@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="lib/jarbundler.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-core.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-swing.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-common.jar"/>
+	<classpathentry kind="lib" path="lib/jgoodies-looks.jar"/>
+	<classpathentry kind="lib" path="lib/jhall.jar"/>
+	<classpathentry kind="lib" path="lib/jna.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/bcpkix.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

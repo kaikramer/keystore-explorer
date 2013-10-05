@@ -1,0 +1,78 @@
+<!--
+Copyright 2004 - 2013 Wayne Grant
+          2013 Kai Kramer
+
+This file is part of KeyStore Explorer.
+
+KeyStore Explorer is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+KeyStore Explorer is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html>
+    <head>
+        <title>Export a Key Pair's Certificate Chain</title>
+        <link rel=stylesheet href="help.css" type="text/css">
+    </head>
+
+    <body>
+
+        <h1>Export a Key Pair's Certificate Chain</h1>
+        <hr>
+
+        To export a Key Pair's certificate chain:
+
+        <ol>
+            <li>Right-click on the Key Pair entry in the KeyStore Entries
+                table.  Select the <b>Export</b> sub-menu from the
+                pop-up menu and from there choose <b>Export Certificate Chain</b>.</li>
+
+            <br>
+
+            <li>The <b>Export Certificate Chain</b> dialog is displayed.</li>
+
+            <br>
+
+            <li>Use the <b>Export Length</b> radio buttons to choose whether the
+                <b>Entire Chain</b> of certificates should be exported or the
+                <b>Head Only</b>.  The <b>X.509</b> export format is not
+                available when the entire chain is to be exported.</li>
+
+            <br>
+
+            <li>Select an <b>Export Format</b>.  The options available are:</li>
+
+            <ul>
+                <li><b>X.509</b> ITU-T standard for public key infrastructure.</li>
+                <li><b>PKCS #7</b> RSA public key cryptography standard.</li>
+                <li><b>PKI Path</b> Certification path.</li>
+                <li><b>SPC</b> Software Publisher Certificate, Microsoft's certificate format.</li>
+            </ul>
+
+            <li>Check the <b>PEM</b> checkbox if the exported certificate is to
+                be PEM encoded.  PEM encoding is not available for <b>PKI Path</b>
+                and <b>SPC</b> format exports.</li>
+
+            <br>
+
+            <li>Use the <b>Browse</b> button to select an export file.</li>
+
+            <br>
+
+            <li>Press the <b>Export</b> button to commence the export.</li>
+        </ol>
+
+        <hr>
+
+        <center><small>Copyright 2004 - 2013 Wayne Grant, 2013 Kai Kramer</small></center>
+
+    </body>
+</html>

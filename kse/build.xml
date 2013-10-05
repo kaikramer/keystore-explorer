@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--========================================================================
+  Copyright 2004 - 2013 Wayne Grant
+            2013 Kai Kramer
+  
+  This file is part of KeyStore Explorer.
+  
+  KeyStore Explorer is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  KeyStore Explorer is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with KeyStore Explorer. If not, see <http://www.gnu.org/licenses/>.
+========================================================================-->
+<!--
+    How to Use this Build Script:
+
+    (1) Install Apache Ant 1.6.5+ and setup for use with JDK 1.6+.
+
+    (2) Create a lib folder under the base directory and place the
+        following files within it:
+
+            - AppleJavaExtensions.jar
+            - bcpkix.jar
+            - bcprov.jar
+            - jarbundler.jar
+            - jhall.jar
+            - junit.jar
+            - jgoodies-looks.jar
+            - jgoodies-common.jar
+            - miglayout-core.jar
+            - miglayout-swing.jar
+            - jna.jar
+
+    (3) Install Launch4j and set "launch4jInstallDir" property
+        appropriately (Windows only).
+
+    (4) Install NSIS and add its top-level directory to the path.
+
+    (5) Install JavaHelp and add its bin directory to the path.
+
+    (6) Run ant -projecthelp for a description of the various targets.
+
+
+ -->
+
+<!-- Build KeyStore Explorer -->
+<project basedir="." default="package" name="KeyStore Explorer">
+	
+    <!-- Application name and version -->
+    <property name="appName" value="KeyStore Explorer" />
+    <property name="appVersion" value="5.0" />
+    <property name="appSimpleName" value="kse" />
+    <property name="appSimpleVersion" value="50" />
+
+    <!-- Vendor details -->
+    <property name="copyright" value="Coypright 2004 - 2013 Wayne Grant, 2013 Kai Kramer" />
+    <property name="vendor" value="Wayne Grant, Kai Kramer" />
+    <property name="website" value="keystore-explorer.sf.net" />
+
+    <!-- Source code directory -->
+    <property name="sourceDir" value="${basedir}/src" />
+
+    <!-- Build directory (for class files) -->
+    <property name="buildDir" value="${basedir}/build" />
+    <property name="testBuildDir" value="${basedir}/build-test" />
+
+    <!-- Unit test directory -->
+    <property name="testDir" value="${basedir}/test" />
+
+    <!-- Distribution directory -->
+    <property name="distDir" value="${basedir}/dist" />
+
+    <!-- Libraries directory -->
+    <property name="libDir" value="${basedir}/lib" />
+
+    <!-- Support JAR files -->
+    <property name="bcPKIXJarName" value="bcpkix.jar" />
+    <property name="bcProvJarName" value="bcprov.jar" />
+    <property name="jhJarName" value="jhall.jar" />
+    <property name="jgoodiesLooksJarName" value="jgoodies-looks.jar" />
+    <property name="jgoodiesCommonJarName" value="jgoodies-common.jar" />
+    <property name="appleExtJarName" value="AppleJavaExtensions.jar" />
+    <property name="jarbundlerJarName" value="jarbundler.jar" />
+    <property name="junitJarName" value="junit.jar" />
+    <property name="mlCoreJarName" value="miglayout-core.jar" />
+    <property name="mlSwingJarName" value="miglayout-swing.jar" />
+    <property name="jnaJarName" value="jna.jar" />
+
+    <property name="bcPKIXJar" value="${libDir}/${bcPKIXJarName}" />
+    <property name="bcProvJar" value="${libDir}/${bcProvJarName}" />
+    <property name="jhJar" value="${libDir}/${jhJarName}" />
+    <property name="jgoodiesLooksJar" value="${libDir}/${jgoodiesLooksJarName}" />
+    <property name="jgoodiesCommonJar" value="${libDir}/${jgoodiesCommonJarName}" />
+    <property name="appleExtJar" value="${libDir}/${appleExtJarName}" />
+    <property name="jarbundlerJar" value="${libDir}/${jarbundlerJarName}" />
+    <property name="junitJar" value="${libDir}/${junitJarName}" />
+    <property name="mlCoreJar" value="${libDir}/${mlCoreJarName}" />
+    <property name="mlSwingJar" value="${libDir}/${mlSwingJarName}" />
+    <property name="jnaJar" value="${libDir}/${jnaJarName}" />
+
+    <!-- Resource directories -->
+    <property name="resDir" value="${basedir}/res" />
+    <property name="iconsDir" value="${resDir}/icons" />
+    <property name="licensesDir" value="${resDir}/licenses" />
+    <property name="readmesDir" value="${resDir}/readmes" />
+    <property name="schemasDir" value="${resDir}/schemas" />
+
+    <!-- Manifest file -->
+    <property name="mfFile" value="${basedir}/MANIFEST.MF" />
+
+    <!-- Application JAR -->
+    <property name="appJarName" value="${appSimpleName}.jar" />
+    <property name="appJar" value="${distDir}/${appJarName}" />
+
+    <!-- Source ZIP -->
+    <property name="srcZip" value="${distDir}/${appSimpleName}-${appSimpleVersion}-src.zip" />
+
+    <!-- Archive file excludes -->
+    <property name="excludes" value="**/.DS_Store,**/Thumbs.db,**/.svn/" />
+
+    <!-- Launch4j properties -->
+    <property name="launch4jInstallDir" location="c:\\program files (x86)\\Launch4j" />
+    <property name="appExe" value="${distDir}/${appSimpleName}.exe" />
+
+    <!-- NSIS properties -->
+    <property name="nsisDir" value="${basedir}/nsis" />
+    <property name="nsisScript" value="${nsisDir}/kse.nsi" />
+    <property name="setupReadme" value="${readmesDir}/windows/readme.txt" />
+    <property name="setupSplash" value="${nsisDir}/splash.bmp" />
+    <property name="setupExe" value="${nsisDir}/${appSimpleName}-${appSimpleVersion}-setup.exe" />
+
+    <!-- Jar Bundle properties -->
+    <property name="javaAppStub" value="${libDir}/JavaApplicationStub" />
+    <property name="appBundleName" value="${appName} ${appVersion}" />
+    <property name="appBundleFile" value="${appBundleName}.app" />
+    <property name="appBundle" value="${distDir}/${appBundleFile}" />
+
+    <!-- dmg properties -->
+    <property name="dmgDir" value="${basedir}/dmg" />
+    <property name="dmgTemplate" value="${dmgDir}/template.dmg.bz2" />
+
+    <!-- Linux self-extracting install properties -->
+    <property name="selfexDir" value="${basedir}/selfex" />
+    <property name="selfexTar" value="${selfexDir}/selfex.tar" />
+    <property name="selfexSh" value="${selfexDir}/selfex.sh" />
+    <property name="installSh" value="${selfexDir}/install.sh" />
+    <property name="selfexReadme" value="${readmesDir}/linux/readme.txt" />
+
+    <!-- Windows setup archive -->
+    <property name="setupZip" value="${distDir}/${appSimpleName}-${appSimpleVersion}-setup.zip" />
+
+    <!-- Manual setup archive -->
+    <property name="manualZip" value="${distDir}/${appSimpleName}-${appSimpleVersion}-manual.zip" />
+
+    <!-- Application bundle archive -->
+    <property name="appBundleDmg" value="${distDir}/${appSimpleName}-${appSimpleVersion}.dmg" />
+
+    <!-- Self-extracting install archive -->
+    <property name="installTarGz" value="${distDir}/${appSimpleName}-${appSimpleVersion}-install.tar.gz" />
+
+    <!-- Icons -->
+    <property name="kseIco" value="${iconsDir}/kse.ico" />
+    <property name="ksePng" value="${iconsDir}/kse.png" />
+    <property name="kseIcns" value="${iconsDir}/kse.icns" />
+    <property name="keystoreIcns" value="${iconsDir}/keystore.icns" />
+
+    <!-- Javadoc properties -->
+    <property name="docDir" value="${basedir}/doc" />
+    <property name="overview" value="${docDir}/overview.html" />
+    <property name="styleSheet" value="${docDir}/stylesheet.css" />
+    <property name="javadocDir" value="${basedir}/api" />
+    <property name="product" value="${appName} ${appVersion}" />
+    <property name="windowTitle" value="${product}" />
+    <property name="documentTitle" value="${product}, API Specification" />
+    <property name="header" value="${product}" />
+    <property name="footer" value="${product}" />
+    <property name="bottom" value="&lt;font size='-1'&gt;${copyright} &lt;a href='http://${website}'&gt;${website}&lt;/a&gt;&lt;/font&gt;" />
+    <property name="overview" value="${basedir}/overview.html" />
+
+    <!-- Java Help properties -->
+    <property name="helpCfgDir" value="${basedir}/help" />
+    <property name="helpCfg" value="${helpCfgDir}/help.cfg" />
+    <property name="helpDir" value="${sourceDir}/net/sf/keystore_explorer/gui/help" />
+    <property name="helpSearchIndex" value="searchindex" />
+    <property name="helpSearchIndexDir" value="${buildDir}/net/sf/keystore_explorer/gui/help/${helpSearchIndex}" />
+
+	
+    <target name="init" description="Initialize environment">
+    	<mkdir dir="${buildDir}"/>
+    	<mkdir dir="${testBuildDir}"/>
+        <mkdir dir="${distDir}" />
+        <mkdir dir="${javadocDir}" />
+    </target>
+
+
+    <target name="compile" depends="init" description="Compile the Java source">
+    	
+        <javac classpath="${bcPKIXJar};${bcProvJar};${jhJar};${jgoodiesLooksJar};${jgoodiesCommonJar};${appleExtJar};${mlCoreJar};${mlSwingJar};${jnaJar}" 
+        	debug="on" deprecation="false" destdir="${buildDir}" source="1.6" target="1.6" srcdir="${sourceDir}" />
+    	
+        <javac classpath="${buildDir};${bcPKIXJar};${bcProvJar};${junitJar}" 
+        	debug="on" deprecation="false" destdir="${testBuildDir}" source="1.6" target="1.6" srcdir="${testDir}" />
+    </target>
+
+
+    <target name="help" depends="compile" description="Create JavaHelp search index">
+
+        <!-- Remove any old search index -->
+        <delete dir="${helpSearchIndexDir}" />
+
+        <!-- Create new search index -->
+    	<java dir="${helpDir}" classname="com.sun.java.help.search.Indexer" fork="true" failonerror="true">
+            <arg value="-verbose" />
+            <arg value="-c" />
+            <arg value="${helpCfg}" />
+            <arg value="-db" />
+            <arg value="${helpSearchIndexDir}" />
+			<classpath>
+				<pathelement location="${jhJar}"/>
+			</classpath>
+		</java>
+
+    </target>
+
+
+    <target name="package" depends="help" description="Create application JAR file, source ZIP file and manual install archives">
+
+        <!-- Create application JAR -->
+        <manifest file="${mfFile}">
+            <attribute name="Implementation-Title" value="${appName}" />
+            <attribute name="Implementation-Version" value="${appVersion}" />
+            <attribute name="Implementation-Vendor" value="${vendor}" />
+            <attribute name="Specification-Title" value="${appName}" />
+            <attribute name="Specification-Version" value="${appVersion}" />
+            <attribute name="Specification-Vendor" value="${vendor}" />
+            <attribute name="Main-Class" value="net.sf.keystore_explorer.KSE" />
+            <attribute name="Class-Path" value="${bcPKIXJarName} ${bcProvJarName} ${jhJarName} ${jgoodiesLooksJarName} ${jgoodiesCommonJarName} ${mlCoreJarName} ${mlSwingJarName} ${jnaJarName}" />
+            <attribute name="SplashScreen-Image" value="net/sf/keystore_explorer/gui/images/splash.png" />
+            <attribute name="Sealed" value="true" />
+        </manifest>
+
+        <jar destfile="${appJar}" manifest="${mfFile}">
+            <fileset defaultexcludes="true" dir="${buildDir}" excludes="**/package.html,**/*.java,${excludes}" />
+			<fileset dir="${sourceDir}">
+				<include name="**/*.gif" />
+				<include name="**/*.png" />
+				<include name="**/*.xml" />
+				<include name="**/*.html" />
+				<include name="**/kse.hs" /> <!-- javahelp -->
+				<include name="**/kseMap.jhm" /> <!-- javahelp -->
+				<include name="**/contents" /> <!-- javahelp -->
+				<include name="**/*.css" />
+				<include name="**/*.properties" />
+				<exclude name="**/*.java" />
+				<exclude name="**/package.html" />
+			</fileset>
+        </jar>
+
+        <copy todir="${distDir}">
+        	<fileset file="${bcPKIXJar}" />
+            <fileset file="${bcProvJar}" />
+            <fileset file="${jhJar}" />
+            <fileset file="${jgoodiesLooksJar}" />
+            <fileset file="${jgoodiesCommonJar}" />
+            <fileset file="${mlCoreJar}" />
+            <fileset file="${mlSwingJar}" />
+            <fileset file="${jnaJar}" />
+        </copy>
+
+        <delete file="${mfFile}" />
+
+        <!-- Create source ZIP -->
+        <zip destfile="${srcZip}">
+            <zipfileset file="${basedir}/build.xml" />
+            <zipfileset defaultexcludes="false" dir="${sourceDir}" prefix="src" excludes="**/*.class,**/${helpSearchIndex}/*,${excludes}" />
+            <zipfileset defaultexcludes="false" dir="${testDir}" prefix="test" excludes="**/*.class,${excludes}" />
+            <zipfileset defaultexcludes="false" dir="${docDir}" prefix="doc" excludes="${excludes}" />
+            <zipfileset defaultexcludes="false" dir="${helpCfgDir}" prefix="help" excludes="${excludes}" />
+            <zipfileset defaultexcludes="false" dir="${nsisDir}" prefix="nsis" excludes="${excludes}" />
+            <zipfileset defaultexcludes="false" dir="${dmgDir}" prefix="dmg" excludes="${excludes}" />
+            <zipfileset defaultexcludes="false" dir="${resDir}" prefix="res" excludes="${excludes}" />
+            <zipfileset defaultexcludes="false" dir="${selfexDir}" prefix="selfex" excludes="${excludes}" />
+        </zip>
+
+        <!-- Create manual install ZIP -->
+        <zip destfile="${manualZip}">
+            <zipfileset file="${appJar}" />
+        	<zipfileset file="${bcPKIXJar}" />
+            <zipfileset file="${bcProvJar}" />
+            <zipfileset file="${jhJar}" />
+            <zipfileset file="${jgoodiesLooksJar}" />
+            <zipfileset file="${jgoodiesCommonJar}" />
+            <zipfileset file="${mlCoreJar}" />
+            <zipfileset file="${mlSwingJar}" />
+            <zipfileset file="${jnaJar}" />
+            <zipfileset file="${readmesDir}/manual/readme.txt" />
+            <zipfileset defaultexcludes="false" dir="${licensesDir}" excludes="${excludes}" />
+        </zip>
+    </target>
+
+
+    <target name="test" depends="compile" description="Run unit tests">
+        <junit fork="yes" printsummary="no" haltonfailure="yes">
+            <classpath>
+                <pathelement location="${buildDir}" />
+                <pathelement location="${testBuildDir}" />
+            	<pathelement location="${bcPKIXJar}" />
+                <pathelement location="${bcProvJar}" />
+                <pathelement location="${junitJar}" />
+            </classpath>
+            <formatter type="plain" usefile="no" />
+            <test name="net.sf.keystore_explorer.crypto.TestSuiteCrypto" />
+        </junit>
+    </target>
+
+
+    <target name="run" depends="init" description="Run built application">
+        <java fork="true" jar="${appJar}" />
+    </target>
+
+
+    <target name="doc" depends="compile" description="Create Javadocs">
+        <javadoc packagenames="net.sf.keystore_explorer.*"
+                 sourcepath="${sourceDir}"
+                 destdir="${javadocDir}"
+                 windowtitle="${windowTitle}"
+                 doctitle="${documentTitle}"
+                 header="${header}"
+                 footer="${footer}"
+                 bottom="${bottom}"
+                 classpath="${bcPKIXJar};${bcProvJar};${jhJar};${jgoodiesLooksJar};${jgoodiesCommonJar};${appleExtJar};${mlCoreJar};${mlSwingJar};${jnaJar}"
+                 source="1.6"
+                 access="protected"
+                 splitindex="true"
+                 overview="${overview}"
+                 stylesheetfile="${styleSheet}">
+            <group title="Application Packages" packages="net.sf.keystore_explorer.*" />
+            <group title="GUI Utility Packages" packages="net.sf.keystore_explorer.gui,net.sf.keystore_explorer.gui.*" />
+            <group title="Crypto Utility Packages" packages="net.sf.keystore_explorer.crypto,net.sf.keystore_explorer.crypto.*" />
+            <group title="Other Utility Packages" packages="net.sf.keystore_explorer.utilities.asn1,net.sf.keystore_explorer.utilities.io,net.sf.keystore_explorer.utilities.net,net.sf.keystore_explorer.utilities.oid,net.sf.keystore_explorer.utilities.pem,net.sf.keystore_explorer.utilities.os,net.sf.keystore_explorer.version" />
+        </javadoc>
+    </target>
+
+
+    <target name="launch4j" depends="init" description="Create windows exe using Launch4j">
+        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask">
+            <classpath>
+                <pathelement location="${launch4jInstallDir}/launch4j.jar" />
+                <pathelement location="${launch4jInstallDir}/lib/xstream.jar" />
+            </classpath>
+        </taskdef>
+    	
+        <launch4j>
+            <config headerType="gui" jarpath="${appJarName}" outfile="${appExe}" dontWrapJar="true"
+                    errTitle="${appName}"  stayAlive="false" icon="${kseIco}">
+                <jre minVersion="1.6.0">
+                    <opt>-Dkse.exe=true</opt>
+                </jre>
+                <versionInfo fileVersion="${appVersion}.0.0"
+                             fileDescription="${appName}"
+                             copyright="${copyright}"
+                             internalName="${appSimpleName}"
+                             originalFilename="${appSimpleName}.exe"
+                             productName="${appName}"
+                             productVersion="${appVersion}.0.0"
+                             txtFileVersion="${appVersion}"
+                             txtProductVersion="${appVersion}" />
+            </config>
+        </launch4j>
+    </target>
+
+
+    <target name="nsis" depends="launch4j" description="Create NSIS install and archive it">
+        <exec executable="makensis" dir="${nsisDir}">
+            <arg value="${nsisScript}" />
+        </exec>
+    </target>
+
+
+    <target name="jarbundler" depends="init" description="Create JAR bundle and archive it as dmg">
+
+        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler">
+            <classpath>
+                <pathelement location="${jarbundlerJar}" />
+            </classpath>
+        </taskdef>
+
+        <jarbundler dir="${distDir}" name="${appBundleName}" shortname="${appSimpleName}"
+                    jvmversion="1.6+" version="${appVersion}" extraclasspath="/System/Library/Java"
+                    stubfile="${javaAppStub}" bundleid="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}"
+                    splashfile="${sourceDir}/net/sf/keystore_explorer/gui/images/splash.png"
+                    icon="${kseIcns}" mainClass="net.sf.keystore_explorer.KSE"
+                    vmoptions="-Dkse.app=true">
+            <jarfileset file="${appJar}" />
+        	<jarfileset file="${bcPKIXJar}" />
+            <jarfileset file="${bcProvJar}" />
+            <jarfileset file="${jhJar}" />
+            <jarfileset file="${jgoodiesLooksJar}" />
+            <jarfileset file="${jgoodiesCommonJar}" />
+            <jarfileset file="${mlCoreJar}" />
+            <jarfileset file="${mlSwingJar}" />
+            <jarfileset file="${jnaJar}" />
+            <resourcefileset file="${licensesDir}/license-bouncycastle.txt" />
+            <resourcefileset file="${licensesDir}/license-javahelp.txt" />
+            <resourcefileset file="${licensesDir}/license-jgoodies.txt" />
+            <resourcefileset file="${licensesDir}/license-miglayout.txt" />
+            <resourcefileset file="${licensesDir}/license-kse.txt" />
+            <documenttype name="KeyStore" extensions="ks jks keystore pfx p12" iconFile="${keystoreIcns}" role="Editor" />
+        </jarbundler>
+
+        <!-- Link to user's own JavaApplicationStub to ensure future compatability with Mac OSX upgrades -->
+        <delete file="${distDir}/${appBundleFile}/Contents/MacOS/JavaApplicationStub"/>
+        <exec executable="ln">
+            <arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub"/>
+            <arg value="${distDir}/${appBundleFile}/Contents/MacOS/JavaApplicationStub"/>
+        </exec>
+
+    	<!-- call script that creates dmg from template -->
+    	<exec executable="bash" failonerror="true">
+    		<arg value="${dmgDir}/finalize.sh" />
+    		<arg value="${dmgDir}" />
+    		<arg value="${distDir}" />
+    		<arg value="${appBundleFile}" />
+    		<arg value="${appBundleDmg}" />
+    		<arg value="${kseIcns}" />
+    	</exec>
+    </target>
+
+
+    <target name="selfex" depends="init" description="Create self-extracting install for Linux">
+
+        <!-- Create tar -->
+        <tar destfile="${selfexTar}">
+            <tarfileset dir="${selfexDir}" mode="755">
+                <include name="kse.sh" />
+            </tarfileset>
+            <tarfileset dir="${distDir}">
+                <include name="${appJarName}" />
+            	<include name="${bcPKIXJarName}" />
+                <include name="${bcProvJarName}" />
+                <include name="${jhJarName}" />
+                <include name="${jgoodiesLooksJarName}" />
+                <include name="${jgoodiesCommonJarName}" />
+                <include name="${mlCoreJarName}" />
+                <include name="${mlSwingJarName}" />
+                <include name="${jnaJarName}" />
+            </tarfileset>
+            <tarfileset dir="${licensesDir}">
+                <include name="license-bouncycastle.txt" />
+                <include name="license-javahelp.txt" />
+                <include name="license-jgoodies.txt" />
+                <include name="license-kse.txt" />
+                <include name="license-jna.txt" />
+                <include name="license-miglayout.txt" />
+            </tarfileset>
+        </tar>
+
+        <concat destfile="${installSh}" binary="yes">
+            <fileset file="${selfexSh}" />
+            <fileset file="${selfexTar}" />
+        </concat>
+
+        <delete file="${selfexTar}" />
+
+        <tar destfile="${installTarGz}" compression="gzip" longfile="gnu">
+
+            <!-- install script must be extracted out executable -->
+            <tarfileset dir="${selfexDir}" mode="755">
+                <include name="install.sh" />
+            </tarfileset>
+
+            <tarfileset file="${selfexReadme}" />
+        </tar>
+
+        <delete file="${installSh}" />
+    </target>
+
+
+    <target name="clean" depends="init" description="Remove generated/compiled files">
+        <delete dir="${buildDir}" />
+        <delete dir="${testBuildDir}" />
+        <delete dir="${distDir}" />
+        <delete dir="${javadocDir}" />
+        <delete dir="${helpSearchIndexDir}" />
+    </target>
+</project>

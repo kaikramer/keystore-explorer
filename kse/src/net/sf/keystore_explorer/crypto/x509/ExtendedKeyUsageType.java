@@ -1,0 +1,111 @@
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package net.sf.keystore_explorer.crypto.x509;
+
+import java.util.ResourceBundle;
+
+/**
+ * 
+ * Enumeration of extended key usage types.
+ * 
+ */
+public enum ExtendedKeyUsageType {
+	/** TLS Web Server Authentication */
+	SERVER_AUTH("1.3.6.1.5.5.7.3.1", "ServerAuthExtKeyUsage"),
+
+	/** TLS Web Client Authentication */
+	CLIENT_AUTH("1.3.6.1.5.5.7.3.2", "ClientAuthExtKeyUsage"),
+
+	/** Code Signing */
+	CODE_SIGNING("1.3.6.1.5.5.7.3.3", "CodeSigningExtKeyUsage"),
+
+	/** E-mail Protection */
+	EMAIL_PROTECTION("1.3.6.1.5.5.7.3.4", "EmailProtectionExtKeyUsage"),
+
+	/** IP Security End System */
+	IPSEC_END_SYSTEM("1.3.6.1.5.5.7.3.5", "IpsecEndSystemExtKeyUsage"),
+
+	/** IP Security Tunnel termination */
+	IPSEC_TUNNEL("1.3.6.1.5.5.7.3.6", "IpsecTunnelExtKeyUsage"),
+
+	/** IP Security User */
+	IPSEC_USER("1.3.6.1.5.5.7.3.7", "IpsecUserExtKeyUsage"),
+
+	/** Time Stamping */
+	TIME_STAMPING("1.3.6.1.5.5.7.3.8", "TimeStampingExtKeyUsage"),
+
+	/** OCSP Signing */
+	OCSP_SIGNING("1.3.6.1.5.5.7.3.9", "OcspSigningExtKeyUsage");
+
+	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
+	private String oid;
+
+	private String friendlyKey;
+
+	private ExtendedKeyUsageType(String oid, String friendlyKey) {
+		this.oid = oid;
+		this.friendlyKey = friendlyKey;
+	}
+
+	/**
+	 * Get type's Object Identifier.
+	 * 
+	 * @return Object Identifier
+	 */
+	public String oid() {
+		return oid;
+	}
+
+	/**
+	 * Get type's friendly name.
+	 * 
+	 * @return Friendly name
+	 */
+	public String friendly() {
+		return res.getString(friendlyKey);
+	}
+
+	/**
+	 * Resolve the supplied object identifier to a matching type.
+	 * 
+	 * @param oid
+	 *            Object identifier
+	 * @return Extended Key Usage type or null if none
+	 */
+	public static ExtendedKeyUsageType resolveOid(String oid) {
+		for (ExtendedKeyUsageType extType : values()) {
+			if (oid.equals(extType.oid())) {
+				return extType;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns friendly name.
+	 * 
+	 * @return Friendly name
+	 */
+	public String toString() {
+		return friendly();
+	}
+}

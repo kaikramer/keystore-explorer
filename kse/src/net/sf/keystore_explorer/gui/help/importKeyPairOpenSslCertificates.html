@@ -1,0 +1,102 @@
+<!--
+Copyright 2004 - 2013 Wayne Grant
+          2013 Kai Kramer
+
+This file is part of KeyStore Explorer.
+
+KeyStore Explorer is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+KeyStore Explorer is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html>
+    <head>
+        <title>Import a Key Pair from OpenSSL and Certificate Files</title>
+        <link rel=stylesheet href="help.css" type="text/css">
+    </head>
+
+    <body>
+
+        <h1>Import a Key Pair from OpenSSL and Certificates</h1>
+        <hr>
+
+        To import a Key Pair from OpenSSL and Certificates:
+
+        <ol>
+            <li>From the <b>Tools</b> menu, choose <b>Import Key Pair</b>.
+                Alternatively click on the <b>Import Key Pair</b> tool bar
+                button:
+                <br><br>&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/importkeypair.png"></li>
+
+            <br>
+
+            <li>The <b>Import Key Pair Type</b> dialog will appear.</li>
+
+            <br>
+
+            <li>Select the <b>OpenSSL</b> radio button and press the <b>OK</b> button.</li>
+
+            <br>
+
+            <li>The <b>Import OpenSSL Key Pair</b> dialog will appear.</li>
+
+            <br>
+
+            <li>If the OpenSSL private key file is unencrypted then uncheck the
+                <b>Encrypted Private Key</b> check box.</li>
+
+            <br>
+
+            <li>Alternatively if the OpenSSL private key file is encrypted enter the decryption password
+                into the <b>Decryption Password</b> field.  The supported PBE encryption algorithms for
+                import are:</li>
+
+            <ul>
+                <li>PBE with DES CBC</li>
+                <li>PBE with DESede CBC</li>
+                <li>PBE with 128 bit AES CBC</li>
+                <li>PBE with 192 bit AES CBC</li>
+                <li>PBE with 256 bit AES CBC</li>
+            </ul>
+
+            <li>Use the <b>Browse</b> buttons to select private key and certificates files
+                and the <b>Details</b> buttons to examine your choices.</li>
+
+            <br>
+
+            <li>If after examination you decide to import the Key Pair press the <b>Import</b>
+                button.  Otherwise use the <b>Cancel</b> button to halt the import.</li>
+
+            <br>
+
+            <li>The <b>New Key Pair Entry Alias</b> dialog will be displayed.</li>
+
+            <br>
+
+            <li>Enter the alias for the new Key Pair entry and press the <b>OK</b> button.</li>
+
+            <br>
+
+            <li>If required the <b>New Key Pair Entry Password</b> dialog will be displayed.
+                Enter the password with which to protect the new Key Pair entry, confirm it and
+                press the <b>OK</b> button.</li>
+
+            <br>
+
+            <li>The new Key Pair entry will appear in the KeyStore Entries table.</li>
+        </ol>
+
+        <hr>
+
+        <center><small>Copyright 2004 - 2013 Wayne Grant, 2013 Kai Kramer</small></center>
+
+    </body>
+</html>
