@@ -21,32 +21,16 @@
 <!--
     How to Use this Build Script:
 
-    (1) Install Apache Ant 1.6.5+ and setup for use with JDK 1.6+.
+    (1) Install Apache Ant 1.8+ and setup for use with JDK 1.6+.
 
-    (2) Create a lib folder under the base directory and place the
-        following files within it:
-
-            - AppleJavaExtensions.jar
-            - bcpkix.jar
-            - bcprov.jar
-            - jarbundler.jar
-            - jhall.jar
-            - junit.jar
-            - jgoodies-looks.jar
-            - jgoodies-common.jar
-            - miglayout-core.jar
-            - miglayout-swing.jar
-            - jna.jar
+    (2) Add AppleJavaExtensions.jar to lib (not necessary on Mac OS) 
 
     (3) Install Launch4j and set "launch4jInstallDir" property
         appropriately (Windows only).
 
     (4) Install NSIS and add its top-level directory to the path.
 
-    (5) Install JavaHelp and add its bin directory to the path.
-
-    (6) Run ant -projecthelp for a description of the various targets.
-
+    (5) Run ant -projecthelp for a description of the various targets.
 
  -->
 
