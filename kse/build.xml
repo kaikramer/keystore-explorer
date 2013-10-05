@@ -23,10 +23,10 @@
 
     (1) Install Apache Ant 1.8+ and setup for use with JDK 1.6+.
 
-    (2) Add AppleJavaExtensions.jar to lib (not necessary on Mac OS) 
+    (2) Add AppleJavaExtensions.jar to lib (not necessary on Mac OS)
+        Link: https://developer.apple.com/legacy/library/samplecode/AppleJavaExtensions/Introduction/Intro.html
 
-    (3) Install Launch4j and set "launch4jInstallDir" property
-        appropriately (Windows only).
+    (3) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
 
     (4) Install NSIS and add its top-level directory to the path.
 
