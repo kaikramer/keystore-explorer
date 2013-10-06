@@ -1483,21 +1483,21 @@ public final class KseFrame implements StatusBar {
 		// Make the first three columns small and not resizable as they hold icons
 		TableColumn typeCol = jtKeyStore.getColumnModel().getColumn(0);
 		typeCol.setResizable(false);
-		typeCol.setMinWidth(20);
-		typeCol.setMaxWidth(20);
-		typeCol.setPreferredWidth(20);
+		typeCol.setMinWidth(28);
+		typeCol.setMaxWidth(28);
+		typeCol.setPreferredWidth(28);
 
 		TableColumn statusCol = jtKeyStore.getColumnModel().getColumn(1);
 		statusCol.setResizable(false);
-		statusCol.setMinWidth(20);
-		statusCol.setMaxWidth(20);
-		statusCol.setPreferredWidth(20);
+		statusCol.setMinWidth(28);
+		statusCol.setMaxWidth(28);
+		statusCol.setPreferredWidth(28);
 
 		TableColumn certExpiredCol = jtKeyStore.getColumnModel().getColumn(2);
 		certExpiredCol.setResizable(false);
-		certExpiredCol.setMinWidth(20);
-		certExpiredCol.setMaxWidth(20);
-		certExpiredCol.setPreferredWidth(20);
+		certExpiredCol.setMinWidth(28);
+		certExpiredCol.setMaxWidth(28);
+		certExpiredCol.setPreferredWidth(28);
 
 		jtKeyStore.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
