@@ -145,9 +145,9 @@ public class DViewExtensions extends JEscDialog {
 
 		TableColumn criticalCol = jtExtensions.getColumnModel().getColumn(0);
 		criticalCol.setResizable(false);
-		criticalCol.setMinWidth(20);
-		criticalCol.setMaxWidth(20);
-		criticalCol.setPreferredWidth(20);
+		criticalCol.setMinWidth(28);
+		criticalCol.setMaxWidth(28);
+		criticalCol.setPreferredWidth(28);
 
 		ListSelectionModel selectionModel = jtExtensions.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
