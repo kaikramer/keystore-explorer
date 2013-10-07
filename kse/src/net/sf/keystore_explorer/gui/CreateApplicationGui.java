@@ -222,7 +222,7 @@ public class CreateApplicationGui implements Runnable {
 		// Integration done by reflection to avoid Mac specific classes it
 		// depends on being loaded on other platforms
 		Class<?> macOsApplication = ClassLoader.getSystemClassLoader().loadClass(
-				"net.sf.keystore_explorer.utilities.kse.MacOsIntegration");
+				"net.sf.keystore_explorer.gui.MacOsIntegration");
 		Constructor constructor = macOsApplication.getConstructor(KseFrame.class);
 		constructor.newInstance(new Object[] { kseFrame });
 	}
