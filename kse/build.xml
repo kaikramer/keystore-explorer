@@ -29,8 +29,10 @@
     (3) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
 
     (4) Install NSIS and add its top-level directory to the path.
+    
+    (5) Add WinShell plugin to NSIS (http://nsis.sourceforge.net/WinShell_plug-in)
 
-    (5) Run ant -projecthelp for a description of the various targets.
+    (6) Run ant -projecthelp for a description of the various targets.
 
  -->
 
