@@ -32,18 +32,33 @@ along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
         Key entries are represented in KeyStore Explorer by the following icon:
 
         <p>
-
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/key_entry.png">
-
+        </p>
         <p>
-
-        Key entries can be displayed and <a href="deleteKey.html">deleted</a>.
-
+        Key entries are protected by a password.  In KeyStore Explorer such entries
+        are described as being <b>Locked</b> and have a closed padlock displayed
+        against them:
+        </p>
         <p>
-
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/locked_entry.png">
+        </p>
+        <p>
+        To access the key the entry must be <a href="unlockKey.html"><b>Unlocked</b></a>
+        by supplying the correct password.  If an entry is successfully unlocked then an open
+        padlock is displayed against it:
+        </p>
+        <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/unlocked_entry.png">
+        </p>
+        <p>
+        If a Key Pair entry is unlocked once during a KeyStore Explorer
+        session it does not need to be unlocked again.  A Key Pair entry may be
+        unlocked explicitly or as part of an operation that requires the private key.
+        </p>
+        <p>
         As key entries do not contain any certificates no value is shown for them in the
         <b>Certificate Expiry</b> column of the KeyStore table.
-
+        </p>
         <br><br>
 
         <hr>

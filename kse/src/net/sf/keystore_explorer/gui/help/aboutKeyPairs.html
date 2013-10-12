@@ -26,7 +26,7 @@ along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
     <body>
 
         <h1>About Key Pairs</h1>
-        <hr>
+        <hr/>
 
         A Key Pair contains a private key and its associated certificate
         chain.  Key Pairs can be used to digitally sign objects such as Java
@@ -34,47 +34,40 @@ along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
         by the following icon:
 
         <p>
-
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/keypair_entry.png">
-
+        </p>
         <p>
-
         As the private key part of the Key Pair should remain secret, Key Pair entries
         are normally protected by a password.  In KeyStore Explorer such entries
         are described as being <b>Locked</b> and have a closed padlock displayed
         against them:
-
+        </p>
         <p>
-
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/locked_entry.png">
-
+        </p>
         <p>
-
         To access the private key the entry must be <a href="unlockKeyPair.html"><b>Unlocked</b></a>
         by supplying the correct password.  If an entry is successfully unlocked then an open
         padlock is displayed against it:
-
+        </p>
         <p>
-
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="images/unlocked_entry.png">
-
+        </p>
         <p>
-
         If a Key Pair entry is unlocked once during a KeyStore Explorer
         session it does not need to be unlocked again.  A Key Pair entry may be
-        unlocked explicitly</a> or as part of an
+        unlocked explicitly or as part of an
         operation that requires the private key.
-
+        </p>
         <p>
-
         A Key Pair must be unlocked to utilize it for operations such as digital
         signing or to view or export the private key.  The exception is Key Pair's
         contained within a PKCS #12 KeyStore - these do not have passwords
         and therefore never require to be unlocked.
+        </p>
+        <br/><br/>
 
-        <br><br>
-
-        <hr>
+        <hr/>
 
         <center><small>Copyright 2004 - 2013 Wayne Grant, 2013 Kai Kramer</small></center>
 

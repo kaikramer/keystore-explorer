@@ -84,7 +84,13 @@
     
     <tocitem text="Keys" expand="false">
         <tocitem text="About Keys" target="aboutKeys" />
+        <tocitem text="View a Key" target="viewKey" />
+        <tocitem text="Unlock a Key" target="unlockKey" />
+        <tocitem text="Set a Key's Password" target="setKeyPassword" />
         <tocitem text="Delete a Key" target="deleteKey" />
+        <tocitem text="Rename a Key" target="renameKey" />
+        <tocitem text="Cut and Paste  a Key" target="cutPasteKey" />
+        <tocitem text="Copy and Paste  a Key" target="copyPasteKey" />
     </tocitem>
     
     <tocitem text="Digital Signing" expand="false">

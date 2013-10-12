@@ -98,7 +98,13 @@
     <mapID target="renameTrustedCertificate" url="renameTrustedCertificate.html" />
 
     <mapID target="aboutKeys" url="aboutKeys.html" />
+    <mapID target="viewKey" url="viewKey.html" />
+    <mapID target="unlockKey" url="unlockKey.html" />
+    <mapID target="setKeyPassword" url="setKeyPassword.html" />
     <mapID target="deleteKey" url="deleteKey.html" />
+    <mapID target="renameKey" url="renameKey.html" />
+    <mapID target="cutPasteKey" url="cutPasteKey.html" />
+    <mapID target="copyPasteKey" url="copyPasteKey.html" />
 
     <mapID target="signCsr" url="signCsr.html" />
     <mapID target="signJar" url="signJar.html" />
