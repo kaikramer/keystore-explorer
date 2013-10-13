@@ -80,6 +80,8 @@ import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -1382,6 +1384,13 @@ public final class KseFrame implements StatusBar {
 		jkstpKeyStores.setTabLayoutPolicy(tabLayout);
 
 		jkstpKeyStores.setBorder(new EmptyBorder(3, 3, 3, 3));
+		
+		jkstpKeyStores.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent evt) {
+				// Update controls as selected KeyStore is changed
+				updateControls(false); 
+			}
+		});
 
 		jkstpKeyStores.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
@@ -1393,7 +1402,8 @@ public final class KseFrame implements StatusBar {
 			}
 
 			public void mouseClicked(MouseEvent evt) {
-				if (evt.getButton() == MouseEvent.BUTTON2) { // Close tab if it is middle-clicked
+				// Close tab if it is middle-clicked
+				if (evt.getButton() == MouseEvent.BUTTON2) { 
 					closeAction.closeActiveKeyStore();
 				}
 			}
@@ -2572,7 +2582,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	/**
-	 * Set the text in the staus bar to reflect the status of the active
+	 * Set the text in the status bar to reflect the status of the active
 	 * KeyStore.
 	 */
 	public void setDefaultStatusBarText() {
