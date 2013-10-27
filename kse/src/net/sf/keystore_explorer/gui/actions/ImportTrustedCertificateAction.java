@@ -47,7 +47,7 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
  * 
  */
 public class ImportTrustedCertificateAction extends AuthorityCertificatesAction implements HistoryAction {
-	private X509Certificate trustCert;
+	private X509Certificate trustCertFromMemory;
 	private File certFile;
 
 	/**
@@ -55,12 +55,22 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 	 * 
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
-	 * @param cert
-	 *            Optional certificate; if cert is null then user is asked to select a cert via FileDialog
 	 */
-	public ImportTrustedCertificateAction(KseFrame kseFrame, X509Certificate cert) {
+	public ImportTrustedCertificateAction(KseFrame kseFrame) {
+		this(kseFrame, null);
+	}
+	
+	/**
+	 * Construct action.
+	 * 
+	 * @param kseFrame
+	 *            KeyStore Explorer frame
+	 * @param trustCert
+	 *            Optional certificate; if trustCert is null then user is asked to select a cert via FileDialog
+	 */
+	public ImportTrustedCertificateAction(KseFrame kseFrame, X509Certificate trustCert) {
 		super(kseFrame);
-		this.trustCert = cert;
+		this.trustCertFromMemory = trustCert;
 
 		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ImportTrustedCertificateAction.accelerator")
 				.charAt(0), Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -95,11 +105,15 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 
 			KeyStore keyStore = newState.getKeyStore();
 
-			if (trustCert == null) {
+			// use either cert that was passed to c-tor or the one from file selection dialog
+			X509Certificate trustCert;
+			if (trustCertFromMemory == null) {
 				trustCert = showFileSelectionDialog();
 				if (trustCert == null) {
 					return;
 				}
+			} else {
+				trustCert = trustCertFromMemory;
 			}
 
 			if (applicationSettings.getEnableImportTrustedCertTrustCheck()) {

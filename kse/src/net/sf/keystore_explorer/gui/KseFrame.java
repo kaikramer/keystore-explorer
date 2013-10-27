@@ -408,7 +408,7 @@ public final class KseFrame implements StatusBar {
 	private final GenerateKeyPairAction generateKeyPairAction = new GenerateKeyPairAction(this);
 	private final GenerateSecretKeyAction generateSecretKeyAction = new GenerateSecretKeyAction(this);
 	private final ImportTrustedCertificateAction importTrustedCertificateAction = new ImportTrustedCertificateAction(
-			this, null);
+			this);
 	private final ImportKeyPairAction importKeyPairAction = new ImportKeyPairAction(this);
 	private final SetPasswordAction setPasswordAction = new SetPasswordAction(this);
 	private final ChangeTypeAction changeTypeJksAction = new ChangeTypeAction(this, KeyStoreType.JKS);
