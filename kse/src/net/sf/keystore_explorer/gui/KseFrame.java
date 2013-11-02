@@ -158,6 +158,7 @@ import net.sf.keystore_explorer.gui.actions.ShowHideToolBarAction;
 import net.sf.keystore_explorer.gui.actions.SignCsrAction;
 import net.sf.keystore_explorer.gui.actions.SignJarAction;
 import net.sf.keystore_explorer.gui.actions.SignMidletAction;
+import net.sf.keystore_explorer.gui.actions.SignNewKeyPairAction;
 import net.sf.keystore_explorer.gui.actions.TabStyleScrollAction;
 import net.sf.keystore_explorer.gui.actions.TabStyleWrapAction;
 import net.sf.keystore_explorer.gui.actions.TipOfTheDayAction;
@@ -343,6 +344,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiKeyPairSignCsr;
 	private JMenuItem jmiKeyPairSignJar;
 	private JMenuItem jmiKeyPairSignMidlet;
+	private JMenuItem jmiKeyPairSignNewKeyPair;
 	private JMenuItem jmiKeyPairUnlock;
 	private JMenuItem jmiKeyPairSetPassword;
 	private JMenuItem jmiKeyPairDelete;
@@ -452,6 +454,7 @@ public final class KseFrame implements StatusBar {
 	private final SignCsrAction signCsrAction = new SignCsrAction(this);
 	private final SignJarAction signJarAction = new SignJarAction(this);
 	private final SignMidletAction signMidletAction = new SignMidletAction(this);
+	private final SignNewKeyPairAction signNewKeyPairAction = new SignNewKeyPairAction(this);
 	private final UnlockKeyPairAction unlockKeyPairAction = new UnlockKeyPairAction(this);
 	private final SetKeyPairPasswordAction setKeyPairPasswordAction = new SetKeyPairPasswordAction(this);
 	private final DeleteKeyPairAction deleteKeyPairAction = new DeleteKeyPairAction(this);
@@ -1840,6 +1843,11 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiKeyPairSignMidlet, (String) signMidletAction.getValue(Action.LONG_DESCRIPTION),
 				this);
 
+		jmiKeyPairSignNewKeyPair = new JMenuItem(signNewKeyPairAction);
+		jmiKeyPairSignNewKeyPair.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyPairSignNewKeyPair,
+				(String) signNewKeyPairAction.getValue(Action.LONG_DESCRIPTION), this);
+
 		jmiKeyPairUnlock = new JMenuItem(unlockKeyPairAction);
 		jmiKeyPairUnlock.setToolTipText(null);
 		new StatusBarChangeHandler(jmiKeyPairUnlock, (String) unlockKeyPairAction.getValue(Action.LONG_DESCRIPTION),
@@ -1880,6 +1888,7 @@ public final class KseFrame implements StatusBar {
 		jmKeyPairEditCertChain.add(jmiKeyPairEditCertChainRemoveCert);
 		jpmKeyPair.addSeparator();
 		jpmKeyPair.add(jmKeyPairSign);
+		jmKeyPairSign.add(jmiKeyPairSignNewKeyPair);
 		jmKeyPairSign.add(jmiKeyPairSignCsr);
 		jmKeyPairSign.add(jmiKeyPairSignJar);
 		jmKeyPairSign.add(jmiKeyPairSignMidlet);

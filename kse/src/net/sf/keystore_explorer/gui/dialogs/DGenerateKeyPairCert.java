@@ -35,6 +35,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -63,6 +64,7 @@ import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
+import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
 import net.sf.keystore_explorer.crypto.x509.X509CertificateGenerator;
 import net.sf.keystore_explorer.crypto.x509.X509ExtensionSet;
 import net.sf.keystore_explorer.gui.CursorUtil;
@@ -107,6 +109,9 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	private X509Certificate certificate;
 	private X509ExtensionSet extensions = new X509ExtensionSet();
 
+	private X509Certificate issuerCert;
+	private PrivateKey issuerPrivateKey;
+
 	/**
 	 * Creates a new DGenerateKeyPairCert dialog.
 	 * 
@@ -126,6 +131,32 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
 		this.keyPair = keyPair;
 		this.keyPairType = keyPairType;
+		initComponents(title);
+	}
+
+	/**
+	 * Creates a new DGenerateKeyPairCert dialog.
+	 * 
+	 * @param parent
+	 *            The parent frame
+	 * @param title
+	 *            The dialog's title
+	 * @param keyPair
+	 *            The key pair to generate the certificate from
+	 * @param keyPairType
+	 *            The key pair type
+	 * @param issuerPrivateKey
+	 * 	          The signing key pair (issuer CA)
+	 * @throws CryptoException
+	 *             A problem was encountered with the supplied key pair
+	 */
+	public DGenerateKeyPairCert(JFrame parent, String title, KeyPair keyPair, KeyPairType keyPairType,
+			X509Certificate issuerCert, PrivateKey issuerPrivateKey) throws CryptoException {
+		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		this.keyPair = keyPair;
+		this.keyPairType = keyPairType;
+		this.issuerCert = issuerCert;
+		this.issuerPrivateKey = issuerPrivateKey;
 		initComponents(title);
 	}
 
@@ -376,8 +407,16 @@ public class DGenerateKeyPairCert extends JEscDialog {
 				generator = new X509CertificateGenerator(VERSION3);
 			}
 
-			certificate = generator.generateSelfSigned(name, validityPeriodMs, keyPair.getPublic(),
+			// self-signed or signed by other key pair?
+			if (issuerPrivateKey == null) {
+				certificate = generator.generateSelfSigned(name, validityPeriodMs, keyPair.getPublic(),
 					keyPair.getPrivate(), signatureType, serialNumber, extensions);
+			} else {
+				certificate = generator.generate(name,
+						X500NameConverter.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
+						validityPeriodMs, keyPair.getPublic(), issuerPrivateKey, signatureType, serialNumber,
+						extensions);
+			}
 		} catch (CryptoException ex) {
 			DError dError = new DError(this, APPLICATION_MODAL, ex);
 			dError.setLocationRelativeTo(getParent());
