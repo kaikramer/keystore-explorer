@@ -40,7 +40,7 @@ import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
 import net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.DGenerateCsr;
@@ -131,7 +131,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 
 				fos.write(csr.getBytes());
 			} else {
-				SpkacSubject subject = new SpkacSubject(X500NameConverter.x500PrincipalToX500Name(firstCertInChain
+				SpkacSubject subject = new SpkacSubject(X500NameUtils.x500PrincipalToX500Name(firstCertInChain
 						.getSubjectX500Principal()));
 				PublicKey publicKey = firstCertInChain.getPublicKey();
 

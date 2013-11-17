@@ -76,7 +76,8 @@ public class PreferencesAction extends ExitAction {
 		DPreferences dPreferences = new DPreferences(frame, applicationSettings.getUseCaCertificates(),
 				caCertificatesFile, applicationSettings.getUseWindowsTrustedRootCertificates(),
 				applicationSettings.getEnableImportTrustedCertTrustCheck(),
-				applicationSettings.getEnableImportCaReplyTrustCheck(), applicationSettings.getPasswordQualityConfig());
+				applicationSettings.getEnableImportCaReplyTrustCheck(), applicationSettings.getPasswordQualityConfig(),
+				applicationSettings.getDefaultDN());
 		dPreferences.setLocationRelativeTo(frame);
 		dPreferences.setVisible(true);
 
@@ -99,6 +100,7 @@ public class PreferencesAction extends ExitAction {
 		applicationSettings.setEnableImportTrustedCertTrustCheck(dPreferences.getEnableImportTrustedCertTrustCheck());
 		applicationSettings.setEnableImportCaReplyTrustCheck(dPreferences.getEnableImportCaReplyTrustCheck());
 		applicationSettings.setPasswordQualityConfig(dPreferences.getPasswordQualityConfig());
+		applicationSettings.setDefaultDN(dPreferences.getDefaultDN());
 
 		UIManager.LookAndFeelInfo lookFeelInfo = dPreferences.getLookFeelInfo();
 		applicationSettings.setLookAndFeelClass(lookFeelInfo.getClassName());

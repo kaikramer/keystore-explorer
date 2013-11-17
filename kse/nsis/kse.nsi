@@ -43,13 +43,14 @@
 !define PRODUCT "KeyStore Explorer"
 
 ; Product version
-!define VERSION "5.0"
+!define VERSION "5.1"
+!define SIMPLE_VERSION "51"
 
 ; Product key (name and version)
 !define PRODUCT_KEY "${PRODUCT} ${VERSION}"
 
 ; AppUserModelId (see http://stackoverflow.com/questions/5438651/launch4j-nsis-and-duplicate-pinned-windows-7-taskbar-icons)
-!define MyApp_AppUserModelId "SourceForge.KeyStoreExplorer"
+!define KSE_AppUserModelId "SourceForge.KeyStoreExplorer"
 
 ; Product home page address
 !define HOME_PAGE_ADDRESS "http://keystore-explorer.sf.net"
@@ -113,7 +114,7 @@ RequestExecutionLevel admin
 Name "${PRODUCT} ${VERSION}"
 
 ; Install file to create
-OutFile "..\dist\kse-50-setup.exe"
+OutFile "..\dist\kse-${SIMPLE_VERSION}-setup.exe"
 
 ; Only one component therefore no customization is required
 InstType /NOCUSTOM
@@ -225,7 +226,7 @@ Section "${PRODUCT}"
     CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\${PRODUCT_KEY}.lnk" "$INSTDIR\${KSE_EXE}" "" "$INSTDIR\${KSE_EXE}" 0
     
     ; Add AppModelUserID to app shortcut (so KSE can be pinned to taskbar under Windows Vista, 7 and 8)
-    WinShell::SetLnkAUMI "$SMPROGRAMS\${PRODUCT_KEY}\${PRODUCT_KEY}.lnk" "${MyApp_AppUserModelId}"
+    WinShell::SetLnkAUMI "$SMPROGRAMS\${PRODUCT_KEY}\${PRODUCT_KEY}.lnk" "${KSE_AppUserModelId}"
 
     ; Create file associations in registry if required
     StrCmp "${KSJKS_FILE_ASSOC}" "1" ksjksfileassoc noksjksfileassoc
@@ -267,7 +268,7 @@ SectionEnd
 Section "Uninstall"
 
 	; Remove AppUserModelId
-	WinShell::UninstAppUserModelId "${MyApp_AppUserModelId}"
+	WinShell::UninstAppUserModelId "${KSE_AppUserModelId}"
 	WinShell::UninstShortcut "$SMPROGRAMS\${PRODUCT_KEY}\${PRODUCT_KEY}.lnk"
 
     ; Remove registry keys
@@ -322,12 +323,9 @@ SectionEnd
 ;--------------------------------
 
 ;
-; Display splash screen and initialise file associations to be true
+; Initialise file associations to be true
 ;
 Function .onInit
-
-    advsplash::show 2000 350 187 -1 splash
-    Pop $3 ; Ignore return value
 
     StrCpy ${KSJKS_FILE_ASSOC} 1
     StrCpy ${PKCS12_FILE_ASSOC} 1

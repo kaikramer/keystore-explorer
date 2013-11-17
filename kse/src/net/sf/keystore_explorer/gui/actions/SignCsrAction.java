@@ -46,7 +46,7 @@ import net.sf.keystore_explorer.crypto.filetype.CryptoFileType;
 import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.crypto.x509.X509CertificateGenerator;
 import net.sf.keystore_explorer.crypto.x509.X509CertificateVersion;
@@ -208,7 +208,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 				return;
 			}
 
-			X500Name issuer = X500NameConverter.x500PrincipalToX500Name(signingCert.getSubjectX500Principal());
+			X500Name issuer = X500NameUtils.x500PrincipalToX500Name(signingCert.getSubjectX500Principal());
 
 			// CA Reply is a cert with subject from CSR and issuer from signing
 			// cert's subject

@@ -45,14 +45,15 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.utilities.StringUtils;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.X500NameBuilder;
 
 /**
  * Dialog to view or edit a distinguished name.
@@ -84,6 +85,8 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 	private boolean editable;
 	private X500Name distinguishedName;
+	
+	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
 	/**
 	 * Creates a new DDistinguishedNameChooser dialog.
@@ -286,6 +289,13 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	}
 
 	private void populate() {
+		
+		// use default DN?
+		String defaultDN = applicationSettings.getDefaultDN();
+		if (distinguishedName == null && !StringUtils.isBlank(defaultDN)) {
+			distinguishedName = new X500Name(defaultDN);
+		}
+		
 		if (distinguishedName != null) {
 			populateRdnField(jtfCommonName, KseX500NameStyle.CN);
 			populateRdnField(jtfOrganisationUnit, KseX500NameStyle.OU);
@@ -298,15 +308,8 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	}
 
 	private void populateRdnField(JTextField rdnField, ASN1ObjectIdentifier rdnOid) {
-		RDN[] rdns = distinguishedName.getRDNs(rdnOid);
-
-		if (rdns.length > 0) {
-			RDN rdn = rdns[0];
-			String value = rdn.getFirst().getValue().toString();
-
-			rdnField.setText(value);
-			rdnField.setCaretPosition(0);
-		}
+		rdnField.setText(X500NameUtils.getRdn(distinguishedName, rdnOid));
+		rdnField.setCaretPosition(0);
 	}
 
 	/**
@@ -320,13 +323,13 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 	private void okPressed() {
 		if (editable) {
-			String commonName = trimAndConvertEmptyToNull(jtfCommonName.getText());
-			String organisationUnit = trimAndConvertEmptyToNull(jtfOrganisationUnit.getText());
-			String organisationName = trimAndConvertEmptyToNull(jtfOrganisationName.getText());
-			String localityName = trimAndConvertEmptyToNull(jtfLocalityName.getText());
-			String stateName = trimAndConvertEmptyToNull(jtfStateName.getText());
-			String countryCode = trimAndConvertEmptyToNull(jtfCountryCode.getText());
-			String emailAddress = trimAndConvertEmptyToNull(jtfEmailAddress.getText());
+			String commonName = StringUtils.trimAndConvertEmptyToNull(jtfCommonName.getText());
+			String organisationUnit = StringUtils.trimAndConvertEmptyToNull(jtfOrganisationUnit.getText());
+			String organisationName = StringUtils.trimAndConvertEmptyToNull(jtfOrganisationName.getText());
+			String localityName = StringUtils.trimAndConvertEmptyToNull(jtfLocalityName.getText());
+			String stateName = StringUtils.trimAndConvertEmptyToNull(jtfStateName.getText());
+			String countryCode = StringUtils.trimAndConvertEmptyToNull(jtfCountryCode.getText());
+			String emailAddress = StringUtils.trimAndConvertEmptyToNull(jtfEmailAddress.getText());
 
 			if ((commonName == null) && (organisationUnit == null) && (organisationName == null)
 					&& (localityName == null) && (stateName == null) && (countryCode == null) && (emailAddress == null)) {
@@ -343,50 +346,11 @@ public class DDistinguishedNameChooser extends JEscDialog {
 				return;
 			}
 
-			X500NameBuilder x500NameBuilder = new X500NameBuilder(KseX500NameStyle.INSTANCE);
-
-			if (emailAddress != null) {
-				x500NameBuilder.addRDN(KseX500NameStyle.E, emailAddress);
-			}
-
-			if (countryCode != null) {
-				x500NameBuilder.addRDN(KseX500NameStyle.C, countryCode);
-			}
-
-			if (stateName != null) {
-				x500NameBuilder.addRDN(KseX500NameStyle.ST, stateName);
-			}
-
-			if (localityName != null) {
-				x500NameBuilder.addRDN(KseX500NameStyle.L, localityName);
-			}
-
-			if (organisationName != null) {
-				x500NameBuilder.addRDN(KseX500NameStyle.O, organisationName);
-			}
-
-			if (organisationUnit != null) {
-				x500NameBuilder.addRDN(KseX500NameStyle.OU, organisationUnit);
-			}
-
-			if (commonName != null) {
-				x500NameBuilder.addRDN(KseX500NameStyle.CN, commonName);
-			}
-
-			distinguishedName = x500NameBuilder.build();
+			distinguishedName = X500NameUtils.buildX500Name(commonName, organisationUnit, organisationName,
+					localityName, stateName, countryCode, emailAddress);
 		}
 
 		closeDialog();
-	}
-
-	private String trimAndConvertEmptyToNull(String str) {
-		str = str.trim();
-
-		if (str.length() < 1) {
-			return null;
-		}
-
-		return str;
 	}
 
 	private void cancelPressed() {

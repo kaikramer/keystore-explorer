@@ -64,7 +64,7 @@ import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertificateGenerator;
 import net.sf.keystore_explorer.crypto.x509.X509ExtensionSet;
 import net.sf.keystore_explorer.gui.CursorUtil;
@@ -413,7 +413,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 					keyPair.getPrivate(), signatureType, serialNumber, extensions);
 			} else {
 				certificate = generator.generate(name,
-						X500NameConverter.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
+						X500NameUtils.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
 						validityPeriodMs, keyPair.getPublic(), issuerPrivateKey, signatureType, serialNumber,
 						extensions);
 			}

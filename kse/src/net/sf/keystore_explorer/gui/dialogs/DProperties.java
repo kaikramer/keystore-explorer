@@ -77,7 +77,7 @@ import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
 import net.sf.keystore_explorer.crypto.secretkey.SecretKeyType;
 import net.sf.keystore_explorer.crypto.secretkey.SecretKeyUtil;
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
@@ -291,11 +291,11 @@ public class DProperties extends JEscDialog {
 			certificateNode.add(new DefaultMutableTreeNode(version));
 
 			String subject = MessageFormat.format(res.getString("DProperties.properties.Subject"),
-					X500NameConverter.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
+					X500NameUtils.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
 			certificateNode.add(new DefaultMutableTreeNode(subject));
 
 			String issuer = MessageFormat.format(res.getString("DProperties.properties.Issuer"),
-					X500NameConverter.x500PrincipalToX500Name(certificate.getIssuerX500Principal()));
+					X500NameUtils.x500PrincipalToX500Name(certificate.getIssuerX500Principal()));
 			certificateNode.add(new DefaultMutableTreeNode(issuer));
 
 			String serialNumber = MessageFormat.format(res.getString("DProperties.properties.SerialNumber"),

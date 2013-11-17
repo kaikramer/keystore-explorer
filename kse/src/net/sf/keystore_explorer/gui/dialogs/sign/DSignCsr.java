@@ -73,7 +73,7 @@ import net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertificateVersion;
 import net.sf.keystore_explorer.crypto.x509.X509ExtensionSet;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
@@ -592,7 +592,7 @@ public class DSignCsr extends JEscDialog {
 
 	private void addExtensionsPressed() {
 		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, verificationCertificate.getPublicKey(),
-				X500NameConverter.x500PrincipalToX500Name(verificationCertificate.getSubjectX500Principal()),
+				X500NameUtils.x500PrincipalToX500Name(verificationCertificate.getSubjectX500Principal()),
 				verificationCertificate.getSerialNumber(), csrPublicKey);
 		dAddExtensions.setLocationRelativeTo(this);
 		dAddExtensions.setVisible(true);

@@ -69,7 +69,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
@@ -407,7 +407,7 @@ public class DViewCrl extends JEscDialog {
 		jtfVersion.setText(Integer.toString(crl.getVersion()));
 		jtfVersion.setCaretPosition(0);
 
-		jdnIssuer.setDistinguishedName(X500NameConverter.x500PrincipalToX500Name(crl.getIssuerX500Principal()));
+		jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(crl.getIssuerX500Principal()));
 
 		jtfEffectiveDate.setText(DATE_FORMAT.format(effectiveDate));
 

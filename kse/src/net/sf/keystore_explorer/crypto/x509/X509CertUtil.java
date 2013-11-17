@@ -235,11 +235,8 @@ public final class X509CertUtil extends Object {
 		try {
 			connection = (HttpsURLConnection) url.openConnection();
 
-			/*
-			 * We are only interested in getting the SSL certificates even if
-			 * they are invalid either in and of themselves or for the hostname
-			 * they are associated with
-			 */
+			// We are only interested in getting the SSL certificates even if they are invalid  
+			// either in and of themselves or for the hostname they are associated with
 
 			// 1) Set connection's SSL Socket factory to have a very trusting trust manager
 			SSLContext context = SSLContext.getInstance("TLS");
@@ -708,8 +705,8 @@ public final class X509CertUtil extends Object {
 		X500Principal subject = cert.getSubjectX500Principal();
 		X500Principal issuer = cert.getIssuerX500Principal();
 
-		String subjectCn = extractCommonName(X500NameConverter.x500PrincipalToX500Name(subject));
-		String issuerCn = extractCommonName(X500NameConverter.x500PrincipalToX500Name(issuer));
+		String subjectCn = extractCommonName(X500NameUtils.x500PrincipalToX500Name(subject));
+		String issuerCn = extractCommonName(X500NameUtils.x500PrincipalToX500Name(issuer));
 
 		if (subjectCn == null) {
 			return "";
@@ -743,7 +740,7 @@ public final class X509CertUtil extends Object {
 	 * @return Short name
 	 */
 	public static String getShortName(X509Certificate cert) {
-		X500Name subject = X500NameConverter.x500PrincipalToX500Name(cert.getSubjectX500Principal());
+		X500Name subject = X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal());
 
 		String shortName = extractCommonName(subject);
 

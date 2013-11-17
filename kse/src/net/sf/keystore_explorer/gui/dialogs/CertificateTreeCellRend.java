@@ -29,7 +29,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 
 /**
@@ -76,7 +76,7 @@ public class CertificateTreeCellRend extends DefaultTreeCellRenderer {
 					res.getString("CertificateTreeCellRend.Certificate.image")));
 			cell.setIcon(icon);
 
-			cell.setToolTipText(X500NameConverter.x500PrincipalToX500Name(cert.getSubjectX500Principal()).toString());
+			cell.setToolTipText(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()).toString());
 		}
 
 		return cell;

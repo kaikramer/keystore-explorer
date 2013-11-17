@@ -72,7 +72,7 @@ import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
-import net.sf.keystore_explorer.crypto.x509.X500NameConverter;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
@@ -643,11 +643,11 @@ public class DViewCertificate extends JEscDialog {
 				jtfVersion.setText(Integer.toString(cert.getVersion()));
 				jtfVersion.setCaretPosition(0);
 
-				jdnSubject.setDistinguishedName(X500NameConverter.x500PrincipalToX500Name(cert
+				jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert
 						.getSubjectX500Principal()));
 
 				jdnIssuer
-						.setDistinguishedName(X500NameConverter.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
+						.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
 
 				jtfSerialNumber.setText("0x"
 						+ new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase());

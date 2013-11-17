@@ -48,6 +48,44 @@ import net.sf.keystore_explorer.utilities.net.ProxyAddress;
  * 
  */
 public class ApplicationSettings {
+
+	private static final String KSE3_DEFAULTDN = "kse3.defaultdn";
+	private static final String KSE3_TIPINDEX = "kse3.tipindex";
+	private static final String KSE3_TIPSONSTARTUP = "kse3.tipsonstartup";
+	private static final String KSE3_LICENSEAGREED = "kse3.licenseagreed";
+	private static final String KSE3_LOOKFEEL = "kse3.lookfeel";
+	private static final String KSE3_LOOKFEELDECOR = "kse3.lookfeeldecor";
+	private static final String KSE3_CURRENTDIR = "kse3.currentdir";
+	private static final String KSE3_RECENTFILE = "kse3.recentfile";
+	private static final String KSE3_TABLAYOUT = "kse3.tablayout";
+	private static final String KSE3_SHOWSTATUSBAR = "kse3.showstatusbar";
+	private static final String KSE3_SHOWTOOLBAR = "kse3.showtoolbar";
+	private static final String KSE3_WIDTH = "kse3.width";
+	private static final String KSE3_HEIGHT = "kse3.height";
+	private static final String KSE3_YPOS = "kse3.ypos";
+	private static final String KSE3_XPOS = "kse3.xpos";
+	private static final String KSE3_SOCKSPORT = "kse3.socksport";
+	private static final String KSE3_SOCKSHOST = "kse3.sockshost";
+	private static final String KSE3_HTTPSPORT = "kse3.httpsport";
+	private static final String KSE3_HTTPSHOST = "kse3.httpshost";
+	private static final String KSE3_HTTPPORT = "kse3.httpport";
+	private static final String KSE3_HTTPHOST = "kse3.httphost";
+	private static final String KSE3_PACURL = "kse3.pacurl";
+	private static final String KSE3_MINPWDQUALENFORCE = "kse3.minpwdqualenforce";
+	private static final String KSE3_MINPWDQUAL = "kse3.minpwdqual";
+	private static final String KSE3_PWDQUALENABLE = "kse3.pwdqualenable";
+	private static final String KSE3_CERTFINGERTYPE = "kse3.certfingertype";
+	private static final String KSE3_SECKEYSIZE = "kse3.seckeysize";
+	private static final String KSE3_SECKEYTYPE = "kse3.seckeytype";
+	private static final String KSE3_KEYPAIRSIZE = "kse3.keypairsize";
+	private static final String KSE3_KEYPAIRTYPE = "kse3.keypairtype";
+	private static final String KSE3_ENABLEIMPORTCAREPLYTRUSTCHECK = "kse3.enableimportcareplytrustcheck";
+	private static final String KSE3_ENABLEIMPORTTRUSTEDCERTTRUSTCHECK = "kse3.enableimporttrustedcerttrustcheck";
+	private static final String KSE3_USEWINTRUSTROOTCERTS = "kse3.usewintrustrootcerts";
+	private static final String KSE3_CACERTSFILE = "kse3.cacertsfile";
+	private static final String KSE3_USECACERTS = "kse3.usecacerts";
+
+	
 	private static ApplicationSettings applicationSettings;
 	private boolean useCaCertificates;
 	private File caCertificatesFile;
@@ -71,6 +109,7 @@ public class ApplicationSettings {
 	private boolean licenseAgreed;
 	private boolean showTipsOnStartUp;
 	private int nextTipIndex;
+	private String defaultDN;
 
 	private ApplicationSettings() {
 
@@ -112,77 +151,53 @@ public class ApplicationSettings {
 	}
 
 	/**
-	 * Load application settings from persistant store.
+	 * Load application settings from persistent store.
 	 */
 	public void load() {
 		Preferences preferences = getUnderlyingPreferences();
 
-		//
 		// Authority certificates
-		//
-
-		useCaCertificates = preferences.getBoolean("kse3.usecacerts", false);
-		caCertificatesFile = new File(preferences.get("kse3.cacertsfile", AuthorityCertificates
+		useCaCertificates = preferences.getBoolean(KSE3_USECACERTS, false);
+		caCertificatesFile = new File(preferences.get(KSE3_CACERTSFILE, AuthorityCertificates
 				.getDefaultCaCertificatesLocation().toString()));
-		useWindowsTrustedRootCertificates = preferences.getBoolean("kse3.usewintrustrootcerts", false);
+		useWindowsTrustedRootCertificates = preferences.getBoolean(KSE3_USEWINTRUSTROOTCERTS, false);
 
-		//
 		// Trust checks
-		//
-		enableImportTrustedCertTrustCheck = preferences.getBoolean("kse3.enableimporttrustedcerttrustcheck", true);
-		enableImportCaReplyTrustCheck = preferences.getBoolean("kse3.enableimportcareplytrustcheck", true);
+		enableImportTrustedCertTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTTRUSTEDCERTTRUSTCHECK, true);
+		enableImportCaReplyTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTCAREPLYTRUSTCHECK, true);
 
-		//
 		// Key pair generation
-		//
-
-		generateKeyPairType = KeyPairType.resolveJce(preferences.get("kse3.keypairtype", RSA.jce()));
+		generateKeyPairType = KeyPairType.resolveJce(preferences.get(KSE3_KEYPAIRTYPE, RSA.jce()));
 		if (generateKeyPairType == null) {
 			generateKeyPairType = RSA;
 		}
-
 		int defaultKeyPairSize;
-
 		if (generateKeyPairType == RSA) {
 			defaultKeyPairSize = 2048;
 		} else {
 			defaultKeyPairSize = 1024; // DSA
 		}
+		generateKeyPairSize = preferences.getInt(KSE3_KEYPAIRSIZE, defaultKeyPairSize);
 
-		generateKeyPairSize = preferences.getInt("kse3.keypairsize", defaultKeyPairSize);
-
-		//
 		// Secret key generation
-		//
-
-		generateSecretKeyType = SecretKeyType.resolveJce(preferences.get("kse3.seckeytype", AES.jce()));
+		generateSecretKeyType = SecretKeyType.resolveJce(preferences.get(KSE3_SECKEYTYPE, AES.jce()));
 		if (generateSecretKeyType == null) {
 			generateSecretKeyType = AES;
 		}
+		generateSecretKeySize = preferences.getInt(KSE3_SECKEYSIZE, 192);
 
-		generateSecretKeySize = preferences.getInt("kse3.seckeysize", 192);
-
-		//
 		// Certificate fingerprint
-		//
-
-		certificateFingerprintType = DigestType.resolveJce(preferences.get("kse3.certfingertype", SHA1.jce()));
+		certificateFingerprintType = DigestType.resolveJce(preferences.get(KSE3_CERTFINGERTYPE, SHA1.jce()));
 		if (certificateFingerprintType == null) {
 			certificateFingerprintType = SHA1;
 		}
 
-		//
 		// Password quality
-		//
+		passwordQualityConfig = new PasswordQualityConfig(preferences.getBoolean(KSE3_PWDQUALENABLE, false),
+				preferences.getBoolean(KSE3_MINPWDQUALENFORCE, false), preferences.getInt(KSE3_MINPWDQUAL, 60));
 
-		passwordQualityConfig = new PasswordQualityConfig(preferences.getBoolean("kse3.pwdqualenable", false),
-				preferences.getBoolean("kse3.minpwdqualenforce", false), preferences.getInt("kse3.minpwdqual", 60));
-
-		//
 		// Internet proxy settings
-		//
-
-		String pacUrl = preferences.get("kse3.pacurl", null);
+		String pacUrl = preferences.get(KSE3_PACURL, null);
 
 		if (pacUrl != null) {
 			// Use PAC URL for proxy configuration
@@ -194,22 +209,22 @@ public class ApplicationSettings {
 			ProxyAddress httpsProxyAddress = null;
 			ProxyAddress socksProxyAddress = null;
 
-			String httpHost = preferences.get("kse3.httphost", null);
-			int httpPort = preferences.getInt("kse3.httpport", 0);
+			String httpHost = preferences.get(KSE3_HTTPHOST, null);
+			int httpPort = preferences.getInt(KSE3_HTTPPORT, 0);
 
 			if ((httpHost != null) && (httpPort > 0)) {
 				httpProxyAddress = new ProxyAddress(httpHost, httpPort);
 			}
 
-			String httpsHost = preferences.get("kse3.httpshost", null);
-			int httpsPort = preferences.getInt("kse3.httpsport", 0);
+			String httpsHost = preferences.get(KSE3_HTTPSHOST, null);
+			int httpsPort = preferences.getInt(KSE3_HTTPSPORT, 0);
 
 			if ((httpsHost != null) && (httpsPort > 0)) {
 				httpsProxyAddress = new ProxyAddress(httpsHost, httpsPort);
 			}
 
-			String socksHost = preferences.get("kse3.sockshost", null);
-			int socksPort = preferences.getInt("kse3.socksport", 0);
+			String socksHost = preferences.get(KSE3_SOCKSHOST, null);
+			int socksPort = preferences.getInt(KSE3_SOCKSPORT, 0);
 
 			if ((socksHost != null) && (socksPort > 0)) {
 				socksProxyAddress = new ProxyAddress(socksHost, socksPort);
@@ -218,38 +233,26 @@ public class ApplicationSettings {
 			if ((httpProxyAddress != null) || (httpsProxyAddress != null)) {
 				ProxySelector.setDefault(new ManualProxySelector(httpProxyAddress, httpsProxyAddress, null,
 						socksProxyAddress));
-			}
-			// No PAC and no manual settings - use no proxy to connect to the
-			// Internet
-			else {
+			} else {
+				// No PAC and no manual settings - use no proxy to connect to the Internet
 				ProxySelector.setDefault(new NoProxySelector());
 			}
 		}
 
-		//
 		// Application size and position
-		//
-
-		sizeAndPosition = new Rectangle(preferences.getInt("kse3.xpos", 0), preferences.getInt("kse3.ypos", 0),
-				preferences.getInt("kse3.width", KseFrame.DEFAULT_WIDTH), preferences.getInt("kse3.height",
+		sizeAndPosition = new Rectangle(preferences.getInt(KSE3_XPOS, 0), preferences.getInt(KSE3_YPOS, 0),
+				preferences.getInt(KSE3_WIDTH, KseFrame.DEFAULT_WIDTH), preferences.getInt(KSE3_HEIGHT,
 						KseFrame.DEFAULT_HEIGHT));
 
-		//
 		// User interface
-		//
+		showToolBar = preferences.getBoolean(KSE3_SHOWTOOLBAR, true);
+		showStatusBar = preferences.getBoolean(KSE3_SHOWSTATUSBAR, true);
+		tabLayout = preferences.getInt(KSE3_TABLAYOUT, JTabbedPane.WRAP_TAB_LAYOUT);
 
-		showToolBar = preferences.getBoolean("kse3.showtoolbar", true);
-		showStatusBar = preferences.getBoolean("kse3.showstatusbar", true);
-		tabLayout = preferences.getInt("kse3.tablayout", JTabbedPane.WRAP_TAB_LAYOUT);
-
-		//
 		// Recent files
-		//
-
 		ArrayList<File> recentFilesList = new ArrayList<File>();
-
 		for (int i = 1; i <= KseFrame.RECENT_FILES_SIZE; i++) {
-			String recentFile = preferences.get("kse3.recentfile" + i, null);
+			String recentFile = preferences.get(KSE3_RECENTFILE + i, null);
 
 			if (recentFile == null) {
 				break;
@@ -257,194 +260,153 @@ public class ApplicationSettings {
 				recentFilesList.add(new File(recentFile));
 			}
 		}
-
 		recentFiles = recentFilesList.toArray(new File[recentFilesList.size()]);
 
-		//
 		// Current directory
-		//
-
-		String currentDirectoryStr = preferences.get("kse3.currentdir", null);
-
+		String currentDirectoryStr = preferences.get(KSE3_CURRENTDIR, null);
 		if (currentDirectoryStr != null) {
 			currentDirectory = new File(currentDirectoryStr);
 		}
 
-		//
 		// Look and feel
-		//
+		lookAndFeelClass = preferences.get(KSE3_LOOKFEEL, null);
+		lookAndFeelDecorated = preferences.getBoolean(KSE3_LOOKFEELDECOR, false);
 
-		lookAndFeelClass = preferences.get("kse3.lookfeel", null);
-		lookAndFeelDecorated = preferences.getBoolean("kse3.lookfeeldecor", false);
-
-		//
 		// Licensing
-		//
+		licenseAgreed = preferences.getBoolean(KSE3_LICENSEAGREED, false);
 
-		licenseAgreed = preferences.getBoolean("kse3.licenseagreed", false);
-
-		//
 		// Tip of the day
-		//
-
-		showTipsOnStartUp = preferences.getBoolean("kse3.tipsonstartup", true);
-		nextTipIndex = preferences.getInt("kse3.tipindex", 0);
+		showTipsOnStartUp = preferences.getBoolean(KSE3_TIPSONSTARTUP, true);
+		nextTipIndex = preferences.getInt(KSE3_TIPINDEX, 0);
+		
+		// Default distinguished name
+		defaultDN = preferences.get(KSE3_DEFAULTDN, null);
 	}
 
 	/**
-	 * Save application settings to persistant store.
+	 * Save application settings to persistent store.
 	 */
 	public void save() {
 		Preferences preferences = getUnderlyingPreferences();
 
-		//
 		// Authority certificates
-		//
+		preferences.putBoolean(KSE3_USECACERTS, useCaCertificates);
+		preferences.put(KSE3_CACERTSFILE, caCertificatesFile.toString());
+		preferences.putBoolean(KSE3_USEWINTRUSTROOTCERTS, useWindowsTrustedRootCertificates);
 
-		preferences.putBoolean("kse3.usecacerts", useCaCertificates);
-		preferences.put("kse3.cacertsfile", caCertificatesFile.toString());
-		preferences.putBoolean("kse3.usewintrustrootcerts", useWindowsTrustedRootCertificates);
-
-		//
 		// Trust checks
-		//
-		preferences.putBoolean("kse3.enableimporttrustedcerttrustcheck", enableImportTrustedCertTrustCheck);
-		preferences.putBoolean("kse3.enableimportcareplytrustcheck", enableImportCaReplyTrustCheck);
+		preferences.putBoolean(KSE3_ENABLEIMPORTTRUSTEDCERTTRUSTCHECK, enableImportTrustedCertTrustCheck);
+		preferences.putBoolean(KSE3_ENABLEIMPORTCAREPLYTRUSTCHECK, enableImportCaReplyTrustCheck);
 
-		//
 		// Key pair generation
-		//
+		preferences.put(KSE3_KEYPAIRTYPE, generateKeyPairType.jce());
+		preferences.putInt(KSE3_KEYPAIRSIZE, generateKeyPairSize);
 
-		preferences.put("kse3.keypairtype", generateKeyPairType.jce());
-		preferences.putInt("kse3.keypairsize", generateKeyPairSize);
-
-		//
 		// Secret key generation
-		//
+		preferences.put(KSE3_SECKEYTYPE, generateSecretKeyType.jce());
+		preferences.putInt(KSE3_SECKEYSIZE, generateSecretKeySize);
 
-		preferences.put("kse3.seckeytype", generateSecretKeyType.jce());
-		preferences.putInt("kse3.seckeysize", generateSecretKeySize);
-
-		//
 		// Certificate fingerprint
-		//
+		preferences.put(KSE3_CERTFINGERTYPE, certificateFingerprintType.jce());
 
-		preferences.put("kse3.certfingertype", certificateFingerprintType.jce());
-
-		//
 		// Password quality
-		//
+		preferences.putBoolean(KSE3_PWDQUALENABLE, passwordQualityConfig.getEnabled());
+		preferences.putBoolean(KSE3_MINPWDQUALENFORCE, passwordQualityConfig.getEnforced());
+		preferences.putInt(KSE3_MINPWDQUAL, passwordQualityConfig.getMinimumQuality());
 
-		preferences.putBoolean("kse3.pwdqualenable", passwordQualityConfig.getEnabled());
-		preferences.putBoolean("kse3.minpwdqualenforce", passwordQualityConfig.getEnforced());
-		preferences.putInt("kse3.minpwdqual", passwordQualityConfig.getMinimumQuality());
-
-		//
 		// Internet proxy settings
-		//
+		clearExistingProxySettings(preferences);
+		getCurrentProxySettings(preferences);
 
-		// Clear all existing proxy settings in preferences
-		preferences.remove("kse3.httphost");
-		preferences.remove("kse3.httpport");
-		preferences.remove("kse3.httpshost");
-		preferences.remove("kse3.httpsport");
-		preferences.remove("kse3.sockshost");
-		preferences.remove("kse3.socksport");
-		preferences.remove("kse3.pacurl");
+		// Application size and position
+		preferences.putInt(KSE3_XPOS, sizeAndPosition.x);
+		preferences.putInt(KSE3_YPOS, sizeAndPosition.y);
+		preferences.putInt(KSE3_WIDTH, sizeAndPosition.width);
+		preferences.putInt(KSE3_HEIGHT, sizeAndPosition.height);
 
+		// User interface
+		preferences.putBoolean(KSE3_SHOWTOOLBAR, showToolBar);
+		preferences.putBoolean(KSE3_SHOWSTATUSBAR, showStatusBar);
+		preferences.putInt(KSE3_TABLAYOUT, tabLayout);
+
+		// Recent files
+		clearExistingRecentFiles(preferences);
+		for (int i = 1; i <= recentFiles.length; i++) {
+			preferences.put(KSE3_RECENTFILE + i, recentFiles[i - 1].toString());
+		}
+
+		// Current directory
+		preferences.put(KSE3_CURRENTDIR, currentDirectory.toString());
+
+		// Look and feel
+		preferences.put(KSE3_LOOKFEEL, lookAndFeelClass);
+		preferences.putBoolean(KSE3_LOOKFEELDECOR, lookAndFeelDecorated);
+
+		// Licensing
+		preferences.putBoolean(KSE3_LICENSEAGREED, licenseAgreed);
+
+		// Tip of the day
+		preferences.putBoolean(KSE3_TIPSONSTARTUP, showTipsOnStartUp);
+		preferences.putInt(KSE3_TIPINDEX, nextTipIndex);
+		
+		// Default distinguished name
+		preferences.put(KSE3_DEFAULTDN, defaultDN);
+	}
+
+	private void clearExistingRecentFiles(Preferences preferences) {
+		// Clear all existing recent files (new list may be shorter than the
+		// existing one)
+		for (int i = 1; i <= KseFrame.RECENT_FILES_SIZE; i++) {
+			String recentFile = preferences.get(KSE3_RECENTFILE + i, null);
+
+			if (recentFile == null) {
+				break;
+			} else {
+				preferences.remove(KSE3_RECENTFILE + i);
+			}
+		}
+	}
+
+	private void getCurrentProxySettings(Preferences preferences) {
 		// Get current proxy settings
 		ProxySelector proxySelector = ProxySelector.getDefault();
 
 		if (proxySelector instanceof PacProxySelector) {
 			PacProxySelector pacProxySelector = (PacProxySelector) proxySelector;
 
-			preferences.put("kse3.pacurl", pacProxySelector.getPacUrl());
+			preferences.put(KSE3_PACURL, pacProxySelector.getPacUrl());
 		} else if (proxySelector instanceof ManualProxySelector) {
 			ManualProxySelector manualProxySelector = (ManualProxySelector) proxySelector;
 
 			ProxyAddress httpProxyAddress = manualProxySelector.getHttpProxyAddress();
 			if (httpProxyAddress != null) {
-				preferences.put("kse3.httphost", httpProxyAddress.getHost());
-				preferences.putInt("kse3.httpport", httpProxyAddress.getPort());
+				preferences.put(KSE3_HTTPHOST, httpProxyAddress.getHost());
+				preferences.putInt(KSE3_HTTPPORT, httpProxyAddress.getPort());
 			}
 
 			ProxyAddress httpsProxyAddress = manualProxySelector.getHttpsProxyAddress();
 			if (httpsProxyAddress != null) {
-				preferences.put("kse3.httpshost", httpsProxyAddress.getHost());
-				preferences.putInt("kse3.httpsport", httpsProxyAddress.getPort());
+				preferences.put(KSE3_HTTPSHOST, httpsProxyAddress.getHost());
+				preferences.putInt(KSE3_HTTPSPORT, httpsProxyAddress.getPort());
 			}
 
 			ProxyAddress socksProxyAddress = manualProxySelector.getSocksProxyAddress();
 			if (socksProxyAddress != null) {
-				preferences.put("kse3.sockshost", socksProxyAddress.getHost());
-				preferences.putInt("kse3.socksport", socksProxyAddress.getPort());
+				preferences.put(KSE3_SOCKSHOST, socksProxyAddress.getHost());
+				preferences.putInt(KSE3_SOCKSPORT, socksProxyAddress.getPort());
 			}
 		}
+	}
 
-		// If nothing is set above use no proxy to connect to the Internet
-
-		//
-		// Application size and position
-		//
-
-		preferences.putInt("kse3.xpos", sizeAndPosition.x);
-		preferences.putInt("kse3.ypos", sizeAndPosition.y);
-		preferences.putInt("kse3.width", sizeAndPosition.width);
-		preferences.putInt("kse3.height", sizeAndPosition.height);
-
-		//
-		// User interface
-		//
-
-		preferences.putBoolean("kse3.showtoolbar", showToolBar);
-		preferences.putBoolean("kse3.showstatusbar", showStatusBar);
-		preferences.putInt("kse3.tablayout", tabLayout);
-
-		//
-		// Recent files
-		//
-
-		// Clear all existing recent files (new list may be shorter than the
-		// existing one)
-		for (int i = 1; i <= KseFrame.RECENT_FILES_SIZE; i++) {
-			String recentFile = preferences.get("kse3.recentfile" + i, null);
-
-			if (recentFile == null) {
-				break;
-			} else {
-				preferences.remove("kse3.recentfile" + i);
-			}
-		}
-
-		for (int i = 1; i <= recentFiles.length; i++) {
-			preferences.put("kse3.recentfile" + i, recentFiles[i - 1].toString());
-		}
-
-		//
-		// Current directory
-		//
-
-		preferences.put("kse3.currentdir", currentDirectory.toString());
-
-		//
-		// Look and feel
-		//
-
-		preferences.put("kse3.lookfeel", lookAndFeelClass);
-		preferences.putBoolean("kse3.lookfeeldecor", lookAndFeelDecorated);
-
-		//
-		// Licensing
-		//
-
-		preferences.putBoolean("kse3.licenseagreed", licenseAgreed);
-
-		//
-		// Tip of the day
-		//
-
-		preferences.putBoolean("kse3.tipsonstartup", showTipsOnStartUp);
-		preferences.putInt("kse3.tipindex", nextTipIndex);
+	private void clearExistingProxySettings(Preferences preferences) {
+		// Clear all existing proxy settings in preferences
+		preferences.remove(KSE3_HTTPHOST);
+		preferences.remove(KSE3_HTTPPORT);
+		preferences.remove(KSE3_HTTPSHOST);
+		preferences.remove(KSE3_HTTPSPORT);
+		preferences.remove(KSE3_SOCKSHOST);
+		preferences.remove(KSE3_SOCKSPORT);
+		preferences.remove(KSE3_PACURL);
 	}
 
 	/**
@@ -638,5 +600,13 @@ public class ApplicationSettings {
 
 	public void setNextTipIndex(int nextTipIndex) {
 		this.nextTipIndex = nextTipIndex;
+	}
+
+	public String getDefaultDN() {
+		return defaultDN;
+	}
+
+	public void setDefaultDN(String defaultDN) {
+		this.defaultDN = defaultDN;
 	}
 }

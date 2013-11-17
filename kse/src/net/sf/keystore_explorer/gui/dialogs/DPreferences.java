@@ -60,18 +60,25 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.SecurityProvider;
+import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
+import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
+import net.sf.keystore_explorer.utilities.StringUtils;
 import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
 import net.sf.keystore_explorer.utilities.net.NoProxySelector;
 import net.sf.keystore_explorer.utilities.net.PacProxySelector;
 import net.sf.keystore_explorer.utilities.net.ProxyAddress;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
+
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.X500Name;
 
 /**
  * Dialog to allow the users to configure KeyStore Explorer's preferences.
@@ -130,6 +137,22 @@ public class DPreferences extends JEscDialog {
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
+	
+	private JPanel jpDefaultName;
+	private JLabel jlCommonName;
+	private JTextField jtfCommonName;
+	private JLabel jlOrganisationUnit;
+	private JTextField jtfOrganisationUnit;
+	private JLabel jlOrganisationName;
+	private JTextField jtfOrganisationName;
+	private JLabel jlLocalityName;
+	private JTextField jtfLocalityName;
+	private JLabel jlStateName;
+	private JTextField jtfStateName;
+	private JLabel jlCountryCode;
+	private JTextField jtfCountryCode;
+	private JLabel jlEmailAddress;
+	private JTextField jtfEmailAddress;
 
 	private boolean useCaCertificates;
 	private File caCertificatesFile;
@@ -140,7 +163,9 @@ public class DPreferences extends JEscDialog {
 	private ArrayList<UIManager.LookAndFeelInfo> lookFeelInfoList = new ArrayList<UIManager.LookAndFeelInfo>();
 	private UIManager.LookAndFeelInfo lookFeelInfo;
 	private boolean lookFeelDecorated;
+	private String defaultDN;
 	private boolean cancelled = false;
+
 
 	/**
 	 * Creates a new DPreferences dialog.
@@ -162,7 +187,8 @@ public class DPreferences extends JEscDialog {
 	 */
 	public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
 			boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
-			boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig) {
+			boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
+			String defaultDN) {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
 		this.useCaCertificates = useCaCertificates;
 		this.caCertificatesFile = caCertificatesFile;
@@ -170,6 +196,7 @@ public class DPreferences extends JEscDialog {
 		this.enableImportTrustedCertTrustCheck = enableImportTrustedCertTrustCheck;
 		this.enableImportCaReplyTrustCheck = enableImportCaReplyTrustCheck;
 		this.passwordQualityConfig = passwordQualityConfig;
+		this.defaultDN = defaultDN;
 		initComponents();
 	}
 
@@ -179,6 +206,7 @@ public class DPreferences extends JEscDialog {
 		initPasswordQualityTab();
 		initLookFeelTab();
 		initInternetProxyTab();
+		initDefaultNameTab();
 
 		jtpPreferences = new JTabbedPane();
 		jtpPreferences.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
@@ -203,6 +231,11 @@ public class DPreferences extends JEscDialog {
 				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpInternetProxy.image"))),
 				jpInternetProxy, res.getString("DPreferences.jpInternetProxy.tooltip"));
 
+		// TODO DPreferences.jpDefaultName.image
+		jtpPreferences.addTab(res.getString("DPreferences.jpDefaultName.text"), 
+				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpDefaultName.image"))), 
+				jpDefaultName, res.getString("DPreferences.jpDefaultName.tooltip"));
+		
 		jtpPreferences.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		if (!OperatingSystem.isMacOs()) {
@@ -835,6 +868,63 @@ public class DPreferences extends JEscDialog {
 		}
 	}
 
+	private void initDefaultNameTab() {
+		
+		jlCommonName = new JLabel(res.getString("DPreferences.jlCommonName.text"));
+		jtfCommonName = new JTextField(25);
+		jlOrganisationUnit = new JLabel(res.getString("DPreferences.jlOrganisationUnit.text"));
+		jtfOrganisationUnit = new JTextField(25);
+		jlOrganisationName = new JLabel(res.getString("DPreferences.jlOrganisationName.text"));
+		jtfOrganisationName = new JTextField(25);
+		jlLocalityName = new JLabel(res.getString("DPreferences.jlLocalityName.text"));
+		jtfLocalityName = new JTextField(25);
+		jlStateName = new JLabel(res.getString("DPreferences.jlStateName.text"));
+		jtfStateName = new JTextField(25);
+		jlCountryCode = new JLabel(res.getString("DPreferences.jlCountryCode.text"));
+		jtfCountryCode = new JTextField(4);
+		jlEmailAddress = new JLabel(res.getString("DPreferences.jlEmailAddress.text"));
+		jtfEmailAddress = new JTextField(25);
+	
+		// layout
+		jpDefaultName = new JPanel();
+		jpDefaultName.setLayout(new MigLayout("insets dialog, fill", "[right][][]", "[]"));
+		jpDefaultName.add(jlCommonName, "");
+		jpDefaultName.add(jtfCommonName, "gap rel, wrap unrel");
+		jpDefaultName.add(jlOrganisationUnit, "");
+		jpDefaultName.add(jtfOrganisationUnit, "gap rel, wrap unrel");
+		jpDefaultName.add(jlOrganisationName, "");
+		jpDefaultName.add(jtfOrganisationName, "gap rel, wrap unrel");
+		jpDefaultName.add(jlLocalityName, "");
+		jpDefaultName.add(jtfLocalityName, "gap rel, wrap unrel");
+		jpDefaultName.add(jlStateName, "");
+		jpDefaultName.add(jtfStateName, "gap rel, wrap unrel");
+		jpDefaultName.add(jlCountryCode, "");
+		jpDefaultName.add(jtfCountryCode, "gap rel, wrap unrel");
+		jpDefaultName.add(jlEmailAddress, "");
+		jpDefaultName.add(jtfEmailAddress, "gap rel, wrap unrel");
+
+		// populate fields with content from saved preferences
+		if (defaultDN != null) {
+			try {
+				X500Name x500Name = new X500Name(defaultDN);
+				populateRdnField(x500Name, jtfCommonName, KseX500NameStyle.CN);
+				populateRdnField(x500Name, jtfOrganisationUnit, KseX500NameStyle.OU);
+				populateRdnField(x500Name, jtfOrganisationName, KseX500NameStyle.O);
+				populateRdnField(x500Name, jtfLocalityName, KseX500NameStyle.L);
+				populateRdnField(x500Name, jtfStateName, KseX500NameStyle.ST);
+				populateRdnField(x500Name, jtfCountryCode, KseX500NameStyle.C);
+				populateRdnField(x500Name, jtfEmailAddress, KseX500NameStyle.E);
+			} catch (Exception e) {
+				// reset invalid DN by leaving fields empty
+			}
+		}
+	}
+	
+	private void populateRdnField(X500Name distinguishedName, JTextField rdnField, ASN1ObjectIdentifier rdnOid) {
+		rdnField.setText(X500NameUtils.getRdn(distinguishedName, rdnOid));
+		rdnField.setCaretPosition(0);
+	}
+	
 	private void updateProxyControls() {
 		if (jrbManualProxyConfig.isSelected()) {
 			jtfHttpHost.setEnabled(true);
@@ -886,13 +976,30 @@ public class DPreferences extends JEscDialog {
 		lookFeelInfo = lookFeelInfoList.get(selectedIndex);
 
 		lookFeelDecorated = jcbLookFeelDecorated.isSelected();
+		
+		// These may fail:
+		boolean returnValue = storeDefaultDN();
+		returnValue &= storeProxyPreferences(); 
+		
+		return returnValue;
+	}
 
-		return storeProxyPreferences(); // May fail
+	private boolean storeDefaultDN() {
+		String commonName = StringUtils.trimAndConvertEmptyToNull(jtfCommonName.getText());
+		String organisationUnit = StringUtils.trimAndConvertEmptyToNull(jtfOrganisationUnit.getText());
+		String organisationName = StringUtils.trimAndConvertEmptyToNull(jtfOrganisationName.getText());
+		String localityName = StringUtils.trimAndConvertEmptyToNull(jtfLocalityName.getText());
+		String stateName = StringUtils.trimAndConvertEmptyToNull(jtfStateName.getText());
+		String countryCode = StringUtils.trimAndConvertEmptyToNull(jtfCountryCode.getText());
+		String emailAddress = StringUtils.trimAndConvertEmptyToNull(jtfEmailAddress.getText());
+
+		defaultDN = X500NameUtils.buildX500Name(commonName, organisationUnit, organisationName,
+				localityName, stateName, countryCode, emailAddress).toString();
+		return true;
 	}
 
 	private boolean storeProxyPreferences() {
-		// Store current proxy selector - compare with new one to see if default
-		// needs updated
+		// Store current proxy selector - compare with new one to see if default needs updated
 		ProxySelector defaultProxySelector = ProxySelector.getDefault();
 
 		if (jrbNoProxy.isSelected()) {
@@ -1095,6 +1202,10 @@ public class DPreferences extends JEscDialog {
 	 */
 	public boolean getLookFeelDecoration() {
 		return lookFeelDecorated;
+	}
+
+	public String getDefaultDN() {
+		return defaultDN;
 	}
 
 	/**

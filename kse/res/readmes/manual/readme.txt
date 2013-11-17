@@ -38,12 +38,13 @@ Unix/Linux Command-Line
 1) These instructions assume that the JRE's bin
    directory has been added to your path.
 
-2) Extract the archive files into a directory, e.g.
-   "/kse".
+2) Unzip the archive
+
+3) Change to the kse directory
 
 3) Enter the following command:
 
-       java -jar /kse/kse.jar
+       ./kse.sh
 
 ===========================================
  Copyright 2004 - 2013 Wayne Grant
