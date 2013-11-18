@@ -403,12 +403,13 @@ public class DViewCertificate extends JEscDialog {
 
 		if (importExport == IMPORT) {
 			jbImportExport = new JButton(res.getString("DViewCertificate.jbImportExport.import.text"));
+			jbImportExport.setToolTipText(res.getString("DViewCertificate.jbImportExport.import.tooltip"));
 		} else {
 			jbImportExport = new JButton(res.getString("DViewCertificate.jbImportExport.export.text"));
+			jbImportExport.setToolTipText(res.getString("DViewCertificate.jbImportExport.export.tooltip"));
 		}
 
 		PlatformUtil.setMnemonic(jbImportExport, res.getString("DViewCertificate.jbImportExport.mnemonic").charAt(0));
-		jbImportExport.setToolTipText(res.getString("DViewCertificate.jbImportExport.tooltip"));
 		jbImportExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				try {
