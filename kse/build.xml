@@ -41,9 +41,9 @@
 	
     <!-- Application name and version -->
     <property name="appName" value="KeyStore Explorer" />
-    <property name="appVersion" value="5.0" />
+    <property name="appVersion" value="5.0.1" />
     <property name="appSimpleName" value="kse" />
-    <property name="appSimpleVersion" value="50" />
+    <property name="appSimpleVersion" value="501" />
 
     <!-- Vendor details -->
     <property name="copyright" value="Coypright 2004 - 2013 Wayne Grant, 2013 Kai Kramer" />
@@ -349,13 +349,13 @@
                 <jre minVersion="1.6.0">
                     <opt>-Dkse.exe=true</opt>
                 </jre>
-                <versionInfo fileVersion="${appVersion}.0.0"
+                <versionInfo fileVersion="${appVersion}.0"
                              fileDescription="${appName}"
                              copyright="${copyright}"
                              internalName="${appSimpleName}"
                              originalFilename="${appSimpleName}.exe"
                              productName="${appName}"
-                             productVersion="${appVersion}.0.0"
+                             productVersion="${appVersion}.0"
                              txtFileVersion="${appVersion}"
                              txtProductVersion="${appVersion}" />
             </config>

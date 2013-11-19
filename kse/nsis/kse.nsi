@@ -37,16 +37,15 @@
 ; Globals
 ;--------------------------------
 
- BrandingText "Copyright 2004 - 2013 Wayne Grant, 2013 Kai Kramer"
+BrandingText "Copyright 2004 - 2013 Wayne Grant, 2013 Kai Kramer"
 
 ; Product name
 !define PRODUCT "KeyStore Explorer"
 
-; Product version
-!define VERSION "5.0"
-
-; Product key (name and version)
-!define PRODUCT_KEY "${PRODUCT} ${VERSION}"
+; Product version and key
+!define VERSION "5.0.1"
+!define SIMPLE_VERSION "501"
+!define PRODUCT_KEY "${PRODUCT} 5.0"
 
 ; AppUserModelId (see http://stackoverflow.com/questions/5438651/launch4j-nsis-and-duplicate-pinned-windows-7-taskbar-icons)
 !define MyApp_AppUserModelId "SourceForge.KeyStoreExplorer"
@@ -113,7 +112,7 @@ RequestExecutionLevel admin
 Name "${PRODUCT} ${VERSION}"
 
 ; Install file to create
-OutFile "..\dist\kse-50-setup.exe"
+OutFile "..\dist\kse-${SIMPLE_VERSION}-setup.exe"
 
 ; Only one component therefore no customization is required
 InstType /NOCUSTOM
