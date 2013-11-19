@@ -19,8 +19,7 @@
  */
 package net.sf.keystore_explorer.crypto.x509;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -44,7 +43,7 @@ public class X500NameConverter {
 	 * @return X.500 Name
 	 */
 	public static X500Name x500PrincipalToX500Name(X500Principal principal) {
-		return new X500Name(KseX500NameStyle.INSTANCE, principal.toString());
+		return X500Name.getInstance(KseX500NameStyle.INSTANCE, principal.getEncoded());
 	}
 
 	/**
@@ -53,11 +52,10 @@ public class X500NameConverter {
 	 * @param name
 	 *            X.500 Name
 	 * @return X.500 Principal
+	 * @throws IOException if an encoding error occurs (incorrect form for DN)
 	 */
-	public static X500Principal x500NameToX500Principal(X500Name name) {
-		Map<String, String> keywordMap = new HashMap<String, String>();
-		keywordMap.put("E", "1.2.840.113549.1.9.1");
-		return new X500Principal(name.toString(), keywordMap);
+	public static X500Principal x500NameToX500Principal(X500Name name) throws IOException {
+		return new X500Principal(name.getEncoded());
 	}
 
 	/**

@@ -88,7 +88,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 			}
 
 			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, sslPort), certs, 
+					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)), certs, 
 					kseFrame, DViewCertificate.IMPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);
