@@ -68,7 +68,7 @@ import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Provides utility methods relating to X509 Certificates and CRLs.
- * 
+ *
  */
 public final class X509CertUtil extends Object {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
@@ -83,7 +83,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * Load one or more certificates from the specified stream.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load certificates from
 	 * @return The certificates
@@ -216,7 +216,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * Load certificates from an SSL connection.
-	 * 
+	 *
 	 * @param host
 	 *            Connection host
 	 * @param port
@@ -270,7 +270,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * Load a CRL from the specified stream.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load CRL from
 	 * @return The CRL
@@ -294,7 +294,7 @@ public final class X509CertUtil extends Object {
 	/**
 	 * Convert the supplied array of certificate objects into X509Certificate
 	 * objects.
-	 * 
+	 *
 	 * @param certsIn
 	 *            The Certificate objects
 	 * @return The converted X509Certificate objects
@@ -302,6 +302,11 @@ public final class X509CertUtil extends Object {
 	 *             A problem occurred during the conversion
 	 */
 	public static X509Certificate[] convertCertificates(Certificate[] certsIn) throws CryptoException {
+
+	    if (certsIn == null) {
+	        return new X509Certificate[0];
+	    }
+
 		X509Certificate[] certsOut = new X509Certificate[certsIn.length];
 
 		for (int i = 0; i < certsIn.length; i++) {
@@ -313,7 +318,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * Convert the supplied certificate object into an X509Certificate object.
-	 * 
+	 *
 	 * @param certIn
 	 *            The Certificate object
 	 * @return The converted X509Certificate object
@@ -332,30 +337,36 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * Order the supplied array of X.509 certificates in issued to issuer order.
-	 * 
+	 *
 	 * @param certs
 	 *            X.509 certificates
 	 * @return The ordered X.509 certificates
 	 */
 	public static X509Certificate[] orderX509CertChain(X509Certificate certs[]) {
+
+	    if (certs == null) {
+	        return new X509Certificate[0];
+	    }
+
+	    if (certs.length <= 1) {
+	        return certs;
+	    }
+
 		// Put together each possible certificate path...
 		ArrayList<ArrayList<X509Certificate>> paths = new ArrayList<ArrayList<X509Certificate>>();
 
 		// For each possible path...
 		for (int i = 0; i < certs.length; i++) {
-			// Each possible path assumes a different certificate is the root
-			// issuer
+			// Each possible path assumes a different certificate is the root issuer
 			ArrayList<X509Certificate> path = new ArrayList<X509Certificate>();
 			X509Certificate issuerCert = certs[i];
 			path.add(issuerCert);
 
 			X509Certificate newIssuer = null;
 
-			// Recursively build that path by finding the next issued
-			// certificate
+			// Recursively build that path by finding the next issued certificate
 			while ((newIssuer = findIssuedCert(issuerCert, certs)) != null) {
-				// Found an issued cert, now attempt to find its issued
-				// certificate
+				// Found an issued cert, now attempt to find its issued certificate
 				issuerCert = newIssuer;
 				path.add(0, newIssuer);
 			}
@@ -399,7 +410,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * X.509 encode a certificate.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param cert
 	 *            The certificate
@@ -416,7 +427,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * X.509 encode a certificate and PEM the encoding.
-	 * 
+	 *
 	 * @return The PEM'd encoding
 	 * @param cert
 	 *            The certificate
@@ -430,7 +441,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * PKCS #7 encode a certificate.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param cert
 	 *            The certificate
@@ -443,7 +454,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * PKCS #7 encode a number of certificates.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param certs
 	 *            The certificates
@@ -470,7 +481,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * PKCS #7 encode a certificate and PEM the encoding.
-	 * 
+	 *
 	 * @param cert
 	 *            The certificate
 	 * @return The PEM'd encoding
@@ -483,7 +494,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * PKCS #7 encode a number of certificates and PEM the encoding.
-	 * 
+	 *
 	 * @param certs
 	 *            The certificates
 	 * @return The PEM'd encoding
@@ -497,7 +508,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * PKI Path encode a certificate.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param cert
 	 *            The certificate
@@ -510,7 +521,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * PKI Path encode a number of certificates.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param certs
 	 *            The certificates
@@ -538,7 +549,7 @@ public final class X509CertUtil extends Object {
 	/**
 	 * Verify that one X.509 certificate was signed using the private key that
 	 * corresponds to the public key of a second certificate.
-	 * 
+	 *
 	 * @return True if the first certificate was signed by private key
 	 *         corresponding to the second signature
 	 * @param signedCert
@@ -576,7 +587,7 @@ public final class X509CertUtil extends Object {
 	 * certificates contained therein, ie that a chain of trust exists between
 	 * the supplied certificate and a self-signed trusted certificate in the
 	 * KeyStores.
-	 * 
+	 *
 	 * @return The trust chain, or null if trust could not be established
 	 * @param cert
 	 *            The certificate
@@ -665,7 +676,7 @@ public final class X509CertUtil extends Object {
 	/**
 	 * Check whether or not a trusted certificate in the supplied KeyStore
 	 * matches the supplied X.509 certificate.
-	 * 
+	 *
 	 * @param cert
 	 *            The certificate
 	 * @param keyStore
@@ -699,7 +710,7 @@ public final class X509CertUtil extends Object {
 	 * name (if any). For a non-self-signed certificate it will be the subject's
 	 * common name followed by the issuer's common name in brackets. Aliases
 	 * will always be in lower case.
-	 * 
+	 *
 	 * @param cert
 	 *            The certificate
 	 * @return The alias or a blank string if none could be worked out
@@ -737,7 +748,7 @@ public final class X509CertUtil extends Object {
 	/**
 	 * Get short name for certificate. Common name if available, otherwise use
 	 * entire distinguished name.
-	 * 
+	 *
 	 * @param cert
 	 *            Certificate
 	 * @return Short name
@@ -758,7 +769,7 @@ public final class X509CertUtil extends Object {
 	 * For a given X.509 certificate get the algorithm of its signature. Useful
 	 * as the JCE may return an unfriendly name. This method converts known
 	 * "unfriendly names" to friendly names.
-	 * 
+	 *
 	 * @param cert
 	 *            The certificate
 	 * @return The algorithm
@@ -784,7 +795,7 @@ public final class X509CertUtil extends Object {
 
 	/**
 	 * Is the supplied X.509 certificate self-signed?
-	 * 
+	 *
 	 * @param cert
 	 *            The certificate
 	 * @return True if it is
@@ -793,7 +804,7 @@ public final class X509CertUtil extends Object {
 		return (cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal()));
 	}
 
-	
+
 	/**
 	 * Implementation of the X509TrustManager. In this implementation we
 	 * always trust the server as we are only interested in getting its
