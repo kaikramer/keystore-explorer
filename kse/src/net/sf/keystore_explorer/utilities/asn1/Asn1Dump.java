@@ -307,8 +307,12 @@ public class Asn1Dump {
 			sb.append(encapsulated);
 		} catch (Exception e) {
 			sb.append("=");
-			sb.append(NEWLINE);
-			sb.append(dumpOctetStringValue(asn1OctetString));
+			if (bytes.length < 8) {
+				sb.append(HexUtil.getHexString(bytes));
+			} else {
+				sb.append(NEWLINE);
+				sb.append(dumpHexClear(bytes));
+			}
 		}
 		sb.append(NEWLINE);
 
@@ -328,14 +332,20 @@ public class Asn1Dump {
 			sb.append(dump);
 		} catch (Exception e) {
 			sb.append("=");
-			sb.append(NEWLINE);
-			sb.append(dumpHexClear(bytes));
+			
+			// print short bit strings as string of bits and long ones as hex dump
+			if (bytes.length < 8) {
+				sb.append(new BigInteger(1, bytes).toString(2));
+			} else {
+				sb.append(NEWLINE);
+				sb.append(dumpHexClear(bytes));
+			}
 		}
 		sb.append(NEWLINE);
 
 		return sb.toString();
 	}
-
+	
 	private String dumpObjectIdentifier(ASN1ObjectIdentifier asn1ObjectIdentifier) {
 		StringBuffer sb = new StringBuffer();
 
@@ -521,9 +531,6 @@ public class Asn1Dump {
 		return sb.toString();
 	}
 
-	private String dumpOctetStringValue(ASN1OctetString asn1OctetString) throws IOException {
-		return dumpHexClear(asn1OctetString.getOctets());
-	}
 
 	private String dumpHexClear(byte[] der) throws IOException {
 		try {
@@ -532,7 +539,7 @@ public class Asn1Dump {
 			// Get hex/clear dump of value
 			String hexClearDump = HexUtil.getHexClearDump(der);
 
-			// Put indent at the start of ech line of teh dump
+			// Put indent at the start of each line of the dump
 			LineNumberReader lnr = new LineNumberReader(new StringReader(hexClearDump));
 
 			StringBuffer sb = new StringBuffer();
