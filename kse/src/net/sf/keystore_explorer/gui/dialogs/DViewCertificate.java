@@ -78,7 +78,7 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.actions.ExportKeyPairCertificateChainAction;
+import net.sf.keystore_explorer.gui.actions.ExportTrustedCertificateAction;
 import net.sf.keystore_explorer.gui.actions.ImportTrustedCertificateAction;
 import net.sf.keystore_explorer.gui.crypto.JCertificateFingerprint;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
@@ -90,18 +90,18 @@ import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
  * Displays the details of one or more X.509 certificates. The details of one
  * certificate are displayed at a time with selector buttons allowing the
  * movement to another of the certificates.
- * 
+ *
  */
 public class DViewCertificate extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
-	
+
 	public static int NONE = 0;
 	public static int IMPORT = 1;
 	public static int EXPORT = 2;
 	private int importExport = 0;
-	
+
 	private KseFrame kseFrame;
 
 	private JPanel jpCertificates;
@@ -140,7 +140,7 @@ public class DViewCertificate extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCertificate dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -148,13 +148,13 @@ public class DViewCertificate extends JEscDialog {
 	 * @param certs
 	 *            Certificate(s) to display
 	 * @param kseFrame
-	 *            Reference to main class with currently opened keystores and their contents 
+	 *            Reference to main class with currently opened keystores and their contents
 	 * @param importExport
 	 *            Show import button/export button/no extra button?
 	 * @throws CryptoException
 	 *             A problem was encountered getting the certificates' details
 	 */
-	public DViewCertificate(JFrame parent, String title, X509Certificate[] certs, KseFrame kseFrame, int importExport) 
+	public DViewCertificate(JFrame parent, String title, X509Certificate[] certs, KseFrame kseFrame, int importExport)
 			throws CryptoException {
 		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
 		this.kseFrame = kseFrame;
@@ -164,7 +164,7 @@ public class DViewCertificate extends JEscDialog {
 
 	/**
 	 * Creates new DViewCertificate dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -174,13 +174,13 @@ public class DViewCertificate extends JEscDialog {
 	 * @param certs
 	 *            Certificate(s) to display
 	 * @param kseFrame
-	 *            Reference to main class with currently opened keystores and their contents 
+	 *            Reference to main class with currently opened keystores and their contents
 	 * @param importExport
 	 *            Show import button/export button/no extra button?
 	 * @throws CryptoException
 	 *             A problem was encountered getting the certificates' details
 	 */
-	public DViewCertificate(JDialog parent, String title, Dialog.ModalityType modality, X509Certificate[] certs, 
+	public DViewCertificate(JDialog parent, String title, Dialog.ModalityType modality, X509Certificate[] certs,
 			KseFrame kseFrame, int importExport) throws CryptoException {
 		super(parent, title, modality);
 		this.kseFrame = kseFrame;
@@ -422,7 +422,7 @@ public class DViewCertificate extends JEscDialog {
 		});
 
 		jpButtons = new JPanel();
-		if (importExport != NONE) { 
+		if (importExport != NONE) {
 			jpButtons.add(jbImportExport);
 		}
 		jpButtons.add(jbExtensions);
@@ -788,7 +788,7 @@ public class DViewCertificate extends JEscDialog {
 		if (importExport == IMPORT) {
 			new ImportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
 		} else {
-			new ExportKeyPairCertificateChainAction(kseFrame).actionPerformed(null);
+			new ExportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
 		}
 	}
 
@@ -803,6 +803,8 @@ public class DViewCertificate extends JEscDialog {
 	}
 
 	private class X509CertificateComparator implements Comparator<X509Certificate> {
+
+	    // TODO
 		public int compare(X509Certificate cert1, X509Certificate cert2) {
 
 			// Compare certificates for equality. Where all we care about is if

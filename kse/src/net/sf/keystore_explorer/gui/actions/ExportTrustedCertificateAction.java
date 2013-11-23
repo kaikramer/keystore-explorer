@@ -42,26 +42,43 @@ import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Action to export the selected trusted certificate entry.
- * 
+ *
  */
 public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
-	/**
-	 * Construct action.
-	 * 
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ExportTrustedCertificateAction(KseFrame kseFrame) {
-		super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificateAction.statusbar"));
-		putValue(NAME, res.getString("ExportTrustedCertificateAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificateAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ExportTrustedCertificateAction.image")))));
-	}
+    private X509Certificate cert;
+
+    /**
+     * Construct action.
+     *
+     * @param kseFrame
+     *            KeyStore Explorer frame
+     */
+    public ExportTrustedCertificateAction(KseFrame kseFrame) {
+        this(kseFrame, null);
+    }
+
+    /**
+     * Construct action.
+     *
+     * @param kseFrame
+     *            KeyStore Explorer frame
+     * @param cert
+     *            Certificate to be exported. If null, the currently selected keystore entry is used.
+     */
+    public ExportTrustedCertificateAction(KseFrame kseFrame, X509Certificate cert) {
+        super(kseFrame);
+
+        this.cert = cert;
+
+        putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificateAction.statusbar"));
+        putValue(NAME, res.getString("ExportTrustedCertificateAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificateAction.tooltip"));
+        putValue(
+                SMALL_ICON,
+                new ImageIcon(Toolkit.getDefaultToolkit().createImage(
+                        getClass().getResource(res.getString("ExportTrustedCertificateAction.image")))));
+    }
 
 	/**
 	 * Do action.
@@ -70,9 +87,15 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 		File exportFile = null;
 
 		try {
-			String alias = kseFrame.getSelectedEntryAlias();
+		    DExportCertificates dExportCertificates = null;
+		    if (cert == null) {
+		        String alias = kseFrame.getSelectedEntryAlias();
+                dExportCertificates = new DExportCertificates(frame, alias, false);
+                cert = getCertificate(alias);
+		    } else {
+		        dExportCertificates = new DExportCertificates(frame, X509CertUtil.getCertificateAlias(cert), false);
+		    }
 
-			DExportCertificates dExportCertificates = new DExportCertificates(frame, alias, false);
 			dExportCertificates.setLocationRelativeTo(frame);
 			dExportCertificates.setVisible(true);
 
@@ -83,8 +106,6 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 			exportFile = dExportCertificates.getExportFile();
 
 			boolean pemEncode = dExportCertificates.pemEncode();
-
-			X509Certificate cert = getCertificate(alias);
 
 			byte[] encoded = null;
 
@@ -103,9 +124,7 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 			} else if (dExportCertificates.exportFormatPkiPath()) {
 				encoded = X509CertUtil.getCertEncodedPkiPath(cert);
 			} else if (dExportCertificates.exportFormatSpc()) {
-				encoded = X509CertUtil.getCertEncodedPkcs7(cert); // SPC is just
-																	// DER PKCS
-																	// #7
+				encoded = X509CertUtil.getCertEncodedPkcs7(cert); // SPC is just DER PKCS #7
 			}
 
 			exportEncodedCertificate(encoded, exportFile);
