@@ -57,7 +57,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 
 /**
  * Dialog to view or edit a distinguished name.
- * 
+ *
  */
 public class DDistinguishedNameChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -85,12 +85,12 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 	private boolean editable;
 	private X500Name distinguishedName;
-	
+
 	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
 	/**
 	 * Creates a new DDistinguishedNameChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -109,7 +109,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 	/**
 	 * Creates a new DDistinguishedNameChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -289,32 +289,40 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	}
 
 	private void populate() {
-		
-		// use default DN?
-		String defaultDN = applicationSettings.getDefaultDN();
-		if (distinguishedName == null && !StringUtils.isBlank(defaultDN)) {
-			distinguishedName = new X500Name(defaultDN);
-		}
-		
+
 		if (distinguishedName != null) {
-			populateRdnField(jtfCommonName, KseX500NameStyle.CN);
-			populateRdnField(jtfOrganisationUnit, KseX500NameStyle.OU);
-			populateRdnField(jtfOrganisationName, KseX500NameStyle.O);
-			populateRdnField(jtfLocalityName, KseX500NameStyle.L);
-			populateRdnField(jtfStateName, KseX500NameStyle.ST);
-			populateRdnField(jtfCountryCode, KseX500NameStyle.C);
-			populateRdnField(jtfEmailAddress, KseX500NameStyle.E);
+			populateRdnField(distinguishedName, jtfCommonName, KseX500NameStyle.CN);
+			populateRdnField(distinguishedName, jtfOrganisationUnit, KseX500NameStyle.OU);
+			populateRdnField(distinguishedName, jtfOrganisationName, KseX500NameStyle.O);
+			populateRdnField(distinguishedName, jtfLocalityName, KseX500NameStyle.L);
+			populateRdnField(distinguishedName, jtfStateName, KseX500NameStyle.ST);
+			populateRdnField(distinguishedName, jtfCountryCode, KseX500NameStyle.C);
+			populateRdnField(distinguishedName, jtfEmailAddress, KseX500NameStyle.E);
+		} else {
+
+		    // use default DN for populating DN fields?
+	        String defaultDN = applicationSettings.getDefaultDN();
+	        if (!StringUtils.isBlank(defaultDN)) {
+	            X500Name defaultX500Name = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
+	            populateRdnField(defaultX500Name, jtfCommonName, KseX500NameStyle.CN);
+	            populateRdnField(defaultX500Name, jtfOrganisationUnit, KseX500NameStyle.OU);
+	            populateRdnField(defaultX500Name, jtfOrganisationName, KseX500NameStyle.O);
+	            populateRdnField(defaultX500Name, jtfLocalityName, KseX500NameStyle.L);
+	            populateRdnField(defaultX500Name, jtfStateName, KseX500NameStyle.ST);
+	            populateRdnField(defaultX500Name, jtfCountryCode, KseX500NameStyle.C);
+	            populateRdnField(defaultX500Name, jtfEmailAddress, KseX500NameStyle.E);
+	        }
 		}
 	}
 
-	private void populateRdnField(JTextField rdnField, ASN1ObjectIdentifier rdnOid) {
-		rdnField.setText(X500NameUtils.getRdn(distinguishedName, rdnOid));
+	private void populateRdnField(X500Name x500Name, JTextField rdnField, ASN1ObjectIdentifier rdnOid) {
+		rdnField.setText(X500NameUtils.getRdn(x500Name, rdnOid));
 		rdnField.setCaretPosition(0);
 	}
 
 	/**
 	 * Get selected distinguished name.
-	 * 
+	 *
 	 * @return Distinguished name, or null if none
 	 */
 	public X500Name getDistinguishedName() {

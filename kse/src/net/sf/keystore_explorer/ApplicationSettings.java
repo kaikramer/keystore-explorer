@@ -45,7 +45,7 @@ import net.sf.keystore_explorer.utilities.net.ProxyAddress;
 /**
  * KSE Application settings. Load, save and provide access to the various
  * application settings. Settings persist to Java preferences.
- * 
+ *
  */
 public class ApplicationSettings {
 
@@ -85,7 +85,7 @@ public class ApplicationSettings {
 	private static final String KSE3_CACERTSFILE = "kse3.cacertsfile";
 	private static final String KSE3_USECACERTS = "kse3.usecacerts";
 
-	
+
 	private static ApplicationSettings applicationSettings;
 	private boolean useCaCertificates;
 	private File caCertificatesFile;
@@ -118,15 +118,15 @@ public class ApplicationSettings {
 		try {
 			// if preferences exist under /com/lazgosoftware but not under /net/sf/keystore_explorer ...
 			if (root.nodeExists("/com/lazgosoftware") && !root.nodeExists("/net/sf/keystore_explorer")) {
-				
-				// ... then copy settings from old to new subtree 
+
+				// ... then copy settings from old to new subtree
 				Preferences prefsOld = root.node("/com/lazgosoftware/utilities/kse");
 				Preferences prefsNew = root.node("/net/sf/keystore_explorer");
 
 				for (String key : prefsOld.keys()) {
 					prefsNew.put(key, prefsOld.get(key, ""));
 				}
-				
+
 				prefsNew.flush();
 			}
 		} catch (BackingStoreException e) {
@@ -139,7 +139,7 @@ public class ApplicationSettings {
 	/**
 	 * Get singleton instance of application settings. If first call the
 	 * application settings are loaded.
-	 * 
+	 *
 	 * @return Application settings
 	 */
 	public static synchronized ApplicationSettings getInstance() {
@@ -278,9 +278,9 @@ public class ApplicationSettings {
 		// Tip of the day
 		showTipsOnStartUp = preferences.getBoolean(KSE3_TIPSONSTARTUP, true);
 		nextTipIndex = preferences.getInt(KSE3_TIPINDEX, 0);
-		
+
 		// Default distinguished name
-		defaultDN = preferences.get(KSE3_DEFAULTDN, null);
+		defaultDN = preferences.get(KSE3_DEFAULTDN, "");
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class ApplicationSettings {
 		// Tip of the day
 		preferences.putBoolean(KSE3_TIPSONSTARTUP, showTipsOnStartUp);
 		preferences.putInt(KSE3_TIPINDEX, nextTipIndex);
-		
+
 		// Default distinguished name
 		preferences.put(KSE3_DEFAULTDN, defaultDN);
 	}
@@ -411,7 +411,7 @@ public class ApplicationSettings {
 
 	/**
 	 * Clear application settings in persistent store.
-	 * 
+	 *
 	 * @throws BackingStoreException
 	 *             If a failure occurred in the backing store
 	 */
