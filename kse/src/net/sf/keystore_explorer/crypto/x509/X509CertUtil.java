@@ -19,6 +19,8 @@
  */
 package net.sf.keystore_explorer.crypto.x509;
 
+import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,7 +101,7 @@ public final class X509CertUtil extends Object {
 
 			is = new ByteArrayInputStream(certsBytes);
 
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
 			Collection certs = cf.generateCertificates(is);
 
@@ -116,9 +118,10 @@ public final class X509CertUtil extends Object {
 			return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
+		} catch (NoSuchProviderException e) {
+			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), e);
 		} catch (CertificateException ex) {
-			// Failed to load certificates, may be pki path encoded - try
-			// loading as that
+			// Failed to load certificates, may be pki path encoded - try loading as that
 			try {
 				return loadCertificatesPkiPath(new ByteArrayInputStream(certsBytes));
 			} catch (CryptoException ex2) {
@@ -324,11 +327,13 @@ public final class X509CertUtil extends Object {
 	 */
 	public static X509Certificate convertCertificate(Certificate certIn) throws CryptoException {
 		try {
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 			ByteArrayInputStream bais = new ByteArrayInputStream(certIn.getEncoded());
 			return (X509Certificate) cf.generateCertificate(bais);
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), ex);
+		} catch (CertificateException e) {
+			throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), e);
+		} catch (NoSuchProviderException e) {
+			throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), e);
 		}
 	}
 

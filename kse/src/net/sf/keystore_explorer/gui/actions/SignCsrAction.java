@@ -32,6 +32,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 
@@ -116,8 +117,10 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			KeyPairType keyPairType = null;
 			if (privateKey instanceof RSAPrivateKey) {
 				keyPairType = KeyPairType.RSA;
-			} else {
+			} else if (privateKey instanceof DSAPrivateKey) {
 				keyPairType = KeyPairType.DSA;
+			} else {
+				keyPairType = KeyPairType.EC;
 			}
 
 			File csrFile = chooseCsrFile();
@@ -210,8 +213,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 
 			X500Name issuer = X500NameUtils.x500PrincipalToX500Name(signingCert.getSubjectX500Principal());
 
-			// CA Reply is a cert with subject from CSR and issuer from signing
-			// cert's subject
+			// CA Reply is a cert with subject from CSR and issuer from signing cert's subject
 			X509CertificateGenerator generator = new X509CertificateGenerator(version);
 			X509Certificate caReplyCert = generator.generate(subject, issuer, validityPeriod, publicKey, privateKey,
 					signatureType, serialNumber, extensions);

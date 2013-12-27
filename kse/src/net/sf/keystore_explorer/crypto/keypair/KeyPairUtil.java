@@ -38,6 +38,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
+import java.security.spec.ECGenParameterSpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.text.MessageFormat;
@@ -75,9 +76,8 @@ public final class KeyPairUtil {
 			// Use BC provider for RSA
 			if (keyPairType == RSA) {
 				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
-			}
-			// Use default provider for DSA
-			else {
+			} else {
+				// Use default provider for DSA
 				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
 			}
 
@@ -95,6 +95,32 @@ public final class KeyPairUtil {
 					keyPairType), ex);
 		}
 	}
+
+	/**
+	 * Generate a key pair.
+	 * 
+	 * @param curveName
+	 *            Name of the ECC curve
+	 * @return A key pair
+	 * @throws CryptoException
+	 *             If there was a problem generating the key pair
+	 */
+	public static KeyPair generateECKeyPair(String curveName) throws CryptoException {
+		try {
+			// Get a key pair generator
+			KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
+			
+			keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
+
+			// Generate and return the key pair
+			KeyPair keyPair = keyPairGen.generateKeyPair();
+			return keyPair;
+		} catch (GeneralSecurityException ex) {
+			throw new CryptoException(MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"),
+					KeyPairType.EC), ex);
+		}
+	}
+	
 
 	/**
 	 * Get the information about the supplied public key.

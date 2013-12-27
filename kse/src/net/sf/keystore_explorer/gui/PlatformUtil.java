@@ -142,7 +142,7 @@ public class PlatformUtil {
 	}
 
 	/**
-	 * Create a dialog button panel with the order and alignment dependant on
+	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
 	 * 
 	 * @param jbPositives
@@ -179,6 +179,34 @@ public class PlatformUtil {
 		return panel;
 	}
 
+	/**
+	 * Create a dialog button panel with the order and alignment dependent on
+	 * the platform.
+	 * <br>
+	 * This method creates zero spacing around the buttons.
+	 * 
+	 * @param jbPositive
+	 *            Positive button
+	 * @param jbNegative
+	 *            Negative button
+	 * @param jbOthers
+	 *            Other buttons
+	 * @return Dialog button panel
+	 */
+	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative) {
+		
+		JPanel panel = new JPanel(new MigLayout("insets 0, nogrid, fillx, aligny 100%"));
+
+		if (jbPositive != null) {
+			panel.add(jbPositive, "tag ok");
+		}
+		
+		if (jbNegative != null) {
+			panel.add(jbNegative, "tag cancel");
+		}
+		
+		return panel;
+	}
 
 	/**
 	 * Create a scroll pane whose scroll bar policy conforms with the current

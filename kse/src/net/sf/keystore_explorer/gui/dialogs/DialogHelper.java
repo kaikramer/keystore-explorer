@@ -1,6 +1,16 @@
 package net.sf.keystore_explorer.gui.dialogs;
 
+import java.security.PrivateKey;
+import java.util.List;
+
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.KeyInfo;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
+import net.sf.keystore_explorer.crypto.signing.SignatureType;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -43,6 +53,50 @@ public class DialogHelper {
 					textField.setCaretPosition(0);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Populate a JComboBox with signature algorithms depending on the key pair type.
+	 * 
+	 * @param keyPairType
+	 * @param privateKey
+	 * @param jcbSignatureAlgorithm
+	 * @throws CryptoException
+	 */
+	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, JComboBox jcbSignatureAlgorithm) 
+			throws CryptoException {
+		
+		List<SignatureType> sigAlgs;
+
+		switch (keyPairType) {
+		case RSA:
+			KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+			sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
+			break;
+		case DSA:
+			sigAlgs = SignatureType.dsaSignatureTypes();
+			break;
+		case EC:
+		default:
+			sigAlgs = SignatureType.ecdsaSignatureTypes();
+		}
+
+		jcbSignatureAlgorithm.removeAllItems();
+
+		for (SignatureType sigAlg : sigAlgs) {
+			jcbSignatureAlgorithm.addItem(sigAlg);
+		}
+
+		// pre-select modern hash algs
+		if (sigAlgs.contains(SignatureType.SHA256_RSA)) {
+			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_RSA);
+		} else if (sigAlgs.contains(SignatureType.SHA256_ECDSA)) {
+			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_ECDSA);
+		} else if (sigAlgs.contains(SignatureType.SHA256_DSA)) {
+			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_DSA);
+		} else {
+			jcbSignatureAlgorithm.setSelectedIndex(0);
 		}
 	}
 }

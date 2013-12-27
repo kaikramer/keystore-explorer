@@ -42,7 +42,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -348,7 +347,7 @@ public class DSignCsr extends JEscDialog {
 
 		jcbSignatureAlgorithm = new JComboBox();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
-		populateSigAlgs();
+		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jcbSignatureAlgorithm.tooltip"));
 		GridBagConstraints gbc_jcbSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
 		gbc_jcbSignatureAlgorithm.gridy = 1;
@@ -490,29 +489,6 @@ public class DSignCsr extends JEscDialog {
 		getRootPane().setDefaultButton(jbOK);
 
 		pack();
-	}
-
-	private void populateSigAlgs() throws CryptoException {
-		List<SignatureType> sigAlgs;
-
-		if (signKeyPairType == KeyPairType.RSA) {
-			KeyInfo keyInfo = KeyPairUtil.getKeyInfo(this.signPrivateKey);
-			sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
-		} else {
-			sigAlgs = SignatureType.dsaSignatureTypes();
-		}
-
-		jcbSignatureAlgorithm.removeAllItems();
-
-		for (SignatureType sigAlg : sigAlgs) {
-			jcbSignatureAlgorithm.addItem(sigAlg);
-		}
-
-		if (sigAlgs.contains(SignatureType.SHA256_RSA)) {
-			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_RSA);
-		} else {
-			jcbSignatureAlgorithm.setSelectedIndex(0);
-		}
 	}
 
 	private void populateCsrDetails() throws CryptoException {

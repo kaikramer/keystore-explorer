@@ -115,13 +115,20 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 				return "";
 			}
 
-			keyPairSize = dGenerateKeyPair.getKeyPairSize();
 			keyPairType = dGenerateKeyPair.getKeyPairType();
+			DGeneratingKeyPair dGeneratingKeyPair;
+			
+			if (keyPairType != KeyPairType.EC) {
+				keyPairSize = dGenerateKeyPair.getKeyPairSize();
+				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize);
 
-			applicationSettings.setGenerateKeyPairSize(keyPairSize);
-			applicationSettings.setGenerateKeyPairType(keyPairType);
+				applicationSettings.setGenerateKeyPairSize(keyPairSize);
+				applicationSettings.setGenerateKeyPairType(keyPairType);
+			} else {
+				String curveName = dGenerateKeyPair.getCurveName();
+				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName);
+			}
 
-			DGeneratingKeyPair dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize);
 			dGeneratingKeyPair.setLocationRelativeTo(frame);
 			dGeneratingKeyPair.startKeyPairGeneration();
 			dGeneratingKeyPair.setVisible(true);

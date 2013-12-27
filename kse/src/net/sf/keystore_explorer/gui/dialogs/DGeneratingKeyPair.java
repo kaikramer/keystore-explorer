@@ -70,6 +70,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 
 	private KeyPairType keyPairType;
 	private int keySize;
+	private String curveName;
 	private KeyPair keyPair;
 	private Thread generator;
 
@@ -87,6 +88,23 @@ public class DGeneratingKeyPair extends JEscDialog {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
 		this.keyPairType = keyPairType;
 		this.keySize = keySize;
+		initComponents();
+	}
+
+	/**
+	 * Creates a new DGeneratingKeyPair dialog.
+	 * 
+	 * @param parent
+	 *            The parent frame
+	 * @param keyPairType
+	 *            The key pair generation type
+	 * @param curveName
+	 *            The name of the curve to create
+	 */
+	public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, String curveName) {
+		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		this.keyPairType = keyPairType;
+		this.curveName = curveName;
 		initComponents();
 	}
 
@@ -177,7 +195,12 @@ public class DGeneratingKeyPair extends JEscDialog {
 	private class GenerateKeyPair implements Runnable {
 		public void run() {
 			try {
-				keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize);
+				// RSA, DSA or EC?
+				if (keyPairType != KeyPairType.EC) {
+					keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize);
+				} else {
+					keyPair = KeyPairUtil.generateECKeyPair(curveName);
+				}
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {

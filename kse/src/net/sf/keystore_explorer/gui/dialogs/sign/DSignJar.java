@@ -20,11 +20,6 @@
 package net.sf.keystore_explorer.gui.dialogs.sign;
 
 import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.MD2_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.MD5_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_DSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_RSA;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -40,9 +35,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.security.PrivateKey;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.jar.JarFile;
 
@@ -62,6 +56,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.digest.DigestType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.signing.JarSigner;
@@ -71,6 +66,7 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.dialogs.DialogHelper;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
@@ -104,6 +100,7 @@ public class DSignJar extends JEscDialog {
 	private JButton jbOK;
 	private JButton jbCancel;
 
+	private PrivateKey signPrivateKey;
 	private KeyPairType signKeyPairType;
 	private File inputJarFile;
 	private File outputJarFile;
@@ -111,24 +108,31 @@ public class DSignJar extends JEscDialog {
 	private SignatureType signatureType;
 	private DigestType digestType;
 
+
 	/**
 	 * Creates a new DSignJar dialog.
 	 * 
 	 * @param parent
 	 *            The parent frame
+	 * @param signPrivateKey 
+	 *            Signing key pair's private key
 	 * @param signKeyPairType
 	 *            Signing key pair's type
 	 * @param signatureName
 	 *            Default signature name
+	 * @throws CryptoException
+	 *             A crypto problem was encountered constructing the dialog
 	 */
-	public DSignJar(JFrame parent, KeyPairType signKeyPairType, String signatureName) {
+	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName) 
+			throws CryptoException {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
 		setTitle(res.getString("DSignJar.Title"));
 		initComponents(signatureName);
 	}
 
-	private void initComponents(String signatureName) {
+	private void initComponents(String signatureName) throws CryptoException {
 		GridBagConstraints gbcLbl = new GridBagConstraints();
 		gbcLbl.gridx = 0;
 		gbcLbl.gridwidth = 1;
@@ -241,7 +245,7 @@ public class DSignJar extends JEscDialog {
 		gbc_jlSignatureAlgorithm.gridy = 4;
 
 		jcbSignatureAlgorithm = new JComboBox();
-		populateSigAlgs();
+		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJar.jcbSignatureAlgorithm.tooltip"));
 		GridBagConstraints gbc_jcbSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
 		gbc_jcbSignatureAlgorithm.gridy = 4;
@@ -334,26 +338,6 @@ public class DSignJar extends JEscDialog {
 		return sb.toString();
 	}
 
-	private void populateSigAlgs() {
-		List<SignatureType> sigAlgs = new ArrayList<SignatureType>();
-
-		if (signKeyPairType == RSA) {
-			sigAlgs.add(MD2_RSA);
-			sigAlgs.add(MD5_RSA);
-			sigAlgs.add(SHA1_RSA);
-		} else {
-			sigAlgs.add(SHA1_DSA);
-		}
-
-		jcbSignatureAlgorithm.removeAllItems();
-
-		for (SignatureType sigAlg : sigAlgs) {
-			jcbSignatureAlgorithm.addItem(sigAlg);
-		}
-
-		jcbSignatureAlgorithm.setSelectedIndex(0);
-	}
-
 	private void populateDigestAlgs() {
 		jcbDigestAlgorithm.removeAllItems();
 
@@ -365,7 +349,7 @@ public class DSignJar extends JEscDialog {
 		jcbDigestAlgorithm.addItem(DigestType.SHA384);
 		jcbDigestAlgorithm.addItem(DigestType.SHA512);
 
-		jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_RSA);
+		jcbDigestAlgorithm.setSelectedItem(DigestType.SHA1);
 	}
 
 	/**

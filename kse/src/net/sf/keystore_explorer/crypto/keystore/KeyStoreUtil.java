@@ -427,10 +427,10 @@ public final class KeyStoreUtil {
 
 			keyStore.store(baos, emptyPassword);
 
-			KeyStore copy = KeyStoreUtil.create(KeyStoreType.resolveJce(keyStore.getType()));
-			copy.load(new ByteArrayInputStream(baos.toByteArray()), emptyPassword);
+			KeyStore theCopy = KeyStoreUtil.create(KeyStoreType.resolveJce(keyStore.getType()));
+			theCopy.load(new ByteArrayInputStream(baos.toByteArray()), emptyPassword);
 
-			return copy;
+			return theCopy;
 		} catch (CryptoException ex) {
 			throw new CryptoException(res.getString("NoCopyKeyStore.exception.message"), ex);
 		} catch (GeneralSecurityException ex) {
@@ -458,8 +458,8 @@ public final class KeyStoreUtil {
 			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
 					keyStoreType), ex);
 		} catch (NoSuchProviderException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
-					keyStoreType), ex);
+			throw new CryptoException(MessageFormat.format(res.getString("NoProvider.exception.message"),
+					BOUNCY_CASTLE.jce()));
 		}
 	}
 }

@@ -24,6 +24,8 @@ import java.io.File;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.RSAPrivateKey;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -87,13 +89,15 @@ public class SignJarAction extends KeyStoreExplorerAction {
 					.getCertificateChain(alias)));
 
 			KeyPairType keyPairType = null;
-			if (privateKey.getAlgorithm().equals(KeyPairType.RSA.jce())) {
+			if (privateKey instanceof RSAPrivateKey) {
 				keyPairType = KeyPairType.RSA;
-			} else {
+			} else if (privateKey instanceof DSAPrivateKey) {
 				keyPairType = KeyPairType.DSA;
+			} else {
+				keyPairType = KeyPairType.EC;
 			}
 
-			DSignJar dSignJar = new DSignJar(frame, keyPairType, alias);
+			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias);
 			dSignJar.setLocationRelativeTo(frame);
 			dSignJar.setVisible(true);
 

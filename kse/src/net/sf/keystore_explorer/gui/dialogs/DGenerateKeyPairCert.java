@@ -38,7 +38,6 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -60,9 +59,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertificateGenerator;
@@ -201,7 +198,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		gbc_jlSigAlg.gridy = 1;
 
 		jcbSignatureAlgorithm = new JComboBox();
-		populateSigAlgs();
+		DialogHelper.populateSigAlgs(keyPairType, this.keyPair.getPrivate(), jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateKeyPairCert.jcbSignatureAlgorithm.tooltip"));
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		GridBagConstraints gbc_jcbSigAlg = (GridBagConstraints) gbcEdCtrl.clone();
@@ -316,29 +313,6 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		getRootPane().setDefaultButton(jbOK);
 
 		pack();
-	}
-
-	private void populateSigAlgs() throws CryptoException {
-		List<SignatureType> sigAlgs;
-
-		if (keyPairType == KeyPairType.RSA) {
-			KeyInfo keyInfo = KeyPairUtil.getKeyInfo(this.keyPair.getPrivate());
-			sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
-		} else {
-			sigAlgs = SignatureType.dsaSignatureTypes();
-		}
-
-		jcbSignatureAlgorithm.removeAllItems();
-
-		for (SignatureType sigAlg : sigAlgs) {
-			jcbSignatureAlgorithm.addItem(sigAlg);
-		}
-
-		if (sigAlgs.contains(SignatureType.SHA256_RSA)) {
-			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_RSA);
-		} else {
-			jcbSignatureAlgorithm.setSelectedIndex(0);
-		}
 	}
 
 	private void addExtensionsPressed() {
