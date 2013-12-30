@@ -28,9 +28,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collections;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -52,14 +51,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
+import net.sf.keystore_explorer.crypto.ecc.CurveSet;
+import net.sf.keystore_explorer.crypto.ecc.EccUtil;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
-
-import org.bouncycastle.asn1.nist.NISTNamedCurves;
-import org.bouncycastle.asn1.sec.SECNamedCurves;
-import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
-import org.bouncycastle.asn1.x9.X962NamedCurves;
 
 /**
  * Dialog used to choose the parameters required for key pair generation. The
@@ -69,13 +66,8 @@ import org.bouncycastle.asn1.x9.X962NamedCurves;
  */
 public class DGenerateKeyPair extends JEscDialog {
 
-	private static final String CURVE_SET_ANSI_X9_62 = "ANSI X9.62";
-	private static final String CURVE_SET_NIST = "NIST";
-	private static final String CURVE_SET_SEC = "SEC";
-	private static final String CURVE_SET_TELETRUST = "Teletrust";
-	private static final String[] CURVE_SETS = new String[] { CURVE_SET_ANSI_X9_62, CURVE_SET_NIST, CURVE_SET_SEC,
-			CURVE_SET_TELETRUST };
-
+	private static final long serialVersionUID = 7178673779995142190L;
+	
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
@@ -90,39 +82,42 @@ public class DGenerateKeyPair extends JEscDialog {
 	
 	private JRadioButton jrbEC;
 	private JLabel jlECCurveSet;
-	private JComboBox jcbECCurveSet;
+	private JComboBox<String> jcbECCurveSet;
 	private JLabel jlECCurve;
-	private JComboBox jcbECCurve;
+	private JComboBox<String> jcbECCurve;
 	
 	private JButton jbOK;
 	private JButton jbCancel;
 
 	private KeyPairType keyPairType;
+	private KeyStoreType keyStoreType;
 	private int keyPairSize;
 	private boolean success = false;
+
 
 	/**
 	 * Creates a new DGenerateKeyPair dialog.
 	 * 
 	 * @param parent
 	 *            The parent frame
+	 * @param keyStoreType 
+	 *            Type of the key store for the new ke pair
 	 * @param keyPairType
 	 *            Initial key pair type
 	 * @param keyPairSize
 	 *            Initial key pair size
 	 */
-	public DGenerateKeyPair(JFrame parent, KeyPairType keyPairType, int keyPairSize) {
+	public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyPairType keyPairType, int keyPairSize) {
 		super(parent, res.getString("DGenerateKeyPair.Title"), Dialog.ModalityType.APPLICATION_MODAL);
 
 		this.keyPairType = keyPairType;
 		this.keyPairSize = keyPairSize;
+		this.keyStoreType = keyStoreType;
 
 		initComponents();
 	}
 
 	private void initComponents() {
-		JLabel jlKeyAlg = new JLabel(res.getString("DGenerateKeyPair.jlKeyAlg.text"));
-
 		jlRSAKeySize = new JLabel(res.getString("DGenerateKeyPair.jlKeySize.text"));
 		
 		jspRSAKeySize = new JSpinner();
@@ -143,24 +138,35 @@ public class DGenerateKeyPair extends JEscDialog {
 
 		jrbEC = new JRadioButton(res.getString("DGenerateKeyPair.jrbEC.text"), true);
 		PlatformUtil.setMnemonic(jrbEC, res.getString("DGenerateKeyPair.jrbEC.mnemonic").charAt(0));
-		jrbEC.setToolTipText(res.getString("DGenerateKeyPair.jrbEC.tooltip"));
+		
+		// EC available?
+		if (EccUtil.isECAvailable(keyStoreType)) {
+			jrbEC.setEnabled(true);
+			jrbEC.setToolTipText(res.getString("DGenerateKeyPair.jrbEC.tooltip"));
+		} else {
+			jrbEC.setEnabled(false);
+			jrbEC.setToolTipText(res.getString("DGenerateKeyPair.jrbEC.na.tooltip"));
+		}
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jrbRSA);
 		buttonGroup.add(jrbDSA);
 		buttonGroup.add(jrbEC);
 
-		// TODO
-		jlECCurveSet = new JLabel("Set:");
+		jlECCurveSet = new JLabel(res.getString("DGenerateKeyPair.jlECCurveSet.text"));
+		jlECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jlECCurveSet.tooltip"));
 	 
-		jcbECCurveSet = new JComboBox();
-		jcbECCurveSet.setModel(new DefaultComboBoxModel(CURVE_SETS));
+		jcbECCurveSet = new JComboBox<String>();
+		jcbECCurveSet.setModel(new DefaultComboBoxModel<String>(CurveSet.getAvailableSetNames(keyStoreType)));
+		jcbECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurveSet.tooltip"));
 		
-		// TODO
-		jlECCurve = new JLabel("Named Curve:");
+		jlECCurve = new JLabel(res.getString("DGenerateKeyPair.jlECCurve.text"));
+		jlECCurve.setToolTipText(res.getString("DGenerateKeyPair.jlECCurve.tooltip"));
 		
-		jcbECCurve = new JComboBox();
-		jcbECCurve.setPrototypeDisplayValue("brainpoolp160r1 "); // make combo box wide enough for longest curve name
+		jcbECCurve = new JComboBox<String>();
+		// make combo box wide enough for longest curve name
+		jcbECCurve.setPrototypeDisplayValue(EccUtil.findLongestCurveName()); 
+		jcbECCurve.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurve.tooltip"));
 		
 		jbCancel = new JButton(res.getString("DGenerateKeyPair.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -173,39 +179,44 @@ public class DGenerateKeyPair extends JEscDialog {
 		} else if (keyPairType == KeyPairType.DSA) {
 			jrbDSA.setSelected(true);
 		} else {
-			jrbEC.setSelected(true);
+			if (jrbEC.isEnabled()) {
+				jrbDSA.setSelected(true);
+			} else {
+				// EC not available => fall back to RSA
+				jrbRSA.setSelected(true);
+			}
 		}
-
+		
 		loadKeySizes(keyPairSize);
-		loadECNamedCurves();
+		loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem());
 		enableDisableElements();
 		
-		JPanel content = new JPanel();
-		content.setBorder(new TitledBorder(new EtchedBorder(), "Algorithm")); // TODO res bundle
-//		content.setBorder(BorderFactory.createTitledBorder("Algorithm")); // TODO res bundle
+		JPanel jpContent = new JPanel();
+		jpContent.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DGenerateKeyPair.jpContent.text")));
+		//jpContent.setBorder(BorderFactory.createTitledBorder(res.getString("DGenerateKeyPair.jpContent.text")));
 		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 		
 		// layout
 		getContentPane().setLayout(new MigLayout("fill", "", ""));
-		getContentPane().add(content, "wrap unrel");
+		getContentPane().add(jpContent, "wrap unrel");
 		getContentPane().add(buttons, "growx");
-		content.setLayout(new MigLayout("", "[][right][]", "[]unrel[]"));
-		content.add(jrbRSA, "");
-		content.add(jlRSAKeySize, "");
-		content.add(jspRSAKeySize, "sg, wrap");
-		content.add(jrbDSA, "");
-		content.add(jlDSAKeySize, "");
-		content.add(jspDSAKeySize, "sg, wrap");
-		content.add(jrbEC, "");
-		content.add(jlECCurveSet, "");
-		content.add(jcbECCurveSet, "growx, wrap");
-		content.add(jlECCurve, "skip");
-		content.add(jcbECCurve, "growx");
+		jpContent.setLayout(new MigLayout("", "[][right][]", "[]unrel[]"));
+		jpContent.add(jrbRSA, "");
+		jpContent.add(jlRSAKeySize, "");
+		jpContent.add(jspRSAKeySize, "sg, wrap");
+		jpContent.add(jrbDSA, "");
+		jpContent.add(jlDSAKeySize, "");
+		jpContent.add(jspDSAKeySize, "sg, wrap");
+		jpContent.add(jrbEC, "");
+		jpContent.add(jlECCurveSet, "");
+		jpContent.add(jcbECCurveSet, "growx, wrap");
+		jpContent.add(jlECCurve, "skip");
+		jpContent.add(jcbECCurve, "growx");
 		
 		
 		jcbECCurveSet.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				loadECNamedCurves();
+				loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem());
 			}
 		});
 
@@ -269,27 +280,13 @@ public class DGenerateKeyPair extends JEscDialog {
 		pack();
 	}
 
-	private void loadECNamedCurves() {
-		Enumeration<String> en = null;
-
-		if (jcbECCurveSet.getModel().getSelectedItem().equals(CURVE_SET_ANSI_X9_62)) {
-			en = X962NamedCurves.getNames();
-		} else if (jcbECCurveSet.getModel().getSelectedItem().equals(CURVE_SET_NIST)) {
-			en = NISTNamedCurves.getNames();
-		} else if (jcbECCurveSet.getModel().getSelectedItem().equals(CURVE_SET_SEC)) {
-			en = SECNamedCurves.getNames();
-		} else if (jcbECCurveSet.getModel().getSelectedItem().equals(CURVE_SET_TELETRUST)) {
-			en = TeleTrusTNamedCurves.getNames();
-		}
-
-		Vector<String> curveNames = new Vector<String>();
-		while (en.hasMoreElements()) {
-			curveNames.add(en.nextElement());
-		}
-
+	private void loadECNamedCurves(String curveSet) {
+		CurveSet set = CurveSet.resolveName(curveSet);
+		List<String> curveNames = set.getAvailableCurveNames(keyStoreType);
+		
 		Collections.sort(curveNames);
 
-		jcbECCurve.setModel(new DefaultComboBoxModel(curveNames));
+		jcbECCurve.setModel(new DefaultComboBoxModel<String>(curveNames.toArray(new String[0])));
 	}
 
 	protected void enableDisableElements() {
@@ -439,7 +436,7 @@ public class DGenerateKeyPair extends JEscDialog {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 
 			public void run() {
-				DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyPairType.RSA, 1024);
+				DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.JKS, KeyPairType.RSA, 1024);
 				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 
 					@Override

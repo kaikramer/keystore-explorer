@@ -160,8 +160,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				String algorithm = (String) value;
 
 				if (algorithm == null) {
-					// No algorithm name available - TODO better reason why in
-					// tooltip?
+					// No algorithm name available - TODO better reason why in tooltip?
 					cell.setText("-");
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoAlgorithm.tooltip"));
 					cell.setHorizontalAlignment(CENTER);

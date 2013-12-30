@@ -2196,6 +2196,22 @@ public final class KseFrame implements StatusBar {
 	}
 
 	/**
+	 * Get the active KeyStore.
+	 * 
+	 * @return The KeyStore or null if no KeyStore is active
+	 */
+	public KeyStore getActiveKeyStore() {	
+		KeyStoreHistory history = getActiveKeyStoreHistory();
+		if (history == null) {
+			return null;
+		}
+
+		KeyStoreState currentState = history.getCurrentState();
+		KeyStore keyStore = currentState.getKeyStore();
+		return keyStore;
+	}
+	
+	/**
 	 * Get the active KeyStore history.
 	 * 
 	 * @return The KeyStore history or null if no KeyStore is active

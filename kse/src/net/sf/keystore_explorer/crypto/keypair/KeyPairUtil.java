@@ -97,7 +97,7 @@ public final class KeyPairUtil {
 	}
 
 	/**
-	 * Generate a key pair.
+	 * Generate a EC key pair.
 	 * 
 	 * @param curveName
 	 *            Name of the ECC curve

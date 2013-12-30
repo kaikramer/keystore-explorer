@@ -35,7 +35,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.security.PrivateKey;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -56,10 +55,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.csr.CsrType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
@@ -173,7 +170,7 @@ public class DGenerateCsr extends JEscDialog {
 		jcbSignatureAlgorithm = new JComboBox();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateCsr.jcbSignatureAlgorithm.tooltip"));
-		populateSigAlgs();
+		DialogHelper.populateSigAlgs(keyPairType, privateKey, jcbSignatureAlgorithm);
 
 		GridBagConstraints gbc_jcbSignatureAlgorithm = new GridBagConstraints();
 		gbc_jcbSignatureAlgorithm.gridx = 1;
@@ -195,7 +192,6 @@ public class DGenerateCsr extends JEscDialog {
 
 		jtfChallenge = new JTextField(15);
 		jtfChallenge.setToolTipText(res.getString("DGenerateCsr.jtfChallenge.tooltip"));
-		populateSigAlgs();
 
 		GridBagConstraints gbc_jtfChallenge = new GridBagConstraints();
 		gbc_jtfChallenge.gridx = 1;
@@ -302,29 +298,6 @@ public class DGenerateCsr extends JEscDialog {
 		getRootPane().setDefaultButton(jbOK);
 
 		pack();
-	}
-
-	private void populateSigAlgs() throws CryptoException {
-		List<SignatureType> sigAlgs;
-
-		if (keyPairType == KeyPairType.RSA) {
-			KeyInfo keyInfo = KeyPairUtil.getKeyInfo(this.privateKey);
-			sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
-		} else {
-			sigAlgs = SignatureType.dsaSignatureTypes();
-		}
-
-		jcbSignatureAlgorithm.removeAllItems();
-
-		for (SignatureType sigAlg : sigAlgs) {
-			jcbSignatureAlgorithm.addItem(sigAlg);
-		}
-
-		if (sigAlgs.contains(SignatureType.SHA256_RSA)) {
-			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_RSA);
-		} else {
-			jcbSignatureAlgorithm.setSelectedIndex(0);
-		}
 	}
 
 	private void browsePressed() {

@@ -231,7 +231,6 @@ public class DPreferences extends JEscDialog {
 				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpInternetProxy.image"))),
 				jpInternetProxy, res.getString("DPreferences.jpInternetProxy.tooltip"));
 
-		// TODO DPreferences.jpDefaultName.image
 		jtpPreferences.addTab(res.getString("DPreferences.jpDefaultName.text"), 
 				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpDefaultName.image"))), 
 				jpDefaultName, res.getString("DPreferences.jpDefaultName.tooltip"));

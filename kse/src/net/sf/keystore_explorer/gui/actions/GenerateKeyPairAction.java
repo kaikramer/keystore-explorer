@@ -106,8 +106,10 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 		try {
 			int keyPairSize = applicationSettings.getGenerateKeyPairSize();
 			KeyPairType keyPairType = applicationSettings.getGenerateKeyPairType();
+			KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
+			KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
 
-			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, keyPairType, keyPairSize);
+			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, keyStoreType, keyPairType, keyPairSize);
 			dGenerateKeyPair.setLocationRelativeTo(frame);
 			dGenerateKeyPair.setVisible(true);
 

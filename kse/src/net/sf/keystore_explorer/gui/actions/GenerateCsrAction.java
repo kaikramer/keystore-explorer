@@ -102,6 +102,8 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 				keyPairType = KeyPairType.RSA;
 			} else if (privateKey.getAlgorithm().equals(KeyPairType.DSA.jce())) {
 				keyPairType = KeyPairType.DSA;
+			} else if (privateKey.getAlgorithm().equals(KeyPairType.EC.jce())) {
+				keyPairType = KeyPairType.EC;
 			} else {
 				throw new CryptoException(MessageFormat.format(
 						res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"), keyPairAlg));
