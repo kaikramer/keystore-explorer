@@ -30,8 +30,7 @@ public class SignNewKeyPairAction extends KeyStoreExplorerAction {
 		putValue(LONG_DESCRIPTION, res.getString("SignNewKeyPairAction.statusbar"));
 		putValue(NAME, res.getString("SignNewKeyPairAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("SignNewKeyPairAction.tooltip"));
-		putValue(
-				SMALL_ICON,
+		putValue(SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 						getClass().getResource(res.getString("SignNewKeyPairAction.image")))));
 	}

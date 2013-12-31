@@ -23,13 +23,18 @@ import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
 
 import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 
+import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.Password;
+import net.sf.keystore_explorer.crypto.ecc.EccUtil;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
@@ -39,12 +44,16 @@ import net.sf.keystore_explorer.utilities.history.HistoryAction;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
+
 /**
  * Action to change the active KeyStore's type.
  * 
  */
 public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryAction {
 	private KeyStoreType newType;
+	private boolean warnPkcs12Password;
+	private boolean warnNoChangeKey;
+	private boolean warnNoECC;
 
 	/**
 	 * Construct action.
@@ -98,94 +107,34 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
 			KeyStore newKeyStore = KeyStoreUtil.create(newKeyStoreType);
 
-			// Only warn the user once about key pair entry passwords when changing from PKCS #12
-			boolean warnPkcs12Password = false;
+			// Only warn the user once
+			resetWarnings();
 
-			// Only warn the user once about key entries not being carried over by the change
-			boolean warnNoChangeKey = false;
-
-			// Copy all entries to the new KeyStore
-			for (Enumeration aliases = currentKeyStore.aliases(); aliases.hasMoreElements();) {
-				String alias = (String) aliases.nextElement();
+			// Copy all entries to the new KeyStore: Trusted certs, key pairs and secret keys
+			for (Enumeration<String> aliases = currentKeyStore.aliases(); aliases.hasMoreElements();) {
+				String alias = aliases.nextElement();
 
 				if (KeyStoreUtil.isTrustedCertificateEntry(alias, currentKeyStore)) {
 					Certificate trustedCertificate = currentKeyStore.getCertificate(alias);
 					newKeyStore.setCertificateEntry(alias, trustedCertificate);
 				} else if (KeyStoreUtil.isKeyPairEntry(alias, currentKeyStore)) {
-					Certificate[] certificateChain = currentKeyStore.getCertificateChain(alias);
-					certificateChain = X509CertUtil.orderX509CertChain(X509CertUtil
-							.convertCertificates(certificateChain));
-
-					Password password = getEntryPassword(alias, currentState);
-
-					if (password == null) {
+					if (!copyKeyPairEntry(newKeyStoreType, currentState, currentKeyStore, currentType,
+							newKeyStore, alias)) {
 						return false;
 					}
-
-					Key privateKey = currentKeyStore.getKey(alias, password.toCharArray());
-
-					currentState.setEntryPassword(alias, password);
-
-					if (currentType.equals(KeyStoreType.PKCS12.jce())) {
-						if (!warnPkcs12Password) {
-							warnPkcs12Password = true;
-							JOptionPane.showMessageDialog(frame, MessageFormat.format(res
-									.getString("ChangeTypeAction.ChangeFromPkcs12Password.message"), new String(
-									getPkcs12DummyPassword().toCharArray())), res
-									.getString("ChangeTypeAction.ChangeKeyStoreType.Title"),
-									JOptionPane.INFORMATION_MESSAGE);
-						}
-
-						password = getPkcs12DummyPassword(); // Changing from PKCS #12 - password is 'password'
-					} else if (newKeyStoreType == KeyStoreType.PKCS12) {
-						password = getPkcs12DummyPassword(); // Changing to PKCS #12 - password is 'password'
-					}
-
-					newKeyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
 				} else if (KeyStoreUtil.isKeyEntry(alias, currentKeyStore)) {
-					
-					if (newKeyStoreType.supportsKeyEntries()) {
-						
-						Password password = getEntryPassword(alias, currentState);
-						
-						if (password == null) {
-							return false;
-						}
-						
-						Key secretKey = currentKeyStore.getKey(alias, password.toCharArray());
-						
-						currentState.setEntryPassword(alias, password);
-						
-						newKeyStore.setKeyEntry(alias, secretKey, password.toCharArray(), null);
-					} else if (!warnNoChangeKey) {
-						warnNoChangeKey = true;
-						int selected = JOptionPane.showConfirmDialog(frame,
-								res.getString("ChangeTypeAction.WarnNoChangeKey.message"),
-								res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.YES_NO_OPTION);
-						if (selected != JOptionPane.YES_OPTION) {
-							return false;
-						}
+					if (!copySecretKeyEntry(newKeyStoreType, currentState, currentKeyStore, newKeyStore, alias)) {
+						return false;
 					}
 				}
 			}
 
 			KeyStoreState newState = currentState.createBasisForNextState(this);
-
 			newState.setKeyStore(newKeyStore);
 
 			// If changing type to be PKCS #12 or from PKCS #12 then all key
-			// pair passwords are reset to be 'password'
-			if ((newKeyStoreType == KeyStoreType.PKCS12) || (currentType.equals(KeyStoreType.PKCS12.jce()))) {
-				Enumeration<String> aliases = newKeyStore.aliases();
-
-				while (aliases.hasMoreElements()) {
-					String alias = aliases.nextElement();
-
-					if (KeyStoreUtil.isKeyPairEntry(alias, newKeyStore)) {
-						newState.setEntryPassword(alias, getPkcs12DummyPassword());
-					}
-				}
-			}
+			// pair passwords are reset to be 'password' => set default password in new state as well
+			setPkcs12DefaultPasswordInNewState(newKeyStoreType, currentType, newKeyStore, newState);
 
 			currentState.append(newState);
 
@@ -199,5 +148,136 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 			DError.displayError(frame, ex);
 			return false;
 		}
+	}
+
+	private void resetWarnings() {
+		// Only warn the user once about key pair entry passwords when changing from PKCS #12
+		warnPkcs12Password = false;
+
+		// Only warn the user once about key entries not being carried over by the change
+		warnNoChangeKey = false;
+
+		// Only warn the user once about key entries not being carried over by the change
+		warnNoECC = false;
+	}
+
+	private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
+			KeyStore currentKeyStore, String currentType, KeyStore newKeyStore, String alias) throws KeyStoreException,
+			CryptoException, NoSuchAlgorithmException, UnrecoverableKeyException {
+	
+		Certificate[] certificateChain = currentKeyStore.getCertificateChain(alias);
+		certificateChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificateChain));
+	
+		Password password = getEntryPassword(alias, currentState);
+		if (password == null) {
+			return false;
+		}
+	
+		Key privateKey = currentKeyStore.getKey(alias, password.toCharArray());
+	
+		currentState.setEntryPassword(alias, password);
+	
+		// change from/to PKCS#12 => handle entry password
+		if (currentType.equals(KeyStoreType.PKCS12.jce())) {
+			showWarnPkcs12();
+			password = getPkcs12DummyPassword(); // Changing from PKCS #12 - password is 'password'
+		} else if (newKeyStoreType == KeyStoreType.PKCS12) {
+			password = getPkcs12DummyPassword(); // Changing to PKCS #12 - password is 'password'
+		}
+		
+		// EC key pair? => might not be supported in target key store type
+		if (KeyStoreUtil.isECKeyPair(alias, currentKeyStore)) {
+			
+			String namedCurve = EccUtil.getNamedCurve(currentKeyStore.getKey(alias, password.toCharArray()));
+			
+			// EC or curve not supported?
+			if (!newKeyStoreType.supportsECC() || !newKeyStoreType.supportsNamedCurve(namedCurve)) {
+
+				 // show warning and abort change or just skip depending on user choice 
+				return showWarnNoECC();
+			}
+		}
+	
+		newKeyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
+		return true;
+	}
+	
+
+	private boolean copySecretKeyEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
+			KeyStore currentKeyStore, KeyStore newKeyStore, String alias) throws KeyStoreException,
+			NoSuchAlgorithmException, UnrecoverableKeyException {
+		
+		if (newKeyStoreType.supportsKeyEntries()) {
+
+			Password password = getEntryPassword(alias, currentState);
+
+			if (password == null) {
+				return false;
+			}
+
+			Key secretKey = currentKeyStore.getKey(alias, password.toCharArray());
+
+			currentState.setEntryPassword(alias, password);
+
+			newKeyStore.setKeyEntry(alias, secretKey, password.toCharArray(), null);
+		} else {
+			// show warning and let user decide whether to abort (return false) or just skip the entry (true)
+			return showWarnNoChangeKey();
+		}
+
+		return true;
+	}
+	
+	private void setPkcs12DefaultPasswordInNewState(KeyStoreType newKeyStoreType, String currentType, KeyStore newKeyStore,
+			KeyStoreState newState) throws KeyStoreException {
+		if ((newKeyStoreType == KeyStoreType.PKCS12) || (currentType.equals(KeyStoreType.PKCS12.jce()))) {
+			Enumeration<String> aliases = newKeyStore.aliases();
+	
+			while (aliases.hasMoreElements()) {
+				String alias = aliases.nextElement();
+	
+				if (KeyStoreUtil.isKeyPairEntry(alias, newKeyStore)) {
+					newState.setEntryPassword(alias, getPkcs12DummyPassword());
+				}
+			}
+		}
+	}
+
+	private void showWarnPkcs12() {
+		if (!warnPkcs12Password) {
+			warnPkcs12Password = true;
+			JOptionPane.showMessageDialog(frame, MessageFormat.format(res
+					.getString("ChangeTypeAction.ChangeFromPkcs12Password.message"), new String(
+					getPkcs12DummyPassword().toCharArray())), res
+					.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	private boolean showWarnNoECC() {
+		if (!warnNoECC) {
+			warnNoECC = true;
+			int selected = JOptionPane.showConfirmDialog(frame, res.getString("ChangeTypeAction.WarnNoECC.message"),
+					res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.YES_NO_OPTION);
+			
+			if (selected != JOptionPane.YES_OPTION) {
+				// user wants to abort
+				return false;
+			}
+		} 
+		// do not add this entry to new key store 
+		return true;
+	}
+
+	private boolean showWarnNoChangeKey() {
+		if (!warnNoChangeKey) {
+			warnNoChangeKey = true;
+			int selected = JOptionPane.showConfirmDialog(frame,
+					res.getString("ChangeTypeAction.WarnNoChangeKey.message"),
+					res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.YES_NO_OPTION);
+			if (selected != JOptionPane.YES_OPTION) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

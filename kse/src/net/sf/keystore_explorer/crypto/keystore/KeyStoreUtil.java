@@ -22,6 +22,7 @@ package net.sf.keystore_explorer.crypto.keystore;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.APPLE;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
@@ -40,6 +41,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.Enumeration;
@@ -461,5 +463,31 @@ public final class KeyStoreUtil {
 			throw new CryptoException(MessageFormat.format(res.getString("NoProvider.exception.message"),
 					BOUNCY_CASTLE.jce()));
 		}
+	}
+
+	/**
+	 * Is the key pair entry identified by alias a EC key pair? 
+	 * 
+	 * @param alias 
+	 *            Alias of key pair entry
+	 * @param keyStore 
+	 *            KeyStore that contains the key pair
+	 * @return True, if alias is a EC key pair
+	 * @throws KeyStoreException
+	 *                If there was a problem accessing the KeyStore.
+	 */
+	public static boolean isECKeyPair(String alias, KeyStore keyStore) throws KeyStoreException {
+		
+		if (!isKeyPairEntry(alias, keyStore)) {
+			return false;
+		}
+		
+		Certificate certificate = keyStore.getCertificate(alias);
+		String algorithm = certificate.getPublicKey().getAlgorithm();
+		if (algorithm.equals(EC.jce())) {
+			return true;
+		}
+		
+		return false;
 	}
 }

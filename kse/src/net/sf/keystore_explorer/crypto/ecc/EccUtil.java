@@ -19,12 +19,18 @@
  */
 package net.sf.keystore_explorer.crypto.ecc;
 
+import java.security.InvalidParameterException;
+import java.security.Key;
 import java.security.Provider;
 import java.security.Security;
+import java.security.interfaces.ECKey;
+import java.security.spec.ECParameterSpec;
 import java.util.List;
 
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.version.JavaVersion;
+
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
 /**
  * Static helper methods for ECC stuff, mainly detection of available ECC algorithms. 
@@ -41,6 +47,30 @@ public class EccUtil {
 		}
 	}
 
+	/**
+	 * Determines the name of the domain parameters that were used for generating the key.
+	 * 
+	 * @param key An EC key
+	 * @return The name of the domain parameters that were used for the EC key, 
+	 *         or an empty string if curve is unknown. 
+	 */
+	public static String getNamedCurve(Key key) {
+		
+		if (!(key instanceof ECKey)) {
+			throw new InvalidParameterException("Not a EC private key.");
+		}
+		
+		ECKey ecKey = (ECKey) key;
+		ECParameterSpec params = ecKey.getParams();
+//		if (!(params instanceof ECNamedCurveSpec)) {
+//			return "";
+//		}
+		
+		ECNamedCurveSpec ecPrivateKeySpec = (ECNamedCurveSpec) params;
+		String namedCurve = ecPrivateKeySpec.getName();
+		return namedCurve;
+	}
+	
 	/**
 	 * Checks if EC curves are available for the given keyStoreType
 	 * (i.e. either BC key store type or at least Java 7)

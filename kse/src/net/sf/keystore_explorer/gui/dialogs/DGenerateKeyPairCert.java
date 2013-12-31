@@ -198,11 +198,19 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		gbc_jlSigAlg.gridy = 1;
 
 		jcbSignatureAlgorithm = new JComboBox();
-		DialogHelper.populateSigAlgs(keyPairType, this.keyPair.getPrivate(), jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateKeyPairCert.jcbSignatureAlgorithm.tooltip"));
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		GridBagConstraints gbc_jcbSigAlg = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jcbSigAlg.gridy = 1;
+		
+		// populate signature algorithm selector 
+		if (issuerPrivateKey != null) {
+			KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerPrivateKey.getAlgorithm());
+			DialogHelper.populateSigAlgs(issuerKeyPairType, issuerPrivateKey, jcbSignatureAlgorithm);
+		} else {
+			// self-signed
+			DialogHelper.populateSigAlgs(keyPairType, keyPair.getPrivate(), jcbSignatureAlgorithm);
+		}
 
 		jlValidityPeriod = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityPeriod.text"));
 		GridBagConstraints gbc_jlValidityPeriod = (GridBagConstraints) gbcLbl.clone();

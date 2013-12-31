@@ -27,6 +27,7 @@ import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UBER_KS;
 
 import java.util.ResourceBundle;
 
+import net.sf.keystore_explorer.crypto.ecc.EccUtil;
 import net.sf.keystore_explorer.crypto.filetype.CryptoFileType;
 
 /**
@@ -84,10 +85,33 @@ public enum KeyStoreType {
 		return fileBased;
 	}
 
+	/**
+	 * Does this KeyStore type support secret key entries?
+	 * 
+	 * @return True, if secret key entries are supported by this KeyStore type
+	 */
 	public boolean supportsKeyEntries() {
 		return this == JCEKS || this == BKS || this == UBER;
 	}
-
+	
+	/**
+	 * Does this KeyStore type support ECC key pair entries?
+	 * 
+	 * @return True, if ECC supported
+	 */
+	public boolean supportsECC() {
+		return EccUtil.isECAvailable(this);
+	}
+	
+	/**
+	 * Does this KeyStore type support a certain named curve?
+	 * 
+	 * @return True, if curve is supported
+	 */
+	public boolean supportsNamedCurve(String curveName) {
+		return EccUtil.isCurveAvailable(curveName, this);
+	}
+	
 	/**
 	 * Resolve the supplied JCE name to a matching KeyStore type.
 	 * 
