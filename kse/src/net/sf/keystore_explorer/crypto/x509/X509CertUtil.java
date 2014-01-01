@@ -134,7 +134,7 @@ public final class X509CertUtil extends Object {
 
 	private static X509Certificate[] loadCertificatesPkiPath(InputStream is) throws CryptoException {
 		try {
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 			CertPath certPath = cf.generateCertPath(is, PKI_PATH_ENCODING);
 
 			List certs = certPath.getCertificates();
@@ -150,8 +150,10 @@ public final class X509CertUtil extends Object {
 			}
 
 			return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), ex);
+		} catch (CertificateException e) {
+			throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), e);
+		} catch (NoSuchProviderException e) {
+			throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), e);
 		} finally {
 			SafeCloseUtil.close(is);
 		}
@@ -391,8 +393,7 @@ public final class X509CertUtil extends Object {
 	}
 
 	private static X509Certificate findIssuedCert(X509Certificate issuerCert, X509Certificate[] certs) {
-		// Find a certificate issued by the supplied certificate based on
-		// distiguished name
+		// Find a certificate issued by the supplied certificate based on  distiguished name
 		for (int i = 0; i < certs.length; i++) {
 			X509Certificate cert = certs[i];
 
@@ -471,13 +472,15 @@ public final class X509CertUtil extends Object {
 				encodedCerts.add(certs[i]);
 			}
 
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
 			CertPath cp = cf.generateCertPath(encodedCerts);
 
 			return cp.getEncoded(PKCS7_ENCODING);
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), ex);
+		} catch (CertificateException e) {
+			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
+		} catch (NoSuchProviderException e) {
+			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
 		}
 	}
 
@@ -538,13 +541,15 @@ public final class X509CertUtil extends Object {
 				encodedCerts.add(certs[i]);
 			}
 
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
 			CertPath cp = cf.generateCertPath(encodedCerts);
 
 			return cp.getEncoded(PKI_PATH_ENCODING);
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), ex);
+		} catch (CertificateException e) {
+			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
+		} catch (NoSuchProviderException e) {
+			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
 		}
 	}
 
@@ -620,23 +625,18 @@ public final class X509CertUtil extends Object {
 		for (int i = 0; i < compCerts.size(); i++) {
 			X509Certificate compCert = compCerts.get(i);
 
-			// Verify of certificate issuer is sam as comparison certificate's
-			// subject
+			// Verify of certificate issuer is sam as comparison certificate's subject
 			if (cert.getIssuerX500Principal().equals(compCert.getSubjectX500Principal())) {
-				// Verify if the comparison certificate's private key was used
-				// to sign the
-				// certificate
+				// Verify if the comparison certificate's private key was used to sign the certificate
 				if (X509CertUtil.verifyCertificate(cert, compCert)) {
-					// If the comparision certificate is self-signed then a
-					// chain of trust exists
+					// If the comparision certificate is self-signed then a chain of trust exists
 					if (compCert.getSubjectX500Principal().equals(compCert.getIssuerX500Principal())) {
 						return new X509Certificate[] { cert, compCert };
 					}
 
 					/*
 					 * Otherwise try and establish a chain of trust from the
-					 * comparison certificate against the other comparison
-					 * certificates
+					 * comparison certificate against the other comparison certificates
 					 */
 					X509Certificate[] tmpChain = establishTrust(compCert, compCerts);
 					if (tmpChain != null) {

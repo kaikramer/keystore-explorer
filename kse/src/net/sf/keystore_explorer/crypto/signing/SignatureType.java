@@ -142,7 +142,7 @@ public enum SignatureType {
 		List<SignatureType> signatureTypes = new ArrayList<SignatureType>();
 		
 		signatureTypes.add(SHA1_ECDSA);
-		signatureTypes.add(SHA224_ECDSA);
+		//signatureTypes.add(SHA224_ECDSA); // not supported by Sun provider
 		signatureTypes.add(SHA256_ECDSA);
 		signatureTypes.add(SHA384_ECDSA);
 		signatureTypes.add(SHA512_ECDSA);
