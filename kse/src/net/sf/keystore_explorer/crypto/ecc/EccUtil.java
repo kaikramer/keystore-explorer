@@ -62,9 +62,9 @@ public class EccUtil {
 		
 		ECKey ecKey = (ECKey) key;
 		ECParameterSpec params = ecKey.getParams();
-//		if (!(params instanceof ECNamedCurveSpec)) {
-//			return "";
-//		}
+		if (!(params instanceof ECNamedCurveSpec)) {
+			return "";
+		}
 		
 		ECNamedCurveSpec ecPrivateKeySpec = (ECNamedCurveSpec) params;
 		String namedCurve = ecPrivateKeySpec.getName();
@@ -90,9 +90,9 @@ public class EccUtil {
 	 * @return True, if KeyStoreType is backed by the BC provider
 	 */
 	public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
+		// NOTE: PKCS12 is backed by BC as well, but left out for compatibility reasons
 		return (keyStoreType == KeyStoreType.BKS 
-				|| keyStoreType == KeyStoreType.UBER 
-				|| keyStoreType == KeyStoreType.PKCS12);
+				|| keyStoreType == KeyStoreType.UBER);
 	}
 	
 	/**
