@@ -20,12 +20,10 @@
 package net.sf.keystore_explorer.gui.dialogs;
 
 import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +31,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PublicKey;
+import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -41,31 +42,38 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
+import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
 import net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
+import net.sf.keystore_explorer.crypto.x509.X509ExtensionSet;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
+import net.sf.keystore_explorer.gui.dialogs.extensions.DViewExtensions;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.pkcs.Attribute;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 
 /**
  * Displays the details of a Certificate Signing Request (CSR).
- * 
+ *
  */
 public class DViewCsr extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -75,19 +83,17 @@ public class DViewCsr extends JEscDialog {
 	private JLabel jlSubject;
 	private JDistinguishedName jdnSubject;
 	private JLabel jlPublicKey;
-	private JPanel jpPublicKey;
 	private JTextField jtfPublicKey;
 	private JButton jbViewPublicKeyDetails;
 	private JLabel jlSignatureAlgorithm;
 	private JTextField jtfSignatureAlgorithm;
-	private JLabel jlChallenge;
-	private JTextField jtfChallenge;
-	private JPanel jpCsr;
-	private JPanel jpButtons;
+    private JLabel jlChallenge;
+    private JTextField jtfChallenge;
+    private JLabel jlUnstructuredName;
+    private JTextField jtfUnstructuredName;
 	private JButton jbExtensions;
 	private JButton jbPem;
 	private JButton jbAsn1;
-	private JPanel jpOK;
 	private JButton jbOK;
 
 	private PKCS10CertificationRequest pkcs10Csr;
@@ -95,7 +101,7 @@ public class DViewCsr extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCsr dialog for a PKCS #10 formatted CSR.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -113,7 +119,7 @@ public class DViewCsr extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCsr dialog for a SPKAC formatted CSR.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -130,45 +136,19 @@ public class DViewCsr extends JEscDialog {
 	}
 
 	private void initComponents() throws CryptoException {
-		GridBagConstraints gbcLbl = new GridBagConstraints();
-		gbcLbl.gridx = 0;
-		gbcLbl.gridwidth = 3;
-		gbcLbl.gridheight = 1;
-		gbcLbl.insets = new Insets(5, 5, 5, 5);
-		gbcLbl.anchor = GridBagConstraints.EAST;
-		gbcLbl.weightx = 0;
-
-		GridBagConstraints gbcCtrl = new GridBagConstraints();
-		gbcCtrl.gridx = 3;
-		gbcCtrl.gridwidth = 3;
-		gbcCtrl.gridheight = 1;
-		gbcCtrl.insets = new Insets(5, 5, 5, 5);
-		gbcCtrl.anchor = GridBagConstraints.WEST;
-		gbcCtrl.fill = GridBagConstraints.NONE;
-		gbcCtrl.weightx = 1;
 
 		jlFormat = new JLabel(res.getString("DViewCsr.jlFormat.text"));
-		GridBagConstraints gbc_jlFormat = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlFormat.gridy = 0;
 
-		jtfFormat = new JTextField(10);
+		jtfFormat = new JTextField(15);
 		jtfFormat.setEditable(false);
 		jtfFormat.setToolTipText(res.getString("DViewCsr.jtfFormat.tooltip"));
-		GridBagConstraints gbc_jtfFormat = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfFormat.gridy = 0;
 
 		jlSubject = new JLabel(res.getString("DViewCsr.jlSubject.text"));
-		GridBagConstraints gbc_jlSubject = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSubject.gridy = 1;
 
 		jdnSubject = new JDistinguishedName(res.getString("DViewCsr.Subject.Title"), 30, false);
 		jdnSubject.setToolTipText(res.getString("DViewCsr.jdnSubject.tooltip"));
-		GridBagConstraints gbc_jdnSubject = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jdnSubject.gridy = 1;
 
 		jlPublicKey = new JLabel(res.getString("DViewCsr.jlPublicKey.text"));
-		GridBagConstraints gbc_jlPublicKey = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlPublicKey.gridy = 2;
 
 		jtfPublicKey = new JTextField(15);
 		jtfPublicKey.setEditable(false);
@@ -178,144 +158,113 @@ public class DViewCsr extends JEscDialog {
 		jbViewPublicKeyDetails.setToolTipText(res.getString("DViewCsr.jbViewPublicKeyDetails.tooltip"));
 		jbViewPublicKeyDetails.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource(res.getString("DViewCsr.jbViewPublicKeyDetails.image")))));
-		jbViewPublicKeyDetails.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					pubKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
-			}
-		});
-
-		jpPublicKey = new JPanel(new GridBagLayout());
-		GridBagConstraints gbc_jpPublicKey = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jpPublicKey.gridy = 2;
-
-		GridBagConstraints gbc_jtfPublicKey = new GridBagConstraints();
-		gbc_jtfPublicKey.gridwidth = 1;
-		gbc_jtfPublicKey.gridheight = 1;
-		gbc_jtfPublicKey.gridx = 0;
-		gbc_jtfPublicKey.gridy = 0;
-		gbc_jtfPublicKey.insets = new Insets(0, 0, 0, 5);
-
-		GridBagConstraints gbc_jbViewPublicKeyDetails = new GridBagConstraints();
-		gbc_jbViewPublicKeyDetails.gridwidth = 1;
-		gbc_jbViewPublicKeyDetails.gridheight = 1;
-		gbc_jbViewPublicKeyDetails.gridx = 1;
-		gbc_jbViewPublicKeyDetails.gridy = 0;
-		gbc_jbViewPublicKeyDetails.insets = new Insets(0, 5, 0, 0);
-
-		jpPublicKey.add(jtfPublicKey, gbc_jtfPublicKey);
-		jpPublicKey.add(jbViewPublicKeyDetails, gbc_jbViewPublicKeyDetails);
 
 		jlSignatureAlgorithm = new JLabel(res.getString("DViewCsr.jlSignatureAlgorithm.text"));
-		GridBagConstraints gbc_jlSignatureAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSignatureAlgorithm.gridy = 3;
 
 		jtfSignatureAlgorithm = new JTextField(15);
 		jtfSignatureAlgorithm.setEditable(false);
 		jtfSignatureAlgorithm.setToolTipText(res.getString("DViewCsr.jtfSignatureAlgorithm.tooltip"));
-		GridBagConstraints gbc_jtfSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfSignatureAlgorithm.gridy = 3;
 
 		jlChallenge = new JLabel(res.getString("DViewCsr.jlChallenge.text"));
-		GridBagConstraints gbc_jlChallenge = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlChallenge.gridy = 4;
 
 		jtfChallenge = new JTextField(15);
 		jtfChallenge.setEditable(false);
 		jtfChallenge.setToolTipText(res.getString("DViewCsr.jtfChallenge.tooltip"));
-		GridBagConstraints gbc_jtfChallenge = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfChallenge.gridy = 4;
+
+		jlUnstructuredName = new JLabel(res.getString("DViewCsr.jlUnstructuredName.text"));
+
+        jtfUnstructuredName = new JTextField(30);
+        jtfUnstructuredName.setEditable(false);
+        jtfUnstructuredName.setToolTipText(res.getString("DViewCsr.jtfUnstructuredName.tooltip"));
 
 		jbExtensions = new JButton(res.getString("DViewCsr.jbExtensions.text"));
 
 		PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewCsr.jbExtensions.mnemonic").charAt(0));
 		jbExtensions.setToolTipText(res.getString("DViewCsr.jbExtensions.tooltip"));
-		jbExtensions.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					// extensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
-			}
-		});
 
 		jbPem = new JButton(res.getString("DViewCsr.jbPem.text"));
 
 		PlatformUtil.setMnemonic(jbPem, res.getString("DViewCsr.jbPem.mnemonic").charAt(0));
 		jbPem.setToolTipText(res.getString("DViewCsr.jbPem.tooltip"));
-		jbPem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					pemEncodingPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
-			}
-		});
 
 		jbAsn1 = new JButton(res.getString("DViewCsr.jbAsn1.text"));
-
 		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewCsr.jbAsn1.mnemonic").charAt(0));
 		jbAsn1.setToolTipText(res.getString("DViewCsr.jbAsn1.tooltip"));
-		jbAsn1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
-			}
-		});
 
-		jpButtons = new JPanel();
-		// jpButtons.add(jbExtensions); // TODO
-		jpButtons.add(jbPem);
-		jpButtons.add(jbAsn1);
+		jbOK = new JButton(res.getString("DViewCsr.jbOK.text"));
 
-		GridBagConstraints gbc_jpButtons = new GridBagConstraints();
-		gbc_jpButtons.gridx = 2;
-		gbc_jpButtons.gridy = 5;
-		gbc_jpButtons.gridwidth = GridBagConstraints.REMAINDER;
-		gbc_jpButtons.gridheight = 1;
-		gbc_jpButtons.anchor = GridBagConstraints.EAST;
-
-		jpCsr = new JPanel(new GridBagLayout());
-		jpCsr.setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
-
-		jpCsr.add(jlFormat, gbc_jlFormat);
-		jpCsr.add(jtfFormat, gbc_jtfFormat);
-		jpCsr.add(jlSubject, gbc_jlSubject);
-		jpCsr.add(jdnSubject, gbc_jdnSubject);
-		jpCsr.add(jlPublicKey, gbc_jlPublicKey);
-		jpCsr.add(jpPublicKey, gbc_jpPublicKey);
-		jpCsr.add(jlSignatureAlgorithm, gbc_jlSignatureAlgorithm);
-		jpCsr.add(jtfSignatureAlgorithm, gbc_jtfSignatureAlgorithm);
-		jpCsr.add(jlChallenge, gbc_jlChallenge);
-		jpCsr.add(jtfChallenge, gbc_jtfChallenge);
-		jpCsr.add(jpButtons, gbc_jpButtons);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+		pane.add(jlFormat, "");
+		pane.add(jtfFormat, "wrap");
+		pane.add(jlSubject, "");
+		pane.add(jdnSubject, "wrap");
+		pane.add(jlPublicKey, "");
+		pane.add(jtfPublicKey, "split 2");
+		pane.add(jbViewPublicKeyDetails, "wrap");
+		pane.add(jlSignatureAlgorithm, "");
+		pane.add(jtfSignatureAlgorithm, "wrap");
+        pane.add(jlChallenge, "");
+        pane.add(jtfChallenge, "wrap");
+        pane.add(jlUnstructuredName, "");
+        pane.add(jtfUnstructuredName, "wrap para");
+		pane.add(jbExtensions, "spanx, split");
+		pane.add(jbPem, "");
+		pane.add(jbAsn1, "wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+		pane.add(jbOK, "spanx, tag ok");
 
 		populateCsrDetails();
 
-		jbOK = new JButton(res.getString("DViewCsr.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
+        jbViewPublicKeyDetails.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    CursorUtil.setCursorBusy(DViewCsr.this);
+                    pubKeyDetailsPressed();
+                } finally {
+                    CursorUtil.setCursorFree(DViewCsr.this);
+                }
+            }
+        });
+
+		jbExtensions.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    CursorUtil.setCursorBusy(DViewCsr.this);
+                    extensionsPressed();
+                } finally {
+                    CursorUtil.setCursorFree(DViewCsr.this);
+                }
+            }
+        });
+
+        jbPem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    CursorUtil.setCursorBusy(DViewCsr.this);
+                    pemEncodingPressed();
+                } finally {
+                    CursorUtil.setCursorFree(DViewCsr.this);
+                }
+            }
+        });
+
+        jbOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpCsr, BorderLayout.NORTH);
-		getContentPane().add(jpOK, BorderLayout.SOUTH);
+        jbAsn1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    CursorUtil.setCursorBusy(DViewCsr.this);
+                    asn1DumpPressed();
+                } finally {
+                    CursorUtil.setCursorFree(DViewCsr.this);
+                }
+            }
+        });
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
@@ -344,11 +293,20 @@ public class DViewCsr extends JEscDialog {
 
 		jdnSubject.setDistinguishedName(pkcs10Csr.getSubject());
 
-		jbExtensions.setEnabled(true);
 		jbPem.setEnabled(true);
 		jbAsn1.setEnabled(true);
 
-		populatePublicKey(getPkcs10PublicKey());
+		Attribute[] extReqAttr = pkcs10Csr.getAttributes(pkcs_9_at_extensionRequest);
+		if (extReqAttr != null && extReqAttr.length > 0) {
+		    jbExtensions.setEnabled(true);
+		} else {
+            jbExtensions.setEnabled(false);
+		}
+
+        DialogHelper.populatePkcs10Challenge(pkcs10Csr.getAttributes(), jtfChallenge);
+        DialogHelper.populatePkcs10UnstructuredName(pkcs10Csr.getAttributes(), jtfUnstructuredName);
+
+        populatePublicKey(getPkcs10PublicKey());
 
 		String sigAlgId = pkcs10Csr.getSignatureAlgorithm().getAlgorithm().getId();
 		SignatureType sigAlg = SignatureType.resolveOid(sigAlgId);
@@ -360,8 +318,6 @@ public class DViewCsr extends JEscDialog {
 		}
 
 		jtfSignatureAlgorithm.setCaretPosition(0);
-
-		DialogHelper.populatePkcs10Challenge(pkcs10Csr.getAttributes(), jtfChallenge);
 	}
 
 	private void populateSpkacCsrDetails() throws CryptoException {
@@ -409,7 +365,26 @@ public class DViewCsr extends JEscDialog {
 		}
 	}
 
-	private void pubKeyDetailsPressed() {
+    private void extensionsPressed() {
+
+        // extract sequence with extensions from csr
+        Attribute[] attributes = pkcs10Csr.getAttributes(pkcs_9_at_extensionRequest);
+        X509ExtensionSet x509ExtensionSet = new X509ExtensionSet();
+        if ((attributes != null) && (attributes.length > 0)) {
+            ASN1Encodable[] attributeValues = attributes[0].getAttributeValues();
+            if (attributeValues.length > 0) {
+                ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(attributeValues[0]);
+                x509ExtensionSet = new X509ExtensionSet(asn1Sequence);
+            }
+        }
+
+        DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCertificate.Extensions.Title"),
+                x509ExtensionSet);
+        dViewExtensions.setLocationRelativeTo(this);
+        dViewExtensions.setVisible(true);
+    }
+
+    private void pubKeyDetailsPressed() {
 		try {
 			PublicKey publicKey = null;
 
@@ -477,4 +452,32 @@ public class DViewCsr extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
+
+	// for quick testing
+    public static void main(String[] args) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+                    KeyPair keyPair = keyGen.genKeyPair();
+                    JcaPKCS10CertificationRequestBuilder csrBuilder =
+                            new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
+                    PKCS10CertificationRequest csr =  csrBuilder.build(
+                            new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
+
+                    DViewCsr dialog = new DViewCsr(new javax.swing.JFrame(), "Title", csr);
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

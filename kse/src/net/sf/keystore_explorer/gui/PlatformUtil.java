@@ -34,7 +34,7 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
  * Platform specific GUI building utility methods. Takes care of differences
  * between Mac OS (and lnfs thereof) and other platforms. They
  * "Think Different", you see.
- * 
+ *
  */
 public class PlatformUtil {
 	private PlatformUtil() {
@@ -43,7 +43,7 @@ public class PlatformUtil {
 	/**
 	 * Create a dialog button panel with the order and alignment dependant on
 	 * the platform.
-	 * 
+	 *
 	 * @param jbPositive
 	 *            Positive button
 	 * @param resizable
@@ -57,7 +57,7 @@ public class PlatformUtil {
 	/**
 	 * Create a dialog button panel with the order and alignment dependant on
 	 * the platform.
-	 * 
+	 *
 	 * @param jbPositives
 	 *            Positive buttons
 	 * @param resizable
@@ -65,13 +65,13 @@ public class PlatformUtil {
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives, boolean resizable) {
-		return createDialogButtonPanel(jbPositives, null, (JButton[]) null, resizable);
+		return createDialogButtonPanel(jbPositives, null, (JButton[]) null, resizable, null);
 	}
 
 	/**
 	 * Create a dialog button panel with the order and alignment dependant on
 	 * the platform.
-	 * 
+	 *
 	 * @param jbPositive
 	 *            Positive button
 	 * @param jbNegative
@@ -88,7 +88,7 @@ public class PlatformUtil {
 	/**
 	 * Create a dialog button panel with the order and alignment dependant on
 	 * the platform.
-	 * 
+	 *
 	 * @param jbPositives
 	 *            Positive buttons
 	 * @param jbNegative
@@ -98,13 +98,13 @@ public class PlatformUtil {
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, boolean resizable) {
-		return createDialogButtonPanel(jbPositives, jbNegative, (JButton[]) null, resizable);
+		return createDialogButtonPanel(jbPositives, jbNegative, (JButton[]) null, resizable, null);
 	}
 
 	/**
 	 * Create a dialog button panel with the order and alignment dependant on
 	 * the platform.
-	 * 
+	 *
 	 * @param jbPositive
 	 *            Positive button
 	 * @param jbNegative
@@ -124,7 +124,7 @@ public class PlatformUtil {
 	/**
 	 * Create a dialog button panel with the order and alignment dependant on
 	 * the platform.
-	 * 
+	 *
 	 * @param jbPositive
 	 *            Positive button
 	 * @param jbNegative
@@ -138,44 +138,52 @@ public class PlatformUtil {
 	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther,
 			boolean resizable) {
 		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, jbOther,
-				resizable);
+				resizable, null);
 	}
 
 	/**
 	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
-	 * 
+	 *
 	 * @param jbPositives
 	 *            Positive buttons
 	 * @param jbNegative
 	 *            Negative button
 	 * @param jbOthers
 	 *            Other buttons
-	 * @param resizable
-	 *            Is the dialog resizable?
+     * @param resizable
+     *            Is the dialog resizable?
+     * @param insets
+     *            Insets for panel (MiGLayout constraint)
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, JButton[] jbOthers,
-			boolean resizable) {
-		
-		JPanel panel = new JPanel(new MigLayout("nogrid, fillx, aligny 100%"));
+			boolean resizable, String insets) {
+
+	    if (insets == null) {
+	        insets = "";
+	    } else {
+	        insets += ",";
+	    }
+
+		JPanel panel = new JPanel(new MigLayout(insets + "nogrid, fillx, aligny 100%"));
 
 		if (jbPositives != null) {
 			for (JButton jButton : jbPositives) {
 				panel.add(jButton, "tag ok");
-			} 
+			}
 		}
-		
+
 		if (jbOthers != null) {
 			for (JButton jButton : jbOthers) {
 				panel.add(jButton, "sgx");
 			}
 		}
-		
+
 		if (jbNegative != null) {
 			panel.add(jbNegative, "tag cancel");
 		}
-		
+
 		return panel;
 	}
 
@@ -213,7 +221,7 @@ public class PlatformUtil {
 	 * platform. i.e. on Mac OS l&f if a scroll bar's policy states that it may
 	 * be shown as needed it should instead always be shown. For all other
 	 * platforms obey policy as provided.
-	 * 
+	 *
 	 * @param vsbPolicy
 	 *            Vertical scroll bar policy
 	 * @param hsbPolicy
@@ -229,7 +237,7 @@ public class PlatformUtil {
 	 * platform. i.e. on Mac OS l&f if a scroll bar's policy states that it may
 	 * be shown as needed it should instead always be shown. For all other
 	 * platforms obey policy as provided.
-	 * 
+	 *
 	 * @param view
 	 *            Component to view
 	 * @param vsbPolicy
@@ -239,8 +247,7 @@ public class PlatformUtil {
 	 * @return Scroll pane
 	 */
 	public static JScrollPane createScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
-		// If Mac l&f convert supplied "scroll bars as needed" to
-		// "scroll bars always"
+		// If Mac l&f convert supplied "scroll bars as needed" to "scroll bars always"
 		if (LnfUtil.usingMacLnf()) {
 			if (vsbPolicy == ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED) {
 				vsbPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
@@ -264,7 +271,7 @@ public class PlatformUtil {
 
 	/**
 	 * Set mnemonic on button in a platform dependant manner.
-	 * 
+	 *
 	 * @param button
 	 *            Button
 	 * @param mnemonic
@@ -276,7 +283,7 @@ public class PlatformUtil {
 
 	/**
 	 * Set mnemonic on button in a platform dependant manner.
-	 * 
+	 *
 	 * @param button
 	 *            Button
 	 * @param mnemonic
@@ -288,7 +295,7 @@ public class PlatformUtil {
 
 	/**
 	 * Set mnemonic on button in a platform dependant manner.
-	 * 
+	 *
 	 * @param button
 	 *            Button
 	 * @param mnemonic
@@ -302,7 +309,7 @@ public class PlatformUtil {
 
 	/**
 	 * Set mnemonic on button in a platform dependant manner.
-	 * 
+	 *
 	 * @param button
 	 *            Button
 	 * @param mnemonic

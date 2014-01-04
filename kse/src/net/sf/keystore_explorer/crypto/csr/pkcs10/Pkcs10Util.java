@@ -20,6 +20,8 @@
 package net.sf.keystore_explorer.crypto.csr.pkcs10;
 
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +33,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
 
@@ -40,7 +43,9 @@ import net.sf.keystore_explorer.utilities.io.ReadUtil;
 import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.x509.Certificate;
+import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.operator.ContentVerifierProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -53,7 +58,7 @@ import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Provides utility methods relating to PKCS #10 CSRs.
- * 
+ *
  */
 public class Pkcs10Util {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/csr/pkcs10/resources");
@@ -69,7 +74,7 @@ public class Pkcs10Util {
 	/**
 	 * Create a PKCS #10 certificate signing request (CSR) using the supplied
 	 * certificate, private key and signature algorithm.
-	 * 
+	 *
 	 * @param cert
 	 *            The certificate
 	 * @param privateKey
@@ -78,48 +83,70 @@ public class Pkcs10Util {
 	 *            Signature
 	 * @param challenge
 	 *            Challenge, optional, pass null if not required
+     * @param unstructuredName
+     *            An optional company name, pass null if not required
+     * @param useExtensions
+     *            Use extensions from cert for extensionRequest attribute?
 	 * @throws CryptoException
 	 *             If there was a problem generating the CSR
 	 * @return The CSR
 	 */
 	public static PKCS10CertificationRequest generateCsr(X509Certificate cert, PrivateKey privateKey,
-			SignatureType signatureType, String challenge) throws CryptoException {
-		
+			SignatureType signatureType, String challenge, String unstructuredName, boolean useExtensions)
+			        throws CryptoException {
+
 		try {
-			JcaPKCS10CertificationRequestBuilder csrBuilder = 
+			JcaPKCS10CertificationRequestBuilder csrBuilder =
 					new JcaPKCS10CertificationRequestBuilder(cert.getSubjectX500Principal(), cert.getPublicKey());
-			
+
+			// add challenge attribute
 			if (challenge != null) {
-				csrBuilder.addAttribute(pkcs_9_at_challengePassword, new DERPrintableString(challenge));
+			    // PKCS#9 2.0: SHOULD use UTF8String encoding
+			    csrBuilder.addAttribute(pkcs_9_at_challengePassword, new DERUTF8String(challenge));
 			}
-			
+
+			if (unstructuredName != null) {
+			    csrBuilder.addAttribute(pkcs_9_at_unstructuredName, new DERUTF8String(unstructuredName));
+			}
+
+			if (useExtensions) {
+    			// add extensionRequest attribute with all extensions from the certificate
+    			Certificate certificate = Certificate.getInstance(cert.getEncoded());
+    			Extensions extensions = certificate.getTBSCertificate().getExtensions();
+    			if (extensions != null) {
+    			    csrBuilder.addAttribute(pkcs_9_at_extensionRequest, extensions.toASN1Primitive());
+    			}
+			}
+
 			PKCS10CertificationRequest csr =  csrBuilder.build(
 					new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(privateKey));
-			
+
 			if (!verifyCsr(csr)) {
 				throw new CryptoException(res.getString("NoVerifyGenPkcs10Csr.exception.message"));
 			}
 
 			return csr;
+		} catch (CertificateEncodingException e) {
+		    throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
 		} catch (OperatorCreationException e) {
 			throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Verify a PKCS #10 certificate signing request (CSR).
-	 * 
+	 *
 	 * @param csr The certificate signing request
 	 * @return True if successfully verified
 	 * @throws CryptoException
-	 * 				If there was a problem verifying the CSR	
+	 * 				If there was a problem verifying the CSR
 	 */
 	public static boolean verifyCsr(PKCS10CertificationRequest csr) throws CryptoException {
 			try {
-				PublicKey pubKey = new JcaPKCS10CertificationRequest(csr).getPublicKey(); 
-				
-				ContentVerifierProvider contentVerifierProvider = 
+				PublicKey pubKey = new JcaPKCS10CertificationRequest(csr).getPublicKey();
+
+				ContentVerifierProvider contentVerifierProvider =
 						new JcaContentVerifierProviderBuilder().setProvider("BC").build(pubKey);
 				return csr.isSignatureValid(contentVerifierProvider);
 			} catch (InvalidKeyException e) {
@@ -135,12 +162,12 @@ public class Pkcs10Util {
 
 	/**
 	 * DER encode a CSR and PEM the encoding.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param csr
 	 *            The CSR
-	 * @throws CryptoException 
-	 * 				If CSR cannot be encoded 
+	 * @throws CryptoException
+	 * 				If CSR cannot be encoded
 	 */
 	public static byte[] getCsrEncodedDer(PKCS10CertificationRequest csr) throws CryptoException {
 		try {
@@ -152,7 +179,7 @@ public class Pkcs10Util {
 
 	/**
 	 * DER encode a CSR and PEM the encoding.
-	 * 
+	 *
 	 * @return The PEM'd encoding
 	 * @param csr
 	 *            The CSR
@@ -195,7 +222,7 @@ public class Pkcs10Util {
 	/**
 	 * Load a PKCS #10 CSR from the specified stream. The encoding of the CSR
 	 * may be PEM or DER.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load CSR from
 	 * @return The CSR

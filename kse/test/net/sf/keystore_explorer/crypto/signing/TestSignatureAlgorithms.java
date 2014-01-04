@@ -67,7 +67,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for all signature algorithms for certificate and CSR generation.
- * 
+ *
  */
 public class TestSignatureAlgorithms extends TestCaseCrypto {
 	private KeyPair rsaKeyPair;
@@ -268,7 +268,7 @@ public class TestSignatureAlgorithms extends TestCaseCrypto {
 			spkac = new Spkac(new ByteArrayInputStream(baos.toByteArray()));
 			assertTrue(spkac.verify());
 		} else {
-			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(cert, privateKey, signatureType, "whatever");
+			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(cert, privateKey, signatureType, "w/e", "w/e", false);
 			byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
 			pkcs10 = Pkcs10Util.loadCsr(new ByteArrayInputStream(encoded));
 			assertTrue(Pkcs10Util.verifyCsr(pkcs10));

@@ -68,7 +68,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Displays the details of X.509 Extensions.
- * 
+ *
  */
 public class DViewExtensions extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -92,7 +92,7 @@ public class DViewExtensions extends JEscDialog {
 
 	/**
 	 * Creates a new DViewExtensions dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -108,7 +108,7 @@ public class DViewExtensions extends JEscDialog {
 
 	/**
 	 * Creates new DViewExtensions dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -273,10 +273,7 @@ public class DViewExtensions extends JEscDialog {
 
 			try {
 				jtaExtensionValue.setText(ext.getStringValue());
-			}
-			// Don't like catching exception but *anything* could go wrong in
-			// there
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				jtaExtensionValue.setText("");
 				DError dError = new DError(this, APPLICATION_MODAL, ex);
 				dError.setLocationRelativeTo(this);

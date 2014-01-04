@@ -34,9 +34,13 @@ import java.util.Set;
 
 import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.x509.Extension;
+
 /**
  * Holds a set of X.509 extensions.
- * 
+ *
  */
 public class X509ExtensionSet implements X509Extension, Cloneable, Serializable {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
@@ -47,10 +51,38 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	private static final long FILE_MAGIC_NUMBER = 0x47911131;
 	private static final int FILE_VERSION = 1;
 
+    /**
+     * Default constructor
+     */
+    public X509ExtensionSet() {
+    }
+
+    /**
+     * Creates an X509ExtensionSet object from the extensions in the ASN1 sequence.
+     *
+     * @param extensions Sequence with extensions.
+     */
+    public X509ExtensionSet(ASN1Sequence extensions) {
+
+        ASN1Encodable[] asn1Encodables = extensions.toArray();
+
+        for (int i = 0; i < asn1Encodables.length; i++) {
+            ASN1Encodable asn1Encodable = asn1Encodables[i];
+            Extension ext = Extension.getInstance(asn1Encodable);
+            if (ext != null) {
+                try {
+                    addExtension(ext.getExtnId().toString(), ext.isCritical(), ext.getExtnValue().getEncoded());
+                } catch (IOException e) {
+                    // ignore exception from getEncoded()
+                }
+            }
+        }
+    }
+
 	/**
 	 * Add an extension to the set. Any existing extension with the same oid
 	 * will be removed in preference of this one.
-	 * 
+	 *
 	 * @param oid
 	 *            X509Extension object identifier
 	 * @param isCritical
@@ -70,7 +102,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Remove an extension from the set.
-	 * 
+	 *
 	 * @param oid
 	 *            X509Extension object identifier
 	 */
@@ -84,7 +116,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Get critical extensions OIDs.
-	 * 
+	 *
 	 * @return OIDs
 	 */
 	public Set<String> getCriticalExtensionOIDs() {
@@ -93,7 +125,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Get non-critical extensions OIDs.
-	 * 
+	 *
 	 * @return OIDs
 	 */
 	public Set<String> getNonCriticalExtensionOIDs() {
@@ -102,7 +134,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Get extension value for OID.
-	 * 
+	 *
 	 * @param oid
 	 *            OID of extension
 	 * @return Value or null if no such extension
@@ -119,7 +151,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Toggle criticality of extension.
-	 * 
+	 *
 	 * @param oid
 	 *            OID of extension
 	 */
@@ -135,7 +167,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * 'Unsupported' has no meaning in this context.
-	 * 
+	 *
 	 * @return Always false.
 	 */
 	public boolean hasUnsupportedCriticalExtension() {
@@ -159,7 +191,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Load X.509 extension set.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load from
 	 * @return X.509 extension set
@@ -231,7 +263,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Load X.509 extension set.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load from
 	 * @return X.509 extension set
@@ -243,7 +275,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	/**
 	 * Save X.509 extension set.
-	 * 
+	 *
 	 * @param os
 	 *            Stream to save to
 	 * @throws IOException
