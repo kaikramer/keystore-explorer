@@ -23,12 +23,8 @@ import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,15 +34,17 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -55,17 +53,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
@@ -80,6 +75,7 @@ import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.MiGUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.crypto.JValidityPeriod;
@@ -88,13 +84,17 @@ import net.sf.keystore_explorer.gui.dialogs.DialogHelper;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DAddExtensions;
 import net.sf.keystore_explorer.gui.error.DError;
 
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 
 /**
  * Dialog that displays the details of a CSR and presents signing options for
  * it.
- * 
+ *
  */
 public class DSignCsr extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -107,16 +107,13 @@ public class DSignCsr extends JEscDialog {
 	private JLabel jlCsrSubject;
 	private JDistinguishedName jdnCsrSubject;
 	private JLabel jlCsrPublicKey;
-	private JPanel jpCsrPublicKey;
 	private JTextField jtfCsrPublicKey;
 	private JButton jbViewCsrPublicKeyDetails;
 	private JLabel jlCsrSignatureAlgorithm;
 	private JTextField jtfCsrSignatureAlgorithm;
 	private JLabel jlCsrChallenge;
 	private JTextField jtfCsrChallenge;
-	private JPanel jpCsrDetails;
 	private JLabel jlVersion;
-	private JPanel jpVersions;
 	private JRadioButton jrbVersion1;
 	private JRadioButton jrbVersion3;
 	private JLabel jlSignatureAlgorithm;
@@ -129,9 +126,6 @@ public class DSignCsr extends JEscDialog {
 	private JTextField jtfCaReplyFile;
 	private JButton jbBrowse;
 	private JButton jbAddExtensions;
-	private JPanel jpSigningOptions;
-	private JPanel jpOptions;
-	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
 
@@ -150,7 +144,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Creates a new DSignCsr dialog for a PKCS #10 formatted CSR.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param pkcs10Csr
@@ -177,7 +171,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Creates a new DSignCsr dialog for a SPKAC formatted CSR.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param spkacCsr
@@ -203,45 +197,19 @@ public class DSignCsr extends JEscDialog {
 	}
 
 	private void initComponents() throws CryptoException {
-		GridBagConstraints gbcLbl = new GridBagConstraints();
-		gbcLbl.gridx = 0;
-		gbcLbl.gridwidth = 3;
-		gbcLbl.gridheight = 1;
-		gbcLbl.insets = new Insets(5, 5, 5, 5);
-		gbcLbl.anchor = GridBagConstraints.EAST;
-		gbcLbl.weightx = 0;
-
-		GridBagConstraints gbcCtrl = new GridBagConstraints();
-		gbcCtrl.gridx = 3;
-		gbcCtrl.gridwidth = 3;
-		gbcCtrl.gridheight = 1;
-		gbcCtrl.insets = new Insets(5, 5, 5, 5);
-		gbcCtrl.anchor = GridBagConstraints.WEST;
-		gbcCtrl.fill = GridBagConstraints.NONE;
-		gbcCtrl.weightx = 1;
 
 		jlCsrFormat = new JLabel(res.getString("DSignCsr.jlCsrFormat.text"));
-		GridBagConstraints gbc_jlCsrFormat = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlCsrFormat.gridy = 0;
 
-		jtfCsrFormat = new JTextField(10);
+		jtfCsrFormat = new JTextField(15);
 		jtfCsrFormat.setEditable(false);
 		jtfCsrFormat.setToolTipText(res.getString("DSignCsr.jtfCsrFormat.tooltip"));
-		GridBagConstraints gbc_jtfCsrFormat = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfCsrFormat.gridy = 0;
 
 		jlCsrSubject = new JLabel(res.getString("DSignCsr.jlCsrSubject.text"));
-		GridBagConstraints gbc_jlCsrSubject = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlCsrSubject.gridy = 1;
 
 		jdnCsrSubject = new JDistinguishedName(res.getString("DSignCsr.Subject.Title"), 30, false);
 		jdnCsrSubject.setToolTipText(res.getString("DSignCsr.jdnCsrSubject.tooltip"));
-		GridBagConstraints gbc_jdnCsrSubject = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jdnCsrSubject.gridy = 1;
 
 		jlCsrPublicKey = new JLabel(res.getString("DSignCsr.jlCsrPublicKey.text"));
-		GridBagConstraints gbc_jlCsrPublicKey = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlCsrPublicKey.gridy = 2;
 
 		jtfCsrPublicKey = new JTextField(15);
 		jtfCsrPublicKey.setEditable(false);
@@ -251,78 +219,22 @@ public class DSignCsr extends JEscDialog {
 		jbViewCsrPublicKeyDetails.setToolTipText(res.getString("DSignCsr.jbViewCsrPublicKeyDetails.tooltip"));
 		jbViewCsrPublicKeyDetails.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource(res.getString("DSignCsr.jbViewCsrPublicKeyDetails.image")))));
-		jbViewCsrPublicKeyDetails.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignCsr.this);
-					pubKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignCsr.this);
-				}
-			}
-		});
-
-		jpCsrPublicKey = new JPanel(new GridBagLayout());
-		GridBagConstraints gbc_jpCsrPublicKey = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jpCsrPublicKey.gridy = 2;
-
-		GridBagConstraints gbc_jtfCsrPublicKey = new GridBagConstraints();
-		gbc_jtfCsrPublicKey.gridwidth = 1;
-		gbc_jtfCsrPublicKey.gridheight = 1;
-		gbc_jtfCsrPublicKey.gridx = 0;
-		gbc_jtfCsrPublicKey.gridy = 0;
-		gbc_jtfCsrPublicKey.insets = new Insets(0, 0, 0, 5);
-
-		GridBagConstraints gbc_jbViewCsrPublicKeyDetails = new GridBagConstraints();
-		gbc_jbViewCsrPublicKeyDetails.gridwidth = 1;
-		gbc_jbViewCsrPublicKeyDetails.gridheight = 1;
-		gbc_jbViewCsrPublicKeyDetails.gridx = 1;
-		gbc_jbViewCsrPublicKeyDetails.gridy = 0;
-		gbc_jbViewCsrPublicKeyDetails.insets = new Insets(0, 5, 0, 0);
-
-		jpCsrPublicKey.add(jtfCsrPublicKey, gbc_jtfCsrPublicKey);
-		jpCsrPublicKey.add(jbViewCsrPublicKeyDetails, gbc_jbViewCsrPublicKeyDetails);
 
 		jlCsrSignatureAlgorithm = new JLabel(res.getString("DSignCsr.jlCsrSignatureAlgorithm.text"));
-		GridBagConstraints gbc_jlCsrSignatureAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlCsrSignatureAlgorithm.gridy = 3;
 
 		jtfCsrSignatureAlgorithm = new JTextField(15);
 		jtfCsrSignatureAlgorithm.setEditable(false);
 		jtfCsrSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jtfCsrSignatureAlgorithm.tooltip"));
-		GridBagConstraints gbc_jtfCsrSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfCsrSignatureAlgorithm.gridy = 3;
 
 		jlCsrChallenge = new JLabel(res.getString("DSignCsr.jlCsrChallenge.text"));
-		GridBagConstraints gbc_jlCsrChallenge = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlCsrChallenge.gridy = 4;
 
 		jtfCsrChallenge = new JTextField(15);
 		jtfCsrChallenge.setEditable(false);
 		jtfCsrChallenge.setToolTipText(res.getString("DSignCsr.jtfCsrChallenge.tooltip"));
-		GridBagConstraints gbc_jtfCsrChallenge = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfCsrChallenge.gridy = 4;
-
-		jpCsrDetails = new JPanel(new GridBagLayout());
-		jpCsrDetails.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new TitledBorder(new EtchedBorder(), res
-				.getString("DSignCsr.jpCsrDetails.text"))));
-
-		jpCsrDetails.add(jlCsrFormat, gbc_jlCsrFormat);
-		jpCsrDetails.add(jtfCsrFormat, gbc_jtfCsrFormat);
-		jpCsrDetails.add(jlCsrSubject, gbc_jlCsrSubject);
-		jpCsrDetails.add(jdnCsrSubject, gbc_jdnCsrSubject);
-		jpCsrDetails.add(jlCsrPublicKey, gbc_jlCsrPublicKey);
-		jpCsrDetails.add(jpCsrPublicKey, gbc_jpCsrPublicKey);
-		jpCsrDetails.add(jlCsrSignatureAlgorithm, gbc_jlCsrSignatureAlgorithm);
-		jpCsrDetails.add(jtfCsrSignatureAlgorithm, gbc_jtfCsrSignatureAlgorithm);
-		jpCsrDetails.add(jlCsrChallenge, gbc_jlCsrChallenge);
-		jpCsrDetails.add(jtfCsrChallenge, gbc_jtfCsrChallenge);
 
 		populateCsrDetails();
 
 		jlVersion = new JLabel(res.getString("DSignCsr.jlVersion.text"));
-		GridBagConstraints gbc_jlVersion = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlVersion.gridy = 0;
 
 		jrbVersion1 = new JRadioButton(res.getString("DSignCsr.jrbVersion1.text"));
 		jrbVersion1.setToolTipText(res.getString("DSignCsr.jrbVersion1.tooltip"));
@@ -330,70 +242,31 @@ public class DSignCsr extends JEscDialog {
 		jrbVersion3 = new JRadioButton(res.getString("DSignCsr.jrbVersion3.text"));
 		jrbVersion3.setToolTipText(res.getString("DSignCsr.jrbVersion3.tooltip"));
 
-		jpVersions = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-		GridBagConstraints gbc_jpVersions = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jpVersions.gridx = 4;
-		gbc_jpVersions.gridy = 0;
-
-		jpVersions.add(jrbVersion1);
-		jpVersions.add(jrbVersion3);
-
-		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(jrbVersion1);
-		buttonGroup.add(jrbVersion3);
-
 		jlSignatureAlgorithm = new JLabel(res.getString("DSignCsr.jlSignatureAlgorithm.text"));
-		GridBagConstraints gbc_jlSignatureAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSignatureAlgorithm.gridy = 1;
 
 		jcbSignatureAlgorithm = new JComboBox();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		populateSigAlgs();
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jcbSignatureAlgorithm.tooltip"));
-		GridBagConstraints gbc_jcbSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jcbSignatureAlgorithm.gridy = 1;
 
 		jlValidityPeriod = new JLabel(res.getString("DSignCsr.jlValidityPeriod.text"));
-		GridBagConstraints gbc_jlValidityPeriod = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlValidityPeriod.gridy = 2;
 
 		jvpValidityPeriod = new JValidityPeriod(JValidityPeriod.YEARS);
 		jvpValidityPeriod.setToolTipText(res.getString("DSignCsr.jvpValidityPeriod.tooltip"));
-		GridBagConstraints gbc_jvpValidityPeriod = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jvpValidityPeriod.gridy = 2;
 
 		jlSerialNumber = new JLabel(res.getString("DSignCsr.jlSerialNumber.text"));
-		GridBagConstraints gbc_jlSerialNumber = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSerialNumber.gridy = 3;
 
-		jtfSerialNumber = new JTextField("" + generateSerialNumber(), 10);
+		jtfSerialNumber = new JTextField("" + generateSerialNumber(), 15);
 		jtfSerialNumber.setToolTipText(res.getString("DSignCsr.jtfSerialNumber.tooltip"));
-		GridBagConstraints gbc_jtfSerialNumber = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfSerialNumber.gridy = 3;
-
-		jpSigningOptions = new JPanel(new GridBagLayout());
-		jpSigningOptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new TitledBorder(new EtchedBorder(),
-				res.getString("DSignCsr.jpSigningOptions.text"))));
 
 		jlCaReplyFile = new JLabel(res.getString("DSignCsr.jlCaReplyFile.text"));
-		GridBagConstraints gbc_jlCaReplyFile = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlCaReplyFile.gridy = 4;
 
 		jtfCaReplyFile = new JTextField(30);
 		jtfCaReplyFile.setToolTipText(res.getString("DSignCsr.jtfCaReplyFile.tooltip"));
-		GridBagConstraints gbc_jtfCaReplyFile = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfCaReplyFile.gridy = 4;
-		gbc_jtfCaReplyFile.gridwidth = 9;
-		gbc_jtfCaReplyFile.fill = GridBagConstraints.HORIZONTAL;
 
 		jbBrowse = new JButton(res.getString("DSignCsr.jbBrowse.text"));
 		jbBrowse.setToolTipText(res.getString("DSignCsr.jbBrowse.tooltip"));
 		PlatformUtil.setMnemonic(jbBrowse, res.getString("DSignCsr.jbBrowse.mnemonic").charAt(0));
-		GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jbBrowse.gridy = 4;
-		gbc_jbBrowse.gridx = 12;
-		gbc_jbBrowse.gridwidth = 3;
-		gbc_jbBrowse.fill = GridBagConstraints.HORIZONTAL;
 
 		jbBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -409,10 +282,6 @@ public class DSignCsr extends JEscDialog {
 		jbAddExtensions = new JButton(res.getString("DSignCsr.jbAddExtensions.text"));
 		jbAddExtensions.setMnemonic(res.getString("DSignCsr.jbAddExtensions.mnemonic").charAt(0));
 		jbAddExtensions.setToolTipText(res.getString("DSignCsr.jbAddExtensions.tooltip"));
-		GridBagConstraints gbc_jbAddExtensions = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jbAddExtensions.gridy = 5;
-		gbc_jbAddExtensions.gridwidth = 15;
-		gbc_jbAddExtensions.anchor = GridBagConstraints.EAST;
 
 		jbAddExtensions.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -433,51 +302,72 @@ public class DSignCsr extends JEscDialog {
 
 		jrbVersion3.setSelected(true);
 
-		jpSigningOptions.add(jlVersion, gbc_jlVersion);
-		jpSigningOptions.add(jpVersions, gbc_jpVersions);
-		jpSigningOptions.add(jlSignatureAlgorithm, gbc_jlSignatureAlgorithm);
-		jpSigningOptions.add(jcbSignatureAlgorithm, gbc_jcbSignatureAlgorithm);
-		jpSigningOptions.add(jlValidityPeriod, gbc_jlValidityPeriod);
-		jpSigningOptions.add(jvpValidityPeriod, gbc_jvpValidityPeriod);
-		jpSigningOptions.add(jlSerialNumber, gbc_jlSerialNumber);
-		jpSigningOptions.add(jtfSerialNumber, gbc_jtfSerialNumber);
-		jpSigningOptions.add(jlCaReplyFile, gbc_jlCaReplyFile);
-		jpSigningOptions.add(jtfCaReplyFile, gbc_jtfCaReplyFile);
-		jpSigningOptions.add(jbBrowse, gbc_jbBrowse);
-		jpSigningOptions.add(jbAddExtensions, gbc_jbAddExtensions);
+        jbOK = new JButton(res.getString("DSignCsr.jbOK.text"));
+        jbCancel = new JButton(res.getString("DSignCsr.jbCancel.text"));
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                CANCEL_KEY);
 
-		jpOptions = new JPanel(new BorderLayout());
-		jpOptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
-		jpOptions.add(jpCsrDetails, BorderLayout.NORTH);
-		jpOptions.add(jpSigningOptions, BorderLayout.SOUTH);
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("debug, insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+        MiGUtil.addSeparator(pane, res.getString("DSignCsr.jpCsrDetails.text"));
+        pane.add(jlCsrFormat, "");
+        pane.add(jtfCsrFormat, "wrap");
+        pane.add(jlCsrSubject, "");
+        pane.add(jdnCsrSubject, "wrap");
+        pane.add(jlCsrPublicKey, "");
+        pane.add(jtfCsrPublicKey, "split 2");
+        pane.add(jbViewCsrPublicKeyDetails, "wrap");
+        pane.add(jlCsrSignatureAlgorithm, "");
+        pane.add(jtfCsrSignatureAlgorithm, "wrap");
+        pane.add(jlCsrChallenge, "");
+        pane.add(jtfCsrChallenge, "wrap");
+        MiGUtil.addSeparator(pane, res.getString("DSignCsr.jpSigningOptions.text"));
+		pane.add(jlVersion, "");
+		pane.add(jrbVersion1, "split 2");
+		pane.add(jrbVersion3, "wrap");
+		pane.add(jlSignatureAlgorithm, "");
+		pane.add(jcbSignatureAlgorithm, "wrap");
+		pane.add(jlValidityPeriod, "");
+		pane.add(jvpValidityPeriod, "wrap");
+		pane.add(jlSerialNumber, "");
+		pane.add(jtfSerialNumber, "wrap");
+		pane.add(jlCaReplyFile, "");
+		pane.add(jtfCaReplyFile, "split 2");
+		pane.add(jbBrowse, "wrap");
+		pane.add(jbAddExtensions, "spanx, wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
-		jbOK = new JButton(res.getString("DSignCsr.jbOK.text"));
+        jbViewCsrPublicKeyDetails.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    CursorUtil.setCursorBusy(DSignCsr.this);
+                    pubKeyDetailsPressed();
+                } finally {
+                    CursorUtil.setCursorFree(DSignCsr.this);
+                }
+            }
+        });
+
 		jbOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
 		});
 
-		jbCancel = new JButton(res.getString("DSignCsr.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
-
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpOptions, BorderLayout.NORTH);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
@@ -605,7 +495,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Get chosen certificate version.
-	 * 
+	 *
 	 * @return Certificate version or null if dialog cancelled
 	 */
 	public X509CertificateVersion getVersion() {
@@ -614,7 +504,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Get chosen signature type.
-	 * 
+	 *
 	 * @return Signature type or null if dialog cancelled
 	 */
 	public SignatureType getSignatureType() {
@@ -623,7 +513,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Get chosen validity period.
-	 * 
+	 *
 	 * @return Validity period or -1 if dialog cancelled
 	 */
 	public long getValidityPeriod() {
@@ -632,7 +522,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Get chosen serial number.
-	 * 
+	 *
 	 * @return Serial number or null if dialog cancelled
 	 */
 	public BigInteger getSerialNumber() {
@@ -641,7 +531,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Get chosen CA Reply file.
-	 * 
+	 *
 	 * @return CA Reply file or null if dialog cancelled
 	 */
 	public File getCaReplyFile() {
@@ -650,7 +540,7 @@ public class DSignCsr extends JEscDialog {
 
 	/**
 	 * Get chosen certficate extensions.
-	 * 
+	 *
 	 * @return Certificate extensions or null if dialog cancelled.
 	 */
 	public X509ExtensionSet getExtensions() {
@@ -759,4 +649,33 @@ public class DSignCsr extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
+
+	   // for quick testing
+    public static void main(String[] args) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+                    KeyPair keyPair = keyGen.genKeyPair();
+                    JcaPKCS10CertificationRequestBuilder csrBuilder =
+                            new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
+                    PKCS10CertificationRequest csr =  csrBuilder.build(
+                            new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
+
+                    DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, keyPair.getPrivate(), KeyPairType.RSA,
+                            null);
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

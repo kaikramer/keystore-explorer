@@ -51,12 +51,12 @@ import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Action to generate a CSR using the selected key pair entry.
- * 
+ *
  */
 public class GenerateCsrAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -107,7 +107,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 						res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"), keyPairAlg));
 			}
 
-			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, privateKey, keyPairType);
+			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType);
 			dGenerateCsr.setLocationRelativeTo(frame);
 			dGenerateCsr.setVisible(true);
 
@@ -118,6 +118,8 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 			CsrType format = dGenerateCsr.getFormat();
 			SignatureType signatureType = dGenerateCsr.getSignatureType();
 			String challenge = dGenerateCsr.getChallenge();
+			String unstructuredName = dGenerateCsr.getUnstructuredName();
+			boolean useCertificateExtensions = dGenerateCsr.isAddExtensionsWanted();
 			csrFile = dGenerateCsr.getCsrFile();
 
 			X509Certificate firstCertInChain = X509CertUtil.orderX509CertChain(X509CertUtil
@@ -127,7 +129,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 
 			if (format == CsrType.PKCS10) {
 				String csr = Pkcs10Util.getCsrEncodedDerPem(Pkcs10Util.generateCsr(firstCertInChain, privateKey,
-						signatureType, challenge));
+						signatureType, challenge, unstructuredName, useCertificateExtensions));
 
 				fos.write(csr.getBytes());
 			} else {
