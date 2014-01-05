@@ -22,6 +22,7 @@ package net.sf.keystore_explorer.crypto.publickey;
 import java.io.IOException;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -35,6 +36,7 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 /**
  * Generator for public key identifiers of various forms.
@@ -110,12 +112,15 @@ public class KeyIdentifierGenerator {
 
 		if (publicKey instanceof RSAPublicKey) {
 			encodedPublicKey = encodeRsaPublicKeyAsBitString((RSAPublicKey) publicKey);
+		} else if (publicKey instanceof ECPublicKey){
+			encodedPublicKey = encodeEcPublicKeyAsBitString((ECPublicKey) publicKey);
 		} else {
 			encodedPublicKey = encodeDsaPublicKeyAsBitString((DSAPublicKey) publicKey);
 		}
 
 		return new DERBitString(encodedPublicKey);
 	}
+
 
 	private byte[] encodeRsaPublicKeyAsBitString(RSAPublicKey rsaPublicKey) throws IOException {
 		ASN1EncodableVector vec = new ASN1EncodableVector();
@@ -124,6 +129,12 @@ public class KeyIdentifierGenerator {
 		
 		DERSequence derSequence = new DERSequence(vec);
 		return derSequence.getEncoded();
+	}
+
+	private byte[] encodeEcPublicKeyAsBitString(ECPublicKey ecPublicKey) {
+		SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(ecPublicKey.getEncoded());
+		byte[] bytes = publicKeyInfo.getPublicKeyData().getBytes();
+		return bytes;
 	}
 
 	private byte[] encodeDsaPublicKeyAsBitString(DSAPublicKey dsaPublicKey) throws IOException {

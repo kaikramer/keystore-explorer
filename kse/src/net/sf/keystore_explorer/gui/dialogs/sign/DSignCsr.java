@@ -23,7 +23,6 @@ import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 
-import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -52,10 +51,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -74,7 +75,6 @@ import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
-import net.sf.keystore_explorer.gui.MiGUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.crypto.JValidityPeriod;
@@ -306,39 +306,44 @@ public class DSignCsr extends JEscDialog {
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 CANCEL_KEY);
 
+        JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+
+		JPanel jpCsr = new JPanel();
+		jpCsr.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DSignCsr.jpCsrDetails.text")));
+		JPanel jpSignOptions = new JPanel();
+		jpSignOptions.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DSignCsr.jpSigningOptions.text")));
 
         // layout
-        Container pane = getContentPane();
-        pane.setLayout(new MigLayout("debug, insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
-        MiGUtil.addSeparator(pane, res.getString("DSignCsr.jpCsrDetails.text"));
-        pane.add(jlCsrFormat, "");
-        pane.add(jtfCsrFormat, "wrap");
-        pane.add(jlCsrSubject, "");
-        pane.add(jdnCsrSubject, "wrap");
-        pane.add(jlCsrPublicKey, "");
-        pane.add(jtfCsrPublicKey, "split 2");
-        pane.add(jbViewCsrPublicKeyDetails, "wrap");
-        pane.add(jlCsrSignatureAlgorithm, "");
-        pane.add(jtfCsrSignatureAlgorithm, "wrap");
-        pane.add(jlCsrChallenge, "");
-        pane.add(jtfCsrChallenge, "wrap");
-        MiGUtil.addSeparator(pane, res.getString("DSignCsr.jpSigningOptions.text"));
-		pane.add(jlVersion, "");
-		pane.add(jrbVersion1, "split 2");
-		pane.add(jrbVersion3, "wrap");
-		pane.add(jlSignatureAlgorithm, "");
-		pane.add(jcbSignatureAlgorithm, "wrap");
-		pane.add(jlValidityPeriod, "");
-		pane.add(jvpValidityPeriod, "wrap");
-		pane.add(jlSerialNumber, "");
-		pane.add(jtfSerialNumber, "wrap");
-		pane.add(jlCaReplyFile, "");
-		pane.add(jtfCaReplyFile, "split 2");
-		pane.add(jbBrowse, "wrap");
-		pane.add(jbAddExtensions, "spanx, wrap");
-		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
-        pane.add(jbCancel, "spanx, split 2, tag cancel");
-        pane.add(jbOK, "tag ok");
+		getContentPane().setLayout(new MigLayout("fill", "", ""));
+		getContentPane().add(jpCsr, "grow, wrap");
+		getContentPane().add(jpSignOptions, "wrap unrel");
+		getContentPane().add(buttons, "growx");
+        jpCsr.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
+        jpCsr.add(jlCsrFormat, "");
+        jpCsr.add(jtfCsrFormat, "wrap");
+        jpCsr.add(jlCsrSubject, "");
+        jpCsr.add(jdnCsrSubject, "wrap");
+        jpCsr.add(jlCsrPublicKey, "");
+        jpCsr.add(jtfCsrPublicKey, "split 2");
+        jpCsr.add(jbViewCsrPublicKeyDetails, "wrap");
+        jpCsr.add(jlCsrSignatureAlgorithm, "");
+        jpCsr.add(jtfCsrSignatureAlgorithm, "wrap");
+        jpCsr.add(jlCsrChallenge, "");
+        jpCsr.add(jtfCsrChallenge, "wrap");
+        jpSignOptions.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
+		jpSignOptions.add(jlVersion, "");
+		jpSignOptions.add(jrbVersion1, "split 2");
+		jpSignOptions.add(jrbVersion3, "wrap");
+		jpSignOptions.add(jlSignatureAlgorithm, "");
+		jpSignOptions.add(jcbSignatureAlgorithm, "wrap");
+		jpSignOptions.add(jlValidityPeriod, "");
+		jpSignOptions.add(jvpValidityPeriod, "wrap");
+		jpSignOptions.add(jlSerialNumber, "");
+		jpSignOptions.add(jtfSerialNumber, "wrap");
+		jpSignOptions.add(jlCaReplyFile, "");
+		jpSignOptions.add(jtfCaReplyFile, "split 2");
+		jpSignOptions.add(jbBrowse, "wrap");
+		jpSignOptions.add(jbAddExtensions, "spanx, wrap");
 
         jbViewCsrPublicKeyDetails.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -626,7 +631,7 @@ public class DSignCsr extends JEscDialog {
 		dispose();
 	}
 
-	   // for quick testing
+	// for quick testing
     public static void main(String[] args) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -634,6 +639,7 @@ public class DSignCsr extends JEscDialog {
             public void run() {
                 try {
                     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+                    keyGen.initialize(1024);
                     KeyPair keyPair = keyGen.genKeyPair();
                     JcaPKCS10CertificationRequestBuilder csrBuilder =
                             new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
