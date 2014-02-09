@@ -33,24 +33,22 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.DViewCrl;
-import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 
 /**
  * Action to examine a CRL.
- * 
+ *
  */
 public class ExamineCrlAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -72,31 +70,11 @@ public class ExamineCrlAction extends KeyStoreExplorerAction {
 	 * Do action.
 	 */
 	protected void doAction() {
-		File crlFile = chooseCRLFile(kseFrame);
-
-		if (crlFile == null) {
-			return;
-		}
-
-		try {
-			X509CRL crl = openCrl(crlFile, kseFrame);
-
-			if (crl != null) {
-				DViewCrl dViewCrl = new DViewCrl(frame, MessageFormat.format(
-						res.getString("ExamineCrlAction.CrlDetailsFile.Title"), crlFile.getName()), crl);
-				dViewCrl.setLocationRelativeTo(frame);
-				dViewCrl.setVisible(true);
-				return;
-			}
-
-			return;
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-			return;
-		}
+		File crlFile = chooseCRLFile();
+		openCrl(crlFile);
 	}
 
-	private File chooseCRLFile(KseFrame kseFrame) {
+	private File chooseCRLFile() {
 		JFileChooser chooser = FileChooserFactory.getCrlFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("ExamineCrlAction.ExamineCrl.Title"));
@@ -111,30 +89,44 @@ public class ExamineCrlAction extends KeyStoreExplorerAction {
 		return null;
 	}
 
-	private X509CRL openCrl(File crlFile, KseFrame kseFrame) throws CryptoException {
-		try {
-			X509CRL crl = X509CertUtil.loadCRL(new FileInputStream(crlFile));
-			return crl;
-		} catch (FileNotFoundException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("ExamineCrlAction.NoReadFile.message"), crlFile),
-					res.getString("ExamineCrlAction.OpenCrl.Title"), JOptionPane.WARNING_MESSAGE);
-			return null;
-		} catch (Exception ex) {
-			String problemStr = MessageFormat.format(res.getString("ExamineCrlAction.NoOpenCrl.Problem"),
-					crlFile.getName());
+	/**
+	 * Open CRL file.
+	 *
+	 * @param crlFile
+	 */
+	public void openCrl(File crlFile) {
 
-			String[] causes = new String[] { res.getString("ExamineCrlAction.NotCrl.Cause"),
-					res.getString("ExamineCrlAction.CorruptedCrl.Cause") };
+       if (crlFile == null) {
+            return;
+        }
 
-			Problem problem = new Problem(problemStr, causes, ex);
+        X509CRL crl = null;
+        try {
+            crl = X509CertUtil.loadCRL(new FileInputStream(crlFile));
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(frame,
+                    MessageFormat.format(res.getString("ExamineCrlAction.NoReadFile.message"), crlFile),
+                    res.getString("ExamineCrlAction.OpenCrl.Title"), JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            String problemStr = MessageFormat.format(res.getString("ExamineCrlAction.NoOpenCrl.Problem"),
+                    crlFile.getName());
 
-			DProblem dProblem = new DProblem(frame, res.getString("ExamineCrlAction.ProblemOpeningCrl.Title"),
-					APPLICATION_MODAL, problem);
-			dProblem.setLocationRelativeTo(frame);
-			dProblem.setVisible(true);
+            String[] causes = new String[] { res.getString("ExamineCrlAction.NotCrl.Cause"),
+                    res.getString("ExamineCrlAction.CorruptedCrl.Cause") };
 
-			return null;
-		}
+            Problem problem = new Problem(problemStr, causes, ex);
+
+            DProblem dProblem = new DProblem(frame, res.getString("ExamineCrlAction.ProblemOpeningCrl.Title"),
+                    APPLICATION_MODAL, problem);
+            dProblem.setLocationRelativeTo(frame);
+            dProblem.setVisible(true);
+        }
+
+        if (crl != null) {
+            DViewCrl dViewCrl = new DViewCrl(frame, MessageFormat.format(
+                    res.getString("ExamineCrlAction.CrlDetailsFile.Title"), crlFile.getName()), crl);
+            dViewCrl.setLocationRelativeTo(frame);
+            dViewCrl.setVisible(true);
+        }
 	}
 }

@@ -186,7 +186,7 @@ import com.jgoodies.looks.Options;
 
 /**
  * KeyStore Explorer application frame. Wraps an actual JFrame.
- * 
+ *
  */
 public final class KseFrame implements StatusBar {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -264,6 +264,10 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiTipOfTheDay;
 	private JMenu jmOnlineResources;
 	private JMenuItem jmiWebsite;
+	private JMenuItem jmiSourceforge;
+	private JMenuItem jmiSfForum;
+	private JMenuItem jmiSfBugs;
+	private JMenuItem jmiSfFeatureReqs;
 	private JMenuItem jmiCheckUpdate;
 	private JMenuItem jmiSecurityProviders;
 	private JMenuItem jmiCryptographyStrength;
@@ -322,7 +326,7 @@ public final class KseFrame implements StatusBar {
 	private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeUber;
 	private JMenuItem jmiKeyStoreSetPassword;
 	private JMenuItem jmiKeyStoreProperties;
-	
+
 	private JPopupMenu jpmKeyPair;
 	private JMenu jmKeyPairDetails;
 	private JMenuItem jmiKeyPairCertificateChainDetails;
@@ -427,7 +431,11 @@ public final class KseFrame implements StatusBar {
 	private final DetectFileTypeAction detectFileTypeAction = new DetectFileTypeAction(this);
 	private final HelpAction helpAction = new HelpAction(this);
 	private final TipOfTheDayAction tipOfTheDayAction = new TipOfTheDayAction(this);
-	private final WebsiteAction websiteAction = new WebsiteAction(this);
+	private final WebsiteAction websiteAction = new WebsiteAction(this, WebsiteAction.Target.MAIN);
+	private final WebsiteAction sfProjectSiteAction = new WebsiteAction(this, WebsiteAction.Target.SOURCEFORGE);
+	private final WebsiteAction sfForumAction = new WebsiteAction(this, WebsiteAction.Target.FORUM);
+	private final WebsiteAction sfBugsAction = new WebsiteAction(this, WebsiteAction.Target.BUGREPORTS);
+	private final WebsiteAction sfFeatureReqsAction = new WebsiteAction(this, WebsiteAction.Target.FEATURE_REQUESTS);
 	private final CheckUpdateAction checkUpdateAction = new CheckUpdateAction(this);
 	private final SecurityProvidersAction securityProvidersAction = new SecurityProvidersAction(this);
 	private final CryptographyStrengthAction cryptographyStrengthAction = new CryptographyStrengthAction(this);
@@ -493,7 +501,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Get underlying JFrame.
-	 * 
+	 *
 	 * @return Underlying frame
 	 */
 	public JFrame getUnderlyingFrame() {
@@ -502,7 +510,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Get application settings.
-	 * 
+	 *
 	 * @return Application settings
 	 */
 	public ApplicationSettings getApplicationSettings() {
@@ -947,11 +955,35 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jmOnlineResources, res.getString("KseFrame.jmOnlineResources.mnemonic").charAt(0));
 		jmHelp.add(jmOnlineResources);
 
-		jmiWebsite = new JMenuItem(websiteAction);
-		PlatformUtil.setMnemonic(jmiWebsite, res.getString("KseFrame.jmiWebsite.mnemonic").charAt(0));
-		jmiWebsite.setToolTipText(null);
-		new StatusBarChangeHandler(jmiWebsite, (String) websiteAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmOnlineResources.add(jmiWebsite);
+        jmiWebsite = new JMenuItem(websiteAction);
+        PlatformUtil.setMnemonic(jmiWebsite, res.getString("KseFrame.jmiWebsite.mnemonic").charAt(0));
+        jmiWebsite.setToolTipText(null);
+        new StatusBarChangeHandler(jmiWebsite, (String) websiteAction.getValue(Action.LONG_DESCRIPTION), this);
+        jmOnlineResources.add(jmiWebsite);
+
+        jmiSourceforge = new JMenuItem(sfProjectSiteAction);
+        PlatformUtil.setMnemonic(jmiSourceforge, res.getString("KseFrame.jmiSourceforge.mnemonic").charAt(0));
+        jmiSourceforge.setToolTipText(null);
+        new StatusBarChangeHandler(jmiSourceforge, (String) sfProjectSiteAction.getValue(Action.LONG_DESCRIPTION), this);
+        jmOnlineResources.add(jmiSourceforge);
+
+        jmiSfBugs = new JMenuItem(sfBugsAction);
+        PlatformUtil.setMnemonic(jmiSfBugs, res.getString("KseFrame.jmiSfBugs.mnemonic").charAt(0));
+        jmiSfBugs.setToolTipText(null);
+        new StatusBarChangeHandler(jmiSfBugs, (String) sfBugsAction.getValue(Action.LONG_DESCRIPTION), this);
+        jmOnlineResources.add(jmiSfBugs);
+
+//        jmiSfFeatureReqs = new JMenuItem(sfFeatureReqsAction);
+//        PlatformUtil.setMnemonic(jmiSfFeatureReqs, res.getString("KseFrame.jmiSfFeatureReqs.mnemonic").charAt(0));
+//        jmiSfFeatureReqs.setToolTipText(null);
+//        new StatusBarChangeHandler(jmiSfFeatureReqs, (String) sfFeatureReqsAction.getValue(Action.LONG_DESCRIPTION), this);
+//        jmOnlineResources.add(jmiSfFeatureReqs);
+
+        jmiSfForum = new JMenuItem(sfForumAction);
+        PlatformUtil.setMnemonic(jmiSfForum, res.getString("KseFrame.jmiSfForum.mnemonic").charAt(0));
+        jmiSfForum.setToolTipText(null);
+        new StatusBarChangeHandler(jmiSfForum, (String) sfForumAction.getValue(Action.LONG_DESCRIPTION), this);
+        jmOnlineResources.add(jmiSfForum);
 
 		jmiCheckUpdate = new JMenuItem(checkUpdateAction);
 		PlatformUtil.setMnemonic(jmiCheckUpdate, res.getString("KseFrame.jmiCheckUpdate.mnemonic").charAt(0));
@@ -1375,7 +1407,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private void initMainPane() {
-		
+
 		// Displays Quick Start pane initially and KeyStore tabbed pane when at
 		// least one KeyStore is open
 
@@ -1387,11 +1419,11 @@ public final class KseFrame implements StatusBar {
 		jkstpKeyStores.setTabLayoutPolicy(tabLayout);
 
 		jkstpKeyStores.setBorder(new EmptyBorder(3, 3, 3, 3));
-		
+
 		jkstpKeyStores.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent evt) {
 				// Update controls as selected KeyStore is changed
-				updateControls(false); 
+				updateControls(false);
 			}
 		});
 
@@ -1406,7 +1438,7 @@ public final class KseFrame implements StatusBar {
 
 			public void mouseClicked(MouseEvent evt) {
 				// Close tab if it is middle-clicked
-				if (evt.getButton() == MouseEvent.BUTTON2) { 
+				if (evt.getButton() == MouseEvent.BUTTON2) {
 					closeAction.closeActiveKeyStore();
 				}
 			}
@@ -1426,7 +1458,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private JScrollPane wrapKeyStoreTableInScrollPane(JTable jtKeyStore) {
-		
+
 		jtKeyStore.setOpaque(true);
 		jtKeyStore.setShowGrid(false);
 		jtKeyStore.setFillsViewportHeight(true);
@@ -1480,7 +1512,7 @@ public final class KseFrame implements StatusBar {
 				}
 	        }
 	    });
-		
+
 		// Add DnD source support to KeyStore
 		DragSource ds = DragSource.getDefaultDragSource();
 		ds.createDefaultDragGestureRecognizer(jtKeyStore, DnDConstants.ACTION_MOVE,
@@ -1644,7 +1676,7 @@ public final class KseFrame implements StatusBar {
 
 	private void initKeyStorePopupMenu() {
 		jpmKeyStore = new JPopupMenu();
-		
+
 		jmiKeyStoreGenerateKeyPair = new JMenuItem(generateKeyPairAction);
 		PlatformUtil.setMnemonic(jmiGenerateKeyPair, res.getString("KseFrame.jmiGenerateKeyPair.mnemonic").charAt(0));
 		jmiKeyStoreGenerateKeyPair.setToolTipText(null);
@@ -1746,8 +1778,8 @@ public final class KseFrame implements StatusBar {
 		jpmKeyStore.add(jmiKeyStoreProperties);
 	}
 
-	
-	
+
+
 	private void initKeyStoreEntryPopupMenus() {
 		jpmKeyPair = new JPopupMenu();
 
@@ -2035,7 +2067,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private void maybeShowSelectedEntryPopupMenu(MouseEvent evt) {
-		
+
 		JTable jtKeyStore = (JTable) evt.getComponent();
 
 		Point point = new Point(evt.getX(), evt.getY());
@@ -2044,28 +2076,28 @@ public final class KseFrame implements StatusBar {
 		if (evt.isPopupTrigger()) {
 
 			if (row != -1) {
-				
+
 				jtKeyStore.setRowSelectionInterval(row, row);
 
 				if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
-					
+
 					// For non-PKCS 12 KeyStores...
 					if (!getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType()
 							.equals(KeyStoreType.PKCS12.jce())) {
-						
+
 						// Only allow unlocking from menu if entry is currently locked
 						boolean locked = ((Boolean) jtKeyStore.getValueAt(row, 1)).booleanValue();
 						unlockKeyPairAction.setEnabled(locked);
 					}
 
 					jpmKeyPair.show(evt.getComponent(), evt.getX(), evt.getY());
-					
+
 				} else if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
-					
+
 					jpmTrustedCertificate.show(evt.getComponent(), evt.getX(), evt.getY());
-					
+
 				} else if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.KEY_ENTRY)) {
-					
+
 					// For non-PKCS 12 KeyStores...
 					if (!getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType()
 							.equals(KeyStoreType.PKCS12.jce())) {
@@ -2085,7 +2117,7 @@ public final class KseFrame implements StatusBar {
 		}
 
 		// Selection changed - update edit controls
-		updateCutCopyPasteControls(); 
+		updateCutCopyPasteControls();
 	}
 
 	private void maybeShowKeyStoreTabPopup(MouseEvent evt) {
@@ -2111,7 +2143,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Add a KeyStore to the set of loaded KeyStores.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore
 	 * @param keyStoreName
@@ -2127,7 +2159,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Add a KeyStore to the set of loaded KeyStores.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore
 	 * @param keyStoreFile
@@ -2164,7 +2196,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Removed the supplied KeyStore from the set of loaded KeyStores.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore
 	 */
@@ -2180,7 +2212,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Find the supplied KeyStore in the set of loaded KeyStores.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore to find
 	 * @return The KeyStore's index
@@ -2197,10 +2229,10 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Get the active KeyStore.
-	 * 
+	 *
 	 * @return The KeyStore or null if no KeyStore is active
 	 */
-	public KeyStore getActiveKeyStore() {	
+	public KeyStore getActiveKeyStore() {
 		KeyStoreHistory history = getActiveKeyStoreHistory();
 		if (history == null) {
 			return null;
@@ -2210,10 +2242,10 @@ public final class KseFrame implements StatusBar {
 		KeyStore keyStore = currentState.getKeyStore();
 		return keyStore;
 	}
-	
+
 	/**
 	 * Get the active KeyStore history.
-	 * 
+	 *
 	 * @return The KeyStore history or null if no KeyStore is active
 	 */
 	public KeyStoreHistory getActiveKeyStoreHistory() {
@@ -2227,7 +2259,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Get all loaded KeyStore histories in display order.
-	 * 
+	 *
 	 * @return KeyStore histories
 	 */
 	public KeyStoreHistory[] getKeyStoreHistories() {
@@ -2236,7 +2268,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Focus on the supplied KeyStore.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore
 	 */
@@ -2259,7 +2291,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Get a the selected entry as a drag entry for DnD.
-	 * 
+	 *
 	 * @return Drag entry or null if entry could not be dragged
 	 */
 	public DragEntry dragSelectedEntry() {
@@ -2318,7 +2350,7 @@ public final class KseFrame implements StatusBar {
 	/**
 	 * Get the alias of the entry currently selected in the KeyStore table if
 	 * any.
-	 * 
+	 *
 	 * @return Alias or null if none selected
 	 */
 	public String getSelectedEntryAlias() {
@@ -2347,7 +2379,7 @@ public final class KseFrame implements StatusBar {
 	/**
 	 * Update the frame's controls dependant on the state of its open and active
 	 * KeyStores.
-	 * 
+	 *
 	 * @param keyStoreContentsChanged
 	 *            Have the active KeyStore's contents changed?
 	 */
@@ -2598,7 +2630,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Display the supplied text in the status bar.
-	 * 
+	 *
 	 * @param status
 	 *            Text to display
 	 */
@@ -2647,7 +2679,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Get frame's size and position. Used to get size on exit.
-	 * 
+	 *
 	 * @param keyStoresClosed
 	 *            Were all KeyStores closed on exit?
 	 * @return Size and position
@@ -2671,7 +2703,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Get recently opened files.
-	 * 
+	 *
 	 * @return Recently opened files
 	 */
 	public File[] getRecentFiles() {
@@ -2680,7 +2712,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Add a file to the top of the recently opened files.
-	 * 
+	 *
 	 * @param recentFile
 	 *            Recent file
 	 */
@@ -2691,7 +2723,7 @@ public final class KseFrame implements StatusBar {
 	/**
 	 * Set tab layout policy - must be one of JTabbedPane.WRAP_TAB_LAYOUT or
 	 * JTabbedPane.SCROLL_TAB_LAYOUT to take effect.
-	 * 
+	 *
 	 * @param tabLayoutPolicy
 	 *            Tab layout policy
 	 */

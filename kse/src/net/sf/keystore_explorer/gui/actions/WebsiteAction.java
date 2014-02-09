@@ -33,33 +33,84 @@ import net.sf.keystore_explorer.gui.KseFrame;
 
 /**
  * Action to visit the KeyStore Explorer web site.
- * 
+ *
  */
 public class WebsiteAction extends KeyStoreExplorerAction {
+
+    private String websiteAddress;
+
+    public enum Target {
+        MAIN,
+        SOURCEFORGE,
+        BUGREPORTS,
+        FEATURE_REQUESTS,
+        FORUM
+    }
+
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
-	public WebsiteAction(KseFrame kseFrame) {
+	public WebsiteAction(KseFrame kseFrame, Target target) {
 		super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("WebsiteAction.statusbar"));
-		putValue(NAME, res.getString("WebsiteAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("WebsiteAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("WebsiteAction.image")))));
+		switch (target) {
+        case SOURCEFORGE:
+            setData(res.getString("WebsiteAction.SourceforgeProject.statusbar"),
+                    res.getString("WebsiteAction.SourceforgeProject.text"),
+                    res.getString("WebsiteAction.SourceforgeProject.tooltip"),
+                    res.getString("WebsiteAction.image"),
+                    res.getString("WebsiteAction.SourceforgeProject.KseWebAddress"));
+            break;
+        case BUGREPORTS:
+            setData(res.getString("WebsiteAction.BugReports.statusbar"),
+                    res.getString("WebsiteAction.BugReports.text"),
+                    res.getString("WebsiteAction.BugReports.tooltip"),
+                    res.getString("WebsiteAction.image"),
+                    res.getString("WebsiteAction.BugReports.KseWebAddress"));
+            break;
+        case FEATURE_REQUESTS:
+            setData(res.getString("WebsiteAction.FeatureRequests.statusbar"),
+                    res.getString("WebsiteAction.FeatureRequests.text"),
+                    res.getString("WebsiteAction.FeatureRequests.tooltip"),
+                    res.getString("WebsiteAction.image"),
+                    res.getString("WebsiteAction.FeatureRequests.KseWebAddress"));
+            break;
+        case FORUM:
+            setData(res.getString("WebsiteAction.Forum.statusbar"),
+                    res.getString("WebsiteAction.Forum.text"),
+                    res.getString("WebsiteAction.Forum.tooltip"),
+                    res.getString("WebsiteAction.image"),
+                    res.getString("WebsiteAction.Forum.KseWebAddress"));
+            break;
+        default:
+        case MAIN:
+            setData(res.getString("WebsiteAction.statusbar"),
+                    res.getString("WebsiteAction.text"),
+                    res.getString("WebsiteAction.tooltip"),
+                    res.getString("WebsiteAction.image"),
+                    res.getString("WebsiteAction.KseWebAddress"));
+            break;
+        }
+	}
+
+	private void setData(String longDescription, String name, String shortDescription, String image, String url) {
+        putValue(LONG_DESCRIPTION, longDescription);
+        putValue(NAME, name);
+        putValue(SHORT_DESCRIPTION, shortDescription);
+        putValue(SMALL_ICON,
+                new ImageIcon(Toolkit.getDefaultToolkit().createImage(
+                        getClass().getResource(image))));
+
+        websiteAddress = url;
 	}
 
 	/**
 	 * Do action.
 	 */
 	protected void doAction() {
-		String websiteAddress = res.getString("WebsiteAction.KseWebAddress");
-
 		try {
 			Desktop.getDesktop().browse(URI.create(websiteAddress));
 		} catch (IOException ex) {

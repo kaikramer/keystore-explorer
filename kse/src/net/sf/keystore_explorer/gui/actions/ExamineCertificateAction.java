@@ -36,12 +36,12 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Action to examine a certificate.
- * 
+ *
  */
 public class ExamineCertificateAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -63,30 +63,39 @@ public class ExamineCertificateAction extends KeyStoreExplorerAction {
 	 * Do action.
 	 */
 	protected void doAction() {
-		File certificateFile = chooseCertificateFile(kseFrame);
-
-		if (certificateFile == null) {
-			return;
-		}
-
-		try {
-			X509Certificate[] certs = openCertificate(certificateFile);
-
-			if ((certs != null) && (certs.length > 0)) {
-				DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-						res.getString("ExamineCertificateAction.CertDetailsFile.Title"), certificateFile.getName()),
-						certs, kseFrame, DViewCertificate.IMPORT);
-				dViewCertificate.setLocationRelativeTo(frame);
-				dViewCertificate.setVisible(true);
-				return;
-			}
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-			return;
-		}
+		File certificateFile = chooseCertificateFile();
+		openCert(certificateFile);
 	}
 
-	private File chooseCertificateFile(KseFrame kseFrame) {
+    /**
+     * Open certificate file.
+     *
+     * @param certificateFile
+     */
+    public void openCert(File certificateFile) {
+
+        if (certificateFile == null) {
+            return;
+        }
+
+        try {
+            X509Certificate[] certs = openCertificate(certificateFile);
+
+            if ((certs != null) && (certs.length > 0)) {
+                DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
+                        res.getString("ExamineCertificateAction.CertDetailsFile.Title"), certificateFile.getName()),
+                        certs, kseFrame, DViewCertificate.IMPORT);
+                dViewCertificate.setLocationRelativeTo(frame);
+                dViewCertificate.setVisible(true);
+                return;
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+            return;
+        }
+    }
+
+	private File chooseCertificateFile() {
 		JFileChooser chooser = FileChooserFactory.getCertFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("ExamineCertificateAction.ExamineCertificate.Title"));

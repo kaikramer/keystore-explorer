@@ -50,6 +50,8 @@ import net.sf.keystore_explorer.utilities.net.ProxyAddress;
 public class ApplicationSettings {
 
 	private static final String KSE3_DEFAULTDN = "kse3.defaultdn";
+	private static final String KSE3_SSLHOSTS = "kse3.sslhosts";
+	private static final String KSE3_SSLPORTS = "kse3.sslports";
 	private static final String KSE3_TIPINDEX = "kse3.tipindex";
 	private static final String KSE3_TIPSONSTARTUP = "kse3.tipsonstartup";
 	private static final String KSE3_LICENSEAGREED = "kse3.licenseagreed";
@@ -110,6 +112,8 @@ public class ApplicationSettings {
 	private boolean showTipsOnStartUp;
 	private int nextTipIndex;
 	private String defaultDN;
+	private String sslHosts;
+	private String sslPorts;
 
 	private ApplicationSettings() {
 
@@ -279,8 +283,12 @@ public class ApplicationSettings {
 		showTipsOnStartUp = preferences.getBoolean(KSE3_TIPSONSTARTUP, true);
 		nextTipIndex = preferences.getInt(KSE3_TIPINDEX, 0);
 
-		// Default distinguished name
-		defaultDN = preferences.get(KSE3_DEFAULTDN, "");
+        // Default distinguished name
+        defaultDN = preferences.get(KSE3_DEFAULTDN, "");
+
+        // SSL host names and ports for "Examine SSL"
+        setSslHosts(preferences.get(KSE3_SSLHOSTS, "www.google.com;www.amazon.com"));
+        setSslPorts(preferences.get(KSE3_SSLPORTS, "443"));
 	}
 
 	/**
@@ -349,13 +357,16 @@ public class ApplicationSettings {
 		preferences.putBoolean(KSE3_TIPSONSTARTUP, showTipsOnStartUp);
 		preferences.putInt(KSE3_TIPINDEX, nextTipIndex);
 
-		// Default distinguished name
-		preferences.put(KSE3_DEFAULTDN, defaultDN);
+        // Default distinguished name
+        preferences.put(KSE3_DEFAULTDN, defaultDN);
+
+        // SSL host names and ports for "Examine SSL"
+        preferences.put(KSE3_SSLHOSTS, getSslHosts());
+        preferences.put(KSE3_SSLPORTS, getSslPorts());
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
-		// Clear all existing recent files (new list may be shorter than the
-		// existing one)
+		// Clear all existing recent files (new list may be shorter than the existing one)
 		for (int i = 1; i <= KseFrame.RECENT_FILES_SIZE; i++) {
 			String recentFile = preferences.get(KSE3_RECENTFILE + i, null);
 
@@ -609,4 +620,20 @@ public class ApplicationSettings {
 	public void setDefaultDN(String defaultDN) {
 		this.defaultDN = defaultDN;
 	}
+
+    public String getSslHosts() {
+        return sslHosts;
+    }
+
+    public void setSslHosts(String sslHosts) {
+        this.sslHosts = sslHosts;
+    }
+
+    public String getSslPorts() {
+        return sslPorts;
+    }
+
+    public void setSslPorts(String sslPorts) {
+        this.sslPorts = sslPorts;
+    }
 }

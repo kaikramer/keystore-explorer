@@ -20,34 +20,26 @@
 
 package net.sf.keystore_explorer.gui;
 
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 import javax.swing.JTabbedPane;
 
-import net.sf.keystore_explorer.gui.actions.OpenAction;
-import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.gui.dnd.DroppedFileHandler;
 
 /**
  * Drop target for opening KeyStore files.
- * 
+ *
  */
 public class JKeyStoreTabbedPane extends JTabbedPane implements DropTargetListener {
 	private KseFrame kseFrame;
 
 	/**
 	 * Construct KeyStore tabbed pane.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KSE frame
 	 */
@@ -59,26 +51,7 @@ public class JKeyStoreTabbedPane extends JTabbedPane implements DropTargetListen
 	}
 
 	public void drop(DropTargetDropEvent evt) {
-		try {
-			evt.acceptDrop(DnDConstants.ACTION_MOVE);
-
-			Transferable trans = evt.getTransferable();
-
-			if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				List droppedFiles = (List) trans.getTransferData(DataFlavor.javaFileListFlavor);
-
-				OpenAction openAction = new OpenAction(kseFrame);
-
-				for (int i = 0; i < droppedFiles.size(); i++) {
-					File droppedFile = (File) droppedFiles.get(i);
-					openAction.openKeyStore(droppedFile);
-				}
-			}
-		} catch (IOException ex) {
-			DError.displayError(kseFrame.getUnderlyingFrame(), ex);
-		} catch (UnsupportedFlavorException ex) {
-			DError.displayError(kseFrame.getUnderlyingFrame(), ex);
-		}
+        DroppedFileHandler.drop(evt, kseFrame);
 	}
 
 	public void dragEnter(DropTargetDragEvent evt) {

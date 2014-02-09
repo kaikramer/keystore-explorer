@@ -26,7 +26,7 @@ import net.sf.keystore_explorer.crypto.Password;
 
 /**
  * Undo/redo history for a KeyStore.
- * 
+ *
  */
 public class KeyStoreHistory {
 	private KeyStoreState initialState;
@@ -37,7 +37,7 @@ public class KeyStoreHistory {
 
 	/**
 	 * Create a new history for an unsaved KeyStore.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore
 	 * @param name
@@ -53,7 +53,7 @@ public class KeyStoreHistory {
 
 	/**
 	 * Create a new history for a saved KeyStore.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore
 	 * @param file
@@ -71,7 +71,7 @@ public class KeyStoreHistory {
 
 	/**
 	 * Get the current state in the history.
-	 * 
+	 *
 	 * @return Current state
 	 */
 	public KeyStoreState getCurrentState() {
@@ -96,7 +96,7 @@ public class KeyStoreHistory {
 
 	/**
 	 * Get the KeyStore's save file.
-	 * 
+	 *
 	 * @return The KeyStore save file or null if none is set
 	 */
 	public File getFile() {
@@ -105,7 +105,7 @@ public class KeyStoreHistory {
 
 	/**
 	 * Set the KeyStore's save file.
-	 * 
+	 *
 	 * @param file
 	 *            The KeyStore save file
 	 */
@@ -118,7 +118,7 @@ public class KeyStoreHistory {
 
 	/**
 	 * Get the KeyStore's path.
-	 * 
+	 *
 	 * @return Path if saved, otherwise use the name supplied on construction
 	 */
 	public String getPath() {
@@ -132,7 +132,7 @@ public class KeyStoreHistory {
 	/**
 	 * Get the KeyStore's name. This will be the save file name where there is
 	 * one, otherwise it will be the name supplied upon construction.
-	 * 
+	 *
 	 * @return KeyStore name
 	 */
 	public String getName() {
@@ -153,5 +153,10 @@ public class KeyStoreHistory {
 
 	void setSavedState(KeyStoreState state) {
 		savedState = state;
+	}
+
+	@Override
+	public String toString() {
+	    return getName();
 	}
 }

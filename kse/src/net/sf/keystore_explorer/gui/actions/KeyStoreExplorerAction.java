@@ -52,7 +52,7 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Abstract base class for all KeyStore Explorer actions.
- * 
+ *
  */
 public abstract class KeyStoreExplorerAction extends AbstractAction {
 	/** Resource bundle */
@@ -69,7 +69,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
 	/**
 	 * Construct a KeyStoreExplorerAction.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -81,7 +81,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
 	/**
 	 * Perform action. Calls doAction.
-	 * 
+	 *
 	 * @param evt
 	 *            Action event
 	 */
@@ -106,7 +106,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	/**
 	 * Get an entry's password. Queries the KeyStore history first and, if the
 	 * password is not found there, asks the user for it.
-	 * 
+	 *
 	 * @param alias
 	 *            Entry alias
 	 * @param state
@@ -130,7 +130,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	/**
 	 * Unlock a key or key pair entry. Updates the KeyStore history with the
 	 * password.
-	 * 
+	 *
 	 * @param alias
 	 *            Entry's alias
 	 * @param state
@@ -177,7 +177,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
 	/**
 	 * Open a certificate file.
-	 * 
+	 *
 	 * @param certificateFile
 	 *            The certificate file
 	 * @return The certificates found in the file or null if open failed
@@ -218,7 +218,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
 	/**
 	 * Get a new KeyStore password.
-	 * 
+	 *
 	 * @return The new KeyStore password, or null if none entered by the user
 	 */
 	protected Password getNewKeyStorePassword() {
@@ -235,7 +235,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
 	/**
 	 * Is the supplied KeyStore file open?
-	 * 
+	 *
 	 * @param keyStoreFile
 	 *            KeyStore file
 	 * @return True if it is

@@ -25,18 +25,11 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -51,13 +44,13 @@ import net.sf.keystore_explorer.gui.actions.NewAction;
 import net.sf.keystore_explorer.gui.actions.OpenAction;
 import net.sf.keystore_explorer.gui.actions.OpenCaCertificatesAction;
 import net.sf.keystore_explorer.gui.actions.OpenDefaultAction;
-import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.gui.dnd.DroppedFileHandler;
 import net.sf.keystore_explorer.gui.gradient.JGradientPanel;
 
 /**
  * KSE Quick Start pane. Displays quick start buttons for common start functions
  * of the application. Also a drop target for opening KeyStore files.
- * 
+ *
  */
 public class JQuickStartPane extends JGradientPanel implements DropTargetListener {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/quickstart/resources");
@@ -81,7 +74,7 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 
 	/**
 	 * Construct Quick Start pane.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KSE frame
 	 */
@@ -229,26 +222,7 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 	}
 
 	public void drop(DropTargetDropEvent evt) {
-		try {
-			evt.acceptDrop(DnDConstants.ACTION_MOVE);
-
-			Transferable trans = evt.getTransferable();
-
-			if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				List droppedFiles = (List) trans.getTransferData(DataFlavor.javaFileListFlavor);
-
-				OpenAction openAction = new OpenAction(kseFrame);
-
-				for (int i = 0; i < droppedFiles.size(); i++) {
-					File droppedFile = (File) droppedFiles.get(i);
-					openAction.openKeyStore(droppedFile);
-				}
-			}
-		} catch (IOException ex) {
-			DError.displayError(kseFrame.getUnderlyingFrame(), ex);
-		} catch (UnsupportedFlavorException ex) {
-			DError.displayError(kseFrame.getUnderlyingFrame(), ex);
-		}
+	    DroppedFileHandler.drop(evt, kseFrame);
 	}
 
 	public void dragEnter(DropTargetDragEvent evt) {

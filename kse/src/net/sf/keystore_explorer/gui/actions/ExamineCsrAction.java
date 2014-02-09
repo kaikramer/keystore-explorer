@@ -49,12 +49,12 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
 /**
  * Action to examine a CSR.
- * 
+ *
  */
 public class ExamineCsrAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -77,8 +77,11 @@ public class ExamineCsrAction extends KeyStoreExplorerAction {
 	 */
 	protected void doAction() {
 		File csrFile = chooseCsrFile(kseFrame);
+		openCsr(csrFile);
+	}
 
-		if (csrFile == null) {
+    public void openCsr(File csrFile) {
+        if (csrFile == null) {
 			return;
 		}
 
@@ -137,7 +140,7 @@ public class ExamineCsrAction extends KeyStoreExplorerAction {
 			DError.displayError(frame, ex);
 			return;
 		}
-	}
+    }
 
 	private File chooseCsrFile(KseFrame kseFrame) {
 		JFileChooser chooser = FileChooserFactory.getCsrFileChooser();

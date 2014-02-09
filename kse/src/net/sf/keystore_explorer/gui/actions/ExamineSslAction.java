@@ -32,15 +32,16 @@ import net.sf.keystore_explorer.gui.dialogs.DExamineSsl;
 import net.sf.keystore_explorer.gui.dialogs.DExaminingSsl;
 import net.sf.keystore_explorer.gui.dialogs.DViewCertificate;
 import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 
 /**
  * Action to examine an SSL connection's certificates.
- * 
+ *
  */
 public class ExamineSslAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -65,18 +66,20 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 	 */
 	protected void doAction() {
 		try {
-			DExamineSsl dExamineSsl = new DExamineSsl(frame);
+			DExamineSsl dExamineSsl = new DExamineSsl(frame, kseFrame);
 			dExamineSsl.setLocationRelativeTo(frame);
 			dExamineSsl.setVisible(true);
 
 			String sslHost = dExamineSsl.getSslHost();
 			int sslPort = dExamineSsl.getSslPort();
+			boolean useClientAuth = dExamineSsl.useClientAuth();
+			KeyStoreHistory ksh = dExamineSsl.getKeyStore();
 
 			if ((sslHost == null) || (sslPort <= 0)) {
 				return;
 			}
 
-			DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort);
+			DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, useClientAuth, ksh);
 			dExaminingSsl.setLocationRelativeTo(frame);
 			dExaminingSsl.startExamination();
 			dExaminingSsl.setVisible(true);
@@ -88,7 +91,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 			}
 
 			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)), certs, 
+					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)), certs,
 					kseFrame, DViewCertificate.IMPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);

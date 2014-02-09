@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -51,11 +52,12 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
+import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 
 /**
  * Examines an SSL connection's certificates - a process which the user may
  * cancel at any time by pressing the cancel button.
- * 
+ *
  */
 public class DExaminingSsl extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -71,23 +73,35 @@ public class DExaminingSsl extends JEscDialog {
 
 	private String sslHost;
 	private int sslPort;
+	private KeyStore keyStore;
+	private char[] password;
 	private X509Certificate[] certificates;
 	private Thread examiner;
 
 	/**
 	 * Creates a new DExaminingSsl dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param sslHost
 	 *            SSL connection's host name
 	 * @param sslPort
 	 *            SSL connection's port number
+	 * @param useClientAuth
+	 *            Try to connect with client certificate
+	 * @param ksh
+	 *            KeyStore with client certificate
 	 */
-	public DExaminingSsl(JFrame parent, String sslHost, int sslPort) {
+	public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+
 		this.sslHost = sslHost;
 		this.sslPort = sslPort;
+
+		if (useClientAuth) {
+		    this.keyStore = ksh.getCurrentState().getKeyStore();
+		    this.password = ksh.getCurrentState().getPassword().toCharArray();
+		}
 		initComponents();
 	}
 
@@ -155,7 +169,7 @@ public class DExaminingSsl extends JEscDialog {
 
 	/**
 	 * Get the SSL connection's certificates.
-	 * 
+	 *
 	 * @return The SSL connection's certificates or null if the user cancelled
 	 *         the dialog or an error occurred
 	 */
@@ -178,7 +192,7 @@ public class DExaminingSsl extends JEscDialog {
 	private class ExamineSsl implements Runnable {
 		public void run() {
 			try {
-				certificates = X509CertUtil.loadCertificates(sslHost, sslPort);
+				certificates = X509CertUtil.loadCertificates(sslHost, sslPort, keyStore, password);
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {

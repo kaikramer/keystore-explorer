@@ -49,10 +49,13 @@ import java.util.ResourceBundle;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
@@ -226,31 +229,49 @@ public final class X509CertUtil extends Object {
 	 *            Connection host
 	 * @param port
 	 *            Connection port
+     * @param keyStore
+     *            KeyStore with a key pair for SSL client authentication
+     * @param password
+     *            The password for the KeyStore
 	 * @return Server certificates
 	 * @throws CryptoException
 	 *             Problem encountered while loading the certificate(s)
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static X509Certificate[] loadCertificates(String host, int port) throws CryptoException, IOException {
-		URL url = new URL(MessageFormat.format("https://{0}:{1}/", host, "" + port));
+	public static X509Certificate[] loadCertificates(String host, int port, KeyStore keyStore, char[] password)
+	        throws CryptoException, IOException {
 
+		URL url = new URL(MessageFormat.format("https://{0}:{1}/", host, "" + port));
 		HttpsURLConnection connection = null;
 
 		try {
 			connection = (HttpsURLConnection) url.openConnection();
 
-			// We are only interested in getting the SSL certificates even if they are invalid  
-			// either in and of themselves or for the hostname they are associated with
+			// create a key manager for client authentication
+			X509KeyManager km = null;
+			if (keyStore != null) {
+                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
+                keyManagerFactory.init(keyStore, password);
+                for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
+                    if (keyManager instanceof X509KeyManager) {
+                        km = (X509KeyManager) keyManager;
+                        break;
+                    }
+                }
+			}
+
+			// We are only interested in getting the SSL certificates even if they are invalid
+			// either in and of themselves or for the host name they are associated with
 
 			// 1) Set connection's SSL Socket factory to have a very trusting trust manager
 			SSLContext context = SSLContext.getInstance("TLS");
 			X509TrustingManager tm = new X509TrustingManager();
-			context.init(null, new TrustManager[] { tm }, null);
+			context.init(new KeyManager[] { km }, new TrustManager[] { tm }, null);
 			SSLSocketFactory factory = context.getSocketFactory();
 			connection.setSSLSocketFactory(factory);
 
-			// 2) Set a hostname verifier that always verifies the hostname
+			// 2) Set a host name verifier that always verifies the host name
 			connection.setHostnameVerifier(new HostnameVerifier() {
 				public boolean verify(String hostname, SSLSession sslSession) {
 					return true;
