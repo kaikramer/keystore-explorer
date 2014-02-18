@@ -27,11 +27,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -51,6 +46,7 @@ import javax.swing.KeyStroke;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.ApplicationSettings;
+import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.MiGUtil;
@@ -74,7 +70,6 @@ public class DExamineSsl extends JEscDialog {
 	private JComboBox<String> jcbSslPort;
 	private JCheckBox jcbClientAuth;
 	private JComboBox<KeyStoreHistory> jcbKeyStore;
-	private JComboBox<String> jcbAlias;
 	private JButton jbLoadKeystore;
 	private JPanel jpButtons;
 	private JButton jbOK;
@@ -84,6 +79,7 @@ public class DExamineSsl extends JEscDialog {
 	private int sslPort = -1;
 
 	private KseFrame kseFrame;
+	private boolean cancelled = true;
 
 	/**
 	 * Creates new DExamineSsl dialog.
@@ -106,8 +102,6 @@ public class DExamineSsl extends JEscDialog {
 		jcbSslHost.setEditable(true);
 		jcbSslHost.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		jcbSslHost.setToolTipText(res.getString("DExamineSsl.jtfSslHost.tooltip"));
-//		jtfSslHost.setSelectionStart(0);
-//		jtfSslHost.setSelectionEnd(jtfSslHost.getText().length());
 		jcbSslHost.setModel(new DefaultComboBoxModel<String>(getSslHosts()));
 
 		jlSslPort = new JLabel(res.getString("DExamineSsl.jlSslPort.text"));
@@ -117,13 +111,14 @@ public class DExamineSsl extends JEscDialog {
 		jcbSslPort.setToolTipText(res.getString("DExamineSsl.jtfSslPort.tooltip"));
 		jcbSslPort.setModel(new DefaultComboBoxModel<String>(getSslPorts()));
 
-		jcbClientAuth = new JCheckBox("Enable Client Authentication");
+		jcbClientAuth = new JCheckBox(res.getString("DExamineSsl.jlEnableClientAuth.text"));
 
 		jcbKeyStore = new JComboBox<KeyStoreHistory>(getKeystoreNames());
-		//jcbAlias = new JComboBox<String>(getAliases((String) jcbKeyStore.getSelectedItem()));
+		jcbKeyStore.setToolTipText(res.getString("DExamineSsl.jcbKeyStore.tooltip"));
 
 		jbLoadKeystore = new JButton();
-		jbLoadKeystore.setIcon(new ImageIcon(getClass().getResource("images/open.png")));
+		jbLoadKeystore.setIcon(new ImageIcon(getClass().getResource(res.getString("DExamineSsl.jbOpen.image"))));
+		jbLoadKeystore.setToolTipText(res.getString("DExamineSsl.jbLoadKeystore.tooltip"));
 
 		jbOK = new JButton(res.getString("DExamineSsl.jbOK.text"));
 
@@ -135,18 +130,16 @@ public class DExamineSsl extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
-        MiGUtil.addSeparator(pane, "Connection Settings");
+        MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlConnSettings.text"));
         pane.add(jlSslHost, "skip");
         pane.add(jcbSslHost, "sgx, wrap");
         pane.add(jlSslPort, "skip");
         pane.add(jcbSslPort, "sgx, wrap para");
-        MiGUtil.addSeparator(pane, "Client Authentication");
+        MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlClientAuth.text"));
         pane.add(jcbClientAuth, "left, spanx, wrap");
-        pane.add(new JLabel("KeyStore:"), "skip");
+        pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
         pane.add(jcbKeyStore, "sgx");
         pane.add(jbLoadKeystore, "wrap para");
-        //pane.add(new JLabel("Alias:"), "skip");
-        //pane.add(jcbAlias, "sgx, wrap para");
         pane.add(new JSeparator(), "spanx, growx, wrap para");
         pane.add(jpButtons, "right, spanx");
 
@@ -199,34 +192,7 @@ public class DExamineSsl extends JEscDialog {
 
 	private ComboBoxModel<KeyStoreHistory> getKeystoreNames() {
 	    KeyStoreHistory[] keyStoreHistories = kseFrame.getKeyStoreHistories();
-//        String[] keyStoreNames = new String[keyStoreHistories.length];
-//        for (int i = 0; i < keyStoreHistories.length; i++) {
-//            keyStoreNames[i] = keyStoreHistories[i].getName();
-//        }
         return new DefaultComboBoxModel<KeyStoreHistory>(keyStoreHistories);
-    }
-
-    private ComboBoxModel<String> getAliases(String keyStoreName) {
-        KeyStoreHistory[] keyStoreHistories = kseFrame.getKeyStoreHistories();
-        for (int i = 0; i < keyStoreHistories.length; i++) {
-            if (keyStoreHistories[i].getName().equals(keyStoreName)) {
-                KeyStore keyStore = keyStoreHistories[i].getCurrentState().getKeyStore();
-                List<String> aliasNames = new ArrayList<String>();
-                Enumeration<?> en = null;
-                try {
-                    en = keyStore.aliases();
-                    while ( en.hasMoreElements()) {
-                        String aliasName = (String) en.nextElement();
-                        aliasNames.add(aliasName);
-                    }
-                } catch (KeyStoreException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return new DefaultComboBoxModel<String>(aliasNames.toArray(new String[0]));
-            }
-        }
-        return new DefaultComboBoxModel<String>();
     }
 
     /**
@@ -264,6 +230,15 @@ public class DExamineSsl extends JEscDialog {
 	public KeyStoreHistory getKeyStore() {
 	    return (KeyStoreHistory) jcbKeyStore.getSelectedItem();
 	}
+
+	/**
+     * Was the dialog cancelled?
+     *
+     * @return True if it was cancelled
+     */
+    public boolean wasCancelled() {
+        return cancelled;
+    }
 
     private String[] getSslHosts() {
         String sslHosts = applicationSettings.getSslHosts();
@@ -306,7 +281,6 @@ public class DExamineSsl extends JEscDialog {
 
     private void updateClientAuthComponents() {
 	    jcbKeyStore.setEnabled(jcbClientAuth.isSelected());
-	    //jcbAlias.setEnabled(jcbClientAuth.isSelected());
 	    jbLoadKeystore.setEnabled(jcbClientAuth.isSelected());
 
 	    jcbKeyStore.setModel(getKeystoreNames());
@@ -348,9 +322,27 @@ public class DExamineSsl extends JEscDialog {
 		this.sslHost = sslHost;
 		this.sslPort = sslPort;
 
+		// check selected key store
+		if (useClientAuth()) {
+    		KeyStoreHistory ksh = (KeyStoreHistory) jcbKeyStore.getSelectedItem();
+    		if (ksh == null) {
+                JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.NoKeyStoreSelected.message"),
+                        getTitle(), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            Password keyStorePassword = ksh.getCurrentState().getPassword();
+            if (keyStorePassword == null) {
+                JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.NoPasswordSetForKeyStore.message"),
+                        getTitle(), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+		}
+
 		// save host/port in preferences
 		setSslHosts(sslHost);
 
+		cancelled = false;
 		closeDialog();
 	}
 
@@ -362,5 +354,4 @@ public class DExamineSsl extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
-
 }

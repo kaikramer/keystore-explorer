@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 
 /**
  * Enumeration of Crypto File Types recognised by the CryptoFileUtil class.
- * 
+ *
  */
 public enum CryptoFileType {
 	/** JKS KeyStore */
@@ -72,7 +72,10 @@ public enum CryptoFileType {
 	UNENC_OPENSSL_PVK("CryptoFileType.UnencOpenSslPvk"),
 
 	/** OpenSSL Public Key */
-	OPENSSL_PUB("CryptoFileType.OpenSslPub");
+	OPENSSL_PUB("CryptoFileType.OpenSslPub"),
+
+	/** Unknown file type */
+	UNKNOWN("CryptoFileType.Unknown");
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/filetype/resources");
 	private String friendlyKey;
@@ -83,7 +86,7 @@ public enum CryptoFileType {
 
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	public String friendly() {

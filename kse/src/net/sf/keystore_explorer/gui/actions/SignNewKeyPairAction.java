@@ -18,7 +18,7 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 /**
  * Action to sign a newly generated key pair (i.e. generate a certificate) using the selected key pair entry as issuing
  * CA.
- * 
+ *
  */
 public class SignNewKeyPairAction extends KeyStoreExplorerAction {
 
@@ -42,27 +42,23 @@ public class SignNewKeyPairAction extends KeyStoreExplorerAction {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStoreState currentState = history.getCurrentState();
 
+			// get alias of selected (signing) key entry
 			String alias = kseFrame.getSelectedEntryAlias();
 
 			Password password = getEntryPassword(alias, currentState);
-
 			if (password == null) {
 				return;
 			}
 
 			KeyStore keyStore = currentState.getKeyStore();
-
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			Certificate[] certs = keyStore.getCertificateChain(alias);
 
-			X509Certificate[] signingChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
-			X509Certificate signingCert = signingChain[0];
+			X509Certificate[] signingCertChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
+			X509Certificate signingCert = signingCertChain[0];
 
 			GenerateKeyPairAction generateKeyPairAction = new GenerateKeyPairAction(kseFrame);
-			String newAlias = generateKeyPairAction.generateKeyPair(signingCert, privateKey);
-			
-			// TODO add issuer to chain
-
+			generateKeyPairAction.generateKeyPair(signingCert, signingCertChain, privateKey);
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 			return;

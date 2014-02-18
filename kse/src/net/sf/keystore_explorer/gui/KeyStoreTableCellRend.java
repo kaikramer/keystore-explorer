@@ -34,7 +34,7 @@ import javax.swing.table.TableCellRenderer;
 /**
  * Custom cell renderer for the cells of the KeyStore table of KeyStore
  * Explorer.
- * 
+ *
  */
 public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -47,11 +47,11 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 
 	 public KeyStoreTableCellRend(TableCellRenderer delegate) {
 	     this.delegate = delegate;
-	 } 
-	
+	 }
+
 	/**
 	 * Returns the rendered cell for the supplied value and column.
-	 * 
+	 *
 	 * @param jtKeyStore
 	 *            The JTable
 	 * @param value
@@ -68,9 +68,9 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 	 */
 	public Component getTableCellRendererComponent(JTable jtKeyStore, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
-		
+
 		//Component c = delegate.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
-		
+
 //		if (c instanceof JLabel) {
 
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
@@ -160,7 +160,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				String algorithm = (String) value;
 
 				if (algorithm == null) {
-					// No algorithm name available - TODO better reason why in tooltip?
+					// No algorithm name available
 					cell.setText("-");
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoAlgorithm.tooltip"));
 					cell.setHorizontalAlignment(CENTER);
@@ -175,7 +175,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				Integer keySize = (Integer) value;
 
 				if (keySize == null) {
-					// No key size available - TODO - better reason why in tooltip?
+					// No key size available
 					cell.setText("-");
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoKeySize.tooltip"));
 					cell.setHorizontalAlignment(CENTER);
@@ -243,7 +243,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 
 			//cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 //		}
-		
+
 		return cell;
 	}
 }

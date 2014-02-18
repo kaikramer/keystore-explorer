@@ -29,6 +29,7 @@ import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.OPENSSL_PU
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNKNOWN;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
@@ -64,7 +65,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
- * 
+ *
  */
 public class CryptoFileUtil {
 	private static final int JKS_MAGIC_NUMBER = 0xFEEDFEED;
@@ -72,7 +73,7 @@ public class CryptoFileUtil {
 
 	/**
 	 * Detect the cryptographic file type of the supplied input stream.
-	 * 
+	 *
 	 * @param is
 	 *            Input stream to detect type for
 	 * @return Type or null if file not of a recognised type
@@ -119,8 +120,7 @@ public class CryptoFileUtil {
 			// Ignore - not an OpenSSL public key file
 		} catch (OutOfMemoryError ex) {
 			// Ignore - not an OpenSSL public key file, some files cause the
-			// heap space to fill up
-			// with the load call
+			// heap space to fill up with the load call
 		}
 
 		try {
@@ -151,7 +151,7 @@ public class CryptoFileUtil {
 		}
 
 		// Not a recognised type
-		return null;
+		return UNKNOWN;
 	}
 
 	private static CsrType detectCsrType(byte[] contents) throws FileNotFoundException, IOException {
@@ -180,7 +180,7 @@ public class CryptoFileUtil {
 
 	/**
 	 * Detect the KeyStore type contained in the supplied file.
-	 * 
+	 *
 	 * @param is
 	 *            Input stream to detect type for
 	 * @return KeyStore type or null if none matched
@@ -249,21 +249,21 @@ public class CryptoFileUtil {
 		}
 
 		// @formatter:off
-
 		/*
 		 * Test for PKCS #12. ASN.1 should look like this:
-		 * 
+		 *
 		 * PFX ::= ASN1Sequence { version ASN1Integer {v3(3)}(v3,...), authSafe
 		 * ContentInfo, macData MacData OPTIONAL
 		 */
-
 		// @formatter:on
 
-		/*
-		 * Read pfx der structure - use BC ASN.1 libraries as binor incorrectly
-		 * recognises an empty sequence
-		 */
-		ASN1Primitive pfx = ASN1Primitive.fromByteArray(contents);
+		ASN1Primitive pfx = null;
+		try {
+            pfx = ASN1Primitive.fromByteArray(contents);
+		} catch (IOException e) {
+		    // if it cannot be parsed as ASN1, it is certainly not a pfx key store
+		    return null;
+		}
 
 		// Is a sequence...
 		if ((pfx != null) && (pfx instanceof ASN1Sequence)) {

@@ -136,7 +136,7 @@ import org.bouncycastle.asn1.x509.UserNotice;
 /**
  * Holds the information of an X.509 extension and provides the ability to get
  * the extension's name and value as a string.
- * 
+ *
  */
 public class X509Ext {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
@@ -151,7 +151,7 @@ public class X509Ext {
 
 	/**
 	 * Construct a new immutable X509Ext.
-	 * 
+	 *
 	 * @param oid
 	 *            X509Extension object identifier
 	 * @param value
@@ -172,7 +172,7 @@ public class X509Ext {
 
 	/**
 	 * Construct a new immutable X509Ext.
-	 * 
+	 *
 	 * @param oid
 	 *            X509Extension object identifier
 	 * @param value
@@ -186,7 +186,7 @@ public class X509Ext {
 
 	/**
 	 * Get extension object identifier.
-	 * 
+	 *
 	 * @return X509Extension object identifier
 	 */
 	public ASN1ObjectIdentifier getOid() {
@@ -195,7 +195,7 @@ public class X509Ext {
 
 	/**
 	 * Get extension value as a DER-encoded OCTET string.
-	 * 
+	 *
 	 * @return X509Extension value
 	 */
 	public byte[] getValue() {
@@ -206,7 +206,7 @@ public class X509Ext {
 
 	/**
 	 * Is extension critical?
-	 * 
+	 *
 	 * @return True if is, false otherwise
 	 */
 	public boolean isCriticalExtension() {
@@ -215,7 +215,7 @@ public class X509Ext {
 
 	/**
 	 * Get extension name.
-	 * 
+	 *
 	 * @return X509Extension name or null if unknown
 	 */
 	public String getName() {
@@ -228,7 +228,7 @@ public class X509Ext {
 
 	/**
 	 * Get extension value as a string.
-	 * 
+	 *
 	 * @return X509Extension value as a string
 	 * @throws IOException
 	 *             If an ASN.1 coding problem occurs
@@ -236,7 +236,7 @@ public class X509Ext {
 	 *             If an I/O problem occurs
 	 */
 	public String getStringValue() throws IOException, IOException {
-		
+
 		// Convert value from DER encoded octet string value to binary DER encoding
 		ASN1OctetString octetString = ASN1OctetString.getInstance(ASN1Primitive.fromByteArray(value));
 		byte[] octets = octetString.getOctets();
@@ -335,13 +335,13 @@ public class X509Ext {
 
 		/*
 		 * EntrustVersInfoSyntax ::= OCTET STRING
-		 * 
+		 *
 		 * entrustVersInfo EXTENSION ::= { SYNTAX EntrustVersInfoSyntax,
 		 * IDENTIFIED BY {id-entrust 0} }
-		 * 
+		 *
 		 * EntrustVersInfoSyntax ::= ASN1Sequence { entrustVers GeneralString,
 		 * entrustInfoFlags EntrustInfoFlags }
-		 * 
+		 *
 		 * EntrustInfoFlags ::= BIT STRING { keyUpdateAllowed newExtensions (1),
 		 * pKIXCertificate (2) }
 		 */
@@ -369,7 +369,7 @@ public class X509Ext {
 		/*
 		 * AuthorityInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF
 		 * AccessDescription
-		 * 
+		 *
 		 * AccessDescription ::= ASN1Sequence { accessMethod OBJECT IDENTIFIER,
 		 * accessLocation GeneralName }
 		 */
@@ -427,7 +427,7 @@ public class X509Ext {
 		/*
 		 * SubjectInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF
 		 * AccessDescription
-		 * 
+		 *
 		 * AccessDescription ::= ASN1Sequence { accessMethod OBJECT IDENTIFIER,
 		 * accessLocation GeneralName }
 		 */
@@ -485,7 +485,7 @@ public class X509Ext {
 		/*
 		 * SubjectDirectoryAttributes ::= ASN1Sequence SIZE (1..MAX) OF
 		 * Attribute
-		 * 
+		 *
 		 * Attribute ::= ASN1Sequence { type AttributeType, values SET OF
 		 * AttributeValue }
 		 */
@@ -497,16 +497,16 @@ public class X509Ext {
 		SubjectDirectoryAttributes subjectDirectoryAttributes = SubjectDirectoryAttributes.getInstance(value);
 
 		for (Object attribute : subjectDirectoryAttributes.getAttributes()) {
-			
+
 			ASN1ObjectIdentifier attributeType = ((Attribute) attribute).getAttrType();
 			String attributeTypeStr = attributeType.getId();
 
 			ASN1Set attributeValues = ((Attribute) attribute).getAttrValues();
-			
+
 			for (Enumeration en = attributeValues.getObjects(); en.hasMoreElements();) {
 
 				ASN1Encodable attributeValue = (ASN1Encodable) en.nextElement();
-			
+
 				String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
 				strBuff.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
@@ -522,7 +522,7 @@ public class X509Ext {
 
 		/*
 		 * SubjectKeyIdentifier ::= KeyIdentifier
-		 * 
+		 *
 		 * KeyIdentifier ::= OCTET STRING
 		 */
 
@@ -646,7 +646,7 @@ public class X509Ext {
 
 		/*
 		 * SubjectAltName ::= GeneralNames
-		 * 
+		 *
 		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
 		 */
 
@@ -669,7 +669,7 @@ public class X509Ext {
 
 		/*
 		 * IssuerAltName ::= GeneralNames
-		 * 
+		 *
 		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
 		 */
 
@@ -749,7 +749,7 @@ public class X509Ext {
 
 		/*
 		 * ReasonCode ::= { CRLReason }
-		 * 
+		 *
 		 * CRLReason ::= ASN1Enumerated { unspecified (0), keyCompromise (1),
 		 * cACompromise (2), affiliationChanged (3), superseded (4),
 		 * cessationOfOperation (5), certificateHold (6), removeFromCRL (8),
@@ -801,7 +801,7 @@ public class X509Ext {
 		StringBuffer strBuff = new StringBuffer();
 
 		ASN1ObjectIdentifier holdInstructionCode = ASN1ObjectIdentifier.getInstance(value);
-		HoldInstructionCodeType holdInstructionCodeType = 
+		HoldInstructionCodeType holdInstructionCodeType =
 				HoldInstructionCodeType.resolveOid(holdInstructionCode.getId());
 
 		if (holdInstructionCodeType != null) {
@@ -838,9 +838,9 @@ public class X509Ext {
 		/*
 		 * deltaCRLIndicator EXTENSION ::= { SYNTAX BaseCRLNumber IDENTIFIED BY
 		 * id-ce-deltaCRLIndicator }
-		 * 
+		 *
 		 * BaseCRLNumber ::= CRLNumber
-		 * 
+		 *
 		 * CRLNumber ::= ASN1Integer (0..MAX)
 		 */
 
@@ -860,12 +860,12 @@ public class X509Ext {
 		// @formatter:off
 
 		/*
-		 * IssuingDistributionPoint ::= ASN1Sequence { 
-		 *     distributionPoint [0] DistributionPointName OPTIONAL, 
+		 * IssuingDistributionPoint ::= ASN1Sequence {
+		 *     distributionPoint [0] DistributionPointName OPTIONAL,
 		 *     onlyContainsUserCerts [1] ASN1Boolean DEFAULT FALSE,
 		 *     onlyContainsCACerts [2] ASN1Boolean DEFAULT FALSE,
-		 *     onlySomeReasons [3] ReasonFlags OPTIONAL, 
-		 *     indirectCRL [4] ASN1Boolean DEFAULT FALSE, 
+		 *     onlySomeReasons [3] ReasonFlags OPTIONAL,
+		 *     indirectCRL [4] ASN1Boolean DEFAULT FALSE,
 		 *     onlyContainsAttributeCerts [5] ASN1Boolean DEFAULT FALSE }
 		 */
 
@@ -924,7 +924,7 @@ public class X509Ext {
 
 		/*
 		 * certificateIssuer ::= GeneralNames
-		 * 
+		 *
 		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
 		 */
 
@@ -949,12 +949,12 @@ public class X509Ext {
 		 * NameConstraints ::= ASN1Sequence { permittedSubtrees [0]
 		 * GeneralSubtrees OPTIONAL, excludedSubtrees [1] GeneralSubtrees
 		 * OPTIONAL }
-		 * 
+		 *
 		 * GeneralSubtrees ::= ASN1Sequence SIZE (1..MAX) OF GeneralSubtree
-		 * 
+		 *
 		 * GeneralSubtree ::= ASN1Sequence { base GeneralName, minimum [0]
 		 * BaseDistance DEFAULT nodistance, maximum [1] BaseDistance OPTIONAL }
-		 * 
+		 *
 		 * BaseDistance ::= ASN1Integer {nodistance(0) } (0..MAX)
 		 */
 
@@ -1113,28 +1113,28 @@ public class X509Ext {
 		/*
 		 * CertificatePolicies ::= ASN1Sequence SIZE (1..MAX) OF
 		 * PolicyInformation
-		 * 
+		 *
 		 * PolicyInformation ::= ASN1Sequence { policyIdentifier CertPolicyId,
 		 * policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo
 		 * OPTIONAL }
-		 * 
+		 *
 		 * CertPolicyId ::= OBJECT IDENTIFIER
-		 * 
+		 *
 		 * PolicyQualifierInfo ::= ASN1Sequence { policyQualifierId
 		 * PolicyQualifierId, qualifier ANY DEFINED BY policyQualifierId }
-		 * 
+		 *
 		 * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
-		 * 
+		 *
 		 * Qualifier ::= CHOICE { cPSuri CPSuri, userNotice UserNotice }
-		 * 
+		 *
 		 * CPSuri ::= DERIA5String
-		 * 
+		 *
 		 * UserNotice ::= ASN1Sequence { noticeRef NoticeReference OPTIONAL,
 		 * explicitText DisplayText OPTIONAL }
-		 * 
+		 *
 		 * NoticeReference ::= ASN1Sequence { organization DisplayText,
 		 * noticeNumbers ASN1Sequence OF ASN1Integer }
-		 * 
+		 *
 		 * DisplayText ::= CHOICE { ia5String DERIA5String (SIZE (1..200)),
 		 * visibleString VisibleString (SIZE (1..200)), bmpString BMPString
 		 * (SIZE (1..200)), utf8String UTF8String (SIZE (1..200)) }
@@ -1277,10 +1277,10 @@ public class X509Ext {
 
 		/*
 		 * PolicyMappings ::= ASN1Sequence SIZE (1..MAX) OF PolicyMappings
-		 * 
+		 *
 		 * PolicyMappings ::= ASN1Sequence { issuerDomainPolicy CertPolicyId,
 		 * subjectDomainPolicy CertPolicyId }
-		 * 
+		 *
 		 * CertPolicyId ::= OBJECT IDENTIFIER
 		 */
 
@@ -1290,11 +1290,11 @@ public class X509Ext {
 
 		PolicyMappings policyMappings = PolicyMappings.getInstance(value);
 		ASN1Sequence policyMappingsSeq = (ASN1Sequence) policyMappings.toASN1Primitive();
-		
+
 		int polMap = 0;
 
 		for (ASN1Encodable policyMapping : policyMappingsSeq.toArray()) {
-			
+
 			ASN1Sequence policyMappingSeq = ASN1Sequence.getInstance(policyMapping.toASN1Primitive());
 			polMap++;
 
@@ -1326,11 +1326,11 @@ public class X509Ext {
 		 * KeyIdentifier OPTIONAL, authorityCertIssuer [1] GeneralNames
 		 * OPTIONAL, authorityCertSerialNumber [2] CertificateSerialNumber
 		 * OPTIONAL }
-		 * 
+		 *
 		 * KeyIdentifier ::= OCTET STRING
-		 * 
+		 *
 		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-		 * 
+		 *
 		 * CertificateSerialNumber ::= ASN1Integer
 		 */
 
@@ -1378,7 +1378,7 @@ public class X509Ext {
 		/*
 		 * PolicyConstraints ::= ASN1Sequence { requireExplicitPolicy [0]
 		 * SkipCerts OPTIONAL, inhibitPolicyMapping [1] SkipCerts OPTIONAL }
-		 * 
+		 *
 		 * SkipCerts ::= ASN1Integer (0..MAX)
 		 */
 
@@ -1409,7 +1409,7 @@ public class X509Ext {
 
 		/*
 		 * ExtendedKeyUsage ::= ASN1Sequence SIZE (1..MAX) OF KeyPurposeId
-		 * 
+		 *
 		 * KeyPurposeId ::= OBJECT IDENTIFIER
 		 */
 
@@ -1442,7 +1442,7 @@ public class X509Ext {
 
 		/*
 		 * FreshestCRL ::= CRLDistributionPoints
-		 * 
+		 *
 		 * CRLDistributionPoints ::= ASN1Sequence SIZE (1..MAX) OF
 		 * DistributionPoint
 		 */
@@ -1472,7 +1472,7 @@ public class X509Ext {
 
 		/*
 		 * InhibitAnyPolicy ::= SkipCerts
-		 * 
+		 *
 		 * SkipCerts ::= ASN1Integer (0..MAX)
 		 */
 
@@ -1550,7 +1550,7 @@ public class X509Ext {
 
 		return strBuff.toString();
 	}
-	
+
 	private boolean isCertType(int netscapeCertTypes, int certType) {
 		return ((netscapeCertTypes & certType) == certType);
 	}
@@ -1682,7 +1682,7 @@ public class X509Ext {
 		 * DistributionPoint ::= ASN1Sequence { distributionPoint [0]
 		 * DistributionPointName OPTIONAL, reasons [1] ReasonFlags OPTIONAL,
 		 * cRLIssuer [2] GeneralNames OPTIONAL }
-		 * 
+		 *
 		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
 		 */
 
@@ -1739,10 +1739,10 @@ public class X509Ext {
 		/*
 		 * DistributionPointName ::= CHOICE { fullname [0] GeneralNames,
 		 * nameRelativeToCRLIssuer [1] RelativeDistinguishedName }
-		 * 
+		 *
 		 * RelativeDistinguishedName ::= SET SIZE (1 .. MAX) OF
 		 * AttributeTypeAndValue
-		 * 
+		 *
 		 * AttributeTypeAndValue ::= ASN1Sequence { type AttributeType, value
 		 * AttributeValue }
 		 */
@@ -1770,7 +1770,7 @@ public class X509Ext {
 				strBuff.append(GeneralNameUtil.toString(generalName));
 				strBuff.append(NEWLINE);
 			}
-		} else { 
+		} else {
 			// DistributionPointName.TAG_NAMERELATIVETOCRLISSUER
 			strBuff.append(baseIndent);
 			strBuff.append(INDENT);
@@ -1812,7 +1812,7 @@ public class X509Ext {
 		List<String> reasonFlagsList = new ArrayList<String>();
 
 		DERBitString reasonFlagsBitString = (DERBitString) reasonFlags.toASN1Primitive();
-		
+
 		int reasonFlagsInt = reasonFlagsBitString.intValue();
 
 		// Go through bit string adding reason flags found to be true
@@ -1879,8 +1879,7 @@ public class X509Ext {
 
 		// Get value string for recognized attribute types
 		AttributeTypeType attributeTypeType = AttributeTypeType.resolveOid(attributeType.getId());
-		
-		// TODO test this
+
 		if (attributeTypeType == COMMON_NAME) {
 			DirectoryString commonName = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
 			return commonName.getString();

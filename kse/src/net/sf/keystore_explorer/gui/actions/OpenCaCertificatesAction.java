@@ -38,12 +38,12 @@ import net.sf.keystore_explorer.gui.error.DError;
 /**
  * Action to open the CA Certificates KeyStore. If it does not exist provide the
  * user with the option of creating it.
- * 
+ *
  */
 public class OpenCaCertificatesAction extends OpenAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -72,11 +72,12 @@ public class OpenCaCertificatesAction extends OpenAction {
 //		try {
 //			KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
 //			kseFrame.addKeyStore(openedKeyStore, "Windows User Keystore", new Password("".toCharArray()));
+//			return;
 //		} catch (CryptoException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-//		
+
 		if (caCertificatesFile.isFile()) {
 			openKeyStore(caCertificatesFile);
 			return;

@@ -804,7 +804,9 @@ public class DViewCertificate extends JEscDialog {
 
 	private class X509CertificateComparator implements Comparator<X509Certificate> {
 
-	    // TODO
+		/* (non-Javadoc)
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
 		public int compare(X509Certificate cert1, X509Certificate cert2) {
 
 			// Compare certificates for equality. Where all we care about is if

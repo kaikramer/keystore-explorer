@@ -20,12 +20,13 @@
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
 import java.security.cert.X509Extension;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -35,7 +36,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * The table model used to display X.509 extensions.
- * 
+ *
  */
 public class ExtensionsTableModel extends AbstractTableModel {
 	private static ResourceBundle res = ResourceBundle
@@ -58,40 +59,42 @@ public class ExtensionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Load the ExtensionsTableModel with X.509 extensions.
-	 * 
+	 *
 	 * @param extensions
 	 *            The X.509 extensions
 	 */
 	public void load(X509Extension extensions) {
-		Set critExts = extensions.getCriticalExtensionOIDs();
-		Set nonCritExts = extensions.getNonCriticalExtensionOIDs();
+		Set<String> critExts = extensions.getCriticalExtensionOIDs();
+		Set<String> nonCritExts = extensions.getNonCriticalExtensionOIDs();
 
 		// Rows will be sorted by extension name
-		TreeMap<String, X509Ext> sortedExts = new TreeMap<String, X509Ext>(new ExtensionNameComparator());
+		List<X509Ext> sortedExts = new ArrayList<X509Ext>();
 
-		for (Iterator itr = critExts.iterator(); itr.hasNext();) {
-			String extOid = (String) itr.next();
+		for (Iterator<String> itr = critExts.iterator(); itr.hasNext();) {
+			String extOid = itr.next();
 			byte[] value = extensions.getExtensionValue(extOid);
 
 			X509Ext ext = new X509Ext(new ASN1ObjectIdentifier(extOid), value, true);
 
-			sortedExts.put(ext.getName(), ext);
+			sortedExts.add(ext);
 		}
 
-		for (Iterator itr = nonCritExts.iterator(); itr.hasNext();) {
-			String extOid = (String) itr.next();
+		for (Iterator<String> itr = nonCritExts.iterator(); itr.hasNext();) {
+			String extOid = itr.next();
 			byte[] value = extensions.getExtensionValue(extOid);
 
 			X509Ext ext = new X509Ext(new ASN1ObjectIdentifier(extOid), value, false);
 
-			sortedExts.put(ext.getName(), ext);
+			sortedExts.add(ext);
 		}
+
+		Collections.sort(sortedExts, new ExtensionNameComparator());
 
 		data = new Object[sortedExts.size()][3];
 
 		int i = 0;
-		for (Iterator itrSortedExts = sortedExts.entrySet().iterator(); itrSortedExts.hasNext();) {
-			X509Ext ext = (X509Ext) ((Map.Entry) itrSortedExts.next()).getValue();
+		for (Iterator<X509Ext> itrSortedExts = sortedExts.iterator(); itrSortedExts.hasNext();) {
+			X509Ext ext = itrSortedExts.next();
 			loadRow(ext, i);
 			i++;
 		}
@@ -115,7 +118,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the number of columns in the table.
-	 * 
+	 *
 	 * @return The number of columns
 	 */
 	public int getColumnCount() {
@@ -124,7 +127,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the number of rows in the table.
-	 * 
+	 *
 	 * @return The number of rows
 	 */
 	public int getRowCount() {
@@ -133,7 +136,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the name of the column at the given position.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column name
@@ -144,7 +147,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the cell value at the given row and column position.
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col
@@ -157,7 +160,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the class at of the cells at the given column position.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column cells' class
@@ -175,7 +178,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Is the cell at the given row and column position editable?
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col
@@ -186,17 +189,29 @@ public class ExtensionsTableModel extends AbstractTableModel {
 		return false;
 	}
 
-	private class ExtensionNameComparator implements Comparator<String> {
-		public int compare(String name1, String name2) {
-			if (name1 == null) {
-				name1 = "";
+	private class ExtensionNameComparator implements Comparator<X509Ext> {
+		public int compare(X509Ext ext1, X509Ext ext2) {
+
+		    // compare extension names
+		    String name1 = ext1.getName();
+		    String name2 = ext2.getName();
+
+            if (name1 == null) {
+                name1 = "-";
+            }
+
+            if (name2 == null) {
+                name2 = "-";
+            }
+
+			int result = name1.compareToIgnoreCase(name2);
+
+			// compare extension OIDs if names are equal
+			if (result == 0) {
+			    result = ext1.getOid().getId().compareToIgnoreCase(ext2.getOid().getId());
 			}
 
-			if (name2 == null) {
-				name2 = "";
-			}
-
-			return name1.compareToIgnoreCase(name2);
+			return result;
 		}
 	}
 }

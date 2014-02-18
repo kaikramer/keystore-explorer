@@ -63,12 +63,11 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Class provides functionality to sign JAR files.
- * 
+ *
  */
 public class JarSigner extends Object {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/signing/resources");
@@ -125,7 +124,7 @@ public class JarSigner extends Object {
 
 	/**
 	 * Sign a JAR file overwriting it with the signed JAR.
-	 * 
+	 *
 	 * @param jsrFile
 	 *            JAR file to sign
 	 * @param privateKey
@@ -160,7 +159,7 @@ public class JarSigner extends Object {
 
 	/**
 	 * Sign a JAR file outputting the signed JAR to a different file.
-	 * 
+	 *
 	 * @param jarFile
 	 *            JAR file to sign
 	 * @param signedJarFile
@@ -339,7 +338,7 @@ public class JarSigner extends Object {
 
 	/**
 	 * Does the named signature already exist in the JAR file?
-	 * 
+	 *
 	 * @param jarFile
 	 *            JAR file
 	 * @param signatureName
@@ -763,32 +762,26 @@ public class JarSigner extends Object {
 
 	private static byte[] createSignatureBlock(byte[] toSign, PrivateKey privateKey,
 			X509Certificate[] certificateChain, SignatureType signatureType) throws CryptoException {
-		// Create a signature block for the supplied data
 
 		ByteArrayInputStream bais = null;
 
 		try {
-			SecureRandom rand = SecureRandom.getInstance("SHA1PRNG");
-
 			List<X509Certificate> certList = new ArrayList<X509Certificate>();
 
 			for (int i = 0; i < certificateChain.length; i++) {
 				certList.add(certificateChain[i]);
 			}
 
-			Store certStore = new JcaCertStore(certList);
+			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
+            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
+			ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce())
+			                                            .setProvider("BC")
+			                                            .setSecureRandom(SecureRandom.getInstance("SHA1PRNG"))
+			                                            .build(privateKey);
 
-			CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator(rand);
-
-			DigestCalculatorProvider digestCalcProvider = new JcaDigestCalculatorProviderBuilder().setProvider("BC")
-					.build();
-			JcaSignerInfoGeneratorBuilder signerInfoGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(
-					digestCalcProvider);
-			ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(
-					privateKey);
-
-			dataGen.addSignerInfoGenerator(signerInfoGeneratorBuilder.build(contentSigner, certificateChain[0]));
-			dataGen.addCertificates(certStore);
+			CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator();
+			dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(contentSigner, certificateChain[0]));
+			dataGen.addCertificates(new JcaCertStore(certList));
 
 			CMSSignedData signed = dataGen.generate(new CMSProcessableByteArray(toSign), true);
 

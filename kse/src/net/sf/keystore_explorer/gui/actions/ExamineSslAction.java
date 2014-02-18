@@ -75,7 +75,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 			boolean useClientAuth = dExamineSsl.useClientAuth();
 			KeyStoreHistory ksh = dExamineSsl.getKeyStore();
 
-			if ((sslHost == null) || (sslPort <= 0)) {
+			if (dExamineSsl.wasCancelled()) {
 				return;
 			}
 

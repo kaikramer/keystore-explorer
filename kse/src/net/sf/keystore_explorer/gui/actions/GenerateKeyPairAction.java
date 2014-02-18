@@ -50,12 +50,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to generate a key pair.
- * 
+ *
  */
 public class GenerateKeyPairAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -88,19 +88,21 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 	 * Generate a key pair (with certificate) in the currently opened KeyStore.
 	 */
 	public void generateKeyPair() {
-		generateKeyPair(null, null);
+		generateKeyPair(null, null, null);
 	}
 
 	/**
 	 * Generate a key pair (with certificate) in the currently opened KeyStore.
-	 * 
+	 *
 	 * @param issuerCert
 	 *                 Issuer certificate for signing the new certificate
+	 * @param issuerCertChain
+	 *                 Chain of issuer certificate
 	 * @param issuerPrivateKey
 	 *                 Issuer's private key for signing
 	 * @return Alias of new key pair
 	 */
-	public String generateKeyPair(X509Certificate issuerCert, PrivateKey issuerPrivateKey) {
+	public String generateKeyPair(X509Certificate issuerCert, X509Certificate[] issuerCertChain, PrivateKey issuerPrivateKey) {
 
 		String alias = "";
 		try {
@@ -119,7 +121,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
 			keyPairType = dGenerateKeyPair.getKeyPairType();
 			DGeneratingKeyPair dGeneratingKeyPair;
-			
+
 			if (keyPairType != KeyPairType.EC) {
 				keyPairSize = dGenerateKeyPair.getKeyPairSize();
 				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize);
@@ -142,7 +144,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 			}
 
 			DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame,
-					res.getString("GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType, 
+					res.getString("GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType,
 					issuerCert, issuerPrivateKey);
 			dGenerateKeyPairCert.setLocationRelativeTo(frame);
 			dGenerateKeyPairCert.setVisible(true);
@@ -202,8 +204,17 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 				newState.removeEntryPassword(alias);
 			}
 
-			keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(),
-					new X509Certificate[] { certificate });
+			// create new chain with certificates from issuer chain
+			X509Certificate[] newCertChain = null;
+            if (issuerCertChain != null) {
+                newCertChain = new X509Certificate[issuerCertChain.length + 1];
+                System.arraycopy(issuerCertChain, 0, newCertChain, 1, issuerCertChain.length);
+                newCertChain[0] = certificate;
+			} else {
+                newCertChain = new X509Certificate[] { certificate };
+			}
+
+			keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(), newCertChain);
 			newState.setEntryPassword(alias, password);
 
 			currentState.append(newState);
@@ -216,7 +227,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
-		
+
 		return alias;
 	}
 }

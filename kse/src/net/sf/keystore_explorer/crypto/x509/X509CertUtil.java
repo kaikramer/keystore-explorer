@@ -83,6 +83,10 @@ public final class X509CertUtil extends Object {
 	private static final String CERT_PEM_TYPE = "CERTIFICATE";
 	private static final String PKCS7_PEM_TYPE = "PKCS7";
 
+	public static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
+	public static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
+	public static final String BASE64_TESTER = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
+
 	private X509CertUtil() {
 	}
 
@@ -100,17 +104,19 @@ public final class X509CertUtil extends Object {
 
 		try {
 			certsBytes = ReadUtil.readFully(is);
+
+			// fix common input certificate problems by converting PEM/B64 to DER
 			certsBytes = fixCommonInputCertProblems(certsBytes);
 
 			is = new ByteArrayInputStream(certsBytes);
 
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
-			Collection certs = cf.generateCertificates(is);
+			Collection<? extends Certificate> certs = cf.generateCertificates(is);
 
 			ArrayList<X509Certificate> loadedCerts = new ArrayList<X509Certificate>();
 
-			for (Iterator itr = certs.iterator(); itr.hasNext();) {
+			for (Iterator<? extends Certificate> itr = certs.iterator(); itr.hasNext();) {
 				X509Certificate cert = (X509Certificate) itr.next();
 
 				if (cert != null) {
@@ -140,11 +146,11 @@ public final class X509CertUtil extends Object {
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 			CertPath certPath = cf.generateCertPath(is, PKI_PATH_ENCODING);
 
-			List certs = certPath.getCertificates();
+			List<? extends Certificate> certs = certPath.getCertificates();
 
 			ArrayList<X509Certificate> loadedCerts = new ArrayList<X509Certificate>();
 
-			for (Iterator itr = certs.iterator(); itr.hasNext();) {
+			for (Iterator<? extends Certificate> itr = certs.iterator(); itr.hasNext();) {
 				X509Certificate cert = (X509Certificate) itr.next();
 
 				if (cert != null) {
@@ -163,29 +169,24 @@ public final class X509CertUtil extends Object {
 	}
 
 	private static byte[] fixCommonInputCertProblems(byte[] certs) throws IOException {
-		// Fix common input certificate problems that cause the
-		// CertificateFactory to break:
 
-		// 1) Remove extra trailing newlines from X.509 PEM encoding
-		String certsStr = new String(certs);
-
-		if (certsStr.startsWith("-----BEGIN CERTIFICATE-----")) {
-			certsStr = certsStr.trim() + '\n';
-			return certsStr.getBytes();
+		// remove PEM header/footer
+	    String certsStr = new String(certs);
+		if (certsStr.startsWith(BEGIN_CERTIFICATE)) {
+			certsStr = certsStr.replaceAll(BEGIN_CERTIFICATE, "");
+			certsStr = certsStr.replaceAll(END_CERTIFICATE, "");
 		}
-		// 2) If a base 64 encoded SPC then decode
-		else {
-			byte[] decoded = attemptSpcBase64Decode(certs);
 
-			if (decoded != null) {
-				return decoded;
-			}
+		// If base 64 encoded then decode
+		byte[] decoded = attemptBase64Decode(certsStr);
+		if (decoded != null) {
+		    return decoded;
 		}
 
 		return certs;
 	}
 
-	private static byte[] attemptSpcBase64Decode(byte[] toTest) {
+    private static byte[] attemptBase64Decode(String toTest) {
 		// Attempt to decode the supplied byte array as a base 64 encoded SPC.
 		// Character set may be UTF-16 big endian or ASCII.
 
@@ -194,7 +195,8 @@ public final class X509CertUtil extends Object {
 				'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5',
 				'6', '7', '8', '9', '+', '/', '=' };
 
-		String toTestStr = new String(toTest);
+		// remove all non visible characters (like newlines) and whitespace
+		toTest = toTest.replaceAll("\\s", "");
 
 		/*
 		 * Check all characters are base 64. Discard any zero bytes that be
@@ -202,8 +204,8 @@ public final class X509CertUtil extends Object {
 		 */
 		StringBuffer sb = new StringBuffer();
 
-		nextChar: for (int i = 0; i < toTestStr.length(); i++) {
-			char c = toTestStr.charAt(i);
+		nextChar: for (int i = 0; i < toTest.length(); i++) {
+			char c = toTest.charAt(i);
 
 			for (int j = 0; j < base64.length; j++) {
 				if (c == base64[j]) // Append base 64 byte
@@ -245,6 +247,8 @@ public final class X509CertUtil extends Object {
 		URL url = new URL(MessageFormat.format("https://{0}:{1}/", host, "" + port));
 		HttpsURLConnection connection = null;
 
+		System.setProperty("javax.net.debug", "ssl");
+
 		try {
 			connection = (HttpsURLConnection) url.openConnection();
 
@@ -279,6 +283,13 @@ public final class X509CertUtil extends Object {
 			});
 
 			connection.connect();
+
+			// this is necessary in order to cause a handshake exception when the client cert is not accepted
+			connection.getResponseMessage();
+
+			SSLConnectionInfos sslConnectionInfos = new SSLConnectionInfos();
+			connection.getCipherSuite();
+			System.out.println(connection.toString());
 
 			return X509CertUtil.convertCertificates(connection.getServerCertificates());
 
@@ -827,6 +838,10 @@ public final class X509CertUtil extends Object {
 		return (cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal()));
 	}
 
+	public static class SSLConnectionInfos {
+	    X509Certificate[] serverCertificates;
+	    String cipherSuite;
+	}
 
 	/**
 	 * Implementation of the X509TrustManager. In this implementation we
