@@ -24,6 +24,7 @@ import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
 import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
@@ -57,7 +58,7 @@ import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
  * Provides utility methods for loading/saving KeyStores. The BouncyCastle
  * provider must be added before using this class to create or load a PKCS12,
  * BKS or UBER type KeyStores.
- * 
+ *
  */
 public final class KeyStoreUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/keystore/resources");
@@ -67,7 +68,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Create a new, empty KeyStore.
-	 * 
+	 *
 	 * @param keyStoreType
 	 *            The KeyStore type to create
 	 * @return The KeyStore
@@ -100,7 +101,7 @@ public final class KeyStoreUtil {
 	/**
 	 * Load a KeyStore, auto-detecting the type, from a file accessed by a
 	 * password.
-	 * 
+	 *
 	 * @param keyStoreFile
 	 *            File to load KeyStore from
 	 * @param password
@@ -138,7 +139,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Load a KeyStore from a file accessed by a password.
-	 * 
+	 *
 	 * @param keyStoreFile
 	 *            File to load KeyStore from
 	 * @param password
@@ -189,7 +190,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Is Apple Keychain supported?
-	 * 
+	 *
 	 * @return True if it is, false otherwise
 	 */
 	public static boolean isAppleKeychainSupported() {
@@ -199,7 +200,7 @@ public final class KeyStoreUtil {
 	/**
 	 * Load the Apple Keychain as a KeyStore. The KeyStore is not file based and
 	 * therefore does not need to be saved.
-	 * 
+	 *
 	 * @return The Keychain as a KeyStore
 	 * @throws CryptoException
 	 *             Problem encountered loading the KeyStore
@@ -239,7 +240,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Are MSCAPI Stores supported?
-	 * 
+	 *
 	 * @return True if they are, false otherwise
 	 */
 	public static boolean areMsCapiStoresSupported() {
@@ -249,7 +250,7 @@ public final class KeyStoreUtil {
 	/**
 	 * Load an MS CAPI Store as a KeyStore. The KeyStore is not file based and
 	 * therefore does not need to be saved.
-	 * 
+	 *
 	 * @param msCapiStoreType
 	 *            MS CAPI Store Type
 	 * @return The MS CAPI Store as a KeyStore
@@ -293,7 +294,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Save a KeyStore to a file protected by a password.
-	 * 
+	 *
 	 * @param keyStore
 	 *            The KeyStore
 	 * @param keyStoreFile
@@ -340,7 +341,7 @@ public final class KeyStoreUtil {
 	/**
 	 * Does the supplied KeyStore contain any key entries? ie any entries that
 	 * contain a key with no certificate chain.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore
 	 * @return True if it does
@@ -367,7 +368,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Is the named entry in the KeyStore a key pair entry?
-	 * 
+	 *
 	 * @param alias
 	 *            Alias
 	 * @param keyStore
@@ -383,7 +384,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Is the named entry in the KeyStore a key entry?
-	 * 
+	 *
 	 * @param alias
 	 *            Alias
 	 * @param keyStore
@@ -399,7 +400,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Is the named entry in the KeyStore a trusted certificate entry?
-	 * 
+	 *
 	 * @param alias
 	 *            Alias
 	 * @param keyStore
@@ -414,7 +415,7 @@ public final class KeyStoreUtil {
 
 	/**
 	 * Copy a KeyStore.
-	 * 
+	 *
 	 * @param keyStore
 	 *            KeyStore to copy
 	 * @return Copy
@@ -446,7 +447,7 @@ public final class KeyStoreUtil {
 
 	private static KeyStore getKeyStoreInstance(KeyStoreType keyStoreType) throws CryptoException {
 		try {
-			if ((keyStoreType == BKS) || (keyStoreType == UBER) || (keyStoreType == PKCS12)) {
+			if ((keyStoreType == BKS) || (keyStoreType == BKS_V1) || (keyStoreType == UBER) || (keyStoreType == PKCS12)) {
 				if (Security.getProvider(BOUNCY_CASTLE.jce()) == null) {
 					throw new CryptoException(MessageFormat.format(res.getString("NoProvider.exception.message"),
 							BOUNCY_CASTLE.jce()));
@@ -466,28 +467,28 @@ public final class KeyStoreUtil {
 	}
 
 	/**
-	 * Is the key pair entry identified by alias a EC key pair? 
-	 * 
-	 * @param alias 
+	 * Is the key pair entry identified by alias a EC key pair?
+	 *
+	 * @param alias
 	 *            Alias of key pair entry
-	 * @param keyStore 
+	 * @param keyStore
 	 *            KeyStore that contains the key pair
 	 * @return True, if alias is a EC key pair
 	 * @throws KeyStoreException
 	 *                If there was a problem accessing the KeyStore.
 	 */
 	public static boolean isECKeyPair(String alias, KeyStore keyStore) throws KeyStoreException {
-		
+
 		if (!isKeyPairEntry(alias, keyStore)) {
 			return false;
 		}
-		
+
 		Certificate certificate = keyStore.getCertificate(alias);
 		String algorithm = certificate.getPublicKey().getAlgorithm();
 		if (algorithm.equals(EC.jce())) {
 			return true;
 		}
-		
+
 		return false;
 	}
 }

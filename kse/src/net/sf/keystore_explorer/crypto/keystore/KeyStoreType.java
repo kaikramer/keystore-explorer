@@ -20,6 +20,7 @@
 package net.sf.keystore_explorer.crypto.keystore;
 
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.BKS_KS;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.BKS_V1_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.JCEKS_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.JKS_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.PKCS12_KS;
@@ -32,17 +33,18 @@ import net.sf.keystore_explorer.crypto.filetype.CryptoFileType;
 
 /**
  * Enumeration of KeyStore Types supported by the KeyStoreUtil class.
- * 
+ *
  */
 public enum KeyStoreType {
-	
+
 	JKS("JKS", "KeyStoreType.Jks", true, JKS_KS),
-	JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS), 
-	PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS), 
-	BKS("BKS-V1", "KeyStoreType.Bks", true, BKS_KS), 
-	UBER("UBER", "KeyStoreType.Uber", true, UBER_KS), 
-	KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null), 
-	MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null), 
+	JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS),
+	PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS),
+	BKS_V1("BKS-V1", "KeyStoreType.BksV1", true, BKS_V1_KS),
+	BKS("BKS", "KeyStoreType.Bks", true, BKS_KS),
+	UBER("UBER", "KeyStoreType.Uber", true, UBER_KS),
+	KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
+	MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
 	MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null);
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/keystore/resources");
@@ -60,7 +62,7 @@ public enum KeyStoreType {
 
 	/**
 	 * Get KeyStore type JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
 	public String jce() {
@@ -69,7 +71,7 @@ public enum KeyStoreType {
 
 	/**
 	 * KeyStore type friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	public String friendly() {
@@ -78,7 +80,7 @@ public enum KeyStoreType {
 
 	/**
 	 * Is KeyStore type file based?
-	 * 
+	 *
 	 * @return True if it is, false otherwise
 	 */
 	public boolean isFileBased() {
@@ -87,34 +89,34 @@ public enum KeyStoreType {
 
 	/**
 	 * Does this KeyStore type support secret key entries?
-	 * 
+	 *
 	 * @return True, if secret key entries are supported by this KeyStore type
 	 */
 	public boolean supportsKeyEntries() {
 		return this == JCEKS || this == BKS || this == UBER;
 	}
-	
+
 	/**
 	 * Does this KeyStore type support ECC key pair entries?
-	 * 
+	 *
 	 * @return True, if ECC supported
 	 */
 	public boolean supportsECC() {
 		return EccUtil.isECAvailable(this);
 	}
-	
+
 	/**
 	 * Does this KeyStore type support a certain named curve?
-	 * 
+	 *
 	 * @return True, if curve is supported
 	 */
 	public boolean supportsNamedCurve(String curveName) {
 		return EccUtil.isCurveAvailable(curveName, this);
 	}
-	
+
 	/**
 	 * Resolve the supplied JCE name to a matching KeyStore type.
-	 * 
+	 *
 	 * @param jce
 	 *            JCE name
 	 * @return KeyStore type or null if none
@@ -131,7 +133,7 @@ public enum KeyStoreType {
 
 	/**
 	 * Get crypto file type.
-	 * 
+	 *
 	 * @return Crypto file type or null if KeyStore type is not file based
 	 */
 	public CryptoFileType getCryptoFileType() {
@@ -140,7 +142,7 @@ public enum KeyStoreType {
 
 	/**
 	 * Returns JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
 	public String toString() {

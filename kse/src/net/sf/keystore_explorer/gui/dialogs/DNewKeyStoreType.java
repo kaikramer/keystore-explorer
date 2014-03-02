@@ -48,7 +48,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Dialog used to retrieve the type to use in the creation of a new KeyStore.
- * 
+ *
  */
 public class DNewKeyStoreType extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -60,6 +60,7 @@ public class DNewKeyStoreType extends JEscDialog {
 	private JRadioButton jrbJceksKeyStore;
 	private JRadioButton jrbJksKeyStore;
 	private JRadioButton jrbPkcs12KeyStore;
+	private JRadioButton jrbBksV1KeyStore;
 	private JRadioButton jrbBksKeyStore;
 	private JRadioButton jrbUberKeyStore;
 	private JPanel jpButtons;
@@ -70,7 +71,7 @@ public class DNewKeyStoreType extends JEscDialog {
 
 	/**
 	 * Creates a new DNewKeyStoreType dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 */
@@ -97,9 +98,13 @@ public class DNewKeyStoreType extends JEscDialog {
 				.charAt(0));
 		jrbPkcs12KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.tooltip"));
 
-		jrbBksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksKeyStore.text"));
-		PlatformUtil.setMnemonic(jrbBksKeyStore, res.getString("DNewKeyStoreType.jrbBksKeyStore.mnemonic").charAt(0));
-		jrbBksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksKeyStore.tooltip"));
+        jrbBksV1KeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.text"));
+        PlatformUtil.setMnemonic(jrbBksV1KeyStore, res.getString("DNewKeyStoreType.jrbBksV1KeyStore.mnemonic").charAt(0));
+        jrbBksV1KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.tooltip"));
+
+        jrbBksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksKeyStore.text"));
+        PlatformUtil.setMnemonic(jrbBksKeyStore, res.getString("DNewKeyStoreType.jrbBksKeyStore.mnemonic").charAt(0));
+        jrbBksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksKeyStore.tooltip"));
 
 		jrbUberKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbUberKeyStore.text"));
 		PlatformUtil.setMnemonic(jrbUberKeyStore, res.getString("DNewKeyStoreType.jrbUberKeyStore.mnemonic").charAt(0));
@@ -110,10 +115,11 @@ public class DNewKeyStoreType extends JEscDialog {
 		keyStoreTypes.add(jrbJceksKeyStore);
 		keyStoreTypes.add(jrbJksKeyStore);
 		keyStoreTypes.add(jrbPkcs12KeyStore);
+		keyStoreTypes.add(jrbBksV1KeyStore);
 		keyStoreTypes.add(jrbBksKeyStore);
 		keyStoreTypes.add(jrbUberKeyStore);
 
-		jpKeyStoreType = new JPanel(new GridLayout(6, 1));
+		jpKeyStoreType = new JPanel(new GridLayout(7, 1));
 		jpKeyStoreType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
 				new EmptyBorder(5, 5, 5, 5))));
 
@@ -121,6 +127,7 @@ public class DNewKeyStoreType extends JEscDialog {
 		jpKeyStoreType.add(jrbJceksKeyStore);
 		jpKeyStoreType.add(jrbJksKeyStore);
 		jpKeyStoreType.add(jrbPkcs12KeyStore);
+		jpKeyStoreType.add(jrbBksV1KeyStore);
 		jpKeyStoreType.add(jrbBksKeyStore);
 		jpKeyStoreType.add(jrbUberKeyStore);
 
@@ -166,7 +173,7 @@ public class DNewKeyStoreType extends JEscDialog {
 
 	/**
 	 * Get the selected KeyStore type.
-	 * 
+	 *
 	 * @return The selected KeyStore type or null if none was selected
 	 */
 	public KeyStoreType getKeyStoreType() {
@@ -180,8 +187,10 @@ public class DNewKeyStoreType extends JEscDialog {
 			keyStoreType = KeyStoreType.JKS;
 		} else if (jrbPkcs12KeyStore.isSelected()) {
 			keyStoreType = KeyStoreType.PKCS12;
-		} else if (jrbBksKeyStore.isSelected()) {
-			keyStoreType = KeyStoreType.BKS;
+        } else if (jrbBksV1KeyStore.isSelected()) {
+            keyStoreType = KeyStoreType.BKS_V1;
+        } else if (jrbBksKeyStore.isSelected()) {
+            keyStoreType = KeyStoreType.BKS;
 		} else {
 			keyStoreType = KeyStoreType.UBER;
 		}

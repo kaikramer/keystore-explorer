@@ -31,6 +31,7 @@ import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_OPEN
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNKNOWN;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
@@ -215,8 +216,8 @@ public class CryptoFileUtil {
 
 			// Test for BKS and UBER
 
-			// Both start with a version number of 0 or 1
-			if ((i1 == 0) || (i1 == 1)) {
+			// Both start with a version number of 0, 1 or 2
+			if ((i1 == 0) || (i1 == 1) || (i1 == 2)) {
 				/*
 				 * For BKS and UBER the last 20 bytes of the file are the SHA-1
 				 * Hash while the byte before that is a ASN1Null (0) indicating
@@ -231,14 +232,17 @@ public class CryptoFileUtil {
 					return null;
 				}
 
-				// Skip to 21st from last byte (file length minus 21 and the 4
-				// bytes already read)
+				// Skip to 21st from last byte (file length minus 21 and the 4 bytes already read)
 				dis.skip(contents.length - 25);
 
 				// Read what may be the null byte
 				if (dis.readByte() == 0) {
-					// Found null byte - BKS
-					return BKS;
+					// Found null byte - BKS/BKS-V1
+				    if (i1 == 1) {
+				        return BKS_V1;
+				    } else {
+				        return BKS;
+				    }
 				} else {
 					// No null byte - UBER
 					return UBER;
