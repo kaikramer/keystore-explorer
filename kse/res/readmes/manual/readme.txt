@@ -48,6 +48,6 @@ Unix/Linux Command-Line
 
 ===========================================
  Copyright 2004 - 2013 Wayne Grant
-           2013 Kai Kramer
+           2013 - 2014 Kai Kramer
 ===========================================
 

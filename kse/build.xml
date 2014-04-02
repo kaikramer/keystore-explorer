@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--========================================================================
   Copyright 2004 - 2013 Wayne Grant
-            2013 Kai Kramer
+            2013 - 2014 Kai Kramer
   
   This file is part of KeyStore Explorer.
   
@@ -46,7 +46,7 @@
     <property name="appSimpleVersion" value="51" />
 
     <!-- Vendor details -->
-    <property name="copyright" value="Coypright 2004 - 2013 Wayne Grant, 2013 Kai Kramer" />
+    <property name="copyright" value="Coypright 2004 - 2013 Wayne Grant, 2013 - 2014 Kai Kramer" />
     <property name="vendor" value="Wayne Grant, Kai Kramer" />
     <property name="website" value="keystore-explorer.sf.net" />
 
