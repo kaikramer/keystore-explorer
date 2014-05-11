@@ -70,10 +70,11 @@ import net.sf.keystore_explorer.gui.dialogs.DialogHelper;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 /**
  * Dialog that displays the presents JAR signing options.
- * 
+ *
  */
 public class DSignJar extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -111,10 +112,10 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Creates a new DSignJar dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
-	 * @param signPrivateKey 
+	 * @param signPrivateKey
 	 *            Signing key pair's private key
 	 * @param signKeyPairType
 	 *            Signing key pair's type
@@ -123,7 +124,7 @@ public class DSignJar extends JEscDialog {
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
-	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName) 
+	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName)
 			throws CryptoException {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
 		this.signPrivateKey = signPrivateKey;
@@ -354,7 +355,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Get chosen input JAR file.
-	 * 
+	 *
 	 * @return Input JAR file
 	 */
 	public File getInputJar() {
@@ -363,7 +364,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Get chosen output JAR file.
-	 * 
+	 *
 	 * @return Output JAR file
 	 */
 	public File getOutputJar() {
@@ -372,7 +373,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Get chosen signature name.
-	 * 
+	 *
 	 * @return Signature name or null if dialog cancelled
 	 */
 	public String getSignatureName() {
@@ -381,7 +382,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Get chosen signature type.
-	 * 
+	 *
 	 * @return Signature type or null if dialog cancelled
 	 */
 	public SignatureType getSignatureType() {
@@ -390,7 +391,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Get chosen digest type.
-	 * 
+	 *
 	 * @return Digest type or null if dialog cancelled
 	 */
 	public DigestType getDigestType() {
@@ -524,6 +525,7 @@ public class DSignJar extends JEscDialog {
 
 		if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentFile.getParentFile());
+			chooser.setSelectedFile(currentFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}
@@ -538,8 +540,18 @@ public class DSignJar extends JEscDialog {
 			CurrentDirectory.updateForFile(chosenFile);
 			jtfInputJar.setText(chosenFile.toString());
 			jtfInputJar.setCaretPosition(0);
+			populateOutputJarFileName(chosenFile);
 		}
 	}
+
+    private void populateOutputJarFileName(File chosenFile) {
+        String fileBaseName = FileNameUtil.removeExtension(chosenFile.getName());
+        if (fileBaseName != null) {
+            String outFileName = fileBaseName + "_signed.jar";
+            File outFile = new File(chosenFile.getParentFile(), outFileName);
+            jtfOutputJar.setText(outFile.getPath());
+        }
+    }
 
 	private void outputJarBrowsePressed() {
 		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
@@ -548,6 +560,7 @@ public class DSignJar extends JEscDialog {
 
 		if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentFile.getParentFile());
+			chooser.setSelectedFile(currentFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

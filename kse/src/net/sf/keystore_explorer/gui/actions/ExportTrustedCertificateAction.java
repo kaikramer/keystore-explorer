@@ -46,7 +46,7 @@ import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
  */
 public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 
-    private X509Certificate cert;
+    private X509Certificate certFromConstructor;
 
     /**
      * Construct action.
@@ -69,7 +69,7 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
     public ExportTrustedCertificateAction(KseFrame kseFrame, X509Certificate cert) {
         super(kseFrame);
 
-        this.cert = cert;
+        this.certFromConstructor = cert;
 
         putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificateAction.statusbar"));
         putValue(NAME, res.getString("ExportTrustedCertificateAction.text"));
@@ -88,11 +88,13 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 
 		try {
 		    DExportCertificates dExportCertificates = null;
-		    if (cert == null) {
+		    X509Certificate cert = null;
+		    if (certFromConstructor == null) {
 		        String alias = kseFrame.getSelectedEntryAlias();
                 dExportCertificates = new DExportCertificates(frame, alias, false);
                 cert = getCertificate(alias);
 		    } else {
+		        cert = certFromConstructor;
 		        dExportCertificates = new DExportCertificates(frame, X509CertUtil.getCertificateAlias(cert), false);
 		    }
 

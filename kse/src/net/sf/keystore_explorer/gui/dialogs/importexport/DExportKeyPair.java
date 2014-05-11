@@ -56,10 +56,11 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.password.JPasswordQualityField;
 import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 /**
  * Dialog used to display options to export a key pair from a KeyStore entry.
- * 
+ *
  */
 public class DExportKeyPair extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -87,7 +88,7 @@ public class DExportKeyPair extends JEscDialog {
 
 	/**
 	 * Creates a new DExportKeyPair dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param entryAlias
@@ -233,12 +234,21 @@ public class DExportKeyPair extends JEscDialog {
 
 		getRootPane().setDefaultButton(jbExport);
 
+        populateExportFileName();
+
 		pack();
 	}
 
+    private void populateExportFileName() {
+        File currentDirectory = CurrentDirectory.get();
+        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.PKCS12_KEYSTORE_EXT_2);
+        jtfExportFile.setText(csrFile.getPath());
+    }
+
 	/**
 	 * Has the user chosen to export?
-	 * 
+	 *
 	 * @return True if they have
 	 */
 	public boolean exportSelected() {
@@ -247,7 +257,7 @@ public class DExportKeyPair extends JEscDialog {
 
 	/**
 	 * Get chosen export file.
-	 * 
+	 *
 	 * @return Export file
 	 */
 	public File getExportFile() {
@@ -256,7 +266,7 @@ public class DExportKeyPair extends JEscDialog {
 
 	/**
 	 * Get export password.
-	 * 
+	 *
 	 * @return Export password
 	 */
 	public Password getExportPassword() {
@@ -270,6 +280,7 @@ public class DExportKeyPair extends JEscDialog {
 
 		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
+			chooser.setSelectedFile(currentExportFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

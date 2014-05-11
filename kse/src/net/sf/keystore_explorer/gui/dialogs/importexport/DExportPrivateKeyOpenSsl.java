@@ -63,11 +63,12 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.password.JPasswordQualityField;
 import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 /**
  * Dialog used to display options to export a private key from a KeyStore entry
  * as OpenSSL.
- * 
+ *
  */
 public class DExportPrivateKeyOpenSsl extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -104,7 +105,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Creates a new DExportPrivateKeyOpenSsl dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param entryAlias
@@ -322,12 +323,21 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 		getRootPane().setDefaultButton(jbExport);
 
+		populateExportFileName();
+
 		pack();
 	}
 
+    private void populateExportFileName() {
+        File currentDirectory = CurrentDirectory.get();
+        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.OPENSSL_PVK_EXT);
+        jtfExportFile.setText(csrFile.getPath());
+    }
+
 	/**
 	 * Has the user chosen to export?
-	 * 
+	 *
 	 * @return True if they have
 	 */
 	public boolean exportSelected() {
@@ -336,7 +346,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Get chosen export file.
-	 * 
+	 *
 	 * @return Export file
 	 */
 	public File getExportFile() {
@@ -345,7 +355,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Encrypt exported private key?
-	 * 
+	 *
 	 * @return True if encryption selected
 	 */
 	public boolean encrypt() {
@@ -354,7 +364,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Get PBE algorithm used for encryption.
-	 * 
+	 *
 	 * @return PBE algorithm
 	 */
 	public OpenSslPbeType getPbeAlgorithm() {
@@ -363,7 +373,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Get export encryption password.
-	 * 
+	 *
 	 * @return Export password
 	 */
 	public Password getExportPassword() {
@@ -372,7 +382,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Was the option to PEM encode selected?
-	 * 
+	 *
 	 * @return True if it was
 	 */
 	public boolean pemEncode() {
@@ -396,6 +406,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
+			chooser.setSelectedFile(currentExportFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

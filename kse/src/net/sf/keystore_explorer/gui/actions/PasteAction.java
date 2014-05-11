@@ -48,12 +48,15 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to paste a KeyStore entry.
- * 
+ *
  */
 public class PasteAction extends KeyStoreExplorerAction implements HistoryAction {
+
+    private boolean warnPkcs12Password = false;
+
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -149,6 +152,12 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 				if (keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
 					password = getPkcs12DummyPassword();
 				} else {
+
+				    // notify user that a default password was set due to keystore type change
+				    if (keyPairBufferEntry.getPassword().equals(Password.getPkcs12DummyPassword())) {
+				        showWarnPkcs12();
+				    }
+
 					password = keyPairBufferEntry.getPassword();
 				}
 
@@ -177,6 +186,18 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 			return false;
 		}
 	}
+
+	   private void showWarnPkcs12() {
+	        if (!warnPkcs12Password) {
+	            warnPkcs12Password = true;
+	            JOptionPane.showMessageDialog(frame, MessageFormat.format(res
+	                    .getString("PasteAction.PasteFromPkcs12Password.message"), new String(
+	                    getPkcs12DummyPassword().toCharArray())), res
+	                    .getString("PasteAction.Paste.Title"), JOptionPane.INFORMATION_MESSAGE);
+	        }
+	    }
+
+
 
 	private String getUniqueEntryName(String name, KeyStore keyStore) throws KeyStoreException {
 		// Get unique KeyStore entry name based on the one supplied, ie *

@@ -69,12 +69,12 @@ import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 
 /**
  * Action to sign a CSR using the selected key pair entry.
- * 
+ *
  */
 public class SignCsrAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -189,12 +189,12 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 				publicKey = new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
 				subject = pkcs10Csr.getSubject();
 
-				dSignCsr = new DSignCsr(frame, pkcs10Csr, privateKey, keyPairType, signingCert);
+				dSignCsr = new DSignCsr(frame, pkcs10Csr, csrFile, privateKey, keyPairType, signingCert);
 			} else {
 				publicKey = spkacCsr.getPublicKey();
 				subject = spkacCsr.getSubject().getName();
 
-				dSignCsr = new DSignCsr(frame, spkacCsr, privateKey, keyPairType, signingCert);
+				dSignCsr = new DSignCsr(frame, spkacCsr, csrFile, privateKey, keyPairType, signingCert);
 			}
 
 			dSignCsr.setLocationRelativeTo(frame);

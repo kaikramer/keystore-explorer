@@ -62,10 +62,11 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 /**
  * Dialog that displays the presents MIDlet signing options.
- * 
+ *
  */
 public class DSignMidlet extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -95,7 +96,7 @@ public class DSignMidlet extends JEscDialog {
 
 	/**
 	 * Creates a new DSignMidlet dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 */
@@ -286,7 +287,7 @@ public class DSignMidlet extends JEscDialog {
 
 	/**
 	 * Get chosen input MIDlet JAD file.
-	 * 
+	 *
 	 * @return Input MIDlet JAD file
 	 */
 	public File getInputJad() {
@@ -295,7 +296,7 @@ public class DSignMidlet extends JEscDialog {
 
 	/**
 	 * Get chosen output MIDlet JAD file.
-	 * 
+	 *
 	 * @return Output MIDlet JAD file
 	 */
 	public File getOutputJad() {
@@ -304,7 +305,7 @@ public class DSignMidlet extends JEscDialog {
 
 	/**
 	 * Get chosen MIDlet JAR file.
-	 * 
+	 *
 	 * @return MIDlet JAR file
 	 */
 	public File getJar() {
@@ -426,6 +427,7 @@ public class DSignMidlet extends JEscDialog {
 
 		if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentFile.getParentFile());
+			chooser.setSelectedFile(currentFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}
@@ -440,8 +442,18 @@ public class DSignMidlet extends JEscDialog {
 			CurrentDirectory.updateForFile(chosenFile);
 			jtfInputJad.setText(chosenFile.toString());
 			jtfInputJad.setCaretPosition(0);
+			populateOutputJadFileName(chosenFile);
 		}
 	}
+
+    private void populateOutputJadFileName(File chosenFile) {
+        String fileBaseName = FileNameUtil.removeExtension(chosenFile.getName());
+        if (fileBaseName != null) {
+            String outFileName = fileBaseName + "_signed.jad";
+            File outFile = new File(chosenFile.getParentFile(), outFileName);
+            jtfOutputJad.setText(outFile.getPath());
+        }
+    }
 
 	private void outputJadBrowsePressed() {
 		JFileChooser chooser = FileChooserFactory.getJadFileChooser();
@@ -450,6 +462,7 @@ public class DSignMidlet extends JEscDialog {
 
 		if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentFile.getParentFile());
+			chooser.setSelectedFile(currentFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

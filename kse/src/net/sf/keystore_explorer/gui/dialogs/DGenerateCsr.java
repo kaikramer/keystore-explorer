@@ -54,7 +54,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.miginfocom.swing.MigLayout;
-import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.csr.CsrType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
@@ -261,7 +260,7 @@ public class DGenerateCsr extends JEscDialog {
 	}
 
 	private void populateCsrFileName() {
-        File currentDirectory = ApplicationSettings.getInstance().getCurrentDirectory();
+        File currentDirectory = CurrentDirectory.get();
         String sanitizedAlias = FileNameUtil.cleanFileName(alias);
         File csrFile = new File(currentDirectory, sanitizedAlias + ".csr");
         jtfCsrFile.setText(csrFile.getPath());
@@ -280,6 +279,7 @@ public class DGenerateCsr extends JEscDialog {
 
 		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
+			chooser.setSelectedFile(currentExportFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

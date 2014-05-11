@@ -53,11 +53,12 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 /**
  * Dialog used to display options to export a public key from a KeyStore entry
  * as OpenSSL.
- * 
+ *
  */
 public class DExportPublicKeyOpenSsl extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -82,7 +83,7 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Creates a new DExportPublicKey dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param entryAlias
@@ -203,12 +204,21 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 
 		getRootPane().setDefaultButton(jbExport);
 
-		pack();
-	}
+        populateExportFileName();
+
+        pack();
+    }
+
+    private void populateExportFileName() {
+        File currentDirectory = CurrentDirectory.get();
+        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.PUBLIC_KEY_EXT);
+        jtfExportFile.setText(csrFile.getPath());
+    }
 
 	/**
 	 * Has the user chosen to export?
-	 * 
+	 *
 	 * @return True if they have
 	 */
 	public boolean exportSelected() {
@@ -217,7 +227,7 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Get chosen export file.
-	 * 
+	 *
 	 * @return Export file
 	 */
 	public File getExportFile() {
@@ -226,7 +236,7 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 
 	/**
 	 * Was the option to PEM encode selected?
-	 * 
+	 *
 	 * @return True if it was
 	 */
 	public boolean pemEncode() {
@@ -240,6 +250,7 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 
 		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
+			chooser.setSelectedFile(currentExportFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

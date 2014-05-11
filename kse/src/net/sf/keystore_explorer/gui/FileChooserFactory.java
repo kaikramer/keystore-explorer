@@ -28,44 +28,38 @@ import javax.swing.JFileChooser;
  * Simple factory that returns JFileChooser objects for the requested security
  * file types. Basically just supplies a JFileChooser object with the file
  * filter box completed appropriately.
- * 
+ *
  */
 public class FileChooserFactory {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 
-	// ks, (keystore)
-	// jks, jceks, bks, uber
-	// pfx, p12
-
-	// ks keystore jks pfx p12
-
-	private static final String KEYSTORE_EXT_1 = "ks";
-	private static final String KEYSTORE_EXT_2 = "keystore";
-	private static final String JKS_EXT = "jks";
-	private static final String JCEKS_EXT = "jceks";
-	private static final String BKS_EXT = "bks";
-	private static final String UBER_EXT = "uber";
-	private static final String PKCS12_KEYSTORE_EXT_1 = "pfx";
-	private static final String PKCS12_KEYSTORE_EXT_2 = "p12";
-	private static final String X509_EXT_1 = "cer";
-	private static final String X509_EXT_2 = "crt";
-	private static final String PKCS7_EXT_1 = "p7b";
-	private static final String PKCS7_EXT_2 = "p7c";
-	private static final String PKI_PATH_EXT = "pkipath";
-	private static final String SPC_EXT = "spc";
-	private static final String CET_EXT = "cet";
-	private static final String PKCS8_EXT = "pkcs8";
-	private static final String PVK_EXT = "pvk";
-	private static final String OPENSSL_PVK_EXT = "openssl";
-	private static final String PUBLIC_KEY_EXT = "openssl";
-	private static final String PKCS10_CSR_EXT_1 = "p10";
-	private static final String PKCS10_CSR_EXT_2 = "csr";
-	private static final String SPKAC_CSR_EXT = "spkac";
-	private static final String CA_REPLY_EXT = "p7r";
-	private static final String CRL_EXT = "crl";
-	private static final String JAR_EXT = "jar";
-	private static final String ZIP_EXT = "zip";
-	private static final String JAD_EXT = "jad";
+	public static final String KEYSTORE_EXT_1 = "ks";
+	public static final String KEYSTORE_EXT_2 = "keystore";
+	public static final String JKS_EXT = "jks";
+	public static final String JCEKS_EXT = "jceks";
+	public static final String BKS_EXT = "bks";
+	public static final String UBER_EXT = "uber";
+	public static final String PKCS12_KEYSTORE_EXT_1 = "pfx";
+	public static final String PKCS12_KEYSTORE_EXT_2 = "p12";
+	public static final String X509_EXT_1 = "cer";
+	public static final String X509_EXT_2 = "crt";
+	public static final String PKCS7_EXT_1 = "p7b";
+	public static final String PKCS7_EXT_2 = "p7c";
+	public static final String PKI_PATH_EXT = "pkipath";
+	public static final String SPC_EXT = "spc";
+	public static final String CET_EXT = "cet";
+	public static final String PKCS8_EXT = "pkcs8";
+	public static final String PVK_EXT = "pvk";
+	public static final String OPENSSL_PVK_EXT = "openssl";
+	public static final String PUBLIC_KEY_EXT = "openssl";
+	public static final String PKCS10_CSR_EXT_1 = "p10";
+	public static final String PKCS10_CSR_EXT_2 = "csr";
+	public static final String SPKAC_CSR_EXT = "spkac";
+	public static final String CA_REPLY_EXT = "p7r";
+	public static final String CRL_EXT = "crl";
+	public static final String JAR_EXT = "jar";
+	public static final String ZIP_EXT = "zip";
+	public static final String JAD_EXT = "jad";
 
 	private static final String KEYSTORE_FILE_DESC = MessageFormat.format(
 			res.getString("FileChooserFactory.KeyStoreFiles"), KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT,
@@ -127,7 +121,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for KeyStore files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getKeyStoreFileChooser() {
@@ -141,7 +135,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for X.509 Certificate files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getX509FileChooser() {
@@ -152,7 +146,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for PKCS #7 Certificate files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPkcs7FileChooser() {
@@ -163,7 +157,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for PKI Path Certificate files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPkiPathFileChooser() {
@@ -174,7 +168,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for SPC Certificate files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getSpcFileChooser() {
@@ -185,7 +179,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for CET files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getCetFileChooser() {
@@ -197,7 +191,7 @@ public class FileChooserFactory {
 	/**
 	 * Get a JFileChooser filtered for Certificate and PKCS #7 Certificate
 	 * files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getCertFileChooser() {
@@ -211,7 +205,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for PKCS #12 files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPkcs12FileChooser() {
@@ -223,7 +217,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for PKCS #8 files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPkcs8FileChooser() {
@@ -234,7 +228,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for PVK files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPvkFileChooser() {
@@ -245,7 +239,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for OpenSSL private key files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getOpenSslPvkFileChooser() {
@@ -256,7 +250,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for public key files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPublicKeyFileChooser() {
@@ -267,7 +261,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for CSR files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getCsrFileChooser() {
@@ -280,7 +274,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for PKCS #10 CSR files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPkcs10FileChooser() {
@@ -292,7 +286,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for SPKAC CSR files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getSpkacFileChooser() {
@@ -303,7 +297,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for CA reply files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getCaReplyFileChooser() {
@@ -314,7 +308,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for CRL files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getCrlFileChooser() {
@@ -325,7 +319,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for JAR and ZIP files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getArchiveFileChooser() {
@@ -337,7 +331,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for ZIP files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getZipFileChooser() {
@@ -348,7 +342,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for JAD files.
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getJadFileChooser() {

@@ -82,6 +82,7 @@ import net.sf.keystore_explorer.gui.dialogs.DViewPublicKey;
 import net.sf.keystore_explorer.gui.dialogs.DialogHelper;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DAddExtensions;
 import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -133,6 +134,7 @@ public class DSignCsr extends JEscDialog {
 	private X509Certificate verificationCertificate;
 	private PKCS10CertificationRequest pkcs10Csr;
 	private Spkac spkacCsr;
+	private File csrFile;
 	private PublicKey csrPublicKey;
 	private X509CertificateVersion version;
 	private SignatureType signatureType;
@@ -148,6 +150,8 @@ public class DSignCsr extends JEscDialog {
 	 *            The parent frame
 	 * @param pkcs10Csr
 	 *            The PKCS #10 formatted CSR
+	 * @param csrFile
+	 *            The CSR file
 	 * @param signPrivateKey
 	 *            Signing private key
 	 * @param signKeyPairType
@@ -157,10 +161,11 @@ public class DSignCsr extends JEscDialog {
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
-	public DSignCsr(JFrame parent, PKCS10CertificationRequest pkcs10Csr, PrivateKey signPrivateKey,
+	public DSignCsr(JFrame parent, PKCS10CertificationRequest pkcs10Csr, File csrFile, PrivateKey signPrivateKey,
 			KeyPairType signKeyPairType, X509Certificate verificationCertificate) throws CryptoException {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
 		this.pkcs10Csr = pkcs10Csr;
+		this.csrFile = csrFile;
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
 		this.verificationCertificate = verificationCertificate;
@@ -175,6 +180,8 @@ public class DSignCsr extends JEscDialog {
 	 *            The parent frame
 	 * @param spkacCsr
 	 *            The SPKAC formatted CSR
+     * @param csrFile
+     *            The CSR file
 	 * @param signPrivateKey
 	 *            Signing private key
 	 * @param signKeyPairType
@@ -184,11 +191,12 @@ public class DSignCsr extends JEscDialog {
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
-	public DSignCsr(JFrame parent, Spkac spkacCsr, PrivateKey signPrivateKey, KeyPairType signKeyPairType,
+	public DSignCsr(JFrame parent, Spkac spkacCsr, File csrFile, PrivateKey signPrivateKey, KeyPairType signKeyPairType,
 			X509Certificate verificationCertificate) throws CryptoException {
 		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
 		this.spkacCsr = spkacCsr;
-		this.signPrivateKey = signPrivateKey;
+        this.csrFile = csrFile;
+        this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
 		this.verificationCertificate = verificationCertificate;
 		setTitle(res.getString("DSignCsr.Title"));
@@ -262,6 +270,7 @@ public class DSignCsr extends JEscDialog {
 
 		jtfCaReplyFile = new JTextField(30);
 		jtfCaReplyFile.setToolTipText(res.getString("DSignCsr.jtfCaReplyFile.tooltip"));
+		populateCaReplyFileName();
 
 		jbBrowse = new JButton(res.getString("DSignCsr.jbBrowse.text"));
 		jbBrowse.setToolTipText(res.getString("DSignCsr.jbBrowse.tooltip"));
@@ -461,7 +470,13 @@ public class DSignCsr extends JEscDialog {
 		return System.currentTimeMillis() / 1000;
 	}
 
-	private void addExtensionsPressed() {
+	private void populateCaReplyFileName() {
+	    String replyFileName = FileNameUtil.removeExtension(csrFile.getName()) + ".p7r";
+        File replyFile = new File(csrFile.getParentFile(), replyFileName);
+        jtfCaReplyFile.setText(replyFile.getPath());
+    }
+
+    private void addExtensionsPressed() {
 		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, verificationCertificate.getPublicKey(),
 				X500NameUtils.x500PrincipalToX500Name(verificationCertificate.getSubjectX500Principal()),
 				verificationCertificate.getSerialNumber(), csrPublicKey);
@@ -535,6 +550,7 @@ public class DSignCsr extends JEscDialog {
 
 		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
+			chooser.setSelectedFile(currentExportFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}
@@ -646,8 +662,8 @@ public class DSignCsr extends JEscDialog {
                     PKCS10CertificationRequest csr =  csrBuilder.build(
                             new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
 
-                    DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, keyPair.getPrivate(), KeyPairType.RSA,
-                            null);
+                    DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, new File(System
+                            .getProperty("user.dir"), "test.csr"), keyPair.getPrivate(), KeyPairType.RSA, null);
                     dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                         public void windowClosing(java.awt.event.WindowEvent e) {
                             System.exit(0);

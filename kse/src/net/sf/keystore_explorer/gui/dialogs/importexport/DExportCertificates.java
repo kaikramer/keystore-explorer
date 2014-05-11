@@ -57,11 +57,12 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 /**
  * Dialog used to display options to export certificate(s) from a KeyStore
  * entry.
- * 
+ *
  */
 public class DExportCertificates extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -100,7 +101,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Creates a new DExportCertificate dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param entryAlias
@@ -280,11 +281,28 @@ public class DExportCertificates extends JEscDialog {
 			}
 		});
 
+		jrbExportX509.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                if (jrbExportX509.isSelected()) {
+                    updateFileExtension(FileChooserFactory.X509_EXT_1);
+                }
+            }
+        });
+
+		jrbExportPkcs7.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                if (jrbExportPkcs7.isSelected()) {
+                    updateFileExtension(FileChooserFactory.PKCS7_EXT_1);
+                }
+            }
+        });
+
 		jrbExportSpc.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent evt) {
 				if (jrbExportSpc.isSelected()) {
 					jcbExportPem.setEnabled(false);
 					jcbExportPem.setSelected(false);
+					updateFileExtension(FileChooserFactory.SPC_EXT);
 				} else {
 					jcbExportPem.setEnabled(true);
 				}
@@ -296,6 +314,7 @@ public class DExportCertificates extends JEscDialog {
 				if (jrbExportPkiPath.isSelected()) {
 					jcbExportPem.setEnabled(false);
 					jcbExportPem.setSelected(false);
+					updateFileExtension(FileChooserFactory.PKI_PATH_EXT);
 				} else {
 					jcbExportPem.setEnabled(true);
 				}
@@ -352,12 +371,27 @@ public class DExportCertificates extends JEscDialog {
 
 		getRootPane().setDefaultButton(jbExport);
 
+		populateExportFileName();
+
 		pack();
 	}
 
+    private void updateFileExtension(String newExt) {
+        String currentFileName = jtfExportFile.getText();
+        String newFileName = FileNameUtil.removeExtension(currentFileName) + "." + newExt;
+        jtfExportFile.setText(newFileName);
+    }
+
+    private void populateExportFileName() {
+        File currentDirectory = CurrentDirectory.get();
+        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.X509_EXT_1);
+        jtfExportFile.setText(csrFile.getPath());
+    }
+
 	/**
 	 * Has the user chosen to export?
-	 * 
+	 *
 	 * @return True if they have
 	 */
 	public boolean exportSelected() {
@@ -366,7 +400,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Get chosen export file.
-	 * 
+	 *
 	 * @return Export file
 	 */
 	public File getExportFile() {
@@ -375,7 +409,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Export head certificate only? Only applicable for key pair entries.
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public boolean exportHead() {
@@ -384,7 +418,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Export entire certificate chain? Only applicable for key pair entries.
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public boolean exportChain() {
@@ -393,7 +427,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Was chosen export format X.509?
-	 * 
+	 *
 	 * @return True if it was
 	 */
 	public boolean exportFormatX509() {
@@ -402,7 +436,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Was chosen export format PKCS #7?
-	 * 
+	 *
 	 * @return True if it was
 	 */
 	public boolean exportFormatPkcs7() {
@@ -411,7 +445,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Was chosen export format PKI Path?
-	 * 
+	 *
 	 * @return True if it was
 	 */
 	public boolean exportFormatPkiPath() {
@@ -420,7 +454,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Was chosen export format SPC?
-	 * 
+	 *
 	 * @return True if it was
 	 */
 	public boolean exportFormatSpc() {
@@ -429,7 +463,7 @@ public class DExportCertificates extends JEscDialog {
 
 	/**
 	 * Was the option to PEM encode selected?
-	 * 
+	 *
 	 * @return True if it was
 	 */
 	public boolean pemEncode() {
@@ -453,6 +487,7 @@ public class DExportCertificates extends JEscDialog {
 
 		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
+			chooser.setSelectedFile(currentExportFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

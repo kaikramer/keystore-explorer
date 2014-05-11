@@ -64,11 +64,12 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.password.JPasswordQualityField;
 import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
+import net.sf.keystore_explorer.utilities.io.FileNameUtil;
 
 /**
  * Dialog used to display options to export a private key from a KeyStore entry
  * as PVK.
- * 
+ *
  */
 public class DExportPrivateKeyPvk extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -108,7 +109,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 	/**
 	 * Creates a new DExportPrivateKeyPvk dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param entryAlias
@@ -356,12 +357,21 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 		getRootPane().setDefaultButton(jbExport);
 
-		pack();
-	}
+        populateExportFileName();
+
+        pack();
+    }
+
+    private void populateExportFileName() {
+        File currentDirectory = CurrentDirectory.get();
+        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.PVK_EXT);
+        jtfExportFile.setText(csrFile.getPath());
+    }
 
 	/**
 	 * Has the user chosen to export?
-	 * 
+	 *
 	 * @return True if they have
 	 */
 	public boolean exportSelected() {
@@ -370,7 +380,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 	/**
 	 * Get chosen export file.
-	 * 
+	 *
 	 * @return Export file
 	 */
 	public File getExportFile() {
@@ -379,7 +389,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 	/**
 	 * Get chosen key type.
-	 * 
+	 *
 	 * @return PvkPrivateKeyUtil.PVK_KEY_EXCHANGE or
 	 *         PvkPrivateKeyUtil.PVK_KEY_SIGNATURE.
 	 */
@@ -389,7 +399,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 	/**
 	 * Encrypt exported private key?
-	 * 
+	 *
 	 * @return True if encryption selected
 	 */
 	public boolean encrypt() {
@@ -398,7 +408,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 	/**
 	 * Use strong encryption for exported key?
-	 * 
+	 *
 	 * @return True if strong encryption selected
 	 */
 	public boolean useStrongEncryption() {
@@ -407,7 +417,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 	/**
 	 * Get export encryption password.
-	 * 
+	 *
 	 * @return Export password
 	 */
 	public Password getExportPassword() {
@@ -421,6 +431,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
+			chooser.setSelectedFile(currentExportFile);
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}

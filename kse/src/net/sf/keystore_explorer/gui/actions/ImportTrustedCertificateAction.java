@@ -44,25 +44,25 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to import a trusted certificate.
- * 
+ *
  */
 public class ImportTrustedCertificateAction extends AuthorityCertificatesAction implements HistoryAction {
-	private X509Certificate trustCertFromMemory;
+	private X509Certificate trustCertFromConstructor;
 	private File certFile;
 
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
 	public ImportTrustedCertificateAction(KseFrame kseFrame) {
 		this(kseFrame, null);
 	}
-	
+
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 * @param trustCert
@@ -70,7 +70,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 	 */
 	public ImportTrustedCertificateAction(KseFrame kseFrame, X509Certificate trustCert) {
 		super(kseFrame);
-		this.trustCertFromMemory = trustCert;
+		this.trustCertFromConstructor = trustCert;
 
 		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ImportTrustedCertificateAction.accelerator")
 				.charAt(0), Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -93,7 +93,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			
+
 			// handle case that no keystore is currently opened (-> create new keystore)
 			if (history == null) {
 				new NewAction(kseFrame).actionPerformed(null);
@@ -106,14 +106,14 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 			KeyStore keyStore = newState.getKeyStore();
 
 			// use either cert that was passed to c-tor or the one from file selection dialog
-			X509Certificate trustCert;
-			if (trustCertFromMemory == null) {
+			X509Certificate trustCert = null;
+			if (trustCertFromConstructor == null) {
 				trustCert = showFileSelectionDialog();
 				if (trustCert == null) {
 					return;
 				}
 			} else {
-				trustCert = trustCertFromMemory;
+				trustCert = trustCertFromConstructor;
 			}
 
 			if (applicationSettings.getEnableImportTrustedCertTrustCheck()) {
@@ -146,11 +146,11 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 					compKeyStores.add(windowsTrustedRootCertificates);
 				}
 
-				// Can we establish trust for the certificate? 
+				// Can we establish trust for the certificate?
 				if (X509CertUtil.establishTrust(trustCert, compKeyStores.toArray(new KeyStore[compKeyStores.size()])) == null) {
 
-					// if trustCert comes from an Examination Dialog (i.e. certFile == null) 
-					// there is no need to present it again to the user 
+					// if trustCert comes from an Examination Dialog (i.e. certFile == null)
+					// there is no need to present it again to the user
 					if (certFile != null) {
 
 						// display the certificate to the user for confirmation
@@ -160,7 +160,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 								JOptionPane.INFORMATION_MESSAGE);
 
 						DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-								res.getString("ImportTrustedCertificateAction.CertDetailsFile.Title"), 
+								res.getString("ImportTrustedCertificateAction.CertDetailsFile.Title"),
 								certFile.getName()),
 								new X509Certificate[] { trustCert }, null, DViewCertificate.NONE);
 						dViewCertificate.setLocationRelativeTo(frame);
