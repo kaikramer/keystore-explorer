@@ -23,7 +23,6 @@ import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
@@ -119,17 +118,12 @@ public class KSE {
 			// Wipe out any previous text
 			g.setColor(new Color(238, 238, 238)); // #EEEEEE
 			g.setPaintMode();
-			g.fillRect(10, 60, 200, 15);
+			g.fillRect(15, 70, 200, 20); // (x,y) is top left corner of area
 
-			// calculate centered position
-			FontMetrics fm = g.getFontMetrics();
-			int msgWidth = fm.stringWidth(message);
-			int x = (230 / 2) - (msgWidth / 2);  
-			
 			// Draw next text
 			g.setColor(new Color(96, 96, 96)); // #606060
 			g.setPaintMode();
-			g.drawString(message, x, 70);
+			g.drawString(message, 18, 80); // (x,y) is baseline of text
 
 			splash.update();
 		}
