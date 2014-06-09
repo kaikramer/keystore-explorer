@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
@@ -109,7 +109,7 @@ public class CreateApplicationGui implements Runnable {
 				openAction.openKeyStore(keyStoreFile);
 			}
 		} catch (Throwable t) {
-			DError dError = new DError(new JFrame(), APPLICATION_MODAL, t);
+			DError dError = new DError(new JFrame(), DOCUMENT_MODAL, t);
 			dError.setLocationRelativeTo(null);
 			dError.setVisible(true);
 			System.exit(1);

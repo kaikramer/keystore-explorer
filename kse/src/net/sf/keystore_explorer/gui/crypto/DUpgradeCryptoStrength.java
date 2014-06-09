@@ -118,7 +118,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 	 *            Parent
 	 */
 	public DUpgradeCryptoStrength(JFrame parent) {
-		super(parent, res.getString("DUpgradeCryptoStrength.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, res.getString("DUpgradeCryptoStrength.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
 		initComponents();
 	}

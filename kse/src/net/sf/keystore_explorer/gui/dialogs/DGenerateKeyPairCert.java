@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 
@@ -125,7 +125,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	 */
 	public DGenerateKeyPairCert(JFrame parent, String title, KeyPair keyPair, KeyPairType keyPairType)
 			throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keyPair = keyPair;
 		this.keyPairType = keyPairType;
 		initComponents(title);
@@ -149,7 +149,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	 */
 	public DGenerateKeyPairCert(JFrame parent, String title, KeyPair keyPair, KeyPairType keyPairType,
 			X509Certificate issuerCert, PrivateKey issuerPrivateKey) throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keyPair = keyPair;
 		this.keyPairType = keyPairType;
 		this.issuerCert = issuerCert;
@@ -400,7 +400,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 						extensions);
 			}
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(getParent());
 			dError.setVisible(true);
 			closeDialog();

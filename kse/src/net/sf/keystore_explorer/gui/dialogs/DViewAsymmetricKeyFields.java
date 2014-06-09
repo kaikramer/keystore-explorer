@@ -88,7 +88,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 	 *            RSA public key to display fields of
 	 */
 	public DViewAsymmetricKeyFields(JDialog parent, String title, RSAPublicKey rsaPublicKey) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		key = rsaPublicKey;
 		initFields();
 	}
@@ -104,7 +104,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 	 *            DSA public key to display fields of
 	 */
 	public DViewAsymmetricKeyFields(JDialog parent, String title, DSAPublicKey dsaPublicKey) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		key = dsaPublicKey;
 		initFields();
 	}
@@ -120,7 +120,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 	 *            RSA private key to display fields of
 	 */
 	public DViewAsymmetricKeyFields(JDialog parent, String title, RSAPrivateCrtKey rsaPrivateKey) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		key = rsaPrivateKey;
 		initFields();
 	}
@@ -136,7 +136,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 	 *            DSA private key to display fields of
 	 */
 	public DViewAsymmetricKeyFields(JDialog parent, String title, DSAPrivateKey dsaPrivateKey) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		key = dsaPrivateKey;
 		initFields();
 	}

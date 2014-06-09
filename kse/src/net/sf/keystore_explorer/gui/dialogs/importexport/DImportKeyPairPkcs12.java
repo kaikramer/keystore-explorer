@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.importexport;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
 
 import java.awt.BorderLayout;
@@ -105,7 +105,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 	 *            The parent frame
 	 */
 	public DImportKeyPairPkcs12(JFrame parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents();
 	}
 
@@ -267,7 +267,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 		if (keypair != null) {
 			DViewKeyPair dViewKeyPair = new DViewKeyPair(this, MessageFormat.format(
-					res.getString("DImportKeyPairPkcs12.ViewKeyPairDetails.Title"), path), APPLICATION_MODAL,
+					res.getString("DImportKeyPairPkcs12.ViewKeyPairDetails.Title"), path), DOCUMENT_MODAL,
 					keypair.getPrivateKey(), keypair.getCertificateChain());
 			dViewKeyPair.setLocationRelativeTo(this);
 			dViewKeyPair.setVisible(true);
@@ -344,7 +344,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 			Problem problem = createLoadPkcs12Problem(ex, pkcs12File);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairPkcs12.ProblemLoadingPkcs12.Title"),
-					APPLICATION_MODAL, problem);
+					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

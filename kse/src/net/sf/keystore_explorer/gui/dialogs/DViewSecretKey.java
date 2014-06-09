@@ -85,7 +85,7 @@ public class DViewSecretKey extends JEscDialog {
 	 *             A problem was encountered getting the secret key's details
 	 */
 	public DViewSecretKey(JFrame parent, String title, SecretKey secretKey) throws CryptoException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.secretKey = secretKey;
 		initComponents();
 	}

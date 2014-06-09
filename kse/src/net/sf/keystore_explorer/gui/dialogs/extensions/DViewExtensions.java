@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -101,7 +101,7 @@ public class DViewExtensions extends JEscDialog {
 	 *            Extensions to display
 	 */
 	public DViewExtensions(JFrame parent, String title, X509Extension extensions) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.extensions = extensions;
 		initComponents();
 	}
@@ -117,7 +117,7 @@ public class DViewExtensions extends JEscDialog {
 	 *            Extensions to display
 	 */
 	public DViewExtensions(JDialog parent, String title, X509Extension extensions) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.extensions = extensions;
 		initComponents();
 	}
@@ -275,7 +275,7 @@ public class DViewExtensions extends JEscDialog {
 				jtaExtensionValue.setText(ext.getStringValue());
 			} catch (Exception ex) {
 				jtaExtensionValue.setText("");
-				DError dError = new DError(this, APPLICATION_MODAL, ex);
+				DError dError = new DError(this, DOCUMENT_MODAL, ex);
 				dError.setLocationRelativeTo(this);
 				dError.setVisible(true);
 			}
@@ -299,16 +299,16 @@ public class DViewExtensions extends JEscDialog {
 		X509Ext extension = new X509Ext(oid, value, criticality);
 
 		try {
-			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, APPLICATION_MODAL, extension);
+			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, extension);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

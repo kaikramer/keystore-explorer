@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.sign;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -101,7 +101,7 @@ public class DSignMidlet extends JEscDialog {
 	 *            The parent frame
 	 */
 	public DSignMidlet(JFrame parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DSignMidlet.Title"));
 		initComponents();
 	}
@@ -342,7 +342,7 @@ public class DSignMidlet extends JEscDialog {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(this, res.getString("DSignMidlet.ProblemOpeningJad.Title"),
-					APPLICATION_MODAL, problem);
+					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -394,7 +394,7 @@ public class DSignMidlet extends JEscDialog {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(this, res.getString("DSignMidlet.ProblemOpeningJar.Title"),
-					APPLICATION_MODAL, problem);
+					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

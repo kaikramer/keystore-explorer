@@ -121,7 +121,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 	 */
 	public DExportPrivateKeyPvk(JFrame parent, String entryAlias, PrivateKey privateKey,
 			PasswordQualityConfig passwordQualityConfig) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.entryAlias = entryAlias;
 		this.privateKey = privateKey;

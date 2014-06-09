@@ -108,7 +108,7 @@ public class DGenerateKeyPair extends JEscDialog {
 	 *            Initial key pair size
 	 */
 	public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyPairType keyPairType, int keyPairSize) {
-		super(parent, res.getString("DGenerateKeyPair.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, res.getString("DGenerateKeyPair.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.keyPairType = keyPairType;
 		this.keyPairSize = keyPairSize;

@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.Toolkit;
 
@@ -59,7 +59,7 @@ public class CryptographyStrengthAction extends ExitAction {
 	 */
 	protected void doAction() {
 		try {
-			DCryptoStrength dCryptoStrength = new DCryptoStrength(frame, APPLICATION_MODAL);
+			DCryptoStrength dCryptoStrength = new DCryptoStrength(frame, DOCUMENT_MODAL);
 			dCryptoStrength.setLocationRelativeTo(frame);
 			dCryptoStrength.setVisible(true);
 		} catch (Exception ex) {

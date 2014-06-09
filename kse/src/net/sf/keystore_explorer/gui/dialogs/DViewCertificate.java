@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -156,7 +156,7 @@ public class DViewCertificate extends JEscDialog {
 	 */
 	public DViewCertificate(JFrame parent, String title, X509Certificate[] certs, KseFrame kseFrame, int importExport)
 			throws CryptoException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.kseFrame = kseFrame;
 		this.importExport = importExport;
 		initComponents(certs);
@@ -713,7 +713,7 @@ public class DViewCertificate extends JEscDialog {
 					jbExtensions.setEnabled(false);
 				}
 			} catch (CryptoException ex) {
-				DError dError = new DError(this, APPLICATION_MODAL, ex);
+				DError dError = new DError(this, DOCUMENT_MODAL, ex);
 				dError.setLocationRelativeTo(this);
 				dError.setVisible(true);
 				dispose();
@@ -726,11 +726,11 @@ public class DViewCertificate extends JEscDialog {
 			X509Certificate cert = getSelectedCertificate();
 
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this,
-					res.getString("DViewCertificate.PubKeyDetails.Title"), APPLICATION_MODAL, cert.getPublicKey());
+					res.getString("DViewCertificate.PubKeyDetails.Title"), DOCUMENT_MODAL, cert.getPublicKey());
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
@@ -751,11 +751,11 @@ public class DViewCertificate extends JEscDialog {
 
 		try {
 			DViewCertCsrPem dViewCertPem = new DViewCertCsrPem(this, res.getString("DViewCertificate.Pem.Title"),
-					APPLICATION_MODAL, cert);
+					DOCUMENT_MODAL, cert);
 			dViewCertPem.setLocationRelativeTo(this);
 			dViewCertPem.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
@@ -766,16 +766,16 @@ public class DViewCertificate extends JEscDialog {
 		X509Certificate cert = getSelectedCertificate();
 
 		try {
-			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, APPLICATION_MODAL, cert);
+			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, cert);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

@@ -118,7 +118,7 @@ public class DProperties extends JEscDialog {
 	 *             If a problem occurred while getting the properties
 	 */
 	public DProperties(JFrame parent, KeyStoreHistory history) throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.history = history;
 		this.currentState = history.getCurrentState();
 		initComponents();

@@ -97,7 +97,7 @@ public class DExportKeyPair extends JEscDialog {
 	 *            Password quality configuration
 	 */
 	public DExportKeyPair(JFrame parent, String entryAlias, PasswordQualityConfig passwordQualityConfig) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.entryAlias = entryAlias;
 		this.passwordQualityConfig = passwordQualityConfig;

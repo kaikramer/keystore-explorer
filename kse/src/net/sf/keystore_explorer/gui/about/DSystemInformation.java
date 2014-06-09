@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.about;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -385,14 +385,14 @@ public class DSystemInformation extends JEscDialog {
 	}
 
 	private void systemPropertiesPressed() {
-		DSystemProperties dSystemProperties = new DSystemProperties(this, APPLICATION_MODAL);
+		DSystemProperties dSystemProperties = new DSystemProperties(this, DOCUMENT_MODAL);
 		dSystemProperties.setResizable(true);
 		dSystemProperties.setLocationRelativeTo(this);
 		dSystemProperties.setVisible(true);
 	}
 
 	private void environmentVariablesPressed() {
-		DEnvironmentVariables dEnvironmentVariables = new DEnvironmentVariables(this, APPLICATION_MODAL);
+		DEnvironmentVariables dEnvironmentVariables = new DEnvironmentVariables(this, DOCUMENT_MODAL);
 		dEnvironmentVariables.setResizable(true);
 		dEnvironmentVariables.setLocationRelativeTo(this);
 		dEnvironmentVariables.setVisible(true);

@@ -101,7 +101,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	 *            Is dialog editable?
 	 */
 	public DDistinguishedNameChooser(JFrame parent, String title, X500Name distinguishedName, boolean editable) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.distinguishedName = distinguishedName;
 		this.editable = editable;
 		initComponents();
@@ -120,7 +120,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	 *            Is dialog editable?
 	 */
 	public DDistinguishedNameChooser(JDialog parent, String title, X500Name distinguishedName, boolean editable) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.distinguishedName = distinguishedName;
 		this.editable = editable;
 		initComponents();

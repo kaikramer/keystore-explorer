@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -123,7 +123,7 @@ public class DViewCrl extends JEscDialog {
 	 *            CRL to display
 	 */
 	public DViewCrl(JFrame parent, String title, X509CRL crl) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.crl = crl;
 		initComponents();
 	}
@@ -495,16 +495,16 @@ public class DViewCrl extends JEscDialog {
 
 	private void asn1DumpPressed() {
 		try {
-			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, APPLICATION_MODAL, crl);
+			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, crl);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

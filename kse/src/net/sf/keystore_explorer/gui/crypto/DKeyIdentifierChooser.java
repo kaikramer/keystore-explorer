@@ -86,7 +86,7 @@ public class DKeyIdentifierChooser extends JEscDialog {
 	 */
 	public DKeyIdentifierChooser(JFrame parent, String title, PublicKey publicKey, byte[] keyIdentifier)
 			throws CryptoException {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.publicKey = publicKey;
 		initComponents(keyIdentifier);
 	}
@@ -107,7 +107,7 @@ public class DKeyIdentifierChooser extends JEscDialog {
 	 */
 	public DKeyIdentifierChooser(JDialog parent, String title, PublicKey publicKey, byte[] keyIdentifier)
 			throws CryptoException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.publicKey = publicKey;
 		initComponents(keyIdentifier);
 	}

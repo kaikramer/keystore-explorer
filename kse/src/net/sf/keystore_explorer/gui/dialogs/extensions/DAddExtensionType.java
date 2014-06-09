@@ -114,7 +114,7 @@ public class DAddExtensionType extends JEscDialog {
 	 *            Current set of extensions
 	 */
 	public DAddExtensionType(JDialog parent, X509Extension extensions) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DAddExtensionType.Title"));
 		this.extensions = extensions;
 		initComponents();

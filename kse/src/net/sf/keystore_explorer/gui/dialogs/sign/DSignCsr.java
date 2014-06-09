@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.sign;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 
@@ -163,7 +163,7 @@ public class DSignCsr extends JEscDialog {
 	 */
 	public DSignCsr(JFrame parent, PKCS10CertificationRequest pkcs10Csr, File csrFile, PrivateKey signPrivateKey,
 			KeyPairType signKeyPairType, X509Certificate verificationCertificate) throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.pkcs10Csr = pkcs10Csr;
 		this.csrFile = csrFile;
 		this.signPrivateKey = signPrivateKey;
@@ -193,7 +193,7 @@ public class DSignCsr extends JEscDialog {
 	 */
 	public DSignCsr(JFrame parent, Spkac spkacCsr, File csrFile, PrivateKey signPrivateKey, KeyPairType signKeyPairType,
 			X509Certificate verificationCertificate) throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.spkacCsr = spkacCsr;
         this.csrFile = csrFile;
         this.signPrivateKey = signPrivateKey;
@@ -570,11 +570,11 @@ public class DSignCsr extends JEscDialog {
 	private void pubKeyDetailsPressed() {
 		try {
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DSignCsr.PubKeyDetails.Title"),
-					APPLICATION_MODAL, csrPublicKey);
+					DOCUMENT_MODAL, csrPublicKey);
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -83,7 +83,7 @@ public class DNameConstraints extends DExtension {
 	 *            The parent dialog
 	 */
 	public DNameConstraints(JDialog parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DNameConstraints.Title"));
 		initComponents();
 	}
@@ -99,7 +99,7 @@ public class DNameConstraints extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DNameConstraints(JDialog parent, byte[] value) throws IOException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DNameConstraints.Title"));
 		initComponents();
 		prepopulateWithValue(value);
@@ -222,7 +222,7 @@ public class DNameConstraints extends DExtension {
 		try {
 			value = nameConstraints.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

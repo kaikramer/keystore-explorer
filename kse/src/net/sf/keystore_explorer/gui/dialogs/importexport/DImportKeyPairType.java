@@ -74,7 +74,7 @@ public class DImportKeyPairType extends JEscDialog {
 	 *            The parent frame
 	 */
 	public DImportKeyPairType(JFrame parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DImportKeyPairType.Title"));
 		initComponents();
 	}

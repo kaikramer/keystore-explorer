@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.Toolkit;
 import java.security.GeneralSecurityException;
@@ -84,7 +84,7 @@ public class SetKeyPasswordAction extends KeyStoreExplorerAction implements Hist
 
 			Password oldPassword = newState.getEntryPassword(alias);
 
-			DChangePassword dChangePassword = new DChangePassword(frame, APPLICATION_MODAL,
+			DChangePassword dChangePassword = new DChangePassword(frame, DOCUMENT_MODAL,
 					res.getString("SetKeyPasswordAction.SetKeyPassword.Title"), oldPassword,
 					applicationSettings.getPasswordQualityConfig());
 			dChangePassword.setLocationRelativeTo(frame);
@@ -129,7 +129,7 @@ public class SetKeyPasswordAction extends KeyStoreExplorerAction implements Hist
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(frame,
-					res.getString("SetKeyPasswordAction.ProblemSettingPasswordKeyEntry.Title"), APPLICATION_MODAL,
+					res.getString("SetKeyPasswordAction.ProblemSettingPasswordKeyEntry.Title"), DOCUMENT_MODAL,
 					problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);

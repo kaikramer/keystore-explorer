@@ -92,7 +92,7 @@ public class DUserNoticeChooser extends JEscDialog {
 	 *            User notice
 	 */
 	public DUserNoticeChooser(JFrame parent, String title, UserNotice userNotice) {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(userNotice);
 	}
 
@@ -107,7 +107,7 @@ public class DUserNoticeChooser extends JEscDialog {
 	 *            User notice
 	 */
 	public DUserNoticeChooser(JDialog parent, String title, UserNotice userNotice) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(userNotice);
 	}
 

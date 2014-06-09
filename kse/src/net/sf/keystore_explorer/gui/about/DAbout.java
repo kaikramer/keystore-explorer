@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.about;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.Color;
 import java.awt.Dialog;
@@ -155,7 +155,7 @@ public class DAbout extends JEscDialog {
 	}
 
 	private void showSystemInformation() {
-		DSystemInformation dSystemInformation = new DSystemInformation(this, APPLICATION_MODAL);
+		DSystemInformation dSystemInformation = new DSystemInformation(this, DOCUMENT_MODAL);
 		dSystemInformation.setLocationRelativeTo(this);
 		dSystemInformation.setVisible(true);
 	}

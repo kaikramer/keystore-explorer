@@ -117,7 +117,7 @@ public class DGenerateCsr extends JEscDialog {
 	 *             A problem was encountered with the supplied private key
 	 */
 	public DGenerateCsr(JFrame parent, String alias, PrivateKey privateKey, KeyPairType keyPairType) throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.alias = alias;
 		this.privateKey = privateKey;
 		this.keyPairType = keyPairType;

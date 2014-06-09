@@ -87,7 +87,7 @@ public class DObjectIdChooser extends JEscDialog {
 	 *             If there was a problem with the object identifier
 	 */
 	public DObjectIdChooser(JFrame parent, String title, ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(objectId);
 	}
 
@@ -105,7 +105,7 @@ public class DObjectIdChooser extends JEscDialog {
 	 */
 	public DObjectIdChooser(JDialog parent, String title, ASN1ObjectIdentifier objectId)
 			throws InvalidObjectIdException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(objectId);
 	}
 

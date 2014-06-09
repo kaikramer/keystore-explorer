@@ -98,7 +98,7 @@ public class DTipOfTheDay extends JEscDialog {
 	 *            Index of current tip
 	 */
 	public DTipOfTheDay(JFrame parent, boolean showTipsOnStartup, ResourceBundle tips, String tipPrefix, int tipIndex) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.tipIndex = tipIndex;
 

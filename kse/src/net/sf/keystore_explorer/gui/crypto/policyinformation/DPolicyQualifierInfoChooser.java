@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.crypto.policyinformation;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
 import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
 
@@ -102,7 +102,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 	 */
 	public DPolicyQualifierInfoChooser(JFrame parent, String title, PolicyQualifierInfo policyQualifierInfo)
 			throws IOException {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(policyQualifierInfo);
 	}
 
@@ -120,7 +120,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 	 */
 	public DPolicyQualifierInfoChooser(JDialog parent, String title, PolicyQualifierInfo policyQualifierInfo)
 			throws IOException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(policyQualifierInfo);
 	}
 
@@ -322,7 +322,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 						userNotice);
 			}
 		} catch (Exception ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

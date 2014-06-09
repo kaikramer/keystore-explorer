@@ -76,7 +76,7 @@ public class DNewKeyStoreType extends JEscDialog {
 	 *            The parent frame
 	 */
 	public DNewKeyStoreType(JFrame parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DNewKeyStoreType.Title"));
 		initComponents();
 	}

@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.CLIENT_AUTH;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.CODE_SIGNING;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.EMAIL_PROTECTION;
@@ -99,7 +99,7 @@ public class DExtendedKeyUsage extends DExtension {
 	 *            The parent dialog
 	 */
 	public DExtendedKeyUsage(JDialog parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DExtendedKeyUsage.Title"));
 		initComponents();
 	}
@@ -115,7 +115,7 @@ public class DExtendedKeyUsage extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DExtendedKeyUsage(JDialog parent, byte[] value) throws IOException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DExtendedKeyUsage.Title"));
 		initComponents();
 		prepopulateWithValue(value);
@@ -298,7 +298,7 @@ public class DExtendedKeyUsage extends DExtension {
 		try {
 			value = extendedKeyUsage.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

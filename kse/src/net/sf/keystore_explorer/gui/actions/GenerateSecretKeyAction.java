@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
 
 import java.awt.Toolkit;
@@ -140,7 +140,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 
 			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
-						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"), APPLICATION_MODAL,
+						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"), DOCUMENT_MODAL,
 						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);

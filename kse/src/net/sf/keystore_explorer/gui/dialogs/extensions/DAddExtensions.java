@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -136,7 +136,7 @@ public class DAddExtensions extends JEscDialog {
 	 */
 	public DAddExtensions(JFrame parent, String title, X509ExtensionSet extensions, PublicKey authorityPublicKey,
 			X500Name authorityCertName, BigInteger authorityCertSerialNumber, PublicKey subjectPublicKey) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DAddExtensions.Title"));
 		this.extensions = extensions;
 		this.authorityPublicKey = authorityPublicKey;
@@ -164,7 +164,7 @@ public class DAddExtensions extends JEscDialog {
 	 */
 	public DAddExtensions(JDialog parent, X509ExtensionSet extensions, PublicKey authorityPublicKey,
 			X500Name authorityCertName, BigInteger authorityCertSerialNumber, PublicKey subjectPublicKey) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DAddExtensions.Title"));
 		this.extensions = (X509ExtensionSet) extensions.clone();
 		this.authorityPublicKey = authorityPublicKey;
@@ -718,7 +718,7 @@ public class DAddExtensions extends JEscDialog {
 				updateButtonControls();
 			}
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

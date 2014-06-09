@@ -98,6 +98,11 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 			if (history == null) {
 				new NewAction(kseFrame).actionPerformed(null);
 				history = kseFrame.getActiveKeyStoreHistory();
+				
+				// cancel pressed => abort
+				if (history == null) {
+					return;
+				}
 			}
 
 			KeyStoreState currentState = history.getCurrentState();

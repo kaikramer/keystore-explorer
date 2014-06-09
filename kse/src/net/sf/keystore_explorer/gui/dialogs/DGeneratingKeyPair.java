@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -85,7 +85,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 	 *            The key size to generate
 	 */
 	public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, int keySize) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keyPairType = keyPairType;
 		this.keySize = keySize;
 		initComponents();
@@ -102,7 +102,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 	 *            The name of the curve to create
 	 */
 	public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, String curveName) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keyPairType = keyPairType;
 		this.curveName = curveName;
 		initComponents();
@@ -213,7 +213,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						if (DGeneratingKeyPair.this.isShowing()) {
-							DError dError = new DError(DGeneratingKeyPair.this, APPLICATION_MODAL, ex);
+							DError dError = new DError(DGeneratingKeyPair.this, DOCUMENT_MODAL, ex);
 							dError.setLocationRelativeTo(DGeneratingKeyPair.this);
 							dError.setVisible(true);
 							closeDialog();

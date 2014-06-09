@@ -90,7 +90,7 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 	 *            The KeyStore entry to export private key from
 	 */
 	public DExportPublicKeyOpenSsl(JFrame parent, String entryAlias) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.entryAlias = entryAlias;
 		initComponents();
 	}

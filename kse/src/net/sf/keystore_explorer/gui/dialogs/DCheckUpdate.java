@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -82,7 +82,7 @@ public class DCheckUpdate extends JEscDialog {
 	 *            The parent frame
 	 */
 	public DCheckUpdate(JFrame parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents();
 	}
 
@@ -226,7 +226,7 @@ public class DCheckUpdate extends JEscDialog {
 							Problem problem = new Problem(problemStr, causes, ex);
 
 							DProblem dProblem = new DProblem(DCheckUpdate.this, res
-									.getString("DCheckUpdate.ProblemCheckingUpdate.Title"), APPLICATION_MODAL, problem);
+									.getString("DCheckUpdate.ProblemCheckingUpdate.Title"), DOCUMENT_MODAL, problem);
 							dProblem.setLocationRelativeTo(DCheckUpdate.this);
 							dProblem.setVisible(true);
 

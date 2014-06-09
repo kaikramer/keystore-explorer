@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.Toolkit;
 import java.io.File;
@@ -109,7 +109,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 			}
 
 			DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-					res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()), APPLICATION_MODAL);
+					res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()), DOCUMENT_MODAL);
 			dGetPassword.setLocationRelativeTo(frame);
 			dGetPassword.setVisible(true);
 			Password password = dGetPassword.getPassword();
@@ -132,7 +132,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 				Problem problem = new Problem(problemStr, causes, klex);
 
 				DProblem dProblem = new DProblem(frame, res.getString("OpenAction.ProblemOpeningKeyStore.Title"),
-						APPLICATION_MODAL, problem);
+						DOCUMENT_MODAL, problem);
 				dProblem.setLocationRelativeTo(frame);
 				dProblem.setVisible(true);
 

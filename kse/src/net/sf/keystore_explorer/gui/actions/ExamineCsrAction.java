@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.Toolkit;
 import java.io.File;
@@ -116,7 +116,7 @@ public class ExamineCsrAction extends KeyStoreExplorerAction {
 				Problem problem = new Problem(problemStr, causes, ex);
 
 				DProblem dProblem = new DProblem(frame, res.getString("ExamineCsrAction.ProblemOpeningCsr.Title"),
-						APPLICATION_MODAL, problem);
+						DOCUMENT_MODAL, problem);
 				dProblem.setLocationRelativeTo(frame);
 				dProblem.setVisible(true);
 

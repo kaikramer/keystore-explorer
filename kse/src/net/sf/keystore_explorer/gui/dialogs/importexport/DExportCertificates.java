@@ -110,7 +110,7 @@ public class DExportCertificates extends JEscDialog {
 	 *            Exporting a chain?
 	 */
 	public DExportCertificates(JFrame parent, String entryAlias, boolean chain) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.entryAlias = entryAlias;
 		this.chain = chain;
 		initComponents();

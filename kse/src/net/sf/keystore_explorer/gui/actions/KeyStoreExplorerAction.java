@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
 
 import java.awt.event.ActionEvent;
@@ -142,7 +142,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 			KeyStore keyStore = state.getKeyStore();
 
 			DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-					res.getString("KeyStoreExplorerAction.UnlockEntry.Title"), alias), APPLICATION_MODAL);
+					res.getString("KeyStoreExplorerAction.UnlockEntry.Title"), alias), DOCUMENT_MODAL);
 			dGetPassword.setLocationRelativeTo(frame);
 			dGetPassword.setVisible(true);
 			Password password = dGetPassword.getPassword();
@@ -167,7 +167,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(frame,
-					res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"), APPLICATION_MODAL, problem);
+					res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"), DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 
@@ -208,7 +208,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
-					APPLICATION_MODAL, problem);
+					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 
@@ -223,7 +223,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	 */
 	protected Password getNewKeyStorePassword() {
 		DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
-				res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"), APPLICATION_MODAL,
+				res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"), DOCUMENT_MODAL,
 				ApplicationSettings.getInstance().getPasswordQualityConfig());
 		dGetNewPassword.setLocationRelativeTo(frame);
 		dGetNewPassword.setVisible(true);

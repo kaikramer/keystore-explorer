@@ -99,7 +99,7 @@ public class DLicenseAgreement extends JEscDialog {
 	 */
 	public DLicenseAgreement(JFrame parent, String subject, Icon bannerIcon, URL licenseAgreementUrl)
 			throws IOException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		initComponents(subject, bannerIcon, licenseAgreementUrl);
 	}

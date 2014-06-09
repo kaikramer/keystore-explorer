@@ -77,7 +77,7 @@ public class DViewJcePolicy extends JEscDialog {
 	 *             JCE Policy
 	 */
 	public DViewJcePolicy(JFrame parent, JcePolicy jcePolicy) throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.jcePolicy = jcePolicy;
 		initComponents();
 	}
@@ -94,7 +94,7 @@ public class DViewJcePolicy extends JEscDialog {
 	 *             JCE Policy
 	 */
 	public DViewJcePolicy(JDialog parent, JcePolicy jcePolicy) throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.jcePolicy = jcePolicy;
 		initComponents();
 	}

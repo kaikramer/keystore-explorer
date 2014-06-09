@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -81,7 +81,7 @@ public class DSubjectKeyIdentifier extends DExtension {
 	 *            Subject public key
 	 */
 	public DSubjectKeyIdentifier(JDialog parent, PublicKey subjectPublicKey) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DSubjectKeyIdentifier.Title"));
 		this.subjectPublicKey = subjectPublicKey;
 		initComponents();
@@ -100,7 +100,7 @@ public class DSubjectKeyIdentifier extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DSubjectKeyIdentifier(JDialog parent, byte[] value, PublicKey subjectPublicKey) throws IOException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DSubjectKeyIdentifier.Title"));
 		this.subjectPublicKey = subjectPublicKey;
 		initComponents();
@@ -181,7 +181,7 @@ public class DSubjectKeyIdentifier extends DExtension {
 		try {
 			value = subjectKeyIdentifier.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

@@ -88,7 +88,7 @@ public class DExamineSsl extends JEscDialog {
 	 *            Parent frame
 	 */
 	public DExamineSsl(JFrame parent, KseFrame kseFrame) {
-		super(parent, res.getString("DExamineSsl.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, res.getString("DExamineSsl.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 	    this.kseFrame = kseFrame;
 		initComponents();
 	}

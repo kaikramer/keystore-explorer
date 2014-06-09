@@ -189,7 +189,7 @@ public class DPreferences extends JEscDialog {
 			boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
 			boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
 			String defaultDN) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.useCaCertificates = useCaCertificates;
 		this.caCertificatesFile = caCertificatesFile;
 		this.useWinTrustRootCertificates = useWinTrustedRootCertificates;

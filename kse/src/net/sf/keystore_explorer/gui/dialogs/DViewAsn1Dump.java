@@ -20,8 +20,6 @@
 package net.sf.keystore_explorer.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -40,7 +38,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -51,7 +48,7 @@ import javax.swing.border.EmptyBorder;
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
 import net.sf.keystore_explorer.crypto.x509.X509Ext;
 import net.sf.keystore_explorer.gui.CursorUtil;
-import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JEscFrame;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Dump;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
@@ -63,7 +60,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
  * key, public key, CRL or Extension.
  * 
  */
-public class DViewAsn1Dump extends JEscDialog {
+public class DViewAsn1Dump extends JEscFrame {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
 	private JPanel jpButtons;
@@ -85,7 +82,7 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * Creates a new DViewAsn1Dump dialog.
 	 * 
 	 * @param parent
-	 *            Parent frame
+	 *            Parent dialog
 	 * @param cert
 	 *            Certificate to display dump for
 	 * @throws Asn1Exception
@@ -93,8 +90,8 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public DViewAsn1Dump(JFrame parent, X509Certificate cert) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Certificate.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+	public DViewAsn1Dump(JDialog parent, X509Certificate cert) throws Asn1Exception, IOException {
+		super(res.getString("DViewAsn1Dump.Certificate.Title"));
 		this.certificate = cert;
 		initComponents();
 	}
@@ -104,27 +101,6 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
-	 * @param cert
-	 *            Certificate to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the extension's ASN.1 dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public DViewAsn1Dump(JDialog parent, Dialog.ModalityType modality, X509Certificate cert) throws Asn1Exception,
-			IOException {
-		super(parent, res.getString("DViewAsn1Dump.Certificate.Title"), modality);
-		this.certificate = cert;
-		initComponents();
-	}
-
-	/**
-	 * Creates a new DViewAsn1Dump dialog.
-	 * 
-	 * @param parent
-	 *            Parent frame
 	 * @param crl
 	 *            CRL to display dump for
 	 * @throws Asn1Exception
@@ -132,8 +108,8 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public DViewAsn1Dump(JFrame parent, X509CRL crl) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Crl.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+	public DViewAsn1Dump(JDialog parent, X509CRL crl) throws Asn1Exception, IOException {
+		super(res.getString("DViewAsn1Dump.Crl.Title"));
 		this.crl = crl;
 		initComponents();
 	}
@@ -143,26 +119,6 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
-	 * @param crl
-	 *            CRL to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the extension's ASN.1 dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public DViewAsn1Dump(JDialog parent, Dialog.ModalityType modality, X509CRL crl) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Crl.Title"), modality);
-		this.crl = crl;
-		initComponents();
-	}
-
-	/**
-	 * Creates a new DViewAsn1Dump dialog.
-	 * 
-	 * @param parent
-	 *            Parent frame
 	 * @param extension
 	 *            Extension to display dump for
 	 * @throws Asn1Exception
@@ -170,8 +126,9 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public DViewAsn1Dump(JFrame parent, X509Ext extension) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Extension.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+	public DViewAsn1Dump(JDialog parent, X509Ext extension) throws Asn1Exception,
+			IOException {
+		super(res.getString("DViewAsn1Dump.Extension.Title"));
 		this.extension = extension;
 		initComponents();
 	}
@@ -181,27 +138,6 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
-	 * @param extension
-	 *            Extension to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the extension's ASN.1 dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public DViewAsn1Dump(JDialog parent, Dialog.ModalityType modality, X509Ext extension) throws Asn1Exception,
-			IOException {
-		super(parent, res.getString("DViewAsn1Dump.Extension.Title"), modality);
-		this.extension = extension;
-		initComponents();
-	}
-
-	/**
-	 * Creates a new DViewAsn1Dump dialog.
-	 * 
-	 * @param parent
-	 *            Parent frame
 	 * @param privateKey
 	 *            Private key to display dump for
 	 * @throws Asn1Exception
@@ -210,8 +146,9 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public DViewAsn1Dump(JFrame parent, PrivateKey privateKey) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.PrivateKey.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+	public DViewAsn1Dump(JDialog parent, PrivateKey privateKey) throws Asn1Exception,
+			IOException {
+		super(res.getString("DViewAsn1Dump.PrivateKey.Title"));
 		this.privateKey = privateKey;
 		initComponents();
 	}
@@ -221,28 +158,6 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
-	 * @param privateKey
-	 *            Private key to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the private key's ASN.1
-	 *             dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public DViewAsn1Dump(JDialog parent, Dialog.ModalityType modality, PrivateKey privateKey) throws Asn1Exception,
-			IOException {
-		super(parent, res.getString("DViewAsn1Dump.PrivateKey.Title"), modality);
-		this.privateKey = privateKey;
-		initComponents();
-	}
-
-	/**
-	 * Creates a new DViewAsn1Dump dialog.
-	 * 
-	 * @param parent
-	 *            Parent frame
 	 * @param publicKey
 	 *            Public key to display dump for
 	 * @throws Asn1Exception
@@ -250,29 +165,9 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public DViewAsn1Dump(JFrame parent, PublicKey publicKey) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.PublicKey.Title"), Dialog.ModalityType.APPLICATION_MODAL);
-		this.publicKey = publicKey;
-		initComponents();
-	}
-
-	/**
-	 * Creates new DViewAsn1Dump dialog where the parent is a dialog.
-	 * 
-	 * @param parent
-	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
-	 * @param publicKey
-	 *            Public key to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the public key's ASN.1 dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public DViewAsn1Dump(JDialog parent, Dialog.ModalityType modality, PublicKey publicKey) throws Asn1Exception,
+	public DViewAsn1Dump(JDialog parent, PublicKey publicKey) throws Asn1Exception,
 			IOException {
-		super(parent, res.getString("DViewAsn1Dump.PublicKey.Title"), modality);
+		super(res.getString("DViewAsn1Dump.PublicKey.Title"));
 		this.publicKey = publicKey;
 		initComponents();
 	}
@@ -282,8 +177,6 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
 	 * @param pkcs10Csr
 	 *            PKCS#10 request to display dump for
 	 * @throws Asn1Exception
@@ -291,9 +184,9 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public DViewAsn1Dump(JFrame parent, PKCS10CertificationRequest pkcs10Csr)
+	public DViewAsn1Dump(JDialog parent, PKCS10CertificationRequest pkcs10Csr)
 			throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Csr.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+		super(res.getString("DViewAsn1Dump.Csr.Title"));
 		this.pkcs10Csr = pkcs10Csr;
 		initComponents();
 	}
@@ -303,8 +196,6 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
 	 * @param pkcs10Csr
 	 *            PKCS#10 request to display dump for
 	 * @throws Asn1Exception
@@ -312,49 +203,8 @@ public class DViewAsn1Dump extends JEscDialog {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public DViewAsn1Dump(JDialog parent, ModalityType modality, PKCS10CertificationRequest pkcs10Csr)
-			throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Csr.Title"), modality);
-		this.pkcs10Csr = pkcs10Csr;
-		initComponents();
-	}
-
-	/**
-	 * Creates a new DViewAsn1Dump dialog.
-	 * 
-	 * @param parent
-	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
-	 * @param pkcs10Csr
-	 *            PKCS#10 request to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the public key's ASN.1 dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public DViewAsn1Dump(JFrame parent, Spkac spkac) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Csr.Title"), Dialog.ModalityType.APPLICATION_MODAL);
-		this.spkac = spkac;
-		initComponents();
-	}
-
-	/**
-	 * Creates a new DViewAsn1Dump dialog.
-	 * 
-	 * @param parent
-	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
-	 * @param pkcs10Csr
-	 *            PKCS#10 request to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the public key's ASN.1 dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public DViewAsn1Dump(JDialog parent, ModalityType modality, Spkac spkac) throws Asn1Exception, IOException {
-		super(parent, res.getString("DViewAsn1Dump.Csr.Title"), modality);
+	public DViewAsn1Dump(JDialog parent, Spkac spkac) throws Asn1Exception, IOException {
+		super(res.getString("DViewAsn1Dump.Csr.Title"));
 		this.spkac = spkac;
 		initComponents();
 	}

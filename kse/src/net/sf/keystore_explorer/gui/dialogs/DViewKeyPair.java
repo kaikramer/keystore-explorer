@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -181,7 +181,7 @@ public class DViewKeyPair extends JEscDialog {
 	private void privateKeyDetailsPressed() {
 		try {
 			DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this,
-					res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"), APPLICATION_MODAL, privateKey);
+					res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"), DOCUMENT_MODAL, privateKey);
 			dViewPrivateKey.setLocationRelativeTo(this);
 			dViewPrivateKey.setVisible(true);
 		} catch (CryptoException ex) {
@@ -192,7 +192,7 @@ public class DViewKeyPair extends JEscDialog {
 	private void certificateDetailsPressed() {
 		try {
 			DViewCertificate dViewCertificate = new DViewCertificate(this,
-					res.getString("DViewKeyPair.ViewCertificateDetails.Title"), APPLICATION_MODAL, certificateChain,
+					res.getString("DViewKeyPair.ViewCertificateDetails.Title"), DOCUMENT_MODAL, certificateChain,
 					null, DViewCertificate.NONE);
 			dViewCertificate.setLocationRelativeTo(this);
 			dViewCertificate.setVisible(true);

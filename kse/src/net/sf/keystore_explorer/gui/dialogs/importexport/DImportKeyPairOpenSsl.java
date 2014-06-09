@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.importexport;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -116,7 +116,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 	 *            The parent frame
 	 */
 	public DImportKeyPairOpenSsl(JFrame parent) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents();
 	}
 
@@ -378,7 +378,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 
 			if (privateKey != null) {
 				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, MessageFormat.format(
-						res.getString("DImportKeyPairOpenSsl.ViewPrivateKeyDetails.Title"), path), APPLICATION_MODAL,
+						res.getString("DImportKeyPairOpenSsl.ViewPrivateKeyDetails.Title"), path), DOCUMENT_MODAL,
 						privateKey);
 				dViewPrivateKey.setLocationRelativeTo(this);
 				dViewPrivateKey.setVisible(true);
@@ -438,7 +438,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 			Problem problem = createLoadOpenSslProblem(ex, privateKeyFile);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairOpenSsl.ProblemLoadingOpenSsl.Title"),
-					APPLICATION_MODAL, problem);
+					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -478,7 +478,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 				String path = new File(jtfCertificatePath.getText()).getName();
 
 				DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
-						res.getString("DImportKeyPairOpenSsl.ViewCertificateDetails.Title"), path), APPLICATION_MODAL,
+						res.getString("DImportKeyPairOpenSsl.ViewCertificateDetails.Title"), path), DOCUMENT_MODAL,
 						certs, null, DViewCertificate.NONE);
 				dViewCertificate.setLocationRelativeTo(this);
 				dViewCertificate.setVisible(true);
@@ -518,7 +518,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 			Problem problem = createLoadCertsProblem(ex, certificateFile);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairOpenSsl.ProblemLoadingCerts.Title"),
-					APPLICATION_MODAL, problem);
+					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

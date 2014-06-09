@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -93,7 +93,7 @@ public class DExaminingSsl extends JEscDialog {
 	 *            KeyStore with client certificate
 	 */
 	public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.sslHost = sslHost;
 		this.sslPort = sslPort;
@@ -215,7 +215,7 @@ public class DExaminingSsl extends JEscDialog {
 							Problem problem = new Problem(problemStr, causes, ex);
 
 							DProblem dProblem = new DProblem(DExaminingSsl.this, res
-									.getString("DExaminingSsl.ProblemExaminingSsl.Title"), APPLICATION_MODAL, problem);
+									.getString("DExaminingSsl.ProblemExaminingSsl.Title"), DOCUMENT_MODAL, problem);
 							dProblem.setLocationRelativeTo(DExaminingSsl.this);
 							dProblem.setVisible(true);
 

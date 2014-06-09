@@ -88,7 +88,7 @@ public class DGenerateSecretKey extends JEscDialog {
 	 *            Initial secret key size
 	 */
 	public DGenerateSecretKey(JFrame parent, SecretKeyType secretKeyType, int secretKeySize) {
-		super(parent, res.getString("DGenerateSecretKey.Title"), Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, res.getString("DGenerateSecretKey.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.secretKeyType = secretKeyType;
 		this.secretKeySize = secretKeySize;

@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.crypto.generalname;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -107,7 +107,7 @@ public class DGeneralNameChooser extends JEscDialog {
 	 *            General name
 	 */
 	public DGeneralNameChooser(JFrame parent, String title, GeneralName generalName) {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(generalName);
 	}
 
@@ -122,7 +122,7 @@ public class DGeneralNameChooser extends JEscDialog {
 	 *            General name
 	 */
 	public DGeneralNameChooser(JDialog parent, String title, GeneralName generalName) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(generalName);
 	}
 
@@ -409,7 +409,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
 			generalName = newGeneralName;
 		} catch (Exception ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

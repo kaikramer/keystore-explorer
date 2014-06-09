@@ -112,7 +112,7 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
 	 *            Password quality configuration
 	 */
 	public DExportPrivateKeyPkcs8(JFrame parent, String entryAlias, PasswordQualityConfig passwordQualityConfig) {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.entryAlias = entryAlias;
 		this.passwordQualityConfig = passwordQualityConfig;
 		initComponents();

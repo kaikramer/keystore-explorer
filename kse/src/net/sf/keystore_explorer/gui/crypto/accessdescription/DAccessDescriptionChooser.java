@@ -84,7 +84,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 	 *            Access description
 	 */
 	public DAccessDescriptionChooser(JFrame parent, String title, AccessDescription accessDescription) {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(accessDescription);
 	}
 
@@ -99,7 +99,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 	 *            Access description
 	 */
 	public DAccessDescriptionChooser(JDialog parent, String title, AccessDescription accessDescription) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(accessDescription);
 	}
 

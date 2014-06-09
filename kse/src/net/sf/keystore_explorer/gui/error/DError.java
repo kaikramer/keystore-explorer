@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.error;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -139,7 +139,7 @@ public class DError extends JEscDialog {
 	 *            Error
 	 */
 	public static void displayError(JFrame frame, Throwable error) {
-		DError dError = new DError(frame, APPLICATION_MODAL, error);
+		DError dError = new DError(frame, DOCUMENT_MODAL, error);
 		dError.setLocationRelativeTo(frame);
 		dError.setVisible(true);
 	}
@@ -153,7 +153,7 @@ public class DError extends JEscDialog {
 	 *            Error
 	 */
 	public static void displayError(JDialog dialog, Throwable error) {
-		DError dError = new DError(dialog, APPLICATION_MODAL, error);
+		DError dError = new DError(dialog, DOCUMENT_MODAL, error);
 		dError.setLocationRelativeTo(dialog);
 		dError.setVisible(true);
 	}
@@ -259,7 +259,7 @@ public class DError extends JEscDialog {
 	}
 
 	private void showErrorDetail() {
-		DErrorDetail dErrorDetail = new DErrorDetail(this, APPLICATION_MODAL, error);
+		DErrorDetail dErrorDetail = new DErrorDetail(this, DOCUMENT_MODAL, error);
 		dErrorDetail.setLocationRelativeTo(this);
 		dErrorDetail.setVisible(true);
 	}

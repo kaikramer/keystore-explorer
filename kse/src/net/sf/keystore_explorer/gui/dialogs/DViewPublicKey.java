@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -95,7 +95,7 @@ public class DViewPublicKey extends JEscDialog {
 	 *             A problem was encountered getting the public key's details
 	 */
 	public DViewPublicKey(JFrame parent, String title, PublicKey publicKey) throws CryptoException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.publicKey = publicKey;
 		initComponents();
 	}
@@ -295,16 +295,16 @@ public class DViewPublicKey extends JEscDialog {
 
 	private void asn1DumpPressed() {
 		try {
-			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, APPLICATION_MODAL, publicKey);
+			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, publicKey);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

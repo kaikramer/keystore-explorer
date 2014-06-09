@@ -82,7 +82,7 @@ public class DPolicyMappingChooser extends JEscDialog {
 	 *            Policy mapping
 	 */
 	public DPolicyMappingChooser(JFrame parent, String title, PolicyMapping policyMapping) {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(policyMapping);
 	}
 
@@ -97,7 +97,7 @@ public class DPolicyMappingChooser extends JEscDialog {
 	 *            Policy mapping
 	 */
 	public DPolicyMappingChooser(JDialog parent, String title, PolicyMapping policyMapping) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(policyMapping);
 	}
 

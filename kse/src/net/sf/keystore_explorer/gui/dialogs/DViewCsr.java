@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
 
 import java.awt.Container;
@@ -112,7 +112,7 @@ public class DViewCsr extends JEscDialog {
 	 *             A crypto problem was encountered constructing the dialog
 	 */
 	public DViewCsr(JFrame parent, String title, PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.pkcs10Csr = pkcs10Csr;
 		initComponents();
 	}
@@ -130,7 +130,7 @@ public class DViewCsr extends JEscDialog {
 	 *             A crypto problem was encountered constructing the dialog
 	 */
 	public DViewCsr(JFrame parent, String title, Spkac spkacCsr) throws CryptoException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.spkacCsr = spkacCsr;
 		initComponents();
 	}
@@ -395,11 +395,11 @@ public class DViewCsr extends JEscDialog {
 			}
 
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DViewCsr.PubKeyDetails.Title"),
-					APPLICATION_MODAL, publicKey);
+					DOCUMENT_MODAL, publicKey);
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
@@ -409,11 +409,11 @@ public class DViewCsr extends JEscDialog {
 	private void pemEncodingPressed() {
 		try {
 			DViewCertCsrPem dViewCsrPem = new DViewCertCsrPem(this, res.getString("DViewCsr.Pem.Title"),
-					APPLICATION_MODAL, pkcs10Csr);
+					DOCUMENT_MODAL, pkcs10Csr);
 			dViewCsrPem.setLocationRelativeTo(this);
 			dViewCsrPem.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
@@ -425,19 +425,19 @@ public class DViewCsr extends JEscDialog {
 		try {
 			DViewAsn1Dump dViewAsn1Dump;
 			if (pkcs10Csr != null) {
-				dViewAsn1Dump = new DViewAsn1Dump(this, APPLICATION_MODAL, pkcs10Csr);
+				dViewAsn1Dump = new DViewAsn1Dump(this, pkcs10Csr);
 			} else {
-				dViewAsn1Dump = new DViewAsn1Dump(this, APPLICATION_MODAL, spkacCsr);
+				dViewAsn1Dump = new DViewAsn1Dump(this, spkacCsr);
 			}
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, APPLICATION_MODAL, ex);
+			DError dError = new DError(this, DOCUMENT_MODAL, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

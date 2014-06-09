@@ -76,7 +76,7 @@ public class DGetAlias extends JEscDialog {
 	 *            The alias to display initially
 	 */
 	public DGetAlias(JFrame parent, String title, String alias) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(alias);
 	}
 

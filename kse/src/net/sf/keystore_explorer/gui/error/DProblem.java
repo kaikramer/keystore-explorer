@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.error;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -231,7 +231,7 @@ public class DProblem extends JEscDialog {
 	}
 
 	private void showError() {
-		DError dError = new DError(this, res.getString("DProblem.CauseError.Title"), APPLICATION_MODAL,
+		DError dError = new DError(this, res.getString("DProblem.CauseError.Title"), DOCUMENT_MODAL,
 				problem.getError());
 		dError.setLocationRelativeTo(this);
 		dError.setVisible(true);

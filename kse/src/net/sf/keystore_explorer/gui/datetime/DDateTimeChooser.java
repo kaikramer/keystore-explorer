@@ -164,7 +164,7 @@ public class DDateTimeChooser extends JEscDialog {
 	 *            Date to display initially
 	 */
 	public DDateTimeChooser(JFrame parent, String title, Date date) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(date);
 	}
 
@@ -179,7 +179,7 @@ public class DDateTimeChooser extends JEscDialog {
 	 *            Date to display initially
 	 */
 	public DDateTimeChooser(JDialog parent, String title, Date date) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(date);
 	}
 

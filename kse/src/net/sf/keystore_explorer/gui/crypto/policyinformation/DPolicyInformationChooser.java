@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.crypto.policyinformation;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -96,7 +96,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 	 */
 	public DPolicyInformationChooser(JFrame parent, String title, PolicyInformation policyInformation)
 			throws IOException {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(policyInformation);
 	}
 
@@ -114,7 +114,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 	 */
 	public DPolicyInformationChooser(JDialog parent, String title, PolicyInformation policyInformation)
 			throws IOException {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(policyInformation);
 	}
 
@@ -256,7 +256,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 				try {
 					policyQualifiersVec.add(policyQualInfo);
 				} catch (Exception ex) {
-					DError dError = new DError(this, APPLICATION_MODAL, ex);
+					DError dError = new DError(this, DOCUMENT_MODAL, ex);
 					dError.setLocationRelativeTo(this);
 					dError.setVisible(true);
 					return;

@@ -19,82 +19,37 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
 /**
- * Extended dialog class that closes itself when escape key was pressed.
- * 
- * This is the usual behavior under Windows and Mac OS.
+ * Extended JFrame class that closes itself when escape key was pressed.
  * 
  */
-public class JEscDialog extends JDialog {
+public class JEscFrame extends JFrame {
 	private static final long serialVersionUID = -3773740513817678414L;
 
-	public JEscDialog() {
-		this((Frame) null, false);
+	public JEscFrame() {
+		super();
 	}
+	
+    public JEscFrame(GraphicsConfiguration gc) {
+        super(gc);
+    }
 
-	public JEscDialog(Frame owner) {
-		this(owner, false);
-	}
-
-	public JEscDialog(Frame owner, boolean modal) {
-		this(owner, null, modal);
-	}
-
-	public JEscDialog(Frame owner, String title) {
-		this(owner, title, false);
-	}
-
-	public JEscDialog(Frame owner, String title, boolean modal) {
-		super(owner, title, modal);
-	}
-
-	public JEscDialog(Frame owner, String title, boolean modal, GraphicsConfiguration gc) {
-		super(owner, title, modal, gc);
-	}
-
-	public JEscDialog(Dialog owner) {
-		this(owner, false);
-	}
-
-	public JEscDialog(Dialog owner, boolean modal) {
-		this(owner, null, modal);
-	}
-
-	public JEscDialog(Dialog owner, String title) {
-		this(owner, title, false);
-	}
-
-	public JEscDialog(Dialog owner, String title, boolean modal) {
-		super(owner, title, modal);
-	}
-
-	public JEscDialog(Dialog owner, String title, boolean modal, GraphicsConfiguration gc) {
-		super(owner, title, modal, gc);
-	}
-
-	public JEscDialog(Window owner, ModalityType modalityType) {
-		this(owner, "", modalityType);
-	}
-
-	public JEscDialog(Window owner, String title, Dialog.ModalityType modalityType) {
-		super(owner, title, modalityType);
-	}
-
-	public JEscDialog(Window owner, String title, Dialog.ModalityType modalityType, GraphicsConfiguration gc) {
-		super(owner, title, modalityType, gc);
+	public JEscFrame(String title) {
+		super(title);
+	}	
+	
+	public JEscFrame(String title, GraphicsConfiguration gc) {
+		super(title, gc);
 	}
 
 	@Override

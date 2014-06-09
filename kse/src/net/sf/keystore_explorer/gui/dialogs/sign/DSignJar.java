@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.sign;
 
-import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -126,7 +126,7 @@ public class DSignJar extends JEscDialog {
 	 */
 	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName)
 			throws CryptoException {
-		super(parent, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
 		setTitle(res.getString("DSignJar.Title"));
@@ -445,7 +445,7 @@ public class DSignJar extends JEscDialog {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(this, res.getString("DSignJar.ProblemOpeningJar.Title"),
-					APPLICATION_MODAL, problem);
+					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

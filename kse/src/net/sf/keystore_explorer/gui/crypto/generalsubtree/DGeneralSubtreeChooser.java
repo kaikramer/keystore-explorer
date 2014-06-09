@@ -86,7 +86,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 	 *            General subtree
 	 */
 	public DGeneralSubtreeChooser(JFrame parent, String title, GeneralSubtree generalSubtree) {
-		super(parent, title, ModalityType.APPLICATION_MODAL);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(generalSubtree);
 	}
 
@@ -101,7 +101,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 	 *            General subtree
 	 */
 	public DGeneralSubtreeChooser(JDialog parent, String title, GeneralSubtree generalSubtree) {
-		super(parent, title, Dialog.ModalityType.APPLICATION_MODAL);
+		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents(generalSubtree);
 	}
 
