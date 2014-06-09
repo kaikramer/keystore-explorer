@@ -26,12 +26,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import javax.crypto.Cipher;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.utilities.io.CopyUtil;
@@ -81,6 +84,11 @@ public class JcePolicyUtil {
 
 			Manifest jarManifest = jar.getManifest();
 			String strength = jarManifest.getMainAttributes().getValue("Crypto-Strength");
+			
+			// workaround for IBM JDK: test for maximum key size
+			if (strength == null) {
+				return unlimitedStrengthTest();
+			}
 
 			if (strength.equals(LIMITED.manifestValue())) {
 				return LIMITED;
@@ -91,6 +99,17 @@ public class JcePolicyUtil {
 			throw new CryptoException(MessageFormat.format(res.getString("NoGetCryptoStrength.exception.message"),
 					jcePolicy), ex);
 		}
+	}
+
+	private static CryptoStrength unlimitedStrengthTest() {
+		try {
+			if (Cipher.getMaxAllowedKeyLength("AES") >= 256) {
+				return UNLIMITED;
+			} 
+		} catch (NoSuchAlgorithmException e) {
+			// swallow exception
+		}
+		return LIMITED;
 	}
 
 	/**
