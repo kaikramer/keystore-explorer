@@ -50,7 +50,7 @@
 !define PRODUCT_KEY "${PRODUCT} ${VERSION}"
 
 ; AppUserModelId (see http://stackoverflow.com/questions/5438651/launch4j-nsis-and-duplicate-pinned-windows-7-taskbar-icons)
-!define KSE_AppUserModelId "SourceForge.KeyStoreExplorer"
+!define KSE_AppUserModelId "SourceForge.KeyStoreExplorer.51"
 
 ; Product home page address
 !define HOME_PAGE_ADDRESS "http://keystore-explorer.sf.net"

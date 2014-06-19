@@ -57,7 +57,7 @@ import com.sun.jna.WString;
 public class KSE {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/resources");
 
-	public static final String APP_ID = "SourceForge.KeyStoreExplorer";
+	public static final String APP_ID = "SourceForge.KeyStoreExplorer.51";
 	public interface Shell32 extends Library {
 		NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
 	}
