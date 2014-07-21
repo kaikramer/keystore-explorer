@@ -43,14 +43,14 @@
 !define PRODUCT "KeyStore Explorer"
 
 ; Product version
-!define VERSION "5.1"
-!define SIMPLE_VERSION "51"
+!define VERSION "%KSE_VERSION%"
+!define SIMPLE_VERSION "%KSE_SIMPLE_VERSION%"
 
 ; Product key (name and version)
 !define PRODUCT_KEY "${PRODUCT} ${VERSION}"
 
 ; AppUserModelId (see http://stackoverflow.com/questions/5438651/launch4j-nsis-and-duplicate-pinned-windows-7-taskbar-icons)
-!define KSE_AppUserModelId "SourceForge.KeyStoreExplorer51"
+!define KSE_AppUserModelId "%KSE_APP_USER_MODEL_ID%"
 
 ; Product home page address
 !define HOME_PAGE_ADDRESS "http://keystore-explorer.sf.net"
@@ -271,7 +271,6 @@ Section "Uninstall"
     ; Remove installed files
     Delete "$INSTDIR\${KSE_EXE}"
     Delete "$INSTDIR\${KSE_JAR}"
-    Delete "$INSTDIR\lib\*"
     RmDir /r "$INSTDIR\lib"
     Delete "$INSTDIR\${KSE_ICO}"
     Delete "$INSTDIR\${KEYSTORE_ICO}"

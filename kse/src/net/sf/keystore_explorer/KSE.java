@@ -52,12 +52,11 @@ import com.sun.jna.WString;
 
 /**
  * Main class to start the KeyStore Explorer (KSE) application.
- * 
+ *
  */
 public class KSE {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/resources");
 
-	public static final String APP_ID = "SourceForge.KeyStoreExplorer.51";
 	public interface Shell32 extends Library {
 		NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
 	}
@@ -65,7 +64,7 @@ public class KSE {
 	/**
 	 * Start the KeyStore Explorer application. Takes one optional argument -
 	 * the location of a KeyStore file to open upon startup.
-	 * 
+	 *
 	 * @param args
 	 *            the command line arguments
 	 */
@@ -75,8 +74,9 @@ public class KSE {
 			if (OperatingSystem.isMacOs()) {
 				setAppleSystemProperties();
 			} else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8()) {
+				String appId = res.getString("KSE.AppUserModelId");
 				Shell32 shell32 = (Shell32) Native.loadLibrary("shell32", Shell32.class);
-				shell32.SetCurrentProcessExplicitAppUserModelID(new WString(APP_ID)).longValue();
+				shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
 			}
 
 			setInstallDirProperty();
@@ -111,19 +111,19 @@ public class KSE {
 		// Splash screen may not be present
 		if (splash != null) {
 			Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
-			Graphics2D g = (Graphics2D) splash.createGraphics();
+			Graphics2D g = splash.createGraphics();
 			g.setFont(font);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 			// Wipe out any previous text
 			g.setColor(new Color(238, 238, 238)); // #EEEEEE
 			g.setPaintMode();
-			g.fillRect(15, 70, 200, 20); // (x,y) is top left corner of area
+			g.fillRect(12, 70, 250, 30); // (x,y) is top left corner of area
 
 			// Draw next text
 			g.setColor(new Color(96, 96, 96)); // #606060
 			g.setPaintMode();
-			g.drawString(message, 18, 80); // (x,y) is baseline of text
+			g.drawString(message, 17, 86); // (x,y) is baseline of text
 
 			splash.update();
 		}
@@ -157,12 +157,12 @@ public class KSE {
 
 	private static void initialiseSecurity() throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		
+
 		// Add BouncyCastle provider
 		Class<?> bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
 		Provider bcProv = (Provider) bcProvClass.newInstance();
 		Security.addProvider(bcProv);
-		
+
 		// Optimize performance of PKCS #12 by creating and saving a dummy PKCS
 		// #12 KeyStore now - first use of PKCS 12 always lags - we take the hit
 		// now so the user doesn't see lag when they first use PKCS 12
@@ -178,7 +178,7 @@ public class KSE {
 
 	/**
 	 * Get application name.
-	 * 
+	 *
 	 * @return Application name
 	 */
 	public static String getApplicationName() {
@@ -187,7 +187,7 @@ public class KSE {
 
 	/**
 	 * Get application version.
-	 * 
+	 *
 	 * @return Application version
 	 */
 	public static Version getApplicationVersion() {
@@ -196,7 +196,7 @@ public class KSE {
 
 	/**
 	 * Get full application name, ie Name and Version.
-	 * 
+	 *
 	 * @return Full application name
 	 */
 	public static String getFullApplicationName() {

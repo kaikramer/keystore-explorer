@@ -1,5 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-# KeyStore Explorer requires that an Oracle/OpenJDK JRE of version 1.6+ be present on your path
+# Oracle/OpenJDK JRE version 1.6+ has to be present on your path 
+# OR in a directory called "jre" in the same directory as this script 
 
-java -classpath kse.jar:bcprov.jar:bcpkix.jar:jhall.jar:jgoodies-looks.jar:jgoodies-common.jar:miglayout-core.jar:miglayout-swing.jar net.sf.keystore_explorer.KSE
+if [ -d "jre" ]; then
+	./jre/bin/java -jar kse.jar 
+elif
+	java -jar kse.jar
+fi
