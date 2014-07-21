@@ -38,12 +38,15 @@ import org.bouncycastle.jce.spec.ECNamedCurveSpec;
  */
 public class EccUtil {
 	
+	private static boolean sunECProviderAvailable = true;
 	private static String[] availableSunCurves = new String[0];
 	static {
 		// read available curves provided by SunEC  
 		Provider sunECProvider = Security.getProvider("SunEC");
 		if (sunECProvider != null) {
 			availableSunCurves = sunECProvider.getProperty("AlgorithmParameters.EC SupportedCurves").split("\\|");
+		} else {
+			sunECProviderAvailable = false;
 		}
 	}
 
@@ -79,7 +82,7 @@ public class EccUtil {
 	 * @return True, if there are EC curves available
 	 */
 	public static boolean isECAvailable(KeyStoreType keyStoreType) {
-		return (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170)
+		return ((JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170) && sunECProviderAvailable)
 				|| isBouncyCastleKeyStore(keyStoreType));
 	}
 	

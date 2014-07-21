@@ -5,6 +5,6 @@
 
 if [ -d "jre" ]; then
 	./jre/bin/java -jar kse.jar 
-elif
+else
 	java -jar kse.jar
 fi
