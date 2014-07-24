@@ -197,16 +197,16 @@ public class DGenerateKeyPair extends JEscDialog {
 		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 		
 		// layout
-		getContentPane().setLayout(new MigLayout("fill", "", ""));
+		getContentPane().setLayout(new MigLayout("fill", "", "para[]"));
 		getContentPane().add(jpContent, "wrap unrel");
 		getContentPane().add(buttons, "growx");
-		jpContent.setLayout(new MigLayout("", "[][right][]", "[]unrel[]"));
+		jpContent.setLayout(new MigLayout("insets dialog, ", "[][right][]", "[]unrel[]"));
 		jpContent.add(jrbRSA, "");
 		jpContent.add(jlRSAKeySize, "");
-		jpContent.add(jspRSAKeySize, "sg, wrap");
+		jpContent.add(jspRSAKeySize, "growx, wrap");
 		jpContent.add(jrbDSA, "");
 		jpContent.add(jlDSAKeySize, "");
-		jpContent.add(jspDSAKeySize, "sg, wrap");
+		jpContent.add(jspDSAKeySize, "growx, wrap");
 		jpContent.add(jrbEC, "");
 		jpContent.add(jlECCurveSet, "");
 		jpContent.add(jcbECCurveSet, "growx, wrap");

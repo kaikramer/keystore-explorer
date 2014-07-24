@@ -246,38 +246,13 @@ public class DExamineSsl extends JEscDialog {
         return hosts;
     }
 
-    private void setSslHosts(String newSslHost) {
-
-        // add new ssl host at first position of the list
-        StringBuilder sb = new StringBuilder(newSslHost);
-        String sslHosts = applicationSettings.getSslHosts();
-        String[] hosts = sslHosts.split(";");
-        for (int i = 0; i < hosts.length; i++) {
-
-            // save maximum of 10 host names
-            if (i >= 10) {
-                break;
-            }
-
-            String host = hosts[i];
-
-            // if saved ssl host list already contains new host, do nothing
-            if (host.equals(newSslHost)) {
-                return;
-            }
-
-            sb.append(";");
-            sb.append(host);
-        }
-
-        applicationSettings.setSslHosts(sb.toString());
-    }
 
     private String[] getSslPorts() {
         String sslPorts = applicationSettings.getSslPorts();
         String[] ports = sslPorts.split(";");
         return ports;
     }
+    
 
     private void updateClientAuthComponents() {
 	    jcbKeyStore.setEnabled(jcbClientAuth.isSelected());
@@ -340,7 +315,8 @@ public class DExamineSsl extends JEscDialog {
 		}
 
 		// save host/port in preferences
-		setSslHosts(sslHost);
+		applicationSettings.addSslHost(sslHost);
+		applicationSettings.addSslPort(sslPortStr);
 
 		cancelled = false;
 		closeDialog();

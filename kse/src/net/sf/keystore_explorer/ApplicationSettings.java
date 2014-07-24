@@ -430,12 +430,69 @@ public class ApplicationSettings {
 		Preferences preferences = getUnderlyingPreferences();
 		preferences.clear();
 	}
-
+	
 	private Preferences getUnderlyingPreferences() {
 		// Get underlying Java preferences
 		Preferences preferences = Preferences.userNodeForPackage(ApplicationSettings.class);
 		return preferences;
 	}
+	
+	/**
+	 * Add a new SSL port to start of current list of ports. 
+	 * 
+	 * Maximum number is 10. If port is already in list, nothing is done.
+	 * 
+	 * @param newSslPort New SSL port
+	 */
+    public void addSslPort(String newSslPort) {
+
+    	String newSslPorts = addToList(newSslPort, getSslPorts(), 10);
+        
+		setSslPorts(newSslPorts);
+    }
+    
+
+	/**
+	 * Add a new SSL host to start of current list of hosts. 
+	 * 
+	 * Maximum number is 10. If host is already in list, nothing is done.
+	 * 
+	 * @param newSslPort New SSL host
+     */
+    public void addSslHost(String newSslHost) {
+      
+    	String newSslHosts = addToList(newSslHost, getSslHosts(), 10);
+        
+    	setSslHosts(newSslHosts);
+    }
+
+	private String addToList(String newItem, String semicolonSepList, int maxItems) {
+		
+		// add new item at first position of the list
+        StringBuilder sb = new StringBuilder(newItem);
+        String[] ports = semicolonSepList.split(";");
+        for (int i = 0; i < ports.length; i++) {
+
+            // save maximum of X items
+			if (i >= maxItems) {
+                break;
+            }
+
+            String port = ports[i];
+
+            // if saved list already contains new item, do nothing
+            if (port.equals(newItem)) {
+                return semicolonSepList;
+            }
+
+            sb.append(";");
+            sb.append(port);
+        }
+
+        String newList = sb.toString();
+		return newList;
+	}
+
 
 	public boolean getUseCaCertificates() {
 		return useCaCertificates;

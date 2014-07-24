@@ -203,6 +203,11 @@ public class Asn1Dump {
 		try {
 	        ASN1Primitive derObject = ASN1Primitive.fromByteArray(der);
 	        
+	        // if size of re-encoded DER primitive differs from input data there must be sth wrong 
+	        if (derObject.getEncoded().length < der.length) {
+	        	throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"));
+	        }
+	        
 			return dump(derObject);
 		} catch (IOException ex) {
 			throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"), ex);
