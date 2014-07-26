@@ -85,7 +85,7 @@
     
     <!-- Jars that are required for compiling KSE -->
 	<path id="compileClasspath">
-		<pathelement location="${sourceDir}"/>
+		<pathelement location="${buildDir}"/>
 	    <path refid="distClasspath"/>
 	    <pathelement location="${libDir}/AppleJavaExtensions.jar"/>
 	    <pathelement location="${libDir}/jarbundler.jar"/>

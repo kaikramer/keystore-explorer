@@ -94,6 +94,7 @@
     </tocitem>
     
     <tocitem text="Digital Signing" expand="false">
+        <tocitem text="Sign a New Key Pair" target="signNewKeyPair" />
         <tocitem text="Sign a CSR" target="signCsr" />
         <tocitem text="Sign a JAR" target="signJar" />
         <tocitem text="Sign a MIDlet" target="signMidlet" />
@@ -121,6 +122,7 @@
         <tocitem text="Tool Bar" target="toolBarConfig" />
         <tocitem text="Status Bar" target="statusBarConfig" />
         <tocitem text="KeyStore Tab Style" target="keyStoreTabStyleConfig" />
+        <tocitem text="Default Name" target="defaultNameConfig" />
     </tocitem>
     
     <tocitem text="License Agreements" expand="false">

@@ -11,26 +11,31 @@ KeyStore Explorer requires JRE version 1.6 or
 greater.  The latest version of the Oracle JRE is
 available free of charge from www.java.com.
 
-Installing
-----------
 
-1) Extract the contents of this archive.
+Local JRE
+---------
 
-2) Follow the instructions below to setup a command
-   line for your operating system.
+Both the shell script and the exe first search for 
+a local JRE, i.e. a directory with name "jre" in the 
+KSE directory. If it exists, it is used for running KSE. 
+This allows to use another JRE for KSE than the default 
+system JRE.
+
+All you have to do is copy the jre, jre6, jre7 or jre8 
+directory into the KSE directory and rename it to "jre". 
+
 
 Windows Command-Line
 --------------------
 
 1) These instructions assume that the JRE's bin
    directory has been added to your path.
-
-2) Extract the archive files into a directory, e.g.
-   "c:\kse".
+   
+2) Change to the kse directory   
 
 3) Enter the following command:
 
-       java -jar c:\kse\kse.jar
+       java -jar kse.jar
 
 Unix/Linux Command-Line
 -----------------------
@@ -38,9 +43,7 @@ Unix/Linux Command-Line
 1) These instructions assume that the JRE's bin
    directory has been added to your path.
 
-2) Unzip the archive
-
-3) Change to the kse directory
+2) Change to the kse directory
 
 3) Enter the following command:
 

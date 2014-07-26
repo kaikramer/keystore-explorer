@@ -106,6 +106,7 @@
     <mapID target="cutPasteKey" url="cutPasteKey.html" />
     <mapID target="copyPasteKey" url="copyPasteKey.html" />
 
+    <mapID target="signNewKeyPair" url="signNewKeyPair.html" />
     <mapID target="signCsr" url="signCsr.html" />
     <mapID target="signJar" url="signJar.html" />
     <mapID target="signMidlet" url="signMidlet.html" />
@@ -127,6 +128,7 @@
     <mapID target="toolBarConfig" url="toolBarConfig.html" />
     <mapID target="statusBarConfig" url="statusBarConfig.html" />
     <mapID target="keyStoreTabStyleConfig" url="keyStoreTabStyleConfig.html" />
+    <mapID target="defaultNameConfig" url="defaultNameConfig.html" />
 
     <mapID target="endUserLicenseAgreement" url="endUserLicenseAgreement.html" />
     <mapID target="bouncyCastleLicenseAgreement" url="bouncyCastleLicenseAgreement.html" />
