@@ -37,7 +37,7 @@ public class OperatingSystem {
 	 * and use the 'os.version' system property to discriminate:
 	 * 
 	 * - NT4 : 4.0 - 95 : 4.0 - 98 : 4.1 - ME : 4.9 - 2000 : 5.0 - XP : 5.1 -
-	 * Vista : 6.0 - 7: 6.1 - 8: 6.2
+	 * Vista : 6.0 - 7: 6.1 - 8: 6.2 - 8.1: 6.3
 	 * 
 	 * This works find except for NT4 and 95 which have the same version. For
 	 * these we also check for the full os name as well.
@@ -126,7 +126,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows8() {
-		return (osName.indexOf("Windows") > -1) && (osVersion.equals("6.2"));
+		return (osName.indexOf("Windows") > -1) && (osVersion.equals("6.2") || osVersion.equals("6.3"));
 	}
 
 	/**
