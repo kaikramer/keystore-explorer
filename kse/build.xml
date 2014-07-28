@@ -372,11 +372,11 @@
     </target>
 
 
-    <target name="jarbundler" depends="init" description="Create JAR bundle and archive it as dmg">
+    <target name="jarbundler" depends="jar" description="Create app bundle">
 
         <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler">
             <classpath>
-                <pathelement location="${jarbundlerJar}" />
+                <pathelement location="lib/jarbundler.jar" />
             </classpath>
         </taskdef>
 
@@ -386,12 +386,9 @@
                     splashfile="${sourceDir}/net/sf/keystore_explorer/gui/images/splash.png"
                     icon="${kseIcns}" mainClass="net.sf.keystore_explorer.KSE"
                     vmoptions="-Dkse.app=true">
-            <jarfileset refid="libs" />
-            <resourcefileset file="${licensesDir}/license-bouncycastle.txt" />
-            <resourcefileset file="${licensesDir}/license-javahelp.txt" />
-            <resourcefileset file="${licensesDir}/license-jgoodies.txt" />
-            <resourcefileset file="${licensesDir}/license-miglayout.txt" />
-            <resourcefileset file="${licensesDir}/license-kse.txt" />
+            <jarfileset file="${appJar}" />
+            <jarfileset refid="libs"/>
+            <resourcefileset dir="${licensesDir}" includes="*.txt" />
             <documenttype name="KeyStore" extensions="ks jks keystore pfx p12" iconFile="${keystoreIcns}" role="Editor" />
         </jarbundler>
 
@@ -401,16 +398,6 @@
             <arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub"/>
             <arg value="${distDir}/${appBundleFile}/Contents/MacOS/JavaApplicationStub"/>
         </exec>
-
-    	<!-- call script that creates dmg from template -->
-    	<exec executable="bash" failonerror="true">
-    		<arg value="${dmgDir}/finalize.sh" />
-    		<arg value="${dmgDir}" />
-    		<arg value="${distDir}" />
-    		<arg value="${appBundleFile}" />
-    		<arg value="${appBundleDmg}" />
-    		<arg value="${kseIcns}" />
-    	</exec>
     </target>
 
 
