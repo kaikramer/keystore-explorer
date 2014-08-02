@@ -886,6 +886,7 @@ public final class KseFrame implements StatusBar {
 		changeTypeGroup.add(jrbmiChangeTypeJceks);
 		changeTypeGroup.add(jrbmiChangeTypePkcs12);
 		changeTypeGroup.add(jrbmiChangeTypeBks);
+		changeTypeGroup.add(jrbmiChangeTypeBksV1);
 		changeTypeGroup.add(jrbmiChangeTypeUber);
 
 		jmiProperties = new JMenuItem(propertiesAction);
@@ -1788,6 +1789,7 @@ public final class KseFrame implements StatusBar {
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypeJceks);
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypePkcs12);
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypeBks);
+		changeTypeGroup.add(jrbmiKeyStoreChangeTypeBksV1);
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypeUber);
 
 		jmiKeyStoreProperties = new JMenuItem(propertiesAction);
@@ -2568,11 +2570,13 @@ public final class KseFrame implements StatusBar {
 		jrbmiChangeTypeJceks.setSelected(false);
 		jrbmiChangeTypePkcs12.setSelected(false);
 		jrbmiChangeTypeBks.setSelected(false);
+		jrbmiChangeTypeBksV1.setSelected(false);
 		jrbmiChangeTypeUber.setSelected(false);
 		jrbmiKeyStoreChangeTypeJks.setSelected(false);
 		jrbmiKeyStoreChangeTypeJceks.setSelected(false);
 		jrbmiKeyStoreChangeTypePkcs12.setSelected(false);
 		jrbmiKeyStoreChangeTypeBks.setSelected(false);
+		jrbmiKeyStoreChangeTypeBksV1.setSelected(false);
 		jrbmiKeyStoreChangeTypeUber.setSelected(false);
 
 		// Show Quick Start pane
