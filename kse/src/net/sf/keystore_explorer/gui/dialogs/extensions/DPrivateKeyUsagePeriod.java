@@ -55,6 +55,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.DERGeneralizedTime;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
@@ -210,7 +211,7 @@ public class DPrivateKeyUsagePeriod extends DExtension {
 	private void prepopulateWithValue(byte[] value) throws IOException {
 		PrivateKeyUsagePeriod privateKeyUsagePeriod = PrivateKeyUsagePeriod.getInstance(value);
 
-		DERGeneralizedTime notBefore = privateKeyUsagePeriod.getNotBefore();
+		ASN1GeneralizedTime notBefore = privateKeyUsagePeriod.getNotBefore();
 
 		if (notBefore != null) {
 			try {
@@ -220,7 +221,7 @@ public class DPrivateKeyUsagePeriod extends DExtension {
 			}
 		}
 
-		DERGeneralizedTime notAfter = privateKeyUsagePeriod.getNotAfter();
+		ASN1GeneralizedTime notAfter = privateKeyUsagePeriod.getNotAfter();
 
 		if (notAfter != null) {
 			try {
