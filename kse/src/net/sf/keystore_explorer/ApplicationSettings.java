@@ -167,8 +167,8 @@ public class ApplicationSettings {
 		useWindowsTrustedRootCertificates = preferences.getBoolean(KSE3_USEWINTRUSTROOTCERTS, false);
 
 		// Trust checks
-		enableImportTrustedCertTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTTRUSTEDCERTTRUSTCHECK, true);
-		enableImportCaReplyTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTCAREPLYTRUSTCHECK, true);
+		enableImportTrustedCertTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTTRUSTEDCERTTRUSTCHECK, false);
+		enableImportCaReplyTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTCAREPLYTRUSTCHECK, false);
 
 		// Key pair generation
 		generateKeyPairType = KeyPairType.resolveJce(preferences.get(KSE3_KEYPAIRTYPE, RSA.jce()));
