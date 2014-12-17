@@ -88,6 +88,7 @@ import net.sf.keystore_explorer.utilities.io.IndentSequence;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -617,8 +618,8 @@ public class X509Ext {
 
 		PrivateKeyUsagePeriod privateKeyUsagePeriod = PrivateKeyUsagePeriod.getInstance(value);
 
-		DERGeneralizedTime notBefore = privateKeyUsagePeriod.getNotBefore();
-		DERGeneralizedTime notAfter = privateKeyUsagePeriod.getNotAfter();
+		ASN1GeneralizedTime notBefore = privateKeyUsagePeriod.getNotBefore();
+		ASN1GeneralizedTime notAfter = privateKeyUsagePeriod.getNotAfter();
 
 		if (notBefore != null) {
 			strBuff.append(MessageFormat.format(res.getString("NotBeforePrivateKeyUsagePeriod"),
@@ -824,7 +825,7 @@ public class X509Ext {
 
 		StringBuffer strBuff = new StringBuffer();
 
-		DERGeneralizedTime invalidityDate = DERGeneralizedTime.getInstance(value);
+		ASN1GeneralizedTime invalidityDate = DERGeneralizedTime.getInstance(value);
 
 		strBuff.append(getGeneralizedTimeString(invalidityDate));
 		strBuff.append(NEWLINE);
@@ -1932,7 +1933,7 @@ public class X509Ext {
 		}
 	}
 
-	private String getGeneralizedTimeString(DERGeneralizedTime notBefore) {
+	private String getGeneralizedTimeString(ASN1GeneralizedTime notBefore) {
 		// Get generalized time as a date
 		Date date;
 		try {

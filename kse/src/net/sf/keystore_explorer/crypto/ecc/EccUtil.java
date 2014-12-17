@@ -95,6 +95,7 @@ public class EccUtil {
 	public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
 		// NOTE: PKCS12 is backed by BC as well, but left out for compatibility reasons
 		return (keyStoreType == KeyStoreType.BKS 
+				|| keyStoreType == KeyStoreType.BKS_V1
 				|| keyStoreType == KeyStoreType.UBER);
 	}
 	
