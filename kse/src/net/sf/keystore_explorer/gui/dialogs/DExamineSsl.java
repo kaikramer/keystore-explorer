@@ -19,7 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -94,7 +93,6 @@ public class DExamineSsl extends JEscDialog {
 	}
 
 	private void initComponents() {
-		getContentPane().setLayout(new BorderLayout());
 
 		jlSslHost = new JLabel(res.getString("DExamineSsl.jlSslHost.text"));
 

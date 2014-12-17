@@ -139,6 +139,7 @@ import net.sf.keystore_explorer.gui.actions.NewAction;
 import net.sf.keystore_explorer.gui.actions.OpenAction;
 import net.sf.keystore_explorer.gui.actions.OpenCaCertificatesAction;
 import net.sf.keystore_explorer.gui.actions.OpenDefaultAction;
+import net.sf.keystore_explorer.gui.actions.OpenPkcs11Action;
 import net.sf.keystore_explorer.gui.actions.PasteAction;
 import net.sf.keystore_explorer.gui.actions.PreferencesAction;
 import net.sf.keystore_explorer.gui.actions.PropertiesAction;
@@ -216,6 +217,7 @@ public final class KseFrame implements StatusBar {
 	private JMenu jmOpenSpecial;
 	private JMenuItem jmiOpenDefaultKeyStore;
 	private JMenuItem jmiOpenCaCertificatesKeyStore;
+	private JMenuItem jmiOpenPkcs11KeyStore;
 	private JMenuItem jmiClose;
 	private JMenuItem jmiCloseAll;
 	private JMenuItem jmiSave;
@@ -398,6 +400,7 @@ public final class KseFrame implements StatusBar {
 	private final OpenAction openAction = new OpenAction(this);
 	private final OpenDefaultAction openDefaultKeyStoreAction = new OpenDefaultAction(this);
 	private final OpenCaCertificatesAction openCaCertificatesKeyStoreAction = new OpenCaCertificatesAction(this);
+	private final OpenPkcs11Action openPkcs11KeyStoreAction = new OpenPkcs11Action(this);
 	private final SaveAction saveAction = new SaveAction(this);
 	private final SaveAsAction saveAsAction = new SaveAsAction(this);
 	private final SaveAllAction saveAllAction = new SaveAllAction(this);
@@ -635,6 +638,14 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiOpenCaCertificatesKeyStore,
 				(String) openCaCertificatesKeyStoreAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmOpenSpecial.add(jmiOpenCaCertificatesKeyStore);
+
+		jmiOpenPkcs11KeyStore = new JMenuItem(openPkcs11KeyStoreAction);
+		PlatformUtil.setMnemonic(jmiOpenPkcs11KeyStore,
+				res.getString("KseFrame.jmiOpenPkcs11KeyStore.mnemonic").charAt(0));
+		jmiOpenPkcs11KeyStore.setToolTipText(null);
+		new StatusBarChangeHandler(jmiOpenPkcs11KeyStore,
+				(String) openPkcs11KeyStoreAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmOpenSpecial.add(jmiOpenPkcs11KeyStore);
 
 		jmFile.addSeparator();
 
