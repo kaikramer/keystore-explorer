@@ -73,6 +73,8 @@ import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 /**
  * Dialog that allows the user to pick a PKCS #12 file to for import as a key
  * pair.
@@ -268,7 +270,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		if (keypair != null) {
 			DViewKeyPair dViewKeyPair = new DViewKeyPair(this, MessageFormat.format(
 					res.getString("DImportKeyPairPkcs12.ViewKeyPairDetails.Title"), path), DOCUMENT_MODAL,
-					keypair.getPrivateKey(), keypair.getCertificateChain());
+					keypair.getPrivateKey(), keypair.getCertificateChain(), new BouncyCastleProvider());
 			dViewKeyPair.setLocationRelativeTo(this);
 			dViewKeyPair.setVisible(true);
 		}

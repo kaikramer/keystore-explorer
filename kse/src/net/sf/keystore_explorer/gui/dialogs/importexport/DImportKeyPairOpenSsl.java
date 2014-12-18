@@ -78,6 +78,8 @@ import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 /**
  * Dialog that allows the user to pick a OpenSSL Private Key file and a
  * certificate file to import as a key pair.
@@ -379,7 +381,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 			if (privateKey != null) {
 				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, MessageFormat.format(
 						res.getString("DImportKeyPairOpenSsl.ViewPrivateKeyDetails.Title"), path), DOCUMENT_MODAL,
-						privateKey);
+						privateKey, new BouncyCastleProvider());
 				dViewPrivateKey.setLocationRelativeTo(this);
 				dViewPrivateKey.setVisible(true);
 			}

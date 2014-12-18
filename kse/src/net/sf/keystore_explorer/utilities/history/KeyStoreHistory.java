@@ -23,6 +23,7 @@ import java.io.File;
 import java.security.KeyStore;
 
 import net.sf.keystore_explorer.crypto.Password;
+import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 
 /**
  * Undo/redo history for a KeyStore.
@@ -47,7 +48,13 @@ public class KeyStoreHistory {
 	 */
 	public KeyStoreHistory(KeyStore keyStore, String name, Password password) {
 		this.name = name;
-		initialState = new KeyStoreState(this, keyStore, password);
+		
+		if (keyStore.getType().equals(KeyStoreType.PKCS11.jce())) {
+			initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
+		} else {
+			initialState = new KeyStoreState(this, keyStore, password);
+		}
+		
 		currentState = initialState;
 	}
 

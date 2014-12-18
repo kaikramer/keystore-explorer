@@ -176,8 +176,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				data[i][6] = null; // No expiry date - must be a key entry
 			}
 
-			// Modified date column - only applies to non-PKCS #12 KeyStores
-			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			// Modified date column - only applies to non-PKCS #11/#12 KeyStores
+			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())
+					&& !keyStore.getType().equals(KeyStoreType.PKCS11.jce())) {
 				data[i][7] = keyStore.getCreationDate(alias);
 			} else {
 				data[i][7] = null;

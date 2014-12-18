@@ -33,6 +33,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.text.MessageFormat;
@@ -82,6 +83,8 @@ public class DViewPrivateKey extends JEscDialog {
 
 	private PrivateKey privateKey;
 
+	private Provider provider;
+
 	/**
 	 * Creates a new DViewPrivateKey dialog.
 	 * 
@@ -94,9 +97,11 @@ public class DViewPrivateKey extends JEscDialog {
 	 * @throws CryptoException
 	 *             A problem was encountered getting the private key's details
 	 */
-	public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey) throws CryptoException {
+	public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey, Provider provider) 
+			throws CryptoException {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
+		this.provider = provider;
 		initComponents();
 	}
 
@@ -114,10 +119,11 @@ public class DViewPrivateKey extends JEscDialog {
 	 * @throws CryptoException
 	 *             A problem was encountered getting the private key's details
 	 */
-	public DViewPrivateKey(JDialog parent, String title, Dialog.ModalityType modality, PrivateKey privateKey)
-			throws CryptoException {
+	public DViewPrivateKey(JDialog parent, String title, Dialog.ModalityType modality, PrivateKey privateKey, 
+			Provider provider) throws CryptoException {
 		super(parent, title, modality);
 		this.privateKey = privateKey;
+		this.provider = provider;
 		initComponents();
 	}
 

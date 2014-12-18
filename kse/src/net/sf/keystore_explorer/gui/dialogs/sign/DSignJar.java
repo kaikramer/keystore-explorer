@@ -36,6 +36,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.jar.JarFile;
@@ -109,6 +110,8 @@ public class DSignJar extends JEscDialog {
 	private SignatureType signatureType;
 	private DigestType digestType;
 
+	private Provider provider;
+
 
 	/**
 	 * Creates a new DSignJar dialog.
@@ -124,11 +127,12 @@ public class DSignJar extends JEscDialog {
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
-	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName)
-			throws CryptoException {
+	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName, 
+			Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
+		this.provider = provider;
 		setTitle(res.getString("DSignJar.Title"));
 		initComponents(signatureName);
 	}
@@ -246,7 +250,7 @@ public class DSignJar extends JEscDialog {
 		gbc_jlSignatureAlgorithm.gridy = 4;
 
 		jcbSignatureAlgorithm = new JComboBox();
-		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
+		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, provider, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJar.jcbSignatureAlgorithm.tooltip"));
 		GridBagConstraints gbc_jcbSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
 		gbc_jcbSignatureAlgorithm.gridy = 4;

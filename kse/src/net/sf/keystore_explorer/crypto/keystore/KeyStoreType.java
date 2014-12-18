@@ -45,7 +45,8 @@ public enum KeyStoreType {
 	UBER("UBER", "KeyStoreType.Uber", true, UBER_KS),
 	KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
 	MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
-	MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null);
+	MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
+	PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null);
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/keystore/resources");
 	private String jce;

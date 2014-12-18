@@ -29,11 +29,10 @@ import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -46,6 +45,7 @@ import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
 import net.sf.keystore_explorer.crypto.filetype.CryptoFileType;
 import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
@@ -112,16 +112,10 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			KeyStore keyStore = currentState.getKeyStore();
 
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+			Certificate cert = keyStore.getCertificate(alias);
 			Certificate[] certs = keyStore.getCertificateChain(alias);
 
-			KeyPairType keyPairType = null;
-			if (privateKey instanceof RSAPrivateKey) {
-				keyPairType = KeyPairType.RSA;
-			} else if (privateKey instanceof DSAPrivateKey) {
-				keyPairType = KeyPairType.DSA;
-			} else {
-				keyPairType = KeyPairType.EC;
-			}
+			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
 			File csrFile = chooseCsrFile();
 			if (csrFile == null) {
@@ -184,17 +178,18 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			PublicKey publicKey = null;
 			X500Name subject = null;
 			DSignCsr dSignCsr = null;
+			Provider provider = keyStore.getProvider();
 
 			if (pkcs10Csr != null) {
 				publicKey = new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
 				subject = pkcs10Csr.getSubject();
 
-				dSignCsr = new DSignCsr(frame, pkcs10Csr, csrFile, privateKey, keyPairType, signingCert);
+				dSignCsr = new DSignCsr(frame, pkcs10Csr, csrFile, privateKey, keyPairType, signingCert, provider);
 			} else {
 				publicKey = spkacCsr.getPublicKey();
 				subject = spkacCsr.getSubject().getName();
 
-				dSignCsr = new DSignCsr(frame, spkacCsr, csrFile, privateKey, keyPairType, signingCert);
+				dSignCsr = new DSignCsr(frame, spkacCsr, csrFile, privateKey, keyPairType, signingCert, provider);
 			}
 
 			dSignCsr.setLocationRelativeTo(frame);
@@ -216,7 +211,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			// CA Reply is a cert with subject from CSR and issuer from signing cert's subject
 			X509CertificateGenerator generator = new X509CertificateGenerator(version);
 			X509Certificate caReplyCert = generator.generate(subject, issuer, validityPeriod, publicKey, privateKey,
-					signatureType, serialNumber, extensions);
+					signatureType, serialNumber, extensions, keyStore.getProvider());
 
 			X509Certificate[] caReplyChain = new X509Certificate[signingChain.length + 1];
 

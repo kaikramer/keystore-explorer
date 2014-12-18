@@ -32,6 +32,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -97,6 +98,7 @@ public class DGenerateCsr extends JEscDialog {
 	private String alias;
 	private PrivateKey privateKey;
 	private KeyPairType keyPairType;
+	private Provider provider;
 	private CsrType format;
 	private SignatureType signatureAlgorithm;
 	private String challenge;
@@ -116,11 +118,13 @@ public class DGenerateCsr extends JEscDialog {
 	 * @throws CryptoException
 	 *             A problem was encountered with the supplied private key
 	 */
-	public DGenerateCsr(JFrame parent, String alias, PrivateKey privateKey, KeyPairType keyPairType) throws CryptoException {
+	public DGenerateCsr(JFrame parent, String alias, PrivateKey privateKey, KeyPairType keyPairType, Provider provider) 
+			throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.alias = alias;
 		this.privateKey = privateKey;
 		this.keyPairType = keyPairType;
+		this.provider = provider;
 		setTitle(res.getString("DGenerateCsr.Title"));
 		initComponents();
 	}
@@ -147,7 +151,7 @@ public class DGenerateCsr extends JEscDialog {
 		jcbSignatureAlgorithm = new JComboBox();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateCsr.jcbSignatureAlgorithm.tooltip"));
-		DialogHelper.populateSigAlgs(keyPairType, privateKey, jcbSignatureAlgorithm);
+		DialogHelper.populateSigAlgs(keyPairType, privateKey, provider, jcbSignatureAlgorithm);
 
 		jlChallenge = new JLabel(res.getString("DGenerateCsr.jlChallenge.text"));
 
@@ -433,7 +437,7 @@ public class DGenerateCsr extends JEscDialog {
                     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
                     PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
                     DGenerateCsr dialog = new DGenerateCsr(new javax.swing.JFrame(), "alias (test)", privateKey,
-                            KeyPairType.RSA);
+                            KeyPairType.RSA, new BouncyCastleProvider());
                     dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                         public void windowClosing(java.awt.event.WindowEvent e) {
                             System.exit(0);

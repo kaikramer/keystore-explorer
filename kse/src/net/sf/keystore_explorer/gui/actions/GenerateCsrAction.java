@@ -109,7 +109,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 						res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"), keyPairAlg));
 			}
 
-			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType);
+			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, keyStore.getProvider());
 			dGenerateCsr.setLocationRelativeTo(frame);
 			dGenerateCsr.setVisible(true);
 

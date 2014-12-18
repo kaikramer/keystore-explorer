@@ -500,6 +500,7 @@ public class DProperties extends JEscDialog {
 		DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
 				res.getString("DProperties.properties.PrivateKey"));
 		parentNode.add(privateKeyNode);
+		KeyStore keyStore = currentState.getKeyStore();
 
 		KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
 		String keyAlg = keyInfo.getAlgorithm();

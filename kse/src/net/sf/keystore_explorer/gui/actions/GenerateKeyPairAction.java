@@ -145,7 +145,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
 			DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame,
 					res.getString("GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType,
-					issuerCert, issuerPrivateKey);
+					issuerCert, issuerPrivateKey, activeKeyStore.getProvider());
 			dGenerateKeyPairCert.setLocationRelativeTo(frame);
 			dGenerateKeyPairCert.setVisible(true);
 

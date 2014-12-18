@@ -38,6 +38,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
@@ -75,6 +76,8 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
+
+	private Provider selectedProvider;
 
 	/**
 	 * Creates a new DOpenPkcs11KeyStore dialog.
@@ -182,7 +185,16 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 	}
 
 	private void okPressed() {
-
+		
+		String providerName = (String) jcbPkcs11Provider.getSelectedItem();
+		selectedProvider = Security.getProvider(providerName);
+		
+		if (selectedProvider == null) {
+			JOptionPane.showMessageDialog(this,
+					res.getString("DOpenPkcs11KeyStore.providerNotInstalled.message"), getTitle(),
+					JOptionPane.WARNING_MESSAGE);
+		}
+		
 		closeDialog();
 	}
 
@@ -193,5 +205,9 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+	
+	public Provider getSelectedProvider() {
+		return this.selectedProvider;
 	}
 }

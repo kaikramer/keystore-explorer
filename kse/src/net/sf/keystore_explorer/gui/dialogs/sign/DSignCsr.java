@@ -36,6 +36,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
@@ -143,6 +144,8 @@ public class DSignCsr extends JEscDialog {
 	private File caReplyFile;
 	private X509ExtensionSet extensions = new X509ExtensionSet();
 
+	private Provider provider;
+
 	/**
 	 * Creates a new DSignCsr dialog for a PKCS #10 formatted CSR.
 	 *
@@ -162,13 +165,14 @@ public class DSignCsr extends JEscDialog {
 	 *             A crypto problem was encountered constructing the dialog
 	 */
 	public DSignCsr(JFrame parent, PKCS10CertificationRequest pkcs10Csr, File csrFile, PrivateKey signPrivateKey,
-			KeyPairType signKeyPairType, X509Certificate verificationCertificate) throws CryptoException {
+			KeyPairType signKeyPairType, X509Certificate verificationCertificate, Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.pkcs10Csr = pkcs10Csr;
 		this.csrFile = csrFile;
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
 		this.verificationCertificate = verificationCertificate;
+		this.provider = provider;
 		setTitle(res.getString("DSignCsr.Title"));
 		initComponents();
 	}
@@ -192,13 +196,14 @@ public class DSignCsr extends JEscDialog {
 	 *             A crypto problem was encountered constructing the dialog
 	 */
 	public DSignCsr(JFrame parent, Spkac spkacCsr, File csrFile, PrivateKey signPrivateKey, KeyPairType signKeyPairType,
-			X509Certificate verificationCertificate) throws CryptoException {
+			X509Certificate verificationCertificate, Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.spkacCsr = spkacCsr;
         this.csrFile = csrFile;
         this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
 		this.verificationCertificate = verificationCertificate;
+		this.provider = provider;
 		setTitle(res.getString("DSignCsr.Title"));
 		initComponents();
 	}
@@ -253,7 +258,7 @@ public class DSignCsr extends JEscDialog {
 
 		jcbSignatureAlgorithm = new JComboBox();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
-		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
+		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, provider, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jcbSignatureAlgorithm.tooltip"));
 
 		jlValidityPeriod = new JLabel(res.getString("DSignCsr.jlValidityPeriod.text"));
@@ -663,7 +668,8 @@ public class DSignCsr extends JEscDialog {
                             new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
 
                     DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, new File(System
-                            .getProperty("user.dir"), "test.csr"), keyPair.getPrivate(), KeyPairType.RSA, null);
+                            .getProperty("user.dir"), "test.csr"), keyPair.getPrivate(), KeyPairType.RSA, null,
+                            new BouncyCastleProvider());
                     dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                         public void windowClosing(java.awt.event.WindowEvent e) {
                             System.exit(0);

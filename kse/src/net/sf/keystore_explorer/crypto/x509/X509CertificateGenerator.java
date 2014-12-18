@@ -22,6 +22,7 @@ package net.sf.keystore_explorer.crypto.x509;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -41,6 +42,7 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -86,7 +88,8 @@ public class X509CertificateGenerator {
 	 */
 	public X509Certificate generate(X500Name subject, X500Name issuer, long validity, PublicKey publicKey,
 			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
-		return generate(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber, null);
+		return generate(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber, null, 
+				new BouncyCastleProvider());
 	}
 
 	/**
@@ -113,14 +116,15 @@ public class X509CertificateGenerator {
 	 *             If there was a problem generating the certificate
 	 */
 	public X509Certificate generate(X500Name subject, X500Name issuer, long validity, PublicKey publicKey,
-			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber, X509Extension extensions)
+			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber, X509Extension extensions,
+			Provider provider)
 			throws CryptoException {
 		if (version == X509CertificateVersion.VERSION1) {
 			return generateVersion1(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber);
 		} else {
 			try {
 				return generateVersion3(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber,
-						extensions);
+						extensions, provider);
 			} catch (CertIOException e) {
 				throw new CryptoException(e);
 			}
@@ -148,7 +152,8 @@ public class X509CertificateGenerator {
 	 */
 	public X509Certificate generateSelfSigned(X500Name name, long validity, PublicKey publicKey, PrivateKey privateKey,
 			SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
-		return generateSelfSigned(name, validity, publicKey, privateKey, signatureType, serialNumber, null);
+		return generateSelfSigned(name, validity, publicKey, privateKey, signatureType, serialNumber, null,
+				new BouncyCastleProvider());
 	}
 
 	/**
@@ -173,8 +178,9 @@ public class X509CertificateGenerator {
 	 *             If there was a problem generating the certificate
 	 */
 	public X509Certificate generateSelfSigned(X500Name name, long validity, PublicKey publicKey, PrivateKey privateKey,
-			SignatureType signatureType, BigInteger serialNumber, X509Extension extensions) throws CryptoException {
-		return generate(name, name, validity, publicKey, privateKey, signatureType, serialNumber, extensions);
+			SignatureType signatureType, BigInteger serialNumber, X509Extension extensions, Provider provider) 
+					throws CryptoException {
+		return generate(name, name, validity, publicKey, privateKey, signatureType, serialNumber, extensions, provider);
 	}
 
 	private X509Certificate generateVersion1(X500Name subject, X500Name issuer, long validity, PublicKey publicKey,
@@ -199,7 +205,8 @@ public class X509CertificateGenerator {
 	}
 
 	private X509Certificate generateVersion3(X500Name subject, X500Name issuer, long validity, PublicKey publicKey,
-			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber, X509Extension extensions)
+			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber, X509Extension extensions,
+			Provider provider)
 			throws CryptoException, CertIOException {
 		Date notBefore = new Date(System.currentTimeMillis());
 		Date notAfter = new Date(System.currentTimeMillis() + validity);
@@ -218,7 +225,7 @@ public class X509CertificateGenerator {
 		}
 
 		try {
-			ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(
+			ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(
 					privateKey);
 			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
 		} catch (CertificateException ex) {

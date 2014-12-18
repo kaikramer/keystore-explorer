@@ -36,6 +36,7 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 import java.security.spec.ECGenParameterSpec;
@@ -171,11 +172,17 @@ public final class KeyPairUtil {
 			String algorithm = privateKey.getAlgorithm();
 
 			if (algorithm.equals(RSA.jce())) {
-				// Using default provider does not work for BKS and UBER resident private keys
-				KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
-				RSAPrivateKeySpec keySpec = (RSAPrivateKeySpec) keyFact.getKeySpec(privateKey, RSAPrivateKeySpec.class);
-				BigInteger modulus = keySpec.getModulus();
-				return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
+				if (privateKey instanceof RSAPrivateKey) {
+					// Using default provider does not work for BKS and UBER resident private keys
+					KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
+					RSAPrivateKeySpec keySpec = (RSAPrivateKeySpec) keyFact.getKeySpec(privateKey,
+							RSAPrivateKeySpec.class);
+					BigInteger modulus = keySpec.getModulus();
+					return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
+				} else {
+					// TODO handle P11 keys!
+					return new KeyInfo(ASYMMETRIC, algorithm, 0);
+				}
 			} else if (algorithm.equals(DSA.jce())) {
 				// Use SUN (DSA key spec not implemented for BC)
 				KeyFactory keyFact = KeyFactory.getInstance(algorithm);
@@ -192,6 +199,17 @@ public final class KeyPairUtil {
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("NoPrivateKeysize.exception.message"), ex);
 		}
+	}
+	
+	/**
+	 * Determine the key pair type (algorithm).
+	 * 
+	 * @param privateKey
+	 *            The private key
+	 * @return KeyPairType type
+	 */
+	public static KeyPairType getKeyPairType(PrivateKey privateKey)  {
+		return KeyPairType.resolveJce(privateKey.getAlgorithm());
 	}
 
 	/**

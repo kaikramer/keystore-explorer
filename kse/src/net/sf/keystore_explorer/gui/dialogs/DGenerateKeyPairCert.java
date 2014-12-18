@@ -36,6 +36,7 @@ import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
@@ -109,6 +110,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	private X509Certificate issuerCert;
 	private PrivateKey issuerPrivateKey;
 
+	private Provider provider;
+
 	/**
 	 * Creates a new DGenerateKeyPairCert dialog.
 	 * 
@@ -148,12 +151,13 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	 *             A problem was encountered with the supplied key pair
 	 */
 	public DGenerateKeyPairCert(JFrame parent, String title, KeyPair keyPair, KeyPairType keyPairType,
-			X509Certificate issuerCert, PrivateKey issuerPrivateKey) throws CryptoException {
+			X509Certificate issuerCert, PrivateKey issuerPrivateKey, Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keyPair = keyPair;
 		this.keyPairType = keyPairType;
 		this.issuerCert = issuerCert;
 		this.issuerPrivateKey = issuerPrivateKey;
+		this.provider = provider;
 		initComponents(title);
 	}
 
@@ -206,10 +210,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		// populate signature algorithm selector 
 		if (issuerPrivateKey != null) {
 			KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerPrivateKey.getAlgorithm());
-			DialogHelper.populateSigAlgs(issuerKeyPairType, issuerPrivateKey, jcbSignatureAlgorithm);
+			DialogHelper.populateSigAlgs(issuerKeyPairType, issuerPrivateKey, provider, jcbSignatureAlgorithm);
 		} else {
 			// self-signed
-			DialogHelper.populateSigAlgs(keyPairType, keyPair.getPrivate(), jcbSignatureAlgorithm);
+			DialogHelper.populateSigAlgs(keyPairType, keyPair.getPrivate(), provider, jcbSignatureAlgorithm);
 		}
 
 		jlValidityPeriod = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityPeriod.text"));
@@ -392,12 +396,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			// self-signed or signed by other key pair?
 			if (issuerPrivateKey == null) {
 				certificate = generator.generateSelfSigned(name, validityPeriodMs, keyPair.getPublic(),
-					keyPair.getPrivate(), signatureType, serialNumber, extensions);
+					keyPair.getPrivate(), signatureType, serialNumber, extensions, provider);
 			} else {
 				certificate = generator.generate(name,
 						X500NameUtils.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
 						validityPeriodMs, keyPair.getPublic(), issuerPrivateKey, signatureType, serialNumber,
-						extensions);
+						extensions, provider);
 			}
 		} catch (CryptoException ex) {
 			DError dError = new DError(this, DOCUMENT_MODAL, ex);

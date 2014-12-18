@@ -30,8 +30,6 @@ import java.security.PublicKey;
 
 import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 
 import org.junit.Test;
 

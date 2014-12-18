@@ -1,6 +1,7 @@
 package net.sf.keystore_explorer.gui.dialogs;
 
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -33,7 +34,7 @@ public class DialogHelper {
 	 * @param jcbSignatureAlgorithm
 	 * @throws CryptoException
 	 */
-	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, JComboBox jcbSignatureAlgorithm) 
+	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, Provider provider, JComboBox jcbSignatureAlgorithm) 
 			throws CryptoException {
 		
 		List<SignatureType> sigAlgs;

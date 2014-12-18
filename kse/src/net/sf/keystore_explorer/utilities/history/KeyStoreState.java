@@ -139,7 +139,7 @@ public class KeyStoreState {
 	 */
 	public void setPreviousStateAsCurrentState() throws CryptoException {
 		if (previous != null) {
-			propogateNewPasswords(previous);
+			propagateNewPasswords(previous);
 			previous.setAsCurrentState();
 		}
 	}
@@ -152,7 +152,7 @@ public class KeyStoreState {
 	 */
 	public void setNextStateAsCurrentState() throws CryptoException {
 		if (next != null) {
-			propogateNewPasswords(next);
+			propagateNewPasswords(next);
 			next.setAsCurrentState();
 		}
 	}
@@ -323,51 +323,46 @@ public class KeyStoreState {
 
 		return copy;
 	}
+	
+	protected void propagateNewPasswords(KeyStoreState targetState) throws CryptoException {
 
-	private void propogateNewPasswords(KeyStoreState targetState) throws CryptoException {
-		/*
-		 * Copy all entry passwords not found in the target state from the
-		 * current state to the target state
-		 */
+		// Copy all entry passwords not found in the target state from the current state to the target state
 		try {
 			for (String alias : entryPasswords.keySet()) {
 				if (KeyStoreUtil.isKeyPairEntry(alias, targetState.keyStore)) {
 					if (!targetState.entryPasswords.containsKey(alias)) {
 						Password newPassword = entryPasswords.get(alias);
 
-						if (isPasswordPropogationValid(targetState, alias, newPassword)) {
+						if (isPasswordPropagationValid(targetState, alias, newPassword)) {
 							targetState.setEntryPassword(alias, newPassword);
 						}
 					}
 				}
 			}
 		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(res.getString("NoPropogateEntryPasswords.exception.message"), ex);
+			throw new CryptoException(res.getString("NoPropagateEntryPasswords.exception.message"), ex);
 		}
 	}
 
-	private boolean isPasswordPropogationValid(KeyStoreState targetState, String alias, Password password)
+	protected boolean isPasswordPropagationValid(KeyStoreState targetState, String alias, Password password)
 			throws GeneralSecurityException {
-		/*
-		 * A password should only be propogated to a target state if it is
-		 * correct and represents the same private key as the current state
-		 */
+		// A password should only be propagated to a target state if it is correct and represents the same private key 
+		// as the current state
 		return isEntryPasswordCorrect(targetState, alias, password)
 				&& isEntryPrivateKeyEqual(targetState, alias, password);
 	}
 
-	private boolean isEntryPasswordCorrect(KeyStoreState targetState, String alias, Password password) {
+	protected boolean isEntryPasswordCorrect(KeyStoreState targetState, String alias, Password password) {
 		try {
 			targetState.keyStore.getKey(alias, password.toCharArray());
 
 			return true;
 		} catch (GeneralSecurityException ex) {
-			return false; // Could not retrieve key part of key pair using
-							// password
+			return false; // Could not retrieve key part of key pair using password
 		}
 	}
 
-	private boolean isEntryPrivateKeyEqual(KeyStoreState targetState, String alias, Password password)
+	protected boolean isEntryPrivateKeyEqual(KeyStoreState targetState, String alias, Password password)
 			throws GeneralSecurityException {
 		Key currentKey = keyStore.getKey(alias, password.toCharArray());
 		Key targetKey = targetState.getKeyStore().getKey(alias, password.toCharArray());
@@ -385,4 +380,6 @@ public class KeyStoreState {
 			return currentKey.equals(targetKey);
 		}
 	}
+
+
 }

@@ -97,7 +97,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
 				keyPairType = KeyPairType.EC;
 			}
 
-			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias);
+			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias, keyStore.getProvider());
 			dSignJar.setLocationRelativeTo(frame);
 			dSignJar.setVisible(true);
 
