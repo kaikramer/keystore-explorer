@@ -350,4 +350,16 @@ public class FileChooserFactory {
 		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { JAD_EXT }, JAD_FILE_DESC));
 		return chooser;
 	}
+	
+	/**
+	 * Get a JFileChooser filtered for library files.
+	 *
+	 * @return JFileChooser object
+	 */
+	public static JFileChooser getLibFileChooser() {
+		JFileChooser chooser = new JFileChooser();
+		// TODO resource bundle
+		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { "*.dll" }, "Windows DLL files"));
+		return chooser;
+	}
 }

@@ -19,17 +19,16 @@
  */
 package net.sf.keystore_explorer.crypto.keystore;
 
+import java.util.ResourceBundle;
+
+import net.sf.keystore_explorer.crypto.ecc.EccUtil;
+import net.sf.keystore_explorer.crypto.filetype.CryptoFileType;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.BKS_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.BKS_V1_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.JCEKS_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.JKS_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.PKCS12_KS;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UBER_KS;
-
-import java.util.ResourceBundle;
-
-import net.sf.keystore_explorer.crypto.ecc.EccUtil;
-import net.sf.keystore_explorer.crypto.filetype.CryptoFileType;
 
 /**
  * Enumeration of KeyStore Types supported by the KeyStoreUtil class.
@@ -86,6 +85,15 @@ public enum KeyStoreType {
 	 */
 	public boolean isFileBased() {
 		return fileBased;
+	}
+
+	/**
+	 * Are key store entries password protected?
+	 *
+	 * @return True if it has, false otherwise
+	 */
+	public boolean hasEntryPasswords() {
+		return this != PKCS11 && this != PKCS12 && this != MS_CAPI_PERSONAL;
 	}
 
 	/**

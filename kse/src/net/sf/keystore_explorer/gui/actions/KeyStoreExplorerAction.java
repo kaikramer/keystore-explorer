@@ -151,8 +151,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 				return null;
 			}
 
-			keyStore.getKey(alias, password.toCharArray()); // Test password is
-															// correct
+			keyStore.getKey(alias, password.toCharArray()); // Test password is correct
 
 			state.setEntryPassword(alias, password);
 			kseFrame.updateControls(true);

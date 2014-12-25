@@ -56,6 +56,16 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
 	AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KeyStore keyStore, Password password) {
 		super(history, keyStore, password);
 	}
+	
+	@Override
+	public boolean isSavedState() {
+		return true;
+	}
+
+	@Override
+	public void setAsSavedState() {
+		// do nothing
+	}
 
 	@Override
 	public void append(KeyStoreState keyStoreState) {
@@ -79,7 +89,7 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
 
 	@Override
 	public KeyStoreState nextState() {
-		return this;
+		return null;
 	}
 
 	@Override

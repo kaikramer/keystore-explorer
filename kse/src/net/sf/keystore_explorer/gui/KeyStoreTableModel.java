@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import static net.sf.keystore_explorer.crypto.KeyType.SYMMETRIC;
-
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
@@ -51,6 +49,7 @@ import net.sf.keystore_explorer.crypto.secretkey.SecretKeyUtil;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
+import static net.sf.keystore_explorer.crypto.KeyType.SYMMETRIC;
 
 /**
  * The table model used to display a KeyStore's entries sorted by alias name.
@@ -103,6 +102,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		KeyStoreState currentState = history.getCurrentState();
 
 		KeyStore keyStore = currentState.getKeyStore();
+		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
 		Enumeration<String> aliases = keyStore.aliases();
 
@@ -132,10 +132,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 			data[i][0] = entryType;
 
-			// Lock column - only applies to key and key pair entries in
-			// non-PKCS #12 KeyStores
-			if ((entryType.equals(KEY_PAIR_ENTRY) || entryType.equals(KEY_ENTRY))
-					&& !keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			// Lock column - only applies to KeyStores types that actually support passwords for entries
+			if ((entryType.equals(KEY_PAIR_ENTRY) || entryType.equals(KEY_ENTRY)) && type.hasEntryPasswords()) {
 				if (currentState.getEntryPassword(alias) != null) {
 					data[i][1] = Boolean.FALSE; // Unlocked
 				} else {

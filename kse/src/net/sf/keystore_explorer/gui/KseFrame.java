@@ -19,13 +19,6 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -185,6 +178,15 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
+
+import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
+
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS11;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 
 /**
  * KeyStore Explorer application frame. Wraps an actual JFrame.
@@ -2104,6 +2106,8 @@ public final class KseFrame implements StatusBar {
 
 		Point point = new Point(evt.getX(), evt.getY());
 		int row = jtKeyStore.rowAtPoint(point);
+		
+		KeyStoreType type = KeyStoreType.resolveJce(getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType());
 
 		if (evt.isPopupTrigger()) {
 
@@ -2113,10 +2117,8 @@ public final class KseFrame implements StatusBar {
 
 				if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
 
-					// For non-PKCS 12 KeyStores...
-					if (!getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType()
-							.equals(KeyStoreType.PKCS12.jce())) {
-
+					// For KeyStore types that support password protected entries...
+					if (type.hasEntryPasswords()) {
 						// Only allow unlocking from menu if entry is currently locked
 						boolean locked = ((Boolean) jtKeyStore.getValueAt(row, 1)).booleanValue();
 						unlockKeyPairAction.setEnabled(locked);
@@ -2130,9 +2132,8 @@ public final class KseFrame implements StatusBar {
 
 				} else if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.KEY_ENTRY)) {
 
-					// For non-PKCS 12 KeyStores...
-					if (!getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType()
-							.equals(KeyStoreType.PKCS12.jce())) {
+					// For KeyStore types that support password protected entries...
+					if (type.hasEntryPasswords()) {
 						// Only allow unlocking from menu if entry is currently locked
 						boolean locked = ((Boolean) jtKeyStore.getValueAt(row, 1)).booleanValue();
 						unlockKeyAction.setEnabled(locked);
@@ -2474,31 +2475,37 @@ public final class KseFrame implements StatusBar {
 			closeOthersAction.setEnabled(false);
 		}
 
+		KeyStore keyStore = currentState.getKeyStore();
+		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
+
 		// Can Save As
-		saveAsAction.setEnabled(true);
+		if (type.isFileBased()) {
+			saveAsAction.setEnabled(true);
+		}
 
 		// May be able to undo/redo
 		updateUndoRedoControls(currentState);
 
 		// May be able to cut/copy/paste
-		updateCutCopyPasteControls();
-
-		KeyStore keyStore = currentState.getKeyStore();
-		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
+		if (type.isFileBased()) {
+			updateCutCopyPasteControls();
+		}
 
 		// Can use tools on
 		generateKeyPairAction.setEnabled(true);
 		generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
 		importTrustedCertificateAction.setEnabled(true);
 		importKeyPairAction.setEnabled(true);
-		setPasswordAction.setEnabled(true);
 		propertiesAction.setEnabled(true);
+		if (type.isFileBased()) {
+			setPasswordAction.setEnabled(true);
+		}
 
 		// Show default status bar display
 		setDefaultStatusBarText();
 
-		// Passwords, and therefore unlocking, are not relevant for PKCS #12 KeyStores
-		if (type == PKCS12) {
+		// Passwords, and therefore unlocking, are not relevant for PKCS #12/#11 KeyStores
+		if (type == PKCS12 || type == PKCS11) {
 			unlockKeyPairAction.setEnabled(false);
 			setKeyPairPasswordAction.setEnabled(false);
 			unlockKeyAction.setEnabled(false);
@@ -2511,7 +2518,9 @@ public final class KseFrame implements StatusBar {
 		}
 
 		// KeyStore type menu items
-		jmChangeType.setEnabled(true);
+		if (type.isFileBased()) {
+			jmChangeType.setEnabled(true);
+		}
 
 		if (type == JKS) {
 			jrbmiChangeTypeJks.setSelected(true);
