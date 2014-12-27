@@ -2520,26 +2520,28 @@ public final class KseFrame implements StatusBar {
 		// KeyStore type menu items
 		if (type.isFileBased()) {
 			jmChangeType.setEnabled(true);
-		}
 
-		if (type == JKS) {
-			jrbmiChangeTypeJks.setSelected(true);
-			jrbmiKeyStoreChangeTypeJks.setSelected(true);
-		} else if (type == JCEKS) {
-			jrbmiChangeTypeJceks.setSelected(true);
-			jrbmiKeyStoreChangeTypeJceks.setSelected(true);
-		} else if (type == PKCS12) {
-			jrbmiChangeTypePkcs12.setSelected(true);
-			jrbmiKeyStoreChangeTypePkcs12.setSelected(true);
-        } else if (type == BKS_V1) {
-            jrbmiChangeTypeBksV1.setSelected(true);
-            jrbmiKeyStoreChangeTypeBksV1.setSelected(true);
-        } else if (type == BKS) {
-            jrbmiChangeTypeBks.setSelected(true);
-            jrbmiKeyStoreChangeTypeBks.setSelected(true);
+			if (type == JKS) {
+				jrbmiChangeTypeJks.setSelected(true);
+				jrbmiKeyStoreChangeTypeJks.setSelected(true);
+			} else if (type == JCEKS) {
+				jrbmiChangeTypeJceks.setSelected(true);
+				jrbmiKeyStoreChangeTypeJceks.setSelected(true);
+			} else if (type == PKCS12) {
+				jrbmiChangeTypePkcs12.setSelected(true);
+				jrbmiKeyStoreChangeTypePkcs12.setSelected(true);
+	        } else if (type == BKS_V1) {
+	            jrbmiChangeTypeBksV1.setSelected(true);
+	            jrbmiKeyStoreChangeTypeBksV1.setSelected(true);
+	        } else if (type == BKS) {
+	            jrbmiChangeTypeBks.setSelected(true);
+	            jrbmiKeyStoreChangeTypeBks.setSelected(true);
+			} else {
+				jrbmiChangeTypeUber.setSelected(true);
+				jrbmiKeyStoreChangeTypeUber.setSelected(true);
+			}
 		} else {
-			jrbmiChangeTypeUber.setSelected(true);
-			jrbmiKeyStoreChangeTypeUber.setSelected(true);
+			jmKeyStoreChangeType.setEnabled(false);
 		}
 
 		// Show KeyStores tabbed pane

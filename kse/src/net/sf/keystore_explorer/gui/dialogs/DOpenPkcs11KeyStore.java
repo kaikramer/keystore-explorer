@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -30,7 +28,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.security.AuthProvider;
 import java.security.Provider;
 import java.security.ProviderException;
 import java.security.Security;
@@ -66,6 +63,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 import sun.security.pkcs11.SunPKCS11;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Dialog used to retrieve the type to use in the creation of a new KeyStore.
@@ -286,10 +284,6 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 				selectedProvider = pkcs11;
 			}
 			
-			// register password handler
-			AuthProvider authProvider = (AuthProvider) selectedProvider;
-			authProvider.setCallbackHandler(new SwingPasswordCallbackHandler());
-
 			closeDialog();
 		} catch (final ProviderException e) {
 			SwingUtilities.invokeLater(new Runnable() {

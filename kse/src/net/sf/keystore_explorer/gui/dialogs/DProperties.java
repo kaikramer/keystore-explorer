@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -37,6 +35,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
@@ -86,6 +85,7 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 import net.sf.keystore_explorer.utilities.io.IndentChar;
 import net.sf.keystore_explorer.utilities.io.IndentSequence;
+import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
 
 /**
  * Displays the properties of a supplied KeyStore.
@@ -720,8 +720,10 @@ public class DProperties extends JEscDialog {
 						DATE_FORMAT.format(keyStore.getCreationDate(alias)));
 				parentNode.add(new DefaultMutableTreeNode(lastModified));
 			}
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+		} catch (ProviderException e) {
+			// some keystore types do not provide creation dates for their entries => simply create no node
+		} catch (KeyStoreException e) {
+			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), e);
 		}
 	}
 
