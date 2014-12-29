@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -92,6 +93,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 			}
 
 			KeyStore keyStore = currentState.getKeyStore();
+			Provider provider = keyStore.getProvider();
 
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
@@ -109,7 +111,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 						res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"), keyPairAlg));
 			}
 
-			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, keyStore.getProvider());
+			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, provider);
 			dGenerateCsr.setLocationRelativeTo(frame);
 			dGenerateCsr.setVisible(true);
 
@@ -131,7 +133,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 
 			if (format == CsrType.PKCS10) {
 				String csr = Pkcs10Util.getCsrEncodedDerPem(Pkcs10Util.generateCsr(firstCertInChain, privateKey,
-						signatureType, challenge, unstructuredName, useCertificateExtensions));
+						signatureType, challenge, unstructuredName, useCertificateExtensions, provider));
 
 				fos.write(csr.getBytes());
 			} else {
@@ -139,6 +141,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 						.getSubjectX500Principal()));
 				PublicKey publicKey = firstCertInChain.getPublicKey();
 
+				// TODO handle other providers (PKCS11 etc)
 				Spkac spkac = new Spkac(challenge, signatureType, subject, publicKey, privateKey);
 
 				spkac.output(fos);

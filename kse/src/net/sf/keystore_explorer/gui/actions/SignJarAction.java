@@ -23,9 +23,8 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.RSAPrivateKey;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -34,6 +33,7 @@ import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.digest.DigestType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.JarSigner;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
@@ -83,21 +83,15 @@ public class SignJarAction extends KeyStoreExplorerAction {
 			}
 
 			KeyStore keyStore = currentState.getKeyStore();
+			Provider provider = keyStore.getProvider();
 
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			X509Certificate[] certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore
 					.getCertificateChain(alias)));
 
-			KeyPairType keyPairType = null;
-			if (privateKey instanceof RSAPrivateKey) {
-				keyPairType = KeyPairType.RSA;
-			} else if (privateKey instanceof DSAPrivateKey) {
-				keyPairType = KeyPairType.DSA;
-			} else {
-				keyPairType = KeyPairType.EC;
-			}
+			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias, keyStore.getProvider());
+			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias, provider);
 			dSignJar.setLocationRelativeTo(frame);
 			dSignJar.setVisible(true);
 
@@ -115,10 +109,11 @@ public class SignJarAction extends KeyStoreExplorerAction {
 			DigestType digestType = dSignJar.getDigestType();
 
 			if (inputJarFile.equals(outputJarFile)) {
-				JarSigner.sign(inputJarFile, privateKey, certs, signatureType, signatureName, signer, digestType);
+				JarSigner.sign(inputJarFile, privateKey, certs, signatureType, signatureName, signer, digestType,
+						provider);
 			} else {
 				JarSigner.sign(inputJarFile, outputJarFile, privateKey, certs, signatureType, signatureName, signer,
-						digestType);
+						digestType, provider);
 			}
 
 			JOptionPane.showMessageDialog(frame, res.getString("SignJarAction.SignJarSuccessful.message"),

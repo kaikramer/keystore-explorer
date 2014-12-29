@@ -24,6 +24,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
 
+import net.sf.keystore_explorer.utilities.os.OperatingSystem;
+
 /**
  * Simple factory that returns JFileChooser objects for the requested security
  * file types. Basically just supplies a JFileChooser object with the file
@@ -60,6 +62,9 @@ public class FileChooserFactory {
 	public static final String JAR_EXT = "jar";
 	public static final String ZIP_EXT = "zip";
 	public static final String JAD_EXT = "jad";
+	public static final String LIB_DLL_EXT = "dll";
+	public static final String LIB_SO_EXT = "so";
+	public static final String LIB_DYLIB_EXT = "dylib";
 
 	private static final String KEYSTORE_FILE_DESC = MessageFormat.format(
 			res.getString("FileChooserFactory.KeyStoreFiles"), KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT,
@@ -115,6 +120,15 @@ public class FileChooserFactory {
 
 	private static final String JAD_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.JadFiles"),
 			JAD_EXT);
+
+	private static final String LIB_DLL_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibDllFiles"),
+			LIB_DLL_EXT);
+	
+	private static final String LIB_SO_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibSoFiles"),
+			LIB_SO_EXT);
+	
+	private static final String LIB_DYLIB_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibDylibFiles"),
+			LIB_DYLIB_EXT);
 
 	private FileChooserFactory() {
 	}
@@ -358,8 +372,15 @@ public class FileChooserFactory {
 	 */
 	public static JFileChooser getLibFileChooser() {
 		JFileChooser chooser = new JFileChooser();
-		// TODO resource bundle
-		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { "*.dll" }, "Windows DLL files"));
+		
+		if (OperatingSystem.isWindows()) {
+			chooser.addChoosableFileFilter(new FileExtFilter(new String[] { LIB_DLL_EXT }, LIB_DLL_FILE_DESC));
+		} else if (OperatingSystem.isMacOs()) { 
+			chooser.addChoosableFileFilter(new FileExtFilter(new String[] { LIB_DYLIB_EXT }, LIB_DYLIB_FILE_DESC));
+		} else if (OperatingSystem.isLinux() || OperatingSystem.isUnix()) { 
+			chooser.addChoosableFileFilter(new FileExtFilter(new String[] { LIB_SO_EXT }, LIB_SO_FILE_DESC));
+		}
+		
 		return chooser;
 	}
 }

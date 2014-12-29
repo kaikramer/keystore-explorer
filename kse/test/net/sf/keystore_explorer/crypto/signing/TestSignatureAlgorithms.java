@@ -19,6 +19,30 @@
  */
 package net.sf.keystore_explorer.crypto.signing;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
+
+import net.sf.keystore_explorer.crypto.TestCaseCrypto;
+import net.sf.keystore_explorer.crypto.csr.CsrType;
+import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
+import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
+import net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
+import net.sf.keystore_explorer.crypto.x509.X509CertificateGenerator;
+import net.sf.keystore_explorer.crypto.x509.X509CertificateVersion;
+
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.junit.Before;
+import org.junit.Test;
+
 import static net.sf.keystore_explorer.crypto.csr.CsrType.PKCS10;
 import static net.sf.keystore_explorer.crypto.csr.CsrType.SPKAC;
 import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
@@ -41,29 +65,6 @@ import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA512_RSA;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.X509Certificate;
-
-import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-import net.sf.keystore_explorer.crypto.csr.CsrType;
-import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
-import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
-import net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
-import net.sf.keystore_explorer.crypto.x509.X509CertificateGenerator;
-import net.sf.keystore_explorer.crypto.x509.X509CertificateVersion;
-
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Unit tests for all signature algorithms for certificate and CSR generation.
@@ -268,7 +269,8 @@ public class TestSignatureAlgorithms extends TestCaseCrypto {
 			spkac = new Spkac(new ByteArrayInputStream(baos.toByteArray()));
 			assertTrue(spkac.verify());
 		} else {
-			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(cert, privateKey, signatureType, "w/e", "w/e", false);
+			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(cert, privateKey, signatureType, "w/e", "w/e",
+					false, new BouncyCastleProvider());
 			byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
 			pkcs10 = Pkcs10Util.loadCsr(new ByteArrayInputStream(encoded));
 			assertTrue(Pkcs10Util.verifyCsr(pkcs10));

@@ -19,15 +19,6 @@
  */
 package net.sf.keystore_explorer.crypto.csr.spkac;
 
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.CN_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.C_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.L_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.OU_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.O_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.ST_PROPERTY;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +57,15 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.util.encoders.Base64;
+
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.CN_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.C_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.L_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.OU_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.O_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.ST_PROPERTY;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
 
 /**
  * Signed Public Key and Challenge (SPKAC). Netscape's CSR format. SPKACs can be
@@ -172,8 +172,7 @@ public class Spkac {
 
 	private Properties readProperties(InputStream is) throws IOException {
 		try {
-			// Properies are defined as name=value pairs where value may be over
-			// several lines
+			// Properies are defined as name=value pairs where value may be over several lines
 			Properties properties = new Properties();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));

@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.crypto.signing;
 
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_DSA;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +30,7 @@ import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -64,6 +63,8 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
+
+import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_DSA;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -145,12 +146,12 @@ public class JarSigner extends Object {
 	 *             If a crypto problem occurs while signing the JAR file
 	 */
 	public static void sign(File jsrFile, PrivateKey privateKey, X509Certificate[] certificateChain,
-			SignatureType signatureType, String signatureName, String signer, DigestType digestType)
-			throws IOException, CryptoException {
+			SignatureType signatureType, String signatureName, String signer, DigestType digestType,
+			Provider provider) throws IOException, CryptoException {
 		File tmpFile = File.createTempFile("kse", "tmp");
 		tmpFile.deleteOnExit();
 
-		sign(jsrFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType);
+		sign(jsrFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType, provider);
 
 		CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jsrFile));
 
@@ -183,7 +184,7 @@ public class JarSigner extends Object {
 	 */
 	public static void sign(File jarFile, File signedJarFile, PrivateKey privateKey,
 			X509Certificate[] certificateChain, SignatureType signatureType, String signatureName, String signer,
-			DigestType digestType) throws IOException, CryptoException {
+			DigestType digestType, Provider provider) throws IOException, CryptoException {
 		JarFile jar = null;
 		JarOutputStream jos = null;
 
@@ -297,7 +298,7 @@ public class JarSigner extends Object {
 			writeSignatureFile(sf, signatureName, jos);
 
 			// Create signature block and write it out to signed JAR
-			byte[] sigBlock = createSignatureBlock(sf, privateKey, certificateChain, signatureType);
+			byte[] sigBlock = createSignatureBlock(sf, privateKey, certificateChain, signatureType, provider);
 			writeSignatureBlock(sigBlock, signatureType, signatureName, jos);
 		} finally {
 			SafeCloseUtil.close(jar);
@@ -761,7 +762,7 @@ public class JarSigner extends Object {
 	}
 
 	private static byte[] createSignatureBlock(byte[] toSign, PrivateKey privateKey,
-			X509Certificate[] certificateChain, SignatureType signatureType) throws CryptoException {
+			X509Certificate[] certificateChain, SignatureType signatureType, Provider provider) throws CryptoException {
 
 		ByteArrayInputStream bais = null;
 
@@ -775,7 +776,7 @@ public class JarSigner extends Object {
 			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
             JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
 			ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce())
-			                                            .setProvider("BC")
+			                                            .setProvider(provider)
 			                                            .setSecureRandom(SecureRandom.getInstance("SHA1PRNG"))
 			                                            .build(privateKey);
 

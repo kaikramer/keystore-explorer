@@ -19,10 +19,6 @@
  */
 package net.sf.keystore_explorer.crypto.csr.pkcs10;
 
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,6 +28,7 @@ import java.io.LineNumberReader;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -55,6 +52,10 @@ import org.bouncycastle.pkcs.PKCSException;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
+
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
 
 /**
  * Provides utility methods relating to PKCS #10 CSRs.
@@ -92,8 +93,8 @@ public class Pkcs10Util {
 	 * @return The CSR
 	 */
 	public static PKCS10CertificationRequest generateCsr(X509Certificate cert, PrivateKey privateKey,
-			SignatureType signatureType, String challenge, String unstructuredName, boolean useExtensions)
-			        throws CryptoException {
+			SignatureType signatureType, String challenge, String unstructuredName, boolean useExtensions,
+			Provider provider) throws CryptoException {
 
 		try {
 			JcaPKCS10CertificationRequestBuilder csrBuilder =
@@ -119,7 +120,7 @@ public class Pkcs10Util {
 			}
 
 			PKCS10CertificationRequest csr =  csrBuilder.build(
-					new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(privateKey));
+					new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey));
 
 			if (!verifyCsr(csr)) {
 				throw new CryptoException(res.getString("NoVerifyGenPkcs10Csr.exception.message"));
