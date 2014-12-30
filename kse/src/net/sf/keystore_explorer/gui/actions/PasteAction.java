@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.awt.Toolkit;
 import java.security.Key;
@@ -150,11 +150,11 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 				Password password = null;
 
 				if (keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
-					password = getPkcs12DummyPassword();
+					password = getDummyPassword();
 				} else {
 
 				    // notify user that a default password was set due to keystore type change
-				    if (keyPairBufferEntry.getPassword().equals(Password.getPkcs12DummyPassword())) {
+				    if (keyPairBufferEntry.getPassword().equals(Password.getDummyPassword())) {
 				        showWarnPkcs12();
 				    }
 
@@ -192,7 +192,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 	            warnPkcs12Password = true;
 	            JOptionPane.showMessageDialog(frame, MessageFormat.format(res
 	                    .getString("PasteAction.PasteFromPkcs12Password.message"), new String(
-	                    getPkcs12DummyPassword().toCharArray())), res
+	                    getDummyPassword().toCharArray())), res
 	                    .getString("PasteAction.Paste.Title"), JOptionPane.INFORMATION_MESSAGE);
 	        }
 	    }

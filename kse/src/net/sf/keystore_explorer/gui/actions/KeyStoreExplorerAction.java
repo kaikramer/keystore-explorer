@@ -19,9 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
-
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +46,8 @@ import net.sf.keystore_explorer.gui.password.DGetNewPassword;
 import net.sf.keystore_explorer.gui.password.DGetPassword;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 /**
  * Abstract base class for all KeyStore Explorer actions.
@@ -117,8 +116,8 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 		Password password = state.getEntryPassword(alias);
 
 		if (password == null) {
-			if (state.getKeyStore().getType().equals(KeyStoreType.PKCS12.jce())) {
-				password = getPkcs12DummyPassword();
+			if (!KeyStoreType.resolveJce(state.getKeyStore().getType()).hasEntryPasswords()) {
+				password = getDummyPassword();
 			} else {
 				password = unlockEntry(alias, state);
 			}

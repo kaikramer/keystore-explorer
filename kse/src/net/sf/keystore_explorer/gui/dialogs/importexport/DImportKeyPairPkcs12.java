@@ -20,7 +20,7 @@
 package net.sf.keystore_explorer.gui.dialogs.importexport;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -301,7 +301,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 				String alias = (String) aliases.nextElement();
 
 				if (pkcs12.isKeyEntry(alias)) {
-					privKey = (PrivateKey) pkcs12.getKey(alias, getPkcs12DummyPassword().toCharArray());
+					privKey = (PrivateKey) pkcs12.getKey(alias, getDummyPassword().toCharArray());
 					Certificate[] certs = pkcs12.getCertificateChain(alias);
 					if ((certs != null) && (certs.length > 0)) {
 						for (int i = 0; i < certs.length; i++) {
@@ -319,7 +319,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 					String alias = (String) aliases.nextElement();
 
 					if (pkcs12.isKeyEntry(alias)) {
-						privKey = (PrivateKey) pkcs12.getKey(alias, getPkcs12DummyPassword().toCharArray());
+						privKey = (PrivateKey) pkcs12.getKey(alias, getDummyPassword().toCharArray());
 					} else {
 						certsList.add(pkcs12.getCertificate(alias));
 					}

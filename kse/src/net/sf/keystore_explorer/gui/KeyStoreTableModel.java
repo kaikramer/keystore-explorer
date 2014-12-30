@@ -225,7 +225,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					char[] keyPassword = null;
 
 					if (keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
-						keyPassword = Password.getPkcs12DummyPassword().toCharArray();
+						keyPassword = Password.getDummyPassword().toCharArray();
 					} else {
 						keyPassword = currentState.getEntryPassword(alias).toCharArray();
 					}

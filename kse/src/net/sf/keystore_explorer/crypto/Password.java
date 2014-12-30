@@ -35,7 +35,7 @@ public class Password {
 	 * Dummy password to use for PKCS #12 KeyStore entries (passwords are not
 	 * applicable for these)
 	 */
-	private static final Password PKCS12_DUMMY_PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r',
+	private static final Password DUMMY_PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r',
 			'd' });
 
 	/**
@@ -122,8 +122,8 @@ public class Password {
 	 * 
 	 * @return Dummy password, 'password'
 	 */
-	public static Password getPkcs12DummyPassword() {
-		return new Password(PKCS12_DUMMY_PASSWORD);
+	public static Password getDummyPassword() {
+		return new Password(DUMMY_PASSWORD);
 	}
 
 	/**

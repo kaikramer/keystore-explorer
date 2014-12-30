@@ -179,7 +179,7 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
 
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
@@ -2354,7 +2354,7 @@ public final class KseFrame implements StatusBar {
 
 				if (keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
 					// Use dummy password for PKCS12 KeyStore
-					password = getPkcs12DummyPassword();
+					password = getDummyPassword();
 				} else {
 					// Otherwise entry must already be unlocked to get password
 					password = currentState.getEntryPassword(alias);

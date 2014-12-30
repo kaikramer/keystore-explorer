@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +34,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import net.sf.keystore_explorer.crypto.Password;
+import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
@@ -47,6 +46,7 @@ import net.sf.keystore_explorer.gui.error.Problem;
 import net.sf.keystore_explorer.utilities.history.HistoryAction;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Action to import a CA Reply into the selected key pair entry.
@@ -65,8 +65,7 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 		putValue(LONG_DESCRIPTION, res.getString("ImportCaReplyAction.statusbar"));
 		putValue(NAME, res.getString("ImportCaReplyAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("ImportCaReplyAction.tooltip"));
-		putValue(
-				SMALL_ICON,
+		putValue(SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 						getClass().getResource(res.getString("ImportCaReplyAction.image")))));
 	}
@@ -94,6 +93,7 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 			KeyStoreState newState = currentState.createBasisForNextState(this);
 
 			KeyStore keyStore = newState.getKeyStore();
+			KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
 			Key privateKey = keyStore.getKey(alias, password.toCharArray());
 
@@ -119,8 +119,7 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 				return;
 			}
 
-			// Holds the new certificate chain for the entry should the import
-			// succeed
+			// Holds the new certificate chain for the entry should the import succeed
 			X509Certificate[] newCertChain = null;
 
 			if (!applicationSettings.getEnableImportCaReplyTrustCheck()) {
@@ -129,17 +128,13 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 				KeyStore caCertificates = getCaCertificates();
 				KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
 
-				/*
-				 * PKCS #7 reply - try and match the self-signed root with any
-				 * of the certificates in the CA Certificates or current
-				 * KeyStore
-				 */
+				// PKCS #7 reply - try and match the self-signed root with any
+				// of the certificates in the CA Certificates or current KeyStore
 				if (certs.length > 1) {
 					X509Certificate rootCert = certs[certs.length - 1];
 					String matchAlias = null;
 
-					if (caCertificates != null) // Match against CA Certificates
-												// KeyStore
+					if (caCertificates != null) // Match against CA Certificates KeyStore
 					{
 						matchAlias = X509CertUtil.matchCertificate(caCertificates, rootCert);
 					}
@@ -155,10 +150,7 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 					}
 
 					if (matchAlias == null) {
-						// No match for the root certificate - display the
-						// certificate to the user
-						// for
-						// confirmation
+						// No match for the root certificate - display the certificate to the user for confirmation
 						JOptionPane.showMessageDialog(frame,
 								res.getString("ImportCaReplyAction.NoMatchRootCertCaReplyConfirm.message"),
 								res.getString("ImportCaReplyAction.ImportCaReply.Title"),
@@ -182,11 +174,8 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 						newCertChain = certs;
 					}
 				}
-				/*
-				 * Single X.509 certificate reply - try and establish a chain of
-				 * trust from the certificate and ending with a root CA
-				 * self-signed certificate
-				 */
+				 // Single X.509 certificate reply - try and establish a chain of
+				 // trust from the certificate and ending with a root CA self-signed certificate
 				else {
 					// Establish trust against current KeyStore
 					ArrayList<KeyStore> compKeyStores = new ArrayList<KeyStore>();
@@ -198,8 +187,7 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 					}
 
 					if (windowsTrustedRootCertificates != null) {
-						// Establish trust against Windows Trusted Root
-						// Certificates KeyStore
+						// Establish trust against Windows Trusted Root Certificates KeyStore
 						compKeyStores.add(windowsTrustedRootCertificates);
 					}
 
@@ -218,9 +206,13 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 				}
 			}
 
-			keyStore.deleteEntry(alias);
-
-			keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), newCertChain);
+			if (keyStoreType.isFileBased()) {
+				// TODO: why or when is delete actually necessary???
+				keyStore.deleteEntry(alias);
+				keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), newCertChain);
+			} else {
+				keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), newCertChain);
+			}
 
 			currentState.append(newState);
 

@@ -19,7 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.security.Key;
 import java.security.KeyStore;
@@ -180,9 +180,9 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 		// change from/to PKCS#12 => handle entry password
 		if (currentType.equals(KeyStoreType.PKCS12.jce())) {
 			showWarnPkcs12();
-			password = getPkcs12DummyPassword(); // Changing from PKCS #12 - password is 'password'
+			password = getDummyPassword(); // Changing from PKCS #12 - password is 'password'
 		} else if (newKeyStoreType == KeyStoreType.PKCS12) {
-			password = getPkcs12DummyPassword(); // Changing to PKCS #12 - password is 'password'
+			password = getDummyPassword(); // Changing to PKCS #12 - password is 'password'
 		}
 		
 		// EC key pair? => might not be supported in target key store type
@@ -237,7 +237,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 				String alias = aliases.nextElement();
 	
 				if (KeyStoreUtil.isKeyPairEntry(alias, newKeyStore)) {
-					newState.setEntryPassword(alias, getPkcs12DummyPassword());
+					newState.setEntryPassword(alias, getDummyPassword());
 				}
 			}
 		}
@@ -248,7 +248,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 			warnPkcs12Password = true;
 			JOptionPane.showMessageDialog(frame, MessageFormat.format(res
 					.getString("ChangeTypeAction.ChangeFromPkcs12Password.message"), new String(
-					getPkcs12DummyPassword().toCharArray())), res
+					getDummyPassword().toCharArray())), res
 					.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}

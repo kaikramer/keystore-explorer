@@ -19,9 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getPkcs12DummyPassword;
-
 import java.awt.Toolkit;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -47,6 +44,8 @@ import net.sf.keystore_explorer.gui.password.DGetNewPassword;
 import net.sf.keystore_explorer.utilities.history.HistoryAction;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 /**
  * Action to generate a key pair.
@@ -109,9 +108,9 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 			int keyPairSize = applicationSettings.getGenerateKeyPairSize();
 			KeyPairType keyPairType = applicationSettings.getGenerateKeyPairType();
 			KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
-			KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
+			KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
 
-			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, keyStoreType, keyPairType, keyPairSize);
+			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, keyPairType, keyPairSize);
 			dGenerateKeyPair.setLocationRelativeTo(frame);
 			dGenerateKeyPair.setVisible(true);
 
@@ -184,9 +183,10 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 				}
 			}
 
-			Password password = getPkcs12DummyPassword();
+			Password password = getDummyPassword();
+			KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
 
-			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			if (keyStoreType.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("GenerateKeyPairAction.NewKeyPairEntryPassword.Title"), DOCUMENT_MODAL,
 						applicationSettings.getPasswordQualityConfig());
