@@ -132,6 +132,7 @@ import net.sf.keystore_explorer.gui.actions.NewAction;
 import net.sf.keystore_explorer.gui.actions.OpenAction;
 import net.sf.keystore_explorer.gui.actions.OpenCaCertificatesAction;
 import net.sf.keystore_explorer.gui.actions.OpenDefaultAction;
+import net.sf.keystore_explorer.gui.actions.OpenMsCapiAction;
 import net.sf.keystore_explorer.gui.actions.OpenPkcs11Action;
 import net.sf.keystore_explorer.gui.actions.PasteAction;
 import net.sf.keystore_explorer.gui.actions.PreferencesAction;
@@ -185,7 +186,6 @@ import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS11;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 
 /**
@@ -195,13 +195,13 @@ import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 public final class KseFrame implements StatusBar {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 
-	/** Default KeyStores tabbed pane width - dictates width of this frame */
+	// Default KeyStores tabbed pane width - dictates width of this frame 
 	public static final int DEFAULT_WIDTH = 700;
 
-	/** Default KeyStores tabbed pane - dictates height of this frame */
+	// Default KeyStores tabbed pane - dictates height of this frame
 	public static final int DEFAULT_HEIGHT = 450;
 
-	/** Maximum number of recent files to maintain in file menu */
+	// Maximum number of recent files to maintain in file menu
 	public static final int RECENT_FILES_SIZE = 6;
 
 	private ArrayList<KeyStoreHistory> histories = new ArrayList<KeyStoreHistory>();
@@ -220,6 +220,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiOpenDefaultKeyStore;
 	private JMenuItem jmiOpenCaCertificatesKeyStore;
 	private JMenuItem jmiOpenPkcs11KeyStore;
+	private JMenuItem jmiOpenMsCapiKeyStore;
 	private JMenuItem jmiClose;
 	private JMenuItem jmiCloseAll;
 	private JMenuItem jmiSave;
@@ -403,6 +404,7 @@ public final class KseFrame implements StatusBar {
 	private final OpenDefaultAction openDefaultKeyStoreAction = new OpenDefaultAction(this);
 	private final OpenCaCertificatesAction openCaCertificatesKeyStoreAction = new OpenCaCertificatesAction(this);
 	private final OpenPkcs11Action openPkcs11KeyStoreAction = new OpenPkcs11Action(this);
+	private final OpenMsCapiAction openMsCapiAction = new OpenMsCapiAction(this);
 	private final SaveAction saveAction = new SaveAction(this);
 	private final SaveAsAction saveAsAction = new SaveAsAction(this);
 	private final SaveAllAction saveAllAction = new SaveAllAction(this);
@@ -648,6 +650,14 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiOpenPkcs11KeyStore,
 				(String) openPkcs11KeyStoreAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmOpenSpecial.add(jmiOpenPkcs11KeyStore);
+
+		jmiOpenMsCapiKeyStore = new JMenuItem(openMsCapiAction);
+		PlatformUtil.setMnemonic(jmiOpenMsCapiKeyStore, res.getString("KseFrame.jmiOpenPkcs11KeyStore.mnemonic")
+				.charAt(0));
+		jmiOpenMsCapiKeyStore.setToolTipText(null);
+		new StatusBarChangeHandler(jmiOpenMsCapiKeyStore, (String) openMsCapiAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		jmOpenSpecial.add(jmiOpenMsCapiKeyStore);
 
 		jmFile.addSeparator();
 
@@ -2504,8 +2514,8 @@ public final class KseFrame implements StatusBar {
 		// Show default status bar display
 		setDefaultStatusBarText();
 
-		// Passwords, and therefore unlocking, are not relevant for PKCS #12/#11 KeyStores
-		if (type == PKCS12 || type == PKCS11) {
+		// Passwords, and therefore unlocking, are not relevant for PKCS #12 or KeyStores that are not file-based
+		if (type == PKCS12 || !type.isFileBased()) {
 			unlockKeyPairAction.setEnabled(false);
 			setKeyPairPasswordAction.setEnabled(false);
 			unlockKeyAction.setEnabled(false);

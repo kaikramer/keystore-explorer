@@ -69,15 +69,6 @@ public class OpenCaCertificatesAction extends OpenAction {
 	protected void doAction() {
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
-//		try {
-//			KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
-//			kseFrame.addKeyStore(openedKeyStore, "Windows User Keystore", new Password("".toCharArray()));
-//			return;
-//		} catch (CryptoException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
 		if (caCertificatesFile.isFile()) {
 			openKeyStore(caCertificatesFile);
 			return;

@@ -48,11 +48,13 @@ public class KeyStoreHistory {
 	 */
 	public KeyStoreHistory(KeyStore keyStore, String name, Password password) {
 		this.name = name;
+		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 		
-		if (keyStore.getType().equals(KeyStoreType.PKCS11.jce())) {
-			initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
-		} else {
+		if (type.isFileBased()) {
 			initialState = new KeyStoreState(this, keyStore, password);
+		} else {
+			// we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike 
+			initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
 		}
 		
 		currentState = initialState;
