@@ -19,11 +19,6 @@
  */
 package net.sf.keystore_explorer.crypto.keypair;
 
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -31,7 +26,13 @@ import java.security.PublicKey;
 import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
+
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for KeyPairUtil. Runs a test to create a key pair for supported
@@ -69,7 +70,7 @@ public class TestCaseKeyPairUtil extends TestCaseCrypto {
 	}
 
 	private void doTest(KeyPairType keyPairType, Integer keySize) throws Exception {
-		KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize);
+		KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, new BouncyCastleProvider());
 
 		PrivateKey privateKey = keyPair.getPrivate();
 		KeyInfo privateKeyInfo = KeyPairUtil.getKeyInfo(privateKey);

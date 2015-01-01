@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
@@ -119,11 +120,12 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 			}
 
 			keyPairType = dGenerateKeyPair.getKeyPairType();
+			Provider provider = activeKeyStore.getProvider();
 			DGeneratingKeyPair dGeneratingKeyPair;
 
 			if (keyPairType != KeyPairType.EC) {
 				keyPairSize = dGenerateKeyPair.getKeyPairSize();
-				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize);
+				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize, provider);
 
 				applicationSettings.setGenerateKeyPairSize(keyPairSize);
 				applicationSettings.setGenerateKeyPairType(keyPairType);
@@ -144,7 +146,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
 			DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame,
 					res.getString("GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType,
-					issuerCert, issuerPrivateKey, activeKeyStore.getProvider());
+					issuerCert, issuerPrivateKey, provider);
 			dGenerateKeyPairCert.setLocationRelativeTo(frame);
 			dGenerateKeyPairCert.setVisible(true);
 

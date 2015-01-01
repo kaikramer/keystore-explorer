@@ -19,18 +19,13 @@
  */
 package net.sf.keystore_explorer.crypto.keypair;
 
-import static net.sf.keystore_explorer.crypto.KeyType.ASYMMETRIC;
-import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
@@ -47,6 +42,12 @@ import java.util.ResourceBundle;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
+import sun.security.mscapi.SunMSCAPI;
+import static net.sf.keystore_explorer.crypto.KeyType.ASYMMETRIC;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
 
 /**
  * Provides utility methods relating to asymmetric key pairs.
@@ -57,7 +58,7 @@ public final class KeyPairUtil {
 
 	private KeyPairUtil() {
 	}
-
+	
 	/**
 	 * Generate a key pair.
 	 * 
@@ -66,19 +67,36 @@ public final class KeyPairUtil {
 	 * @param keySize
 	 *            Key size of key pair
 	 * @return A keypair
+	 * @param provider
+	 *         Crypto provider used for key generation
 	 * @throws CryptoException
 	 *             If there was a problem generating the key pair
 	 */
-	public static KeyPair generateKeyPair(KeyPairType keyPairType, int keySize) throws CryptoException {
+	public static KeyPair generateKeyPair(KeyPairType keyPairType, int keySize, Provider provider) throws CryptoException {
 		try {
 			// Get a key pair generator
 			KeyPairGenerator keyPairGen = null;
 
 			// Use BC provider for RSA
-			if (keyPairType == RSA) {
-				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
-			} else {
+//			if (keyPairType == RSA) {
+//				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
+//			} else {
 				// Use default provider for DSA
+//				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+//			}
+
+			if (provider != null) {
+				
+				// workaround for restriction in MSCAPI provider, see https://bugs.openjdk.java.net/browse/JDK-6407454
+				// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
+				// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
+				// applications must not specify the SunMSCAPI provider." 
+				if (provider instanceof SunMSCAPI) {
+					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+				} else {
+					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
+				}
+			} else {
 				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
 			}
 

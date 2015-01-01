@@ -25,10 +25,10 @@ import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Abstract base class for all private or public key test cases.
@@ -45,13 +45,13 @@ public abstract class TestCaseKey extends TestCaseCrypto {
 		super();
 
 		if (rsaPrivateKey == null) {
-			KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048);
+			KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, new BouncyCastleProvider());
 			rsaPrivateKey = (RSAPrivateCrtKey) rsaKeyPair.getPrivate();
 			rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
 		}
 
 		if (dsaPrivateKey == null) {
-			KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024);
+			KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, new BouncyCastleProvider());
 			dsaPrivateKey = (DSAPrivateKey) dsaKeyPair.getPrivate();
 			dsaPublicKey = (DSAPublicKey) dsaKeyPair.getPublic();
 		}

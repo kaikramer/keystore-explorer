@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -30,6 +28,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.KeyPair;
+import java.security.Provider;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -50,6 +49,7 @@ import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Generates a key pair which the user may cancel at any time by pressing the
@@ -74,6 +74,8 @@ public class DGeneratingKeyPair extends JEscDialog {
 	private KeyPair keyPair;
 	private Thread generator;
 
+	private Provider provider;
+
 	/**
 	 * Creates a new DGeneratingKeyPair dialog.
 	 * 
@@ -84,10 +86,11 @@ public class DGeneratingKeyPair extends JEscDialog {
 	 * @param keySize
 	 *            The key size to generate
 	 */
-	public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, int keySize) {
+	public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, int keySize, Provider provider) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keyPairType = keyPairType;
 		this.keySize = keySize;
+		this.provider = provider;
 		initComponents();
 	}
 
@@ -197,8 +200,10 @@ public class DGeneratingKeyPair extends JEscDialog {
 			try {
 				// RSA, DSA or EC?
 				if (keyPairType != KeyPairType.EC) {
-					keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize);
+					keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, provider);
 				} else {
+					
+					// TODO handle hardware providers
 					keyPair = KeyPairUtil.generateECKeyPair(curveName);
 				}
 

@@ -19,10 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
-import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
@@ -75,6 +71,10 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
+import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
+
 /**
  * Dialog used to generate a certificate based on a supplied key pair and
  * signature algorithm for inclusion in a KeyStore.
@@ -111,28 +111,6 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	private PrivateKey issuerPrivateKey;
 
 	private Provider provider;
-
-	/**
-	 * Creates a new DGenerateKeyPairCert dialog.
-	 * 
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog's title
-	 * @param keyPair
-	 *            The key pair to generate the certificate from
-	 * @param keyPairType
-	 *            The key pair type
-	 * @throws CryptoException
-	 *             A problem was encountered with the supplied key pair
-	 */
-	public DGenerateKeyPairCert(JFrame parent, String title, KeyPair keyPair, KeyPairType keyPairType)
-			throws CryptoException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.keyPair = keyPair;
-		this.keyPairType = keyPairType;
-		initComponents(title);
-	}
 
 	/**
 	 * Creates a new DGenerateKeyPairCert dialog.

@@ -47,6 +47,8 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
+import sun.security.mscapi.SunMSCAPI;
+
 /**
  * X.509 certificate generator.
  * 
@@ -120,6 +122,7 @@ public class X509CertificateGenerator {
 			Provider provider)
 			throws CryptoException {
 		if (version == X509CertificateVersion.VERSION1) {
+			// TODO
 			return generateVersion1(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber);
 		} else {
 			try {
@@ -225,8 +228,18 @@ public class X509CertificateGenerator {
 		}
 
 		try {
-			ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(
-					privateKey);
+			ContentSigner certSigner = null;
+			
+			// workaround for restriction in MSCAPI provider, see https://bugs.openjdk.java.net/browse/JDK-6407454
+			// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
+			// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
+			// applications must not specify the SunMSCAPI provider." 
+			if (provider instanceof SunMSCAPI) {
+				certSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
+			} else {
+				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
+			}
+			
 			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
 		} catch (CertificateException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);

@@ -78,8 +78,8 @@ public class TestSignatureAlgorithms extends TestCaseCrypto {
 
 	@Before
 	public void setUp() throws Exception {
-		rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 1024);
-		dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 512);
+		rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 1024, new BouncyCastleProvider());
+		dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 512, new BouncyCastleProvider());
 		generatorv1 = new X509CertificateGenerator(VERSION1);
 		generatorv3 = new X509CertificateGenerator(VERSION3);
 	}

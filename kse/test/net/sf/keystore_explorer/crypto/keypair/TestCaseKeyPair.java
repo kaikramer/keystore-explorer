@@ -23,8 +23,8 @@ import java.security.KeyPair;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Abstract base class for all key pair test cases. Sets up test key pairs.
@@ -38,11 +38,11 @@ public abstract class TestCaseKeyPair extends TestCaseCrypto {
 		super();
 
 		if (rsaKeyPair == null) {
-			rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048);
+			rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, new BouncyCastleProvider());
 		}
 
 		if (dsaKeyPair == null) {
-			dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024);
+			dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, new BouncyCastleProvider());
 		}
 	}
 }
