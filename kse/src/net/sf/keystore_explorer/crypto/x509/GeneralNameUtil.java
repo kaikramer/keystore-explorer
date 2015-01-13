@@ -184,9 +184,8 @@ public class GeneralNameUtil {
 		}
 		case GeneralName.x400Address: {
 			/*
-			 * No support fo this at the moment - ust get a hex dump The Oracle
-			 * CertificateFactory blows up if a certificate extenstion contains
-			 * this anyway
+			 * No support for this at the moment - just get a hex dump 
+			 * The Oracle CertificateFactory blows up if a certificate extension contains this anyway
 			 */
 			ASN1Encodable x400Address = generalName.getName();
 

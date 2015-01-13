@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -39,16 +37,21 @@ import javax.swing.SwingUtilities;
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
+import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
 import net.sf.keystore_explorer.gui.CreateApplicationGui;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.Version;
 
+import org.bouncycastle.asn1.x500.X500Name;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
+
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Main class to start the KeyStore Explorer (KSE) application.
@@ -56,6 +59,11 @@ import com.sun.jna.WString;
  */
 public class KSE {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/resources");
+
+	static {
+		// set default style for Bouncy Castle's X500Name class
+		X500Name.setDefaultStyle(KseX500NameStyle.INSTANCE);
+	}
 
 	public interface Shell32 extends Library {
 		NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
