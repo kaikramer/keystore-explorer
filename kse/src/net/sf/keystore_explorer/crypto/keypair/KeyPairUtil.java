@@ -42,7 +42,6 @@ import java.util.ResourceBundle;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
-import sun.security.mscapi.SunMSCAPI;
 import static net.sf.keystore_explorer.crypto.KeyType.ASYMMETRIC;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
@@ -91,7 +90,7 @@ public final class KeyPairUtil {
 				// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
 				// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
 				// applications must not specify the SunMSCAPI provider." 
-				if (provider instanceof SunMSCAPI) {
+				if (isSunMSCAPI(provider)) {
 					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
 				} else {
 					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
@@ -113,6 +112,28 @@ public final class KeyPairUtil {
 			throw new CryptoException(MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"),
 					keyPairType), ex);
 		}
+	}
+	
+	/**
+	 * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
+	 * 
+	 * @param provider A JCE provider.
+	 * @return True, if instance of SunMSCAPI
+	 */
+	public static boolean isSunMSCAPI(Provider provider) {
+		
+		Class<?> sunMSCAPI = null;
+		try {
+			sunMSCAPI = Class.forName("sun.security.mscapi.SunMSCAPI");
+		} catch (Exception e) {
+			return false;
+		}
+		
+		if (sunMSCAPI == null) {
+			return false;
+		}
+		
+		return sunMSCAPI.isInstance(provider);
 	}
 
 	/**
@@ -156,12 +177,12 @@ public final class KeyPairUtil {
 
 			if (algorithm.equals(RSA.jce())) {
 				KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
-				RSAPublicKeySpec keySpec = (RSAPublicKeySpec) keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
+				RSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
 				BigInteger modulus = keySpec.getModulus();
 				return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
 			} else if (algorithm.equals(DSA.jce())) {
 				KeyFactory keyFact = KeyFactory.getInstance(algorithm);
-				DSAPublicKeySpec keySpec = (DSAPublicKeySpec) keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
+				DSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
 				BigInteger prime = keySpec.getP();
 				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
 			} else if (algorithm.equals(EC.jce())) {
@@ -193,7 +214,7 @@ public final class KeyPairUtil {
 				if (privateKey instanceof RSAPrivateKey) {
 					// Using default provider does not work for BKS and UBER resident private keys
 					KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
-					RSAPrivateKeySpec keySpec = (RSAPrivateKeySpec) keyFact.getKeySpec(privateKey,
+					RSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey,
 							RSAPrivateKeySpec.class);
 					BigInteger modulus = keySpec.getModulus();
 					return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
@@ -204,7 +225,7 @@ public final class KeyPairUtil {
 			} else if (algorithm.equals(DSA.jce())) {
 				// Use SUN (DSA key spec not implemented for BC)
 				KeyFactory keyFact = KeyFactory.getInstance(algorithm);
-				DSAPrivateKeySpec keySpec = (DSAPrivateKeySpec) keyFact.getKeySpec(privateKey, DSAPrivateKeySpec.class);
+				DSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey, DSAPrivateKeySpec.class);
 				BigInteger prime = keySpec.getP();
 				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
 			} else if (algorithm.equals(EC.jce())) {
