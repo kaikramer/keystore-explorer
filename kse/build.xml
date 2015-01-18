@@ -88,7 +88,6 @@
 		<pathelement location="${buildDir}"/>
 	    <path refid="distClasspath"/>
 	    <pathelement location="${libDir}/AppleJavaExtensions.jar"/>
-	    <pathelement location="${libDir}/jarbundler.jar"/>
 	    <pathelement location="${libDir}/junit.jar"/>
 	</path>
     
@@ -372,14 +371,9 @@
     </target>
 
 
-    <target name="jarbundler" depends="jar" description="Create app bundle">
+    <target name="appbundler" depends="jar" description="Create app bundle">
 
-        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler">
-            <classpath>
-                <pathelement location="lib/jarbundler.jar" />
-            </classpath>
-        </taskdef>
-
+    	<!--
         <jarbundler dir="${distDir}" name="${appBundleName}" shortname="${appSimpleName}"
                     jvmversion="1.6+" version="${appVersion}" extraclasspath="/System/Library/Java"
                     stubfile="${javaAppStub}" bundleid="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}"
@@ -391,13 +385,55 @@
             <resourcefileset dir="${licensesDir}" includes="*.txt" />
             <documenttype name="KeyStore" extensions="ks jks keystore pfx p12" iconFile="${keystoreIcns}" role="Editor" />
         </jarbundler>
+        -->
 
-        <!-- Link to user's own JavaApplicationStub to ensure future compatability with Mac OSX upgrades -->
-        <delete file="${distDir}/${appBundleFile}/Contents/MacOS/JavaApplicationStub"/>
-        <exec executable="ln">
-            <arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub"/>
-            <arg value="${distDir}/${appBundleFile}/Contents/MacOS/JavaApplicationStub"/>
-        </exec>
+    	<taskdef name="bundleapp" 
+    	    classpath="lib/appbundler-1.0ea.jar"
+    	    classname="com.oracle.appbundler.AppBundlerTask"/>
+
+    	  <bundleapp 
+    	      outputdirectory="${distDir}"
+    	      name="${appBundleName}"
+    	      displayname="${appBundleName}"
+    	      executableName="${appBundleName}"
+    	      identifier="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}"
+    	      shortversion="${appSimpleVersion}"
+    	      version="${appVersion}"
+    	      icon="${kseIcns}"
+    	      mainclassname="net.sf.keystore_explorer.KSE"
+    	      copyright="${copyright}"
+    	      applicationCategory="public.app-category.developer-tools">
+
+    	      <!--<runtime dir="${env.JAVA_HOME}"/>-->
+    	  	
+	  	      <classpath dir="${distDir}" >
+	  	      	<include name="${appJarName}"/>
+	  	      </classpath>	
+	  	      <classpath refid="libs" />
+    	  	
+    	  	  <!-- TODO license files -->
+
+    	      <arch name="x86_64"/>
+    	      <arch name="i386"/>
+
+    	      <bundledocument extensions="ks,jks,jceks,keystore,bks,uber,pfx,p12"
+    	        icon="${keystoreIcns}"
+    	        name="KeyStore"
+    	        role="editor">
+    	      </bundledocument>
+
+    	      <!-- Workaround since the icon parameter for bundleapp doesn't work -->
+    	      <option value="-Xdock:icon=Contents/Resources/${kseIcns}"/>
+
+    	      <option value="-Dapple.laf.useScreenMenuBar=true"/>
+    	      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+    	      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+    	      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${appBundleName}"/>
+    	      <option value="-Dcom.apple.smallTabs=true"/>
+    	      <option value="-Dfile.encoding=UTF-8"/>
+    	  	
+    	      <option value="-Dkse.app=true"/>
+    	  </bundleapp>
     </target>
 
 
