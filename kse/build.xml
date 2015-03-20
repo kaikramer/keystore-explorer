@@ -338,13 +338,13 @@
                 <jre minVersion="1.6.0" path="jre">
                     <opt>-Dkse.exe=true</opt>
                 </jre>
-                <versionInfo fileVersion="${appVersion}.0.0"
+                <versionInfo fileVersion="${appVersion}.0"
                              fileDescription="${appName}"
                              copyright="${copyright}"
                              internalName="${appSimpleName}"
                              originalFilename="${appSimpleName}.exe"
                              productName="${appName}"
-                             productVersion="${appVersion}.0.0"
+                             productVersion="${appVersion}.0"
                              txtFileVersion="${appVersion}"
                              txtProductVersion="${appVersion}" />
             </config>

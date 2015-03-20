@@ -12,5 +12,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/bcpkix.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov.jar"/>
+	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
