@@ -276,6 +276,7 @@
             <zipfileset file="${appShell}" prefix="${distFileNamePrefix}" filemode="755"/>
             <zipfileset refid="libs" prefix="${distFileNamePrefix}/lib" />
             <zipfileset file="${readmesDir}/manual/readme.txt" prefix="${distFileNamePrefix}" />
+            <zipfileset file="${iconsDir}/kse_*.png" prefix="${distFileNamePrefix}/icons" />
             <zipfileset defaultexcludes="false" dir="${licensesDir}" excludes="${excludes}" prefix="${distFileNamePrefix}/licences"/>
         </zip>
     </target>
