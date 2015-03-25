@@ -1,13 +1,15 @@
 #!/bin/bash
 
-SCRIPT_DIR=`dirname $0`
-APP_JAR=${SCRIPT_DIR}/kse.jar
-
 # Oracle/OpenJDK JRE version 1.6+ has to be present on your path 
 # OR in a directory called "jre" in the same directory as this script 
 
+SCRIPT_DIR="`dirname \"$0\"`"
+JAR_FILE="${SCRIPT_DIR}/kse.jar"
+cd "$SCRIPT_DIR"
+
 if [ -d "jre" ]; then
-	./jre/bin/java -jar ${APP_JAR} 
+    ./jre/bin/java -jar "${JAR_FILE}"
 else
-	java -jar ${APP_JAR}
+    java -jar "${JAR_FILE}"
 fi
+
