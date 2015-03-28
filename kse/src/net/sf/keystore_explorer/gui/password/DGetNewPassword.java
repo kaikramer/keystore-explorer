@@ -41,10 +41,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.gui.JEscDialog;
@@ -229,12 +230,21 @@ public class DGetNewPassword extends JEscDialog {
 		setResizable(false);
 
 		getRootPane().setDefaultButton(jbOK);
-
+		
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				jpfFirst.requestFocus();
+		// fix for focus issues: request focus after dialog was made visible 
+		jpfFirst.addAncestorListener(new AncestorListener() {
+			@Override
+			public void ancestorRemoved(AncestorEvent event) {
+			}
+			@Override
+			public void ancestorMoved(AncestorEvent event) {
+			}
+			@Override
+			public void ancestorAdded(AncestorEvent event) {
+				JComponent component = event.getComponent();
+				component.requestFocusInWindow();
 			}
 		});
 	}

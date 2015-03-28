@@ -274,20 +274,23 @@ public final class KeyPairUtil {
 				return false;
 			}
 
-			/*
-			 * Match private and public keys by signing some data with the
-			 * private key and verifying the signature with the public key
-			 */
-
+			// Match private and public keys by signing some data with the
+			// private key and verifying the signature with the public key
 			if (privateAlgorithm.equals(RSA.jce())) {
 				byte[] toSign = "Rivest Shamir Adleman".getBytes();
-				String signatureAlgorithm = "MD5withRSA";
+				String signatureAlgorithm = "SHA256withRSA";
 				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
 
 				return verify(toSign, signature, publicKey, signatureAlgorithm);
 			} else if (privateAlgorithm.equals(DSA.jce())) {
 				byte[] toSign = "Digital Signature Algorithm".getBytes();
 				String signatureAlgorithm = "SHA1withDSA";
+				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
+
+				return verify(toSign, signature, publicKey, signatureAlgorithm);
+			} else if (privateAlgorithm.equals(EC.jce())) {
+				byte[] toSign = "EC Digital Signature Algorithm".getBytes();
+				String signatureAlgorithm = "SHA256withECDSA";
 				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
 
 				return verify(toSign, signature, publicKey, signatureAlgorithm);
