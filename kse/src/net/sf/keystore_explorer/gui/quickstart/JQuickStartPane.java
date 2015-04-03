@@ -38,7 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import net.sf.keystore_explorer.gui.KseFrame;
-import net.sf.keystore_explorer.gui.actions.ExamineCertificateAction;
+import net.sf.keystore_explorer.gui.actions.ExamineFileAction;
 import net.sf.keystore_explorer.gui.actions.HelpAction;
 import net.sf.keystore_explorer.gui.actions.NewAction;
 import net.sf.keystore_explorer.gui.actions.OpenAction;
@@ -136,7 +136,7 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 				res.getString("JQuickStartPane.jqsbExamineCertificate.image"))));
 		ImageIcon examineCertificateImageRollOver = new ImageIcon(toolKit.createImage(getClass().getResource(
 				res.getString("JQuickStartPane.jqsbExamineCertificate.rollover.image"))));
-		jqsbExamineCertificate = new JQuickStartButton(new ExamineCertificateAction(kseFrame),
+		jqsbExamineCertificate = new JQuickStartButton(new ExamineFileAction(kseFrame),
 				res.getString("JQuickStartPane.jqsbExamineCertificate.text"), examineCertificateImage,
 				examineCertificateImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
 		jqsbExamineCertificate.setOpaque(false);
