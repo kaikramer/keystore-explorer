@@ -19,6 +19,13 @@
  */
 package net.sf.keystore_explorer.gui;
 
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -105,9 +112,8 @@ import net.sf.keystore_explorer.gui.actions.DeleteKeyAction;
 import net.sf.keystore_explorer.gui.actions.DeleteKeyPairAction;
 import net.sf.keystore_explorer.gui.actions.DeleteTrustedCertificateAction;
 import net.sf.keystore_explorer.gui.actions.DetectFileTypeAction;
-import net.sf.keystore_explorer.gui.actions.ExamineCertificateAction;
-import net.sf.keystore_explorer.gui.actions.ExamineCrlAction;
-import net.sf.keystore_explorer.gui.actions.ExamineCsrAction;
+import net.sf.keystore_explorer.gui.actions.ExamineClipboardAction;
+import net.sf.keystore_explorer.gui.actions.ExamineFileAction;
 import net.sf.keystore_explorer.gui.actions.ExamineSslAction;
 import net.sf.keystore_explorer.gui.actions.ExitAction;
 import net.sf.keystore_explorer.gui.actions.ExportKeyPairAction;
@@ -180,14 +186,6 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
 
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
-
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
-
 /**
  * KeyStore Explorer application frame. Wraps an actual JFrame.
  *
@@ -195,7 +193,7 @@ import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 public final class KseFrame implements StatusBar {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 
-	// Default KeyStores tabbed pane width - dictates width of this frame 
+	// Default KeyStores tabbed pane width - dictates width of this frame
 	public static final int DEFAULT_WIDTH = 700;
 
 	// Default KeyStores tabbed pane - dictates height of this frame
@@ -260,9 +258,8 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiPreferences;
 
 	private JMenu jmExamine;
-	private JMenuItem jmiExamineCertificate;
-	private JMenuItem jmiExamineCsr;
-	private JMenuItem jmiExamineCrl;
+	private JMenuItem jmiExamineFile;
+	private JMenuItem jmiExamineClipboard;
 	private JMenuItem jmiExamineSsl;
 	private JMenuItem jmiDetectFileType;
 
@@ -300,11 +297,9 @@ public final class KseFrame implements StatusBar {
 	private JButton jbImportKeyPair;
 	private JButton jbSetPassword;
 	private JButton jbProperties;
-	private JButton jbExamineCertificate;
-	private JButton jbExamineCsr;
-	private JButton jbExamineCrl;
+	private JButton jbExamineFile;
+	private JButton jbExamineClipboard;
 	private JButton jbExamineSsl;
-	private JButton jbDetectFileType;
 	private JButton jbHelp;
 
 	//
@@ -435,9 +430,8 @@ public final class KseFrame implements StatusBar {
 	private final ChangeTypeAction changeTypeUberAction = new ChangeTypeAction(this, KeyStoreType.UBER);
 	private final PropertiesAction propertiesAction = new PropertiesAction(this);
 	private final PreferencesAction preferencesAction = new PreferencesAction(this);
-	private final ExamineCertificateAction examineCertificateAction = new ExamineCertificateAction(this);
-	private final ExamineCsrAction examineCsrAction = new ExamineCsrAction(this);
-	private final ExamineCrlAction examineCrlAction = new ExamineCrlAction(this);
+	private final ExamineFileAction examineFileAction = new ExamineFileAction(this);
+	private final ExamineClipboardAction examineClipboardAction = new ExamineClipboardAction(this);
 	private final ExamineSslAction examineSslAction = new ExamineSslAction(this);
 	private final DetectFileTypeAction detectFileTypeAction = new DetectFileTypeAction(this);
 	private final HelpAction helpAction = new HelpAction(this);
@@ -932,25 +926,19 @@ public final class KseFrame implements StatusBar {
 		jmExamine = new JMenu(res.getString("KseFrame.jmExamine.text"));
 		PlatformUtil.setMnemonic(jmExamine, res.getString("KseFrame.jmExamine.mnemonic").charAt(0));
 
-		jmiExamineCertificate = new JMenuItem(examineCertificateAction);
-		PlatformUtil.setMnemonic(jmiExamineCertificate, res.getString("KseFrame.jmiExamineCertificate.mnemonic")
+		jmiExamineFile = new JMenuItem(examineFileAction);
+		PlatformUtil.setMnemonic(jmiExamineFile, res.getString("KseFrame.jmiExamineFile.mnemonic")
 				.charAt(0));
-		jmiExamineCertificate.setToolTipText(null);
-		new StatusBarChangeHandler(jmiExamineCertificate,
-				(String) examineCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmExamine.add(jmiExamineCertificate);
+		jmiExamineFile.setToolTipText(null);
+		new StatusBarChangeHandler(jmiExamineFile,
+				(String) examineFileAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmExamine.add(jmiExamineFile);
 
-		jmiExamineCsr = new JMenuItem(examineCsrAction);
-		PlatformUtil.setMnemonic(jmiExamineCsr, res.getString("KseFrame.jmiExamineCsr.mnemonic").charAt(0));
-		jmiExamineCsr.setToolTipText(null);
-		new StatusBarChangeHandler(jmiExamineCsr, (String) examineCsrAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmExamine.add(jmiExamineCsr);
-
-		jmiExamineCrl = new JMenuItem(examineCrlAction);
-		PlatformUtil.setMnemonic(jmiExamineCrl, res.getString("KseFrame.jmiExamineCrl.mnemonic").charAt(0));
-		jmiExamineCrl.setToolTipText(null);
-		new StatusBarChangeHandler(jmiExamineCrl, (String) examineCrlAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmExamine.add(jmiExamineCrl);
+		jmiExamineClipboard = new JMenuItem(examineClipboardAction);
+		PlatformUtil.setMnemonic(jmiExamineClipboard, res.getString("KseFrame.jmiExamineClipboard.mnemonic").charAt(0));
+		jmiExamineClipboard.setToolTipText(null);
+		new StatusBarChangeHandler(jmiExamineClipboard, (String) examineClipboardAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmExamine.add(jmiExamineClipboard);
 
 		jmiExamineSsl = new JMenuItem(examineSslAction);
 		PlatformUtil.setMnemonic(jmiExamineSsl, res.getString("KseFrame.jmiExamineSsl.mnemonic").charAt(0));
@@ -1296,14 +1284,14 @@ public final class KseFrame implements StatusBar {
 			}
 		});
 
-		jbExamineCertificate = new JButton();
-		jbExamineCertificate.setAction(examineCertificateAction);
-		jbExamineCertificate.setText(null);
-		PlatformUtil.setMnemonic(jbExamineCertificate, 0);
-		jbExamineCertificate.setFocusable(false);
-		jbExamineCertificate.addMouseListener(new MouseAdapter() {
+		jbExamineFile = new JButton();
+		jbExamineFile.setAction(examineFileAction);
+		jbExamineFile.setText(null);
+		PlatformUtil.setMnemonic(jbExamineFile, 0);
+		jbExamineFile.setFocusable(false);
+		jbExamineFile.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent evt) {
-				setStatusBarText((String) examineCertificateAction.getValue(Action.LONG_DESCRIPTION));
+				setStatusBarText((String) examineFileAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
 			public void mouseExited(MouseEvent evt) {
@@ -1311,29 +1299,14 @@ public final class KseFrame implements StatusBar {
 			}
 		});
 
-		jbExamineCsr = new JButton();
-		jbExamineCsr.setAction(examineCsrAction);
-		jbExamineCsr.setText(null);
-		PlatformUtil.setMnemonic(jbExamineCsr, 0);
-		jbExamineCsr.setFocusable(false);
-		jbExamineCsr.addMouseListener(new MouseAdapter() {
+		jbExamineClipboard = new JButton();
+		jbExamineClipboard.setAction(examineClipboardAction);
+		jbExamineClipboard.setText(null);
+		PlatformUtil.setMnemonic(jbExamineClipboard, 0);
+		jbExamineClipboard.setFocusable(false);
+		jbExamineClipboard.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent evt) {
-				setStatusBarText((String) examineCsrAction.getValue(Action.LONG_DESCRIPTION));
-			}
-
-			public void mouseExited(MouseEvent evt) {
-				setDefaultStatusBarText();
-			}
-		});
-
-		jbExamineCrl = new JButton();
-		jbExamineCrl.setAction(examineCrlAction);
-		jbExamineCrl.setText(null);
-		PlatformUtil.setMnemonic(jbExamineCrl, 0);
-		jbExamineCrl.setFocusable(false);
-		jbExamineCrl.addMouseListener(new MouseAdapter() {
-			public void mouseEntered(MouseEvent evt) {
-				setStatusBarText((String) examineCrlAction.getValue(Action.LONG_DESCRIPTION));
+				setStatusBarText((String) examineClipboardAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
 			public void mouseExited(MouseEvent evt) {
@@ -1349,21 +1322,6 @@ public final class KseFrame implements StatusBar {
 		jbExamineSsl.addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) examineSslAction.getValue(Action.LONG_DESCRIPTION));
-			}
-
-			public void mouseExited(MouseEvent evt) {
-				setDefaultStatusBarText();
-			}
-		});
-
-		jbDetectFileType = new JButton();
-		jbDetectFileType.setAction(detectFileTypeAction);
-		jbDetectFileType.setText(null);
-		PlatformUtil.setMnemonic(jbDetectFileType, 0);
-		jbDetectFileType.setFocusable(false);
-		jbDetectFileType.addMouseListener(new MouseAdapter() {
-			public void mouseEntered(MouseEvent evt) {
-				setStatusBarText((String) detectFileTypeAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
 			public void mouseExited(MouseEvent evt) {
@@ -1424,11 +1382,9 @@ public final class KseFrame implements StatusBar {
 
 		jtbToolBar.addSeparator();
 
-		jtbToolBar.add(jbExamineCertificate);
-		jtbToolBar.add(jbExamineCsr);
-		jtbToolBar.add(jbExamineCrl);
+		jtbToolBar.add(jbExamineFile);
+		jtbToolBar.add(jbExamineClipboard);
 		jtbToolBar.add(jbExamineSsl);
-		jtbToolBar.add(jbDetectFileType);
 
 		jtbToolBar.addSeparator();
 
@@ -2116,7 +2072,7 @@ public final class KseFrame implements StatusBar {
 
 		Point point = new Point(evt.getX(), evt.getY());
 		int row = jtKeyStore.rowAtPoint(point);
-		
+
 		KeyStoreType type = KeyStoreType.resolveJce(getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType());
 
 		if (evt.isPopupTrigger()) {

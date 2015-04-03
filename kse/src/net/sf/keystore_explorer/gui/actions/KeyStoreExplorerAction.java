@@ -19,10 +19,14 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
+
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -46,8 +50,6 @@ import net.sf.keystore_explorer.gui.password.DGetNewPassword;
 import net.sf.keystore_explorer.gui.password.DGetPassword;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 /**
  * Abstract base class for all KeyStore Explorer actions.
@@ -182,37 +184,51 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	 */
 	protected X509Certificate[] openCertificate(File certificateFile) {
 		try {
-			X509Certificate[] certs = X509CertUtil.loadCertificates(new FileInputStream(certificateFile));
-
-			if (certs.length == 0) {
-				JOptionPane.showMessageDialog(frame, MessageFormat.format(
-						res.getString("KeyStoreExplorerAction.NoCertsFound.message"), certificateFile), res
-						.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
-			}
-
-			return certs;
+			FileInputStream is = new FileInputStream(certificateFile);
+            return openCertificate(is, certificateFile.getName());
 		} catch (FileNotFoundException ex) {
 			JOptionPane.showMessageDialog(frame,
 					MessageFormat.format(res.getString("KeyStoreExplorerAction.NoReadFile.message"), certificateFile),
 					res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
 			return null;
-		} catch (Exception ex) {
-			String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoOpenCert.Problem"),
-					certificateFile.getName());
-
-			String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
-					res.getString("KeyStoreExplorerAction.CorruptedCert.Cause") };
-
-			Problem problem = new Problem(problemStr, causes, ex);
-
-			DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
-					DOCUMENT_MODAL, problem);
-			dProblem.setLocationRelativeTo(frame);
-			dProblem.setVisible(true);
-
-			return null;
 		}
 	}
+
+    /**
+     * Open a certificate input stream.
+     *
+     * @param certificateFile
+     *            The certificate file
+     * @return The certificates found in the file or null if open failed
+     */
+	protected X509Certificate[] openCertificate(InputStream is, String name) {
+
+        try {
+            X509Certificate[] certs = X509CertUtil.loadCertificates(is);
+
+            if (certs.length == 0) {
+                JOptionPane.showMessageDialog(frame,
+                        MessageFormat.format(res.getString("KeyStoreExplorerAction.NoCertsFound.message"), name),
+                        res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
+            }
+
+            return certs;
+        } catch (Exception ex) {
+            String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoOpenCert.Problem"), name);
+
+            String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
+                    res.getString("KeyStoreExplorerAction.CorruptedCert.Cause") };
+
+            Problem problem = new Problem(problemStr, causes, ex);
+
+            DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
+                    DOCUMENT_MODAL, problem);
+            dProblem.setLocationRelativeTo(frame);
+            dProblem.setVisible(true);
+
+            return null;
+        }
+    }
 
 	/**
 	 * Get a new KeyStore password.
