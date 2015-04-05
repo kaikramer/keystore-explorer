@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
@@ -233,11 +232,11 @@ public class X509CertificateGenerator {
 			// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
 			// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
 			// applications must not specify the SunMSCAPI provider." 
-			if (KeyPairUtil.isSunMSCAPI(provider)) {
+//			if (KeyPairUtil.isSunMSCAPI(provider)) {
 				certSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
-			} else {
-				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
-			}
+//			} else {
+//				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
+//			}
 			
 			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
 		} catch (CertificateException ex) {

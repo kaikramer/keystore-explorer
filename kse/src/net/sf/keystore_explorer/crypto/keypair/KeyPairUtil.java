@@ -77,27 +77,27 @@ public final class KeyPairUtil {
 			KeyPairGenerator keyPairGen = null;
 
 			// Use BC provider for RSA
-//			if (keyPairType == RSA) {
-//				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
-//			} else {
-				// Use default provider for DSA
-//				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
-//			}
-
-			if (provider != null) {
-				
-				// workaround for restriction in MSCAPI provider, see https://bugs.openjdk.java.net/browse/JDK-6407454
-				// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
-				// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
-				// applications must not specify the SunMSCAPI provider." 
-				if (isSunMSCAPI(provider)) {
-					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
-				} else {
-					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
-				}
+			if (keyPairType == RSA) {
+				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
 			} else {
+				// Use default provider for DSA
 				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
 			}
+
+//			if (provider != null) {
+//				
+//				// workaround for restriction in MSCAPI provider, see https://bugs.openjdk.java.net/browse/JDK-6407454
+//				// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
+//				// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
+//				// applications must not specify the SunMSCAPI provider." 
+//				if (isSunMSCAPI(provider)) {
+//					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+//				} else {
+//					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
+//				}
+//			} else {
+//				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+//			}
 
 			// Create a SecureRandom
 			SecureRandom rand = SecureRandom.getInstance("SHA1PRNG");
@@ -136,6 +136,29 @@ public final class KeyPairUtil {
 		return sunMSCAPI.isInstance(provider);
 	}
 
+	
+	/**
+	 * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
+	 * 
+	 * @param provider A JCE provider.
+	 * @return True, if instance of SunMSCAPI
+	 */
+	public static boolean isSunJCE(Provider provider) {
+		
+		Class<?> sunJCE = null;
+		try {
+			sunJCE = Class.forName("com.sun.crypto.provider.SunJCE");
+		} catch (Exception e) {
+			return false;
+		}
+		
+		if (sunJCE == null) {
+			return false;
+		}
+		
+		return sunJCE.isInstance(provider);
+	}
+	
 	/**
 	 * Generate a EC key pair.
 	 * 
