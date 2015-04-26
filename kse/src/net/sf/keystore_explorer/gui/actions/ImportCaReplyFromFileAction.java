@@ -19,6 +19,8 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,28 +48,29 @@ import net.sf.keystore_explorer.gui.error.Problem;
 import net.sf.keystore_explorer.utilities.history.HistoryAction;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Action to import a CA Reply into the selected key pair entry.
- * 
+ *
  */
-public class ImportCaReplyAction extends AuthorityCertificatesAction implements HistoryAction {
-	/**
+public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction implements HistoryAction {
+    private static final long serialVersionUID = 8516357420696038325L;
+
+    /**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
-	public ImportCaReplyAction(KseFrame kseFrame) {
+	public ImportCaReplyFromFileAction(KseFrame kseFrame) {
 		super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("ImportCaReplyAction.statusbar"));
-		putValue(NAME, res.getString("ImportCaReplyAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ImportCaReplyAction.tooltip"));
+		putValue(LONG_DESCRIPTION, res.getString("ImportCaReplyFromFileAction.statusbar"));
+		putValue(NAME, res.getString("ImportCaReplyFromFileAction.text"));
+		putValue(SHORT_DESCRIPTION, res.getString("ImportCaReplyFromFileAction.tooltip"));
 		putValue(SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ImportCaReplyAction.image")))));
+						getClass().getResource(res.getString("ImportCaReplyFromFileAction.image")))));
 	}
 
 	public String getHistoryDescription() {
@@ -114,8 +117,8 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 					.convertCertificates(keyStore.getCertificateChain(alias)));
 
 			if (!exitingEntryCerts[0].getPublicKey().equals(certs[0].getPublicKey())) {
-				JOptionPane.showMessageDialog(frame, res.getString("ImportCaReplyAction.NoMatchPubKeyCaReply.message"),
-						res.getString("ImportCaReplyAction.ImportCaReply.Title"), JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(frame, res.getString("ImportCaReplyFromFileAction.NoMatchPubKeyCaReply.message"),
+						res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"), JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 
@@ -152,19 +155,19 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 					if (matchAlias == null) {
 						// No match for the root certificate - display the certificate to the user for confirmation
 						JOptionPane.showMessageDialog(frame,
-								res.getString("ImportCaReplyAction.NoMatchRootCertCaReplyConfirm.message"),
-								res.getString("ImportCaReplyAction.ImportCaReply.Title"),
+								res.getString("ImportCaReplyFromFileAction.NoMatchRootCertCaReplyConfirm.message"),
+								res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"),
 								JOptionPane.INFORMATION_MESSAGE);
 
 						DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-								res.getString("ImportCaReplyAction.CertDetailsFile.Title"), caReplyFile.getName()),
+								res.getString("ImportCaReplyFromFileAction.CertDetailsFile.Title"), caReplyFile.getName()),
 								new X509Certificate[] { rootCert }, null, DViewCertificate.NONE);
 						dViewCertificate.setLocationRelativeTo(frame);
 						dViewCertificate.setVisible(true);
 
 						int selected = JOptionPane.showConfirmDialog(frame,
-								res.getString("ImportCaReplyAction.AcceptCaReply.message"),
-								res.getString("ImportCaReplyAction.ImportCaReply.Title"), JOptionPane.YES_NO_OPTION);
+								res.getString("ImportCaReplyFromFileAction.AcceptCaReply.message"),
+								res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"), JOptionPane.YES_NO_OPTION);
 						if (selected != JOptionPane.YES_OPTION) {
 							return;
 						}
@@ -199,8 +202,8 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 					} else {
 						// Cannot establish trust for the certificate - fail
 						JOptionPane.showMessageDialog(frame,
-								res.getString("ImportCaReplyAction.NoTrustCaReply.message"),
-								res.getString("ImportCaReplyAction.ImportCaReply.Title"), JOptionPane.WARNING_MESSAGE);
+								res.getString("ImportCaReplyFromFileAction.NoTrustCaReply.message"),
+								res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"), JOptionPane.WARNING_MESSAGE);
 						return;
 					}
 				}
@@ -218,8 +221,8 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 
 			kseFrame.updateControls(true);
 
-			JOptionPane.showMessageDialog(frame, res.getString("ImportCaReplyAction.ImportCaReplySuccessful.message"),
-					res.getString("ImportCaReplyAction.ImportCaReply.Title"), JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(frame, res.getString("ImportCaReplyFromFileAction.ImportCaReplySuccessful.message"),
+					res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"), JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
@@ -228,10 +231,10 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 	private File chooseCaFile() {
 		JFileChooser chooser = FileChooserFactory.getCaReplyFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
-		chooser.setDialogTitle(res.getString("ImportCaReplyAction.ImportCaReply.Title"));
+		chooser.setDialogTitle(res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"));
 		chooser.setMultiSelectionEnabled(false);
 
-		int rtnValue = chooser.showDialog(frame, res.getString("ImportCaReplyAction.ImportCaReply.button"));
+		int rtnValue = chooser.showDialog(frame, res.getString("ImportCaReplyFromFileAction.ImportCaReply.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File openFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(openFile);
@@ -247,26 +250,26 @@ public class ImportCaReplyAction extends AuthorityCertificatesAction implements 
 
 			if (certs.length == 0) {
 				JOptionPane.showMessageDialog(frame,
-						MessageFormat.format(res.getString("ImportCaReplyAction.NoCertsFound.message"), caReply),
-						res.getString("ImportCaReplyAction.OpenCaReply.Title"), JOptionPane.WARNING_MESSAGE);
+						MessageFormat.format(res.getString("ImportCaReplyFromFileAction.NoCertsFound.message"), caReply),
+						res.getString("ImportCaReplyFromFileAction.OpenCaReply.Title"), JOptionPane.WARNING_MESSAGE);
 			}
 
 			return certs;
 		} catch (FileNotFoundException ex) {
 			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("ImportCaReplyAction.NoReadFile.message"), caReply),
-					res.getString("ImportCaReplyAction.OpenCaReply.Title"), JOptionPane.WARNING_MESSAGE);
+					MessageFormat.format(res.getString("ImportCaReplyFromFileAction.NoReadFile.message"), caReply),
+					res.getString("ImportCaReplyFromFileAction.OpenCaReply.Title"), JOptionPane.WARNING_MESSAGE);
 			return null;
 		} catch (Exception ex) {
-			String problemStr = MessageFormat.format(res.getString("ImportCaReplyAction.NoOpenCaReply.Problem"),
+			String problemStr = MessageFormat.format(res.getString("ImportCaReplyFromFileAction.NoOpenCaReply.Problem"),
 					caReply.getName());
 
-			String[] causes = new String[] { res.getString("ImportCaReplyAction.NotCaReply.Cause"),
-					res.getString("ImportCaReplyAction.CorruptedCaReply.Cause") };
+			String[] causes = new String[] { res.getString("ImportCaReplyFromFileAction.NotCaReply.Cause"),
+					res.getString("ImportCaReplyFromFileAction.CorruptedCaReply.Cause") };
 
 			Problem problem = new Problem(problemStr, causes, ex);
 
-			DProblem dProblem = new DProblem(frame, res.getString("ImportCaReplyAction.ProblemOpeningCaReply.Title"),
+			DProblem dProblem = new DProblem(frame, res.getString("ImportCaReplyFromFileAction.ProblemOpeningCaReply.Title"),
 					DOCUMENT_MODAL, problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);

@@ -19,6 +19,9 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
+
 import java.awt.Toolkit;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -45,8 +48,6 @@ import net.sf.keystore_explorer.gui.password.DGetNewPassword;
 import net.sf.keystore_explorer.utilities.history.HistoryAction;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 /**
  * Action to generate a key pair.
@@ -110,6 +111,8 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 			KeyPairType keyPairType = applicationSettings.getGenerateKeyPairType();
 			KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
 			KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
+			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+			Provider provider = history.getExplicitProvider();
 
 			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, keyPairType, keyPairSize);
 			dGenerateKeyPair.setLocationRelativeTo(frame);
@@ -120,7 +123,6 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 			}
 
 			keyPairType = dGenerateKeyPair.getKeyPairType();
-			Provider provider = activeKeyStore.getProvider();
 			DGeneratingKeyPair dGeneratingKeyPair;
 
 			if (keyPairType != KeyPairType.EC) {
@@ -155,8 +157,6 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 			if (certificate == null) {
 				return "";
 			}
-
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
 			KeyStoreState currentState = history.getCurrentState();
 			KeyStoreState newState = currentState.createBasisForNextState(this);

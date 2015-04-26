@@ -19,6 +19,8 @@
  */
 package net.sf.keystore_explorer.crypto.signing;
 
+import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_DSA;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,14 +59,11 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
-
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_DSA;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -775,13 +774,15 @@ public class JarSigner extends Object {
 
 			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
             JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
-			ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce())
-			                                            .setProvider(provider)
-			                                            .setSecureRandom(SecureRandom.getInstance("SHA1PRNG"))
-			                                            .build(privateKey);
+
+            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
+		                                            .setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
+            if (provider == null)  {
+                    csb.setProvider(provider);
+            }
 
 			CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator();
-			dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(contentSigner, certificateChain[0]));
+			dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]));
 			dataGen.addCertificates(new JcaCertStore(certList));
 
 			CMSSignedData signed = dataGen.generate(new CMSProcessableByteArray(toSign), true);

@@ -19,6 +19,12 @@
  */
 package net.sf.keystore_explorer.crypto.keypair;
 
+import static net.sf.keystore_explorer.crypto.KeyType.ASYMMETRIC;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -42,25 +48,20 @@ import java.util.ResourceBundle;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
-import static net.sf.keystore_explorer.crypto.KeyType.ASYMMETRIC;
-import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
 
 /**
  * Provides utility methods relating to asymmetric key pairs.
- * 
+ *
  */
 public final class KeyPairUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/keypair/resources");
 
 	private KeyPairUtil() {
 	}
-	
+
 	/**
 	 * Generate a key pair.
-	 * 
+	 *
 	 * @param keyPairType
 	 *            Key pair type to generate
 	 * @param keySize
@@ -76,28 +77,17 @@ public final class KeyPairUtil {
 			// Get a key pair generator
 			KeyPairGenerator keyPairGen = null;
 
-			// Use BC provider for RSA
-			if (keyPairType == RSA) {
-				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
+			if (provider != null) {
+				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
 			} else {
-				// Use default provider for DSA
-				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+	            // Always use BC provider for RSA
+	            if (keyPairType == RSA) {
+	                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
+	            } else {
+	                // Use default provider for DSA
+	                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+	            }
 			}
-
-//			if (provider != null) {
-//				
-//				// workaround for restriction in MSCAPI provider, see https://bugs.openjdk.java.net/browse/JDK-6407454
-//				// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
-//				// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
-//				// applications must not specify the SunMSCAPI provider." 
-//				if (isSunMSCAPI(provider)) {
-//					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
-//				} else {
-//					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
-//				}
-//			} else {
-//				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
-//			}
 
 			// Create a SecureRandom
 			SecureRandom rand = SecureRandom.getInstance("SHA1PRNG");
@@ -113,55 +103,55 @@ public final class KeyPairUtil {
 					keyPairType), ex);
 		}
 	}
-	
+
 	/**
 	 * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
-	 * 
+	 *
 	 * @param provider A JCE provider.
 	 * @return True, if instance of SunMSCAPI
 	 */
 	public static boolean isSunMSCAPI(Provider provider) {
-		
+
 		Class<?> sunMSCAPI = null;
 		try {
 			sunMSCAPI = Class.forName("sun.security.mscapi.SunMSCAPI");
 		} catch (Exception e) {
 			return false;
 		}
-		
+
 		if (sunMSCAPI == null) {
 			return false;
 		}
-		
+
 		return sunMSCAPI.isInstance(provider);
 	}
 
-	
+
 	/**
 	 * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
-	 * 
+	 *
 	 * @param provider A JCE provider.
 	 * @return True, if instance of SunMSCAPI
 	 */
 	public static boolean isSunJCE(Provider provider) {
-		
+
 		Class<?> sunJCE = null;
 		try {
 			sunJCE = Class.forName("com.sun.crypto.provider.SunJCE");
 		} catch (Exception e) {
 			return false;
 		}
-		
+
 		if (sunJCE == null) {
 			return false;
 		}
-		
+
 		return sunJCE.isInstance(provider);
 	}
-	
+
 	/**
 	 * Generate a EC key pair.
-	 * 
+	 *
 	 * @param curveName
 	 *            Name of the ECC curve
 	 * @return A key pair
@@ -172,7 +162,7 @@ public final class KeyPairUtil {
 		try {
 			// Get a key pair generator
 			KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
-			
+
 			keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
 
 			// Generate and return the key pair
@@ -183,11 +173,11 @@ public final class KeyPairUtil {
 					KeyPairType.EC), ex);
 		}
 	}
-	
+
 
 	/**
 	 * Get the information about the supplied public key.
-	 * 
+	 *
 	 * @param publicKey
 	 *            The public key
 	 * @return Key information
@@ -222,7 +212,7 @@ public final class KeyPairUtil {
 
 	/**
 	 * Get the information about the supplied private key.
-	 * 
+	 *
 	 * @param privateKey
 	 *            The private key
 	 * @return Key information
@@ -262,10 +252,10 @@ public final class KeyPairUtil {
 			throw new CryptoException(res.getString("NoPrivateKeysize.exception.message"), ex);
 		}
 	}
-	
+
 	/**
 	 * Determine the key pair type (algorithm).
-	 * 
+	 *
 	 * @param privateKey
 	 *            The private key
 	 * @return KeyPairType type
@@ -277,7 +267,7 @@ public final class KeyPairUtil {
 	/**
 	 * Check that the supplied private and public keys actually comprise a valid
 	 * key pair.
-	 * 
+	 *
 	 * @param privateKey
 	 *            Private key
 	 * @param publicKey

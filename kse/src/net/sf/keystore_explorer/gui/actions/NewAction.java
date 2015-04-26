@@ -34,14 +34,14 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Action to create a new KeyStore.
- * 
+ *
  */
 public class NewAction extends KeyStoreExplorerAction {
 	private static int untitledCount = 0;
 
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -79,7 +79,7 @@ public class NewAction extends KeyStoreExplorerAction {
 			untitledCount++;
 			String untitled = MessageFormat.format(res.getString("NewAction.Untitled"), untitledCount);
 
-			kseFrame.addKeyStore(newKeyStore, untitled, null);
+			kseFrame.addKeyStore(newKeyStore, untitled, null, null);
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}

@@ -35,12 +35,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to display the private key details for the selected key pair entry.
- * 
+ *
  */
 public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -78,7 +78,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
 
 			DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
 					res.getString("KeyPairPrivateKeyDetailsAction.PrivKeyDetailsEntry.Title"), alias), privKey,
-					keyStore.getProvider());
+					history.getExplicitProvider());
 			dViewPrivateKey.setLocationRelativeTo(frame);
 			dViewPrivateKey.setVisible(true);
 		} catch (Exception ex) {

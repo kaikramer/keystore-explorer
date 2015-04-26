@@ -49,7 +49,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /**
  * X.509 certificate generator.
- * 
+ *
  */
 public class X509CertificateGenerator {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
@@ -57,7 +57,7 @@ public class X509CertificateGenerator {
 
 	/**
 	 * Construct the generator.
-	 * 
+	 *
 	 * @param version
 	 *            Version of generated certificates
 	 */
@@ -67,7 +67,7 @@ public class X509CertificateGenerator {
 
 	/**
 	 * Generate a certificate.
-	 * 
+	 *
 	 * @param subject
 	 *            Certificate subject
 	 * @param issuer
@@ -88,13 +88,13 @@ public class X509CertificateGenerator {
 	 */
 	public X509Certificate generate(X500Name subject, X500Name issuer, long validity, PublicKey publicKey,
 			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
-		return generate(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber, null, 
+		return generate(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber, null,
 				new BouncyCastleProvider());
 	}
 
 	/**
 	 * Generate a certificate.
-	 * 
+	 *
 	 * @param subject
 	 *            Certificate subject
 	 * @param issuer
@@ -134,7 +134,7 @@ public class X509CertificateGenerator {
 
 	/**
 	 * Generate a self-signed certificate.
-	 * 
+	 *
 	 * @param name
 	 *            Certificate subject and issuer
 	 * @param validity
@@ -159,7 +159,7 @@ public class X509CertificateGenerator {
 
 	/**
 	 * Generate a self-signed certificate.
-	 * 
+	 *
 	 * @param name
 	 *            Certificate subject and issuer
 	 * @param validity
@@ -179,7 +179,7 @@ public class X509CertificateGenerator {
 	 *             If there was a problem generating the certificate
 	 */
 	public X509Certificate generateSelfSigned(X500Name name, long validity, PublicKey publicKey, PrivateKey privateKey,
-			SignatureType signatureType, BigInteger serialNumber, X509Extension extensions, Provider provider) 
+			SignatureType signatureType, BigInteger serialNumber, X509Extension extensions, Provider provider)
 					throws CryptoException {
 		return generate(name, name, validity, publicKey, privateKey, signatureType, serialNumber, extensions, provider);
 	}
@@ -227,17 +227,13 @@ public class X509CertificateGenerator {
 
 		try {
 			ContentSigner certSigner = null;
-			
-			// workaround for restriction in MSCAPI provider, see https://bugs.openjdk.java.net/browse/JDK-6407454
-			// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
-			// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and 
-			// applications must not specify the SunMSCAPI provider." 
-//			if (KeyPairUtil.isSunMSCAPI(provider)) {
+
+			if (provider == null) {
 				certSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
-//			} else {
-//				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
-//			}
-			
+			} else {
+				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
+			}
+
 			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
 		} catch (CertificateException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);

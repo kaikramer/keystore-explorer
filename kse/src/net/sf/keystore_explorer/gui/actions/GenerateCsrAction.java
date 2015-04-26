@@ -43,6 +43,7 @@ import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
+import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.DGenerateCsr;
 import net.sf.keystore_explorer.gui.error.DError;
@@ -83,6 +84,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStoreState currentState = history.getCurrentState();
+			Provider provider = history.getExplicitProvider();
 
 			String alias = kseFrame.getSelectedEntryAlias();
 
@@ -93,7 +95,6 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 			}
 
 			KeyStore keyStore = currentState.getKeyStore();
-			Provider provider = keyStore.getProvider();
 
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
@@ -111,7 +112,14 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 						res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"), keyPairAlg));
 			}
 
-			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, provider);
+			// determine dir of current keystore as proposal for CSR file location
+			String path = CurrentDirectory.get().getAbsolutePath();
+			File keyStoreFile = history.getFile();
+			if (keyStoreFile != null) {
+			    path = keyStoreFile.getAbsoluteFile().getParent();
+			}
+
+			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, path, provider);
 			dGenerateCsr.setLocationRelativeTo(frame);
 			dGenerateCsr.setVisible(true);
 

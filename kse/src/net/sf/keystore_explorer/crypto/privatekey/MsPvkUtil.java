@@ -54,10 +54,10 @@ import net.sf.keystore_explorer.utilities.io.UnsignedUtil;
 /**
  * Provides utility methods relating to Microsoft PVK encoded RSA and DSS (DSA)
  * private keys.
- * 
+ *
  * <pre>
  * PVK format for RSA and DSS private keys:
- * 
+ *
  *     DWORD magic     = PVK_MAGIC_NUMBER
  *     DWORD reserved  = PVK_RESERVED
  *     DWORD keytype   = PVK_KEY_EXCHANGE | PVK_KEY_SIGNATURE
@@ -67,16 +67,16 @@ import net.sf.keystore_explorer.utilities.io.UnsignedUtil;
  *     BYTE  salt[saltlen]
  *     BLOBHEADER blobheader
  *     PublicKeyBlob publicKeyBlob
- * 
+ *
  *     BLOBHEADER:
- * 
+ *
  *         BYTE bType      = PRIVATE_KEY_BLOB
  *         BYTE bVersion   = CUR_BLOB_VERSION
  *         WORD reserved   = BLOB_RESERVED
  *         ALG_ID aiKeyAlg = CALG_RSA_SIGN | CALG_RSA_KEYX | CALG_DSS_SIGN
- * 
+ *
  *     RSA PublicKeyBlob:
- * 
+ *
  *         RSAPUBKEY rsapubkey
  *         BYTE modulus[rsapubkey.bitlen/8]
  *         BYTE prime1[rsapubkey.bitlen/16]
@@ -85,33 +85,33 @@ import net.sf.keystore_explorer.utilities.io.UnsignedUtil;
  *         BYTE exponent2[rsapubkey.bitlen/16]
  *         BYTE coefficient[rsapubkey.bitlen/16]
  *         BYTE privateExponent[rsapubkey.bitlen/8]
- * 
+ *
  *         RSAPUBKEY:
- * 
+ *
  *             DWORD magic = RSA_PRIV_MAGIC
  *             DWORD bitlen
  *             DWORD pubexp
- * 
+ *
  *     DSS PublicKeyBlob:
- * 
+ *
  *         DSSPUBKEY dsspubkey
  *         BYTE p[dsspubkey.bitlen/8]
  *         BYTE q[20]
  *         BYTE g[dsspubkey.bitlen/8]
  *         BYTE x[20]
  *         DSSSEED seedstruct
- * 
+ *
  *         DSSPUBKEY:
- * 
+ *
  *             DWORD magic = DSA_PRIV_MAGIC
  *             DWORD bitlen
- * 
+ *
  *         DSSSEED:
- * 
+ *
  *             DWORD counter
  *             BYTE seed[20]
  * </pre>
- * 
+ *
  */
 // @formatter:on
 public class MsPvkUtil {
@@ -179,7 +179,7 @@ public class MsPvkUtil {
 
 	/**
 	 * Load an unencrypted PVK private key from the stream.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load the unencrypted private key from
 	 * @return The private key
@@ -197,9 +197,7 @@ public class MsPvkUtil {
 		ByteBuffer bb = ByteBuffer.wrap(pvk);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 
-		// Read and validate the reserved, magic number and key type fields -
-		// only returns the
-		// latter
+		// Read and validate the reserved, magic number and key type fields - only returns the latter
 		long keyType = readReservedMagicKeyType(bb);
 
 		// Read and validate encrypted field
@@ -214,8 +212,7 @@ public class MsPvkUtil {
 		// Read and validate salt length field
 		long saltLength = UnsignedUtil.getInt(bb);
 
-		if (saltLength != UNENCRYPTED_SALT_LENGTH) // Specific length (0) for
-													// unencrypted PVK
+		if (saltLength != UNENCRYPTED_SALT_LENGTH) // Specific length (0) for unencrypted PVK
 		{
 			throw new CryptoException(MessageFormat.format(
 					res.getString("InvalidMsPvkSaltLengthField.exception.message"), Long.toHexString(saltLength),
@@ -244,7 +241,7 @@ public class MsPvkUtil {
 
 	/**
 	 * Load an encrypted PVK private key from the specified stream.
-	 * 
+	 *
 	 * @param is
 	 *            Stream load the encrypted private key from
 	 * @param password
@@ -266,9 +263,7 @@ public class MsPvkUtil {
 			ByteBuffer bb = ByteBuffer.wrap(pvk);
 			bb.order(ByteOrder.LITTLE_ENDIAN);
 
-			// Read and validate the reserved, magic number and key type fields
-			// - only returns the
-			// latter
+			// Read and validate the reserved, magic number and key type fields - only returns the latter
 			long keyType = readReservedMagicKeyType(bb);
 
 			// Read and validate encrypted field
@@ -283,9 +278,7 @@ public class MsPvkUtil {
 			// Read and validate salt length field
 			long saltLength = UnsignedUtil.getInt(bb);
 
-			if (saltLength != ENCRYPTED_SALT_LENGTH) // Specific length for
-														// encrypted PVK
-			{
+			if (saltLength != ENCRYPTED_SALT_LENGTH) { // Specific length for encrypted PVK
 				throw new CryptoException(MessageFormat.format(
 						res.getString("InvalidMsPvkSaltLengthField.exception.message"), Long.toHexString(saltLength),
 						Long.toHexString(ENCRYPTED_SALT_LENGTH)));
@@ -330,8 +323,7 @@ public class MsPvkUtil {
 			byte[] encryptedPrivateKeyBlob = new byte[bb.remaining()];
 			bb.get(encryptedPrivateKeyBlob);
 
-			// Validate key length - should be length of encrypted key blob plus
-			// blob header
+			// Validate key length - should be length of encrypted key blob plus blob header
 			if (keyLength != (encryptedPrivateKeyBlob.length + BLOB_HEADER_LENGTH)) {
 				throw new CryptoException(MessageFormat.format(
 						res.getString("InvalidMsPvkKeyLengthField.exception.message"), Long.toHexString(keyLength),
@@ -347,8 +339,7 @@ public class MsPvkUtil {
 				decryptedPrivateKeyBlob = decryptPrivateKeyBlob(encryptedPrivateKeyBlob, weakKey);
 
 				if (decryptedPrivateKeyBlob == null) {
-					// Failed - could not decrypt - password is most likely
-					// incorrect
+					// Failed - could not decrypt - password is most likely incorrect
 					throw new CryptoException(res.getString("NoDecryptMsPvkCheckPassword.exception.message"));
 				}
 			}
@@ -361,7 +352,7 @@ public class MsPvkUtil {
 
 	/**
 	 * PVK encode an RSA private key.
-	 * 
+	 *
 	 * @param privateKey
 	 *            The private key
 	 * @param keyType
@@ -376,7 +367,7 @@ public class MsPvkUtil {
 
 	/**
 	 * PVK encode a DSA private key.
-	 * 
+	 *
 	 * @param privateKey
 	 *            The private key
 	 * @return The encoding
@@ -389,7 +380,7 @@ public class MsPvkUtil {
 
 	/**
 	 * Detect if a Microsoft PVK private key is encrypted or not.
-	 * 
+	 *
 	 * @param is
 	 *            Input stream containing Microsoft PVK private key
 	 * @return Encryption type or null if not a valid Microsoft PVK private key
@@ -462,8 +453,7 @@ public class MsPvkUtil {
 			// Write salt length - unencrypted so no salt, length = 0
 			UnsignedUtil.putInt(bb, UNENCRYPTED_SALT_LENGTH);
 
-			// Write key length field - length of the blob plus length of blob
-			// header
+			// Write key length field - length of the blob plus length of blob header
 			long keyLength = privateKeyBlob.length + BLOB_HEADER_LENGTH;
 			UnsignedUtil.putInt(bb, keyLength);
 
@@ -483,7 +473,7 @@ public class MsPvkUtil {
 
 	/**
 	 * PVK encode and encrypt an RSA private key.
-	 * 
+	 *
 	 * @param privateKey
 	 *            The RSA private key
 	 * @param keyType
@@ -503,7 +493,7 @@ public class MsPvkUtil {
 
 	/**
 	 * PVK encode and encrypt a DSA private key.
-	 * 
+	 *
 	 * @param privateKey
 	 *            The DSA private key
 	 * @param password
@@ -564,8 +554,7 @@ public class MsPvkUtil {
 				System.arraycopy(key, 0, strongKey, 0, strongKey.length);
 				encryptedPrivateKeyBlob = encryptPrivateKeyBlob(privateKeyBlob, strongKey);
 			} else {
-				// The weak version uses only 5 bytes of the key followed by 11
-				// zero bytes
+				// The weak version uses only 5 bytes of the key followed by 11 zero bytes
 				byte[] weakKey = new byte[16];
 				System.arraycopy(key, 0, weakKey, 0, 5);
 				for (int i = 5; i < weakKey.length; i++) {
@@ -581,8 +570,7 @@ public class MsPvkUtil {
 			// Write salt length field
 			UnsignedUtil.putInt(bb, salt.length);
 
-			// Write key length field - length of the blob plus length blob
-			// header
+			// Write key length field - length of the blob plus length blob header
 			int keyLength = encryptedPrivateKeyBlob.length + BLOB_HEADER_LENGTH;
 			UnsignedUtil.putInt(bb, keyLength);
 
@@ -754,9 +742,7 @@ public class MsPvkUtil {
 
 			long bitLength = UnsignedUtil.getInt(bb); // rsapubkey.bitlen
 
-			// Byte lengths divisions may have remainders to take account for if
-			// not factors of 16
-			// and/or 8
+			// Byte lengths divisions may have remainders to take account for if not factors of 16 and/or 8
 			int add8 = 0;
 			if ((bitLength % 8) != 0) {
 				add8++;
@@ -770,10 +756,8 @@ public class MsPvkUtil {
 			BigInteger publicExponent = new BigInteger(Long.toString(UnsignedUtil.getInt(bb))); // rsapubkey.pubexp
 
 			BigInteger modulus = readBigInteger(bb, (int) (bitLength / 8) + add8); // modulus
-			BigInteger prime1 = readBigInteger(bb, (int) (bitLength / 16) + add16); // prime
-																					// 1
-			BigInteger prime2 = readBigInteger(bb, (int) (bitLength / 16) + add16); // prime
-																					// 2
+			BigInteger prime1 = readBigInteger(bb, (int) (bitLength / 16) + add16); // prime 1
+			BigInteger prime2 = readBigInteger(bb, (int) (bitLength / 16) + add16); // prime 2
 			BigInteger exponent1 = readBigInteger(bb, (int) (bitLength / 16) + add16); // exponent1
 			BigInteger exponent2 = readBigInteger(bb, (int) (bitLength / 16) + add16); // exponent2
 			BigInteger coefficient = readBigInteger(bb, (int) (bitLength / 16) + add16); // coefficient
@@ -831,10 +815,7 @@ public class MsPvkUtil {
 
 	private static byte[] rsaPrivateKeyToBlob(RSAPrivateCrtKey rsaPrivCrtKey) throws CryptoException {
 		try {
-			ByteBuffer bb = ByteBuffer.wrap(new byte[4096]); // 2316 sufficient
-																// for a 4096
-																// bit RSA
-																// key
+			ByteBuffer bb = ByteBuffer.wrap(new byte[4096]); // 2316 sufficient for a 4096 bit RSA key
 			bb.order(ByteOrder.LITTLE_ENDIAN);
 
 			// Write out the blob fields
@@ -880,9 +861,7 @@ public class MsPvkUtil {
 		try {
 			DSAParams dsaParams = dsaPrivKey.getParams();
 
-			ByteBuffer bb = ByteBuffer.wrap(new byte[512]); // 328 sufficient
-															// for a 1024 bit
-															// DSA key
+			ByteBuffer bb = ByteBuffer.wrap(new byte[512]); // 328 sufficient for a 1024 bit DSA key
 			bb.order(ByteOrder.LITTLE_ENDIAN);
 
 			// Write out the blob fields
@@ -903,8 +882,7 @@ public class MsPvkUtil {
 			writeBigInteger(bb, dsaParams.getG(), (bitLength / 8)); // generator
 			writeBigInteger(bb, dsaPrivKey.getX(), 20); // secret exponent
 
-			UnsignedUtil.putInt(bb, 0xffffffff); // dssseed.counter - none, fill
-													// 0xff
+			UnsignedUtil.putInt(bb, 0xffffffff); // dssseed.counter - none, fill 0xff
 
 			for (int i = 0; i < 20; i++) // dssseed.seed - none, fill 0xff
 			{
@@ -928,8 +906,7 @@ public class MsPvkUtil {
 
 			// Test if key decryption was successful
 
-			// First four bytes will be "RSA2" if successful for an RSA private
-			// key
+			// First four bytes will be "RSA2" if successful for an RSA private key
 			if ((decryptedKeyBlob[0] == 82) && // R
 					(decryptedKeyBlob[1] == 83) && // S
 					(decryptedKeyBlob[2] == 65) && // A
@@ -937,8 +914,7 @@ public class MsPvkUtil {
 			{
 				return decryptedKeyBlob;
 			}
-			// First four bytes will be "DSS2" if successful for a DSA private
-			// key
+			// First four bytes will be "DSS2" if successful for a DSA private key
 			else if ((decryptedKeyBlob[0] == 68) && // D
 					(decryptedKeyBlob[1] == 83) && // S
 					(decryptedKeyBlob[2] == 83) && // S

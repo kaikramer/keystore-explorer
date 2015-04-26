@@ -45,12 +45,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to sign a JAR using the selected key pair entry.
- * 
+ *
  */
 public class SignJarAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -83,7 +83,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
 			}
 
 			KeyStore keyStore = currentState.getKeyStore();
-			Provider provider = keyStore.getProvider();
+			Provider provider = history.getExplicitProvider();
 
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			X509Certificate[] certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore

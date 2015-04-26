@@ -178,7 +178,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			PublicKey publicKey = null;
 			X500Name subject = null;
 			DSignCsr dSignCsr = null;
-			Provider provider = keyStore.getProvider();
+			Provider provider = history.getExplicitProvider();
 
 			if (pkcs10Csr != null) {
 				publicKey = new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
@@ -211,7 +211,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			// CA Reply is a cert with subject from CSR and issuer from signing cert's subject
 			X509CertificateGenerator generator = new X509CertificateGenerator(version);
 			X509Certificate caReplyCert = generator.generate(subject, issuer, validityPeriod, publicKey, privateKey,
-					signatureType, serialNumber, extensions, keyStore.getProvider());
+					signatureType, serialNumber, extensions, history.getExplicitProvider());
 
 			X509Certificate[] caReplyChain = new X509Certificate[signingChain.length + 1];
 

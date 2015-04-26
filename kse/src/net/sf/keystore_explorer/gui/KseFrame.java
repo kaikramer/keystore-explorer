@@ -48,6 +48,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -126,7 +127,8 @@ import net.sf.keystore_explorer.gui.actions.GenerateCsrAction;
 import net.sf.keystore_explorer.gui.actions.GenerateKeyPairAction;
 import net.sf.keystore_explorer.gui.actions.GenerateSecretKeyAction;
 import net.sf.keystore_explorer.gui.actions.HelpAction;
-import net.sf.keystore_explorer.gui.actions.ImportCaReplyAction;
+import net.sf.keystore_explorer.gui.actions.ImportCaReplyFromClipboardAction;
+import net.sf.keystore_explorer.gui.actions.ImportCaReplyFromFileAction;
 import net.sf.keystore_explorer.gui.actions.ImportKeyPairAction;
 import net.sf.keystore_explorer.gui.actions.ImportTrustedCertificateAction;
 import net.sf.keystore_explorer.gui.actions.JarsAction;
@@ -343,7 +345,9 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiKeyPairExportPrivateKey;
 	private JMenuItem jmiKeyPairExportPublicKey;
 	private JMenuItem jmiKeyPairGenerateCsr;
-	private JMenuItem jmiKeyPairImportCaReply;
+	private JMenu jmKeyPairImportCaReply;
+	private JMenuItem jmiKeyPairImportCaReplyFile;
+	private JMenuItem jmiKeyPairImportCaReplyClipboard;
 	private JMenu jmKeyPairEditCertChain;
 	private JMenuItem jmiKeyPairEditCertChainAppendCert;
 	private JMenuItem jmiKeyPairEditCertChainRemoveCert;
@@ -459,7 +463,8 @@ public final class KseFrame implements StatusBar {
 	private final ExportKeyPairPrivateKeyAction exportKeyPairPrivateKeyAction = new ExportKeyPairPrivateKeyAction(this);
 	private final ExportKeyPairPublicKeyAction exportKeyPairPublicKeyAction = new ExportKeyPairPublicKeyAction(this);
 	private final GenerateCsrAction generateCsrAction = new GenerateCsrAction(this);
-	private final ImportCaReplyAction importCaReplyAction = new ImportCaReplyAction(this);
+	private final ImportCaReplyFromFileAction importCaReplyFromFileAction = new ImportCaReplyFromFileAction(this);
+	private final ImportCaReplyFromClipboardAction importCaReplyFromClipboardAction = new ImportCaReplyFromClipboardAction(this);
 	private final AppendToCertificateChainAction appendToCertificateChainAction = new AppendToCertificateChainAction(
 			this);
 	private final RemoveFromCertificateChainAction removeFromCertificateChainAction = new RemoveFromCertificateChainAction(
@@ -1839,10 +1844,19 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiKeyPairGenerateCsr, (String) generateCsrAction.getValue(Action.LONG_DESCRIPTION),
 				this);
 
-		jmiKeyPairImportCaReply = new JMenuItem(importCaReplyAction);
-		jmiKeyPairImportCaReply.setToolTipText(null);
-		new StatusBarChangeHandler(jmiKeyPairImportCaReply,
-				(String) importCaReplyAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmKeyPairImportCaReply = new JMenu(res.getString("KseFrame.jmKeyPairImportCaReply.text"));
+		jmKeyPairImportCaReply.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
+                getClass().getResource(res.getString("KseFrame.jmKeyPairImportCaReply.image")))));
+
+        jmiKeyPairImportCaReplyFile = new JMenuItem(importCaReplyFromFileAction);
+        jmiKeyPairImportCaReplyFile.setToolTipText(null);
+        new StatusBarChangeHandler(jmiKeyPairImportCaReplyFile,
+                (String) importCaReplyFromFileAction.getValue(Action.LONG_DESCRIPTION), this);
+
+        jmiKeyPairImportCaReplyClipboard = new JMenuItem(importCaReplyFromClipboardAction);
+        jmiKeyPairImportCaReplyClipboard.setToolTipText(null);
+        new StatusBarChangeHandler(jmiKeyPairImportCaReplyClipboard,
+                (String) importCaReplyFromClipboardAction.getValue(Action.LONG_DESCRIPTION), this);
 
 		jmKeyPairEditCertChain = new JMenu(res.getString("KseFrame.jmKeyPairEditCertChain.text"));
 		jmKeyPairEditCertChain.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
@@ -1914,7 +1928,9 @@ public final class KseFrame implements StatusBar {
 		jmKeyPairExport.add(jmiKeyPairExportPrivateKey);
 		jmKeyPairExport.add(jmiKeyPairExportPublicKey);
 		jpmKeyPair.add(jmiKeyPairGenerateCsr);
-		jpmKeyPair.add(jmiKeyPairImportCaReply);
+		jpmKeyPair.add(jmKeyPairImportCaReply);
+		jmKeyPairImportCaReply.add(jmiKeyPairImportCaReplyFile);
+		jmKeyPairImportCaReply.add(jmiKeyPairImportCaReplyClipboard);
 		jpmKeyPair.add(jmKeyPairEditCertChain);
 		jmKeyPairEditCertChain.add(jmiKeyPairEditCertChainAppendCert);
 		jmKeyPairEditCertChain.add(jmiKeyPairEditCertChainRemoveCert);
@@ -2149,9 +2165,11 @@ public final class KseFrame implements StatusBar {
 	 *            KeyStore name
 	 * @param password
 	 *            KeyStore password
+	 * @param explicitProvider
+	 *            Explicitly specify a provider that is used for this keystore
 	 */
-	public void addKeyStore(KeyStore keyStore, String keyStoreName, Password password) {
-		KeyStoreHistory history = new KeyStoreHistory(keyStore, keyStoreName, password);
+	public void addKeyStore(KeyStore keyStore, String keyStoreName, Password password, Provider explicitProvider) {
+		KeyStoreHistory history = new KeyStoreHistory(keyStore, keyStoreName, password, explicitProvider);
 
 		addKeyStoreHistory(history);
 	}

@@ -21,6 +21,7 @@ package net.sf.keystore_explorer.utilities.history;
 
 import java.io.File;
 import java.security.KeyStore;
+import java.security.Provider;
 
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
@@ -35,6 +36,7 @@ public class KeyStoreHistory {
 	private KeyStoreState savedState;
 	private File file;
 	private String name;
+    private Provider explicitProvider;
 
 	/**
 	 * Create a new history for an unsaved KeyStore.
@@ -45,18 +47,21 @@ public class KeyStoreHistory {
 	 *            KeyStore name
 	 * @param password
 	 *            KeyStore password
+	 * @param explicitProvider
 	 */
-	public KeyStoreHistory(KeyStore keyStore, String name, Password password) {
+	public KeyStoreHistory(KeyStore keyStore, String name, Password password, Provider explicitProvider) {
 		this.name = name;
+        this.explicitProvider = explicitProvider;
+
 		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
-		
+
 		if (type.isFileBased()) {
 			initialState = new KeyStoreState(this, keyStore, password);
 		} else {
-			// we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike 
+			// we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike
 			initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
 		}
-		
+
 		currentState = initialState;
 	}
 
@@ -164,7 +169,11 @@ public class KeyStoreHistory {
 		savedState = state;
 	}
 
-	@Override
+	public Provider getExplicitProvider() {
+        return explicitProvider;
+    }
+
+    @Override
 	public String toString() {
 	    return getName();
 	}

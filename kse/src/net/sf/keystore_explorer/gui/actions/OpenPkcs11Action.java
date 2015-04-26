@@ -19,6 +19,8 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS11;
+
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.security.AuthProvider;
@@ -32,8 +34,6 @@ import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.DOpenPkcs11KeyStore;
 import net.sf.keystore_explorer.gui.dialogs.PasswordCallbackHandler;
 import net.sf.keystore_explorer.gui.error.DError;
-
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS11;
 
 /**
  * Action to open the PKCS11 KeyStore. If it does not exist provide the
@@ -72,21 +72,21 @@ public class OpenPkcs11Action extends OpenAction {
 			DOpenPkcs11KeyStore dOpenPkcs11KeyStore = new DOpenPkcs11KeyStore(frame);
 			dOpenPkcs11KeyStore.setLocationRelativeTo(frame);
 			dOpenPkcs11KeyStore.setVisible(true);
-			
+
 			Provider selectedProvider = dOpenPkcs11KeyStore.getSelectedProvider();
 			if (selectedProvider == null) {
 				return;
 			}
-			
+
 			KeyStore keyStore = KeyStore.getInstance(PKCS11.jce(), selectedProvider);
-			
+
 			// register password handler
 			AuthProvider authProvider = (AuthProvider) selectedProvider;
 			authProvider.setCallbackHandler(new PasswordCallbackHandler(frame));
-			
+
 			keyStore.load(null, null);
-			
-			kseFrame.addKeyStore(keyStore, selectedProvider.getName(), null);
+
+			kseFrame.addKeyStore(keyStore, selectedProvider.getName(), null, selectedProvider);
 
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);

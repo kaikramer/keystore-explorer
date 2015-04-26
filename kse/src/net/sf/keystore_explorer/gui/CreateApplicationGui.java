@@ -50,7 +50,7 @@ import net.sf.keystore_explorer.version.VersionException;
 
 /**
  * Runnable to create and show KeyStore Explorer application.
- * 
+ *
  */
 public class CreateApplicationGui implements Runnable {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -63,7 +63,7 @@ public class CreateApplicationGui implements Runnable {
 
 	/**
 	 * Construct CreateApplicationGui.
-	 * 
+	 *
 	 * @param applicationSettings
 	 *            Application settings
 	 * @param splash
@@ -93,7 +93,7 @@ public class CreateApplicationGui implements Runnable {
 			}
 
 			if (JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
-				upgradeCryptoStrength();
+//				upgradeCryptoStrength();
 			}
 
 			final KseFrame kseFrame = new KseFrame();
@@ -131,13 +131,13 @@ public class CreateApplicationGui implements Runnable {
 			String lookAndFeelClass = LnfUtil.useLnfForPlatform();
 			applicationSettings.setLookAndFeelClass(lookAndFeelClass);
 		}
-		
+
 		boolean lookFeelDecorated = applicationSettings.getLookAndFeelDecorated();
 
 		JFrame.setDefaultLookAndFeelDecorated(lookFeelDecorated);
 		JDialog.setDefaultLookAndFeelDecorated(lookFeelDecorated);
 	}
-	
+
 
 	private static boolean checkJreVersion() {
 		JavaVersion actualJreVersion = null;

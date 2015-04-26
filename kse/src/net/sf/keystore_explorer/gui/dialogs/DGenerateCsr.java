@@ -106,6 +106,8 @@ public class DGenerateCsr extends JEscDialog {
 	private boolean addExtensionsWanted;
 	private File csrFile;
 
+    private String path;
+
 	/**
 	 * Creates a new DGenerateCsr dialog.
 	 *
@@ -115,15 +117,18 @@ public class DGenerateCsr extends JEscDialog {
 	 *            Private key
 	 * @param keyPairType
 	 *            Key pair algorithm
+	 * @param path
+	 *             Path to keystore file
 	 * @throws CryptoException
 	 *             A problem was encountered with the supplied private key
 	 */
-	public DGenerateCsr(JFrame parent, String alias, PrivateKey privateKey, KeyPairType keyPairType, Provider provider) 
-			throws CryptoException {
+	public DGenerateCsr(JFrame parent, String alias, PrivateKey privateKey, KeyPairType keyPairType, String path,
+	        Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.alias = alias;
 		this.privateKey = privateKey;
 		this.keyPairType = keyPairType;
+        this.path = path;
 		this.provider = provider;
 		setTitle(res.getString("DGenerateCsr.Title"));
 		initComponents();
@@ -264,9 +269,8 @@ public class DGenerateCsr extends JEscDialog {
 	}
 
 	private void populateCsrFileName() {
-        File currentDirectory = CurrentDirectory.get();
         String sanitizedAlias = FileNameUtil.cleanFileName(alias);
-        File csrFile = new File(currentDirectory, sanitizedAlias + ".csr");
+        File csrFile = new File(path, sanitizedAlias + ".csr");
         jtfCsrFile.setText(csrFile.getPath());
     }
 
@@ -437,7 +441,7 @@ public class DGenerateCsr extends JEscDialog {
                     KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
                     PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
                     DGenerateCsr dialog = new DGenerateCsr(new javax.swing.JFrame(), "alias (test)", privateKey,
-                            KeyPairType.RSA, new BouncyCastleProvider());
+                            KeyPairType.RSA, "", new BouncyCastleProvider());
                     dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                         public void windowClosing(java.awt.event.WindowEvent e) {
                             System.exit(0);
