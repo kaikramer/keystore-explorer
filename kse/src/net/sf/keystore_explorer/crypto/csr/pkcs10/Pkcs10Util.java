@@ -19,10 +19,6 @@
  */
 package net.sf.keystore_explorer.crypto.csr.pkcs10;
 
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,6 +53,10 @@ import org.bouncycastle.pkcs.PKCSException;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
+
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
 
 /**
  * Provides utility methods relating to PKCS #10 CSRs.
@@ -121,7 +121,7 @@ public class Pkcs10Util {
 			}
 
 			// fallback to bouncy castle provider if given provider does not support the requested algorithm
-			if (provider.getService("Signature", signatureType.jce()) == null) {
+			if (provider == null || provider.getService("Signature", signatureType.jce()) == null) {
 			    provider = new BouncyCastleProvider();
 			}
 
