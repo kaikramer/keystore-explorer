@@ -7,12 +7,6 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.KeyInfo;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
-import net.sf.keystore_explorer.crypto.signing.SignatureType;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERPrintableString;
@@ -20,23 +14,29 @@ import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.KeyInfo;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
+import net.sf.keystore_explorer.crypto.signing.SignatureType;
+
 /**
  * Helper class that bundles redundant code from the dialogs.
  */
 public class DialogHelper {
 
-	
+
 	/**
 	 * Populate a JComboBox with signature algorithms depending on the key pair type.
-	 * 
+	 *
 	 * @param keyPairType
 	 * @param privateKey
 	 * @param jcbSignatureAlgorithm
 	 * @throws CryptoException
 	 */
-	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, Provider provider, JComboBox jcbSignatureAlgorithm) 
+	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, Provider provider, JComboBox<SignatureType> jcbSignatureAlgorithm)
 			throws CryptoException {
-		
+
 		List<SignatureType> sigAlgs;
 
 		switch (keyPairType) {
@@ -69,7 +69,7 @@ public class DialogHelper {
 			jcbSignatureAlgorithm.setSelectedIndex(0);
 		}
 	}
-	
+
 	/**
 	 * Populates a JTextField with PKCS#10 challenge
 	 *
@@ -83,7 +83,7 @@ public class DialogHelper {
 	    ASN1ObjectIdentifier pkcs9AtChallengepassword = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
 	    populateTextField(attributes, textField, pkcs9AtChallengepassword);
 	}
-	
+
 
 	   /**
      * Populates a JTextField with PKCS#10/#9 unstructuredName

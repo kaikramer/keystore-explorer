@@ -30,13 +30,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
-import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -47,23 +47,29 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.encoders.Base64;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.digest.DigestType;
 import net.sf.keystore_explorer.crypto.digest.DigestUtil;
 import net.sf.keystore_explorer.utilities.io.CopyUtil;
 import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.DigestCalculatorProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -139,6 +145,8 @@ public class JarSigner extends Object {
 	 *            Signer
 	 * @param digestType
 	 *            Digest type
+	 * @param tsaUrl
+	 *             TSA URL
 	 * @throws IOException
 	 *             If an I/O problem occurs while signing the JAR file
 	 * @throws CryptoException
@@ -146,11 +154,12 @@ public class JarSigner extends Object {
 	 */
 	public static void sign(File jsrFile, PrivateKey privateKey, X509Certificate[] certificateChain,
 			SignatureType signatureType, String signatureName, String signer, DigestType digestType,
-			Provider provider) throws IOException, CryptoException {
+			String tsaUrl, Provider provider) throws IOException, CryptoException {
 		File tmpFile = File.createTempFile("kse", "tmp");
 		tmpFile.deleteOnExit();
 
-		sign(jsrFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType, provider);
+		sign(jsrFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType, tsaUrl,
+		        provider);
 
 		CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jsrFile));
 
@@ -176,6 +185,8 @@ public class JarSigner extends Object {
 	 *            Signer
 	 * @param digestType
 	 *            Digest type
+	 * @param tsaUrl
+	 *            TSA URL
 	 * @throws IOException
 	 *             If an I/O problem occurs while signing the JAR file
 	 * @throws CryptoException
@@ -183,7 +194,8 @@ public class JarSigner extends Object {
 	 */
 	public static void sign(File jarFile, File signedJarFile, PrivateKey privateKey,
 			X509Certificate[] certificateChain, SignatureType signatureType, String signatureName, String signer,
-			DigestType digestType, Provider provider) throws IOException, CryptoException {
+			DigestType digestType, String tsaUrl, Provider provider) throws IOException, CryptoException {
+
 		JarFile jar = null;
 		JarOutputStream jos = null;
 
@@ -216,14 +228,12 @@ public class JarSigner extends Object {
 			// Write out digests to manifest and signature file
 
 			// Sign each JAR entry...
-			for (Enumeration jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
+			for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
 				JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
 
 				if (!jarEntry.isDirectory()) // Ignore directories
 				{
-					if (!ignoreJarEntry(jarEntry)) // Ignore some entries
-													// (existing signature
-													// files)
+					if (!ignoreJarEntry(jarEntry)) // Ignore some entries (existing signature files)
 					{
 						// Get the digest of the entry as manifest attributes
 						String manifestEntry = getDigestManifestAttrs(jar, jarEntry, digestType);
@@ -246,36 +256,27 @@ public class JarSigner extends Object {
 				}
 			}
 
-			/*
-			 * Manifest file complete - get base 64 encoded digest of its
-			 * content for inclusion in signature file
-			 */
+			// Manifest file complete - get base 64 encoded digest of its content for inclusion in signature file
 			byte[] manifest = sbManifest.toString().getBytes();
 
 			byte[] digestMf = DigestUtil.getMessageDigest(manifest, digestType);
 			String digestMfStr = new String(Base64.encode(digestMf));
 
-			/*
-			 * Get base 64 encoded digest of manifest's main attributes for
-			 * incusion in signature file
-			 */
+			// Get base 64 encoded digest of manifest's main attributes for inclusion in signature file
 			byte[] mainfestMainAttrs = manifestMainAttrs.getBytes();
 
 			byte[] digestMfMainAttrs = DigestUtil.getMessageDigest(mainfestMainAttrs, digestType);
 			String digestMfMainAttrsStr = new String(Base64.encode(digestMfMainAttrs));
 
-			// Write out Manifest Digest, Created By and Signature Version to
-			// start of signature
-			// file
+			// Write out Manifest Digest, Created By and Signature Version to start of signature file
 			sbSf.insert(0, CRLF);
 			sbSf.insert(0, CRLF);
-			sbSf.insert(0,
-					createAttributeText(MessageFormat.format(DIGEST_MANIFEST_ATTR, digestType.jce()), digestMfStr));
-			sbSf.insert(0, CRLF);
-			sbSf.insert(
-					0,
-					createAttributeText(MessageFormat.format(DIGEST_MANIFEST_MAIN_ATTRIBUTES_ATTR, digestType.jce()),
-							digestMfMainAttrsStr));
+            sbSf.insert(0,
+                    createAttributeText(MessageFormat.format(DIGEST_MANIFEST_ATTR, digestType.jce()), digestMfStr));
+            sbSf.insert(0, CRLF);
+            sbSf.insert(0,
+                    createAttributeText(MessageFormat.format(DIGEST_MANIFEST_MAIN_ATTRIBUTES_ATTR, digestType.jce()),
+                            digestMfMainAttrsStr));
 			sbSf.insert(0, CRLF);
 			sbSf.insert(0, createAttributeText(CREATED_BY_ATTR, signer));
 			sbSf.insert(0, CRLF);
@@ -297,7 +298,7 @@ public class JarSigner extends Object {
 			writeSignatureFile(sf, signatureName, jos);
 
 			// Create signature block and write it out to signed JAR
-			byte[] sigBlock = createSignatureBlock(sf, privateKey, certificateChain, signatureType, provider);
+			byte[] sigBlock = createSignatureBlock(sf, privateKey, certificateChain, signatureType, tsaUrl, provider);
 			writeSignatureBlock(sigBlock, signatureType, signatureName, jos);
 		} finally {
 			SafeCloseUtil.close(jar);
@@ -305,12 +306,11 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 * Ignore a JAR entry for signing? JAR entries which should not be
+	 * signed are the manifest files, signature files and signature block files
+	 */
 	private static boolean ignoreJarEntry(JarEntry jarEntry) {
-		/*
-		 * Ignore a JAR entry for signing? JAR entries which should not be
-		 * signed are the manifest files, signature files and signature block
-		 * files
-		 */
 
 		String entryName = jarEntry.getName();
 
@@ -354,7 +354,7 @@ public class JarSigner extends Object {
 			// Look for signature file (DSA or RSA)
 			jar = new JarFile(jarFile);
 
-			for (Enumeration jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
+			for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
 				JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
 				if (!jarEntry.isDirectory()) {
 					if ((jarEntry.getName().equalsIgnoreCase(MessageFormat.format(METAINF_FILE_LOCATION, signatureName,
@@ -372,12 +372,12 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 * Get main attributes of JAR manifest as a string. Gets original
+	 * manifest verbatim. If there is no manifest in JAR it returns a string
+	 * with those two attributes
+	 */
 	private static String getManifestMainAttrs(JarFile jar, String signer) throws IOException {
-		/*
-		 * Get main attributes of JAR manifest as a string. Gets original
-		 * manifest verbatim. If there is no manifest in JAR it returns a string
-		 * with those two attributes
-		 */
 
 		StringBuffer sbManifest = new StringBuffer();
 
@@ -408,8 +408,10 @@ public class JarSigner extends Object {
 		return sbManifest.toString();
 	}
 
+	/*
+	 *  Get all entries' attributes of JAR manifest as a string
+	 */
 	private static String getManifestEntriesAttrs(JarFile jar) throws IOException {
-		// Get all entries' attributes of JAR manifest as a string
 
 		StringBuffer sbManifest = new StringBuffer();
 
@@ -454,11 +456,12 @@ public class JarSigner extends Object {
 		return sbManifest.toString();
 	}
 
+	/*
+	 *  Get the digest of the supplied JAR entry as manifest attributes
+	 *  "Name" and "<digestType> Digest"
+	 */
 	private static String getDigestManifestAttrs(JarFile jar, JarEntry jarEntry, DigestType digestType)
 			throws IOException, CryptoException {
-		// Get the digest of the supplied JAR entry as manifest attributes
-		// "Name" and
-		// "<digestType> Digest"
 
 		InputStream jis = null;
 
@@ -485,8 +488,10 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 *  Get JAR file's manifest as a string
+	 */
 	private static String getManifest(JarFile jar) throws IOException {
-		// Get JAR file's manifest as a string
 
 		JarEntry manifestEntry = jar.getJarEntry(MANIFEST_LOCATION);
 
@@ -509,8 +514,10 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 *  Get JAR file manifest's main attributes manifest as a string
+	 */
 	private static String getManifestMainAttrs(JarFile jar) throws IOException {
-		// Get JAR file manifest's main attributes manifest as a string
 
 		// Get full manifest content
 		String manifestContent = getManifest(jar);
@@ -540,8 +547,10 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 *  Get JAR file manifest's attributes for a specified entry as a string
+	 */
 	private static String getManifestEntryAttrs(JarFile jar, String entryName) throws IOException {
-		// Get JAR file manifest's attributes for a specified entry as a string
 
 		// Get full manifest content
 		String manifestContent = getManifest(jar);
@@ -561,10 +570,7 @@ public class JarSigner extends Object {
 				entryNameAttr = entryNameAttr.substring(0, 70);
 			}
 
-			/*
-			 * Keep reading and ignoring lines until entry is found - the end of
-			 * the entry's attributes
-			 */
+			// Keep reading and ignoring lines until entry is found - the end of the entry's attributes
 			while ((line = lnr.readLine()) != null) {
 				if (line.equals(entryNameAttr)) {
 					// Found entry name attribute - append it
@@ -592,13 +598,13 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 * Write out all JAR entries from source JAR to output stream excepting
+	 * manifest and existing signature files for the supplied signature name
+	 */
 	private static void writeJarEntries(JarFile jar, JarOutputStream jos, String signatureName) throws IOException {
-		/*
-		 * Write out all JAR entries from source JAR to output stream excepting
-		 * manifest and existing signature files for the supplied signature name
-		 */
 
-		for (Enumeration jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
+		for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
 			JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
 			if (!jarEntry.isDirectory()) {
 				String entryName = jarEntry.getName();
@@ -611,8 +617,7 @@ public class JarSigner extends Object {
 				String rsaSigBlockLocation = MessageFormat.format(METAINF_FILE_LOCATION, signatureName,
 						RSA_SIG_BLOCK_EXT);
 
-				// Do not write across existing manifest or matching signature
-				// files
+				// Do not write across existing manifest or matching signature files
 				if ((!entryName.equalsIgnoreCase(MANIFEST_LOCATION)) && (!entryName.equalsIgnoreCase(sigFileLocation))
 						&& (!entryName.equalsIgnoreCase(dsaSigBlockLocation))
 						&& (!entryName.equalsIgnoreCase(rsaSigBlockLocation))) {
@@ -644,8 +649,10 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 *  Write manifest content to output stream
+	 */
 	private static void writeManifest(byte[] manifest, JarOutputStream jos) throws IOException {
-		// Write manifest content to output stream
 
 		// Manifest file entry
 		JarEntry mfJarEntry = new JarEntry(MANIFEST_LOCATION);
@@ -670,8 +677,10 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 *  Write signature file content to output stream
+	 */
 	private static void writeSignatureFile(byte[] sf, String signatureName, JarOutputStream jos) throws IOException {
-		// Write signature file content to output stream
 
 		// Signature file entry
 		JarEntry sfJarEntry = new JarEntry(MessageFormat.format(METAINF_FILE_LOCATION, signatureName, SIGNATURE_EXT)
@@ -697,9 +706,11 @@ public class JarSigner extends Object {
 		}
 	}
 
+	/*
+	 *  Write signature block to output stream
+	 */
 	private static void writeSignatureBlock(byte[] sigBlock, SignatureType signatureType, String signatureName,
 			JarOutputStream jos) throws IOException {
-		// Write signature block to output stream
 
 		// Block's extension depends on signature type
 		String extension = null;
@@ -728,16 +739,16 @@ public class JarSigner extends Object {
 		jos.closeEntry();
 	}
 
+	/*
+	 *  Create manifest attribute text from the supplied attribute name and value
+	 */
 	private static String createAttributeText(String attributeName, String attributeValue) {
-		// Create manifest attribute text from the supplied attribute name and
-		// value
 
-		String attributeText = MessageFormat.format(ATTR_TEMPLATE, attributeName, attributeValue);
 
-		/*
-		 * No attribute text can have lines exceeding 72 bytes. Split it across
-		 * lines no greater than 72 bytes by inserting '\r\n '
-		 */
+	    String attributeText = MessageFormat.format(ATTR_TEMPLATE, attributeName, attributeValue);
+
+		// No attribute text can have lines exceeding 72 bytes. Split it across
+	    // lines no greater than 72 bytes by inserting '\r\n '
 		StringBuffer sb = new StringBuffer();
 
 		// Remaining text to split
@@ -760,53 +771,75 @@ public class JarSigner extends Object {
 		return sb.toString();
 	}
 
-	private static byte[] createSignatureBlock(byte[] toSign, PrivateKey privateKey,
-			X509Certificate[] certificateChain, SignatureType signatureType, Provider provider) throws CryptoException {
-
-		ByteArrayInputStream bais = null;
+	private static byte[] createSignatureBlock(byte[] toSign, PrivateKey privateKey, X509Certificate[] certificateChain,
+	        SignatureType signatureType, String tsaUrl, Provider provider) throws CryptoException {
 
 		try {
-			List<X509Certificate> certList = new ArrayList<X509Certificate>();
+            List<X509Certificate> certList = new ArrayList<X509Certificate>();
 
-			for (int i = 0; i < certificateChain.length; i++) {
-				certList.add(certificateChain[i]);
-			}
+            for (int i = 0; i < certificateChain.length; i++) {
+                certList.add(certificateChain[i]);
+            }
 
-			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
+            DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
             JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
 
             JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
-		                                            .setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
-            if (provider == null)  {
-                    csb.setProvider(provider);
+                    .setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
+            if (provider != null) {
+                csb.setProvider(provider);
             }
 
-			CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator();
-			dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]));
-			dataGen.addCertificates(new JcaCertStore(certList));
+            CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator();
+            dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]));
+            dataGen.addCertificates(new JcaCertStore(certList));
 
-			CMSSignedData signed = dataGen.generate(new CMSProcessableByteArray(toSign), true);
+            CMSSignedData signedData = dataGen.generate(new CMSProcessableByteArray(toSign), true);
 
-			return signed.getEncoded();
-		} catch (IOException ex) {
-			throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
-		} catch (CMSException ex) {
-			throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
-		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
-		} catch (OperatorCreationException ex) {
-			throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
-		} finally {
-			SafeCloseUtil.close(bais);
-		}
+            // now let TSA time-stamp the signature
+            if (tsaUrl != null && !tsaUrl.isEmpty()) {
+                signedData = addTimestamp(tsaUrl, signedData);
+            }
+
+            return signedData.getEncoded();
+        } catch (Exception ex) {
+            throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
+        }
 	}
 
+    private static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData) throws IOException {
+
+        Collection<SignerInformation> signerInfos = signedData.getSignerInfos().getSigners();
+
+        // get signature of first signer (should be the only one)
+        SignerInformation si = signerInfos.iterator().next();
+        byte[] signature = si.getSignature();
+
+        // send request to TSA
+        byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, DigestType.SHA1);
+
+        // create new SignerInformation with TS attribute
+        Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,
+                new DERSet(ASN1Primitive.fromByteArray(token)));
+        ASN1EncodableVector timestampVector = new ASN1EncodableVector();
+        timestampVector.add(tokenAttr);
+        AttributeTable at = new AttributeTable(timestampVector);
+        si = SignerInformation.replaceUnsignedAttributes(si, at);
+        signerInfos.clear();
+        signerInfos.add(si);
+        SignerInformationStore newSignerStore = new SignerInformationStore(signerInfos);
+
+        // create new signed data
+        CMSSignedData newSignedData = CMSSignedData.replaceSigners(signedData, newSignerStore);
+        return newSignedData;
+    }
+
+	/*
+	 * Convert the supplied signature name to make it valid for use with
+	 * signing, ie any characters that are not 'a-z', 'A-Z', '0-9', '_' or
+	 * '-' are converted to '_'
+	 */
 	private static String convertSignatureName(String signatureName) {
-		/*
-		 * Convert the supplied signature name to make it valid for use with
-		 * signing, ie any characters that are not 'a-z', 'A-Z', '0-9', '_' or
-		 * '-' are converted to '_'
-		 */
 
 		StringBuffer sb = new StringBuffer(signatureName.length());
 

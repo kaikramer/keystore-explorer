@@ -48,7 +48,9 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
  *
  */
 public class SignJarAction extends KeyStoreExplorerAction {
-	/**
+    private static final long serialVersionUID = -8414470251471035085L;
+
+    /**
 	 * Construct action.
 	 *
 	 * @param kseFrame
@@ -99,6 +101,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
 			String signatureName = dSignJar.getSignatureName();
 			File inputJarFile = dSignJar.getInputJar();
 			File outputJarFile = dSignJar.getOutputJar();
+			String tsaUrl = dSignJar.getTimestampingServerUrl();
 
 			if (signatureType == null) {
 				return;
@@ -110,10 +113,10 @@ public class SignJarAction extends KeyStoreExplorerAction {
 
 			if (inputJarFile.equals(outputJarFile)) {
 				JarSigner.sign(inputJarFile, privateKey, certs, signatureType, signatureName, signer, digestType,
-						provider);
+				        tsaUrl, provider);
 			} else {
 				JarSigner.sign(inputJarFile, outputJarFile, privateKey, certs, signatureType, signatureName, signer,
-						digestType, provider);
+				        digestType, tsaUrl, provider);
 			}
 
 			JOptionPane.showMessageDialog(frame, res.getString("SignJarAction.SignJarSuccessful.message"),

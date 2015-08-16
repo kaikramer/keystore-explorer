@@ -21,11 +21,8 @@ package net.sf.keystore_explorer.gui.dialogs.sign;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -35,13 +32,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.jar.JarFile;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -51,12 +53,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
+import javax.swing.UIManager;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.digest.DigestType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
@@ -66,6 +70,7 @@ import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.MiGUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.dialogs.DialogHelper;
 import net.sf.keystore_explorer.gui.error.DError;
@@ -78,7 +83,9 @@ import net.sf.keystore_explorer.utilities.io.FileNameUtil;
  *
  */
 public class DSignJar extends JEscDialog {
-	private static ResourceBundle res = ResourceBundle
+    private static final long serialVersionUID = -5095469699284737624L;
+
+    private static ResourceBundle res = ResourceBundle
 			.getBundle("net/sf/keystore_explorer/gui/dialogs/sign/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
@@ -94,10 +101,13 @@ public class DSignJar extends JEscDialog {
 	private JLabel jlSignatureName;
 	private JTextField jtfSignatureName;
 	private JLabel jlSignatureAlgorithm;
-	private JComboBox jcbSignatureAlgorithm;
+	private JComboBox<SignatureType> jcbSignatureAlgorithm;
 	private JLabel jlDigestAlgorithm;
-	private JComboBox jcbDigestAlgorithm;
-	private JPanel jpOptions;
+	private JComboBox<DigestType> jcbDigestAlgorithm;
+    private JLabel jlAddTimestamp;
+    private JCheckBox jcbAddTimestamp;
+    private JLabel jlTimestampServerUrl;
+    private JComboBox<String> jcbTimestampServerUrl;
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
@@ -109,6 +119,7 @@ public class DSignJar extends JEscDialog {
 	private String signatureName;
 	private SignatureType signatureType;
 	private DigestType digestType;
+	private String tsaUrl;
 
 	private Provider provider;
 
@@ -127,7 +138,7 @@ public class DSignJar extends JEscDialog {
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
-	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName, 
+	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName,
 			Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.signPrivateKey = signPrivateKey;
@@ -138,177 +149,148 @@ public class DSignJar extends JEscDialog {
 	}
 
 	private void initComponents(String signatureName) throws CryptoException {
-		GridBagConstraints gbcLbl = new GridBagConstraints();
-		gbcLbl.gridx = 0;
-		gbcLbl.gridwidth = 1;
-		gbcLbl.gridheight = 1;
-		gbcLbl.insets = new Insets(5, 5, 5, 5);
-		gbcLbl.anchor = GridBagConstraints.EAST;
-		gbcLbl.weightx = 0;
-
-		GridBagConstraints gbcCtrl = new GridBagConstraints();
-		gbcCtrl.gridx = 1;
-		gbcCtrl.gridwidth = 1;
-		gbcCtrl.gridheight = 1;
-		gbcCtrl.insets = new Insets(5, 5, 5, 5);
-		gbcCtrl.anchor = GridBagConstraints.WEST;
-		gbcCtrl.fill = GridBagConstraints.NONE;
-		gbcCtrl.weightx = 1;
-
-		GridBagConstraints gbcBrws = new GridBagConstraints();
-		gbcBrws.gridx = 2;
-		gbcBrws.gridwidth = 1;
-		gbcBrws.gridheight = 1;
-		gbcBrws.insets = new Insets(5, 5, 5, 5);
-		gbcBrws.anchor = GridBagConstraints.WEST;
-		gbcBrws.fill = GridBagConstraints.NONE;
-		gbcBrws.weightx = 1;
 
 		jlInputJar = new JLabel(res.getString("DSignJar.jlInputJar.text"));
-		GridBagConstraints gbc_jlInputJar = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlInputJar.gridy = 0;
-
 		jtfInputJar = new JTextField(30);
 		jtfInputJar.setCaretPosition(0);
 		jtfInputJar.setToolTipText(res.getString("DSignJar.jtfInputJar.tooltip"));
-		GridBagConstraints gbc_jtfInputJar = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfInputJar.gridy = 0;
 
 		jbInputJarBrowse = new JButton(res.getString("DSignJar.jbInputJarBrowse.text"));
 		PlatformUtil.setMnemonic(jbInputJarBrowse, res.getString("DSignJar.jbInputJarBrowse.mnemonic").charAt(0));
 		jbInputJarBrowse.setToolTipText(res.getString("DSignJar.jbInputJarBrowse.tooltip"));
-		jbInputJarBrowse.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignJar.this);
-					inputJarBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignJar.this);
-				}
-			}
-		});
-		GridBagConstraints gbc_jbInputJarBrowse = (GridBagConstraints) gbcBrws.clone();
-		gbc_jbInputJarBrowse.gridy = 0;
 
 		jlSignDirectly = new JLabel(res.getString("DSignJar.jlSignDirectly.text"));
-		GridBagConstraints gbc_jlSignDirectly = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSignDirectly.gridy = 1;
-
 		jcbSignDirectly = new JCheckBox();
 		jcbSignDirectly.setSelected(true);
 		jcbSignDirectly.setToolTipText(res.getString("DSignJar.jcbSignDirectly.tooltip"));
-		GridBagConstraints gbc_jcbSignDirectly = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jcbSignDirectly.gridy = 1;
-
-		jcbSignDirectly.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent evt) {
-				jtfOutputJar.setEnabled(!jcbSignDirectly.isSelected());
-				jbOutputJarBrowse.setEnabled(!jcbSignDirectly.isSelected());
-			}
-		});
 
 		jlOutputJar = new JLabel(res.getString("DSignJar.jlOutputJar.text"));
-		GridBagConstraints gbc_jlOutputJar = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlOutputJar.gridy = 2;
-
 		jtfOutputJar = new JTextField(30);
 		jtfOutputJar.setEnabled(false);
 		jtfOutputJar.setCaretPosition(0);
 		jtfOutputJar.setToolTipText(res.getString("DSignJar.jtfOutputJar.tooltip"));
-		GridBagConstraints gbc_jtfOutputJar = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfOutputJar.gridy = 2;
 
 		jbOutputJarBrowse = new JButton(res.getString("DSignJar.jbOutputJarBrowse.text"));
 		PlatformUtil.setMnemonic(jbOutputJarBrowse, res.getString("DSignJar.jbOutputJarBrowse.mnemonic").charAt(0));
 		jbOutputJarBrowse.setToolTipText(res.getString("DSignJar.jbOutputJarBrowse.tooltip"));
 		jbOutputJarBrowse.setEnabled(false);
-		jbOutputJarBrowse.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignJar.this);
-					outputJarBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignJar.this);
-				}
-			}
-		});
-		GridBagConstraints gbc_jbOutputJarBrowse = (GridBagConstraints) gbcBrws.clone();
-		gbc_jbOutputJarBrowse.gridy = 2;
 
 		jlSignatureName = new JLabel(res.getString("DSignJar.jlSignatureName.text"));
-		GridBagConstraints gbc_jlSignatureName = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSignatureName.gridy = 3;
-
 		jtfSignatureName = new JTextField(convertSignatureName(signatureName), 15);
 		jtfSignatureName.setCaretPosition(0);
 		jtfSignatureName.setToolTipText(res.getString("DSignJar.jtfSignatureName.tooltip"));
-		GridBagConstraints gbc_jtfSignatureName = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jtfSignatureName.gridy = 3;
 
 		jlSignatureAlgorithm = new JLabel(res.getString("DSignJar.jlSignatureAlgorithm.text"));
-		GridBagConstraints gbc_jlSignatureAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSignatureAlgorithm.gridy = 4;
-
-		jcbSignatureAlgorithm = new JComboBox();
+		jcbSignatureAlgorithm = new JComboBox<SignatureType>();
 		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, provider, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJar.jcbSignatureAlgorithm.tooltip"));
-		GridBagConstraints gbc_jcbSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jcbSignatureAlgorithm.gridy = 4;
 
 		jlDigestAlgorithm = new JLabel(res.getString("DSignJar.jlDigestAlgorithm.text"));
-		GridBagConstraints gbc_jlDigestAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlDigestAlgorithm.gridy = 5;
-
-		jcbDigestAlgorithm = new JComboBox();
+		jcbDigestAlgorithm = new JComboBox<DigestType>();
 		populateDigestAlgs();
 		jcbDigestAlgorithm.setToolTipText(res.getString("DSignJar.jcbDigestAlgorithm.tooltip"));
-		GridBagConstraints gbc_jcbDigestAlgorithm = (GridBagConstraints) gbcCtrl.clone();
-		gbc_jcbDigestAlgorithm.gridy = 5;
 
-		jpOptions = new JPanel(new GridBagLayout());
-		jpOptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
+        jlAddTimestamp = new JLabel(res.getString("DSignJar.jlAddTimestamp.text"));
+        jcbAddTimestamp = new JCheckBox();
+        jcbAddTimestamp.setSelected(false);
+        jcbAddTimestamp.setToolTipText(res.getString("DSignJar.jcbAddTimestamp.tooltip"));
 
-		jpOptions.add(jlInputJar, gbc_jlInputJar);
-		jpOptions.add(jtfInputJar, gbc_jtfInputJar);
-		jpOptions.add(jbInputJarBrowse, gbc_jbInputJarBrowse);
-		jpOptions.add(jlSignDirectly, gbc_jlSignDirectly);
-		jpOptions.add(jcbSignDirectly, gbc_jcbSignDirectly);
-		jpOptions.add(jlOutputJar, gbc_jlOutputJar);
-		jpOptions.add(jtfOutputJar, gbc_jtfOutputJar);
-		jpOptions.add(jbOutputJarBrowse, gbc_jbOutputJarBrowse);
-		jpOptions.add(jlSignatureName, gbc_jlSignatureName);
-		jpOptions.add(jtfSignatureName, gbc_jtfSignatureName);
-		jpOptions.add(jlSignatureAlgorithm, gbc_jlSignatureAlgorithm);
-		jpOptions.add(jcbSignatureAlgorithm, gbc_jcbSignatureAlgorithm);
-		jpOptions.add(jlDigestAlgorithm, gbc_jlDigestAlgorithm);
-		jpOptions.add(jcbDigestAlgorithm, gbc_jcbDigestAlgorithm);
+        jlTimestampServerUrl = new JLabel(res.getString("DSignJar.jlTimestampServerUrl.text"));
+        jcbTimestampServerUrl = new JComboBox<String>();
+        jcbTimestampServerUrl.setEditable(true);
+        jcbTimestampServerUrl.setEnabled(false);;
+        jcbTimestampServerUrl.setToolTipText(res.getString("DSignJar.jcbTimestampServerUrl.tooltip"));
+        jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<String>(getTsaUrls()));
 
-		jbOK = new JButton(res.getString("DSignJar.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+        jbOK = new JButton(res.getString("DSignJar.jbOK.text"));
 
 		jbCancel = new JButton(res.getString("DSignJar.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpOptions, BorderLayout.NORTH);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+		// layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
+        MiGUtil.addSeparator(pane, res.getString("DSignJar.jlFiles.text"));
+        pane.add(jlInputJar, "skip");
+        pane.add(jtfInputJar, "sgx");
+        pane.add(jbInputJarBrowse, "wrap");
+        pane.add(jlSignDirectly, "skip");
+        pane.add(jcbSignDirectly, "wrap");
+        pane.add(jlOutputJar, "skip");
+        pane.add(jtfOutputJar, "sgx");
+        pane.add(jbOutputJarBrowse, "wrap para");
+        MiGUtil.addSeparator(pane, res.getString("DSignJar.jlSignature.text"));
+        pane.add(jlSignatureName, "skip");
+        pane.add(jtfSignatureName, "sgx, wrap");
+        pane.add(jlSignatureAlgorithm, "skip");
+        pane.add(jcbSignatureAlgorithm, "sgx, wrap");
+        pane.add(jlDigestAlgorithm, "skip");
+        pane.add(jcbDigestAlgorithm, "sgx, wrap para");
+        MiGUtil.addSeparator(pane, res.getString("DSignJar.jlTimestamp.text"));
+        pane.add(jlAddTimestamp, "skip");
+        pane.add(jcbAddTimestamp, "wrap");
+        pane.add(jlTimestampServerUrl, "skip");
+        pane.add(jcbTimestampServerUrl, "sgx, wrap para");
+        pane.add(new JSeparator(), "spanx, growx, wrap para");
+        pane.add(jpButtons, "right, spanx");
+
+        // actions
+        jbInputJarBrowse.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    CursorUtil.setCursorBusy(DSignJar.this);
+                    inputJarBrowsePressed();
+                } finally {
+                    CursorUtil.setCursorFree(DSignJar.this);
+                }
+            }
+        });
+
+        jcbSignDirectly.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                jtfOutputJar.setEnabled(!jcbSignDirectly.isSelected());
+                jbOutputJarBrowse.setEnabled(!jcbSignDirectly.isSelected());
+            }
+        });
+
+        jbOutputJarBrowse.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    CursorUtil.setCursorBusy(DSignJar.this);
+                    outputJarBrowsePressed();
+                } finally {
+                    CursorUtil.setCursorFree(DSignJar.this);
+                }
+            }
+        });
+
+        jcbAddTimestamp.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                jcbTimestampServerUrl.setEnabled(jcbAddTimestamp.isSelected());
+            }
+        });
+
+
+        jbOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                okPressed();
+            }
+        });
+
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
+        jbCancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
@@ -321,9 +303,16 @@ public class DSignJar extends JEscDialog {
 		getRootPane().setDefaultButton(jbOK);
 
 		pack();
+		setLocationRelativeTo(null);
 	}
 
-	private String convertSignatureName(String signatureName) {
+	private String[] getTsaUrls() {
+        return new String[] { "https://timestamp.geotrust.com/tsa", "http://tsa.starfieldtech.com",
+                "http://www.startssl.com/timestamp", "http://timestamp.globalsign.com/scripts/timstamp.dll",
+                "http://timestamp.comodoca.com/rfc3161"};
+    }
+
+    private String convertSignatureName(String signatureName) {
 		/*
 		 * Convert the supplied signature name to make it valid for use with
 		 * signing, i.e. any characters that are not 'a-z', 'A-Z', '0-9', '_' or
@@ -393,14 +382,23 @@ public class DSignJar extends JEscDialog {
 		return signatureType;
 	}
 
-	/**
-	 * Get chosen digest type.
-	 *
-	 * @return Digest type or null if dialog cancelled
-	 */
-	public DigestType getDigestType() {
-		return digestType;
-	}
+    /**
+     * Get chosen digest type.
+     *
+     * @return Digest type or null if dialog cancelled
+     */
+    public DigestType getDigestType() {
+        return digestType;
+    }
+
+    /**
+     * Get chosen TSA URL.
+     *
+     * @return TSA URL or null if dialog cancelled
+     */
+    public String getTimestampingServerUrl() {
+        return tsaUrl;
+    }
 
 	private boolean verifySignatureName(String signatureName) {
 		/*
@@ -513,11 +511,20 @@ public class DSignJar extends JEscDialog {
 			return;
 		}
 
+        if (jcbAddTimestamp.isSelected() && jcbTimestampServerUrl.getSelectedItem().toString().isEmpty()) {
+            JOptionPane.showMessageDialog(this, res.getString("DSignJar.EmptyTimestampUrl.message"), getTitle(),
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
 		this.inputJarFile = inputJarFile;
 		this.outputJarFile = outputJarFile;
 		this.signatureName = signatureName;
 		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
 		digestType = (DigestType) jcbDigestAlgorithm.getSelectedItem();
+		if (jcbAddTimestamp.isSelected()) {
+		    tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
+		}
 
 		closeDialog();
 	}
@@ -590,4 +597,35 @@ public class DSignJar extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
+
+	   // for quick UI testing
+    public static void main(String[] args) throws Exception {
+        UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        Security.addProvider(new BouncyCastleProvider());
+
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                try {
+                    KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
+                    kpg.initialize(1024, new SecureRandom());
+                    KeyPair kp = kpg.generateKeyPair();
+                    DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name", null);
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                        @Override
+                        public void windowDeactivated(WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }
