@@ -59,17 +59,17 @@ import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.util.encoders.Base64;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.utilities.io.ReadUtil;
 import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 import net.sf.keystore_explorer.utilities.pem.PemInfo;
 import net.sf.keystore_explorer.utilities.pem.PemUtil;
-
-import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Provides utility methods relating to X509 Certificates and CRLs.
@@ -248,6 +248,7 @@ public final class X509CertUtil extends Object {
 		HttpsURLConnection connection = null;
 
 		System.setProperty("javax.net.debug", "ssl");
+		System.setProperty("jsse.enableSNIExtension", "false");
 
 		try {
 			connection = (HttpsURLConnection) url.openConnection();
