@@ -26,7 +26,6 @@ import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 
 import java.io.ByteArrayInputStream;
@@ -447,7 +446,7 @@ public final class KeyStoreUtil {
 
 	private static KeyStore getKeyStoreInstance(KeyStoreType keyStoreType) throws CryptoException {
 		try {
-			if ((keyStoreType == BKS) || (keyStoreType == BKS_V1) || (keyStoreType == UBER) || (keyStoreType == PKCS12)) {
+			if ((keyStoreType == BKS) || (keyStoreType == BKS_V1) || (keyStoreType == UBER)) {
 				if (Security.getProvider(BOUNCY_CASTLE.jce()) == null) {
 					throw new CryptoException(MessageFormat.format(res.getString("NoProvider.exception.message"),
 							BOUNCY_CASTLE.jce()));

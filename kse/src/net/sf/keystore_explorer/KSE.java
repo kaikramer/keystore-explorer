@@ -19,13 +19,14 @@
  */
 package net.sf.keystore_explorer;
 
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
 import java.io.File;
-import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
@@ -34,16 +35,6 @@ import java.util.ResourceBundle;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import net.sf.keystore_explorer.crypto.Password;
-import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
-import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
-import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
-import net.sf.keystore_explorer.gui.CreateApplicationGui;
-import net.sf.keystore_explorer.gui.CurrentDirectory;
-import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.utilities.os.OperatingSystem;
-import net.sf.keystore_explorer.version.Version;
-
 import org.bouncycastle.asn1.x500.X500Name;
 
 import com.sun.jna.Library;
@@ -51,7 +42,12 @@ import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
+import net.sf.keystore_explorer.gui.CreateApplicationGui;
+import net.sf.keystore_explorer.gui.CurrentDirectory;
+import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.os.OperatingSystem;
+import net.sf.keystore_explorer.version.Version;
 
 /**
  * Main class to start the KeyStore Explorer (KSE) application.
@@ -170,18 +166,6 @@ public class KSE {
 		Class<?> bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
 		Provider bcProv = (Provider) bcProvClass.newInstance();
 		Security.addProvider(bcProv);
-
-		// Optimize performance of PKCS #12 by creating and saving a dummy PKCS
-		// #12 KeyStore now - first use of PKCS 12 always lags - we take the hit
-		// now so the user doesn't see lag when they first use PKCS 12
-		try {
-			KeyStore keyStore = KeyStoreUtil.create(KeyStoreType.PKCS12);
-			File tmpFile = File.createTempFile("kse", "tmp");
-			tmpFile.deleteOnExit();
-			KeyStoreUtil.save(keyStore, tmpFile, new Password("123".toCharArray()));
-		} catch (Exception ex) {
-			ex.printStackTrace(); // Ignore - not essential that this works
-		}
 	}
 
 	/**

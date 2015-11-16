@@ -374,20 +374,6 @@
 
     <target name="appbundler" depends="jar" description="Create app bundle">
 
-    	<!--
-        <jarbundler dir="${distDir}" name="${appBundleName}" shortname="${appSimpleName}"
-                    jvmversion="1.6+" version="${appVersion}" extraclasspath="/System/Library/Java"
-                    stubfile="${javaAppStub}" bundleid="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}"
-                    splashfile="${sourceDir}/net/sf/keystore_explorer/gui/images/splash.png"
-                    icon="${kseIcns}" mainClass="net.sf.keystore_explorer.KSE"
-                    vmoptions="-Dkse.app=true">
-            <jarfileset file="${appJar}" />
-            <jarfileset refid="libs"/>
-            <resourcefileset dir="${licensesDir}" includes="*.txt" />
-            <documenttype name="KeyStore" extensions="ks jks keystore pfx p12" iconFile="${keystoreIcns}" role="Editor" />
-        </jarbundler>
-        -->
-
     	<taskdef name="bundleapp" 
     	    classpath="lib/appbundler-1.0ea.jar"
     	    classname="com.oracle.appbundler.AppBundlerTask"/>

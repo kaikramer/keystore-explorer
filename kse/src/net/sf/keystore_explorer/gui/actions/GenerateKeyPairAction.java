@@ -20,7 +20,6 @@
 package net.sf.keystore_explorer.gui.actions;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.awt.Toolkit;
 import java.security.KeyPair;
@@ -74,6 +73,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 						getClass().getResource(res.getString("GenerateKeyPairAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -81,6 +81,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		generateKeyPair();
 	}
@@ -185,7 +186,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 				}
 			}
 
-			Password password = getDummyPassword();
+			Password password = new Password((char[])null);
 			KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
 
 			if (keyStoreType.hasEntryPasswords()) {

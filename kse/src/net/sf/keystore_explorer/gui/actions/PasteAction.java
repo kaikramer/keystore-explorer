@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
-
 import java.awt.Toolkit;
 import java.security.Key;
 import java.security.KeyStore;
@@ -51,8 +49,6 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
  *
  */
 public class PasteAction extends KeyStoreExplorerAction implements HistoryAction {
-
-    private boolean warnPkcs12Password = false;
 
 	/**
 	 * Construct action.
@@ -147,19 +143,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 				KeyPairBufferEntry keyPairBufferEntry = (KeyPairBufferEntry) bufferEntry;
 
 				PrivateKey privateKey = keyPairBufferEntry.getPrivateKey();
-				Password password = null;
-
-				if (keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
-					password = getDummyPassword();
-				} else {
-
-				    // notify user that a default password was set due to keystore type change
-				    if (keyPairBufferEntry.getPassword().equals(Password.getDummyPassword())) {
-				        showWarnPkcs12();
-				    }
-
-					password = keyPairBufferEntry.getPassword();
-				}
+				Password password = keyPairBufferEntry.getPassword();
 
 				Certificate[] certificateChain = keyPairBufferEntry.getCertificateChain();
 
@@ -186,18 +170,6 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 			return false;
 		}
 	}
-
-	   private void showWarnPkcs12() {
-	        if (!warnPkcs12Password) {
-	            warnPkcs12Password = true;
-	            JOptionPane.showMessageDialog(frame, MessageFormat.format(res
-	                    .getString("PasteAction.PasteFromPkcs12Password.message"), new String(
-	                    getDummyPassword().toCharArray())), res
-	                    .getString("PasteAction.Paste.Title"), JOptionPane.INFORMATION_MESSAGE);
-	        }
-	    }
-
-
 
 	private String getUniqueEntryName(String name, KeyStore keyStore) throws KeyStoreException {
 		// Get unique KeyStore entry name based on the one supplied, ie *

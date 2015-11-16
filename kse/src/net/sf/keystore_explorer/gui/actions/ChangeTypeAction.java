@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
-
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -47,7 +45,7 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to change the active KeyStore's type.
- * 
+ *
  */
 public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryAction {
 	private KeyStoreType newType;
@@ -57,7 +55,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 * @param newType
@@ -132,10 +130,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 			KeyStoreState newState = currentState.createBasisForNextState(this);
 			newState.setKeyStore(newKeyStore);
 
-			// If changing type to be PKCS #12 or from PKCS #12 then all key
-			// pair passwords are reset to be 'password' => set default password in new state as well
-			setPkcs12DefaultPasswordInNewState(newKeyStoreType, currentType, newKeyStore, newState);
-
 			currentState.append(newState);
 
 			kseFrame.updateControls(true);
@@ -164,49 +158,41 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 	private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
 			KeyStore currentKeyStore, String currentType, KeyStore newKeyStore, String alias) throws KeyStoreException,
 			CryptoException, NoSuchAlgorithmException, UnrecoverableKeyException {
-	
+
 		Certificate[] certificateChain = currentKeyStore.getCertificateChain(alias);
 		certificateChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificateChain));
-	
+
 		Password password = getEntryPassword(alias, currentState);
 		if (password == null) {
 			return false;
 		}
-	
+
 		Key privateKey = currentKeyStore.getKey(alias, password.toCharArray());
-	
+
 		currentState.setEntryPassword(alias, password);
-	
-		// change from/to PKCS#12 => handle entry password
-		if (currentType.equals(KeyStoreType.PKCS12.jce())) {
-			showWarnPkcs12();
-			password = getDummyPassword(); // Changing from PKCS #12 - password is 'password'
-		} else if (newKeyStoreType == KeyStoreType.PKCS12) {
-			password = getDummyPassword(); // Changing to PKCS #12 - password is 'password'
-		}
-		
+
 		// EC key pair? => might not be supported in target key store type
 		if (KeyStoreUtil.isECKeyPair(alias, currentKeyStore)) {
-			
+
 			String namedCurve = EccUtil.getNamedCurve(currentKeyStore.getKey(alias, password.toCharArray()));
-			
+
 			// EC or curve not supported?
 			if (!newKeyStoreType.supportsECC() || !newKeyStoreType.supportsNamedCurve(namedCurve)) {
 
-				 // show warning and abort change or just skip depending on user choice 
+				 // show warning and abort change or just skip depending on user choice
 				return showWarnNoECC();
 			}
 		}
-	
+
 		newKeyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
 		return true;
 	}
-	
+
 
 	private boolean copySecretKeyEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
 			KeyStore currentKeyStore, KeyStore newKeyStore, String alias) throws KeyStoreException,
 			NoSuchAlgorithmException, UnrecoverableKeyException {
-		
+
 		if (newKeyStoreType.supportsKeyEntries()) {
 
 			Password password = getEntryPassword(alias, currentState);
@@ -227,44 +213,19 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
 		return true;
 	}
-	
-	private void setPkcs12DefaultPasswordInNewState(KeyStoreType newKeyStoreType, String currentType, KeyStore newKeyStore,
-			KeyStoreState newState) throws KeyStoreException {
-		if ((newKeyStoreType == KeyStoreType.PKCS12) || (currentType.equals(KeyStoreType.PKCS12.jce()))) {
-			Enumeration<String> aliases = newKeyStore.aliases();
-	
-			while (aliases.hasMoreElements()) {
-				String alias = aliases.nextElement();
-	
-				if (KeyStoreUtil.isKeyPairEntry(alias, newKeyStore)) {
-					newState.setEntryPassword(alias, getDummyPassword());
-				}
-			}
-		}
-	}
-
-	private void showWarnPkcs12() {
-		if (!warnPkcs12Password) {
-			warnPkcs12Password = true;
-			JOptionPane.showMessageDialog(frame, MessageFormat.format(res
-					.getString("ChangeTypeAction.ChangeFromPkcs12Password.message"), new String(
-					getDummyPassword().toCharArray())), res
-					.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
 
 	private boolean showWarnNoECC() {
 		if (!warnNoECC) {
 			warnNoECC = true;
 			int selected = JOptionPane.showConfirmDialog(frame, res.getString("ChangeTypeAction.WarnNoECC.message"),
 					res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.YES_NO_OPTION);
-			
+
 			if (selected != JOptionPane.YES_OPTION) {
 				// user wants to abort
 				return false;
 			}
-		} 
-		// do not add this entry to new key store 
+		}
+		// do not add this entry to new key store
 		return true;
 	}
 

@@ -19,7 +19,6 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
@@ -88,6 +87,9 @@ import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+
+import com.jgoodies.looks.HeaderStyle;
+import com.jgoodies.looks.Options;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
@@ -184,9 +186,6 @@ import net.sf.keystore_explorer.utilities.buffer.Buffer;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
-
-import com.jgoodies.looks.HeaderStyle;
-import com.jgoodies.looks.Options;
 
 /**
  * KeyStore Explorer application frame. Wraps an actual JFrame.
@@ -2334,17 +2333,12 @@ public final class KseFrame implements StatusBar {
 			}
 
 			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-				Password password = null;
 
-				if (keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
-					// Use dummy password for PKCS12 KeyStore
-					password = getDummyPassword();
-				} else {
-					// Otherwise entry must already be unlocked to get password
-					password = currentState.getEntryPassword(alias);
-				}
+			    // Otherwise entry must already be unlocked to get password
+				Password password = currentState.getEntryPassword(alias);
+				KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-				if (password == null) {
+				if (password == null && type.hasEntryPasswords()) {
 					JOptionPane.showMessageDialog(frame, res.getString("KseFrame.NoDragLockedKeyPairEntry.message"),
 							KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
 					return null;
@@ -2489,7 +2483,7 @@ public final class KseFrame implements StatusBar {
 		setDefaultStatusBarText();
 
 		// Passwords, and therefore unlocking, are not relevant for PKCS #12 or KeyStores that are not file-based
-		if (type == PKCS12 || !type.isFileBased()) {
+		if (!type.hasEntryPasswords() || !type.isFileBased()) {
 			unlockKeyPairAction.setEnabled(false);
 			setKeyPairPasswordAction.setEnabled(false);
 			unlockKeyAction.setEnabled(false);

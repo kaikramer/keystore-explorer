@@ -20,7 +20,6 @@
 package net.sf.keystore_explorer.gui.actions;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.awt.Toolkit;
 import java.security.KeyStore;
@@ -51,12 +50,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to import a key pair.
- * 
+ *
  */
 public class ImportKeyPairAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -144,9 +143,10 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 				}
 			}
 
-			Password password = getDummyPassword();
+			Password password = new Password((char[])null);
+			KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"), DOCUMENT_MODAL,
 						applicationSettings.getPasswordQualityConfig());
@@ -222,16 +222,17 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 				}
 			}
 
-			Password password = getDummyPassword();
+			Password password = new Password((char[])null);
+			KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"), DOCUMENT_MODAL,
 						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
-
+	
 				if (password == null) {
 					return;
 				}
@@ -300,16 +301,17 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 				}
 			}
 
-			Password password = getDummyPassword();
+			Password password = new Password((char[])null);
+			KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"), DOCUMENT_MODAL,
 						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
-
+	
 				if (password == null) {
 					return;
 				}
@@ -378,16 +380,17 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 				}
 			}
 
-			Password password = getDummyPassword();
+			Password password = new Password((char[])null);
+			KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"), DOCUMENT_MODAL,
 						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
-
+	
 				if (password == null) {
 					return;
 				}

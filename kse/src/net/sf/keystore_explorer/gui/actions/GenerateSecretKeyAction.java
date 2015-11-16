@@ -20,7 +20,6 @@
 package net.sf.keystore_explorer.gui.actions;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -47,12 +46,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to generate a secret key.
- * 
+ *
  */
 public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -72,6 +71,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 						getClass().getResource(res.getString("GenerateSecretKeyAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -79,6 +79,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		generateSecret();
 	}
@@ -136,9 +137,10 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 				}
 			}
 
-			Password password = getDummyPassword();
+			Password password = new Password((char[])null);
+			KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
+			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"), DOCUMENT_MODAL,
 						applicationSettings.getPasswordQualityConfig());

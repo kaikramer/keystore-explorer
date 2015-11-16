@@ -20,7 +20,6 @@
 package net.sf.keystore_explorer.gui.dialogs.importexport;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -58,6 +57,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
@@ -73,12 +74,10 @@ import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 /**
  * Dialog that allows the user to pick a PKCS #12 file to for import as a key
  * pair.
- * 
+ *
  */
 public class DImportKeyPairPkcs12 extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -102,7 +101,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 	/**
 	 * Creates a new DImportKeyPairPkcs12 dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 */
@@ -301,7 +300,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 				String alias = (String) aliases.nextElement();
 
 				if (pkcs12.isKeyEntry(alias)) {
-					privKey = (PrivateKey) pkcs12.getKey(alias, getDummyPassword().toCharArray());
+					privKey = (PrivateKey) pkcs12.getKey(alias, pkcs12Password.toCharArray());
 					Certificate[] certs = pkcs12.getCertificateChain(alias);
 					if ((certs != null) && (certs.length > 0)) {
 						for (int i = 0; i < certs.length; i++) {
@@ -318,11 +317,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 				for (Enumeration aliases = pkcs12.aliases(); aliases.hasMoreElements();) {
 					String alias = (String) aliases.nextElement();
 
-					if (pkcs12.isKeyEntry(alias)) {
-						privKey = (PrivateKey) pkcs12.getKey(alias, getDummyPassword().toCharArray());
-					} else {
-						certsList.add(pkcs12.getCertificate(alias));
-					}
+					certsList.add(pkcs12.getCertificate(alias));
 				}
 			}
 
@@ -369,7 +364,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 	/**
 	 * Get the private part of the key pair chosen by the user for import.
-	 * 
+	 *
 	 * @return The private key or null if the user has not chosen a key pair
 	 */
 	public PrivateKey getPrivateKey() {
@@ -379,7 +374,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 	/**
 	 * Get the certificate chain part of the key pair chosen by the user for
 	 * import.
-	 * 
+	 *
 	 * @return The certificate chain or null if the user has not chosen a key
 	 *         pair
 	 */

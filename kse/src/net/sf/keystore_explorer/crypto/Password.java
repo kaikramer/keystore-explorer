@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 /**
  * Wraps a character array based password providing the ability to null the
  * password to remove it from memory for security.
- * 
+ *
  */
 public class Password {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/resources");
@@ -32,15 +32,8 @@ public class Password {
 	private boolean nulled;
 
 	/**
-	 * Dummy password to use for PKCS #12 KeyStore entries (passwords are not
-	 * applicable for these)
-	 */
-	private static final Password DUMMY_PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r',
-			'd' });
-
-	/**
 	 * Construct password wrapper.
-	 * 
+	 *
 	 * @param password
 	 *            Password to wrap
 	 */
@@ -51,7 +44,7 @@ public class Password {
 
 	/**
 	 * Copy construct password wrapper.
-	 * 
+	 *
 	 * @param password
 	 *            Password wrapper to copy
 	 */
@@ -65,10 +58,10 @@ public class Password {
 
 	/**
 	 * Get wrapped password as a char array.
-	 * 
+	 *
 	 * @return Wrapped password
 	 * @throws IllegalStateException
-	 *             If pasword requested after it has been nulled
+	 *             If password requested after it has been nulled
 	 */
 	public char[] toCharArray() throws IllegalStateException {
 		if (nulled) {
@@ -80,7 +73,7 @@ public class Password {
 
 	/**
 	 * Get wrapped password as a byte array.
-	 * 
+	 *
 	 * @return Wrapped password
 	 * @throws IllegalStateException
 	 *             If pasword requested after it has been nulled
@@ -110,7 +103,7 @@ public class Password {
 
 	/**
 	 * Has the wrapped password been nulled?
-	 * 
+	 *
 	 * @return True is it has
 	 */
 	public boolean isNulled() {
@@ -118,22 +111,14 @@ public class Password {
 	}
 
 	/**
-	 * Get a copy of the dummy password for use with PKCS #12 KeyStore entries.
-	 * 
-	 * @return Dummy password, 'password'
-	 */
-	public static Password getDummyPassword() {
-		return new Password(DUMMY_PASSWORD);
-	}
-
-	/**
 	 * Is the supplied object equal to the password wrapper, ie do they wrap the
 	 * same password.
-	 * 
+	 *
 	 * @param object
 	 *            Object to check
 	 * @return True if the object is equal
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object == this) {
 			return true;
@@ -162,6 +147,7 @@ public class Password {
 	 * Nulls the password. Just a fail-safe, applications should null the
 	 * password programmatically.
 	 */
+	@Override
 	protected void finalize() {
 		nullPassword();
 	}

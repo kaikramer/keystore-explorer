@@ -19,6 +19,8 @@
  */
 package net.sf.keystore_explorer.gui;
 
+import static net.sf.keystore_explorer.crypto.KeyType.SYMMETRIC;
+
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyStore;
@@ -40,7 +42,6 @@ import javax.swing.table.AbstractTableModel;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
-import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
@@ -49,11 +50,10 @@ import net.sf.keystore_explorer.crypto.secretkey.SecretKeyUtil;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
-import static net.sf.keystore_explorer.crypto.KeyType.SYMMETRIC;
 
 /**
  * The table model used to display a KeyStore's entries sorted by alias name.
- * 
+ *
  */
 public class KeyStoreTableModel extends AbstractTableModel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -88,7 +88,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	/**
 	 * Load the KeyStoreTableModel with the entries from a KeyStore.
-	 * 
+	 *
 	 * @param history
 	 *            KeyStore history
 	 * @throws GeneralSecurityException
@@ -220,15 +220,10 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				return KeyPairUtil.getKeyInfo(x509Chain[0].getPublicKey());
 			} else {
 				// Key entry - get key info if entry is unlocked
-				if ((currentState.getEntryPassword(alias) != null)
-						|| (keyStore.getType().equals(KeyStoreType.PKCS12.jce()))) {
-					char[] keyPassword = null;
+                if (currentState.getEntryPassword(alias) != null) {
+                    char[] keyPassword = null;
 
-					if (keyStore.getType().equals(KeyStoreType.PKCS12.jce())) {
-						keyPassword = Password.getDummyPassword().toCharArray();
-					} else {
-						keyPassword = currentState.getEntryPassword(alias).toCharArray();
-					}
+					keyPassword = currentState.getEntryPassword(alias).toCharArray();
 
 					Key key = keyStore.getKey(alias, keyPassword);
 					if (key instanceof SecretKey) {
@@ -262,7 +257,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the number of columns in the table.
-	 * 
+	 *
 	 * @return The number of columns
 	 */
 	public int getColumnCount() {
@@ -271,7 +266,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the number of rows in the table.
-	 * 
+	 *
 	 * @return The number of rows
 	 */
 	public int getRowCount() {
@@ -280,7 +275,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the name of the column at the given position.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column name
@@ -291,7 +286,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the cell value at the given row and column position.
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col
@@ -304,7 +299,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the class of the values at the provided column.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column cells' class
@@ -330,7 +325,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	/**
 	 * Is the cell at the given row and column position editable?
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col

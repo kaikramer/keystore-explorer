@@ -20,7 +20,6 @@
 package net.sf.keystore_explorer.gui.actions;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -86,6 +85,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	 * @param evt
 	 *            Action event
 	 */
+	@Override
 	public void actionPerformed(ActionEvent evt) {
 		try {
 			kseFrame.setDefaultStatusBarText();
@@ -119,7 +119,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
 		if (password == null) {
 			if (!KeyStoreType.resolveJce(state.getKeyStore().getType()).hasEntryPasswords()) {
-				password = getDummyPassword();
+				password = new Password((char[])null);
 			} else {
 				password = unlockEntry(alias, state);
 			}
@@ -260,7 +260,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 		for (int i = 0; i < histories.length; i++) {
 			File f = histories[i].getFile();
 
-			if ((f != null) && (f.equals(keyStoreFile))) {
+			if (f != null && f.equals(keyStoreFile)) {
 				return true;
 			}
 		}

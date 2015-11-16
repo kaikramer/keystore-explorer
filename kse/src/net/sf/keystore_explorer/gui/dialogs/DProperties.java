@@ -85,11 +85,10 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 import net.sf.keystore_explorer.utilities.io.IndentChar;
 import net.sf.keystore_explorer.utilities.io.IndentSequence;
-import static net.sf.keystore_explorer.crypto.Password.getDummyPassword;
 
 /**
  * Displays the properties of a supplied KeyStore.
- * 
+ *
  */
 public class DProperties extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -109,7 +108,7 @@ public class DProperties extends JEscDialog {
 
 	/**
 	 * Creates a new DProperties dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param history
@@ -596,12 +595,6 @@ public class DProperties extends JEscDialog {
 
 	private Password getEntryPassword(String alias) {
 		Password password = currentState.getEntryPassword(alias);
-
-		if (password == null) {
-			if (currentState.getKeyStore().getType().equals(KeyStoreType.PKCS12.jce())) {
-				password = getDummyPassword();
-			}
-		}
 
 		return password;
 	}

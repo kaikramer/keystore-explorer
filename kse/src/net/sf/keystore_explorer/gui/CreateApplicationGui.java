@@ -93,7 +93,7 @@ public class CreateApplicationGui implements Runnable {
 			}
 
 			if (JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
-//				upgradeCryptoStrength();
+				upgradeCryptoStrength();
 			}
 
 			final KseFrame kseFrame = new KseFrame();
