@@ -21,6 +21,7 @@ package net.sf.keystore_explorer.gui;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
+import java.awt.Font;
 import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.io.File;
@@ -30,12 +31,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
@@ -90,6 +93,7 @@ public class CreateApplicationGui implements Runnable {
 			}
 
 			initLookAndFeel(applicationSettings);
+			//setDefaultSize(14);
 
 			if (!applicationSettings.getLicenseAgreed()) {
 				displayLicenseAgreement(applicationSettings);
@@ -120,6 +124,21 @@ public class CreateApplicationGui implements Runnable {
 			closeSplash();
 		}
 
+	}
+
+	private static void setDefaultSize(int size) {
+		Set<Object> keySet = UIManager.getLookAndFeelDefaults().keySet();
+		Object[] keys = keySet.toArray(new Object[keySet.size()]);
+
+		for (Object key : keys) {
+			if (key != null && key.toString().toLowerCase().contains("font")) {
+				Font font = UIManager.getDefaults().getFont(key);
+				if (font != null) {
+					font = font.deriveFont((float) size);
+					UIManager.put(key, font);
+				}
+			}
+		}
 	}
 
 

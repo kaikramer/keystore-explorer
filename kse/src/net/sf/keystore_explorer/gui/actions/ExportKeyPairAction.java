@@ -42,12 +42,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to export the selected key pair entry as PKCS #12.
- * 
+ *
  */
 public class ExportKeyPairAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -66,6 +66,7 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		File exportFile = null;
 
@@ -101,7 +102,7 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
 			KeyStore pkcs12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
 
 			certificates = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificates));
-			pkcs12.setKeyEntry(alias, privateKey, new char[0], certificates);
+			pkcs12.setKeyEntry(alias, privateKey, exportPassword.toCharArray(), certificates);
 
 			KeyStoreUtil.save(pkcs12, exportFile, exportPassword);
 
