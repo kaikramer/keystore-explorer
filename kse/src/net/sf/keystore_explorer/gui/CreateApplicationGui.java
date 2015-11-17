@@ -43,6 +43,8 @@ import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
 import net.sf.keystore_explorer.gui.actions.OpenAction;
 import net.sf.keystore_explorer.gui.crypto.DUpgradeCryptoStrength;
 import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.gui.error.DProblem;
+import net.sf.keystore_explorer.gui.error.Problem;
 import net.sf.keystore_explorer.gui.licenseagreement.DLicenseAgreement;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.JavaVersion;
@@ -80,6 +82,7 @@ public class CreateApplicationGui implements Runnable {
 	/**
 	 * Create and show KeyStore Explorer.
 	 */
+	@Override
 	public void run() {
 		try {
 			if (!checkJreVersion()) {
@@ -193,26 +196,51 @@ public class CreateApplicationGui implements Runnable {
 		JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.UpgradeRequired.message"),
 				KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
-		DUpgradeCryptoStrength dUpgradeCryptoStrength = new DUpgradeCryptoStrength(new JFrame());
-		dUpgradeCryptoStrength.setLocationRelativeTo(null);
-		dUpgradeCryptoStrength.setVisible(true);
+		if (OperatingSystem.isWindows()) {
 
-		if (dUpgradeCryptoStrength.hasCryptoStrengthBeenUpgraded()) {
-			// Crypto strength upgraded - restart required to take effect
-			JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.Upgraded.message"),
-					KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+			// start upgrade assistant with elevated permissions
+			File kseInstallDir = new File(System.getProperty("kse.install.dir"));
+			File cuaExe = new File(kseInstallDir, "cua.exe");
 
-			KseRestart.restart();
-			System.exit(0);
-		} else if (dUpgradeCryptoStrength.hasCryptoStrengthUpgradeFailed()) {
-			// Manual install instructions have already been displayed
-			System.exit(1);
+			// cmd.exe is workaround for http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6410605
+			String toExec[] = new String[] { "cmd.exe", "/C", cuaExe.getPath() };
+
+			try {
+				Process process = Runtime.getRuntime().exec(toExec);
+			} catch (Exception ex) {
+	            Problem problem = new Problem("Cannot run Crypto Strength Upgrade Assistant.", null, ex);
+	            JFrame frame = new JFrame();
+				DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCrl.Title"),
+	                    DOCUMENT_MODAL, problem);
+	            dProblem.setLocationRelativeTo(frame);
+	            dProblem.setVisible(true);
+			} finally {
+				System.exit(0);
+			}
+
 		} else {
-			// Crypto strength not upgraded - exit as upgrade required
-			JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.NotUpgraded.message"),
-					KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
 
-			System.exit(1);
+			DUpgradeCryptoStrength dUpgradeCryptoStrength = new DUpgradeCryptoStrength(new JFrame());
+			dUpgradeCryptoStrength.setLocationRelativeTo(null);
+			dUpgradeCryptoStrength.setVisible(true);
+
+			if (dUpgradeCryptoStrength.hasCryptoStrengthBeenUpgraded()) {
+				// Crypto strength upgraded - restart required to take effect
+				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.Upgraded.message"),
+						KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+
+				KseRestart.restart();
+				System.exit(0);
+			} else if (dUpgradeCryptoStrength.hasCryptoStrengthUpgradeFailed()) {
+				// Manual install instructions have already been displayed
+				System.exit(1);
+			} else {
+				// Crypto strength not upgraded - exit as upgrade required
+				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.NotUpgraded.message"),
+						KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
+
+				System.exit(1);
+			}
 		}
 	}
 
