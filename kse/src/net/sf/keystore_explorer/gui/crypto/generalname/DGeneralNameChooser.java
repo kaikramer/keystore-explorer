@@ -23,13 +23,16 @@ import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.security.Security;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -45,16 +48,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-
-import net.sf.keystore_explorer.gui.JEscDialog;
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
-import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.gui.net.JIpAddress;
-import net.sf.keystore_explorer.gui.oid.JObjectId;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -62,10 +59,17 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
+import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.gui.oid.JObjectId;
 
 /**
  * Dialog to choose a general name.
- * 
+ *
  */
 public class DGeneralNameChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/generalname/resources");
@@ -86,7 +90,7 @@ public class DGeneralNameChooser extends JEscDialog {
 	private JLabel jlGeneralNameValue;
 	private JDistinguishedName jdnDirectoryName;
 	private JTextField jtfDnsName;
-	private JIpAddress jipaIpAddress;
+	private JTextField jtfIpAddress;
 	private JObjectId joiRegisteredId;
 	private JTextField jtfRfc822Name;
 	private JTextField jtfUniformResourceIdentifier;
@@ -98,7 +102,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DGeneralNameChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -113,7 +117,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DGeneralNameChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -127,9 +131,11 @@ public class DGeneralNameChooser extends JEscDialog {
 	}
 
 	private void initComponents(GeneralName generalName) {
+
 		jrbDirectoryName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDirectoryName.text"));
 		jrbDirectoryName.setToolTipText(res.getString("DGeneralNameChooser.jrbDirectoryName.tooltip"));
 		jrbDirectoryName.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				generalNameTypeChanged();
 			}
@@ -138,6 +144,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jrbDnsName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDnsName.text"));
 		jrbDnsName.setToolTipText(res.getString("DGeneralNameChooser.jrbDnsName.tooltip"));
 		jrbDnsName.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				generalNameTypeChanged();
 			}
@@ -146,6 +153,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jrbIpAddress = new JRadioButton(res.getString("DGeneralNameChooser.jrbIpAddress.text"));
 		jrbIpAddress.setToolTipText(res.getString("DGeneralNameChooser.jrbIpAddress.tooltip"));
 		jrbIpAddress.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				generalNameTypeChanged();
 			}
@@ -154,6 +162,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jrbRegisteredId = new JRadioButton(res.getString("DGeneralNameChooser.jrbRegisteredId.text"));
 		jrbRegisteredId.setToolTipText(res.getString("DGeneralNameChooser.jrbRegisteredId.tooltip"));
 		jrbRegisteredId.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				generalNameTypeChanged();
 			}
@@ -162,6 +171,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jrbRfc822Name = new JRadioButton(res.getString("DGeneralNameChooser.jrbRfc822Name.text"));
 		jrbRfc822Name.setToolTipText(res.getString("DGeneralNameChooser.jrbRfc822Name.tooltip"));
 		jrbRfc822Name.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				generalNameTypeChanged();
 			}
@@ -172,6 +182,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jrbUniformResourceIdentifier.setToolTipText(res
 				.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.tooltip"));
 		jrbUniformResourceIdentifier.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				generalNameTypeChanged();
 			}
@@ -222,7 +233,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
 		jdnDirectoryName = new JDistinguishedName(res.getString("DGeneralNameChooser.DirectoryName.Title"), 20, true);
 		jtfDnsName = new JTextField(30);
-		jipaIpAddress = new JIpAddress();
+		jtfIpAddress = new JTextField(30);
 		joiRegisteredId = new JObjectId(res.getString("DGeneralNameChooser.RegisteredId.Title"));
 		jtfRfc822Name = new JTextField(30);
 		jtfUniformResourceIdentifier = new JTextField(30);
@@ -239,6 +250,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DGeneralNameChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -246,6 +258,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -253,6 +266,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -283,7 +297,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		} else if (jrbDnsName.isSelected()) {
 			jpGeneralNameValue.add(jtfDnsName);
 		} else if (jrbIpAddress.isSelected()) {
-			jpGeneralNameValue.add(jipaIpAddress);
+			jpGeneralNameValue.add(jtfIpAddress);
 		} else if (jrbRegisteredId.isSelected()) {
 			jpGeneralNameValue.add(joiRegisteredId);
 		} else if (jrbRfc822Name.isSelected()) {
@@ -312,12 +326,18 @@ public class DGeneralNameChooser extends JEscDialog {
 			}
 			case GeneralName.iPAddress: {
 				jrbIpAddress.setSelected(true);
-				jipaIpAddress.setIpAddress(((ASN1OctetString) generalName.getName()).getOctets());
+				try {
+					byte[] octets = ((ASN1OctetString) generalName.getName()).getOctets();
+					InetAddress inetAddress = InetAddress.getByAddress(octets);
+					jtfIpAddress.setText(inetAddress.getHostAddress());
+				} catch (UnknownHostException e) {
+					// ignore because it comes from extension
+				}
 				break;
 			}
 			case GeneralName.registeredID: {
 				jrbRegisteredId.setSelected(true);
-				joiRegisteredId.setObjectId(((ASN1ObjectIdentifier) generalName.getName()));
+				joiRegisteredId.setObjectId((ASN1ObjectIdentifier) generalName.getName());
 				break;
 			}
 			case GeneralName.rfc822Name: {
@@ -336,7 +356,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
 	/**
 	 * Get selected general name.
-	 * 
+	 *
 	 * @return General name, or null if none
 	 */
 	public GeneralName getGeneralName() {
@@ -369,8 +389,24 @@ public class DGeneralNameChooser extends JEscDialog {
 
 				newGeneralName = new GeneralName(GeneralName.dNSName, new DERIA5String(dnsName));
 			} else if (jrbIpAddress.isSelected()) {
-				newGeneralName = new GeneralName(GeneralName.iPAddress,
-						new DEROctetString(jipaIpAddress.getIpAddress()));
+
+				String ipAddress = jtfIpAddress.getText().trim();
+
+				if (ipAddress.length() == 0) {
+					JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.IpAddressValueReq.message"),
+							getTitle(), JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				try {
+					InetAddress inetAddr = InetAddress.getByName(ipAddress);
+					newGeneralName = new GeneralName(GeneralName.iPAddress,	new DEROctetString(inetAddr.getAddress()));
+				} catch (UnknownHostException e) {
+					JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
+							getTitle(), JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
 			} else if (jrbRegisteredId.isSelected()) {
 				ASN1ObjectIdentifier registeredId = joiRegisteredId.getObjectId();
 
@@ -425,5 +461,32 @@ public class DGeneralNameChooser extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	public static void main(String[] args) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+			public void run() {
+                try {
+                    DGeneralNameChooser dialog = new DGeneralNameChooser(new javax.swing.JFrame(), "GeneralNameChooser",
+                    		null);
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                        @Override
+                        public void windowDeactivated(java.awt.event.WindowEvent e) {
+                        	System.exit(0);
+                        };
+                    });
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 	}
 }

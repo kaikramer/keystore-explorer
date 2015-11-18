@@ -20,6 +20,8 @@
 package net.sf.keystore_explorer.crypto.x509;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -38,7 +40,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 
 /**
  * General Name utility methods.
- * 
+ *
  */
 public class GeneralNameUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
@@ -51,13 +53,13 @@ public class GeneralNameUtil {
 	 * directoryName [4] Name, ediPartyName [5] EDIPartyName,
 	 * uniformResourceIdentifier [6] DERIA5String, iPAddress [7] OCTET STRING,
 	 * registeredID [8] OBJECT IDENTIFIER }
-	 * 
+	 *
 	 * AnotherName ::= ASN1Sequence { type-id OBJECT IDENTIFIER, value [0]
 	 * EXPLICIT ANY DEFINED BY type-id }
-	 * 
+	 *
 	 * EDIPartyName ::= ASN1Sequence { nameAssigner [0] DirectoryString
 	 * OPTIONAL, partyName [1] DirectoryString }
-	 * 
+	 *
 	 * DirectoryString ::= CHOICE { teletexString TeletexString (SIZE (1..MAX),
 	 * printableString PrintableString (SIZE (1..MAX)), universalString
 	 * UniversalString (SIZE (1..MAX)), utf8String UTF8String (SIZE (1.. MAX)),
@@ -70,7 +72,7 @@ public class GeneralNameUtil {
 	 * Get string representation for General names that cannot cause a
 	 * IOException to be thrown. Unsupported are ediPartyName, otherName and
 	 * x400Address. Returns a blank string for these.
-	 * 
+	 *
 	 * @param generalName
 	 *            General name
 	 * @return String representation of general name
@@ -93,21 +95,18 @@ public class GeneralNameUtil {
 
 			byte[] ipAddressBytes = ipAddress.getOctets();
 
-			// Output the IP Address components one at a time separated by dots
-			StringBuffer sbIpAddress = new StringBuffer();
+			String ipAddressString = "";
 
-			for (int i = 0; i < ipAddressBytes.length; i++) {
-				byte b = ipAddressBytes[i];
-
-				// Convert from (possibly negative) byte to positive int
-				sbIpAddress.append(b & 0xFF);
-
-				if ((i + 1) < ipAddressBytes.length) {
-					sbIpAddress.append('.');
+			try {
+				if (ipAddressBytes.length == 4 || ipAddressBytes.length == 16) {
+					InetAddress addr = InetAddress.getByAddress(ipAddressBytes);
+					ipAddressString = addr.getHostAddress();
 				}
+			} catch (UnknownHostException e) {
+				// ignore
 			}
 
-			return MessageFormat.format(res.getString("GeneralNameUtil.IpAddressGeneralName"), sbIpAddress.toString());
+			return MessageFormat.format(res.getString("GeneralNameUtil.IpAddressGeneralName"), ipAddressString);
 		}
 		case GeneralName.registeredID: {
 			ASN1ObjectIdentifier registeredId = (ASN1ObjectIdentifier) generalName.getName();
@@ -133,7 +132,7 @@ public class GeneralNameUtil {
 
 	/**
 	 * Get string representation for all General Names.
-	 * 
+	 *
 	 * @param generalName
 	 *            General name
 	 * @return String representation of general name
@@ -147,7 +146,7 @@ public class GeneralNameUtil {
 			/* EDIPartyName ::= SEQUENCE {
 			 *      nameAssigner            [0]     DirectoryString OPTIONAL,
 			 *      partyName               [1]     DirectoryString }
-			 */      
+			 */
 			ASN1Sequence ediPartyName = (ASN1Sequence) generalName.getName();
 
 			DirectoryString nameAssigner = DirectoryString.getInstance(ediPartyName.getObjectAt(0));
@@ -168,13 +167,13 @@ public class GeneralNameUtil {
 			}
 		}
 		case GeneralName.otherName: {
-			
+
 			/* OtherName ::= SEQUENCE {
 			 *      type-id    OBJECT IDENTIFIER,
 			 *      value      [0] EXPLICIT ANY DEFINED BY type-id }
-			 */      
+			 */
 			ASN1Sequence otherName = (ASN1Sequence) generalName.getName();
-			
+
 			ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) otherName.getObjectAt(0);
 			ASN1Encodable value = otherName.getObjectAt(1);
 
@@ -184,7 +183,7 @@ public class GeneralNameUtil {
 		}
 		case GeneralName.x400Address: {
 			/*
-			 * No support for this at the moment - just get a hex dump 
+			 * No support for this at the moment - just get a hex dump
 			 * The Oracle CertificateFactory blows up if a certificate extension contains this anyway
 			 */
 			ASN1Encodable x400Address = generalName.getName();
