@@ -25,18 +25,20 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import net.sf.keystore_explorer.utilities.io.HexUtil;
-import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x500.DirectoryString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
+
+import net.sf.keystore_explorer.utilities.io.HexUtil;
+import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 
 /**
  * General Name utility methods.
@@ -124,10 +126,31 @@ public class GeneralNameUtil {
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.UriGeneralName"), uri.getString());
 		}
+		case GeneralName.otherName: {
+			// we currently only support UPN in otherName
+			String upn = parseUPN(generalName);
+			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"), "UPN", upn);
+		}
 		default: {
 			return "";
 		}
 		}
+	}
+
+	/**
+	 * Parse UPN/otherName
+	 *
+	 * @param generalName otherName object
+	 * @return UPN as string
+	 */
+	public static String parseUPN(GeneralName generalName) {
+		// OtherName ::= SEQUENCE {
+		//    type-id OBJECT IDENTIFIER,
+		//    value [0] EXPLICIT ANY DEFINED BY type-id }
+		ASN1Sequence asn1Sequence = (ASN1Sequence) generalName.getName();
+		DERTaggedObject derTaggedObject = (DERTaggedObject) asn1Sequence.getObjectAt(1);
+		DERUTF8String upn = DERUTF8String.getInstance(derTaggedObject.getObject());
+		return upn.getString();
 	}
 
 	/**

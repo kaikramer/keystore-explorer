@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.gui.crypto.generalname;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -36,7 +36,6 @@ import java.security.Security;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -46,21 +45,25 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import net.miginfocom.swing.MigLayout;
+import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
@@ -72,20 +75,20 @@ import net.sf.keystore_explorer.gui.oid.JObjectId;
  *
  */
 public class DGeneralNameChooser extends JEscDialog {
+	private static final String UPN_OID = "1.3.6.1.4.1.311.20.2.3";
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/generalname/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpGeneralName;
-	private JPanel jpGeneralNameType;
 	private JLabel jlGeneralNameType;
-	private JPanel jpGeneralNameTypes;
 	private JRadioButton jrbDirectoryName;
 	private JRadioButton jrbDnsName;
 	private JRadioButton jrbIpAddress;
 	private JRadioButton jrbRegisteredId;
 	private JRadioButton jrbRfc822Name;
 	private JRadioButton jrbUniformResourceIdentifier;
+	private JRadioButton jrbPrincipalName;
 	private JPanel jpGeneralNameValue;
 	private JLabel jlGeneralNameValue;
 	private JDistinguishedName jdnDirectoryName;
@@ -94,6 +97,7 @@ public class DGeneralNameChooser extends JEscDialog {
 	private JObjectId joiRegisteredId;
 	private JTextField jtfRfc822Name;
 	private JTextField jtfUniformResourceIdentifier;
+	private JTextField jtfPrincipalName;
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
@@ -134,59 +138,26 @@ public class DGeneralNameChooser extends JEscDialog {
 
 		jrbDirectoryName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDirectoryName.text"));
 		jrbDirectoryName.setToolTipText(res.getString("DGeneralNameChooser.jrbDirectoryName.tooltip"));
-		jrbDirectoryName.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
 
 		jrbDnsName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDnsName.text"));
 		jrbDnsName.setToolTipText(res.getString("DGeneralNameChooser.jrbDnsName.tooltip"));
-		jrbDnsName.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
 
 		jrbIpAddress = new JRadioButton(res.getString("DGeneralNameChooser.jrbIpAddress.text"));
 		jrbIpAddress.setToolTipText(res.getString("DGeneralNameChooser.jrbIpAddress.tooltip"));
-		jrbIpAddress.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
 
 		jrbRegisteredId = new JRadioButton(res.getString("DGeneralNameChooser.jrbRegisteredId.text"));
 		jrbRegisteredId.setToolTipText(res.getString("DGeneralNameChooser.jrbRegisteredId.tooltip"));
-		jrbRegisteredId.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
 
 		jrbRfc822Name = new JRadioButton(res.getString("DGeneralNameChooser.jrbRfc822Name.text"));
 		jrbRfc822Name.setToolTipText(res.getString("DGeneralNameChooser.jrbRfc822Name.tooltip"));
-		jrbRfc822Name.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
 
 		jrbUniformResourceIdentifier = new JRadioButton(
 				res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.text"));
-		jrbUniformResourceIdentifier.setToolTipText(res
-				.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.tooltip"));
-		jrbUniformResourceIdentifier.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
+		jrbUniformResourceIdentifier
+				.setToolTipText(res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.tooltip"));
+
+		jrbPrincipalName = new JRadioButton(res.getString("DGeneralNameChooser.jrbPrincipalName.text"));
+		jrbPrincipalName.setToolTipText(res.getString("DGeneralNameChooser.jrbPrincipalName.tooltip"));
 
 		ButtonGroup bgGeneralName = new ButtonGroup();
 		bgGeneralName.add(jrbDirectoryName);
@@ -195,41 +166,11 @@ public class DGeneralNameChooser extends JEscDialog {
 		bgGeneralName.add(jrbRegisteredId);
 		bgGeneralName.add(jrbRfc822Name);
 		bgGeneralName.add(jrbUniformResourceIdentifier);
-
-		JPanel jpFirstColumn = new JPanel();
-		jpFirstColumn.setLayout(new BoxLayout(jpFirstColumn, BoxLayout.Y_AXIS));
-
-		jpFirstColumn.add(jrbDirectoryName);
-		jpFirstColumn.add(jrbDnsName);
-
-		JPanel jpSecondColumn = new JPanel();
-		jpSecondColumn.setLayout(new BoxLayout(jpSecondColumn, BoxLayout.Y_AXIS));
-
-		jpSecondColumn.add(jrbIpAddress);
-		jpSecondColumn.add(jrbRegisteredId);
-
-		JPanel jpThirdColumn = new JPanel();
-		jpThirdColumn.setLayout(new BoxLayout(jpThirdColumn, BoxLayout.Y_AXIS));
-
-		jpThirdColumn.add(jrbRfc822Name);
-		jpThirdColumn.add(jrbUniformResourceIdentifier);
-
-		jpGeneralNameTypes = new JPanel();
-		jpGeneralNameTypes.setLayout(new BoxLayout(jpGeneralNameTypes, BoxLayout.X_AXIS));
-
-		jpGeneralNameTypes.add(jpFirstColumn);
-		jpGeneralNameTypes.add(jpSecondColumn);
-		jpGeneralNameTypes.add(jpThirdColumn);
+		bgGeneralName.add(jrbPrincipalName);
 
 		jlGeneralNameType = new JLabel(res.getString("DGeneralNameChooser.jlGeneralNameType.text"));
-		jlGeneralNameType.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		jpGeneralNameType = new JPanel(new BorderLayout(0, 0));
-
-		jpGeneralNameType.add(jlGeneralNameType, BorderLayout.NORTH);
-		jpGeneralNameType.add(jpGeneralNameTypes, BorderLayout.SOUTH);
-
 		jlGeneralNameValue = new JLabel(res.getString("DGeneralNameChooser.jlGeneralNameValue.text"));
+		jpGeneralNameValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		jdnDirectoryName = new JDistinguishedName(res.getString("DGeneralNameChooser.DirectoryName.Title"), 20, true);
 		jtfDnsName = new JTextField(30);
@@ -237,34 +178,84 @@ public class DGeneralNameChooser extends JEscDialog {
 		joiRegisteredId = new JObjectId(res.getString("DGeneralNameChooser.RegisteredId.Title"));
 		jtfRfc822Name = new JTextField(30);
 		jtfUniformResourceIdentifier = new JTextField(30);
-
-		jpGeneralNameValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		jpGeneralName = new JPanel(new BorderLayout(0, 0));
-
-		jpGeneralName.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
-
-		jpGeneralName.add(jpGeneralNameType, BorderLayout.NORTH);
-		jpGeneralName.add(jpGeneralNameValue, BorderLayout.SOUTH);
+		jtfPrincipalName = new JTextField(30);
 
 		jbOK = new JButton(res.getString("DGeneralNameChooser.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
+		jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[]", ""));
+        pane.add(jlGeneralNameType, "spanx, wrap");
+        pane.add(jrbDirectoryName, "");
+        pane.add(jrbDnsName, "");
+        pane.add(jrbIpAddress, "");
+        pane.add(jrbRegisteredId, "wrap");
+        pane.add(jrbRfc822Name, "");
+        pane.add(jrbUniformResourceIdentifier, "");
+        pane.add(jrbPrincipalName, "wrap");
+        pane.add(jlGeneralNameValue, "spanx");
+        pane.add(jpGeneralNameValue, "spanx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap para");
+        pane.add(jpButtons, "right, spanx");
+
+        // actions
+		jrbDirectoryName.addItemListener(new ItemListener() {
 			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
+			public void itemStateChanged(ItemEvent evt) {
+				generalNameTypeChanged();
 			}
 		});
-
-		jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
+		jrbDnsName.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				generalNameTypeChanged();
+			}
+		});
+		jrbRegisteredId.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				generalNameTypeChanged();
+			}
+		});
+		jrbIpAddress.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				generalNameTypeChanged();
+			}
+		});
+		jrbRfc822Name.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				generalNameTypeChanged();
+			}
+		});
+		jrbUniformResourceIdentifier.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				generalNameTypeChanged();
+			}
+		});
+		jrbPrincipalName.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				generalNameTypeChanged();
+			}
+		});
+        jbOK.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent evt) {
+        		okPressed();
+        	}
+        });
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -272,13 +263,7 @@ public class DGeneralNameChooser extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(BorderLayout.CENTER, jpGeneralName);
-		getContentPane().add(BorderLayout.SOUTH, jpButtons);
-
-		populate(generalName);
+        populate(generalName);
 
 		setResizable(false);
 
@@ -304,6 +289,8 @@ public class DGeneralNameChooser extends JEscDialog {
 			jpGeneralNameValue.add(jtfRfc822Name);
 		} else if (jrbUniformResourceIdentifier.isSelected()) {
 			jpGeneralNameValue.add(jtfUniformResourceIdentifier);
+		}  else if (jrbPrincipalName.isSelected()) {
+			jpGeneralNameValue.add(jtfPrincipalName);
 		}
 
 		pack();
@@ -331,7 +318,7 @@ public class DGeneralNameChooser extends JEscDialog {
 					InetAddress inetAddress = InetAddress.getByAddress(octets);
 					jtfIpAddress.setText(inetAddress.getHostAddress());
 				} catch (UnknownHostException e) {
-					// ignore because it comes from extension
+					// ignore because it comes from existing extension
 				}
 				break;
 			}
@@ -348,6 +335,12 @@ public class DGeneralNameChooser extends JEscDialog {
 			case GeneralName.uniformResourceIdentifier: {
 				jrbUniformResourceIdentifier.setSelected(true);
 				jtfUniformResourceIdentifier.setText(((DERIA5String) generalName.getName()).getString());
+				break;
+			}
+			case GeneralName.otherName: {
+				jrbPrincipalName.setSelected(true);
+				// we currently only support UPN in otherName
+				jtfPrincipalName.setText(GeneralNameUtil.parseUPN(generalName));
 				break;
 			}
 			}
@@ -441,6 +434,21 @@ public class DGeneralNameChooser extends JEscDialog {
 
 				newGeneralName = new GeneralName(GeneralName.uniformResourceIdentifier, new DERIA5String(
 						uniformResourceIdentifier));
+			} else if (jrbPrincipalName.isSelected()) {
+				String upnString = jtfPrincipalName.getText().trim();
+
+				if (upnString.length() == 0) {
+					JOptionPane.showMessageDialog(this,
+							res.getString("DGeneralNameChooser.PrincipalNameValueReq.message"), getTitle(),
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+
+				ASN1EncodableVector asn1Vector = new ASN1EncodableVector();
+				asn1Vector.add(new ASN1ObjectIdentifier(UPN_OID));
+				asn1Vector.add(new DERTaggedObject(true, 0, new DERUTF8String(upnString)));
+
+				newGeneralName = new GeneralName(GeneralName.otherName, new DERSequence(asn1Vector));
 			}
 
 			generalName = newGeneralName;
