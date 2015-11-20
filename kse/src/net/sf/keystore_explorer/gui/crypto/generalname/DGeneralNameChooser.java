@@ -54,13 +54,13 @@ import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.IPAddress;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
@@ -313,12 +313,11 @@ public class DGeneralNameChooser extends JEscDialog {
 			}
 			case GeneralName.iPAddress: {
 				jrbIpAddress.setSelected(true);
+				byte[] ipAddressBytes = ((ASN1OctetString) generalName.getName()).getOctets();
 				try {
-					byte[] octets = ((ASN1OctetString) generalName.getName()).getOctets();
-					InetAddress inetAddress = InetAddress.getByAddress(octets);
-					jtfIpAddress.setText(inetAddress.getHostAddress());
+					jtfIpAddress.setText(InetAddress.getByAddress(ipAddressBytes).getHostAddress());
 				} catch (UnknownHostException e) {
-					// ignore because it comes from existing extension
+					// cannot happen here because user input was checked for validity
 				}
 				break;
 			}
@@ -391,15 +390,13 @@ public class DGeneralNameChooser extends JEscDialog {
 					return;
 				}
 
-				try {
-					InetAddress inetAddr = InetAddress.getByName(ipAddress);
-					newGeneralName = new GeneralName(GeneralName.iPAddress,	new DEROctetString(inetAddr.getAddress()));
-				} catch (UnknownHostException e) {
+				if (!IPAddress.isValid(ipAddress)) {
 					JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
 							getTitle(), JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 
+				newGeneralName = new GeneralName(GeneralName.iPAddress,	ipAddress);
 			} else if (jrbRegisteredId.isSelected()) {
 				ASN1ObjectIdentifier registeredId = joiRegisteredId.getObjectId();
 

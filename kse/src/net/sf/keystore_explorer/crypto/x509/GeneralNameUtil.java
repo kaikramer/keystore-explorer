@@ -93,19 +93,13 @@ public class GeneralNameUtil {
 			return MessageFormat.format(res.getString("GeneralNameUtil.DnsGeneralName"), dnsName.getString());
 		}
 		case GeneralName.iPAddress: {
-			ASN1OctetString ipAddress = (ASN1OctetString) generalName.getName();
-
-			byte[] ipAddressBytes = ipAddress.getOctets();
+			byte[] ipAddressBytes = ((ASN1OctetString) generalName.getName()).getOctets();
 
 			String ipAddressString = "";
-
 			try {
-				if (ipAddressBytes.length == 4 || ipAddressBytes.length == 16) {
-					InetAddress addr = InetAddress.getByAddress(ipAddressBytes);
-					ipAddressString = addr.getHostAddress();
-				}
+				ipAddressString = InetAddress.getByAddress(ipAddressBytes).getHostAddress();
 			} catch (UnknownHostException e) {
-				// ignore
+				// ignore -> results in empty IP address string
 			}
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.IpAddressGeneralName"), ipAddressString);
