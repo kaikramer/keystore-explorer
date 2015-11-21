@@ -25,19 +25,20 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
-import net.sf.keystore_explorer.gui.theme.LightMetalTheme;
-import net.sf.keystore_explorer.utilities.os.OperatingSystem;
-import net.sf.keystore_explorer.version.JavaVersion;
-
+import com.bulenkov.darcula.DarculaLaf;
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.SkyBlue;
 import com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
+import net.sf.keystore_explorer.gui.theme.LightMetalTheme;
+import net.sf.keystore_explorer.utilities.os.OperatingSystem;
+import net.sf.keystore_explorer.version.JavaVersion;
+
 /**
  * Look and Feel utility methods.
- * 
+ *
  */
 public class LnfUtil {
 	private LnfUtil() {
@@ -45,7 +46,7 @@ public class LnfUtil {
 
 	/**
 	 * Do the supplied l&f object and l&f info object refer to the same l&f?
-	 * 
+	 *
 	 * @param lookAndFeel
 	 *            L&F object
 	 * @param lookAndFeelInfo
@@ -64,11 +65,12 @@ public class LnfUtil {
 		if (OperatingSystem.isWindows()) {
 			UIManager.installLookAndFeel("JGoodies Windows", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName());
 		}
+		UIManager.installLookAndFeel("Darcula", DarculaLaf.class.getName());
 	}
 
 	/**
 	 * Use supplied l&f.
-	 * 
+	 *
 	 * @param lnfClassName
 	 *            L&f class name
 	 */
@@ -115,7 +117,7 @@ public class LnfUtil {
 
 	/**
 	 * Use the appropriate look and feel for the current platform.
-	 * 
+	 *
 	 * @return Look and feel class name used
 	 */
 	public static String useLnfForPlatform() {
@@ -136,7 +138,7 @@ public class LnfUtil {
 
 	/**
 	 * Is a Mac l&f (Aqua) currently being used?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public static boolean usingMacLnf() {
@@ -147,7 +149,7 @@ public class LnfUtil {
 
 	/**
 	 * Is the JGoodies Plastic 3D l&f currently being used?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public static boolean usingPlastic3DLnf() {
@@ -156,7 +158,7 @@ public class LnfUtil {
 
 	/**
 	 * Is the Metal l&f currently being used?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public static boolean usingMetalLnf() {
@@ -165,7 +167,7 @@ public class LnfUtil {
 
 	/**
 	 * Is the Windows l&f currently being used?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public static boolean usingWindowsLnf() {
@@ -174,7 +176,7 @@ public class LnfUtil {
 
 	/**
 	 * Is the Windows Classic l&f currently being used?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public static boolean usingWindowsClassicLnf() {
@@ -183,7 +185,7 @@ public class LnfUtil {
 
 	/**
 	 * Is the supplied l&f currently being used?
-	 * 
+	 *
 	 * @return l&f class
 	 */
 	private static boolean usingLnf(Class lnfClass) {
