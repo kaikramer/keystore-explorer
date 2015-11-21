@@ -50,9 +50,10 @@ public class Password {
 	 */
 	public Password(Password password) {
 		char[] wrappedPassword = password.toCharArray();
-		this.wrappedPassword = new char[wrappedPassword.length];
-		System.arraycopy(wrappedPassword, 0, this.wrappedPassword, 0, this.wrappedPassword.length);
-
+		if (wrappedPassword != null) {
+			this.wrappedPassword = new char[wrappedPassword.length];
+			System.arraycopy(wrappedPassword, 0, this.wrappedPassword, 0, this.wrappedPassword.length);
+		}
 		nulled = password.isNulled();
 	}
 
@@ -83,6 +84,10 @@ public class Password {
 			throw new IllegalStateException(res.getString("NoGetPasswordNulled.message"));
 		}
 
+		if (wrappedPassword == null) {
+			return null;
+		}
+
 		byte[] passwordBytes = new byte[wrappedPassword.length];
 
 		for (int i = 0; i < wrappedPassword.length; i++) {
@@ -96,6 +101,9 @@ public class Password {
 	 * Null the wrapped password.
 	 */
 	public void nullPassword() {
+		if (wrappedPassword == null) {
+			return;
+		}
 		for (int i = 0; i < wrappedPassword.length; i++) {
 			wrappedPassword[i] = 0;
 		}
@@ -111,7 +119,7 @@ public class Password {
 	}
 
 	/**
-	 * Is the supplied object equal to the password wrapper, ie do they wrap the
+	 * Is the supplied object equal to the password wrapper, i.e. do they wrap the
 	 * same password.
 	 *
 	 * @param object
@@ -129,6 +137,13 @@ public class Password {
 		}
 
 		Password password = (Password) object;
+
+		if (password.wrappedPassword == null) {
+			if (wrappedPassword == null) {
+				return true;
+			}
+			return false;
+		}
 
 		if (wrappedPassword.length != password.wrappedPassword.length) {
 			return false;
