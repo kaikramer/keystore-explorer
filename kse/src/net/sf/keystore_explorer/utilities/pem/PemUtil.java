@@ -25,14 +25,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
+import org.bouncycastle.util.encoders.Base64;
+
 import net.sf.keystore_explorer.utilities.io.ReadUtil;
 import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
-import org.bouncycastle.util.encoders.Base64;
-
 /**
  * Provides utility methods relating to PEM.
- * 
+ *
  */
 public class PemUtil extends Object {
 	private static final int MAX_PRINTABLE_ENCODING_LINE_LENGTH = 64;
@@ -42,7 +42,7 @@ public class PemUtil extends Object {
 
 	/**
 	 * Encode the supplied information as PEM.
-	 * 
+	 *
 	 * @param pemInfo
 	 *            PEM Information
 	 * @return PEM encoding
@@ -59,7 +59,7 @@ public class PemUtil extends Object {
 		// Output any header attributes
 		PemAttributes attributes = pemInfo.getAttributes();
 
-		if ((attributes != null) && (attributes.size() > 0)) {
+		if (attributes != null && attributes.size() > 0) {
 			for (PemAttribute attribute : attributes.values()) {
 				sbPem.append(attribute);
 				sbPem.append('\n');
@@ -76,13 +76,13 @@ public class PemUtil extends Object {
 		for (int i = 0; i < base64.length(); i += MAX_PRINTABLE_ENCODING_LINE_LENGTH) {
 			int lineLength;
 
-			if ((i + MAX_PRINTABLE_ENCODING_LINE_LENGTH) > base64.length()) {
-				lineLength = (base64.length() - i);
+			if (i + MAX_PRINTABLE_ENCODING_LINE_LENGTH > base64.length()) {
+				lineLength = base64.length() - i;
 			} else {
 				lineLength = MAX_PRINTABLE_ENCODING_LINE_LENGTH;
 			}
 
-			sbPem.append(base64.substring(i, (i + lineLength)));
+			sbPem.append(base64.substring(i, i + lineLength));
 			sbPem.append("\n");
 		}
 
@@ -121,7 +121,7 @@ public class PemUtil extends Object {
 
 	/**
 	 * Decode the PEM included in the supplied input stream.
-	 * 
+	 *
 	 * @param is
 	 *            Input stream
 	 * @return PEM information or null if stream does not contain PEM
@@ -136,28 +136,30 @@ public class PemUtil extends Object {
 		try {
 			lnr = new LineNumberReader(new InputStreamReader(new ByteArrayInputStream(streamContents)));
 
-			String line = lnr.readLine().trim();
+			String line = lnr.readLine();
 			StringBuffer sbBase64 = new StringBuffer();
 
 			if (line != null) {
+				line = line.trim();
 				String headerType = getTypeFromHeader(line);
 
 				if (headerType != null) {
-					line = lnr.readLine().trim();
+					line = lnr.readLine();
 
 					PemAttributes attributes = null;
 
-					if ((line != null) && (line.contains(": "))) // Read any
-																	// header
-																	// attributes
-					{
+					// Read any header attributes
+					if (line != null && line.contains(": ")) {
+						line = line.trim();
+
 						attributes = new PemAttributes();
 
 						attributesDone: while (line != null) {
-							if (line.equals("")) // Empty line - end of
-													// attributes
-							{
-								line = lnr.readLine().trim();
+							line = line.trim();
+
+							// Empty line - end of attributes
+							if (line.equals("")) {
+								line = lnr.readLine();
 								break attributesDone;
 							}
 
@@ -174,12 +176,13 @@ public class PemUtil extends Object {
 
 							attributes.add(new PemAttribute(attributeName, attributeValue));
 
-							line = lnr.readLine().trim();
+							line = lnr.readLine();
 						}
 					}
 
-					while (line != null) // Read content
-					{
+					// Read content
+					while (line != null) {
+						line = line.trim();
 						String footerType = getTypeFromFooter(line);
 
 						if (footerType == null) {
@@ -196,7 +199,7 @@ public class PemUtil extends Object {
 							}
 						}
 
-						line = lnr.readLine().trim();
+						line = lnr.readLine();
 					}
 				}
 			}
