@@ -1,7 +1,7 @@
 # KeyStore Explorer
 KeyStore Explorer is a free GUI replacement for the Java command-line utilities keytool, jarsigner and jadtool.
 
-Web Site: http://keystore-explorer.sourceforge.net/
+Web Site: http://www.keystore-explorer.org/
 
 Features:
 
