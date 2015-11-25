@@ -38,6 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import net.sf.keystore_explorer.gui.KseFrame;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.actions.ExamineFileAction;
 import net.sf.keystore_explorer.gui.actions.HelpAction;
 import net.sf.keystore_explorer.gui.actions.NewAction;
@@ -55,10 +56,12 @@ import net.sf.keystore_explorer.gui.gradient.JGradientPanel;
 public class JQuickStartPane extends JGradientPanel implements DropTargetListener {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/quickstart/resources");
 
-	private static final Color GRADIENT_COLOR_1 = Color.WHITE;
-	private static final Color GRADIENT_COLOR_2 = Color.LIGHT_GRAY;
-	private static final Color TEXT_COLOR = new Color(0, 134, 201); // Light blue
-	private static final Color TEXT_ROLLOVER_COLOR = new Color(135, 31, 120); // Dark purple
+	// set dark or light colors (depending on active LaF)
+	private static final boolean IS_DARK_LAF = LnfUtil.isDarkLnf();
+    private static final Color GRADIENT_COLOR_1 = IS_DARK_LAF ? new Color(85, 85, 85) : Color.WHITE;
+    private static final Color GRADIENT_COLOR_2 = IS_DARK_LAF ? new Color(60, 63, 65) : Color.LIGHT_GRAY;
+    private static final Color TEXT_COLOR = IS_DARK_LAF ? new Color(116, 131, 141) : new Color(0, 134, 201);
+    private static final Color TEXT_ROLLOVER_COLOR = IS_DARK_LAF ? new Color(141, 141, 124) : new Color(135, 31, 120);
 
 	private KseFrame kseFrame;
 
@@ -79,7 +82,7 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 	 *            KSE frame
 	 */
 	public JQuickStartPane(KseFrame kseFrame) {
-		super(GRADIENT_COLOR_1, GRADIENT_COLOR_2);
+	    super(GRADIENT_COLOR_1, GRADIENT_COLOR_2);
 
 		this.kseFrame = kseFrame;
 

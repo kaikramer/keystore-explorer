@@ -137,6 +137,7 @@
     <mapID target="fugueLicense" url="fugueLicense.html" />
     <mapID target="migLayoutLicense" url="migLayoutLicense.html" />
     <mapID target="jnaLicense" url="jnaLicense.html" />
+    <mapID target="darculaLicense" url="darculaLicense.html" />
 
     <mapID target="specifications" url="specifications.html" />
 

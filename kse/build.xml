@@ -95,6 +95,7 @@
 			<include name="jna.jar"/>
 			<include name="miglayout-core.jar"/>
 			<include name="miglayout-swing.jar"/>
+			<include name="darcula.jar"/>
 	    </fileset>
 	</path>
 

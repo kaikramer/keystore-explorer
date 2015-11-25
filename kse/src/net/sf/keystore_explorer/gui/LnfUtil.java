@@ -192,4 +192,11 @@ public class LnfUtil {
 		String currentLnfClass = UIManager.getLookAndFeel().getClass().getName();
 		return currentLnfClass.equals(lnfClass.getName());
 	}
+
+	/**
+	 * Does the currently active l&f use a dark color scheme?
+	 */
+	public static boolean isDarkLnf() {
+        return UIManager.getLookAndFeel().getClass().getName().equals(DarculaLaf.class.getName());
+	}
 }

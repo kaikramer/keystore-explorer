@@ -40,33 +40,36 @@ import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.ticker.JTicker;
 
 /**
  * An About dialog which displays an image of about information, a ticker for
- * ackowledgements and a button to access system information.
- * 
+ * acknowledgements and a button to access system information.
+ *
  */
 public class DAbout extends JEscDialog {
-	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/about/resources");
+    private static final long serialVersionUID = 1L;
 
-	private static final Color LIGHT_BLUE = new Color(0, 134, 201);
-	
+    private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/about/resources");
+
+	private static final Color KSE_COLOR = LnfUtil.isDarkLnf() ? new Color(116, 131, 141) : new Color(0, 134, 201);
+
 	private JPanel jpAbout = new JPanel();
-	
+
 	private JLabel jlKSE = new JLabel(KSE.getApplicationName());
 	private JLabel jlIcon;
 	private JLabel jlVersion;
 	private JLabel jlLicense;
-	
+
 	private JTicker jtkDetails;
 	private JButton jbOK;
 	private JButton jbSystemInformation;
 
 	/**
 	 * Creates new DAbout dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -85,7 +88,7 @@ public class DAbout extends JEscDialog {
 	}
 
 	private void initComponents(Image aboutImg, String licenseNotice, Object[] tickerItems) {
-		
+
 		// init ticker
 		jtkDetails = new JTicker();
 		jtkDetails.setIncrement(1);
@@ -99,8 +102,8 @@ public class DAbout extends JEscDialog {
 		// prepare other elements
 		jlKSE = new JLabel(KSE.getApplicationName());
 		jlKSE.setFont(jlKSE.getFont().deriveFont(20f));
-		jlKSE.setForeground(LIGHT_BLUE);
-		
+		jlKSE.setForeground(KSE_COLOR);
+
 		jlIcon = new JLabel(new ImageIcon(aboutImg));
 
 		jlVersion = new JLabel("Version " + KSE.getApplicationVersion());
@@ -133,7 +136,7 @@ public class DAbout extends JEscDialog {
 		jpAbout.add(jlVersion, "top, wrap para");
 		jpAbout.add(jlLicense, "span, wrap unrel");
 		jpAbout.add(jtkDetails, "width 100%, span, wrap para:push");
-		
+
 		jpAbout.add(jbSystemInformation, "");
 		jpAbout.add(jbOK, "tag ok");
 
@@ -149,7 +152,7 @@ public class DAbout extends JEscDialog {
 		pack();
 
 		jtkDetails.start();
-		
+
 		// because in windows laf default button follows focus, OK would not be the default button anymore
 		jbOK.requestFocusInWindow();
 	}

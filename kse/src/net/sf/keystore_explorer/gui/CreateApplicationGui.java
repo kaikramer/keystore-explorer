@@ -58,9 +58,9 @@ import net.sf.keystore_explorer.version.VersionException;
  *
  */
 public class CreateApplicationGui implements Runnable {
-	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_160;
-	private static final String KSE_JAR_NAME = "kse.jar";
+	private static final String UPGRADE_ASSISTANT_EXE = "cua.exe";
 	private ApplicationSettings applicationSettings;
 	private SplashScreen splash;
 	private File keyStoreFile;
@@ -215,11 +215,10 @@ public class CreateApplicationGui implements Runnable {
 		JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.UpgradeRequired.message"),
 				KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
-		if (OperatingSystem.isWindows()) {
+		File cuaExe = determinePathToCryptoPolicyUpgradeAssistantExe();
 
-			// start upgrade assistant with elevated permissions
-			File kseInstallDir = new File(System.getProperty("kse.install.dir"));
-			File cuaExe = new File(kseInstallDir, "cua.exe");
+		// if on windows, start upgrade assistant with elevated permissions
+		if (OperatingSystem.isWindows() && cuaExe.exists()) {
 
 			// cmd.exe is workaround for http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6410605
 			String toExec[] = new String[] { "cmd.exe", "/C", cuaExe.getPath() };
@@ -262,6 +261,12 @@ public class CreateApplicationGui implements Runnable {
 			}
 		}
 	}
+
+    private File determinePathToCryptoPolicyUpgradeAssistantExe() {
+        File kseInstallDir = new File(System.getProperty("kse.install.dir"));
+        File cuaExe = new File(kseInstallDir, UPGRADE_ASSISTANT_EXE);
+        return cuaExe;
+    }
 
 	private void integrateWithMacOs(KseFrame kseFrame) throws ClassNotFoundException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
