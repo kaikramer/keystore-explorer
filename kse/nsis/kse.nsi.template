@@ -70,9 +70,6 @@
 !define FILE_ASSOCIATIONS_DIALOG fileAssociations.ini
 ReserveFile ${FILE_ASSOCIATIONS_DIALOG}
 
-; License text
-!define LICENSE_FILE "../res/licenses/license-kse.txt"
-
 ; Files to install
 !define KSE_EXE "kse.exe"
 !define KSE_JAR "kse.jar"
@@ -158,7 +155,6 @@ ShowUninstDetails Show
 ; Install
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE ${LICENSE_FILE}
 Page custom fileAssociationsPage "" ": File Associations"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES

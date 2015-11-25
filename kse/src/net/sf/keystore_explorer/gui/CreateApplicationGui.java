@@ -23,18 +23,13 @@ import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 import java.awt.Font;
 import java.awt.SplashScreen;
-import java.awt.Toolkit;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -48,7 +43,6 @@ import net.sf.keystore_explorer.gui.crypto.DUpgradeCryptoStrength;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
-import net.sf.keystore_explorer.gui.licenseagreement.DLicenseAgreement;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.JavaVersion;
 import net.sf.keystore_explorer.version.VersionException;
@@ -94,10 +88,6 @@ public class CreateApplicationGui implements Runnable {
 
 			initLookAndFeel(applicationSettings);
 			//setDefaultSize(14);
-
-			if (!applicationSettings.getLicenseAgreed()) {
-				displayLicenseAgreement(applicationSettings);
-			}
 
 			if (JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
 				upgradeCryptoStrength();
@@ -182,31 +172,6 @@ public class CreateApplicationGui implements Runnable {
 		}
 
 		return true;
-	}
-
-	private void displayLicenseAgreement(ApplicationSettings applicationSettings) throws IOException {
-		closeSplash();
-
-		String subject = KSE.getApplicationName();
-		Icon licenseAgreementIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("LicenseAgreement.image"))));
-		URL licenseAgreementUrl = getClass().getResource(res.getString("LicenseAgreement.Html"));
-
-		DLicenseAgreement dLicenseAgreement = new DLicenseAgreement(new JFrame(), subject, licenseAgreementIcon,
-				licenseAgreementUrl);
-		dLicenseAgreement.setLocationRelativeTo(null);
-		dLicenseAgreement.setVisible(true);
-
-		if (!dLicenseAgreement.agreed()) {
-			JOptionPane
-					.showMessageDialog(
-							new JFrame(),
-							MessageFormat.format(res.getString("LicenseAgreement.NotAgreed.message"),
-									KSE.getApplicationName()), KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
-			System.exit(1);
-		}
-
-		applicationSettings.setLicenseAgreed(true);
 	}
 
 	private void upgradeCryptoStrength() {
