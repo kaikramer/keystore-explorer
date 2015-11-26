@@ -36,6 +36,19 @@ public enum ExtendedKeyUsageType {
 
 	/** Code Signing */
 	CODE_SIGNING("1.3.6.1.5.5.7.3.3", "CodeSigningExtKeyUsage"),
+	
+	/** Document Signing */
+	DOCUMENT_SIGNING("1.3.6.1.4.1.311.10.3.12", "DocumentSigningExtKeyUsage"),
+	
+	/** Encrypted File System */
+	ENCRYPTED_FILE_SYSTEM("1.3.6.1.4.1.311.10.3.4", 
+			"EncryptedFileSystemExtKeyUsage"),
+	
+	/** Smartcard Logon */
+	SMARTCARD_LOGON("1.3.6.1.4.1.311.20.2.2", "SmartcardLogonExtKeyUsage"),
+	
+	/** Any EXtended Key Usage */
+	ANY_EXTENDED_KEY_USAGE("2.5.29.37.0", "AnyExtendedKeyUsageExtKeyUsage"),
 
 	/** E-mail Protection */
 	EMAIL_PROTECTION("1.3.6.1.5.5.7.3.4", "EmailProtectionExtKeyUsage"),

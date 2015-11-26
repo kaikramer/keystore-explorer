@@ -2,17 +2,24 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/miglayout-core.jar"/>
-	<classpathentry kind="lib" path="lib/miglayout-swing.jar"/>
-	<classpathentry kind="lib" path="lib/jgoodies-common.jar"/>
-	<classpathentry kind="lib" path="lib/jgoodies-looks.jar"/>
-	<classpathentry kind="lib" path="lib/jhall.jar"/>
-	<classpathentry kind="lib" path="lib/jna.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry exported="true" kind="lib" path="lib/miglayout-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/miglayout-swing.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jgoodies-common.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jgoodies-looks.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jhall.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jna.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Users/ur20980/git/keystore-explorer/kse/lib/AppleJavaExtensions-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/bcpkix.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov.jar"/>
-	<classpathentry kind="lib" path="lib/darcula.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/darcula.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Library/Java/Extensions/bcpkix-jdk15on-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Library/Java/Extensions/bcprov-ext-jdk15on-153.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/appbundler-1.0ea.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<accessrules>
+			<accessrule kind="accessible" pattern="**"/>
+		</accessrules>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
