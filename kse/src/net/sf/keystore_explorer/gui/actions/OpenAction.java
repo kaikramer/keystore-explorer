@@ -45,12 +45,12 @@ import net.sf.keystore_explorer.gui.password.DGetPassword;
 
 /**
  * Action to open a KeyStore.
- * 
+ *
  */
 public class OpenAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -71,6 +71,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
@@ -88,7 +89,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 
 	/**
 	 * Open the supplied KeyStore file from disk.
-	 * 
+	 *
 	 * @param keyStoreFile
 	 *            The KeyStore file
 	 */
@@ -108,35 +109,44 @@ public class OpenAction extends KeyStoreExplorerAction {
 				return;
 			}
 
-			DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-					res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()), DOCUMENT_MODAL);
-			dGetPassword.setLocationRelativeTo(frame);
-			dGetPassword.setVisible(true);
-			Password password = dGetPassword.getPassword();
-
-			if (password == null) {
-				return;
-			}
-
 			KeyStore openedKeyStore = null;
+			Password password = null;
+			while (true) {
 
-			try {
-				openedKeyStore = KeyStoreUtil.load(keyStoreFile, password);
-			} catch (KeyStoreLoadException klex) {
-				String problemStr = MessageFormat.format(res.getString("OpenAction.NoOpenKeyStore.Problem"), klex
-						.getKeyStoreType().friendly(), keyStoreFile.getName());
+				DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
+						res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()), DOCUMENT_MODAL);
+				dGetPassword.setLocationRelativeTo(frame);
+				dGetPassword.setVisible(true);
+				password = dGetPassword.getPassword();
 
-				String[] causes = new String[] { res.getString("OpenAction.PasswordIncorrectKeyStore.Cause"),
-						res.getString("OpenAction.CorruptedKeyStore.Cause") };
+				if (password == null) {
+					return;
+				}
 
-				Problem problem = new Problem(problemStr, causes, klex);
+				try {
+					openedKeyStore = KeyStoreUtil.load(keyStoreFile, password);
+					break;
+				} catch (KeyStoreLoadException klex) {
+					String problemStr = MessageFormat.format(res.getString("OpenAction.NoOpenKeyStore.Problem"), klex
+							.getKeyStoreType().friendly(), keyStoreFile.getName());
 
-				DProblem dProblem = new DProblem(frame, res.getString("OpenAction.ProblemOpeningKeyStore.Title"),
-						DOCUMENT_MODAL, problem);
-				dProblem.setLocationRelativeTo(frame);
-				dProblem.setVisible(true);
+					String[] causes = new String[] { res.getString("OpenAction.PasswordIncorrectKeyStore.Cause"),
+							res.getString("OpenAction.CorruptedKeyStore.Cause") };
 
-				return;
+					Problem problem = new Problem(problemStr, causes, klex);
+
+					DProblem dProblem = new DProblem(frame, res.getString("OpenAction.ProblemOpeningKeyStore.Title"),
+							DOCUMENT_MODAL, problem);
+					dProblem.setLocationRelativeTo(frame);
+					dProblem.setVisible(true);
+
+					int choice = JOptionPane.showConfirmDialog(frame, res.getString("OpenAction.TryAgain.message"),
+							res.getString("OpenAction.TryAgain.Title"), JOptionPane.YES_NO_OPTION);
+
+					if (choice == JOptionPane.NO_OPTION) {
+						return;
+					}
+				}
 			}
 
 			if (openedKeyStore == null) {

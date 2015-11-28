@@ -45,11 +45,12 @@ import javax.swing.border.MatteBorder;
 
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Displays a problem and its possible causes.
- * 
+ *
  */
 public class DProblem extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/error/resources");
@@ -67,7 +68,7 @@ public class DProblem extends JEscDialog {
 
 	/**
 	 * Creates new DProblem dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -87,7 +88,7 @@ public class DProblem extends JEscDialog {
 
 	/**
 	 * Creates new DProblem dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -108,7 +109,9 @@ public class DProblem extends JEscDialog {
 	private void initComponents() {
 		jpProblemHeader = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		jpProblemHeader.setBorder(new EmptyBorder(5, 5, 5, 5));
-		jpProblemHeader.setBackground(Color.WHITE);
+		if (!LnfUtil.isDarkLnf()) {
+			jpProblemHeader.setBackground(Color.WHITE);
+		}
 		jpProblemHeader.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.WHITE), new CompoundBorder(
 				new MatteBorder(0, 0, 1, 0, Color.GRAY), new EmptyBorder(10, 10, 10, 10))));
 
@@ -136,6 +139,7 @@ public class DProblem extends JEscDialog {
 		PlatformUtil.setMnemonic(jbDisplayError, res.getString("DProblem.jbDisplayError.mnemonic").charAt(0));
 		jbDisplayError.setToolTipText(res.getString("DProblem.jbDisplayError.tooltip"));
 		jbDisplayError.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DProblem.this);
@@ -148,6 +152,7 @@ public class DProblem extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DProblem.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -161,6 +166,7 @@ public class DProblem extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -207,7 +213,7 @@ public class DProblem extends JEscDialog {
 				continue;
 			}
 
-			if ((currentLine.length() + word.length() + 1) <= maxLineLength) {
+			if (currentLine.length() + word.length() + 1 <= maxLineLength) {
 				currentLine += " ";
 				currentLine += word;
 				continue;
