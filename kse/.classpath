@@ -9,7 +9,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-looks.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jhall.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jna.jar"/>
-	<classpathentry exported="true" kind="lib" path="/Users/ur20980/git/keystore-explorer/kse/lib/AppleJavaExtensions-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bcpkix.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bcprov.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/darcula.jar"/>
@@ -21,5 +20,6 @@
 			<accessrule kind="accessible" pattern="**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/AppleJavaExtensions-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
