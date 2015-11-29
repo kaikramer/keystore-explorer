@@ -41,10 +41,8 @@ public class WebsiteAction extends KeyStoreExplorerAction {
 
     public enum Target {
         MAIN,
-        SOURCEFORGE,
-        BUGREPORTS,
-        FEATURE_REQUESTS,
-        FORUM
+        GITHUB,
+        ISSUE_TRACKER
     }
 
 	/**
@@ -57,33 +55,19 @@ public class WebsiteAction extends KeyStoreExplorerAction {
 		super(kseFrame);
 
 		switch (target) {
-        case SOURCEFORGE:
-            setData(res.getString("WebsiteAction.SourceforgeProject.statusbar"),
-                    res.getString("WebsiteAction.SourceforgeProject.text"),
-                    res.getString("WebsiteAction.SourceforgeProject.tooltip"),
+        case GITHUB:
+            setData(res.getString("WebsiteAction.GitHubProject.statusbar"),
+                    res.getString("WebsiteAction.GitHubProject.text"),
+                    res.getString("WebsiteAction.GitHubProject.tooltip"),
                     res.getString("WebsiteAction.image"),
-                    res.getString("WebsiteAction.SourceforgeProject.KseWebAddress"));
+                    res.getString("WebsiteAction.GitHubProject.KseWebAddress"));
             break;
-        case BUGREPORTS:
-            setData(res.getString("WebsiteAction.BugReports.statusbar"),
-                    res.getString("WebsiteAction.BugReports.text"),
-                    res.getString("WebsiteAction.BugReports.tooltip"),
+        case ISSUE_TRACKER:
+            setData(res.getString("WebsiteAction.GitHubIssueTracker.statusbar"),
+                    res.getString("WebsiteAction.GitHubIssueTracker.text"),
+                    res.getString("WebsiteAction.GitHubIssueTracker.tooltip"),
                     res.getString("WebsiteAction.image"),
-                    res.getString("WebsiteAction.BugReports.KseWebAddress"));
-            break;
-        case FEATURE_REQUESTS:
-            setData(res.getString("WebsiteAction.FeatureRequests.statusbar"),
-                    res.getString("WebsiteAction.FeatureRequests.text"),
-                    res.getString("WebsiteAction.FeatureRequests.tooltip"),
-                    res.getString("WebsiteAction.image"),
-                    res.getString("WebsiteAction.FeatureRequests.KseWebAddress"));
-            break;
-        case FORUM:
-            setData(res.getString("WebsiteAction.Forum.statusbar"),
-                    res.getString("WebsiteAction.Forum.text"),
-                    res.getString("WebsiteAction.Forum.tooltip"),
-                    res.getString("WebsiteAction.image"),
-                    res.getString("WebsiteAction.Forum.KseWebAddress"));
+                    res.getString("WebsiteAction.GitHubIssueTracker.KseWebAddress"));
             break;
         default:
         case MAIN:
@@ -110,6 +94,7 @@ public class WebsiteAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			Desktop.getDesktop().browse(URI.create(websiteAddress));

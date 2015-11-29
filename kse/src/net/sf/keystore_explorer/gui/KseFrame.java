@@ -19,12 +19,6 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -90,6 +84,12 @@ import javax.swing.table.TableRowSorter;
 
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
+
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
@@ -270,9 +270,7 @@ public final class KseFrame implements StatusBar {
 	private JMenu jmOnlineResources;
 	private JMenuItem jmiWebsite;
 	private JMenuItem jmiSourceforge;
-	private JMenuItem jmiSfForum;
 	private JMenuItem jmiSfBugs;
-	private JMenuItem jmiSfFeatureReqs;
 	private JMenuItem jmiCheckUpdate;
 	private JMenuItem jmiSecurityProviders;
 	private JMenuItem jmiCryptographyStrength;
@@ -440,10 +438,8 @@ public final class KseFrame implements StatusBar {
 	private final HelpAction helpAction = new HelpAction(this);
 	private final TipOfTheDayAction tipOfTheDayAction = new TipOfTheDayAction(this);
 	private final WebsiteAction websiteAction = new WebsiteAction(this, WebsiteAction.Target.MAIN);
-	private final WebsiteAction sfProjectSiteAction = new WebsiteAction(this, WebsiteAction.Target.SOURCEFORGE);
-	private final WebsiteAction sfForumAction = new WebsiteAction(this, WebsiteAction.Target.FORUM);
-	private final WebsiteAction sfBugsAction = new WebsiteAction(this, WebsiteAction.Target.BUGREPORTS);
-	private final WebsiteAction sfFeatureReqsAction = new WebsiteAction(this, WebsiteAction.Target.FEATURE_REQUESTS);
+	private final WebsiteAction sfProjectSiteAction = new WebsiteAction(this, WebsiteAction.Target.GITHUB);
+	private final WebsiteAction sfBugsAction = new WebsiteAction(this, WebsiteAction.Target.ISSUE_TRACKER);
 	private final CheckUpdateAction checkUpdateAction = new CheckUpdateAction(this);
 	private final SecurityProvidersAction securityProvidersAction = new SecurityProvidersAction(this);
 	private final CryptographyStrengthAction cryptographyStrengthAction = new CryptographyStrengthAction(this);
@@ -545,6 +541,7 @@ public final class KseFrame implements StatusBar {
 
 		// Handle application close
 		frame.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				exitAction.exitApplication();
 			}
@@ -566,7 +563,7 @@ public final class KseFrame implements StatusBar {
 		int xPos = sizeAndPosition.x;
 		int yPos = sizeAndPosition.y;
 
-		if ((xPos <= 0) || (yPos <= 0)) {
+		if (xPos <= 0 || yPos <= 0) {
 			frame.setLocationRelativeTo(null);
 		} else {
 			frame.setLocation(new Point(xPos, yPos));
@@ -703,7 +700,7 @@ public final class KseFrame implements StatusBar {
 
 		File[] recentFiles = applicationSettings.getRecentFiles();
 
-		for (int i = (recentFiles.length - 1); i >= 0; i--) {
+		for (int i = recentFiles.length - 1; i >= 0; i--) {
 			jmrfRecentFiles.add(createRecentFileMenuItem(jmrfRecentFiles, recentFiles[i]));
 		}
 
@@ -1000,18 +997,6 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiSfBugs, (String) sfBugsAction.getValue(Action.LONG_DESCRIPTION), this);
         jmOnlineResources.add(jmiSfBugs);
 
-//        jmiSfFeatureReqs = new JMenuItem(sfFeatureReqsAction);
-//        PlatformUtil.setMnemonic(jmiSfFeatureReqs, res.getString("KseFrame.jmiSfFeatureReqs.mnemonic").charAt(0));
-//        jmiSfFeatureReqs.setToolTipText(null);
-//        new StatusBarChangeHandler(jmiSfFeatureReqs, (String) sfFeatureReqsAction.getValue(Action.LONG_DESCRIPTION), this);
-//        jmOnlineResources.add(jmiSfFeatureReqs);
-
-        jmiSfForum = new JMenuItem(sfForumAction);
-        PlatformUtil.setMnemonic(jmiSfForum, res.getString("KseFrame.jmiSfForum.mnemonic").charAt(0));
-        jmiSfForum.setToolTipText(null);
-        new StatusBarChangeHandler(jmiSfForum, (String) sfForumAction.getValue(Action.LONG_DESCRIPTION), this);
-        jmOnlineResources.add(jmiSfForum);
-
 		jmiCheckUpdate = new JMenuItem(checkUpdateAction);
 		PlatformUtil.setMnemonic(jmiCheckUpdate, res.getString("KseFrame.jmiCheckUpdate.mnemonic").charAt(0));
 		jmiCheckUpdate.setToolTipText(null);
@@ -1078,10 +1063,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbNew, 0);
 		jbNew.setFocusable(false);
 		jbNew.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) newAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1093,10 +1080,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbOpen, 0);
 		jbOpen.setFocusable(false);
 		jbOpen.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) openAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1108,10 +1097,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbSave, 0);
 		jbSave.setFocusable(false);
 		jbSave.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) saveAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1126,10 +1117,12 @@ public final class KseFrame implements StatusBar {
 										// later on action
 		jbUndo.setFocusable(false);
 		jbUndo.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) undoAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1144,10 +1137,12 @@ public final class KseFrame implements StatusBar {
 										// later on action
 		jbRedo.setFocusable(false);
 		jbRedo.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) redoAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1159,10 +1154,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbCut, 0);
 		jbCut.setFocusable(false);
 		jbCut.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) cutAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1174,10 +1171,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbCopy, 0);
 		jbCopy.setFocusable(false);
 		jbCopy.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) copyAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1189,10 +1188,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbPaste, 0);
 		jbPaste.setFocusable(false);
 		jbPaste.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) pasteAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1204,10 +1205,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbGenerateKeyPair, 0);
 		jbGenerateKeyPair.setFocusable(false);
 		jbGenerateKeyPair.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) generateKeyPairAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1219,10 +1222,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbGenerateSecretKey, 0);
 		jbGenerateSecretKey.setFocusable(false);
 		jbGenerateSecretKey.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) generateSecretKeyAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1234,10 +1239,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbImportTrustedCertificate, 0);
 		jbImportTrustedCertificate.setFocusable(false);
 		jbImportTrustedCertificate.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) importTrustedCertificateAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1249,10 +1256,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbImportKeyPair, 0);
 		jbImportKeyPair.setFocusable(false);
 		jbImportKeyPair.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) importKeyPairAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1264,10 +1273,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbSetPassword, 0);
 		jbSetPassword.setFocusable(false);
 		jbSetPassword.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) setPasswordAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1279,10 +1290,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbProperties, 0);
 		jbProperties.setFocusable(false);
 		jbProperties.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) propertiesAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1294,10 +1307,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbExamineFile, 0);
 		jbExamineFile.setFocusable(false);
 		jbExamineFile.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) examineFileAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1309,10 +1324,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbExamineClipboard, 0);
 		jbExamineClipboard.setFocusable(false);
 		jbExamineClipboard.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) examineClipboardAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1324,10 +1341,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbExamineSsl, 0);
 		jbExamineSsl.setFocusable(false);
 		jbExamineSsl.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) examineSslAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1339,10 +1358,12 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jbHelp, 0);
 		jbHelp.setFocusable(false);
 		jbHelp.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				setStatusBarText((String) helpAction.getValue(Action.LONG_DESCRIPTION));
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				setDefaultStatusBarText();
 			}
@@ -1352,7 +1373,7 @@ public final class KseFrame implements StatusBar {
 
 		// If using Windows need a bottom line on the toolbar to seperate it
 		// from the main view
-		if ((LnfUtil.usingWindowsLnf()) || (LnfUtil.usingWindowsClassicLnf())) {
+		if (LnfUtil.usingWindowsLnf() || LnfUtil.usingWindowsClassicLnf()) {
 			jtbToolBar.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 		}
 
@@ -1416,6 +1437,7 @@ public final class KseFrame implements StatusBar {
 		jkstpKeyStores.setBorder(new EmptyBorder(3, 3, 3, 3));
 
 		jkstpKeyStores.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent evt) {
 				// Update controls as selected KeyStore is changed
 				updateControls(false);
@@ -1423,14 +1445,17 @@ public final class KseFrame implements StatusBar {
 		});
 
 		jkstpKeyStores.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent evt) {
 				maybeShowKeyStoreTabPopup(evt);
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent evt) {
 				maybeShowKeyStoreTabPopup(evt);
 			}
 
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				// Close tab if it is middle-clicked
 				if (evt.getButton() == MouseEvent.BUTTON2) {
@@ -1443,7 +1468,7 @@ public final class KseFrame implements StatusBar {
 		int width = sizeAndPosition.width;
 		int height = sizeAndPosition.height;
 
-		if ((width <= 0) || (height <= 0)) {
+		if (width <= 0 || height <= 0) {
 			jQuickStart.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		} else {
 			jQuickStart.setPreferredSize(new Dimension(width, height));
@@ -1540,14 +1565,17 @@ public final class KseFrame implements StatusBar {
 		certExpiredCol.setPreferredWidth(28);
 
 		jtKeyStore.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				maybeShowSelectedEntryDetails(evt);
 			}
 
+			@Override
 			public void mousePressed(MouseEvent evt) {
 				maybeShowSelectedEntryPopupMenu(evt);
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent evt) {
 				maybeShowSelectedEntryPopupMenu(evt);
 			}
@@ -1556,24 +1584,27 @@ public final class KseFrame implements StatusBar {
 		jtKeyStore.addKeyListener(new KeyAdapter() {
 			boolean deleteLastPressed = false;
 
+			@Override
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE) ? true : false;
+					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE ? true : false;
 				}
 			}
 
+			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
-				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
+				if (!OperatingSystem.isMacOs() && deleteLastPressed && evt.getKeyCode() == KeyEvent.VK_DELETE) {
 					deleteLastPressed = false;
 					handleDeleteSelectedEntry();
 				}
 			}
 
+			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
-				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
+				if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
 					handleDeleteSelectedEntry();
 				}
 			}
@@ -2125,7 +2156,7 @@ public final class KseFrame implements StatusBar {
 			} else {
 				jpmKeyStore.show(evt.getComponent(), evt.getX(), evt.getY());
 			}
-		} else if ((evt.getClickCount() > 1) && (row == -1)) {
+		} else if (evt.getClickCount() > 1 && row == -1) {
 			// double click on free space opens generate key pair dialog
 			generateKeyPairAction.generateKeyPair();
 		}
@@ -2145,7 +2176,7 @@ public final class KseFrame implements StatusBar {
 				int x = evt.getX();
 				int y = evt.getY();
 
-				if ((x < rect.x) || (x > (rect.x + rect.width)) || (y < rect.y) || (y > (rect.y + rect.height))) {
+				if (x < rect.x || x > rect.x + rect.width || y < rect.y || y > rect.y + rect.height) {
 					continue;
 				}
 
@@ -2597,7 +2628,7 @@ public final class KseFrame implements StatusBar {
 
 	private void updateCutCopyPasteControls() {
 		// Can cut and copy if a KeyStore entry is selected
-		boolean cutAndCopyEnabled = (getActiveKeyStoreTable().getSelectedRow() != -1);
+		boolean cutAndCopyEnabled = getActiveKeyStoreTable().getSelectedRow() != -1;
 
 		cutAction.setEnabled(cutAndCopyEnabled);
 		cutKeyPairAction.setEnabled(cutAndCopyEnabled);
@@ -2660,6 +2691,7 @@ public final class KseFrame implements StatusBar {
 	 * @param status
 	 *            Text to display
 	 */
+	@Override
 	public void setStatusBarText(String status) {
 		jlStatusBar.setText(status);
 	}
@@ -2668,6 +2700,7 @@ public final class KseFrame implements StatusBar {
 	 * Set the text in the status bar to reflect the status of the active
 	 * KeyStore.
 	 */
+	@Override
 	public void setDefaultStatusBarText() {
 		KeyStoreHistory history = getActiveKeyStoreHistory();
 
@@ -2754,7 +2787,7 @@ public final class KseFrame implements StatusBar {
 	 *            Tab layout policy
 	 */
 	public void setKeyStoreTabLayoutPolicy(int tabLayoutPolicy) {
-		if ((tabLayoutPolicy == JTabbedPane.WRAP_TAB_LAYOUT) || (tabLayoutPolicy == JTabbedPane.SCROLL_TAB_LAYOUT)) {
+		if (tabLayoutPolicy == JTabbedPane.WRAP_TAB_LAYOUT || tabLayoutPolicy == JTabbedPane.SCROLL_TAB_LAYOUT) {
 			jkstpKeyStores.setTabLayoutPolicy(tabLayoutPolicy);
 			applicationSettings.setTabLayout(tabLayoutPolicy);
 		}
