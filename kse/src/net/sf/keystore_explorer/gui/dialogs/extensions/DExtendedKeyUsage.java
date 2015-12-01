@@ -1,6 +1,7 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
  *           2013 - 2015 Kai Kramer
+ *           2015 - 2015 Uri Blumenthal
  *
  * This file is part of KeyStore Explorer.
  *
@@ -69,6 +70,11 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
  * 
  */
 public class DExtendedKeyUsage extends DExtension {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -972351635055954L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("net/sf/keystore_explorer/gui/dialogs/extensions/resources");
 
@@ -150,8 +156,10 @@ public class DExtendedKeyUsage extends DExtension {
 		
 		dummy2 = new JCheckBox();
 		dummy3 = new JCheckBox();
-		//dummy2.setVisible(false);
-		//dummy3.setVisible(false);
+		dummy2.setEnabled(false);
+		dummy3.setEnabled(false);
+//		dummy2.setVisible(false);
+//		dummy3.setVisible(false);
 		
 		JPanel jpFirstColumn = new JPanel();
 		jpFirstColumn.setLayout(new BoxLayout(jpFirstColumn, BoxLayout.Y_AXIS));
@@ -169,7 +177,7 @@ public class DExtendedKeyUsage extends DExtension {
 		jpSecondColumn.add(jcbIpSecurityTunnelTermination);
 		jpSecondColumn.add(jcbIpSecurityUser);
 		jpSecondColumn.add(jcbOcspStamping);
-//		jpSecondColumn.add(dummy2);
+		jpSecondColumn.add(dummy2);
 
 		JPanel jpThirdColumn = new JPanel();
 		jpThirdColumn.setLayout(new BoxLayout(jpThirdColumn, BoxLayout.Y_AXIS));
@@ -178,7 +186,7 @@ public class DExtendedKeyUsage extends DExtension {
 		jpThirdColumn.add(jcbTlsWebClientAuthentication);
 		jpThirdColumn.add(jcbTlsWebServerAuthentication);
 		jpThirdColumn.add(jcbSmartcardLogon);
-//		jpThirdColumn.add(dummy3);
+		jpThirdColumn.add(dummy3);
 		
 		
 		jpExtendedKeyUsages = new JPanel();
@@ -212,6 +220,11 @@ public class DExtendedKeyUsage extends DExtension {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1792160787358938936L;
+
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
