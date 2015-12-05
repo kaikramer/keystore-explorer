@@ -96,11 +96,12 @@ public class DExtendedKeyUsage extends DExtension {
 	private JCheckBox jcbTlsWebServerAuthentication;
 	private JCheckBox jcbSmartcardLogon;
 	private JCheckBox jcbAnyExtendedKeyUsage;
+	private JCheckBox jcbAdobePDFSigning;
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
 	
-	private JCheckBox dummy2, dummy3;
+	private JCheckBox dummy3;
 
 	private byte[] value;
 
@@ -139,6 +140,7 @@ public class DExtendedKeyUsage extends DExtension {
 
 		jcbCodeSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbCodeSigning.text"));
 		jcbDocumentSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbDocumentSigning.text"));
+		jcbAdobePDFSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAdobePDFSigning.text"));
 		jcbEncryptedFileSystem = new JCheckBox(res.getString("DExtendedKeyUsage.jcbEncryptedFileSystem.text"));
 		jcbEmailProtection = new JCheckBox(res.getString("DExtendedKeyUsage.jcbEmailProtection.text"));
 		jcbIpSecurityEndSystem = new JCheckBox(res.getString("DExtendedKeyUsage.jcbIpSecurityEndSystem.text"));
@@ -154,11 +156,8 @@ public class DExtendedKeyUsage extends DExtension {
 		jcbSmartcardLogon = new JCheckBox(res.getString("DExtendedKeyUsage.jcbSmartcardLogon.text"));
 		jcbAnyExtendedKeyUsage = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAnyExtendedKeyUsage.text"));
 		
-		dummy2 = new JCheckBox();
-		dummy3 = new JCheckBox();
-		dummy2.setEnabled(false);
+		dummy3 = new JCheckBox();	
 		dummy3.setEnabled(false);
-//		dummy2.setVisible(false);
 //		dummy3.setVisible(false);
 		
 		JPanel jpFirstColumn = new JPanel();
@@ -177,7 +176,7 @@ public class DExtendedKeyUsage extends DExtension {
 		jpSecondColumn.add(jcbIpSecurityTunnelTermination);
 		jpSecondColumn.add(jcbIpSecurityUser);
 		jpSecondColumn.add(jcbOcspStamping);
-		jpSecondColumn.add(dummy2);
+		jpSecondColumn.add(jcbAdobePDFSigning);
 
 		JPanel jpThirdColumn = new JPanel();
 		jpThirdColumn.setLayout(new BoxLayout(jpThirdColumn, BoxLayout.Y_AXIS));
