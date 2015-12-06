@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry exported="true" kind="lib" path="lib/AppleJavaExtensions.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-swing.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-common.jar"/>
@@ -13,7 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/bcprov.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/darcula.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/appbundler-1.0ea.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/AppleJavaExtensions-1.4.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<accessrules>
 			<accessrule kind="accessible" pattern="**"/>
