@@ -41,6 +41,9 @@ public enum ExtendedKeyUsageType {
 	/** Document Signing */
 	DOCUMENT_SIGNING("1.3.6.1.4.1.311.10.3.12", "DocumentSigningExtKeyUsage"),
 	
+	/** Adobe PDF Signing */
+	ADOBE_PDF_SIGNING("1.2.840.113583.1.1.5", "AdobePDFSigningExtKeyUsage"),
+	
 	/** Encrypted File System */
 	ENCRYPTED_FILE_SYSTEM("1.3.6.1.4.1.311.10.3.4", 
 			"EncryptedFileSystemExtKeyUsage"),

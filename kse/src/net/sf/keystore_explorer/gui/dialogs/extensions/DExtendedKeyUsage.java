@@ -21,15 +21,21 @@
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
 import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.ADOBE_PDF_SIGNING;
+import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.ANY_EXTENDED_KEY_USAGE;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.CLIENT_AUTH;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.CODE_SIGNING;
+import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.DOCUMENT_SIGNING;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.EMAIL_PROTECTION;
+import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.ENCRYPTED_FILE_SYSTEM;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.IPSEC_END_SYSTEM;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.IPSEC_TUNNEL;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.IPSEC_USER;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.OCSP_SIGNING;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.SERVER_AUTH;
+import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.SMARTCARD_LOGON;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.TIME_STAMPING;
+
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -262,18 +268,26 @@ public class DExtendedKeyUsage extends DExtension {
 				jcbTlsWebClientAuthentication.setSelected(true);
 			} else if (type == CODE_SIGNING) {
 				jcbCodeSigning.setSelected(true);
+			} else if (type == DOCUMENT_SIGNING) {
+				jcbDocumentSigning.setSelected(true);
 			} else if (type == EMAIL_PROTECTION) {
 				jcbEmailProtection.setSelected(true);
+			} else if (type == ENCRYPTED_FILE_SYSTEM) {
+				jcbEncryptedFileSystem.setSelected(true);
 			} else if (type == IPSEC_END_SYSTEM) {
 				jcbIpSecurityEndSystem.setSelected(true);
 			} else if (type == IPSEC_TUNNEL) {
 				jcbIpSecurityTunnelTermination.setSelected(true);
 			} else if (type == IPSEC_USER) {
 				jcbIpSecurityUser.setSelected(true);
+			} else if (type == SMARTCARD_LOGON) {
+				jcbSmartcardLogon.setSelected(true);
 			} else if (type == TIME_STAMPING) {
 				jcbTimeStamping.setSelected(true);
 			} else if (type == OCSP_SIGNING) {
 				jcbOcspStamping.setSelected(true);
+			} else if (type == ANY_EXTENDED_KEY_USAGE) {
+				jcbAnyExtendedKeyUsage.setSelected(true);
 			}
 		}
 	}
@@ -282,7 +296,11 @@ public class DExtendedKeyUsage extends DExtension {
 		if (!jcbTlsWebServerAuthentication.isSelected() && !jcbTlsWebClientAuthentication.isSelected()
 				&& !jcbCodeSigning.isSelected() && !jcbEmailProtection.isSelected()
 				&& !jcbIpSecurityEndSystem.isSelected() && !jcbIpSecurityTunnelTermination.isSelected()
-				&& !jcbIpSecurityUser.isSelected() && !jcbTimeStamping.isSelected() && !jcbOcspStamping.isSelected()) {
+				&& !jcbIpSecurityUser.isSelected() && !jcbTimeStamping.isSelected() && !jcbOcspStamping.isSelected() 
+				&& !jcbDocumentSigning.isSelected() && !jcbAdobePDFSigning.isSelected()
+				&& !jcbEncryptedFileSystem.isSelected() && !jcbAnyExtendedKeyUsage.isSelected()
+				)
+		{
 			JOptionPane.showMessageDialog(this, res.getString("DExtendedKeyUsage.ValueReq.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return;
@@ -301,9 +319,21 @@ public class DExtendedKeyUsage extends DExtension {
 		if (jcbCodeSigning.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(CODE_SIGNING.oid())));
 		}
+		
+		if (jcbDocumentSigning.isSelected()) {
+			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(DOCUMENT_SIGNING.oid())));
+		}
+		
+		if (jcbAdobePDFSigning.isSelected()) {
+			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ADOBE_PDF_SIGNING.oid())));
+		}
 
 		if (jcbEmailProtection.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(EMAIL_PROTECTION.oid())));
+		}
+		
+		if (jcbEncryptedFileSystem.isSelected()) {
+			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ENCRYPTED_FILE_SYSTEM.oid())));
 		}
 
 		if (jcbIpSecurityEndSystem.isSelected()) {
@@ -325,7 +355,15 @@ public class DExtendedKeyUsage extends DExtension {
 		if (jcbOcspStamping.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(OCSP_SIGNING.oid())));
 		}
+		
+		if (jcbSmartcardLogon.isSelected()) {
+			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(SMARTCARD_LOGON.oid())));
+		}
 
+		if (jcbAnyExtendedKeyUsage.isSelected()) {
+			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ANY_EXTENDED_KEY_USAGE.oid())));
+		}
+		
 		ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage(
 				keyPurposeIds.toArray(new KeyPurposeId[keyPurposeIds.size()]));
 
@@ -358,4 +396,25 @@ public class DExtendedKeyUsage extends DExtension {
 		setVisible(false);
 		dispose();
 	}
+	
+	public static void main(String[] args) throws Exception {
+        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DExtendedKeyUsage dialog = new DExtendedKeyUsage(new javax.swing.JDialog());
+                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                        @Override
+                        public void windowClosing(java.awt.event.WindowEvent e) {
+                            System.exit(0);
+                        }
+                    });
+                    dialog.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }
