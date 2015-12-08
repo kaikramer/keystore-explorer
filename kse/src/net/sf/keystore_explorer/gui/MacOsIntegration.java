@@ -21,11 +21,6 @@ package net.sf.keystore_explorer.gui;
 
 import java.io.File;
 
-import net.sf.keystore_explorer.gui.actions.AboutAction;
-import net.sf.keystore_explorer.gui.actions.ExitAction;
-import net.sf.keystore_explorer.gui.actions.OpenAction;
-import net.sf.keystore_explorer.gui.actions.PreferencesAction;
-
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
 import com.apple.eawt.AppEvent.OpenFilesEvent;
@@ -37,18 +32,23 @@ import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 
+import net.sf.keystore_explorer.gui.actions.AboutAction;
+import net.sf.keystore_explorer.gui.actions.ExitAction;
+import net.sf.keystore_explorer.gui.actions.OpenAction;
+import net.sf.keystore_explorer.gui.actions.PreferencesAction;
+
 /**
  * Integrate KSE with Mac OS. Handles call backs from Mac OS.
- * 
+ *
  */
-public class MacOsIntegration implements AboutHandler, OpenFilesHandler, 
+public class MacOsIntegration implements AboutHandler, OpenFilesHandler,
 	PreferencesHandler, QuitHandler {
 	private KseFrame kseFrame;
 	private Application macOsApplicationIntegration;
 
 	/**
 	 * Construct integration with Mac OS.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer main frame
 	 */
@@ -56,19 +56,19 @@ public class MacOsIntegration implements AboutHandler, OpenFilesHandler,
 		this.kseFrame = kseFrame;
 		macOsApplicationIntegration = Application.getApplication();
 
-//		macOsApplicationIntegration.setEnabledAboutMenu(true);
-//		macOsApplicationIntegration.setAboutHandler(this);
-//		macOsApplicationIntegration.setOpenFileHandler(this);
-//		macOsApplicationIntegration.setPreferencesHandler(this);
-//		macOsApplicationIntegration.setQuitHandler(this);
+		macOsApplicationIntegration.setAboutHandler(this);
+		macOsApplicationIntegration.setOpenFileHandler(this);
+		macOsApplicationIntegration.setPreferencesHandler(this);
+		macOsApplicationIntegration.setQuitHandler(this);
 	}
 
 	/**
 	 * Handle about callback. Show application's about dialog.
-	 * 
+	 *
 	 * @param evt
 	 *            Event
 	 */
+	@Override
 	public void handleAbout(AboutEvent evt) {
 		AboutAction aboutAction = new AboutAction(kseFrame);
 		aboutAction.showAbout();
@@ -76,10 +76,11 @@ public class MacOsIntegration implements AboutHandler, OpenFilesHandler,
 
 	/**
 	 * Handle open file callback. Open file in application.
-	 * 
+	 *
 	 * @param evt
 	 *            Event
 	 */
+	@Override
 	public void openFiles(OpenFilesEvent evt) {
 		OpenAction openAction = new OpenAction(kseFrame);
 
@@ -90,10 +91,11 @@ public class MacOsIntegration implements AboutHandler, OpenFilesHandler,
 
 	/**
 	 * Handle preferences callback. Show application's preferences dialog.
-	 * 
+	 *
 	 * @param evt
 	 *            Event
 	 */
+	@Override
 	public void handlePreferences(PreferencesEvent evt) {
 		PreferencesAction preferencesAction = new PreferencesAction(kseFrame);
 		preferencesAction.showPreferences();
@@ -101,12 +103,13 @@ public class MacOsIntegration implements AboutHandler, OpenFilesHandler,
 
 	/**
 	 * Handle quit callback. Quit application.
-	 * 
+	 *
 	 * @param evt
 	 *            Event
 	 * @param resp
 	 *            Response
 	 */
+	@Override
 	public void handleQuitRequestWith(QuitEvent evt, QuitResponse resp) {
 		ExitAction exitAction = new ExitAction(kseFrame);
 		exitAction.exitApplication();

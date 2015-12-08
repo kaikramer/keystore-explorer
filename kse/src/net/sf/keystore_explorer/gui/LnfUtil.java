@@ -29,7 +29,8 @@ import com.bulenkov.darcula.DarculaLaf;
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.SkyBlue;
-import javax.swing.plaf.nimbus.*;
+import com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel;
+import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
 import net.sf.keystore_explorer.gui.theme.LightMetalTheme;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
@@ -125,7 +126,7 @@ public class LnfUtil {
 		if (OperatingSystem.isMacOs()) {
 			lnfClassName = UIManager.getSystemLookAndFeelClassName();
 		} else if (OperatingSystem.isWindows()) {
-			lnfClassName = NimbusLookAndFeel.class.getName();
+			lnfClassName = WindowsLookAndFeel.class.getName();
 		} else {
 			lnfClassName = Plastic3DLookAndFeel.class.getName();
 		}
@@ -170,7 +171,7 @@ public class LnfUtil {
 	 * @return True if it is
 	 */
 	public static boolean usingWindowsLnf() {
-		return usingLnf(NimbusLookAndFeel.class);
+		return usingLnf(WindowsLookAndFeel.class);
 	}
 
 	/**
@@ -179,7 +180,7 @@ public class LnfUtil {
 	 * @return True if it is
 	 */
 	public static boolean usingWindowsClassicLnf() {
-		return usingLnf(NimbusLookAndFeel.class);
+		return usingLnf(WindowsClassicLookAndFeel.class);
 	}
 
 	/**
