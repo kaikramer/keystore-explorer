@@ -1,7 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
  *           2013 - 2015 Kai Kramer
- *           2015 - 2015 Uri Blumenthal
  *
  * This file is part of KeyStore Explorer.
  *
@@ -270,6 +269,8 @@ public class DExtendedKeyUsage extends DExtension {
 				jcbCodeSigning.setSelected(true);
 			} else if (type == DOCUMENT_SIGNING) {
 				jcbDocumentSigning.setSelected(true);
+			} else if (type == ADOBE_PDF_SIGNING) {
+				jcbAdobePDFSigning.setSelected(true);
 			} else if (type == EMAIL_PROTECTION) {
 				jcbEmailProtection.setSelected(true);
 			} else if (type == ENCRYPTED_FILE_SYSTEM) {
