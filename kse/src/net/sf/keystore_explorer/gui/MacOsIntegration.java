@@ -41,7 +41,8 @@ import com.apple.eawt.QuitResponse;
  * Integrate KSE with Mac OS. Handles call backs from Mac OS.
  * 
  */
-public class MacOsIntegration implements AboutHandler, OpenFilesHandler, PreferencesHandler, QuitHandler {
+public class MacOsIntegration implements AboutHandler, OpenFilesHandler, 
+	PreferencesHandler, QuitHandler {
 	private KseFrame kseFrame;
 	private Application macOsApplicationIntegration;
 
@@ -55,10 +56,11 @@ public class MacOsIntegration implements AboutHandler, OpenFilesHandler, Prefere
 		this.kseFrame = kseFrame;
 		macOsApplicationIntegration = Application.getApplication();
 
-		macOsApplicationIntegration.setAboutHandler(this);
-		macOsApplicationIntegration.setOpenFileHandler(this);
-		macOsApplicationIntegration.setPreferencesHandler(this);
-		macOsApplicationIntegration.setQuitHandler(this);
+//		macOsApplicationIntegration.setEnabledAboutMenu(true);
+//		macOsApplicationIntegration.setAboutHandler(this);
+//		macOsApplicationIntegration.setOpenFileHandler(this);
+//		macOsApplicationIntegration.setPreferencesHandler(this);
+//		macOsApplicationIntegration.setQuitHandler(this);
 	}
 
 	/**
