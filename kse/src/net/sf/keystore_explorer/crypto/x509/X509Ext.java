@@ -19,125 +19,34 @@
  */
 package net.sf.keystore_explorer.crypto.x509;
 
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.COMMON_NAME;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.COUNTRY_NAME;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.DOMAIN_COMPONENT;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.EMAIL_ADDRESS;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.LOCALITY_NAME;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.MAIL;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.ORGANIZATIONAL_UNIT;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.ORGANIZATION_NAME;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.SERIAL_NUMBER;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.STATE_NAME;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.STREET_ADDRESS;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.TITLE;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.UNSTRUCTURED_ADDRESS;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.UNSTRUCTURED_NAME;
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.USER_ID;
-import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
-import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.AUTHORITY_INFORMATION_ACCESS;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.AUTHORITY_KEY_IDENTIFIER;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.BASIC_CONSTRAINTS;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CERTIFICATE_ISSUER;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CERTIFICATE_POLICIES;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CRL_DISTRIBUTION_POINTS;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CRL_NUMBER;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.DELTA_CRL_INDICATOR;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ENTRUST_VERSION_INFORMATION;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.EXTENDED_KEY_USAGE;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.FRESHEST_CRL;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.HOLD_INSTRUCTION_CODE;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.INHIBIT_ANY_POLICY;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.INVALIDITY_DATE;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ISSUER_ALTERNATIVE_NAME;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ISSUING_DISTRIBUTION_POINT;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.KEY_USAGE;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NAME_CONSTRAINTS;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_BASE_URL;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CA_POLICY_URL;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CA_REVOCATION_URL;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_RENEWAL_URL;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_TYPE;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_COMMENT;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_REVOCATION_URL;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_SSL_SERVER_NAME;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.POLICY_CONSTRAINTS;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.POLICY_MAPPINGS;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.PRIVATE_KEY_USAGE_PERIOD;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.REASON_CODE;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_ALTERNATIVE_NAME;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_DIRECTORY_ATTRIBUTES;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_INFORMATION_ACCESS;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_KEY_IDENTIFIER;
+import net.sf.keystore_explorer.utilities.io.HexUtil;
+import net.sf.keystore_explorer.utilities.io.IndentChar;
+import net.sf.keystore_explorer.utilities.io.IndentSequence;
+import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.isismtt.x509.*;
+import org.bouncycastle.asn1.misc.NetscapeCertType;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.DirectoryString;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x509.*;
+import org.bouncycastle.asn1.x509.qualified.*;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import net.sf.keystore_explorer.utilities.io.HexUtil;
-import net.sf.keystore_explorer.utilities.io.IndentChar;
-import net.sf.keystore_explorer.utilities.io.IndentSequence;
-import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1GeneralizedTime;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERGeneralString;
-import org.bouncycastle.asn1.DERGeneralizedTime;
-import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.misc.NetscapeCertType;
-import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
-import org.bouncycastle.asn1.x500.DirectoryString;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x509.AccessDescription;
-import org.bouncycastle.asn1.x509.Attribute;
-import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.CRLDistPoint;
-import org.bouncycastle.asn1.x509.CRLNumber;
-import org.bouncycastle.asn1.x509.CRLReason;
-import org.bouncycastle.asn1.x509.CertificatePolicies;
-import org.bouncycastle.asn1.x509.DisplayText;
-import org.bouncycastle.asn1.x509.DistributionPoint;
-import org.bouncycastle.asn1.x509.DistributionPointName;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.asn1.x509.GeneralSubtree;
-import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.NameConstraints;
-import org.bouncycastle.asn1.x509.NoticeReference;
-import org.bouncycastle.asn1.x509.PolicyInformation;
-import org.bouncycastle.asn1.x509.PolicyMappings;
-import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
-import org.bouncycastle.asn1.x509.ReasonFlags;
-import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.asn1.x509.UserNotice;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.*;
+import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
+import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.*;
 
 /**
  * Holds the information of an X.509 extension and provides the ability to get
  * the extension's name and value as a string.
- *
  */
 public class X509Ext {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
@@ -153,12 +62,9 @@ public class X509Ext {
 	/**
 	 * Construct a new immutable X509Ext.
 	 *
-	 * @param oid
-	 *            X509Extension object identifier
-	 * @param value
-	 *            X509Extension value as a DER-encoded OCTET string
-	 * @param critical
-	 *            Critical extension?
+	 * @param oid      X509Extension object identifier
+	 * @param value    X509Extension value as a DER-encoded OCTET string
+	 * @param critical Critical extension?
 	 */
 	public X509Ext(ASN1ObjectIdentifier oid, byte[] value, boolean critical) {
 		this.oid = oid;
@@ -174,12 +80,9 @@ public class X509Ext {
 	/**
 	 * Construct a new immutable X509Ext.
 	 *
-	 * @param oid
-	 *            X509Extension object identifier
-	 * @param value
-	 *            X509Extension value as a DER-encoded OCTET string
-	 * @param critical
-	 *            Critical extension?
+	 * @param oid      X509Extension object identifier
+	 * @param value    X509Extension value as a DER-encoded OCTET string
+	 * @param critical Critical extension?
 	 */
 	public X509Ext(String oid, byte[] value, boolean critical) {
 		this(new ASN1ObjectIdentifier(oid), value, critical);
@@ -231,10 +134,8 @@ public class X509Ext {
 	 * Get extension value as a string.
 	 *
 	 * @return X509Extension value as a string
-	 * @throws IOException
-	 *             If an ASN.1 coding problem occurs
-	 * @throws IOException
-	 *             If an I/O problem occurs
+	 * @throws IOException If an ASN.1 coding problem occurs
+	 * @throws IOException If an I/O problem occurs
 	 */
 	public String getStringValue() throws IOException, IOException {
 
@@ -312,6 +213,32 @@ public class X509Ext {
 			return getNetscapeSslServerNameStringValue(octets);
 		} else if (type == NETSCAPE_COMMENT) {
 			return getNetscapeCommentStringValue(octets);
+		} else if (type == BIOMETRIC_INFO) {
+			return getBiometricInfoStringValue(octets);
+		} else if (type == QC_STATEMENTS) {
+			return getQcStatementsStringValue(octets);
+		} else if (type == OCSP_NO_CHECK) {
+			return getOcspNoCheckStringValue(octets);
+		} else if (type == LIABILITY_LIMITATION_FLAG) {
+			return getLiabilityLimitationFlagStringValue(octets);
+		} else if (type == DATE_OF_CERT_GEN) {
+			return getDateOfCertGenStringValue(octets);
+		} else if (type == PROCURATION) {
+			return getProcurationStringValue(octets);
+		} else if (type == ADMISSION) {
+			return getAdmissionStringValue(octets);
+		} else if (type == MONETARY_LIMIT) {
+			return getMonetaryLimitStringValue(octets);
+		} else if (type == DECLARATION_OF_MAJORITY) {
+			return getDeclarationOfMajorityStringValue(octets);
+		} else if (type == ICCSN) {
+			return getICCSNStringValue(octets);
+		} else if (type == RESTRICTION) {
+			return getRestrictionStringValue(octets);
+		} else if (type == ADDITIONAL_INFORMATION) {
+			return getAdditionalInformationStringValue(octets);
+		} else if (type == VALIDITY_MODEL) {
+			return getValidityModelStringValue(octets);
 		} else {
 			/*
 			 * X509Extension not recognised or means to output it not defined - just
@@ -349,19 +276,19 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		ASN1Sequence entrustVersInfo = (ASN1Sequence) ASN1Primitive.fromByteArray(value);
 
 		DERGeneralString entrustVers = (DERGeneralString) entrustVersInfo.getObjectAt(0);
 		DERBitString entrustInfoFlags = (DERBitString) entrustVersInfo.getObjectAt(1);
 
-		strBuff.append(MessageFormat.format(res.getString("EntrustVersion"), entrustVers.getString()));
-		strBuff.append(NEWLINE);
-		strBuff.append(MessageFormat.format(res.getString("EntrustInformationFlags"), entrustInfoFlags.getString()));
-		strBuff.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("EntrustVersion"), entrustVers.getString()));
+		sb.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("EntrustInformationFlags"), entrustInfoFlags.getString()));
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getAuthorityInformationAccessStringValue(byte[] value) throws IOException {
@@ -377,7 +304,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		AuthorityInformationAccess authorityInfoAccess = AuthorityInformationAccess.getInstance(value);
 
@@ -405,21 +332,21 @@ public class X509Ext {
 
 			String accessLocationStr = GeneralNameUtil.toString(accessLocation);
 
-			strBuff.append(MessageFormat.format(res.getString("AuthorityInformationAccess"), accessDesc));
-			strBuff.append(NEWLINE);
-			strBuff.append(INDENT);
-			strBuff.append(MessageFormat.format(res.getString("AccessMethod"), accessMethodStr));
-			strBuff.append(NEWLINE);
-			strBuff.append(INDENT);
-			strBuff.append(res.getString("AccessLocation"));
-			strBuff.append(NEWLINE);
-			strBuff.append(INDENT);
-			strBuff.append(INDENT);
-			strBuff.append(accessLocationStr);
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("AuthorityInformationAccess"), accessDesc));
+			sb.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("AccessMethod"), accessMethodStr));
+			sb.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(res.getString("AccessLocation"));
+			sb.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(INDENT);
+			sb.append(accessLocationStr);
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getSubjectInformationAccessStringValue(byte[] value) throws IOException {
@@ -435,7 +362,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		SubjectInfoAccess subjectInfoAccess = SubjectInfoAccess.getInstance(value);
 
@@ -463,21 +390,21 @@ public class X509Ext {
 
 			String accessLocationStr = GeneralNameUtil.toString(accessLocation);
 
-			strBuff.append(MessageFormat.format(res.getString("SubjectInformationAccess"), accessDesc));
-			strBuff.append(NEWLINE);
-			strBuff.append(INDENT);
-			strBuff.append(MessageFormat.format(res.getString("AccessMethod"), accessMethodStr));
-			strBuff.append(NEWLINE);
-			strBuff.append(INDENT);
-			strBuff.append(res.getString("AccessLocation"));
-			strBuff.append(NEWLINE);
-			strBuff.append(INDENT);
-			strBuff.append(INDENT);
-			strBuff.append(accessLocationStr);
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("SubjectInformationAccess"), accessDesc));
+			sb.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("AccessMethod"), accessMethodStr));
+			sb.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(res.getString("AccessLocation"));
+			sb.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(INDENT);
+			sb.append(accessLocationStr);
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getSubjectDirectoryAttributesStringValue(byte[] value) throws IOException {
@@ -493,7 +420,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		SubjectDirectoryAttributes subjectDirectoryAttributes = SubjectDirectoryAttributes.getInstance(value);
 
@@ -504,18 +431,16 @@ public class X509Ext {
 
 			ASN1Set attributeValues = ((Attribute) attribute).getAttrValues();
 
-			for (Enumeration en = attributeValues.getObjects(); en.hasMoreElements();) {
-
-				ASN1Encodable attributeValue = (ASN1Encodable) en.nextElement();
+			for (ASN1Encodable attributeValue : attributeValues) {
 
 				String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
-				strBuff.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
-				strBuff.append(NEWLINE);
+				sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
+				sb.append(NEWLINE);
 			}
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getSubjectKeyIndentifierStringValue(byte[] value) throws IOException {
@@ -529,18 +454,18 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		SubjectKeyIdentifier subjectKeyIdentifier = SubjectKeyIdentifier.getInstance(value);
 
 		// Get key identifier from octet string
 		byte[] keyIdentifierBytes = subjectKeyIdentifier.getKeyIdentifier();
 
-		strBuff.append(MessageFormat.format(res.getString("SubjectKeyIdentifier"),
-				HexUtil.getHexString(keyIdentifierBytes)));
-		strBuff.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("SubjectKeyIdentifier"),
+		                               HexUtil.getHexString(keyIdentifierBytes)));
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getKeyUsageStringValue(byte[] value) throws IOException {
@@ -558,46 +483,46 @@ public class X509Ext {
 
 		int keyUsages = keyUsage.intValue();
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (hasKeyUsage(keyUsages, KeyUsage.digitalSignature)) {
-			strBuff.append(res.getString("DigitalSignatureKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("DigitalSignatureKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.nonRepudiation)) {
-			strBuff.append(res.getString("NonRepudiationKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("NonRepudiationKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.keyEncipherment)) {
-			strBuff.append(res.getString("KeyEnciphermentKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("KeyEnciphermentKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.dataEncipherment)) {
-			strBuff.append(res.getString("DataEnciphermentKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("DataEnciphermentKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.keyAgreement)) {
-			strBuff.append(res.getString("KeyAgreementKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("KeyAgreementKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.keyCertSign)) {
-			strBuff.append(res.getString("KeyCertSignKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("KeyCertSignKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.cRLSign)) {
-			strBuff.append(res.getString("CrlSignKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("CrlSignKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.encipherOnly)) {
-			strBuff.append(res.getString("EncipherOnlyKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("EncipherOnlyKeyUsage"));
+			sb.append(NEWLINE);
 		}
 		if (hasKeyUsage(keyUsages, KeyUsage.decipherOnly)) {
-			strBuff.append(res.getString("DecipherOnlyKeyUsage"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("DecipherOnlyKeyUsage"));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private boolean hasKeyUsage(int keyUsages, int keyUsage) {
@@ -614,7 +539,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		PrivateKeyUsagePeriod privateKeyUsagePeriod = PrivateKeyUsagePeriod.getInstance(value);
 
@@ -622,24 +547,24 @@ public class X509Ext {
 		ASN1GeneralizedTime notAfter = privateKeyUsagePeriod.getNotAfter();
 
 		if (notBefore != null) {
-			strBuff.append(MessageFormat.format(res.getString("NotBeforePrivateKeyUsagePeriod"),
-					getGeneralizedTimeString(notBefore)));
+			sb.append(MessageFormat.format(res.getString("NotBeforePrivateKeyUsagePeriod"),
+			                               getGeneralizedTimeString(notBefore)));
 		} else {
-			strBuff.append(MessageFormat.format(res.getString("NotBeforePrivateKeyUsagePeriod"),
-					res.getString("NoValue")));
+			sb.append(MessageFormat.format(res.getString("NotBeforePrivateKeyUsagePeriod"),
+			                               res.getString("NoValue")));
 		}
-		strBuff.append(NEWLINE);
+		sb.append(NEWLINE);
 
 		if (notAfter != null) {
-			strBuff.append(MessageFormat.format(res.getString("NotAfterPrivateKeyUsagePeriod"),
-					getGeneralizedTimeString(notAfter)));
+			sb.append(MessageFormat.format(res.getString("NotAfterPrivateKeyUsagePeriod"),
+			                               getGeneralizedTimeString(notAfter)));
 		} else {
-			strBuff.append(MessageFormat.format(res.getString("NotAfterPrivateKeyUsagePeriod"),
-					res.getString("NoValue")));
+			sb.append(MessageFormat.format(res.getString("NotAfterPrivateKeyUsagePeriod"),
+			                               res.getString("NoValue")));
 		}
-		strBuff.append(NEWLINE);
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getSubjectAlternativeNameStringValue(byte[] value) throws IOException {
@@ -653,16 +578,16 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		GeneralNames subjectAltName = GeneralNames.getInstance(value);
 
 		for (GeneralName generalName : subjectAltName.getNames()) {
-			strBuff.append(GeneralNameUtil.toString(generalName));
-			strBuff.append(NEWLINE);
+			sb.append(GeneralNameUtil.toString(generalName));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getIssuerAlternativeNameStringValue(byte[] value) throws IOException {
@@ -676,16 +601,16 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		GeneralNames issuerAltName = GeneralNames.getInstance(value);
 
 		for (GeneralName generalName : issuerAltName.getNames()) {
-			strBuff.append(GeneralNameUtil.toString(generalName));
-			strBuff.append(NEWLINE);
+			sb.append(GeneralNameUtil.toString(generalName));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getBasicConstraintsStringValue(byte[] value) throws IOException {
@@ -703,7 +628,7 @@ public class X509Ext {
 		 * which saves the bother of a null check
 		 */
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		BasicConstraints basicConstraints = BasicConstraints.getInstance(value);
 
@@ -711,23 +636,23 @@ public class X509Ext {
 		BigInteger pathLenConstraint = basicConstraints.getPathLenConstraint();
 
 		if (ca) {
-			strBuff.append(res.getString("SubjectIsCa"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("SubjectIsCa"));
+			sb.append(NEWLINE);
 		} else {
-			strBuff.append(res.getString("SubjectIsNotCa"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("SubjectIsNotCa"));
+			sb.append(NEWLINE);
 		}
 
 		if (pathLenConstraint != null) {
-			strBuff.append(MessageFormat.format(res.getString("PathLengthConstraint"), pathLenConstraint
+			sb.append(MessageFormat.format(res.getString("PathLengthConstraint"), pathLenConstraint
 					.intValue()));
-			strBuff.append(NEWLINE);
+			sb.append(NEWLINE);
 		} else {
-			strBuff.append(res.getString("NoPathLengthConstraint"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("NoPathLengthConstraint"));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getCrlNumberStringValue(byte[] value) throws IOException {
@@ -735,14 +660,14 @@ public class X509Ext {
 		/* CRLNumber ::= ASN1Integer (0..MAX) */
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		CRLNumber crlNumber = CRLNumber.getInstance(value);
 
-		strBuff.append(HexUtil.getHexString(crlNumber.getCRLNumber()));
-		strBuff.append(NEWLINE);
+		sb.append(HexUtil.getHexString(crlNumber.getCRLNumber()));
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getReasonCodeStringValue(byte[] value) throws IOException {
@@ -759,39 +684,39 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		CRLReason crlReason = CRLReason.getInstance(value);
 
 		long crlReasonLong = crlReason.getValue().longValue();
 
 		if (crlReasonLong == CRLReason.unspecified) {
-			strBuff.append(res.getString("UnspecifiedCrlReason"));
+			sb.append(res.getString("UnspecifiedCrlReason"));
 		} else if (crlReasonLong == CRLReason.keyCompromise) {
-			strBuff.append(res.getString("KeyCompromiseCrlReason"));
+			sb.append(res.getString("KeyCompromiseCrlReason"));
 		} else if (crlReasonLong == CRLReason.cACompromise) {
-			strBuff.append(res.getString("CaCompromiseCrlReason"));
+			sb.append(res.getString("CaCompromiseCrlReason"));
 		} else if (crlReasonLong == CRLReason.affiliationChanged) {
-			strBuff.append(res.getString("AffiliationChangedCrlReason"));
+			sb.append(res.getString("AffiliationChangedCrlReason"));
 		} else if (crlReasonLong == CRLReason.superseded) {
-			strBuff.append(res.getString("SupersededCrlReason"));
+			sb.append(res.getString("SupersededCrlReason"));
 		} else if (crlReasonLong == CRLReason.cessationOfOperation) {
-			strBuff.append(res.getString("CessationOfOperationCrlReason"));
+			sb.append(res.getString("CessationOfOperationCrlReason"));
 		} else if (crlReasonLong == CRLReason.certificateHold) {
-			strBuff.append(res.getString("CertificateHoldCrlReason"));
+			sb.append(res.getString("CertificateHoldCrlReason"));
 		} else if (crlReasonLong == CRLReason.removeFromCRL) {
-			strBuff.append(res.getString("RemoveFromCrlCrlReason"));
+			sb.append(res.getString("RemoveFromCrlCrlReason"));
 		} else if (crlReasonLong == CRLReason.privilegeWithdrawn) {
-			strBuff.append(res.getString("PrivilegeWithdrawnCrlReason"));
+			sb.append(res.getString("PrivilegeWithdrawnCrlReason"));
 		} else
 		// CRLReason.aACompromise
 		{
-			strBuff.append(res.getString("AaCompromiseCrlReason"));
+			sb.append(res.getString("AaCompromiseCrlReason"));
 		}
 
-		strBuff.append(NEWLINE);
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getHoldInstructionCodeStringValue(byte[] value) throws IOException {
@@ -799,21 +724,21 @@ public class X509Ext {
 		/* HoldInstructionCode ::= OBJECT IDENTIFER */
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		ASN1ObjectIdentifier holdInstructionCode = ASN1ObjectIdentifier.getInstance(value);
 		HoldInstructionCodeType holdInstructionCodeType =
 				HoldInstructionCodeType.resolveOid(holdInstructionCode.getId());
 
 		if (holdInstructionCodeType != null) {
-			strBuff.append(holdInstructionCodeType.friendly());
+			sb.append(holdInstructionCodeType.friendly());
 		} else {
 			// Unrecognised Hold Instruction Code
-			strBuff.append(holdInstructionCode.getId());
+			sb.append(holdInstructionCode.getId());
 		}
-		strBuff.append(NEWLINE);
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getInvalidityDateStringValue(byte[] value) throws IOException {
@@ -823,14 +748,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		ASN1GeneralizedTime invalidityDate = DERGeneralizedTime.getInstance(value);
 
-		strBuff.append(getGeneralizedTimeString(invalidityDate));
-		strBuff.append(NEWLINE);
+		sb.append(getGeneralizedTimeString(invalidityDate));
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getDeltaCrlIndicatorStringValue(byte[] value) throws IOException {
@@ -850,11 +775,11 @@ public class X509Ext {
 		CRLNumber crlNumber = CRLNumber.getInstance(value);
 		BigInteger crlNum = crlNumber.getCRLNumber();
 
-		StringBuffer strBuff = new StringBuffer();
-		strBuff.append(HexUtil.getHexString(crlNum));
-		strBuff.append(NEWLINE);
+		StringBuilder sb = new StringBuilder();
+		sb.append(HexUtil.getHexString(crlNum));
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getIssuingDistributionPointStringValue(byte[] value) throws IOException {
@@ -877,47 +802,47 @@ public class X509Ext {
 		 * present which saves the bother of a null check
 		 */
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		IssuingDistributionPoint issuingDistributionPoint = IssuingDistributionPoint.getInstance(value);
 
 		DistributionPointName distributionPointName = issuingDistributionPoint.getDistributionPoint();
 
 		if (distributionPointName != null) { // Optional
-			strBuff.append(getDistributionPointNameString(distributionPointName, ""));
+			sb.append(getDistributionPointNameString(distributionPointName, ""));
 		}
 
 		boolean onlyContainsUserCerts = issuingDistributionPoint.onlyContainsUserCerts();
-		strBuff.append(MessageFormat.format(res.getString("OnlyContainsUserCerts"), onlyContainsUserCerts));
-		strBuff.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("OnlyContainsUserCerts"), onlyContainsUserCerts));
+		sb.append(NEWLINE);
 
 		boolean onlyContainsCaCerts = issuingDistributionPoint.onlyContainsCACerts();
-		strBuff.append(MessageFormat.format(res.getString("OnlyContainsCaCerts"), onlyContainsCaCerts));
-		strBuff.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("OnlyContainsCaCerts"), onlyContainsCaCerts));
+		sb.append(NEWLINE);
 
 		ReasonFlags onlySomeReasons = issuingDistributionPoint.getOnlySomeReasons();
 		if (onlySomeReasons != null) {// Optional
-			strBuff.append(res.getString("OnlySomeReasons"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("OnlySomeReasons"));
+			sb.append(NEWLINE);
 
 			String[] reasonFlags = getReasonFlagsStrings(onlySomeReasons);
 
 			for (String reasonFlag : reasonFlags) {
-				strBuff.append(INDENT);
-				strBuff.append(reasonFlag);
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(reasonFlag);
+				sb.append(NEWLINE);
 			}
 		}
 
 		boolean indirectCrl = issuingDistributionPoint.isIndirectCRL();
-		strBuff.append(MessageFormat.format(res.getString("IndirectCrl"), indirectCrl));
-		strBuff.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("IndirectCrl"), indirectCrl));
+		sb.append(NEWLINE);
 
 		boolean onlyContainsAttributeCerts = issuingDistributionPoint.onlyContainsAttributeCerts();
-		strBuff.append(MessageFormat.format(res.getString("OnlyContainsAttributeCerts"), onlyContainsAttributeCerts));
-		strBuff.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("OnlyContainsAttributeCerts"), onlyContainsAttributeCerts));
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getCertificateIssuerStringValue(byte[] value) throws IOException {
@@ -931,16 +856,16 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		GeneralNames certificateIssuer = GeneralNames.getInstance(value);
 
 		for (GeneralName generalName : certificateIssuer.getNames()) {
-			strBuff.append(GeneralNameUtil.toString(generalName));
-			strBuff.append(NEWLINE);
+			sb.append(GeneralNameUtil.toString(generalName));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNameConstraintsStringValue(byte[] value) throws IOException {
@@ -961,7 +886,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		NameConstraints nameConstraints = NameConstraints.getInstance(value);
 
@@ -971,35 +896,35 @@ public class X509Ext {
 			permittedSubtrees = new GeneralSubtrees(nameConstraints.getPermittedSubtrees());
 		}
 
-		strBuff.append(res.getString("PermittedSubtrees"));
+		sb.append(res.getString("PermittedSubtrees"));
 
 		if (permittedSubtrees == null) {
-			strBuff.append(" " + res.getString("NoValue"));
-			strBuff.append(NEWLINE);
+			sb.append(" " + res.getString("NoValue"));
+			sb.append(NEWLINE);
 		} else {
-			strBuff.append(NEWLINE);
+			sb.append(NEWLINE);
 
 			int permitted = 0;
 
 			for (GeneralSubtree permittedSubtree : permittedSubtrees.getGeneralSubtrees()) {
 				permitted++;
 
-				strBuff.append(INDENT);
-				strBuff.append(MessageFormat.format(res.getString("PermittedSubtree"), permitted));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(MessageFormat.format(res.getString("PermittedSubtree"), permitted));
+				sb.append(NEWLINE);
 
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(res.getString("Base"));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(res.getString("Base"));
+				sb.append(NEWLINE);
 
 				GeneralName base = permittedSubtree.getBase();
 
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(GeneralNameUtil.toString(base));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(GeneralNameUtil.toString(base));
+				sb.append(NEWLINE);
 
 				BigInteger minimum = permittedSubtree.getMinimum();
 				int minimumInt = 0; // Default 'nodistance' value
@@ -1008,76 +933,76 @@ public class X509Ext {
 					minimumInt = minimum.intValue();
 				}
 
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
+				sb.append(NEWLINE);
 
 				BigInteger maximum = permittedSubtree.getMaximum();
 
 				if (maximum != null) {
 					int maximumInt = maximum.intValue();
 
-					strBuff.append(INDENT);
-					strBuff.append(INDENT);
-					strBuff.append(MessageFormat.format(res.getString("Minimum"), maximumInt));
-					strBuff.append(NEWLINE);
+					sb.append(INDENT);
+					sb.append(INDENT);
+					sb.append(MessageFormat.format(res.getString("Minimum"), maximumInt));
+					sb.append(NEWLINE);
 				}
 			}
 		}
 
 		GeneralSubtrees excludedSubtrees = new GeneralSubtrees(nameConstraints.getExcludedSubtrees());
 
-		strBuff.append(res.getString("ExcludedSubtrees"));
+		sb.append(res.getString("ExcludedSubtrees"));
 
 		if (excludedSubtrees == null) // Optional
 		{
-			strBuff.append(" " + res.getString("NoValue"));
-			strBuff.append(NEWLINE);
+			sb.append(" " + res.getString("NoValue"));
+			sb.append(NEWLINE);
 		} else {
-			strBuff.append(NEWLINE);
+			sb.append(NEWLINE);
 
 			int excluded = 0;
 
 			for (GeneralSubtree excludedSubtree : excludedSubtrees.getGeneralSubtrees()) {
 				excluded++;
 
-				strBuff.append(INDENT);
-				strBuff.append(MessageFormat.format(res.getString("ExcludedSubtree"), excluded));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(MessageFormat.format(res.getString("ExcludedSubtree"), excluded));
+				sb.append(NEWLINE);
 
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(res.getString("Base"));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(res.getString("Base"));
+				sb.append(NEWLINE);
 
 				GeneralName base = excludedSubtree.getBase();
 
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(GeneralNameUtil.toString(base));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(GeneralNameUtil.toString(base));
+				sb.append(NEWLINE);
 
 				BigInteger minimum = excludedSubtree.getMinimum();
 				int minimumInt = minimum.intValue();
 
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
+				sb.append(NEWLINE);
 
 				BigInteger maximum = excludedSubtree.getMaximum();
 				int maximumInt = maximum.intValue();
 
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
+				sb.append(NEWLINE);
 			}
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getCrlDistributionPointsStringValue(byte[] value) throws IOException {
@@ -1090,7 +1015,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		CRLDistPoint crlDistributionPoints = CRLDistPoint.getInstance(value);
 
@@ -1099,13 +1024,13 @@ public class X509Ext {
 		for (DistributionPoint distributionPoint : crlDistributionPoints.getDistributionPoints()) {
 			distPoint++;
 
-			strBuff.append(MessageFormat.format(res.getString("CrlDistributionPoint"), distPoint));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("CrlDistributionPoint"), distPoint));
+			sb.append(NEWLINE);
 
-			strBuff.append(getDistributionPointString(distributionPoint, INDENT.toString(1)));
+			sb.append(getDistributionPointString(distributionPoint, INDENT.toString(1)));
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getCertificatePoliciesStringValue(byte[] value) throws IOException {
@@ -1143,7 +1068,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		CertificatePolicies certificatePolicies = CertificatePolicies.getInstance(value);
 
@@ -1152,32 +1077,32 @@ public class X509Ext {
 		for (PolicyInformation policyInformation : certificatePolicies.getPolicyInformation()) {
 			certPolicy++;
 
-			strBuff.append(MessageFormat.format(res.getString("CertificatePolicy"), certPolicy));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("CertificatePolicy"), certPolicy));
+			sb.append(NEWLINE);
 
 			ASN1ObjectIdentifier policyIdentifier = policyInformation.getPolicyIdentifier();
 			String policyIdentifierStr = ObjectIdUtil.toString(policyIdentifier);
 
-			strBuff.append(INDENT);
-			strBuff.append(MessageFormat.format(res.getString("PolicyIdentifier"), policyIdentifierStr));
-			strBuff.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("PolicyIdentifier"), policyIdentifierStr));
+			sb.append(NEWLINE);
 
 			ASN1Sequence policyQualifiers = policyInformation.getPolicyQualifiers();
 
 			if (policyQualifiers != null) { // Optional
 				int policyQual = 0;
 
-				for (Enumeration en = policyQualifiers.getObjects();  en.hasMoreElements();) {
+				for (ASN1Encodable policyQualifier : policyQualifiers) {
 
-					ASN1Sequence policyQualifierInfo = (ASN1Sequence)  en.nextElement();
+					ASN1Sequence policyQualifierInfo = (ASN1Sequence) policyQualifier;
 
 					policyQual++;
 
-					strBuff.append(INDENT);
-					strBuff.append(INDENT);
-					strBuff.append(MessageFormat.format(res.getString("PolicyQualifierInformation"), certPolicy,
-							policyQual));
-					strBuff.append(NEWLINE);
+					sb.append(INDENT);
+					sb.append(INDENT);
+					sb.append(MessageFormat.format(res.getString("PolicyQualifierInformation"), certPolicy,
+					                               policyQual));
+					sb.append(NEWLINE);
 
 					ASN1ObjectIdentifier policyQualifierId = (ASN1ObjectIdentifier) policyQualifierInfo.getObjectAt(0);
 
@@ -1185,84 +1110,84 @@ public class X509Ext {
 							.resolveOid(policyQualifierId.getId());
 
 					if (certificatePolicyQualifierType != null) {
-						strBuff.append(INDENT);
-						strBuff.append(INDENT);
-						strBuff.append(INDENT);
-						strBuff.append(certificatePolicyQualifierType.friendly());
-						strBuff.append(NEWLINE);
+						sb.append(INDENT);
+						sb.append(INDENT);
+						sb.append(INDENT);
+						sb.append(certificatePolicyQualifierType.friendly());
+						sb.append(NEWLINE);
 
 						if (certificatePolicyQualifierType == PKIX_CPS_POINTER_QUALIFIER) {
 							DERIA5String cpsPointer = (DERIA5String) policyQualifierInfo.getObjectAt(1);
 
-							strBuff.append(INDENT);
-							strBuff.append(INDENT);
-							strBuff.append(INDENT);
-							strBuff.append(MessageFormat.format(res.getString("CpsPointer"), cpsPointer));
-							strBuff.append(NEWLINE);
+							sb.append(INDENT);
+							sb.append(INDENT);
+							sb.append(INDENT);
+							sb.append(MessageFormat.format(res.getString("CpsPointer"), cpsPointer));
+							sb.append(NEWLINE);
 						} else if (certificatePolicyQualifierType == PKIX_USER_NOTICE_QUALIFIER) {
 							ASN1Encodable userNoticeObj = policyQualifierInfo.getObjectAt(1);
 
 							UserNotice userNotice = UserNotice.getInstance(userNoticeObj);
 
-							strBuff.append(INDENT);
-							strBuff.append(INDENT);
-							strBuff.append(INDENT);
-							strBuff.append(res.getString("UserNotice"));
-							strBuff.append(NEWLINE);
+							sb.append(INDENT);
+							sb.append(INDENT);
+							sb.append(INDENT);
+							sb.append(res.getString("UserNotice"));
+							sb.append(NEWLINE);
 
 							NoticeReference noticeReference = userNotice.getNoticeRef();
 
 							DisplayText explicitText = userNotice.getExplicitText();
 
 							if (noticeReference != null) { // Optional
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(res.getString("NoticeReference"));
-								strBuff.append(NEWLINE);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(res.getString("NoticeReference"));
+								sb.append(NEWLINE);
 
 								DisplayText organization = noticeReference.getOrganization();
 
 								String organizationString = organization.getString();
 
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(MessageFormat.format(res.getString("Organization"), organizationString));
-								strBuff.append(NEWLINE);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(MessageFormat.format(res.getString("Organization"), organizationString));
+								sb.append(NEWLINE);
 
 								ASN1Integer[] noticeNumbers = noticeReference.getNoticeNumbers();
 
-								StringBuffer sbNoticeNumbers = new StringBuffer();
+								StringBuilder sbNoticeNumbers = new StringBuilder();
 								for (ASN1Integer noticeNumber : noticeNumbers) {
 									sbNoticeNumbers.append(noticeNumber.getValue().intValue());
 									sbNoticeNumbers.append(", ");
 								}
 								sbNoticeNumbers.setLength(sbNoticeNumbers.length() - 2);
 
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(MessageFormat.format(res.getString("NoticeNumbers"),
-										sbNoticeNumbers.toString()));
-								strBuff.append(NEWLINE);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(MessageFormat.format(res.getString("NoticeNumbers"),
+								                               sbNoticeNumbers.toString()));
+								sb.append(NEWLINE);
 							}
 
 							if (explicitText != null) // Optional
 							{
 								String explicitTextString = explicitText.getString();
 
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(INDENT);
-								strBuff.append(MessageFormat.format(res.getString("ExplicitText"), explicitTextString));
-								strBuff.append(NEWLINE);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(INDENT);
+								sb.append(MessageFormat.format(res.getString("ExplicitText"), explicitTextString));
+								sb.append(NEWLINE);
 							}
 						}
 					}
@@ -1270,7 +1195,7 @@ public class X509Ext {
 			}
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getPolicyMappingsStringValue(byte[] value) throws IOException {
@@ -1287,7 +1212,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		PolicyMappings policyMappings = PolicyMappings.getInstance(value);
 		ASN1Sequence policyMappingsSeq = (ASN1Sequence) policyMappings.toASN1Primitive();
@@ -1299,24 +1224,24 @@ public class X509Ext {
 			ASN1Sequence policyMappingSeq = ASN1Sequence.getInstance(policyMapping.toASN1Primitive());
 			polMap++;
 
-			strBuff.append(MessageFormat.format(res.getString("PolicyMapping"), polMap));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("PolicyMapping"), polMap));
+			sb.append(NEWLINE);
 
 			ASN1ObjectIdentifier issuerDomainPolicy = (ASN1ObjectIdentifier) policyMappingSeq.getObjectAt(0);
 			ASN1ObjectIdentifier subjectDomainPolicy = (ASN1ObjectIdentifier) policyMappingSeq.getObjectAt(1);
 
-			strBuff.append(INDENT);
-			strBuff.append(MessageFormat.format(res.getString("IssuerDomainPolicy"),
-					ObjectIdUtil.toString(issuerDomainPolicy)));
-			strBuff.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("IssuerDomainPolicy"),
+			                               ObjectIdUtil.toString(issuerDomainPolicy)));
+			sb.append(NEWLINE);
 
-			strBuff.append(INDENT);
-			strBuff.append(MessageFormat.format(res.getString("SubjectDomainPolicy"),
-					ObjectIdUtil.toString(subjectDomainPolicy)));
-			strBuff.append(NEWLINE);
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("SubjectDomainPolicy"),
+			                               ObjectIdUtil.toString(subjectDomainPolicy)));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getAuthorityKeyIdentifierStringValue(byte[] value) throws IOException {
@@ -1337,7 +1262,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(value);
 
@@ -1347,30 +1272,30 @@ public class X509Ext {
 
 		if (keyIdentifier != null) { // Optional
 			// Output as a hex string
-			strBuff.append(MessageFormat.format(res.getString("AuthorityKeyIdentifier"),
-					HexUtil.getHexString(keyIdentifier)));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("AuthorityKeyIdentifier"),
+			                               HexUtil.getHexString(keyIdentifier)));
+			sb.append(NEWLINE);
 		}
 
 		if (authorityCertIssuer != null) { // Optional
-			strBuff.append(res.getString("CertificateIssuer"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("CertificateIssuer"));
+			sb.append(NEWLINE);
 
 			for (GeneralName generalName : authorityCertIssuer.getNames()) {
-				strBuff.append(INDENT);
-				strBuff.append(GeneralNameUtil.toString(generalName));
-				strBuff.append(NEWLINE);
+				sb.append(INDENT);
+				sb.append(GeneralNameUtil.toString(generalName));
+				sb.append(NEWLINE);
 			}
 		}
 
 		if (certificateSerialNumber != null) { // Optional
 			// Output as an integer
-			strBuff.append(MessageFormat.format(res.getString("CertificateSerialNumber"),
-					HexUtil.getHexString(certificateSerialNumber)));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("CertificateSerialNumber"),
+			                               HexUtil.getHexString(certificateSerialNumber)));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getPolicyConstraintsStringValue(byte[] value) throws IOException {
@@ -1385,7 +1310,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		PolicyConstraints policyConstraints = PolicyConstraints.getInstance(value);
 
@@ -1393,16 +1318,16 @@ public class X509Ext {
 		int inhibitPolicyMapping = policyConstraints.getInhibitPolicyMapping();
 
 		if (requireExplicitPolicy != -1) { // Optional
-			strBuff.append(MessageFormat.format(res.getString("RequireExplicitPolicy"), requireExplicitPolicy));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("RequireExplicitPolicy"), requireExplicitPolicy));
+			sb.append(NEWLINE);
 		}
 
 		if (inhibitPolicyMapping != -1) { // Optional
-			strBuff.append(MessageFormat.format(res.getString("InhibitPolicyMapping"), inhibitPolicyMapping));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("InhibitPolicyMapping"), inhibitPolicyMapping));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getExtendedKeyUsageStringValue(byte[] value) throws IOException {
@@ -1416,7 +1341,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		ExtendedKeyUsage extendedKeyUsage = ExtendedKeyUsage.getInstance(value);
 
@@ -1426,16 +1351,16 @@ public class X509Ext {
 			ExtendedKeyUsageType type = ExtendedKeyUsageType.resolveOid(oid);
 
 			if (type != null) {
-				strBuff.append(type.friendly());
+				sb.append(type.friendly());
 			} else {
 				// Unrecognised key purpose ID
-				strBuff.append(oid);
+				sb.append(oid);
 			}
 
-			strBuff.append(NEWLINE);
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getFreshestCrlStringValue(byte[] value) throws IOException {
@@ -1450,7 +1375,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		CRLDistributionPoints freshestCRL = CRLDistributionPoints.getInstance(value);
 
@@ -1459,13 +1384,13 @@ public class X509Ext {
 		for (DistributionPoint distributionPoint : freshestCRL.getDistributionPointList()) {
 			distPoint++;
 
-			strBuff.append(MessageFormat.format(res.getString("FreshestCrlDistributionPoint"), distPoint));
-			strBuff.append(NEWLINE);
+			sb.append(MessageFormat.format(res.getString("FreshestCrlDistributionPoint"), distPoint));
+			sb.append(NEWLINE);
 
-			strBuff.append(getDistributionPointString(distributionPoint, INDENT.toString(1)));
+			sb.append(getDistributionPointString(distributionPoint, INDENT.toString(1)));
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getInhibitAnyPolicyStringValue(byte[] value) throws IOException {
@@ -1479,16 +1404,16 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		InhibitAnyPolicy inhibitAnyPolicy = InhibitAnyPolicy.getInstance(value);
 
 		int skipCerts = inhibitAnyPolicy.getSkipCerts();
 
-		strBuff.append(MessageFormat.format(res.getString("InhibitAnyPolicy"), skipCerts));
-		strBuff.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("InhibitAnyPolicy"), skipCerts));
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNetscapeCertificateTypeStringValue(byte[] value) throws IOException {
@@ -1502,54 +1427,54 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		@SuppressWarnings("resource") // we have a ByteArrayInputStream here which does not need to be closed
-		DERBitString netscapeCertType = NetscapeCertType.getInstance(new ASN1InputStream(value).readObject());
+				DERBitString netscapeCertType = NetscapeCertType.getInstance(new ASN1InputStream(value).readObject());
 
 		int netscapeCertTypes = netscapeCertType.intValue();
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.sslClient)) {
-			strBuff.append(res.getString("SslClientNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("SslClientNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.sslServer)) {
-			strBuff.append(res.getString("SslServerNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("SslServerNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.smime)) {
-			strBuff.append(res.getString("SmimeNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("SmimeNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.objectSigning)) {
-			strBuff.append(res.getString("ObjectSigningNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("ObjectSigningNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.reserved)) {
-			strBuff.append(res.getString("ReservedNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("ReservedNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.sslCA)) {
-			strBuff.append(res.getString("SslCaNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("SslCaNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.smimeCA)) {
-			strBuff.append(res.getString("SmimeCaNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("SmimeCaNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
 		if (isCertType(netscapeCertTypes, NetscapeCertType.objectSigningCA)) {
-			strBuff.append(res.getString("ObjectSigningCaNetscapeCertificateType"));
-			strBuff.append(NEWLINE);
+			sb.append(res.getString("ObjectSigningCaNetscapeCertificateType"));
+			sb.append(NEWLINE);
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private boolean isCertType(int netscapeCertTypes, int certType) {
@@ -1563,14 +1488,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DERIA5String netscapeBaseUrl = DERIA5String.getInstance(value);
 
-		strBuff.append(netscapeBaseUrl.getString());
-		strBuff.append(NEWLINE);
+		sb.append(netscapeBaseUrl.getString());
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNetscapeRevocationUrlStringValue(byte[] value) throws IOException {
@@ -1580,14 +1505,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DERIA5String netscapeRevocationUrl = DERIA5String.getInstance(value);
 
-		strBuff.append(netscapeRevocationUrl.getString());
-		strBuff.append(NEWLINE);
+		sb.append(netscapeRevocationUrl.getString());
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNetscapeCaRevocationUrlStringValue(byte[] value) throws IOException {
@@ -1597,14 +1522,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DERIA5String netscapeCaRevocationUrl = DERIA5String.getInstance(value);
 
-		strBuff.append(netscapeCaRevocationUrl.getString());
-		strBuff.append(NEWLINE);
+		sb.append(netscapeCaRevocationUrl.getString());
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNetscapeCertificateRenewalStringValue(byte[] value) throws IOException {
@@ -1614,14 +1539,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DERIA5String netscapeCertRenewalUrl = DERIA5String.getInstance(value);
 
-		strBuff.append(netscapeCertRenewalUrl.getString());
-		strBuff.append(NEWLINE);
+		sb.append(netscapeCertRenewalUrl.getString());
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNetscapeCaPolicyUrlStringValue(byte[] value) throws IOException {
@@ -1631,14 +1556,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DERIA5String netscapeCaPolicyUrl = DERIA5String.getInstance(value);
 
-		strBuff.append(netscapeCaPolicyUrl.getString());
-		strBuff.append(NEWLINE);
+		sb.append(netscapeCaPolicyUrl.getString());
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNetscapeSslServerNameStringValue(byte[] value) throws IOException {
@@ -1648,14 +1573,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DERIA5String netscapeSslServerName = DERIA5String.getInstance(value);
 
-		strBuff.append(netscapeSslServerName.getString());
-		strBuff.append(NEWLINE);
+		sb.append(netscapeSslServerName.getString());
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getNetscapeCommentStringValue(byte[] value) throws IOException {
@@ -1665,14 +1590,14 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DERIA5String netscapeComment = DERIA5String.getInstance(value);
 
-		strBuff.append(netscapeComment.getString());
-		strBuff.append(NEWLINE);
+		sb.append(netscapeComment.getString());
+		sb.append(NEWLINE);
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getDistributionPointString(DistributionPoint distributionPoint, String baseIndent)
@@ -1689,7 +1614,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DistributionPointName distributionPointName = distributionPoint.getDistributionPoint();
 		ReasonFlags reasons = distributionPoint.getReasons();
@@ -1697,40 +1622,40 @@ public class X509Ext {
 
 		if (distributionPointName != null) // Optional
 		{
-			strBuff.append(getDistributionPointNameString(distributionPointName, baseIndent));
+			sb.append(getDistributionPointNameString(distributionPointName, baseIndent));
 		}
 
 		if (reasons != null) // Optional
 		{
-			strBuff.append(baseIndent);
-			strBuff.append(res.getString("DistributionPointReasons"));
-			strBuff.append(NEWLINE);
+			sb.append(baseIndent);
+			sb.append(res.getString("DistributionPointReasons"));
+			sb.append(NEWLINE);
 
 			String[] reasonFlags = getReasonFlagsStrings(reasons);
 
 			for (String reasonFlag : reasonFlags) {
-				strBuff.append(baseIndent);
-				strBuff.append(INDENT);
-				strBuff.append(reasonFlag);
-				strBuff.append(NEWLINE);
+				sb.append(baseIndent);
+				sb.append(INDENT);
+				sb.append(reasonFlag);
+				sb.append(NEWLINE);
 			}
 		}
 
 		if (crlIssuer != null) // Optional
 		{
-			strBuff.append(baseIndent);
-			strBuff.append(res.getString("DistributionPointCrlIssuer"));
-			strBuff.append(NEWLINE);
+			sb.append(baseIndent);
+			sb.append(res.getString("DistributionPointCrlIssuer"));
+			sb.append(NEWLINE);
 
 			for (GeneralName generalName : crlIssuer.getNames()) {
-				strBuff.append(baseIndent);
-				strBuff.append(INDENT);
-				strBuff.append(GeneralNameUtil.toString(generalName));
-				strBuff.append(NEWLINE);
+				sb.append(baseIndent);
+				sb.append(INDENT);
+				sb.append(GeneralNameUtil.toString(generalName));
+				sb.append(NEWLINE);
 			}
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String getDistributionPointNameString(DistributionPointName distributionPointName, String baseIndent)
@@ -1750,33 +1675,33 @@ public class X509Ext {
 
 		// @formatter: on
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
-		strBuff.append(baseIndent);
-		strBuff.append(res.getString("DistributionPointName"));
-		strBuff.append(NEWLINE);
+		sb.append(baseIndent);
+		sb.append(res.getString("DistributionPointName"));
+		sb.append(NEWLINE);
 
 		if (distributionPointName.getType() == DistributionPointName.FULL_NAME) {
-			strBuff.append(baseIndent);
-			strBuff.append(INDENT);
-			strBuff.append(res.getString("DistributionPointFullName"));
-			strBuff.append(NEWLINE);
+			sb.append(baseIndent);
+			sb.append(INDENT);
+			sb.append(res.getString("DistributionPointFullName"));
+			sb.append(NEWLINE);
 
 			GeneralNames generalNames = GeneralNames.getInstance(distributionPointName.getName());
 
 			for (GeneralName generalName : generalNames.getNames()) {
-				strBuff.append(baseIndent);
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(GeneralNameUtil.toString(generalName));
-				strBuff.append(NEWLINE);
+				sb.append(baseIndent);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(GeneralNameUtil.toString(generalName));
+				sb.append(NEWLINE);
 			}
 		} else {
 			// DistributionPointName.TAG_NAMERELATIVETOCRLISSUER
-			strBuff.append(baseIndent);
-			strBuff.append(INDENT);
-			strBuff.append(res.getString("DistributionPointNameRelativeToCrlIssuer"));
-			strBuff.append(NEWLINE);
+			sb.append(baseIndent);
+			sb.append(INDENT);
+			sb.append(res.getString("DistributionPointNameRelativeToCrlIssuer"));
+			sb.append(NEWLINE);
 
 			RDN rdn = RDN.getInstance(distributionPointName.getName());
 
@@ -1787,15 +1712,15 @@ public class X509Ext {
 				String attributeTypeStr = getAttributeTypeString(attributeType);
 				String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
-				strBuff.append(baseIndent);
-				strBuff.append(INDENT);
-				strBuff.append(INDENT);
-				strBuff.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
-				strBuff.append(NEWLINE);
+				sb.append(baseIndent);
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
+				sb.append(NEWLINE);
 			}
 		}
 
-		return strBuff.toString();
+		return sb.toString();
 	}
 
 	private String[] getReasonFlagsStrings(ReasonFlags reasonFlags) throws IOException {
@@ -1946,5 +1871,639 @@ public class X509Ext {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss.SSS z");
 
 		return sdf.format(date);
+	}
+
+	private String getBiometricInfoStringValue(byte[] octets) {
+
+		// @formatter:off
+
+		/*
+			BiometricSyntax ::= SEQUENCE OF BiometricData
+			BiometricData ::= SEQUENCE
+			{
+				typeOfBiometricData TypeOfBiometricData,
+				hashAlgorithm AlgorithmIdentifier,
+				biometricDataHash OCTET STRING,
+				sourceDataUri IA5String OPTIONAL
+			}
+			TypeOfBiometricData ::= CHOICE
+			{
+				predefinedBiometricType PredefinedBiometricType,
+				biometricDataId OBJECT IDENTIIFER
+			}
+			PredefinedBiometricType ::= INTEGER
+			{
+				picture(0),
+				handwritten-signature(1)
+			}
+		 */
+
+		// @formatter:on
+
+		StringBuilder sb = new StringBuilder();
+		int biometricDataNr = 0;
+
+		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(octets);
+
+		for (ASN1Encodable asn1Encodable : asn1Sequence) {
+			BiometricData biometricData = BiometricData.getInstance(asn1Encodable);
+			TypeOfBiometricData typeOfBiometricData = biometricData.getTypeOfBiometricData();
+			AlgorithmIdentifier hashAlgorithm = biometricData.getHashAlgorithm();
+			ASN1OctetString biometricDataHash = biometricData.getBiometricDataHash();
+			DERIA5String sourceDataUri = biometricData.getSourceDataUri();
+
+			sb.append(MessageFormat.format(res.getString("BiometricInfo.BiometricData"), biometricDataNr));
+			sb.append(NEWLINE);
+
+			sb.append(INDENT);
+			if (typeOfBiometricData.isPredefined()) {
+				int type = typeOfBiometricData.getPredefinedBiometricType();
+				sb.append(MessageFormat.format(res.getString("BiometricInfo.TypeOfBiometricData"), type));
+			} else {
+				String biometricDataOid = typeOfBiometricData.getBiometricDataOid().getId();
+				sb.append(MessageFormat.format(res.getString("BiometricInfo.TypeOfBiometricData"), biometricDataOid));
+			}
+			sb.append(NEWLINE);
+
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("BiometricInfo.HashAlgorithm"),
+			                               hashAlgorithm.getAlgorithm().getId()));
+			sb.append(NEWLINE);
+
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("BiometricInfo.BiometricDataHash"),
+			                               HexUtil.getHexString(biometricDataHash.getOctets())));
+			sb.append(NEWLINE);
+
+			if (sourceDataUri != null) { // optional
+				sb.append(INDENT);
+				sb.append(MessageFormat.format(res.getString("BiometricInfo.SourceDataUri"), sourceDataUri.toString
+						()));
+				sb.append(NEWLINE);
+			}
+		}
+
+		return null;
+	}
+
+	private String getQcStatementsStringValue(byte[] octets) throws IOException {
+
+		// @formatter:off
+
+		/*
+			QCStatements ::= SEQUENCE OF QSStatement
+		    QSStatement ::= SEQUENCE
+		    {
+		        statementId OBJECT IDENTIFIER,
+		        statementInfo ANY DEFINED BY statementId OPTIONAL
+		    }
+		    QcEuLimitValue ::= MonetaryValue
+			QcRetentionPeriod ::= INTEGER
+		 */
+
+		// @formatter:on
+
+		StringBuffer sb = new StringBuffer();
+
+		int qcStatementNr = 0;
+
+		ASN1Sequence qcStatements = ASN1Sequence.getInstance(octets);
+		for (ASN1Encodable asn1Encodable : qcStatements) {
+			QCStatement qcStatement = QCStatement.getInstance(asn1Encodable);
+			ASN1ObjectIdentifier statementId = qcStatement.getStatementId();
+			ASN1Encodable statementInfo = qcStatement.getStatementInfo();
+
+			int indentLevel = 1;
+
+			sb.append(MessageFormat.format(res.getString("QCStatement.QCStatement"), qcStatementNr));
+			sb.append(NEWLINE);
+
+			X509ExtensionType qcStatementType = X509ExtensionType.resolveOid(statementId.getId());
+			switch (qcStatementType) {
+				case QC_SYNTAX_V1:
+				case QC_SYNTAX_V2:
+					SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
+					sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
+					sb.append(NEWLINE);
+					break;
+				case QC_COMPLIANCE:
+					// no statementInfo
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString("QCStatement.QcCompliance"), qcStatementType.oid()));
+					sb.append(NEWLINE);
+					break;
+				case QC_EU_LIMIT_VALUE:
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue"), qcStatementType.oid()));
+					sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
+					sb.append(NEWLINE);
+					break;
+				case QC_RETENTION_PERIOD:
+					ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString("QCStatement.QcRetentionPeriod"),
+					                               qcStatementType.oid(),
+					                               asn1Integer.getValue().toString()));
+					sb.append(NEWLINE);
+					break;
+				case QC_SSCD:
+					// no statementInfo
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString("QCStatement.QcSSCD"), qcStatementType.oid()));
+					sb.append(NEWLINE);
+					break;
+			}
+
+
+		}
+
+		return sb.toString();
+	}
+
+	private String getSemanticInformationValueString(X509ExtensionType qcStatementType, SemanticsInformation
+			semanticsInfo, int baseIndentLevel) throws IOException {
+
+		// @formatter:off
+
+		/*
+		SemanticsInformation ::= SEQUENCE
+		{
+			semanticsIdentifier OBJECT IDENTIFIER OPTIONAL,
+			nameRegistrationAuthorities NameRegistrationAuthorities OPTIONAL
+		}
+		NameRegistrationAuthorities ::= SEQUENCE SIZE(1..MAX) OF GeneralName
+		 */
+
+		// @formatter:on
+
+		ASN1ObjectIdentifier semanticsIdentifier = semanticsInfo.getSemanticsIdentifier();
+		GeneralName[] nameRegistrationAuthorities = semanticsInfo.getNameRegistrationAuthorities();
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(INDENT.toString(baseIndentLevel));
+		if (qcStatementType == QC_SYNTAX_V1) {
+			sb.append(MessageFormat.format(res.getString("QCStatement.QCSyntaxV1"), qcStatementType.oid()));
+		} else {
+			sb.append(MessageFormat.format(res.getString("QCStatement.QCSyntaxV2"), qcStatementType.oid()));
+		}
+		sb.append(NEWLINE);
+
+		if (semanticsIdentifier != null) {
+			sb.append(INDENT.toString(baseIndentLevel + 1));
+			sb.append(MessageFormat.format(res.getString("QCStatement.QCSyntax.SemanticsIdentifier"),
+			                               semanticsIdentifier.getId()));
+			sb.append(NEWLINE);
+		}
+
+		if (nameRegistrationAuthorities != null) {
+			sb.append(INDENT.toString(baseIndentLevel + 1));
+			sb.append(res.getString("QCStatement.QCSyntax.NameRegistrationAuthorities"));
+			sb.append(NEWLINE);
+
+			for (GeneralName nameRegistrationAuthority : nameRegistrationAuthorities) {
+				sb.append(INDENT.toString(baseIndentLevel + 2));
+				sb.append(GeneralNameUtil.toString(nameRegistrationAuthority));
+				sb.append(NEWLINE);
+			}
+		}
+
+		return sb.toString();
+	}
+
+	private String getMonetaryValueStringValue(ASN1Encodable asn1Encodable, int baseIndentLevel) {
+
+		// @formatter:off
+
+		/*
+		    MonetaryValue ::= SEQUENCE
+		    {
+		        currency Iso4217CurrencyCode,
+		        amount INTEGER,
+		        exponent INTEGER
+		    }
+		    Iso4217CurrencyCode ::= CHOICE
+		    {
+		        alphabetic PrintableString,
+		        numeric INTEGER(1..999)
+		    }
+		*/
+
+		// @formatter:on
+
+		StringBuilder sb = new StringBuilder();
+
+		MonetaryValue monetaryValue = MonetaryValue.getInstance(asn1Encodable);
+		BigInteger amount = monetaryValue.getAmount();
+		Iso4217CurrencyCode currency = monetaryValue.getCurrency();
+		BigInteger exponent = monetaryValue.getExponent();
+
+		if (currency != null) {
+			String currencyString = currency.isAlphabetic() ? currency.getAlphabetic() : "" + currency.getNumeric();
+			sb.append(INDENT.toString(baseIndentLevel));
+			sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue.Currency"), currencyString));
+			sb.append(NEWLINE);
+		}
+
+		if (amount != null) {
+			sb.append(INDENT.toString(baseIndentLevel));
+			sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue.Amount"), amount.toString()));
+			sb.append(NEWLINE);
+		}
+
+		if (exponent != null) {
+			sb.append(INDENT.toString(baseIndentLevel));
+			sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue.Exponent"), exponent.toString()));
+			sb.append(NEWLINE);
+		}
+
+		return sb.toString();
+	}
+
+	private String getOcspNoCheckStringValue(byte[] octets) {
+
+		/*	OCSPNoCheck ::= NULL */
+
+		// we return the extension name as the value, because only its existence matters and 'NULL' might be confusing
+		return res.getString("OCSPNoCheck");
+	}
+
+	private String getAdmissionStringValue(byte[] octets) throws IOException {
+
+		// @formatter:off
+
+		/*
+			 AdmissionSyntax ::= SEQUENCE
+		     {
+		       admissionAuthority GeneralName OPTIONAL,
+		       contentsOfAdmissions SEQUENCE OF Admissions
+		     }
+		     Admissions ::= SEQUENCE
+		     {
+		       admissionAuthority [0] EXPLICIT GeneralName OPTIONAL
+		       namingAuthority [1] EXPLICIT NamingAuthority OPTIONAL
+		       professionInfos SEQUENCE OF ProfessionInfo
+		     }
+		     NamingAuthority ::= SEQUENCE
+		     {
+		       namingAuthorityId OBJECT IDENTIFIER OPTIONAL,
+		       namingAuthorityUrl IA5String OPTIONAL,
+		       namingAuthorityText DirectoryString(SIZE(1..128)) OPTIONAL
+		     }
+		     ProfessionInfo ::= SEQUENCE
+		     {
+		       namingAuthority [0] EXPLICIT NamingAuthority OPTIONAL,
+		       professionItems SEQUENCE OF DirectoryString (SIZE(1..128)),
+		       professionOIDs SEQUENCE OF OBJECT IDENTIFIER OPTIONAL,
+		       registrationNumber PrintableString(SIZE(1..128)) OPTIONAL,
+		       addProfessionInfo OCTET STRING OPTIONAL
+		     }
+		 */
+
+		// @formatter:on
+
+		StringBuilder sb = new StringBuilder();
+		int indentLevel = 1;
+
+		AdmissionSyntax admissionSyntax = AdmissionSyntax.getInstance(ASN1Sequence.getInstance(octets));
+		GeneralName admissionAuthority = admissionSyntax.getAdmissionAuthority();
+
+		if (admissionAuthority != null) {
+			sb.append(MessageFormat.format(res.getString("Admission.AdmissionAuthority"),
+			                               GeneralNameUtil.toString(admissionAuthority)));
+			sb.append(NEWLINE);
+		}
+
+		Admissions[] admissions = admissionSyntax.getContentsOfAdmissions();
+		int admissionNr = 0;
+		for (Admissions admission : admissions) {
+			sb.append(MessageFormat.format(res.getString("Admission.Admission"), ++admissionNr));
+			sb.append(NEWLINE);
+
+			admissionAuthority = admission.getAdmissionAuthority();
+			NamingAuthority namingAuthority = admission.getNamingAuthority();
+			ProfessionInfo[] professionInfos = admission.getProfessionInfos();
+
+			if (admissionAuthority != null) {
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(MessageFormat.format(res.getString("Admission.AdmissionAuthority"),
+				                               GeneralNameUtil.toString(admissionAuthority)));
+				sb.append(NEWLINE);
+			}
+
+			if (namingAuthority != null) {
+				sb.append(getNamingAuthorityStringValue(namingAuthority, indentLevel));
+			}
+
+			for (ProfessionInfo professionInfo : professionInfos) {
+
+				namingAuthority = professionInfo.getNamingAuthority();
+				ASN1ObjectIdentifier[] professionOIDs = professionInfo.getProfessionOIDs();
+				String registrationNumber = professionInfo.getRegistrationNumber();
+				ASN1OctetString addProfessionInfo = professionInfo.getAddProfessionInfo();
+
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString("Admission.ProfessionInfo"));
+				sb.append(NEWLINE);
+				indentLevel++;
+
+				if (namingAuthority != null) {
+					sb.append(getNamingAuthorityStringValue(namingAuthority, indentLevel));
+				}
+
+				DirectoryString[] professionItems = professionInfo.getProfessionItems();
+				for (DirectoryString professionItem : professionItems) {
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString("Admission.ProfessionItem"),
+					                               professionItem.toString()));
+					sb.append(NEWLINE);
+				}
+
+				if (professionOIDs != null) {
+					for (ASN1ObjectIdentifier professionOID : professionOIDs) {
+						sb.append(INDENT.toString(indentLevel));
+						sb.append(MessageFormat.format(res.getString("Admission.ProfessionOID"),
+						                               professionOID.getId()));
+						sb.append(NEWLINE);
+					}
+				}
+
+				if (registrationNumber != null) {
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString("Admission.RegistrationNumber"),
+					                               registrationNumber));
+					sb.append(NEWLINE);
+				}
+
+				if (addProfessionInfo != null) {
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString("Admission.AddProfessionInfo"),
+					                               HexUtil.getHexString(addProfessionInfo.getOctets())));
+					sb.append(NEWLINE);
+				}
+
+				indentLevel--;
+			}
+		}
+
+		return sb.toString();
+	}
+
+
+	private String getNamingAuthorityStringValue(NamingAuthority namingAuthority, int indentLevel)
+			throws IOException {
+		// @formatter:off
+		/*
+		     NamingAuthority ::= SEQUENCE
+		     {
+		       namingAuthorityId OBJECT IDENTIFIER OPTIONAL,
+		       namingAuthorityUrl IA5String OPTIONAL,
+		       namingAuthorityText DirectoryString(SIZE(1..128)) OPTIONAL
+		     }
+		 */
+		// @formatter:on
+
+		StringBuilder sb = new StringBuilder();
+
+		ASN1ObjectIdentifier namingAuthorityId = namingAuthority.getNamingAuthorityId();
+		String namingAuthorityUrl = namingAuthority.getNamingAuthorityUrl();
+		DirectoryString namingAuthorityText = namingAuthority.getNamingAuthorityText();
+
+		if (namingAuthorityId != null) {
+			sb.append(INDENT.toString(indentLevel));
+			sb.append(MessageFormat.format(res.getString("Admission.NamingAuthorityOID"), namingAuthorityId.getId()));
+			sb.append(NEWLINE);
+		}
+
+		if (namingAuthorityUrl != null) {
+			sb.append(INDENT.toString(indentLevel));
+			sb.append(MessageFormat.format(res.getString("Admission.NamingAuthorityURL"), namingAuthorityUrl));
+			sb.append(NEWLINE);
+		}
+
+		if (namingAuthorityText != null) {
+			sb.append(INDENT.toString(indentLevel));
+			sb.append(MessageFormat.format(res.getString("Admission.NamingAuthorityText"),
+			                               namingAuthorityText.toString()));
+			sb.append(NEWLINE);
+		}
+
+		return sb.toString();
+	}
+
+
+	private String getLiabilityLimitationFlagStringValue(byte[] octets) {
+
+		/*	LiabilityLimitationFlagSyntax ::= BOOLEAN */
+
+		ASN1Boolean asn1Boolean = ASN1Boolean.getInstance(octets);
+		return asn1Boolean.toString();
+	}
+
+
+	private String getDateOfCertGenStringValue(byte[] octets) {
+
+		/*	DateOfCertGenSyntax ::= GeneralizedTime */
+
+		ASN1GeneralizedTime dateOfCertGenSyntax = ASN1GeneralizedTime.getInstance(octets);
+		return getGeneralizedTimeString(dateOfCertGenSyntax);
+	}
+
+
+	private String getProcurationStringValue(byte[] octets) throws IOException {
+
+		// @formatter:off
+
+		/*
+			ProcurationSyntax ::= SEQUENCE
+			{
+				country [1] EXPLICIT PrintableString(SIZE(2)) OPTIONAL,
+				typeOfSubstitution [2] EXPLICIT DirectoryString(SIZE(1..128)) OPTIONAL,
+				signingFor [3] EXPLICIT SigningFor
+			}
+
+			SigningFor ::= CHOICE
+			{
+				thirdPerson GeneralName,
+				certRef IssuerSerial
+			}
+		*/
+
+		// @formatter:on
+
+		StringBuffer sb = new StringBuffer();
+
+		ProcurationSyntax procurationSyntax = ProcurationSyntax.getInstance(octets);
+		String country = procurationSyntax.getCountry();
+		DirectoryString typeOfSubstitution = procurationSyntax.getTypeOfSubstitution();
+		GeneralName thirdPerson = procurationSyntax.getThirdPerson();
+		IssuerSerial certRef = procurationSyntax.getCertRef();
+
+		if (country != null) {
+			sb.append(MessageFormat.format(res.getString("Procuration.Country"), country));
+			sb.append(NEWLINE);
+		}
+
+		if (typeOfSubstitution != null) {
+			sb.append(MessageFormat.format(res.getString("Procuration.TypeOfSubstitution"),
+			                               typeOfSubstitution.toString()));
+			sb.append(NEWLINE);
+		}
+
+		if (thirdPerson != null) {
+			sb.append(MessageFormat.format(res.getString("Procuration.ThirdPerson"),
+			                               GeneralNameUtil.toString(thirdPerson)));
+			sb.append(NEWLINE);
+		}
+
+		if (certRef != null) {
+			sb.append(res.getString("Procuration.CertRef"));
+			sb.append(NEWLINE);
+
+			sb.append(INDENT);
+			sb.append(res.getString("Procuration.CertRef.Issuer"));
+			for (GeneralName generalName : certRef.getIssuer().getNames()) {
+				sb.append(INDENT);
+				sb.append(INDENT);
+				sb.append(GeneralNameUtil.toString(generalName));
+				sb.append(NEWLINE);
+			}
+			sb.append(NEWLINE);
+
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("Procuration.CertRef.SN"),
+			                               HexUtil.getHexString(certRef.getSerial().getValue())));
+			sb.append(NEWLINE);
+		}
+
+		return sb.toString();
+	}
+
+	private String getMonetaryLimitStringValue(byte[] octets) {
+
+		// @formatter:off
+
+		/*
+			MonetaryLimitSyntax ::= SEQUENCE
+			{
+				currency PrintableString (SIZE(3)),
+				amount INTEGER,
+				exponent INTEGER
+			}
+		*/
+
+		// @formatter:on
+
+		StringBuffer sb = new StringBuffer();
+
+		MonetaryLimit monetaryLimit = MonetaryLimit.getInstance(octets);
+		String currency = monetaryLimit.getCurrency();
+		BigInteger amount = monetaryLimit.getAmount();
+		BigInteger exponent = monetaryLimit.getExponent();
+
+		if (currency != null) {
+			sb.append(MessageFormat.format(res.getString("MonetaryLimit.Currency"), currency));
+			sb.append(NEWLINE);
+		}
+
+		if (amount != null) {
+			sb.append(MessageFormat.format(res.getString("MonetaryLimit.Amount"), amount.toString()));
+			sb.append(NEWLINE);
+		}
+
+		if (exponent != null) {
+			sb.append(MessageFormat.format(res.getString("MonetaryLimit.Exponent"), exponent.toString()));
+			sb.append(NEWLINE);
+		}
+
+		return sb.toString();
+	}
+
+	private String getDeclarationOfMajorityStringValue(byte[] octets) {
+
+		// @formatter:off
+
+		/*
+			DeclarationOfMajoritySyntax ::= CHOICE
+			{
+				notYoungerThan [0] IMPLICIT INTEGER,
+				fullAgeAtCountry [1] IMPLICIT SEQUENCE {
+					fullAge BOOLEAN DEFAULT TRUE,
+					country PrintableString (SIZE(2))
+				},
+				dateOfBirth [2] IMPLICIT GeneralizedTime
+			}
+		*/
+
+		// @formatter:on
+
+		StringBuffer sb = new StringBuffer();
+
+		DeclarationOfMajority declarationOfMajority = DeclarationOfMajority.getInstance(octets);
+		int notYoungerThan = declarationOfMajority.notYoungerThan();
+		ASN1Sequence fullAgeAtCountry = declarationOfMajority.fullAgeAtCountry();
+		ASN1GeneralizedTime dateOfBirth = declarationOfMajority.getDateOfBirth();
+
+		if (notYoungerThan != -1) {
+			sb.append(MessageFormat.format(res.getString("DeclarationOfMajority.notYoungerThan"), notYoungerThan));
+			sb.append(NEWLINE);
+		}
+
+		if (fullAgeAtCountry != null) {
+			ASN1Boolean fullAge = ASN1Boolean.getInstance(fullAgeAtCountry.getObjectAt(0));
+			DERPrintableString country = DERPrintableString.getInstance(fullAgeAtCountry.getObjectAt(1));
+
+			sb.append(MessageFormat.format(res.getString("DeclarationOfMajority.fullAgeAtCountry"), country.toString(),
+			                               fullAge.toString()));
+			sb.append(NEWLINE);
+		}
+
+		if (dateOfBirth != null) {
+			sb.append(MessageFormat.format(res.getString("DeclarationOfMajority.dateOfBirth"), dateOfBirth));
+			sb.append(NEWLINE);
+		}
+
+		return sb.toString();
+	}
+
+	private String getICCSNStringValue(byte[] octets) {
+
+		/*	ICCSNSyntax ::= OCTET STRING (SIZE(8..20)) */
+
+		return HexUtil.getHexString(octets);
+	}
+
+	private String getRestrictionStringValue(byte[] octets) throws IOException {
+
+		/*	RestrictionSyntax ::= DirectoryString (SIZE(1..1024)) */
+
+		return DirectoryString.getInstance(ASN1Primitive.fromByteArray(octets)).toString();
+	}
+
+	private String getAdditionalInformationStringValue(byte[] octets) throws IOException {
+
+		/*	AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048)) */
+
+		return DirectoryString.getInstance(ASN1Primitive.fromByteArray(octets)).toString();
+	}
+
+	private String getValidityModelStringValue(byte[] octets) {
+
+		// @formatter:off
+
+		/*
+			ValidityModel::= SEQUENCE
+			{
+				validityModelId OBJECT IDENTIFIER
+				validityModelInfo ANY DEFINED BY validityModelId OPTIONAL
+			}
+		*/
+
+		// @formatter:on
+
+		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(octets);
+		ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(asn1Sequence.getObjectAt(0));
+
+		return res.getString("ValidityModel." + oid.getId());
 	}
 }

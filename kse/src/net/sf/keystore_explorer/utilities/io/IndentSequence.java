@@ -32,7 +32,7 @@ public class IndentSequence {
 
 	/**
 	 * Construct IndentSequence.
-	 * 
+	 *
 	 * @param indentChar
 	 *            Indent character
 	 * @param indentSize
@@ -51,7 +51,7 @@ public class IndentSequence {
 	 * @return Indent sequence for level
 	 */
 	public String toString(int level) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < level; i++) {
 			sb.append(toString());
@@ -66,7 +66,7 @@ public class IndentSequence {
 	 * @return Indent sequence
 	 */
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < indentSize; i++) {
 			sb.append(indentChar.getIndentChar());

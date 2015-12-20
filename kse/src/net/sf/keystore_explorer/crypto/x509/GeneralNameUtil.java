@@ -157,6 +157,11 @@ public class GeneralNameUtil {
 	 *             If general name is invalid
 	 */
 	public static String toString(GeneralName generalName) throws IOException {
+
+		if (generalName == null) {
+			return "";
+		}
+
 		switch (generalName.getTagNo()) {
 		case GeneralName.ediPartyName: {
 

@@ -55,6 +55,8 @@ public class CRLDistributionPoints extends ASN1Object {
 			return (CRLDistributionPoints) obj;
 		} else if (obj instanceof ASN1Sequence) {
 			return new CRLDistributionPoints((ASN1Sequence) obj);
+		} else if (obj instanceof byte[]) {
+			return new CRLDistributionPoints(ASN1Sequence.getInstance(obj));
 		}
 
 		throw new IllegalArgumentException("unknown object type");

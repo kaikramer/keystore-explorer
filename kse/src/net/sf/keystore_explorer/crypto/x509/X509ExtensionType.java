@@ -243,7 +243,57 @@ public enum X509ExtensionType {
 	ISSUING_DISTRIBUTION_POINT_OBS("2.5.29.26", "IssuingDistributionPointObsCertExt"),
 
 	/** Additional Obsolete Policy Constraints */
-	POLICY_CONSTRAINTS_OBS1("2.5.29.34", "PolicyConstraintsObsCertExt");
+	POLICY_CONSTRAINTS_OBS1("2.5.29.34", "PolicyConstraintsObsCertExt"),
+
+
+	// ////////////////////////////////
+	// RFC3739 QC PRIVATE EXTENSIONS
+	// ////////////////////////////////
+
+	/** Stores biometric information for authentication purposes. */
+	BIOMETRIC_INFO("1.3.6.1.5.5.7.1.2", "BiometricInfo"),
+
+	/** Indicates that the certificate is a Qualified Certificate in accordance with a particular legal system. */
+	QC_STATEMENTS("1.3.6.1.5.5.7.1.3", "QCStatements"),
+	/* not really extensions but sub types of QCStatement */
+	QC_SYNTAX_V1("1.3.6.1.5.5.7.11.1", "QCSyntaxV1"),
+	QC_SYNTAX_V2("1.3.6.1.5.5.7.11.2", "QCSyntaxV2"),
+	QC_COMPLIANCE("0.4.0.1862.1.1", "QcCompliance"),
+	QC_EU_LIMIT_VALUE("0.4.0.1862.1.2", "QcEuLimitValue"),
+	QC_RETENTION_PERIOD("0.4.0.1862.1.3", "QcRetentionPeriod"),
+	QC_SSCD("0.4.0.1862.1.4", "QcSSCD"),
+
+
+	// ////////////////////////////////
+	// RFC2560 PRIVATE EXTENSIONS
+	// ////////////////////////////////
+
+	/** A CA specifies by including this extension in the certificate of an OCSP responder that the requester can trust
+	   the certificate and need not obtain revocation information. */
+	OCSP_NO_CHECK("1.3.6.1.5.5.7.48.1.5", "OCSPNoCheck"),
+
+
+	// ////////////////////////////////
+	// COMMON PKI 2.0
+	// ////////////////////////////////
+
+	LIABILITY_LIMITATION_FLAG("0.2.262.1.10.12.0", "LiabilityLimitationFlag"),
+	DATE_OF_CERT_GEN("1.3.36.8.3.1", "DateOfCertGen"),
+	PROCURATION("1.3.36.8.3.2", "Procuration"),
+	ADMISSION("1.3.36.8.3.3", "Admission"),
+	MONETARY_LIMIT("1.3.36.8.3.4", "MonetaryLimit"),
+	DECLARATION_OF_MAJORITY("1.3.36.8.3.5", "DeclarationOfMajority"),
+	ICCSN("1.3.36.8.3.5", "ICCSN"),
+	RESTRICTION("1.3.36.8.3.8", "Restriction"),
+	ADDITIONAL_INFORMATION("1.3.36.8.3.15", "AdditionalInformation"),
+
+
+	// ////////////////////////////////
+	// CDC
+	// ////////////////////////////////
+
+	VALIDITY_MODEL("1.3.6.1.4.1.8301.3.5", "ValidityModel");
+
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
 	private String oid;

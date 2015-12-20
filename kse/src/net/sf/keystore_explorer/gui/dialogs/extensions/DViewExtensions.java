@@ -169,7 +169,7 @@ public class DViewExtensions extends JEscDialog {
 		jspExtensionsTable.getViewport().setBackground(jtExtensions.getBackground());
 
 		jpExtensionsTable = new JPanel(new BorderLayout(5, 5));
-		jpExtensionsTable.setPreferredSize(new Dimension(350, 200));
+		jpExtensionsTable.setPreferredSize(new Dimension(500, 200));
 		jpExtensionsTable.add(jspExtensionsTable, BorderLayout.CENTER);
 
 		jpExtensionValue = new JPanel(new BorderLayout(5, 5));
@@ -189,7 +189,7 @@ public class DViewExtensions extends JEscDialog {
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		jpExtensionValueTextArea = new JPanel(new BorderLayout(5, 5));
-		jpExtensionValueTextArea.setPreferredSize(new Dimension(350, 200));
+		jpExtensionValueTextArea.setPreferredSize(new Dimension(500, 200));
 		jpExtensionValueTextArea.add(jspExtensionValue, BorderLayout.CENTER);
 
 		jpExtensionValue.add(jpExtensionValueTextArea, BorderLayout.CENTER);
