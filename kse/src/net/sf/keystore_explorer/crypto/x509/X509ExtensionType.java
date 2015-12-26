@@ -311,6 +311,13 @@ public enum X509ExtensionType {
 
 
 	// ////////////////////////////////
+	// RFC 3709
+	// ////////////////////////////////
+
+	LOGO_TYPE("1.3.6.1.5.5.7.1.12", "LogoType"),
+
+
+	// ////////////////////////////////
 	// SET (Secure Electronic Transaction)
 	// ////////////////////////////////
 
@@ -320,7 +327,23 @@ public enum X509ExtensionType {
 	SET_CARD_CERT_REQUIRED("2.23.42.7.3", "SETCardCertRequired"),
 	SET_TUNNELING("2.23.42.7.4", "SETTunneling"),
 	SET_SET_EXTENSIONS("2.23.42.7.5", "SETSetExtensions"),
-	SET_SET_QUALIFIER("2.23.42.7.6", "SETSetQualifier");
+	SET_SET_QUALIFIER("2.23.42.7.6", "SETSetQualifier"),
+
+
+	// ////////////////////////////////
+	// VeriSign
+	// ////////////////////////////////
+
+	VS_CZAG("2.16.840.1.113733.1.6.3", "VeriSignCZAG"),
+	VS_NON_VERIFIED("2.16.840.1.113733.1.6.4", "VeriSignNonVerified"),
+	VS_FIDELITY_TOKEN("2.16.840.1.113733.1.6.5", "VeriSignFidelityToken"),
+	VS_IN_BOX_V1("2.16.840.1.113733.1.6.6", "VeriSignInBoxV1"),
+	VS_SERIAL_NUMBER_ROLLOVER("2.16.840.1.113733.1.6.7", "VeriSignSerialNumberRollover"),
+	VS_TOKEN_TYPE("2.16.840.1.113733.1.6.8", "VeriSignTokenType"),
+	VS_IN_BOX_V2("2.16.840.1.113733.1.6.10", " VeriSignNetscapeInBoxV2"),
+	VS_ON_SITE_JURISDICTION_HASH("2.16.840.1.113733.1.6.11", "VeriSignOnSiteJurisdictionHash"),
+	VS_UNKNOWN("2.16.840.1.113733.1.6.13", "VeriSignUnknown"),
+	VS_DNB_DUNS_NUMBER("2.16.840.1.113733.1.6.15", "VeriSignDnbDunsNumber");
 
 
 	// @formatter:on

@@ -23,20 +23,74 @@ import net.sf.keystore_explorer.utilities.io.HexUtil;
 import net.sf.keystore_explorer.utilities.io.IndentChar;
 import net.sf.keystore_explorer.utilities.io.IndentSequence;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
-import org.bouncycastle.asn1.*;
-import org.bouncycastle.asn1.isismtt.x509.*;
+import org.bouncycastle.asn1.ASN1Boolean;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1GeneralizedTime;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1UTCTime;
+import org.bouncycastle.asn1.DERBMPString;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERGeneralString;
+import org.bouncycastle.asn1.DERGeneralizedTime;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.isismtt.x509.AdmissionSyntax;
+import org.bouncycastle.asn1.isismtt.x509.Admissions;
+import org.bouncycastle.asn1.isismtt.x509.DeclarationOfMajority;
+import org.bouncycastle.asn1.isismtt.x509.MonetaryLimit;
+import org.bouncycastle.asn1.isismtt.x509.NamingAuthority;
+import org.bouncycastle.asn1.isismtt.x509.ProcurationSyntax;
+import org.bouncycastle.asn1.isismtt.x509.ProfessionInfo;
 import org.bouncycastle.asn1.misc.NetscapeCertType;
-import org.bouncycastle.asn1.smime.SMIMECapabilities;
 import org.bouncycastle.asn1.smime.SMIMECapability;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.DirectoryString;
 import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x509.*;
-import org.bouncycastle.asn1.x509.qualified.*;
+import org.bouncycastle.asn1.x509.AccessDescription;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.Attribute;
+import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.CRLNumber;
+import org.bouncycastle.asn1.x509.CRLReason;
+import org.bouncycastle.asn1.x509.CertificatePolicies;
+import org.bouncycastle.asn1.x509.DisplayText;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.GeneralSubtree;
+import org.bouncycastle.asn1.x509.IssuerSerial;
+import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.NameConstraints;
+import org.bouncycastle.asn1.x509.NoticeReference;
+import org.bouncycastle.asn1.x509.PolicyInformation;
+import org.bouncycastle.asn1.x509.PolicyMappings;
+import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
+import org.bouncycastle.asn1.x509.ReasonFlags;
+import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
+import org.bouncycastle.asn1.x509.UserNotice;
+import org.bouncycastle.asn1.x509.qualified.BiometricData;
+import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
+import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
+import org.bouncycastle.asn1.x509.qualified.QCStatement;
+import org.bouncycastle.asn1.x509.qualified.SemanticsInformation;
+import org.bouncycastle.asn1.x509.qualified.TypeOfBiometricData;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,10 +99,85 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.*;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.COMMON_NAME;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.COUNTRY_NAME;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.DOMAIN_COMPONENT;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.EMAIL_ADDRESS;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.LOCALITY_NAME;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.MAIL;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.ORGANIZATIONAL_UNIT;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.ORGANIZATION_NAME;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.SERIAL_NUMBER;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.STATE_NAME;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.STREET_ADDRESS;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.TITLE;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.UNSTRUCTURED_ADDRESS;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.UNSTRUCTURED_NAME;
+import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.USER_ID;
 import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
 import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
-import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.*;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ADDITIONAL_INFORMATION;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ADMISSION;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.AUTHORITY_INFORMATION_ACCESS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.AUTHORITY_KEY_IDENTIFIER;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.BASIC_CONSTRAINTS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.BIOMETRIC_INFO;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CERTIFICATE_ISSUER;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CERTIFICATE_POLICIES;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CRL_DISTRIBUTION_POINTS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.CRL_NUMBER;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.DATE_OF_CERT_GEN;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.DECLARATION_OF_MAJORITY;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.DELTA_CRL_INDICATOR;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ENTRUST_VERSION_INFORMATION;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.EXTENDED_KEY_USAGE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.FRESHEST_CRL;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.HOLD_INSTRUCTION_CODE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ICCSN;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.INHIBIT_ANY_POLICY;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.INVALIDITY_DATE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ISSUER_ALTERNATIVE_NAME;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.ISSUING_DISTRIBUTION_POINT;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.KEY_USAGE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.LIABILITY_LIMITATION_FLAG;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.MONETARY_LIMIT;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.MS_APPLICATION_POLICIES;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.MS_CA_VERSION;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.MS_CERTIFICATE_TEMPLATE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.MS_CRL_NEXT_PUBLISH;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.MS_ENROLL_CERT_TYPE_EXTENSION;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NAME_CONSTRAINTS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_BASE_URL;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CA_POLICY_URL;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CA_REVOCATION_URL;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_RENEWAL_URL;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_TYPE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_COMMENT;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_REVOCATION_URL;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.NETSCAPE_SSL_SERVER_NAME;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.OCSP_NO_CHECK;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.POLICY_CONSTRAINTS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.POLICY_MAPPINGS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.PRIVATE_KEY_USAGE_PERIOD;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.PROCURATION;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.QC_STATEMENTS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.REASON_CODE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.RESTRICTION;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SMIME_CAPABILITIES;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_ALTERNATIVE_NAME;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_DIRECTORY_ATTRIBUTES;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_INFORMATION_ACCESS;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.SUBJECT_KEY_IDENTIFIER;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VALIDITY_MODEL;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_CZAG;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_FIDELITY_TOKEN;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_IN_BOX_V1;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_IN_BOX_V2;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_NON_VERIFIED;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_ON_SITE_JURISDICTION_HASH;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_SERIAL_NUMBER_ROLLOVER;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_TOKEN_TYPE;
+import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_UNKNOWN;
 
 /**
  * Holds the information of an X.509 extension and provides the ability to get
@@ -257,6 +386,20 @@ public class X509Ext {
 			return HexUtil.getHexClearDump(octets);
 		} else if (type == SMIME_CAPABILITIES) {
 			return getSMIMECapabilitiesStringValue(octets);
+		} else if (type == VS_CZAG
+				|| type == VS_FIDELITY_TOKEN
+				|| type == VS_IN_BOX_V1
+				|| type == VS_IN_BOX_V2
+				|| type == VS_SERIAL_NUMBER_ROLLOVER
+				|| type == VS_ON_SITE_JURISDICTION_HASH) {
+			// most VeriSign extensions contain just an IA5STRING
+			return DERIA5String.getInstance(octets).getString();
+		} else if (type == VS_TOKEN_TYPE
+				|| type == VS_UNKNOWN) {
+			return getBitString(octets);
+		} else if (type == VS_NON_VERIFIED) {
+			// NonVerified ::= SET OF ATTRIBUTE
+			return HexUtil.getHexClearDump(octets);
 		} else {
 			/*
 			 * X509Extension not recognised or means to output it not defined - just
@@ -428,11 +571,13 @@ public class X509Ext {
 		// @formatter:off
 
 		/*
-		 * SubjectDirectoryAttributes ::= ASN1Sequence SIZE (1..MAX) OF
-		 * Attribute
+		 * SubjectDirectoryAttributes ::= ASN1Sequence SIZE (1..MAX) OF Attribute
 		 *
-		 * Attribute ::= ASN1Sequence { type AttributeType, values SET OF
-		 * AttributeValue }
+		 * Attribute ::= ASN1Sequence
+		 * {
+		 *      type AttributeType,
+		 *      values SET OF AttributeValue
+		 * }
 		 */
 
 		// @formatter:on
@@ -1441,7 +1586,7 @@ public class X509Ext {
 		StringBuilder sb = new StringBuilder();
 
 		@SuppressWarnings("resource") // we have a ByteArrayInputStream here which does not need to be closed
-				DERBitString netscapeCertType = NetscapeCertType.getInstance(new ASN1InputStream(value).readObject());
+		DERBitString netscapeCertType = NetscapeCertType.getInstance(new ASN1InputStream(value).readObject());
 
 		int netscapeCertTypes = netscapeCertType.intValue();
 
@@ -2469,7 +2614,6 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-
 	private String getICCSNStringValue(byte[] octets) {
 
 		/*	ICCSNSyntax ::= OCTET STRING (SIZE(8..20)) */
@@ -2514,6 +2658,7 @@ public class X509Ext {
 
 		return validityModel.friendly();
 	}
+
 
 	private String getMsCertTypeStringValue(byte[] octets) {
 
@@ -2642,6 +2787,18 @@ public class X509Ext {
 		}
 
 		return sb.toString();
+	}
+
+	private String getBitString(byte[] octets) throws IOException {
+
+		if (octets == null) {
+			return "";
+		}
+
+		DERBitString derBitString = DERBitString.getInstance(ASN1Primitive.fromByteArray(octets));
+		byte[] bitStringBytes = derBitString.getBytes();
+
+		return new BigInteger(1, bitStringBytes).toString(2);
 	}
 
 }
