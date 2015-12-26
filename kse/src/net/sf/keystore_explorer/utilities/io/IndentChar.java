@@ -40,4 +40,9 @@ public enum IndentChar {
 	public char getIndentChar() {
 		return indentChar;
 	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(indentChar);
+	}
 }

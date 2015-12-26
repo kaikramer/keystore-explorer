@@ -23,20 +23,18 @@ import java.util.ResourceBundle;
 
 /**
  * 
- * Enumeration of Access Methods (1.3.6.1.5.5.7.1.1).
+ * Enumeration of Validity Models (1.3.6.1.5.5.7.1.1).
  * 
  */
-public enum AccessMethodType {
-	OCSP("1.3.6.1.5.5.7.48.1", "OcspAccessMethod"),
-	CA_ISSUERS("1.3.6.1.5.5.7.48.2", "CaIssuersAccessMethod"),
-	TIME_STAMPING("1.3.6.1.5.5.7.48.3", "TimeStampingAccessMethod"),
-	CA_REPOSITORY("1.3.6.1.5.5.7.48.5",	"CaRepositoryAccessMethod");
+public enum ValidityModelType {
+	CHAIN_MODEL("1.3.6.1.4.1.8301.3.5.1", "ChainModel"),
+	SHELL_MODEL("1.3.6.1.4.1.8301.3.5.2", "ShellModel");
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
 	private String oid;
 	private String friendlyKey;
 
-	private AccessMethodType(String oid, String friendlyKey) {
+	private ValidityModelType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}
@@ -57,8 +55,8 @@ public enum AccessMethodType {
 	 *            Object identifier
 	 * @return Type or null if none
 	 */
-	public static AccessMethodType resolveOid(String oid) {
-		for (AccessMethodType type : values()) {
+	public static ValidityModelType resolveOid(String oid) {
+		for (ValidityModelType type : values()) {
 			if (oid.equals(type.oid())) {
 				return type;
 			}

@@ -23,31 +23,29 @@ import java.util.ResourceBundle;
 
 /**
  * 
- * Enumeration of Access Methods (1.3.6.1.5.5.7.1.1).
+ * Qualified Certificate Statements (1.3.6.1.5.5.7.1.3).
  * 
  */
-public enum AccessMethodType {
-	OCSP("1.3.6.1.5.5.7.48.1", "OcspAccessMethod"),
-	CA_ISSUERS("1.3.6.1.5.5.7.48.2", "CaIssuersAccessMethod"),
-	TIME_STAMPING("1.3.6.1.5.5.7.48.3", "TimeStampingAccessMethod"),
-	CA_REPOSITORY("1.3.6.1.5.5.7.48.5",	"CaRepositoryAccessMethod");
+public enum QcStatementType {
+
+	// @formatter:off
+
+	QC_SYNTAX_V1("1.3.6.1.5.5.7.11.1", "QCSyntaxV1"),
+	QC_SYNTAX_V2("1.3.6.1.5.5.7.11.2", "QCSyntaxV2"),
+	QC_COMPLIANCE("0.4.0.1862.1.1", "QCCompliance"),
+	QC_EU_LIMIT_VALUE("0.4.0.1862.1.2", "QCEuLimitValue"),
+	QC_RETENTION_PERIOD("0.4.0.1862.1.3", "QCRetentionPeriod"),
+	QC_SSCD("0.4.0.1862.1.4", "QCSSCD");
+
+	// @formatter:on
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
 	private String oid;
 	private String friendlyKey;
 
-	private AccessMethodType(String oid, String friendlyKey) {
+	QcStatementType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
-	}
-
-	/**
-	 * Get type's friendly name.
-	 * 
-	 * @return Friendly name
-	 */
-	public String friendly() {
-		return res.getString(friendlyKey);
 	}
 
 	/**
@@ -57,8 +55,8 @@ public enum AccessMethodType {
 	 *            Object identifier
 	 * @return Type or null if none
 	 */
-	public static AccessMethodType resolveOid(String oid) {
-		for (AccessMethodType type : values()) {
+	public static QcStatementType resolveOid(String oid) {
+		for (QcStatementType type : values()) {
 			if (oid.equals(type.oid())) {
 				return type;
 			}
@@ -74,5 +72,14 @@ public enum AccessMethodType {
 	 */
 	public String oid() {
 		return oid;
+	}
+
+	/**
+	 * Get friendly key for resource string
+	 *
+	 * @return Key for resource string
+	 */
+	public String getResKey() {
+		return friendlyKey;
 	}
 }

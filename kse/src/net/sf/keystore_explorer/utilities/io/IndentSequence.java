@@ -28,8 +28,8 @@ public class IndentSequence {
 	public static final IndentSequence SINGLE_TAB = new IndentSequence(IndentChar.TAB, 1);
 
 	private IndentChar indentChar;
-	private int indentSize;
 
+	private int indentSize;
 	/**
 	 * Construct IndentSequence.
 	 *
@@ -45,7 +45,7 @@ public class IndentSequence {
 
 	/**
 	 * Get indent sequence for level.
-	 * 
+	 *
 	 * @param level
 	 *            Indent level
 	 * @return Indent sequence for level
@@ -62,7 +62,7 @@ public class IndentSequence {
 
 	/**
 	 * Get indent sequence.
-	 * 
+	 *
 	 * @return Indent sequence
 	 */
 	public String toString() {
@@ -73,5 +73,14 @@ public class IndentSequence {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Get the indent character.
+	 *
+	 * @return
+	 */
+	public IndentChar getIndentChar() {
+		return indentChar;
 	}
 }

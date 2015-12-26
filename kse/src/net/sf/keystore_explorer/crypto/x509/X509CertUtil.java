@@ -248,7 +248,7 @@ public final class X509CertUtil extends Object {
 		HttpsURLConnection connection = null;
 
 		System.setProperty("javax.net.debug", "ssl");
-		System.setProperty("jsse.enableSNIExtension", "false");
+		System.setProperty("jsse.enableSNIExtension", "true");
 
 		try {
 			connection = (HttpsURLConnection) url.openConnection();

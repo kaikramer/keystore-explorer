@@ -75,7 +75,6 @@ import net.sf.keystore_explorer.gui.oid.JObjectId;
  *
  */
 public class DGeneralNameChooser extends JEscDialog {
-	private static final String UPN_OID = "1.3.6.1.4.1.311.20.2.3";
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/generalname/resources");
 
@@ -442,7 +441,7 @@ public class DGeneralNameChooser extends JEscDialog {
 				}
 
 				ASN1EncodableVector asn1Vector = new ASN1EncodableVector();
-				asn1Vector.add(new ASN1ObjectIdentifier(UPN_OID));
+				asn1Vector.add(new ASN1ObjectIdentifier(GeneralNameUtil.UPN_OID));
 				asn1Vector.add(new DERTaggedObject(true, 0, new DERUTF8String(upnString)));
 
 				newGeneralName = new GeneralName(GeneralName.otherName, new DERSequence(asn1Vector));

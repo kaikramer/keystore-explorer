@@ -45,27 +45,49 @@ import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
  *
  */
 public class GeneralNameUtil {
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
+
+	// other name
+	public static final String UPN_OID = "1.3.6.1.4.1.311.20.2.3";
+
 
 	// @formatter:off
 
 	/*
-	 * GeneralName ::= CHOICE { otherName [0] AnotherName, rfc822Name [1]
-	 * DERIA5String, dNSName [2] DERIA5String, x400Address [3] ORAddress,
-	 * directoryName [4] Name, ediPartyName [5] EDIPartyName,
-	 * uniformResourceIdentifier [6] DERIA5String, iPAddress [7] OCTET STRING,
-	 * registeredID [8] OBJECT IDENTIFIER }
+	 * GeneralName ::= CHOICE
+	 * {
+	 *      otherName [0] AnotherName,
+	 *      rfc822Name [1] DERIA5String,
+	 *      dNSName [2] DERIA5String,
+	 *      x400Address [3] ORAddress,
+	 *      directoryName [4] Name,
+	 *      ediPartyName [5] EDIPartyName,
+	 *      uniformResourceIdentifier [6] DERIA5String,
+	 *      iPAddress [7] OCTET STRING,
+	 *      registeredID [8] OBJECT IDENTIFIER
+	 * }
 	 *
-	 * AnotherName ::= ASN1Sequence { type-id OBJECT IDENTIFIER, value [0]
-	 * EXPLICIT ANY DEFINED BY type-id }
+	 * AnotherName ::= ASN1Sequence
+	 * {
+	 *      type-id OBJECT IDENTIFIER,
+	 *      value [0] EXPLICIT ANY DEFINED BY type-id
+	 * }
 	 *
-	 * EDIPartyName ::= ASN1Sequence { nameAssigner [0] DirectoryString
-	 * OPTIONAL, partyName [1] DirectoryString }
+	 * EDIPartyName ::= ASN1Sequence
+	 * {
+	 *      nameAssigner [0] DirectoryString OPTIONAL,
+	 *      partyName [1] DirectoryString
+	 * }
 	 *
-	 * DirectoryString ::= CHOICE { teletexString TeletexString (SIZE (1..MAX),
-	 * printableString PrintableString (SIZE (1..MAX)), universalString
-	 * UniversalString (SIZE (1..MAX)), utf8String UTF8String (SIZE (1.. MAX)),
-	 * bmpString BMPString (SIZE(1..MAX)) }
+	 * DirectoryString ::= CHOICE
+	 * {
+	 *      teletexString TeletexString (SIZE (1..MAX),
+	 *      printableString PrintableString (SIZE (1..MAX)),
+	 *      universalString UniversalString (SIZE (1..MAX)),
+	 *      utf8String UTF8String (SIZE (1.. MAX)),
+	 *      bmpString BMPString (SIZE(1..MAX))
+	 * }
 	 */
 
 	// @formatter:on
@@ -118,7 +140,9 @@ public class GeneralNameUtil {
 		case GeneralName.uniformResourceIdentifier: {
 			DERIA5String uri = (DERIA5String) generalName.getName();
 
-			return MessageFormat.format(res.getString("GeneralNameUtil.UriGeneralName"), uri.getString());
+			String link = "<html><a href=\"" + uri.getString() + "\">" + uri.getString() + "</a></html>";
+
+			return MessageFormat.format(res.getString("GeneralNameUtil.UriGeneralName"), link);
 		}
 		case GeneralName.otherName: {
 			// we currently only support UPN in otherName
@@ -141,10 +165,27 @@ public class GeneralNameUtil {
 		// OtherName ::= SEQUENCE {
 		//    type-id OBJECT IDENTIFIER,
 		//    value [0] EXPLICIT ANY DEFINED BY type-id }
-		ASN1Sequence asn1Sequence = (ASN1Sequence) generalName.getName();
-		DERTaggedObject derTaggedObject = (DERTaggedObject) asn1Sequence.getObjectAt(1);
-		DERUTF8String upn = DERUTF8String.getInstance(derTaggedObject.getObject());
-		return upn.getString();
+
+		ASN1Sequence otherName = (ASN1Sequence) generalName.getName();
+		ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) otherName.getObjectAt(0);
+
+		if (UPN_OID.equals(oid.getId())) {
+			DERTaggedObject derTaggedObject = (DERTaggedObject) otherName.getObjectAt(1);
+			DERUTF8String upn = DERUTF8String.getInstance(derTaggedObject.getObject());
+			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"), "UPN", upn.getString());
+		}
+
+		// fallback to generic handling
+		ASN1Encodable value = otherName.getObjectAt(1);
+		try {
+			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"),
+			                            ObjectIdUtil.toString(oid),
+			                            HexUtil.getHexString(value.toASN1Primitive().getEncoded(ASN1Encoding.DER)));
+		} catch (IOException e) {
+			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"),
+			                            ObjectIdUtil.toString(oid),
+			                            "");
+		}
 	}
 
 	/**
@@ -190,18 +231,7 @@ public class GeneralNameUtil {
 		}
 		case GeneralName.otherName: {
 
-			/* OtherName ::= SEQUENCE {
-			 *      type-id    OBJECT IDENTIFIER,
-			 *      value      [0] EXPLICIT ANY DEFINED BY type-id }
-			 */
-			ASN1Sequence otherName = (ASN1Sequence) generalName.getName();
-
-			ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) otherName.getObjectAt(0);
-			ASN1Encodable value = otherName.getObjectAt(1);
-
-			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"),
-					ObjectIdUtil.toString(oid),
-					HexUtil.getHexString(value.toASN1Primitive().getEncoded(ASN1Encoding.DER)));
+			return parseUPN(generalName);
 		}
 		case GeneralName.x400Address: {
 			/*

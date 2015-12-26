@@ -26,6 +26,8 @@ import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.isismtt.x509.*;
 import org.bouncycastle.asn1.misc.NetscapeCertType;
+import org.bouncycastle.asn1.smime.SMIMECapabilities;
+import org.bouncycastle.asn1.smime.SMIMECapability;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.DirectoryString;
 import org.bouncycastle.asn1.x500.RDN;
@@ -34,10 +36,14 @@ import org.bouncycastle.asn1.x509.qualified.*;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.*;
 import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
@@ -56,8 +62,8 @@ public class X509Ext {
 	private byte[] value;
 	private boolean critical;
 
-	private static final IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
-	private static final String NEWLINE = "\n";
+	public static final IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+	public static final String NEWLINE = "\n";
 
 	/**
 	 * Construct a new immutable X509Ext.
@@ -239,6 +245,18 @@ public class X509Ext {
 			return getAdditionalInformationStringValue(octets);
 		} else if (type == VALIDITY_MODEL) {
 			return getValidityModelStringValue(octets);
+		} else if (type == MS_ENROLL_CERT_TYPE_EXTENSION) {
+			return getMsCertTypeStringValue(octets);
+		} else if (type == MS_CA_VERSION) {
+			return  getMsCaVersionStringValue(octets);
+		} else if (type == MS_CRL_NEXT_PUBLISH) {
+			return  getMsCrlNextPublishStringValue(octets);
+		} else if (type == MS_CERTIFICATE_TEMPLATE) {
+			return getMsCertificateTemplateStringValue(octets);
+		} else if (type == MS_APPLICATION_POLICIES) {
+			return HexUtil.getHexClearDump(octets);
+		} else if (type == SMIME_CAPABILITIES) {
+			return getSMIMECapabilitiesStringValue(octets);
 		} else {
 			/*
 			 * X509Extension not recognised or means to output it not defined - just
@@ -340,8 +358,7 @@ public class X509Ext {
 			sb.append(INDENT);
 			sb.append(res.getString("AccessLocation"));
 			sb.append(NEWLINE);
-			sb.append(INDENT);
-			sb.append(INDENT);
+			sb.append(INDENT.toString(2));
 			sb.append(accessLocationStr);
 			sb.append(NEWLINE);
 		}
@@ -1037,33 +1054,51 @@ public class X509Ext {
 		// @formatter:off
 
 		/*
-		 * CertificatePolicies ::= ASN1Sequence SIZE (1..MAX) OF
-		 * PolicyInformation
+		 * CertificatePolicies ::= ASN1Sequence SIZE (1..MAX) OF PolicyInformation
 		 *
-		 * PolicyInformation ::= ASN1Sequence { policyIdentifier CertPolicyId,
-		 * policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo
-		 * OPTIONAL }
+		 * PolicyInformation ::= ASN1Sequence
+		 * {
+		 *      policyIdentifier CertPolicyId,
+		 *      policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
+		 * }
 		 *
 		 * CertPolicyId ::= OBJECT IDENTIFIER
 		 *
-		 * PolicyQualifierInfo ::= ASN1Sequence { policyQualifierId
-		 * PolicyQualifierId, qualifier ANY DEFINED BY policyQualifierId }
+		 * PolicyQualifierInfo ::= ASN1Sequence
+		 * {
+		 *      policyQualifierId PolicyQualifierId,
+		 *      qualifier ANY DEFINED BY policyQualifierId
+		 * }
 		 *
 		 * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
 		 *
-		 * Qualifier ::= CHOICE { cPSuri CPSuri, userNotice UserNotice }
+		 * Qualifier ::= CHOICE
+		 * {
+		 *      cPSuri CPSuri,
+		 *      userNotice UserNotice
+		 * }
 		 *
 		 * CPSuri ::= DERIA5String
 		 *
-		 * UserNotice ::= ASN1Sequence { noticeRef NoticeReference OPTIONAL,
-		 * explicitText DisplayText OPTIONAL }
+		 * UserNotice ::= ASN1Sequence
+		 * {
+		 *      noticeRef NoticeReference OPTIONAL,
+		 *      explicitText DisplayText OPTIONAL
+		 * }
 		 *
-		 * NoticeReference ::= ASN1Sequence { organization DisplayText,
-		 * noticeNumbers ASN1Sequence OF ASN1Integer }
+		 * NoticeReference ::= ASN1Sequence
+		 * {
+		 *      organization DisplayText,
+		 *      noticeNumbers ASN1Sequence OF ASN1Integer
+		 * }
 		 *
-		 * DisplayText ::= CHOICE { ia5String DERIA5String (SIZE (1..200)),
-		 * visibleString VisibleString (SIZE (1..200)), bmpString BMPString
-		 * (SIZE (1..200)), utf8String UTF8String (SIZE (1..200)) }
+		 * DisplayText ::= CHOICE
+		 * {
+		 *      ia5String DERIA5String (SIZE (1..200)),
+		 *      visibleString VisibleString (SIZE (1..200)),
+		 *      bmpString BMPString (SIZE (1..200)),
+		 *      utf8String UTF8String (SIZE (1..200))
+		 * }
 		 */
 
 		// @formatter:on
@@ -1096,12 +1131,9 @@ public class X509Ext {
 
 					ASN1Sequence policyQualifierInfo = (ASN1Sequence) policyQualifier;
 
-					policyQual++;
-
-					sb.append(INDENT);
-					sb.append(INDENT);
+					sb.append(INDENT.toString(1));
 					sb.append(MessageFormat.format(res.getString("PolicyQualifierInformation"), certPolicy,
-					                               policyQual));
+					                               ++policyQual));
 					sb.append(NEWLINE);
 
 					ASN1ObjectIdentifier policyQualifierId = (ASN1ObjectIdentifier) policyQualifierInfo.getObjectAt(0);
@@ -1110,28 +1142,23 @@ public class X509Ext {
 							.resolveOid(policyQualifierId.getId());
 
 					if (certificatePolicyQualifierType != null) {
-						sb.append(INDENT);
-						sb.append(INDENT);
-						sb.append(INDENT);
+						sb.append(INDENT.toString(2));
 						sb.append(certificatePolicyQualifierType.friendly());
 						sb.append(NEWLINE);
 
 						if (certificatePolicyQualifierType == PKIX_CPS_POINTER_QUALIFIER) {
 							DERIA5String cpsPointer = (DERIA5String) policyQualifierInfo.getObjectAt(1);
 
-							sb.append(INDENT);
-							sb.append(INDENT);
-							sb.append(INDENT);
-							sb.append(MessageFormat.format(res.getString("CpsPointer"), cpsPointer));
+							sb.append(INDENT.toString(2));
+							sb.append(MessageFormat.format(res.getString("CpsPointer"),
+							                               "<a href=\"" + cpsPointer + "\">" + cpsPointer + "</a>"));
 							sb.append(NEWLINE);
 						} else if (certificatePolicyQualifierType == PKIX_USER_NOTICE_QUALIFIER) {
 							ASN1Encodable userNoticeObj = policyQualifierInfo.getObjectAt(1);
 
 							UserNotice userNotice = UserNotice.getInstance(userNoticeObj);
 
-							sb.append(INDENT);
-							sb.append(INDENT);
-							sb.append(INDENT);
+							sb.append(INDENT.toString(2));
 							sb.append(res.getString("UserNotice"));
 							sb.append(NEWLINE);
 
@@ -1140,22 +1167,14 @@ public class X509Ext {
 							DisplayText explicitText = userNotice.getExplicitText();
 
 							if (noticeReference != null) { // Optional
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
+								sb.append(INDENT.toString(3));
 								sb.append(res.getString("NoticeReference"));
 								sb.append(NEWLINE);
 
 								DisplayText organization = noticeReference.getOrganization();
-
 								String organizationString = organization.getString();
 
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
+								sb.append(INDENT.toString(4));
 								sb.append(MessageFormat.format(res.getString("Organization"), organizationString));
 								sb.append(NEWLINE);
 
@@ -1168,24 +1187,16 @@ public class X509Ext {
 								}
 								sbNoticeNumbers.setLength(sbNoticeNumbers.length() - 2);
 
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
+								sb.append(INDENT.toString(4));
 								sb.append(MessageFormat.format(res.getString("NoticeNumbers"),
 								                               sbNoticeNumbers.toString()));
 								sb.append(NEWLINE);
 							}
 
-							if (explicitText != null) // Optional
-							{
+							if (explicitText != null) { // Optional
 								String explicitTextString = explicitText.getString();
 
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
-								sb.append(INDENT);
+								sb.append(INDENT.toString(3));
 								sb.append(MessageFormat.format(res.getString("ExplicitText"), explicitTextString));
 								sb.append(NEWLINE);
 							}
@@ -1975,52 +1986,48 @@ public class X509Ext {
 
 			int indentLevel = 1;
 
-			sb.append(MessageFormat.format(res.getString("QCStatement.QCStatement"), qcStatementNr));
+			sb.append(MessageFormat.format(res.getString("QCStatement.QCStatement"), ++qcStatementNr));
 			sb.append(NEWLINE);
 
-			X509ExtensionType qcStatementType = X509ExtensionType.resolveOid(statementId.getId());
+			QcStatementType qcStatementType = QcStatementType.resolveOid(statementId.getId());
 			switch (qcStatementType) {
 				case QC_SYNTAX_V1:
 				case QC_SYNTAX_V2:
 					SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
 					sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
-					sb.append(NEWLINE);
 					break;
 				case QC_COMPLIANCE:
 					// no statementInfo
 					sb.append(INDENT.toString(indentLevel));
-					sb.append(MessageFormat.format(res.getString("QCStatement.QcCompliance"), qcStatementType.oid()));
+					sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
 					sb.append(NEWLINE);
 					break;
 				case QC_EU_LIMIT_VALUE:
 					sb.append(INDENT.toString(indentLevel));
-					sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue"), qcStatementType.oid()));
-					sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
+					sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
 					sb.append(NEWLINE);
+					sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
 					break;
 				case QC_RETENTION_PERIOD:
 					ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
 					sb.append(INDENT.toString(indentLevel));
-					sb.append(MessageFormat.format(res.getString("QCStatement.QcRetentionPeriod"),
-					                               qcStatementType.oid(),
+					sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
 					                               asn1Integer.getValue().toString()));
 					sb.append(NEWLINE);
 					break;
 				case QC_SSCD:
 					// no statementInfo
 					sb.append(INDENT.toString(indentLevel));
-					sb.append(MessageFormat.format(res.getString("QCStatement.QcSSCD"), qcStatementType.oid()));
+					sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
 					sb.append(NEWLINE);
 					break;
 			}
-
-
 		}
 
 		return sb.toString();
 	}
 
-	private String getSemanticInformationValueString(X509ExtensionType qcStatementType, SemanticsInformation
+	private String getSemanticInformationValueString(QcStatementType qcStatementType, SemanticsInformation
 			semanticsInfo, int baseIndentLevel) throws IOException {
 
 		// @formatter:off
@@ -2042,23 +2049,23 @@ public class X509Ext {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(INDENT.toString(baseIndentLevel));
-		if (qcStatementType == QC_SYNTAX_V1) {
-			sb.append(MessageFormat.format(res.getString("QCStatement.QCSyntaxV1"), qcStatementType.oid()));
+		if (qcStatementType == QcStatementType.QC_SYNTAX_V1) {
+			sb.append(res.getString(QcStatementType.QC_SYNTAX_V1.getResKey()));
 		} else {
-			sb.append(MessageFormat.format(res.getString("QCStatement.QCSyntaxV2"), qcStatementType.oid()));
+			sb.append(res.getString(QcStatementType.QC_SYNTAX_V2.getResKey()));
 		}
 		sb.append(NEWLINE);
 
 		if (semanticsIdentifier != null) {
 			sb.append(INDENT.toString(baseIndentLevel + 1));
-			sb.append(MessageFormat.format(res.getString("QCStatement.QCSyntax.SemanticsIdentifier"),
+			sb.append(MessageFormat.format(res.getString("QCSyntax.SemanticsIdentifier"),
 			                               semanticsIdentifier.getId()));
 			sb.append(NEWLINE);
 		}
 
 		if (nameRegistrationAuthorities != null) {
 			sb.append(INDENT.toString(baseIndentLevel + 1));
-			sb.append(res.getString("QCStatement.QCSyntax.NameRegistrationAuthorities"));
+			sb.append(res.getString("QCSyntax.NameRegistrationAuthorities"));
 			sb.append(NEWLINE);
 
 			for (GeneralName nameRegistrationAuthority : nameRegistrationAuthorities) {
@@ -2101,19 +2108,19 @@ public class X509Ext {
 		if (currency != null) {
 			String currencyString = currency.isAlphabetic() ? currency.getAlphabetic() : "" + currency.getNumeric();
 			sb.append(INDENT.toString(baseIndentLevel));
-			sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue.Currency"), currencyString));
+			sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Currency"), currencyString));
 			sb.append(NEWLINE);
 		}
 
 		if (amount != null) {
 			sb.append(INDENT.toString(baseIndentLevel));
-			sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue.Amount"), amount.toString()));
+			sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Amount"), amount.toString()));
 			sb.append(NEWLINE);
 		}
 
 		if (exponent != null) {
 			sb.append(INDENT.toString(baseIndentLevel));
-			sb.append(MessageFormat.format(res.getString("QCStatement.QcEuLimitValue.Exponent"), exponent.toString()));
+			sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Exponent"), exponent.toString()));
 			sb.append(NEWLINE);
 		}
 
@@ -2249,7 +2256,6 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-
 	private String getNamingAuthorityStringValue(NamingAuthority namingAuthority, int indentLevel)
 			throws IOException {
 		// @formatter:off
@@ -2291,7 +2297,6 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-
 	private String getLiabilityLimitationFlagStringValue(byte[] octets) {
 
 		/*	LiabilityLimitationFlagSyntax ::= BOOLEAN */
@@ -2300,7 +2305,6 @@ public class X509Ext {
 		return asn1Boolean.toString();
 	}
 
-
 	private String getDateOfCertGenStringValue(byte[] octets) {
 
 		/*	DateOfCertGenSyntax ::= GeneralizedTime */
@@ -2308,7 +2312,6 @@ public class X509Ext {
 		ASN1GeneralizedTime dateOfCertGenSyntax = ASN1GeneralizedTime.getInstance(octets);
 		return getGeneralizedTimeString(dateOfCertGenSyntax);
 	}
-
 
 	private String getProcurationStringValue(byte[] octets) throws IOException {
 
@@ -2466,12 +2469,14 @@ public class X509Ext {
 		return sb.toString();
 	}
 
+
 	private String getICCSNStringValue(byte[] octets) {
 
 		/*	ICCSNSyntax ::= OCTET STRING (SIZE(8..20)) */
 
 		return HexUtil.getHexString(octets);
 	}
+
 
 	private String getRestrictionStringValue(byte[] octets) throws IOException {
 
@@ -2480,12 +2485,14 @@ public class X509Ext {
 		return DirectoryString.getInstance(ASN1Primitive.fromByteArray(octets)).toString();
 	}
 
+
 	private String getAdditionalInformationStringValue(byte[] octets) throws IOException {
 
 		/*	AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048)) */
 
 		return DirectoryString.getInstance(ASN1Primitive.fromByteArray(octets)).toString();
 	}
+
 
 	private String getValidityModelStringValue(byte[] octets) {
 
@@ -2503,7 +2510,138 @@ public class X509Ext {
 
 		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(octets);
 		ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(asn1Sequence.getObjectAt(0));
+		ValidityModelType validityModel = ValidityModelType.resolveOid(oid.getId());
 
-		return res.getString("ValidityModel." + oid.getId());
+		return validityModel.friendly();
 	}
+
+	private String getMsCertTypeStringValue(byte[] octets) {
+
+		// @formatter:off
+
+		/*
+			Not much information available about that extension...
+
+			06 09		; OBJECT_ID (9 Bytes)
+			|  2b 06 01 04 01 82 37 14  02
+			|     ; 1.3.6.1.4.1.311.20.2 Certificate Template Name (Certificate Type)
+			04 0a		; OCTET_STRING (a Bytes)#
+			   1e 08 00 55 00 73 00 65  00 72                    ; ...U.s.e.r
+		*/
+
+		// @formatter:on
+
+		DERBMPString derbmpString = DERBMPString.getInstance(octets);
+
+		return derbmpString.toString();
+	}
+
+	private String getMsCaVersionStringValue(byte[] octets) {
+
+		/*
+            "The extension data is a DWORD value (encoded as X509_INTEGER in the extension);
+            the low 16 bits are the certificate index, and the high 16 bits are the key index."
+		*/
+
+		ASN1Integer asn1Integer = ASN1Integer.getInstance(octets);
+		int version = asn1Integer.getValue().intValue();
+		String certIndex = String.valueOf(version & 0xffff);
+		String keyIndex = String.valueOf(version >> 16);
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(MessageFormat.format(res.getString("MSCaVersion.CertIndex"), certIndex));
+		sb.append(NEWLINE);
+		sb.append(MessageFormat.format(res.getString("MSCaVersion.KeyIndex"), keyIndex));
+		sb.append(NEWLINE);
+
+		return sb.toString();
+	}
+
+	private String getMsCrlNextPublishStringValue(byte[] octets) {
+		ASN1UTCTime time = ASN1UTCTime.getInstance(octets);
+		return time.getTime();
+	}
+
+	private String getMsCertificateTemplateStringValue(byte[] octets) {
+
+		// @formatter:off
+
+		/*
+			CertificateTemplate ::= SEQUENCE
+			{
+				templateID              EncodedObjectID,
+				templateMajorVersion    TemplateVersion,
+				templateMinorVersion    TemplateVersion OPTIONAL
+			}
+			TemplateVersion ::= INTEGER (0..4294967295)
+		*/
+
+		// @formatter:on
+
+		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(octets);
+		ASN1ObjectIdentifier templateID = (ASN1ObjectIdentifier) asn1Sequence.getObjectAt(0);
+		ASN1Integer majorVersion = (ASN1Integer) asn1Sequence.getObjectAt(1);
+		ASN1Integer minorVersion = (ASN1Integer) asn1Sequence.getObjectAt(2);
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(MessageFormat.format(res.getString("MSCertificateTemplate.ID"), templateID.getId()));
+		sb.append(NEWLINE);
+
+		sb.append(MessageFormat.format(res.getString("MSCertificateTemplate.MajorVersion"), majorVersion));
+		sb.append(NEWLINE);
+
+		if (minorVersion != null) {
+			sb.append(MessageFormat.format(res.getString("MSCertificateTemplate.MinorVersion"), minorVersion));
+			sb.append(NEWLINE);
+		}
+
+		return sb.toString();
+	}
+
+	private String getSMIMECapabilitiesStringValue(byte[] octets) throws IOException {
+
+		// @formatter:off
+
+		/*
+			SMIMECapabilities ::= SEQUENCE OF SMIMECapability
+
+			SMIMECapability ::= SEQUENCE
+			{
+                capabilityID OBJECT IDENTIFIER,
+                parameters ANY DEFINED BY capabilityID OPTIONAL
+            }
+		*/
+
+		// @formatter:on
+
+		StringBuilder sb = new StringBuilder();
+
+		int capabilityNr = 0;
+
+		ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(octets);
+		for (ASN1Encodable asn1Encodable : asn1Sequence) {
+			SMIMECapability capability = SMIMECapability.getInstance(asn1Encodable);
+			ASN1ObjectIdentifier oid = capability.getCapabilityID();
+			ASN1Encodable parameters = capability.getParameters();
+
+			sb.append(MessageFormat.format(res.getString("SMIMECapability"), ++capabilityNr));
+			sb.append(NEWLINE);
+
+			sb.append(INDENT);
+			sb.append(MessageFormat.format(res.getString("SMIMECapability.ObjectID"), ObjectIdUtil.toString(oid)));
+			sb.append(NEWLINE);
+
+			if (parameters != null) {
+				sb.append(INDENT);
+				sb.append(MessageFormat.format(res.getString("SMIMECapability.Parameter"),
+				                               HexUtil.getHexString(parameters.toASN1Primitive().getEncoded())));
+				sb.append(NEWLINE);
+			}
+		}
+
+		return sb.toString();
+	}
+
 }

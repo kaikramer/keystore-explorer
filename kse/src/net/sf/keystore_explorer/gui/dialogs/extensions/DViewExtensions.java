@@ -19,9 +19,40 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
+import net.sf.keystore_explorer.crypto.x509.X509Ext;
+import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
+import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
+import net.sf.keystore_explorer.utilities.io.IndentChar;
+import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -32,45 +63,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.net.URL;
 import java.security.cert.X509Extension;
 import java.util.ResourceBundle;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
-import net.sf.keystore_explorer.crypto.x509.X509Ext;
-import net.sf.keystore_explorer.gui.CursorUtil;
-import net.sf.keystore_explorer.gui.JEscDialog;
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
-import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
-import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Displays the details of X.509 Extensions.
  *
  */
-public class DViewExtensions extends JEscDialog {
+public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("net/sf/keystore_explorer/gui/dialogs/extensions/resources");
 
@@ -82,7 +85,7 @@ public class DViewExtensions extends JEscDialog {
 	private JLabel jlExtensionValue;
 	private JPanel jpExtensionValueTextArea;
 	private JScrollPane jspExtensionValue;
-	private JTextArea jtaExtensionValue;
+	private JEditorPane jepExtensionValue;
 	private JPanel jpExtensionValueAsn1;
 	private JButton jbAsn1;
 	private JPanel jpOK;
@@ -178,15 +181,22 @@ public class DViewExtensions extends JEscDialog {
 
 		jpExtensionValue.add(jlExtensionValue, BorderLayout.NORTH);
 
-		jtaExtensionValue = new JTextArea();
-		jtaExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
-		jtaExtensionValue.setEditable(false);
-		jtaExtensionValue.setToolTipText(res.getString("DViewExtensions.jtaExtensionValue.tooltip"));
+		jepExtensionValue = new JEditorPane();
+		jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jepExtensionValue.setEditable(false);
+		jepExtensionValue.setToolTipText(res.getString("DViewExtensions.jtaExtensionValue.tooltip"));
 		// JGoodies - keep uneditable color same as editable
-		jtaExtensionValue.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+		jepExtensionValue.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
-		jspExtensionValue = PlatformUtil.createScrollPane(jtaExtensionValue,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		// for displaying URLs in extensions as clickable links
+		jepExtensionValue.setContentType("text/html");
+		jepExtensionValue.addHyperlinkListener(this);
+		// use default font and foreground color from the component
+		jepExtensionValue.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+
+		jspExtensionValue = PlatformUtil.createScrollPane(jepExtensionValue,
+		                                                  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+		                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		jpExtensionValueTextArea = new JPanel(new BorderLayout(5, 5));
 		jpExtensionValueTextArea.setPreferredSize(new Dimension(500, 200));
@@ -262,7 +272,7 @@ public class DViewExtensions extends JEscDialog {
 		int selectedRow = jtExtensions.getSelectedRow();
 
 		if (selectedRow == -1) {
-			jtaExtensionValue.setText("");
+			jepExtensionValue.setText("");
 			jbAsn1.setEnabled(false);
 		} else {
 			String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
@@ -272,14 +282,16 @@ public class DViewExtensions extends JEscDialog {
 			X509Ext ext = new X509Ext(oid, value, criticality);
 
 			try {
-				jtaExtensionValue.setText(ext.getStringValue());
+				jepExtensionValue.setText("<html><body>" + ext.getStringValue()
+						.replace(X509Ext.INDENT.getIndentChar().toString(), "&nbsp;")
+						.replace(X509Ext.NEWLINE, "<br/>") + "</body></html>");
 			} catch (Exception ex) {
-				jtaExtensionValue.setText("");
+				jepExtensionValue.setText("");
 				DError dError = new DError(this, DOCUMENT_MODAL, ex);
 				dError.setLocationRelativeTo(this);
 				dError.setVisible(true);
 			}
-			jtaExtensionValue.setCaretPosition(0);
+			jepExtensionValue.setCaretPosition(0);
 
 			jbAsn1.setEnabled(true);
 		}
@@ -322,5 +334,20 @@ public class DViewExtensions extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	@Override
+	public void hyperlinkUpdate(HyperlinkEvent e) {
+		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+			try {
+				URL url = e.getURL();
+				if (url != null) {
+					Desktop.getDesktop().browse(url.toURI());
+				}
+			} catch (Exception ex) {
+				// TODO
+				ex.printStackTrace();
+			}
+		}
 	}
 }

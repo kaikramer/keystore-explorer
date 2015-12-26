@@ -29,6 +29,9 @@ import java.util.ResourceBundle;
  * 
  */
 public enum X509ExtensionType {
+
+	// @formatter:off
+
 	// ////////////////////////////////
 	// Active X509Extension OIDs
 	// ////////////////////////////////
@@ -255,13 +258,6 @@ public enum X509ExtensionType {
 
 	/** Indicates that the certificate is a Qualified Certificate in accordance with a particular legal system. */
 	QC_STATEMENTS("1.3.6.1.5.5.7.1.3", "QCStatements"),
-	/* not really extensions but sub types of QCStatement */
-	QC_SYNTAX_V1("1.3.6.1.5.5.7.11.1", "QCSyntaxV1"),
-	QC_SYNTAX_V2("1.3.6.1.5.5.7.11.2", "QCSyntaxV2"),
-	QC_COMPLIANCE("0.4.0.1862.1.1", "QcCompliance"),
-	QC_EU_LIMIT_VALUE("0.4.0.1862.1.2", "QcEuLimitValue"),
-	QC_RETENTION_PERIOD("0.4.0.1862.1.3", "QcRetentionPeriod"),
-	QC_SSCD("0.4.0.1862.1.4", "QcSSCD"),
 
 
 	// ////////////////////////////////
@@ -289,11 +285,45 @@ public enum X509ExtensionType {
 
 
 	// ////////////////////////////////
-	// CDC
+	// CDC (TU Darmstadt)
 	// ////////////////////////////////
 
-	VALIDITY_MODEL("1.3.6.1.4.1.8301.3.5", "ValidityModel");
+	VALIDITY_MODEL("1.3.6.1.4.1.8301.3.5", "ValidityModel"),
 
+
+	// ////////////////////////////////
+	// Microsoft
+	// ////////////////////////////////
+
+	MS_ENROLL_CERT_TYPE_EXTENSION("1.3.6.1.4.1.311.20.2", "MSEnrollCerttypeExtension"),
+	MS_CA_VERSION("1.3.6.1.4.1.311.21.1", "MSCaVersion"),
+	MS_CA_CERTIFICATE_HASH("1.3.6.1.4.1.311.21.2", "MSCACertificateHash"),
+	MS_CRL_NEXT_PUBLISH("1.3.6.1.4.1.311.21.4", "MSCRLNextPublish"),
+	MS_CERTIFICATE_TEMPLATE("1.3.6.1.4.1.311.21.7", "MSCertificateTemplate"),
+	MS_APPLICATION_POLICIES("1.3.6.1.4.1.311.21.10", "MSApplicationPolicies"),
+
+
+	// ////////////////////////////////
+	// RFC 3851
+	// ////////////////////////////////
+
+	SMIME_CAPABILITIES("1.2.840.113549.1.9.15", "SMIMECapabilities"),
+
+
+	// ////////////////////////////////
+	// SET (Secure Electronic Transaction)
+	// ////////////////////////////////
+
+	SET_HASHED_ROOT_KEY("2.23.42.7.0", "SETHashedRootKey"),
+	SET_CERTIFICATE_TYPE("2.23.42.7.1", "SETCertificateType"),
+	SET_MERCHANT_DATA("2.23.42.7.2", "SETMerchantData"),
+	SET_CARD_CERT_REQUIRED("2.23.42.7.3", "SETCardCertRequired"),
+	SET_TUNNELING("2.23.42.7.4", "SETTunneling"),
+	SET_SET_EXTENSIONS("2.23.42.7.5", "SETSetExtensions"),
+	SET_SET_QUALIFIER("2.23.42.7.6", "SETSetQualifier");
+
+
+	// @formatter:on
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
 	private String oid;
