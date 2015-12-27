@@ -19,13 +19,18 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.crypto.x509.X509Ext;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
+import net.sf.keystore_explorer.gui.dialogs.DViewCertificate;
+import net.sf.keystore_explorer.gui.dialogs.DViewCrl;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
+import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
@@ -62,8 +67,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.security.cert.X509Extension;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**
@@ -337,12 +347,62 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 			try {
 				URL url = e.getURL();
 				if (url != null) {
-					Desktop.getDesktop().browse(url.toURI());
+					if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
+						X509Certificate[] certs = downloadCert(url);
+						if ((certs != null) && (certs.length > 0)) {
+							DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
+									res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs, null,
+							                                                         DViewCertificate.NONE);
+							dViewCertificate.setLocationRelativeTo(this);
+							dViewCertificate.setVisible(true);
+						}
+					} else if (url.getPath().endsWith(".crl")) {
+						X509CRL crl = downloadCrl(url);
+						if (crl != null) {
+							DViewCrl dViewCrl = new DViewCrl(this, MessageFormat.format(
+									res.getString("DViewExtensions.ViewCrl.Title"), url.toString()),
+							                                 ModalityType.DOCUMENT_MODAL, crl);
+							dViewCrl.setLocationRelativeTo(this);
+							dViewCrl.setVisible(true);
+						}
+					} else {
+						Desktop.getDesktop().browse(url.toURI());
+					}
 				}
 			} catch (Exception ex) {
 				// TODO
 				ex.printStackTrace();
 			}
+		}
+	}
+
+	private X509CRL downloadCrl(URL url) throws IOException, CryptoException {
+		InputStream is = null;
+		try {
+			URLConnection urlConn = url.openConnection();
+
+			is = urlConn.getInputStream();
+
+			X509CRL crl = X509CertUtil.loadCRL(is);
+
+			return crl;
+		} finally {
+			SafeCloseUtil.close(is);
+		}
+	}
+
+	private X509Certificate[] downloadCert(URL url) throws IOException, CryptoException {
+		InputStream is = null;
+		try {
+			URLConnection urlConn = url.openConnection();
+
+			is = urlConn.getInputStream();
+
+			X509Certificate[] certs = X509CertUtil.loadCertificates(is);
+
+			return certs;
+		} finally {
+			SafeCloseUtil.close(is);
 		}
 	}
 }

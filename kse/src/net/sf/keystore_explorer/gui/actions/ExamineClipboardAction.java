@@ -108,7 +108,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
     /**
      * Show clipboard content
      *
-     * @param certificateFile
+     * @param data
      */
     public void show(String data) {
 

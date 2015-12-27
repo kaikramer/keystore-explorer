@@ -398,13 +398,9 @@ public class X509Ext {
 				|| type == VS_UNKNOWN) {
 			return getBitString(octets);
 		} else if (type == VS_NON_VERIFIED) {
-			// NonVerified ::= SET OF ATTRIBUTE
-			return HexUtil.getHexClearDump(octets);
+			return getVeriSignNonVerified(octets);
 		} else {
-			/*
-			 * X509Extension not recognised or means to output it not defined - just
-			 * dump out hex and clear text
-			 */
+			// X509Extension not recognised or means to output it not defined - just dump out hex and clear text
 			return HexUtil.getHexClearDump(octets);
 		}
 	}
@@ -2618,7 +2614,6 @@ public class X509Ext {
 		return HexUtil.getHexString(octets);
 	}
 
-
 	private String getRestrictionStringValue(byte[] octets) throws IOException {
 
 		/*	RestrictionSyntax ::= DirectoryString (SIZE(1..1024)) */
@@ -2677,6 +2672,7 @@ public class X509Ext {
 
 		return derbmpString.toString();
 	}
+
 
 	private String getMsCaVersionStringValue(byte[] octets) {
 
@@ -2798,4 +2794,29 @@ public class X509Ext {
 		return new BigInteger(1, bitStringBytes).toString(2);
 	}
 
+	private String getVeriSignNonVerified(byte[] octets) throws IOException {
+
+		/*
+		    NonVerified ::= SET OF ATTRIBUTE
+		*/
+
+		StringBuilder sb = new StringBuilder();
+
+		ASN1Set asn1Set = ASN1Set.getInstance(octets);
+		for (ASN1Encodable attribute : asn1Set) {
+
+			ASN1ObjectIdentifier attributeId = ((Attribute) attribute).getAttrType();
+			ASN1Set attributeValues = ((Attribute) attribute).getAttrValues();
+
+			for (ASN1Encodable attributeValue : attributeValues) {
+
+				String attributeValueStr = getAttributeValueString(attributeId, attributeValue);
+
+				sb.append(MessageFormat.format("{0}={1}", attributeId.getId(), attributeValueStr));
+				sb.append(NEWLINE);
+			}
+		}
+
+		return sb.toString();
+	}
 }

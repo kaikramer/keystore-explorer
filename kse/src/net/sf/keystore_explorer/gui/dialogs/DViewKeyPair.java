@@ -194,6 +194,7 @@ public class DViewKeyPair extends JEscDialog {
 			DViewCertificate dViewCertificate = new DViewCertificate(this,
 			                                                         res.getString("DViewKeyPair.ViewCertificateDetails.Title"),
 			                                                         certificateChain,
+			                                                         null,
 			                                                         DViewCertificate.NONE);
 			dViewCertificate.setLocationRelativeTo(this);
 			dViewCertificate.setVisible(true);

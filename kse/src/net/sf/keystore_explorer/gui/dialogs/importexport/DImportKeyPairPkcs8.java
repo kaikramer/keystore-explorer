@@ -478,7 +478,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 				DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
 						res.getString("DImportKeyPairPkcs8.ViewCertificateDetails.Title"), path),
-				                                                         certs, DViewCertificate.NONE);
+				                                                         certs, null, DViewCertificate.NONE);
 				dViewCertificate.setLocationRelativeTo(this);
 				dViewCertificate.setVisible(true);
 			}

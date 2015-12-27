@@ -27,6 +27,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -153,32 +154,10 @@ public class DViewCertificate extends JEscDialog {
 	 * @throws CryptoException
 	 *             A problem was encountered getting the certificates' details
 	 */
-	public DViewCertificate(JFrame parent, String title, X509Certificate[] certs, KseFrame kseFrame, int importExport)
+	public DViewCertificate(Window parent, String title, X509Certificate[] certs, KseFrame kseFrame, int importExport)
 			throws CryptoException {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.kseFrame = kseFrame;
-		this.importExport = importExport;
-		initComponents(certs);
-	}
-
-	/**
-	 * Creates new DViewCertificate dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param certs
-	 *            Certificate(s) to display
-	 * @param importExport
-	 *            Show import button/export button/no extra button?
-	 * @throws CryptoException
-	 *             A problem was encountered getting the certificates' details
-	 */
-	public DViewCertificate(JDialog parent, String title, X509Certificate[] certs,
-	                        int importExport) throws CryptoException {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		this.kseFrame = null;
 		this.importExport = importExport;
 		initComponents(certs);
 	}
