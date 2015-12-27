@@ -129,8 +129,8 @@ public class SetKeyPasswordAction extends KeyStoreExplorerAction implements Hist
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(frame,
-					res.getString("SetKeyPasswordAction.ProblemSettingPasswordKeyEntry.Title"), DOCUMENT_MODAL,
-					problem);
+					res.getString("SetKeyPasswordAction.ProblemSettingPasswordKeyEntry.Title"),
+					                         problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 		} catch (Exception ex) {

@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.error;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -62,32 +60,24 @@ public class DError extends JEscDialog {
 
 	/**
 	 * Creates new DError dialog where the parent is a frame.
-	 * 
-	 * @param modality
-	 *            Create the dialog as modal?
-	 * @param parent
+	 *  @param parent
 	 *            Parent frame
 	 * @param error
-	 *            Error to display
 	 */
-	public DError(JFrame parent, Dialog.ModalityType modality, Throwable error) {
-		super(parent, res.getString("DError.Title"), modality);
+	public DError(JFrame parent, Throwable error) {
+		super(parent, res.getString("DError.Title"), ModalityType.DOCUMENT_MODAL);
 		this.error = error;
 		initComponents();
 	}
 
 	/**
 	 * Creates new DError dialog where the parent is a dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Create the dialog as modal?
 	 * @param error
-	 *            Error to display
 	 */
-	public DError(JDialog parent, Dialog.ModalityType modality, Throwable error) {
-		super(parent, res.getString("DError.Title"), modality);
+	public DError(JDialog parent, Throwable error) {
+		super(parent, res.getString("DError.Title"), ModalityType.DOCUMENT_MODAL);
 		this.error = error;
 		initComponents();
 	}
@@ -113,18 +103,14 @@ public class DError extends JEscDialog {
 
 	/**
 	 * Creates new DError dialog where the parent is a dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent dialog
 	 * @param title
 	 *            Dialog title
-	 * @param modality
-	 *            Create the dialog as modal?
 	 * @param error
-	 *            Error to display
 	 */
-	public DError(JDialog parent, String title, Dialog.ModalityType modality, Throwable error) {
-		super(parent, modality);
+	public DError(JDialog parent, String title, Throwable error) {
+		super(parent, ModalityType.DOCUMENT_MODAL);
 		setTitle(title);
 		this.error = error;
 		initComponents();
@@ -139,7 +125,7 @@ public class DError extends JEscDialog {
 	 *            Error
 	 */
 	public static void displayError(JFrame frame, Throwable error) {
-		DError dError = new DError(frame, DOCUMENT_MODAL, error);
+		DError dError = new DError(frame, error);
 		dError.setLocationRelativeTo(frame);
 		dError.setVisible(true);
 	}
@@ -153,7 +139,7 @@ public class DError extends JEscDialog {
 	 *            Error
 	 */
 	public static void displayError(JDialog dialog, Throwable error) {
-		DError dError = new DError(dialog, DOCUMENT_MODAL, error);
+		DError dError = new DError(dialog, error);
 		dError.setLocationRelativeTo(dialog);
 		dError.setVisible(true);
 	}
@@ -214,13 +200,13 @@ public class DError extends JEscDialog {
 		String message = error.getMessage();
 
 		if (message != null) {
-			return MessageFormat.format("<html>{0}:<br>{1}</html>", error.getClass().getName(), breakLine(message, 50));
+			return MessageFormat.format("<html>{0}:<br>{1}</html>", error.getClass().getName(), breakLine(message));
 		} else {
 			return error.getClass().getName();
 		}
 	}
 
-	private String breakLine(String line, int maxLineLength) {
+	private String breakLine(String line) {
 		StringBuffer sb = new StringBuffer();
 
 		StringTokenizer strTok = new StringTokenizer(line, " ");
@@ -235,10 +221,9 @@ public class DError extends JEscDialog {
 				continue;
 			}
 
-			if ((currentLine.length() + word.length() + 1) <= maxLineLength) {
+			if ((currentLine.length() + word.length() + 1) <= 50) {
 				currentLine += " ";
 				currentLine += word;
-				continue;
 			} else {
 				if (sb.length() > 0) {
 					sb.append("<br>");
@@ -259,7 +244,7 @@ public class DError extends JEscDialog {
 	}
 
 	private void showErrorDetail() {
-		DErrorDetail dErrorDetail = new DErrorDetail(this, DOCUMENT_MODAL, error);
+		DErrorDetail dErrorDetail = new DErrorDetail(this, error);
 		dErrorDetail.setLocationRelativeTo(this);
 		dErrorDetail.setVisible(true);
 	}

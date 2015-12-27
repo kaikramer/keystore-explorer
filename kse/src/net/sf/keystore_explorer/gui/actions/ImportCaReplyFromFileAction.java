@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
@@ -270,7 +268,8 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(frame, res.getString("ImportCaReplyFromFileAction.ProblemOpeningCaReply.Title"),
-					DOCUMENT_MODAL, problem);
+
+			                                 problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 

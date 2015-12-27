@@ -19,10 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -81,7 +78,7 @@ public class DBasicConstraints extends DExtension {
 	 *            The parent dialog
 	 */
 	public DBasicConstraints(JDialog parent) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DBasicConstraints.Title"));
 		initComponents();
 	}
@@ -97,7 +94,7 @@ public class DBasicConstraints extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DBasicConstraints(JDialog parent, byte[] value) throws IOException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DBasicConstraints.Title"));
 		initComponents();
 		prepopulateWithValue(value);
@@ -214,7 +211,7 @@ public class DBasicConstraints extends DExtension {
 		try {
 			value = basicConstraints.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

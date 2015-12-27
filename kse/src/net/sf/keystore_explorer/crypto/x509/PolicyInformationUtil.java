@@ -186,7 +186,7 @@ public class PolicyInformationUtil {
 
 			if (noticeNumbers != null) {
 				for (int i = 0; i < noticeNumbers.length; i++) {
-					ASN1Integer noticeNumber = (ASN1Integer) noticeNumbers[i];
+					ASN1Integer noticeNumber = noticeNumbers[i];
 
 					sbNoticeNumbers.append(noticeNumber.getValue().intValue());
 

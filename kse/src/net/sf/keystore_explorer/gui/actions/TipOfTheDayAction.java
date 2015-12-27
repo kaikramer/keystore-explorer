@@ -61,7 +61,7 @@ public class TipOfTheDayAction extends KeyStoreExplorerAction {
 	 */
 	public void showTipOfTheDay() {
 		DTipOfTheDay dTipOfTheDay = new DTipOfTheDay(frame, applicationSettings.getShowTipsOnStartUp(), res,
-				"TipOfTheDayAction.TipOfTheDay", applicationSettings.getNextTipIndex());
+		                                             applicationSettings.getNextTipIndex());
 
 		dTipOfTheDay.setLocationRelativeTo(frame);
 		dTipOfTheDay.setVisible(true);

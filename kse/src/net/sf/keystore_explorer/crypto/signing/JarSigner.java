@@ -37,6 +37,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +76,7 @@ import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
  * Class provides functionality to sign JAR files.
  *
  */
-public class JarSigner extends Object {
+public class JarSigner {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/signing/resources");
 
 	private static final String CRLF = "\r\n";
@@ -207,7 +208,7 @@ public class JarSigner extends Object {
 			jar = new JarFile(jarFile);
 
 			// Write manifest content to here
-			StringBuffer sbManifest = new StringBuffer();
+			StringBuilder sbManifest = new StringBuilder();
 
 			// Write out main attributes to manifest
 			String manifestMainAttrs = getManifestMainAttrs(jar, signer);
@@ -223,7 +224,7 @@ public class JarSigner extends Object {
 			}
 
 			// Write signature file to here
-			StringBuffer sbSf = new StringBuffer();
+			StringBuilder sbSf = new StringBuilder();
 
 			// Write out digests to manifest and signature file
 
@@ -379,7 +380,7 @@ public class JarSigner extends Object {
 	 */
 	private static String getManifestMainAttrs(JarFile jar, String signer) throws IOException {
 
-		StringBuffer sbManifest = new StringBuffer();
+		StringBuilder sbManifest = new StringBuilder();
 
 		// Get current manifest
 		Manifest manifest = jar.getManifest();
@@ -413,7 +414,7 @@ public class JarSigner extends Object {
 	 */
 	private static String getManifestEntriesAttrs(JarFile jar) throws IOException {
 
-		StringBuffer sbManifest = new StringBuffer();
+		StringBuilder sbManifest = new StringBuilder();
 
 		// Get current manifest
 		Manifest manifest = jar.getManifest();
@@ -426,15 +427,15 @@ public class JarSigner extends Object {
 			boolean firstEntry = true;
 
 			// For each entry...
-			entry: for (String entryName : entries.keySet()) {
+			for (String entryName : entries.keySet()) {
 				// Get entry's attributes
 				Attributes entryAttrs = entries.get(entryName);
 
 				// Completely ignore entries that contain only a xxx-Digest
 				// attribute
 				if ((entryAttrs.size() == 1)
-						&& (((Attributes.Name) entryAttrs.keySet().toArray()[0]).toString().endsWith("-Digest"))) {
-					continue entry;
+						&& (entryAttrs.keySet().toArray()[0].toString().endsWith("-Digest"))) {
+					continue;
 				}
 
 				if (!firstEntry) {
@@ -475,7 +476,7 @@ public class JarSigner extends Object {
 			String md64Str = new String(md64);
 
 			// Write manifest entries for JARs digest
-			StringBuffer sbManifestEntry = new StringBuffer();
+			StringBuilder sbManifestEntry = new StringBuilder();
 			sbManifestEntry.append(createAttributeText(NAME_ATTR, jarEntry.getName()));
 			sbManifestEntry.append(CRLF);
 			sbManifestEntry.append(createAttributeText(MessageFormat.format(DIGEST_ATTR, digestType.jce()), md64Str));
@@ -525,7 +526,7 @@ public class JarSigner extends Object {
 		LineNumberReader lnr = new LineNumberReader(new StringReader(manifestContent));
 
 		try {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			String line = null;
 
@@ -558,7 +559,7 @@ public class JarSigner extends Object {
 		LineNumberReader lnr = new LineNumberReader(new StringReader(manifestContent));
 
 		try {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			String line = null;
 
@@ -749,7 +750,7 @@ public class JarSigner extends Object {
 
 		// No attribute text can have lines exceeding 72 bytes. Split it across
 	    // lines no greater than 72 bytes by inserting '\r\n '
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// Remaining text to split
 		String remainingText = attributeText;
@@ -777,9 +778,7 @@ public class JarSigner extends Object {
 		try {
             List<X509Certificate> certList = new ArrayList<X509Certificate>();
 
-            for (int i = 0; i < certificateChain.length; i++) {
-                certList.add(certificateChain[i]);
-            }
+			Collections.addAll(certList, certificateChain);
 
             DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
             JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
@@ -841,7 +840,7 @@ public class JarSigner extends Object {
 	 */
 	private static String convertSignatureName(String signatureName) {
 
-		StringBuffer sb = new StringBuffer(signatureName.length());
+		StringBuilder sb = new StringBuilder(signatureName.length());
 
 		for (int i = 0; i < signatureName.length(); i++) {
 			char c = signatureName.charAt(i);

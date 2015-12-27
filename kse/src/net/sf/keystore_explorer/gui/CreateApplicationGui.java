@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Font;
 import java.awt.SplashScreen;
 import java.io.File;
@@ -106,7 +104,7 @@ public class CreateApplicationGui implements Runnable {
 				openAction.openKeyStore(keyStoreFile);
 			}
 		} catch (Throwable t) {
-			DError dError = new DError(new JFrame(), DOCUMENT_MODAL, t);
+			DError dError = new DError(new JFrame(), t);
 			dError.setLocationRelativeTo(null);
 			dError.setVisible(true);
 			System.exit(1);
@@ -194,7 +192,7 @@ public class CreateApplicationGui implements Runnable {
 	            Problem problem = new Problem("Cannot run Crypto Strength Upgrade Assistant.", null, ex);
 	            JFrame frame = new JFrame();
 				DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCrl.Title"),
-	                    DOCUMENT_MODAL, problem);
+				                                 problem);
 	            dProblem.setLocationRelativeTo(frame);
 	            dProblem.setVisible(true);
 			} finally {
@@ -241,7 +239,7 @@ public class CreateApplicationGui implements Runnable {
 		Class<?> macOsApplication = ClassLoader.getSystemClassLoader().loadClass(
 				"net.sf.keystore_explorer.gui.MacOsIntegration");
 		Constructor constructor = macOsApplication.getConstructor(KseFrame.class);
-		constructor.newInstance(new Object[] { kseFrame });
+		constructor.newInstance(kseFrame);
 	}
 
 	private void closeSplash() {

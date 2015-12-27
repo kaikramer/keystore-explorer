@@ -86,8 +86,7 @@ public class NoProxySelector extends ProxySelector {
 			return false;
 		}
 
-		return true; // Any NoProxySelector is equal to any other
-						// NoProxySelector
-
+		// Any NoProxySelector is equal to any other NoProxySelector
+		return true;
 	}
 }

@@ -19,7 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
 
 import java.awt.Container;
@@ -395,28 +394,26 @@ public class DViewCsr extends JEscDialog {
 			}
 
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DViewCsr.PubKeyDetails.Title"),
-					DOCUMENT_MODAL, publicKey);
+			                                                   publicKey);
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 
 	private void pemEncodingPressed() {
 		try {
 			DViewCertCsrPem dViewCsrPem = new DViewCertCsrPem(this, res.getString("DViewCsr.Pem.Title"),
-					DOCUMENT_MODAL, pkcs10Csr);
+			                                                  pkcs10Csr);
 			dViewCsrPem.setLocationRelativeTo(this);
 			dViewCsrPem.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 
@@ -432,15 +429,13 @@ public class DViewCsr extends JEscDialog {
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

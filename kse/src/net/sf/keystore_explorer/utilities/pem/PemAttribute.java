@@ -65,12 +65,6 @@ public class PemAttribute {
 	 * @return String representation
 	 */
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-
-		sb.append(name);
-		sb.append(": ");
-		sb.append(value);
-
-		return sb.toString();
+		return name + ": " + value;
 	}
 }

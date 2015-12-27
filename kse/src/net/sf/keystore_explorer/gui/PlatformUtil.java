@@ -65,7 +65,7 @@ public class PlatformUtil {
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives, boolean resizable) {
-		return createDialogButtonPanel(jbPositives, null, (JButton[]) null, resizable, null);
+		return createDialogButtonPanel(jbPositives, null, null, resizable, null);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class PlatformUtil {
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, boolean resizable) {
-		return createDialogButtonPanel(jbPositives, jbNegative, (JButton[]) null, resizable, null);
+		return createDialogButtonPanel(jbPositives, jbNegative, null, resizable, null);
 	}
 
 	/**

@@ -84,20 +84,7 @@ public class JGeneralSubtrees extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JGeneralSubtrees(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JGeneralSubtrees.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param generalSubtrees
-	 *            General subtrees
-	 */
-	public JGeneralSubtrees(String title, GeneralSubtrees generalSubtrees) {
 		this.title = title;
-		this.generalSubtrees = generalSubtrees;
 		initComponents();
 	}
 
@@ -212,7 +199,7 @@ public class JGeneralSubtrees extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE) ? true : false;
+					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
 				}
 			}
 

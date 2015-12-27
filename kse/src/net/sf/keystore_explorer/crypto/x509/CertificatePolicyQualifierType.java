@@ -40,7 +40,7 @@ public enum CertificatePolicyQualifierType {
 	private String oid;
 	private String friendlyKey;
 
-	private CertificatePolicyQualifierType(String oid, String friendlyKey) {
+	CertificatePolicyQualifierType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}

@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
@@ -499,15 +497,13 @@ public class DViewCrl extends JEscDialog {
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

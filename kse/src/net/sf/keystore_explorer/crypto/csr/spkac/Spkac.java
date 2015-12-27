@@ -153,7 +153,7 @@ public class Spkac {
 	 * @throws SpkacException
 	 *             If load fails
 	 */
-	public Spkac(InputStream is) throws IOException, SpkacMissingPropertyException, SpkacException {
+	public Spkac(InputStream is) throws IOException, SpkacException {
 		Properties properties = readProperties(is);
 
 		if (!properties.containsKey(SPKAC_PROPERTY)) {
@@ -193,10 +193,7 @@ public class Spkac {
 
 					lastName = name;
 				} else if (lastName != null) {
-					StringBuffer sb = new StringBuffer();
-					sb.append(properties.get(lastName));
-					sb.append(line);
-					properties.setProperty(lastName, sb.toString());
+					properties.setProperty(lastName, String.valueOf(properties.get(lastName)) + line);
 				}
 			}
 

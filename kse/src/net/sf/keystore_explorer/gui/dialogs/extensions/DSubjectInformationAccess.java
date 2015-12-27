@@ -19,10 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -81,7 +78,7 @@ public class DSubjectInformationAccess extends DExtension {
 	 *            The parent dialog
 	 */
 	public DSubjectInformationAccess(JDialog parent) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DSubjectInformationAccess.Title"));
 		initComponents();
 	}
@@ -97,7 +94,7 @@ public class DSubjectInformationAccess extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DSubjectInformationAccess(JDialog parent, byte[] value) throws IOException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DSubjectInformationAccess.Title"));
 		initComponents();
 		prepopulateWithValue(value);
@@ -177,7 +174,7 @@ public class DSubjectInformationAccess extends DExtension {
 	private void prepopulateWithValue(byte[] value) throws IOException {
 		SubjectInfoAccess subjectInformationAccess = SubjectInfoAccess.getInstance(value);
 
-		jadAccessDescriptions.setAccessDescriptions((List<AccessDescription>) subjectInformationAccess
+		jadAccessDescriptions.setAccessDescriptions(subjectInformationAccess
 				.getAccessDescriptionList());
 	}
 
@@ -195,7 +192,7 @@ public class DSubjectInformationAccess extends DExtension {
 		try {
 			value = subjectInformationAccess.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

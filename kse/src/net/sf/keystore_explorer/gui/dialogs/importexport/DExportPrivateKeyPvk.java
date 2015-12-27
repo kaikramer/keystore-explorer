@@ -500,7 +500,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 		if (exportFile.isFile()) {
 			String message = MessageFormat.format(res.getString("DExportPrivateKeyPvk.OverWriteExportFile.message"),
-					new Object[] { exportFile });
+			                                      exportFile);
 
 			int selected = JOptionPane.showConfirmDialog(this, message,
 					res.getString("DExportPrivateKeyPvk.Simple.Title"), JOptionPane.YES_NO_OPTION);

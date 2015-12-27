@@ -56,9 +56,7 @@ public class FileExtFilter extends FileFilter {
 	public FileExtFilter(String[] exts, String description) {
 		this.exts = new String[exts.length];
 
-		for (int i = 0; i < exts.length; i++) {
-			this.exts[i] = exts[i];
-		}
+		System.arraycopy(exts, 0, this.exts, 0, exts.length);
 
 		this.description = description;
 	}

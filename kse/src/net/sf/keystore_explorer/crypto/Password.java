@@ -139,10 +139,7 @@ public class Password {
 		Password password = (Password) object;
 
 		if (password.wrappedPassword == null) {
-			if (wrappedPassword == null) {
-				return true;
-			}
-			return false;
+			return wrappedPassword == null;
 		}
 
 		if (wrappedPassword.length != password.wrappedPassword.length) {
@@ -163,7 +160,8 @@ public class Password {
 	 * password programmatically.
 	 */
 	@Override
-	protected void finalize() {
+	protected void finalize() throws Throwable {
+		super.finalize();
 		nullPassword();
 	}
 }

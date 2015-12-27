@@ -19,13 +19,11 @@
  */
 package net.sf.keystore_explorer.gui.crypto.policyinformation;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
 import static net.sf.keystore_explorer.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -322,7 +320,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 						userNotice);
 			}
 		} catch (Exception ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

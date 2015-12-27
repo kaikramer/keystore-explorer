@@ -34,7 +34,7 @@ public enum KeyPairType {
 	private int maxSize;
 	private int stepSize;
 
-	private KeyPairType(String jce, String oid, int minSize, int maxSize, int stepSize) {
+	KeyPairType(String jce, String oid, int minSize, int maxSize, int stepSize) {
 		this.jce = jce;
 		this.oid = oid;
 		this.minSize = minSize;

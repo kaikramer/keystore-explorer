@@ -247,7 +247,7 @@ public class DUserNoticeChooser extends JEscDialog {
 			StringBuffer sb = new StringBuffer();
 
 			for (int i = 0; i < noticeNumbers.length; i++) {
-				ASN1Integer noticeNumber = (ASN1Integer) noticeNumbers[i];
+				ASN1Integer noticeNumber = noticeNumbers[i];
 
 				sb.append(noticeNumber.getValue().intValue());
 

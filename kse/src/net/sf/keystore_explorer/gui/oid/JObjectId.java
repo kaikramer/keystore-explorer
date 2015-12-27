@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.oid;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -64,20 +62,7 @@ public class JObjectId extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JObjectId(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JObjectId.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param objectId
-	 *            Object identifier
-	 */
-	public JObjectId(String title, ASN1ObjectIdentifier objectId) {
 		this.title = title;
-		this.objectId = objectId;
 		initComponents();
 	}
 
@@ -223,14 +208,13 @@ public class JObjectId extends JPanel {
 			DError dError = null;
 
 			if (container instanceof JDialog) {
-				dError = new DError((JDialog) container, DOCUMENT_MODAL, ex);
-			} else if (container instanceof JFrame) {
-				dError = new DError((JFrame) container, DOCUMENT_MODAL, ex);
+				dError = new DError((JDialog) container, ex);
+			} else {
+				dError = new DError((JFrame) container, ex);
 			}
 
 			dError.setLocationRelativeTo(container);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

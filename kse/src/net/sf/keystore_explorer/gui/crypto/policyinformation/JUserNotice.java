@@ -61,20 +61,7 @@ public class JUserNotice extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JUserNotice(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JUserNotice.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param userNotice
-	 *            User notice
-	 */
-	public JUserNotice(String title, UserNotice userNotice) {
 		this.title = title;
-		this.userNotice = userNotice;
 		initComponents();
 	}
 

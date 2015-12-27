@@ -85,24 +85,20 @@ public class DTipOfTheDay extends JEscDialog {
 
 	/**
 	 * Construct tip of the Day dialog
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent frame
 	 * @param showTipsOnStartup
 	 *            Enable show tips on startup checkbox?
 	 * @param tips
-	 *            Tips resource bundle
-	 * @param tipPrefix
-	 *            Tips' property prefix
+ *            Tips resource bundle
 	 * @param tipIndex
-	 *            Index of current tip
 	 */
-	public DTipOfTheDay(JFrame parent, boolean showTipsOnStartup, ResourceBundle tips, String tipPrefix, int tipIndex) {
+	public DTipOfTheDay(JFrame parent, boolean showTipsOnStartup, ResourceBundle tips, int tipIndex) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.tipIndex = tipIndex;
 
-		readTips(tips, tipPrefix);
+		readTips(tips, "TipOfTheDayAction.TipOfTheDay");
 
 		initComponents(showTipsOnStartup);
 	}

@@ -226,15 +226,9 @@ public class Asn1Dump {
 	 *             If an I/O problem occurred
 	 */
 	public String dump(ASN1Primitive asn1Object) throws Asn1Exception, IOException {
-		return dump(asn1Object, true);
-	}
-
-	private String dump(ASN1Primitive asn1Object, boolean incrementIndent) throws Asn1Exception, IOException {
 		// Get dump of the supplied ASN.1 object incrementing the indent level of the output
 		try {
-			if (incrementIndent) {
-				indentLevel++;
-			}
+			indentLevel++;
 
 			if (asn1Object instanceof DERBitString) { // special case of ASN1String
 				return dumpBitString((DERBitString) asn1Object);
@@ -265,7 +259,7 @@ public class Asn1Dump {
 				throw new Asn1Exception("Unknown ASN.1 object: " + asn1Object.toString());
 			}
 		} finally {
-			if (incrementIndent) {
+			if (true) {
 				indentLevel--;
 			}
 		}
@@ -273,7 +267,7 @@ public class Asn1Dump {
 
 	private String dumpTaggedObject(ASN1TaggedObject o) throws Asn1Exception, IOException {
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 		if (o instanceof BERTaggedObject) {
@@ -293,14 +287,14 @@ public class Asn1Dump {
 		if (o.isEmpty()) {
 			sb.append("EMPTY");
 		} else {
-			sb.append(dump(o.getObject(), true));
+			sb.append(dump(o.getObject()));
 		}
 
 		return sb.toString();
 	}
 
 	private String dumpOctetString(ASN1OctetString asn1OctetString) throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		byte[] bytes = asn1OctetString.getOctets();
 
 		sb.append(indentSequence.toString(indentLevel));
@@ -325,7 +319,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpBitString(DERBitString asn1BitString) throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		byte[] bytes = asn1BitString.getBytes();
 
 		sb.append(indentSequence.toString(indentLevel));
@@ -352,7 +346,7 @@ public class Asn1Dump {
 	}
 	
 	private String dumpObjectIdentifier(ASN1ObjectIdentifier asn1ObjectIdentifier) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 		sb.append("OBJECT IDENTIFIER=");
@@ -363,7 +357,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpNull(ASN1Null asn1Null) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 		sb.append("NULL");
@@ -373,7 +367,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpInteger(ASN1Integer asn1Integer) throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		BigInteger value = asn1Integer.getValue();
 
 		sb.append(indentSequence.toString(indentLevel));
@@ -382,7 +376,7 @@ public class Asn1Dump {
 		if (value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == -1) {
 			sb.append(value.toString(10));
 			if (value.longValue() >= 10) {
-				sb.append(" (0x" + value.toString(16) + ")");
+				sb.append(" (0x").append(value.toString(16)).append(")");
 			}
 		} else {
 			// else print as byte array
@@ -395,7 +389,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpEnumerated(ASN1Enumerated asn1Enumerated) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 		sb.append("ENUMERATED=");
@@ -406,7 +400,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpBoolean(ASN1Boolean asn1Boolean) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 		sb.append("BOOLEAN=");
@@ -417,7 +411,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpSetOrSequence(ASN1Encodable asn1ConstructedType) throws Asn1Exception, IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 
@@ -455,7 +449,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpUTCTime(ASN1UTCTime asn1Time) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 		sb.append("UTC TIME=");
@@ -479,7 +473,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpGeneralizedTime(ASN1GeneralizedTime asn1Time) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 		sb.append("GENERALIZED TIME=");
@@ -502,7 +496,7 @@ public class Asn1Dump {
 	}
 
 	private String dumpString(ASN1String asn1String) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));
 
@@ -547,7 +541,7 @@ public class Asn1Dump {
 			// Put indent at the start of each line of the dump
 			LineNumberReader lnr = new LineNumberReader(new StringReader(hexClearDump));
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			String line = null;
 			boolean firstLine = true;

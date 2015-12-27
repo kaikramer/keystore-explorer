@@ -69,13 +69,11 @@ public class DJarInfo extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
 	 * @throws IOException
 	 *             Problem occurred getting JAR information
 	 */
-	public DJarInfo(JFrame parent, Dialog.ModalityType modality) throws IOException {
-		this(parent, res.getString("DJarInfo.Title"), modality);
+	public DJarInfo(JFrame parent) throws IOException {
+		this(parent, res.getString("DJarInfo.Title"), ModalityType.DOCUMENT_MODAL);
 	}
 
 	/**

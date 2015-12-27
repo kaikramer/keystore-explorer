@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import java.awt.Dialog.ModalityType;
-
 import javax.swing.JDialog;
 
 import net.sf.keystore_explorer.gui.JEscDialog;
@@ -32,14 +30,12 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 public abstract class DExtension extends JEscDialog {
 	/**
 	 * Creates a new AbstractDExtension dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            The parent dialog
-	 * @param modality
-	 *            Dialog modality
+	 *
 	 */
-	public DExtension(JDialog parent, ModalityType modality) {
-		super(parent, modality);
+	public DExtension(JDialog parent) {
+		super(parent, ModalityType.DOCUMENT_MODAL);
 	}
 
 	/**

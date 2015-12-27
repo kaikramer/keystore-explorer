@@ -38,7 +38,7 @@ public enum SecurityProvider {
 
 	private String jce;
 
-	private SecurityProvider(String jce) {
+	SecurityProvider(String jce) {
 		this.jce = jce;
 	}
 

@@ -72,14 +72,12 @@ public class DProviderInfo extends JEscDialog {
 
 	/**
 	 * Creates new DProviderInfo dialog where the parent is a frame.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
+	 *
 	 */
-	public DProviderInfo(JFrame parent, Dialog.ModalityType modality) {
-		super(parent, modality);
+	public DProviderInfo(JFrame parent) {
+		super(parent, ModalityType.DOCUMENT_MODAL);
 		initComponents();
 	}
 

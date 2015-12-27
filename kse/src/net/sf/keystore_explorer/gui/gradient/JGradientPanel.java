@@ -31,15 +31,8 @@ import javax.swing.JPanel;
  * 
  */
 public class JGradientPanel extends JPanel {
-	private Color color1 = Color.WHITE;
-	private Color color2 = new Color(128, 128, 255); // light blue
-
-	/**
-	 * Construct a Gradient panel using the default colours - white to light
-	 * blue.
-	 */
-	public JGradientPanel() {
-	}
+	private Color color1;
+	private Color color2;
 
 	/**
 	 * Construct a Gradient panel using the supplied colours.
@@ -51,26 +44,6 @@ public class JGradientPanel extends JPanel {
 	 */
 	public JGradientPanel(Color color1, Color color2) {
 		this.color1 = color1;
-		this.color2 = color2;
-	}
-
-	/**
-	 * Set first colour.
-	 * 
-	 * @param color1
-	 *            First colour
-	 */
-	public void setColor1(Color color1) {
-		this.color1 = color1;
-	}
-
-	/**
-	 * Set second colour.
-	 * 
-	 * @param color2
-	 *            Second colour
-	 */
-	public void setColor2(Color color2) {
 		this.color2 = color2;
 	}
 

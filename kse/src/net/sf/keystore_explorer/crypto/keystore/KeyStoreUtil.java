@@ -117,7 +117,7 @@ public final class KeyStoreUtil {
 	 *             than a regular file, or for some other reason cannot be
 	 *             opened for reading
 	 */
-	public static KeyStore load(File keyStoreFile, Password password) throws KeyStoreLoadException, CryptoException,
+	public static KeyStore load(File keyStoreFile, Password password) throws CryptoException,
 			FileNotFoundException {
 		KeyStoreType keyStoreType = null;
 
@@ -157,7 +157,7 @@ public final class KeyStoreUtil {
 	 *             opened for reading
 	 */
 	public static KeyStore load(File keyStoreFile, Password password, KeyStoreType keyStoreType)
-			throws KeyStoreLoadException, CryptoException, FileNotFoundException {
+			throws CryptoException, FileNotFoundException {
 		if (!keyStoreType.isFileBased()) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreNotFile.exception.message"),
 					keyStoreType.jce()));
@@ -310,7 +310,7 @@ public final class KeyStoreUtil {
 	 *             An I/O error occurred
 	 */
 	public static void save(KeyStore keyStore, File keyStoreFile, Password password) throws CryptoException,
-			FileNotFoundException, IOException {
+			IOException {
 		KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
 		if (!keyStoreType.isFileBased()) {
@@ -484,10 +484,6 @@ public final class KeyStoreUtil {
 
 		Certificate certificate = keyStore.getCertificate(alias);
 		String algorithm = certificate.getPublicKey().getAlgorithm();
-		if (algorithm.equals(EC.jce())) {
-			return true;
-		}
-
-		return false;
+		return algorithm.equals(EC.jce());
 	}
 }

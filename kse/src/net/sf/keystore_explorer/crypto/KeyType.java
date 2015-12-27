@@ -24,5 +24,5 @@ package net.sf.keystore_explorer.crypto;
  * 
  */
 public enum KeyType {
-	SYMMETRIC, ASYMMETRIC;
+	SYMMETRIC, ASYMMETRIC
 }

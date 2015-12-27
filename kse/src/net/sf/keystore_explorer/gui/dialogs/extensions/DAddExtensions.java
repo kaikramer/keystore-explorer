@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -315,7 +313,7 @@ public class DAddExtensions extends JEscDialog {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE) ? true : false;
+					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
 				}
 			}
 
@@ -718,10 +716,9 @@ public class DAddExtensions extends JEscDialog {
 				updateButtonControls();
 			}
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

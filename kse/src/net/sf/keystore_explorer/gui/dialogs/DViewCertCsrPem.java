@@ -107,17 +107,15 @@ public class DViewCertCsrPem extends JEscDialog {
 	 *            Parent dialog
 	 * @param title
 	 *            The dialog title
-	 * @param modality
-	 *            Dialog modality
 	 * @param cert
 	 *            Certificate to display encoding for
 	 * @throws CryptoException
 	 *             A problem was encountered getting the certificate's PEM'd DER
 	 *             encoding
 	 */
-	public DViewCertCsrPem(JDialog parent, String title, Dialog.ModalityType modality, X509Certificate cert)
+	public DViewCertCsrPem(JDialog parent, String title, X509Certificate cert)
 			throws CryptoException {
-		super(parent, title, modality);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.cert = cert;
 		initComponents();
 	}
@@ -147,16 +145,14 @@ public class DViewCertCsrPem extends JEscDialog {
 	 *            Parent dialog
 	 * @param title
 	 *            The dialog title
-	 * @param modality
-	 *            Dialog modality
 	 * @param pkcs10Csr
 	 *            PKCS10 CSR to display encoding for
 	 * @throws CryptoException
 	 *             A problem was encountered getting the certificate's PEM'd DER encoding
 	 */
-	public DViewCertCsrPem(JDialog parent, String title, Dialog.ModalityType modality,
-			PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
-		super(parent, title, modality);
+	public DViewCertCsrPem(JDialog parent, String title,
+	                       PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.pkcs10Csr = pkcs10Csr;
 		initComponents();
 	}

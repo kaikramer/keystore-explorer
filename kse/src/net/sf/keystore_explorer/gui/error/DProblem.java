@@ -19,11 +19,8 @@
  */
 package net.sf.keystore_explorer.gui.error;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -68,18 +65,14 @@ public class DProblem extends JEscDialog {
 
 	/**
 	 * Creates new DProblem dialog where the parent is a frame.
-	 *
-	 * @param parent
+	 *  @param parent
 	 *            Parent frame
 	 * @param title
 	 *            Dialog title
-	 * @param modality
-	 *            Create the dialog as modal?
 	 * @param problem
-	 *            Problem to display
 	 */
-	public DProblem(JFrame parent, String title, Dialog.ModalityType modality, Problem problem) {
-		super(parent, modality);
+	public DProblem(JFrame parent, String title, Problem problem) {
+		super(parent, ModalityType.DOCUMENT_MODAL);
 		setTitle(title);
 		this.problem = problem;
 
@@ -88,18 +81,14 @@ public class DProblem extends JEscDialog {
 
 	/**
 	 * Creates new DProblem dialog where the parent is a dialog.
-	 *
-	 * @param parent
+	 *  @param parent
 	 *            Parent dialog
 	 * @param title
 	 *            Dialog title
-	 * @param modality
-	 *            Create the dialog as modal?
 	 * @param problem
-	 *            Problem to display
 	 */
-	public DProblem(JDialog parent, String title, Dialog.ModalityType modality, Problem problem) {
-		super(parent, modality);
+	public DProblem(JDialog parent, String title, Problem problem) {
+		super(parent, ModalityType.DOCUMENT_MODAL);
 		setTitle(title);
 		this.problem = problem;
 
@@ -216,7 +205,6 @@ public class DProblem extends JEscDialog {
 			if (currentLine.length() + word.length() + 1 <= maxLineLength) {
 				currentLine += " ";
 				currentLine += word;
-				continue;
 			} else {
 				if (sb.length() > 0) {
 					sb.append("<br>");
@@ -237,8 +225,8 @@ public class DProblem extends JEscDialog {
 	}
 
 	private void showError() {
-		DError dError = new DError(this, res.getString("DProblem.CauseError.Title"), DOCUMENT_MODAL,
-				problem.getError());
+		DError dError = new DError(this, res.getString("DProblem.CauseError.Title"),
+		                           problem.getError());
 		dError.setLocationRelativeTo(this);
 		dError.setVisible(true);
 	}

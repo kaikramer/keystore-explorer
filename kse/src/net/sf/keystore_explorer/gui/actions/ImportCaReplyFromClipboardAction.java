@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -276,8 +274,8 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 			Problem problem = new Problem(problemStr, causes, ex);
 
             DProblem dProblem = new DProblem(frame,
-                    res.getString("ImportCaReplyFromClipboardAction.ProblemOpeningCaReply.Title"), DOCUMENT_MODAL,
-                    problem);
+                    res.getString("ImportCaReplyFromClipboardAction.ProblemOpeningCaReply.Title"),
+                                             problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 

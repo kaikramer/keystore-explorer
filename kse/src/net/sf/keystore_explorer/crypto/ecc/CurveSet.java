@@ -45,7 +45,7 @@ public enum CurveSet {
 	
 	private String visibleName;
 	
-	private CurveSet(String visibleName) {
+	CurveSet(String visibleName) {
 		this.visibleName = visibleName;
 	}
 	

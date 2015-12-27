@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -215,7 +213,7 @@ public class DExaminingSsl extends JEscDialog {
 							Problem problem = new Problem(problemStr, causes, ex);
 
 							DProblem dProblem = new DProblem(DExaminingSsl.this, res
-									.getString("DExaminingSsl.ProblemExaminingSsl.Title"), DOCUMENT_MODAL, problem);
+									.getString("DExaminingSsl.ProblemExaminingSsl.Title"), problem);
 							dProblem.setLocationRelativeTo(DExaminingSsl.this);
 							dProblem.setVisible(true);
 

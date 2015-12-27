@@ -49,7 +49,7 @@ public enum OpenSslPbeType implements PbeType {
 	private int saltSize;
 	private String friendlyKey;
 
-	private OpenSslPbeType(String dekInfo, String jceCipher, int keySize, int saltSize, String friendlyKey) {
+	OpenSslPbeType(String dekInfo, String jceCipher, int keySize, int saltSize, String friendlyKey) {
 		this.dekInfo = dekInfo;
 		this.jceCipher = jceCipher;
 		this.keySize = keySize;

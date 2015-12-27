@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
@@ -59,7 +57,7 @@ public class CryptographyStrengthAction extends ExitAction {
 	 */
 	protected void doAction() {
 		try {
-			DCryptoStrength dCryptoStrength = new DCryptoStrength(frame, DOCUMENT_MODAL);
+			DCryptoStrength dCryptoStrength = new DCryptoStrength(frame);
 			dCryptoStrength.setLocationRelativeTo(frame);
 			dCryptoStrength.setVisible(true);
 		} catch (Exception ex) {

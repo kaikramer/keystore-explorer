@@ -59,14 +59,12 @@ public class DEnvironmentVariables extends JEscDialog {
 
 	/**
 	 * Creates new DEnvironmentVariables dialog where the parent is a dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
+	 *
 	 */
-	public DEnvironmentVariables(JDialog parent, Dialog.ModalityType modality) {
-		this(parent, res.getString("DEnvironmentVariables.Title"), modality);
+	public DEnvironmentVariables(JDialog parent) {
+		this(parent, res.getString("DEnvironmentVariables.Title"), ModalityType.DOCUMENT_MODAL);
 	}
 
 	/**

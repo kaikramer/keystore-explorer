@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
@@ -57,7 +55,7 @@ public class JarsAction extends KeyStoreExplorerAction {
 	 */
 	protected void doAction() {
 		try {
-			DJarInfo dJarInfo = new DJarInfo(frame, DOCUMENT_MODAL);
+			DJarInfo dJarInfo = new DJarInfo(frame);
 			dJarInfo.setLocationRelativeTo(frame);
 			dJarInfo.setVisible(true);
 		} catch (Exception ex) {

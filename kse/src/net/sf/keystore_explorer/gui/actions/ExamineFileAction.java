@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
@@ -133,7 +131,6 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-            return;
         } finally {
             SafeCloseUtil.close(is);
         }
@@ -148,7 +145,6 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                     certs, kseFrame, DViewCertificate.IMPORT);
             dViewCertificate.setLocationRelativeTo(frame);
             dViewCertificate.setVisible(true);
-            return;
         }
     }
 
@@ -175,7 +171,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             Problem problem = new Problem(problemStr, causes, ex);
 
             DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCrl.Title"),
-                    DOCUMENT_MODAL, problem);
+                                             problem);
             dProblem.setLocationRelativeTo(frame);
             dProblem.setVisible(true);
         }
@@ -218,7 +214,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                 Problem problem = new Problem(problemStr, causes, ex);
 
                 DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCsr.Title"),
-                        DOCUMENT_MODAL, problem);
+                                                 problem);
                 dProblem.setLocationRelativeTo(frame);
                 dProblem.setVisible(true);
 
@@ -230,17 +226,14 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                         res.getString("ExamineFileAction.CsrDetailsFile.Title"), csrFile.getName()), pkcs10Csr);
                 dViewCsr.setLocationRelativeTo(frame);
                 dViewCsr.setVisible(true);
-                return;
             } else {
                 DViewCsr dViewCsr = new DViewCsr(frame, MessageFormat.format(
                         res.getString("ExamineFileAction.CsrDetailsFile.Title"), csrFile.getName()), spkacCsr);
                 dViewCsr.setLocationRelativeTo(frame);
                 dViewCsr.setVisible(true);
-                return;
             }
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-            return;
         }
     }
 

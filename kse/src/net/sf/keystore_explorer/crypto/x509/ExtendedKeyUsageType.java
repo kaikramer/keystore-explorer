@@ -75,7 +75,7 @@ public enum ExtendedKeyUsageType {
 
 	private String friendlyKey;
 
-	private ExtendedKeyUsageType(String oid, String friendlyKey) {
+	ExtendedKeyUsageType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}

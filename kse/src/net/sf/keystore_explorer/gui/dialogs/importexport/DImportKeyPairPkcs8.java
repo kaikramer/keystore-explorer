@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.importexport;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
@@ -380,8 +378,8 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 			if (privateKey != null) {
 				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, MessageFormat.format(
-						res.getString("DImportKeyPairPkcs8.ViewPrivateKeyDetails.Title"), path), DOCUMENT_MODAL,
-						privateKey, new BouncyCastleProvider());
+						res.getString("DImportKeyPairPkcs8.ViewPrivateKeyDetails.Title"), path),
+				                                                      privateKey, new BouncyCastleProvider());
 				dViewPrivateKey.setLocationRelativeTo(this);
 				dViewPrivateKey.setVisible(true);
 			}
@@ -440,7 +438,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 			Problem problem = createLoadPkcs8Problem(ex, privateKeyFile);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairPkcs8.ProblemLoadingPkcs8.Title"),
-					DOCUMENT_MODAL, problem);
+			                                 problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -479,8 +477,8 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 				String path = new File(jtfCertificatePath.getText()).getName();
 
 				DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
-						res.getString("DImportKeyPairPkcs8.ViewCertificateDetails.Title"), path), DOCUMENT_MODAL,
-						certs, null, DViewCertificate.NONE);
+						res.getString("DImportKeyPairPkcs8.ViewCertificateDetails.Title"), path),
+				                                                         certs, DViewCertificate.NONE);
 				dViewCertificate.setLocationRelativeTo(this);
 				dViewCertificate.setVisible(true);
 			}
@@ -519,7 +517,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 			Problem problem = createLoadCertsProblem(ex, certificateFile);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairPkcs8.ProblemLoadingCerts.Title"),
-					DOCUMENT_MODAL, problem);
+			                                 problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

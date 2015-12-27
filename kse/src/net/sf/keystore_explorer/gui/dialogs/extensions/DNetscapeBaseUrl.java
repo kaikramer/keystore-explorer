@@ -19,10 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -76,7 +73,7 @@ public class DNetscapeBaseUrl extends DExtension {
 	 *            The parent dialog
 	 */
 	public DNetscapeBaseUrl(JDialog parent) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DNetscapeBaseUrl.Title"));
 		initComponents();
 	}
@@ -92,7 +89,7 @@ public class DNetscapeBaseUrl extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DNetscapeBaseUrl(JDialog parent, byte[] value) throws IOException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DNetscapeBaseUrl.Title"));
 		initComponents();
 		prepopulateWithValue(value);
@@ -172,7 +169,7 @@ public class DNetscapeBaseUrl extends DExtension {
 		try {
 			value = netscapeBaseUrl.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

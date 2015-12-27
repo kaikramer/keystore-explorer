@@ -48,7 +48,7 @@ public enum Pkcs8PbeType implements PbeType {
 	private String jce;
 	private String friendlyKey;
 
-	private Pkcs8PbeType(String jce, String friendlyKey) {
+	Pkcs8PbeType(String jce, String friendlyKey) {
 		this.jce = jce;
 		this.friendlyKey = friendlyKey;
 	}

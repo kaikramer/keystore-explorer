@@ -31,7 +31,7 @@ public enum CryptoStrength {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/jcepolicy/resources");
 	private final String manifestValue;
 
-	private CryptoStrength(String manifestValue) {
+	CryptoStrength(String manifestValue) {
 		this.manifestValue = manifestValue;
 	}
 

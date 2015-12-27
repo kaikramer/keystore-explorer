@@ -108,15 +108,13 @@ public class PreferencesAction extends ExitAction {
 		boolean lookAndFeelDecorated = dPreferences.getLookFeelDecoration();
 		applicationSettings.setLookAndFeelDecorated(lookAndFeelDecorated);
 
-		if (lookFeelInfo != null) {
-			if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName()))
-					|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())) {
-				// L&F changed - restart required for upgrade to take effect
-				JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
-						res.getString("PreferencesAction.LookFeelChanged.Title"), JOptionPane.INFORMATION_MESSAGE);
+		if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName()))
+				|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())) {
+			// L&F changed - restart required for upgrade to take effect
+			JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
+					res.getString("PreferencesAction.LookFeelChanged.Title"), JOptionPane.INFORMATION_MESSAGE);
 
-				exitApplication(true);
-			}
+			exitApplication(true);
 		}
 	}
 }

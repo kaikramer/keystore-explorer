@@ -69,7 +69,7 @@ import org.bouncycastle.asn1.DERSequence;
  * Provides utility methods relating to OpenSSL encoded private keys.
  * 
  */
-public class OpenSslPvkUtil extends Object {
+public class OpenSslPvkUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/privatekey/resources");
 
 	// Begin OpenSSL RSA private key PEM
@@ -245,7 +245,7 @@ public class OpenSslPvkUtil extends Object {
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PrivateKey load(InputStream is) throws PrivateKeyEncryptedException, CryptoException, IOException {
+	public static PrivateKey load(InputStream is) throws CryptoException, IOException {
 		byte[] streamContents = ReadUtil.readFully(is);
 
 		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
@@ -305,7 +305,7 @@ public class OpenSslPvkUtil extends Object {
 							privateExponent, primeP, primeQ, primeExponentP, primeExponenetQ, crtCoefficient);
 
 					KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-					return (RSAPrivateCrtKey) keyFactory.generatePrivate(rsaPrivateCrtKeySpec);
+					return keyFactory.generatePrivate(rsaPrivateCrtKeySpec);
 				} else if (sequence.size() == 6) { // DSA private key
 				
 					BigInteger version = ((ASN1Integer) sequence.getObjectAt(0)).getValue();
@@ -325,7 +325,7 @@ public class OpenSslPvkUtil extends Object {
 							generatorG);
 
 					KeyFactory keyFactory = KeyFactory.getInstance("DSA");
-					return (DSAPrivateKey) keyFactory.generatePrivate(dsaPrivateKeySpec);
+					return keyFactory.generatePrivate(dsaPrivateKeySpec);
 				} else {
 					throw new CryptoException(MessageFormat.format(
 							res.getString("OpenSslSequenceIncorrectSize.exception.message"), "" + sequence.size()));
@@ -356,8 +356,8 @@ public class OpenSslPvkUtil extends Object {
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PrivateKey loadEncrypted(InputStream is, Password password) throws PrivateKeyUnencryptedException,
-			PrivateKeyPbeNotSupportedException, CryptoException, IOException {
+	public static PrivateKey loadEncrypted(InputStream is, Password password) throws
+			CryptoException, IOException {
 		byte[] streamContents = ReadUtil.readFully(is);
 
 		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
@@ -455,7 +455,7 @@ public class OpenSslPvkUtil extends Object {
 				ASN1Sequence sequence = (ASN1Sequence) key;
 
 				for (int i = 0; i < sequence.size(); i++) {
-					if (!((ASN1Primitive) sequence.getObjectAt(i) instanceof ASN1Integer)) {
+					if (!(sequence.getObjectAt(i) instanceof ASN1Integer)) {
 						return null; // Not OpenSSL
 					}
 				}

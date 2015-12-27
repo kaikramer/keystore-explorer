@@ -60,20 +60,7 @@ public class JGeneralName extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JGeneralName(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JGeneralName.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param generalName
-	 *            General name
-	 */
-	public JGeneralName(String title, GeneralName generalName) {
 		this.title = title;
-		this.generalName = generalName;
 		initComponents();
 	}
 

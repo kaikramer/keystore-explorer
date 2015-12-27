@@ -286,7 +286,7 @@ public class DGenerateKeyPair extends JEscDialog {
 		
 		Collections.sort(curveNames);
 
-		jcbECCurve.setModel(new DefaultComboBoxModel<String>(curveNames.toArray(new String[0])));
+		jcbECCurve.setModel(new DefaultComboBoxModel<String>(curveNames.toArray(new String[curveNames.size()])));
 	}
 
 	protected void enableDisableElements() {

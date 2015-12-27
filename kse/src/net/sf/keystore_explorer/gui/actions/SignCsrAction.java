@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
@@ -165,7 +163,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 				Problem problem = new Problem(problemStr, causes, ex);
 
 				DProblem dProblem = new DProblem(frame, res.getString("SignCsrAction.ProblemOpeningCsr.Title"),
-						DOCUMENT_MODAL, problem);
+				                                 problem);
 				dProblem.setLocationRelativeTo(frame);
 				dProblem.setVisible(true);
 
@@ -218,9 +216,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			caReplyChain[0] = caReplyCert;
 
 			// Add all of the signing chain to the reply
-			for (int i = 0; i < signingChain.length; i++) {
-				caReplyChain[i + 1] = signingChain[i];
-			}
+			System.arraycopy(signingChain, 0, caReplyChain, 1, signingChain.length);
 
 			byte[] caCertEncoded = X509CertUtil.getCertsEncodedPkcs7(caReplyChain);
 

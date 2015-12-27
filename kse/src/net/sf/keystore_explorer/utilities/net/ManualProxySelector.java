@@ -228,10 +228,7 @@ public class ManualProxySelector extends ProxySelector {
 		boolean socksEquals = (proxySocksAddress == null ? cmpSocksProxyAddress == null : proxySocksAddress
 				.equals(cmpSocksProxyAddress));
 
-		if (!socksEquals) {
-			return false;
-		}
+		return socksEquals;
 
-		return true;
 	}
 }

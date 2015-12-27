@@ -69,7 +69,7 @@ public enum SecretKeyType {
 	private int maxSize;
 	private int stepSize;
 
-	private SecretKeyType(String jce, String friendly, int minSize, int maxSize, int stepSize) {
+	SecretKeyType(String jce, String friendly, int minSize, int maxSize, int stepSize) {
 		this.jce = jce;
 		this.friendly = friendly;
 		this.minSize = minSize;

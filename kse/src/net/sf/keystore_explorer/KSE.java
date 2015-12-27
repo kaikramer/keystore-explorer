@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -104,7 +102,7 @@ public class KSE {
 			updateSplashMessage(splash, res.getString("KSE.CreatingApplicationGui.splash.message"));
 			SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, splash, keyStoreFile));
 		} catch (Throwable t) {
-			DError dError = new DError(new JFrame(), DOCUMENT_MODAL, t);
+			DError dError = new DError(new JFrame(), t);
 			dError.setLocationRelativeTo(null);
 			dError.setVisible(true);
 			System.exit(1);

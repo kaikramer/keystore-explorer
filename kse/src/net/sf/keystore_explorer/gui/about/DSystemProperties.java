@@ -59,14 +59,12 @@ public class DSystemProperties extends JEscDialog {
 
 	/**
 	 * Creates new DSystemProperties dialog where the parent is a dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
+	 *
 	 */
-	public DSystemProperties(JDialog parent, Dialog.ModalityType modality) {
-		this(parent, res.getString("DSystemProperties.Title"), modality);
+	public DSystemProperties(JDialog parent) {
+		this(parent, res.getString("DSystemProperties.Title"), ModalityType.DOCUMENT_MODAL);
 	}
 
 	/**

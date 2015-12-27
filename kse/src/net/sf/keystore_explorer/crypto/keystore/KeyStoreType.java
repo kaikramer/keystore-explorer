@@ -54,7 +54,7 @@ public enum KeyStoreType {
 	private boolean fileBased;
 	private CryptoFileType cryptoFileType;
 
-	private KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType) {
+	KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType) {
 		this.jce = jce;
 		this.friendlyKey = friendlyKey;
 		this.fileBased = fileBased;

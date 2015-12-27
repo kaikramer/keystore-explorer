@@ -61,7 +61,6 @@ public class SignNewKeyPairAction extends KeyStoreExplorerAction {
 			generateKeyPairAction.generateKeyPair(signingCert, signingCertChain, privateKey);
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
-			return;
 		}
 	}
 

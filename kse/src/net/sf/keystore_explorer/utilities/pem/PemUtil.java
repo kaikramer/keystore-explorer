@@ -34,7 +34,7 @@ import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
  * Provides utility methods relating to PEM.
  *
  */
-public class PemUtil extends Object {
+public class PemUtil {
 	private static final int MAX_PRINTABLE_ENCODING_LINE_LENGTH = 64;
 
 	private PemUtil() {
@@ -160,7 +160,7 @@ public class PemUtil extends Object {
 							// Empty line - end of attributes
 							if (line.equals("")) {
 								line = lnr.readLine();
-								break attributesDone;
+								break;
 							}
 
 							// Run out of attributes before blank line - not PEM

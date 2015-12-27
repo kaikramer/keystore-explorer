@@ -26,7 +26,6 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
-import net.sf.keystore_explorer.utilities.io.IndentChar;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
@@ -66,8 +65,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.cert.X509Extension;
 import java.util.ResourceBundle;
-
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Displays the details of X.509 Extensions.
@@ -287,7 +284,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 						.replace(X509Ext.NEWLINE, "<br/>") + "</body></html>");
 			} catch (Exception ex) {
 				jepExtensionValue.setText("");
-				DError dError = new DError(this, DOCUMENT_MODAL, ex);
+				DError dError = new DError(this, ex);
 				dError.setLocationRelativeTo(this);
 				dError.setVisible(true);
 			}
@@ -315,15 +312,13 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

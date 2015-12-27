@@ -30,7 +30,7 @@ public enum CsrType {
 
 	private CryptoFileType cryptoFileType;
 
-	private CsrType(CryptoFileType cryptoFileType) {
+	CsrType(CryptoFileType cryptoFileType) {
 		this.cryptoFileType = cryptoFileType;
 	}
 

@@ -24,5 +24,5 @@ package net.sf.keystore_explorer.crypto.privatekey;
  * 
  */
 public enum EncryptionType {
-	ENCRYPTED(), UNENCRYPTED();
+	ENCRYPTED(), UNENCRYPTED()
 }

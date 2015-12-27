@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.crypto;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -66,23 +64,8 @@ public class JKeyIdentifier extends JPanel {
 	 *            Public key
 	 */
 	public JKeyIdentifier(String title, PublicKey publicKey) {
-		this(title, publicKey, null);
-	}
-
-	/**
-	 * Construct a JKeyIdentifier.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param publicKey
-	 *            Public key
-	 * @param keyIdentifier
-	 *            Key identifier
-	 */
-	public JKeyIdentifier(String title, PublicKey publicKey, byte[] keyIdentifier) {
 		this.title = title;
 		this.publicKey = publicKey;
-		this.keyIdentifier = keyIdentifier;
 		initComponents();
 	}
 
@@ -230,14 +213,13 @@ public class JKeyIdentifier extends JPanel {
 			DError dError = null;
 
 			if (container instanceof JDialog) {
-				dError = new DError((JDialog) container, DOCUMENT_MODAL, ex);
-			} else if (container instanceof JFrame) {
-				dError = new DError((JFrame) container, DOCUMENT_MODAL, ex);
+				dError = new DError((JDialog) container, ex);
+			} else {
+				dError = new DError((JFrame) container, ex);
 			}
 
 			dError.setLocationRelativeTo(container);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

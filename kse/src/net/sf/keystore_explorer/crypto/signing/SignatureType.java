@@ -73,7 +73,7 @@ public enum SignatureType {
 	private DigestType digestType;
 	private String friendlyKey;
 
-	private SignatureType(String jce, String oid, DigestType digestType, String friendlyKey) {
+	SignatureType(String jce, String oid, DigestType digestType, String friendlyKey) {
 		this.jce = jce;
 		this.oid = oid;
 		this.digestType = digestType;

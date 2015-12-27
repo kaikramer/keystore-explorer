@@ -34,7 +34,7 @@ public enum ValidityModelType {
 	private String oid;
 	private String friendlyKey;
 
-	private ValidityModelType(String oid, String friendlyKey) {
+	ValidityModelType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}

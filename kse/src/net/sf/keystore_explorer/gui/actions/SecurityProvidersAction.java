@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
@@ -55,7 +53,7 @@ public class SecurityProvidersAction extends KeyStoreExplorerAction {
 	 * Do action.
 	 */
 	protected void doAction() {
-		DProviderInfo dProviderInfo = new DProviderInfo(frame, DOCUMENT_MODAL);
+		DProviderInfo dProviderInfo = new DProviderInfo(frame);
 		dProviderInfo.setLocationRelativeTo(frame);
 		dProviderInfo.setVisible(true);
 	}

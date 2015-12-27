@@ -49,7 +49,6 @@ import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Generates a key pair which the user may cancel at any time by pressing the
@@ -218,7 +217,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						if (DGeneratingKeyPair.this.isShowing()) {
-							DError dError = new DError(DGeneratingKeyPair.this, DOCUMENT_MODAL, ex);
+							DError dError = new DError(DGeneratingKeyPair.this, ex);
 							dError.setLocationRelativeTo(DGeneratingKeyPair.this);
 							dError.setVisible(true);
 							closeDialog();

@@ -63,7 +63,6 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 import sun.security.pkcs11.SunPKCS11;
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 /**
  * Dialog used to retrieve the type to use in the creation of a new KeyStore.
@@ -300,7 +299,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 						Problem problem = new Problem(problemStr, causes, e);
 
 						DProblem dProblem = new DProblem(DOpenPkcs11KeyStore.this, res
-								.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Title"), DOCUMENT_MODAL, problem);
+								.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Title"), problem);
 						dProblem.setLocationRelativeTo(DOpenPkcs11KeyStore.this);
 						dProblem.setVisible(true);
 					}

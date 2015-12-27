@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.crypto;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -182,9 +180,9 @@ public class JCertificateFingerprint extends JPanel {
 				DError dError = null;
 
 				if (container instanceof JDialog) {
-					dError = new DError((JDialog) container, DOCUMENT_MODAL, ex);
+					dError = new DError((JDialog) container, ex);
 				} else if (container instanceof JFrame) {
-					dError = new DError((JFrame) container, DOCUMENT_MODAL, ex);
+					dError = new DError((JFrame) container, ex);
 				}
 
 				dError.setLocationRelativeTo(container);

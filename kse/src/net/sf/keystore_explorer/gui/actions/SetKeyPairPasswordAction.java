@@ -139,7 +139,7 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
 
 			DProblem dProblem = new DProblem(frame,
 					res.getString("SetKeyPairPasswordAction.ProblemSettingPasswordKeyPairEntry.Title"),
-					DOCUMENT_MODAL, problem);
+					                         problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 		} catch (Exception ex) {

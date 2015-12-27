@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.crypto.policyinformation;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -88,20 +86,7 @@ public class JPolicyInformation extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JPolicyInformation(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JPolicyInformation.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param policyInformation
-	 *            Policy information
-	 */
-	public JPolicyInformation(String title, List<PolicyInformation> policyInformation) {
 		this.title = title;
-		this.policyInformation = policyInformation;
 		initComponents();
 	}
 
@@ -214,7 +199,7 @@ public class JPolicyInformation extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE) ? true : false;
+					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
 				}
 			}
 
@@ -340,14 +325,13 @@ public class JPolicyInformation extends JPanel {
 			DError dError = null;
 
 			if (container instanceof JDialog) {
-				dError = new DError((JDialog) container, DOCUMENT_MODAL, ex);
-			} else if (container instanceof JFrame) {
-				dError = new DError((JFrame) container, DOCUMENT_MODAL, ex);
+				dError = new DError((JDialog) container, ex);
+			} else {
+				dError = new DError((JFrame) container, ex);
 			}
 
 			dError.setLocationRelativeTo(container);
 			dError.setVisible(true);
-			return;
 		}
 	}
 
@@ -446,14 +430,13 @@ public class JPolicyInformation extends JPanel {
 				DError dError = null;
 
 				if (container instanceof JDialog) {
-					dError = new DError((JDialog) container, DOCUMENT_MODAL, ex);
-				} else if (container instanceof JFrame) {
-					dError = new DError((JFrame) container, DOCUMENT_MODAL, ex);
+					dError = new DError((JDialog) container, ex);
+				} else {
+					dError = new DError((JFrame) container, ex);
 				}
 
 				dError.setLocationRelativeTo(container);
 				dError.setVisible(true);
-				return;
 			}
 		}
 	}

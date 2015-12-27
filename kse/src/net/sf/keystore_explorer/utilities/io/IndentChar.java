@@ -28,7 +28,7 @@ public enum IndentChar {
 
 	private char indentChar;
 
-	private IndentChar(char indentChar) {
+	IndentChar(char indentChar) {
 		this.indentChar = indentChar;
 	}
 

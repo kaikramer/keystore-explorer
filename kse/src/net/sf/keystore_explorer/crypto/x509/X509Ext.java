@@ -262,7 +262,7 @@ public class X509Ext {
 			return null;
 		}
 
-		return new String(name);
+		return name;
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class X509Ext {
 	 * @throws IOException If an ASN.1 coding problem occurs
 	 * @throws IOException If an I/O problem occurs
 	 */
-	public String getStringValue() throws IOException, IOException {
+	public String getStringValue() throws IOException {
 
 		// Convert value from DER encoded octet string value to binary DER encoding
 		ASN1OctetString octetString = ASN1OctetString.getInstance(ASN1Primitive.fromByteArray(value));
@@ -937,11 +937,7 @@ public class X509Ext {
 		CRLNumber crlNumber = CRLNumber.getInstance(value);
 		BigInteger crlNum = crlNumber.getCRLNumber();
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(HexUtil.getHexString(crlNum));
-		sb.append(NEWLINE);
-
-		return sb.toString();
+		return HexUtil.getHexString(crlNum) + NEWLINE;
 	}
 
 	private String getIssuingDistributionPointStringValue(byte[] value) throws IOException {
@@ -1061,7 +1057,7 @@ public class X509Ext {
 		sb.append(res.getString("PermittedSubtrees"));
 
 		if (permittedSubtrees == null) {
-			sb.append(" " + res.getString("NoValue"));
+			sb.append(" ").append(res.getString("NoValue"));
 			sb.append(NEWLINE);
 		} else {
 			sb.append(NEWLINE);
@@ -1113,15 +1109,17 @@ public class X509Ext {
 			}
 		}
 
-		GeneralSubtrees excludedSubtrees = new GeneralSubtrees(nameConstraints.getExcludedSubtrees());
+		GeneralSubtree[] excludedSubtreeArray = nameConstraints.getExcludedSubtrees();
 
 		sb.append(res.getString("ExcludedSubtrees"));
 
-		if (excludedSubtrees == null) // Optional
-		{
-			sb.append(" " + res.getString("NoValue"));
+		if (excludedSubtreeArray == null) { // Optional
+			sb.append(" ").append(res.getString("NoValue"));
 			sb.append(NEWLINE);
 		} else {
+
+			GeneralSubtrees excludedSubtrees = new GeneralSubtrees(excludedSubtreeArray);
+
 			sb.append(NEWLINE);
 
 			int excluded = 0;
@@ -2093,13 +2091,12 @@ public class X509Ext {
 
 			if (sourceDataUri != null) { // optional
 				sb.append(INDENT);
-				sb.append(MessageFormat.format(res.getString("BiometricInfo.SourceDataUri"), sourceDataUri.toString
-						()));
+				sb.append(MessageFormat.format(res.getString("BiometricInfo.SourceDataUri"), sourceDataUri.toString()));
 				sb.append(NEWLINE);
 			}
 		}
 
-		return null;
+		return sb.toString();
 	}
 
 	private String getQcStatementsStringValue(byte[] octets) throws IOException {
@@ -2119,7 +2116,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		int qcStatementNr = 0;
 
@@ -2479,7 +2476,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		ProcurationSyntax procurationSyntax = ProcurationSyntax.getInstance(octets);
 		String country = procurationSyntax.getCountry();
@@ -2542,7 +2539,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		MonetaryLimit monetaryLimit = MonetaryLimit.getInstance(octets);
 		String currency = monetaryLimit.getCurrency();
@@ -2585,7 +2582,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		DeclarationOfMajority declarationOfMajority = DeclarationOfMajority.getInstance(octets);
 		int notYoungerThan = declarationOfMajority.notYoungerThan();

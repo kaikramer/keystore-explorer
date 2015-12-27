@@ -135,7 +135,7 @@ public class JavaVersion implements Comparable {
 			updateRead = javaVersion.substring(indexUpdate + 1); // Update as a string
 		}
 		// Identifier but no update
-		else if ((indexUpdate == -1) && (indexIdentifier != -1)) {
+		else if (indexUpdate == -1) {
 			versionRead = javaVersion.substring(0, indexIdentifier); // Version as a string
 			identifierRead = javaVersion.substring(indexIdentifier + 1); // Identifier as a string
 		}
@@ -264,7 +264,7 @@ public class JavaVersion implements Comparable {
 			return null;
 		}
 
-		return new String(identifier);
+		return identifier;
 	}
 
 	/**
@@ -334,11 +334,8 @@ public class JavaVersion implements Comparable {
 			return false;
 		}
 
-		if (compareTo(object) == 0) {
-			return true;
-		}
+		return compareTo(object) == 0;
 
-		return false;
 	}
 
 	public int hashCode() {
@@ -354,6 +351,6 @@ public class JavaVersion implements Comparable {
 	}
 
 	public String toString() {
-		return new String(javaVersion);
+		return javaVersion;
 	}
 }

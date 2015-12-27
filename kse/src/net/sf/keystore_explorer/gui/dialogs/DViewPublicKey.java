@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
@@ -107,16 +105,14 @@ public class DViewPublicKey extends JEscDialog {
 	 *            Parent dialog
 	 * @param title
 	 *            The dialog title
-	 * @param modality
-	 *            Dialog modality
 	 * @param publicKey
 	 *            Public key to display
 	 * @throws CryptoException
 	 *             A problem was encountered getting the public key's details
 	 */
-	public DViewPublicKey(JDialog parent, String title, Dialog.ModalityType modality, PublicKey publicKey)
+	public DViewPublicKey(JDialog parent, String title, PublicKey publicKey)
 			throws CryptoException {
-		super(parent, title, modality);
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.publicKey = publicKey;
 		initComponents();
 	}
@@ -299,15 +295,13 @@ public class DViewPublicKey extends JEscDialog {
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

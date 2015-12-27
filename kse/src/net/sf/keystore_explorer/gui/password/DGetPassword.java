@@ -65,16 +65,13 @@ public class DGetPassword extends JEscDialog {
 
 	/**
 	 * Creates new DGetPassword dialog where the parent is a frame.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent frame
 	 * @param title
 	 *            The dialog's title
-	 * @param modality
-	 *            Dialog modality
 	 */
-	public DGetPassword(JFrame parent, String title, Dialog.ModalityType modality) {
-		super(parent, title, modality);
+	public DGetPassword(JFrame parent, String title) {
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents();
 	}
 

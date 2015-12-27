@@ -352,7 +352,7 @@ public enum X509ExtensionType {
 	private String oid;
 	private String friendlyKey;
 
-	private X509ExtensionType(String oid, String friendlyKey) {
+	X509ExtensionType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}

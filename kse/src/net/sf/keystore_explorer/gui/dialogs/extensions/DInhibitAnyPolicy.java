@@ -19,10 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,7 +76,7 @@ public class DInhibitAnyPolicy extends DExtension {
 	 *            The parent dialog
 	 */
 	public DInhibitAnyPolicy(JDialog parent) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DInhibitAnyPolicy.Title"));
 		initComponents();
 	}
@@ -95,7 +92,7 @@ public class DInhibitAnyPolicy extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DInhibitAnyPolicy(JDialog parent, byte[] value) throws IOException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DInhibitAnyPolicy.Title"));
 		initComponents();
 		prepopulateWithValue(value);
@@ -198,7 +195,7 @@ public class DInhibitAnyPolicy extends DExtension {
 		try {
 			value = inhibitAnyPolicy.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

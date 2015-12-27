@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -226,7 +224,7 @@ public class DCheckUpdate extends JEscDialog {
 							Problem problem = new Problem(problemStr, causes, ex);
 
 							DProblem dProblem = new DProblem(DCheckUpdate.this, res
-									.getString("DCheckUpdate.ProblemCheckingUpdate.Title"), DOCUMENT_MODAL, problem);
+									.getString("DCheckUpdate.ProblemCheckingUpdate.Title"), problem);
 							dProblem.setLocationRelativeTo(DCheckUpdate.this);
 							dProblem.setVisible(true);
 

@@ -446,7 +446,7 @@ public class ApplicationSettings {
 	 */
     public void addSslPort(String newSslPort) {
 
-    	String newSslPorts = addToList(newSslPort, getSslPorts(), 10);
+    	String newSslPorts = addToList(newSslPort, getSslPorts());
         
 		setSslPorts(newSslPorts);
     }
@@ -457,16 +457,16 @@ public class ApplicationSettings {
 	 * 
 	 * Maximum number is 10. If host is already in list, nothing is done.
 	 * 
-	 * @param newSslPort New SSL host
+	 * @param newSslHost New SSL host
      */
     public void addSslHost(String newSslHost) {
       
-    	String newSslHosts = addToList(newSslHost, getSslHosts(), 10);
+    	String newSslHosts = addToList(newSslHost, getSslHosts());
         
     	setSslHosts(newSslHosts);
     }
 
-	private String addToList(String newItem, String semicolonSepList, int maxItems) {
+	private String addToList(String newItem, String semicolonSepList) {
 		
 		// add new item at first position of the list
         StringBuilder sb = new StringBuilder(newItem);
@@ -474,7 +474,7 @@ public class ApplicationSettings {
         for (int i = 0; i < ports.length; i++) {
 
             // save maximum of X items
-			if (i >= maxItems) {
+			if (i >= 10) {
                 break;
             }
 

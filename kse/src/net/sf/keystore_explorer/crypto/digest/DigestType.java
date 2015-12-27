@@ -34,7 +34,7 @@ public enum DigestType {
 	private String oid;
 	private String friendly;
 
-	private DigestType(String jce, String oid, String friendly) {
+	DigestType(String jce, String oid, String friendly) {
 		this.jce = jce;
 		this.oid = oid;
 		this.friendly = friendly;

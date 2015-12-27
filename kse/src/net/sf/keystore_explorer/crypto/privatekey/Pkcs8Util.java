@@ -189,7 +189,7 @@ public class Pkcs8Util {
 	 * @throws IOException
 	 *             If an I/O error occurred
 	 */
-	public static PrivateKey load(InputStream is) throws PrivateKeyEncryptedException, CryptoException, IOException {
+	public static PrivateKey load(InputStream is) throws CryptoException, IOException {
 		byte[] streamContents = ReadUtil.readFully(is);
 
 		// Check pkcs #8 is unencrypted
@@ -205,28 +205,23 @@ public class Pkcs8Util {
 		}
 
 		byte[] pvkBytes = null;
-		ByteArrayInputStream bais = null;
+		// Check if stream is PEM encoded
+		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
 
-		try {
-			// Check if stream is PEM encoded
-			PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
-
-			if (pemInfo != null) {
-				// It is - get DER from PEM
-				pvkBytes = pemInfo.getContent();
-			}
-
-			/*
-			 * If we haven't got the key bytes via PEM then just use stream
-			 * contents directly (assume it is DER encoded)
-			 */
-			if (pvkBytes == null) {
-				// Read in private key bytes
-				pvkBytes = streamContents;
-			}
-		} finally {
-			SafeCloseUtil.close(bais);
+		if (pemInfo != null) {
+			// It is - get DER from PEM
+			pvkBytes = pemInfo.getContent();
 		}
+
+		/*
+		 * If we haven't got the key bytes via PEM then just use stream
+		 * contents directly (assume it is DER encoded)
+		 */
+		if (pvkBytes == null) {
+			// Read in private key bytes
+			pvkBytes = streamContents;
+		}
+
 
 		try {
 			// Determine private key algorithm from key bytes
@@ -263,8 +258,8 @@ public class Pkcs8Util {
 	 * @throws IOException
 	 *             If an I/O error occurred
 	 */
-	public static PrivateKey loadEncrypted(InputStream is, Password password) throws PrivateKeyUnencryptedException,
-			PrivateKeyPbeNotSupportedException, CryptoException, IOException {
+	public static PrivateKey loadEncrypted(InputStream is, Password password) throws
+			CryptoException, IOException {
 		byte[] streamContents = ReadUtil.readFully(is);
 
 		// Check pkcs #8 is not unencrypted
@@ -280,27 +275,21 @@ public class Pkcs8Util {
 		}
 
 		byte[] encPvk = null;
-		ByteArrayInputStream bais = null;
+		// Check if stream is PEM encoded
+		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
 
-		try {
-			// Check if stream is PEM encoded
-			PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
+		if (pemInfo != null) {
+			// It is - get DER from PEM
+			encPvk = pemInfo.getContent();
+		}
 
-			if (pemInfo != null) {
-				// It is - get DER from PEM
-				encPvk = pemInfo.getContent();
-			}
-
-			/*
-			 * If we haven't got the encrypted bytes via PEM then just use
-			 * stream contents directly (assume it is DER encoded)
-			 */
-			if (encPvk == null) {
-				// Read in encrypted private key bytes
-				encPvk = streamContents;
-			}
-		} finally {
-			SafeCloseUtil.close(bais);
+		/*
+		 * If we haven't got the encrypted bytes via PEM then just use
+		 * stream contents directly (assume it is DER encoded)
+		 */
+		if (encPvk == null) {
+			// Read in encrypted private key bytes
+			encPvk = streamContents;
 		}
 
 		try {
@@ -487,11 +476,8 @@ public class Pkcs8Util {
 
 		Object obj1 = sequence.getObjectAt(0);
 
-		if (!(obj1 instanceof ASN1ObjectIdentifier)) {
-			return false;
-		}
+		return obj1 instanceof ASN1ObjectIdentifier;
 
-		return true;
 	}
 
 	private static boolean checkSupportedForDecrypt(String algorithm) {
@@ -507,12 +493,9 @@ public class Pkcs8Util {
 		 * Also supported if algorithm is one of the following strings that the
 		 * OpenSSL pkcs8 tool sets
 		 */
-		if ((algorithm.equals("PBEWithSHA1AndDESede")) || (algorithm.equals("PBEWithSHA1AndRC2_40"))
-				|| (algorithm.equals("1.2.840.113549.1.5.13"))) {
-			return true;
-		}
+		return (algorithm.equals("PBEWithSHA1AndDESede")) || (algorithm.equals("PBEWithSHA1AndRC2_40"))
+				|| (algorithm.equals("1.2.840.113549.1.5.13"));
 
-		return false;
 	}
 
 	private static int generateIterationCount() {

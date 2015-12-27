@@ -1588,7 +1588,7 @@ public final class KseFrame implements StatusBar {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE ? true : false;
+					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE;
 				}
 			}
 
@@ -2127,7 +2127,7 @@ public final class KseFrame implements StatusBar {
 
 				jtKeyStore.setRowSelectionInterval(row, row);
 
-				if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
+				if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
 
 					// For KeyStore types that support password protected entries...
 					if (type.hasEntryPasswords()) {
@@ -2138,11 +2138,11 @@ public final class KseFrame implements StatusBar {
 
 					jpmKeyPair.show(evt.getComponent(), evt.getX(), evt.getY());
 
-				} else if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
+				} else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
 
 					jpmTrustedCertificate.show(evt.getComponent(), evt.getX(), evt.getY());
 
-				} else if (((String) jtKeyStore.getValueAt(row, 0)).equals(KeyStoreTableModel.KEY_ENTRY)) {
+				} else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_ENTRY)) {
 
 					// For KeyStore types that support password protected entries...
 					if (type.hasEntryPasswords()) {

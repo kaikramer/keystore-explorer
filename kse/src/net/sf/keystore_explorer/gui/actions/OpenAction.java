@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -114,7 +112,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 			while (true) {
 
 				DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-						res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()), DOCUMENT_MODAL);
+						res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()));
 				dGetPassword.setLocationRelativeTo(frame);
 				dGetPassword.setVisible(true);
 				password = dGetPassword.getPassword();
@@ -136,7 +134,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 					Problem problem = new Problem(problemStr, causes, klex);
 
 					DProblem dProblem = new DProblem(frame, res.getString("OpenAction.ProblemOpeningKeyStore.Title"),
-							DOCUMENT_MODAL, problem);
+					                                 problem);
 					dProblem.setLocationRelativeTo(frame);
 					dProblem.setVisible(true);
 

@@ -84,20 +84,7 @@ public class JAccessDescriptions extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JAccessDescriptions(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JAccessDescriptions.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param accessDescriptions
-	 *            Access descriptions
-	 */
-	public JAccessDescriptions(String title, List<AccessDescription> accessDescriptions) {
 		this.title = title;
-		this.accessDescriptions = accessDescriptions;
 		initComponents();
 	}
 
@@ -211,7 +198,7 @@ public class JAccessDescriptions extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE) ? true : false;
+					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
 				}
 			}
 

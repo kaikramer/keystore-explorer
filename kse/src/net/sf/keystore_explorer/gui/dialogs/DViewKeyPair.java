@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -91,21 +89,17 @@ public class DViewKeyPair extends JEscDialog {
 
 	/**
 	 * Creates a new DViewKeyPair dialog where the parent is a dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            The parent dualog
 	 * @param title
 	 *            The dialog title
-	 * @param modality
-	 *            Dialog modality
 	 * @param privateKey
-	 *            Private Private key part of keypair
+ *            Private Private key part of keypair
 	 * @param certificateChain
-	 *            Certificates Certificates part of keypair
 	 */
-	public DViewKeyPair(JDialog parent, String title, Dialog.ModalityType modality, PrivateKey privateKey,
-			X509Certificate[] certificateChain, Provider provider) {
-		super(parent, title, modality);
+	public DViewKeyPair(JDialog parent, String title, PrivateKey privateKey,
+	                    X509Certificate[] certificateChain, Provider provider) {
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
 		this.certificateChain = certificateChain;
 		this.provider = provider;
@@ -186,7 +180,8 @@ public class DViewKeyPair extends JEscDialog {
 	private void privateKeyDetailsPressed() {
 		try {
 			DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this,
-					res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"), DOCUMENT_MODAL, privateKey, provider);
+			                                                      res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"),
+			                                                      privateKey, provider);
 			dViewPrivateKey.setLocationRelativeTo(this);
 			dViewPrivateKey.setVisible(true);
 		} catch (CryptoException ex) {
@@ -197,8 +192,9 @@ public class DViewKeyPair extends JEscDialog {
 	private void certificateDetailsPressed() {
 		try {
 			DViewCertificate dViewCertificate = new DViewCertificate(this,
-					res.getString("DViewKeyPair.ViewCertificateDetails.Title"), DOCUMENT_MODAL, certificateChain,
-					null, DViewCertificate.NONE);
+			                                                         res.getString("DViewKeyPair.ViewCertificateDetails.Title"),
+			                                                         certificateChain,
+			                                                         DViewCertificate.NONE);
 			dViewCertificate.setLocationRelativeTo(this);
 			dViewCertificate.setVisible(true);
 		} catch (CryptoException ex) {

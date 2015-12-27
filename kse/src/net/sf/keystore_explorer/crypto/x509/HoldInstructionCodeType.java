@@ -35,7 +35,7 @@ public enum HoldInstructionCodeType {
 	private String oid;
 	private String friendlyKey;
 
-	private HoldInstructionCodeType(String oid, String friendlyKey) {
+	HoldInstructionCodeType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}

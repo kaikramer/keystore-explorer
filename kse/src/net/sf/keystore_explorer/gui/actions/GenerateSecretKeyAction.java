@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.security.KeyStore;
@@ -142,8 +140,8 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 
 			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
-						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"), DOCUMENT_MODAL,
-						applicationSettings.getPasswordQualityConfig());
+						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"),
+						                                              applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();

@@ -190,7 +190,7 @@ public class MsPvkUtil {
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PrivateKey load(InputStream is) throws IOException, PrivateKeyEncryptedException, CryptoException {
+	public static PrivateKey load(InputStream is) throws IOException, CryptoException {
 		byte[] pvk = ReadUtil.readFully(is);
 
 		// Wrap in a byte buffer set up to read little endian
@@ -255,7 +255,7 @@ public class MsPvkUtil {
 	 *             An I/O error occurred
 	 */
 	public static PrivateKey loadEncrypted(InputStream is, Password password) throws IOException,
-			PrivateKeyUnencryptedException, CryptoException {
+			CryptoException {
 		try {
 			byte[] pvk = ReadUtil.readFully(is);
 
@@ -895,7 +895,7 @@ public class MsPvkUtil {
 		}
 	}
 
-	private static final byte[] decryptPrivateKeyBlob(byte[] encryptedPvk, byte[] rc4Key) throws CryptoException {
+	private static byte[] decryptPrivateKeyBlob(byte[] encryptedPvk, byte[] rc4Key) throws CryptoException {
 		// Decrypt encrypted private key blob using RC4
 
 		try {
@@ -929,7 +929,7 @@ public class MsPvkUtil {
 		}
 	}
 
-	private static final byte[] encryptPrivateKeyBlob(byte[] privateKeyBlob, byte[] rc4Key) throws CryptoException {
+	private static byte[] encryptPrivateKeyBlob(byte[] privateKeyBlob, byte[] rc4Key) throws CryptoException {
 		// Encrypt private key blob using RC4
 
 		try {
@@ -962,9 +962,7 @@ public class MsPvkUtil {
 		// took place
 		byte[] written = new byte[bb.position()];
 
-		for (int i = 0; i < written.length; i++) {
-			written[i] = buffer[i];
-		}
+		System.arraycopy(buffer, 0, written, 0, written.length);
 
 		return written;
 	}

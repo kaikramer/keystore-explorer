@@ -31,11 +31,8 @@ public class StringUtils {
 	 * @return true if the String is null, empty or whitespace-only
 	 */
 	public static boolean isBlank(String str) {
-		
-		if (trimAndConvertEmptyToNull(str) == null) {
-			return true;
-		}
 
-		return false;
+		return trimAndConvertEmptyToNull(str) == null;
+
 	}
 }

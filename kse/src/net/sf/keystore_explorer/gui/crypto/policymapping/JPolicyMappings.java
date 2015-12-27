@@ -85,20 +85,7 @@ public class JPolicyMappings extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JPolicyMappings(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JPolicyMappings.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param policyMappings
-	 *            Policy mappings
-	 */
-	public JPolicyMappings(String title, PolicyMappings policyMappings) {
 		this.title = title;
-		this.policyMappings = policyMappings;
 		initComponents();
 	}
 
@@ -212,7 +199,7 @@ public class JPolicyMappings extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE) ? true : false;
+					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
 				}
 			}
 

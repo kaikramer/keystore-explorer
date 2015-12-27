@@ -42,7 +42,7 @@ public enum AttributeTypeType {
 	private String oid;
 	private String friendlyKey;
 
-	private AttributeTypeType(String oid, String friendlyKey) {
+	AttributeTypeType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}

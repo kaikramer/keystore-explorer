@@ -19,11 +19,8 @@
  */
 package net.sf.keystore_explorer.gui.crypto.policyinformation;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -256,7 +253,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 				try {
 					policyQualifiersVec.add(policyQualInfo);
 				} catch (Exception ex) {
-					DError dError = new DError(this, DOCUMENT_MODAL, ex);
+					DError dError = new DError(this, ex);
 					dError.setLocationRelativeTo(this);
 					dError.setVisible(true);
 					return;

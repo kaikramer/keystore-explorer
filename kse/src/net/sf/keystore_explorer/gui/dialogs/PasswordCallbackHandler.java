@@ -32,7 +32,6 @@ import javax.swing.JFrame;
 
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.gui.password.DGetPassword;
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 
 public class PasswordCallbackHandler implements CallbackHandler {
 	
@@ -59,8 +58,8 @@ public class PasswordCallbackHandler implements CallbackHandler {
 	private void handlePasswordCallback(PasswordCallback passCb) throws UnsupportedCallbackException {
 		
 		
-		DGetPassword dGetPassword = new DGetPassword(frame, res.getString("PasswordCallbackHandler.Title"),
-				DOCUMENT_MODAL);
+		DGetPassword dGetPassword = new DGetPassword(frame, res.getString("PasswordCallbackHandler.Title")
+		);
 		dGetPassword.setLocationRelativeTo(frame);
 		dGetPassword.setVisible(true);
 		Password password = dGetPassword.getPassword();

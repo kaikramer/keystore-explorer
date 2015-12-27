@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.sign;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -198,7 +196,7 @@ public class DSignJar extends JEscDialog {
         jlTimestampServerUrl = new JLabel(res.getString("DSignJar.jlTimestampServerUrl.text"));
         jcbTimestampServerUrl = new JComboBox<String>();
         jcbTimestampServerUrl.setEditable(true);
-        jcbTimestampServerUrl.setEnabled(false);;
+        jcbTimestampServerUrl.setEnabled(false);
         jcbTimestampServerUrl.setToolTipText(res.getString("DSignJar.jcbTimestampServerUrl.tooltip"));
         jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<String>(getTsaUrls()));
 
@@ -447,7 +445,7 @@ public class DSignJar extends JEscDialog {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(this, res.getString("DSignJar.ProblemOpeningJar.Title"),
-					DOCUMENT_MODAL, problem);
+			                                 problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

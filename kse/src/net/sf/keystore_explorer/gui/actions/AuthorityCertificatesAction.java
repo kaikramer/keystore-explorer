@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.security.KeyStore;
@@ -103,8 +101,8 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 
 		try {
 			DGetPassword dGetPassword = new DGetPassword(frame,
-					res.getString("AuthorityCertificatesAction.CaCertificatesKeyStorePassword.Title"),
-					DOCUMENT_MODAL);
+					res.getString("AuthorityCertificatesAction.CaCertificatesKeyStorePassword.Title")
+			);
 			dGetPassword.setLocationRelativeTo(frame);
 			dGetPassword.setVisible(true);
 			Password password = dGetPassword.getPassword();
@@ -130,7 +128,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 
 				DProblem dProblem = new DProblem(frame,
 						res.getString("AuthorityCertificatesAction.ProblemOpeningCaCertificatesKeyStore.Title"),
-						DOCUMENT_MODAL, problem);
+						                         problem);
 				dProblem.setLocationRelativeTo(frame);
 				dProblem.setVisible(true);
 

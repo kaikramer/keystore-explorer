@@ -86,16 +86,12 @@ public class DErrorDetail extends JEscDialog {
 
 	/**
 	 * Creates new DErrorDetail dialog where the parent is a dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
 	 * @param error
-	 *            Error to display
 	 */
-	public DErrorDetail(JDialog parent, Dialog.ModalityType modality, Throwable error) {
-		super(parent, modality);
+	public DErrorDetail(JDialog parent, Throwable error) {
+		super(parent, ModalityType.DOCUMENT_MODAL);
 		this.error = error;
 		initComponents();
 	}

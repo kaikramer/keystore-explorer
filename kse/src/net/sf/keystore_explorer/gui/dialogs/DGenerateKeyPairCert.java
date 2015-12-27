@@ -71,7 +71,6 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 
@@ -382,7 +381,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 						extensions, provider);
 			}
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(getParent());
 			dError.setVisible(true);
 			closeDialog();

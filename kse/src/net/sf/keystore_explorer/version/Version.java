@@ -91,7 +91,7 @@ public class Version implements Comparable, Serializable {
 	}
 
 	private int[] getSections() {
-		return (int[]) iSections.clone();
+		return iSections.clone();
 	}
 
 	public int compareTo(Object object) {
@@ -135,11 +135,8 @@ public class Version implements Comparable, Serializable {
 			return false;
 		}
 
-		if (compareTo(object) == 0) {
-			return true;
-		}
+		return compareTo(object) == 0;
 
-		return false;
 	}
 
 	public int hashCode() {

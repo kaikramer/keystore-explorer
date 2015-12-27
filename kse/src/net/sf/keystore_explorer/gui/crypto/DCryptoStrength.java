@@ -73,13 +73,11 @@ public class DCryptoStrength extends JEscDialog {
 	 * 
 	 * @param parent
 	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
 	 * @throws CryptoException
 	 *             If a crypto problem occurred
 	 */
-	public DCryptoStrength(JFrame parent, Dialog.ModalityType modality) throws CryptoException {
-		super(parent, res.getString("DCryptoStrength.Title"), modality);
+	public DCryptoStrength(JFrame parent) throws CryptoException {
+		super(parent, res.getString("DCryptoStrength.Title"), ModalityType.DOCUMENT_MODAL);
 
 		initComponents();
 	}

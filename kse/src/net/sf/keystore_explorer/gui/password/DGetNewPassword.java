@@ -92,19 +92,15 @@ public class DGetNewPassword extends JEscDialog {
 
 	/**
 	 * Creates new DGetNewPassword dialog where the parent is a frame.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent frame
 	 * @param title
 	 *            The dialog's title
-	 * @param modality
-	 *            Dialog modality
 	 * @param passwordQualityConfig
-	 *            Password quality configuration
 	 */
-	public DGetNewPassword(JFrame parent, String title, Dialog.ModalityType modality,
-			PasswordQualityConfig passwordQualityConfig) {
-		super(parent, title, modality);
+	public DGetNewPassword(JFrame parent, String title,
+	                       PasswordQualityConfig passwordQualityConfig) {
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 
 		this.passwordQualityConfig = passwordQualityConfig;
 

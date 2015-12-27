@@ -65,10 +65,7 @@ public class KeyStoreEntryTransferable implements Transferable {
 	 * @return True if it is
 	 */
 	public boolean isDataFlavorSupported(DataFlavor dataFlavor) {
-		if ((dataFlavor == DataFlavor.javaFileListFlavor) || (dataFlavor == DataFlavor.stringFlavor)) {
-			return true;
-		}
-		return false;
+		return (dataFlavor == DataFlavor.javaFileListFlavor) || (dataFlavor == DataFlavor.stringFlavor);
 	}
 
 	/**

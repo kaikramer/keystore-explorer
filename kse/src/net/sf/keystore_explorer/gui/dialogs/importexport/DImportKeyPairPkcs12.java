@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.importexport;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
@@ -39,6 +37,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
@@ -268,8 +267,8 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 		if (keypair != null) {
 			DViewKeyPair dViewKeyPair = new DViewKeyPair(this, MessageFormat.format(
-					res.getString("DImportKeyPairPkcs12.ViewKeyPairDetails.Title"), path), DOCUMENT_MODAL,
-					keypair.getPrivateKey(), keypair.getCertificateChain(), new BouncyCastleProvider());
+					res.getString("DImportKeyPairPkcs12.ViewKeyPairDetails.Title"), path),
+			                                             keypair.getPrivateKey(), keypair.getCertificateChain(), new BouncyCastleProvider());
 			dViewKeyPair.setLocationRelativeTo(this);
 			dViewKeyPair.setVisible(true);
 		}
@@ -303,9 +302,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 					privKey = (PrivateKey) pkcs12.getKey(alias, pkcs12Password.toCharArray());
 					Certificate[] certs = pkcs12.getCertificateChain(alias);
 					if ((certs != null) && (certs.length > 0)) {
-						for (int i = 0; i < certs.length; i++) {
-							certsList.add(certs[i]);
-						}
+						Collections.addAll(certsList, certs);
 						break;
 					}
 				}
@@ -341,7 +338,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 			Problem problem = createLoadPkcs12Problem(ex, pkcs12File);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairPkcs12.ProblemLoadingPkcs12.Title"),
-					DOCUMENT_MODAL, problem);
+			                                 problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

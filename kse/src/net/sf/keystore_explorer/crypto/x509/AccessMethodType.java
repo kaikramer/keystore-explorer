@@ -36,7 +36,7 @@ public enum AccessMethodType {
 	private String oid;
 	private String friendlyKey;
 
-	private AccessMethodType(String oid, String friendlyKey) {
+	AccessMethodType(String oid, String friendlyKey) {
 		this.oid = oid;
 		this.friendlyKey = friendlyKey;
 	}

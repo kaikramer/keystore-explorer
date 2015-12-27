@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.about;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -94,14 +92,12 @@ public class DSystemInformation extends JEscDialog {
 
 	/**
 	 * Creates new DSystemInformation dialog where the parent is a dialog.
-	 * 
-	 * @param parent
+	 *  @param parent
 	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
+	 *
 	 */
-	public DSystemInformation(JDialog parent, Dialog.ModalityType modality) {
-		this(parent, res.getString("DSystemInformation.Title"), modality);
+	public DSystemInformation(JDialog parent) {
+		this(parent, res.getString("DSystemInformation.Title"), ModalityType.DOCUMENT_MODAL);
 	}
 
 	/**
@@ -385,14 +381,14 @@ public class DSystemInformation extends JEscDialog {
 	}
 
 	private void systemPropertiesPressed() {
-		DSystemProperties dSystemProperties = new DSystemProperties(this, DOCUMENT_MODAL);
+		DSystemProperties dSystemProperties = new DSystemProperties(this);
 		dSystemProperties.setResizable(true);
 		dSystemProperties.setLocationRelativeTo(this);
 		dSystemProperties.setVisible(true);
 	}
 
 	private void environmentVariablesPressed() {
-		DEnvironmentVariables dEnvironmentVariables = new DEnvironmentVariables(this, DOCUMENT_MODAL);
+		DEnvironmentVariables dEnvironmentVariables = new DEnvironmentVariables(this);
 		dEnvironmentVariables.setResizable(true);
 		dEnvironmentVariables.setLocationRelativeTo(this);
 		dEnvironmentVariables.setVisible(true);

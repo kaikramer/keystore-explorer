@@ -19,10 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -99,7 +96,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 	 */
 	public DAuthorityKeyIdentifier(JDialog parent, PublicKey authorityPublicKey, X500Name authorityCertName,
 			BigInteger authorityCertSerialNumber) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 
 		setTitle(res.getString("DAuthorityKeyIdentifier.Title"));
 		this.authorityPublicKey = authorityPublicKey;
@@ -120,7 +117,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DAuthorityKeyIdentifier(JDialog parent, byte[] value, PublicKey authorityPublicKey) throws IOException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DAuthorityKeyIdentifier.Title"));
 		this.authorityPublicKey = authorityPublicKey;
 		initComponents();
@@ -251,7 +248,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 
 				jgnAuthorityCertIssuer.setGeneralNames(generalNames);
 			} catch (Exception ex) {
-				DError dError = new DError(this, DOCUMENT_MODAL, ex);
+				DError dError = new DError(this, ex);
 				dError.setLocationRelativeTo(this);
 				dError.setVisible(true);
 				return;
@@ -326,7 +323,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 			// only key identifier
 			authorityKeyIdentifier = new AuthorityKeyIdentifier(keyIdentifier);
 			
-		} else if ((keyIdentifier == null) && (authorityCertSerialNumber != null)) {
+		} else if (keyIdentifier == null) {
 			
 			// only issuer / serial
 			authorityKeyIdentifier = new AuthorityKeyIdentifier(authorityCertIssuer, authorityCertSerialNumber);
@@ -340,7 +337,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 		try {
 			value = authorityKeyIdentifier.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

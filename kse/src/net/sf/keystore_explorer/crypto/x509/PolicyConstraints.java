@@ -20,11 +20,11 @@
 package net.sf.keystore_explorer.crypto.x509;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 
@@ -67,10 +67,10 @@ public class PolicyConstraints extends ASN1Object {
 			ASN1TaggedObject taggedObj = ASN1TaggedObject.getInstance(seq.getObjectAt(i));
 			switch (taggedObj.getTagNo()) {
 			case 0:
-				requireExplicitPolicy = DERInteger.getInstance(taggedObj.getObject()).getValue().intValue();
+				requireExplicitPolicy = ASN1Integer.getInstance(taggedObj.getObject()).getValue().intValue();
 				break;
 			case 1:
-				inhibitPolicyMapping = DERInteger.getInstance(taggedObj.getObject()).getValue().intValue();
+				inhibitPolicyMapping = ASN1Integer.getInstance(taggedObj.getObject()).getValue().intValue();
 				break;
 			default:
 				throw new IllegalArgumentException("wrong tag number");
@@ -101,11 +101,11 @@ public class PolicyConstraints extends ASN1Object {
 		ASN1EncodableVector vec = new ASN1EncodableVector();
 		
 		if (requireExplicitPolicy != -1) {
-			vec.add(new DERTaggedObject(0, new DERInteger(requireExplicitPolicy)));
+			vec.add(new DERTaggedObject(0, new ASN1Integer(requireExplicitPolicy)));
 		}
 		
 		if (inhibitPolicyMapping != -1) {
-			vec.add(new DERTaggedObject(1, new DERInteger(inhibitPolicyMapping)));
+			vec.add(new DERTaggedObject(1, new ASN1Integer(inhibitPolicyMapping)));
 		}
 		
 		return new DERSequence(vec);

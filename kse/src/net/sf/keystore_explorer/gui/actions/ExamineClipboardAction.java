@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -149,7 +147,6 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-            return;
         }
     }
 
@@ -173,7 +170,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             Problem problem = new Problem(problemStr, causes, ex);
 
             DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCert.Title"),
-                    DOCUMENT_MODAL, problem);
+                                             problem);
             dProblem.setLocationRelativeTo(frame);
             dProblem.setVisible(true);
         }
@@ -183,7 +180,6 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                     res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame, DViewCertificate.IMPORT);
             dViewCertificate.setLocationRelativeTo(frame);
             dViewCertificate.setVisible(true);
-            return;
         }
     }
 
@@ -204,7 +200,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
              Problem problem = new Problem(problemStr, causes, ex);
 
              DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCrl.Title"),
-                     DOCUMENT_MODAL, problem);
+                                              problem);
              dProblem.setLocationRelativeTo(frame);
              dProblem.setVisible(true);
          }
@@ -241,7 +237,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 Problem problem = new Problem(problemStr, causes, ex);
 
                 DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCsr.Title"),
-                        DOCUMENT_MODAL, problem);
+                                                 problem);
                 dProblem.setLocationRelativeTo(frame);
                 dProblem.setVisible(true);
 
@@ -253,17 +249,14 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                         pkcs10Csr);
                 dViewCsr.setLocationRelativeTo(frame);
                 dViewCsr.setVisible(true);
-                return;
             } else {
                 DViewCsr dViewCsr = new DViewCsr(frame, res.getString("ExamineClipboardAction.CsrDetails.Title"),
                         spkacCsr);
                 dViewCsr.setLocationRelativeTo(frame);
                 dViewCsr.setVisible(true);
-                return;
             }
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-            return;
         }
     }
 }

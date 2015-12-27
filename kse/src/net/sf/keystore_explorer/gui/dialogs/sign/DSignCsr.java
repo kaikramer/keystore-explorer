@@ -19,7 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.sign;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
 import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 
@@ -575,14 +574,13 @@ public class DSignCsr extends JEscDialog {
 	private void pubKeyDetailsPressed() {
 		try {
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DSignCsr.PubKeyDetails.Title"),
-					DOCUMENT_MODAL, csrPublicKey);
+			                                                   csrPublicKey);
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

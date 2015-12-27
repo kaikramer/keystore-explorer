@@ -29,7 +29,7 @@ public enum MsCapiStoreType {
 
 	private String jce;
 
-	private MsCapiStoreType(String jce) {
+	MsCapiStoreType(String jce) {
 		this.jce = jce;
 	}
 

@@ -19,7 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.ADOBE_PDF_SIGNING;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.ANY_EXTENDED_KEY_USAGE;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.CLIENT_AUTH;
@@ -37,7 +36,6 @@ import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.TIME_STA
 
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -117,7 +115,7 @@ public class DExtendedKeyUsage extends DExtension {
 	 *            The parent dialog
 	 */
 	public DExtendedKeyUsage(JDialog parent) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DExtendedKeyUsage.Title"));
 		initComponents();
 	}
@@ -133,7 +131,7 @@ public class DExtendedKeyUsage extends DExtension {
 	 *             If value could not be decoded
 	 */
 	public DExtendedKeyUsage(JDialog parent, byte[] value) throws IOException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		super(parent);
 		setTitle(res.getString("DExtendedKeyUsage.Title"));
 		initComponents();
 		prepopulateWithValue(value);
@@ -371,7 +369,7 @@ public class DExtendedKeyUsage extends DExtension {
 		try {
 			value = extendedKeyUsage.getEncoded(ASN1Encoding.DER);
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
 			return;

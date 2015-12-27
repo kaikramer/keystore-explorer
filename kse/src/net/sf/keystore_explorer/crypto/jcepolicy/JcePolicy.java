@@ -31,7 +31,7 @@ public enum JcePolicy {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/jcepolicy/resources");
 	private final String jar;
 
-	private JcePolicy(String jar) {
+	JcePolicy(String jar) {
 		this.jar = jar;
 	}
 

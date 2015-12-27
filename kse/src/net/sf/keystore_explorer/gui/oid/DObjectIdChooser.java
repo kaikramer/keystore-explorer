@@ -207,7 +207,7 @@ public class DObjectIdChooser extends JEscDialog {
 
 	private void populateSecondArc() {
 		int firstArc = (Integer) jcbFirstArc.getSelectedItem();
-		int secondArc = (Integer) jcbSecondArc.getSelectedIndex();
+		int secondArc = jcbSecondArc.getSelectedIndex();
 		int maxSecondArc;
 
 		if ((firstArc == 0) || (firstArc == 1)) {

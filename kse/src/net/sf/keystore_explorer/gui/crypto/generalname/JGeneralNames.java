@@ -83,20 +83,7 @@ public class JGeneralNames extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JGeneralNames(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JGeneralName.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param generalNames
-	 *            General names
-	 */
-	public JGeneralNames(String title, GeneralNames generalNames) {
 		this.title = title;
-		this.generalNames = generalNames;
 		initComponents();
 	}
 
@@ -208,7 +195,7 @@ public class JGeneralNames extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE) ? true : false;
+					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
 				}
 			}
 

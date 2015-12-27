@@ -62,20 +62,7 @@ public class JDateTime extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JDateTime(String title) {
-		this(title, null);
-	}
-
-	/**
-	 * Construct a JDateTime.
-	 * 
-	 * @param title
-	 *            Title of edit dialog
-	 * @param date
-	 *            Date
-	 */
-	public JDateTime(String title, Date date) {
 		this.title = title;
-		this.date = date;
 		initComponents();
 	}
 

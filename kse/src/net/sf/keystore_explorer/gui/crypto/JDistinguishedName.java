@@ -66,25 +66,8 @@ public class JDistinguishedName extends JPanel {
 	 *            Is control editable?
 	 */
 	public JDistinguishedName(String title, int columns, boolean editable) {
-		this(title, columns, editable, null);
-	}
-
-	/**
-	 * Construct a JDistinguishedName.
-	 * 
-	 * @param title
-	 *            Title of view or edit dialog
-	 * @param distinguishedName
-	 *            Distinguished name
-	 * @param columns
-	 *            Size of text field
-	 * @param editable
-	 *            Is control editable?
-	 */
-	public JDistinguishedName(String title, int columns, boolean editable, X500Name distinguishedName) {
 		this.title = title;
 		this.editable = editable;
-		this.distinguishedName = distinguishedName;
 		initComponents(columns);
 	}
 
@@ -187,7 +170,7 @@ public class JDistinguishedName extends JPanel {
 		if (distinguishedName == null) {
 			this.distinguishedName = new X500Name(KseX500NameStyle.INSTANCE, new RDN[0]);
 		} else {
-			this.distinguishedName = new X500Name(KseX500NameStyle.INSTANCE, distinguishedName);
+			this.distinguishedName = new X500Name(KseX500NameStyle.INSTANCE, distinguishedName.getRDNs());
 		}
 		populate();
 	}

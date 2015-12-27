@@ -155,7 +155,7 @@ public class CryptoFileUtil {
 		return UNKNOWN;
 	}
 
-	private static CsrType detectCsrType(byte[] contents) throws FileNotFoundException, IOException {
+	private static CsrType detectCsrType(byte[] contents) throws IOException {
 		try {
 			Pkcs10Util.loadCsr(new ByteArrayInputStream(contents));
 			return PKCS10;

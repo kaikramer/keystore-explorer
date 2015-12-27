@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Toolkit;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -73,7 +71,7 @@ public class AboutAction extends KeyStoreExplorerAction {
 		URL aboutDialogImageURL = AboutAction.class.getResource(res.getString("AboutAction.About.image"));
 		DAbout dAbout = new DAbout(frame, 
 				MessageFormat.format(res.getString("AboutAction.About.Title"), KSE.getApplicationName()),
-				DOCUMENT_MODAL, res.getString("AboutAction.License"),
+				                   res.getString("AboutAction.License"),
 				Toolkit.getDefaultToolkit().createImage(aboutDialogImageURL), tickerItems);
 		dAbout.setLocationRelativeTo(frame);
 		dAbout.setVisible(true);

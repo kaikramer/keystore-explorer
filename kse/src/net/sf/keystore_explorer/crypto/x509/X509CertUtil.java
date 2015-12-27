@@ -42,6 +42,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -75,7 +76,7 @@ import net.sf.keystore_explorer.utilities.pem.PemUtil;
  * Provides utility methods relating to X509 Certificates and CRLs.
  *
  */
-public final class X509CertUtil extends Object {
+public final class X509CertUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
 	private static final String X509_CERT_TYPE = "X.509";
 	private static final String PKCS7_ENCODING = "PKCS7";
@@ -501,9 +502,7 @@ public final class X509CertUtil extends Object {
 		try {
 			ArrayList<Certificate> encodedCerts = new ArrayList<Certificate>();
 
-			for (int i = 0; i < certs.length; i++) {
-				encodedCerts.add(certs[i]);
-			}
+			Collections.addAll(encodedCerts, certs);
 
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
@@ -570,9 +569,7 @@ public final class X509CertUtil extends Object {
 		try {
 			ArrayList<Certificate> encodedCerts = new ArrayList<Certificate>();
 
-			for (int i = 0; i < certs.length; i++) {
-				encodedCerts.add(certs[i]);
-			}
+			Collections.addAll(encodedCerts, certs);
 
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
@@ -677,9 +674,7 @@ public final class X509CertUtil extends Object {
 
 						trustChain[0] = cert;
 
-						for (int j = 1; j <= tmpChain.length; j++) {
-							trustChain[j] = tmpChain[j - 1];
-						}
+						System.arraycopy(tmpChain, 0, trustChain, 1, tmpChain.length);
 
 						return trustChain;
 					}
@@ -761,7 +756,7 @@ public final class X509CertUtil extends Object {
 			return "";
 		}
 
-		if (((subjectCn != null) && (issuerCn == null)) || (subjectCn.equals(issuerCn))) {
+		if (((issuerCn == null)) || (subjectCn.equals(issuerCn))) {
 			return subjectCn;
 		}
 
@@ -809,7 +804,7 @@ public final class X509CertUtil extends Object {
 	 *            The certificate
 	 * @return The algorithm
 	 */
-	public static final String getCertificateSignatureAlgorithm(X509Certificate cert) {
+	public static String getCertificateSignatureAlgorithm(X509Certificate cert) {
 		// Unfriendly JCE sig names may be actual JCE names or OIDs
 		String algorithm = cert.getSigAlgName();
 
@@ -835,7 +830,7 @@ public final class X509CertUtil extends Object {
 	 *            The certificate
 	 * @return True if it is
 	 */
-	public static final boolean isCertificateSelfSigned(X509Certificate cert) {
+	public static boolean isCertificateSelfSigned(X509Certificate cert) {
 		return (cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal()));
 	}
 

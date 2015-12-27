@@ -78,10 +78,7 @@ public class CloseAllAction extends CloseAction {
 			histories = kseFrame.getKeyStoreHistories();
 		}
 
-		if (histories.length == 0) {
-			return true;
-		}
+		return histories.length == 0;
 
-		return false;
 	}
 }

@@ -83,7 +83,7 @@ public enum CryptoFileType {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/filetype/resources");
 	private String friendlyKey;
 
-	private CryptoFileType(String friendlyKey) {
+	CryptoFileType(String friendlyKey) {
 		this.friendlyKey = friendlyKey;
 	}
 

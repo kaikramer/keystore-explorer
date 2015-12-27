@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
@@ -39,6 +37,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
@@ -169,21 +168,17 @@ public class DViewCertificate extends JEscDialog {
 	 *            Parent dialog
 	 * @param title
 	 *            The dialog title
-	 * @param modality
-	 *            Dialog modality
 	 * @param certs
 	 *            Certificate(s) to display
-	 * @param kseFrame
-	 *            Reference to main class with currently opened keystores and their contents
 	 * @param importExport
 	 *            Show import button/export button/no extra button?
 	 * @throws CryptoException
 	 *             A problem was encountered getting the certificates' details
 	 */
-	public DViewCertificate(JDialog parent, String title, Dialog.ModalityType modality, X509Certificate[] certs,
-			KseFrame kseFrame, int importExport) throws CryptoException {
-		super(parent, title, modality);
-		this.kseFrame = kseFrame;
+	public DViewCertificate(JDialog parent, String title, X509Certificate[] certs,
+	                        int importExport) throws CryptoException {
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
+		this.kseFrame = null;
 		this.importExport = importExport;
 		initComponents(certs);
 	}
@@ -501,10 +496,9 @@ public class DViewCertificate extends JEscDialog {
 		DefaultMutableTreeNode certsNode = new DefaultMutableTreeNode();
 
 		TreeSet<X509Certificate> certSet = new TreeSet<X509Certificate>(new X509CertificateComparator());
-		for (X509Certificate cert : certs) {
-			certSet.add(cert);
-		}
+		Collections.addAll(certSet, certs);
 
+		// TODO rewrite
 		setcheck: while (certSet.size() > 0) {
 			certs: for (X509Certificate cert : certSet) {
 				if (X509CertUtil.isCertificateSelfSigned(cert)) {
@@ -713,7 +707,7 @@ public class DViewCertificate extends JEscDialog {
 					jbExtensions.setEnabled(false);
 				}
 			} catch (CryptoException ex) {
-				DError dError = new DError(this, DOCUMENT_MODAL, ex);
+				DError dError = new DError(this, ex);
 				dError.setLocationRelativeTo(this);
 				dError.setVisible(true);
 				dispose();
@@ -726,14 +720,14 @@ public class DViewCertificate extends JEscDialog {
 			X509Certificate cert = getSelectedCertificate();
 
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this,
-					res.getString("DViewCertificate.PubKeyDetails.Title"), DOCUMENT_MODAL, cert.getPublicKey());
+			                                                   res.getString("DViewCertificate.PubKeyDetails.Title"),
+			                                                   cert.getPublicKey());
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 
@@ -751,14 +745,13 @@ public class DViewCertificate extends JEscDialog {
 
 		try {
 			DViewCertCsrPem dViewCertPem = new DViewCertCsrPem(this, res.getString("DViewCertificate.Pem.Title"),
-					DOCUMENT_MODAL, cert);
+			                                                   cert);
 			dViewCertPem.setLocationRelativeTo(this);
 			dViewCertPem.setVisible(true);
 		} catch (CryptoException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 
@@ -770,15 +763,13 @@ public class DViewCertificate extends JEscDialog {
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
 		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		} catch (IOException ex) {
-			DError dError = new DError(this, DOCUMENT_MODAL, ex);
+			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
-			return;
 		}
 	}
 

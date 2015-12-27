@@ -29,7 +29,7 @@ import javax.swing.SwingConstants;
 public class MiGUtil {
 
     public static void addSeparator(Container container, String text) {
-        Color LABEL_COLOR = new Color(0, 70, 213);
+        @SuppressWarnings("UnusedAssignment") Color LABEL_COLOR = new Color(0, 70, 213);
         JLabel l = new JLabel(text, SwingConstants.LEADING);
         //l.setForeground(LABEL_COLOR);
 

@@ -19,10 +19,7 @@
  */
 package net.sf.keystore_explorer.gui.about;
 
-import static java.awt.Dialog.ModalityType.DOCUMENT_MODAL;
-
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,21 +66,16 @@ public class DAbout extends JEscDialog {
 
 	/**
 	 * Creates new DAbout dialog.
-	 *
-	 * @param parent
+	 *  @param parent
 	 *            Parent frame
 	 * @param title
 	 *            The title of the dialog
-	 * @param modality
-	 *            Dialog modality
 	 * @param aboutImg
-	 *            The image containing the about information
+ *            The image containing the about information
 	 * @param tickerItems
-	 *            Items to display in ticker
 	 */
-	public DAbout(JFrame parent, String title, Dialog.ModalityType modality, String licenseNotice,
-			Image aboutImg, Object[] tickerItems) {
-		super(parent, title, modality);
+	public DAbout(JFrame parent, String title, String licenseNotice, Image aboutImg, Object[] tickerItems) {
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(aboutImg, licenseNotice, tickerItems);
 	}
 
@@ -158,7 +150,7 @@ public class DAbout extends JEscDialog {
 	}
 
 	private void showSystemInformation() {
-		DSystemInformation dSystemInformation = new DSystemInformation(this, DOCUMENT_MODAL);
+		DSystemInformation dSystemInformation = new DSystemInformation(this);
 		dSystemInformation.setLocationRelativeTo(this);
 		dSystemInformation.setVisible(true);
 	}
