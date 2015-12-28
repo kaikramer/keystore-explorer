@@ -68,7 +68,17 @@ public enum ExtendedKeyUsageType {
 	TIME_STAMPING("1.3.6.1.5.5.7.3.8", "TimeStampingExtKeyUsage"),
 
 	/** OCSP Signing */
-	OCSP_SIGNING("1.3.6.1.5.5.7.3.9", "OcspSigningExtKeyUsage");
+	OCSP_SIGNING("1.3.6.1.5.5.7.3.9", "OcspSigningExtKeyUsage"),
+
+	/** Microsoft Server Gated Crypto (SGC) */
+	MICROSOFT_SGC("1.3.6.1.4.1.311.10.3.3",  "MicrosoftSGCExtKeyUsage"),
+
+	/** Netscape Server Gated Crypto (SGC) */
+	NETSCAPE_SGC("2.16.840.1.113730.4.1",  "NetscapeSGCExtKeyUsage"),
+
+	/** Microsoft Server Gated Crypto (SGC) */
+	VERISIGN_SGC("2.16.840.1.113733.1.8.1",  "VeriSignSGCExtKeyUsage");
+
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
 	private String oid;
