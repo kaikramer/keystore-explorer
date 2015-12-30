@@ -65,35 +65,29 @@ public class MacOsIntegration implements InvocationHandler {
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		switch (method.getName()) {
-			case "openFiles":
-				if (args[0] != null) {
-					Object files = args[0].getClass().getMethod("getFiles").invoke(args[0]);
-					if (files instanceof List) {
-						OpenAction openAction = new OpenAction(kseFrame);
-						for (File file : (List<File>) files) {
-							openAction.openKeyStore(file);
-						}
+		if ("openFiles".equals(method.getName())) {
+			if (args[0] != null) {
+				Object files = args[0].getClass().getMethod("getFiles").invoke(args[0]);
+				if (files instanceof List) {
+					OpenAction openAction = new OpenAction(kseFrame);
+					for (File file : (List<File>) files) {
+						openAction.openKeyStore(file);
 					}
 				}
-				break;
-			case "handleQuitRequestWith":
+			}
+		} else if ("handleQuitRequestWith".equals(method.getName())) {
 				ExitAction exitAction = new ExitAction(kseFrame);
 				exitAction.exitApplication();
 				// If we have returned from the above call the user has decied not to quit
 				if (args[1] != null) {
 					args[1].getClass().getDeclaredMethod("cancelQuit").invoke(args[1]);
 				}
-				break;
-			case "handleAbout":
+		} else if ("handleAbout".equals(method.getName())) {
 				AboutAction aboutAction = new AboutAction(kseFrame);
 				aboutAction.showAbout();
-				break;
-			case "handlePreferences":
+		} else if ("handlePreferences".equals(method.getName())) {
 				PreferencesAction preferencesAction = new PreferencesAction(kseFrame);
 				preferencesAction.showPreferences();
-				break;
-			default:
 		}
 		return null;
 	}
