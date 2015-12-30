@@ -19,101 +19,83 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import java.io.File;
-
-import com.apple.eawt.AboutHandler;
-import com.apple.eawt.AppEvent.AboutEvent;
-import com.apple.eawt.AppEvent.OpenFilesEvent;
-import com.apple.eawt.AppEvent.PreferencesEvent;
-import com.apple.eawt.AppEvent.QuitEvent;
-import com.apple.eawt.Application;
-import com.apple.eawt.OpenFilesHandler;
-import com.apple.eawt.PreferencesHandler;
-import com.apple.eawt.QuitHandler;
-import com.apple.eawt.QuitResponse;
-
 import net.sf.keystore_explorer.gui.actions.AboutAction;
 import net.sf.keystore_explorer.gui.actions.ExitAction;
 import net.sf.keystore_explorer.gui.actions.OpenAction;
 import net.sf.keystore_explorer.gui.actions.PreferencesAction;
 
+import java.io.File;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.List;
+
 /**
  * Integrate KSE with Mac OS. Handles call backs from Mac OS.
- *
  */
-public class MacOsIntegration implements AboutHandler, OpenFilesHandler,
-	PreferencesHandler, QuitHandler {
-	private KseFrame kseFrame;
-	private Application macOsApplicationIntegration;
+public class MacOsIntegration implements InvocationHandler {
 
-	/**
-	 * Construct integration with Mac OS.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer main frame
-	 */
+	private final KseFrame kseFrame;
+
 	public MacOsIntegration(KseFrame kseFrame) {
 		this.kseFrame = kseFrame;
-		macOsApplicationIntegration = Application.getApplication();
-
-		macOsApplicationIntegration.setAboutHandler(this);
-		macOsApplicationIntegration.setOpenFileHandler(this);
-		macOsApplicationIntegration.setPreferencesHandler(this);
-		macOsApplicationIntegration.setQuitHandler(this);
 	}
 
-	/**
-	 * Handle about callback. Show application's about dialog.
-	 *
-	 * @param evt
-	 *            Event
-	 */
-	@Override
-	public void handleAbout(AboutEvent evt) {
-		AboutAction aboutAction = new AboutAction(kseFrame);
-		aboutAction.showAbout();
+	public void addEventHandlers() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
+			InvocationTargetException, InstantiationException {
+
+		// using reflection to avoid Mac specific classes being required for compiling KSE on other platforms
+		Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
+		Class<?> quitHandlerClass = Class.forName("com.apple.eawt.QuitHandler");
+		Class<?> aboutHandlerClass = Class.forName("com.apple.eawt.AboutHandler");
+		Class<?> openFilesHandlerClass = Class.forName("com.apple.eawt.OpenFilesHandler");
+		Class<?> preferencesHandlerClass = Class.forName("com.apple.eawt.PreferencesHandler");
+
+		Object application = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
+		Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(), new Class<?>[]{
+				quitHandlerClass, aboutHandlerClass, openFilesHandlerClass, preferencesHandlerClass}, this);
+
+		applicationClass.getDeclaredMethod("setQuitHandler", quitHandlerClass).invoke(application, proxy);
+		applicationClass.getDeclaredMethod("setAboutHandler", aboutHandlerClass).invoke(application, proxy);
+		applicationClass.getDeclaredMethod("setOpenFileHandler", openFilesHandlerClass).invoke(application, proxy);
+		applicationClass.getDeclaredMethod("setPreferencesHandler", preferencesHandlerClass).invoke(application,
+		                                                                                            proxy);
 	}
 
-	/**
-	 * Handle open file callback. Open file in application.
-	 *
-	 * @param evt
-	 *            Event
-	 */
 	@Override
-	public void openFiles(OpenFilesEvent evt) {
-		OpenAction openAction = new OpenAction(kseFrame);
-
-		for (File file : evt.getFiles()) {
-			openAction.openKeyStore(file);
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		switch (method.getName()) {
+			case "openFiles":
+				if (args[0] != null) {
+					Object files = args[0].getClass().getMethod("getFiles").invoke(args[0]);
+					if (files instanceof List) {
+						OpenAction openAction = new OpenAction(kseFrame);
+						for (File file : (List<File>) files) {
+							openAction.openKeyStore(file);
+						}
+					}
+				}
+				break;
+			case "handleQuitRequestWith":
+				ExitAction exitAction = new ExitAction(kseFrame);
+				exitAction.exitApplication();
+				// If we have returned from the above call the user has decied not to quit
+				if (args[1] != null) {
+					args[1].getClass().getDeclaredMethod("cancelQuit").invoke(args[1]);
+				}
+				break;
+			case "handleAbout":
+				AboutAction aboutAction = new AboutAction(kseFrame);
+				aboutAction.showAbout();
+				break;
+			case "handlePreferences":
+				PreferencesAction preferencesAction = new PreferencesAction(kseFrame);
+				preferencesAction.showPreferences();
+				break;
+			default:
 		}
+		return null;
 	}
 
-	/**
-	 * Handle preferences callback. Show application's preferences dialog.
-	 *
-	 * @param evt
-	 *            Event
-	 */
-	@Override
-	public void handlePreferences(PreferencesEvent evt) {
-		PreferencesAction preferencesAction = new PreferencesAction(kseFrame);
-		preferencesAction.showPreferences();
-	}
-
-	/**
-	 * Handle quit callback. Quit application.
-	 *
-	 * @param evt
-	 *            Event
-	 * @param resp
-	 *            Response
-	 */
-	@Override
-	public void handleQuitRequestWith(QuitEvent evt, QuitResponse resp) {
-		ExitAction exitAction = new ExitAction(kseFrame);
-		exitAction.exitApplication();
-		resp.cancelQuit(); // If we have retuned from the above call the user
-							// has decied not to quit
-	}
 }

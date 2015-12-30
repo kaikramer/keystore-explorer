@@ -23,16 +23,13 @@
 
     (1) Install Apache Ant 1.8+ and setup for use with JDK 1.6+.
 
-    (2) Add AppleJavaExtensions.jar to lib (not necessary on Mac OS)
-        Link: https://developer.apple.com/legacy/library/samplecode/AppleJavaExtensions/Introduction/Intro.html
+    (2) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
 
-    (3) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
-
-    (4) Install NSIS and add its top-level directory to the path.
+    (3) Install NSIS and add its top-level directory to the path.
     
-    (5) Add WinShell plugin to NSIS (http://nsis.sourceforge.net/WinShell_plug-in)
+    (4) Add WinShell plugin to NSIS (http://nsis.sourceforge.net/WinShell_plug-in)
 
-    (6) Run ant -projecthelp for a description of the various targets.
+    (5) Run ant -projecthelp for a description of the various targets.
 
  -->
 
@@ -109,7 +106,6 @@
 	<path id="compileClasspath">
 		<pathelement location="${buildDir}"/>
 	    <path refid="distClasspath"/>
-	    <pathelement location="${libDir}/AppleJavaExtensions.jar"/>
 	    <pathelement location="${libDir}/junit.jar"/>
 	</path>
     

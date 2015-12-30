@@ -22,7 +22,6 @@ package net.sf.keystore_explorer.gui;
 import java.awt.Font;
 import java.awt.SplashScreen;
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -234,12 +233,8 @@ public class CreateApplicationGui implements Runnable {
 	private void integrateWithMacOs(KseFrame kseFrame) throws ClassNotFoundException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
 			InvocationTargetException {
-		// Integration done by reflection to avoid Mac specific classes it
-		// depends on being loaded on other platforms
-		Class<?> macOsApplication = ClassLoader.getSystemClassLoader().loadClass(
-				"net.sf.keystore_explorer.gui.MacOsIntegration");
-		Constructor constructor = macOsApplication.getConstructor(KseFrame.class);
-		constructor.newInstance(kseFrame);
+		MacOsIntegration macOsIntegration = new MacOsIntegration(kseFrame);
+		macOsIntegration.addEventHandlers();
 	}
 
 	private void closeSplash() {

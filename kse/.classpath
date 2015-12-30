@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry exported="true" kind="lib" path="lib/AppleJavaExtensions.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-swing.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jgoodies-common.jar"/>
