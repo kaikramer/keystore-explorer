@@ -28,6 +28,8 @@ import java.io.File;
 import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
@@ -92,15 +94,14 @@ public class KSE {
 			updateSplashMessage(splash, res.getString("KSE.InitializingSecurity.splash.message"));
 			initialiseSecurity();
 
-			File keyStoreFile = null;
-
-			if (args.length > 0) {
-				keyStoreFile = new File(args[0]);
+			List<File> parameterFiles = new ArrayList<File>();
+			for (String arg : args) {
+				parameterFiles.add(new File(arg));
 			}
 
 			// Create application GUI on the event handler thread
 			updateSplashMessage(splash, res.getString("KSE.CreatingApplicationGui.splash.message"));
-			SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, splash, keyStoreFile));
+			SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, splash, parameterFiles));
 		} catch (Throwable t) {
 			DError dError = new DError(new JFrame(), t);
 			dError.setLocationRelativeTo(null);

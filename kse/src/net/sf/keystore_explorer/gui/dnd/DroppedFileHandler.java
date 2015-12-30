@@ -30,7 +30,7 @@ public class DroppedFileHandler {
                 // open files in new thread, so we can return quickly
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        openDroppedFiles(kseFrame, droppedFiles);
+                        openFiles(kseFrame, droppedFiles);
                     }
                 });
 
@@ -42,7 +42,7 @@ public class DroppedFileHandler {
         }
     }
 
-    private static void openDroppedFiles(KseFrame kseFrame, List<File> droppedFiles) {
+    public static void openFiles(KseFrame kseFrame, List<File> droppedFiles) {
 
         ExamineFileAction examineFileAction = new ExamineFileAction(kseFrame);
 

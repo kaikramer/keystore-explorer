@@ -8,8 +8,8 @@ JAR_FILE="${SCRIPT_DIR}/kse.jar"
 cd "$SCRIPT_DIR"
 
 if [ -d "jre" ]; then
-    ./jre/bin/java -jar "${JAR_FILE}"
+    ./jre/bin/java -jar "${JAR_FILE}" "$@"
 else
-    java -jar "${JAR_FILE}"
+    java -jar "${JAR_FILE}" "$@"
 fi
 

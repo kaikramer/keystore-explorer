@@ -24,6 +24,7 @@ import java.awt.SplashScreen;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -35,8 +36,8 @@ import javax.swing.UIManager;
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
-import net.sf.keystore_explorer.gui.actions.OpenAction;
 import net.sf.keystore_explorer.gui.crypto.DUpgradeCryptoStrength;
+import net.sf.keystore_explorer.gui.dnd.DroppedFileHandler;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
@@ -54,23 +55,22 @@ public class CreateApplicationGui implements Runnable {
 	private static final String UPGRADE_ASSISTANT_EXE = "cua.exe";
 	private ApplicationSettings applicationSettings;
 	private SplashScreen splash;
-	private File keyStoreFile;
+	private List<File> parameterFiles;
 
 
 	/**
 	 * Construct CreateApplicationGui.
-	 *
-	 * @param applicationSettings
+	 *  @param applicationSettings
 	 *            Application settings
 	 * @param splash
 	 *            Splash screen
-	 * @param keyStoreFile
-	 *            KeyStore file to open initially (supply null if none)
+	 * @param parameterFiles
+	 *            File list to open
 	 */
-	public CreateApplicationGui(ApplicationSettings applicationSettings, SplashScreen splash, File keyStoreFile) {
+	public CreateApplicationGui(ApplicationSettings applicationSettings, SplashScreen splash, List<File> parameterFiles) {
 		this.applicationSettings = applicationSettings;
 		this.splash = splash;
-		this.keyStoreFile = keyStoreFile;
+		this.parameterFiles = parameterFiles;
 	}
 
 	/**
@@ -98,10 +98,8 @@ public class CreateApplicationGui implements Runnable {
 
 			kseFrame.display();
 
-			if (keyStoreFile != null) {
-				OpenAction openAction = new OpenAction(kseFrame);
-				openAction.openKeyStore(keyStoreFile);
-			}
+			// open file list passed via command line params (basically same as if files were dropped on application)
+			DroppedFileHandler.openFiles(kseFrame, parameterFiles);
 		} catch (Throwable t) {
 			DError dError = new DError(new JFrame(), t);
 			dError.setLocationRelativeTo(null);
