@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.SplashScreen;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -31,26 +32,30 @@ import java.util.Set;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
+import net.sf.keystore_explorer.gui.actions.CheckUpdateAction;
 import net.sf.keystore_explorer.gui.crypto.DUpgradeCryptoStrength;
 import net.sf.keystore_explorer.gui.dnd.DroppedFileHandler;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
+import net.sf.keystore_explorer.utilities.net.URLs;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.JavaVersion;
+import net.sf.keystore_explorer.version.Version;
 import net.sf.keystore_explorer.version.VersionException;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Runnable to create and show KeyStore Explorer application.
- *
  */
 public class CreateApplicationGui implements Runnable {
-    private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
+	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_160;
 	private static final String UPGRADE_ASSISTANT_EXE = "cua.exe";
 	private ApplicationSettings applicationSettings;
@@ -60,14 +65,13 @@ public class CreateApplicationGui implements Runnable {
 
 	/**
 	 * Construct CreateApplicationGui.
-	 *  @param applicationSettings
-	 *            Application settings
-	 * @param splash
-	 *            Splash screen
-	 * @param parameterFiles
-	 *            File list to open
+	 *
+	 * @param applicationSettings Application settings
+	 * @param splash              Splash screen
+	 * @param parameterFiles      File list to open
 	 */
-	public CreateApplicationGui(ApplicationSettings applicationSettings, SplashScreen splash, List<File> parameterFiles) {
+	public CreateApplicationGui(ApplicationSettings applicationSettings, SplashScreen splash, List<File>
+			parameterFiles) {
 		this.applicationSettings = applicationSettings;
 		this.splash = splash;
 		this.parameterFiles = parameterFiles;
@@ -100,6 +104,9 @@ public class CreateApplicationGui implements Runnable {
 
 			// open file list passed via command line params (basically same as if files were dropped on application)
 			DroppedFileHandler.openFiles(kseFrame, parameterFiles);
+
+			// start update check in background
+			checkForUpdates(kseFrame);
 		} catch (Throwable t) {
 			DError dError = new DError(new JFrame(), t);
 			dError.setLocationRelativeTo(null);
@@ -109,6 +116,30 @@ public class CreateApplicationGui implements Runnable {
 			closeSplash();
 		}
 
+	}
+
+	private void checkForUpdates(final KseFrame kseFrame) {
+		new Thread() {
+			public void run() {
+				try {
+					// Get the version number of the latest KeyStore Explorer from its web site
+					URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
+
+					String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
+					Version latestVersion = new Version(versionString);
+
+					// show update dialog to user
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
+							checkUpdateAction.compareVersions(latestVersion);
+						}
+					});
+				} catch (Exception e) {
+					// ignore any problems here
+				}
+			}
+		}.start();
 	}
 
 	private static void setDefaultSize(int size) {
@@ -160,7 +191,7 @@ public class CreateApplicationGui implements Runnable {
 
 		if (actualJreVersion.compareTo(MIN_JRE_VERSION) < 0) {
 			String message = MessageFormat.format(res.getString("CreateApplicationGui.MinJreVersionReq.message"),
-					actualJreVersion, MIN_JRE_VERSION);
+			                                      actualJreVersion, MIN_JRE_VERSION);
 			System.err.println(message);
 			JOptionPane.showMessageDialog(new JFrame(), message, KSE.getApplicationName(), JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -173,7 +204,7 @@ public class CreateApplicationGui implements Runnable {
 		closeSplash();
 
 		JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.UpgradeRequired.message"),
-				KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+		                              KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
 		File cuaExe = determinePathToCryptoPolicyUpgradeAssistantExe();
 
@@ -181,17 +212,17 @@ public class CreateApplicationGui implements Runnable {
 		if (OperatingSystem.isWindows() && cuaExe.exists()) {
 
 			// cmd.exe is workaround for http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6410605
-			String toExec[] = new String[] { "cmd.exe", "/C", cuaExe.getPath() };
+			String toExec[] = new String[]{"cmd.exe", "/C", cuaExe.getPath()};
 
 			try {
 				Process process = Runtime.getRuntime().exec(toExec);
 			} catch (Exception ex) {
-	            Problem problem = new Problem("Cannot run Crypto Strength Upgrade Assistant.", null, ex);
-	            JFrame frame = new JFrame();
+				Problem problem = new Problem("Cannot run Crypto Strength Upgrade Assistant.", null, ex);
+				JFrame frame = new JFrame();
 				DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCrl.Title"),
 				                                 problem);
-	            dProblem.setLocationRelativeTo(frame);
-	            dProblem.setVisible(true);
+				dProblem.setLocationRelativeTo(frame);
+				dProblem.setVisible(true);
 			} finally {
 				System.exit(0);
 			}
@@ -205,7 +236,7 @@ public class CreateApplicationGui implements Runnable {
 			if (dUpgradeCryptoStrength.hasCryptoStrengthBeenUpgraded()) {
 				// Crypto strength upgraded - restart required to take effect
 				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.Upgraded.message"),
-						KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+				                              KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
 				KseRestart.restart();
 				System.exit(0);
@@ -215,18 +246,18 @@ public class CreateApplicationGui implements Runnable {
 			} else {
 				// Crypto strength not upgraded - exit as upgrade required
 				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.NotUpgraded.message"),
-						KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
+				                              KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
 
 				System.exit(1);
 			}
 		}
 	}
 
-    private File determinePathToCryptoPolicyUpgradeAssistantExe() {
-        File kseInstallDir = new File(System.getProperty("kse.install.dir"));
-        File cuaExe = new File(kseInstallDir, UPGRADE_ASSISTANT_EXE);
-        return cuaExe;
-    }
+	private File determinePathToCryptoPolicyUpgradeAssistantExe() {
+		File kseInstallDir = new File(System.getProperty("kse.install.dir"));
+		File cuaExe = new File(kseInstallDir, UPGRADE_ASSISTANT_EXE);
+		return cuaExe;
+	}
 
 	private void integrateWithMacOs(KseFrame kseFrame) throws ClassNotFoundException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,

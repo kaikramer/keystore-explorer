@@ -29,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -51,7 +52,9 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
+import net.sf.keystore_explorer.utilities.net.URLs;
 import net.sf.keystore_explorer.version.Version;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Check for an updated version of KeyStore Explorer. This check works over the
@@ -180,31 +183,11 @@ public class DCheckUpdate extends JEscDialog {
 		}
 
 		public void run() {
-			HttpURLConnection urlConn = null;
-
 			try {
-				/*
-				 * Get the version number of the latest KeyStore Explorer from
-				 * the Internet - present in a serialised Version object on the
-				 * KeyStore Explorer web site
-				 */
-				URL latestVersionUrl = new URL(res.getString("DCheckUpdate.LatestVersionAddress"));
-				urlConn = (HttpURLConnection) latestVersionUrl.openConnection();
+				// Get the version number of the latest KeyStore Explorer from its web site
+				URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
 
-				int responseCode = urlConn.getResponseCode();
-
-				if (responseCode != HttpURLConnection.HTTP_OK) {
-					String errorMessage = MessageFormat.format(res.getString("DCheckUpdate.Non200Response.message"),
-							responseCode, latestVersionUrl);
-					displayErrorCloseDialog(errorMessage);
-					return;
-				}
-
-				// trick from https://weblogs.java.net/blog/pat/archive/2004/10/stupid_scanner_1.html
-				Scanner s = new Scanner(urlConn.getInputStream());
-				s.useDelimiter("\\A");
-			    String versionString = s.hasNext() ? s.next() : "";
-			    s.close();
+			    String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
 				latestVersion = new Version(versionString);
 
 				SwingUtilities.invokeLater(new Runnable() {
@@ -232,10 +215,6 @@ public class DCheckUpdate extends JEscDialog {
 						}
 					}
 				});
-			} finally {
-				if (urlConn != null) {
-					urlConn.disconnect();
-				}
 			}
 		}
 	}

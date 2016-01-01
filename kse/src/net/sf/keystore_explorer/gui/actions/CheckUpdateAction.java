@@ -32,6 +32,7 @@ import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.DCheckUpdate;
 import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.net.URLs;
 import net.sf.keystore_explorer.version.Version;
 import net.sf.keystore_explorer.version.VersionException;
 
@@ -73,6 +74,10 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 			return;
 		}
 
+		compareVersions(latestVersion);
+	}
+
+	public void compareVersions(Version latestVersion) {
 		try {
 			Version currentVersion = KSE.getApplicationVersion();
 
@@ -81,7 +86,6 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 						res.getString("CheckUpdateAction.HaveLatestVersion.message"), currentVersion), KSE
 						.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				String downloadsAddress = res.getString("CheckUpdateAction.DownloadsWebAddress");
 
 				int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
 						res.getString("CheckUpdateAction.NewerVersionAvailable.message"), latestVersion), KSE
@@ -89,11 +93,11 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 
 				if (selected == JOptionPane.YES_OPTION) {
 					try {
-						Desktop.getDesktop().browse(URI.create(downloadsAddress));
+						Desktop.getDesktop().browse(URI.create(URLs.DOWNLOADS_WEB_ADDRESS));
 					} catch (IOException ex) {
 						JOptionPane.showMessageDialog(frame, MessageFormat.format(
-								res.getString("CheckUpdateAction.NoLaunchBrowser.message"), downloadsAddress), KSE
-								.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+								res.getString("CheckUpdateAction.NoLaunchBrowser.message"),
+								URLs.DOWNLOADS_WEB_ADDRESS), KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
 			}

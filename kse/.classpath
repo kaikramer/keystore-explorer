@@ -18,5 +18,6 @@
 			<accessrule kind="accessible" pattern="**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

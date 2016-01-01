@@ -5,10 +5,9 @@
 
 SCRIPT_DIR="`dirname \"$0\"`"
 JAR_FILE="${SCRIPT_DIR}/kse.jar"
-cd "$SCRIPT_DIR"
 
-if [ -d "jre" ]; then
-    ./jre/bin/java -jar "${JAR_FILE}" "$@"
+if [ -d "${SCRIPT_DIR}/jre" ]; then
+    "${SCRIPT_DIR}/jre/bin/java" -jar "${JAR_FILE}" "$@"
 else
     java -jar "${JAR_FILE}" "$@"
 fi

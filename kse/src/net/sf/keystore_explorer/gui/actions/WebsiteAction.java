@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.gui.KseFrame;
+import net.sf.keystore_explorer.utilities.net.URLs;
 
 /**
  * Action to visit the KeyStore Explorer web site.
@@ -60,14 +61,14 @@ public class WebsiteAction extends KeyStoreExplorerAction {
                     res.getString("WebsiteAction.GitHubProject.text"),
                     res.getString("WebsiteAction.GitHubProject.tooltip"),
                     res.getString("WebsiteAction.image"),
-                    res.getString("WebsiteAction.GitHubProject.KseWebAddress"));
+                    URLs.GITHUB_PROJECT);
             break;
         case ISSUE_TRACKER:
             setData(res.getString("WebsiteAction.GitHubIssueTracker.statusbar"),
                     res.getString("WebsiteAction.GitHubIssueTracker.text"),
                     res.getString("WebsiteAction.GitHubIssueTracker.tooltip"),
                     res.getString("WebsiteAction.image"),
-                    res.getString("WebsiteAction.GitHubIssueTracker.KseWebAddress"));
+                    URLs.GITHUB_ISSUE_TRACKER);
             break;
         default:
         case MAIN:
@@ -75,7 +76,7 @@ public class WebsiteAction extends KeyStoreExplorerAction {
                     res.getString("WebsiteAction.text"),
                     res.getString("WebsiteAction.tooltip"),
                     res.getString("WebsiteAction.image"),
-                    res.getString("WebsiteAction.KseWebAddress"));
+                    URLs.KSE_WEB_SITE);
             break;
         }
 	}

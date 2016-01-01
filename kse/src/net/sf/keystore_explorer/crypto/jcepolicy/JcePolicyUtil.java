@@ -39,6 +39,7 @@ import javax.crypto.Cipher;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.utilities.io.CopyUtil;
 import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
+import net.sf.keystore_explorer.utilities.net.URLs;
 import net.sf.keystore_explorer.version.JavaVersion;
 
 /**
@@ -187,14 +188,6 @@ public class JcePolicyUtil {
 	public static String getJcePolicyDownloadUrl() {
 		JavaVersion jreVersion = JavaVersion.getJreVersion();
 
-		int major = jreVersion.getMajor();
-		int middle = jreVersion.getMiddle();
-		int minor = jreVersion.getMinor();
-
-		String version = MessageFormat.format("{0}.{1}.{2}", major, middle, minor);
-
-		String url = MessageFormat.format(res.getString("JcePolicyDownload.url"), version);
-
-		return url;
+		return MessageFormat.format(URLs.JCE_POLICY_DOWNLOAD_URL, jreVersion.getMiddle());
 	}
 }
