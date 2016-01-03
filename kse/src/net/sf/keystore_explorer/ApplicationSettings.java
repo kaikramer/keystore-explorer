@@ -388,6 +388,11 @@ public class ApplicationSettings {
         // SSL host names and ports for "Examine SSL"
         preferences.put(KSE3_SSLHOSTS, getSslHosts());
         preferences.put(KSE3_SSLPORTS, getSslPorts());
+
+		// auto update check settings
+		preferences.putBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, isAutoUpdateCheckEnabled());
+		preferences.putInt(KSE3_AUTO_UPDATE_CHECK_INTERVAL, getAutoUpdateCheckInterval());
+		preferences.put(KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, DATE_FORMAT.format(getAutoUpdateCheckLastCheck()));
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
