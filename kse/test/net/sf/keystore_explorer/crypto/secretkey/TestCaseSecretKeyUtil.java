@@ -19,18 +19,15 @@
  */
 package net.sf.keystore_explorer.crypto.secretkey;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import javax.crypto.SecretKey;
-
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-import net.sf.keystore_explorer.crypto.secretkey.SecretKeyType;
-import net.sf.keystore_explorer.crypto.secretkey.SecretKeyUtil;
-
 import org.junit.Test;
+
+import javax.crypto.SecretKey;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestCaseSecretKeyUtil extends TestCaseCrypto {
 	@Test
@@ -39,7 +36,7 @@ public class TestCaseSecretKeyUtil extends TestCaseCrypto {
 			testSecretKeyType(secretKeyType);
 		}
 	}
-
+	@Test
 	private void testSecretKeyType(SecretKeyType secretKeyType) throws CryptoException {
 		for (int keySize = secretKeyType.minSize(); keySize <= secretKeyType.maxSize(); keySize += secretKeyType
 				.stepSize()) {
