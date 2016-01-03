@@ -57,6 +57,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
@@ -75,8 +77,6 @@ import net.sf.keystore_explorer.gui.dialogs.DViewPrivateKey;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Dialog that allows the user to pick a PKCS #8 Private Key file and a

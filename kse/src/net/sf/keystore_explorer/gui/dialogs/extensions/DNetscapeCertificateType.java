@@ -43,13 +43,13 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.error.DError;
-
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.misc.NetscapeCertType;
+
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit a Netscape Certificate Type extension.

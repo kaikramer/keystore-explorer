@@ -26,10 +26,10 @@ import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.bouncycastle.asn1.x509.AccessDescription;
+
 import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
-
-import org.bouncycastle.asn1.x509.AccessDescription;
 
 /**
  * The table model used to display access descriptions.

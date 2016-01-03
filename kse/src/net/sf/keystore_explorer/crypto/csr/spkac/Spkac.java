@@ -19,6 +19,15 @@
  */
 package net.sf.keystore_explorer.crypto.csr.spkac;
 
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.CN_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.C_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.L_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.OU_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.O_PROPERTY;
+import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.ST_PROPERTY;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,11 +50,7 @@ import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.signing.SignatureType;
-import net.sf.keystore_explorer.utilities.io.HexUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -58,14 +63,9 @@ import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.util.encoders.Base64;
 
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.CN_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.C_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.L_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.OU_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.O_PROPERTY;
-import static net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject.ST_PROPERTY;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.signing.SignatureType;
+import net.sf.keystore_explorer.utilities.io.HexUtil;
 
 /**
  * Signed Public Key and Challenge (SPKAC). Netscape's CSR format. SPKACs can be
@@ -199,7 +199,7 @@ public class Spkac {
 
 			return properties;
 		} finally {
-			SafeCloseUtil.close(is);
+			IOUtils.closeQuietly(is);
 		}
 	}
 
@@ -369,7 +369,7 @@ public class Spkac {
 		} catch (IOException ex) {
 			throw new SpkacException(res.getString("NoOutputSpkac.exception.message"), ex);
 		} finally {
-			SafeCloseUtil.close(osw);
+			IOUtils.closeQuietly(osw);
 		}
 	}
 

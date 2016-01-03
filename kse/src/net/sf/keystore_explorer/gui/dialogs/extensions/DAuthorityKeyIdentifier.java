@@ -47,16 +47,16 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.crypto.JKeyIdentifier;
-import net.sf.keystore_explorer.gui.crypto.generalname.JGeneralNames;
-import net.sf.keystore_explorer.gui.error.DError;
-
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
+
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.crypto.JKeyIdentifier;
+import net.sf.keystore_explorer.gui.crypto.generalname.JGeneralNames;
+import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Authority Key Identifier extension.

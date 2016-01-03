@@ -52,15 +52,15 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.sf.keystore_explorer.gui.JEscDialog;
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.error.DError;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 import org.bouncycastle.asn1.x509.UserNotice;
+
+import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog to choose an policy qualifier info.

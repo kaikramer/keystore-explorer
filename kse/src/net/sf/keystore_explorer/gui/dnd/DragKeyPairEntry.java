@@ -30,6 +30,8 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.io.IOUtils;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
@@ -37,7 +39,6 @@ import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
 import net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType;
 import net.sf.keystore_explorer.crypto.privatekey.Pkcs8Util;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Encapsulates a draggable key pair entry. Product of drag is:
@@ -46,7 +47,7 @@ import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
  * <li>A concatenation of encrypted PEM'd PKCS #8 (private key) and PKCS #7
  * (certificate chain) if drag is to a string.</li>
  * </ol>
- * 
+ *
  */
 public class DragKeyPairEntry extends DragEntry {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dnd/resources");
@@ -59,7 +60,7 @@ public class DragKeyPairEntry extends DragEntry {
 
 	/**
 	 * Construct DragKeyPairEntry.
-	 * 
+	 *
 	 * @param name
 	 *            Entry name
 	 * @param privateKey
@@ -86,7 +87,7 @@ public class DragKeyPairEntry extends DragEntry {
 				p12.store(baos, password.toCharArray());
 				contentBytes = baos.toByteArray();
 			} finally {
-				SafeCloseUtil.close(baos);
+				IOUtils.closeQuietly(baos);
 			}
 
 			/*
@@ -121,36 +122,40 @@ public class DragKeyPairEntry extends DragEntry {
 
 	/**
 	 * Get entry image - to display while dragging.
-	 * 
+	 *
 	 * @return Entry image
 	 */
+	@Override
 	public ImageIcon getImage() {
 		return image;
 	}
 
 	/**
 	 * Get entry file extension. Used to generate file name.
-	 * 
+	 *
 	 * @return File extension
 	 */
+	@Override
 	public String getExtension() {
 		return EXTENSION;
 	}
 
 	/**
 	 * Get entry content as binary. Used to generate dragged file name.
-	 * 
+	 *
 	 * @return Content
 	 */
+	@Override
 	public byte[] getContent() {
 		return contentBytes;
 	}
 
 	/**
 	 * Get entry content as a string.
-	 * 
+	 *
 	 * @return Content
 	 */
+	@Override
 	public String getContentString() {
 		return contentStr;
 	}

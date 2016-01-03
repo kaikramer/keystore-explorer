@@ -50,14 +50,14 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.bouncycastle.asn1.x509.CertPolicyId;
+import org.bouncycastle.asn1.x509.PolicyMappings;
+
 import net.sf.keystore_explorer.crypto.x509.PolicyMapping;
 import net.sf.keystore_explorer.crypto.x509.PolicyMappingsUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
-
-import org.bouncycastle.asn1.x509.CertPolicyId;
-import org.bouncycastle.asn1.x509.PolicyMappings;
 
 /**
  * Component to edit a set of policy mappings.

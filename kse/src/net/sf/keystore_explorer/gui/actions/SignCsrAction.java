@@ -37,6 +37,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
@@ -59,11 +64,6 @@ import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 
 /**
  * Action to sign a CSR using the selected key pair entry.
@@ -231,7 +231,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			DError.displayError(frame, ex);
 			return;
 		} finally {
-			SafeCloseUtil.close(fos);
+			IOUtils.closeQuietly(fos);
 		}
 
 		JOptionPane.showMessageDialog(frame, res.getString("SignCsrAction.SignCsrSuccessful.message"),

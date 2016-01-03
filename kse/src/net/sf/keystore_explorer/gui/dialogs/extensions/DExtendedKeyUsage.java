@@ -34,7 +34,6 @@ import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.SERVER_A
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.SMARTCARD_LOGON;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.TIME_STAMPING;
 
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,14 +58,14 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType;
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.error.DError;
-
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
+
+import net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType;
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Extended Key Usage extension.

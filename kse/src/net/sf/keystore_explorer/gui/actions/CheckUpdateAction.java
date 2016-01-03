@@ -19,15 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import java.awt.Desktop;
-import java.awt.Toolkit;
-import java.io.IOException;
-import java.net.URI;
-import java.text.MessageFormat;
-
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.DCheckUpdate;
@@ -35,6 +26,16 @@ import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.net.URLs;
 import net.sf.keystore_explorer.version.Version;
 import net.sf.keystore_explorer.version.VersionException;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.net.URI;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Action to check for updates to KeyStore Explorer.
@@ -74,17 +75,33 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 			return;
 		}
 
-		compareVersions(latestVersion);
+		compareVersions(latestVersion, false);
 	}
 
-	public void compareVersions(Version latestVersion) {
+	public void compareVersions(Version latestVersion, boolean autoUpdateCheck) {
+
+		// abort auto update check if not time yet
+		if (autoUpdateCheck) {
+			if (!applicationSettings.isAutoUpdateCheckEnabled()) {
+				return;
+			}
+			Date lastCheck = applicationSettings.getAutoUpdateCheckLastCheck();
+			Date now = new Date();
+			int checkInterval = applicationSettings.getAutoUpdateCheckInterval();
+			if (TimeUnit.MILLISECONDS.toDays(now.getTime() - lastCheck.getTime()) < checkInterval) {
+				return;
+			}
+		}
+
 		try {
 			Version currentVersion = KSE.getApplicationVersion();
 
 			if (currentVersion.compareTo(latestVersion) >= 0) {
-				JOptionPane.showMessageDialog(frame, MessageFormat.format(
-						res.getString("CheckUpdateAction.HaveLatestVersion.message"), currentVersion), KSE
-						.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+				if (!autoUpdateCheck) {
+					JOptionPane.showMessageDialog(frame, MessageFormat.format(
+							res.getString("CheckUpdateAction.HaveLatestVersion.message"), currentVersion), KSE
+							                              .getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+				}
 			} else {
 
 				int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(

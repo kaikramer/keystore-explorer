@@ -19,20 +19,26 @@
  */
 package net.sf.keystore_explorer.gui.dialogs.extensions;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
-import net.sf.keystore_explorer.crypto.x509.X509Ext;
-import net.sf.keystore_explorer.gui.CursorUtil;
-import net.sf.keystore_explorer.gui.JEscDialog;
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
-import net.sf.keystore_explorer.gui.dialogs.DViewCertificate;
-import net.sf.keystore_explorer.gui.dialogs.DViewCrl;
-import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import java.awt.BorderLayout;
+import java.awt.Desktop;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
+import java.security.cert.X509Extension;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -55,26 +61,22 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.BorderLayout;
-import java.awt.Desktop;
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
-import java.security.cert.X509Extension;
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
+
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
+import net.sf.keystore_explorer.crypto.x509.X509Ext;
+import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
+import net.sf.keystore_explorer.gui.dialogs.DViewCertificate;
+import net.sf.keystore_explorer.gui.dialogs.DViewCrl;
+import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
+import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
 
 /**
  * Displays the details of X.509 Extensions.
@@ -162,6 +164,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		ListSelectionModel selectionModel = jtExtensions.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		selectionModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent evt) {
 				if (!evt.getValueIsAdjusting()) {
 					try {
@@ -216,6 +219,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewExtensions.jbAsn1.mnemonic").charAt(0));
 		jbAsn1.setToolTipText(res.getString("DViewExtensions.jbAsn1.tooltip"));
 		jbAsn1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewExtensions.this);
@@ -240,6 +244,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 		jbOK = new JButton(res.getString("DViewExtensions.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -259,6 +264,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -269,6 +275,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}
@@ -349,7 +356,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 				if (url != null) {
 					if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
 						X509Certificate[] certs = downloadCert(url);
-						if ((certs != null) && (certs.length > 0)) {
+						if (certs != null && certs.length > 0) {
 							DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
 									res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs, null,
 							                                                         DViewCertificate.NONE);
@@ -387,7 +394,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 			return crl;
 		} finally {
-			SafeCloseUtil.close(is);
+			IOUtils.closeQuietly(is);
 		}
 	}
 
@@ -402,7 +409,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 			return certs;
 		} finally {
-			SafeCloseUtil.close(is);
+			IOUtils.closeQuietly(is);
 		}
 	}
 }

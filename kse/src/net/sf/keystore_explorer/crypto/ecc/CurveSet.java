@@ -25,12 +25,12 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
-
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
+
+import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 
 /**
  * Enumeration for all currently available ECC named curve sets.

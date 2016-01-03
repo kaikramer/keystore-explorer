@@ -32,13 +32,14 @@ import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.IOUtils;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.importexport.DExportCertificates;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Action to export the selected key pair entry's certificate chain.
@@ -167,7 +168,7 @@ public class ExportKeyPairCertificateChainAction extends KeyStoreExplorerAction 
 			fos = new FileOutputStream(exportFile);
 			fos.write(encoded);
 		} finally {
-			SafeCloseUtil.close(fos);
+			IOUtils.closeQuietly(fos);
 		}
 	}
 }

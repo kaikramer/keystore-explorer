@@ -46,17 +46,17 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.sf.keystore_explorer.gui.JEscDialog;
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.gui.oid.JObjectId;
-
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
+
+import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.gui.oid.JObjectId;
 
 /**
  * Dialog to choose policy information.

@@ -33,6 +33,8 @@ import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.IOUtils;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.csr.CsrType;
@@ -49,7 +51,6 @@ import net.sf.keystore_explorer.gui.dialogs.DGenerateCsr;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Action to generate a CSR using the selected key pair entry.
@@ -163,7 +164,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 			DError.displayError(frame, ex);
 			return;
 		} finally {
-			SafeCloseUtil.close(fos);
+			IOUtils.closeQuietly(fos);
 		}
 
 		JOptionPane.showMessageDialog(frame, res.getString("GenerateCsrAction.CsrGenerationSuccessful.message"),

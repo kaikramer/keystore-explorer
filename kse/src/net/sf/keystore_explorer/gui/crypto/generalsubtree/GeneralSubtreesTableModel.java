@@ -27,10 +27,10 @@ import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.bouncycastle.asn1.x509.GeneralSubtree;
+
 import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
 import net.sf.keystore_explorer.crypto.x509.GeneralSubtrees;
-
-import org.bouncycastle.asn1.x509.GeneralSubtree;
 
 /**
  * The table model used to display general subtrees.

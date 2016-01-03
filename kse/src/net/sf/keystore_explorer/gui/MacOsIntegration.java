@@ -19,17 +19,17 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import net.sf.keystore_explorer.gui.actions.AboutAction;
-import net.sf.keystore_explorer.gui.actions.ExitAction;
-import net.sf.keystore_explorer.gui.actions.OpenAction;
-import net.sf.keystore_explorer.gui.actions.PreferencesAction;
-
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
+
+import net.sf.keystore_explorer.gui.actions.AboutAction;
+import net.sf.keystore_explorer.gui.actions.ExitAction;
+import net.sf.keystore_explorer.gui.actions.OpenAction;
+import net.sf.keystore_explorer.gui.actions.PreferencesAction;
 
 /**
  * Integrate KSE with Mac OS. Handles call backs from Mac OS.

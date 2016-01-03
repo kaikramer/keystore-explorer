@@ -25,10 +25,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 import net.sf.keystore_explorer.utilities.io.ReadUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Provides utility methods relating to PEM.
@@ -204,7 +204,7 @@ public class PemUtil {
 				}
 			}
 		} finally {
-			SafeCloseUtil.close(lnr);
+			IOUtils.closeQuietly(lnr);
 		}
 
 		return null; // Not PEM

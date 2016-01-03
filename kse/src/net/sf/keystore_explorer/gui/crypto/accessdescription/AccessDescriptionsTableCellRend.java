@@ -19,16 +19,14 @@
  */
 package net.sf.keystore_explorer.gui.crypto.accessdescription;
 
-import java.awt.Component;
+import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
+import org.bouncycastle.asn1.x509.AccessDescription;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
-
-import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
-
-import org.bouncycastle.asn1.x509.AccessDescription;
+import java.awt.Component;
 
 /**
  * Custom cell renderer for the cells of the access descriptions table.

@@ -34,12 +34,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.oid.InvalidObjectIdException;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Component to edit an object identifier.

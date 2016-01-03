@@ -32,6 +32,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
@@ -47,9 +50,6 @@ import net.sf.keystore_explorer.gui.dialogs.DViewCsr;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
 
 /**
@@ -132,7 +132,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         } finally {
-            SafeCloseUtil.close(is);
+            IOUtils.closeQuietly(is);
         }
     }
 

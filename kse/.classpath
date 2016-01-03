@@ -13,11 +13,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/bcprov.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/darcula.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/appbundler-1.0ea.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<accessrules>
 			<accessrule kind="accessible" pattern="**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

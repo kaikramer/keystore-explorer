@@ -21,7 +21,6 @@ package net.sf.keystore_explorer.gui.oid;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,12 +44,12 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.oid.InvalidObjectIdException;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Dialog to choose an object identifier.

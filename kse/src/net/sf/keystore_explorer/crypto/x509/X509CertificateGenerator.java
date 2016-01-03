@@ -30,10 +30,7 @@ import java.security.cert.X509Extension;
 import java.util.Date;
 import java.util.ResourceBundle;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.signing.SignatureType;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -46,6 +43,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.signing.SignatureType;
 
 /**
  * X.509 certificate generator.
@@ -253,7 +253,7 @@ public class X509CertificateGenerator {
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
 		} finally {
-			SafeCloseUtil.close(ais);
+			IOUtils.closeQuietly(ais);
 		}
 	}
 }

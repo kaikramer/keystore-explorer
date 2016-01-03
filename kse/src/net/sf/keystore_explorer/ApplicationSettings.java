@@ -19,28 +19,32 @@
  */
 package net.sf.keystore_explorer;
 
-import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA1;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-import static net.sf.keystore_explorer.crypto.secretkey.SecretKeyType.AES;
-
-import java.awt.Rectangle;
-import java.io.File;
-import java.net.ProxySelector;
-import java.util.ArrayList;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-
-import javax.swing.JTabbedPane;
-
 import net.sf.keystore_explorer.crypto.digest.DigestType;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.secretkey.SecretKeyType;
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
+import net.sf.keystore_explorer.utilities.StringUtils;
 import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
 import net.sf.keystore_explorer.utilities.net.NoProxySelector;
 import net.sf.keystore_explorer.utilities.net.PacProxySelector;
 import net.sf.keystore_explorer.utilities.net.ProxyAddress;
+
+import javax.swing.JTabbedPane;
+import java.awt.Rectangle;
+import java.io.File;
+import java.net.ProxySelector;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA1;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+import static net.sf.keystore_explorer.crypto.secretkey.SecretKeyType.AES;
 
 /**
  * KSE Application settings. Load, save and provide access to the various
@@ -86,7 +90,12 @@ public class ApplicationSettings {
 	private static final String KSE3_USEWINTRUSTROOTCERTS = "kse3.usewintrustrootcerts";
 	private static final String KSE3_CACERTSFILE = "kse3.cacertsfile";
 	private static final String KSE3_USECACERTS = "kse3.usecacerts";
+	private static final String KSE3_AUTO_UPDATE_CHECK_ENABLED = "kse3.autoupdatecheckenabled";
+	private static final String KSE3_AUTO_UPDATE_CHECK_LAST_CHECK = "kse3.autoupdatechecklastcheck";
+	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
+	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL_UNIT = "kse3.autoupdatecheckintervalunit";
 
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private static ApplicationSettings applicationSettings;
 	private boolean useCaCertificates;
@@ -114,6 +123,9 @@ public class ApplicationSettings {
 	private String defaultDN;
 	private String sslHosts;
 	private String sslPorts;
+	private boolean autoUpdateCheckEnabled;
+	private Date autoUpdateCheckLastCheck;
+	private int autoUpdateCheckInterval;
 
 	private ApplicationSettings() {
 
@@ -287,8 +299,21 @@ public class ApplicationSettings {
         defaultDN = preferences.get(KSE3_DEFAULTDN, "");
 
         // SSL host names and ports for "Examine SSL"
-        setSslHosts(preferences.get(KSE3_SSLHOSTS, "www.google.com;www.amazon.com"));
-        setSslPorts(preferences.get(KSE3_SSLPORTS, "443"));
+        sslHosts = preferences.get(KSE3_SSLHOSTS, "www.google.com;www.amazon.com");
+        sslPorts = preferences.get(KSE3_SSLPORTS, "443");
+
+		// auto update check
+		autoUpdateCheckEnabled = preferences.getBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, true);
+		autoUpdateCheckInterval = preferences.getInt(KSE3_AUTO_UPDATE_CHECK_INTERVAL, 14);
+		autoUpdateCheckLastCheck = getDate(preferences, KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, new Date());
+	}
+
+	private Date getDate(Preferences preferences, String name,  Date def) {
+		try {
+			return DATE_FORMAT.parse(preferences.get(name, DATE_FORMAT.format(def)));
+		} catch (ParseException e) {
+			return def;
+		}
 	}
 
 	/**
@@ -440,59 +465,31 @@ public class ApplicationSettings {
 	/**
 	 * Add a new SSL port to start of current list of ports. 
 	 * 
-	 * Maximum number is 10. If port is already in list, nothing is done.
+	 * Maximum number is 10. If port is already in list, it is brought to the first position.
 	 * 
 	 * @param newSslPort New SSL port
 	 */
     public void addSslPort(String newSslPort) {
 
-    	String newSslPorts = addToList(newSslPort, getSslPorts());
+    	String newSslPorts = StringUtils.addToList(newSslPort, getSslPorts(), 10);
         
 		setSslPorts(newSslPorts);
     }
     
 
 	/**
-	 * Add a new SSL host to start of current list of hosts. 
+	 * Add a new SSL host to start of current list of hosts.
 	 * 
-	 * Maximum number is 10. If host is already in list, nothing is done.
+	 * Maximum number is 10. If host is already in list, it is brought to the first position.
 	 * 
 	 * @param newSslHost New SSL host
      */
     public void addSslHost(String newSslHost) {
       
-    	String newSslHosts = addToList(newSslHost, getSslHosts());
+    	String newSslHosts = StringUtils.addToList(newSslHost, getSslHosts(), 10);
         
     	setSslHosts(newSslHosts);
     }
-
-	private String addToList(String newItem, String semicolonSepList) {
-		
-		// add new item at first position of the list
-        StringBuilder sb = new StringBuilder(newItem);
-        String[] ports = semicolonSepList.split(";");
-        for (int i = 0; i < ports.length; i++) {
-
-            // save maximum of X items
-			if (i >= 10) {
-                break;
-            }
-
-            String port = ports[i];
-
-            // if saved list already contains new item, do nothing
-            if (port.equals(newItem)) {
-                return semicolonSepList;
-            }
-
-            sb.append(";");
-            sb.append(port);
-        }
-
-        String newList = sb.toString();
-		return newList;
-	}
-
 
 	public boolean getUseCaCertificates() {
 		return useCaCertificates;
@@ -646,14 +643,6 @@ public class ApplicationSettings {
 		this.lookAndFeelDecorated = lookAndFeelDecorated;
 	}
 
-	public boolean getLicenseAgreed() {
-		return licenseAgreed;
-	}
-
-	public void setLicenseAgreed(boolean licenseAgreed) {
-		this.licenseAgreed = licenseAgreed;
-	}
-
 	public boolean getShowTipsOnStartUp() {
 		return showTipsOnStartUp;
 	}
@@ -678,19 +667,43 @@ public class ApplicationSettings {
 		this.defaultDN = defaultDN;
 	}
 
-    public String getSslHosts() {
-        return sslHosts;
-    }
+	public String getSslHosts() {
+		return sslHosts;
+	}
 
-    public void setSslHosts(String sslHosts) {
-        this.sslHosts = sslHosts;
-    }
+	public void setSslHosts(String sslHosts) {
+		this.sslHosts = sslHosts;
+	}
 
-    public String getSslPorts() {
-        return sslPorts;
-    }
+	public String getSslPorts() {
+		return sslPorts;
+	}
 
-    public void setSslPorts(String sslPorts) {
-        this.sslPorts = sslPorts;
-    }
+	public void setSslPorts(String sslPorts) {
+		this.sslPorts = sslPorts;
+	}
+
+	public boolean isAutoUpdateCheckEnabled() {
+		return autoUpdateCheckEnabled;
+	}
+
+	public void setAutoUpdateCheckEnabled(boolean autoUpdateCheckEnabled) {
+		this.autoUpdateCheckEnabled = autoUpdateCheckEnabled;
+	}
+
+	public Date getAutoUpdateCheckLastCheck() {
+		return autoUpdateCheckLastCheck;
+	}
+
+	public void setAutoUpdateCheckLastCheck(Date autoUpdateCheckLastCheck) {
+		this.autoUpdateCheckLastCheck = autoUpdateCheckLastCheck;
+	}
+
+	public int getAutoUpdateCheckInterval() {
+		return autoUpdateCheckInterval;
+	}
+
+	public void setAutoUpdateCheckInterval(int autoUpdateCheckInterval) {
+		this.autoUpdateCheckInterval = autoUpdateCheckInterval;
+	}
 }

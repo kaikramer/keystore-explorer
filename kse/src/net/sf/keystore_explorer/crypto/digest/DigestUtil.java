@@ -27,8 +27,9 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import org.apache.commons.io.IOUtils;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Provides utility methods for the creation of message digests.
@@ -68,7 +69,7 @@ public final class DigestUtil {
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoCreateDigest.exception.message"), ex);
 		} finally {
-			SafeCloseUtil.close(istream);
+			IOUtils.closeQuietly(istream);
 		}
 	}
 

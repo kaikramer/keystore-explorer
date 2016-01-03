@@ -86,13 +86,14 @@
 	    <fileset dir="${libDir}" id="libs">
 			<include name="bcpkix.jar"/>
 			<include name="bcprov.jar"/>
+			<include name="commons-io.jar"/>
+            <include name="darcula.jar"/>
 			<include name="jgoodies-common.jar"/>
 			<include name="jgoodies-looks.jar"/>
 			<include name="jhall.jar"/>
 			<include name="jna.jar"/>
 			<include name="miglayout-core.jar"/>
 			<include name="miglayout-swing.jar"/>
-			<include name="darcula.jar"/>
 	    </fileset>
 	</path>
 

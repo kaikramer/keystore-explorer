@@ -21,7 +21,6 @@ package net.sf.keystore_explorer.gui.crypto;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

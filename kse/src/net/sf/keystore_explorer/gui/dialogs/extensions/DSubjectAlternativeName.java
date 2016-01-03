@@ -44,12 +44,12 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.x509.GeneralNames;
+
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.generalname.JGeneralNames;
 import net.sf.keystore_explorer.gui.error.DError;
-
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.x509.GeneralNames;
 
 /**
  * Dialog used to add or edit an Subject Alternative Name extension.

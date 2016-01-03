@@ -19,6 +19,30 @@
  */
 package net.sf.keystore_explorer.crypto.filetype;
 
+import net.sf.keystore_explorer.crypto.csr.CsrType;
+import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
+import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
+import net.sf.keystore_explorer.crypto.csr.spkac.SpkacException;
+import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
+import net.sf.keystore_explorer.crypto.privatekey.EncryptionType;
+import net.sf.keystore_explorer.crypto.privatekey.MsPvkUtil;
+import net.sf.keystore_explorer.crypto.privatekey.OpenSslPvkUtil;
+import net.sf.keystore_explorer.crypto.privatekey.Pkcs8Util;
+import net.sf.keystore_explorer.crypto.publickey.OpenSslPubUtil;
+import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
+import net.sf.keystore_explorer.utilities.io.ReadUtil;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import static net.sf.keystore_explorer.crypto.csr.CsrType.PKCS10;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.CERT;
 import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.CRL;
@@ -38,31 +62,6 @@ import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.ENCRYPTED;
 import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.UNENCRYPTED;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import net.sf.keystore_explorer.crypto.csr.CsrType;
-import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
-import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
-import net.sf.keystore_explorer.crypto.csr.spkac.SpkacException;
-import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
-import net.sf.keystore_explorer.crypto.privatekey.EncryptionType;
-import net.sf.keystore_explorer.crypto.privatekey.MsPvkUtil;
-import net.sf.keystore_explorer.crypto.privatekey.OpenSslPvkUtil;
-import net.sf.keystore_explorer.crypto.privatekey.Pkcs8Util;
-import net.sf.keystore_explorer.crypto.publickey.OpenSslPubUtil;
-import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
-import net.sf.keystore_explorer.utilities.io.ReadUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
@@ -249,7 +248,7 @@ public class CryptoFileUtil {
 				}
 			}
 		} finally {
-			SafeCloseUtil.close(dis);
+			IOUtils.closeQuietly(dis);
 		}
 
 		// @formatter:off

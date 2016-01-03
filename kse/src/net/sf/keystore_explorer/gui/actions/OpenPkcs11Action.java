@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS11;
-
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.security.AuthProvider;
@@ -29,6 +27,8 @@ import java.security.Provider;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
+
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS11;
 
 import net.sf.keystore_explorer.gui.KseFrame;
 import net.sf.keystore_explorer.gui.dialogs.DOpenPkcs11KeyStore;

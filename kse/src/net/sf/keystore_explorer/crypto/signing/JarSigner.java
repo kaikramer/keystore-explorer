@@ -48,6 +48,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DERSet;
@@ -70,7 +71,6 @@ import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.digest.DigestType;
 import net.sf.keystore_explorer.crypto.digest.DigestUtil;
 import net.sf.keystore_explorer.utilities.io.CopyUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -302,8 +302,8 @@ public class JarSigner {
 			byte[] sigBlock = createSignatureBlock(sf, privateKey, certificateChain, signatureType, tsaUrl, provider);
 			writeSignatureBlock(sigBlock, signatureType, signatureName, jos);
 		} finally {
-			SafeCloseUtil.close(jar);
-			SafeCloseUtil.close(jos);
+			IOUtils.closeQuietly(jar);
+			IOUtils.closeQuietly(jos);
 		}
 	}
 
@@ -369,7 +369,7 @@ public class JarSigner {
 
 			return false;
 		} finally {
-			SafeCloseUtil.close(jar);
+			IOUtils.closeQuietly(jar);
 		}
 	}
 
@@ -485,7 +485,7 @@ public class JarSigner {
 
 			return sbManifestEntry.toString();
 		} finally {
-			SafeCloseUtil.close(jis);
+			IOUtils.closeQuietly(jis);
 		}
 	}
 
@@ -510,8 +510,8 @@ public class JarSigner {
 
 			return manifest;
 		} finally {
-			SafeCloseUtil.close(jis);
-			SafeCloseUtil.close(baos);
+			IOUtils.closeQuietly(jis);
+			IOUtils.closeQuietly(baos);
 		}
 	}
 
@@ -544,7 +544,7 @@ public class JarSigner {
 
 			return sb.toString();
 		} finally {
-			SafeCloseUtil.close(lnr);
+			IOUtils.closeQuietly(lnr);
 		}
 	}
 
@@ -595,7 +595,7 @@ public class JarSigner {
 
 			return sb.toString();
 		} finally {
-			SafeCloseUtil.close(lnr);
+			IOUtils.closeQuietly(lnr);
 		}
 	}
 
@@ -643,7 +643,7 @@ public class JarSigner {
 
 						jos.closeEntry();
 					} finally {
-						SafeCloseUtil.close(jis);
+						IOUtils.closeQuietly(jis);
 					}
 				}
 			}
@@ -674,7 +674,7 @@ public class JarSigner {
 
 			jos.closeEntry();
 		} finally {
-			SafeCloseUtil.close(bais);
+			IOUtils.closeQuietly(bais);
 		}
 	}
 
@@ -703,7 +703,7 @@ public class JarSigner {
 
 			jos.closeEntry();
 		} finally {
-			SafeCloseUtil.close(bais);
+			IOUtils.closeQuietly(bais);
 		}
 	}
 

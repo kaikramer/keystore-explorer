@@ -27,9 +27,9 @@ import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
 
-import net.sf.keystore_explorer.crypto.x509.PolicyInformationUtil;
-
 import org.bouncycastle.asn1.x509.PolicyInformation;
+
+import net.sf.keystore_explorer.crypto.x509.PolicyInformationUtil;
 
 /**
  * The table model used to display policy information.

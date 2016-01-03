@@ -30,9 +30,9 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
-import net.sf.keystore_explorer.crypto.x509.X509Ext;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+
+import net.sf.keystore_explorer.crypto.x509.X509Ext;
 
 /**
  * The table model used to display X.509 extensions.

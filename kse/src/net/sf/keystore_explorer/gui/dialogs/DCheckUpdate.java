@@ -27,12 +27,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.text.MessageFormat;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -48,13 +44,14 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.io.IOUtils;
+
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 import net.sf.keystore_explorer.utilities.net.URLs;
 import net.sf.keystore_explorer.version.Version;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Check for an updated version of KeyStore Explorer. This check works over the

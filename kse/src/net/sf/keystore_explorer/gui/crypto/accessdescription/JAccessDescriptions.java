@@ -52,11 +52,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.bouncycastle.asn1.x509.AccessDescription;
+
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
-
-import org.bouncycastle.asn1.x509.AccessDescription;
 
 /**
  * Component to edit a set of access descriptions.

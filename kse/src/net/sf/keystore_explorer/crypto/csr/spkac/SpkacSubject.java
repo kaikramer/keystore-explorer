@@ -21,12 +21,12 @@ package net.sf.keystore_explorer.crypto.csr.spkac;
 
 import java.util.ArrayList;
 
-import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
+
+import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
 
 /**
  * SPKAC subject. Holder for all possible DN components that can be included in

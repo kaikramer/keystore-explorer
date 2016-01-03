@@ -60,6 +60,7 @@ import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -68,7 +69,6 @@ import org.bouncycastle.util.encoders.Base64;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.utilities.io.ReadUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 import net.sf.keystore_explorer.utilities.pem.PemInfo;
 import net.sf.keystore_explorer.utilities.pem.PemUtil;
 
@@ -138,7 +138,7 @@ public final class X509CertUtil {
 				throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
 			}
 		} finally {
-			SafeCloseUtil.close(is);
+			IOUtils.closeQuietly(is);
 		}
 	}
 
@@ -165,7 +165,7 @@ public final class X509CertUtil {
 		} catch (NoSuchProviderException e) {
 			throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), e);
 		} finally {
-			SafeCloseUtil.close(is);
+			IOUtils.closeQuietly(is);
 		}
 	}
 
@@ -279,6 +279,7 @@ public final class X509CertUtil {
 
 			// 2) Set a host name verifier that always verifies the host name
 			connection.setHostnameVerifier(new HostnameVerifier() {
+				@Override
 				public boolean verify(String hostname, SSLSession sslSession) {
 					return true;
 				}
@@ -323,7 +324,7 @@ public final class X509CertUtil {
 		} catch (CRLException ex) {
 			throw new CryptoException(res.getString("NoLoadCrl.exception.message"), ex);
 		} finally {
-			SafeCloseUtil.close(is);
+			IOUtils.closeQuietly(is);
 		}
 	}
 
@@ -431,8 +432,8 @@ public final class X509CertUtil {
 		for (int i = 0; i < certs.length; i++) {
 			X509Certificate cert = certs[i];
 
-			if ((issuerCert.getSubjectX500Principal().equals(cert.getSubjectX500Principal()))
-					&& (issuerCert.getIssuerX500Principal().equals(cert.getIssuerX500Principal()))) {
+			if (issuerCert.getSubjectX500Principal().equals(cert.getSubjectX500Principal())
+					&& issuerCert.getIssuerX500Principal().equals(cert.getIssuerX500Principal())) {
 				// Checked certificate is issuer - ignore it
 				continue;
 			}
@@ -756,7 +757,7 @@ public final class X509CertUtil {
 			return "";
 		}
 
-		if (((issuerCn == null)) || (subjectCn.equals(issuerCn))) {
+		if (issuerCn == null || subjectCn.equals(issuerCn)) {
 			return subjectCn;
 		}
 
@@ -831,7 +832,7 @@ public final class X509CertUtil {
 	 * @return True if it is
 	 */
 	public static boolean isCertificateSelfSigned(X509Certificate cert) {
-		return (cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal()));
+		return cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal());
 	}
 
 	public static class SSLConnectionInfos {

@@ -49,6 +49,9 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
@@ -58,9 +61,6 @@ import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
 /**
  * Displays an X.509 certificate's PEM'd DER encoding and provides the
@@ -305,7 +305,7 @@ public class DViewCertCsrPem extends JEscDialog {
 			DError.displayError(this, ex);
 			return;
 		} finally {
-			SafeCloseUtil.close(fw);
+			IOUtils.closeQuietly(fw);
 		}
 
 		JOptionPane.showMessageDialog(this, res.getString("DViewCertCsrPem.ExportPemCertificateSuccessful.message"),

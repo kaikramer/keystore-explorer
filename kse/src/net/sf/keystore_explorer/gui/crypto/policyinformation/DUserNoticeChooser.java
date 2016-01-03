@@ -21,7 +21,6 @@ package net.sf.keystore_explorer.gui.crypto.policyinformation;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -48,13 +47,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-import net.sf.keystore_explorer.gui.JEscDialog;
-import net.sf.keystore_explorer.gui.PlatformUtil;
-
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.x509.DisplayText;
 import org.bouncycastle.asn1.x509.NoticeReference;
 import org.bouncycastle.asn1.x509.UserNotice;
+
+import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Dialog to choose a user notice.

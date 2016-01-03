@@ -27,16 +27,16 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.digest.DigestType;
-import net.sf.keystore_explorer.crypto.digest.DigestUtil;
-
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.digest.DigestType;
+import net.sf.keystore_explorer.crypto.digest.DigestUtil;
 
 /**
  * Generator for public key identifiers of various forms.

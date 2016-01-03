@@ -27,9 +27,9 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.sf.keystore_explorer.crypto.x509.PolicyInformationUtil;
-
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
+
+import net.sf.keystore_explorer.crypto.x509.PolicyInformationUtil;
 
 /**
  * Custom cell renderer for the cells of the policy qualifier info table.

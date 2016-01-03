@@ -41,11 +41,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.error.DError;
-
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.DERIA5String;
+
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit a Netscape CA Policy URL extension.

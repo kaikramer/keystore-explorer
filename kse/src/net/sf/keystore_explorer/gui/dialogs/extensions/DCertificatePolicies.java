@@ -47,13 +47,13 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import net.sf.keystore_explorer.gui.PlatformUtil;
-import net.sf.keystore_explorer.gui.crypto.policyinformation.JPolicyInformation;
-import net.sf.keystore_explorer.gui.error.DError;
-
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.CertificatePolicies;
 import org.bouncycastle.asn1.x509.PolicyInformation;
+
+import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.crypto.policyinformation.JPolicyInformation;
+import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit a Certificate Policies extension.

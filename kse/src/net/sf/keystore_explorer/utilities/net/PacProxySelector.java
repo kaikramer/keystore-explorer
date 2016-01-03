@@ -41,8 +41,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.commons.io.IOUtils;
+
 import net.sf.keystore_explorer.utilities.io.CopyUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Proxy Selector for Proxy Automatic Configuration (PAC).
@@ -145,8 +146,8 @@ public class PacProxySelector extends ProxySelector {
 
 				return sw.toString();
 			} finally {
-				SafeCloseUtil.close(isr);
-				SafeCloseUtil.close(sw);
+				IOUtils.closeQuietly(isr);
+				IOUtils.closeQuietly(sw);
 			}
 		} catch (IOException ex) {
 			throw new PacProxyException(

@@ -54,6 +54,8 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.csr.CsrType;
@@ -65,8 +67,6 @@ import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.io.FileNameUtil;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Dialog used to choose parameters for CSR generation.

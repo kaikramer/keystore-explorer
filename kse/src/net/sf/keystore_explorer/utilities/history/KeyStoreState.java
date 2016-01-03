@@ -26,12 +26,12 @@ import java.security.interfaces.DSAPrivateKey;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.jce.provider.JDKDSAPrivateKey;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
-
-import org.bouncycastle.jce.provider.JDKDSAPrivateKey;
 
 /**
  * Records a single state for a KeyStore in the undo/redo history. This includes

@@ -42,11 +42,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.asn1.ASN1Encoding;
+
 import net.sf.keystore_explorer.crypto.x509.InhibitAnyPolicy;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
-
-import org.bouncycastle.asn1.ASN1Encoding;
 
 /**
  * Dialog used to add or edit an Inhibit Any Policy extension.

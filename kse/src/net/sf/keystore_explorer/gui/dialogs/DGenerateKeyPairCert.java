@@ -19,6 +19,9 @@
  */
 package net.sf.keystore_explorer.gui.dialogs;
 
+import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
+import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
+
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
@@ -55,6 +58,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.bouncycastle.asn1.x500.X500Name;
+
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
@@ -68,11 +73,6 @@ import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.crypto.JValidityPeriod;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DAddExtensions;
 import net.sf.keystore_explorer.gui.error.DError;
-
-import org.bouncycastle.asn1.x500.X500Name;
-
-import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION1;
-import static net.sf.keystore_explorer.crypto.x509.X509CertificateVersion.VERSION3;
 
 /**
  * Dialog used to generate a certificate based on a supplied key pair and

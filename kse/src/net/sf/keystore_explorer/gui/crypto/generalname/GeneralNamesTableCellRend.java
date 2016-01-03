@@ -26,9 +26,9 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
-
 import org.bouncycastle.asn1.x509.GeneralName;
+
+import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
 
 /**
  * Custom cell renderer for the cells of the general names table.

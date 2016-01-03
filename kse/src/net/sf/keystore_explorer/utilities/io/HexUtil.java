@@ -23,6 +23,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Class of utility methods to output data in hex.
  * 
@@ -122,7 +124,7 @@ public class HexUtil {
 
 			return strBuff.toString();
 		} finally {
-			SafeCloseUtil.close(bais);
+			IOUtils.closeQuietly(bais);
 		}
 	}
 

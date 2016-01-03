@@ -45,6 +45,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
 import net.sf.keystore_explorer.crypto.x509.X509Ext;
 import net.sf.keystore_explorer.gui.CursorUtil;
@@ -52,8 +54,6 @@ import net.sf.keystore_explorer.gui.JEscFrame;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Dump;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
-
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 
 /**
  * Displays an ASN.1 dump of the supplied object: an X.509 certificate, private

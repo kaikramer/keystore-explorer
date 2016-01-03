@@ -19,6 +19,8 @@
  */
 package net.sf.keystore_explorer.gui.dnd;
 
+import org.apache.commons.io.IOUtils;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -27,8 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
 
 /**
  * Transferable for KeyStore entries. <code>DataFlavor.javaFileListFlavor</code>
@@ -95,7 +95,7 @@ public class KeyStoreEntryTransferable implements Transferable {
 				fos = new FileOutputStream(tmpFile);
 				fos.write(dragEntry.getContent());
 			} finally {
-				SafeCloseUtil.close(fos);
+				IOUtils.closeQuietly(fos);
 			}
 
 			List<File> list = new ArrayList<File>();

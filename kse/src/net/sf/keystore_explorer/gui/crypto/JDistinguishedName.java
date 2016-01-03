@@ -34,11 +34,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
-import net.sf.keystore_explorer.gui.CursorUtil;
-
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
+
+import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
+import net.sf.keystore_explorer.gui.CursorUtil;
 
 /**
  * Component to view or edit a distinguished name.

@@ -23,9 +23,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Class of utility methods to read from streams.
- * 
+ *
  */
 public class ReadUtil {
 	private ReadUtil() {
@@ -33,7 +35,7 @@ public class ReadUtil {
 
 	/**
 	 * Read all bytes from the supplied input stream. Closes the input stream.
-	 * 
+	 *
 	 * @param is
 	 *            Input stream
 	 * @return All bytes
@@ -55,8 +57,8 @@ public class ReadUtil {
 
 			return baos.toByteArray();
 		} finally {
-			SafeCloseUtil.close(baos);
-			SafeCloseUtil.close(is);
+			IOUtils.closeQuietly(baos);
+			IOUtils.closeQuietly(is);
 		}
 	}
 }

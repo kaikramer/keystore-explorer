@@ -25,12 +25,12 @@ import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
 
-import net.sf.keystore_explorer.crypto.x509.PolicyMapping;
-import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.PolicyMappings;
+
+import net.sf.keystore_explorer.crypto.x509.PolicyMapping;
+import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
 
 /**
  * The table model used to display policy mappings.

@@ -19,17 +19,26 @@
  */
 package net.sf.keystore_explorer.crypto.privatekey;
 
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.ENCRYPTED;
-import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.UNENCRYPTED;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC2;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_2KEY_DESEDE;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_3KEY_DESEDE;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC2;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC4;
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.Password;
+import net.sf.keystore_explorer.utilities.io.ReadUtil;
+import net.sf.keystore_explorer.utilities.pem.PemInfo;
+import net.sf.keystore_explorer.utilities.pem.PemUtil;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
 
+import javax.crypto.Cipher;
+import javax.crypto.EncryptedPrivateKeyInfo;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,27 +55,16 @@ import java.util.Calendar;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import javax.crypto.Cipher;
-import javax.crypto.EncryptedPrivateKeyInfo;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
-
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.Password;
-import net.sf.keystore_explorer.utilities.io.ReadUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-import net.sf.keystore_explorer.utilities.pem.PemInfo;
-import net.sf.keystore_explorer.utilities.pem.PemUtil;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.ENCRYPTED;
+import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.UNENCRYPTED;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC2;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_2KEY_DESEDE;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_3KEY_DESEDE;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC2;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC4;
 
 /**
  * Provides utility methods relating to PKCS #8 encoded private keys.
@@ -586,7 +584,7 @@ public class Pkcs8Util {
 				return oid; // Unknown algorithm
 			}
 		} finally {
-			SafeCloseUtil.close(ais);
+			IOUtils.closeQuietly(ais);
 		}
 	}
 }

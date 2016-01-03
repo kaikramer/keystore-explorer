@@ -19,6 +19,11 @@
  */
 package net.sf.keystore_explorer.crypto.x509;
 
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.x509.Extension;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -31,12 +36,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x509.Extension;
 
 /**
  * Holds a set of X.509 extensions.
@@ -230,7 +229,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 			throw new X509ExtensionSetLoadException(
 					res.getString("NoLoadX509ExtensionSet.NotEnoughBytes.exception.message"));
 		} finally {
-			SafeCloseUtil.close(dis);
+			IOUtils.closeQuietly(dis);
 		}
 	}
 
@@ -293,7 +292,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 			saveExtensions(criticalExtensions, dos);
 			saveExtensions(nonCriticalExtensions, dos);
 		} finally {
-			SafeCloseUtil.close(dos);
+			IOUtils.closeQuietly(dos);
 		}
 	}
 

@@ -19,14 +19,11 @@
  */
 package net.sf.keystore_explorer.crypto.keystore;
 
-import static net.sf.keystore_explorer.crypto.SecurityProvider.APPLE;
-import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
-import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
+import net.sf.keystore_explorer.ApplicationSettings;
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.Password;
+import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,11 +44,14 @@ import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import net.sf.keystore_explorer.ApplicationSettings;
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.Password;
-import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.APPLE;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 
 /**
  * Provides utility methods for loading/saving KeyStores. The BouncyCastle
@@ -181,7 +181,7 @@ public final class KeyStoreUtil {
 			throw new KeyStoreLoadException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
 					keyStoreType), ex, keyStoreType);
 		} finally {
-			SafeCloseUtil.close(fis);
+			IOUtils.closeQuietly(fis);
 		}
 
 		return keyStore;
@@ -333,7 +333,7 @@ public final class KeyStoreUtil {
 		} catch (NoSuchAlgorithmException ex) {
 			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
 		} finally {
-			SafeCloseUtil.close(fos);
+			IOUtils.closeQuietly(fos);
 		}
 	}
 

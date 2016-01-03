@@ -19,22 +19,6 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import java.awt.Font;
-import java.awt.SplashScreen;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
@@ -50,6 +34,21 @@ import net.sf.keystore_explorer.version.JavaVersion;
 import net.sf.keystore_explorer.version.Version;
 import net.sf.keystore_explorer.version.VersionException;
 import org.apache.commons.io.IOUtils;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import java.awt.Font;
+import java.awt.SplashScreen;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * Runnable to create and show KeyStore Explorer application.
@@ -120,19 +119,21 @@ public class CreateApplicationGui implements Runnable {
 
 	private void checkForUpdates(final KseFrame kseFrame) {
 		new Thread() {
+			@Override
 			public void run() {
 				try {
 					// Get the version number of the latest KeyStore Explorer from its web site
 					URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
 
 					String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
-					Version latestVersion = new Version(versionString);
+					final Version latestVersion = new Version(versionString);
 
 					// show update dialog to user
 					SwingUtilities.invokeLater(new Runnable() {
+						@Override
 						public void run() {
 							CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
-							checkUpdateAction.compareVersions(latestVersion);
+							checkUpdateAction.compareVersions(latestVersion, true);
 						}
 					});
 				} catch (Exception e) {

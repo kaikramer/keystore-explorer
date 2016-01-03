@@ -34,10 +34,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.bouncycastle.asn1.x509.GeneralName;
+
 import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
-
-import org.bouncycastle.asn1.x509.GeneralName;
 
 /**
  * Component to edit a general name.

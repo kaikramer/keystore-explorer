@@ -35,12 +35,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import net.sf.keystore_explorer.crypto.x509.X509Ext;
-import net.sf.keystore_explorer.utilities.io.HexUtil;
-import net.sf.keystore_explorer.utilities.io.IndentChar;
-import net.sf.keystore_explorer.utilities.io.IndentSequence;
-import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
-
 import org.bouncycastle.asn1.ASN1Boolean;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Enumerated;
@@ -66,6 +60,12 @@ import org.bouncycastle.asn1.DERT61String;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.DERUniversalString;
 import org.bouncycastle.asn1.DERVisibleString;
+
+import net.sf.keystore_explorer.crypto.x509.X509Ext;
+import net.sf.keystore_explorer.utilities.io.HexUtil;
+import net.sf.keystore_explorer.utilities.io.IndentChar;
+import net.sf.keystore_explorer.utilities.io.IndentSequence;
+import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 
 /**
  * Utility class to produce string dumps of the contents of ASN.1 objects.

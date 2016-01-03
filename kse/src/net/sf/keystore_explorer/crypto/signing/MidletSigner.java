@@ -19,6 +19,11 @@
  */
 package net.sf.keystore_explorer.crypto.signing;
 
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.utilities.io.CopyUtil;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.util.encoders.Base64;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,12 +43,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.utilities.io.CopyUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-
-import org.bouncycastle.util.encoders.Base64;
 
 /**
  * Class provides functionality to sign MIDlets.
@@ -185,7 +184,7 @@ public class MidletSigner {
 				fw.write(CRLF);
 			}
 		} finally {
-			SafeCloseUtil.close(fw);
+			IOUtils.closeQuietly(fw);
 		}
 	}
 
@@ -213,7 +212,7 @@ public class MidletSigner {
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("JarDigestSignatureFailed.exception.message"), ex);
 		} finally {
-			SafeCloseUtil.close(fis);
+			IOUtils.closeQuietly(fis);
 		}
 	}
 
@@ -249,7 +248,7 @@ public class MidletSigner {
 
 			return jadProperties;
 		} finally {
-			SafeCloseUtil.close(lnr);
+			IOUtils.closeQuietly(lnr);
 		}
 	}
 }

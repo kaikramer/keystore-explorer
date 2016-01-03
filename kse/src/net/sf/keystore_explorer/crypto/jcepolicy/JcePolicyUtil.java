@@ -19,9 +19,13 @@
  */
 package net.sf.keystore_explorer.crypto.jcepolicy;
 
-import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.LIMITED;
-import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.UNLIMITED;
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.utilities.io.CopyUtil;
+import net.sf.keystore_explorer.utilities.net.URLs;
+import net.sf.keystore_explorer.version.JavaVersion;
+import org.apache.commons.io.IOUtils;
 
+import javax.crypto.Cipher;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,13 +38,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.crypto.Cipher;
-
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.utilities.io.CopyUtil;
-import net.sf.keystore_explorer.utilities.io.SafeCloseUtil;
-import net.sf.keystore_explorer.utilities.net.URLs;
-import net.sf.keystore_explorer.version.JavaVersion;
+import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.LIMITED;
+import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.UNLIMITED;
 
 /**
  * Provides utility methods relating to JCE policies.
@@ -150,7 +149,7 @@ public class JcePolicyUtil {
 						isr = new InputStreamReader(jar.getInputStream(jarEntry));
 						CopyUtil.copy(isr, sw);
 					} finally {
-						SafeCloseUtil.close(isr);
+						IOUtils.closeQuietly(isr);
 					}
 
 					sw.write('\n');

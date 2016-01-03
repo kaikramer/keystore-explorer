@@ -68,6 +68,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.X500Name;
+
 import net.sf.keystore_explorer.crypto.x509.X509ExtensionSet;
 import net.sf.keystore_explorer.crypto.x509.X509ExtensionSetLoadException;
 import net.sf.keystore_explorer.crypto.x509.X509ExtensionType;
@@ -79,9 +82,6 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.x500.X500Name;
 
 /**
  * Allows selection of X.509 Extensions to add to a certificate.

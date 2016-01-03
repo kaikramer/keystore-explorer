@@ -43,14 +43,14 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.x509.GeneralSubtree;
+import org.bouncycastle.asn1.x509.NameConstraints;
+
 import net.sf.keystore_explorer.crypto.x509.GeneralSubtrees;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.generalsubtree.JGeneralSubtrees;
 import net.sf.keystore_explorer.gui.error.DError;
-
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.x509.GeneralSubtree;
-import org.bouncycastle.asn1.x509.NameConstraints;
 
 /**
  * Dialog used to add or edit a Name Constraints extension.

@@ -19,6 +19,8 @@
  */
 package net.sf.keystore_explorer.utilities.io;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,8 +67,8 @@ public class CopyUtil {
 		try {
 			copy(in, out);
 		} finally {
-			SafeCloseUtil.close(in);
-			SafeCloseUtil.close(out);
+			IOUtils.closeQuietly(in);
+			IOUtils.closeQuietly(out);
 		}
 	}
 
@@ -102,8 +104,8 @@ public class CopyUtil {
 		try {
 			copy(reader, writer);
 		} finally {
-			SafeCloseUtil.close(reader);
-			SafeCloseUtil.close(writer);
+			IOUtils.closeQuietly(reader);
+			IOUtils.closeQuietly(writer);
 		}
 	}
 }
