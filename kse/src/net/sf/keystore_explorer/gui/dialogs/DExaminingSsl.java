@@ -28,7 +28,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.KeyStore;
-import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -45,12 +44,13 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
+import net.sf.keystore_explorer.utilities.ssl.SslConnectionInfos;
+import net.sf.keystore_explorer.utilities.ssl.SslUtils;
 
 /**
  * Examines an SSL connection's certificates - a process which the user may
@@ -73,7 +73,7 @@ public class DExaminingSsl extends JEscDialog {
 	private int sslPort;
 	private KeyStore keyStore;
 	private char[] password;
-	private X509Certificate[] certificates;
+	private SslConnectionInfos sslInfos;
 	private Thread examiner;
 
 	/**
@@ -166,13 +166,13 @@ public class DExaminingSsl extends JEscDialog {
 	}
 
 	/**
-	 * Get the SSL connection's certificates.
+	 * Get the SSL connection's certificates and some details like protocol version or cipher suite.
 	 *
-	 * @return The SSL connection's certificates or null if the user cancelled
+	 * @return The SSL connection's details or null if the user cancelled
 	 *         the dialog or an error occurred
 	 */
-	public X509Certificate[] getCertificates() {
-		return certificates;
+	public SslConnectionInfos getSSLConnectionInfos() {
+		return sslInfos;
 	}
 
 	private void cancelPressed() {
@@ -190,7 +190,7 @@ public class DExaminingSsl extends JEscDialog {
 	private class ExamineSsl implements Runnable {
 		public void run() {
 			try {
-				certificates = X509CertUtil.loadCertificates(sslHost, sslPort, keyStore, password);
+			    sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
 
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {

@@ -19,13 +19,9 @@
  */
 package net.sf.keystore_explorer.crypto.jcepolicy;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.utilities.io.CopyUtil;
-import net.sf.keystore_explorer.utilities.net.URLs;
-import net.sf.keystore_explorer.version.JavaVersion;
-import org.apache.commons.io.IOUtils;
+import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.LIMITED;
+import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.UNLIMITED;
 
-import javax.crypto.Cipher;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,12 +34,18 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.LIMITED;
-import static net.sf.keystore_explorer.crypto.jcepolicy.CryptoStrength.UNLIMITED;
+import javax.crypto.Cipher;
+
+import org.apache.commons.io.IOUtils;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.utilities.io.CopyUtil;
+import net.sf.keystore_explorer.utilities.net.URLs;
+import net.sf.keystore_explorer.version.JavaVersion;
 
 /**
  * Provides utility methods relating to JCE policies.
- * 
+ *
  */
 public class JcePolicyUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/jcepolicy/resources");
@@ -53,7 +55,7 @@ public class JcePolicyUtil {
 
 	/**
 	 * Is the local JCE policy's crypto strength limited?
-	 * 
+	 *
 	 * @return True if it is
 	 * @throws CryptoException
 	 *             If there was a problem getting the policy or crypto strength
@@ -64,7 +66,7 @@ public class JcePolicyUtil {
 
 	/**
 	 * Get a JCE policy's crypto strength.
-	 * 
+	 *
 	 * @param jcePolicy
 	 *            JCE policy
 	 * @return Crypto strength
@@ -74,17 +76,17 @@ public class JcePolicyUtil {
 	public static CryptoStrength getCryptoStrength(JcePolicy jcePolicy) throws CryptoException {
 		try {
 			File file = getJarFile(jcePolicy);
-			
+
 			// if there is no policy file at all, we assume that we are running under OpenJDK
 			if (!file.exists()) {
 				return UNLIMITED;
 			}
-			
+
 			JarFile jar = new JarFile(file);
 
 			Manifest jarManifest = jar.getManifest();
 			String strength = jarManifest.getMainAttributes().getValue("Crypto-Strength");
-			
+
 			// workaround for IBM JDK: test for maximum key size
 			if (strength == null) {
 				return unlimitedStrengthTest();
@@ -105,7 +107,7 @@ public class JcePolicyUtil {
 		try {
 			if (Cipher.getMaxAllowedKeyLength("AES") >= 256) {
 				return UNLIMITED;
-			} 
+			}
 		} catch (NoSuchAlgorithmException e) {
 			// swallow exception
 		}
@@ -114,7 +116,7 @@ public class JcePolicyUtil {
 
 	/**
 	 * Get a JCE policy's details.
-	 * 
+	 *
 	 * @param jcePolicy
 	 *            JCE policy
 	 * @return Policy details
@@ -126,12 +128,12 @@ public class JcePolicyUtil {
 			StringWriter sw = new StringWriter();
 
 			File file = getJarFile(jcePolicy);
-			
+
 			// if there is no policy file at all, return empty string
 			if (!file.exists()) {
 				return "";
 			}
-			
+
 			JarFile jar = new JarFile(file);
 
 			Enumeration<JarEntry> jarEntries = jar.entries();
@@ -141,7 +143,7 @@ public class JcePolicyUtil {
 
 				String entryName = jarEntry.getName();
 
-				if ((!jarEntry.isDirectory()) && (entryName.endsWith(".policy"))) {
+				if (!jarEntry.isDirectory() && entryName.endsWith(".policy")) {
 					sw.write(entryName + ":\n\n");
 
 					InputStreamReader isr = null;
@@ -165,7 +167,7 @@ public class JcePolicyUtil {
 
 	/**
 	 * Get a JCE policy's JAR file.
-	 * 
+	 *
 	 * @param jcePolicy
 	 *            JCE policy
 	 * @return JAR file
@@ -181,12 +183,20 @@ public class JcePolicyUtil {
 	/**
 	 * Get JCE Unlimited Strength Jurisdiction Policy download URL for the
 	 * current JRE.
-	 * 
+	 *
 	 * @return Download page URL
 	 */
 	public static String getJcePolicyDownloadUrl() {
 		JavaVersion jreVersion = JavaVersion.getJreVersion();
 
-		return MessageFormat.format(URLs.JCE_POLICY_DOWNLOAD_URL, jreVersion.getMiddle());
+		int major = jreVersion.getMajor();
+		int middle = jreVersion.getMiddle();
+		int minor = jreVersion.getMinor();
+
+		String version = MessageFormat.format("{0}.{1}.{2}", major, middle, minor);
+
+		String url = MessageFormat.format(URLs.JCE_POLICY_DOWNLOAD_URL, version);
+
+		return url;
 	}
 }

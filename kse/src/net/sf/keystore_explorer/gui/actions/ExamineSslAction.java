@@ -21,7 +21,6 @@ package net.sf.keystore_explorer.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
-import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -33,6 +32,7 @@ import net.sf.keystore_explorer.gui.dialogs.DExaminingSsl;
 import net.sf.keystore_explorer.gui.dialogs.DViewCertificate;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
+import net.sf.keystore_explorer.utilities.ssl.SslConnectionInfos;
 
 /**
  * Action to examine an SSL connection's certificates.
@@ -84,15 +84,15 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 			dExaminingSsl.startExamination();
 			dExaminingSsl.setVisible(true);
 
-			X509Certificate[] certs = dExaminingSsl.getCertificates();
+			SslConnectionInfos sslInfos = dExaminingSsl.getSSLConnectionInfos();
 
-			if (certs == null) {
+			if (sslInfos == null || sslInfos.getServerCertificates() == null) {
 				return;
 			}
 
 			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)), certs,
-					kseFrame, DViewCertificate.IMPORT);
+					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)),
+			        sslInfos.getServerCertificates(), kseFrame, DViewCertificate.IMPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);
 		} catch (Exception ex) {

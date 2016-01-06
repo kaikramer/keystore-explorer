@@ -24,8 +24,6 @@ import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -48,16 +46,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509KeyManager;
-import javax.net.ssl.X509TrustManager;
 import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.io.IOUtils;
@@ -225,85 +213,7 @@ public final class X509CertUtil {
 		return Base64.decode(sb.toString());
 	}
 
-	/**
-	 * Load certificates from an SSL connection.
-	 *
-	 * @param host
-	 *            Connection host
-	 * @param port
-	 *            Connection port
-     * @param keyStore
-     *            KeyStore with a key pair for SSL client authentication
-     * @param password
-     *            The password for the KeyStore
-	 * @return Server certificates
-	 * @throws CryptoException
-	 *             Problem encountered while loading the certificate(s)
-	 * @throws IOException
-	 *             An I/O error occurred
-	 */
-	public static X509Certificate[] loadCertificates(String host, int port, KeyStore keyStore, char[] password)
-	        throws CryptoException, IOException {
 
-		URL url = new URL(MessageFormat.format("https://{0}:{1}/", host, "" + port));
-		HttpsURLConnection connection = null;
-
-		System.setProperty("javax.net.debug", "ssl");
-		System.setProperty("jsse.enableSNIExtension", "true");
-
-		try {
-			connection = (HttpsURLConnection) url.openConnection();
-
-			// create a key manager for client authentication
-			X509KeyManager km = null;
-			if (keyStore != null) {
-                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
-                keyManagerFactory.init(keyStore, password);
-                for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
-                    if (keyManager instanceof X509KeyManager) {
-                        km = (X509KeyManager) keyManager;
-                        break;
-                    }
-                }
-			}
-
-			// We are only interested in getting the SSL certificates even if they are invalid
-			// either in and of themselves or for the host name they are associated with
-
-			// 1) Set connection's SSL Socket factory to have a very trusting trust manager
-			SSLContext context = SSLContext.getInstance("TLS");
-			X509TrustingManager tm = new X509TrustingManager();
-			context.init(new KeyManager[] { km }, new TrustManager[] { tm }, null);
-			SSLSocketFactory factory = context.getSocketFactory();
-			connection.setSSLSocketFactory(factory);
-
-			// 2) Set a host name verifier that always verifies the host name
-			connection.setHostnameVerifier(new HostnameVerifier() {
-				@Override
-				public boolean verify(String hostname, SSLSession sslSession) {
-					return true;
-				}
-			});
-
-			connection.connect();
-
-			// this is necessary in order to cause a handshake exception when the client cert is not accepted
-			connection.getResponseMessage();
-
-			SSLConnectionInfos sslConnectionInfos = new SSLConnectionInfos();
-			connection.getCipherSuite();
-			System.out.println(connection.toString());
-
-			return X509CertUtil.convertCertificates(connection.getServerCertificates());
-
-		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
-		} finally {
-			if (connection != null) {
-				connection.disconnect();
-			}
-		}
-	}
 
 	/**
 	 * Load a CRL from the specified stream.
@@ -835,27 +745,4 @@ public final class X509CertUtil {
 		return cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal());
 	}
 
-	public static class SSLConnectionInfos {
-	    X509Certificate[] serverCertificates;
-	    String cipherSuite;
-	}
-
-	/**
-	 * Implementation of the X509TrustManager. In this implementation we
-	 * always trust the server as we are only interested in getting its
-	 * certificates for examination.
-	 */
-	private static class X509TrustingManager implements X509TrustManager {
-        @Override
-		public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-		}
-        @Override
-		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-			throw new UnsupportedOperationException();
-		}
-		@Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return new X509Certificate[0];
-        }
-	}
 }
