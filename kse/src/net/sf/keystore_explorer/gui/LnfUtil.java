@@ -25,7 +25,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
-import com.bulenkov.darcula.DarculaLaf;
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.SkyBlue;
@@ -41,6 +40,10 @@ import net.sf.keystore_explorer.version.JavaVersion;
  *
  */
 public class LnfUtil {
+
+	// Darcula LnF class as constant to avoid compile dependency
+	private static final String DARCULA_LAF_CLASS = "com.bulenkov.darcula.DarculaLaf";
+
 	private LnfUtil() {
 	}
 
@@ -62,10 +65,18 @@ public class LnfUtil {
 	 */
 	public static void installLnfs() {
 		UIManager.installLookAndFeel("JGoodies Plastic 3D", Plastic3DLookAndFeel.class.getName());
+
 		if (OperatingSystem.isWindows()) {
 			UIManager.installLookAndFeel("JGoodies Windows", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName());
 		}
-		UIManager.installLookAndFeel("Darcula", DarculaLaf.class.getName());
+
+		// Darcula is optional
+		try {
+			Class.forName(DARCULA_LAF_CLASS);
+			UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
+		} catch (ClassNotFoundException e) {
+			// Darcula jar not included
+		}
 	}
 
 	/**
@@ -197,6 +208,6 @@ public class LnfUtil {
 	 * Does the currently active l&f use a dark color scheme?
 	 */
 	public static boolean isDarkLnf() {
-        return UIManager.getLookAndFeel().getClass().getName().equals(DarculaLaf.class.getName());
+        return UIManager.getLookAndFeel().getClass().getName().equals(DARCULA_LAF_CLASS);
 	}
 }

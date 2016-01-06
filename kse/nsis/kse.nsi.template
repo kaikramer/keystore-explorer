@@ -73,14 +73,6 @@ ReserveFile ${FILE_ASSOCIATIONS_DIALOG}
 ; Files to install
 !define KSE_EXE "kse.exe"
 !define KSE_JAR "kse.jar"
-!define BCPKIX_JAR "bcpkix.jar"
-!define BCPROV_JAR "bcprov.jar"
-!define JH_JAR "jhall.jar"
-!define JGOODIES_LOOKS_JAR "jgoodies-looks.jar"
-!define JGOODIES_COMMON_JAR "jgoodies-common.jar"
-!define MIG_LAYOUT_CORE_JAR "miglayout-core.jar"
-!define MIG_LAYOUT_SWING_JAR "miglayout-swing.jar"
-!define JNA_JAR "jna.jar"
 !define KSE_ICO "kse.ico"
 !define KEYSTORE_ICO "keystore.ico"
 !define WWW_ICO "www.ico"
@@ -196,6 +188,8 @@ Section "${PRODUCT}"
     File /oname=${LICENSE_DIR}\kse.txt "..\res\licenses\license-kse.txt"
     File /oname=${LICENSE_DIR}\miglayout.txt "..\res\licenses\license-miglayout.txt"
     File /oname=${LICENSE_DIR}\jna.txt "..\res\licenses\license-jna.txt"
+    File /oname=${LICENSE_DIR}\apache-commons.txt "..\res\licenses\license-apache-commons.txt"
+    File /oname=${LICENSE_DIR}\darcula.txt "..\res\licenses\license-darcula.txt"
 
     ; Write the installation path into the registry
     WriteRegStr HKLM "SOFTWARE\${PRODUCT_KEY}" "Install_Dir" "$INSTDIR"
