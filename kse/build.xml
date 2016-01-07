@@ -107,12 +107,13 @@
 	<path id="compileClasspath">
 		<pathelement location="${buildDir}"/>
 	    <path refid="distClasspath"/>
-	    <pathelement location="${libDir}/junit.jar"/>
 	</path>
     
     <!-- Jars that are required for running the unit tests -->
 	<path id="testClasspath">
 		<path refid="compileClasspath"/>
+	    <pathelement location="${sourceDir}"/>
+	    <pathelement location="${libDir}/junit.jar"/>
 		<pathelement location="${testBuildDir}" />
 	</path>
     
@@ -191,18 +192,20 @@
         <mkdir dir="${distDir}" />
         <mkdir dir="${javadocDir}" />
     </target>
-
+	
 
     <target name="compile" depends="init" description="Compile the Java source">
-    	
         <javac debug="on" includeantruntime="false" destdir="${buildDir}" source="1.6" target="1.6" >
 			<src path="${sourceDir}" />
 			<classpath refid="compileClasspath"/>
         </javac>
-        
+    </target>
+	
+
+    <target name="compile-test" depends="init" description="Compile the unit tests">
         <javac debug="on" includeantruntime="false" destdir="${testBuildDir}" source="1.6" target="1.6" >
 			<src path="${testDir}" />
-			<classpath refid="compileClasspath"/>
+			<classpath refid="testClasspath"/>
         </javac>
     </target>
 
@@ -314,7 +317,7 @@
     </target>
 
 
-    <target name="test" depends="compile" description="Run unit tests">
+    <target name="test" depends="compile, compile-test" description="Run unit tests">
         <junit fork="yes" printsummary="no" haltonfailure="yes">
             <classpath refid="testClasspath"/>
             <formatter type="plain" usefile="no" />
