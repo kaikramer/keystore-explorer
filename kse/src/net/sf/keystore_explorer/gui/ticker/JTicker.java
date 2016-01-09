@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,7 +33,7 @@ import javax.swing.event.ListDataListener;
 
 /**
  * Ticker Swing control to display scolling (right to left) text items.
- * 
+ *
  */
 public class JTicker extends JComponent implements ActionListener, ListDataListener {
 	/** Renderer to display ticker */
@@ -72,7 +72,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Construct a JTicker using the supplied model and default renderer.
-	 * 
+	 *
 	 * @param model
 	 *            The model
 	 */
@@ -82,7 +82,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Construct a JTicker using the supplied model and renderer.
-	 * 
+	 *
 	 * @param model
 	 *            The model
 	 * @param renderer
@@ -118,7 +118,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Stop the ticker - do this before the parent is destroyed.
-	 * 
+	 *
 	 */
 	public void stop() {
 		timer.stop();
@@ -126,7 +126,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Add an item to the ticker.
-	 * 
+	 *
 	 * @param item
 	 *            Item to add
 	 */
@@ -136,7 +136,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Remove an item to the ticker.
-	 * 
+	 *
 	 * @param item
 	 *            Item to remove
 	 */
@@ -146,7 +146,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Set gap between items.
-	 * 
+	 *
 	 * @param gap
 	 *            Gap (pixels)
 	 */
@@ -156,7 +156,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Get gap between items.
-	 * 
+	 *
 	 * @return Gap (pixels)
 	 */
 	public int getGap() {
@@ -165,7 +165,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Set item movement increment.
-	 * 
+	 *
 	 * @param increment
 	 *            Increment (pixels)
 	 */
@@ -175,7 +175,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Get item movement increment.
-	 * 
+	 *
 	 * @return Increment (pixels)
 	 */
 	public int getIncrement() {
@@ -184,7 +184,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Set item movement interval.
-	 * 
+	 *
 	 * @param interval
 	 *            Intervals (msecs)
 	 */
@@ -194,7 +194,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Get item movement interval.
-	 * 
+	 *
 	 * @return Intervals (msecs)
 	 */
 	public int getInterval() {
@@ -203,7 +203,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Set JTicker's renderer.
-	 * 
+	 *
 	 * @param renderer
 	 *            Renderer
 	 */
@@ -214,7 +214,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Get JTicker's renderer.
-	 * 
+	 *
 	 * @return renderer Renderer
 	 */
 	public TickerRenderer getRenderer() {
@@ -223,7 +223,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Set JTicker's model.
-	 * 
+	 *
 	 * @param model
 	 *            model
 	 */
@@ -239,7 +239,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Get JTicker's model.
-	 * 
+	 *
 	 * @return model Model
 	 */
 	public TickerModel getModel() {
@@ -248,10 +248,11 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Triggered by the timer firing. Update item positions and repaint ticker.
-	 * 
+	 *
 	 * @param event
 	 *            Action event
 	 */
+	@Override
 	public void actionPerformed(ActionEvent event) {
 		// Decrement initial offset
 		offset -= increment;
@@ -267,10 +268,11 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Listen for items being added to the model.
-	 * 
+	 *
 	 * @param event
 	 *            Event
 	 */
+	@Override
 	public void intervalAdded(ListDataEvent event) {
 		calculatePositionArray();
 		setPreferredSize(calculatePreferredSize());
@@ -278,10 +280,11 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Listen for items being removed from the model.
-	 * 
+	 *
 	 * @param event
 	 *            Event
 	 */
+	@Override
 	public void intervalRemoved(ListDataEvent event) {
 		calculatePositionArray();
 		setPreferredSize(calculatePreferredSize());
@@ -289,10 +292,11 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Listen for a change to the items in the model.
-	 * 
+	 *
 	 * @param event
 	 *            Event
 	 */
+	@Override
 	public void contentsChanged(ListDataEvent event) {
 		calculatePositionArray();
 		setPreferredSize(calculatePreferredSize());
@@ -322,7 +326,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Calculate the preferred size of the ticker based on its items.
-	 * 
+	 *
 	 * @return Preferred size
 	 */
 	protected Dimension calculatePreferredSize() {
@@ -343,10 +347,11 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/**
 	 * Paint the JTicker.
-	 * 
+	 *
 	 * @param graphics
 	 *            Graphics object used to draw JTicker
 	 */
+	@Override
 	protected void paintComponent(Graphics graphics) {
 		int width = getSize().width;
 		int height = getSize().height;

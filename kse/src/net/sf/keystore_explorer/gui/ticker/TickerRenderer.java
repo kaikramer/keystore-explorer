@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,12 +23,12 @@ import javax.swing.JComponent;
 
 /**
  * Interface for renderers to use with the JTicker Swing control.
- * 
+ *
  */
 public interface TickerRenderer {
 	/**
 	 * Get the rendering component for the specified JTicker and ticker item
-	 * 
+	 *
 	 * @return Rendering component
 	 * @param ticker
 	 *            The JTicker that is asking the renderer to draw

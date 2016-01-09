@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.crypto;
 
 /**
  * Enumeration of Security Providers utilized by the crypto utility classes.
- * 
+ *
  */
 public enum SecurityProvider {
 	/** Sun */
@@ -44,7 +44,7 @@ public enum SecurityProvider {
 
 	/**
 	 * Get SecurityProvider type JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
 	public String jce() {

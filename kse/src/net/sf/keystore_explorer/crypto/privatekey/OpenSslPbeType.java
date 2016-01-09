@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 /**
  * Enumeration of Password based Encryption (PBE) Types supported by
  * OpenSslPvkUtil.
- * 
+ *
  */
 public enum OpenSslPbeType implements PbeType {
 	/** DES CBC */
@@ -59,7 +59,7 @@ public enum OpenSslPbeType implements PbeType {
 
 	/**
 	 * PBE type DEK-Info name.
-	 * 
+	 *
 	 * @return DEK-Info name
 	 */
 	public String dekInfo() {
@@ -68,7 +68,7 @@ public enum OpenSslPbeType implements PbeType {
 
 	/**
 	 * Get JCE cipher transformation.
-	 * 
+	 *
 	 * @return JCE cipher trandformation
 	 */
 	public String jceCipher() {
@@ -77,7 +77,7 @@ public enum OpenSslPbeType implements PbeType {
 
 	/**
 	 * Get cipher key size in bits.
-	 * 
+	 *
 	 * @return Key size
 	 */
 	public int keySize() {
@@ -86,7 +86,7 @@ public enum OpenSslPbeType implements PbeType {
 
 	/**
 	 * Get cipher salt size in bits.
-	 * 
+	 *
 	 * @return Salt size
 	 */
 	public int saltSize() {
@@ -95,16 +95,17 @@ public enum OpenSslPbeType implements PbeType {
 
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
+	@Override
 	public String friendly() {
 		return res.getString(friendlyKey);
 	}
 
 	/**
 	 * Resolve the supplied DEK-Info name name to a matching PBE type.
-	 * 
+	 *
 	 * @param dekInfo
 	 *            DEK-Info name name
 	 * @return PBE type or null if none
@@ -121,9 +122,10 @@ public enum OpenSslPbeType implements PbeType {
 
 	/**
 	 * Returns friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
+	@Override
 	public String toString() {
 		return friendly();
 	}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,7 +28,7 @@ import net.sf.keystore_explorer.crypto.keystore.MsCapiStoreType;
 
 /**
  * Singleton that maintains authority certificates KeyStores.
- * 
+ *
  */
 public class AuthorityCertificates {
 	private static AuthorityCertificates authorityCertificates;
@@ -40,7 +40,7 @@ public class AuthorityCertificates {
 
 	/**
 	 * Get singleton instance of authority certificates.
-	 * 
+	 *
 	 * @return Authority certificates
 	 */
 	public static synchronized AuthorityCertificates getInstance() {
@@ -54,7 +54,7 @@ public class AuthorityCertificates {
 	/**
 	 * Get CA Certificates KeyStore. If not set this is not loaded. Instead load
 	 * seperately and set it for future reference.
-	 * 
+	 *
 	 * @return CA Certificates KeyStore
 	 */
 	public KeyStore getCaCertificates() {
@@ -63,7 +63,7 @@ public class AuthorityCertificates {
 
 	/**
 	 * Set CA Certificates KeyStore.
-	 * 
+	 *
 	 * @param caCertificates
 	 *            CA Certificates KeyStore
 	 */
@@ -73,7 +73,7 @@ public class AuthorityCertificates {
 
 	/**
 	 * Get the default location for the CA Certificates KeyStore.
-	 * 
+	 *
 	 * @return CA Certificates KeyStore default location
 	 */
 	public static File getDefaultCaCertificatesLocation() {
@@ -85,7 +85,7 @@ public class AuthorityCertificates {
 	/**
 	 * Get Windows Trusted Root Certificates KeyStore. If not set this is
 	 * loaded.
-	 * 
+	 *
 	 * @return Windows Trusted Root Certificates KeyStore
 	 * @throws CryptoException
 	 *             If a problem occurred getting the KeyStore

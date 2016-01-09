@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,12 +31,12 @@ import net.sf.keystore_explorer.gui.about.DAbout;
 
 /**
  * Action to show KeyStore Explorer about dialog.
- * 
+ *
  */
 public class AboutAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -55,6 +55,7 @@ public class AboutAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		showAbout();
 	}
@@ -63,16 +64,16 @@ public class AboutAction extends KeyStoreExplorerAction {
 	 * Display the about dialog.
 	 */
 	public void showAbout() {
-		Object[] tickerItems = { res.getString("AboutAction.Copyright"), res.getString("AboutAction.Acknowledgement1"), 
-				res.getString("AboutAction.Acknowledgement2"), res.getString("AboutAction.Acknowledgement3"), 
+		Object[] tickerItems = { res.getString("AboutAction.Copyright"), res.getString("AboutAction.Acknowledgement1"),
+				res.getString("AboutAction.Acknowledgement2"), res.getString("AboutAction.Acknowledgement3"),
 				res.getString("AboutAction.Acknowledgement4"), res.getString("AboutAction.Acknowledgement5"),
 				res.getString("AboutAction.Acknowledgement6"), res.getString("AboutAction.Acknowledgement7"),
-	            res.getString("AboutAction.Acknowledgement8") };
+				res.getString("AboutAction.Acknowledgement8") };
 
 		URL aboutDialogImageURL = AboutAction.class.getResource(res.getString("AboutAction.About.image"));
-		DAbout dAbout = new DAbout(frame, 
+		DAbout dAbout = new DAbout(frame,
 				MessageFormat.format(res.getString("AboutAction.About.Title"), KSE.getApplicationName()),
-				                   res.getString("AboutAction.License"),
+				res.getString("AboutAction.License"),
 				Toolkit.getDefaultToolkit().createImage(aboutDialogImageURL), tickerItems);
 		dAbout.setLocationRelativeTo(frame);
 		dAbout.setVisible(true);

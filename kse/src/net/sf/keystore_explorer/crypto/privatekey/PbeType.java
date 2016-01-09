@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,12 +22,12 @@ package net.sf.keystore_explorer.crypto.privatekey;
 /**
  * Password based Encryption (PBE) Types used to encrypt private key formats
  * such as PKCS #8 and OpenSSL.
- * 
+ *
  */
 public interface PbeType {
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	String friendly();

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Unit tests for KeyPairUtil. Runs a test to create a key pair for supported
  * types and a selection of key sizes.
- * 
+ *
  */
 public class TestCaseKeyPairUtil extends TestCaseCrypto {
 	public TestCaseKeyPairUtil() {

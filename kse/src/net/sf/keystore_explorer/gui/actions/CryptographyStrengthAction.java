@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,12 +29,12 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Action to display the Cryptography Strength dialog.
- * 
+ *
  */
 public class CryptographyStrengthAction extends ExitAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -42,7 +42,7 @@ public class CryptographyStrengthAction extends ExitAction {
 		super(kseFrame);
 
 		putValue(ACCELERATOR_KEY, null); // Blank the accelerators set above in
-											// the class hierarchy
+		// the class hierarchy
 		putValue(LONG_DESCRIPTION, res.getString("CryptographyStrengthAction.statusbar"));
 		putValue(NAME, res.getString("CryptographyStrengthAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("CryptographyStrengthAction.tooltip"));
@@ -55,6 +55,7 @@ public class CryptographyStrengthAction extends ExitAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			DCryptoStrength dCryptoStrength = new DCryptoStrength(frame);

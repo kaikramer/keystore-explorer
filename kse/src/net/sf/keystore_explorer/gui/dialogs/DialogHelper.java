@@ -1,3 +1,22 @@
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 - 2016 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.sf.keystore_explorer.gui.dialogs;
 
 import java.security.PrivateKey;
@@ -80,44 +99,44 @@ public class DialogHelper {
 	 */
 	public static void populatePkcs10Challenge(Attribute[] attributes, JTextField textField) {
 
-	    ASN1ObjectIdentifier pkcs9AtChallengepassword = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-	    populateTextField(attributes, textField, pkcs9AtChallengepassword);
+		ASN1ObjectIdentifier pkcs9AtChallengepassword = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+		populateTextField(attributes, textField, pkcs9AtChallengepassword);
 	}
 
 
-	   /**
-     * Populates a JTextField with PKCS#10/#9 unstructuredName
-     *
-     * @param attributes
-     *              Attributes from CSR
-     * @param textField
-     *              Text field to be populated with the unstructuredName
-     */
-    public static void populatePkcs10UnstructuredName(Attribute[] attributes, JTextField textField) {
+	/**
+	 * Populates a JTextField with PKCS#10/#9 unstructuredName
+	 *
+	 * @param attributes
+	 *              Attributes from CSR
+	 * @param textField
+	 *              Text field to be populated with the unstructuredName
+	 */
+	public static void populatePkcs10UnstructuredName(Attribute[] attributes, JTextField textField) {
 
-        ASN1ObjectIdentifier pkcs9UnstructureName = PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
-        populateTextField(attributes, textField, pkcs9UnstructureName);
-    }
+		ASN1ObjectIdentifier pkcs9UnstructureName = PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
+		populateTextField(attributes, textField, pkcs9UnstructureName);
+	}
 
 
-    private static void populateTextField(Attribute[] attrs, JTextField textField, ASN1ObjectIdentifier pkcs9Attr) {
-        if (attrs != null) {
-            for (Attribute attribute : attrs) {
+	private static void populateTextField(Attribute[] attrs, JTextField textField, ASN1ObjectIdentifier pkcs9Attr) {
+		if (attrs != null) {
+			for (Attribute attribute : attrs) {
 
-                ASN1ObjectIdentifier attributeOid = attribute.getAttrType();
+				ASN1ObjectIdentifier attributeOid = attribute.getAttrType();
 
-                if (attributeOid.equals(pkcs9Attr)) {
-                    ASN1Encodable challenge = attribute.getAttributeValues()[0];
+				if (attributeOid.equals(pkcs9Attr)) {
+					ASN1Encodable challenge = attribute.getAttributeValues()[0];
 
-                    // data type can be one of IA5String or UTF8String
-                    if (challenge instanceof DERPrintableString) {
-                        textField.setText(((DERPrintableString) challenge).getString());
-                    } else if (challenge instanceof DERUTF8String) {
-                        textField.setText(((DERUTF8String) challenge).getString());
-                    }
-                    textField.setCaretPosition(0);
-                }
-            }
-        }
-    }
+					// data type can be one of IA5String or UTF8String
+					if (challenge instanceof DERPrintableString) {
+						textField.setText(((DERPrintableString) challenge).getString());
+					} else if (challenge instanceof DERUTF8String) {
+						textField.setText(((DERUTF8String) challenge).getString());
+					}
+					textField.setCaretPosition(0);
+				}
+			}
+		}
+	}
 }

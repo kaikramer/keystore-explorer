@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,6 +27,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 
 /**
  * Utility class that handles distinguished names.
@@ -35,7 +36,7 @@ public class X500NameUtils {
 
 	/**
 	 * Convert an X.500 Principal to an X.500 Name.
-	 * 
+	 *
 	 * @param principal
 	 *            X.500 Principal
 	 * @return X.500 Name
@@ -44,10 +45,10 @@ public class X500NameUtils {
 		return X500Name.getInstance(KseX500NameStyle.INSTANCE, principal.getEncoded());
 	}
 
-	
+
 	/**
 	 * Convert an X.500 Name to an X.500 Principal.
-	 * 
+	 *
 	 * @param name
 	 *            X.500 Name
 	 * @return X.500 Principal
@@ -59,18 +60,18 @@ public class X500NameUtils {
 
 
 	/**
-	 * Returns the (first) value of the (first) RDN of type rdnOid  
-	 * 
+	 * Returns the (first) value of the (first) RDN of type rdnOid
+	 *
 	 * @param dn The X500Name
 	 * @param rdnOid OID of wanted RDN
 	 * @return Value of requested RDN
 	 */
 	public static String getRdn(X500Name dn, ASN1ObjectIdentifier rdnOid) {
-		
+
 		if (dn == null || rdnOid == null) {
 			return "";
 		}
-		
+
 		RDN[] rdns = dn.getRDNs(rdnOid);
 		String value = "";
 
@@ -78,13 +79,13 @@ public class X500NameUtils {
 			RDN rdn = rdns[0];
 			value = rdn.getFirst().getValue().toString();
 		}
-		
+
 		return value;
 	}
-	
+
 	/**
 	 * Creates an X500Name object from the given components.
-	 * 
+	 *
 	 * @param commonName
 	 * @param organisationUnit
 	 * @param organisationName
@@ -96,29 +97,29 @@ public class X500NameUtils {
 	 */
 	public static X500Name buildX500Name(String commonName, String organisationUnit, String organisationName,
 			String localityName, String stateName, String countryCode, String emailAddress) {
-		
+
 		X500NameBuilder x500NameBuilder = new X500NameBuilder(KseX500NameStyle.INSTANCE);
 
 		if (emailAddress != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.E, emailAddress);
+			x500NameBuilder.addRDN(BCStyle.E, emailAddress);
 		}
 		if (countryCode != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.C, countryCode);
+			x500NameBuilder.addRDN(BCStyle.C, countryCode);
 		}
 		if (stateName != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.ST, stateName);
+			x500NameBuilder.addRDN(BCStyle.ST, stateName);
 		}
 		if (localityName != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.L, localityName);
+			x500NameBuilder.addRDN(BCStyle.L, localityName);
 		}
 		if (organisationName != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.O, organisationName);
+			x500NameBuilder.addRDN(BCStyle.O, organisationName);
 		}
 		if (organisationUnit != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.OU, organisationUnit);
+			x500NameBuilder.addRDN(BCStyle.OU, organisationUnit);
 		}
 		if (commonName != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.CN, commonName);
+			x500NameBuilder.addRDN(BCStyle.CN, commonName);
 		}
 
 		return x500NameBuilder.build();

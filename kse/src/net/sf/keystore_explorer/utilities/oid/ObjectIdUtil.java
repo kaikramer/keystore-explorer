@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,7 +29,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Provides utility methods related to Object Identifiers.
- * 
+ *
  */
 public class ObjectIdUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/utilities/oid/resources");
@@ -42,7 +42,7 @@ public class ObjectIdUtil {
 	 * must contain valid arcs ranges. The first arc must be 0-2, and the second
 	 * arc must be 0-39 where the first arc is 0-1 or 0-47 where the first arc
 	 * is 2.
-	 * 
+	 *
 	 * @param oid
 	 *            Object identifier
 	 * @throws InvalidObjectIdException
@@ -56,7 +56,7 @@ public class ObjectIdUtil {
 
 	/**
 	 * Extract the arcs from an object identifier.
-	 * 
+	 *
 	 * @param oid
 	 *            Object identifier
 	 * @return Arcs
@@ -2273,7 +2273,7 @@ public class ObjectIdUtil {
 
 	/**
 	 * Get string representation of Object Identifier.
-	 * 
+	 *
 	 * @param objectIdentifer
 	 *            Object Identifier
 	 * @return String representation of Object Identifier

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,14 +23,14 @@ import net.sf.keystore_explorer.crypto.CryptoException;
 
 /**
  * Thrown when a KeyStore load fails.
- * 
+ *
  */
 public class KeyStoreLoadException extends CryptoException {
 	private KeyStoreType keyStoreType;
 
 	/**
 	 * Creates a new KeyStoreLoadException.
-	 * 
+	 *
 	 * @param keyStoreType
 	 *            KeyStore type load was attempted for
 	 */
@@ -42,7 +42,7 @@ public class KeyStoreLoadException extends CryptoException {
 
 	/**
 	 * Creates a new KeyStoreLoadException with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 * @param keyStoreType
@@ -57,7 +57,7 @@ public class KeyStoreLoadException extends CryptoException {
 	/**
 	 * Creates a new KeyStoreLoadException with the specified message and cause
 	 * throwable.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 * @param causeThrowable
@@ -73,7 +73,7 @@ public class KeyStoreLoadException extends CryptoException {
 
 	/**
 	 * Creates a new KeyStoreLoadException with the specified cause throwable.
-	 * 
+	 *
 	 * @param causeThrowable
 	 *            The throwable that caused this exception to be thrown
 	 * @param keyStoreType
@@ -87,7 +87,7 @@ public class KeyStoreLoadException extends CryptoException {
 
 	/**
 	 * Get KeyStore type load was attempted for.
-	 * 
+	 *
 	 * @return KeyStore type
 	 */
 	public KeyStoreType getKeyStoreType() {

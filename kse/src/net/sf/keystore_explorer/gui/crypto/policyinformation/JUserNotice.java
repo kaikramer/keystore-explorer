@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,7 +41,7 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 
 /**
  * Component to edit a user notice.
- * 
+ *
  */
 public class JUserNotice extends JPanel {
 	private static ResourceBundle res = ResourceBundle
@@ -56,7 +56,7 @@ public class JUserNotice extends JPanel {
 
 	/**
 	 * Construct a JUserNotice.
-	 * 
+	 *
 	 * @param title
 	 *            Title of edit dialog
 	 */
@@ -80,6 +80,7 @@ public class JUserNotice extends JPanel {
 		jbEditUserNotice = new JButton(editIcon);
 		jbEditUserNotice.setToolTipText(res.getString("JUserNotice.jbEditUserNotice.tooltip"));
 		jbEditUserNotice.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JUserNotice.this);
@@ -102,6 +103,7 @@ public class JUserNotice extends JPanel {
 		jbClearUserNotice = new JButton(clearIcon);
 		jbClearUserNotice.setToolTipText(res.getString("JUserNotice.jbClearUserNotice.tooltip"));
 		jbClearUserNotice.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JUserNotice.this);
@@ -129,7 +131,7 @@ public class JUserNotice extends JPanel {
 
 	/**
 	 * Get user notice.
-	 * 
+	 *
 	 * @return User notice, or null if none chosen
 	 */
 	public UserNotice getUserNotice() {
@@ -138,7 +140,7 @@ public class JUserNotice extends JPanel {
 
 	/**
 	 * Set user notice.
-	 * 
+	 *
 	 * @param userNotice
 	 *            User notice
 	 */
@@ -149,10 +151,11 @@ public class JUserNotice extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jbEditUserNotice.setEnabled(enabled);
 		jbClearUserNotice.setEnabled(enabled);
@@ -160,10 +163,11 @@ public class JUserNotice extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jtfUserNotice.setToolTipText(toolTipText);

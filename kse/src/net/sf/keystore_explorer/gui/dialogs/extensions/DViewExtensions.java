@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -205,8 +205,8 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		jepExtensionValue.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
 
 		jspExtensionValue = PlatformUtil.createScrollPane(jepExtensionValue,
-		                                                  ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-		                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		jpExtensionValueTextArea = new JPanel(new BorderLayout(5, 5));
 		jpExtensionValueTextArea.setPreferredSize(new Dimension(500, 200));
@@ -297,8 +297,8 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 			try {
 				jepExtensionValue.setText("<html><body>" + ext.getStringValue()
-						.replace(X509Ext.INDENT.getIndentChar().toString(), "&nbsp;")
-						.replace(X509Ext.NEWLINE, "<br/>") + "</body></html>");
+				.replace(X509Ext.INDENT.getIndentChar().toString(), "&nbsp;")
+				.replace(X509Ext.NEWLINE, "<br/>") + "</body></html>");
 			} catch (Exception ex) {
 				jepExtensionValue.setText("");
 				DError dError = new DError(this, ex);
@@ -359,7 +359,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 						if (certs != null && certs.length > 0) {
 							DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
 									res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs, null,
-							                                                         DViewCertificate.NONE);
+									DViewCertificate.NONE);
 							dViewCertificate.setLocationRelativeTo(this);
 							dViewCertificate.setVisible(true);
 						}
@@ -368,7 +368,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 						if (crl != null) {
 							DViewCrl dViewCrl = new DViewCrl(this, MessageFormat.format(
 									res.getString("DViewExtensions.ViewCrl.Title"), url.toString()),
-							                                 ModalityType.DOCUMENT_MODAL, crl);
+									ModalityType.DOCUMENT_MODAL, crl);
 							dViewCrl.setLocationRelativeTo(this);
 							dViewCrl.setVisible(true);
 						}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,7 +40,7 @@ import org.junit.Test;
 /**
  * Unit tests for Pkcs8Util. Encodes RSA And DSA private keys using PKCS #8 and
  * reads it back using a variety of options.
- * 
+ *
  */
 public class TestCasePkcs8Util extends TestCaseKey {
 	public TestCasePkcs8Util() throws CryptoException {

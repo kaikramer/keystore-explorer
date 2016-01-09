@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,6 +52,7 @@ import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.util.encoders.Base64;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
@@ -160,7 +161,7 @@ public final class X509CertUtil {
 	private static byte[] fixCommonInputCertProblems(byte[] certs) throws IOException {
 
 		// remove PEM header/footer
-	    String certsStr = new String(certs);
+		String certsStr = new String(certs);
 		if (certsStr.startsWith(BEGIN_CERTIFICATE)) {
 			certsStr = certsStr.replaceAll(BEGIN_CERTIFICATE, "");
 			certsStr = certsStr.replaceAll(END_CERTIFICATE, "");
@@ -169,13 +170,13 @@ public final class X509CertUtil {
 		// If base 64 encoded then decode
 		byte[] decoded = attemptBase64Decode(certsStr);
 		if (decoded != null) {
-		    return decoded;
+			return decoded;
 		}
 
 		return certs;
 	}
 
-    private static byte[] attemptBase64Decode(String toTest) {
+	private static byte[] attemptBase64Decode(String toTest) {
 		// Attempt to decode the supplied byte array as a base 64 encoded SPC.
 		// Character set may be UTF-16 big endian or ASCII.
 
@@ -250,9 +251,9 @@ public final class X509CertUtil {
 	 */
 	public static X509Certificate[] convertCertificates(Certificate[] certsIn) throws CryptoException {
 
-	    if (certsIn == null) {
-	        return new X509Certificate[0];
-	    }
+		if (certsIn == null) {
+			return new X509Certificate[0];
+		}
 
 		X509Certificate[] certsOut = new X509Certificate[certsIn.length];
 
@@ -293,13 +294,13 @@ public final class X509CertUtil {
 	 */
 	public static X509Certificate[] orderX509CertChain(X509Certificate certs[]) {
 
-	    if (certs == null) {
-	        return new X509Certificate[0];
-	    }
+		if (certs == null) {
+			return new X509Certificate[0];
+		}
 
-	    if (certs.length <= 1) {
-	        return certs;
-	    }
+		if (certs.length <= 1) {
+			return certs;
+		}
 
 		// Put together each possible certificate path...
 		ArrayList<ArrayList<X509Certificate>> paths = new ArrayList<ArrayList<X509Certificate>>();
@@ -678,7 +679,7 @@ public final class X509CertUtil {
 		for (RDN rdn : name.getRDNs()) {
 			AttributeTypeAndValue atav = rdn.getFirst();
 
-			if (atav.getType().equals(KseX500NameStyle.CN)) {
+			if (atav.getType().equals(BCStyle.CN)) {
 				return atav.getValue().toString();
 			}
 		}

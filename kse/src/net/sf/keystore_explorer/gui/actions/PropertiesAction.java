@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,12 +33,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 
 /**
  * Action to show a properties of the active KeyStore.
- * 
+ *
  */
 public class PropertiesAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -58,6 +58,7 @@ public class PropertiesAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();

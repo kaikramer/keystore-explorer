@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -58,7 +58,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Displays the fields of a asymmetric key.
- * 
+ *
  */
 public class DViewAsymmetricKeyFields extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -79,7 +79,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
 	/**
 	 * Creates new DViewAsymmetricKeyFields dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -95,7 +95,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
 	/**
 	 * Creates new DViewAsymmetricKeyFields dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -111,7 +111,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
 	/**
 	 * Creates new DViewAsymmetricKeyFields dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -127,7 +127,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
 	/**
 	 * Creates new DViewAsymmetricKeyFields dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -150,6 +150,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		jltFields.setBorder(new EtchedBorder());
 
 		jltFields.addListSelectionListener(new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewAsymmetricKeyFields.this);
@@ -195,6 +196,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewAsymmetricKeyFields.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -210,6 +212,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -220,6 +223,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}
@@ -349,6 +353,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 			return sb.toString();
 		}
 
+		@Override
 		public String toString() {
 			return getName();
 		}

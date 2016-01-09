@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -77,7 +77,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 /**
  * Dialog used to generate a certificate based on a supplied key pair and
  * signature algorithm for inclusion in a KeyStore.
- * 
+ *
  */
 public class DGenerateKeyPairCert extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -113,7 +113,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 	/**
 	 * Creates a new DGenerateKeyPairCert dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -183,8 +183,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		GridBagConstraints gbc_jcbSigAlg = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jcbSigAlg.gridy = 1;
-		
-		// populate signature algorithm selector 
+
+		// populate signature algorithm selector
 		if (issuerPrivateKey != null) {
 			KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerPrivateKey.getAlgorithm());
 			DialogHelper.populateSigAlgs(issuerKeyPairType, issuerPrivateKey, provider, jcbSignatureAlgorithm);
@@ -229,6 +229,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		gbc_jbAddExtensions.anchor = GridBagConstraints.EAST;
 
 		jbAddExtensions.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DGenerateKeyPairCert.this);
@@ -240,6 +241,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		});
 
 		jrbVersion3.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent evt) {
 				jbAddExtensions.setEnabled(jrbVersion3.isSelected());
 			}
@@ -265,6 +267,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DGenerateKeyPairCert.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -272,6 +275,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DGenerateKeyPairCert.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -279,6 +283,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -291,6 +296,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -373,7 +379,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			// self-signed or signed by other key pair?
 			if (issuerPrivateKey == null) {
 				certificate = generator.generateSelfSigned(name, validityPeriodMs, keyPair.getPublic(),
-					keyPair.getPrivate(), signatureType, serialNumber, extensions, provider);
+						keyPair.getPrivate(), signatureType, serialNumber, extensions, provider);
 			} else {
 				certificate = generator.generate(name,
 						X500NameUtils.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
@@ -396,7 +402,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 	/**
 	 * Get the generated certificate.
-	 * 
+	 *
 	 * @return The generated certificate or null if the user cancelled the
 	 *         dialog
 	 */

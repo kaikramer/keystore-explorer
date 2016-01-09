@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,12 +28,12 @@ import javax.swing.JLabel;
 /**
  * Quick Start label. Used to display Quick Start pane's title. Basically just
  * an anti-aliased and coloured JLabel.
- * 
+ *
  */
 public class JQuickStartLabel extends JLabel {
 	/**
 	 * Construct Quick Start label.
-	 * 
+	 *
 	 * @param text
 	 *            Label text
 	 */
@@ -43,10 +43,11 @@ public class JQuickStartLabel extends JLabel {
 
 	/**
 	 * Paint component.
-	 * 
+	 *
 	 * @param g
 	 *            Graphics
 	 */
+	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

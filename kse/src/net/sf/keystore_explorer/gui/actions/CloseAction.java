@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,12 +32,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to close the active KeyStore.
- * 
+ *
  */
 public class CloseAction extends SaveAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -58,6 +58,7 @@ public class CloseAction extends SaveAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		closeActiveKeyStore();
 	}
@@ -65,7 +66,7 @@ public class CloseAction extends SaveAction {
 	/**
 	 * Close the active KeyStore. Allow the user to save it if there are unsaved
 	 * changes.
-	 * 
+	 *
 	 * @return True if the KeyStore is closed, false otherwise
 	 */
 	public boolean closeActiveKeyStore() {
@@ -75,7 +76,7 @@ public class CloseAction extends SaveAction {
 	/**
 	 * Close the supplied KeyStore. Allow the user to save it if there are
 	 * unsaved changes.
-	 * 
+	 *
 	 * @param history
 	 *            KeyStore history
 	 * @return True if the KeyStore is closed, false otherwise

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -84,10 +84,10 @@ public class DGenerateCsr extends JEscDialog {
 	private JComboBox jcbSignatureAlgorithm;
 	private JLabel jlChallenge;
 	private JTextField jtfChallenge;
-    private JLabel jlUnstructuredName;
-    private JTextField jtfUnstructuredName;
-    private JLabel jlExtensions;
-    private JCheckBox jcbExtensions;
+	private JLabel jlUnstructuredName;
+	private JTextField jtfUnstructuredName;
+	private JLabel jlExtensions;
+	private JCheckBox jcbExtensions;
 	private JLabel jlCsrFile;
 	private JTextField jtfCsrFile;
 	private JButton jbBrowse;
@@ -106,7 +106,7 @@ public class DGenerateCsr extends JEscDialog {
 	private boolean addExtensionsWanted;
 	private File csrFile;
 
-    private String path;
+	private String path;
 
 	/**
 	 * Creates a new DGenerateCsr dialog.
@@ -123,12 +123,12 @@ public class DGenerateCsr extends JEscDialog {
 	 *             A problem was encountered with the supplied private key
 	 */
 	public DGenerateCsr(JFrame parent, String alias, PrivateKey privateKey, KeyPairType keyPairType, String path,
-	        Provider provider) throws CryptoException {
+			Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.alias = alias;
 		this.privateKey = privateKey;
 		this.keyPairType = keyPairType;
-        this.path = path;
+		this.path = path;
 		this.provider = provider;
 		setTitle(res.getString("DGenerateCsr.Title"));
 		initComponents();
@@ -165,13 +165,13 @@ public class DGenerateCsr extends JEscDialog {
 
 		jlUnstructuredName = new JLabel(res.getString("DGenerateCsr.jlUnstructuredName.text"));
 
-        jtfUnstructuredName = new JTextField(30);
-        jtfUnstructuredName.setToolTipText(res.getString("DGenerateCsr.jtfUnstructuredName.tooltip"));
+		jtfUnstructuredName = new JTextField(30);
+		jtfUnstructuredName.setToolTipText(res.getString("DGenerateCsr.jtfUnstructuredName.tooltip"));
 
-        jlExtensions = new JLabel(res.getString("DGenerateCsr.jlExtensions.text"));
+		jlExtensions = new JLabel(res.getString("DGenerateCsr.jlExtensions.text"));
 
-        jcbExtensions = new JCheckBox(res.getString("DGenerateCsr.jcbExtensions.text"));
-        jcbExtensions.setToolTipText(res.getString("DGenerateCsr.jcbExtensions.tooltip"));
+		jcbExtensions = new JCheckBox(res.getString("DGenerateCsr.jcbExtensions.text"));
+		jcbExtensions.setToolTipText(res.getString("DGenerateCsr.jcbExtensions.tooltip"));
 
 		jlCsrFile = new JLabel(res.getString("DGenerateCsr.jlCsrFile.text"));
 
@@ -196,10 +196,10 @@ public class DGenerateCsr extends JEscDialog {
 		pane.add(jcbSignatureAlgorithm, "wrap");
 		pane.add(jlChallenge, "");
 		pane.add(jtfChallenge, "wrap");
-        pane.add(jlUnstructuredName, "");
-        pane.add(jtfUnstructuredName, "wrap");
-        // pane.add(jlExtensions, "");
-        pane.add(jcbExtensions, "skip, wrap");
+		pane.add(jlUnstructuredName, "");
+		pane.add(jtfUnstructuredName, "wrap");
+		// pane.add(jlExtensions, "");
+		pane.add(jcbExtensions, "skip, wrap");
 		pane.add(jlCsrFile, "");
 		pane.add(jtfCsrFile, "");
 		pane.add(jbBrowse, "wrap");
@@ -209,53 +209,59 @@ public class DGenerateCsr extends JEscDialog {
 
 		// actions
 		jrbPkcs10.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                // unstructured name and extensions are Pkcs10-only
-                if (jrbPkcs10.isSelected()) {
-                    jlUnstructuredName.setEnabled(true);
-                    jtfUnstructuredName.setEnabled(true);
-                    jlExtensions.setEnabled(true);
-                    jcbExtensions.setEnabled(true);
-                } else {
-                    jlUnstructuredName.setEnabled(false);
-                    jtfUnstructuredName.setEnabled(false);
-                    jlExtensions.setEnabled(false);
-                    jcbExtensions.setEnabled(false);
-                }
-            }
-        });
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// unstructured name and extensions are Pkcs10-only
+				if (jrbPkcs10.isSelected()) {
+					jlUnstructuredName.setEnabled(true);
+					jtfUnstructuredName.setEnabled(true);
+					jlExtensions.setEnabled(true);
+					jcbExtensions.setEnabled(true);
+				} else {
+					jlUnstructuredName.setEnabled(false);
+					jtfUnstructuredName.setEnabled(false);
+					jlExtensions.setEnabled(false);
+					jcbExtensions.setEnabled(false);
+				}
+			}
+		});
 
-        jbBrowse.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    CursorUtil.setCursorBusy(DGenerateCsr.this);
-                    browsePressed();
-                } finally {
-                    CursorUtil.setCursorFree(DGenerateCsr.this);
-                }
-            }
-        });
+		jbBrowse.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DGenerateCsr.this);
+					browsePressed();
+				} finally {
+					CursorUtil.setCursorFree(DGenerateCsr.this);
+				}
+			}
+		});
 
-        jbOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                okPressed();
-            }
-        });
+		jbOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				okPressed();
+			}
+		});
 
-        jbCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
+		jbCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				cancelPressed();
+			}
+		});
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
+		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				cancelPressed();
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -269,10 +275,10 @@ public class DGenerateCsr extends JEscDialog {
 	}
 
 	private void populateCsrFileName() {
-        String sanitizedAlias = FileNameUtil.cleanFileName(alias);
-        File csrFile = new File(path, sanitizedAlias + ".csr");
-        jtfCsrFile.setText(csrFile.getPath());
-    }
+		String sanitizedAlias = FileNameUtil.cleanFileName(alias);
+		File csrFile = new File(path, sanitizedAlias + ".csr");
+		jtfCsrFile.setText(csrFile.getPath());
+	}
 
 	private void browsePressed() {
 		JFileChooser chooser = null;
@@ -346,20 +352,20 @@ public class DGenerateCsr extends JEscDialog {
 	 * @return unstructuredName or null if dialog cancelled
 	 */
 	public String getUnstructuredName() {
-        return unstructuredName;
-    }
+		return unstructuredName;
+	}
 
-    /**
-     * Add extensions to request?
-     *
-     * @return true if user wants to add extensions
-     */
-    public boolean isAddExtensionsWanted() {
-        return addExtensionsWanted;
-    }
+	/**
+	 * Add extensions to request?
+	 *
+	 * @return true if user wants to add extensions
+	 */
+	public boolean isAddExtensionsWanted() {
+		return addExtensionsWanted;
+	}
 
 
-    /**
+	/**
 	 * Get chosen CSR file.
 	 *
 	 * @return CSR file or null if dialog cancelled
@@ -380,19 +386,19 @@ public class DGenerateCsr extends JEscDialog {
 		challenge = jtfChallenge.getText();
 		if (challenge.length() == 0) {
 			if (format == SPKAC) {
-			    // Challenge is mandatory for SPKAC
+				// Challenge is mandatory for SPKAC
 				JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.ChallengeRequiredForSpkac.message"),
 						getTitle(), JOptionPane.WARNING_MESSAGE);
 				return;
 			} else {
-			    // Challenge is optional for PKCS #10
+				// Challenge is optional for PKCS #10
 				challenge = null;
 			}
 		}
 
 		unstructuredName = jtfUnstructuredName.getText();
 		if (unstructuredName.length() == 0) {
-		    unstructuredName = null;
+			unstructuredName = null;
 		}
 
 		addExtensionsWanted = jcbExtensions.isSelected();
@@ -432,26 +438,28 @@ public class DGenerateCsr extends JEscDialog {
 	}
 
 	// for quick testing
-    public static void main(String[] args) throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
-        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-                    PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
-                    DGenerateCsr dialog = new DGenerateCsr(new javax.swing.JFrame(), "alias (test)", privateKey,
-                            KeyPairType.RSA, "", new BouncyCastleProvider());
-                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                        public void windowClosing(java.awt.event.WindowEvent e) {
-                            System.exit(0);
-                        }
-                    });
-                    dialog.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+					PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
+					DGenerateCsr dialog = new DGenerateCsr(new javax.swing.JFrame(), "alias (test)", privateKey,
+							KeyPairType.RSA, "", new BouncyCastleProvider());
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 }

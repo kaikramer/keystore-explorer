@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,7 +28,7 @@ import javax.swing.JMenu;
  * Menu with Recent File List capability, ie a list of files where the most
  * recently accessed file is set as the first item shifting other files down and
  * the list contains no duplicates.
- * 
+ *
  */
 public class JMenuRecentFiles extends JMenu {
 	private JMenuItemRecentFile[] jmiRecentFiles;
@@ -36,7 +36,7 @@ public class JMenuRecentFiles extends JMenu {
 
 	/**
 	 * Construct a JMenuRecentFiles.
-	 * 
+	 *
 	 * @param title
 	 *            Title of menu
 	 * @param length
@@ -91,7 +91,7 @@ public class JMenuRecentFiles extends JMenu {
 	/**
 	 * Add a recent file menu item to the menu. Only call when the menu is
 	 * completely populated with standard menu items and separators.
-	 * 
+	 *
 	 * @param jmirfNew
 	 *            The new recent file menu item
 	 */
@@ -140,7 +140,7 @@ public class JMenuRecentFiles extends JMenu {
 	/**
 	 * Invalidate a recent file menu item by removing it from the menu. Call
 	 * when a recent file no longer exists.
-	 * 
+	 *
 	 * @param jmirfOld
 	 *            The recent file menu item to remove
 	 */
@@ -171,7 +171,7 @@ public class JMenuRecentFiles extends JMenu {
 
 	/**
 	 * Get the set of recent files currently maintained by the menu in order.
-	 * 
+	 *
 	 * @return The recent files
 	 */
 	public File[] getRecentFiles() {

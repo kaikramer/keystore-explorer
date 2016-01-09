@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -85,7 +85,7 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
 /**
  * Allows selection of X.509 Extensions to add to a certificate.
- * 
+ *
  */
 public class DAddExtensions extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -116,7 +116,7 @@ public class DAddExtensions extends JEscDialog {
 
 	/**
 	 * Creates a new DAddExtensions dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -146,7 +146,7 @@ public class DAddExtensions extends JEscDialog {
 
 	/**
 	 * Creates new DAddExtensions dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param extensions
@@ -180,6 +180,7 @@ public class DAddExtensions extends JEscDialog {
 		jbAdd.setMnemonic(res.getString("DAddExtensions.jbAdd.mnemonic").charAt(0));
 
 		jbAdd.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAddExtensions.this);
@@ -199,6 +200,7 @@ public class DAddExtensions extends JEscDialog {
 		jbEdit.setEnabled(false);
 
 		jbEdit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAddExtensions.this);
@@ -218,6 +220,7 @@ public class DAddExtensions extends JEscDialog {
 		jbToggleCriticality.setEnabled(false);
 
 		jbToggleCriticality.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAddExtensions.this);
@@ -237,6 +240,7 @@ public class DAddExtensions extends JEscDialog {
 		jbRemove.setEnabled(false);
 
 		jbRemove.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAddExtensions.this);
@@ -288,6 +292,7 @@ public class DAddExtensions extends JEscDialog {
 		ListSelectionModel selectionModel = jtExtensions.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		selectionModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent evt) {
 				if (!evt.getValueIsAdjusting()) {
 					try {
@@ -302,6 +307,7 @@ public class DAddExtensions extends JEscDialog {
 		});
 
 		jtExtensions.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				maybeEditExtension(evt);
 			}
@@ -310,6 +316,7 @@ public class DAddExtensions extends JEscDialog {
 		jtExtensions.addKeyListener(new KeyAdapter() {
 			boolean deleteLastPressed = false;
 
+			@Override
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
@@ -317,6 +324,7 @@ public class DAddExtensions extends JEscDialog {
 				}
 			}
 
+			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
 				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
@@ -330,6 +338,7 @@ public class DAddExtensions extends JEscDialog {
 				}
 			}
 
+			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
 				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
@@ -352,6 +361,7 @@ public class DAddExtensions extends JEscDialog {
 		jbLoadTemplate.setToolTipText(res.getString("DAddExtensions.jbLoadTemplate.tooltip"));
 
 		jbLoadTemplate.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAddExtensions.this);
@@ -367,6 +377,7 @@ public class DAddExtensions extends JEscDialog {
 		jbSaveTemplate.setToolTipText(res.getString("DAddExtensions.jbSaveTemplate.tooltip"));
 
 		jbSaveTemplate.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAddExtensions.this);
@@ -395,6 +406,7 @@ public class DAddExtensions extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DAddExtensions.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -402,6 +414,7 @@ public class DAddExtensions extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DAddExtensions.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -409,6 +422,7 @@ public class DAddExtensions extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -425,6 +439,7 @@ public class DAddExtensions extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -859,7 +874,7 @@ public class DAddExtensions extends JEscDialog {
 
 	/**
 	 * Get chosen certficate extensions.
-	 * 
+	 *
 	 * @return Certificate extensions or null if dialog cancelled.
 	 */
 	public X509ExtensionSet getExtensions() {

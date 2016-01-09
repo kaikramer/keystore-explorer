@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -24,7 +24,7 @@ import net.sf.keystore_explorer.crypto.CryptoException;
 /**
  * Thrown when a encrypted private key load is attempted when it is, in fact,
  * unencrypted.
- * 
+ *
  */
 public class PrivateKeyUnencryptedException extends CryptoException {
 	/**
@@ -36,7 +36,7 @@ public class PrivateKeyUnencryptedException extends CryptoException {
 
 	/**
 	 * Creates a new PrivateKeyUnencryptedException with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 */
@@ -47,7 +47,7 @@ public class PrivateKeyUnencryptedException extends CryptoException {
 	/**
 	 * Creates a new PrivateKeyUnencryptedException with the specified message
 	 * and cause throwable.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 * @param causeThrowable
@@ -60,7 +60,7 @@ public class PrivateKeyUnencryptedException extends CryptoException {
 	/**
 	 * Creates a new PrivateKeyUnencryptedException with the specified cause
 	 * throwable.
-	 * 
+	 *
 	 * @param causeThrowable
 	 *            The throwable that caused this exception to be thrown
 	 */

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.crypto.x509;
 
 /**
  * X.509 certificate versions.
- * 
+ *
  */
 public enum X509CertificateVersion {
 	VERSION1, VERSION3

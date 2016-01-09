@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,7 +32,7 @@ import net.sf.keystore_explorer.gui.actions.OpenAction;
 /**
  * ActionListener intended for use with the JMenuItemRecentFile class. The
  * ActionListener is used to open a KeyStore file from the menu item.
- * 
+ *
  */
 public class RecentKeyStoreFileActionListener implements ActionListener {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -42,7 +42,7 @@ public class RecentKeyStoreFileActionListener implements ActionListener {
 	/**
 	 * Create an RecentKeyStoreFileActionListener for the supplied KeyStore file
 	 * and KseFrame.
-	 * 
+	 *
 	 * @param recentFile
 	 *            Recent KeyStore file
 	 * @param kseFrame
@@ -56,10 +56,11 @@ public class RecentKeyStoreFileActionListener implements ActionListener {
 	/**
 	 * Action to perform to open the KeyStore file in response to an
 	 * ActionEvent.
-	 * 
+	 *
 	 * @param evt
 	 *            Action event
 	 */
+	@Override
 	public void actionPerformed(ActionEvent evt) {
 		kseFrame.setDefaultStatusBarText();
 
@@ -71,10 +72,10 @@ public class RecentKeyStoreFileActionListener implements ActionListener {
 			jmRecentFiles.invalidate(jmiRecentFile);
 
 			JOptionPane
-					.showMessageDialog(kseFrame.getUnderlyingFrame(), MessageFormat.format(
-							res.getString("RecentKeyStoreFileActionListener.NotFile.message"), recentFile), res
-							.getString("RecentKeyStoreFileActionListener.OpenKeyStore.Title"),
-							JOptionPane.WARNING_MESSAGE);
+			.showMessageDialog(kseFrame.getUnderlyingFrame(), MessageFormat.format(
+					res.getString("RecentKeyStoreFileActionListener.NotFile.message"), recentFile), res
+					.getString("RecentKeyStoreFileActionListener.OpenKeyStore.Title"),
+					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 

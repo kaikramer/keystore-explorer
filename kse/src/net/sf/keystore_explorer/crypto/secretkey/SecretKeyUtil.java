@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -42,7 +42,7 @@ public class SecretKeyUtil {
 
 	/**
 	 * Generate a secret key.
-	 * 
+	 *
 	 * @param secretKeyType
 	 *            Secret key type to generate
 	 * @param keySize
@@ -65,7 +65,7 @@ public class SecretKeyUtil {
 
 	/**
 	 * Get the information about the supplied secret key.
-	 * 
+	 *
 	 * @param secretKey
 	 *            The secret key
 	 * @return Key information
@@ -75,14 +75,14 @@ public class SecretKeyUtil {
 
 		if (algorithm.equals("RC4")) {
 			algorithm = "ARC4"; // RC4 is trademarked so we never want to
-								// display it
+			// display it
 		}
 
 		if (secretKey.getFormat().equals("RAW")) {
 			int keySize = secretKey.getEncoded().length * 8;
 			return new KeyInfo(SYMMETRIC, algorithm, keySize);
 		} else
-		// Key size unknown
+			// Key size unknown
 		{
 			return new KeyInfo(SYMMETRIC, algorithm);
 		}

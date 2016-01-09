@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  * Simple class intended to store the current directory for a file centric GUI
  * application. Wraps the "user.dir" System property.
- * 
+ *
  */
 public class CurrentDirectory {
 	static {
@@ -45,7 +45,7 @@ public class CurrentDirectory {
 
 	/**
 	 * Update CurrentSirectory to be the supplied directory.
-	 * 
+	 *
 	 * @param directory
 	 *            Used to set current directory
 	 */
@@ -60,7 +60,7 @@ public class CurrentDirectory {
 	/**
 	 * Update CurrentDirectory based on the supplied file. If the file exists
 	 * then its parent is used.
-	 * 
+	 *
 	 * @param file
 	 *            Used to set current directory
 	 */
@@ -74,7 +74,7 @@ public class CurrentDirectory {
 
 	/**
 	 * Get the current directory.
-	 * 
+	 *
 	 * @return Current directory
 	 */
 	public static File get() {

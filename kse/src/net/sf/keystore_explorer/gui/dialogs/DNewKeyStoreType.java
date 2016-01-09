@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -98,13 +98,13 @@ public class DNewKeyStoreType extends JEscDialog {
 				.charAt(0));
 		jrbPkcs12KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.tooltip"));
 
-        jrbBksV1KeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.text"));
-        PlatformUtil.setMnemonic(jrbBksV1KeyStore, res.getString("DNewKeyStoreType.jrbBksV1KeyStore.mnemonic").charAt(0));
-        jrbBksV1KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.tooltip"));
+		jrbBksV1KeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.text"));
+		PlatformUtil.setMnemonic(jrbBksV1KeyStore, res.getString("DNewKeyStoreType.jrbBksV1KeyStore.mnemonic").charAt(0));
+		jrbBksV1KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.tooltip"));
 
-        jrbBksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksKeyStore.text"));
-        PlatformUtil.setMnemonic(jrbBksKeyStore, res.getString("DNewKeyStoreType.jrbBksKeyStore.mnemonic").charAt(0));
-        jrbBksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksKeyStore.tooltip"));
+		jrbBksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksKeyStore.text"));
+		PlatformUtil.setMnemonic(jrbBksKeyStore, res.getString("DNewKeyStoreType.jrbBksKeyStore.mnemonic").charAt(0));
+		jrbBksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksKeyStore.tooltip"));
 
 		jrbUberKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbUberKeyStore.text"));
 		PlatformUtil.setMnemonic(jrbUberKeyStore, res.getString("DNewKeyStoreType.jrbUberKeyStore.mnemonic").charAt(0));
@@ -133,6 +133,7 @@ public class DNewKeyStoreType extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DNewKeyStoreType.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -140,6 +141,7 @@ public class DNewKeyStoreType extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DNewKeyStoreType.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -147,6 +149,7 @@ public class DNewKeyStoreType extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -159,6 +162,7 @@ public class DNewKeyStoreType extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -187,10 +191,10 @@ public class DNewKeyStoreType extends JEscDialog {
 			keyStoreType = KeyStoreType.JKS;
 		} else if (jrbPkcs12KeyStore.isSelected()) {
 			keyStoreType = KeyStoreType.PKCS12;
-        } else if (jrbBksV1KeyStore.isSelected()) {
-            keyStoreType = KeyStoreType.BKS_V1;
-        } else if (jrbBksKeyStore.isSelected()) {
-            keyStoreType = KeyStoreType.BKS;
+		} else if (jrbBksV1KeyStore.isSelected()) {
+			keyStoreType = KeyStoreType.BKS_V1;
+		} else if (jrbBksKeyStore.isSelected()) {
+			keyStoreType = KeyStoreType.BKS;
 		} else {
 			keyStoreType = KeyStoreType.UBER;
 		}

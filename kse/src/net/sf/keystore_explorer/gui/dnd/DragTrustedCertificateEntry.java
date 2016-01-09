@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,9 +30,9 @@ import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 
 /**
  * Encapsulates a draggable trusted certificate entry.
- * 
+ *
  * Product of drag is a PEM'd X.509 encoding of the trusted certificate.
- * 
+ *
  */
 public class DragTrustedCertificateEntry extends DragEntry {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dnd/resources");
@@ -45,7 +45,7 @@ public class DragTrustedCertificateEntry extends DragEntry {
 
 	/**
 	 * Construct DragTrustedCertificateEntry.
-	 * 
+	 *
 	 * @param name
 	 *            Entry name
 	 * @param trustedCertificate
@@ -69,36 +69,40 @@ public class DragTrustedCertificateEntry extends DragEntry {
 
 	/**
 	 * Get entry image - to display while dragging.
-	 * 
+	 *
 	 * @return Entry image
 	 */
+	@Override
 	public ImageIcon getImage() {
 		return image;
 	}
 
 	/**
 	 * Get entry file extension. Used to generate dragged file name.
-	 * 
+	 *
 	 * @return File extension
 	 */
+	@Override
 	public String getExtension() {
 		return EXTENSION;
 	}
 
 	/**
 	 * Get entry content as binary.
-	 * 
+	 *
 	 * @return Content
 	 */
+	@Override
 	public byte[] getContent() {
 		return contentBytes;
 	}
 
 	/**
 	 * Get entry content as a string.
-	 * 
+	 *
 	 * @return Content
 	 */
+	@Override
 	public String getContentString() {
 		return contentStr;
 	}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,7 +41,7 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 
 /**
  * Component to edit a date/time value.
- * 
+ *
  */
 public class JDateTime extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/datetime/resources");
@@ -57,7 +57,7 @@ public class JDateTime extends JPanel {
 
 	/**
 	 * Construct a JDateTime.
-	 * 
+	 *
 	 * @param title
 	 *            Title of edit dialog
 	 */
@@ -81,6 +81,7 @@ public class JDateTime extends JPanel {
 		jbEditDateTime = new JButton(editIcon);
 		jbEditDateTime.setToolTipText(res.getString("JDateTime.jbEditDateTime.tooltip"));
 		jbEditDateTime.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JDateTime.this);
@@ -102,6 +103,7 @@ public class JDateTime extends JPanel {
 		jbClearDateTime = new JButton(clearIcon);
 		jbClearDateTime.setToolTipText(res.getString("JDateTime.jbClearDateTime.tooltip"));
 		jbClearDateTime.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JDateTime.this);
@@ -129,7 +131,7 @@ public class JDateTime extends JPanel {
 
 	/**
 	 * Get date/time value.
-	 * 
+	 *
 	 * @return Date value, or null if none chosen
 	 */
 	public Date getDateTime() {
@@ -138,7 +140,7 @@ public class JDateTime extends JPanel {
 
 	/**
 	 * Set date/time value.
-	 * 
+	 *
 	 * @param date
 	 *            Date
 	 */
@@ -149,10 +151,11 @@ public class JDateTime extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jbEditDateTime.setEnabled(enabled);
 		jbClearDateTime.setEnabled(enabled);
@@ -160,10 +163,11 @@ public class JDateTime extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jtfDateTime.setToolTipText(toolTipText);

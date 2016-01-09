@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,18 +32,18 @@ import org.bouncycastle.asn1.x509.AccessDescription;
 
 /**
  * X509 extension SubjectInfoAccess, RFC5280:
- * 
+ *
  * SubjectInfoAccessSyntax ::= SEQUENCE SIZE (1..MAX) OF AccessDescription
- * 
- * AccessDescription ::= SEQUENCE { 
+ *
+ * AccessDescription ::= SEQUENCE {
  * 		accessMethod OBJECT IDENTIFIER,
  * 		accessLocation GeneralName }
- * 
+ *
  */
 public class SubjectInfoAccess extends ASN1Object {
 
 	private List<AccessDescription> accessDescriptions;
-	
+
 	/**
 	 * Creates a new instance with the given list of accessDescription.
 	 */
@@ -71,8 +71,8 @@ public class SubjectInfoAccess extends ASN1Object {
 		}
 	}
 
-	/** 
-	 * Returns a list with the AccessDescription objects. 
+	/**
+	 * Returns a list with the AccessDescription objects.
 	 */
 	public List<AccessDescription> getAccessDescriptionList() {
 		return accessDescriptions;

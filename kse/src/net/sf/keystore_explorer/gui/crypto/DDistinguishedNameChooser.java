@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -47,6 +47,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
@@ -226,6 +227,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DDistinguishedNameChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -244,6 +246,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 			jbCancel = new JButton(res.getString("DDistinguishedNameChooser.jbCancel.text"));
 			jbCancel.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					cancelPressed();
 				}
@@ -251,6 +254,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 			jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 					CANCEL_KEY);
 			jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					cancelPressed();
 				}
@@ -276,6 +280,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				okPressed();
 			}
@@ -291,27 +296,27 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	private void populate() {
 
 		if (distinguishedName != null) {
-			populateRdnField(distinguishedName, jtfCommonName, KseX500NameStyle.CN);
-			populateRdnField(distinguishedName, jtfOrganisationUnit, KseX500NameStyle.OU);
-			populateRdnField(distinguishedName, jtfOrganisationName, KseX500NameStyle.O);
-			populateRdnField(distinguishedName, jtfLocalityName, KseX500NameStyle.L);
-			populateRdnField(distinguishedName, jtfStateName, KseX500NameStyle.ST);
-			populateRdnField(distinguishedName, jtfCountryCode, KseX500NameStyle.C);
-			populateRdnField(distinguishedName, jtfEmailAddress, KseX500NameStyle.E);
+			populateRdnField(distinguishedName, jtfCommonName, BCStyle.CN);
+			populateRdnField(distinguishedName, jtfOrganisationUnit, BCStyle.OU);
+			populateRdnField(distinguishedName, jtfOrganisationName, BCStyle.O);
+			populateRdnField(distinguishedName, jtfLocalityName, BCStyle.L);
+			populateRdnField(distinguishedName, jtfStateName, BCStyle.ST);
+			populateRdnField(distinguishedName, jtfCountryCode, BCStyle.C);
+			populateRdnField(distinguishedName, jtfEmailAddress, BCStyle.E);
 		} else {
 
-		    // use default DN for populating DN fields?
-	        String defaultDN = applicationSettings.getDefaultDN();
-	        if (!StringUtils.isBlank(defaultDN)) {
-	            X500Name defaultX500Name = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
-	            populateRdnField(defaultX500Name, jtfCommonName, KseX500NameStyle.CN);
-	            populateRdnField(defaultX500Name, jtfOrganisationUnit, KseX500NameStyle.OU);
-	            populateRdnField(defaultX500Name, jtfOrganisationName, KseX500NameStyle.O);
-	            populateRdnField(defaultX500Name, jtfLocalityName, KseX500NameStyle.L);
-	            populateRdnField(defaultX500Name, jtfStateName, KseX500NameStyle.ST);
-	            populateRdnField(defaultX500Name, jtfCountryCode, KseX500NameStyle.C);
-	            populateRdnField(defaultX500Name, jtfEmailAddress, KseX500NameStyle.E);
-	        }
+			// use default DN for populating DN fields?
+			String defaultDN = applicationSettings.getDefaultDN();
+			if (!StringUtils.isBlank(defaultDN)) {
+				X500Name defaultX500Name = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
+				populateRdnField(defaultX500Name, jtfCommonName, BCStyle.CN);
+				populateRdnField(defaultX500Name, jtfOrganisationUnit, BCStyle.OU);
+				populateRdnField(defaultX500Name, jtfOrganisationName, BCStyle.O);
+				populateRdnField(defaultX500Name, jtfLocalityName, BCStyle.L);
+				populateRdnField(defaultX500Name, jtfStateName, BCStyle.ST);
+				populateRdnField(defaultX500Name, jtfCountryCode, BCStyle.C);
+				populateRdnField(defaultX500Name, jtfEmailAddress, BCStyle.E);
+			}
 		}
 	}
 

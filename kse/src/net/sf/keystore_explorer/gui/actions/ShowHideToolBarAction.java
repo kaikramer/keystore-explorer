@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,12 +23,12 @@ import net.sf.keystore_explorer.gui.KseFrame;
 
 /**
  * Action to show/hide the tool bar.
- * 
+ *
  */
 public class ShowHideToolBarAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -43,6 +43,7 @@ public class ShowHideToolBarAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		kseFrame.showHideToolBar();
 	}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 
 /**
  * JPanel with gradient.
- * 
+ *
  */
 public class JGradientPanel extends JPanel {
 	private Color color1;
@@ -36,7 +36,7 @@ public class JGradientPanel extends JPanel {
 
 	/**
 	 * Construct a Gradient panel using the supplied colours.
-	 * 
+	 *
 	 * @param color1
 	 *            First colour
 	 * @param color2
@@ -49,10 +49,11 @@ public class JGradientPanel extends JPanel {
 
 	/**
 	 * Paint component with gradient.
-	 * 
+	 *
 	 * @param g
 	 *            The graphics object on which to paint
 	 */
+	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		GradientPaint gradient = new GradientPaint(0, 0, color1, getWidth(), getHeight(), color2);

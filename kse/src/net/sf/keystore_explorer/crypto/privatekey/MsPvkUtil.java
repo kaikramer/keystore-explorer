@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -255,7 +255,7 @@ public class MsPvkUtil {
 	 *             An I/O error occurred
 	 */
 	public static PrivateKey loadEncrypted(InputStream is, Password password) throws IOException,
-			CryptoException {
+	CryptoException {
 		try {
 			byte[] pvk = ReadUtil.readFully(is);
 

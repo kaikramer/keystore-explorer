@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -39,12 +39,12 @@ import net.sf.keystore_explorer.gui.password.DGetPassword;
 
 /**
  * Abstract base class for actions that utilize authority certificates.
- * 
+ *
  */
 public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -54,7 +54,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 
 	/**
 	 * Get CA Certificates KeyStore.
-	 * 
+	 *
 	 * @return KeyStore or null if unavailable
 	 */
 	protected KeyStore getCaCertificates() {
@@ -79,7 +79,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 
 	/**
 	 * Get Windows Trusted Root Certificates KeyStore.
-	 * 
+	 *
 	 * @return KeyStore or null if unavailable
 	 * @throws CryptoException
 	 *             If a problem occurred getting the KeyStore
@@ -102,7 +102,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 		try {
 			DGetPassword dGetPassword = new DGetPassword(frame,
 					res.getString("AuthorityCertificatesAction.CaCertificatesKeyStorePassword.Title")
-			);
+					);
 			dGetPassword.setLocationRelativeTo(frame);
 			dGetPassword.setVisible(true);
 			Password password = dGetPassword.getPassword();
@@ -128,7 +128,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 
 				DProblem dProblem = new DProblem(frame,
 						res.getString("AuthorityCertificatesAction.ProblemOpeningCaCertificatesKeyStore.Title"),
-						                         problem);
+						problem);
 				dProblem.setLocationRelativeTo(frame);
 				dProblem.setVisible(true);
 

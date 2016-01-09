@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,6 +19,39 @@
  */
 package net.sf.keystore_explorer.crypto.filetype;
 
+import static net.sf.keystore_explorer.crypto.csr.CsrType.PKCS10;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.CERT;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.CRL;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_MS_PVK;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.OPENSSL_PUB;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
+import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNKNOWN;
+import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.ENCRYPTED;
+import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.UNENCRYPTED;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
+
 import net.sf.keystore_explorer.crypto.csr.CsrType;
 import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
@@ -31,37 +64,6 @@ import net.sf.keystore_explorer.crypto.privatekey.Pkcs8Util;
 import net.sf.keystore_explorer.crypto.publickey.OpenSslPubUtil;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.utilities.io.ReadUtil;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static net.sf.keystore_explorer.crypto.csr.CsrType.PKCS10;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.CERT;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.CRL;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_MS_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.OPENSSL_PUB;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNKNOWN;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
-import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.ENCRYPTED;
-import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.UNENCRYPTED;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
@@ -237,11 +239,11 @@ public class CryptoFileUtil {
 				// Read what may be the null byte
 				if (dis.readByte() == 0) {
 					// Found null byte - BKS/BKS-V1
-				    if (i1 == 1) {
-				        return BKS_V1;
-				    } else {
-				        return BKS;
-				    }
+					if (i1 == 1) {
+						return BKS_V1;
+					} else {
+						return BKS;
+					}
 				} else {
 					// No null byte - UBER
 					return UBER;
@@ -262,10 +264,10 @@ public class CryptoFileUtil {
 
 		ASN1Primitive pfx = null;
 		try {
-            pfx = ASN1Primitive.fromByteArray(contents);
+			pfx = ASN1Primitive.fromByteArray(contents);
 		} catch (IOException e) {
-		    // if it cannot be parsed as ASN1, it is certainly not a pfx key store
-		    return null;
+			// if it cannot be parsed as ASN1, it is certainly not a pfx key store
+			return null;
 		}
 
 		// Is a sequence...

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -121,6 +121,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 	 *
 	 * @return The number of columns
 	 */
+	@Override
 	public int getColumnCount() {
 		return columnNames.length;
 	}
@@ -130,6 +131,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 	 *
 	 * @return The number of rows
 	 */
+	@Override
 	public int getRowCount() {
 		return data.length;
 	}
@@ -141,6 +143,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return The column name
 	 */
+	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
@@ -154,6 +157,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return The cell value
 	 */
+	@Override
 	public Object getValueAt(int row, int col) {
 		return data[row][col];
 	}
@@ -165,6 +169,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return The column cells' class
 	 */
+	@Override
 	public Class<?> getColumnClass(int col) {
 		switch (col) {
 		case 0:
@@ -185,30 +190,32 @@ public class ExtensionsTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return True if the cell is editable, false otherwise
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		return false;
 	}
 
 	private class ExtensionNameComparator implements Comparator<X509Ext> {
+		@Override
 		public int compare(X509Ext ext1, X509Ext ext2) {
 
-		    // compare extension names
-		    String name1 = ext1.getName();
-		    String name2 = ext2.getName();
+			// compare extension names
+			String name1 = ext1.getName();
+			String name2 = ext2.getName();
 
-            if (name1 == null) {
-                name1 = "-";
-            }
+			if (name1 == null) {
+				name1 = "-";
+			}
 
-            if (name2 == null) {
-                name2 = "-";
-            }
+			if (name2 == null) {
+				name2 = "-";
+			}
 
 			int result = name1.compareToIgnoreCase(name2);
 
 			// compare extension OIDs if names are equal
 			if (result == 0) {
-			    result = ext1.getOid().getId().compareToIgnoreCase(ext2.getOid().getId());
+				result = ext1.getOid().getId().compareToIgnoreCase(ext2.getOid().getId());
 			}
 
 			return result;

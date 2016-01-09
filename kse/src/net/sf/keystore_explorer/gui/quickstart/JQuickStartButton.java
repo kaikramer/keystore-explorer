@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,7 +37,7 @@ import javax.swing.JPanel;
 /**
  * Quick Start button. Undecorated image button with attached descriptive text
  * that each react to mouse roll-overs.
- * 
+ *
  */
 public class JQuickStartButton extends JPanel {
 	private JButton jbWelcome;
@@ -45,7 +45,7 @@ public class JQuickStartButton extends JPanel {
 
 	/**
 	 * Initialise component and its subcomponents.
-	 * 
+	 *
 	 * @param action
 	 *            Button action
 	 * @param test
@@ -88,12 +88,14 @@ public class JQuickStartButton extends JPanel {
 
 		jbWelcome.addMouseListener(new MouseAdapter() {
 			// Mouse entered - use roll-over color on text and image on button
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				jlWelcome.setForeground(rollOverColor);
 				jbWelcome.setIcon(rollOverIcon);
 			}
 
 			// Mouse exited - remove roll-over color on text and image on button
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				jlWelcome.setForeground(foreground);
 				jbWelcome.setIcon(icon);
@@ -103,6 +105,7 @@ public class JQuickStartButton extends JPanel {
 		jbWelcome.addActionListener(new ActionListener() {
 			// Button activate - remove roll-over color on text and image on
 			// button
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				jlWelcome.setForeground(foreground);
 				jbWelcome.setIcon(icon);

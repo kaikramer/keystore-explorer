@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -44,12 +44,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to cut a KeyStore entry.
- * 
+ *
  */
 public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -67,6 +67,7 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
 						getClass().getResource(res.getString("CutAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -74,6 +75,7 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		BufferEntry bufferEntry = bufferSelectedEntry();
 

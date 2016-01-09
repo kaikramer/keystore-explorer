@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -134,7 +134,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 					Problem problem = new Problem(problemStr, causes, klex);
 
 					DProblem dProblem = new DProblem(frame, res.getString("OpenAction.ProblemOpeningKeyStore.Title"),
-					                                 problem);
+							problem);
 					dProblem.setLocationRelativeTo(frame);
 					dProblem.setVisible(true);
 

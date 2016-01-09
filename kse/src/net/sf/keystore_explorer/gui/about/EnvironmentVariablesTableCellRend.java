@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,12 +29,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 /**
  * Custom cell renderer for the cells of the Environment Variables table of
  * DEnvironmentVariables.
- * 
+ *
  */
 public class EnvironmentVariablesTableCellRend extends DefaultTableCellRenderer {
 	/**
 	 * Returns the rendered cell for the supplied value and column.
-	 * 
+	 *
 	 * @param jtEnvironmentVariables
 	 *            The JTable
 	 * @param value
@@ -49,6 +49,7 @@ public class EnvironmentVariablesTableCellRend extends DefaultTableCellRenderer 
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtEnvironmentVariables, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtEnvironmentVariables, value, isSelected, hasFocus,

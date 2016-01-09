@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,12 +41,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to append to the selected key pair entry's certificate chain.
- * 
+ *
  */
 public class AppendToCertificateChainAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -62,6 +62,7 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
 						getClass().getResource(res.getString("AppendToCertificateChainAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -69,6 +70,7 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();

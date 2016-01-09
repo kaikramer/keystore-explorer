@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -88,7 +88,7 @@ public class DExamineSsl extends JEscDialog {
 	 */
 	public DExamineSsl(JFrame parent, KseFrame kseFrame) {
 		super(parent, res.getString("DExamineSsl.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
-	    this.kseFrame = kseFrame;
+		this.kseFrame = kseFrame;
 		initComponents();
 	}
 
@@ -126,54 +126,60 @@ public class DExamineSsl extends JEscDialog {
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-        Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
-        MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlConnSettings.text"));
-        pane.add(jlSslHost, "skip");
-        pane.add(jcbSslHost, "sgx, wrap");
-        pane.add(jlSslPort, "skip");
-        pane.add(jcbSslPort, "sgx, wrap para");
-        MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlClientAuth.text"));
-        pane.add(jcbClientAuth, "left, spanx, wrap");
-        pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
-        pane.add(jcbKeyStore, "sgx");
-        pane.add(jbLoadKeystore, "wrap para");
-        pane.add(new JSeparator(), "spanx, growx, wrap para");
-        pane.add(jpButtons, "right, spanx");
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
+		MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlConnSettings.text"));
+		pane.add(jlSslHost, "skip");
+		pane.add(jcbSslHost, "sgx, wrap");
+		pane.add(jlSslPort, "skip");
+		pane.add(jcbSslPort, "sgx, wrap para");
+		MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlClientAuth.text"));
+		pane.add(jcbClientAuth, "left, spanx, wrap");
+		pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
+		pane.add(jcbKeyStore, "sgx");
+		pane.add(jbLoadKeystore, "wrap para");
+		pane.add(new JSeparator(), "spanx, growx, wrap para");
+		pane.add(jpButtons, "right, spanx");
 
-        jcbClientAuth.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateClientAuthComponents();
-            }
-        });
+		jcbClientAuth.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				updateClientAuthComponents();
+			}
+		});
 
-        jbLoadKeystore.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OpenAction openAction = new OpenAction(kseFrame);
-                openAction.actionPerformed(evt);
-                updateClientAuthComponents();
-            }
-        });
+		jbLoadKeystore.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				OpenAction openAction = new OpenAction(kseFrame);
+				openAction.actionPerformed(evt);
+				updateClientAuthComponents();
+			}
+		});
 
-        jbOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                okPressed();
-            }
-        });
+		jbOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				okPressed();
+			}
+		});
 
-        jbCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
+		jbCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				cancelPressed();
+			}
+		});
 
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
+		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				cancelPressed();
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -189,11 +195,11 @@ public class DExamineSsl extends JEscDialog {
 	}
 
 	private ComboBoxModel<KeyStoreHistory> getKeystoreNames() {
-	    KeyStoreHistory[] keyStoreHistories = kseFrame.getKeyStoreHistories();
-        return new DefaultComboBoxModel<KeyStoreHistory>(keyStoreHistories);
-    }
+		KeyStoreHistory[] keyStoreHistories = kseFrame.getKeyStoreHistories();
+		return new DefaultComboBoxModel<KeyStoreHistory>(keyStoreHistories);
+	}
 
-    /**
+	/**
 	 * Get selected SSL hostname.
 	 *
 	 * @return Hostname or null of dialog cancelled by user
@@ -217,7 +223,7 @@ public class DExamineSsl extends JEscDialog {
 	 * @return True if user wants to use SSL client authentication
 	 */
 	public boolean useClientAuth() {
-	    return jcbClientAuth.isSelected();
+		return jcbClientAuth.isSelected();
 	}
 
 	/**
@@ -226,40 +232,40 @@ public class DExamineSsl extends JEscDialog {
 	 * @return KeyStore (wrapped in a history object)
 	 */
 	public KeyStoreHistory getKeyStore() {
-	    return (KeyStoreHistory) jcbKeyStore.getSelectedItem();
+		return (KeyStoreHistory) jcbKeyStore.getSelectedItem();
 	}
 
 	/**
-     * Was the dialog cancelled?
-     *
-     * @return True if it was cancelled
-     */
-    public boolean wasCancelled() {
-        return cancelled;
-    }
+	 * Was the dialog cancelled?
+	 *
+	 * @return True if it was cancelled
+	 */
+	public boolean wasCancelled() {
+		return cancelled;
+	}
 
-    private String[] getSslHosts() {
-        String sslHosts = applicationSettings.getSslHosts();
-        String[] hosts = sslHosts.split(";");
-        return hosts;
-    }
+	private String[] getSslHosts() {
+		String sslHosts = applicationSettings.getSslHosts();
+		String[] hosts = sslHosts.split(";");
+		return hosts;
+	}
 
 
-    private String[] getSslPorts() {
-        String sslPorts = applicationSettings.getSslPorts();
-        String[] ports = sslPorts.split(";");
-        return ports;
-    }
-    
+	private String[] getSslPorts() {
+		String sslPorts = applicationSettings.getSslPorts();
+		String[] ports = sslPorts.split(";");
+		return ports;
+	}
 
-    private void updateClientAuthComponents() {
-	    jcbKeyStore.setEnabled(jcbClientAuth.isSelected());
-	    jbLoadKeystore.setEnabled(jcbClientAuth.isSelected());
 
-	    jcbKeyStore.setModel(getKeystoreNames());
-    }
+	private void updateClientAuthComponents() {
+		jcbKeyStore.setEnabled(jcbClientAuth.isSelected());
+		jbLoadKeystore.setEnabled(jcbClientAuth.isSelected());
 
-    private void okPressed() {
+		jcbKeyStore.setModel(getKeystoreNames());
+	}
+
+	private void okPressed() {
 		String sslHost = ((String) jcbSslHost.getSelectedItem()).trim();
 
 		if (sslHost.length() == 0) {
@@ -297,19 +303,19 @@ public class DExamineSsl extends JEscDialog {
 
 		// check selected key store
 		if (useClientAuth()) {
-    		KeyStoreHistory ksh = (KeyStoreHistory) jcbKeyStore.getSelectedItem();
-    		if (ksh == null) {
-                JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.NoKeyStoreSelected.message"),
-                        getTitle(), JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+			KeyStoreHistory ksh = (KeyStoreHistory) jcbKeyStore.getSelectedItem();
+			if (ksh == null) {
+				JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.NoKeyStoreSelected.message"),
+						getTitle(), JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 
-            Password keyStorePassword = ksh.getCurrentState().getPassword();
-            if (keyStorePassword == null) {
-                JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.NoPasswordSetForKeyStore.message"),
-                        getTitle(), JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+			Password keyStorePassword = ksh.getCurrentState().getPassword();
+			if (keyStorePassword == null) {
+				JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.NoPasswordSetForKeyStore.message"),
+						getTitle(), JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 		}
 
 		// save host/port in preferences

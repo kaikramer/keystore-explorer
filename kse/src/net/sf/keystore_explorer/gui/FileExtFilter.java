@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,7 +25,7 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * File filter specifically for filtering against file extensions.
- * 
+ *
  */
 public class FileExtFilter extends FileFilter {
 	private String[] exts;
@@ -33,7 +33,7 @@ public class FileExtFilter extends FileFilter {
 
 	/**
 	 * Construct a FileExtFilter for a single file extension.
-	 * 
+	 *
 	 * @param ext
 	 *            The file extension (eg "exe" for a Windows executable)
 	 * @param description
@@ -47,7 +47,7 @@ public class FileExtFilter extends FileFilter {
 
 	/**
 	 * Construct a FileExtFilter for a set of related file extension.
-	 * 
+	 *
 	 * @param exts
 	 *            The file extension (eg "exe" for a Windows executable)
 	 * @param description
@@ -63,11 +63,12 @@ public class FileExtFilter extends FileFilter {
 
 	/**
 	 * Does the supplied file match the filter?
-	 * 
+	 *
 	 * @param file
 	 *            The file to filter
 	 * @return True if the file matches the filter, false otherwise
 	 */
+	@Override
 	public boolean accept(File file) {
 		if (file.isDirectory()) {
 			return true;
@@ -91,9 +92,10 @@ public class FileExtFilter extends FileFilter {
 
 	/**
 	 * Get the description.
-	 * 
+	 *
 	 * @return The description
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}

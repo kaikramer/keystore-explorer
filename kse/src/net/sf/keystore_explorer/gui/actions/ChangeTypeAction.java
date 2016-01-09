@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -72,6 +72,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 		putValue(SHORT_DESCRIPTION, newType.friendly());
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return MessageFormat.format(res.getString("ChangeTypeAction.History.text"), newType.friendly());
 	}
@@ -79,6 +80,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		KeyStoreType currentType = KeyStoreType.resolveJce(kseFrame.getActiveKeyStoreHistory().getCurrentState()
 				.getKeyStore().getType());
@@ -157,7 +159,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
 	private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
 			KeyStore currentKeyStore, String currentType, KeyStore newKeyStore, String alias) throws KeyStoreException,
-			CryptoException, NoSuchAlgorithmException, UnrecoverableKeyException {
+	CryptoException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
 		Certificate[] certificateChain = currentKeyStore.getCertificateChain(alias);
 		certificateChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificateChain));
@@ -179,7 +181,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 			// EC or curve not supported?
 			if (!newKeyStoreType.supportsECC() || !newKeyStoreType.supportsNamedCurve(namedCurve)) {
 
-				 // show warning and abort change or just skip depending on user choice
+				// show warning and abort change or just skip depending on user choice
 				return showWarnNoECC();
 			}
 		}
@@ -191,7 +193,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
 	private boolean copySecretKeyEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
 			KeyStore currentKeyStore, KeyStore newKeyStore, String alias) throws KeyStoreException,
-			NoSuchAlgorithmException, UnrecoverableKeyException {
+	NoSuchAlgorithmException, UnrecoverableKeyException {
 
 		if (newKeyStoreType.supportsKeyEntries()) {
 

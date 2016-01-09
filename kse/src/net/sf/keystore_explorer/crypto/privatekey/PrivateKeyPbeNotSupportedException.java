@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -24,14 +24,14 @@ import net.sf.keystore_explorer.crypto.CryptoException;
 /**
  * Thrown when a encrypted private key is encrypted with an unsupported PBE
  * algorithm.
- * 
+ *
  */
 public class PrivateKeyPbeNotSupportedException extends CryptoException {
 	private String unsupportedPbe;
 
 	/**
 	 * Creates a new PrivateKeyPbeNotSupportedException.
-	 * 
+	 *
 	 * @param unsupportedPbe
 	 *            Unsupported PBE algorithm
 	 */
@@ -43,7 +43,7 @@ public class PrivateKeyPbeNotSupportedException extends CryptoException {
 	/**
 	 * Creates a new PrivateKeyPbeNotSupportedException with the specified
 	 * message.
-	 * 
+	 *
 	 * @param unsupportedPbe
 	 *            Unsupported PBE algorithm
 	 * @param message
@@ -57,7 +57,7 @@ public class PrivateKeyPbeNotSupportedException extends CryptoException {
 	/**
 	 * Creates a new PrivateKeyPbeNotSupportedException with the specified
 	 * message and cause throwable.
-	 * 
+	 *
 	 * @param unsupportedPbe
 	 *            Unsupported PBE algorithm
 	 * @param message
@@ -73,7 +73,7 @@ public class PrivateKeyPbeNotSupportedException extends CryptoException {
 	/**
 	 * Creates a new PrivateKeyPbeNotSupportedException with the specified cause
 	 * throwable.
-	 * 
+	 *
 	 * @param unsupportedPbe
 	 *            Unsupported PBE algorithm
 	 * @param causeThrowable
@@ -86,7 +86,7 @@ public class PrivateKeyPbeNotSupportedException extends CryptoException {
 
 	/**
 	 * Get unsupported Pbe algorithm.
-	 * 
+	 *
 	 * @return Unsupported PBE algorithm
 	 */
 	public String getUnsupportedPbe() {

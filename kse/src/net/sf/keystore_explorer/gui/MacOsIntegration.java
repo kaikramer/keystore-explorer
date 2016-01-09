@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -43,7 +43,7 @@ public class MacOsIntegration implements InvocationHandler {
 	}
 
 	public void addEventHandlers() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
-			InvocationTargetException, InstantiationException {
+	InvocationTargetException, InstantiationException {
 
 		// using reflection to avoid Mac specific classes being required for compiling KSE on other platforms
 		Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
@@ -54,13 +54,13 @@ public class MacOsIntegration implements InvocationHandler {
 
 		Object application = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
 		Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(), new Class<?>[]{
-				quitHandlerClass, aboutHandlerClass, openFilesHandlerClass, preferencesHandlerClass}, this);
+			quitHandlerClass, aboutHandlerClass, openFilesHandlerClass, preferencesHandlerClass}, this);
 
 		applicationClass.getDeclaredMethod("setQuitHandler", quitHandlerClass).invoke(application, proxy);
 		applicationClass.getDeclaredMethod("setAboutHandler", aboutHandlerClass).invoke(application, proxy);
 		applicationClass.getDeclaredMethod("setOpenFileHandler", openFilesHandlerClass).invoke(application, proxy);
 		applicationClass.getDeclaredMethod("setPreferencesHandler", preferencesHandlerClass).invoke(application,
-		                                                                                            proxy);
+				proxy);
 	}
 
 	@Override
@@ -76,18 +76,18 @@ public class MacOsIntegration implements InvocationHandler {
 				}
 			}
 		} else if ("handleQuitRequestWith".equals(method.getName())) {
-				ExitAction exitAction = new ExitAction(kseFrame);
-				exitAction.exitApplication();
-				// If we have returned from the above call the user has decied not to quit
-				if (args[1] != null) {
-					args[1].getClass().getDeclaredMethod("cancelQuit").invoke(args[1]);
-				}
+			ExitAction exitAction = new ExitAction(kseFrame);
+			exitAction.exitApplication();
+			// If we have returned from the above call the user has decied not to quit
+			if (args[1] != null) {
+				args[1].getClass().getDeclaredMethod("cancelQuit").invoke(args[1]);
+			}
 		} else if ("handleAbout".equals(method.getName())) {
-				AboutAction aboutAction = new AboutAction(kseFrame);
-				aboutAction.showAbout();
+			AboutAction aboutAction = new AboutAction(kseFrame);
+			aboutAction.showAbout();
 		} else if ("handlePreferences".equals(method.getName())) {
-				PreferencesAction preferencesAction = new PreferencesAction(kseFrame);
-				preferencesAction.showPreferences();
+			PreferencesAction preferencesAction = new PreferencesAction(kseFrame);
+			preferencesAction.showPreferences();
 		}
 		return null;
 	}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -42,16 +42,16 @@ public enum CurveSet {
 	NIST("NIST"),
 	SEC("SEC"),
 	TELETRUST("Brainpool");
-	
+
 	private String visibleName;
-	
+
 	CurveSet(String visibleName) {
 		this.visibleName = visibleName;
 	}
-	
+
 	/**
 	 * Return list with all curve set name that are available for the given KeyStoreType.
-	 * 
+	 *
 	 * @return All available sets of named curves
 	 */
 	public static String[] getAvailableSetNames(KeyStoreType keyStoreType) {
@@ -64,10 +64,10 @@ public enum CurveSet {
 		}
 		return sets.toArray(new String[sets.size()]);
 	}
-	
+
 	/**
 	 * Return list with all curve sets that are available for the given KeyStoreType.
-	 * 
+	 *
 	 * @return All available sets of named curves
 	 */
 	public static List<CurveSet> getAvailableSets(KeyStoreType keyStoreType) {
@@ -80,11 +80,11 @@ public enum CurveSet {
 		}
 		return sets;
 	}
-	
+
 	/**
 	 * Return the list of available curve names for this set.
-	 * 
-	 * @return The named curves that belong to this set 
+	 *
+	 * @return The named curves that belong to this set
 	 */
 	public List<String> getAvailableCurveNames(KeyStoreType keyStoreType) {
 
@@ -101,15 +101,15 @@ public enum CurveSet {
 		return curveNames;
 	}
 
-	
+
 	/**
 	 * Return the list of all curve names for this set.
-	 * 
-	 * @return The named curves that belong to this set 
+	 *
+	 * @return The named curves that belong to this set
 	 */
 	public List<String> getAllCurveNames() {
 		Enumeration<String> en = null;
-		
+
 		switch (this) {
 		case ANSI_X9_62:
 			en = X962NamedCurves.getNames();
@@ -124,17 +124,17 @@ public enum CurveSet {
 			en = SECNamedCurves.getNames();
 			break;
 		}
-		
+
 		if (en == null) {
 			return new ArrayList<String>();
 		}
-		
+
 		return Collections.list(en);
 	}
-	
+
 	/**
 	 * Resolve curve set name to a CurveSet instance.
-	 * 
+	 *
 	 * @param curveSetName Name of the curve set
 	 * @return CurveSet instance or null if no match found
 	 */
@@ -142,7 +142,7 @@ public enum CurveSet {
 		if (curveSetName == null) {
 			return null;
 		}
-		
+
 		if (curveSetName.equals(SEC.visibleName)) {
 			return SEC;
 		} else if (curveSetName.equals(NIST.visibleName)) {
@@ -151,13 +151,13 @@ public enum CurveSet {
 			return ANSI_X9_62;
 		} else if (curveSetName.equals(TELETRUST.visibleName)) {
 			return TELETRUST;
-		} 
-		
+		}
+
 		return null;
 	}
-	
+
 	/**
-	 * Get set name for use in GUI elements 
+	 * Get set name for use in GUI elements
 	 * @return Set name
 	 */
 	public String getVisibleName() {

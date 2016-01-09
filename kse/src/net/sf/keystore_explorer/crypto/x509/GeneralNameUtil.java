@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -179,12 +179,12 @@ public class GeneralNameUtil {
 		ASN1Encodable value = otherName.getObjectAt(1);
 		try {
 			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"),
-			                            ObjectIdUtil.toString(oid),
-			                            HexUtil.getHexString(value.toASN1Primitive().getEncoded(ASN1Encoding.DER)));
+					ObjectIdUtil.toString(oid),
+					HexUtil.getHexString(value.toASN1Primitive().getEncoded(ASN1Encoding.DER)));
 		} catch (IOException e) {
 			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"),
-			                            ObjectIdUtil.toString(oid),
-			                            "");
+					ObjectIdUtil.toString(oid),
+					"");
 		}
 	}
 

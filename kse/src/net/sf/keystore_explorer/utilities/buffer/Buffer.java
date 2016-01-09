@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.utilities.buffer;
 
 /**
  * Singleton buffer for copy/paste. Holds at most one KeyStore entry.
- * 
+ *
  */
 public class Buffer {
 	private static BufferEntry bufferEntry;
@@ -31,7 +31,7 @@ public class Buffer {
 
 	/**
 	 * Populate buffer with supplied entry.
-	 * 
+	 *
 	 * @param bufferEntry
 	 *            Buffer entry
 	 */
@@ -41,7 +41,7 @@ public class Buffer {
 
 	/**
 	 * Interrogate buffer.
-	 * 
+	 *
 	 * @return Buffer entry or null if empty
 	 */
 	public static BufferEntry interrogate() {
@@ -50,7 +50,7 @@ public class Buffer {
 
 	/**
 	 * Is buffer clear?
-	 * 
+	 *
 	 * @return True if its is
 	 */
 	public static boolean isClear() {
@@ -59,7 +59,7 @@ public class Buffer {
 
 	/**
 	 * Is buffer populated?
-	 * 
+	 *
 	 * @return True if its is
 	 */
 	public static boolean isPopulated() {

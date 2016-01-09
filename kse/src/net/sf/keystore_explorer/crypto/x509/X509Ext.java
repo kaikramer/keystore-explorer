@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -18,86 +18,6 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.keystore_explorer.crypto.x509;
-
-import net.sf.keystore_explorer.utilities.io.HexUtil;
-import net.sf.keystore_explorer.utilities.io.IndentChar;
-import net.sf.keystore_explorer.utilities.io.IndentSequence;
-import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
-import org.bouncycastle.asn1.ASN1Boolean;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1GeneralizedTime;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.ASN1UTCTime;
-import org.bouncycastle.asn1.DERBMPString;
-import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERGeneralString;
-import org.bouncycastle.asn1.DERGeneralizedTime;
-import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DERPrintableString;
-import org.bouncycastle.asn1.isismtt.x509.AdmissionSyntax;
-import org.bouncycastle.asn1.isismtt.x509.Admissions;
-import org.bouncycastle.asn1.isismtt.x509.DeclarationOfMajority;
-import org.bouncycastle.asn1.isismtt.x509.MonetaryLimit;
-import org.bouncycastle.asn1.isismtt.x509.NamingAuthority;
-import org.bouncycastle.asn1.isismtt.x509.ProcurationSyntax;
-import org.bouncycastle.asn1.isismtt.x509.ProfessionInfo;
-import org.bouncycastle.asn1.misc.NetscapeCertType;
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
-import org.bouncycastle.asn1.x500.DirectoryString;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x509.AccessDescription;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.Attribute;
-import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.CRLDistPoint;
-import org.bouncycastle.asn1.x509.CRLNumber;
-import org.bouncycastle.asn1.x509.CRLReason;
-import org.bouncycastle.asn1.x509.CertificatePolicies;
-import org.bouncycastle.asn1.x509.DisplayText;
-import org.bouncycastle.asn1.x509.DistributionPoint;
-import org.bouncycastle.asn1.x509.DistributionPointName;
-import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.asn1.x509.GeneralSubtree;
-import org.bouncycastle.asn1.x509.IssuerSerial;
-import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
-import org.bouncycastle.asn1.x509.KeyPurposeId;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.NameConstraints;
-import org.bouncycastle.asn1.x509.NoticeReference;
-import org.bouncycastle.asn1.x509.PolicyInformation;
-import org.bouncycastle.asn1.x509.PolicyMappings;
-import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
-import org.bouncycastle.asn1.x509.ReasonFlags;
-import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.asn1.x509.UserNotice;
-import org.bouncycastle.asn1.x509.qualified.BiometricData;
-import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
-import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
-import org.bouncycastle.asn1.x509.qualified.QCStatement;
-import org.bouncycastle.asn1.x509.qualified.SemanticsInformation;
-import org.bouncycastle.asn1.x509.qualified.TypeOfBiometricData;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
 
 import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.COMMON_NAME;
 import static net.sf.keystore_explorer.crypto.x509.AttributeTypeType.COUNTRY_NAME;
@@ -178,6 +98,87 @@ import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_ON_SITE_
 import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_SERIAL_NUMBER_ROLLOVER;
 import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_TOKEN_TYPE;
 import static net.sf.keystore_explorer.crypto.x509.X509ExtensionType.VS_UNKNOWN;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import org.bouncycastle.asn1.ASN1Boolean;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1GeneralizedTime;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1UTCTime;
+import org.bouncycastle.asn1.DERBMPString;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERGeneralString;
+import org.bouncycastle.asn1.DERGeneralizedTime;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.isismtt.x509.AdmissionSyntax;
+import org.bouncycastle.asn1.isismtt.x509.Admissions;
+import org.bouncycastle.asn1.isismtt.x509.DeclarationOfMajority;
+import org.bouncycastle.asn1.isismtt.x509.MonetaryLimit;
+import org.bouncycastle.asn1.isismtt.x509.NamingAuthority;
+import org.bouncycastle.asn1.isismtt.x509.ProcurationSyntax;
+import org.bouncycastle.asn1.isismtt.x509.ProfessionInfo;
+import org.bouncycastle.asn1.misc.NetscapeCertType;
+import org.bouncycastle.asn1.smime.SMIMECapability;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.DirectoryString;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x509.AccessDescription;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.Attribute;
+import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.CRLNumber;
+import org.bouncycastle.asn1.x509.CRLReason;
+import org.bouncycastle.asn1.x509.CertificatePolicies;
+import org.bouncycastle.asn1.x509.DisplayText;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.GeneralSubtree;
+import org.bouncycastle.asn1.x509.IssuerSerial;
+import org.bouncycastle.asn1.x509.IssuingDistributionPoint;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.NameConstraints;
+import org.bouncycastle.asn1.x509.NoticeReference;
+import org.bouncycastle.asn1.x509.PolicyInformation;
+import org.bouncycastle.asn1.x509.PolicyMappings;
+import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
+import org.bouncycastle.asn1.x509.ReasonFlags;
+import org.bouncycastle.asn1.x509.SubjectDirectoryAttributes;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
+import org.bouncycastle.asn1.x509.UserNotice;
+import org.bouncycastle.asn1.x509.qualified.BiometricData;
+import org.bouncycastle.asn1.x509.qualified.Iso4217CurrencyCode;
+import org.bouncycastle.asn1.x509.qualified.MonetaryValue;
+import org.bouncycastle.asn1.x509.qualified.QCStatement;
+import org.bouncycastle.asn1.x509.qualified.SemanticsInformation;
+import org.bouncycastle.asn1.x509.qualified.TypeOfBiometricData;
+
+import net.sf.keystore_explorer.utilities.io.HexUtil;
+import net.sf.keystore_explorer.utilities.io.IndentChar;
+import net.sf.keystore_explorer.utilities.io.IndentSequence;
+import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 
 /**
  * Holds the information of an X.509 extension and provides the ability to get
@@ -620,7 +621,7 @@ public class X509Ext {
 		byte[] keyIdentifierBytes = subjectKeyIdentifier.getKeyIdentifier();
 
 		sb.append(MessageFormat.format(res.getString("SubjectKeyIdentifier"),
-		                               HexUtil.getHexString(keyIdentifierBytes)));
+				HexUtil.getHexString(keyIdentifierBytes)));
 		sb.append(NEWLINE);
 
 		return sb.toString();
@@ -706,19 +707,19 @@ public class X509Ext {
 
 		if (notBefore != null) {
 			sb.append(MessageFormat.format(res.getString("NotBeforePrivateKeyUsagePeriod"),
-			                               getGeneralizedTimeString(notBefore)));
+					getGeneralizedTimeString(notBefore)));
 		} else {
 			sb.append(MessageFormat.format(res.getString("NotBeforePrivateKeyUsagePeriod"),
-			                               res.getString("NoValue")));
+					res.getString("NoValue")));
 		}
 		sb.append(NEWLINE);
 
 		if (notAfter != null) {
 			sb.append(MessageFormat.format(res.getString("NotAfterPrivateKeyUsagePeriod"),
-			                               getGeneralizedTimeString(notAfter)));
+					getGeneralizedTimeString(notAfter)));
 		} else {
 			sb.append(MessageFormat.format(res.getString("NotAfterPrivateKeyUsagePeriod"),
-			                               res.getString("NoValue")));
+					res.getString("NoValue")));
 		}
 		sb.append(NEWLINE);
 
@@ -867,7 +868,7 @@ public class X509Ext {
 		} else if (crlReasonLong == CRLReason.privilegeWithdrawn) {
 			sb.append(res.getString("PrivilegeWithdrawnCrlReason"));
 		} else
-		// CRLReason.aACompromise
+			// CRLReason.aACompromise
 		{
 			sb.append(res.getString("AaCompromiseCrlReason"));
 		}
@@ -908,7 +909,7 @@ public class X509Ext {
 
 		StringBuilder sb = new StringBuilder();
 
-		ASN1GeneralizedTime invalidityDate = DERGeneralizedTime.getInstance(value);
+		ASN1GeneralizedTime invalidityDate = ASN1GeneralizedTime.getInstance(value);
 
 		sb.append(getGeneralizedTimeString(invalidityDate));
 		sb.append(NEWLINE);
@@ -1272,7 +1273,7 @@ public class X509Ext {
 
 					sb.append(INDENT.toString(1));
 					sb.append(MessageFormat.format(res.getString("PolicyQualifierInformation"), certPolicy,
-					                               ++policyQual));
+							++policyQual));
 					sb.append(NEWLINE);
 
 					ASN1ObjectIdentifier policyQualifierId = (ASN1ObjectIdentifier) policyQualifierInfo.getObjectAt(0);
@@ -1290,7 +1291,7 @@ public class X509Ext {
 
 							sb.append(INDENT.toString(2));
 							sb.append(MessageFormat.format(res.getString("CpsPointer"),
-							                               "<a href=\"" + cpsPointer + "\">" + cpsPointer + "</a>"));
+									"<a href=\"" + cpsPointer + "\">" + cpsPointer + "</a>"));
 							sb.append(NEWLINE);
 						} else if (certificatePolicyQualifierType == PKIX_USER_NOTICE_QUALIFIER) {
 							ASN1Encodable userNoticeObj = policyQualifierInfo.getObjectAt(1);
@@ -1328,7 +1329,7 @@ public class X509Ext {
 
 								sb.append(INDENT.toString(4));
 								sb.append(MessageFormat.format(res.getString("NoticeNumbers"),
-								                               sbNoticeNumbers.toString()));
+										sbNoticeNumbers.toString()));
 								sb.append(NEWLINE);
 							}
 
@@ -1382,12 +1383,12 @@ public class X509Ext {
 
 			sb.append(INDENT);
 			sb.append(MessageFormat.format(res.getString("IssuerDomainPolicy"),
-			                               ObjectIdUtil.toString(issuerDomainPolicy)));
+					ObjectIdUtil.toString(issuerDomainPolicy)));
 			sb.append(NEWLINE);
 
 			sb.append(INDENT);
 			sb.append(MessageFormat.format(res.getString("SubjectDomainPolicy"),
-			                               ObjectIdUtil.toString(subjectDomainPolicy)));
+					ObjectIdUtil.toString(subjectDomainPolicy)));
 			sb.append(NEWLINE);
 		}
 
@@ -1423,7 +1424,7 @@ public class X509Ext {
 		if (keyIdentifier != null) { // Optional
 			// Output as a hex string
 			sb.append(MessageFormat.format(res.getString("AuthorityKeyIdentifier"),
-			                               HexUtil.getHexString(keyIdentifier)));
+					HexUtil.getHexString(keyIdentifier)));
 			sb.append(NEWLINE);
 		}
 
@@ -1441,7 +1442,7 @@ public class X509Ext {
 		if (certificateSerialNumber != null) { // Optional
 			// Output as an integer
 			sb.append(MessageFormat.format(res.getString("CertificateSerialNumber"),
-			                               HexUtil.getHexString(certificateSerialNumber)));
+					HexUtil.getHexString(certificateSerialNumber)));
 			sb.append(NEWLINE);
 		}
 
@@ -1580,7 +1581,7 @@ public class X509Ext {
 		StringBuilder sb = new StringBuilder();
 
 		@SuppressWarnings("resource") // we have a ByteArrayInputStream here which does not need to be closed
-		DERBitString netscapeCertType = NetscapeCertType.getInstance(new ASN1InputStream(value).readObject());
+		DERBitString netscapeCertType = DERBitString.getInstance(new ASN1InputStream(value).readObject());
 
 		int netscapeCertTypes = netscapeCertType.intValue();
 
@@ -2077,12 +2078,12 @@ public class X509Ext {
 
 			sb.append(INDENT);
 			sb.append(MessageFormat.format(res.getString("BiometricInfo.HashAlgorithm"),
-			                               hashAlgorithm.getAlgorithm().getId()));
+					hashAlgorithm.getAlgorithm().getId()));
 			sb.append(NEWLINE);
 
 			sb.append(INDENT);
 			sb.append(MessageFormat.format(res.getString("BiometricInfo.BiometricDataHash"),
-			                               HexUtil.getHexString(biometricDataHash.getOctets())));
+					HexUtil.getHexString(biometricDataHash.getOctets())));
 			sb.append(NEWLINE);
 
 			if (sourceDataUri != null) { // optional
@@ -2129,36 +2130,36 @@ public class X509Ext {
 
 			QcStatementType qcStatementType = QcStatementType.resolveOid(statementId.getId());
 			switch (qcStatementType) {
-				case QC_SYNTAX_V1:
-				case QC_SYNTAX_V2:
-					SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
-					sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
-					break;
-				case QC_COMPLIANCE:
-					// no statementInfo
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
-					sb.append(NEWLINE);
-					break;
-				case QC_EU_LIMIT_VALUE:
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
-					sb.append(NEWLINE);
-					sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
-					break;
-				case QC_RETENTION_PERIOD:
-					ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
-					                               asn1Integer.getValue().toString()));
-					sb.append(NEWLINE);
-					break;
-				case QC_SSCD:
-					// no statementInfo
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
-					sb.append(NEWLINE);
-					break;
+			case QC_SYNTAX_V1:
+			case QC_SYNTAX_V2:
+				SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
+				sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
+				break;
+			case QC_COMPLIANCE:
+				// no statementInfo
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
+				sb.append(NEWLINE);
+				break;
+			case QC_EU_LIMIT_VALUE:
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
+				sb.append(NEWLINE);
+				sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
+				break;
+			case QC_RETENTION_PERIOD:
+				ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
+						asn1Integer.getValue().toString()));
+				sb.append(NEWLINE);
+				break;
+			case QC_SSCD:
+				// no statementInfo
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
+				sb.append(NEWLINE);
+				break;
 			}
 		}
 
@@ -2197,7 +2198,7 @@ public class X509Ext {
 		if (semanticsIdentifier != null) {
 			sb.append(INDENT.toString(baseIndentLevel + 1));
 			sb.append(MessageFormat.format(res.getString("QCSyntax.SemanticsIdentifier"),
-			                               semanticsIdentifier.getId()));
+					semanticsIdentifier.getId()));
 			sb.append(NEWLINE);
 		}
 
@@ -2232,7 +2233,7 @@ public class X509Ext {
 		        alphabetic PrintableString,
 		        numeric INTEGER(1..999)
 		    }
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2315,7 +2316,7 @@ public class X509Ext {
 
 		if (admissionAuthority != null) {
 			sb.append(MessageFormat.format(res.getString("Admission.AdmissionAuthority"),
-			                               GeneralNameUtil.toString(admissionAuthority)));
+					GeneralNameUtil.toString(admissionAuthority)));
 			sb.append(NEWLINE);
 		}
 
@@ -2332,7 +2333,7 @@ public class X509Ext {
 			if (admissionAuthority != null) {
 				sb.append(INDENT.toString(indentLevel));
 				sb.append(MessageFormat.format(res.getString("Admission.AdmissionAuthority"),
-				                               GeneralNameUtil.toString(admissionAuthority)));
+						GeneralNameUtil.toString(admissionAuthority)));
 				sb.append(NEWLINE);
 			}
 
@@ -2360,7 +2361,7 @@ public class X509Ext {
 				for (DirectoryString professionItem : professionItems) {
 					sb.append(INDENT.toString(indentLevel));
 					sb.append(MessageFormat.format(res.getString("Admission.ProfessionItem"),
-					                               professionItem.toString()));
+							professionItem.toString()));
 					sb.append(NEWLINE);
 				}
 
@@ -2368,7 +2369,7 @@ public class X509Ext {
 					for (ASN1ObjectIdentifier professionOID : professionOIDs) {
 						sb.append(INDENT.toString(indentLevel));
 						sb.append(MessageFormat.format(res.getString("Admission.ProfessionOID"),
-						                               professionOID.getId()));
+								professionOID.getId()));
 						sb.append(NEWLINE);
 					}
 				}
@@ -2376,14 +2377,14 @@ public class X509Ext {
 				if (registrationNumber != null) {
 					sb.append(INDENT.toString(indentLevel));
 					sb.append(MessageFormat.format(res.getString("Admission.RegistrationNumber"),
-					                               registrationNumber));
+							registrationNumber));
 					sb.append(NEWLINE);
 				}
 
 				if (addProfessionInfo != null) {
 					sb.append(INDENT.toString(indentLevel));
 					sb.append(MessageFormat.format(res.getString("Admission.AddProfessionInfo"),
-					                               HexUtil.getHexString(addProfessionInfo.getOctets())));
+							HexUtil.getHexString(addProfessionInfo.getOctets())));
 					sb.append(NEWLINE);
 				}
 
@@ -2428,7 +2429,7 @@ public class X509Ext {
 		if (namingAuthorityText != null) {
 			sb.append(INDENT.toString(indentLevel));
 			sb.append(MessageFormat.format(res.getString("Admission.NamingAuthorityText"),
-			                               namingAuthorityText.toString()));
+					namingAuthorityText.toString()));
 			sb.append(NEWLINE);
 		}
 
@@ -2468,7 +2469,7 @@ public class X509Ext {
 				thirdPerson GeneralName,
 				certRef IssuerSerial
 			}
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2487,13 +2488,13 @@ public class X509Ext {
 
 		if (typeOfSubstitution != null) {
 			sb.append(MessageFormat.format(res.getString("Procuration.TypeOfSubstitution"),
-			                               typeOfSubstitution.toString()));
+					typeOfSubstitution.toString()));
 			sb.append(NEWLINE);
 		}
 
 		if (thirdPerson != null) {
 			sb.append(MessageFormat.format(res.getString("Procuration.ThirdPerson"),
-			                               GeneralNameUtil.toString(thirdPerson)));
+					GeneralNameUtil.toString(thirdPerson)));
 			sb.append(NEWLINE);
 		}
 
@@ -2513,7 +2514,7 @@ public class X509Ext {
 
 			sb.append(INDENT);
 			sb.append(MessageFormat.format(res.getString("Procuration.CertRef.SN"),
-			                               HexUtil.getHexString(certRef.getSerial().getValue())));
+					HexUtil.getHexString(certRef.getSerial().getValue())));
 			sb.append(NEWLINE);
 		}
 
@@ -2531,7 +2532,7 @@ public class X509Ext {
 				amount INTEGER,
 				exponent INTEGER
 			}
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2574,7 +2575,7 @@ public class X509Ext {
 				},
 				dateOfBirth [2] IMPLICIT GeneralizedTime
 			}
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2595,7 +2596,7 @@ public class X509Ext {
 			DERPrintableString country = DERPrintableString.getInstance(fullAgeAtCountry.getObjectAt(1));
 
 			sb.append(MessageFormat.format(res.getString("DeclarationOfMajority.fullAgeAtCountry"), country.toString(),
-			                               fullAge.toString()));
+					fullAge.toString()));
 			sb.append(NEWLINE);
 		}
 
@@ -2640,7 +2641,7 @@ public class X509Ext {
 				validityModelId OBJECT IDENTIFIER
 				validityModelInfo ANY DEFINED BY validityModelId OPTIONAL
 			}
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2664,7 +2665,7 @@ public class X509Ext {
 			|     ; 1.3.6.1.4.1.311.20.2 Certificate Template Name (Certificate Type)
 			04 0a		; OCTET_STRING (a Bytes)#
 			   1e 08 00 55 00 73 00 65  00 72                    ; ...U.s.e.r
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2679,7 +2680,7 @@ public class X509Ext {
 		/*
             "The extension data is a DWORD value (encoded as X509_INTEGER in the extension);
             the low 16 bits are the certificate index, and the high 16 bits are the key index."
-		*/
+		 */
 
 		ASN1Integer asn1Integer = ASN1Integer.getInstance(octets);
 		int version = asn1Integer.getValue().intValue();
@@ -2713,7 +2714,7 @@ public class X509Ext {
 				templateMinorVersion    TemplateVersion OPTIONAL
 			}
 			TemplateVersion ::= INTEGER (0..4294967295)
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2750,7 +2751,7 @@ public class X509Ext {
                 capabilityID OBJECT IDENTIFIER,
                 parameters ANY DEFINED BY capabilityID OPTIONAL
             }
-		*/
+		 */
 
 		// @formatter:on
 
@@ -2774,7 +2775,7 @@ public class X509Ext {
 			if (parameters != null) {
 				sb.append(INDENT);
 				sb.append(MessageFormat.format(res.getString("SMIMECapability.Parameter"),
-				                               HexUtil.getHexString(parameters.toASN1Primitive().getEncoded())));
+						HexUtil.getHexString(parameters.toASN1Primitive().getEncoded())));
 				sb.append(NEWLINE);
 			}
 		}
@@ -2798,7 +2799,7 @@ public class X509Ext {
 
 		/*
 		    NonVerified ::= SET OF ATTRIBUTE
-		*/
+		 */
 
 		StringBuilder sb = new StringBuilder();
 

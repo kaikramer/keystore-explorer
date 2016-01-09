@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.gui.crypto.generalname.JGeneralName;
 
 /**
  * Dialog to choose an general subtree.
- * 
+ *
  */
 public class DGeneralSubtreeChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -76,7 +76,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DGeneralSubtreeChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -91,7 +91,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DGeneralSubtreeChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -182,6 +182,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DGeneralSubtreeChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -189,6 +190,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DGeneralSubtreeChooser.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -196,6 +198,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -234,7 +237,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 
 	/**
 	 * Get selected general subtree.
-	 * 
+	 *
 	 * @return General subtree, or null if none
 	 */
 	public GeneralSubtree getGeneralSubtree() {
@@ -298,7 +301,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
 			}
 		}
 
-		
+
 		BigInteger asn1Minimum = (minimum != -1) ? BigInteger.valueOf(minimum) : null;
 		BigInteger asn1Maximum = (maximum != -1) ? BigInteger.valueOf(maximum) : null;
 

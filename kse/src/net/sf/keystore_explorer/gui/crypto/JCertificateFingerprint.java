@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,7 +45,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Component to view a fingerprint.
- * 
+ *
  */
 public class JCertificateFingerprint extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -58,7 +58,7 @@ public class JCertificateFingerprint extends JPanel {
 
 	/**
 	 * Construct a JCertificateFingerprint.
-	 * 
+	 *
 	 * @param columns
 	 *            Size of text field
 	 */
@@ -71,6 +71,7 @@ public class JCertificateFingerprint extends JPanel {
 		jcbFingerprintAlg.setToolTipText(res.getString("JCertificateFingerprint.jcbFingerprintAlg.tooltip"));
 		jcbFingerprintAlg.setMaximumRowCount(10);
 		jcbFingerprintAlg.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				populateFingerprint();
 			}
@@ -102,6 +103,7 @@ public class JCertificateFingerprint extends JPanel {
 		jbViewCertificateFingerprint.setToolTipText(res
 				.getString("JCertificateFingerprint.jbViewCertificateFingerprint.tooltip"));
 		jbViewCertificateFingerprint.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JCertificateFingerprint.this);
@@ -140,7 +142,7 @@ public class JCertificateFingerprint extends JPanel {
 
 	/**
 	 * Set encoded certificate.
-	 * 
+	 *
 	 * @param encodedCertificate
 	 *            Encoded certificate
 	 */
@@ -159,10 +161,11 @@ public class JCertificateFingerprint extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jbViewCertificateFingerprint.setEnabled(enabled);
 	}

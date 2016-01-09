@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -65,7 +65,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 /**
  * Displays an X.509 certificate's PEM'd DER encoding and provides the
  * opportunity to export it to file.
- * 
+ *
  */
 public class DViewCertCsrPem extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -83,7 +83,7 @@ public class DViewCertCsrPem extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCertCsrPem dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -102,7 +102,7 @@ public class DViewCertCsrPem extends JEscDialog {
 
 	/**
 	 * Creates new DViewCertCsrPem dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -122,7 +122,7 @@ public class DViewCertCsrPem extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCertCsrPem dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -140,7 +140,7 @@ public class DViewCertCsrPem extends JEscDialog {
 
 	/**
 	 * Creates new DViewCertCsrPem dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -151,7 +151,7 @@ public class DViewCertCsrPem extends JEscDialog {
 	 *             A problem was encountered getting the certificate's PEM'd DER encoding
 	 */
 	public DViewCertCsrPem(JDialog parent, String title,
-	                       PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
+			PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.pkcs10Csr = pkcs10Csr;
 		initComponents();
@@ -161,6 +161,7 @@ public class DViewCertCsrPem extends JEscDialog {
 		jbOK = new JButton(res.getString("DViewCertCsrPem.jbOK.text"));
 
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -175,6 +176,7 @@ public class DViewCertCsrPem extends JEscDialog {
 		}
 
 		jbCopy.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertCsrPem.this);
@@ -193,6 +195,7 @@ public class DViewCertCsrPem extends JEscDialog {
 			jbExport.setToolTipText(res.getString("DViewCertCsrPem.jbCsrExport.tooltip"));
 		}
 		jbExport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertCsrPem.this);
@@ -230,6 +233,7 @@ public class DViewCertCsrPem extends JEscDialog {
 		setResizable(true);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -240,6 +244,7 @@ public class DViewCertCsrPem extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -42,7 +42,7 @@ import org.junit.Test;
 /**
  * Unit tests for KeyStoreUtil. Runs tests to create, save and load a KeyStore
  * of each of the supported types.
- * 
+ *
  */
 public class TestCaseKeyStoreUtil extends TestCaseCrypto {
 	private static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });

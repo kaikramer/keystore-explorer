@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,16 +31,16 @@ import org.bouncycastle.asn1.DERSequence;
 /**
  * Helper class that represents single <code>PolicyMapping</code> objects, that are used in KSE
  * because binor had them.
- * 
+ *
  * RFC 5280 and BC only know <code>PolicyMappings</code> (= sequence of <code>PolicyMapping</code>):
  * <pre>
  * PolicyMappings ::= SEQUENCE SIZE (1..MAX) OF SEQUENCE {
  *    issuerDomainPolicy      CertPolicyId,
  *    subjectDomainPolicy     CertPolicyId }
- *    
+ *
  * CertPolicyId ::= OBJECT IDENTIFIER
  * <pre>
- * 
+ *
  */
 public class PolicyMapping extends ASN1Object {
 
@@ -48,8 +48,8 @@ public class PolicyMapping extends ASN1Object {
 	private ASN1ObjectIdentifier subjectDomainPolicy;
 
 	/**
-	 * Constructor 
-	 * 
+	 * Constructor
+	 *
 	 * @param issuerDomainPolicy
 	 * @param subjectDomainPolicy
 	 */
@@ -99,7 +99,7 @@ public class PolicyMapping extends ASN1Object {
 	}
 
 	private PolicyMapping(ASN1Sequence seq) {
-		// java object in sequence is actually not ASN1ObjectIdentifier but CertPolicyId, 
+		// java object in sequence is actually not ASN1ObjectIdentifier but CertPolicyId,
 		// so we do a conversion in order to avoid possible class cast exception here
 		this.issuerDomainPolicy = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0).toASN1Primitive());
 		this.subjectDomainPolicy = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(1).toASN1Primitive());

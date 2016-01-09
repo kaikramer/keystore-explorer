@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -174,6 +174,7 @@ public class DViewCertificate extends JEscDialog {
 		expandTree(jtrHierarchy, new TreePath(topNode));
 
 		jtrHierarchy.addTreeSelectionListener(new TreeSelectionListener() {
+			@Override
 			public void valueChanged(TreeSelectionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificate.this);
@@ -279,6 +280,7 @@ public class DViewCertificate extends JEscDialog {
 		jbViewPublicKeyDetails.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource(res.getString("DViewCertificate.jbViewPublicKeyDetails.image")))));
 		jbViewPublicKeyDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificate.this);
@@ -333,6 +335,7 @@ public class DViewCertificate extends JEscDialog {
 		PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewCertificate.jbExtensions.mnemonic").charAt(0));
 		jbExtensions.setToolTipText(res.getString("DViewCertificate.jbExtensions.tooltip"));
 		jbExtensions.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificate.this);
@@ -348,6 +351,7 @@ public class DViewCertificate extends JEscDialog {
 		PlatformUtil.setMnemonic(jbPem, res.getString("DViewCertificate.jbPem.mnemonic").charAt(0));
 		jbPem.setToolTipText(res.getString("DViewCertificate.jbPem.tooltip"));
 		jbPem.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificate.this);
@@ -363,6 +367,7 @@ public class DViewCertificate extends JEscDialog {
 		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewCertificate.jbAsn1.mnemonic").charAt(0));
 		jbAsn1.setToolTipText(res.getString("DViewCertificate.jbAsn1.tooltip"));
 		jbAsn1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificate.this);
@@ -383,6 +388,7 @@ public class DViewCertificate extends JEscDialog {
 
 		PlatformUtil.setMnemonic(jbImportExport, res.getString("DViewCertificate.jbImportExport.mnemonic").charAt(0));
 		jbImportExport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificate.this);
@@ -438,6 +444,7 @@ public class DViewCertificate extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -453,6 +460,7 @@ public class DViewCertificate extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -463,6 +471,7 @@ public class DViewCertificate extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}
@@ -619,7 +628,7 @@ public class DViewCertificate extends JEscDialog {
 						.getSubjectX500Principal()));
 
 				jdnIssuer
-						.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
+				.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
 
 				jtfSerialNumber.setText("0x"
 						+ new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase());
@@ -697,8 +706,8 @@ public class DViewCertificate extends JEscDialog {
 			X509Certificate cert = getSelectedCertificate();
 
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this,
-			                                                   res.getString("DViewCertificate.PubKeyDetails.Title"),
-			                                                   cert.getPublicKey());
+					res.getString("DViewCertificate.PubKeyDetails.Title"),
+					cert.getPublicKey());
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
@@ -722,7 +731,7 @@ public class DViewCertificate extends JEscDialog {
 
 		try {
 			DViewCertCsrPem dViewCertPem = new DViewCertCsrPem(this, res.getString("DViewCertificate.Pem.Title"),
-			                                                   cert);
+					cert);
 			dViewCertPem.setLocationRelativeTo(this);
 			dViewCertPem.setVisible(true);
 		} catch (CryptoException ex) {
@@ -775,10 +784,11 @@ public class DViewCertificate extends JEscDialog {
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(X509Certificate cert1, X509Certificate cert2) {
 
 			// Compare certificates for equality. Where all we care about is if
-			 // the certificates are equal or not - the order is unimportant
+			// the certificates are equal or not - the order is unimportant
 			if (cert1.equals(cert2)) {
 				return 0;
 			}

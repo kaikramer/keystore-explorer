@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -160,7 +160,7 @@ public class JarSigner {
 		tmpFile.deleteOnExit();
 
 		sign(jsrFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType, tsaUrl,
-		        provider);
+				provider);
 
 		CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jsrFile));
 
@@ -272,12 +272,12 @@ public class JarSigner {
 			// Write out Manifest Digest, Created By and Signature Version to start of signature file
 			sbSf.insert(0, CRLF);
 			sbSf.insert(0, CRLF);
-            sbSf.insert(0,
-                    createAttributeText(MessageFormat.format(DIGEST_MANIFEST_ATTR, digestType.jce()), digestMfStr));
-            sbSf.insert(0, CRLF);
-            sbSf.insert(0,
-                    createAttributeText(MessageFormat.format(DIGEST_MANIFEST_MAIN_ATTRIBUTES_ATTR, digestType.jce()),
-                            digestMfMainAttrsStr));
+			sbSf.insert(0,
+					createAttributeText(MessageFormat.format(DIGEST_MANIFEST_ATTR, digestType.jce()), digestMfStr));
+			sbSf.insert(0, CRLF);
+			sbSf.insert(0,
+					createAttributeText(MessageFormat.format(DIGEST_MANIFEST_MAIN_ATTRIBUTES_ATTR, digestType.jce()),
+							digestMfMainAttrsStr));
 			sbSf.insert(0, CRLF);
 			sbSf.insert(0, createAttributeText(CREATED_BY_ATTR, signer));
 			sbSf.insert(0, CRLF);
@@ -746,10 +746,10 @@ public class JarSigner {
 	private static String createAttributeText(String attributeName, String attributeValue) {
 
 
-	    String attributeText = MessageFormat.format(ATTR_TEMPLATE, attributeName, attributeValue);
+		String attributeText = MessageFormat.format(ATTR_TEMPLATE, attributeName, attributeValue);
 
 		// No attribute text can have lines exceeding 72 bytes. Split it across
-	    // lines no greater than 72 bytes by inserting '\r\n '
+		// lines no greater than 72 bytes by inserting '\r\n '
 		StringBuilder sb = new StringBuilder();
 
 		// Remaining text to split
@@ -773,65 +773,65 @@ public class JarSigner {
 	}
 
 	private static byte[] createSignatureBlock(byte[] toSign, PrivateKey privateKey, X509Certificate[] certificateChain,
-	        SignatureType signatureType, String tsaUrl, Provider provider) throws CryptoException {
+			SignatureType signatureType, String tsaUrl, Provider provider) throws CryptoException {
 
 		try {
-            List<X509Certificate> certList = new ArrayList<X509Certificate>();
+			List<X509Certificate> certList = new ArrayList<X509Certificate>();
 
 			Collections.addAll(certList, certificateChain);
 
-            DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
-            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
+			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
+			JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
 
-            JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
-                    .setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
-            if (provider != null) {
-                csb.setProvider(provider);
-            }
+			JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
+					.setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
+			if (provider != null) {
+				csb.setProvider(provider);
+			}
 
-            CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator();
-            dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]));
-            dataGen.addCertificates(new JcaCertStore(certList));
+			CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator();
+			dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]));
+			dataGen.addCertificates(new JcaCertStore(certList));
 
-            CMSSignedData signedData = dataGen.generate(new CMSProcessableByteArray(toSign), true);
+			CMSSignedData signedData = dataGen.generate(new CMSProcessableByteArray(toSign), true);
 
-            // now let TSA time-stamp the signature
-            if (tsaUrl != null && !tsaUrl.isEmpty()) {
-                signedData = addTimestamp(tsaUrl, signedData);
-            }
+			// now let TSA time-stamp the signature
+			if (tsaUrl != null && !tsaUrl.isEmpty()) {
+				signedData = addTimestamp(tsaUrl, signedData);
+			}
 
-            return signedData.getEncoded();
-        } catch (Exception ex) {
-            throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
-        }
+			return signedData.getEncoded();
+		} catch (Exception ex) {
+			throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
+		}
 	}
 
-    private static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData) throws IOException {
+	private static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData) throws IOException {
 
-        Collection<SignerInformation> signerInfos = signedData.getSignerInfos().getSigners();
+		Collection<SignerInformation> signerInfos = signedData.getSignerInfos().getSigners();
 
-        // get signature of first signer (should be the only one)
-        SignerInformation si = signerInfos.iterator().next();
-        byte[] signature = si.getSignature();
+		// get signature of first signer (should be the only one)
+		SignerInformation si = signerInfos.iterator().next();
+		byte[] signature = si.getSignature();
 
-        // send request to TSA
-        byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, DigestType.SHA1);
+		// send request to TSA
+		byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, DigestType.SHA1);
 
-        // create new SignerInformation with TS attribute
-        Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,
-                new DERSet(ASN1Primitive.fromByteArray(token)));
-        ASN1EncodableVector timestampVector = new ASN1EncodableVector();
-        timestampVector.add(tokenAttr);
-        AttributeTable at = new AttributeTable(timestampVector);
-        si = SignerInformation.replaceUnsignedAttributes(si, at);
-        signerInfos.clear();
-        signerInfos.add(si);
-        SignerInformationStore newSignerStore = new SignerInformationStore(signerInfos);
+		// create new SignerInformation with TS attribute
+		Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,
+				new DERSet(ASN1Primitive.fromByteArray(token)));
+		ASN1EncodableVector timestampVector = new ASN1EncodableVector();
+		timestampVector.add(tokenAttr);
+		AttributeTable at = new AttributeTable(timestampVector);
+		si = SignerInformation.replaceUnsignedAttributes(si, at);
+		signerInfos.clear();
+		signerInfos.add(si);
+		SignerInformationStore newSignerStore = new SignerInformationStore(signerInfos);
 
-        // create new signed data
-        CMSSignedData newSignedData = CMSSignedData.replaceSigners(signedData, newSignerStore);
-        return newSignedData;
-    }
+		// create new signed data
+		CMSSignedData newSignedData = CMSSignedData.replaceSigners(signedData, newSignerStore);
+		return newSignedData;
+	}
 
 	/*
 	 * Convert the supplied signature name to make it valid for use with

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -43,7 +43,7 @@ import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 
 /**
  * Component to edit an object identifier.
- * 
+ *
  */
 public class JObjectId extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/oid/resources");
@@ -57,7 +57,7 @@ public class JObjectId extends JPanel {
 
 	/**
 	 * Construct a JObjectId.
-	 * 
+	 *
 	 * @param title
 	 *            Title of edit dialog
 	 */
@@ -81,6 +81,7 @@ public class JObjectId extends JPanel {
 		jbEditObjectId = new JButton(editIcon);
 		jbEditObjectId.setToolTipText(res.getString("JObjectId.jbEditObjectId.tooltip"));
 		jbEditObjectId.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JObjectId.this);
@@ -102,6 +103,7 @@ public class JObjectId extends JPanel {
 		jbClearObjectId = new JButton(clearIcon);
 		jbClearObjectId.setToolTipText(res.getString("JObjectId.jbClearObjectId.tooltip"));
 		jbClearObjectId.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JObjectId.this);
@@ -129,7 +131,7 @@ public class JObjectId extends JPanel {
 
 	/**
 	 * Get object identifier.
-	 * 
+	 *
 	 * @return Object identifer, or null if none chosen
 	 */
 	public ASN1ObjectIdentifier getObjectId() {
@@ -138,7 +140,7 @@ public class JObjectId extends JPanel {
 
 	/**
 	 * Set object identifier.
-	 * 
+	 *
 	 * @param objectId
 	 *            Object identifier
 	 */
@@ -149,10 +151,11 @@ public class JObjectId extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jbEditObjectId.setEnabled(enabled);
 		jbClearObjectId.setEnabled(enabled);
@@ -160,10 +163,11 @@ public class JObjectId extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jtfObjectId.setToolTipText(toolTipText);

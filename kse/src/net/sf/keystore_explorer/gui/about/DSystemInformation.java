@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -54,7 +54,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 /**
  * A dialog which displays general system information: OS, Locale, Java version,
  * Java vendor, Java vendor URL, JVM total memory and JVM free memory.
- * 
+ *
  */
 public class DSystemInformation extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/about/resources");
@@ -102,7 +102,7 @@ public class DSystemInformation extends JEscDialog {
 
 	/**
 	 * Creates new DSystemInformation dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -302,6 +302,7 @@ public class DSystemInformation extends JEscDialog {
 				res.getString("DSystemInformation.jbEnvironmentVariables.mnemonic").charAt(0));
 		jbEnvironmentVariables.setToolTipText(res.getString("DSystemInformation.jbEnvironmentVariables.tooltip"));
 		jbEnvironmentVariables.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DSystemInformation.this);
@@ -317,6 +318,7 @@ public class DSystemInformation extends JEscDialog {
 				.charAt(0));
 		jbSystemProperties.setToolTipText(res.getString("DSystemInformation.jbSystemProperties.tooltip"));
 		jbSystemProperties.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DSystemInformation.this);
@@ -343,6 +345,7 @@ public class DSystemInformation extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DSystemInformation.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -356,6 +359,7 @@ public class DSystemInformation extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -420,9 +424,11 @@ public class DSystemInformation extends JEscDialog {
 	}
 
 	private class UpdateMemoryFields implements Runnable {
+		@Override
 		public void run() {
 			for (;;) {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 
 						Runtime runtime = Runtime.getRuntime();

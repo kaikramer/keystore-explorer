@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Displays the details of a secret key.
- * 
+ *
  */
 public class DViewSecretKey extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -74,7 +74,7 @@ public class DViewSecretKey extends JEscDialog {
 
 	/**
 	 * Creates a new DViewSecretKey dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -92,7 +92,7 @@ public class DViewSecretKey extends JEscDialog {
 
 	/**
 	 * Creates new DViewSecretKey dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -180,6 +180,7 @@ public class DViewSecretKey extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewSecretKey.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -195,6 +196,7 @@ public class DViewSecretKey extends JEscDialog {
 		populateDialog();
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -205,6 +207,7 @@ public class DViewSecretKey extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

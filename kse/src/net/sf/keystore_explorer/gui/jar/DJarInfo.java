@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * A dialog that displays information about the JAR files on the classpath.
- * 
+ *
  */
 public class DJarInfo extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/jar/resources");
@@ -66,7 +66,7 @@ public class DJarInfo extends JEscDialog {
 
 	/**
 	 * Creates new DJarInfo dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @throws IOException
@@ -78,7 +78,7 @@ public class DJarInfo extends JEscDialog {
 
 	/**
 	 * Creates new DJarInfo dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -127,6 +127,7 @@ public class DJarInfo extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DJarInfo.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -140,6 +141,7 @@ public class DJarInfo extends JEscDialog {
 		setResizable(true);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -150,6 +152,7 @@ public class DJarInfo extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}
@@ -212,10 +215,10 @@ public class DJarInfo extends JEscDialog {
 
 			if ((name.endsWith(".jar")) || (name.endsWith(".JAR")) || (name.endsWith(".zip"))
 					|| (name.endsWith(".ZIP"))) // Consider
-												// zips
-												// to
-												// be
-												// jars
+				// zips
+				// to
+				// be
+				// jars
 			{
 				return true;
 			}

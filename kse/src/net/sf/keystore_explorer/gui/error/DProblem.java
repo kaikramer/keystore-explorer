@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -226,7 +226,7 @@ public class DProblem extends JEscDialog {
 
 	private void showError() {
 		DError dError = new DError(this, res.getString("DProblem.CauseError.Title"),
-		                           problem.getError());
+				problem.getError());
 		dError.setLocationRelativeTo(this);
 		dError.setVisible(true);
 	}

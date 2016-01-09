@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -57,7 +57,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Tip of the Day dialog.
- * 
+ *
  */
 public class DTipOfTheDay extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/tipoftheday/resources");
@@ -90,7 +90,7 @@ public class DTipOfTheDay extends JEscDialog {
 	 * @param showTipsOnStartup
 	 *            Enable show tips on startup checkbox?
 	 * @param tips
- *            Tips resource bundle
+	 *            Tips resource bundle
 	 * @param tipIndex
 	 */
 	public DTipOfTheDay(JFrame parent, boolean showTipsOnStartup, ResourceBundle tips, int tipIndex) {
@@ -106,7 +106,7 @@ public class DTipOfTheDay extends JEscDialog {
 	private void initComponents(boolean showTipsOnStartup) {
 		jpTipOfTheDay = new JPanel(new BorderLayout());
 		jpTipOfTheDay
-				.setBorder(new CompoundBorder(new EmptyBorder(10, 10, 5, 10), new LineBorder(Color.LIGHT_GRAY, 1)));
+		.setBorder(new CompoundBorder(new EmptyBorder(10, 10, 5, 10), new LineBorder(Color.LIGHT_GRAY, 1)));
 
 		jpTipMargin = new JPanel(new FlowLayout());
 		jpTipMargin.setBackground(Color.LIGHT_GRAY);
@@ -163,6 +163,7 @@ public class DTipOfTheDay extends JEscDialog {
 		PlatformUtil.setMnemonic(jbPreviousTip, res.getString("DTipOfTheDay.jbPreviousTip.mnemonic").charAt(0));
 
 		jbPreviousTip.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					CursorUtil.setCursorBusy(DTipOfTheDay.this);
@@ -179,6 +180,7 @@ public class DTipOfTheDay extends JEscDialog {
 		jbNextTip.setDefaultCapable(true);
 
 		jbNextTip.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
 					CursorUtil.setCursorBusy(DTipOfTheDay.this);
@@ -193,6 +195,7 @@ public class DTipOfTheDay extends JEscDialog {
 		jbClose = new JButton(res.getString("DTipOfTheDay.jbClose.text"));
 		PlatformUtil.setMnemonic(jbClose, res.getString("DTipOfTheDay.jbClose.mnemonic").charAt(0));
 		jbClose.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				closePressed();
 			}
@@ -201,6 +204,7 @@ public class DTipOfTheDay extends JEscDialog {
 		jbClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CLOSE_KEY);
 		jbClose.getActionMap().put(CLOSE_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				closePressed();
 			}
@@ -227,6 +231,7 @@ public class DTipOfTheDay extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbClose.requestFocus();
 			}
@@ -290,7 +295,7 @@ public class DTipOfTheDay extends JEscDialog {
 
 	/**
 	 * Show tips on startup?
-	 * 
+	 *
 	 * @return True if so
 	 */
 	public boolean showTipsOnStartup() {
@@ -299,7 +304,7 @@ public class DTipOfTheDay extends JEscDialog {
 
 	/**
 	 * Get the index of the next tip in the sequence.
-	 * 
+	 *
 	 * @return Tip index
 	 */
 	public int nextTipIndex() {

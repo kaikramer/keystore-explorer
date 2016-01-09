@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -54,9 +54,9 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
  *
  */
 public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesAction implements HistoryAction {
-    private static final long serialVersionUID = 3536795359314369745L;
+	private static final long serialVersionUID = 3536795359314369745L;
 
-    /**
+	/**
 	 * Construct action.
 	 *
 	 * @param kseFrame
@@ -73,6 +73,7 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 						getClass().getResource(res.getString("ImportCaReplyFromClipboardAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -80,6 +81,7 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
@@ -172,8 +174,8 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 						newCertChain = certs;
 					}
 				}
-				 // Single X.509 certificate reply - try and establish a chain of
-				 // trust from the certificate and ending with a root CA self-signed certificate
+				// Single X.509 certificate reply - try and establish a chain of
+				// trust from the certificate and ending with a root CA self-signed certificate
 				else {
 					// Establish trust against current KeyStore
 					ArrayList<KeyStore> compKeyStores = new ArrayList<KeyStore>();
@@ -241,41 +243,41 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 
 	private X509Certificate[] openCaReply() {
 
-	    X509Certificate[] certs = null;
+		X509Certificate[] certs = null;
 
 		try {
 
-		    // get clip board contents, but only string types, not files
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            Transferable t = clipboard.getContents(null);
-            if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String data;
-                data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
+			// get clip board contents, but only string types, not files
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			Transferable t = clipboard.getContents(null);
+			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				String data;
+				data = (String) t.getTransferData(DataFlavor.stringFlavor);
+				ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
 
-                // try to extract certs from clip board data
-                certs = X509CertUtil.loadCertificates(bais);
-                if (certs.length == 0) {
-                    JOptionPane.showMessageDialog(frame, MessageFormat.format(
-                            res.getString("ImportCaReplyFromClipboardAction.NoCertsFound.message"), "Clipboard"), res
-                            .getString("ImportCaReplyFromClipboardAction.OpenCaReply.Title"),
-                            JOptionPane.WARNING_MESSAGE);
-                }
-            }
+				// try to extract certs from clip board data
+				certs = X509CertUtil.loadCertificates(bais);
+				if (certs.length == 0) {
+					JOptionPane.showMessageDialog(frame, MessageFormat.format(
+							res.getString("ImportCaReplyFromClipboardAction.NoCertsFound.message"), "Clipboard"), res
+							.getString("ImportCaReplyFromClipboardAction.OpenCaReply.Title"),
+							JOptionPane.WARNING_MESSAGE);
+				}
+			}
 
-            return certs;
+			return certs;
 		} catch (Exception ex) {
-            String problemStr = MessageFormat.format(
-                    res.getString("ImportCaReplyFromClipboardAction.NoOpenCaReply.Problem"), "Clipboard");
+			String problemStr = MessageFormat.format(
+					res.getString("ImportCaReplyFromClipboardAction.NoOpenCaReply.Problem"), "Clipboard");
 
 			String[] causes = new String[] { res.getString("ImportCaReplyFromClipboardAction.NotCaReply.Cause"),
 					res.getString("ImportCaReplyFromClipboardAction.CorruptedCaReply.Cause") };
 
 			Problem problem = new Problem(problemStr, causes, ex);
 
-            DProblem dProblem = new DProblem(frame,
-                    res.getString("ImportCaReplyFromClipboardAction.ProblemOpeningCaReply.Title"),
-                                             problem);
+			DProblem dProblem = new DProblem(frame,
+					res.getString("ImportCaReplyFromClipboardAction.ProblemOpeningCaReply.Title"),
+					problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 

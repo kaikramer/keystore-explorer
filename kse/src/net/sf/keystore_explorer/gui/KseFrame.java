@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -54,6 +54,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -878,19 +879,19 @@ public final class KseFrame implements StatusBar {
 				(String) changeTypePkcs12Action.getValue(Action.LONG_DESCRIPTION), this);
 		jmChangeType.add(jrbmiChangeTypePkcs12);
 
-        jrbmiChangeTypeBksV1 = new JRadioButtonMenuItem(changeTypeBksV1Action);
-        PlatformUtil.setMnemonic(jrbmiChangeTypeBksV1, res.getString("KseFrame.jrbmiChangeTypeBksV1.mnemonic").charAt(0));
-        jrbmiChangeTypeBksV1.setToolTipText(null);
-        new StatusBarChangeHandler(jrbmiChangeTypeBksV1, (String) changeTypeBksV1Action.getValue(Action.LONG_DESCRIPTION),
-                this);
-        jmChangeType.add(jrbmiChangeTypeBksV1);
+		jrbmiChangeTypeBksV1 = new JRadioButtonMenuItem(changeTypeBksV1Action);
+		PlatformUtil.setMnemonic(jrbmiChangeTypeBksV1, res.getString("KseFrame.jrbmiChangeTypeBksV1.mnemonic").charAt(0));
+		jrbmiChangeTypeBksV1.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiChangeTypeBksV1, (String) changeTypeBksV1Action.getValue(Action.LONG_DESCRIPTION),
+				this);
+		jmChangeType.add(jrbmiChangeTypeBksV1);
 
-        jrbmiChangeTypeBks = new JRadioButtonMenuItem(changeTypeBksAction);
-        PlatformUtil.setMnemonic(jrbmiChangeTypeBks, res.getString("KseFrame.jrbmiChangeTypeBks.mnemonic").charAt(0));
-        jrbmiChangeTypeBks.setToolTipText(null);
-        new StatusBarChangeHandler(jrbmiChangeTypeBks, (String) changeTypeBksAction.getValue(Action.LONG_DESCRIPTION),
-                this);
-        jmChangeType.add(jrbmiChangeTypeBks);
+		jrbmiChangeTypeBks = new JRadioButtonMenuItem(changeTypeBksAction);
+		PlatformUtil.setMnemonic(jrbmiChangeTypeBks, res.getString("KseFrame.jrbmiChangeTypeBks.mnemonic").charAt(0));
+		jrbmiChangeTypeBks.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiChangeTypeBks, (String) changeTypeBksAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		jmChangeType.add(jrbmiChangeTypeBks);
 
 		jrbmiChangeTypeUber = new JRadioButtonMenuItem(changeTypeUberAction);
 		PlatformUtil.setMnemonic(jrbmiChangeTypeUber, res.getString("KseFrame.jrbmiChangeTypeUber.mnemonic").charAt(0));
@@ -979,23 +980,23 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jmOnlineResources, res.getString("KseFrame.jmOnlineResources.mnemonic").charAt(0));
 		jmHelp.add(jmOnlineResources);
 
-        jmiWebsite = new JMenuItem(websiteAction);
-        PlatformUtil.setMnemonic(jmiWebsite, res.getString("KseFrame.jmiWebsite.mnemonic").charAt(0));
-        jmiWebsite.setToolTipText(null);
-        new StatusBarChangeHandler(jmiWebsite, (String) websiteAction.getValue(Action.LONG_DESCRIPTION), this);
-        jmOnlineResources.add(jmiWebsite);
+		jmiWebsite = new JMenuItem(websiteAction);
+		PlatformUtil.setMnemonic(jmiWebsite, res.getString("KseFrame.jmiWebsite.mnemonic").charAt(0));
+		jmiWebsite.setToolTipText(null);
+		new StatusBarChangeHandler(jmiWebsite, (String) websiteAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmOnlineResources.add(jmiWebsite);
 
-        jmiSourceforge = new JMenuItem(sfProjectSiteAction);
-        PlatformUtil.setMnemonic(jmiSourceforge, res.getString("KseFrame.jmiSourceforge.mnemonic").charAt(0));
-        jmiSourceforge.setToolTipText(null);
-        new StatusBarChangeHandler(jmiSourceforge, (String) sfProjectSiteAction.getValue(Action.LONG_DESCRIPTION), this);
-        jmOnlineResources.add(jmiSourceforge);
+		jmiSourceforge = new JMenuItem(sfProjectSiteAction);
+		PlatformUtil.setMnemonic(jmiSourceforge, res.getString("KseFrame.jmiSourceforge.mnemonic").charAt(0));
+		jmiSourceforge.setToolTipText(null);
+		new StatusBarChangeHandler(jmiSourceforge, (String) sfProjectSiteAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmOnlineResources.add(jmiSourceforge);
 
-        jmiSfBugs = new JMenuItem(sfBugsAction);
-        PlatformUtil.setMnemonic(jmiSfBugs, res.getString("KseFrame.jmiSfBugs.mnemonic").charAt(0));
-        jmiSfBugs.setToolTipText(null);
-        new StatusBarChangeHandler(jmiSfBugs, (String) sfBugsAction.getValue(Action.LONG_DESCRIPTION), this);
-        jmOnlineResources.add(jmiSfBugs);
+		jmiSfBugs = new JMenuItem(sfBugsAction);
+		PlatformUtil.setMnemonic(jmiSfBugs, res.getString("KseFrame.jmiSfBugs.mnemonic").charAt(0));
+		jmiSfBugs.setToolTipText(null);
+		new StatusBarChangeHandler(jmiSfBugs, (String) sfBugsAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmOnlineResources.add(jmiSfBugs);
 
 		jmiCheckUpdate = new JMenuItem(checkUpdateAction);
 		PlatformUtil.setMnemonic(jmiCheckUpdate, res.getString("KseFrame.jmiCheckUpdate.mnemonic").charAt(0));
@@ -1113,8 +1114,8 @@ public final class KseFrame implements StatusBar {
 		jbUndo.setText(null);
 		PlatformUtil.setMnemonic(jbUndo, 0);
 		jbUndo.setHideActionText(true); // Ensure text is not displayed when
-										// changed dynamically
-										// later on action
+		// changed dynamically
+		// later on action
 		jbUndo.setFocusable(false);
 		jbUndo.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1133,8 +1134,8 @@ public final class KseFrame implements StatusBar {
 		jbRedo.setText(null);
 		PlatformUtil.setMnemonic(jbRedo, 0);
 		jbRedo.setHideActionText(true); // Ensure text is not displayed when
-										// changed dynamically
-										// later on action
+		// changed dynamically
+		// later on action
 		jbRedo.setFocusable(false);
 		jbRedo.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1517,10 +1518,10 @@ public final class KseFrame implements StatusBar {
 
 		// open keystore entry details when user presses enter key
 		KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-		jtKeyStore.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, "Enter");
+		jtKeyStore.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, "Enter");
 		jtKeyStore.getActionMap().put("Enter", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent ae) {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
 				try {
 					int selectedRow = jtKeyStore.getSelectedRow();
 					if (selectedRow != -1) {
@@ -1530,8 +1531,8 @@ public final class KseFrame implements StatusBar {
 				} finally {
 					CursorUtil.setCursorFree(frame);
 				}
-	        }
-	    });
+			}
+		});
 
 		// Add DnD source support to KeyStore
 		DragSource ds = DragSource.getDefaultDragSource();
@@ -1638,7 +1639,7 @@ public final class KseFrame implements StatusBar {
 
 		if (OperatingSystem.isMacOs()) {
 			rightPadding = 15; // Allow extra padding in the grow box status bar
-								// if using Mac OS
+			// if using Mac OS
 		}
 
 		jlStatusBar.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY), new EmptyBorder(3, 3,
@@ -1774,21 +1775,21 @@ public final class KseFrame implements StatusBar {
 				(String) changeTypePkcs12Action.getValue(Action.LONG_DESCRIPTION), this);
 		jmKeyStoreChangeType.add(jrbmiKeyStoreChangeTypePkcs12);
 
-        jrbmiKeyStoreChangeTypeBksV1 = new JRadioButtonMenuItem(changeTypeBksV1Action);
-        PlatformUtil.setMnemonic(jrbmiKeyStoreChangeTypeBksV1, res.getString("KseFrame.jrbmiChangeTypeBksV1.mnemonic")
-                .charAt(0));
-        jrbmiKeyStoreChangeTypeBksV1.setToolTipText(null);
-        new StatusBarChangeHandler(jrbmiKeyStoreChangeTypeBksV1,
-                (String) changeTypeBksV1Action.getValue(Action.LONG_DESCRIPTION), this);
-        jmKeyStoreChangeType.add(jrbmiKeyStoreChangeTypeBksV1);
+		jrbmiKeyStoreChangeTypeBksV1 = new JRadioButtonMenuItem(changeTypeBksV1Action);
+		PlatformUtil.setMnemonic(jrbmiKeyStoreChangeTypeBksV1, res.getString("KseFrame.jrbmiChangeTypeBksV1.mnemonic")
+				.charAt(0));
+		jrbmiKeyStoreChangeTypeBksV1.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiKeyStoreChangeTypeBksV1,
+				(String) changeTypeBksV1Action.getValue(Action.LONG_DESCRIPTION), this);
+		jmKeyStoreChangeType.add(jrbmiKeyStoreChangeTypeBksV1);
 
-        jrbmiKeyStoreChangeTypeBks = new JRadioButtonMenuItem(changeTypeBksAction);
-        PlatformUtil.setMnemonic(jrbmiKeyStoreChangeTypeBks, res.getString("KseFrame.jrbmiChangeTypeBks.mnemonic")
-                .charAt(0));
-        jrbmiKeyStoreChangeTypeBks.setToolTipText(null);
-        new StatusBarChangeHandler(jrbmiKeyStoreChangeTypeBks,
-                (String) changeTypeBksAction.getValue(Action.LONG_DESCRIPTION), this);
-        jmKeyStoreChangeType.add(jrbmiKeyStoreChangeTypeBks);
+		jrbmiKeyStoreChangeTypeBks = new JRadioButtonMenuItem(changeTypeBksAction);
+		PlatformUtil.setMnemonic(jrbmiKeyStoreChangeTypeBks, res.getString("KseFrame.jrbmiChangeTypeBks.mnemonic")
+				.charAt(0));
+		jrbmiKeyStoreChangeTypeBks.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiKeyStoreChangeTypeBks,
+				(String) changeTypeBksAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmKeyStoreChangeType.add(jrbmiKeyStoreChangeTypeBks);
 
 		jrbmiKeyStoreChangeTypeUber = new JRadioButtonMenuItem(changeTypeUberAction);
 		PlatformUtil.setMnemonic(jrbmiKeyStoreChangeTypeUber, res.getString("KseFrame.jrbmiChangeTypeUber.mnemonic")
@@ -1876,17 +1877,17 @@ public final class KseFrame implements StatusBar {
 
 		jmKeyPairImportCaReply = new JMenu(res.getString("KseFrame.jmKeyPairImportCaReply.text"));
 		jmKeyPairImportCaReply.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-                getClass().getResource(res.getString("KseFrame.jmKeyPairImportCaReply.image")))));
+				getClass().getResource(res.getString("KseFrame.jmKeyPairImportCaReply.image")))));
 
-        jmiKeyPairImportCaReplyFile = new JMenuItem(importCaReplyFromFileAction);
-        jmiKeyPairImportCaReplyFile.setToolTipText(null);
-        new StatusBarChangeHandler(jmiKeyPairImportCaReplyFile,
-                (String) importCaReplyFromFileAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmiKeyPairImportCaReplyFile = new JMenuItem(importCaReplyFromFileAction);
+		jmiKeyPairImportCaReplyFile.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyPairImportCaReplyFile,
+				(String) importCaReplyFromFileAction.getValue(Action.LONG_DESCRIPTION), this);
 
-        jmiKeyPairImportCaReplyClipboard = new JMenuItem(importCaReplyFromClipboardAction);
-        jmiKeyPairImportCaReplyClipboard.setToolTipText(null);
-        new StatusBarChangeHandler(jmiKeyPairImportCaReplyClipboard,
-                (String) importCaReplyFromClipboardAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmiKeyPairImportCaReplyClipboard = new JMenuItem(importCaReplyFromClipboardAction);
+		jmiKeyPairImportCaReplyClipboard.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyPairImportCaReplyClipboard,
+				(String) importCaReplyFromClipboardAction.getValue(Action.LONG_DESCRIPTION), this);
 
 		jmKeyPairEditCertChain = new JMenu(res.getString("KseFrame.jmKeyPairEditCertChain.text"));
 		jmKeyPairEditCertChain.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
@@ -2365,7 +2366,7 @@ public final class KseFrame implements StatusBar {
 
 			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
 
-			    // Otherwise entry must already be unlocked to get password
+				// Otherwise entry must already be unlocked to get password
 				Password password = currentState.getEntryPassword(alias);
 				KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
@@ -2539,12 +2540,12 @@ public final class KseFrame implements StatusBar {
 			} else if (type == PKCS12) {
 				jrbmiChangeTypePkcs12.setSelected(true);
 				jrbmiKeyStoreChangeTypePkcs12.setSelected(true);
-	        } else if (type == BKS_V1) {
-	            jrbmiChangeTypeBksV1.setSelected(true);
-	            jrbmiKeyStoreChangeTypeBksV1.setSelected(true);
-	        } else if (type == BKS) {
-	            jrbmiChangeTypeBks.setSelected(true);
-	            jrbmiKeyStoreChangeTypeBks.setSelected(true);
+			} else if (type == BKS_V1) {
+				jrbmiChangeTypeBksV1.setSelected(true);
+				jrbmiKeyStoreChangeTypeBksV1.setSelected(true);
+			} else if (type == BKS) {
+				jrbmiChangeTypeBks.setSelected(true);
+				jrbmiKeyStoreChangeTypeBks.setSelected(true);
 			} else {
 				jrbmiChangeTypeUber.setSelected(true);
 				jrbmiKeyStoreChangeTypeUber.setSelected(true);

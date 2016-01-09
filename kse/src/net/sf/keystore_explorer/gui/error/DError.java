@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,7 +45,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Displays an error message with the option to display the stack trace.
- * 
+ *
  */
 public class DError extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/error/resources");
@@ -84,7 +84,7 @@ public class DError extends JEscDialog {
 
 	/**
 	 * Creates new DError dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param modality
 	 *            Create the dialog as modal?
 	 * @param title
@@ -118,7 +118,7 @@ public class DError extends JEscDialog {
 
 	/**
 	 * Display an error for the supplied frame as application modal.
-	 * 
+	 *
 	 * @param frame
 	 *            Frame
 	 * @param error
@@ -132,7 +132,7 @@ public class DError extends JEscDialog {
 
 	/**
 	 * Display an error for the supplied dialog as application modal.
-	 * 
+	 *
 	 * @param dialog
 	 *            Dialog
 	 * @param error
@@ -161,6 +161,7 @@ public class DError extends JEscDialog {
 		PlatformUtil.setMnemonic(jbDetails, res.getString("DError.jbDetails.mnemonic").charAt(0));
 
 		jbDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DError.this);
@@ -173,6 +174,7 @@ public class DError extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DError.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -186,6 +188,7 @@ public class DError extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}

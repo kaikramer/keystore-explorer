@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,7 +52,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 /**
  * Dialog used for entering and confirming a password and checking it against an
  * old password which may or may not have been supplied to the dialog.
- * 
+ *
  */
 public class DChangePassword extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/password/resources");
@@ -76,7 +76,7 @@ public class DChangePassword extends JEscDialog {
 
 	/**
 	 * Creates new DChangePassword dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param modality
@@ -93,7 +93,7 @@ public class DChangePassword extends JEscDialog {
 
 	/**
 	 * Creates new DChangePassword dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param modality
@@ -115,7 +115,7 @@ public class DChangePassword extends JEscDialog {
 
 	/**
 	 * Creates new DChangePassword dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param modality
@@ -132,7 +132,7 @@ public class DChangePassword extends JEscDialog {
 
 	/**
 	 * Creates new DChangePassword dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -224,6 +224,7 @@ public class DChangePassword extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DChangePassword.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -231,6 +232,7 @@ public class DChangePassword extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DChangePassword.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -238,6 +240,7 @@ public class DChangePassword extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -249,6 +252,7 @@ public class DChangePassword extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -263,7 +267,7 @@ public class DChangePassword extends JEscDialog {
 
 	/**
 	 * Get the new password set in the dialog.
-	 * 
+	 *
 	 * @return The new password or null if none was set
 	 */
 	public Password getNewPassword() {
@@ -272,7 +276,7 @@ public class DChangePassword extends JEscDialog {
 
 	/**
 	 * Get the old password set in the dialog.
-	 * 
+	 *
 	 * @return The old password or null if none was set/supplied
 	 */
 	public Password getOldPassword() {

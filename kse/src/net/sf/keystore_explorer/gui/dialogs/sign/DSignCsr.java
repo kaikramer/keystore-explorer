@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -183,8 +183,8 @@ public class DSignCsr extends JEscDialog {
 	 *            The parent frame
 	 * @param spkacCsr
 	 *            The SPKAC formatted CSR
-     * @param csrFile
-     *            The CSR file
+	 * @param csrFile
+	 *            The CSR file
 	 * @param signPrivateKey
 	 *            Signing private key
 	 * @param signKeyPairType
@@ -198,8 +198,8 @@ public class DSignCsr extends JEscDialog {
 			X509Certificate verificationCertificate, Provider provider) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.spkacCsr = spkacCsr;
-        this.csrFile = csrFile;
-        this.signPrivateKey = signPrivateKey;
+		this.csrFile = csrFile;
+		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
 		this.verificationCertificate = verificationCertificate;
 		this.provider = provider;
@@ -281,6 +281,7 @@ public class DSignCsr extends JEscDialog {
 		PlatformUtil.setMnemonic(jbBrowse, res.getString("DSignCsr.jbBrowse.mnemonic").charAt(0));
 
 		jbBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DSignCsr.this);
@@ -296,6 +297,7 @@ public class DSignCsr extends JEscDialog {
 		jbAddExtensions.setToolTipText(res.getString("DSignCsr.jbAddExtensions.tooltip"));
 
 		jbAddExtensions.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DSignCsr.this);
@@ -307,6 +309,7 @@ public class DSignCsr extends JEscDialog {
 		});
 
 		jrbVersion3.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent evt) {
 				jbAddExtensions.setEnabled(jrbVersion3.isSelected());
 			}
@@ -314,36 +317,36 @@ public class DSignCsr extends JEscDialog {
 
 		jrbVersion3.setSelected(true);
 
-        jbOK = new JButton(res.getString("DSignCsr.jbOK.text"));
-        jbCancel = new JButton(res.getString("DSignCsr.jbCancel.text"));
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                CANCEL_KEY);
+		jbOK = new JButton(res.getString("DSignCsr.jbOK.text"));
+		jbCancel = new JButton(res.getString("DSignCsr.jbCancel.text"));
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
 
-        JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		JPanel jpCsr = new JPanel();
 		jpCsr.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DSignCsr.jpCsrDetails.text")));
 		JPanel jpSignOptions = new JPanel();
 		jpSignOptions.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DSignCsr.jpSigningOptions.text")));
 
-        // layout
+		// layout
 		getContentPane().setLayout(new MigLayout("fill", "", ""));
 		getContentPane().add(jpCsr, "grow, wrap");
 		getContentPane().add(jpSignOptions, "wrap unrel");
 		getContentPane().add(buttons, "growx");
-        jpCsr.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
-        jpCsr.add(jlCsrFormat, "");
-        jpCsr.add(jtfCsrFormat, "wrap");
-        jpCsr.add(jlCsrSubject, "");
-        jpCsr.add(jdnCsrSubject, "wrap");
-        jpCsr.add(jlCsrPublicKey, "");
-        jpCsr.add(jtfCsrPublicKey, "split 2");
-        jpCsr.add(jbViewCsrPublicKeyDetails, "wrap");
-        jpCsr.add(jlCsrSignatureAlgorithm, "");
-        jpCsr.add(jtfCsrSignatureAlgorithm, "wrap");
-        jpCsr.add(jlCsrChallenge, "");
-        jpCsr.add(jtfCsrChallenge, "wrap");
-        jpSignOptions.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
+		jpCsr.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
+		jpCsr.add(jlCsrFormat, "");
+		jpCsr.add(jtfCsrFormat, "wrap");
+		jpCsr.add(jlCsrSubject, "");
+		jpCsr.add(jdnCsrSubject, "wrap");
+		jpCsr.add(jlCsrPublicKey, "");
+		jpCsr.add(jtfCsrPublicKey, "split 2");
+		jpCsr.add(jbViewCsrPublicKeyDetails, "wrap");
+		jpCsr.add(jlCsrSignatureAlgorithm, "");
+		jpCsr.add(jtfCsrSignatureAlgorithm, "wrap");
+		jpCsr.add(jlCsrChallenge, "");
+		jpCsr.add(jtfCsrChallenge, "wrap");
+		jpSignOptions.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
 		jpSignOptions.add(jlVersion, "");
 		jpSignOptions.add(jrbVersion1, "split 2");
 		jpSignOptions.add(jrbVersion3, "wrap");
@@ -358,35 +361,40 @@ public class DSignCsr extends JEscDialog {
 		jpSignOptions.add(jbBrowse, "wrap");
 		jpSignOptions.add(jbAddExtensions, "spanx, wrap");
 
-        jbViewCsrPublicKeyDetails.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    CursorUtil.setCursorBusy(DSignCsr.this);
-                    pubKeyDetailsPressed();
-                } finally {
-                    CursorUtil.setCursorFree(DSignCsr.this);
-                }
-            }
-        });
+		jbViewCsrPublicKeyDetails.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DSignCsr.this);
+					pubKeyDetailsPressed();
+				} finally {
+					CursorUtil.setCursorFree(DSignCsr.this);
+				}
+			}
+		});
 
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
 		});
 
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -475,12 +483,12 @@ public class DSignCsr extends JEscDialog {
 	}
 
 	private void populateCaReplyFileName() {
-	    String replyFileName = FileNameUtil.removeExtension(csrFile.getName()) + ".p7r";
-        File replyFile = new File(csrFile.getParentFile(), replyFileName);
-        jtfCaReplyFile.setText(replyFile.getPath());
-    }
+		String replyFileName = FileNameUtil.removeExtension(csrFile.getName()) + ".p7r";
+		File replyFile = new File(csrFile.getParentFile(), replyFileName);
+		jtfCaReplyFile.setText(replyFile.getPath());
+	}
 
-    private void addExtensionsPressed() {
+	private void addExtensionsPressed() {
 		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, verificationCertificate.getPublicKey(),
 				X500NameUtils.x500PrincipalToX500Name(verificationCertificate.getSubjectX500Principal()),
 				verificationCertificate.getSerialNumber(), csrPublicKey);
@@ -574,7 +582,7 @@ public class DSignCsr extends JEscDialog {
 	private void pubKeyDetailsPressed() {
 		try {
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DSignCsr.PubKeyDetails.Title"),
-			                                                   csrPublicKey);
+					csrPublicKey);
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
@@ -651,33 +659,35 @@ public class DSignCsr extends JEscDialog {
 	}
 
 	// for quick testing
-    public static void main(String[] args) throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
-        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-                    keyGen.initialize(1024);
-                    KeyPair keyPair = keyGen.genKeyPair();
-                    JcaPKCS10CertificationRequestBuilder csrBuilder =
-                            new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
-                    PKCS10CertificationRequest csr =  csrBuilder.build(
-                            new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+					keyGen.initialize(1024);
+					KeyPair keyPair = keyGen.genKeyPair();
+					JcaPKCS10CertificationRequestBuilder csrBuilder =
+							new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
+					PKCS10CertificationRequest csr =  csrBuilder.build(
+							new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
 
-                    DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, new File(System
-                            .getProperty("user.dir"), "test.csr"), keyPair.getPrivate(), KeyPairType.RSA, null,
-                            new BouncyCastleProvider());
-                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                        public void windowClosing(java.awt.event.WindowEvent e) {
-                            System.exit(0);
-                        }
-                    });
-                    dialog.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+					DSignCsr dialog = new DSignCsr(new javax.swing.JFrame(), csr, new File(System
+							.getProperty("user.dir"), "test.csr"), keyPair.getPrivate(), KeyPairType.RSA, null,
+							new BouncyCastleProvider());
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 }

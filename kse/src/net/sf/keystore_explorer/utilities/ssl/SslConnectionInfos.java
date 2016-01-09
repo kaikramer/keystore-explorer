@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,54 +26,54 @@ import java.security.cert.X509Certificate;
  */
 public class SslConnectionInfos {
 
-    String peerHost;
-    int peerPort;
-    String protocol;
-    String cipherSuite;
-    boolean sniEnabled;
-    X509Certificate[] serverCertificates;
-    X509Certificate[] clientCertificates;
+	String peerHost;
+	int peerPort;
+	String protocol;
+	String cipherSuite;
+	boolean sniEnabled;
+	X509Certificate[] serverCertificates;
+	X509Certificate[] clientCertificates;
 
-    public String getPeerHost() {
-        return peerHost;
-    }
-    public void setPeerHost(String peerHost) {
-        this.peerHost = peerHost;
-    }
-    public int getPeerPort() {
-        return peerPort;
-    }
-    public void setPeerPort(int peerPort) {
-        this.peerPort = peerPort;
-    }
-    public String getProtocol() {
-        return protocol;
-    }
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-    public String getCipherSuite() {
-        return cipherSuite;
-    }
-    public void setCipherSuite(String cipherSuite) {
-        this.cipherSuite = cipherSuite;
-    }
-    public boolean isSniEnabled() {
-        return sniEnabled;
-    }
-    public void setSniEnabled(boolean sniEnabled) {
-        this.sniEnabled = sniEnabled;
-    }
-    public X509Certificate[] getServerCertificates() {
-        return serverCertificates;
-    }
-    public void setServerCertificates(X509Certificate[] serverCertificates) {
-        this.serverCertificates = serverCertificates;
-    }
-    public X509Certificate[] getClientCertificates() {
-        return clientCertificates;
-    }
-    public void setClientCertificates(X509Certificate[] clientCertificates) {
-        this.clientCertificates = clientCertificates;
-    }
+	public String getPeerHost() {
+		return peerHost;
+	}
+	public void setPeerHost(String peerHost) {
+		this.peerHost = peerHost;
+	}
+	public int getPeerPort() {
+		return peerPort;
+	}
+	public void setPeerPort(int peerPort) {
+		this.peerPort = peerPort;
+	}
+	public String getProtocol() {
+		return protocol;
+	}
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
+	public String getCipherSuite() {
+		return cipherSuite;
+	}
+	public void setCipherSuite(String cipherSuite) {
+		this.cipherSuite = cipherSuite;
+	}
+	public boolean isSniEnabled() {
+		return sniEnabled;
+	}
+	public void setSniEnabled(boolean sniEnabled) {
+		this.sniEnabled = sniEnabled;
+	}
+	public X509Certificate[] getServerCertificates() {
+		return serverCertificates;
+	}
+	public void setServerCertificates(X509Certificate[] serverCertificates) {
+		this.serverCertificates = serverCertificates;
+	}
+	public X509Certificate[] getClientCertificates() {
+		return clientCertificates;
+	}
+	public void setClientCertificates(X509Certificate[] clientCertificates) {
+		this.clientCertificates = clientCertificates;
+	}
 }

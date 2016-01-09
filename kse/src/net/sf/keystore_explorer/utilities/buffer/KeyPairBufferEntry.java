@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,7 +26,7 @@ import net.sf.keystore_explorer.crypto.Password;
 
 /**
  * Key pair buffer entry.
- * 
+ *
  */
 public class KeyPairBufferEntry extends BufferEntry {
 	private PrivateKey privateKey;
@@ -35,7 +35,7 @@ public class KeyPairBufferEntry extends BufferEntry {
 
 	/**
 	 * Construct.
-	 * 
+	 *
 	 * @param name
 	 *            Entry name
 	 * @param cut
@@ -58,7 +58,7 @@ public class KeyPairBufferEntry extends BufferEntry {
 
 	/**
 	 * Get private key.
-	 * 
+	 *
 	 * @return Private key
 	 */
 	public PrivateKey getPrivateKey() {
@@ -67,7 +67,7 @@ public class KeyPairBufferEntry extends BufferEntry {
 
 	/**
 	 * Get password.
-	 * 
+	 *
 	 * @return Password
 	 */
 	public Password getPassword() {
@@ -76,13 +76,14 @@ public class KeyPairBufferEntry extends BufferEntry {
 
 	/**
 	 * Get certificate chain.
-	 * 
+	 *
 	 * @return Certificate chain
 	 */
 	public Certificate[] getCertificateChain() {
 		return certificateChain;
 	}
 
+	@Override
 	void clear() {
 		password.nullPassword();
 	}

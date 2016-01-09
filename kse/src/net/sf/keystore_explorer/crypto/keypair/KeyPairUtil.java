@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -80,13 +80,13 @@ public final class KeyPairUtil {
 			if (provider != null) {
 				keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
 			} else {
-	            // Always use BC provider for RSA
-	            if (keyPairType == RSA) {
-	                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
-	            } else {
-	                // Use default provider for DSA
-	                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
-	            }
+				// Always use BC provider for RSA
+				if (keyPairType == RSA) {
+					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
+				} else {
+					// Use default provider for DSA
+					keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
+				}
 			}
 
 			// Create a SecureRandom
@@ -200,7 +200,7 @@ public final class KeyPairUtil {
 				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
 			} else if (algorithm.equals(EC.jce())) {
 				ECPublicKey pubk = (ECPublicKey) publicKey;
-	            int size = pubk.getParams().getOrder().bitLength();
+				int size = pubk.getParams().getOrder().bitLength();
 				return new KeyInfo(ASYMMETRIC, algorithm, size);
 			}
 
@@ -243,7 +243,7 @@ public final class KeyPairUtil {
 				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
 			} else if (algorithm.equals(EC.jce())) {
 				ECPrivateKey pubk = (ECPrivateKey) privateKey;
-	            int size = pubk.getParams().getOrder().bitLength();
+				int size = pubk.getParams().getOrder().bitLength();
 				return new KeyInfo(ASYMMETRIC, algorithm, size);
 			}
 

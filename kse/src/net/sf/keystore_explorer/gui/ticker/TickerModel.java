@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,12 +23,12 @@ import javax.swing.ListModel;
 
 /**
  * Interface for data models to use with the JTicker Swing control.
- * 
+ *
  */
 public interface TickerModel extends ListModel {
 	/**
 	 * Get the item in the model at the specified index.
-	 * 
+	 *
 	 * @param index
 	 *            The index
 	 * @return The item
@@ -37,7 +37,7 @@ public interface TickerModel extends ListModel {
 
 	/**
 	 * Get the index in the model of the specified item.
-	 * 
+	 *
 	 * @param item
 	 *            The item
 	 * @return The index
@@ -46,7 +46,7 @@ public interface TickerModel extends ListModel {
 
 	/**
 	 * Add an item to the model.
-	 * 
+	 *
 	 * @param item
 	 *            The item
 	 */
@@ -54,7 +54,7 @@ public interface TickerModel extends ListModel {
 
 	/**
 	 * Remove an item from the model.
-	 * 
+	 *
 	 * @param item
 	 *            The item
 	 */

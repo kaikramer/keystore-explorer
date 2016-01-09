@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -35,12 +35,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 /**
  * Action to display the certificate chain details for the selected key pair
  * entry.
- * 
+ *
  */
 public class KeyPairCertificateChainDetailsAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -59,6 +59,7 @@ public class KeyPairCertificateChainDetailsAction extends KeyStoreExplorerAction
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		showCertificateSelectedEntry();
 	}
@@ -75,7 +76,7 @@ public class KeyPairCertificateChainDetailsAction extends KeyStoreExplorerAction
 			X509Certificate[] certs = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
 
 			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-					res.getString("KeyPairCertificateChainDetailsAction.CertDetailsEntry.Title"), alias), certs, 
+					res.getString("KeyPairCertificateChainDetailsAction.CertDetailsEntry.Title"), alias), certs,
 					kseFrame, DViewCertificate.EXPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,7 +28,7 @@ import java.security.Security;
 
 /**
  * Abstract base class for all test cases. Sets up the BC provider.
- * 
+ *
  */
 public abstract class TestCaseCrypto {
 	public TestCaseCrypto() {

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,12 +28,12 @@ import net.sf.keystore_explorer.gui.crypto.DProviderInfo;
 
 /**
  * Action to display the Security Providers information dialog.
- * 
+ *
  */
 public class SecurityProvidersAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -52,6 +52,7 @@ public class SecurityProvidersAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		DProviderInfo dProviderInfo = new DProviderInfo(frame);
 		dProviderInfo.setLocationRelativeTo(frame);

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,7 +36,7 @@ import javax.swing.JPasswordField;
 
 /**
  * Password field with quality meter.
- * 
+ *
  */
 public class JPasswordQualityField extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/password/resources");
@@ -49,7 +49,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Creates a new instance of JPasswordQualityField with no minimum quality.
-	 * 
+	 *
 	 * @param columns
 	 *            Number of columns in password field
 	 */
@@ -59,7 +59,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Creates a new instance of JPasswordQualityField with a minimum quality.
-	 * 
+	 *
 	 * @param columns
 	 *            Number of columns in password field
 	 * @param minPasswordQuality
@@ -106,6 +106,7 @@ public class JPasswordQualityField extends JPanel {
 		gbc_jpbQuality.fill = GridBagConstraints.HORIZONTAL;
 
 		jpfPassword.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent evt) {
 				passwordChanged();
 			}
@@ -119,7 +120,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Get password or null if minimum password quality not met.
-	 * 
+	 *
 	 * @return Password
 	 */
 	public char[] getPassword() {
@@ -134,7 +135,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Get minimum password quality.
-	 * 
+	 *
 	 * @return Minimum password quality, -1 for none
 	 */
 	public int getMinPasswordQuality() {
@@ -143,7 +144,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Get password quality.
-	 * 
+	 *
 	 * @return Password quality
 	 */
 	public int getPasswordQuality() {
@@ -152,7 +153,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Set echo character.
-	 * 
+	 *
 	 * @param c
 	 *            Echo character
 	 */
@@ -162,7 +163,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Get echo character.
-	 * 
+	 *
 	 * @return Echo character
 	 */
 	public char getEchoChar() {
@@ -171,7 +172,7 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Is there an echo character set?
-	 * 
+	 *
 	 * @return True if there is
 	 */
 	public boolean echoCharIsSet() {
@@ -180,10 +181,11 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Set whether or not the password quality field is enabled?
-	 * 
+	 *
 	 * @param enabled
 	 *            Enabled?
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jpfPassword.setEnabled(enabled);
 		jpqmQuality.setEnabled(enabled);
@@ -191,16 +193,17 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Is the password quality field?
-	 * 
+	 *
 	 * @return Enabled?
 	 */
+	@Override
 	public boolean isEnabled() {
 		return jpfPassword.isEnabled();
 	}
 
 	/**
 	 * Set the password quality field's text.
-	 * 
+	 *
 	 * @param text
 	 *            Text
 	 */
@@ -211,10 +214,11 @@ public class JPasswordQualityField extends JPanel {
 
 	/**
 	 * Set password quality field's tool tip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tool top text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		jpfPassword.setToolTipText(toolTipText);
 	}
@@ -222,6 +226,7 @@ public class JPasswordQualityField extends JPanel {
 	/**
 	 * Request input focus.
 	 */
+	@Override
 	public void requestFocus() {
 		jpfPassword.requestFocus();
 	}
@@ -288,12 +293,12 @@ public class JPasswordQualityField extends JPanel {
 
 		if ((digits == 0) && (symbols == 0) && (lower) && (!upper)) {
 			return 0; // Password contains only lower case characters - score
-						// zero
+			// zero
 		}
 
 		if ((digits == 0) && (symbols == 0) && (!lower) && (upper)) {
 			return 0; // Password contains only upper case characters - score
-						// zero
+			// zero
 		}
 
 		if (digits > 3) {
@@ -348,6 +353,7 @@ public class JPasswordQualityField extends JPanel {
 			passwordQuality = 0;
 		}
 
+		@Override
 		public void paintComponent(Graphics g) {
 			Rectangle bounds = new Rectangle(getSize());
 			bounds.x = 0;

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,7 +25,7 @@ import net.sf.keystore_explorer.crypto.Password;
 
 /**
  * Key buffer entry.
- * 
+ *
  */
 public class KeyBufferEntry extends BufferEntry {
 	private Key key;
@@ -33,7 +33,7 @@ public class KeyBufferEntry extends BufferEntry {
 
 	/**
 	 * Construct.
-	 * 
+	 *
 	 * @param name
 	 *            Entry name
 	 * @param cut
@@ -54,7 +54,7 @@ public class KeyBufferEntry extends BufferEntry {
 
 	/**
 	 * Get key.
-	 * 
+	 *
 	 * @return key
 	 */
 	public Key getKey() {
@@ -63,13 +63,14 @@ public class KeyBufferEntry extends BufferEntry {
 
 	/**
 	 * Get password.
-	 * 
+	 *
 	 * @return Password
 	 */
 	public Password getPassword() {
 		return new Password(password); // Copy as may be cleared
 	}
 
+	@Override
 	void clear() {
 		password.nullPassword();
 	}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,7 +36,7 @@ public class KeyStoreHistory {
 	private KeyStoreState savedState;
 	private File file;
 	private String name;
-    private Provider explicitProvider;
+	private Provider explicitProvider;
 
 	/**
 	 * Create a new history for an unsaved KeyStore.
@@ -51,7 +51,7 @@ public class KeyStoreHistory {
 	 */
 	public KeyStoreHistory(KeyStore keyStore, String name, Password password, Provider explicitProvider) {
 		this.name = name;
-        this.explicitProvider = explicitProvider;
+		this.explicitProvider = explicitProvider;
 
 		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
@@ -170,11 +170,11 @@ public class KeyStoreHistory {
 	}
 
 	public Provider getExplicitProvider() {
-        return explicitProvider;
-    }
+		return explicitProvider;
+	}
 
-    @Override
+	@Override
 	public String toString() {
-	    return getName();
+		return getName();
 	}
 }

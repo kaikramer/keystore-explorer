@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -56,9 +56,9 @@ import net.sf.keystore_explorer.gui.error.Problem;
  */
 public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
-    private static final long serialVersionUID = -4374420674229658652L;
+	private static final long serialVersionUID = -4374420674229658652L;
 
-    /**
+	/**
 	 * Construct action.
 	 *
 	 * @param kseFrame
@@ -81,182 +81,183 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 
-	    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-        // get clipboard contents, but only string types, not files
-        Transferable t = clipboard.getContents(null);
-        try {
-            if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String data;
-                data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                show(data);
-            }
+		// get clipboard contents, but only string types, not files
+		Transferable t = clipboard.getContents(null);
+		try {
+			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				String data;
+				data = (String) t.getTransferData(DataFlavor.stringFlavor);
+				show(data);
+			}
 
-            // TODO handle other flavor types
+			// TODO handle other flavor types
 
-        } catch (UnsupportedFlavorException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		} catch (UnsupportedFlavorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-    /**
-     * Show clipboard content
-     *
-     * @param data
-     */
-    public void show(String data) {
+	/**
+	 * Show clipboard content
+	 *
+	 * @param data
+	 */
+	public void show(String data) {
 
-        if (data == null) {
-            return;
-        }
+		if (data == null) {
+			return;
+		}
 
-        try {
+		try {
 
-            CryptoFileType fileType = CryptoFileUtil.detectFileType(new ByteArrayInputStream(data.getBytes()));
+			CryptoFileType fileType = CryptoFileUtil.detectFileType(new ByteArrayInputStream(data.getBytes()));
 
-            switch (fileType) {
-            case CERT:
-                showCert(new ByteArrayInputStream(data.getBytes()));
-                break;
-            case CRL:
-                showCrl(new ByteArrayInputStream(data.getBytes()));
-                break;
-            case PKCS10_CSR:
-            case SPKAC_CSR:
-                showCsr(new ByteArrayInputStream(data.getBytes()), fileType);
-                break;
-            case JCEKS_KS:
-            case JKS_KS:
-            case PKCS12_KS:
-            case BKS_KS:
-            case BKS_V1_KS:
-            case UBER_KS:
-            case UNKNOWN:
-            default:
-                JOptionPane.showMessageDialog(frame,
-                        res.getString("ExamineClipboardAction.UnknownType.message"),
-                        res.getString("ExamineClipboardAction.ExamineClipboard.Title"), JOptionPane.WARNING_MESSAGE);
-                break;
-            }
+			switch (fileType) {
+			case CERT:
+				showCert(new ByteArrayInputStream(data.getBytes()));
+				break;
+			case CRL:
+				showCrl(new ByteArrayInputStream(data.getBytes()));
+				break;
+			case PKCS10_CSR:
+			case SPKAC_CSR:
+				showCsr(new ByteArrayInputStream(data.getBytes()), fileType);
+				break;
+			case JCEKS_KS:
+			case JKS_KS:
+			case PKCS12_KS:
+			case BKS_KS:
+			case BKS_V1_KS:
+			case UBER_KS:
+			case UNKNOWN:
+			default:
+				JOptionPane.showMessageDialog(frame,
+						res.getString("ExamineClipboardAction.UnknownType.message"),
+						res.getString("ExamineClipboardAction.ExamineClipboard.Title"), JOptionPane.WARNING_MESSAGE);
+				break;
+			}
 
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
-    }
+		} catch (Exception ex) {
+			DError.displayError(frame, ex);
+		}
+	}
 
-    private void showCert(InputStream is) throws CryptoException {
+	private void showCert(InputStream is) throws CryptoException {
 
-        X509Certificate[] certs = null;
-        try {
-            certs = X509CertUtil.loadCertificates(is);
+		X509Certificate[] certs = null;
+		try {
+			certs = X509CertUtil.loadCertificates(is);
 
-            if (certs.length == 0) {
-                JOptionPane.showMessageDialog(frame,
-                        res.getString("ExamineClipboardAction.NoCertsFound.message"),
-                        res.getString("ExamineClipboardAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
-            }
-        } catch (Exception ex) {
-            String problemStr = res.getString("ExamineClipboardAction.NoOpenCert.Problem");
+			if (certs.length == 0) {
+				JOptionPane.showMessageDialog(frame,
+						res.getString("ExamineClipboardAction.NoCertsFound.message"),
+						res.getString("ExamineClipboardAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
+			}
+		} catch (Exception ex) {
+			String problemStr = res.getString("ExamineClipboardAction.NoOpenCert.Problem");
 
-            String[] causes = new String[] { res.getString("ExamineClipboardAction.NotCert.Cause"),
-                    res.getString("ExamineClipboardAction.CorruptedCert.Cause") };
+			String[] causes = new String[] { res.getString("ExamineClipboardAction.NotCert.Cause"),
+					res.getString("ExamineClipboardAction.CorruptedCert.Cause") };
 
-            Problem problem = new Problem(problemStr, causes, ex);
+			Problem problem = new Problem(problemStr, causes, ex);
 
-            DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCert.Title"),
-                                             problem);
-            dProblem.setLocationRelativeTo(frame);
-            dProblem.setVisible(true);
-        }
+			DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCert.Title"),
+					problem);
+			dProblem.setLocationRelativeTo(frame);
+			dProblem.setVisible(true);
+		}
 
-        if ((certs != null) && (certs.length > 0)) {
-            DViewCertificate dViewCertificate = new DViewCertificate(frame,
-                    res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame, DViewCertificate.IMPORT);
-            dViewCertificate.setLocationRelativeTo(frame);
-            dViewCertificate.setVisible(true);
-        }
-    }
+		if ((certs != null) && (certs.length > 0)) {
+			DViewCertificate dViewCertificate = new DViewCertificate(frame,
+					res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame, DViewCertificate.IMPORT);
+			dViewCertificate.setLocationRelativeTo(frame);
+			dViewCertificate.setVisible(true);
+		}
+	}
 
-    private void showCrl(InputStream is) {
-        if (is == null) {
-             return;
-         }
+	private void showCrl(InputStream is) {
+		if (is == null) {
+			return;
+		}
 
-         X509CRL crl = null;
-         try {
-             crl = X509CertUtil.loadCRL(is);
-         } catch (Exception ex) {
-            String problemStr = res.getString("ExamineClipboardAction.NoOpenCrl.Problem");
+		X509CRL crl = null;
+		try {
+			crl = X509CertUtil.loadCRL(is);
+		} catch (Exception ex) {
+			String problemStr = res.getString("ExamineClipboardAction.NoOpenCrl.Problem");
 
-             String[] causes = new String[] { res.getString("ExamineClipboardAction.NotCrl.Cause"),
-                     res.getString("ExamineClipboardAction.CorruptedCrl.Cause") };
+			String[] causes = new String[] { res.getString("ExamineClipboardAction.NotCrl.Cause"),
+					res.getString("ExamineClipboardAction.CorruptedCrl.Cause") };
 
-             Problem problem = new Problem(problemStr, causes, ex);
+			Problem problem = new Problem(problemStr, causes, ex);
 
-             DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCrl.Title"),
-                                              problem);
-             dProblem.setLocationRelativeTo(frame);
-             dProblem.setVisible(true);
-         }
+			DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCrl.Title"),
+					problem);
+			dProblem.setLocationRelativeTo(frame);
+			dProblem.setVisible(true);
+		}
 
-         if (crl != null) {
-             DViewCrl dViewCrl = new DViewCrl(frame, res.getString("ExamineClipboardAction.CrlDetails.Title"), crl);
-             dViewCrl.setLocationRelativeTo(frame);
-             dViewCrl.setVisible(true);
-         }
-     }
+		if (crl != null) {
+			DViewCrl dViewCrl = new DViewCrl(frame, res.getString("ExamineClipboardAction.CrlDetails.Title"), crl);
+			dViewCrl.setLocationRelativeTo(frame);
+			dViewCrl.setVisible(true);
+		}
+	}
 
 
-    private void showCsr(InputStream is, CryptoFileType fileType) {
-        if (is == null) {
-            return;
-        }
+	private void showCsr(InputStream is, CryptoFileType fileType) {
+		if (is == null) {
+			return;
+		}
 
-        try {
-            PKCS10CertificationRequest pkcs10Csr = null;
-            Spkac spkacCsr = null;
+		try {
+			PKCS10CertificationRequest pkcs10Csr = null;
+			Spkac spkacCsr = null;
 
-            try {
-                if (fileType == CryptoFileType.PKCS10_CSR) {
-                    pkcs10Csr = Pkcs10Util.loadCsr(is);
-                } else if (fileType == CryptoFileType.SPKAC_CSR) {
-                    spkacCsr = new Spkac(is);
-                }
-            } catch (Exception ex) {
-                String problemStr = res.getString("ExamineClipboardAction.NoOpenCsr.Problem");
+			try {
+				if (fileType == CryptoFileType.PKCS10_CSR) {
+					pkcs10Csr = Pkcs10Util.loadCsr(is);
+				} else if (fileType == CryptoFileType.SPKAC_CSR) {
+					spkacCsr = new Spkac(is);
+				}
+			} catch (Exception ex) {
+				String problemStr = res.getString("ExamineClipboardAction.NoOpenCsr.Problem");
 
-                String[] causes = new String[] { res.getString("ExamineClipboardAction.NotCsr.Cause"),
-                        res.getString("ExamineClipboardAction.CorruptedCsr.Cause") };
+				String[] causes = new String[] { res.getString("ExamineClipboardAction.NotCsr.Cause"),
+						res.getString("ExamineClipboardAction.CorruptedCsr.Cause") };
 
-                Problem problem = new Problem(problemStr, causes, ex);
+				Problem problem = new Problem(problemStr, causes, ex);
 
-                DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCsr.Title"),
-                                                 problem);
-                dProblem.setLocationRelativeTo(frame);
-                dProblem.setVisible(true);
+				DProblem dProblem = new DProblem(frame, res.getString("ExamineClipboardAction.ProblemOpeningCsr.Title"),
+						problem);
+				dProblem.setLocationRelativeTo(frame);
+				dProblem.setVisible(true);
 
-                return;
-            }
+				return;
+			}
 
-            if (pkcs10Csr != null) {
-                DViewCsr dViewCsr = new DViewCsr(frame, res.getString("ExamineClipboardAction.CsrDetails.Title"),
-                        pkcs10Csr);
-                dViewCsr.setLocationRelativeTo(frame);
-                dViewCsr.setVisible(true);
-            } else {
-                DViewCsr dViewCsr = new DViewCsr(frame, res.getString("ExamineClipboardAction.CsrDetails.Title"),
-                        spkacCsr);
-                dViewCsr.setLocationRelativeTo(frame);
-                dViewCsr.setVisible(true);
-            }
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
-    }
+			if (pkcs10Csr != null) {
+				DViewCsr dViewCsr = new DViewCsr(frame, res.getString("ExamineClipboardAction.CsrDetails.Title"),
+						pkcs10Csr);
+				dViewCsr.setLocationRelativeTo(frame);
+				dViewCsr.setVisible(true);
+			} else {
+				DViewCsr dViewCsr = new DViewCsr(frame, res.getString("ExamineClipboardAction.CsrDetails.Title"),
+						spkacCsr);
+				dViewCsr.setLocationRelativeTo(frame);
+				dViewCsr.setVisible(true);
+			}
+		} catch (Exception ex) {
+			DError.displayError(frame, ex);
+		}
+	}
 }

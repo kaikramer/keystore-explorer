@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,12 +30,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 
 /**
  * Action to close all KeyStores.
- * 
+ *
  */
 public class CloseAllAction extends CloseAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -58,13 +58,14 @@ public class CloseAllAction extends CloseAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		closeAllKeyStores();
 	}
 
 	/**
 	 * Close all keyStores.
-	 * 
+	 *
 	 * @return True if all KeyStores closed, false otherwise
 	 */
 	protected boolean closeAllKeyStores() {

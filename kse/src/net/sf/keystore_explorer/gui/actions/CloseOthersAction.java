@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,12 +28,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 
 /**
  * Action to close other KeyStores.
- * 
+ *
  */
 public class CloseOthersAction extends CloseAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -53,6 +53,7 @@ public class CloseOthersAction extends CloseAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		// Get the currently active KeyStore - the one to keep open
 		KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();

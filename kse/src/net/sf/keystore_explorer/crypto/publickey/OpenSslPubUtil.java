@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,34 +37,34 @@ import net.sf.keystore_explorer.utilities.pem.PemUtil;
 // @formatter:off
 /**
  * Provides utility methods relating to OpenSSL encoded public keys.
- * 
+ *
  * <pre>
  * OpenSSL Public Key structure:
- * 
+ *
  *     SubjectPublicKeyInfo ::= ASN1Sequence {
  *         algorithm AlgorithmIdentifier,
  *         subjectPublicKey BIT STRING }
- * 
+ *
  *     AlgorithmIdentifier ::= ASN1Sequence {
  *         algorithm OBJECT IDENTIFIER,
  *         parameters ANY DEFINED BY algorithm OPTIONAL }
- * 
+ *
  *     Rsa-Parms ::= ASN1Null
- * 
+ *
  *     Dss-Parms ::= ASN1Sequence {
  *         p ASN1Integer,
  *         q ASN1Integer,
  *         g ASN1Integer }
- * 
+ *
  *     subjectPublicKey as DERBitString:
- * 
+ *
  *     RSAPublicKey ::= ASN1Sequence {
  *         modulus ASN1Integer,
  *         publicExponent ASN1Integer}
- * 
+ *
  *     DSAPublicKey ::= ASN1Integer
  * </pre>
- * 
+ *
  */
 // @formatter:on
 public class OpenSslPubUtil {
@@ -74,7 +74,7 @@ public class OpenSslPubUtil {
 
 	/**
 	 * OpenSSL encode a public key.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param publicKey
 	 *            The public key
@@ -87,7 +87,7 @@ public class OpenSslPubUtil {
 
 	/**
 	 * OpenSSL encode a public key and PEM the encoding.
-	 * 
+	 *
 	 * @return The PEM'd encoding
 	 * @param publicKey
 	 *            The public key
@@ -104,7 +104,7 @@ public class OpenSslPubUtil {
 	/**
 	 * Load an unencrypted OpenSSL public key from the stream. The encoding of
 	 * the public key may be PEM or DER.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load the unencrypted public key from
 	 * @return The public key

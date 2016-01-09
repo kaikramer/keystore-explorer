@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -35,5 +35,5 @@ public class URLs {
 
 	// URL of page that forwards to unlimited strength policy download site for the respective Java version
 	public static final String JCE_POLICY_DOWNLOAD_URL =
-										"http://www.keystore-explorer.org/jcePolicyDownload.php?jreversion={0}";
+			"http://www.keystore-explorer.org/jcePolicyDownload.php?jreversion={0}";
 }

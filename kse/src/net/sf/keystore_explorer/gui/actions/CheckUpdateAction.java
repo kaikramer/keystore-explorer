@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,16 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.actions;
 
-import net.sf.keystore_explorer.KSE;
-import net.sf.keystore_explorer.gui.KseFrame;
-import net.sf.keystore_explorer.gui.dialogs.DCheckUpdate;
-import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.utilities.net.URLs;
-import net.sf.keystore_explorer.version.Version;
-import net.sf.keystore_explorer.version.VersionException;
-
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.io.IOException;
@@ -37,14 +27,25 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import net.sf.keystore_explorer.KSE;
+import net.sf.keystore_explorer.gui.KseFrame;
+import net.sf.keystore_explorer.gui.dialogs.DCheckUpdate;
+import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.net.URLs;
+import net.sf.keystore_explorer.version.Version;
+import net.sf.keystore_explorer.version.VersionException;
+
 /**
  * Action to check for updates to KeyStore Explorer.
- * 
+ *
  */
 public class CheckUpdateAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -63,6 +64,7 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		DCheckUpdate dCheckUpdate = new DCheckUpdate(frame);
 		dCheckUpdate.setLocationRelativeTo(frame);
@@ -100,7 +102,7 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 				if (!autoUpdateCheck) {
 					JOptionPane.showMessageDialog(frame, MessageFormat.format(
 							res.getString("CheckUpdateAction.HaveLatestVersion.message"), currentVersion), KSE
-							                              .getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+							.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 				}
 			} else {
 

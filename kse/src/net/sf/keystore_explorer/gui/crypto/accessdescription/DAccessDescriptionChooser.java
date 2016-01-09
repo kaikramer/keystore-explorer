@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.gui.oid.JObjectId;
 
 /**
  * Dialog to choose an access description.
- * 
+ *
  */
 public class DAccessDescriptionChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -74,7 +74,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DAccessDescriptionChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -89,7 +89,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DAccessDescriptionChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -157,6 +157,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DAccessDescriptionChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -164,6 +165,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DAccessDescriptionChooser.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -171,6 +173,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -200,7 +203,7 @@ public class DAccessDescriptionChooser extends JEscDialog {
 
 	/**
 	 * Get selected access description.
-	 * 
+	 *
 	 * @return Access description, or null if none
 	 */
 	public AccessDescription getAccessDescription() {

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -70,6 +70,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 						getClass().getResource(res.getString("PasteAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -77,6 +78,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		BufferEntry bufferEntry = Buffer.interrogate();
 

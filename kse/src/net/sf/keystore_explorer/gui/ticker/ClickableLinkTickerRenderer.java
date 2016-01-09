@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,7 +37,7 @@ import javax.swing.JOptionPane;
 
 /**
  * Renderer to use with the JTicker Swing control that displays clickable links.
- * 
+ *
  */
 public class ClickableLinkTickerRenderer extends JLabel implements TickerRenderer {
 
@@ -47,13 +47,14 @@ public class ClickableLinkTickerRenderer extends JLabel implements TickerRendere
 
 	/**
 	 * Get the rendering component for the specified JTicker and ticker item
-	 * 
+	 *
 	 * @return Rendering component
 	 * @param ticker
 	 *            The JTicker that is asking the renderer to draw
 	 * @param value
 	 *            The value of the ticker item to be rendered
 	 */
+	@Override
 	public JComponent getTickerRendererComponent(JTicker ticker, Object value) {
 
 		String text = value.toString();

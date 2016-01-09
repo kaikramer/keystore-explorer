@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Dialog used for entering and confirming a password.
- * 
+ *
  */
 public class DGetNewPassword extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/password/resources");
@@ -74,7 +74,7 @@ public class DGetNewPassword extends JEscDialog {
 
 	/**
 	 * Creates new DGetNewPassword dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param modality
@@ -99,7 +99,7 @@ public class DGetNewPassword extends JEscDialog {
 	 * @param passwordQualityConfig
 	 */
 	public DGetNewPassword(JFrame parent, String title,
-	                       PasswordQualityConfig passwordQualityConfig) {
+			PasswordQualityConfig passwordQualityConfig) {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 
 		this.passwordQualityConfig = passwordQualityConfig;
@@ -109,7 +109,7 @@ public class DGetNewPassword extends JEscDialog {
 
 	/**
 	 * Creates new DGetNewPassword dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param modality
@@ -123,7 +123,7 @@ public class DGetNewPassword extends JEscDialog {
 
 	/**
 	 * Creates new DGetNewPassword dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -193,6 +193,7 @@ public class DGetNewPassword extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DGetNewPassword.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -200,6 +201,7 @@ public class DGetNewPassword extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DGetNewPassword.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -207,6 +209,7 @@ public class DGetNewPassword extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -218,6 +221,7 @@ public class DGetNewPassword extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -226,10 +230,10 @@ public class DGetNewPassword extends JEscDialog {
 		setResizable(false);
 
 		getRootPane().setDefaultButton(jbOK);
-		
+
 		pack();
 
-		// fix for focus issues: request focus after dialog was made visible 
+		// fix for focus issues: request focus after dialog was made visible
 		jpfFirst.addAncestorListener(new AncestorListener() {
 			@Override
 			public void ancestorRemoved(AncestorEvent event) {
@@ -247,7 +251,7 @@ public class DGetNewPassword extends JEscDialog {
 
 	/**
 	 * Get the password set in the dialog.
-	 * 
+	 *
 	 * @return The password or null if none was set
 	 */
 	public Password getPassword() {

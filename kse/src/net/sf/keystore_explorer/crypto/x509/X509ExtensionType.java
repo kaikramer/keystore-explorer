@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -24,9 +24,9 @@ import java.util.ResourceBundle;
 
 
 /**
- * 
+ *
  * Enumeration of X.509 certificate extensions.
- * 
+ *
  */
 public enum X509ExtensionType {
 
@@ -359,7 +359,7 @@ public enum X509ExtensionType {
 
 	/**
 	 * Get type's Object Identifier.
-	 * 
+	 *
 	 * @return Object Identifier
 	 */
 	public String oid() {
@@ -368,7 +368,7 @@ public enum X509ExtensionType {
 
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	public String friendly() {
@@ -377,7 +377,7 @@ public enum X509ExtensionType {
 
 	/**
 	 * Resolve the supplied object identifier to a matching type.
-	 * 
+	 *
 	 * @param oid
 	 *            Object identifier
 	 * @return Type or null if none
@@ -394,9 +394,10 @@ public enum X509ExtensionType {
 
 	/**
 	 * Returns friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
+	@Override
 	public String toString() {
 		return friendly();
 	}

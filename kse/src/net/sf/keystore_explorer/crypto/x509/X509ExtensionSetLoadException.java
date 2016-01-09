@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,7 +23,7 @@ import net.sf.keystore_explorer.crypto.CryptoException;
 
 /**
  * Thrown when an X.509 X509Extension Set load fails.
- * 
+ *
  */
 public class X509ExtensionSetLoadException extends CryptoException {
 	/**
@@ -35,7 +35,7 @@ public class X509ExtensionSetLoadException extends CryptoException {
 
 	/**
 	 * Creates a new X509ExtensionSetLoadException with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 */
@@ -46,7 +46,7 @@ public class X509ExtensionSetLoadException extends CryptoException {
 	/**
 	 * Creates a new X509ExtensionSetLoadException with the specified message
 	 * and cause throwable.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 * @param causeThrowable
@@ -59,7 +59,7 @@ public class X509ExtensionSetLoadException extends CryptoException {
 	/**
 	 * Creates a new X509ExtensionSetLoadException with the specified cause
 	 * throwable.
-	 * 
+	 *
 	 * @param causeThrowable
 	 *            The throwable that caused this exception to be thrown
 	 */

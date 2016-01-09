@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -145,6 +145,7 @@ public class DSignMidlet extends JEscDialog {
 		PlatformUtil.setMnemonic(jbInputJadBrowse, res.getString("DSignMidlet.jbInputJadBrowse.mnemonic").charAt(0));
 		jbInputJadBrowse.setToolTipText(res.getString("DSignMidlet.jbInputJadBrowse.tooltip"));
 		jbInputJadBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DSignMidlet.this);
@@ -168,6 +169,7 @@ public class DSignMidlet extends JEscDialog {
 		gbc_jcbSignDirectly.gridy = 1;
 
 		jcbSignDirectly.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				jtfOutputJad.setEnabled(!jcbSignDirectly.isSelected());
 				jbOutputJadBrowse.setEnabled(!jcbSignDirectly.isSelected());
@@ -190,6 +192,7 @@ public class DSignMidlet extends JEscDialog {
 		jbOutputJadBrowse.setToolTipText(res.getString("DSignMidlet.jbOutputJadBrowse.tooltip"));
 		jbOutputJadBrowse.setEnabled(false);
 		jbOutputJadBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DSignMidlet.this);
@@ -216,6 +219,7 @@ public class DSignMidlet extends JEscDialog {
 		PlatformUtil.setMnemonic(jbJarBrowse, res.getString("DSignMidlet.jbJarBrowse.mnemonic").charAt(0));
 		jbJarBrowse.setToolTipText(res.getString("DSignMidlet.jbJarBrowse.tooltip"));
 		jbJarBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DSignMidlet.this);
@@ -245,6 +249,7 @@ public class DSignMidlet extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DSignMidlet.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -252,6 +257,7 @@ public class DSignMidlet extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DSignMidlet.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -259,6 +265,7 @@ public class DSignMidlet extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -271,6 +278,7 @@ public class DSignMidlet extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -340,7 +348,7 @@ public class DSignMidlet extends JEscDialog {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(this, res.getString("DSignMidlet.ProblemOpeningJad.Title"),
-			                                 problem);
+					problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -392,7 +400,7 @@ public class DSignMidlet extends JEscDialog {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(this, res.getString("DSignMidlet.ProblemOpeningJar.Title"),
-			                                 problem);
+					problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -444,14 +452,14 @@ public class DSignMidlet extends JEscDialog {
 		}
 	}
 
-    private void populateOutputJadFileName(File chosenFile) {
-        String fileBaseName = FileNameUtil.removeExtension(chosenFile.getName());
-        if (fileBaseName != null) {
-            String outFileName = fileBaseName + "_signed.jad";
-            File outFile = new File(chosenFile.getParentFile(), outFileName);
-            jtfOutputJad.setText(outFile.getPath());
-        }
-    }
+	private void populateOutputJadFileName(File chosenFile) {
+		String fileBaseName = FileNameUtil.removeExtension(chosenFile.getName());
+		if (fileBaseName != null) {
+			String outFileName = fileBaseName + "_signed.jad";
+			File outFile = new File(chosenFile.getParentFile(), outFileName);
+			jtfOutputJad.setText(outFile.getPath());
+		}
+	}
 
 	private void outputJadBrowsePressed() {
 		JFileChooser chooser = FileChooserFactory.getJadFileChooser();

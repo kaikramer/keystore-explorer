@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -97,8 +97,8 @@ public class DExaminingSsl extends JEscDialog {
 		this.sslPort = sslPort;
 
 		if (useClientAuth) {
-		    this.keyStore = ksh.getCurrentState().getKeyStore();
-		    this.password = ksh.getCurrentState().getPassword().toCharArray();
+			this.keyStore = ksh.getCurrentState().getKeyStore();
+			this.password = ksh.getCurrentState().getPassword().toCharArray();
 		}
 		initComponents();
 	}
@@ -123,6 +123,7 @@ public class DExaminingSsl extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DExaminingSsl.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -130,6 +131,7 @@ public class DExaminingSsl extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -142,6 +144,7 @@ public class DExaminingSsl extends JEscDialog {
 		getContentPane().add(jpCancel, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				if ((examiner != null) && (examiner.isAlive())) {
 					examiner.interrupt();
@@ -188,11 +191,13 @@ public class DExaminingSsl extends JEscDialog {
 	}
 
 	private class ExamineSsl implements Runnable {
+		@Override
 		public void run() {
 			try {
-			    sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
+				sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
 
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						if (DExaminingSsl.this.isShowing()) {
 							closeDialog();
@@ -201,6 +206,7 @@ public class DExaminingSsl extends JEscDialog {
 				});
 			} catch (final Exception ex) {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						if (DExaminingSsl.this.isShowing()) {
 							String problemStr = MessageFormat.format(

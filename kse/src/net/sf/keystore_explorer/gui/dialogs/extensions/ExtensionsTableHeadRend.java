@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,7 +30,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Custom cell renderer for the headers of the Extensions table.
- * 
+ *
  */
 public class ExtensionsTableHeadRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle
@@ -44,7 +44,7 @@ public class ExtensionsTableHeadRend extends DefaultTableCellRenderer {
 
 	/**
 	 * Returns the rendered header cell for the supplied value and column.
-	 * 
+	 *
 	 * @param jtExtensions
 	 *            The JTable
 	 * @param value
@@ -59,11 +59,12 @@ public class ExtensionsTableHeadRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtExtensions, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
-		
+
 		Component c = delegate.getTableCellRendererComponent(jtExtensions, value, isSelected, hasFocus, row, col);
-		
+
 		if (c instanceof JLabel) {
 			JLabel header = (JLabel) c;
 
@@ -75,13 +76,13 @@ public class ExtensionsTableHeadRend extends DefaultTableCellRenderer {
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);
-	
+
 				header.setToolTipText(res.getString("ExtensionsTableHeadRend.CriticalColumn.tooltip"));
 			} else {
 				// The other headers contain text
 				header.setText(value.toString());
 				header.setHorizontalAlignment(LEFT);
-	
+
 				if (col == 1) {
 					header.setToolTipText(res.getString("ExtensionsTableHeadRend.NameColumn.tooltip"));
 				} else {

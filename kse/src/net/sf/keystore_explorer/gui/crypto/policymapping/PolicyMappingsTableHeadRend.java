@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,7 +29,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Custom cell renderer for the headers of the policy mappings table.
- * 
+ *
  */
 public class PolicyMappingsTableHeadRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle
@@ -43,7 +43,7 @@ public class PolicyMappingsTableHeadRend extends DefaultTableCellRenderer {
 
 	/**
 	 * Returns the rendered header cell for the supplied value and column.
-	 * 
+	 *
 	 * @param jtPolicyMappings
 	 *            The JTable
 	 * @param value
@@ -58,6 +58,7 @@ public class PolicyMappingsTableHeadRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jTable, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 

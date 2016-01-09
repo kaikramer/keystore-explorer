@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -46,7 +46,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * A dialog that displays the Java System Properties.
- * 
+ *
  */
 public class DSystemProperties extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/about/resources");
@@ -69,7 +69,7 @@ public class DSystemProperties extends JEscDialog {
 
 	/**
 	 * Creates new DSystemProperties dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -119,6 +119,7 @@ public class DSystemProperties extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DSystemProperties.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -132,6 +133,7 @@ public class DSystemProperties extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -142,6 +144,7 @@ public class DSystemProperties extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

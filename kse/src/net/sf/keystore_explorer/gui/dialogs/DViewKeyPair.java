@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -48,7 +48,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog that displays the details of a key pair.
- * 
+ *
  */
 public class DViewKeyPair extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -66,7 +66,7 @@ public class DViewKeyPair extends JEscDialog {
 
 	/**
 	 * Creates a new DViewKeyPair dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -94,11 +94,11 @@ public class DViewKeyPair extends JEscDialog {
 	 * @param title
 	 *            The dialog title
 	 * @param privateKey
- *            Private Private key part of keypair
+	 *            Private Private key part of keypair
 	 * @param certificateChain
 	 */
 	public DViewKeyPair(JDialog parent, String title, PrivateKey privateKey,
-	                    X509Certificate[] certificateChain, Provider provider) {
+			X509Certificate[] certificateChain, Provider provider) {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
 		this.certificateChain = certificateChain;
@@ -113,6 +113,7 @@ public class DViewKeyPair extends JEscDialog {
 		jbPrivateKeyDetails.setToolTipText(res.getString("DViewKeyPair.jbPrivateKeyDetails.tooltip"));
 		jbPrivateKeyDetails.setEnabled(true);
 		jbPrivateKeyDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewKeyPair.this);
@@ -129,6 +130,7 @@ public class DViewKeyPair extends JEscDialog {
 		jbCertificateDetails.setToolTipText(res.getString("DViewKeyPair.jbCertificateDetails.tooltip"));
 		jbCertificateDetails.setEnabled(true);
 		jbCertificateDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewKeyPair.this);
@@ -147,6 +149,7 @@ public class DViewKeyPair extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -161,6 +164,7 @@ public class DViewKeyPair extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -171,6 +175,7 @@ public class DViewKeyPair extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}
@@ -180,8 +185,8 @@ public class DViewKeyPair extends JEscDialog {
 	private void privateKeyDetailsPressed() {
 		try {
 			DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this,
-			                                                      res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"),
-			                                                      privateKey, provider);
+					res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"),
+					privateKey, provider);
 			dViewPrivateKey.setLocationRelativeTo(this);
 			dViewPrivateKey.setVisible(true);
 		} catch (CryptoException ex) {
@@ -192,10 +197,10 @@ public class DViewKeyPair extends JEscDialog {
 	private void certificateDetailsPressed() {
 		try {
 			DViewCertificate dViewCertificate = new DViewCertificate(this,
-			                                                         res.getString("DViewKeyPair.ViewCertificateDetails.Title"),
-			                                                         certificateChain,
-			                                                         null,
-			                                                         DViewCertificate.NONE);
+					res.getString("DViewKeyPair.ViewCertificateDetails.Title"),
+					certificateChain,
+					null,
+					DViewCertificate.NONE);
 			dViewCertificate.setLocationRelativeTo(this);
 			dViewCertificate.setVisible(true);
 		} catch (CryptoException ex) {

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -70,34 +70,34 @@ import net.sf.keystore_explorer.utilities.io.HexUtil;
 /**
  * Signed Public Key and Challenge (SPKAC). Netscape's CSR format. SPKACs can be
  * created, outputted, loaded and verified using this class.
- * 
+ *
  */
 public class Spkac {
 	// @formatter:off
 
 	/*
 	 * SPKAC ASN.1 structure:
-	 * 
+	 *
 	 * SignedPublicKeyAndChallenge ::= ASN1Sequence { publicKeyAndChallenge
 	 * PublicKeyAndChallenge, signatureAlgorithm AlgorithmIdentifier, signature
 	 * BIT STRING }
-	 * 
+	 *
 	 * PublicKeyAndChallenge ::= ASN1Sequence { spki SubjectPublicKeyInfo,
 	 * challenge IA5STRING }
-	 * 
+	 *
 	 * SubjectPublicKeyInfo ::= ASN1Sequence { algorithm AlgorithmIdentifier,
 	 * publicKey BIT STRING }
-	 * 
+	 *
 	 * AlgorithmIdentifier ::= ASN1Sequence { algorithm OBJECT IDENTIFIER,
 	 * parameters ANY DEFINED BY algorithm OPTIONAL }
-	 * 
+	 *
 	 * AlgorithmIdentifier parameters for DSA:
-	 * 
+	 *
 	 * Dss-Parms ::= ASN1Sequence { p ASN1Integer, q ASN1Integer, g ASN1Integer
 	 * }
-	 * 
+	 *
 	 * AlgorithmIdentifier parameters for RSA:
-	 * 
+	 *
 	 * Rsa-Params ::= ASN1Null
 	 */
 
@@ -118,7 +118,7 @@ public class Spkac {
 
 	/**
 	 * Construct a new SPKAC.
-	 * 
+	 *
 	 * @param challenge
 	 *            Challenge
 	 * @param signatureAlgorithm
@@ -143,7 +143,7 @@ public class Spkac {
 
 	/**
 	 * Load a SPKAC.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load from
 	 * @throws IOException
@@ -344,7 +344,7 @@ public class Spkac {
 
 	/**
 	 * Output SPKAC.
-	 * 
+	 *
 	 * @param os
 	 *            Output stream
 	 * @throws IOException
@@ -381,7 +381,7 @@ public class Spkac {
 
 	/**
 	 * Verify SPKAC including the challenge.
-	 * 
+	 *
 	 * @param challenge
 	 *            Challenge
 	 * @return True if verified successfully, false otherwise
@@ -398,7 +398,7 @@ public class Spkac {
 
 	/**
 	 * Verify SPKAC.
-	 * 
+	 *
 	 * @return True if verified successfully, false otherwise
 	 * @throws SpkacException
 	 *             If verification fails
@@ -483,7 +483,7 @@ public class Spkac {
 
 	/**
 	 * Get challenge.
-	 * 
+	 *
 	 * @return Challenge
 	 */
 	public String getChallenge() {
@@ -492,7 +492,7 @@ public class Spkac {
 
 	/**
 	 * Get subject.
-	 * 
+	 *
 	 * @return Subject
 	 */
 	public SpkacSubject getSubject() {
@@ -501,7 +501,7 @@ public class Spkac {
 
 	/**
 	 * Get signature algorithm.
-	 * 
+	 *
 	 * @return Signature algorithm
 	 */
 	public SignatureType getSignatureAlgorithm() {
@@ -510,7 +510,7 @@ public class Spkac {
 
 	/**
 	 * Get public key.
-	 * 
+	 *
 	 * @return Public key
 	 */
 	public PublicKey getPublicKey() {
@@ -519,7 +519,7 @@ public class Spkac {
 
 	/**
 	 * Get public key algorithm.
-	 * 
+	 *
 	 * @return Public key algorithm
 	 */
 	public KeyPairType getPublicKeyAlg() {
@@ -534,6 +534,7 @@ public class Spkac {
 		return derSpkac;
 	}
 
+	@Override
 	public String toString() {
 		return "challenge=" + getChallenge() + ", signatureAlgorithm=" + signatureAlgorithm + ", signature="
 				+ HexUtil.getHexString(signature) + ", subject=" + getSubject() + ", publicKey=" + publicKey;

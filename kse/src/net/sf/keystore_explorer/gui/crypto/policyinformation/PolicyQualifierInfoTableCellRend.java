@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,12 +33,12 @@ import net.sf.keystore_explorer.crypto.x509.PolicyInformationUtil;
 
 /**
  * Custom cell renderer for the cells of the policy qualifier info table.
- * 
+ *
  */
 public class PolicyQualifierInfoTableCellRend extends DefaultTableCellRenderer {
 	/**
 	 * Returns the rendered cell.
-	 * 
+	 *
 	 * @param jtPolicyQualifierInfo
 	 *            The JTable
 	 * @param value
@@ -53,6 +53,7 @@ public class PolicyQualifierInfoTableCellRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtPolicyQualifierInfo, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtPolicyQualifierInfo, value, isSelected, hasFocus,
@@ -66,7 +67,7 @@ public class PolicyQualifierInfoTableCellRend extends DefaultTableCellRenderer {
 			cell.setToolTipText(policyQualifierInfoStr);
 		} catch (IOException ex) {
 			throw new RuntimeException(ex); // We build this data so should not
-											// happen
+			// happen
 		}
 
 		cell.setHorizontalAlignment(LEFT);

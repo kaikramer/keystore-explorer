@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -118,7 +118,7 @@ public class X509CertificateGenerator {
 	public X509Certificate generate(X500Name subject, X500Name issuer, long validity, PublicKey publicKey,
 			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber, X509Extension extensions,
 			Provider provider)
-			throws CryptoException {
+					throws CryptoException {
 		if (version == X509CertificateVersion.VERSION1) {
 			// TODO
 			return generateVersion1(subject, issuer, validity, publicKey, privateKey, signatureType, serialNumber);
@@ -208,7 +208,7 @@ public class X509CertificateGenerator {
 	private X509Certificate generateVersion3(X500Name subject, X500Name issuer, long validity, PublicKey publicKey,
 			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber, X509Extension extensions,
 			Provider provider)
-			throws CryptoException, CertIOException {
+					throws CryptoException, CertIOException {
 		Date notBefore = new Date(System.currentTimeMillis());
 		Date notAfter = new Date(System.currentTimeMillis() + validity);
 

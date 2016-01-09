@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,10 +21,10 @@ package net.sf.keystore_explorer.crypto.keypair;
 
 /**
  * Enumeration of Key Pair Types supported by the KeyPairUtil class.
- * 
+ *
  */
 public enum KeyPairType {
-	RSA("RSA", "1.2.840.113549.1.1.1", 512, 16384, 8), 
+	RSA("RSA", "1.2.840.113549.1.1.1", 512, 16384, 8),
 	DSA("DSA", "1.2.840.10040.4.1", 512, 1024, 64),
 	EC("EC", "1.2.840.10045.2.1", 160, 571, 32);
 
@@ -44,7 +44,7 @@ public enum KeyPairType {
 
 	/**
 	 * Get key pair type JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
 	public String jce() {
@@ -53,7 +53,7 @@ public enum KeyPairType {
 
 	/**
 	 * Get key pair type Object Identifier.
-	 * 
+	 *
 	 * @return Object Identifier
 	 */
 	public String oid() {
@@ -62,7 +62,7 @@ public enum KeyPairType {
 
 	/**
 	 * Get key pair minimum size.
-	 * 
+	 *
 	 * @return Minimum size
 	 */
 	public int minSize() {
@@ -71,7 +71,7 @@ public enum KeyPairType {
 
 	/**
 	 * Get key pair maximum size.
-	 * 
+	 *
 	 * @return Maximum size
 	 */
 	public int maxSize() {
@@ -80,7 +80,7 @@ public enum KeyPairType {
 
 	/**
 	 * Get key pair step size.
-	 * 
+	 *
 	 * @return Step size
 	 */
 	public int stepSize() {
@@ -89,7 +89,7 @@ public enum KeyPairType {
 
 	/**
 	 * Resolve the supplied JCE name to a matching KeyPair type.
-	 * 
+	 *
 	 * @param jce
 	 *            JCE name
 	 * @return KeyPair type or null if none
@@ -106,9 +106,10 @@ public enum KeyPairType {
 
 	/**
 	 * Returns JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
+	@Override
 	public String toString() {
 		return jce();
 	}

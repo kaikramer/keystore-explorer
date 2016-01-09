@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -51,7 +51,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Displays a JCE Policy.
- * 
+ *
  */
 public class DViewJcePolicy extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -67,7 +67,7 @@ public class DViewJcePolicy extends JEscDialog {
 
 	/**
 	 * Creates a new DViewJcePolicy dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param jcePolicy
@@ -84,7 +84,7 @@ public class DViewJcePolicy extends JEscDialog {
 
 	/**
 	 * Creates a new DViewJcePolicy dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param jcePolicy
@@ -104,6 +104,7 @@ public class DViewJcePolicy extends JEscDialog {
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewJcePolicy.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DViewJcePolicy.jbCopy.tooltip"));
 		jbCopy.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewJcePolicy.this);
@@ -116,6 +117,7 @@ public class DViewJcePolicy extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewJcePolicy.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -149,6 +151,7 @@ public class DViewJcePolicy extends JEscDialog {
 		setResizable(true);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -159,6 +162,7 @@ public class DViewJcePolicy extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

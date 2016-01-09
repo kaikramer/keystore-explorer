@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -60,7 +60,7 @@ import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
 /**
  * Displays the details of a private key with the option to display its fields
  * if it is of a supported type (RSA or DSA).
- * 
+ *
  */
 public class DViewPrivateKey extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -85,7 +85,7 @@ public class DViewPrivateKey extends JEscDialog {
 
 	/**
 	 * Creates a new DViewPrivateKey dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -95,7 +95,7 @@ public class DViewPrivateKey extends JEscDialog {
 	 * @throws CryptoException
 	 *             A problem was encountered getting the private key's details
 	 */
-	public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey, Provider provider) 
+	public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey, Provider provider)
 			throws CryptoException {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
@@ -105,7 +105,7 @@ public class DViewPrivateKey extends JEscDialog {
 
 	/**
 	 * Creates new DViewPrivateKey dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -116,7 +116,7 @@ public class DViewPrivateKey extends JEscDialog {
 	 *             A problem was encountered getting the private key's details
 	 */
 	public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey,
-	                       Provider provider) throws CryptoException {
+			Provider provider) throws CryptoException {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
 		this.provider = provider;
@@ -192,6 +192,7 @@ public class DViewPrivateKey extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewPrivateKey.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -201,6 +202,7 @@ public class DViewPrivateKey extends JEscDialog {
 		PlatformUtil.setMnemonic(jbFields, res.getString("DViewPrivateKey.jbFields.mnemonic").charAt(0));
 		jbFields.setToolTipText(res.getString("DViewPrivateKey.jbFields.tooltip"));
 		jbFields.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewPrivateKey.this);
@@ -216,6 +218,7 @@ public class DViewPrivateKey extends JEscDialog {
 		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewPrivateKey.jbAsn1.mnemonic").charAt(0));
 		jbAsn1.setToolTipText(res.getString("DViewPrivateKey.jbAsn1.tooltip"));
 		jbAsn1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewPrivateKey.this);
@@ -236,6 +239,7 @@ public class DViewPrivateKey extends JEscDialog {
 		populateDialog();
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -246,6 +250,7 @@ public class DViewPrivateKey extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

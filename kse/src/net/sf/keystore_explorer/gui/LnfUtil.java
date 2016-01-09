@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -90,10 +90,10 @@ public class LnfUtil {
 			// Make l&f specific settings - required before setting the l&f
 
 			if (lnfClassName.equals(Plastic3DLookAndFeel.class.getName())) {
-				PlasticLookAndFeel.setCurrentTheme(new SkyBlue());
+				MetalLookAndFeel.setCurrentTheme(new SkyBlue());
 				UIManager.put("jgoodies.useNarrowButtons", Boolean.FALSE);
 			} else if (lnfClassName.equals(com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName())) {
-					UIManager.put("jgoodies.useNarrowButtons", Boolean.FALSE);
+				UIManager.put("jgoodies.useNarrowButtons", Boolean.FALSE);
 			} else if (lnfClassName.equals(MetalLookAndFeel.class.getName())) {
 				// Lighten metal/ocean
 				if (JavaVersion.getJreVersion().compareTo(JavaVersion.JRE_VERSION_150) < 0) {
@@ -208,6 +208,6 @@ public class LnfUtil {
 	 * Does the currently active l&f use a dark color scheme?
 	 */
 	public static boolean isDarkLnf() {
-        return UIManager.getLookAndFeel().getClass().getName().equals(DARCULA_LAF_CLASS);
+		return UIManager.getLookAndFeel().getClass().getName().equals(DARCULA_LAF_CLASS);
 	}
 }

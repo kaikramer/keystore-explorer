@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,12 +28,12 @@ import net.sf.keystore_explorer.gui.tipoftheday.DTipOfTheDay;
 
 /**
  * Action to display a tip of the day.
- * 
+ *
  */
 public class TipOfTheDayAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -52,6 +52,7 @@ public class TipOfTheDayAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		showTipOfTheDay();
 	}
@@ -61,7 +62,7 @@ public class TipOfTheDayAction extends KeyStoreExplorerAction {
 	 */
 	public void showTipOfTheDay() {
 		DTipOfTheDay dTipOfTheDay = new DTipOfTheDay(frame, applicationSettings.getShowTipsOnStartUp(), res,
-		                                             applicationSettings.getNextTipIndex());
+				applicationSettings.getNextTipIndex());
 
 		dTipOfTheDay.setLocationRelativeTo(frame);
 		dTipOfTheDay.setVisible(true);

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -190,7 +190,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 			if (keyStoreType.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("GenerateKeyPairAction.NewKeyPairEntryPassword.Title"),
-						                                              applicationSettings.getPasswordQualityConfig());
+						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
@@ -207,12 +207,12 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
 			// create new chain with certificates from issuer chain
 			X509Certificate[] newCertChain = null;
-            if (issuerCertChain != null) {
-                newCertChain = new X509Certificate[issuerCertChain.length + 1];
-                System.arraycopy(issuerCertChain, 0, newCertChain, 1, issuerCertChain.length);
-                newCertChain[0] = certificate;
+			if (issuerCertChain != null) {
+				newCertChain = new X509Certificate[issuerCertChain.length + 1];
+				System.arraycopy(issuerCertChain, 0, newCertChain, 1, issuerCertChain.length);
+				newCertChain[0] = certificate;
 			} else {
-                newCertChain = new X509Certificate[] { certificate };
+				newCertChain = new X509Certificate[] { certificate };
 			}
 
 			keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(), newCertChain);

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,7 +36,7 @@ import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
 /**
  * Records a single state for a KeyStore in the undo/redo history. This includes
  * a cache of both the KeyStore and its entries' passwords.
- * 
+ *
  */
 public class KeyStoreState {
 	/** Resource bundle */
@@ -59,7 +59,7 @@ public class KeyStoreState {
 
 	/**
 	 * Create a new state.
-	 * 
+	 *
 	 * @param history
 	 *            History
 	 * @param keyStore
@@ -76,7 +76,7 @@ public class KeyStoreState {
 	/**
 	 * Append a state subsequently to this one and set it to be the current
 	 * state.
-	 * 
+	 *
 	 * @param keyStoreState
 	 *            State
 	 */
@@ -88,7 +88,7 @@ public class KeyStoreState {
 
 	/**
 	 * Get the desciption of the action that created this state.
-	 * 
+	 *
 	 * @return Description or null if none
 	 */
 	public String getActionDescription() {
@@ -108,7 +108,7 @@ public class KeyStoreState {
 
 	/**
 	 * Is this state the initial state in the history?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public boolean isInitialState() {
@@ -117,7 +117,7 @@ public class KeyStoreState {
 
 	/**
 	 * Is this state the saved state in the history?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public boolean isSavedState() {
@@ -133,7 +133,7 @@ public class KeyStoreState {
 
 	/**
 	 * Set the previous state as the current state if it exists.
-	 * 
+	 *
 	 * @throws CryptoException
 	 *             If entry passwords could not be propogated to new state
 	 */
@@ -146,7 +146,7 @@ public class KeyStoreState {
 
 	/**
 	 * Set the next state as the current state if it exists.
-	 * 
+	 *
 	 * @throws CryptoException
 	 *             If entry passwords could not be propogated to new state
 	 */
@@ -159,7 +159,7 @@ public class KeyStoreState {
 
 	/**
 	 * Is there a previous state?
-	 * 
+	 *
 	 * @return True if there is
 	 */
 	public boolean hasPreviousState() {
@@ -168,7 +168,7 @@ public class KeyStoreState {
 
 	/**
 	 * Get previous state.
-	 * 
+	 *
 	 * @return Previous state or null if none
 	 */
 	public KeyStoreState previousState() {
@@ -177,7 +177,7 @@ public class KeyStoreState {
 
 	/**
 	 * Is there a next state?
-	 * 
+	 *
 	 * @return True if there is
 	 */
 	public boolean hasNextState() {
@@ -186,7 +186,7 @@ public class KeyStoreState {
 
 	/**
 	 * Get next state.
-	 * 
+	 *
 	 * @return Next state or null if none
 	 */
 	public KeyStoreState nextState() {
@@ -195,7 +195,7 @@ public class KeyStoreState {
 
 	/**
 	 * Get KeyStore's type.
-	 * 
+	 *
 	 * @return KeyStore's type
 	 */
 	public KeyStoreType getType() {
@@ -204,7 +204,7 @@ public class KeyStoreState {
 
 	/**
 	 * Get the KeyStore.
-	 * 
+	 *
 	 * @return The KeyStore
 	 */
 	public KeyStore getKeyStore() {
@@ -213,7 +213,7 @@ public class KeyStoreState {
 
 	/**
 	 * Set the KeyStore.
-	 * 
+	 *
 	 * @param keyStore
 	 *            The KeyStore
 	 */
@@ -223,7 +223,7 @@ public class KeyStoreState {
 
 	/**
 	 * Get the cached KeyStore password
-	 * 
+	 *
 	 * @return Password
 	 */
 	public Password getPassword() {
@@ -232,7 +232,7 @@ public class KeyStoreState {
 
 	/**
 	 * Set the cached KeyStore password.
-	 * 
+	 *
 	 * @param password
 	 *            Password
 	 */
@@ -242,7 +242,7 @@ public class KeyStoreState {
 
 	/**
 	 * Set the cached password for a particular entry.
-	 * 
+	 *
 	 * @param alias
 	 *            The entry's alias
 	 * @param password
@@ -254,7 +254,7 @@ public class KeyStoreState {
 
 	/**
 	 * Remove a particular entry's cached password.
-	 * 
+	 *
 	 * @param alias
 	 *            The entry's alias
 	 */
@@ -268,7 +268,7 @@ public class KeyStoreState {
 
 	/**
 	 * Get the cached password for a particular entry.
-	 * 
+	 *
 	 * @param alias
 	 *            The entry's alias
 	 * @return The entry's password or null if none is set
@@ -295,7 +295,7 @@ public class KeyStoreState {
 	/**
 	 * Create the basis for the next state based on this one. Makes a copy of
 	 * the current state excluding its position in the history.
-	 * 
+	 *
 	 * @param action
 	 *            The action responsible for the creation of the next state
 	 * @return Next state
@@ -323,7 +323,7 @@ public class KeyStoreState {
 
 		return copy;
 	}
-	
+
 	protected void propagateNewPasswords(KeyStoreState targetState) throws CryptoException {
 
 		// Copy all entry passwords not found in the target state from the current state to the target state
@@ -346,7 +346,7 @@ public class KeyStoreState {
 
 	protected boolean isPasswordPropagationValid(KeyStoreState targetState, String alias, Password password)
 			throws GeneralSecurityException {
-		// A password should only be propagated to a target state if it is correct and represents the same private key 
+		// A password should only be propagated to a target state if it is correct and represents the same private key
 		// as the current state
 		return isEntryPasswordCorrect(targetState, alias, password)
 				&& isEntryPrivateKeyEqual(targetState, alias, password);

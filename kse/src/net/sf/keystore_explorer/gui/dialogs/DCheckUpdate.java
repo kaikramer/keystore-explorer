@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -56,7 +56,7 @@ import net.sf.keystore_explorer.version.Version;
 /**
  * Check for an updated version of KeyStore Explorer. This check works over the
  * net so the user may cancel at any time by pressing the cancel button.
- * 
+ *
  */
 public class DCheckUpdate extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -75,7 +75,7 @@ public class DCheckUpdate extends JEscDialog {
 
 	/**
 	 * Creates a new DCheckUpdate dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 */
@@ -105,6 +105,7 @@ public class DCheckUpdate extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DCheckUpdate.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -112,6 +113,7 @@ public class DCheckUpdate extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -124,6 +126,7 @@ public class DCheckUpdate extends JEscDialog {
 		getContentPane().add(jpCancel, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				if ((checker != null) && (checker.isAlive())) {
 					checker.interrupt();
@@ -161,7 +164,7 @@ public class DCheckUpdate extends JEscDialog {
 
 	/**
 	 * Get latest version found by check.
-	 * 
+	 *
 	 * @return latest version or null if none found.
 	 */
 	public Version getLatestVersion() {
@@ -171,6 +174,7 @@ public class DCheckUpdate extends JEscDialog {
 	private class CheckForUpdate implements Runnable {
 		private void displayErrorCloseDialog(final String message) {
 			SwingUtilities.invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					JOptionPane.showMessageDialog(DCheckUpdate.this, message, DCheckUpdate.this.getTitle(),
 							JOptionPane.ERROR_MESSAGE);
@@ -179,21 +183,24 @@ public class DCheckUpdate extends JEscDialog {
 			});
 		}
 
+		@Override
 		public void run() {
 			try {
 				// Get the version number of the latest KeyStore Explorer from its web site
 				URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
 
-			    String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
+				String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
 				latestVersion = new Version(versionString);
 
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						closeDialog();
 					}
 				});
 			} catch (final Exception ex) {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						if (DCheckUpdate.this.isShowing()) {
 							String problemStr = res.getString("DCheckUpdate.NoCheckUpdate.Problem");

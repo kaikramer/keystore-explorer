@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -59,7 +59,7 @@ import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
 /**
  * Displays the details of a public key with the option to display its fields if
  * it is of a supported type (RSA or DSA).
- * 
+ *
  */
 public class DViewPublicKey extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -82,7 +82,7 @@ public class DViewPublicKey extends JEscDialog {
 
 	/**
 	 * Creates a new DViewPublicKey dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -100,7 +100,7 @@ public class DViewPublicKey extends JEscDialog {
 
 	/**
 	 * Creates new DViewPublicKey dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -186,6 +186,7 @@ public class DViewPublicKey extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewPublicKey.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -195,6 +196,7 @@ public class DViewPublicKey extends JEscDialog {
 		PlatformUtil.setMnemonic(jbFields, res.getString("DViewPublicKey.jbFields.mnemonic").charAt(0));
 		jbFields.setToolTipText(res.getString("DViewPublicKey.jbFields.tooltip"));
 		jbFields.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewPublicKey.this);
@@ -210,6 +212,7 @@ public class DViewPublicKey extends JEscDialog {
 		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewPublicKey.jbAsn1.mnemonic").charAt(0));
 		jbAsn1.setToolTipText(res.getString("DViewPublicKey.jbAsn1.tooltip"));
 		jbAsn1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewPublicKey.this);
@@ -230,6 +233,7 @@ public class DViewPublicKey extends JEscDialog {
 		populateDialog();
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -240,6 +244,7 @@ public class DViewPublicKey extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

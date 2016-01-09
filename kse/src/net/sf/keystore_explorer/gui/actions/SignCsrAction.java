@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -91,6 +91,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		FileOutputStream fos = null;
 		File caReplyFile = null;
@@ -143,9 +144,9 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 					}
 				} else {
 					JOptionPane
-							.showMessageDialog(frame, MessageFormat.format(
-									res.getString("SignCsrAction.FileNotRecognisedType.message"), csrFile), res
-									.getString("SignCsrAction.SignCsr.Title"), JOptionPane.WARNING_MESSAGE);
+					.showMessageDialog(frame, MessageFormat.format(
+							res.getString("SignCsrAction.FileNotRecognisedType.message"), csrFile), res
+							.getString("SignCsrAction.SignCsr.Title"), JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 			} catch (FileNotFoundException ex) {
@@ -163,7 +164,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 				Problem problem = new Problem(problemStr, causes, ex);
 
 				DProblem dProblem = new DProblem(frame, res.getString("SignCsrAction.ProblemOpeningCsr.Title"),
-				                                 problem);
+						problem);
 				dProblem.setLocationRelativeTo(frame);
 				dProblem.setVisible(true);
 

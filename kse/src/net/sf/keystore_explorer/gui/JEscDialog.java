@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,9 +34,9 @@ import javax.swing.KeyStroke;
 
 /**
  * Extended dialog class that closes itself when escape key was pressed.
- * 
+ *
  * This is the usual behavior under Windows and Mac OS.
- * 
+ *
  */
 public class JEscDialog extends JDialog {
 	private static final long serialVersionUID = -3773740513817678414L;

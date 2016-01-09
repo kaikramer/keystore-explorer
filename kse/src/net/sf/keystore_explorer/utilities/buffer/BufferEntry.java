@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.utilities.buffer;
 
 /**
  * Abstract base class for buffer entries.
- * 
+ *
  */
 public abstract class BufferEntry {
 	private String name;
@@ -29,7 +29,7 @@ public abstract class BufferEntry {
 
 	/**
 	 * Construct.
-	 * 
+	 *
 	 * @param name
 	 *            Entry name
 	 * @param cut
@@ -42,7 +42,7 @@ public abstract class BufferEntry {
 
 	/**
 	 * Get entry's name.
-	 * 
+	 *
 	 * @return Name
 	 */
 	public String getName() {
@@ -51,7 +51,7 @@ public abstract class BufferEntry {
 
 	/**
 	 * Is entry to be cut?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public boolean isCut() {

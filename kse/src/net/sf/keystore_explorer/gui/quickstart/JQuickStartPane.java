@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -58,10 +58,10 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 
 	// set dark or light colors (depending on active LaF)
 	private static final boolean IS_DARK_LAF = LnfUtil.isDarkLnf();
-    private static final Color GRADIENT_COLOR_1 = IS_DARK_LAF ? new Color(85, 85, 85) : Color.WHITE;
-    private static final Color GRADIENT_COLOR_2 = IS_DARK_LAF ? new Color(60, 63, 65) : Color.LIGHT_GRAY;
-    private static final Color TEXT_COLOR = IS_DARK_LAF ? new Color(116, 131, 141) : new Color(0, 134, 201);
-    private static final Color TEXT_ROLLOVER_COLOR = IS_DARK_LAF ? new Color(141, 141, 124) : new Color(135, 31, 120);
+	private static final Color GRADIENT_COLOR_1 = IS_DARK_LAF ? new Color(85, 85, 85) : Color.WHITE;
+	private static final Color GRADIENT_COLOR_2 = IS_DARK_LAF ? new Color(60, 63, 65) : Color.LIGHT_GRAY;
+	private static final Color TEXT_COLOR = IS_DARK_LAF ? new Color(116, 131, 141) : new Color(0, 134, 201);
+	private static final Color TEXT_ROLLOVER_COLOR = IS_DARK_LAF ? new Color(141, 141, 124) : new Color(135, 31, 120);
 
 	private KseFrame kseFrame;
 
@@ -82,7 +82,7 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 	 *            KSE frame
 	 */
 	public JQuickStartPane(KseFrame kseFrame) {
-	    super(GRADIENT_COLOR_1, GRADIENT_COLOR_2);
+		super(GRADIENT_COLOR_1, GRADIENT_COLOR_2);
 
 		this.kseFrame = kseFrame;
 
@@ -224,19 +224,24 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 		add(jpNonResizeCenterHorizontally);
 	}
 
+	@Override
 	public void drop(DropTargetDropEvent evt) {
-	    DroppedFileHandler.drop(evt, kseFrame);
+		DroppedFileHandler.drop(evt, kseFrame);
 	}
 
+	@Override
 	public void dragEnter(DropTargetDragEvent evt) {
 	}
 
+	@Override
 	public void dragExit(DropTargetEvent evt) {
 	}
 
+	@Override
 	public void dragOver(DropTargetDragEvent evt) {
 	}
 
+	@Override
 	public void dropActionChanged(DropTargetDragEvent evt) {
 	}
 }

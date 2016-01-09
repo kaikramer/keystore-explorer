@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -78,7 +78,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Dialog used to retrieve the type to use in the addition of a new extension.
- * 
+ *
  */
 public class DAddExtensionType extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -107,7 +107,7 @@ public class DAddExtensionType extends JEscDialog {
 
 	/**
 	 * Creates new DAddExtensionType dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param extensions
@@ -135,6 +135,7 @@ public class DAddExtensionType extends JEscDialog {
 		jltExtensionTypes.setBorder(new EtchedBorder());
 
 		jltExtensionTypes.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				maybeAddExtension(evt);
 			}
@@ -152,6 +153,7 @@ public class DAddExtensionType extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DAddExtensionType.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -159,6 +161,7 @@ public class DAddExtensionType extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DAddExtensionType.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -166,6 +169,7 @@ public class DAddExtensionType extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -180,6 +184,7 @@ public class DAddExtensionType extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -211,7 +216,7 @@ public class DAddExtensionType extends JEscDialog {
 
 	/**
 	 * Get chosen extension type.
-	 * 
+	 *
 	 * @return Extension type of null if dialog cancelled
 	 */
 	public X509ExtensionType getExtensionType() {
@@ -220,7 +225,7 @@ public class DAddExtensionType extends JEscDialog {
 
 	/**
 	 * Is extension critical?
-	 * 
+	 *
 	 * @return True if is, false otherwise
 	 */
 	public boolean isExtensionCritical() {

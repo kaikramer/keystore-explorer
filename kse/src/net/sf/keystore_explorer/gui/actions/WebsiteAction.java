@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -38,13 +38,13 @@ import net.sf.keystore_explorer.utilities.net.URLs;
  */
 public class WebsiteAction extends KeyStoreExplorerAction {
 
-    private String websiteAddress;
+	private String websiteAddress;
 
-    public enum Target {
-        MAIN,
-        GITHUB,
-        ISSUE_TRACKER
-    }
+	public enum Target {
+		MAIN,
+		GITHUB,
+		ISSUE_TRACKER
+	}
 
 	/**
 	 * Construct action.
@@ -56,40 +56,40 @@ public class WebsiteAction extends KeyStoreExplorerAction {
 		super(kseFrame);
 
 		switch (target) {
-        case GITHUB:
-            setData(res.getString("WebsiteAction.GitHubProject.statusbar"),
-                    res.getString("WebsiteAction.GitHubProject.text"),
-                    res.getString("WebsiteAction.GitHubProject.tooltip"),
-                    res.getString("WebsiteAction.image"),
-                    URLs.GITHUB_PROJECT);
-            break;
-        case ISSUE_TRACKER:
-            setData(res.getString("WebsiteAction.GitHubIssueTracker.statusbar"),
-                    res.getString("WebsiteAction.GitHubIssueTracker.text"),
-                    res.getString("WebsiteAction.GitHubIssueTracker.tooltip"),
-                    res.getString("WebsiteAction.image"),
-                    URLs.GITHUB_ISSUE_TRACKER);
-            break;
-        default:
-        case MAIN:
-            setData(res.getString("WebsiteAction.statusbar"),
-                    res.getString("WebsiteAction.text"),
-                    res.getString("WebsiteAction.tooltip"),
-                    res.getString("WebsiteAction.image"),
-                    URLs.KSE_WEB_SITE);
-            break;
-        }
+		case GITHUB:
+			setData(res.getString("WebsiteAction.GitHubProject.statusbar"),
+					res.getString("WebsiteAction.GitHubProject.text"),
+					res.getString("WebsiteAction.GitHubProject.tooltip"),
+					res.getString("WebsiteAction.image"),
+					URLs.GITHUB_PROJECT);
+			break;
+		case ISSUE_TRACKER:
+			setData(res.getString("WebsiteAction.GitHubIssueTracker.statusbar"),
+					res.getString("WebsiteAction.GitHubIssueTracker.text"),
+					res.getString("WebsiteAction.GitHubIssueTracker.tooltip"),
+					res.getString("WebsiteAction.image"),
+					URLs.GITHUB_ISSUE_TRACKER);
+			break;
+		default:
+		case MAIN:
+			setData(res.getString("WebsiteAction.statusbar"),
+					res.getString("WebsiteAction.text"),
+					res.getString("WebsiteAction.tooltip"),
+					res.getString("WebsiteAction.image"),
+					URLs.KSE_WEB_SITE);
+			break;
+		}
 	}
 
 	private void setData(String longDescription, String name, String shortDescription, String image, String url) {
-        putValue(LONG_DESCRIPTION, longDescription);
-        putValue(NAME, name);
-        putValue(SHORT_DESCRIPTION, shortDescription);
-        putValue(SMALL_ICON,
-                new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-                        getClass().getResource(image))));
+		putValue(LONG_DESCRIPTION, longDescription);
+		putValue(NAME, name);
+		putValue(SHORT_DESCRIPTION, shortDescription);
+		putValue(SMALL_ICON,
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
+						getClass().getResource(image))));
 
-        websiteAddress = url;
+		websiteAddress = url;
 	}
 
 	/**

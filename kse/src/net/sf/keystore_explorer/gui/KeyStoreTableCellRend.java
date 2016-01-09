@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,9 +45,9 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 
 	private TableCellRenderer delegate;
 
-	 public KeyStoreTableCellRend(TableCellRenderer delegate) {
-	     this.delegate = delegate;
-	 }
+	public KeyStoreTableCellRend(TableCellRenderer delegate) {
+		this.delegate = delegate;
+	}
 
 	/**
 	 * Returns the rendered cell for the supplied value and column.
@@ -66,30 +66,59 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtKeyStore, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 
 		//Component c = delegate.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
 
-//		if (c instanceof JLabel) {
+		//		if (c instanceof JLabel) {
 
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
 
-			// Entry Type column - display an icon representing the type and tool-tip text
-			if (col == 0) {
+		// Entry Type column - display an icon representing the type and tool-tip text
+		if (col == 0) {
+			ImageIcon icon = null;
+
+			if (KeyStoreTableModel.KEY_PAIR_ENTRY.equals(value)) {
+				icon = new ImageIcon(getClass().getResource(
+						res.getString("KeyStoreTableCellRend.KeyPairEntry.image")));
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.KeyPairEntry.tooltip"));
+			} else if (KeyStoreTableModel.TRUST_CERT_ENTRY.equals(value)) {
+				icon = new ImageIcon(getClass().getResource(
+						res.getString("KeyStoreTableCellRend.TrustCertEntry.image")));
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.TrustCertEntry.tooltip"));
+			} else {
+				icon = new ImageIcon(getClass().getResource(res.getString("KeyStoreTableCellRend.KeyEntry.image")));
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.KeyEntry.tooltip"));
+			}
+
+			cell.setIcon(icon);
+			cell.setText("");
+			cell.setVerticalAlignment(CENTER);
+			cell.setHorizontalAlignment(CENTER);
+		}
+		// Lock column - if entry is a key or key pair display an icon for the lock status
+		else if (col == 1) {
+			if (value == null) {
+				// No lock status available (not a key pair entry or PKCS #12 KeyStore)
+				cell.setIcon(null);
+				cell.setText("-");
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoLockStatus.tooltip"));
+				cell.setHorizontalAlignment(CENTER);
+			} else {
 				ImageIcon icon = null;
 
-				if (KeyStoreTableModel.KEY_PAIR_ENTRY.equals(value)) {
+				if (value.equals(Boolean.TRUE)) {
+					// Locked
 					icon = new ImageIcon(getClass().getResource(
-							res.getString("KeyStoreTableCellRend.KeyPairEntry.image")));
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.KeyPairEntry.tooltip"));
-				} else if (KeyStoreTableModel.TRUST_CERT_ENTRY.equals(value)) {
-					icon = new ImageIcon(getClass().getResource(
-							res.getString("KeyStoreTableCellRend.TrustCertEntry.image")));
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.TrustCertEntry.tooltip"));
+							res.getString("KeyStoreTableCellRend.LockedEntry.image")));
+					cell.setToolTipText(res.getString("KeyStoreTableCellRend.LockedEntry.tooltip"));
 				} else {
-					icon = new ImageIcon(getClass().getResource(res.getString("KeyStoreTableCellRend.KeyEntry.image")));
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.KeyEntry.tooltip"));
+					// Unlocked
+					icon = new ImageIcon(getClass().getResource(
+							res.getString("KeyStoreTableCellRend.UnlockedEntry.image")));
+					cell.setToolTipText(res.getString("KeyStoreTableCellRend.UnlockedEntry.tooltip"));
 				}
 
 				cell.setIcon(icon);
@@ -97,152 +126,124 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				cell.setVerticalAlignment(CENTER);
 				cell.setHorizontalAlignment(CENTER);
 			}
-			// Lock column - if entry is a key or key pair display an icon for the lock status
-			else if (col == 1) {
-				if (value == null) {
-					// No lock status available (not a key pair entry or PKCS #12 KeyStore)
-					cell.setIcon(null);
-					cell.setText("-");
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoLockStatus.tooltip"));
-					cell.setHorizontalAlignment(CENTER);
+		}
+		// Expiry column - if entry is a key pair display an icon for the expired/unexpired
+		else if (col == 2) {
+			if (value == null) {
+				// No cert expired status available (must be a key entry)
+				cell.setIcon(null);
+				cell.setText("-");
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoCertExpiry.tooltip"));
+				cell.setHorizontalAlignment(CENTER);
+			} else {
+				ImageIcon icon = null;
+
+				if (value.equals(Boolean.TRUE)) {
+					// Expired
+					icon = new ImageIcon(getClass().getResource(
+							res.getString("KeyStoreTableCellRend.CertExpiredEntry.image")));
+					cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertExpiredEntry.tooltip"));
 				} else {
-					ImageIcon icon = null;
-
-					if (value.equals(Boolean.TRUE)) {
-						// Locked
-						icon = new ImageIcon(getClass().getResource(
-								res.getString("KeyStoreTableCellRend.LockedEntry.image")));
-						cell.setToolTipText(res.getString("KeyStoreTableCellRend.LockedEntry.tooltip"));
-					} else {
-						// Unlocked
-						icon = new ImageIcon(getClass().getResource(
-								res.getString("KeyStoreTableCellRend.UnlockedEntry.image")));
-						cell.setToolTipText(res.getString("KeyStoreTableCellRend.UnlockedEntry.tooltip"));
-					}
-
-					cell.setIcon(icon);
-					cell.setText("");
-					cell.setVerticalAlignment(CENTER);
-					cell.setHorizontalAlignment(CENTER);
+					// Unexpired
+					icon = new ImageIcon(getClass().getResource(
+							res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.image")));
+					cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.tooltip"));
 				}
-			}
-			// Expiry column - if entry is a key pair display an icon for the expired/unexpired
-			else if (col == 2) {
-				if (value == null) {
-					// No cert expired status available (must be a key entry)
-					cell.setIcon(null);
-					cell.setText("-");
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoCertExpiry.tooltip"));
-					cell.setHorizontalAlignment(CENTER);
-				} else {
-					ImageIcon icon = null;
 
-					if (value.equals(Boolean.TRUE)) {
-						// Expired
-						icon = new ImageIcon(getClass().getResource(
-								res.getString("KeyStoreTableCellRend.CertExpiredEntry.image")));
-						cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertExpiredEntry.tooltip"));
-					} else {
-						// Unexpired
-						icon = new ImageIcon(getClass().getResource(
-								res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.image")));
-						cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.tooltip"));
-					}
+				cell.setIcon(icon);
+				cell.setText("");
+				cell.setVerticalAlignment(CENTER);
+				cell.setHorizontalAlignment(CENTER);
+			}
+		}
+		// Algorithm column - algorithm name
+		else if (col == 4) {
+			String algorithm = (String) value;
 
-					cell.setIcon(icon);
-					cell.setText("");
-					cell.setVerticalAlignment(CENTER);
-					cell.setHorizontalAlignment(CENTER);
-				}
-			}
-			// Algorithm column - algorithm name
-			else if (col == 4) {
-				String algorithm = (String) value;
-
-				if (algorithm == null) {
-					// No algorithm name available
-					cell.setText("-");
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoAlgorithm.tooltip"));
-					cell.setHorizontalAlignment(CENTER);
-				} else {
-					cell.setText(algorithm);
-					cell.setToolTipText(getText());
-					cell.setHorizontalAlignment(LEFT);
-				}
-			}
-			// Key Size column - key size (if known)
-			else if (col == 5) {
-				Integer keySize = (Integer) value;
-
-				if (keySize == null) {
-					// No key size available
-					cell.setText("-");
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoKeySize.tooltip"));
-					cell.setHorizontalAlignment(CENTER);
-				} else {
-					cell.setText("" + keySize);
-					cell.setToolTipText(getText());
-					cell.setHorizontalAlignment(LEFT);
-				}
-			}
-			// Certificate Expiry column - format date (if any) and indicate any expiry
-			else if (col == 6) {
-				if (value != null) {
-					cell.setText(DATE_FORMAT.format((Date) value));
-					cell.setHorizontalAlignment(LEFT);
-
-					// If expiry passed add to the tool tip to suggest expiry
-					if (new Date().after((Date) value)) {
-						cell.setToolTipText(MessageFormat.format(
-								res.getString("KeyStoreTableCellRend.ExpiredEntry.tooltip"), getText()));
-					}
-					// Otherwise clear any icon and set tooltip as date/time
-					else {
-						cell.setToolTipText(getText());
-					}
-				} else {
-					// No expiry date/time available (no certificates in KeyStore entry)
-					cell.setText("-");
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoCertExpiry.tooltip"));
-					cell.setHorizontalAlignment(CENTER);
-					cell.setIcon(null);
-				}
-			}
-			// Last Modified column - format date (if any)
-			else if (col == 7) {
-				if (value != null) {
-					cell.setText(DATE_FORMAT.format((Date) value));
-					cell.setToolTipText(getText());
-					cell.setHorizontalAlignment(LEFT);
-				} else {
-					// No last modified date/time available (PKCS #12 KeyStore)
-					cell.setText("-");
-					cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoLastModified.tooltip"));
-					cell.setHorizontalAlignment(CENTER);
-				}
-			}
-			// Alias column - just use alias text
-			else {
-				cell.setText(value.toString());
+			if (algorithm == null) {
+				// No algorithm name available
+				cell.setText("-");
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoAlgorithm.tooltip"));
+				cell.setHorizontalAlignment(CENTER);
+			} else {
+				cell.setText(algorithm);
 				cell.setToolTipText(getText());
+				cell.setHorizontalAlignment(LEFT);
 			}
+		}
+		// Key Size column - key size (if known)
+		else if (col == 5) {
+			Integer keySize = (Integer) value;
 
-//			// Let background through if cell not selected, text should be black
-//			// and
-//			// plain
-//			if (!isSelected) {
-//				cell.setOpaque(false);
-//				cell.setForeground(Color.BLACK);
-//			}
-//			// Make background blue if selected, text should be white and bold
-//			else {
-//				cell.setOpaque(true);
-//				cell.setBackground(new Color(0, 127, 190));
-//				cell.setForeground(Color.WHITE);
-//			}
+			if (keySize == null) {
+				// No key size available
+				cell.setText("-");
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoKeySize.tooltip"));
+				cell.setHorizontalAlignment(CENTER);
+			} else {
+				cell.setText("" + keySize);
+				cell.setToolTipText(getText());
+				cell.setHorizontalAlignment(LEFT);
+			}
+		}
+		// Certificate Expiry column - format date (if any) and indicate any expiry
+		else if (col == 6) {
+			if (value != null) {
+				cell.setText(DATE_FORMAT.format((Date) value));
+				cell.setHorizontalAlignment(LEFT);
 
-			//cell.setBorder(new EmptyBorder(0, 5, 0, 5));
-//		}
+				// If expiry passed add to the tool tip to suggest expiry
+				if (new Date().after((Date) value)) {
+					cell.setToolTipText(MessageFormat.format(
+							res.getString("KeyStoreTableCellRend.ExpiredEntry.tooltip"), getText()));
+				}
+				// Otherwise clear any icon and set tooltip as date/time
+				else {
+					cell.setToolTipText(getText());
+				}
+			} else {
+				// No expiry date/time available (no certificates in KeyStore entry)
+				cell.setText("-");
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoCertExpiry.tooltip"));
+				cell.setHorizontalAlignment(CENTER);
+				cell.setIcon(null);
+			}
+		}
+		// Last Modified column - format date (if any)
+		else if (col == 7) {
+			if (value != null) {
+				cell.setText(DATE_FORMAT.format((Date) value));
+				cell.setToolTipText(getText());
+				cell.setHorizontalAlignment(LEFT);
+			} else {
+				// No last modified date/time available (PKCS #12 KeyStore)
+				cell.setText("-");
+				cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoLastModified.tooltip"));
+				cell.setHorizontalAlignment(CENTER);
+			}
+		}
+		// Alias column - just use alias text
+		else {
+			cell.setText(value.toString());
+			cell.setToolTipText(getText());
+		}
+
+		//			// Let background through if cell not selected, text should be black
+		//			// and
+		//			// plain
+		//			if (!isSelected) {
+		//				cell.setOpaque(false);
+		//				cell.setForeground(Color.BLACK);
+		//			}
+		//			// Make background blue if selected, text should be white and bold
+		//			else {
+		//				cell.setOpaque(true);
+		//				cell.setBackground(new Color(0, 127, 190));
+		//				cell.setForeground(Color.WHITE);
+		//			}
+
+		//cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+		//		}
 
 		return cell;
 	}

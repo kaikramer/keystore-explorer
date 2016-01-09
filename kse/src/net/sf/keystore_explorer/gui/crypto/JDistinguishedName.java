@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -42,7 +42,7 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 
 /**
  * Component to view or edit a distinguished name.
- * 
+ *
  */
 public class JDistinguishedName extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -57,7 +57,7 @@ public class JDistinguishedName extends JPanel {
 
 	/**
 	 * Construct a JDistinguishedName.
-	 * 
+	 *
 	 * @param title
 	 *            Title of view or edit dialog
 	 * @param columns
@@ -90,6 +90,7 @@ public class JDistinguishedName extends JPanel {
 			jbViewEditDistinguishedName.setToolTipText(res
 					.getString("JDistinguishedName.jbViewEditDistinguishedName.Edit.tooltip"));
 			jbViewEditDistinguishedName.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					try {
 						CursorUtil.setCursorBusy(JDistinguishedName.this);
@@ -103,6 +104,7 @@ public class JDistinguishedName extends JPanel {
 			jbViewEditDistinguishedName.setToolTipText(res
 					.getString("JDistinguishedName.jbViewEditDistinguishedName.View.tooltip"));
 			jbViewEditDistinguishedName.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent evt) {
 					try {
 						CursorUtil.setCursorBusy(JDistinguishedName.this);
@@ -131,6 +133,7 @@ public class JDistinguishedName extends JPanel {
 		jbClearDistinguishedName = new JButton(clearIcon);
 		jbClearDistinguishedName.setToolTipText(res.getString("JDistinguishedName.jbClearDistinguishedName.tooltip"));
 		jbClearDistinguishedName.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JDistinguishedName.this);
@@ -161,7 +164,7 @@ public class JDistinguishedName extends JPanel {
 
 	/**
 	 * Set distinguished name.
-	 * 
+	 *
 	 * @param distinguishedName
 	 *            Distinguished name
 	 */
@@ -177,7 +180,7 @@ public class JDistinguishedName extends JPanel {
 
 	/**
 	 * Get distinguished name.
-	 * 
+	 *
 	 * @return Distinguished name
 	 */
 	public X500Name getDistinguishedName() {
@@ -186,10 +189,11 @@ public class JDistinguishedName extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jbViewEditDistinguishedName.setEnabled(enabled);
 		jbClearDistinguishedName.setEnabled(enabled);
@@ -197,10 +201,11 @@ public class JDistinguishedName extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jtfDistinguishedName.setToolTipText(toolTipText);

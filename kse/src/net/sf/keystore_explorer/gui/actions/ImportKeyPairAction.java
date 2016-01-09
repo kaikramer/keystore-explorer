@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -71,6 +71,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 						getClass().getResource(res.getString("ImportKeyPairAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -78,6 +79,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		DImportKeyPairType dImportKeyPairType = new DImportKeyPairType(frame);
 		dImportKeyPairType.setLocationRelativeTo(frame);
@@ -147,7 +149,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"),
-						                                              applicationSettings.getPasswordQualityConfig());
+						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
@@ -226,11 +228,11 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"),
-						                                              applicationSettings.getPasswordQualityConfig());
+						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
-	
+
 				if (password == null) {
 					return;
 				}
@@ -305,11 +307,11 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"),
-						                                              applicationSettings.getPasswordQualityConfig());
+						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
-	
+
 				if (password == null) {
 					return;
 				}
@@ -384,11 +386,11 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"),
-						                                              applicationSettings.getPasswordQualityConfig());
+						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();
-	
+
 				if (password == null) {
 					return;
 				}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -78,6 +78,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		File csrFile = null;
 		FileOutputStream fos = null;
@@ -117,7 +118,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 			String path = CurrentDirectory.get().getAbsolutePath();
 			File keyStoreFile = history.getFile();
 			if (keyStoreFile != null) {
-			    path = keyStoreFile.getAbsoluteFile().getParent();
+				path = keyStoreFile.getAbsoluteFile().getParent();
 			}
 
 			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, path, provider);

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -65,16 +65,17 @@ public class OpenMsCapiAction  extends OpenAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 
 		try {
 
 			KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
 
-            // https://bugs.openjdk.java.net/browse/JDK-6407454
-            // "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
-            // Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
-            // applications must not specify the SunMSCAPI provider."
+			// https://bugs.openjdk.java.net/browse/JDK-6407454
+			// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
+			// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
+			// applications must not specify the SunMSCAPI provider."
 
 			// TODO
 			kseFrame.addKeyStore(openedKeyStore, "Windows User Keystore", null, null);

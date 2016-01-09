@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,7 +25,7 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 
 /**
  * Abstract base for all extension dialogs.
- * 
+ *
  */
 public abstract class DExtension extends JEscDialog {
 	/**
@@ -40,7 +40,7 @@ public abstract class DExtension extends JEscDialog {
 
 	/**
 	 * Get extension value DER-encoded.
-	 * 
+	 *
 	 * @return Extension value
 	 */
 	public abstract byte[] getValue();

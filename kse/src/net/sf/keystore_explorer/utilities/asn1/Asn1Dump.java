@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -69,7 +69,7 @@ import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 
 /**
  * Utility class to produce string dumps of the contents of ASN.1 objects.
- * 
+ *
  */
 public class Asn1Dump {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/utilities/asn1/resources");
@@ -86,7 +86,7 @@ public class Asn1Dump {
 
 	/**
 	 * Construct Asn1Dump.
-	 * 
+	 *
 	 * @param indentSequence
 	 *            Indent sequence
 	 */
@@ -96,7 +96,7 @@ public class Asn1Dump {
 
 	/**
 	 * Get dump of the supplied X.509 certificate.
-	 * 
+	 *
 	 * @param certificate
 	 *            X.509 certificate
 	 * @return Dump of certificate
@@ -117,7 +117,7 @@ public class Asn1Dump {
 
 	/**
 	 * Get dump of the supplied X.509 CRL.
-	 * 
+	 *
 	 * @param crl
 	 *            X.509 CRL
 	 * @return Dump of CRL
@@ -138,7 +138,7 @@ public class Asn1Dump {
 
 	/**
 	 * Get dump of the supplied X.509 extension.
-	 * 
+	 *
 	 * @param extension
 	 *            X.509 extension
 	 * @return Dump of extension
@@ -160,7 +160,7 @@ public class Asn1Dump {
 
 	/**
 	 * Get dump of the supplied private key.
-	 * 
+	 *
 	 * @param privateKey
 	 *            Private key
 	 * @return Dump of private key
@@ -175,7 +175,7 @@ public class Asn1Dump {
 
 	/**
 	 * Get dump of the supplied public key.
-	 * 
+	 *
 	 * @param publicKey
 	 *            Public key
 	 * @return Dump of private key
@@ -190,7 +190,7 @@ public class Asn1Dump {
 
 	/**
 	 * Get dump of the supplied DER encoded ASN.1 object.
-	 * 
+	 *
 	 * @param der
 	 *            DER encoded ASN.1 object
 	 * @return Dump of object
@@ -201,13 +201,13 @@ public class Asn1Dump {
 	 */
 	public String dump(byte[] der) throws Asn1Exception, IOException {
 		try {
-	        ASN1Primitive derObject = ASN1Primitive.fromByteArray(der);
-	        
-	        // if size of re-encoded DER primitive differs from input data there must be sth wrong 
-	        if (derObject.getEncoded().length < der.length) {
-	        	throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"));
-	        }
-	        
+			ASN1Primitive derObject = ASN1Primitive.fromByteArray(der);
+
+			// if size of re-encoded DER primitive differs from input data there must be sth wrong
+			if (derObject.getEncoded().length < der.length) {
+				throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"));
+			}
+
 			return dump(derObject);
 		} catch (IOException ex) {
 			throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"), ex);
@@ -216,7 +216,7 @@ public class Asn1Dump {
 
 	/**
 	 * Get dump of the supplied ASN.1 object.
-	 * 
+	 *
 	 * @param asn1Object
 	 *            ASN.1 object
 	 * @return Dump of object
@@ -232,14 +232,14 @@ public class Asn1Dump {
 
 			if (asn1Object instanceof DERBitString) { // special case of ASN1String
 				return dumpBitString((DERBitString) asn1Object);
-			} else if (asn1Object instanceof ASN1String) { 
+			} else if (asn1Object instanceof ASN1String) {
 				return dumpString((ASN1String) asn1Object);
 			} else if (asn1Object instanceof ASN1UTCTime) {
 				return dumpUTCTime((ASN1UTCTime) asn1Object);
 			} else if (asn1Object instanceof ASN1GeneralizedTime) {
 				return dumpGeneralizedTime((ASN1GeneralizedTime) asn1Object);
-			} else if (asn1Object instanceof ASN1Sequence || 
-					   asn1Object instanceof ASN1Set ) {
+			} else if (asn1Object instanceof ASN1Sequence ||
+					asn1Object instanceof ASN1Set ) {
 				return dumpSetOrSequence(asn1Object);
 			} else if (asn1Object instanceof ASN1TaggedObject) {
 				return dumpTaggedObject((ASN1TaggedObject) asn1Object);
@@ -331,7 +331,7 @@ public class Asn1Dump {
 			sb.append(dump);
 		} catch (Exception e) {
 			sb.append("=");
-			
+
 			// print short bit strings as string of bits and long ones as hex dump
 			if (bytes.length < 8) {
 				sb.append(new BigInteger(1, bytes).toString(2));
@@ -344,7 +344,7 @@ public class Asn1Dump {
 
 		return sb.toString();
 	}
-	
+
 	private String dumpObjectIdentifier(ASN1ObjectIdentifier asn1ObjectIdentifier) {
 		StringBuilder sb = new StringBuilder();
 

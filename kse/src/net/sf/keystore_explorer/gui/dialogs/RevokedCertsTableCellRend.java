@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,14 +31,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Custom cell renderer for the cells of the RevokedCerts table of DViewCrl.
- * 
+ *
  */
 public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
 
 	/**
 	 * Returns the rendered cell.
-	 * 
+	 *
 	 * @param jtRevokedCerts
 	 *            The JTable
 	 * @param value
@@ -53,6 +53,7 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtRevokedCerts, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -18,11 +18,6 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.keystore_explorer.crypto.signing;
-
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.utilities.io.CopyUtil;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.util.encoders.Base64;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,9 +39,15 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.util.encoders.Base64;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.utilities.io.CopyUtil;
+
 /**
  * Class provides functionality to sign MIDlets.
- * 
+ *
  */
 public class MidletSigner {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/signing/resources");
@@ -70,7 +71,7 @@ public class MidletSigner {
 
 	/**
 	 * Sign a MIDlet overwriting the supplied JAD file.
-	 * 
+	 *
 	 * @param jadFile
 	 *            JAD file
 	 * @param jarFile
@@ -100,7 +101,7 @@ public class MidletSigner {
 
 	/**
 	 * Sign a JAD file outputting the modified JAD to a different file.
-	 * 
+	 *
 	 * @param jadFile
 	 *            JAD file
 	 * @param outputJadFile
@@ -218,7 +219,7 @@ public class MidletSigner {
 
 	/**
 	 * Read the attributes of the supplied JAD file as properties.
-	 * 
+	 *
 	 * @param jadFile
 	 *            JAD file
 	 * @return JAD file's attributes as properties

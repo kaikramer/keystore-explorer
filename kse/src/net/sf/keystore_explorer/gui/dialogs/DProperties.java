@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -128,6 +128,7 @@ public class DProperties extends JEscDialog {
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DProperties.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DProperties.jbCopy.tooltip"));
 		jbCopy.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DProperties.this);
@@ -140,6 +141,7 @@ public class DProperties extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DProperties.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -172,6 +174,7 @@ public class DProperties extends JEscDialog {
 		setResizable(true);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -182,6 +185,7 @@ public class DProperties extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

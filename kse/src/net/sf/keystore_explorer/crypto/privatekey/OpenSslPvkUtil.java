@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -67,7 +67,7 @@ import net.sf.keystore_explorer.utilities.pem.PemUtil;
 
 /**
  * Provides utility methods relating to OpenSSL encoded private keys.
- * 
+ *
  */
 public class OpenSslPvkUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/privatekey/resources");
@@ -98,7 +98,7 @@ public class OpenSslPvkUtil {
 
 	/**
 	 * OpenSSL encode a private key.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param privateKey
 	 *            The private key
@@ -107,7 +107,7 @@ public class OpenSslPvkUtil {
 	 */
 	public static byte[] get(PrivateKey privateKey) throws CryptoException {
 		// DER encoding for each key type is a sequence
-        ASN1EncodableVector vec = new ASN1EncodableVector();
+		ASN1EncodableVector vec = new ASN1EncodableVector();
 
 		if (privateKey instanceof RSAPrivateCrtKey) {
 			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
@@ -151,7 +151,7 @@ public class OpenSslPvkUtil {
 
 	/**
 	 * OpenSSL encode a private key and PEM the encoding.
-	 * 
+	 *
 	 * @return The PEM'd encoding
 	 * @param privateKey
 	 *            The private key
@@ -178,7 +178,7 @@ public class OpenSslPvkUtil {
 	/**
 	 * OpenSSL encode and encrypt a private key. Encrypted OpenSSL private keys
 	 * must always by PEM'd.
-	 * 
+	 *
 	 * @return The encrypted, PEM'd encoding
 	 * @param privateKey
 	 *            The private key
@@ -234,7 +234,7 @@ public class OpenSslPvkUtil {
 	/**
 	 * Load an unencrypted OpenSSL private key from the stream. The encoding of
 	 * the private key may be PEM or DER.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load the unencrypted private key from
 	 * @return The private key
@@ -271,20 +271,20 @@ public class OpenSslPvkUtil {
 			ASN1InputStream asn1InputStream = new ASN1InputStream(streamContents);
 			ASN1Primitive openSsl = asn1InputStream.readObject();
 			asn1InputStream.close();
-			
+
 			if (openSsl instanceof ASN1Sequence) {
 				ASN1Sequence sequence = (ASN1Sequence) openSsl;
 
 				for (int i = 0; i < sequence.size(); i++) {
 					ASN1Encodable obj = sequence.getObjectAt(i);
-					
+
 					if (!(obj instanceof ASN1Integer)) {
 						throw new CryptoException(res.getString("OpenSslSequenceContainsNonIntegers.exception.message"));
 					}
 				}
-				
+
 				if (sequence.size() == 9) { // RSA private key
-				
+
 					BigInteger version = ((ASN1Integer) sequence.getObjectAt(0)).getValue();
 					BigInteger modulus = ((ASN1Integer) sequence.getObjectAt(1)).getValue();
 					BigInteger publicExponent = ((ASN1Integer) sequence.getObjectAt(2)).getValue();
@@ -307,7 +307,7 @@ public class OpenSslPvkUtil {
 					KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 					return keyFactory.generatePrivate(rsaPrivateCrtKeySpec);
 				} else if (sequence.size() == 6) { // DSA private key
-				
+
 					BigInteger version = ((ASN1Integer) sequence.getObjectAt(0)).getValue();
 					BigInteger primeModulusP = ((ASN1Integer) sequence.getObjectAt(1)).getValue();
 					BigInteger primeQ = ((ASN1Integer) sequence.getObjectAt(2)).getValue();
@@ -341,7 +341,7 @@ public class OpenSslPvkUtil {
 	/**
 	 * Load an encrypted OpenSSL private key from the specified stream. The
 	 * encoding of the private key will be PEM.
-	 * 
+	 *
 	 * @param is
 	 *            Stream load the encrypted private key from
 	 * @param password
@@ -357,7 +357,7 @@ public class OpenSslPvkUtil {
 	 *             An I/O error occurred
 	 */
 	public static PrivateKey loadEncrypted(InputStream is, Password password) throws
-			CryptoException, IOException {
+	CryptoException, IOException {
 		byte[] streamContents = ReadUtil.readFully(is);
 
 		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
@@ -414,7 +414,7 @@ public class OpenSslPvkUtil {
 
 	/**
 	 * Detect if a OpenSSL private key is encrypted or not.
-	 * 
+	 *
 	 * @param is
 	 *            Input stream containing OpenSSL private key
 	 * @return Encryption type or null if not a valid OpenSSL private key
@@ -545,7 +545,7 @@ public class OpenSslPvkUtil {
 
 		for (int i = 0; i < leadingZeros; i++) {
 			hex = "0" + hex; // Use leading zeros to ensure correct string
-								// length
+			// length
 		}
 
 		return hex;

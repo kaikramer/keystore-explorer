@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,12 +37,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to save the active KeyStore.
- * 
+ *
  */
 public class SaveAction extends SaveAsAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -63,6 +63,7 @@ public class SaveAction extends SaveAsAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		saveKeyStore(kseFrame.getActiveKeyStoreHistory());
 	}
@@ -70,7 +71,7 @@ public class SaveAction extends SaveAsAction {
 	/**
 	 * Save the supplied KeyStore back to the file it was originally opened
 	 * from.
-	 * 
+	 *
 	 * @param history
 	 *            KeyStore history
 	 * @return True if the KeyStore is saved to disk, false otherwise

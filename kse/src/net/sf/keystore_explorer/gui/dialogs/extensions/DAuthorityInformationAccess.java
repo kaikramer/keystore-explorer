@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -58,7 +58,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Authority Information Access extension.
- * 
+ *
  */
 public class DAuthorityInformationAccess extends DExtension {
 	private static ResourceBundle res = ResourceBundle
@@ -77,7 +77,7 @@ public class DAuthorityInformationAccess extends DExtension {
 
 	/**
 	 * Creates a new DAuthorityInformationAccess dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 */
@@ -89,7 +89,7 @@ public class DAuthorityInformationAccess extends DExtension {
 
 	/**
 	 * Creates a new DAuthorityInformationAccess dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param value
@@ -136,6 +136,7 @@ public class DAuthorityInformationAccess extends DExtension {
 
 		jbOK = new JButton(res.getString("DAuthorityInformationAccess.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -143,6 +144,7 @@ public class DAuthorityInformationAccess extends DExtension {
 
 		jbCancel = new JButton(res.getString("DAuthorityInformationAccess.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -150,6 +152,7 @@ public class DAuthorityInformationAccess extends DExtension {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -162,6 +165,7 @@ public class DAuthorityInformationAccess extends DExtension {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -177,8 +181,8 @@ public class DAuthorityInformationAccess extends DExtension {
 	@SuppressWarnings("unchecked")
 	private void prepopulateWithValue(byte[] value) throws IOException {
 		AuthorityInformationAccess authorityInformationAccess = AuthorityInformationAccess.getInstance(value);
-		
-		List<AccessDescription> accessDescriptionList = 
+
+		List<AccessDescription> accessDescriptionList =
 				new ArrayList<AccessDescription>(Arrays.asList(authorityInformationAccess.getAccessDescriptions()));
 
 		jadAccessDescriptions.setAccessDescriptions(accessDescriptionList);
@@ -193,12 +197,12 @@ public class DAuthorityInformationAccess extends DExtension {
 			return;
 		}
 
-        ASN1EncodableVector vec = new ASN1EncodableVector();
-        for (AccessDescription accessDescription : accessDescriptions) {
-        	vec.add(accessDescription);
+		ASN1EncodableVector vec = new ASN1EncodableVector();
+		for (AccessDescription accessDescription : accessDescriptions) {
+			vec.add(accessDescription);
 		}
-        AuthorityInformationAccess authorityInformationAccess = 
-        		AuthorityInformationAccess.getInstance(new DERSequence(vec));
+		AuthorityInformationAccess authorityInformationAccess =
+				AuthorityInformationAccess.getInstance(new DERSequence(vec));
 
 		try {
 			value = authorityInformationAccess.getEncoded(ASN1Encoding.DER);
@@ -214,9 +218,10 @@ public class DAuthorityInformationAccess extends DExtension {
 
 	/**
 	 * Get extension value DER-encoded.
-	 * 
+	 *
 	 * @return Extension value
 	 */
+	@Override
 	public byte[] getValue() {
 		return value;
 	}

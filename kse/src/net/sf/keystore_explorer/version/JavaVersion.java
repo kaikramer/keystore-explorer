@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,7 +40,7 @@ import java.util.StringTokenizer;
  * two otherwise identical versions the presence of an identifier in one will
  * make it a lower version than the other. This is because standard identifier
  * values have not been identified by Oracle.
- * 
+ *
  */
 // @formatter:on
 public class JavaVersion implements Comparable {
@@ -73,7 +73,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Construct a JavaVersion object for the current Java environment.
-	 * 
+	 *
 	 * @throws VersionException
 	 *             If the Java version string cannot be parsed
 	 */
@@ -83,7 +83,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Construct a JavaVersion object from the supplied string.
-	 * 
+	 *
 	 * @param javaVersion
 	 *            The Java version string
 	 * @throws VersionException
@@ -216,7 +216,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Get Java version's major number.
-	 * 
+	 *
 	 * @return Minor number
 	 */
 	public int getMajor() {
@@ -226,7 +226,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Get Java version's middle number.
-	 * 
+	 *
 	 * @return Minor number
 	 */
 	public int getMiddle() {
@@ -236,7 +236,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Get Java version's minor number.
-	 * 
+	 *
 	 * @return Minor number
 	 */
 	public int getMinor() {
@@ -246,7 +246,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Get Java version's update number.
-	 * 
+	 *
 	 * @return Update number or 0 if none
 	 */
 	public int getUpdate() {
@@ -256,7 +256,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Get Java version's identifier.
-	 * 
+	 *
 	 * @return Identifier or null if none
 	 */
 	public String getIdentifier() {
@@ -269,7 +269,7 @@ public class JavaVersion implements Comparable {
 
 	/**
 	 * Get the current JRE version.
-	 * 
+	 *
 	 * @return The JRE version.
 	 * @throws VersionException
 	 *             If JRE's version is not parseable
@@ -283,11 +283,11 @@ public class JavaVersion implements Comparable {
 
 		return jreVersion;
 	}
-	
+
 	/**
 	 * Compares version of the current JRE with the passed version.
-	 * 
-	 * @param javaVersion 
+	 *
+	 * @param javaVersion
 	 *             Java version to compare to.
 	 * @return True, if current JRE is same version or higher.
 	 */
@@ -295,6 +295,7 @@ public class JavaVersion implements Comparable {
 		return compareTo(javaVersion) >= 0;
 	}
 
+	@Override
 	public int compareTo(Object object) throws ClassCastException {
 		JavaVersion cmpJavaVersion = (JavaVersion) object;
 
@@ -325,6 +326,7 @@ public class JavaVersion implements Comparable {
 		return 0;
 	}
 
+	@Override
 	public boolean equals(Object object) {
 		if (object == this) {
 			return true;
@@ -338,6 +340,7 @@ public class JavaVersion implements Comparable {
 
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 27;
 
@@ -350,6 +353,7 @@ public class JavaVersion implements Comparable {
 		return result;
 	}
 
+	@Override
 	public String toString() {
 		return javaVersion;
 	}

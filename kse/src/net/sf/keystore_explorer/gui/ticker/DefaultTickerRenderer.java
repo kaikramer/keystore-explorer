@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -24,18 +24,19 @@ import javax.swing.JLabel;
 
 /**
  * Default renderer to use with the JTicker Swing control.
- * 
+ *
  */
 public class DefaultTickerRenderer extends JLabel implements TickerRenderer {
 	/**
 	 * Get the rendering component for the specified JTicker and ticker item
-	 * 
+	 *
 	 * @return Rendering component
 	 * @param ticker
 	 *            The JTicker that is asking the renderer to draw
 	 * @param value
 	 *            The value of the ticker item to be rendered
 	 */
+	@Override
 	public JComponent getTickerRendererComponent(JTicker ticker, Object value) {
 		// Simply set the text of the parent label
 		setText(value.toString());

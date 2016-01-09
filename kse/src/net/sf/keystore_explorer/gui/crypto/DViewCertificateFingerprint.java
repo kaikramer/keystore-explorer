@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -54,7 +54,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog to view a certificate fingerprint.
- * 
+ *
  */
 public class DViewCertificateFingerprint extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -71,7 +71,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCertificateFingerprint dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param encodedCertificate
@@ -88,7 +88,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCertificateFingerprint dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param encodedCertificate
@@ -108,6 +108,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertificateFingerprint.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DViewCertificateFingerprint.jbCopy.tooltip"));
 		jbCopy.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificateFingerprint.this);
@@ -120,6 +121,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewCertificateFingerprint.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -153,6 +155,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		setResizable(true);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -163,6 +166,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

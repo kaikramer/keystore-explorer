@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -159,7 +159,7 @@ public class KSE {
 	}
 
 	private static void initialiseSecurity() throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException {
+	IllegalAccessException {
 
 		// Add BouncyCastle provider
 		Class<?> bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");

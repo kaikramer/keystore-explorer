@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,17 +34,18 @@ import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.gui.password.DGetPassword;
 
 public class PasswordCallbackHandler implements CallbackHandler {
-	
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
-	
+
 	private JFrame frame;
 
 	public PasswordCallbackHandler(JFrame frame) {
 		this.frame = frame;
 	}
 
+	@Override
 	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-		
+
 		for (int i = 0; i < callbacks.length; i++) {
 			if (callbacks[i] instanceof PasswordCallback) {
 				handlePasswordCallback((PasswordCallback) callbacks[i]);
@@ -54,20 +55,20 @@ public class PasswordCallbackHandler implements CallbackHandler {
 			}
 		}
 	}
-	
+
 	private void handlePasswordCallback(PasswordCallback passCb) throws UnsupportedCallbackException {
-		
-		
+
+
 		DGetPassword dGetPassword = new DGetPassword(frame, res.getString("PasswordCallbackHandler.Title")
-		);
+				);
 		dGetPassword.setLocationRelativeTo(frame);
 		dGetPassword.setVisible(true);
 		Password password = dGetPassword.getPassword();
-		
+
 		if (password == null) {
 			throw new CancellationException("Password Callback canceled by user");
 		}
-		
+
 		passCb.setPassword(password.toCharArray());
 	}
 

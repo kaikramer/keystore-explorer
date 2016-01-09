@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,24 +19,9 @@
  */
 package net.sf.keystore_explorer.crypto.csr.pkcs10;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.signing.SignatureType;
-import net.sf.keystore_explorer.utilities.io.ReadUtil;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.DEROutputStream;
-import org.bouncycastle.asn1.DERUTF8String;
-import org.bouncycastle.asn1.x509.Certificate;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.operator.ContentVerifierProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
-import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.pkcs.PKCSException;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-import org.bouncycastle.util.encoders.Base64;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,9 +38,25 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
 
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_extensionRequest;
-import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.x509.Certificate;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentVerifierProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentVerifierProviderBuilder;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.PKCSException;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.bouncycastle.util.encoders.Base64;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.signing.SignatureType;
+import net.sf.keystore_explorer.utilities.io.ReadUtil;
 
 /**
  * Provides utility methods relating to PKCS #10 CSRs.
@@ -84,10 +85,10 @@ public class Pkcs10Util {
 	 *            Signature
 	 * @param challenge
 	 *            Challenge, optional, pass null if not required
-     * @param unstructuredName
-     *            An optional company name, pass null if not required
-     * @param useExtensions
-     *            Use extensions from cert for extensionRequest attribute?
+	 * @param unstructuredName
+	 *            An optional company name, pass null if not required
+	 * @param useExtensions
+	 *            Use extensions from cert for extensionRequest attribute?
 	 * @throws CryptoException
 	 *             If there was a problem generating the CSR
 	 * @return The CSR
@@ -102,26 +103,26 @@ public class Pkcs10Util {
 
 			// add challenge attribute
 			if (challenge != null) {
-			    // PKCS#9 2.0: SHOULD use UTF8String encoding
-			    csrBuilder.addAttribute(pkcs_9_at_challengePassword, new DERUTF8String(challenge));
+				// PKCS#9 2.0: SHOULD use UTF8String encoding
+				csrBuilder.addAttribute(pkcs_9_at_challengePassword, new DERUTF8String(challenge));
 			}
 
 			if (unstructuredName != null) {
-			    csrBuilder.addAttribute(pkcs_9_at_unstructuredName, new DERUTF8String(unstructuredName));
+				csrBuilder.addAttribute(pkcs_9_at_unstructuredName, new DERUTF8String(unstructuredName));
 			}
 
 			if (useExtensions) {
-    			// add extensionRequest attribute with all extensions from the certificate
-    			Certificate certificate = Certificate.getInstance(cert.getEncoded());
-    			Extensions extensions = certificate.getTBSCertificate().getExtensions();
-    			if (extensions != null) {
-    			    csrBuilder.addAttribute(pkcs_9_at_extensionRequest, extensions.toASN1Primitive());
-    			}
+				// add extensionRequest attribute with all extensions from the certificate
+				Certificate certificate = Certificate.getInstance(cert.getEncoded());
+				Extensions extensions = certificate.getTBSCertificate().getExtensions();
+				if (extensions != null) {
+					csrBuilder.addAttribute(pkcs_9_at_extensionRequest, extensions.toASN1Primitive());
+				}
 			}
 
 			// fallback to bouncy castle provider if given provider does not support the requested algorithm
 			if (provider == null || provider.getService("Signature", signatureType.jce()) == null) {
-			    provider = new BouncyCastleProvider();
+				provider = new BouncyCastleProvider();
 			}
 
 			PKCS10CertificationRequest csr =  csrBuilder.build(
@@ -133,7 +134,7 @@ public class Pkcs10Util {
 
 			return csr;
 		} catch (CertificateEncodingException e) {
-		    throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
+			throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
 		} catch (OperatorCreationException e) {
 			throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
 		}
@@ -149,21 +150,21 @@ public class Pkcs10Util {
 	 * 				If there was a problem verifying the CSR
 	 */
 	public static boolean verifyCsr(PKCS10CertificationRequest csr) throws CryptoException {
-			try {
-				PublicKey pubKey = new JcaPKCS10CertificationRequest(csr).getPublicKey();
+		try {
+			PublicKey pubKey = new JcaPKCS10CertificationRequest(csr).getPublicKey();
 
-				ContentVerifierProvider contentVerifierProvider =
-						new JcaContentVerifierProviderBuilder().setProvider("BC").build(pubKey);
-				return csr.isSignatureValid(contentVerifierProvider);
-			} catch (InvalidKeyException e) {
-				throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
-			} catch (OperatorCreationException e) {
-				throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
-			} catch (NoSuchAlgorithmException e) {
-				throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
-			} catch (PKCSException e) {
-				throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
-			}
+			ContentVerifierProvider contentVerifierProvider =
+					new JcaContentVerifierProviderBuilder().setProvider("BC").build(pubKey);
+			return csr.isSignatureValid(contentVerifierProvider);
+		} catch (InvalidKeyException e) {
+			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
+		} catch (OperatorCreationException e) {
+			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
+		} catch (PKCSException e) {
+			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
+		}
 	}
 
 	/**

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,7 +30,7 @@ import javax.swing.JFrame;
 
 /**
  * Cursor utility methods.
- * 
+ *
  */
 public class CursorUtil {
 	private CursorUtil() {
@@ -39,7 +39,7 @@ public class CursorUtil {
 	/**
 	 * Set cursor to busy and disable application input. This can be reversed by
 	 * a subsequent call to setCursorFree.
-	 * 
+	 *
 	 * @param frame
 	 *            Frame to apply to
 	 */
@@ -50,7 +50,7 @@ public class CursorUtil {
 	/**
 	 * Set cursor to free and enable application input. Called after a call to
 	 * setCursorBusy.
-	 * 
+	 *
 	 * @param frame
 	 *            Frame to apply to
 	 */
@@ -61,7 +61,7 @@ public class CursorUtil {
 	/**
 	 * Set cursor to busy and disable application input. This can be reversed by
 	 * a subsequent call to setCursorFree.
-	 * 
+	 *
 	 * @param component
 	 *            Component within container to apply to
 	 */
@@ -82,7 +82,7 @@ public class CursorUtil {
 	/**
 	 * Set cursor to free and enable application input. Called after a call to
 	 * setCursorBusy.
-	 * 
+	 *
 	 * @param component
 	 *            Component within container to apply to
 	 */
@@ -131,7 +131,7 @@ public class CursorUtil {
 	/**
 	 * Set cursor to busy and disable application input. This can be reversed by
 	 * a subsequent call to setCursorFree.
-	 * 
+	 *
 	 * @param dialog
 	 *            Dialog to apply to
 	 */
@@ -142,7 +142,7 @@ public class CursorUtil {
 	/**
 	 * Set cursor to free and enable application input. Called after a call to
 	 * setCursorBusy.
-	 * 
+	 *
 	 * @param dialog
 	 *            Dialog to apply to
 	 */

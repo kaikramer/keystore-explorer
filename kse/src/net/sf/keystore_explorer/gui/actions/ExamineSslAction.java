@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -64,6 +64,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			DExamineSsl dExamineSsl = new DExamineSsl(frame, kseFrame);
@@ -92,7 +93,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 
 			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
 					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)),
-			        sslInfos.getServerCertificates(), kseFrame, DViewCertificate.IMPORT);
+					sslInfos.getServerCertificates(), kseFrame, DViewCertificate.IMPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);
 		} catch (Exception ex) {

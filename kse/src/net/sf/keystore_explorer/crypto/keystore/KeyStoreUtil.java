@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,11 +19,10 @@
  */
 package net.sf.keystore_explorer.crypto.keystore;
 
-import net.sf.keystore_explorer.ApplicationSettings;
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.Password;
-import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
-import org.apache.commons.io.IOUtils;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.APPLE;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
+import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,14 +43,17 @@ import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import static net.sf.keystore_explorer.crypto.SecurityProvider.APPLE;
-import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
-import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
+import org.apache.commons.io.IOUtils;
+
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
+
+import net.sf.keystore_explorer.ApplicationSettings;
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.Password;
+import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
 
 /**
  * Provides utility methods for loading/saving KeyStores. The BouncyCastle
@@ -118,7 +120,7 @@ public final class KeyStoreUtil {
 	 *             opened for reading
 	 */
 	public static KeyStore load(File keyStoreFile, Password password) throws CryptoException,
-			FileNotFoundException {
+	FileNotFoundException {
 		KeyStoreType keyStoreType = null;
 
 		try {
@@ -310,7 +312,7 @@ public final class KeyStoreUtil {
 	 *             An I/O error occurred
 	 */
 	public static void save(KeyStore keyStore, File keyStoreFile, Password password) throws CryptoException,
-			IOException {
+	IOException {
 		KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
 		if (!keyStoreType.isFileBased()) {

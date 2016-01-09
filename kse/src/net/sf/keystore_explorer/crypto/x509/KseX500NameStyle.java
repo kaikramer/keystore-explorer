@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,7 +32,7 @@ import org.bouncycastle.asn1.x500.style.IETFUtils;
 /**
  * X.500 name style. Supports the same DN components as the BC versions but
  * implements the reverse ordering of DN components as the RFC 4519 style.
- * 
+ *
  */
 public class KseX500NameStyle extends BCStyle {
 	public static final KseX500NameStyle INSTANCE = new KseX500NameStyle();
@@ -79,6 +79,7 @@ public class KseX500NameStyle extends BCStyle {
 	private KseX500NameStyle() {
 	}
 
+	@Override
 	public ASN1ObjectIdentifier attrNameToOID(String attrName) {
 		// Add support for 'DNQ', BCStyle only supports 'DN'
 		if (attrName.equalsIgnoreCase("DNQ")) {
@@ -88,6 +89,7 @@ public class KseX500NameStyle extends BCStyle {
 		return super.attrNameToOID(attrName);
 	}
 
+	@Override
 	public RDN[] fromString(String name) {
 		// Parse backwards
 		RDN[] tmp = IETFUtils.rDNsFromString(name, this);
@@ -100,6 +102,7 @@ public class KseX500NameStyle extends BCStyle {
 		return res;
 	}
 
+	@Override
 	public String toString(X500Name name) {
 		// Convert in reverse
 		StringBuffer buf = new StringBuffer();

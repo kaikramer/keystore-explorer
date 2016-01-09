@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,7 +41,7 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 
 /**
  * Component to edit a general name.
- * 
+ *
  */
 public class JGeneralName extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/generalname/resources");
@@ -55,7 +55,7 @@ public class JGeneralName extends JPanel {
 
 	/**
 	 * Construct a JGeneralName.
-	 * 
+	 *
 	 * @param title
 	 *            Title of edit dialog
 	 */
@@ -80,6 +80,7 @@ public class JGeneralName extends JPanel {
 		jbEditGeneralName = new JButton(editIcon);
 		jbEditGeneralName.setToolTipText(res.getString("JGeneralName.jbEditGeneralName.tooltip"));
 		jbEditGeneralName.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralName.this);
@@ -102,6 +103,7 @@ public class JGeneralName extends JPanel {
 		jbClearGeneralName = new JButton(clearIcon);
 		jbClearGeneralName.setToolTipText(res.getString("JGeneralName.jbClearGeneralName.tooltip"));
 		jbClearGeneralName.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralName.this);
@@ -129,7 +131,7 @@ public class JGeneralName extends JPanel {
 
 	/**
 	 * Get general name.
-	 * 
+	 *
 	 * @return General name, or null if none chosen
 	 */
 	public GeneralName getGeneralName() {
@@ -138,7 +140,7 @@ public class JGeneralName extends JPanel {
 
 	/**
 	 * Set general name.
-	 * 
+	 *
 	 * @param generalName
 	 *            General name
 	 */
@@ -149,10 +151,11 @@ public class JGeneralName extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jbEditGeneralName.setEnabled(enabled);
 		jbClearGeneralName.setEnabled(enabled);
@@ -160,10 +163,11 @@ public class JGeneralName extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jtfGeneralName.setToolTipText(toolTipText);

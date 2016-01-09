@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -44,12 +44,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to set the selected key pair entry's password.
- * 
+ *
  */
 public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -65,6 +65,7 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
 						getClass().getResource(res.getString("SetKeyPairPasswordAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return res.getString("SetKeyPairPasswordAction.History.text");
 	}
@@ -72,6 +73,7 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		String alias = null;
 
@@ -123,10 +125,10 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
 			kseFrame.updateControls(true);
 
 			JOptionPane
-					.showMessageDialog(frame,
-							res.getString("SetKeyPairPasswordAction.SetKeyPairPasswordSuccessful.message"),
-							res.getString("SetKeyPairPasswordAction.SetKeyPairPassword.Title"),
-							JOptionPane.INFORMATION_MESSAGE);
+			.showMessageDialog(frame,
+					res.getString("SetKeyPairPasswordAction.SetKeyPairPasswordSuccessful.message"),
+					res.getString("SetKeyPairPasswordAction.SetKeyPairPassword.Title"),
+					JOptionPane.INFORMATION_MESSAGE);
 		} catch (GeneralSecurityException ex) {
 			String problemStr = MessageFormat.format(
 					res.getString("SetKeyPairPasswordAction.NoSetPasswordKeyPairEntry.Problem"), alias);
@@ -139,7 +141,7 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
 
 			DProblem dProblem = new DProblem(frame,
 					res.getString("SetKeyPairPasswordAction.ProblemSettingPasswordKeyPairEntry.Title"),
-					                         problem);
+					problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 		} catch (Exception ex) {

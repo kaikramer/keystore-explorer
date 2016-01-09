@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,9 +25,10 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Comparator for Object Identifiers.
- * 
+ *
  */
 public class ObjectIdComparator implements Comparator<ASN1ObjectIdentifier> {
+	@Override
 	public int compare(ASN1ObjectIdentifier oid1, ASN1ObjectIdentifier oid2) {
 		int[] arcs1;
 		int[] arcs2;

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,7 +40,7 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 /**
  * KeyStore tab. Displays a KeyStore's title and allows it to be closed using a
  * close icon.
- * 
+ *
  */
 public class KeyStoreTab extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -51,7 +51,7 @@ public class KeyStoreTab extends JPanel {
 
 	/**
 	 * Construct KeyStore tab.
-	 * 
+	 *
 	 * @param title
 	 *            Tab title
 	 * @param kseFrame
@@ -95,16 +95,19 @@ public class KeyStoreTab extends JPanel {
 		jbClose.setFocusable(false);
 
 		jbClose.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseEntered(MouseEvent evt) {
 				jbClose.setIcon(rollOverIcon);
 			}
 
+			@Override
 			public void mouseExited(MouseEvent evt) {
 				jbClose.setIcon(icon);
 			}
 		});
 
 		jbClose.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				jbClose.setIcon(icon);
 				CloseAction closeAction = new CloseAction(kseFrame);
@@ -121,7 +124,7 @@ public class KeyStoreTab extends JPanel {
 
 	/**
 	 * Update the tab's title.
-	 * 
+	 *
 	 * @param title
 	 *            New tab title
 	 */

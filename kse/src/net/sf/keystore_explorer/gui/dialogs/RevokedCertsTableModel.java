@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,7 +32,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * The table model used to display an array of X.509 CRL entries sorted by
  * serial number.
- * 
+ *
  */
 public class RevokedCertsTableModel extends AbstractTableModel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -53,7 +53,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 
 	/**
 	 * Load the RevokedCertsTableModel with an array of X.509 CRL entries.
-	 * 
+	 *
 	 * @param revokedCerts
 	 *            The X.509 CRL entries
 	 */
@@ -79,53 +79,58 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the number of columns in the table.
-	 * 
+	 *
 	 * @return The number of columns
 	 */
+	@Override
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
 	/**
 	 * Get the number of rows in the table.
-	 * 
+	 *
 	 * @return The number of rows
 	 */
+	@Override
 	public int getRowCount() {
 		return data.length;
 	}
 
 	/**
 	 * Get the name of the column at the given position.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column name
 	 */
+	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
 
 	/**
 	 * Get the cell value at the given row and column position.
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col
 	 *            The column position
 	 * @return The cell value
 	 */
+	@Override
 	public Object getValueAt(int row, int col) {
 		return data[row][col];
 	}
 
 	/**
 	 * Get the class at of the cells at the given column position.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column cells' class
 	 */
+	@Override
 	public Class<?> getColumnClass(int col) {
 		switch (col) {
 		case 0:
@@ -137,13 +142,14 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 
 	/**
 	 * Is the cell at the given row and column position editable?
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col
 	 *            The column position
 	 * @return True if the cell is editable, false otherwise
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		return false;
 	}

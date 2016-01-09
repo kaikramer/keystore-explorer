@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,9 +23,9 @@ package net.sf.keystore_explorer.crypto.x509;
 import java.util.ResourceBundle;
 
 /**
- * 
+ *
  * Enumeration of Certificate Policy Qualifiers (2.5.29.32).
- * 
+ *
  */
 public enum CertificatePolicyQualifierType {
 
@@ -47,7 +47,7 @@ public enum CertificatePolicyQualifierType {
 
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	public String friendly() {
@@ -56,7 +56,7 @@ public enum CertificatePolicyQualifierType {
 
 	/**
 	 * Resolve the supplied object identifier to a matching type.
-	 * 
+	 *
 	 * @param oid
 	 *            Object identifier
 	 * @return Type or null if none
@@ -73,7 +73,7 @@ public enum CertificatePolicyQualifierType {
 
 	/**
 	 * Get Certificate Policy Qualifier's Object Identifier.
-	 * 
+	 *
 	 * @return Object Identifier
 	 */
 	public String oid() {

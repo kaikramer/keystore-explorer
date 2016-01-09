@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -81,7 +81,7 @@ import net.sf.keystore_explorer.gui.error.Problem;
 /**
  * Dialog that allows the user to pick a PKCS #8 Private Key file and a
  * certificate file to import as a key pair.
- * 
+ *
  */
 public class DImportKeyPairPkcs8 extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -111,7 +111,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 	/**
 	 * Creates a new DImportKeyPairPkcs8 dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 */
@@ -168,6 +168,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		PlatformUtil.setMnemonic(jbPrivateKeyBrowse, res.getString("DImportKeyPairPkcs8.jbPrivateKeyBrowse.mnemonic")
 				.charAt(0));
 		jbPrivateKeyBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
@@ -184,6 +185,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 		jbPrivateKeyDetails = new JButton(res.getString("DImportKeyPairPkcs8.jbPrivateKeyDetails.text"));
 		jbPrivateKeyDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
@@ -212,6 +214,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 		jbCertificateBrowse = new JButton(res.getString("DImportKeyPairPkcs8.jbCertificateBrowse.text"));
 		jbCertificateBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
@@ -230,6 +233,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 		jbCertificateDetails = new JButton(res.getString("DImportKeyPairPkcs8.jbCertificateDetails.text"));
 		jbCertificateDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
@@ -264,6 +268,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		jpKeyPair.add(jbCertificateDetails, gbc_jbCertificateDetails);
 
 		jcbEncrypted.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				if (jcbEncrypted.isSelected()) {
 					jpfPassword.setEnabled(true);
@@ -278,6 +283,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		PlatformUtil.setMnemonic(jbImport, res.getString("DImportKeyPairPkcs8.jbImport.mnemonic").charAt(0));
 		jbImport.setToolTipText(res.getString("DImportKeyPairPkcs8.jbImport.tooltip"));
 		jbImport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
@@ -290,6 +296,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DImportKeyPairPkcs8.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -297,6 +304,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -309,6 +317,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -379,7 +388,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 			if (privateKey != null) {
 				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, MessageFormat.format(
 						res.getString("DImportKeyPairPkcs8.ViewPrivateKeyDetails.Title"), path),
-				                                                      privateKey, new BouncyCastleProvider());
+						privateKey, new BouncyCastleProvider());
 				dViewPrivateKey.setLocationRelativeTo(this);
 				dViewPrivateKey.setVisible(true);
 			}
@@ -438,7 +447,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 			Problem problem = createLoadPkcs8Problem(ex, privateKeyFile);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairPkcs8.ProblemLoadingPkcs8.Title"),
-			                                 problem);
+					problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -478,7 +487,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 				DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
 						res.getString("DImportKeyPairPkcs8.ViewCertificateDetails.Title"), path),
-				                                                         certs, null, DViewCertificate.NONE);
+						certs, null, DViewCertificate.NONE);
 				dViewCertificate.setLocationRelativeTo(this);
 				dViewCertificate.setVisible(true);
 			}
@@ -517,7 +526,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 			Problem problem = createLoadCertsProblem(ex, certificateFile);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairPkcs8.ProblemLoadingCerts.Title"),
-			                                 problem);
+					problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -539,7 +548,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 	/**
 	 * Get the private part of the key pair chosen by the user for import.
-	 * 
+	 *
 	 * @return The private key or null if the user has not chosen a key pair
 	 */
 	public PrivateKey getPrivateKey() {
@@ -549,7 +558,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 	/**
 	 * Get the certificate chain part of the key pair chosen by the user for
 	 * import.
-	 * 
+	 *
 	 * @return The certificate chain or null if the user has not chosen a key
 	 *         pair
 	 */

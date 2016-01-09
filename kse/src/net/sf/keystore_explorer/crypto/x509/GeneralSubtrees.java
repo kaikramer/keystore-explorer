@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -35,16 +35,16 @@ import org.bouncycastle.asn1.x509.GeneralSubtree;
  * <pre>
  * GeneralSubtrees ::= SEQUENCE SIZE (1..MAX) OF GeneralSubtree
  * </pre>
- * 
+ *
  */
 public class GeneralSubtrees implements ASN1Encodable {
 
 	private List<GeneralSubtree> subtrees;
 
 	/**
-	 * Create <code>GeneralSubtrees</code> from list of <code>GeneralSubtree</code> 
+	 * Create <code>GeneralSubtrees</code> from list of <code>GeneralSubtree</code>
 	 * objects.
-	 * 
+	 *
 	 * @param subtrees
 	 */
 	public GeneralSubtrees(List<GeneralSubtree> subtrees) {
@@ -52,13 +52,13 @@ public class GeneralSubtrees implements ASN1Encodable {
 	}
 
 	/**
-	 * Create <code>GeneralSubtrees</code> from array of <code>GeneralSubtree</code> 
+	 * Create <code>GeneralSubtrees</code> from array of <code>GeneralSubtree</code>
 	 * objects.
-	 * 
+	 *
 	 * @param subtrees
 	 */
 	public GeneralSubtrees(GeneralSubtree[] subtrees) {
-	    this.subtrees = new ArrayList<GeneralSubtree>(Arrays.asList(subtrees));
+		this.subtrees = new ArrayList<GeneralSubtree>(Arrays.asList(subtrees));
 	}
 
 	private GeneralSubtrees(ASN1Sequence seq) {
@@ -67,7 +67,7 @@ public class GeneralSubtrees implements ASN1Encodable {
 			subtrees.add(GeneralSubtree.getInstance(seq.getObjectAt(i)));
 		}
 	}
-	
+
 	public static GeneralSubtrees getInstance(Object obj) {
 		if (obj instanceof GeneralSubtrees) {
 			return (GeneralSubtrees) obj;

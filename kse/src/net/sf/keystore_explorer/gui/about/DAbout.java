@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -47,9 +47,9 @@ import net.sf.keystore_explorer.gui.ticker.JTicker;
  *
  */
 public class DAbout extends JEscDialog {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/about/resources");
+	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/about/resources");
 
 	private static final Color KSE_COLOR = LnfUtil.isDarkLnf() ? new Color(116, 131, 141) : new Color(0, 134, 201);
 
@@ -71,7 +71,7 @@ public class DAbout extends JEscDialog {
 	 * @param title
 	 *            The title of the dialog
 	 * @param aboutImg
- *            The image containing the about information
+	 *            The image containing the about information
 	 * @param tickerItems
 	 */
 	public DAbout(JFrame parent, String title, String licenseNotice, Image aboutImg, Object[] tickerItems) {
@@ -103,6 +103,7 @@ public class DAbout extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DAbout.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -111,6 +112,7 @@ public class DAbout extends JEscDialog {
 		jbSystemInformation = new JButton(res.getString("DAbout.jbSystemInformation.text"));
 		PlatformUtil.setMnemonic(jbSystemInformation, res.getString("DAbout.jbSystemInformation.mnemonic").charAt(0));
 		jbSystemInformation.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAbout.this);
@@ -133,6 +135,7 @@ public class DAbout extends JEscDialog {
 		jpAbout.add(jbOK, "tag ok");
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}

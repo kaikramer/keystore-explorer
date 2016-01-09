@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.crypto;
 
 /**
  * Holds information about a key.
- * 
+ *
  */
 public class KeyInfo {
 	private KeyType keyType;
@@ -48,7 +48,7 @@ public class KeyInfo {
 
 	/**
 	 * Get key size in bits.
-	 * 
+	 *
 	 * @return Key size or null if size unknown
 	 */
 	public Integer getSize() {

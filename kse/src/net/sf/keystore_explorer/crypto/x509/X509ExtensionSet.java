@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,11 +19,6 @@
  */
 package net.sf.keystore_explorer.crypto.x509;
 
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x509.Extension;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -36,6 +31,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.x509.Extension;
 
 /**
  * Holds a set of X.509 extensions.
@@ -50,33 +50,33 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	private static final long FILE_MAGIC_NUMBER = 0x47911131;
 	private static final int FILE_VERSION = 1;
 
-    /**
-     * Default constructor
-     */
-    public X509ExtensionSet() {
-    }
+	/**
+	 * Default constructor
+	 */
+	public X509ExtensionSet() {
+	}
 
-    /**
-     * Creates an X509ExtensionSet object from the extensions in the ASN1 sequence.
-     *
-     * @param extensions Sequence with extensions.
-     */
-    public X509ExtensionSet(ASN1Sequence extensions) {
+	/**
+	 * Creates an X509ExtensionSet object from the extensions in the ASN1 sequence.
+	 *
+	 * @param extensions Sequence with extensions.
+	 */
+	public X509ExtensionSet(ASN1Sequence extensions) {
 
-        ASN1Encodable[] asn1Encodables = extensions.toArray();
+		ASN1Encodable[] asn1Encodables = extensions.toArray();
 
-        for (int i = 0; i < asn1Encodables.length; i++) {
-            ASN1Encodable asn1Encodable = asn1Encodables[i];
-            Extension ext = Extension.getInstance(asn1Encodable);
-            if (ext != null) {
-                try {
-                    addExtension(ext.getExtnId().toString(), ext.isCritical(), ext.getExtnValue().getEncoded());
-                } catch (IOException e) {
-                    // ignore exception from getEncoded()
-                }
-            }
-        }
-    }
+		for (int i = 0; i < asn1Encodables.length; i++) {
+			ASN1Encodable asn1Encodable = asn1Encodables[i];
+			Extension ext = Extension.getInstance(asn1Encodable);
+			if (ext != null) {
+				try {
+					addExtension(ext.getExtnId().toString(), ext.isCritical(), ext.getExtnValue().getEncoded());
+				} catch (IOException e) {
+					// ignore exception from getEncoded()
+				}
+			}
+		}
+	}
 
 	/**
 	 * Add an extension to the set. Any existing extension with the same oid
@@ -118,6 +118,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	 *
 	 * @return OIDs
 	 */
+	@Override
 	public Set<String> getCriticalExtensionOIDs() {
 		return criticalExtensions.keySet();
 	}
@@ -127,6 +128,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	 *
 	 * @return OIDs
 	 */
+	@Override
 	public Set<String> getNonCriticalExtensionOIDs() {
 		return nonCriticalExtensions.keySet();
 	}
@@ -138,6 +140,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	 *            OID of extension
 	 * @return Value or null if no such extension
 	 */
+	@Override
 	public byte[] getExtensionValue(String oid) {
 		if (criticalExtensions.containsKey(oid)) {
 			return criticalExtensions.get(oid);
@@ -169,10 +172,12 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	 *
 	 * @return Always false.
 	 */
+	@Override
 	public boolean hasUnsupportedCriticalExtension() {
 		return false;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Object clone() {
 		try {

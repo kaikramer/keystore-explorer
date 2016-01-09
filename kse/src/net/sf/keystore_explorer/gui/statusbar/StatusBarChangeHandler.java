@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,7 +28,7 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 /**
  * Handles change events on a menu item that causes the status bar text to show
  * or hide help text for the menu item.
- * 
+ *
  */
 public class StatusBarChangeHandler implements ChangeListener {
 	private JMenuItem jmi;
@@ -37,7 +37,7 @@ public class StatusBarChangeHandler implements ChangeListener {
 
 	/**
 	 * Construct a StatusBarChangeHandler.
-	 * 
+	 *
 	 * @param jmi
 	 *            The menu item
 	 * @param helpText
@@ -55,10 +55,11 @@ public class StatusBarChangeHandler implements ChangeListener {
 	/**
 	 * Menu item's state has changed - if armed show its help text, otherwise
 	 * hide any help text.
-	 * 
+	 *
 	 * @param evt
 	 *            The change event
 	 */
+	@Override
 	public void stateChanged(ChangeEvent evt) {
 		/*
 		 * Only bother if not using Mac OS - on there stateChagned is not fired

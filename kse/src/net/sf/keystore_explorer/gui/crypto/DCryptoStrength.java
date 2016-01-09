@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -51,7 +51,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Display crypto strength.
- * 
+ *
  */
 public class DCryptoStrength extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -70,7 +70,7 @@ public class DCryptoStrength extends JEscDialog {
 
 	/**
 	 * Creates a new DCryptoStrength dialog where the parent is a frame.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @throws CryptoException
@@ -84,7 +84,7 @@ public class DCryptoStrength extends JEscDialog {
 
 	/**
 	 * Creates a new DCryptoStrength dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param modality
@@ -147,6 +147,7 @@ public class DCryptoStrength extends JEscDialog {
 		jbLocalStrengthDetails.setToolTipText(res.getString("DCryptoStrength.jbLocalStrengthDetails.tooltip"));
 
 		jbLocalStrengthDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DCryptoStrength.this);
@@ -183,6 +184,7 @@ public class DCryptoStrength extends JEscDialog {
 		jbUsExportStrengthDetails.setToolTipText(res.getString("DCryptoStrength.jbUsExportStrengthDetails.tooltip"));
 
 		jbUsExportStrengthDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DCryptoStrength.this);
@@ -199,6 +201,7 @@ public class DCryptoStrength extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DCryptoStrength.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -212,6 +215,7 @@ public class DCryptoStrength extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}

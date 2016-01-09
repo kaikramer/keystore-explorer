@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.utilities.pem;
 
 /**
  * PEM header attribute.
- * 
+ *
  */
 public class PemAttribute {
 	private String name;
@@ -29,7 +29,7 @@ public class PemAttribute {
 
 	/**
 	 * Construct PEM header attribute.
-	 * 
+	 *
 	 * @param name
 	 *            Name
 	 * @param value
@@ -42,7 +42,7 @@ public class PemAttribute {
 
 	/**
 	 * Get attribute name.
-	 * 
+	 *
 	 * @return Name
 	 */
 	public String getName() {
@@ -51,7 +51,7 @@ public class PemAttribute {
 
 	/**
 	 * Get attribute value.
-	 * 
+	 *
 	 * @return Value
 	 */
 	public String getValue() {
@@ -61,9 +61,10 @@ public class PemAttribute {
 	/**
 	 * Get string representation of attribute suitable for inclusion in encoded
 	 * PEM: "<name>: <value>".
-	 * 
+	 *
 	 * @return String representation
 	 */
+	@Override
 	public String toString() {
 		return name + ": " + value;
 	}

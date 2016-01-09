@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -35,12 +35,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to set the active KeyStore's password.
- * 
+ *
  */
 public class SetPasswordAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -58,6 +58,7 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
 						getClass().getResource(res.getString("SetPasswordAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return res.getString("SetPasswordAction.History.text");
 	}
@@ -65,6 +66,7 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			if (setKeyStorePassword()) {
@@ -79,7 +81,7 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
 
 	/**
 	 * Set the active KeyStore's password.
-	 * 
+	 *
 	 * @return True if successful
 	 * @throws CryptoException
 	 *             If problem occurred

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -50,19 +50,24 @@ public class JKeyStoreTabbedPane extends JTabbedPane implements DropTargetListen
 		new DropTarget(this, this);
 	}
 
+	@Override
 	public void drop(DropTargetDropEvent evt) {
-        DroppedFileHandler.drop(evt, kseFrame);
+		DroppedFileHandler.drop(evt, kseFrame);
 	}
 
+	@Override
 	public void dragEnter(DropTargetDragEvent evt) {
 	}
 
+	@Override
 	public void dragExit(DropTargetEvent evt) {
 	}
 
+	@Override
 	public void dragOver(DropTargetDragEvent evt) {
 	}
 
+	@Override
 	public void dropActionChanged(DropTargetDragEvent evt) {
 	}
 }

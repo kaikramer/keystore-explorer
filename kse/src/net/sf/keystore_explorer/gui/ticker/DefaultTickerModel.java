@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,25 +23,27 @@ import javax.swing.DefaultListModel;
 
 /**
  * Default data model to use with the JTicker Swing control.
- * 
+ *
  */
 public class DefaultTickerModel extends DefaultListModel implements TickerModel {
 	/**
 	 * Add an item to the model.
-	 * 
+	 *
 	 * @param item
 	 *            The item
 	 */
+	@Override
 	public void add(Object item) {
 		addElement(item);
 	}
 
 	/**
 	 * Remove an item from the model.
-	 * 
+	 *
 	 * @param item
 	 *            The item
 	 */
+	@Override
 	public void remove(Object item) {
 		removeElement(item);
 	}

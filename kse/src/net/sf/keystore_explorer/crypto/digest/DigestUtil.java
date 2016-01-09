@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,7 +33,7 @@ import net.sf.keystore_explorer.crypto.CryptoException;
 
 /**
  * Provides utility methods for the creation of message digests.
- * 
+ *
  */
 public final class DigestUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/digest/resources");
@@ -43,7 +43,7 @@ public final class DigestUtil {
 
 	/**
 	 * Get a digest of the input stream.
-	 * 
+	 *
 	 * @param istream
 	 *            Input stream to digest
 	 * @param digestType
@@ -75,7 +75,7 @@ public final class DigestUtil {
 
 	/**
 	 * Get a digest of the supplied message.
-	 * 
+	 *
 	 * @param message
 	 *            The message to digest
 	 * @param digestType
@@ -94,7 +94,7 @@ public final class DigestUtil {
 	 * Get the digest of a message as a formatted String. Returned in base-16
 	 * with ':' separators every two characters padded with a leading 0 if
 	 * necessary to make for an even number of hex characters.
-	 * 
+	 *
 	 * @param message
 	 *            The message to digest
 	 * @param digestType
@@ -123,7 +123,7 @@ public final class DigestUtil {
 
 	/**
 	 * Create message digester of supplied type.
-	 * 
+	 *
 	 * @param digestType
 	 *            Digest type
 	 * @return Message digester

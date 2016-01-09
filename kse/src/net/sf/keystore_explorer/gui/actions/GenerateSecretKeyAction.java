@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -141,7 +141,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 			if (type.hasEntryPasswords()) {
 				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"),
-						                                              applicationSettings.getPasswordQualityConfig());
+						applicationSettings.getPasswordQualityConfig());
 				dGetNewPassword.setLocationRelativeTo(frame);
 				dGetNewPassword.setVisible(true);
 				password = dGetNewPassword.getPassword();

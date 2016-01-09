@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 /**
  * Generates a key pair which the user may cancel at any time by pressing the
  * cancel button.
- * 
+ *
  */
 public class DGeneratingKeyPair extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -77,7 +77,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 
 	/**
 	 * Creates a new DGeneratingKeyPair dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param keyPairType
@@ -95,7 +95,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 
 	/**
 	 * Creates a new DGeneratingKeyPair dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param keyPairType
@@ -130,6 +130,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DGeneratingKeyPair.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -137,6 +138,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -149,6 +151,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 		getContentPane().add(jpCancel, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				if ((generator != null) && (generator.isAlive())) {
 					generator.interrupt();
@@ -186,7 +189,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 
 	/**
 	 * Get the generated key pair.
-	 * 
+	 *
 	 * @return The generated key pair or null if the user cancelled the dialog
 	 *         or an error occurred
 	 */
@@ -195,18 +198,20 @@ public class DGeneratingKeyPair extends JEscDialog {
 	}
 
 	private class GenerateKeyPair implements Runnable {
+		@Override
 		public void run() {
 			try {
 				// RSA, DSA or EC?
 				if (keyPairType != KeyPairType.EC) {
 					keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, provider);
 				} else {
-					
+
 					// TODO handle hardware providers
 					keyPair = KeyPairUtil.generateECKeyPair(curveName);
 				}
 
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						if (DGeneratingKeyPair.this.isShowing()) {
 							closeDialog();
@@ -215,6 +220,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 				});
 			} catch (final Exception ex) {
 				SwingUtilities.invokeLater(new Runnable() {
+					@Override
 					public void run() {
 						if (DGeneratingKeyPair.this.isShowing()) {
 							DError dError = new DError(DGeneratingKeyPair.this, ex);

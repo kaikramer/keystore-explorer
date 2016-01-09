@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -38,7 +38,7 @@ import org.junit.Test;
 /**
  * Unit tests for PvkUtil. Encodes a RSA and DSA private keys using Microsoft's
  * PVK format and reads them back using a variety of options.
- * 
+ *
  */
 public class TestCasePvkUtil extends TestCaseKey {
 	public TestCasePvkUtil() throws CryptoException {

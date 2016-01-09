@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -38,13 +38,13 @@ import net.sf.keystore_explorer.crypto.digest.DigestType;
 
 /**
  * Enumeration of Signature Types supported by the X509CertUtil class.
- * 
+ *
  */
 public enum SignatureType {
 
 	// @formatter:off
-	SHA1_DSA("SHA1withDSA", "1.2.840.10040.4.3", SHA1, "SignatureType.Sha1WithDsa"), 
-	SHA224_DSA("SHA224withDSA", "2.16.840.1.101.3.4.3.1", SHA224, "SignatureType.Sha224WithDsa"), 
+	SHA1_DSA("SHA1withDSA", "1.2.840.10040.4.3", SHA1, "SignatureType.Sha1WithDsa"),
+	SHA224_DSA("SHA224withDSA", "2.16.840.1.101.3.4.3.1", SHA224, "SignatureType.Sha224WithDsa"),
 	SHA256_DSA("SHA256withDSA", "2.16.840.1.101.3.4.3.2", SHA256, "SignatureType.Sha256WithDsa"),
 	SHA384_DSA("SHA384withDSA", "2.16.840.1.101.3.4.3.3", SHA384, "SignatureType.Sha384WithDsa"),
 	SHA512_DSA("SHA512withDSA", "2.16.840.1.101.3.4.3.4", SHA512, "SignatureType.Sha512WithDsa"),
@@ -66,7 +66,7 @@ public enum SignatureType {
 	SHA384_ECDSA("SHA384withECDSA", "1.2.840.10045.4.3.3", SHA384, "SignatureType.Sha384WithEcDsa"),
 	SHA512_ECDSA("SHA512withECDSA", "1.2.840.10045.4.3.4", SHA512, "SignatureType.Sha512WithEcDsa");
 	// @formatter:on
-	
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/signing/resources");
 	private String jce;
 	private String oid;
@@ -82,7 +82,7 @@ public enum SignatureType {
 
 	/**
 	 * Get signature type JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
 	public String jce() {
@@ -91,7 +91,7 @@ public enum SignatureType {
 
 	/**
 	 * Get signature type Object Identifier.
-	 * 
+	 *
 	 * @return Object Identifier
 	 */
 	public String oid() {
@@ -100,7 +100,7 @@ public enum SignatureType {
 
 	/**
 	 * Get signature type's digest type.
-	 * 
+	 *
 	 * @return Digest type
 	 */
 	public DigestType digestType() {
@@ -109,16 +109,16 @@ public enum SignatureType {
 
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	public String friendly() {
 		return res.getString(friendlyKey);
 	}
-	
+
 	/**
 	 * Get the signature types compatible with DSA.
-	 * 
+	 *
 	 * @return DSA signature types
 	 */
 	public static List<SignatureType> dsaSignatureTypes() {
@@ -135,24 +135,24 @@ public enum SignatureType {
 
 	/**
 	 * Get the signature types compatible with ECDSA.
-	 * 
+	 *
 	 * @return ECDSA signature types
 	 */
 	public static List<SignatureType> ecdsaSignatureTypes() {
 		List<SignatureType> signatureTypes = new ArrayList<SignatureType>();
-		
+
 		signatureTypes.add(SHA1_ECDSA);
 		//signatureTypes.add(SHA224_ECDSA); // not supported by Sun provider
 		signatureTypes.add(SHA256_ECDSA);
 		signatureTypes.add(SHA384_ECDSA);
 		signatureTypes.add(SHA512_ECDSA);
-		
+
 		return signatureTypes;
 	}
-	
+
 	/**
 	 * Get the signature types compatible with RSA.
-	 * 
+	 *
 	 * @return RSA signature types
 	 */
 	public static List<SignatureType> rsaSignatureTypes() {
@@ -174,7 +174,7 @@ public enum SignatureType {
 
 	/**
 	 * Get the signature types compatible with RSA at the supplied key size.
-	 * 
+	 *
 	 * @param keySize
 	 *            Key size in bits
 	 * @return RSA signature types
@@ -197,7 +197,7 @@ public enum SignatureType {
 
 	/**
 	 * Resolve the supplied JCE name to a matching Signature type.
-	 * 
+	 *
 	 * @param jce
 	 *            JCE name
 	 * @return Signature type or null if none
@@ -214,7 +214,7 @@ public enum SignatureType {
 
 	/**
 	 * Resolve the supplied object identifier to a matching Signature type.
-	 * 
+	 *
 	 * @param oid
 	 *            Object identifier
 	 * @return Signature type or null if none
@@ -231,9 +231,10 @@ public enum SignatureType {
 
 	/**
 	 * Returns friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
+	@Override
 	public String toString() {
 		return friendly();
 	}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,34 +27,37 @@ import javax.swing.plaf.metal.DefaultMetalTheme;
 /**
  * Very simple Metal theme that simply gets rid of the bold used in the default
  * theme for control and menu text (note: title is left bold).
- * 
+ *
  */
 public class LightMetalTheme extends DefaultMetalTheme {
 	private static final String THEME_NAME = "Light Metal";
 
 	/**
 	 * Get theme name.
-	 * 
+	 *
 	 * @return Theme name
 	 */
+	@Override
 	public String getName() {
 		return THEME_NAME;
 	}
 
 	/**
 	 * Get control text font - minus the usual bold.
-	 * 
+	 *
 	 * @return Font
 	 */
+	@Override
 	public FontUIResource getControlTextFont() {
 		return new FontUIResource(super.getControlTextFont().deriveFont(Font.PLAIN));
 	}
 
 	/**
 	 * Get menu text font - minus the usual bold.
-	 * 
+	 *
 	 * @return Font
 	 */
+	@Override
 	public FontUIResource getMenuTextFont() {
 		return new FontUIResource(super.getMenuTextFont().deriveFont(Font.PLAIN));
 	}

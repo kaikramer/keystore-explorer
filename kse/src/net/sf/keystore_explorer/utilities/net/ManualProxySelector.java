@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Proxy selector for 'manual' proxies, i.e. where individual proxies are
  * specified for each protocol.
- * 
+ *
  */
 public class ManualProxySelector extends ProxySelector {
 	private ProxyAddress httpProxyAddress;
@@ -45,7 +45,7 @@ public class ManualProxySelector extends ProxySelector {
 	/**
 	 * Construct ManualProxySelector with proxy settings for each protocol.
 	 * Where a particular setting is not to be set supply null.
-	 * 
+	 *
 	 * @param httpProxyAddress
 	 *            HTTP proxy address
 	 * @param httpsProxyAddress
@@ -68,11 +68,12 @@ public class ManualProxySelector extends ProxySelector {
 
 	/**
 	 * Get a list of proxies for the supplied URI.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI that a connection is required to
 	 * @return List of proxies
 	 */
+	@Override
 	public List<Proxy> select(URI uri) {
 		createProxies();
 
@@ -85,7 +86,7 @@ public class ManualProxySelector extends ProxySelector {
 		} else if ((uri.getScheme().equals("ftp")) && (ftpProxy != null)) {
 			proxies.add(ftpProxy);
 		} else if (socksProxy != null) // Use SOCKS if available and no proxy
-										// yet identified
+			// yet identified
 		{
 			proxies.add(socksProxy);
 		}
@@ -122,7 +123,7 @@ public class ManualProxySelector extends ProxySelector {
 
 	/**
 	 * Connection failed. Do nothing.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI that the proxy at socketAddress failed to serve
 	 * @param socketAddress
@@ -130,6 +131,7 @@ public class ManualProxySelector extends ProxySelector {
 	 * @param ioException
 	 *            The I/O exception thrown when the connect failed
 	 */
+	@Override
 	public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {
 		/*
 		 * Do nothing. Documentation of base class ProxySelector suggests that
@@ -140,7 +142,7 @@ public class ManualProxySelector extends ProxySelector {
 
 	/**
 	 * Get HTTP proxy address.
-	 * 
+	 *
 	 * @return HTTP proxy address or null if none set
 	 */
 	public ProxyAddress getHttpProxyAddress() {
@@ -149,7 +151,7 @@ public class ManualProxySelector extends ProxySelector {
 
 	/**
 	 * Get HTTPS proxy address.
-	 * 
+	 *
 	 * @return HTTPS proxy address or null if none set
 	 */
 	public ProxyAddress getHttpsProxyAddress() {
@@ -158,7 +160,7 @@ public class ManualProxySelector extends ProxySelector {
 
 	/**
 	 * Get FTP proxy address.
-	 * 
+	 *
 	 * @return FTP proxy address or null if none set
 	 */
 	public ProxyAddress getFtpProxyAddress() {
@@ -167,7 +169,7 @@ public class ManualProxySelector extends ProxySelector {
 
 	/**
 	 * Get SOCKS proxy address.
-	 * 
+	 *
 	 * @return SOCKS proxy address or null if none set
 	 */
 	public ProxyAddress getSocksProxyAddress() {
@@ -176,11 +178,12 @@ public class ManualProxySelector extends ProxySelector {
 
 	/**
 	 * Is this ManualProxySelector object equal to another object?
-	 * 
+	 *
 	 * @param object
 	 *            Object to compare ManualProxySelector with.
 	 * @return true if the equal, false otherwise.
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object == this) {
 			return true;

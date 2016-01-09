@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,8 +19,6 @@
  */
 package net.sf.keystore_explorer.gui.dnd;
 
-import org.apache.commons.io.IOUtils;
-
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -30,17 +28,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Transferable for KeyStore entries. <code>DataFlavor.javaFileListFlavor</code>
  * and <code>DataFlavor.stringFlavor</code> are supported.
- * 
+ *
  */
 public class KeyStoreEntryTransferable implements Transferable {
 	private DragEntry dragEntry;
 
 	/**
 	 * Construct KeyStoreEntryTransferable.
-	 * 
+	 *
 	 * @param dragEntry
 	 *            Drag entry
 	 */
@@ -50,27 +50,29 @@ public class KeyStoreEntryTransferable implements Transferable {
 
 	/**
 	 * Get supported transfer data flavors.
-	 * 
+	 *
 	 * @return Supported data flavors
 	 */
+	@Override
 	public DataFlavor[] getTransferDataFlavors() {
 		return new DataFlavor[] { DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor };
 	}
 
 	/**
 	 * Is supplied data flavor supported?
-	 * 
+	 *
 	 * @param dataFlavor
 	 *            Data flavor
 	 * @return True if it is
 	 */
+	@Override
 	public boolean isDataFlavorSupported(DataFlavor dataFlavor) {
 		return (dataFlavor == DataFlavor.javaFileListFlavor) || (dataFlavor == DataFlavor.stringFlavor);
 	}
 
 	/**
 	 * Get transfer data.
-	 * 
+	 *
 	 * @param dataFlavor
 	 *            Data flavor
 	 * @return Transfer data
@@ -79,6 +81,7 @@ public class KeyStoreEntryTransferable implements Transferable {
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
+	@Override
 	public Object getTransferData(DataFlavor dataFlavor) throws UnsupportedFlavorException, IOException {
 		if (!isDataFlavorSupported(dataFlavor)) {
 			throw new UnsupportedFlavorException(dataFlavor);

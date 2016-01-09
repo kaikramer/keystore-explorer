@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -42,7 +42,7 @@ import net.sf.keystore_explorer.utilities.io.HexUtil;
 
 /**
  * Component to edit a key identifier.
- * 
+ *
  */
 public class JKeyIdentifier extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -57,7 +57,7 @@ public class JKeyIdentifier extends JPanel {
 
 	/**
 	 * Construct a JKeyIdentifier.
-	 * 
+	 *
 	 * @param title
 	 *            Title of edit dialog
 	 * @param publicKey
@@ -85,6 +85,7 @@ public class JKeyIdentifier extends JPanel {
 		jbEditKeyIdentifier = new JButton(editIcon);
 		jbEditKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbEditKeyIdentifier.tooltip"));
 		jbEditKeyIdentifier.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JKeyIdentifier.this);
@@ -107,6 +108,7 @@ public class JKeyIdentifier extends JPanel {
 		jbClearKeyIdentifier = new JButton(clearIcon);
 		jbClearKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbClearKeyIdentifier.tooltip"));
 		jbClearKeyIdentifier.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JKeyIdentifier.this);
@@ -134,7 +136,7 @@ public class JKeyIdentifier extends JPanel {
 
 	/**
 	 * Get key identifier.
-	 * 
+	 *
 	 * @return Key identifier, or null if none chosen
 	 */
 	public byte[] getKeyIdentifier() {
@@ -143,7 +145,7 @@ public class JKeyIdentifier extends JPanel {
 
 	/**
 	 * Set key identifer.
-	 * 
+	 *
 	 * @param keyIdentifier
 	 *            Key identifier
 	 */
@@ -154,10 +156,11 @@ public class JKeyIdentifier extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		jbEditKeyIdentifier.setEnabled(enabled);
 		jbClearKeyIdentifier.setEnabled(enabled);
@@ -165,10 +168,11 @@ public class JKeyIdentifier extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jtfKeyIdentifier.setToolTipText(toolTipText);

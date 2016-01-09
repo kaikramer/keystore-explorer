@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,12 +32,12 @@ import net.sf.keystore_explorer.gui.KseRestart;
 
 /**
  * Action to exit.
- * 
+ *
  */
 public class ExitAction extends CloseAllAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -57,6 +57,7 @@ public class ExitAction extends CloseAllAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		exitApplication();
 	}
@@ -70,7 +71,7 @@ public class ExitAction extends CloseAllAction {
 
 	/**
 	 * Exit the application and optionally restart.
-	 * 
+	 *
 	 * @param restart
 	 *            Restart application if true
 	 */

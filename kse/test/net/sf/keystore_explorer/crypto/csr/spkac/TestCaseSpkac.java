@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -51,7 +51,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for SPKAC.
- * 
+ *
  */
 public class TestCaseSpkac extends TestCaseKeyPair {
 	private static final String CHALLENGE = "hello";

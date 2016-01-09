@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -146,6 +146,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		jbBrowse = new JButton(res.getString("DImportKeyPairPkcs12.jbBrowse.text"));
 		PlatformUtil.setMnemonic(jbBrowse, res.getString("DImportKeyPairPkcs12.jbBrowse.mnemonic").charAt(0));
 		jbBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
@@ -163,6 +164,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		jbDetails = new JButton(res.getString("DImportKeyPairPkcs12.jbDetails.text"));
 		PlatformUtil.setMnemonic(jbDetails, res.getString("DImportKeyPairPkcs12.jbDetails.mnemonic").charAt(0));
 		jbDetails.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
@@ -192,6 +194,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		PlatformUtil.setMnemonic(jbImport, res.getString("DImportKeyPairPkcs12.jbImport.mnemonic").charAt(0));
 		jbImport.setToolTipText(res.getString("DImportKeyPairPkcs12.jbImport.tooltip"));
 		jbImport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
@@ -204,6 +207,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DImportKeyPairPkcs12.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -211,6 +215,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -223,6 +228,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -268,7 +274,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		if (keypair != null) {
 			DViewKeyPair dViewKeyPair = new DViewKeyPair(this, MessageFormat.format(
 					res.getString("DImportKeyPairPkcs12.ViewKeyPairDetails.Title"), path),
-			                                             keypair.getPrivateKey(), keypair.getCertificateChain(), new BouncyCastleProvider());
+					keypair.getPrivateKey(), keypair.getCertificateChain(), new BouncyCastleProvider());
 			dViewKeyPair.setLocationRelativeTo(this);
 			dViewKeyPair.setVisible(true);
 		}
@@ -326,7 +332,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 			}
 
 			X509Certificate[] certs = X509CertUtil.convertCertificates(certsList.toArray(new Certificate[certsList
-					.size()]));
+			                                                                                             .size()]));
 
 			return new Keypair(privKey, certs);
 		} catch (FileNotFoundException ex) {
@@ -338,7 +344,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 			Problem problem = createLoadPkcs12Problem(ex, pkcs12File);
 
 			DProblem dProblem = new DProblem(this, res.getString("DImportKeyPairPkcs12.ProblemLoadingPkcs12.Title"),
-			                                 problem);
+					problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

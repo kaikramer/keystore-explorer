@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -144,7 +144,7 @@ public class DExportCertificates extends JEscDialog {
 		jrbExportChain = new JRadioButton(res.getString("DExportCertificates.jrbExportChain.text"));
 		jrbExportChain.setToolTipText(res.getString("DExportCertificates.jrbExportChain.tooltip"));
 		PlatformUtil
-				.setMnemonic(jrbExportChain, res.getString("DExportCertificates.jrbExportChain.mnemonic").charAt(0));
+		.setMnemonic(jrbExportChain, res.getString("DExportCertificates.jrbExportChain.mnemonic").charAt(0));
 		GridBagConstraints gbc_jrbExportChain = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jrbExportChain.gridy = 0;
 		gbc_jrbExportChain.gridx = 6;
@@ -167,7 +167,7 @@ public class DExportCertificates extends JEscDialog {
 		jrbExportPkcs7 = new JRadioButton(res.getString("DExportCertificates.jrbExportPkcs7.text"));
 		jrbExportPkcs7.setToolTipText(res.getString("DExportCertificates.jrbExportPkcs7.tooltip"));
 		PlatformUtil
-				.setMnemonic(jrbExportPkcs7, res.getString("DExportCertificates.jrbExportPkcs7.mnemonic").charAt(0));
+		.setMnemonic(jrbExportPkcs7, res.getString("DExportCertificates.jrbExportPkcs7.mnemonic").charAt(0));
 		GridBagConstraints gbc_jrbExportPkcs7 = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jrbExportPkcs7.gridy = 1;
 		gbc_jrbExportPkcs7.gridx = 6;
@@ -223,6 +223,7 @@ public class DExportCertificates extends JEscDialog {
 		gbc_jbBrowse.gridx = 15;
 
 		jbBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DExportCertificates.this);
@@ -268,6 +269,7 @@ public class DExportCertificates extends JEscDialog {
 		jpOptions.add(jbBrowse, gbc_jbBrowse);
 
 		jrbExportHead.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				if (jrbExportHead.isSelected()) {
 					jrbExportX509.setEnabled(true);
@@ -282,22 +284,25 @@ public class DExportCertificates extends JEscDialog {
 		});
 
 		jrbExportX509.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                if (jrbExportX509.isSelected()) {
-                    updateFileExtension(FileChooserFactory.X509_EXT_1);
-                }
-            }
-        });
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				if (jrbExportX509.isSelected()) {
+					updateFileExtension(FileChooserFactory.X509_EXT_1);
+				}
+			}
+		});
 
 		jrbExportPkcs7.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                if (jrbExportPkcs7.isSelected()) {
-                    updateFileExtension(FileChooserFactory.PKCS7_EXT_1);
-                }
-            }
-        });
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				if (jrbExportPkcs7.isSelected()) {
+					updateFileExtension(FileChooserFactory.PKCS7_EXT_1);
+				}
+			}
+		});
 
 		jrbExportSpc.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				if (jrbExportSpc.isSelected()) {
 					jcbExportPem.setEnabled(false);
@@ -310,6 +315,7 @@ public class DExportCertificates extends JEscDialog {
 		});
 
 		jrbExportPkiPath.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				if (jrbExportPkiPath.isSelected()) {
 					jcbExportPem.setEnabled(false);
@@ -325,6 +331,7 @@ public class DExportCertificates extends JEscDialog {
 		PlatformUtil.setMnemonic(jbExport, res.getString("DExportCertificates.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DExportCertificates.jbExport.tooltip"));
 		jbExport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DExportCertificates.this);
@@ -337,6 +344,7 @@ public class DExportCertificates extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DExportCertificates.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -344,6 +352,7 @@ public class DExportCertificates extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -356,6 +365,7 @@ public class DExportCertificates extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -376,18 +386,18 @@ public class DExportCertificates extends JEscDialog {
 		pack();
 	}
 
-    private void updateFileExtension(String newExt) {
-        String currentFileName = jtfExportFile.getText();
-        String newFileName = FileNameUtil.removeExtension(currentFileName) + "." + newExt;
-        jtfExportFile.setText(newFileName);
-    }
+	private void updateFileExtension(String newExt) {
+		String currentFileName = jtfExportFile.getText();
+		String newFileName = FileNameUtil.removeExtension(currentFileName) + "." + newExt;
+		jtfExportFile.setText(newFileName);
+	}
 
-    private void populateExportFileName() {
-        File currentDirectory = CurrentDirectory.get();
-        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
-        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.X509_EXT_1);
-        jtfExportFile.setText(csrFile.getPath());
-    }
+	private void populateExportFileName() {
+		File currentDirectory = CurrentDirectory.get();
+		String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+		File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.X509_EXT_1);
+		jtfExportFile.setText(csrFile.getPath());
+	}
 
 	/**
 	 * Has the user chosen to export?

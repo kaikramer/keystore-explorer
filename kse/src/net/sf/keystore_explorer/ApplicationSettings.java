@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,18 +19,10 @@
  */
 package net.sf.keystore_explorer;
 
-import net.sf.keystore_explorer.crypto.digest.DigestType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.secretkey.SecretKeyType;
-import net.sf.keystore_explorer.gui.KseFrame;
-import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
-import net.sf.keystore_explorer.utilities.StringUtils;
-import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
-import net.sf.keystore_explorer.utilities.net.NoProxySelector;
-import net.sf.keystore_explorer.utilities.net.PacProxySelector;
-import net.sf.keystore_explorer.utilities.net.ProxyAddress;
+import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA1;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+import static net.sf.keystore_explorer.crypto.secretkey.SecretKeyType.AES;
 
-import javax.swing.JTabbedPane;
 import java.awt.Rectangle;
 import java.io.File;
 import java.net.ProxySelector;
@@ -42,9 +34,18 @@ import java.util.Date;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA1;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-import static net.sf.keystore_explorer.crypto.secretkey.SecretKeyType.AES;
+import javax.swing.JTabbedPane;
+
+import net.sf.keystore_explorer.crypto.digest.DigestType;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.secretkey.SecretKeyType;
+import net.sf.keystore_explorer.gui.KseFrame;
+import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
+import net.sf.keystore_explorer.utilities.StringUtils;
+import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
+import net.sf.keystore_explorer.utilities.net.NoProxySelector;
+import net.sf.keystore_explorer.utilities.net.PacProxySelector;
+import net.sf.keystore_explorer.utilities.net.ProxyAddress;
 
 /**
  * KSE Application settings. Load, save and provide access to the various
@@ -228,25 +229,25 @@ public class ApplicationSettings {
 			String httpHost = preferences.get(KSE3_HTTPHOST, null);
 			int httpPort = preferences.getInt(KSE3_HTTPPORT, 0);
 
-			if ((httpHost != null) && (httpPort > 0)) {
+			if (httpHost != null && httpPort > 0) {
 				httpProxyAddress = new ProxyAddress(httpHost, httpPort);
 			}
 
 			String httpsHost = preferences.get(KSE3_HTTPSHOST, null);
 			int httpsPort = preferences.getInt(KSE3_HTTPSPORT, 0);
 
-			if ((httpsHost != null) && (httpsPort > 0)) {
+			if (httpsHost != null && httpsPort > 0) {
 				httpsProxyAddress = new ProxyAddress(httpsHost, httpsPort);
 			}
 
 			String socksHost = preferences.get(KSE3_SOCKSHOST, null);
 			int socksPort = preferences.getInt(KSE3_SOCKSPORT, 0);
 
-			if ((socksHost != null) && (socksPort > 0)) {
+			if (socksHost != null && socksPort > 0) {
 				socksProxyAddress = new ProxyAddress(socksHost, socksPort);
 			}
 
-			if ((httpProxyAddress != null) || (httpsProxyAddress != null)) {
+			if (httpProxyAddress != null || httpsProxyAddress != null) {
 				ProxySelector.setDefault(new ManualProxySelector(httpProxyAddress, httpsProxyAddress, null,
 						socksProxyAddress));
 			} else {
@@ -295,12 +296,12 @@ public class ApplicationSettings {
 		showTipsOnStartUp = preferences.getBoolean(KSE3_TIPSONSTARTUP, true);
 		nextTipIndex = preferences.getInt(KSE3_TIPINDEX, 0);
 
-        // Default distinguished name
-        defaultDN = preferences.get(KSE3_DEFAULTDN, "");
+		// Default distinguished name
+		defaultDN = preferences.get(KSE3_DEFAULTDN, "");
 
-        // SSL host names and ports for "Examine SSL"
-        sslHosts = preferences.get(KSE3_SSLHOSTS, "www.google.com;www.amazon.com");
-        sslPorts = preferences.get(KSE3_SSLPORTS, "443");
+		// SSL host names and ports for "Examine SSL"
+		sslHosts = preferences.get(KSE3_SSLHOSTS, "www.google.com;www.amazon.com");
+		sslPorts = preferences.get(KSE3_SSLPORTS, "443");
 
 		// auto update check
 		autoUpdateCheckEnabled = preferences.getBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, true);
@@ -382,12 +383,12 @@ public class ApplicationSettings {
 		preferences.putBoolean(KSE3_TIPSONSTARTUP, showTipsOnStartUp);
 		preferences.putInt(KSE3_TIPINDEX, nextTipIndex);
 
-        // Default distinguished name
-        preferences.put(KSE3_DEFAULTDN, defaultDN);
+		// Default distinguished name
+		preferences.put(KSE3_DEFAULTDN, defaultDN);
 
-        // SSL host names and ports for "Examine SSL"
-        preferences.put(KSE3_SSLHOSTS, getSslHosts());
-        preferences.put(KSE3_SSLPORTS, getSslPorts());
+		// SSL host names and ports for "Examine SSL"
+		preferences.put(KSE3_SSLHOSTS, getSslHosts());
+		preferences.put(KSE3_SSLPORTS, getSslPorts());
 
 		// auto update check settings
 		preferences.putBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, isAutoUpdateCheckEnabled());
@@ -460,41 +461,41 @@ public class ApplicationSettings {
 		Preferences preferences = getUnderlyingPreferences();
 		preferences.clear();
 	}
-	
+
 	private Preferences getUnderlyingPreferences() {
 		// Get underlying Java preferences
 		Preferences preferences = Preferences.userNodeForPackage(ApplicationSettings.class);
 		return preferences;
 	}
-	
+
 	/**
-	 * Add a new SSL port to start of current list of ports. 
-	 * 
+	 * Add a new SSL port to start of current list of ports.
+	 *
 	 * Maximum number is 10. If port is already in list, it is brought to the first position.
-	 * 
+	 *
 	 * @param newSslPort New SSL port
 	 */
-    public void addSslPort(String newSslPort) {
+	public void addSslPort(String newSslPort) {
 
-    	String newSslPorts = StringUtils.addToList(newSslPort, getSslPorts(), 10);
-        
+		String newSslPorts = StringUtils.addToList(newSslPort, getSslPorts(), 10);
+
 		setSslPorts(newSslPorts);
-    }
-    
+	}
+
 
 	/**
 	 * Add a new SSL host to start of current list of hosts.
-	 * 
+	 *
 	 * Maximum number is 10. If host is already in list, it is brought to the first position.
-	 * 
+	 *
 	 * @param newSslHost New SSL host
-     */
-    public void addSslHost(String newSslHost) {
-      
-    	String newSslHosts = StringUtils.addToList(newSslHost, getSslHosts(), 10);
-        
-    	setSslHosts(newSslHosts);
-    }
+	 */
+	public void addSslHost(String newSslHost) {
+
+		String newSslHosts = StringUtils.addToList(newSslHost, getSslHosts(), 10);
+
+		setSslHosts(newSslHosts);
+	}
 
 	public boolean getUseCaCertificates() {
 		return useCaCertificates;

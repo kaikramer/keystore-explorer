@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -165,8 +165,8 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 			Problem problem = new Problem(problemStr, causes, ex);
 
 			DProblem dProblem = new DProblem(frame,
-			                                 res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"),
-			                                 problem);
+					res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"),
+					problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 
@@ -184,7 +184,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	protected X509Certificate[] openCertificate(File certificateFile) {
 		try {
 			FileInputStream is = new FileInputStream(certificateFile);
-            return openCertificate(is, certificateFile.getName());
+			return openCertificate(is, certificateFile.getName());
 		} catch (FileNotFoundException ex) {
 			JOptionPane.showMessageDialog(frame,
 					MessageFormat.format(res.getString("KeyStoreExplorerAction.NoReadFile.message"), certificateFile),
@@ -193,41 +193,41 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 		}
 	}
 
-    /**
-     * Open a certificate input stream.
-     *
-     * @param certificateFile
-     *            The certificate file
-     * @return The certificates found in the file or null if open failed
-     */
+	/**
+	 * Open a certificate input stream.
+	 *
+	 * @param certificateFile
+	 *            The certificate file
+	 * @return The certificates found in the file or null if open failed
+	 */
 	protected X509Certificate[] openCertificate(InputStream is, String name) {
 
-        try {
-            X509Certificate[] certs = X509CertUtil.loadCertificates(is);
+		try {
+			X509Certificate[] certs = X509CertUtil.loadCertificates(is);
 
-            if (certs.length == 0) {
-                JOptionPane.showMessageDialog(frame,
-                        MessageFormat.format(res.getString("KeyStoreExplorerAction.NoCertsFound.message"), name),
-                        res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
-            }
+			if (certs.length == 0) {
+				JOptionPane.showMessageDialog(frame,
+						MessageFormat.format(res.getString("KeyStoreExplorerAction.NoCertsFound.message"), name),
+						res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
+			}
 
-            return certs;
-        } catch (Exception ex) {
-            String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoOpenCert.Problem"), name);
+			return certs;
+		} catch (Exception ex) {
+			String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoOpenCert.Problem"), name);
 
-            String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
-                    res.getString("KeyStoreExplorerAction.CorruptedCert.Cause") };
+			String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
+					res.getString("KeyStoreExplorerAction.CorruptedCert.Cause") };
 
-            Problem problem = new Problem(problemStr, causes, ex);
+			Problem problem = new Problem(problemStr, causes, ex);
 
-            DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
-                                             problem);
-            dProblem.setLocationRelativeTo(frame);
-            dProblem.setVisible(true);
+			DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
+					problem);
+			dProblem.setLocationRelativeTo(frame);
+			dProblem.setVisible(true);
 
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 
 	/**
 	 * Get a new KeyStore password.
@@ -237,7 +237,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	protected Password getNewKeyStorePassword() {
 		DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
 				res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"),
-				                                              ApplicationSettings.getInstance().getPasswordQualityConfig());
+				ApplicationSettings.getInstance().getPasswordQualityConfig());
 		dGetNewPassword.setLocationRelativeTo(frame);
 		dGetNewPassword.setVisible(true);
 

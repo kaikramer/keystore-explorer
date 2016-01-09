@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,7 +31,7 @@ import javax.swing.table.TableCellRenderer;
 /**
  * Custom cell renderer for the headers of the KeyStore table of KeyStore
  * Explorer.
- * 
+ *
  */
 public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -41,10 +41,10 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	public KeyStoreTableHeadRend(TableCellRenderer delegate) {
 		this.delegate = delegate;
 	}
-	
+
 	/**
 	 * Returns the rendered header cell for the supplied value and column.
-	 * 
+	 *
 	 * @param jtKeyStore
 	 *            The JTable
 	 * @param value
@@ -59,15 +59,16 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtKeyStore, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
-		
+
 		Component c = delegate.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
-		
+
 		if (c instanceof JLabel) {
-			
+
 			JLabel header = (JLabel) c;
-			
+
 			// The entry type header contains an icon (entry type)
 			if (col == 0) {
 				header.setText("");
@@ -76,7 +77,7 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);
-	
+
 				header.setToolTipText(res.getString("KeyStoreTableHeadRend.TypeColumn.tooltip"));
 			}
 			// As does the lock status
@@ -87,7 +88,7 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);
-	
+
 				header.setToolTipText(res.getString("KeyStoreTableHeadRend.LockStatusColumn.tooltip"));
 			}
 			// And the expiry status
@@ -98,14 +99,14 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);
-	
+
 				header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertExpiryStatusColumn.tooltip"));
 			}
 			// The other headers contain text
 			else {
 				header.setText((String) value);
 				header.setHorizontalAlignment(LEFT);
-	
+
 				if (col == 3) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.NameColumn.tooltip"));
 				} else if (col == 4) {

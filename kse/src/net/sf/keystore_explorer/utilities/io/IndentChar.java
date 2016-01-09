@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.utilities.io;
 
 /**
  * Indentation characters.
- * 
+ *
  */
 public enum IndentChar {
 	SPACE(' '), TAB('\t');
@@ -34,7 +34,7 @@ public enum IndentChar {
 
 	/**
 	 * Get indentation character.
-	 * 
+	 *
 	 * @return Indentation character
 	 */
 	public char getIndentChar() {

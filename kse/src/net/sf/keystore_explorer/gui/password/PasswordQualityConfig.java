@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,7 +22,7 @@ package net.sf.keystore_explorer.gui.password;
 /**
  * Encapsulates password quality configuration for dialogs that accept new
  * passwords.
- * 
+ *
  */
 public class PasswordQualityConfig {
 	private boolean enabled;
@@ -31,7 +31,7 @@ public class PasswordQualityConfig {
 
 	/**
 	 * Construct password quality configuration.
-	 * 
+	 *
 	 * @param enabled
 	 *            Is password quality enabled?
 	 * @param minimumQualityEnforced
@@ -47,7 +47,7 @@ public class PasswordQualityConfig {
 
 	/**
 	 * Is password quality enabled?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public boolean getEnabled() {
@@ -56,7 +56,7 @@ public class PasswordQualityConfig {
 
 	/**
 	 * Set if password quality is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            Enabled?
 	 */
@@ -66,7 +66,7 @@ public class PasswordQualityConfig {
 
 	/**
 	 * Is minimum password quality enforced?
-	 * 
+	 *
 	 * @return True if it is
 	 */
 	public boolean getEnforced() {
@@ -75,7 +75,7 @@ public class PasswordQualityConfig {
 
 	/**
 	 * Set if minimum password quality is enforced.
-	 * 
+	 *
 	 * @param enforced
 	 *            Enforced?
 	 */
@@ -85,7 +85,7 @@ public class PasswordQualityConfig {
 
 	/**
 	 * Get minimum password quality
-	 * 
+	 *
 	 * @return Minimum password quality
 	 */
 	public int getMinimumQuality() {
@@ -94,7 +94,7 @@ public class PasswordQualityConfig {
 
 	/**
 	 * Set minimum password quality
-	 * 
+	 *
 	 * @param minimumQuality
 	 *            Minimum password quality
 	 */

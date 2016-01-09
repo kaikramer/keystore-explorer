@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -81,7 +81,7 @@ import net.sf.keystore_explorer.utilities.io.CopyUtil;
 
 /**
  * Dialog to upgrade cyptography strength.
- * 
+ *
  */
 public class DUpgradeCryptoStrength extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -113,7 +113,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 	/**
 	 * Creates a new DUpgradeCryptoStrength dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent
 	 */
@@ -136,6 +136,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		PlatformUtil.setMnemonic(jbDownloadPolicy, res.getString("DUpgradeCryptoStrength.jbDownloadPolicy.mnemonic")
 				.charAt(0));
 		jbDownloadPolicy.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DUpgradeCryptoStrength.this);
@@ -165,6 +166,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		PlatformUtil.setMnemonic(jbBrowsePolicy, res.getString("DUpgradeCryptoStrength.jbBrowsePolicy.mnemonic")
 				.charAt(0));
 		jbBrowsePolicy.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DUpgradeCryptoStrength.this);
@@ -194,6 +196,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		jbUpgrade = new JButton(res.getString("DUpgradeCryptoStrength.jbUpgrade.text"));
 		PlatformUtil.setMnemonic(jbUpgrade, res.getString("DUpgradeCryptoStrength.jbUpgrade.mnemonic").charAt(0));
 		jbUpgrade.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				upgradePressed();
 			}
@@ -202,6 +205,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DUpgradeCryptoStrength.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -209,6 +213,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -221,6 +226,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -283,7 +289,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 	/**
 	 * Has the crypto strength been upgraded?
-	 * 
+	 *
 	 * @return True if has, false otherwise
 	 */
 	public boolean hasCryptoStrengthBeenUpgraded() {
@@ -292,7 +298,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 	/**
 	 * Has the crypto strength upgrade failed?
-	 * 
+	 *
 	 * @return True if has, false otherwise
 	 */
 	public boolean hasCryptoStrengthUpgradeFailed() {
@@ -406,6 +412,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 			new DropTarget(this, this);
 		}
 
+		@Override
 		public void drop(DropTargetDropEvent evt) {
 			if (policyZipAccepted) {
 				evt.rejectDrop();
@@ -434,15 +441,19 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 			}
 		}
 
+		@Override
 		public void dragEnter(DropTargetDragEvent evt) {
 		}
 
+		@Override
 		public void dragExit(DropTargetEvent evt) {
 		}
 
+		@Override
 		public void dragOver(DropTargetDragEvent evt) {
 		}
 
+		@Override
 		public void dropActionChanged(DropTargetDragEvent evt) {
 		}
 

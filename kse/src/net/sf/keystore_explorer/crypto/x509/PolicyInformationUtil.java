@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -39,7 +39,7 @@ import org.bouncycastle.asn1.x509.UserNotice;
 
 /**
  * Policy Information utility methods.
- * 
+ *
  */
 public class PolicyInformationUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/x509/resources");
@@ -50,29 +50,29 @@ public class PolicyInformationUtil {
 	 * PolicyInformation ::= ASN1Sequence { policyIdentifier CertPolicyId,
 	 * policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo
 	 * OPTIONAL }
-	 * 
+	 *
 	 * CertPolicyId ::= OBJECT IDENTIFIER
-	 * 
+	 *
 	 * PolicyQualifierInfo ::= ASN1Sequence { policyQualifierId
 	 * PolicyQualifierId, qualifier ANY DEFINED BY policyQualifierId }
-	 * 
+	 *
 	 * -- policyQualifierIds for Internet policy qualifiers
-	 * 
+	 *
 	 * id-qt OBJECT IDENTIFIER ::= { id-pkix 2 } id-qt-cps OBJECT IDENTIFIER ::=
 	 * { id-qt 1 } id-qt-unotice OBJECT IDENTIFIER ::= { id-qt 2 }
-	 * 
+	 *
 	 * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
-	 * 
+	 *
 	 * Qualifier ::= CHOICE { cPSuri CPSuri, userNotice UserNotice }
-	 * 
+	 *
 	 * CPSuri ::= DERIA5String
-	 * 
+	 *
 	 * UserNotice ::= ASN1Sequence { noticeRef NoticeReference OPTIONAL,
 	 * explicitText DisplayText OPTIONAL}
-	 * 
+	 *
 	 * NoticeReference ::= ASN1Sequence { organization DisplayText,
 	 * noticeNumbers ASN1Sequence OF ASN1Integer }
-	 * 
+	 *
 	 * DisplayText ::= CHOICE { ia5String DERIA5String (SIZE (1..200)),
 	 * visibleString VisibleString (SIZE (1..200)), bmpString BMPString (SIZE
 	 * (1..200)), utf8String UTF8String (SIZE (1..200)) }
@@ -82,7 +82,7 @@ public class PolicyInformationUtil {
 
 	/**
 	 * Get string representation of policy information.
-	 * 
+	 *
 	 * @param policyInformation
 	 *            Policy information
 	 * @return String representation of policy information
@@ -105,7 +105,7 @@ public class PolicyInformationUtil {
 			StringBuffer sbPolicyQualifiers = new StringBuffer();
 
 			for (int i = 0; i < policyQualifiers.size(); i++) {
-				PolicyQualifierInfo policyQualifierInfo = 
+				PolicyQualifierInfo policyQualifierInfo =
 						PolicyQualifierInfo.getInstance(policyQualifiers.getObjectAt(i));
 
 				sbPolicyQualifiers.append(toString(policyQualifierInfo));
@@ -124,7 +124,7 @@ public class PolicyInformationUtil {
 
 	/**
 	 * Get string representation of policy qualifier info.
-	 * 
+	 *
 	 * @param policyQualifierInfo
 	 *            Policy qualifier info
 	 * @return String representation of policy qualifier info
@@ -143,7 +143,7 @@ public class PolicyInformationUtil {
 			DERIA5String cpsPointer = ((DERIA5String) policyQualifierInfo.getQualifier());
 
 			sbPolicyQualifier
-					.append(MessageFormat.format(res.getString("PolicyInformationUtil.CpsPointer"), cpsPointer));
+			.append(MessageFormat.format(res.getString("PolicyInformationUtil.CpsPointer"), cpsPointer));
 		} else if (certificatePolicyQualifierType == PKIX_USER_NOTICE_QUALIFIER) {
 			ASN1Encodable userNoticeObj = policyQualifierInfo.getQualifier();
 
@@ -158,7 +158,7 @@ public class PolicyInformationUtil {
 
 	/**
 	 * Get string representation of user notice.
-	 * 
+	 *
 	 * @param userNotice
 	 *            User notice
 	 * @return String representation of user notice
@@ -208,7 +208,7 @@ public class PolicyInformationUtil {
 
 		if (explicitText != null) {
 			sbUserNotice.append(MessageFormat.format(res.getString("PolicyInformationUtil.ExplicitText"),
-					 explicitText.getString()));
+					explicitText.getString()));
 		}
 
 		return sbUserNotice.toString();

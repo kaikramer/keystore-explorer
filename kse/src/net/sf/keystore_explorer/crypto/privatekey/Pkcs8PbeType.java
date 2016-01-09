@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 
 /**
  * Enumeration of Password based Encryption (PBE) Types supported by Pkcs8Util.
- * 
+ *
  */
 public enum Pkcs8PbeType implements PbeType {
 	/** SHA-1 with 2 key Triple DES */
@@ -55,7 +55,7 @@ public enum Pkcs8PbeType implements PbeType {
 
 	/**
 	 * PBE type JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
 	public String jce() {
@@ -64,18 +64,20 @@ public enum Pkcs8PbeType implements PbeType {
 
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name resource key name
 	 */
+	@Override
 	public String friendly() {
 		return res.getString(friendlyKey);
 	}
 
 	/**
 	 * Returns friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
+	@Override
 	public String toString() {
 		return friendly();
 	}

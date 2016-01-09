@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -253,6 +253,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 		gbc_jbBrowse.gridx = 9;
 
 		jbBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DExportPrivateKeyPvk.this);
@@ -291,6 +292,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 		jpOptions.add(jbBrowse, gbc_jbBrowse);
 
 		jcbEncrypt.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				if (jcbEncrypt.isSelected()) {
 					jrbStrong.setEnabled(true);
@@ -316,6 +318,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 		PlatformUtil.setMnemonic(jbExport, res.getString("DExportPrivateKeyPvk.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DExportPrivateKeyPvk.jbExport.tooltip"));
 		jbExport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DExportPrivateKeyPvk.this);
@@ -328,6 +331,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DExportPrivateKeyPvk.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -335,6 +339,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -347,6 +352,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -357,17 +363,17 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 		getRootPane().setDefaultButton(jbExport);
 
-        populateExportFileName();
+		populateExportFileName();
 
-        pack();
-    }
+		pack();
+	}
 
-    private void populateExportFileName() {
-        File currentDirectory = CurrentDirectory.get();
-        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
-        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.PVK_EXT);
-        jtfExportFile.setText(csrFile.getPath());
-    }
+	private void populateExportFileName() {
+		File currentDirectory = CurrentDirectory.get();
+		String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+		File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.PVK_EXT);
+		jtfExportFile.setText(csrFile.getPath());
+	}
 
 	/**
 	 * Has the user chosen to export?
@@ -500,7 +506,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
 		if (exportFile.isFile()) {
 			String message = MessageFormat.format(res.getString("DExportPrivateKeyPvk.OverWriteExportFile.message"),
-			                                      exportFile);
+					exportFile);
 
 			int selected = JOptionPane.showConfirmDialog(this, message,
 					res.getString("DExportPrivateKeyPvk.Simple.Title"), JOptionPane.YES_NO_OPTION);

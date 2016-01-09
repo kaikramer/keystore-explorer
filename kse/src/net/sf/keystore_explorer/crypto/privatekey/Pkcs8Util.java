@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,26 +19,17 @@
  */
 package net.sf.keystore_explorer.crypto.privatekey;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.Password;
-import net.sf.keystore_explorer.utilities.io.ReadUtil;
-import net.sf.keystore_explorer.utilities.pem.PemInfo;
-import net.sf.keystore_explorer.utilities.pem.PemUtil;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
+import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
+import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.ENCRYPTED;
+import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.UNENCRYPTED;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC2;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_2KEY_DESEDE;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_3KEY_DESEDE;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC2;
+import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC4;
 
-import javax.crypto.Cipher;
-import javax.crypto.EncryptedPrivateKeyInfo;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,20 +46,31 @@ import java.util.Calendar;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
-import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.ENCRYPTED;
-import static net.sf.keystore_explorer.crypto.privatekey.EncryptionType.UNENCRYPTED;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC2;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_2KEY_DESEDE;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_3KEY_DESEDE;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC2;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC4;
+import javax.crypto.Cipher;
+import javax.crypto.EncryptedPrivateKeyInfo;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
+
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+
+import net.sf.keystore_explorer.crypto.CryptoException;
+import net.sf.keystore_explorer.crypto.Password;
+import net.sf.keystore_explorer.utilities.io.ReadUtil;
+import net.sf.keystore_explorer.utilities.pem.PemInfo;
+import net.sf.keystore_explorer.utilities.pem.PemUtil;
 
 /**
  * Provides utility methods relating to PKCS #8 encoded private keys.
- * 
+ *
  */
 public class Pkcs8Util {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/privatekey/resources");
@@ -80,7 +82,7 @@ public class Pkcs8Util {
 
 	/**
 	 * PKCS #8 encode a private key.
-	 * 
+	 *
 	 * @return The encoding
 	 * @param privateKey
 	 *            The private key
@@ -91,7 +93,7 @@ public class Pkcs8Util {
 
 	/**
 	 * PKCS #8 encode a private key and PEM the encoding.
-	 * 
+	 *
 	 * @return The PEM'd encoding
 	 * @param privateKey
 	 *            The private key
@@ -103,7 +105,7 @@ public class Pkcs8Util {
 
 	/**
 	 * PKCS #8 encode and encrypt a private key.
-	 * 
+	 *
 	 * @return The encrypted encoding
 	 * @param privateKey
 	 *            The private key
@@ -153,7 +155,7 @@ public class Pkcs8Util {
 
 	/**
 	 * PKCS #8 encode and encrypt a private key and PEM the encoding.
-	 * 
+	 *
 	 * @return The encrypted, PEM'd encoding
 	 * @param privateKey
 	 *            The private key
@@ -176,7 +178,7 @@ public class Pkcs8Util {
 	/**
 	 * Load an unencrypted PKCS #8 private key from the stream. The encoding of
 	 * the private key may be PEM or DER.
-	 * 
+	 *
 	 * @param is
 	 *            Stream to load the unencrypted private key from
 	 * @return The private key
@@ -241,7 +243,7 @@ public class Pkcs8Util {
 	/**
 	 * Load an encrypted PKCS #8 private key from the specified stream. The
 	 * encoding of the private key may be PEM or DER.
-	 * 
+	 *
 	 * @param is
 	 *            Stream load the encrypted private key from
 	 * @param password
@@ -257,7 +259,7 @@ public class Pkcs8Util {
 	 *             If an I/O error occurred
 	 */
 	public static PrivateKey loadEncrypted(InputStream is, Password password) throws
-			CryptoException, IOException {
+	CryptoException, IOException {
 		byte[] streamContents = ReadUtil.readFully(is);
 
 		// Check pkcs #8 is not unencrypted
@@ -334,7 +336,7 @@ public class Pkcs8Util {
 
 	/**
 	 * Detect if a PKCS #8 private key is encrypted or not.
-	 * 
+	 *
 	 * @param is
 	 *            Input stream containing PKCS #8 private key
 	 * @return Encryption type or null if not a valid PKCS #8 private key
@@ -374,12 +376,12 @@ public class Pkcs8Util {
 
 					/*
 					 * Unencrypted PKCS #8 Private Key:
-					 * 
+					 *
 					 * PrivateKeyInfo ::= ASN1Sequence { version Version,
 					 * privateKeyAlgorithm PrivateKeyAlgorithmIdentifier,
 					 * privateKey PrivateKey, attributes [0] IMPLICIT Attributes
 					 * OPTIONAL }
-					 * 
+					 *
 					 * Version ::= ASN1Integer PrivateKeyAlgorithmIdentifier ::=
 					 * AlgorithmIdentifier PrivateKey ::= OCTET STRING
 					 * Attributes ::= SET OF Attribute
@@ -421,11 +423,11 @@ public class Pkcs8Util {
 
 					/*
 					 * Encrypted PKCS #8 Private Key:
-					 * 
+					 *
 					 * EncryptedPrivateKeyInfo ::= ASN1Sequence {
 					 * encryptionAlgorithm EncryptionAlgorithmIdentifier,
 					 * encryptedData EncryptedData }
-					 * 
+					 *
 					 * EncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
 					 * EncryptedData ::= OCTET STRING
 					 */
@@ -525,13 +527,13 @@ public class Pkcs8Util {
 
 		/*
 		 * Get private key algorithm from unencrypted PKCS #8 bytes:
-		 * 
+		 *
 		 * PrivateKeyInfo ::= ASN1Sequence { version Version,
 		 * privateKeyAlgorithm PrivateKeyAlgorithmIdentifier, privateKey
 		 * PrivateKey, attributes [0] IMPLICIT Attributes OPTIONAL }
-		 * 
+		 *
 		 * PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
-		 * 
+		 *
 		 * AlgorithmIdentifier ::= ASN1Sequence { algorithm OBJECT IDENTIFIER,
 		 * parameters ANY DEFINED BY algorithm OPTIONAL }
 		 */

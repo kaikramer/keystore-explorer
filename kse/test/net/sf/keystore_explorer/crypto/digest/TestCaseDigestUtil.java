@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,7 +40,7 @@ import org.junit.Test;
 /**
  * Unit tests for DigestUtil. Runs tests to create a digest for each of the
  * supported types.
- * 
+ *
  */
 public class TestCaseDigestUtil extends TestCaseCrypto {
 	private String MESSAGE = "This is a really good test message honestly";

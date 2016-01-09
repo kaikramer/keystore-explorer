@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,17 +19,17 @@
  */
 package net.sf.keystore_explorer.utilities.io;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Class of utility methods to copy data between I/O streams.
- * 
+ *
  */
 public class CopyUtil {
 	private CopyUtil() {
@@ -37,7 +37,7 @@ public class CopyUtil {
 
 	/**
 	 * Copy data from one stream to another and do not close I/O.
-	 * 
+	 *
 	 * @param in
 	 *            Input stream
 	 * @param out
@@ -55,7 +55,7 @@ public class CopyUtil {
 
 	/**
 	 * Copy data from one stream to another and close I/O.
-	 * 
+	 *
 	 * @param in
 	 *            Input stream
 	 * @param out
@@ -74,7 +74,7 @@ public class CopyUtil {
 
 	/**
 	 * Copy data from a reader to a writer and do not close I/O.
-	 * 
+	 *
 	 * @param reader
 	 *            Reader
 	 * @param writer
@@ -92,7 +92,7 @@ public class CopyUtil {
 
 	/**
 	 * Copy data from a reader to a writer and close I/O.
-	 * 
+	 *
 	 * @param reader
 	 *            Reader
 	 * @param writer

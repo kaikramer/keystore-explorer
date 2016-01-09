@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * Proxy selector for no proxy, i.e. for a direct connection to the internet.
- * 
+ *
  */
 public class NoProxySelector extends ProxySelector {
 	/**
@@ -40,11 +40,12 @@ public class NoProxySelector extends ProxySelector {
 
 	/**
 	 * Get a list of proxies for the supplied URI.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI that a connection is required to
 	 * @return List of proxies
 	 */
+	@Override
 	public List<Proxy> select(URI uri) {
 		ArrayList<Proxy> proxies = new ArrayList<Proxy>();
 		proxies.add(Proxy.NO_PROXY);
@@ -54,7 +55,7 @@ public class NoProxySelector extends ProxySelector {
 
 	/**
 	 * Connection failed. Do nothing.
-	 * 
+	 *
 	 * @param uri
 	 *            The URI that the proxy at socketAddress failed to serve
 	 * @param socketAddress
@@ -62,6 +63,7 @@ public class NoProxySelector extends ProxySelector {
 	 * @param ioException
 	 *            The I/O exception thrown when the connect failed
 	 */
+	@Override
 	public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {
 		/*
 		 * Do nothing. Documentation of base class ProxySelector suggests that
@@ -72,11 +74,12 @@ public class NoProxySelector extends ProxySelector {
 
 	/**
 	 * Is this NoProxySelector object equal to another object?
-	 * 
+	 *
 	 * @param object
 	 *            Object to compare NoProxySelector with.
 	 * @return true if the equal, false otherwise.
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object == this) {
 			return true;

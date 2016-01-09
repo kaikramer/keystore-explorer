@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,7 +40,7 @@ import net.sf.keystore_explorer.crypto.digest.DigestUtil;
 
 /**
  * Generator for public key identifiers of various forms.
- * 
+ *
  */
 public class KeyIdentifierGenerator {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/publickey/resources");
@@ -49,7 +49,7 @@ public class KeyIdentifierGenerator {
 
 	/**
 	 * Construct KeyIdentifierGenerator.
-	 * 
+	 *
 	 * @param publicKey
 	 *            Public key to generate identifiers for
 	 */
@@ -59,7 +59,7 @@ public class KeyIdentifierGenerator {
 
 	/**
 	 * Generate 160 bit hash key identifier.
-	 * 
+	 *
 	 * @return Key identifier
 	 * @throws CryptoException
 	 *             If generation fails
@@ -81,7 +81,7 @@ public class KeyIdentifierGenerator {
 
 	/**
 	 * Generate 64 bit hash key identifier.
-	 * 
+	 *
 	 * @return Key identifier
 	 * @throws CryptoException
 	 *             If generation fails
@@ -126,7 +126,7 @@ public class KeyIdentifierGenerator {
 		ASN1EncodableVector vec = new ASN1EncodableVector();
 		vec.add(new ASN1Integer(rsaPublicKey.getModulus()));
 		vec.add(new ASN1Integer(rsaPublicKey.getPublicExponent()));
-		
+
 		DERSequence derSequence = new DERSequence(vec);
 		return derSequence.getEncoded();
 	}

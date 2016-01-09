@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.version;
 
 /**
  * Represents a version exception.
- * 
+ *
  */
 public class VersionException extends RuntimeException {
 	/**
@@ -33,7 +33,7 @@ public class VersionException extends RuntimeException {
 
 	/**
 	 * Creates a new VersionException with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 */
@@ -44,7 +44,7 @@ public class VersionException extends RuntimeException {
 	/**
 	 * Creates a new VersionException with the specified message and cause
 	 * throwable.
-	 * 
+	 *
 	 * @param causeThrowable
 	 *            The throwable that caused this exception to be thrown
 	 * @param message
@@ -56,7 +56,7 @@ public class VersionException extends RuntimeException {
 
 	/**
 	 * Creates a new VersionException with the specified cause throwable.
-	 * 
+	 *
 	 * @param causeThrowable
 	 *            The throwable that caused this exception to be thrown
 	 */

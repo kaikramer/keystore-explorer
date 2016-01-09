@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit a Netscape Certificate Type extension.
- * 
+ *
  */
 public class DNetscapeCertificateType extends DExtension {
 	private static ResourceBundle res = ResourceBundle
@@ -80,7 +80,7 @@ public class DNetscapeCertificateType extends DExtension {
 
 	/**
 	 * Creates a new DNetscapeCertificateType dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 */
@@ -92,7 +92,7 @@ public class DNetscapeCertificateType extends DExtension {
 
 	/**
 	 * Creates a new DNetscapeCertificateType dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param value
@@ -158,6 +158,7 @@ public class DNetscapeCertificateType extends DExtension {
 
 		jbOK = new JButton(res.getString("DNetscapeCertificateType.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -165,6 +166,7 @@ public class DNetscapeCertificateType extends DExtension {
 
 		jbCancel = new JButton(res.getString("DNetscapeCertificateType.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -172,6 +174,7 @@ public class DNetscapeCertificateType extends DExtension {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -184,6 +187,7 @@ public class DNetscapeCertificateType extends DExtension {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -198,7 +202,7 @@ public class DNetscapeCertificateType extends DExtension {
 
 	private void prepopulateWithValue(byte[] value) throws IOException {
 		@SuppressWarnings("resource") // we have a ByteArrayInputStream here which does not need to be closed
-		DERBitString netscapeCertType = NetscapeCertType.getInstance(new ASN1InputStream(value).readObject());
+		DERBitString netscapeCertType = DERBitString.getInstance(new ASN1InputStream(value).readObject());
 
 		int netscapeCertTypes = netscapeCertType.intValue();
 
@@ -211,7 +215,7 @@ public class DNetscapeCertificateType extends DExtension {
 		jcbSmimeCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.smimeCA));
 		jcbObjectSigningCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.objectSigningCA));
 	}
-	
+
 	private boolean isCertType(int netscapeCertTypes, int certType) {
 		return ((netscapeCertTypes & certType) == certType);
 	}
@@ -271,9 +275,10 @@ public class DNetscapeCertificateType extends DExtension {
 
 	/**
 	 * Get extension value DER-encoded.
-	 * 
+	 *
 	 * @return Extension value
 	 */
+	@Override
 	public byte[] getValue() {
 		return value;
 	}

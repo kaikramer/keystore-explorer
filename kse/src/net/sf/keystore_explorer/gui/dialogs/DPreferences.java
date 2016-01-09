@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -62,6 +62,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.SecurityProvider;
@@ -82,7 +83,7 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
 /**
  * Dialog to allow the users to configure KeyStore Explorer's preferences.
- * 
+ *
  */
 public class DPreferences extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -137,7 +138,7 @@ public class DPreferences extends JEscDialog {
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
-	
+
 	private JPanel jpDefaultName;
 	private JLabel jlCommonName;
 	private JTextField jtfCommonName;
@@ -169,7 +170,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Creates a new DPreferences dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param useCaCertificates
@@ -231,10 +232,10 @@ public class DPreferences extends JEscDialog {
 				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpInternetProxy.image"))),
 				jpInternetProxy, res.getString("DPreferences.jpInternetProxy.tooltip"));
 
-		jtpPreferences.addTab(res.getString("DPreferences.jpDefaultName.text"), 
-				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpDefaultName.image"))), 
+		jtpPreferences.addTab(res.getString("DPreferences.jpDefaultName.text"),
+				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpDefaultName.image"))),
 				jpDefaultName, res.getString("DPreferences.jpDefaultName.tooltip"));
-		
+
 		jtpPreferences.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		if (!OperatingSystem.isMacOs()) {
@@ -247,6 +248,7 @@ public class DPreferences extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DPreferences.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DPreferences.this);
@@ -259,6 +261,7 @@ public class DPreferences extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DPreferences.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -266,6 +269,7 @@ public class DPreferences extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -278,6 +282,7 @@ public class DPreferences extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				cancelPressed(); // No save of settings
 			}
@@ -311,6 +316,7 @@ public class DPreferences extends JEscDialog {
 				res.getString("DPreferences.jbBrowseCaCertificatesFile.mnemonic").charAt(0));
 		jbBrowseCaCertificatesFile.setToolTipText(res.getString("DPreferences.jbBrowseCaCertificatesFile.tooltip"));
 		jbBrowseCaCertificatesFile.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DPreferences.this);
@@ -424,6 +430,7 @@ public class DPreferences extends JEscDialog {
 		jcbEnablePasswordQuality.setToolTipText(res.getString("DPreferences.jcbEnablePasswordQuality.tooltip"));
 
 		jcbEnablePasswordQuality.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				jcbEnforceMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected());
 				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
@@ -449,6 +456,7 @@ public class DPreferences extends JEscDialog {
 				.getString("DPreferences.jcbEnforceMinimumPasswordQuality.tooltip"));
 
 		jcbEnforceMinimumPasswordQuality.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
 						&& jcbEnforceMinimumPasswordQuality.isSelected());
@@ -609,6 +617,7 @@ public class DPreferences extends JEscDialog {
 				.charAt(0));
 
 		jrbManualProxyConfig.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				updateProxyControls();
 			}
@@ -760,6 +769,7 @@ public class DPreferences extends JEscDialog {
 				.getString("DPreferences.jrbAutomaticProxyConfig.mnemonic").charAt(0));
 
 		jrbAutomaticProxyConfig.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				updateProxyControls();
 			}
@@ -868,7 +878,7 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private void initDefaultNameTab() {
-		
+
 		jlCommonName = new JLabel(res.getString("DPreferences.jlCommonName.text"));
 		jtfCommonName = new JTextField(25);
 		jlOrganisationUnit = new JLabel(res.getString("DPreferences.jlOrganisationUnit.text"));
@@ -883,7 +893,7 @@ public class DPreferences extends JEscDialog {
 		jtfCountryCode = new JTextField(4);
 		jlEmailAddress = new JLabel(res.getString("DPreferences.jlEmailAddress.text"));
 		jtfEmailAddress = new JTextField(25);
-	
+
 		// layout
 		jpDefaultName = new JPanel();
 		jpDefaultName.setLayout(new MigLayout("insets dialog, fill", "[right][][]", "[]"));
@@ -906,24 +916,24 @@ public class DPreferences extends JEscDialog {
 		if (defaultDN != null) {
 			try {
 				X500Name x500Name = new X500Name(defaultDN);
-				populateRdnField(x500Name, jtfCommonName, KseX500NameStyle.CN);
-				populateRdnField(x500Name, jtfOrganisationUnit, KseX500NameStyle.OU);
-				populateRdnField(x500Name, jtfOrganisationName, KseX500NameStyle.O);
-				populateRdnField(x500Name, jtfLocalityName, KseX500NameStyle.L);
-				populateRdnField(x500Name, jtfStateName, KseX500NameStyle.ST);
-				populateRdnField(x500Name, jtfCountryCode, KseX500NameStyle.C);
-				populateRdnField(x500Name, jtfEmailAddress, KseX500NameStyle.E);
+				populateRdnField(x500Name, jtfCommonName, BCStyle.CN);
+				populateRdnField(x500Name, jtfOrganisationUnit, BCStyle.OU);
+				populateRdnField(x500Name, jtfOrganisationName, BCStyle.O);
+				populateRdnField(x500Name, jtfLocalityName, BCStyle.L);
+				populateRdnField(x500Name, jtfStateName, BCStyle.ST);
+				populateRdnField(x500Name, jtfCountryCode, BCStyle.C);
+				populateRdnField(x500Name, jtfEmailAddress, BCStyle.E);
 			} catch (Exception e) {
 				// reset invalid DN by leaving fields empty
 			}
 		}
 	}
-	
+
 	private void populateRdnField(X500Name distinguishedName, JTextField rdnField, ASN1ObjectIdentifier rdnOid) {
 		rdnField.setText(X500NameUtils.getRdn(distinguishedName, rdnOid));
 		rdnField.setCaretPosition(0);
 	}
-	
+
 	private void updateProxyControls() {
 		if (jrbManualProxyConfig.isSelected()) {
 			jtfHttpHost.setEnabled(true);
@@ -975,11 +985,11 @@ public class DPreferences extends JEscDialog {
 		lookFeelInfo = lookFeelInfoList.get(selectedIndex);
 
 		lookFeelDecorated = jcbLookFeelDecorated.isSelected();
-		
+
 		// These may fail:
 		boolean returnValue = storeDefaultDN();
-		returnValue &= storeProxyPreferences(); 
-		
+		returnValue &= storeProxyPreferences();
+
 		return returnValue;
 	}
 
@@ -1131,7 +1141,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Get whether or not the usage of CA Certificates has been chosen.
-	 * 
+	 *
 	 * @return True if it has, false otherwise
 	 */
 	public boolean getUseCaCertificates() {
@@ -1140,7 +1150,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Get the chosen CA Certificates KeyStore file.
-	 * 
+	 *
 	 * @return The chosen CA Certificates KeyStore file
 	 */
 	public File getCaCertificatesFile() {
@@ -1150,7 +1160,7 @@ public class DPreferences extends JEscDialog {
 	/**
 	 * Get whether or not the usage of Windows Trusted Root Certificates has
 	 * been chosen.
-	 * 
+	 *
 	 * @return True if it has, false otherwise
 	 */
 	public boolean getUseWinTrustRootCertificates() {
@@ -1160,7 +1170,7 @@ public class DPreferences extends JEscDialog {
 	/**
 	 * Get whether or not trust checks are enabled when importing Trusted
 	 * Certificates.
-	 * 
+	 *
 	 * @return True if they are, false otherwise
 	 */
 	public boolean getEnableImportTrustedCertTrustCheck() {
@@ -1169,7 +1179,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Get whether or not trust checks are enabled when importing CA Replies.
-	 * 
+	 *
 	 * @return True if they are, false otherwise
 	 */
 	public boolean getEnableImportCaReplyTrustCheck() {
@@ -1178,7 +1188,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Get the chosen password quality confiruration settings.
-	 * 
+	 *
 	 * @return Password quality configuration settings
 	 */
 	public PasswordQualityConfig getPasswordQualityConfig() {
@@ -1187,7 +1197,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Get the chosen look & feel information.
-	 * 
+	 *
 	 * @return The chosen look & feel information
 	 */
 	public UIManager.LookAndFeelInfo getLookFeelInfo() {
@@ -1196,7 +1206,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Get whether or not the look & feel should be used for window decoration.
-	 * 
+	 *
 	 * @return True id it should, false otherwise.
 	 */
 	public boolean getLookFeelDecoration() {
@@ -1209,7 +1219,7 @@ public class DPreferences extends JEscDialog {
 
 	/**
 	 * Was the dialog cancelled (ie were no settings made).
-	 * 
+	 *
 	 * @return True f it was cancelled
 	 */
 	public boolean wasCancelled() {

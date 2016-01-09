@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -66,6 +66,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerListModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -78,7 +79,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Dialog to choose a date/time value.
- * 
+ *
  */
 public class DDateTimeChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/datetime/resources");
@@ -155,7 +156,7 @@ public class DDateTimeChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DDateTimeChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -170,7 +171,7 @@ public class DDateTimeChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DDateTimeChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -186,6 +187,7 @@ public class DDateTimeChooser extends JEscDialog {
 	private void initComponents(Date date) {
 		jcbMonth = new JComboBox(MONTH_NAMES);
 		jcbMonth.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				update();
 			}
@@ -193,6 +195,7 @@ public class DDateTimeChooser extends JEscDialog {
 
 		jsYear = new JSpinner(new SpinnerListModel(YEARS));
 		jsYear.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent evt) {
 				update();
 			}
@@ -200,7 +203,7 @@ public class DDateTimeChooser extends JEscDialog {
 
 		jlDaysOfMonth = new JLabel[7][7];
 		for (int i = 0; i < 7; i++) {
-			jlDaysOfMonth[0][i] = new JLabel(DAY_NAMES[i], JLabel.RIGHT);
+			jlDaysOfMonth[0][i] = new JLabel(DAY_NAMES[i], SwingConstants.RIGHT);
 			jlDaysOfMonth[0][i].setOpaque(true);
 			jlDaysOfMonth[0][i].setForeground(WEEK_DAY_FOREGROUND);
 			jlDaysOfMonth[0][i].setBackground(WEEK_DAY_BACKGROUND);
@@ -209,11 +212,12 @@ public class DDateTimeChooser extends JEscDialog {
 
 		for (int i = 1; i < 7; i++) {
 			for (int j = 0; j < 7; j++) {
-				jlDaysOfMonth[i][j] = new JLabel(EMPTY_DAY, JLabel.RIGHT);
+				jlDaysOfMonth[i][j] = new JLabel(EMPTY_DAY, SwingConstants.RIGHT);
 				jlDaysOfMonth[i][j].setOpaque(true);
 				jlDaysOfMonth[i][j].setForeground(DAY_FOREGROUND);
 				jlDaysOfMonth[i][j].setBackground(DAY_BACKGROUND);
 				jlDaysOfMonth[i][j].addMouseListener(new MouseAdapter() {
+					@Override
 					public void mouseClicked(MouseEvent evt) {
 						selectDay((JLabel) evt.getSource());
 					}
@@ -234,16 +238,19 @@ public class DDateTimeChooser extends JEscDialog {
 		jpDaysOfMonth.setFocusable(true);
 
 		jpDaysOfMonth.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent evt) {
 				setSelectedDay(jlSelectedDayOfMonth);
 			}
 
+			@Override
 			public void focusLost(FocusEvent evt) {
 				setSelectedDay(jlSelectedDayOfMonth);
 			}
 		});
 
 		jpDaysOfMonth.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent evt) {
 				calendarKeyboardNavigation(evt);
 			}
@@ -277,6 +284,7 @@ public class DDateTimeChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DDateTimeChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -284,6 +292,7 @@ public class DDateTimeChooser extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DDateTimeChooser.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -291,6 +300,7 @@ public class DDateTimeChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -317,7 +327,7 @@ public class DDateTimeChooser extends JEscDialog {
 
 	/**
 	 * Get selected date.
-	 * 
+	 *
 	 * @return Date, or null if none
 	 */
 	public Date getDate() {
@@ -484,6 +494,7 @@ public class DDateTimeChooser extends JEscDialog {
 			return time;
 		}
 
+		@Override
 		public String toString() {
 			String str = "" + time;
 
@@ -507,12 +518,15 @@ public class DDateTimeChooser extends JEscDialog {
 			this.cols = cols;
 		}
 
+		@Override
 		public void addLayoutComponent(String name, Component child) {
 		}
 
+		@Override
 		public void removeLayoutComponent(Component child) {
 		}
 
+		@Override
 		public Dimension preferredLayoutSize(Container parent) {
 			synchronized (parent.getTreeLock()) {
 				Insets insets = parent.getInsets();
@@ -540,6 +554,7 @@ public class DDateTimeChooser extends JEscDialog {
 			}
 		}
 
+		@Override
 		public Dimension minimumLayoutSize(Container parent) {
 			synchronized (parent.getTreeLock()) {
 				Insets insets = parent.getInsets();
@@ -567,6 +582,7 @@ public class DDateTimeChooser extends JEscDialog {
 			}
 		}
 
+		@Override
 		public void layoutContainer(Container parent) {
 			synchronized (parent.getTreeLock()) {
 				Insets insets = parent.getInsets();

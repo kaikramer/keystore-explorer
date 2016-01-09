@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,7 +30,7 @@ import javax.swing.JMenuItem;
  * mnemonic that reflects the menu items position in the list of recent files.
  * An action listener should be added to actually open the file. Other listeners
  * can be added as required to respond to other types of event.
- * 
+ *
  */
 public class JMenuItemRecentFile extends JMenuItem {
 	private JMenuRecentFiles jmRecentFiles;
@@ -39,7 +39,7 @@ public class JMenuItemRecentFile extends JMenuItem {
 
 	/**
 	 * Construct a JMenuItemRecentFile.
-	 * 
+	 *
 	 * @param jmRecentFiles
 	 *            Recent files menu
 	 * @param recentFile
@@ -55,7 +55,7 @@ public class JMenuItemRecentFile extends JMenuItem {
 
 	/**
 	 * Get the recent files menu.
-	 * 
+	 *
 	 * @return The recent files manu
 	 */
 	public JMenuRecentFiles getRecentFilesMenu() {
@@ -64,7 +64,7 @@ public class JMenuItemRecentFile extends JMenuItem {
 
 	/**
 	 * Get the recent file.
-	 * 
+	 *
 	 * @return The recent file
 	 */
 	public File getFile() {
@@ -74,7 +74,7 @@ public class JMenuItemRecentFile extends JMenuItem {
 	/**
 	 * Get the menu item's position in its recent file list (maintained by
 	 * JMenuRecentFiles).
-	 * 
+	 *
 	 * @return Position
 	 */
 	public int getPosition() {

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -60,7 +60,7 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
 /**
  * Component to edit a set of general names.
- * 
+ *
  */
 public class JGeneralNames extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/generalname/resources");
@@ -78,7 +78,7 @@ public class JGeneralNames extends JPanel {
 
 	/**
 	 * Construct a JGeneralNames.
-	 * 
+	 *
 	 * @param title
 	 *            Title of edit dialog
 	 */
@@ -95,6 +95,7 @@ public class JGeneralNames extends JPanel {
 		jbAdd.setMnemonic(res.getString("JGeneralNames.jbAdd.mnemonic").charAt(0));
 
 		jbAdd.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralNames.this);
@@ -114,6 +115,7 @@ public class JGeneralNames extends JPanel {
 		jbEdit.setEnabled(false);
 
 		jbEdit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralNames.this);
@@ -133,6 +135,7 @@ public class JGeneralNames extends JPanel {
 		jbRemove.setEnabled(false);
 
 		jbRemove.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralNames.this);
@@ -176,6 +179,7 @@ public class JGeneralNames extends JPanel {
 		ListSelectionModel selectionModel = jtGeneralNames.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		selectionModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent evt) {
 				if (!evt.getValueIsAdjusting()) {
 					updateButtonControls();
@@ -184,6 +188,7 @@ public class JGeneralNames extends JPanel {
 		});
 
 		jtGeneralNames.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				maybeEditGeneralName(evt);
 			}
@@ -192,6 +197,7 @@ public class JGeneralNames extends JPanel {
 		jtGeneralNames.addKeyListener(new KeyAdapter() {
 			boolean deleteLastPressed = false;
 
+			@Override
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
@@ -199,6 +205,7 @@ public class JGeneralNames extends JPanel {
 				}
 			}
 
+			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
 				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
@@ -212,6 +219,7 @@ public class JGeneralNames extends JPanel {
 				}
 			}
 
+			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
 				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
@@ -239,7 +247,7 @@ public class JGeneralNames extends JPanel {
 
 	/**
 	 * Get general names.
-	 * 
+	 *
 	 * @return General names
 	 */
 	public GeneralNames getGeneralNames() {
@@ -248,7 +256,7 @@ public class JGeneralNames extends JPanel {
 
 	/**
 	 * Set general names.
-	 * 
+	 *
 	 * @param generalNames
 	 *            General names
 	 */
@@ -259,10 +267,11 @@ public class JGeneralNames extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 
@@ -271,10 +280,11 @@ public class JGeneralNames extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jspGeneralNames.setToolTipText(toolTipText);
@@ -318,7 +328,7 @@ public class JGeneralNames extends JPanel {
 		populate();
 		selectGeneralNameInTable(newGeneralName);
 	}
-	
+
 	private void removePressed() {
 		removeSelectedGeneralName();
 	}
@@ -445,7 +455,7 @@ public class JGeneralNames extends JPanel {
 
 	private GeneralNames removeGeneralName(GeneralName toBeRemoved, GeneralNames generalNames) {
 		GeneralName[] names = generalNames.getNames();
-		
+
 		// sanity check: is toBeRemoved part of names?
 		boolean found = false;
 		for (int i = 0; i < names.length; i++) {
@@ -454,11 +464,11 @@ public class JGeneralNames extends JPanel {
 				break;
 			}
 		}
-		
+
 		if (!found) {
 			return generalNames;
 		}
-		
+
 		// copy to new array
 		GeneralName[] newNames = new GeneralName[names.length - 1];
 		for (int i = 0; i < newNames.length; i++) {
@@ -468,7 +478,7 @@ public class JGeneralNames extends JPanel {
 				newNames[i] = names[i];
 			}
 		}
-		
+
 		return new GeneralNames(newNames);
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,14 +31,14 @@ import javax.swing.tree.TreeNode;
 
 /**
  * Custom cell renderer for the cells of the DProperties tree.
- * 
+ *
  */
 public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
 	/**
 	 * Returns the rendered cell for the supplied value.
-	 * 
+	 *
 	 * @param jtrProperties
 	 *            The JTree
 	 * @param value
@@ -55,6 +55,7 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTreeCellRendererComponent(JTree jtrProperties, Object value, boolean isSelected,
 			boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
 		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrProperties, value, isSelected, isExpanded, leaf,
@@ -67,8 +68,8 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 		ImageIcon icon = null;
 
 		if (node.getLevel() == 1) // Second level - keystore main properties and
-									// "keys", "key pairs"
-									// and "trusted certificates"
+			// "keys", "key pairs"
+			// and "trusted certificates"
 		{
 			TreeNode parent = node.getParent();
 			int index = parent.getIndex(node);
@@ -91,10 +92,10 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 		{
 			icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Entry.image")));
 		} else if (node.getLevel() == 3) // Fourth level - includes private
-											// keys, certificates of key
-											// pairs, public keys of trusted
-											// certificates and keys within
-											// key entries of all types
+			// keys, certificates of key
+			// pairs, public keys of trusted
+			// certificates and keys within
+			// key entries of all types
 		{
 			if (value.toString().equals(res.getString("DProperties.properties.PrivateKey"))) {
 				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.PrivateKey.image")));
@@ -110,8 +111,8 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Default.image")));
 			}
 		} else if (node.getLevel() == 5) // Sixth level - includes public keys
-											// of key pair
-											// certificates
+			// of key pair
+			// certificates
 		{
 			if (value.toString().equals(res.getString("DProperties.properties.PublicKey"))) {
 				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.PublicKey.image")));

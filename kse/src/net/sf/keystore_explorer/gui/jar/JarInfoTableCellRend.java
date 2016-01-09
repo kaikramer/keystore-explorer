@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,14 +30,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Custom cell renderer for the cells of the Jar Information table of DJarInfo.
- * 
+ *
  */
 public class JarInfoTableCellRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/jar/resources");
 
 	/**
 	 * Returns the rendered cell for the supplied value and column.
-	 * 
+	 *
 	 * @param jtJarInfo
 	 *            The JTable
 	 * @param value
@@ -52,6 +52,7 @@ public class JarInfoTableCellRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtJarInfo, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtJarInfo, value, isSelected, hasFocus, row, col);

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,14 +34,14 @@ import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 
 /**
  * Custom cell renderer for the cells of the DViewCertificate tree.
- * 
+ *
  */
 public class CertificateTreeCellRend extends DefaultTreeCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
 	/**
 	 * Returns the rendered cell for the supplied value.
-	 * 
+	 *
 	 * @param jtrHierarchy
 	 *            The JTree
 	 * @param value
@@ -58,6 +58,7 @@ public class CertificateTreeCellRend extends DefaultTreeCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTreeCellRendererComponent(JTree jtrHierarchy, Object value, boolean isSelected,
 			boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
 		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrHierarchy, value, isSelected, isExpanded, leaf,

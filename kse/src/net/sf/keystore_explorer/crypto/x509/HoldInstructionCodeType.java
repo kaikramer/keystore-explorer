@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,9 +23,9 @@ package net.sf.keystore_explorer.crypto.x509;
 import java.util.ResourceBundle;
 
 /**
- * 
+ *
  * Enumeration of Hold Instruction Codes (2.5.29.23).
- * 
+ *
  */
 public enum HoldInstructionCodeType {
 	NONE("1.2.840.10040.2.1", "HoldInstructionCodeNone"), CALL_ISSUER("1.2.840.10040.2.2",
@@ -42,7 +42,7 @@ public enum HoldInstructionCodeType {
 
 	/**
 	 * Get type's friendly name.
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	public String friendly() {
@@ -51,7 +51,7 @@ public enum HoldInstructionCodeType {
 
 	/**
 	 * Resolve the supplied object identifier to a matching type.
-	 * 
+	 *
 	 * @param oid
 	 *            Object identifier
 	 * @return Type or null if none
@@ -68,7 +68,7 @@ public enum HoldInstructionCodeType {
 
 	/**
 	 * Get Hold Instruction Code's Object Identifier.
-	 * 
+	 *
 	 * @return Object Identifier
 	 */
 	public String oid() {

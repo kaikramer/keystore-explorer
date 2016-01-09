@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -35,11 +35,11 @@ public enum CryptoFileType {
 	/** PKCS #12 KeyStore */
 	PKCS12_KS("CryptoFileType.Pkcs12Ks"),
 
-    /** BKS-V1 KeyStore */
-    BKS_V1_KS("CryptoFileType.BksV1Ks"),
+	/** BKS-V1 KeyStore */
+	BKS_V1_KS("CryptoFileType.BksV1Ks"),
 
-    /** BKS KeyStore */
-    BKS_KS("CryptoFileType.BksKs"),
+	/** BKS KeyStore */
+	BKS_KS("CryptoFileType.BksKs"),
 
 	/** UBER KeyStore */
 	UBER_KS("CryptoFileType.UberKs"),

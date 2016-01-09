@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -38,114 +38,114 @@ import javax.net.ssl.SSLSocketFactory;
  */
 public class CustomSslSocketFactory extends SSLSocketFactory {
 
-    private final SSLSocketFactory sslSocketFactory;
+	private final SSLSocketFactory sslSocketFactory;
 
-    private HandshakeCompletedListener handshakeListener;
+	private HandshakeCompletedListener handshakeListener;
 
-    private boolean sniEnabled;
+	private boolean sniEnabled;
 
-    /**
-     * Constructor
-     *
-     * @param sslSocketFactory The actual SSLSocketFactory (used by this class)
-     * @param handshakeListener The class that handles "handshake completed" events
-     */
-    public CustomSslSocketFactory(SSLSocketFactory sslSocketFactory, HandshakeCompletedListener handshakeListener,
-            boolean sniEnabled) {
-        this.sslSocketFactory = sslSocketFactory;
-        this.handshakeListener = handshakeListener;
-        this.sniEnabled = sniEnabled;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param sslSocketFactory The actual SSLSocketFactory (used by this class)
+	 * @param handshakeListener The class that handles "handshake completed" events
+	 */
+	public CustomSslSocketFactory(SSLSocketFactory sslSocketFactory, HandshakeCompletedListener handshakeListener,
+			boolean sniEnabled) {
+		this.sslSocketFactory = sslSocketFactory;
+		this.handshakeListener = handshakeListener;
+		this.sniEnabled = sniEnabled;
+	}
 
-    @Override
-    public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+	@Override
+	public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
 
-        SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(s, host, port, autoClose);
+		SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(s, host, port, autoClose);
 
-        if (!sniEnabled) {
-            disableSNI(socket);
-        }
+		if (!sniEnabled) {
+			disableSNI(socket);
+		}
 
-        if (this.handshakeListener != null) {
-            socket.addHandshakeCompletedListener(this.handshakeListener);
-        }
+		if (this.handshakeListener != null) {
+			socket.addHandshakeCompletedListener(this.handshakeListener);
+		}
 
-        return socket;
-    }
+		return socket;
+	}
 
-    private void disableSNI(SSLSocket socket) {
-        // effectively disable SNI by passing an empty server name list (works only in Java 8 or higher)
-        SSLParameters sslParameters = socket.getSSLParameters();
-        Method setServerNamesMethod;
-        try {
-            setServerNamesMethod = sslParameters.getClass().getMethod("setServerNames", List.class);
-            setServerNamesMethod.invoke(sslParameters, new ArrayList<Object>());
-            socket.setSSLParameters(sslParameters);
-        } catch (Exception e) {
-            // Java 6/7, nothing we can do here (setting jsse.enableSNIExtension wouldn't work here anymore)
-        }
-    }
+	private void disableSNI(SSLSocket socket) {
+		// effectively disable SNI by passing an empty server name list (works only in Java 8 or higher)
+		SSLParameters sslParameters = socket.getSSLParameters();
+		Method setServerNamesMethod;
+		try {
+			setServerNamesMethod = sslParameters.getClass().getMethod("setServerNames", List.class);
+			setServerNamesMethod.invoke(sslParameters, new ArrayList<Object>());
+			socket.setSSLParameters(sslParameters);
+		} catch (Exception e) {
+			// Java 6/7, nothing we can do here (setting jsse.enableSNIExtension wouldn't work here anymore)
+		}
+	}
 
-    @Override
-    public Socket createSocket(String paramString, int paramInt) throws IOException, UnknownHostException {
+	@Override
+	public Socket createSocket(String paramString, int paramInt) throws IOException, UnknownHostException {
 
-        SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramString, paramInt);
+		SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramString, paramInt);
 
-        if (this.handshakeListener != null) {
-            socket.addHandshakeCompletedListener(this.handshakeListener);
-        }
+		if (this.handshakeListener != null) {
+			socket.addHandshakeCompletedListener(this.handshakeListener);
+		}
 
-        return socket;
-    }
+		return socket;
+	}
 
-    @Override
-    public Socket createSocket(String paramString, int paramInt1, InetAddress paramInetAddress, int paramInt2)
-            throws IOException, UnknownHostException {
+	@Override
+	public Socket createSocket(String paramString, int paramInt1, InetAddress paramInetAddress, int paramInt2)
+			throws IOException, UnknownHostException {
 
-        SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramString, paramInt1, paramInetAddress,
-                paramInt2);
+		SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramString, paramInt1, paramInetAddress,
+				paramInt2);
 
-        if (this.handshakeListener != null) {
-            socket.addHandshakeCompletedListener(this.handshakeListener);
-        }
+		if (this.handshakeListener != null) {
+			socket.addHandshakeCompletedListener(this.handshakeListener);
+		}
 
-        return socket;
-    }
+		return socket;
+	}
 
-    @Override
-    public Socket createSocket(InetAddress paramInetAddress, int paramInt) throws IOException {
+	@Override
+	public Socket createSocket(InetAddress paramInetAddress, int paramInt) throws IOException {
 
-        SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramInetAddress, paramInt);
+		SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramInetAddress, paramInt);
 
-        if (this.handshakeListener != null) {
-            socket.addHandshakeCompletedListener(this.handshakeListener);
-        }
+		if (this.handshakeListener != null) {
+			socket.addHandshakeCompletedListener(this.handshakeListener);
+		}
 
-        return socket;
-    }
+		return socket;
+	}
 
-    @Override
-    public Socket createSocket(InetAddress paramInetAddress1, int paramInt1, InetAddress paramInetAddress2,
-            int paramInt2) throws IOException {
+	@Override
+	public Socket createSocket(InetAddress paramInetAddress1, int paramInt1, InetAddress paramInetAddress2,
+			int paramInt2) throws IOException {
 
-        SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramInetAddress1, paramInt1,
-                paramInetAddress2, paramInt2);
+		SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramInetAddress1, paramInt1,
+				paramInetAddress2, paramInt2);
 
-        if (this.handshakeListener != null) {
-            socket.addHandshakeCompletedListener(this.handshakeListener);
-        }
+		if (this.handshakeListener != null) {
+			socket.addHandshakeCompletedListener(this.handshakeListener);
+		}
 
-        return socket;
-    }
+		return socket;
+	}
 
-    @Override
-    public String[] getDefaultCipherSuites() {
-        return this.sslSocketFactory.getDefaultCipherSuites();
-    }
+	@Override
+	public String[] getDefaultCipherSuites() {
+		return this.sslSocketFactory.getDefaultCipherSuites();
+	}
 
-    @Override
-    public String[] getSupportedCipherSuites() {
-        return this.sslSocketFactory.getSupportedCipherSuites();
-    }
+	@Override
+	public String[] getSupportedCipherSuites() {
+		return this.sslSocketFactory.getSupportedCipherSuites();
+	}
 
 }

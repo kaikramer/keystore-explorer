@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,7 +37,7 @@ import net.sf.keystore_explorer.gui.KseFrame;
 
 /**
  * Listens for KeyStore entry drag gestures and starts the drag off if valid.
- * 
+ *
  */
 public class KeyStoreEntryDragGestureListener extends DragSourceAdapter implements DragGestureListener {
 	private KseFrame kseFrame;
@@ -45,7 +45,7 @@ public class KeyStoreEntryDragGestureListener extends DragSourceAdapter implemen
 
 	/**
 	 * Construct KeyStoreEntryDragGestureListener.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -55,10 +55,11 @@ public class KeyStoreEntryDragGestureListener extends DragSourceAdapter implemen
 
 	/**
 	 * Drag gesture recognized. Start the drag off if valid.
-	 * 
+	 *
 	 * @param evt
 	 *            Drag gesture event
 	 */
+	@Override
 	public void dragGestureRecognized(DragGestureEvent evt) {
 		DragEntry dragEntry = kseFrame.dragSelectedEntry();
 
@@ -80,10 +81,11 @@ public class KeyStoreEntryDragGestureListener extends DragSourceAdapter implemen
 
 	/**
 	 * Drag target entered.
-	 * 
+	 *
 	 * @param evt
 	 *            Drag event
 	 */
+	@Override
 	public void dragEnter(DragSourceDragEvent evt) {
 		// Show drag cursor
 		DragSourceContext ctx = evt.getDragSourceContext();
@@ -92,7 +94,7 @@ public class KeyStoreEntryDragGestureListener extends DragSourceAdapter implemen
 
 	/**
 	 * Drag target exited.
-	 * 
+	 *
 	 * @param evt
 	 *            Drag event
 	 */

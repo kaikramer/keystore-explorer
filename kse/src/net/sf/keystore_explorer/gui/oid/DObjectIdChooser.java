@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,7 +53,7 @@ import net.sf.keystore_explorer.utilities.oid.ObjectIdUtil;
 
 /**
  * Dialog to choose an object identifier.
- * 
+ *
  */
 public class DObjectIdChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/oid/resources");
@@ -75,7 +75,7 @@ public class DObjectIdChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DObjectIdChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -92,7 +92,7 @@ public class DObjectIdChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DObjectIdChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -127,6 +127,7 @@ public class DObjectIdChooser extends JEscDialog {
 		populateSecondArc();
 
 		jcbFirstArc.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent e) {
 				populateSecondArc();
 			}
@@ -146,6 +147,7 @@ public class DObjectIdChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DObjectIdChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -153,6 +155,7 @@ public class DObjectIdChooser extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DObjectIdChooser.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -160,6 +163,7 @@ public class DObjectIdChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -212,7 +216,7 @@ public class DObjectIdChooser extends JEscDialog {
 		if ((firstArc == 0) || (firstArc == 1)) {
 			maxSecondArc = 39;
 		} else
-		// firstArc == 2
+			// firstArc == 2
 		{
 			maxSecondArc = 47;
 		}
@@ -232,7 +236,7 @@ public class DObjectIdChooser extends JEscDialog {
 
 	/**
 	 * Get selected object identifier name.
-	 * 
+	 *
 	 * @return Object identifier, or null if none
 	 */
 	public ASN1ObjectIdentifier getObjectId() {

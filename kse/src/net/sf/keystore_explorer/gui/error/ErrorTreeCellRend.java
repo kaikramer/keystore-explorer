@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,14 +30,14 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
  * Custom cell renderer for the cells of the DErrorDetail tree.
- * 
+ *
  */
 public class ErrorTreeCellRend extends DefaultTreeCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/error/resources");
 
 	/**
 	 * Returns the rendered cell for the supplied value.
-	 * 
+	 *
 	 * @param jtrError
 	 *            The JTree
 	 * @param value
@@ -54,6 +54,7 @@ public class ErrorTreeCellRend extends DefaultTreeCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTreeCellRendererComponent(JTree jtrError, Object value, boolean isSelected, boolean isExpanded,
 			boolean leaf, int row, boolean hasFocus) {
 		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrError, value, isSelected, isExpanded, leaf, row,

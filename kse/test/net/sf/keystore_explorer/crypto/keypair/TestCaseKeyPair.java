@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,7 +28,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  * Abstract base class for all key pair test cases. Sets up test key pairs.
- * 
+ *
  */
 public abstract class TestCaseKeyPair extends TestCaseCrypto {
 	protected static KeyPair rsaKeyPair;

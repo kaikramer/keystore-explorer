@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,7 +23,7 @@ import net.sf.keystore_explorer.crypto.CryptoException;
 
 /**
  * Represents an SPKAC exception.
- * 
+ *
  */
 public class SpkacException extends CryptoException {
 	/**
@@ -35,7 +35,7 @@ public class SpkacException extends CryptoException {
 
 	/**
 	 * Creates a new SpkacException with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 */
@@ -46,7 +46,7 @@ public class SpkacException extends CryptoException {
 	/**
 	 * Creates a new SpkacException with the specified message and cause
 	 * throwable.
-	 * 
+	 *
 	 * @param message
 	 *            Exception message
 	 * @param causeThrowable
@@ -58,7 +58,7 @@ public class SpkacException extends CryptoException {
 
 	/**
 	 * Creates a new SpkacException with the specified cause throwable.
-	 * 
+	 *
 	 * @param causeThrowable
 	 *            The throwable that caused this exception to be thrown
 	 */

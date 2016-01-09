@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -57,7 +57,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
  * Dialog to choose a user notice.
- * 
+ *
  */
 public class DUserNoticeChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -82,7 +82,7 @@ public class DUserNoticeChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DUserNoticeChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -97,7 +97,7 @@ public class DUserNoticeChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DUserNoticeChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -181,6 +181,7 @@ public class DUserNoticeChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DUserNoticeChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -188,6 +189,7 @@ public class DUserNoticeChooser extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DUserNoticeChooser.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -195,6 +197,7 @@ public class DUserNoticeChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -262,7 +265,7 @@ public class DUserNoticeChooser extends JEscDialog {
 
 	/**
 	 * Get selected user notice.
-	 * 
+	 *
 	 * @return User notice, or null if none
 	 */
 	public UserNotice getUserNotice() {

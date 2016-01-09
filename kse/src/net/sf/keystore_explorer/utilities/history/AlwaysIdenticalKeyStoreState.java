@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,10 +28,10 @@ import net.sf.keystore_explorer.crypto.Password;
 
 /**
  * Special version of KeyStoreState for KeyStores that cannot be copied (like PKCS#11).
- * 
+ *
  */
 public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
-	
+
 	/** Resource bundle */
 	protected static ResourceBundle res = ResourceBundle
 			.getBundle("net/sf/keystore_explorer/utilities/history/resources");
@@ -45,7 +45,7 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
 
 	/**
 	 * Create a new state.
-	 * 
+	 *
 	 * @param history
 	 *            History
 	 * @param keyStore
@@ -56,7 +56,7 @@ public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
 	AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KeyStore keyStore, Password password) {
 		super(history, keyStore, password);
 	}
-	
+
 	@Override
 	public boolean isSavedState() {
 		return true;

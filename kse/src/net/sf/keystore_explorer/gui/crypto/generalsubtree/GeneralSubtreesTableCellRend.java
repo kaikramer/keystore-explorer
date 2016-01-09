@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,12 +32,12 @@ import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
 
 /**
  * Custom cell renderer for the cells of the general subtrees table.
- * 
+ *
  */
 public class GeneralSubtreesTableCellRend extends DefaultTableCellRenderer {
 	/**
 	 * Returns the rendered cell.
-	 * 
+	 *
 	 * @param jtGeneralSubtrees
 	 *            The JTable
 	 * @param value
@@ -52,6 +52,7 @@ public class GeneralSubtreesTableCellRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtGeneralSubtrees, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtGeneralSubtrees, value, isSelected, hasFocus, row,

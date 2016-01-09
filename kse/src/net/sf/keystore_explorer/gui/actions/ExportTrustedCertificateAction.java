@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -47,57 +47,58 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
  */
 public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 
-    private X509Certificate certFromConstructor;
+	private X509Certificate certFromConstructor;
 
-    /**
-     * Construct action.
-     *
-     * @param kseFrame
-     *            KeyStore Explorer frame
-     */
-    public ExportTrustedCertificateAction(KseFrame kseFrame) {
-        this(kseFrame, null);
-    }
+	/**
+	 * Construct action.
+	 *
+	 * @param kseFrame
+	 *            KeyStore Explorer frame
+	 */
+	public ExportTrustedCertificateAction(KseFrame kseFrame) {
+		this(kseFrame, null);
+	}
 
-    /**
-     * Construct action.
-     *
-     * @param kseFrame
-     *            KeyStore Explorer frame
-     * @param cert
-     *            Certificate to be exported. If null, the currently selected keystore entry is used.
-     */
-    public ExportTrustedCertificateAction(KseFrame kseFrame, X509Certificate cert) {
-        super(kseFrame);
+	/**
+	 * Construct action.
+	 *
+	 * @param kseFrame
+	 *            KeyStore Explorer frame
+	 * @param cert
+	 *            Certificate to be exported. If null, the currently selected keystore entry is used.
+	 */
+	public ExportTrustedCertificateAction(KseFrame kseFrame, X509Certificate cert) {
+		super(kseFrame);
 
-        this.certFromConstructor = cert;
+		this.certFromConstructor = cert;
 
-        putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificateAction.statusbar"));
-        putValue(NAME, res.getString("ExportTrustedCertificateAction.text"));
-        putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificateAction.tooltip"));
-        putValue(
-                SMALL_ICON,
-                new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-                        getClass().getResource(res.getString("ExportTrustedCertificateAction.image")))));
-    }
+		putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificateAction.statusbar"));
+		putValue(NAME, res.getString("ExportTrustedCertificateAction.text"));
+		putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificateAction.tooltip"));
+		putValue(
+				SMALL_ICON,
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
+						getClass().getResource(res.getString("ExportTrustedCertificateAction.image")))));
+	}
 
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		File exportFile = null;
 
 		try {
-		    DExportCertificates dExportCertificates = null;
-		    X509Certificate cert = null;
-		    if (certFromConstructor == null) {
-		        String alias = kseFrame.getSelectedEntryAlias();
-                dExportCertificates = new DExportCertificates(frame, alias, false);
-                cert = getCertificate(alias);
-		    } else {
-		        cert = certFromConstructor;
-		        dExportCertificates = new DExportCertificates(frame, X509CertUtil.getCertificateAlias(cert), false);
-		    }
+			DExportCertificates dExportCertificates = null;
+			X509Certificate cert = null;
+			if (certFromConstructor == null) {
+				String alias = kseFrame.getSelectedEntryAlias();
+				dExportCertificates = new DExportCertificates(frame, alias, false);
+				cert = getCertificate(alias);
+			} else {
+				cert = certFromConstructor;
+				dExportCertificates = new DExportCertificates(frame, X509CertUtil.getCertificateAlias(cert), false);
+			}
 
 			dExportCertificates.setLocationRelativeTo(frame);
 			dExportCertificates.setVisible(true);

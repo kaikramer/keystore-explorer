@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,34 +25,34 @@ import org.bouncycastle.asn1.ASN1Primitive;
 
 /**
  * InhibitAnyPolicy extension from RFC 5280.
- * 
+ *
  * <pre>
  * id-ce-inhibitAnyPolicy OBJECT IDENTIFIER ::=  { id-ce 54 }
- * 
+ *
  * InhibitAnyPolicy ::= SkipCerts
- * 
+ *
  * SkipCerts ::= INTEGER (0..MAX)
  * </pre>
- * 
+ *
  */
 public class InhibitAnyPolicy extends ASN1Object {
-	
+
 	int skipCerts;
-        
-    /**
-     * Creates an new instance with the given skipCerts.
-     */
+
+	/**
+	 * Creates an new instance with the given skipCerts.
+	 */
 	public InhibitAnyPolicy(int skipCerts) {
 		this.skipCerts = skipCerts;
 	}
-    
-    /**
-     * Returns the value of skipCerts.
-     */
-    public int getSkipCerts(){
-        return skipCerts;
-    }
-    
+
+	/**
+	 * Returns the value of skipCerts.
+	 */
+	public int getSkipCerts(){
+		return skipCerts;
+	}
+
 	public static InhibitAnyPolicy getInstance(Object obj) {
 		if (obj instanceof InhibitAnyPolicy) {
 			return (InhibitAnyPolicy) obj;
@@ -67,7 +67,7 @@ public class InhibitAnyPolicy extends ASN1Object {
 		}
 		throw new IllegalArgumentException("illegal object in getInstance: " + obj.getClass().getName());
 	}
-	
+
 	@Override
 	public ASN1Primitive toASN1Primitive() {
 		return new ASN1Integer(skipCerts);

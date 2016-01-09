@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,14 +23,14 @@ import java.util.ArrayList;
 
 /**
  * PEM header attributes.
- * 
+ *
  */
 public class PemAttributes {
 	private ArrayList<PemAttribute> attributes = new ArrayList<PemAttribute>();
 
 	/**
 	 * Add an attribute.
-	 * 
+	 *
 	 * @param attribute
 	 *            Attribute
 	 */
@@ -40,7 +40,7 @@ public class PemAttributes {
 
 	/**
 	 * Get attributes.
-	 * 
+	 *
 	 * @return Attributes in addition order
 	 */
 	public Iterable<PemAttribute> values() {
@@ -49,7 +49,7 @@ public class PemAttributes {
 
 	/**
 	 * Get the named attribute.
-	 * 
+	 *
 	 * @param name
 	 *            Attribute name
 	 * @return named attribute or null if none
@@ -66,7 +66,7 @@ public class PemAttributes {
 
 	/**
 	 * How many attributes or contained in object?
-	 * 
+	 *
 	 * @return Size
 	 */
 	public int size() {

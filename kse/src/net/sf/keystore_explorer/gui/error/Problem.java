@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.gui.error;
 
 /**
  * Encapsutes a problem and possible causes.
- * 
+ *
  */
 public class Problem {
 	private String problem;
@@ -30,7 +30,7 @@ public class Problem {
 
 	/**
 	 * Construct ProblemAndCauses.
-	 * 
+	 *
 	 * @param problem
 	 *            Problem description
 	 * @param causes
@@ -46,7 +46,7 @@ public class Problem {
 
 	/**
 	 * Get problem description.
-	 * 
+	 *
 	 * @return problem description
 	 */
 	public String getProblem() {
@@ -55,7 +55,7 @@ public class Problem {
 
 	/**
 	 * Get possible causes.
-	 * 
+	 *
 	 * @return Possible causes
 	 */
 	public String[] getCauses() {
@@ -64,7 +64,7 @@ public class Problem {
 
 	/**
 	 * Get cause error.
-	 * 
+	 *
 	 * @return Cause error
 	 */
 	public Throwable getError() {

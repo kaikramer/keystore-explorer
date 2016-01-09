@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,13 +25,14 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
 
 /**
  * SPKAC subject. Holder for all possible DN components that can be included in
  * a SPKAC request.
- * 
+ *
  */
 public class SpkacSubject {
 	/** Common name property */
@@ -62,7 +63,7 @@ public class SpkacSubject {
 
 	/**
 	 * Construct SpkacSubject.
-	 * 
+	 *
 	 * @param cn
 	 *            Common name
 	 * @param ou
@@ -87,17 +88,17 @@ public class SpkacSubject {
 
 	/**
 	 * Construct SpkacSubject.
-	 * 
+	 *
 	 * @param name
 	 *            Name
 	 */
 	public SpkacSubject(X500Name name) {
-		cn = getRdn(name, KseX500NameStyle.CN);
-		ou = getRdn(name, KseX500NameStyle.OU);
-		o = getRdn(name, KseX500NameStyle.O);
-		l = getRdn(name, KseX500NameStyle.L);
-		st = getRdn(name, KseX500NameStyle.ST);
-		c = getRdn(name, KseX500NameStyle.C);
+		cn = getRdn(name, BCStyle.CN);
+		ou = getRdn(name, BCStyle.OU);
+		o = getRdn(name, BCStyle.O);
+		l = getRdn(name, BCStyle.L);
+		st = getRdn(name, BCStyle.ST);
+		c = getRdn(name, BCStyle.C);
 	}
 
 	private String getRdn(X500Name name, ASN1ObjectIdentifier rdnOid) {
@@ -115,7 +116,7 @@ public class SpkacSubject {
 
 	/**
 	 * Get common name.
-	 * 
+	 *
 	 * @return Common name
 	 */
 	public String getCN() {
@@ -124,7 +125,7 @@ public class SpkacSubject {
 
 	/**
 	 * Get organisational unit.
-	 * 
+	 *
 	 * @return Organisational unit
 	 */
 	public String getOU() {
@@ -133,7 +134,7 @@ public class SpkacSubject {
 
 	/**
 	 * Get organisation.
-	 * 
+	 *
 	 * @return Organisation
 	 */
 	public String getO() {
@@ -142,7 +143,7 @@ public class SpkacSubject {
 
 	/**
 	 * Get locality.
-	 * 
+	 *
 	 * @return Locality
 	 */
 	public String getL() {
@@ -151,7 +152,7 @@ public class SpkacSubject {
 
 	/**
 	 * Get state.
-	 * 
+	 *
 	 * @return State
 	 */
 	public String getST() {
@@ -160,7 +161,7 @@ public class SpkacSubject {
 
 	/**
 	 * Get country.
-	 * 
+	 *
 	 * @return Country
 	 */
 	public String getC() {
@@ -169,39 +170,40 @@ public class SpkacSubject {
 
 	/**
 	 * Get subject as an X.509 name.
-	 * 
+	 *
 	 * @return Name
 	 */
 	public X500Name getName() {
 		X500NameBuilder x500NameBuilder = new X500NameBuilder(KseX500NameStyle.INSTANCE);
 
 		if (c != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.C, c);
+			x500NameBuilder.addRDN(BCStyle.C, c);
 		}
 
 		if (st != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.ST, st);
+			x500NameBuilder.addRDN(BCStyle.ST, st);
 		}
 
 		if (l != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.L, l);
+			x500NameBuilder.addRDN(BCStyle.L, l);
 		}
 
 		if (o != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.O, o);
+			x500NameBuilder.addRDN(BCStyle.O, o);
 		}
 
 		if (ou != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.OU, ou);
+			x500NameBuilder.addRDN(BCStyle.OU, ou);
 		}
 
 		if (cn != null) {
-			x500NameBuilder.addRDN(KseX500NameStyle.CN, cn);
+			x500NameBuilder.addRDN(BCStyle.CN, cn);
 		}
 
 		return x500NameBuilder.build();
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 
@@ -217,6 +219,7 @@ public class SpkacSubject {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -289,9 +292,10 @@ public class SpkacSubject {
 
 	/**
 	 * Return subject as a distinguished name.
-	 * 
+	 *
 	 * @return Distinguished name
 	 */
+	@Override
 	public String toString() {
 		ArrayList<String> properties = new ArrayList<String>();
 

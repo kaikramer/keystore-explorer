@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -48,9 +48,9 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
  *
  */
 public class SignJarAction extends KeyStoreExplorerAction {
-    private static final long serialVersionUID = -8414470251471035085L;
+	private static final long serialVersionUID = -8414470251471035085L;
 
-    /**
+	/**
 	 * Construct action.
 	 *
 	 * @param kseFrame
@@ -71,6 +71,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
@@ -113,10 +114,10 @@ public class SignJarAction extends KeyStoreExplorerAction {
 
 			if (inputJarFile.equals(outputJarFile)) {
 				JarSigner.sign(inputJarFile, privateKey, certs, signatureType, signatureName, signer, digestType,
-				        tsaUrl, provider);
+						tsaUrl, provider);
 			} else {
 				JarSigner.sign(inputJarFile, outputJarFile, privateKey, certs, signatureType, signatureName, signer,
-				        digestType, tsaUrl, provider);
+						digestType, tsaUrl, provider);
 			}
 
 			JOptionPane.showMessageDialog(frame, res.getString("SignJarAction.SignJarSuccessful.message"),

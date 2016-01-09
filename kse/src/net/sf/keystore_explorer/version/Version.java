@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,17 +29,17 @@ import java.util.Vector;
  * Immutable version class constructed from a version string. Used to compare
  * versions. Only allows for simple versions strings made up of >= 0 integers
  * separated by dots or something similar.
- * 
+ *
  */
 public class Version implements Comparable, Serializable {
-	private static final long serialVersionUID = 775513157889646154L; 
+	private static final long serialVersionUID = 775513157889646154L;
 	private static transient ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/version/resources");
 	private int[] iSections;
 
 	/**
 	 * Construct a Version object from the supplied string assuming that the
 	 * string delimiter used is '.'.
-	 * 
+	 *
 	 * @param version
 	 *            The version string.
 	 * @throws VersionException
@@ -51,7 +51,7 @@ public class Version implements Comparable, Serializable {
 
 	/**
 	 * Construct a Version object from the supplied string and delimiters.
-	 * 
+	 *
 	 * @param version
 	 *            The version string.
 	 * @param delimiters
@@ -94,6 +94,7 @@ public class Version implements Comparable, Serializable {
 		return iSections.clone();
 	}
 
+	@Override
 	public int compareTo(Object object) {
 		Version cmpVersion = (Version) object;
 
@@ -126,6 +127,7 @@ public class Version implements Comparable, Serializable {
 		return 0;
 	}
 
+	@Override
 	public boolean equals(Object object) {
 		if (object == this) {
 			return true;
@@ -139,6 +141,7 @@ public class Version implements Comparable, Serializable {
 
 	}
 
+	@Override
 	public int hashCode() {
 		int result = 27;
 
@@ -153,9 +156,10 @@ public class Version implements Comparable, Serializable {
 	 * Get a string representation of the version. This will always be '.'
 	 * delimited. Trailing 0's originally supplied on construction will be
 	 * included.
-	 * 
+	 *
 	 * @return A string representation of the version.
 	 */
+	@Override
 	public String toString() {
 		StringBuffer strBuff = new StringBuffer();
 

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,6 +19,24 @@
  */
 package net.sf.keystore_explorer.gui;
 
+import java.awt.Font;
+import java.awt.SplashScreen;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import org.apache.commons.io.IOUtils;
+
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
@@ -33,22 +51,6 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.JavaVersion;
 import net.sf.keystore_explorer.version.Version;
 import net.sf.keystore_explorer.version.VersionException;
-import org.apache.commons.io.IOUtils;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import java.awt.Font;
-import java.awt.SplashScreen;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
 
 /**
  * Runnable to create and show KeyStore Explorer application.
@@ -70,7 +72,7 @@ public class CreateApplicationGui implements Runnable {
 	 * @param parameterFiles      File list to open
 	 */
 	public CreateApplicationGui(ApplicationSettings applicationSettings, SplashScreen splash, List<File>
-			parameterFiles) {
+	parameterFiles) {
 		this.applicationSettings = applicationSettings;
 		this.splash = splash;
 		this.parameterFiles = parameterFiles;
@@ -192,7 +194,7 @@ public class CreateApplicationGui implements Runnable {
 
 		if (actualJreVersion.compareTo(MIN_JRE_VERSION) < 0) {
 			String message = MessageFormat.format(res.getString("CreateApplicationGui.MinJreVersionReq.message"),
-			                                      actualJreVersion, MIN_JRE_VERSION);
+					actualJreVersion, MIN_JRE_VERSION);
 			System.err.println(message);
 			JOptionPane.showMessageDialog(new JFrame(), message, KSE.getApplicationName(), JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -205,7 +207,7 @@ public class CreateApplicationGui implements Runnable {
 		closeSplash();
 
 		JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.UpgradeRequired.message"),
-		                              KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+				KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
 		File cuaExe = determinePathToCryptoPolicyUpgradeAssistantExe();
 
@@ -221,7 +223,7 @@ public class CreateApplicationGui implements Runnable {
 				Problem problem = new Problem("Cannot run Crypto Strength Upgrade Assistant.", null, ex);
 				JFrame frame = new JFrame();
 				DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCrl.Title"),
-				                                 problem);
+						problem);
 				dProblem.setLocationRelativeTo(frame);
 				dProblem.setVisible(true);
 			} finally {
@@ -237,7 +239,7 @@ public class CreateApplicationGui implements Runnable {
 			if (dUpgradeCryptoStrength.hasCryptoStrengthBeenUpgraded()) {
 				// Crypto strength upgraded - restart required to take effect
 				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.Upgraded.message"),
-				                              KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+						KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
 				KseRestart.restart();
 				System.exit(0);
@@ -247,7 +249,7 @@ public class CreateApplicationGui implements Runnable {
 			} else {
 				// Crypto strength not upgraded - exit as upgrade required
 				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.NotUpgraded.message"),
-				                              KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
+						KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
 
 				System.exit(1);
 			}
@@ -261,8 +263,8 @@ public class CreateApplicationGui implements Runnable {
 	}
 
 	private void integrateWithMacOs(KseFrame kseFrame) throws ClassNotFoundException, SecurityException,
-			NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
-			InvocationTargetException {
+	NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException,
+	InvocationTargetException {
 		MacOsIntegration macOsIntegration = new MacOsIntegration(kseFrame);
 		macOsIntegration.addEventHandlers();
 	}

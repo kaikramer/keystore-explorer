@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -60,7 +60,7 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
 /**
  * Component to edit a set of general subtrees.
- * 
+ *
  */
 public class JGeneralSubtrees extends JPanel {
 	private static ResourceBundle res = ResourceBundle
@@ -79,7 +79,7 @@ public class JGeneralSubtrees extends JPanel {
 
 	/**
 	 * Construct a JGeneralSubtrees.
-	 * 
+	 *
 	 * @param title
 	 *            Title of edit dialog
 	 */
@@ -96,6 +96,7 @@ public class JGeneralSubtrees extends JPanel {
 		jbAdd.setMnemonic(res.getString("JGeneralSubtrees.jbAdd.mnemonic").charAt(0));
 
 		jbAdd.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralSubtrees.this);
@@ -115,6 +116,7 @@ public class JGeneralSubtrees extends JPanel {
 		jbEdit.setEnabled(false);
 
 		jbEdit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralSubtrees.this);
@@ -134,6 +136,7 @@ public class JGeneralSubtrees extends JPanel {
 		jbRemove.setEnabled(false);
 
 		jbRemove.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(JGeneralSubtrees.this);
@@ -180,6 +183,7 @@ public class JGeneralSubtrees extends JPanel {
 		ListSelectionModel selectionModel = jtGeneralSubtrees.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		selectionModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent evt) {
 				if (!evt.getValueIsAdjusting()) {
 					updateButtonControls();
@@ -188,6 +192,7 @@ public class JGeneralSubtrees extends JPanel {
 		});
 
 		jtGeneralSubtrees.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				maybeEditGeneralSubtree(evt);
 			}
@@ -196,6 +201,7 @@ public class JGeneralSubtrees extends JPanel {
 		jtGeneralSubtrees.addKeyListener(new KeyAdapter() {
 			boolean deleteLastPressed = false;
 
+			@Override
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
@@ -203,6 +209,7 @@ public class JGeneralSubtrees extends JPanel {
 				}
 			}
 
+			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
 				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
@@ -216,6 +223,7 @@ public class JGeneralSubtrees extends JPanel {
 				}
 			}
 
+			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
 				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
@@ -243,7 +251,7 @@ public class JGeneralSubtrees extends JPanel {
 
 	/**
 	 * Get general subtrees.
-	 * 
+	 *
 	 * @return General subtrees
 	 */
 	public GeneralSubtrees getGeneralSubtrees() {
@@ -252,7 +260,7 @@ public class JGeneralSubtrees extends JPanel {
 
 	/**
 	 * Set general subtrees.
-	 * 
+	 *
 	 * @param generalSubtrees
 	 *            General subtrees
 	 */
@@ -263,10 +271,11 @@ public class JGeneralSubtrees extends JPanel {
 
 	/**
 	 * Sets whether or not the component is enabled.
-	 * 
+	 *
 	 * @param enabled
 	 *            True if this component should be enabled, false otherwise
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 		updateButtonControls();
@@ -274,10 +283,11 @@ public class JGeneralSubtrees extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jspGeneralSubtrees.setToolTipText(toolTipText);

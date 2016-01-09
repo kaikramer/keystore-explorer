@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,9 +22,9 @@ package net.sf.keystore_explorer.crypto.x509;
 import java.util.ResourceBundle;
 
 /**
- * 
+ *
  * Qualified Certificate Statements (1.3.6.1.5.5.7.1.3).
- * 
+ *
  */
 public enum QcStatementType {
 
@@ -50,7 +50,7 @@ public enum QcStatementType {
 
 	/**
 	 * Resolve the supplied object identifier to a matching type.
-	 * 
+	 *
 	 * @param oid
 	 *            Object identifier
 	 * @return Type or null if none
@@ -67,7 +67,7 @@ public enum QcStatementType {
 
 	/**
 	 * Get Access Method's Object Identifier.
-	 * 
+	 *
 	 * @return Object Identifier
 	 */
 	public String oid() {

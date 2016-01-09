@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -151,20 +151,20 @@ public class PlatformUtil {
 	 *            Negative button
 	 * @param jbOthers
 	 *            Other buttons
-     * @param resizable
-     *            Is the dialog resizable?
-     * @param insets
-     *            Insets for panel (MiGLayout constraint)
+	 * @param resizable
+	 *            Is the dialog resizable?
+	 * @param insets
+	 *            Insets for panel (MiGLayout constraint)
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, JButton[] jbOthers,
 			boolean resizable, String insets) {
 
-	    if (insets == null) {
-	        insets = "";
-	    } else {
-	        insets += ",";
-	    }
+		if (insets == null) {
+			insets = "";
+		} else {
+			insets += ",";
+		}
 
 		JPanel panel = new JPanel(new MigLayout(insets + "nogrid, fillx, aligny 100%"));
 
@@ -192,7 +192,7 @@ public class PlatformUtil {
 	 * the platform.
 	 * <br>
 	 * This method creates zero spacing around the buttons.
-	 * 
+	 *
 	 * @param jbPositive
 	 *            Positive button
 	 * @param jbNegative
@@ -202,17 +202,17 @@ public class PlatformUtil {
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative) {
-		
+
 		JPanel panel = new JPanel(new MigLayout("insets 0, nogrid, fillx, aligny 100%"));
 
 		if (jbPositive != null) {
 			panel.add(jbPositive, "tag ok");
 		}
-		
+
 		if (jbNegative != null) {
 			panel.add(jbNegative, "tag cancel");
 		}
-		
+
 		return panel;
 	}
 

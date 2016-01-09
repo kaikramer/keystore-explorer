@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -69,11 +69,11 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Extended Key Usage extension.
- * 
+ *
  */
 public class DExtendedKeyUsage extends DExtension {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -972351635055954L;
 
@@ -102,14 +102,14 @@ public class DExtendedKeyUsage extends DExtension {
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
-	
+
 	private JCheckBox dummy3;
 
 	private byte[] value;
 
 	/**
 	 * Creates a new DExtendedKeyUsage dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 */
@@ -121,7 +121,7 @@ public class DExtendedKeyUsage extends DExtension {
 
 	/**
 	 * Creates a new DExtendedKeyUsage dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param value
@@ -157,11 +157,11 @@ public class DExtendedKeyUsage extends DExtension {
 				res.getString("DExtendedKeyUsage.jcbTlsWebServerAuthentication.text"));
 		jcbSmartcardLogon = new JCheckBox(res.getString("DExtendedKeyUsage.jcbSmartcardLogon.text"));
 		jcbAnyExtendedKeyUsage = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAnyExtendedKeyUsage.text"));
-		
-		dummy3 = new JCheckBox();	
+
+		dummy3 = new JCheckBox();
 		dummy3.setEnabled(false);
-//		dummy3.setVisible(false);
-		
+		//		dummy3.setVisible(false);
+
 		JPanel jpFirstColumn = new JPanel();
 		jpFirstColumn.setLayout(new BoxLayout(jpFirstColumn, BoxLayout.Y_AXIS));
 
@@ -170,7 +170,7 @@ public class DExtendedKeyUsage extends DExtension {
 		jpFirstColumn.add(jcbEmailProtection);
 		jpFirstColumn.add(jcbIpSecurityEndSystem);
 		jpFirstColumn.add(jcbAnyExtendedKeyUsage);
-		
+
 		JPanel jpSecondColumn = new JPanel();
 		jpSecondColumn.setLayout(new BoxLayout(jpSecondColumn, BoxLayout.Y_AXIS));
 
@@ -188,8 +188,8 @@ public class DExtendedKeyUsage extends DExtension {
 		jpThirdColumn.add(jcbTlsWebServerAuthentication);
 		jpThirdColumn.add(jcbSmartcardLogon);
 		jpThirdColumn.add(dummy3);
-		
-		
+
+
 		jpExtendedKeyUsages = new JPanel();
 		jpExtendedKeyUsages.setLayout(new BoxLayout(jpExtendedKeyUsages, BoxLayout.X_AXIS));
 
@@ -207,6 +207,7 @@ public class DExtendedKeyUsage extends DExtension {
 
 		jbOK = new JButton(res.getString("DExtendedKeyUsage.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -214,6 +215,7 @@ public class DExtendedKeyUsage extends DExtension {
 
 		jbCancel = new JButton(res.getString("DExtendedKeyUsage.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -222,10 +224,11 @@ public class DExtendedKeyUsage extends DExtension {
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1792160787358938936L;
 
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -238,6 +241,7 @@ public class DExtendedKeyUsage extends DExtension {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -294,7 +298,7 @@ public class DExtendedKeyUsage extends DExtension {
 		if (!jcbTlsWebServerAuthentication.isSelected() && !jcbTlsWebClientAuthentication.isSelected()
 				&& !jcbCodeSigning.isSelected() && !jcbEmailProtection.isSelected()
 				&& !jcbIpSecurityEndSystem.isSelected() && !jcbIpSecurityTunnelTermination.isSelected()
-				&& !jcbIpSecurityUser.isSelected() && !jcbTimeStamping.isSelected() && !jcbOcspStamping.isSelected() 
+				&& !jcbIpSecurityUser.isSelected() && !jcbTimeStamping.isSelected() && !jcbOcspStamping.isSelected()
 				&& !jcbDocumentSigning.isSelected() && !jcbAdobePDFSigning.isSelected()
 				&& !jcbEncryptedFileSystem.isSelected() && !jcbAnyExtendedKeyUsage.isSelected()
 				)
@@ -317,11 +321,11 @@ public class DExtendedKeyUsage extends DExtension {
 		if (jcbCodeSigning.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(CODE_SIGNING.oid())));
 		}
-		
+
 		if (jcbDocumentSigning.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(DOCUMENT_SIGNING.oid())));
 		}
-		
+
 		if (jcbAdobePDFSigning.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ADOBE_PDF_SIGNING.oid())));
 		}
@@ -329,7 +333,7 @@ public class DExtendedKeyUsage extends DExtension {
 		if (jcbEmailProtection.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(EMAIL_PROTECTION.oid())));
 		}
-		
+
 		if (jcbEncryptedFileSystem.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ENCRYPTED_FILE_SYSTEM.oid())));
 		}
@@ -353,7 +357,7 @@ public class DExtendedKeyUsage extends DExtension {
 		if (jcbOcspStamping.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(OCSP_SIGNING.oid())));
 		}
-		
+
 		if (jcbSmartcardLogon.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(SMARTCARD_LOGON.oid())));
 		}
@@ -361,7 +365,7 @@ public class DExtendedKeyUsage extends DExtension {
 		if (jcbAnyExtendedKeyUsage.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ANY_EXTENDED_KEY_USAGE.oid())));
 		}
-		
+
 		ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage(
 				keyPurposeIds.toArray(new KeyPurposeId[keyPurposeIds.size()]));
 
@@ -379,9 +383,10 @@ public class DExtendedKeyUsage extends DExtension {
 
 	/**
 	 * Get extension value DER-encoded.
-	 * 
+	 *
 	 * @return Extension value
 	 */
+	@Override
 	public byte[] getValue() {
 		return value;
 	}
@@ -394,25 +399,25 @@ public class DExtendedKeyUsage extends DExtension {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    DExtendedKeyUsage dialog = new DExtendedKeyUsage(new javax.swing.JDialog());
-                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                        @Override
-                        public void windowClosing(java.awt.event.WindowEvent e) {
-                            System.exit(0);
-                        }
-                    });
-                    dialog.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					DExtendedKeyUsage dialog = new DExtendedKeyUsage(new javax.swing.JDialog());
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 }

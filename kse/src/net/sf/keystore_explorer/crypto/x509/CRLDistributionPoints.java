@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,11 +32,11 @@ import org.bouncycastle.asn1.x509.DistributionPoint;
 
 /**
  * X509 extension CRLDistributionPoints, RFC 5280
- * 
+ *
  * <pre>
  * CRLDistributionPoints ::= SEQUENCE SIZE (1..MAX) OF DistributionPoint
  * </pre>
- * 
+ *
  */
 public class CRLDistributionPoints extends ASN1Object {
 

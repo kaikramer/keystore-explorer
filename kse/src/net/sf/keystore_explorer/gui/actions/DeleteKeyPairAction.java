@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,12 +34,12 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to delete the selected key pair.
- * 
+ *
  */
 public class DeleteKeyPairAction extends KeyStoreExplorerAction implements HistoryAction {
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -55,6 +55,7 @@ public class DeleteKeyPairAction extends KeyStoreExplorerAction implements Histo
 						getClass().getResource(res.getString("DeleteKeyPairAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -62,6 +63,7 @@ public class DeleteKeyPairAction extends KeyStoreExplorerAction implements Histo
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		deleteSelectedEntry();
 	}

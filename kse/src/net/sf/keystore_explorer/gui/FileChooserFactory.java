@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -123,10 +123,10 @@ public class FileChooserFactory {
 
 	private static final String LIB_DLL_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibDllFiles"),
 			LIB_DLL_EXT);
-	
+
 	private static final String LIB_SO_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibSoFiles"),
 			LIB_SO_EXT);
-	
+
 	private static final String LIB_DYLIB_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibDylibFiles"),
 			LIB_DYLIB_EXT);
 
@@ -364,7 +364,7 @@ public class FileChooserFactory {
 		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { JAD_EXT }, JAD_FILE_DESC));
 		return chooser;
 	}
-	
+
 	/**
 	 * Get a JFileChooser filtered for library files.
 	 *
@@ -372,15 +372,15 @@ public class FileChooserFactory {
 	 */
 	public static JFileChooser getLibFileChooser() {
 		JFileChooser chooser = new JFileChooser();
-		
+
 		if (OperatingSystem.isWindows()) {
 			chooser.addChoosableFileFilter(new FileExtFilter(new String[] { LIB_DLL_EXT }, LIB_DLL_FILE_DESC));
-		} else if (OperatingSystem.isMacOs()) { 
+		} else if (OperatingSystem.isMacOs()) {
 			chooser.addChoosableFileFilter(new FileExtFilter(new String[] { LIB_DYLIB_EXT }, LIB_DYLIB_FILE_DESC));
-		} else if (OperatingSystem.isLinux() || OperatingSystem.isUnix()) { 
+		} else if (OperatingSystem.isLinux() || OperatingSystem.isUnix()) {
 			chooser.addChoosableFileFilter(new FileExtFilter(new String[] { LIB_SO_EXT }, LIB_SO_FILE_DESC));
 		}
-		
+
 		return chooser;
 	}
 }

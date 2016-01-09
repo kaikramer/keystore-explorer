@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,7 +23,7 @@ import net.sf.keystore_explorer.crypto.filetype.CryptoFileType;
 
 /**
  * Enumeration of CSR Types.
- * 
+ *
  */
 public enum CsrType {
 	PKCS10(CryptoFileType.PKCS10_CSR), SPKAC(CryptoFileType.SPKAC_CSR);
@@ -36,7 +36,7 @@ public enum CsrType {
 
 	/**
 	 * Get crypto file type.
-	 * 
+	 *
 	 * @return Crypto file type
 	 */
 	public CryptoFileType getCryptoFileType() {

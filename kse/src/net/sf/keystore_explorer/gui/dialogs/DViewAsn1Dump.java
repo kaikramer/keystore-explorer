@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -58,7 +58,7 @@ import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
 /**
  * Displays an ASN.1 dump of the supplied object: an X.509 certificate, private
  * key, public key, CRL or Extension.
- * 
+ *
  */
 public class DViewAsn1Dump extends JEscFrame {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -80,7 +80,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 	/**
 	 * Creates a new DViewAsn1Dump dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param cert
@@ -98,7 +98,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 	/**
 	 * Creates new DViewAsn1Dump dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param crl
@@ -116,7 +116,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 	/**
 	 * Creates new DViewAsn1Dump dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param extension
@@ -127,7 +127,7 @@ public class DViewAsn1Dump extends JEscFrame {
 	 *             If an I/O problem occurred
 	 */
 	public DViewAsn1Dump(JDialog parent, X509Ext extension) throws Asn1Exception,
-			IOException {
+	IOException {
 		super(res.getString("DViewAsn1Dump.Extension.Title"));
 		this.extension = extension;
 		initComponents();
@@ -135,7 +135,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 	/**
 	 * Creates new DViewAsn1Dump dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param privateKey
@@ -147,7 +147,7 @@ public class DViewAsn1Dump extends JEscFrame {
 	 *             If an I/O problem occurred
 	 */
 	public DViewAsn1Dump(JDialog parent, PrivateKey privateKey) throws Asn1Exception,
-			IOException {
+	IOException {
 		super(res.getString("DViewAsn1Dump.PrivateKey.Title"));
 		this.privateKey = privateKey;
 		initComponents();
@@ -155,7 +155,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 	/**
 	 * Creates new DViewAsn1Dump dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param publicKey
@@ -166,7 +166,7 @@ public class DViewAsn1Dump extends JEscFrame {
 	 *             If an I/O problem occurred
 	 */
 	public DViewAsn1Dump(JDialog parent, PublicKey publicKey) throws Asn1Exception,
-			IOException {
+	IOException {
 		super(res.getString("DViewAsn1Dump.PublicKey.Title"));
 		this.publicKey = publicKey;
 		initComponents();
@@ -174,7 +174,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 	/**
 	 * Creates a new DViewAsn1Dump dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param pkcs10Csr
@@ -193,7 +193,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 	/**
 	 * Creates a new DViewAsn1Dump dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param pkcs10Csr
@@ -215,6 +215,7 @@ public class DViewAsn1Dump extends JEscFrame {
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewAsn1Dump.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DViewAsn1Dump.jbCopy.tooltip"));
 		jbCopy.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewAsn1Dump.this);
@@ -228,6 +229,7 @@ public class DViewAsn1Dump extends JEscFrame {
 		jbOK = new JButton(res.getString("DViewAsn1Dump.jbOK.text"));
 
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -273,6 +275,7 @@ public class DViewAsn1Dump extends JEscFrame {
 		setResizable(true);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -283,6 +286,7 @@ public class DViewAsn1Dump extends JEscFrame {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

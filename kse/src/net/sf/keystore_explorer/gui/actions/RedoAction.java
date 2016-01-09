@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,14 +32,14 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 
 /**
  * Action to redo an action.
- * 
+ *
  */
 public class RedoAction extends KeyStoreExplorerAction {
 	private String defaultName;
 
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -61,10 +61,11 @@ public class RedoAction extends KeyStoreExplorerAction {
 
 	/**
 	 * Enable or disable the action.
-	 * 
+	 *
 	 * @param enabled
 	 *            True to enable, false to disable it
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 
@@ -81,6 +82,7 @@ public class RedoAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();

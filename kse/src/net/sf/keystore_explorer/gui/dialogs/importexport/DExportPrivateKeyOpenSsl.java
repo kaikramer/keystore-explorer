@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -146,6 +146,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		gbc_jcbEncrypt.gridy = 0;
 
 		jcbEncrypt.addChangeListener(new ChangeListener() {
+			@Override
 			public void stateChanged(ChangeEvent evt) {
 				if (jcbEncrypt.isSelected()) {
 					jcbExportPem.setSelected(true);
@@ -201,8 +202,8 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		jcbExportPem = new JCheckBox();
 		jcbExportPem.setSelected(true);
 		jcbExportPem.setEnabled(false); // Itinitla export setting is with
-										// encryption - must be pem
-										// export
+		// encryption - must be pem
+		// export
 		jcbExportPem.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jcbExportPem.tooltip"));
 		GridBagConstraints gbc_jcbExportPem = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jcbExportPem.gridy = 4;
@@ -225,6 +226,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		gbc_jbBrowse.gridx = 9;
 
 		jbBrowse.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DExportPrivateKeyOpenSsl.this);
@@ -259,6 +261,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		jpOptions.add(jbBrowse, gbc_jbBrowse);
 
 		jcbEncrypt.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				if (jcbEncrypt.isSelected()) {
 					jcbPbeAlg.setEnabled(true);
@@ -282,6 +285,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		PlatformUtil.setMnemonic(jbExport, res.getString("DExportPrivateKeyOpenSsl.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jbExport.tooltip"));
 		jbExport.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DExportPrivateKeyOpenSsl.this);
@@ -294,6 +298,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -301,6 +306,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -313,6 +319,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -328,12 +335,12 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		pack();
 	}
 
-    private void populateExportFileName() {
-        File currentDirectory = CurrentDirectory.get();
-        String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
-        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.OPENSSL_PVK_EXT);
-        jtfExportFile.setText(csrFile.getPath());
-    }
+	private void populateExportFileName() {
+		File currentDirectory = CurrentDirectory.get();
+		String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+		File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.OPENSSL_PVK_EXT);
+		jtfExportFile.setText(csrFile.getPath());
+	}
 
 	/**
 	 * Has the user chosen to export?

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,14 +31,14 @@ import javax.swing.tree.TreeNode;
 
 /**
  * Custom cell renderer for the cells of the DProviderInfo tree.
- * 
+ *
  */
 public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
 
 	/**
 	 * Returns the rendered cell for the supplied value.
-	 * 
+	 *
 	 * @param jtrProvider
 	 *            The JTree
 	 * @param value
@@ -55,6 +55,7 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTreeCellRendererComponent(JTree jtrProvider, Object value, boolean isSelected,
 			boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
 		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrProvider, value, isSelected, isExpanded, leaf,
@@ -77,8 +78,8 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 			icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Provider.image")));
 			cell.setToolTipText(res.getString("ProviderTreeCellRend.Provider.tooltip"));
 		} else if (node.getLevel() == 2) // Third level - provider description,
-											// version, java class
-											// and services
+			// version, java class
+			// and services
 		{
 			TreeNode parent = node.getParent();
 			int index = parent.getIndex(node);
@@ -102,13 +103,13 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 			icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Service.image")));
 			cell.setToolTipText(res.getString("ProviderTreeCellRend.Service.tooltip"));
 		} else if (node.getLevel() == 4) // Fifth level - list of service
-											// algorithms
+			// algorithms
 		{
 			// Service algorithm node
 			icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Algorithm.image")));
 			cell.setToolTipText(res.getString("ProviderTreeCellRend.Algorithm.tooltip"));
 		} else if (node.getLevel() == 5) // Sixth level - algorithm java class,
-											// attributes and aliases
+			// attributes and aliases
 		{
 			TreeNode parent = node.getParent();
 			int index = parent.getIndex(node);
@@ -127,7 +128,7 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.Aliases.tooltip"));
 			}
 		} else
-		// Seventh level - list of attributes or aliases
+			// Seventh level - list of attributes or aliases
 		{
 			TreeNode parent = node.getParent();
 

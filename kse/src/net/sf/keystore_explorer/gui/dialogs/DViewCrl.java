@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -78,7 +78,7 @@ import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
 
 /**
  * Displays the details of a Certificate Revocation List (CRL).
- * 
+ *
  */
 public class DViewCrl extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
@@ -112,7 +112,7 @@ public class DViewCrl extends JEscDialog {
 
 	/**
 	 * Creates a new DViewCrl dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
@@ -128,7 +128,7 @@ public class DViewCrl extends JEscDialog {
 
 	/**
 	 * Creates new DViewCrl dialog where the parent is a dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            Parent dialog
 	 * @param title
@@ -213,6 +213,7 @@ public class DViewCrl extends JEscDialog {
 		PlatformUtil.setMnemonic(jbCrlExtensions, res.getString("DViewCrl.jbCrlExtensions.mnemonic").charAt(0));
 		jbCrlExtensions.setToolTipText(res.getString("DViewCrl.jbCrlExtensions.tooltip"));
 		jbCrlExtensions.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCrl.this);
@@ -228,6 +229,7 @@ public class DViewCrl extends JEscDialog {
 		PlatformUtil.setMnemonic(jbCrlAsn1, res.getString("DViewCrl.jbCrlAsn1.mnemonic").charAt(0));
 		jbCrlAsn1.setToolTipText(res.getString("DViewCrl.jbCrlAsn1.tooltip"));
 		jbCrlAsn1.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCrl.this);
@@ -278,9 +280,10 @@ public class DViewCrl extends JEscDialog {
 
 		ListSelectionModel listSelectionModel = jtRevokedCerts.getSelectionModel();
 		listSelectionModel.addListSelectionListener(new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent evt) {
 				if (!evt.getValueIsAdjusting()) // Ignore spurious
-												// events
+					// events
 				{
 					try {
 						CursorUtil.setCursorBusy(DViewCrl.this);
@@ -293,6 +296,7 @@ public class DViewCrl extends JEscDialog {
 		});
 
 		jtRevokedCerts.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent evt) {
 				maybeDisplayCrlEntryExtensions(evt);
 			}
@@ -315,6 +319,7 @@ public class DViewCrl extends JEscDialog {
 		jbCrlEntryExtensions.setToolTipText(res.getString("DViewCrl.jbCrlEntryExtensions.tooltip"));
 		jbCrlEntryExtensions.setEnabled(false);
 		jbCrlEntryExtensions.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCrl.this);
@@ -359,6 +364,7 @@ public class DViewCrl extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewCrl.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -372,6 +378,7 @@ public class DViewCrl extends JEscDialog {
 		setResizable(false);
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -382,6 +389,7 @@ public class DViewCrl extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				jbOK.requestFocus();
 			}

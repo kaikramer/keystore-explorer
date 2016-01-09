@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,9 +52,9 @@ import net.sf.keystore_explorer.utilities.history.KeyStoreState;
  *
  */
 public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction implements HistoryAction {
-    private static final long serialVersionUID = 8516357420696038325L;
+	private static final long serialVersionUID = 8516357420696038325L;
 
-    /**
+	/**
 	 * Construct action.
 	 *
 	 * @param kseFrame
@@ -71,6 +71,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 						getClass().getResource(res.getString("ImportCaReplyFromFileAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -78,6 +79,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
@@ -175,8 +177,8 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 						newCertChain = certs;
 					}
 				}
-				 // Single X.509 certificate reply - try and establish a chain of
-				 // trust from the certificate and ending with a root CA self-signed certificate
+				// Single X.509 certificate reply - try and establish a chain of
+				// trust from the certificate and ending with a root CA self-signed certificate
 				else {
 					// Establish trust against current KeyStore
 					ArrayList<KeyStore> compKeyStores = new ArrayList<KeyStore>();
@@ -269,7 +271,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 
 			DProblem dProblem = new DProblem(frame, res.getString("ImportCaReplyFromFileAction.ProblemOpeningCaReply.Title"),
 
-			                                 problem);
+					problem);
 			dProblem.setLocationRelativeTo(frame);
 			dProblem.setVisible(true);
 

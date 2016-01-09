@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,14 +41,14 @@ import net.sf.keystore_explorer.gui.error.DError;
 
 /**
  * Action to show help.
- * 
+ *
  */
 public class HelpAction extends KeyStoreExplorerAction {
 	private DefaultHelpBroker helpBroker;
 
 	/**
 	 * Construct action.
-	 * 
+	 *
 	 * @param kseFrame
 	 *            KeyStore Explorer frame
 	 */
@@ -68,6 +68,7 @@ public class HelpAction extends KeyStoreExplorerAction {
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			if (helpBroker != null) {
@@ -76,7 +77,7 @@ public class HelpAction extends KeyStoreExplorerAction {
 				}
 
 				helpBroker.setDisplayed(true); // Help already created but
-												// hidden - redisplay
+				// hidden - redisplay
 				return;
 			}
 

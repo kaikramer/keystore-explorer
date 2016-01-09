@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -60,7 +60,7 @@ import net.sf.keystore_explorer.gui.oid.JObjectId;
 
 /**
  * Dialog to choose policy information.
- * 
+ *
  */
 public class DPolicyInformationChooser extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle
@@ -81,7 +81,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DPolicyInformationChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param title
@@ -99,7 +99,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 
 	/**
 	 * Constructs a new DPolicyInformationChooser dialog.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent dialog
 	 * @param title
@@ -171,6 +171,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DPolicyInformationChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
@@ -178,6 +179,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DPolicyInformationChooser.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -185,6 +187,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
@@ -227,7 +230,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 
 	/**
 	 * Get selected policy information.
-	 * 
+	 *
 	 * @return Policy information, or null if none
 	 */
 	public PolicyInformation getPolicyInformation() {

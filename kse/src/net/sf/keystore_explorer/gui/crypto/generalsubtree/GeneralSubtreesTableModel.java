@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,7 +34,7 @@ import net.sf.keystore_explorer.crypto.x509.GeneralSubtrees;
 
 /**
  * The table model used to display general subtrees.
- * 
+ *
  */
 public class GeneralSubtreesTableModel extends AbstractTableModel {
 	private static ResourceBundle res = ResourceBundle
@@ -57,7 +57,7 @@ public class GeneralSubtreesTableModel extends AbstractTableModel {
 
 	/**
 	 * Load the GeneralSubtreesTableModel with general subtrees.
-	 * 
+	 *
 	 * @param generalSubtrees
 	 *            The general subtrees
 	 */
@@ -80,71 +80,78 @@ public class GeneralSubtreesTableModel extends AbstractTableModel {
 
 	/**
 	 * Get the number of columns in the table.
-	 * 
+	 *
 	 * @return The number of columns
 	 */
+	@Override
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
 	/**
 	 * Get the number of rows in the table.
-	 * 
+	 *
 	 * @return The number of rows
 	 */
+	@Override
 	public int getRowCount() {
 		return data.length;
 	}
 
 	/**
 	 * Get the name of the column at the given position.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column name
 	 */
+	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
 
 	/**
 	 * Get the cell value at the given row and column position.
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col
 	 *            The column position
 	 * @return The cell value
 	 */
+	@Override
 	public Object getValueAt(int row, int col) {
 		return data[row][col];
 	}
 
 	/**
 	 * Get the class at of the cells at the given column position.
-	 * 
+	 *
 	 * @param col
 	 *            The column position
 	 * @return The column cells' class
 	 */
+	@Override
 	public Class<?> getColumnClass(int col) {
 		return GeneralSubtree.class;
 	}
 
 	/**
 	 * Is the cell at the given row and column position editable?
-	 * 
+	 *
 	 * @param row
 	 *            The row position
 	 * @param col
 	 *            The column position
 	 * @return True if the cell is editable, false otherwise
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		return false;
 	}
 
 	static class GeneralSubtreeBaseComparator implements Comparator<GeneralSubtree> {
+		@Override
 		public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
 			return GeneralNameUtil.safeToString(subtree1.getBase()).compareToIgnoreCase(
 					GeneralNameUtil.safeToString(subtree2.getBase()));
@@ -152,12 +159,14 @@ public class GeneralSubtreesTableModel extends AbstractTableModel {
 	}
 
 	static class GeneralSubtreeMinimumComparator implements Comparator<GeneralSubtree> {
+		@Override
 		public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
 			return subtree1.getMinimum().compareTo(subtree2.getMinimum());
 		}
 	}
 
 	static class GeneralSubtreeMaximumComparator implements Comparator<GeneralSubtree> {
+		@Override
 		public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
 			// Maximum may be null;
 			BigInteger maximum1 = BigInteger.valueOf(-1);

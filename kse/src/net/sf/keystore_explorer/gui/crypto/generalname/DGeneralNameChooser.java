@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -151,7 +151,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jrbUniformResourceIdentifier = new JRadioButton(
 				res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.text"));
 		jrbUniformResourceIdentifier
-				.setToolTipText(res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.tooltip"));
+		.setToolTipText(res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.tooltip"));
 
 		jrbPrincipalName = new JRadioButton(res.getString("DGeneralNameChooser.jrbPrincipalName.text"));
 		jrbPrincipalName.setToolTipText(res.getString("DGeneralNameChooser.jrbPrincipalName.tooltip"));
@@ -183,22 +183,22 @@ public class DGeneralNameChooser extends JEscDialog {
 				CANCEL_KEY);
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-        Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[]", ""));
-        pane.add(jlGeneralNameType, "spanx, wrap");
-        pane.add(jrbDirectoryName, "");
-        pane.add(jrbDnsName, "");
-        pane.add(jrbIpAddress, "");
-        pane.add(jrbRegisteredId, "wrap");
-        pane.add(jrbRfc822Name, "");
-        pane.add(jrbUniformResourceIdentifier, "");
-        pane.add(jrbPrincipalName, "wrap");
-        pane.add(jlGeneralNameValue, "spanx");
-        pane.add(jpGeneralNameValue, "spanx, wrap");
-        pane.add(new JSeparator(), "spanx, growx, wrap para");
-        pane.add(jpButtons, "right, spanx");
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[]", ""));
+		pane.add(jlGeneralNameType, "spanx, wrap");
+		pane.add(jrbDirectoryName, "");
+		pane.add(jrbDnsName, "");
+		pane.add(jrbIpAddress, "");
+		pane.add(jrbRegisteredId, "wrap");
+		pane.add(jrbRfc822Name, "");
+		pane.add(jrbUniformResourceIdentifier, "");
+		pane.add(jrbPrincipalName, "wrap");
+		pane.add(jlGeneralNameValue, "spanx");
+		pane.add(jpGeneralNameValue, "spanx, wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap para");
+		pane.add(jpButtons, "right, spanx");
 
-        // actions
+		// actions
 		jrbDirectoryName.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent evt) {
@@ -241,12 +241,12 @@ public class DGeneralNameChooser extends JEscDialog {
 				generalNameTypeChanged();
 			}
 		});
-        jbOK.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent evt) {
-        		okPressed();
-        	}
-        });
+		jbOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				okPressed();
+			}
+		});
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -260,7 +260,7 @@ public class DGeneralNameChooser extends JEscDialog {
 			}
 		});
 
-        populate(generalName);
+		populate(generalName);
 
 		setResizable(false);
 
@@ -466,29 +466,29 @@ public class DGeneralNameChooser extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new BouncyCastleProvider());
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        EventQueue.invokeLater(new Runnable() {
-            @Override
+		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
-                try {
-                    DGeneralNameChooser dialog = new DGeneralNameChooser(new javax.swing.JFrame(), "GeneralNameChooser",
-                    		null);
-                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                        @Override
+				try {
+					DGeneralNameChooser dialog = new DGeneralNameChooser(new javax.swing.JFrame(), "GeneralNameChooser",
+							null);
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
 						public void windowClosing(java.awt.event.WindowEvent e) {
-                            System.exit(0);
-                        }
-                        @Override
-                        public void windowDeactivated(java.awt.event.WindowEvent e) {
-                        	System.exit(0);
-                        }
-                    });
-                    dialog.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+							System.exit(0);
+						}
+						@Override
+						public void windowDeactivated(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

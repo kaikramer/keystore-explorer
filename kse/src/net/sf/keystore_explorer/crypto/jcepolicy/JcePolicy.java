@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 
 /**
  * Enumeration of JCE policies.
- * 
+ *
  */
 public enum JcePolicy {
 	LOCAL_POLICY("local_policy.jar"), US_EXPORT_POLICY("US_export_policy.jar");
@@ -37,7 +37,7 @@ public enum JcePolicy {
 
 	/**
 	 * Get friendly name
-	 * 
+	 *
 	 * @return Friendly name
 	 */
 	public String friendly() {
@@ -50,7 +50,7 @@ public enum JcePolicy {
 
 	/**
 	 * Get JCE policy JAR name.
-	 * 
+	 *
 	 * @return JAR name
 	 */
 	public String jar() {

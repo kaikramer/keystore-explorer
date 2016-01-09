@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.utilities.io;
 
 /**
  * Indentation sequence.
- * 
+ *
  */
 public class IndentSequence {
 	public static final IndentSequence FOUR_SPACES = new IndentSequence(IndentChar.SPACE, 4);
@@ -65,6 +65,7 @@ public class IndentSequence {
 	 *
 	 * @return Indent sequence
 	 */
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 

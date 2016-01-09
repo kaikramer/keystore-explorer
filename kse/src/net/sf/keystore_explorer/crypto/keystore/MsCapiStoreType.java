@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,7 +22,7 @@ package net.sf.keystore_explorer.crypto.keystore;
 /**
  * Enumeration of MS CAPI Certificate Store Types supported by the KeyStoreUtil
  * class.
- * 
+ *
  */
 public enum MsCapiStoreType {
 	PERSONAL("Windows-MY"), ROOT("Windows-ROOT");
@@ -35,7 +35,7 @@ public enum MsCapiStoreType {
 
 	/**
 	 * Get MsCapiStoreType type JCE name.
-	 * 
+	 *
 	 * @return JCE name
 	 */
 	public String jce() {

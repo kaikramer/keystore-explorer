@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -86,10 +86,10 @@ public class DViewCsr extends JEscDialog {
 	private JButton jbViewPublicKeyDetails;
 	private JLabel jlSignatureAlgorithm;
 	private JTextField jtfSignatureAlgorithm;
-    private JLabel jlChallenge;
-    private JTextField jtfChallenge;
-    private JLabel jlUnstructuredName;
-    private JTextField jtfUnstructuredName;
+	private JLabel jlChallenge;
+	private JTextField jtfChallenge;
+	private JLabel jlUnstructuredName;
+	private JTextField jtfUnstructuredName;
 	private JButton jbExtensions;
 	private JButton jbPem;
 	private JButton jbAsn1;
@@ -172,9 +172,9 @@ public class DViewCsr extends JEscDialog {
 
 		jlUnstructuredName = new JLabel(res.getString("DViewCsr.jlUnstructuredName.text"));
 
-        jtfUnstructuredName = new JTextField(30);
-        jtfUnstructuredName.setEditable(false);
-        jtfUnstructuredName.setToolTipText(res.getString("DViewCsr.jtfUnstructuredName.tooltip"));
+		jtfUnstructuredName = new JTextField(30);
+		jtfUnstructuredName.setEditable(false);
+		jtfUnstructuredName.setToolTipText(res.getString("DViewCsr.jtfUnstructuredName.tooltip"));
 
 		jbExtensions = new JButton(res.getString("DViewCsr.jbExtensions.text"));
 
@@ -192,8 +192,8 @@ public class DViewCsr extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewCsr.jbOK.text"));
 
-        Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 		pane.add(jlFormat, "");
 		pane.add(jtfFormat, "wrap");
 		pane.add(jlSubject, "");
@@ -203,10 +203,10 @@ public class DViewCsr extends JEscDialog {
 		pane.add(jbViewPublicKeyDetails, "wrap");
 		pane.add(jlSignatureAlgorithm, "");
 		pane.add(jtfSignatureAlgorithm, "wrap");
-        pane.add(jlChallenge, "");
-        pane.add(jtfChallenge, "wrap");
-        pane.add(jlUnstructuredName, "");
-        pane.add(jtfUnstructuredName, "wrap para");
+		pane.add(jlChallenge, "");
+		pane.add(jtfChallenge, "wrap");
+		pane.add(jlUnstructuredName, "");
+		pane.add(jtfUnstructuredName, "wrap para");
 		pane.add(jbExtensions, "spanx, split");
 		pane.add(jbPem, "");
 		pane.add(jbAsn1, "wrap");
@@ -215,57 +215,63 @@ public class DViewCsr extends JEscDialog {
 
 		populateCsrDetails();
 
-        jbViewPublicKeyDetails.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    CursorUtil.setCursorBusy(DViewCsr.this);
-                    pubKeyDetailsPressed();
-                } finally {
-                    CursorUtil.setCursorFree(DViewCsr.this);
-                }
-            }
-        });
+		jbViewPublicKeyDetails.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DViewCsr.this);
+					pubKeyDetailsPressed();
+				} finally {
+					CursorUtil.setCursorFree(DViewCsr.this);
+				}
+			}
+		});
 
 		jbExtensions.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    CursorUtil.setCursorBusy(DViewCsr.this);
-                    extensionsPressed();
-                } finally {
-                    CursorUtil.setCursorFree(DViewCsr.this);
-                }
-            }
-        });
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DViewCsr.this);
+					extensionsPressed();
+				} finally {
+					CursorUtil.setCursorFree(DViewCsr.this);
+				}
+			}
+		});
 
-        jbPem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    CursorUtil.setCursorBusy(DViewCsr.this);
-                    pemEncodingPressed();
-                } finally {
-                    CursorUtil.setCursorFree(DViewCsr.this);
-                }
-            }
-        });
+		jbPem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DViewCsr.this);
+					pemEncodingPressed();
+				} finally {
+					CursorUtil.setCursorFree(DViewCsr.this);
+				}
+			}
+		});
 
-        jbOK.addActionListener(new ActionListener() {
+		jbOK.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
 		});
 
-        jbAsn1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    CursorUtil.setCursorBusy(DViewCsr.this);
-                    asn1DumpPressed();
-                } finally {
-                    CursorUtil.setCursorFree(DViewCsr.this);
-                }
-            }
-        });
+		jbAsn1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DViewCsr.this);
+					asn1DumpPressed();
+				} finally {
+					CursorUtil.setCursorFree(DViewCsr.this);
+				}
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
@@ -297,15 +303,15 @@ public class DViewCsr extends JEscDialog {
 
 		Attribute[] extReqAttr = pkcs10Csr.getAttributes(pkcs_9_at_extensionRequest);
 		if (extReqAttr != null && extReqAttr.length > 0) {
-		    jbExtensions.setEnabled(true);
+			jbExtensions.setEnabled(true);
 		} else {
-            jbExtensions.setEnabled(false);
+			jbExtensions.setEnabled(false);
 		}
 
-        DialogHelper.populatePkcs10Challenge(pkcs10Csr.getAttributes(), jtfChallenge);
-        DialogHelper.populatePkcs10UnstructuredName(pkcs10Csr.getAttributes(), jtfUnstructuredName);
+		DialogHelper.populatePkcs10Challenge(pkcs10Csr.getAttributes(), jtfChallenge);
+		DialogHelper.populatePkcs10UnstructuredName(pkcs10Csr.getAttributes(), jtfUnstructuredName);
 
-        populatePublicKey(getPkcs10PublicKey());
+		populatePublicKey(getPkcs10PublicKey());
 
 		String sigAlgId = pkcs10Csr.getSignatureAlgorithm().getAlgorithm().getId();
 		SignatureType sigAlg = SignatureType.resolveOid(sigAlgId);
@@ -364,26 +370,26 @@ public class DViewCsr extends JEscDialog {
 		}
 	}
 
-    private void extensionsPressed() {
+	private void extensionsPressed() {
 
-        // extract sequence with extensions from csr
-        Attribute[] attributes = pkcs10Csr.getAttributes(pkcs_9_at_extensionRequest);
-        X509ExtensionSet x509ExtensionSet = new X509ExtensionSet();
-        if ((attributes != null) && (attributes.length > 0)) {
-            ASN1Encodable[] attributeValues = attributes[0].getAttributeValues();
-            if (attributeValues.length > 0) {
-                ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(attributeValues[0]);
-                x509ExtensionSet = new X509ExtensionSet(asn1Sequence);
-            }
-        }
+		// extract sequence with extensions from csr
+		Attribute[] attributes = pkcs10Csr.getAttributes(pkcs_9_at_extensionRequest);
+		X509ExtensionSet x509ExtensionSet = new X509ExtensionSet();
+		if ((attributes != null) && (attributes.length > 0)) {
+			ASN1Encodable[] attributeValues = attributes[0].getAttributeValues();
+			if (attributeValues.length > 0) {
+				ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(attributeValues[0]);
+				x509ExtensionSet = new X509ExtensionSet(asn1Sequence);
+			}
+		}
 
-        DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCertificate.Extensions.Title"),
-                x509ExtensionSet);
-        dViewExtensions.setLocationRelativeTo(this);
-        dViewExtensions.setVisible(true);
-    }
+		DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCertificate.Extensions.Title"),
+				x509ExtensionSet);
+		dViewExtensions.setLocationRelativeTo(this);
+		dViewExtensions.setVisible(true);
+	}
 
-    private void pubKeyDetailsPressed() {
+	private void pubKeyDetailsPressed() {
 		try {
 			PublicKey publicKey = null;
 
@@ -394,7 +400,7 @@ public class DViewCsr extends JEscDialog {
 			}
 
 			DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DViewCsr.PubKeyDetails.Title"),
-			                                                   publicKey);
+					publicKey);
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
 		} catch (CryptoException ex) {
@@ -407,7 +413,7 @@ public class DViewCsr extends JEscDialog {
 	private void pemEncodingPressed() {
 		try {
 			DViewCertCsrPem dViewCsrPem = new DViewCertCsrPem(this, res.getString("DViewCsr.Pem.Title"),
-			                                                  pkcs10Csr);
+					pkcs10Csr);
 			dViewCsrPem.setLocationRelativeTo(this);
 			dViewCsrPem.setVisible(true);
 		} catch (CryptoException ex) {
@@ -449,30 +455,32 @@ public class DViewCsr extends JEscDialog {
 	}
 
 	// for quick testing
-    public static void main(String[] args) throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
-        javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-                    KeyPair keyPair = keyGen.genKeyPair();
-                    JcaPKCS10CertificationRequestBuilder csrBuilder =
-                            new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
-                    PKCS10CertificationRequest csr =  csrBuilder.build(
-                            new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+					KeyPair keyPair = keyGen.genKeyPair();
+					JcaPKCS10CertificationRequestBuilder csrBuilder =
+							new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
+					PKCS10CertificationRequest csr =  csrBuilder.build(
+							new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
 
-                    DViewCsr dialog = new DViewCsr(new javax.swing.JFrame(), "Title", csr);
-                    dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                        public void windowClosing(java.awt.event.WindowEvent e) {
-                            System.exit(0);
-                        }
-                    });
-                    dialog.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+					DViewCsr dialog = new DViewCsr(new javax.swing.JFrame(), "Title", csr);
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 }

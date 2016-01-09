@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
 
 /**
  * Proxy address: host name and port.
- * 
+ *
  */
 public class ProxyAddress {
 	private String host;
@@ -31,7 +31,7 @@ public class ProxyAddress {
 
 	/**
 	 * Construct proxy.
-	 * 
+	 *
 	 * @param host
 	 *            Proxy host name
 	 * @param port
@@ -48,7 +48,7 @@ public class ProxyAddress {
 
 	/**
 	 * Get proxy address as an InetSocketAddress.
-	 * 
+	 *
 	 * @return InetSocketAddress
 	 */
 	public InetSocketAddress getInetSocketAddress() {
@@ -57,7 +57,7 @@ public class ProxyAddress {
 
 	/**
 	 * Get proxy host name.
-	 * 
+	 *
 	 * @return Proxy host name
 	 */
 	public String getHost() {
@@ -66,7 +66,7 @@ public class ProxyAddress {
 
 	/**
 	 * Get proxy port number.
-	 * 
+	 *
 	 * @return Proxy port number
 	 */
 	public int getPort() {
@@ -75,11 +75,12 @@ public class ProxyAddress {
 
 	/**
 	 * Is this ProxyAddress object equal to another object?
-	 * 
+	 *
 	 * @param object
 	 *            Object to compare ProxyAddress with.
 	 * @return true if the equal, false otherwise.
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object == this) {
 			return true;

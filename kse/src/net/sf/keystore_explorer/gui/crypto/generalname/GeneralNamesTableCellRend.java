@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,12 +32,12 @@ import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
 
 /**
  * Custom cell renderer for the cells of the general names table.
- * 
+ *
  */
 public class GeneralNamesTableCellRend extends DefaultTableCellRenderer {
 	/**
 	 * Returns the rendered cell.
-	 * 
+	 *
 	 * @param jtGeneralNames
 	 *            The JTable
 	 * @param value
@@ -52,6 +52,7 @@ public class GeneralNamesTableCellRend extends DefaultTableCellRenderer {
 	 *            If true, render cell appropriately
 	 * @return The renderered cell
 	 */
+	@Override
 	public Component getTableCellRendererComponent(JTable jtGeneralNames, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtGeneralNames, value, isSelected, hasFocus, row,

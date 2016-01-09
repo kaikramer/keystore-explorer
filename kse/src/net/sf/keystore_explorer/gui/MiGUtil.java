@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,12 +28,12 @@ import javax.swing.SwingConstants;
 
 public class MiGUtil {
 
-    public static void addSeparator(Container container, String text) {
-        @SuppressWarnings("UnusedAssignment") Color LABEL_COLOR = new Color(0, 70, 213);
-        JLabel l = new JLabel(text, SwingConstants.LEADING);
-        //l.setForeground(LABEL_COLOR);
+	public static void addSeparator(Container container, String text) {
+		@SuppressWarnings("UnusedAssignment") Color LABEL_COLOR = new Color(0, 70, 213);
+		JLabel l = new JLabel(text, SwingConstants.LEADING);
+		//l.setForeground(LABEL_COLOR);
 
-        container.add(l, "gapbottom 1, span, split 2, aligny center");
-        container.add(new JSeparator(), "gapleft rel, growx");
-    }
+		container.add(l, "gapbottom 1, span, split 2, aligny center");
+		container.add(new JSeparator(), "gapleft rel, growx");
+	}
 }

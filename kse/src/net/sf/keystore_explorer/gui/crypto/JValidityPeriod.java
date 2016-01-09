@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,7 +37,7 @@ import javax.swing.SpinnerNumberModel;
  * Component that allows a user to choose a validity period. User can choose an
  * integral value and a period type (year, month, week, day). Choice is
  * converted into msecs. Useful for the likes of X.509 certificate creation.
- * 
+ *
  */
 public class JValidityPeriod extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/resources");
@@ -60,7 +60,7 @@ public class JValidityPeriod extends JPanel {
 	/**
 	 * Construct a JValidityPeriod with the period type defaulting to that
 	 * supplied.
-	 * 
+	 *
 	 * @param periodType
 	 *            Period type
 	 */
@@ -113,6 +113,7 @@ public class JValidityPeriod extends JPanel {
 		}
 
 		jcbType.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				typeChanged(((JComboBox) evt.getSource()).getSelectedIndex());
 			}
@@ -125,10 +126,11 @@ public class JValidityPeriod extends JPanel {
 
 	/**
 	 * Set component's tooltip text.
-	 * 
+	 *
 	 * @param toolTipText
 	 *            Tooltip text
 	 */
+	@Override
 	public void setToolTipText(String toolTipText) {
 		super.setToolTipText(toolTipText);
 		jsValue.setToolTipText(toolTipText);
@@ -169,7 +171,7 @@ public class JValidityPeriod extends JPanel {
 
 	/**
 	 * Get chosen validity period in msecs.
-	 * 
+	 *
 	 * @return Validity period
 	 */
 	public long getValidityPeriodMs() {

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -205,7 +205,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	}
 
 	private KeyInfo getKeyInfo(String alias, KeyStore keyStore, KeyStoreState currentState) throws CryptoException,
-			GeneralSecurityException {
+	GeneralSecurityException {
 		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
 			// Get key info from certificate
 			X509Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
@@ -220,8 +220,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				return KeyPairUtil.getKeyInfo(x509Chain[0].getPublicKey());
 			} else {
 				// Key entry - get key info if entry is unlocked
-                if (currentState.getEntryPassword(alias) != null) {
-                    char[] keyPassword = null;
+				if (currentState.getEntryPassword(alias) != null) {
+					char[] keyPassword = null;
 
 					keyPassword = currentState.getEntryPassword(alias).toCharArray();
 
@@ -260,6 +260,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 *
 	 * @return The number of columns
 	 */
+	@Override
 	public int getColumnCount() {
 		return columnNames.length;
 	}
@@ -269,6 +270,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 *
 	 * @return The number of rows
 	 */
+	@Override
 	public int getRowCount() {
 		return data.length;
 	}
@@ -280,6 +282,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return The column name
 	 */
+	@Override
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
@@ -293,6 +296,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return The cell value
 	 */
+	@Override
 	public Object getValueAt(int row, int col) {
 		return data[row][col];
 	}
@@ -304,6 +308,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return The column cells' class
 	 */
+	@Override
 	public Class<?> getColumnClass(int col) {
 		switch (col) {
 		case 0:
@@ -332,11 +337,13 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 *            The column position
 	 * @return True if the cell is editable, false otherwise
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		return false;
 	}
 
 	private class AliasComparator implements Comparator<String> {
+		@Override
 		public int compare(String name1, String name2) {
 			return name1.compareToIgnoreCase(name2);
 		}

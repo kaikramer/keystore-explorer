@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,7 +21,7 @@ package net.sf.keystore_explorer.utilities.pem;
 
 /**
  * Information contained in a PEM including type, header attributes and content.
- * 
+ *
  */
 public class PemInfo {
 	private String type;
@@ -30,7 +30,7 @@ public class PemInfo {
 
 	/**
 	 * Construct PEM.
-	 * 
+	 *
 	 * @param type
 	 *            Type
 	 * @param attributes
@@ -46,7 +46,7 @@ public class PemInfo {
 
 	/**
 	 * Get type.
-	 * 
+	 *
 	 * @return Type
 	 */
 	public String getType() {
@@ -55,7 +55,7 @@ public class PemInfo {
 
 	/**
 	 * Get header attributes.
-	 * 
+	 *
 	 * @return Header attributes
 	 */
 	public PemAttributes getAttributes() {
@@ -64,7 +64,7 @@ public class PemInfo {
 
 	/**
 	 * Get content.
-	 * 
+	 *
 	 * @return Content
 	 */
 	public byte[] getContent() {

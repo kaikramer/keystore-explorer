@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,7 +27,7 @@ import org.apache.commons.io.IOUtils;
 
 /**
  * Class of utility methods to output data in hex.
- * 
+ *
  */
 public class HexUtil {
 	private static final String NEWLINE = "\n";
@@ -39,7 +39,7 @@ public class HexUtil {
 	 * Get hex string for the supplied big integer: "0x<hex string>" where hex
 	 * string is outputted in groups of exactly four characters sub-divided by
 	 * spaces.
-	 * 
+	 *
 	 * @param bigInt
 	 *            Big integer
 	 * @return Hex string
@@ -82,7 +82,7 @@ public class HexUtil {
 	 * Get hex string for the supplied byte array: "0x<hex string>" where hex
 	 * string is outputted in groups of exactly four characters sub-divided by
 	 * spaces.
-	 * 
+	 *
 	 * @param bytes
 	 *            Byte array
 	 * @return Hex string
@@ -93,7 +93,7 @@ public class HexUtil {
 
 	/**
 	 * Get hex and clear text dump of byte array.
-	 * 
+	 *
 	 * @param bytes
 	 *            Array of bytes
 	 * @return Hex/clear dump
@@ -181,7 +181,7 @@ public class HexUtil {
 		}
 
 		strBuff.append("   "); // The gap between hex and clear output is three
-								// spaces
+		// spaces
 		strBuff.append(sbClr.toString());
 
 		return strBuff.toString();

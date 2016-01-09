@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,12 +34,12 @@ import org.junit.runners.Suite;
 
 /**
  * Unit tests for crypto package.
- * 
+ *
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ TestCaseKeyStoreUtil.class, TestCaseDigestUtil.class, TestCaseKeyPairUtil.class,
-		TestCasePkcs8Util.class, TestCasePvkUtil.class, TestCaseOpenSslPvkUtil.class, TestCaseOpenSslPubUtil.class,
-		TestCaseSpkac.class })
+	TestCasePkcs8Util.class, TestCasePvkUtil.class, TestCaseOpenSslPvkUtil.class, TestCaseOpenSslPubUtil.class,
+	TestCaseSpkac.class })
 public class TestSuiteCrypto extends TestSuite {
 
 }

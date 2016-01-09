@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2015 Kai Kramer
+ *           2013 - 2016 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -83,6 +83,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 						getClass().getResource(res.getString("ImportTrustedCertificateAction.image")))));
 	}
 
+	@Override
 	public String getHistoryDescription() {
 		return (String) getValue(NAME);
 	}
@@ -90,6 +91,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 	/**
 	 * Do action.
 	 */
+	@Override
 	protected void doAction() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
@@ -98,7 +100,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 			if (history == null) {
 				new NewAction(kseFrame).actionPerformed(null);
 				history = kseFrame.getActiveKeyStoreHistory();
-				
+
 				// cancel pressed => abort
 				if (history == null) {
 					return;
