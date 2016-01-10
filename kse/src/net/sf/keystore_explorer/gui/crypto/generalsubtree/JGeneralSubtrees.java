@@ -42,7 +42,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -55,6 +54,7 @@ import org.bouncycastle.asn1.x509.GeneralSubtree;
 
 import net.sf.keystore_explorer.crypto.x509.GeneralSubtrees;
 import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
@@ -71,7 +71,7 @@ public class JGeneralSubtrees extends JPanel {
 	private JButton jbEdit;
 	private JButton jbRemove;
 	private JScrollPane jspGeneralSubtrees;
-	private JTable jtGeneralSubtrees;
+	private JKseTable jtGeneralSubtrees;
 
 	private String title;
 	private GeneralSubtrees generalSubtrees;
@@ -158,7 +158,7 @@ public class JGeneralSubtrees extends JPanel {
 		jpGeneralSubtreeButtons.add(Box.createVerticalGlue());
 
 		GeneralSubtreesTableModel generalSubtreesTableModel = new GeneralSubtreesTableModel();
-		jtGeneralSubtrees = new JTable(generalSubtreesTableModel);
+		jtGeneralSubtrees = new JKseTable(generalSubtreesTableModel);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(generalSubtreesTableModel);
 		sorter.setComparator(0, new GeneralSubtreesTableModel.GeneralSubtreeBaseComparator());
@@ -170,7 +170,7 @@ public class JGeneralSubtrees extends JPanel {
 		jtGeneralSubtrees.setRowMargin(0);
 		jtGeneralSubtrees.getColumnModel().setColumnMargin(0);
 		jtGeneralSubtrees.getTableHeader().setReorderingAllowed(false);
-		jtGeneralSubtrees.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtGeneralSubtrees.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 		jtGeneralSubtrees.setRowHeight(18);
 
 		for (int i = 0; i < jtGeneralSubtrees.getColumnCount(); i++) {

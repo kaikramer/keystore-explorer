@@ -52,7 +52,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
@@ -70,6 +69,7 @@ import javax.swing.table.TableRowSorter;
 import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DViewExtensions;
@@ -104,7 +104,7 @@ public class DViewCrl extends JEscDialog {
 	private JPanel jpRevokedCertsTable;
 	private JLabel jlRevokedCerts;
 	private JScrollPane jspRevokedCertsTable;
-	private JTable jtRevokedCerts;
+	private JKseTable jtRevokedCerts;
 	private JPanel jpCrlEntryExtensions;
 	private JButton jbCrlEntryExtensions;
 
@@ -256,7 +256,7 @@ public class DViewCrl extends JEscDialog {
 
 		RevokedCertsTableModel rcModel = new RevokedCertsTableModel();
 
-		jtRevokedCerts = new JTable(rcModel);
+		jtRevokedCerts = new JKseTable(rcModel);
 
 		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(rcModel);
 		jtRevokedCerts.setRowSorter(sorter);
@@ -265,7 +265,7 @@ public class DViewCrl extends JEscDialog {
 		jtRevokedCerts.setRowMargin(0);
 		jtRevokedCerts.getColumnModel().setColumnMargin(0);
 		jtRevokedCerts.getTableHeader().setReorderingAllowed(false);
-		jtRevokedCerts.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtRevokedCerts.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 
 		for (int i = 0; i < jtRevokedCerts.getColumnCount(); i++) {
 			TableColumn column = jtRevokedCerts.getColumnModel().getColumn(i);

@@ -1495,7 +1495,7 @@ public final class KseFrame implements StatusBar {
 
 	private JTable createEmptyKeyStoreTable() {
 		KeyStoreTableModel ksModel = new KeyStoreTableModel();
-		final JTable jtKeyStore = new JTable(ksModel);
+		final JTable jtKeyStore = new JKseTable(ksModel);
 
 		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ksModel);
 		jtKeyStore.setRowSorter(sorter);
@@ -1504,7 +1504,7 @@ public final class KseFrame implements StatusBar {
 		jtKeyStore.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jtKeyStore.getTableHeader().setReorderingAllowed(false);
 		jtKeyStore.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		jtKeyStore.setRowHeight(18); // because of 16x16 icons in first 3 rows
+		jtKeyStore.setRowHeight(Math.max(18, jtKeyStore.getRowHeight())); // min. height of 18 because of 16x16 icons
 
 		// Register cut, copy and paste actions with the relevant keystrokes
 		jtKeyStore.getInputMap().put((KeyStroke) cutAction.getValue(Action.ACCELERATOR_KEY), CUT_KEY);
@@ -1543,7 +1543,7 @@ public final class KseFrame implements StatusBar {
 		for (int i = 0; i < jtKeyStore.getColumnCount(); i++) {
 			TableColumn column = jtKeyStore.getColumnModel().getColumn(i);
 			column.setHeaderRenderer(new KeyStoreTableHeadRend(jtKeyStore.getTableHeader().getDefaultRenderer()));
-			column.setCellRenderer(new KeyStoreTableCellRend(jtKeyStore.getDefaultRenderer(column.getClass())));
+			column.setCellRenderer(new KeyStoreTableCellRend());
 		}
 
 		// Make the first three columns small and not resizable as they hold icons

@@ -44,7 +44,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -56,6 +55,7 @@ import javax.swing.table.TableRowSorter;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 
 import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
@@ -73,7 +73,7 @@ public class JPolicyInformation extends JPanel {
 	private JButton jbEdit;
 	private JButton jbRemove;
 	private JScrollPane jspPolicyInformation;
-	private JTable jtPolicyInformation;
+	private JKseTable jtPolicyInformation;
 
 	private String title;
 	private List<PolicyInformation> policyInformation;
@@ -160,7 +160,7 @@ public class JPolicyInformation extends JPanel {
 		jpPolicyInformationButtons.add(Box.createVerticalGlue());
 
 		PolicyInformationTableModel policyInformationTableModel = new PolicyInformationTableModel();
-		jtPolicyInformation = new JTable(policyInformationTableModel);
+		jtPolicyInformation = new JKseTable(policyInformationTableModel);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(policyInformationTableModel);
 		sorter.setComparator(0, new PolicyInformationTableModel.PolicyInformationComparator());
@@ -170,7 +170,7 @@ public class JPolicyInformation extends JPanel {
 		jtPolicyInformation.setRowMargin(0);
 		jtPolicyInformation.getColumnModel().setColumnMargin(0);
 		jtPolicyInformation.getTableHeader().setReorderingAllowed(false);
-		jtPolicyInformation.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtPolicyInformation.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 		jtPolicyInformation.setRowHeight(18);
 
 		for (int i = 0; i < jtPolicyInformation.getColumnCount(); i++) {

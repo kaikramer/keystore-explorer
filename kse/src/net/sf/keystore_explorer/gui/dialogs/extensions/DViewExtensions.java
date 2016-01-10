@@ -47,7 +47,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -70,6 +69,7 @@ import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.crypto.x509.X509Ext;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
 import net.sf.keystore_explorer.gui.dialogs.DViewCertificate;
@@ -89,7 +89,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 	private JPanel jpExtensions;
 	private JPanel jpExtensionsTable;
 	private JScrollPane jspExtensionsTable;
-	private JTable jtExtensions;
+	private JKseTable jtExtensions;
 	private JPanel jpExtensionValue;
 	private JLabel jlExtensionValue;
 	private JPanel jpExtensionValueTextArea;
@@ -136,7 +136,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 	private void initComponents() {
 		ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
-		jtExtensions = new JTable(extensionsTableModel);
+		jtExtensions = new JKseTable(extensionsTableModel);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(extensionsTableModel);
 		sorter.setComparator(2, new ObjectIdComparator());
@@ -146,7 +146,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		jtExtensions.setRowMargin(0);
 		jtExtensions.getColumnModel().setColumnMargin(0);
 		jtExtensions.getTableHeader().setReorderingAllowed(false);
-		jtExtensions.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 		jtExtensions.setRowHeight(18);
 
 		for (int i = 0; i < jtExtensions.getColumnCount(); i++) {

@@ -43,7 +43,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -55,6 +54,7 @@ import javax.swing.table.TableRowSorter;
 import org.bouncycastle.asn1.x509.AccessDescription;
 
 import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
@@ -71,7 +71,7 @@ public class JAccessDescriptions extends JPanel {
 	private JButton jbEdit;
 	private JButton jbRemove;
 	private JScrollPane jspAccessDescriptions;
-	private JTable jtAccessDescriptions;
+	private JKseTable jtAccessDescriptions;
 
 	private String title;
 	private List<AccessDescription> accessDescriptions;
@@ -158,7 +158,7 @@ public class JAccessDescriptions extends JPanel {
 		jpAccessDescriptionButtons.add(Box.createVerticalGlue());
 
 		AccessDescriptionsTableModel accessDescriptionsTableModel = new AccessDescriptionsTableModel();
-		jtAccessDescriptions = new JTable(accessDescriptionsTableModel);
+		jtAccessDescriptions = new JKseTable(accessDescriptionsTableModel);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(accessDescriptionsTableModel);
 		sorter.setComparator(0, new AccessDescriptionsTableModel.AccessDescriptionMethodComparator());
@@ -169,7 +169,7 @@ public class JAccessDescriptions extends JPanel {
 		jtAccessDescriptions.setRowMargin(0);
 		jtAccessDescriptions.getColumnModel().setColumnMargin(0);
 		jtAccessDescriptions.getTableHeader().setReorderingAllowed(false);
-		jtAccessDescriptions.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtAccessDescriptions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 		jtAccessDescriptions.setRowHeight(18);
 
 		for (int i = 0; i < jtAccessDescriptions.getColumnCount(); i++) {

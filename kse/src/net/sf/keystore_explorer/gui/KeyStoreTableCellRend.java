@@ -29,7 +29,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 
 /**
  * Custom cell renderer for the cells of the KeyStore table of KeyStore
@@ -39,15 +38,6 @@ import javax.swing.table.TableCellRenderer;
 public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
-	//private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM,
-	//		Locale.getDefault());
-
-
-	private TableCellRenderer delegate;
-
-	public KeyStoreTableCellRend(TableCellRenderer delegate) {
-		this.delegate = delegate;
-	}
 
 	/**
 	 * Returns the rendered cell for the supplied value and column.
@@ -69,10 +59,6 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable jtKeyStore, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
-
-		//Component c = delegate.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
-
-		//		if (c instanceof JLabel) {
 
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
 
@@ -227,23 +213,6 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 			cell.setText(value.toString());
 			cell.setToolTipText(getText());
 		}
-
-		//			// Let background through if cell not selected, text should be black
-		//			// and
-		//			// plain
-		//			if (!isSelected) {
-		//				cell.setOpaque(false);
-		//				cell.setForeground(Color.BLACK);
-		//			}
-		//			// Make background blue if selected, text should be white and bold
-		//			else {
-		//				cell.setOpaque(true);
-		//				cell.setBackground(new Color(0, 127, 190));
-		//				cell.setForeground(Color.WHITE);
-		//			}
-
-		//cell.setBorder(new EmptyBorder(0, 5, 0, 5));
-		//		}
 
 		return cell;
 	}

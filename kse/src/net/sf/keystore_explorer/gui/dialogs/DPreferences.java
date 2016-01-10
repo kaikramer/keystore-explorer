@@ -66,7 +66,6 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.SecurityProvider;
-import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
 import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;

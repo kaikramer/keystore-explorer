@@ -41,7 +41,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -56,6 +55,7 @@ import org.bouncycastle.asn1.x509.PolicyMappings;
 import net.sf.keystore_explorer.crypto.x509.PolicyMapping;
 import net.sf.keystore_explorer.crypto.x509.PolicyMappingsUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
@@ -72,7 +72,7 @@ public class JPolicyMappings extends JPanel {
 	private JButton jbEdit;
 	private JButton jbRemove;
 	private JScrollPane jspPolicyMappings;
-	private JTable jtPolicyMappings;
+	private JKseTable jtPolicyMappings;
 
 	private String title;
 	private PolicyMappings policyMappings;
@@ -159,7 +159,7 @@ public class JPolicyMappings extends JPanel {
 		jpPolicyMappingButtons.add(Box.createVerticalGlue());
 
 		PolicyMappingsTableModel policyMappingsTableModel = new PolicyMappingsTableModel();
-		jtPolicyMappings = new JTable(policyMappingsTableModel);
+		jtPolicyMappings = new JKseTable(policyMappingsTableModel);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(policyMappingsTableModel);
 		sorter.setComparator(0, new PolicyMappingsTableModel.IssuerDomainPolicyComparator());
@@ -170,7 +170,7 @@ public class JPolicyMappings extends JPanel {
 		jtPolicyMappings.setRowMargin(0);
 		jtPolicyMappings.getColumnModel().setColumnMargin(0);
 		jtPolicyMappings.getTableHeader().setReorderingAllowed(false);
-		jtPolicyMappings.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtPolicyMappings.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 		jtPolicyMappings.setRowHeight(18);
 
 		for (int i = 0; i < jtPolicyMappings.getColumnCount(); i++) {

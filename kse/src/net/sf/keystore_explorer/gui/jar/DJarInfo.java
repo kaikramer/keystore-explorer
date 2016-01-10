@@ -39,7 +39,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -49,6 +48,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
@@ -62,7 +62,7 @@ public class DJarInfo extends JEscDialog {
 	private JPanel jpOK;
 	private JPanel jpJarInfoTable;
 	private JScrollPane jspJarInfoTable;
-	private JTable jtJarInfo;
+	private JKseTable jtJarInfo;
 
 	/**
 	 * Creates new DJarInfo dialog where the parent is a frame.
@@ -99,12 +99,12 @@ public class DJarInfo extends JEscDialog {
 		JarInfoTableModel jiModel = new JarInfoTableModel();
 		jiModel.load(jarFiles);
 
-		jtJarInfo = new JTable(jiModel);
+		jtJarInfo = new JKseTable(jiModel);
 
 		jtJarInfo.setRowMargin(0);
 		jtJarInfo.getColumnModel().setColumnMargin(0);
 		jtJarInfo.getTableHeader().setReorderingAllowed(false);
-		jtJarInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		jtJarInfo.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
 		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jiModel);
 		jtJarInfo.setRowSorter(sorter);

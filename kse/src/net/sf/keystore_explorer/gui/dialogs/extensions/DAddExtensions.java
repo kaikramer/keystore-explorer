@@ -55,7 +55,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -78,6 +77,7 @@ import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.oid.ObjectIdComparator;
@@ -100,7 +100,7 @@ public class DAddExtensions extends JEscDialog {
 	private JButton jbToggleCriticality;
 	private JButton jbRemove;
 	private JScrollPane jspExtensionsTable;
-	private JTable jtExtensions;
+	private JKseTable jtExtensions;
 	private JPanel jpLoadSaveTemplate;
 	private JButton jbLoadTemplate;
 	private JButton jbSaveTemplate;
@@ -264,7 +264,7 @@ public class DAddExtensions extends JEscDialog {
 		jpExtensionButtons.add(Box.createVerticalGlue());
 
 		ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
-		jtExtensions = new JTable(extensionsTableModel);
+		jtExtensions = new JKseTable(extensionsTableModel);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(extensionsTableModel);
 		sorter.setComparator(2, new ObjectIdComparator());
@@ -274,7 +274,7 @@ public class DAddExtensions extends JEscDialog {
 		jtExtensions.setRowMargin(0);
 		jtExtensions.getColumnModel().setColumnMargin(0);
 		jtExtensions.getTableHeader().setReorderingAllowed(false);
-		jtExtensions.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 		jtExtensions.setRowHeight(18);
 
 		for (int i = 0; i < jtExtensions.getColumnCount(); i++) {

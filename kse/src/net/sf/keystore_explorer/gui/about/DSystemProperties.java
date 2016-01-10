@@ -32,7 +32,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -42,6 +41,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
@@ -55,7 +55,7 @@ public class DSystemProperties extends JEscDialog {
 	private JPanel jpOK;
 	private JPanel jpSystemPropertiesTable;
 	private JScrollPane jspSystemPropertiesTable;
-	private JTable jtSystemProperties;
+	private JKseTable jtSystemProperties;
 
 	/**
 	 * Creates new DSystemProperties dialog where the parent is a dialog.
@@ -86,12 +86,12 @@ public class DSystemProperties extends JEscDialog {
 		SystemPropertiesTableModel spModel = new SystemPropertiesTableModel();
 		spModel.load();
 
-		jtSystemProperties = new JTable(spModel);
+		jtSystemProperties = new JKseTable(spModel);
 
 		jtSystemProperties.setRowMargin(0);
 		jtSystemProperties.getColumnModel().setColumnMargin(0);
 		jtSystemProperties.getTableHeader().setReorderingAllowed(false);
-		jtSystemProperties.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		jtSystemProperties.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
 		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(spModel);
 		jtSystemProperties.setRowSorter(sorter);

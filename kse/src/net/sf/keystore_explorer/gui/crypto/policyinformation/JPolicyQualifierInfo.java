@@ -44,7 +44,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -56,6 +55,7 @@ import javax.swing.table.TableRowSorter;
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 
 import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.gui.JKseTable;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
@@ -73,7 +73,7 @@ public class JPolicyQualifierInfo extends JPanel {
 	private JButton jbEdit;
 	private JButton jbRemove;
 	private JScrollPane jspPolicyQualifierInfo;
-	private JTable jtPolicyQualifierInfo;
+	private JKseTable jtPolicyQualifierInfo;
 
 	private String title;
 	private List<PolicyQualifierInfo> policyQualifierInfo;
@@ -160,7 +160,7 @@ public class JPolicyQualifierInfo extends JPanel {
 		jpPolicyQualifierInfoButtons.add(Box.createVerticalGlue());
 
 		PolicyQualifierInfoTableModel policyQualifierInfoTableModel = new PolicyQualifierInfoTableModel();
-		jtPolicyQualifierInfo = new JTable(policyQualifierInfoTableModel);
+		jtPolicyQualifierInfo = new JKseTable(policyQualifierInfoTableModel);
 
 		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(policyQualifierInfoTableModel);
 		sorter.setComparator(0, new PolicyQualifierInfoTableModel.PolicyQualifierInfoComparator());
@@ -170,7 +170,7 @@ public class JPolicyQualifierInfo extends JPanel {
 		jtPolicyQualifierInfo.setRowMargin(0);
 		jtPolicyQualifierInfo.getColumnModel().setColumnMargin(0);
 		jtPolicyQualifierInfo.getTableHeader().setReorderingAllowed(false);
-		jtPolicyQualifierInfo.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtPolicyQualifierInfo.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
 		jtPolicyQualifierInfo.setRowHeight(18);
 
 		for (int i = 0; i < jtPolicyQualifierInfo.getColumnCount(); i++) {
