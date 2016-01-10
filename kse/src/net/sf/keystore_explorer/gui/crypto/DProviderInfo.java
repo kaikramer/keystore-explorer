@@ -294,7 +294,7 @@ public class DProviderInfo extends JEscDialog {
 		for (Enumeration names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
 
-			if ((key.startsWith(match)) && (key.indexOf(' ') == -1)) {
+			if (key.startsWith(match) && key.indexOf(' ') == -1) {
 				String algorithm = key.substring(key.indexOf(".") + 1);
 				algorithmList.add(algorithm);
 			}

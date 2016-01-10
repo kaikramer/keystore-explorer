@@ -171,7 +171,7 @@ public class JPolicyMappings extends JPanel {
 		jtPolicyMappings.getColumnModel().setColumnMargin(0);
 		jtPolicyMappings.getTableHeader().setReorderingAllowed(false);
 		jtPolicyMappings.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
-		jtPolicyMappings.setRowHeight(18);
+		jtPolicyMappings.setRowHeight(Math.max(18, jtPolicyMappings.getRowHeight()));
 
 		for (int i = 0; i < jtPolicyMappings.getColumnCount(); i++) {
 			TableColumn column = jtPolicyMappings.getColumnModel().getColumn(i);
@@ -205,14 +205,14 @@ public class JPolicyMappings extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
+					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE;
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
-				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
+				if (!OperatingSystem.isMacOs() && deleteLastPressed && evt.getKeyCode() == KeyEvent.VK_DELETE) {
 					try {
 						CursorUtil.setCursorBusy(JPolicyMappings.this);
 						deleteLastPressed = false;
@@ -226,7 +226,7 @@ public class JPolicyMappings extends JPanel {
 			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
-				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
+				if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
 					try {
 						CursorUtil.setCursorBusy(JPolicyMappings.this);
 						removeSelectedPolicyMapping();

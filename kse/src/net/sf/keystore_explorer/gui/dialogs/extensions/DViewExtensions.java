@@ -147,7 +147,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		jtExtensions.getColumnModel().setColumnMargin(0);
 		jtExtensions.getTableHeader().setReorderingAllowed(false);
 		jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
-		jtExtensions.setRowHeight(18);
+		jtExtensions.setRowHeight(Math.max(18, jtExtensions.getRowHeight()));
 
 		for (int i = 0; i < jtExtensions.getColumnCount(); i++) {
 			TableColumn column = jtExtensions.getColumnModel().getColumn(i);
@@ -192,7 +192,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		jpExtensionValue.add(jlExtensionValue, BorderLayout.NORTH);
 
 		jepExtensionValue = new JEditorPane();
-		jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jepExtensionValue.getFont().getSize()));
 		jepExtensionValue.setEditable(false);
 		jepExtensionValue.setToolTipText(res.getString("DViewExtensions.jtaExtensionValue.tooltip"));
 		// JGoodies - keep uneditable color same as editable

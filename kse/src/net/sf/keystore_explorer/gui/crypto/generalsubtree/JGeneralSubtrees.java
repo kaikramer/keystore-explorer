@@ -171,7 +171,7 @@ public class JGeneralSubtrees extends JPanel {
 		jtGeneralSubtrees.getColumnModel().setColumnMargin(0);
 		jtGeneralSubtrees.getTableHeader().setReorderingAllowed(false);
 		jtGeneralSubtrees.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
-		jtGeneralSubtrees.setRowHeight(18);
+		jtGeneralSubtrees.setRowHeight(Math.max(18, jtGeneralSubtrees.getRowHeight()));
 
 		for (int i = 0; i < jtGeneralSubtrees.getColumnCount(); i++) {
 			TableColumn column = jtGeneralSubtrees.getColumnModel().getColumn(i);
@@ -205,14 +205,14 @@ public class JGeneralSubtrees extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
+					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE;
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
-				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
+				if (!OperatingSystem.isMacOs() && deleteLastPressed && evt.getKeyCode() == KeyEvent.VK_DELETE) {
 					try {
 						CursorUtil.setCursorBusy(JGeneralSubtrees.this);
 						deleteLastPressed = false;
@@ -226,7 +226,7 @@ public class JGeneralSubtrees extends JPanel {
 			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
-				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
+				if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
 					try {
 						CursorUtil.setCursorBusy(JGeneralSubtrees.this);
 						removeSelectedGeneralSubtree();

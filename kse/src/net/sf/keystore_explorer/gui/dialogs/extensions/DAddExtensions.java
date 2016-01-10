@@ -275,7 +275,7 @@ public class DAddExtensions extends JEscDialog {
 		jtExtensions.getColumnModel().setColumnMargin(0);
 		jtExtensions.getTableHeader().setReorderingAllowed(false);
 		jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
-		jtExtensions.setRowHeight(18);
+		jtExtensions.setRowHeight(Math.max(18, jtExtensions.getRowHeight()));
 
 		for (int i = 0; i < jtExtensions.getColumnCount(); i++) {
 			TableColumn column = jtExtensions.getColumnModel().getColumn(i);
@@ -320,14 +320,14 @@ public class DAddExtensions extends JEscDialog {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
+					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE;
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
-				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
+				if (!OperatingSystem.isMacOs() && deleteLastPressed && evt.getKeyCode() == KeyEvent.VK_DELETE) {
 					try {
 						CursorUtil.setCursorBusy(DAddExtensions.this);
 						deleteLastPressed = false;
@@ -341,7 +341,7 @@ public class DAddExtensions extends JEscDialog {
 			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
-				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
+				if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
 					try {
 						CursorUtil.setCursorBusy(DAddExtensions.this);
 						removeSelectedExtension();

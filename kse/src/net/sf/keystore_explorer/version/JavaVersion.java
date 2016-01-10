@@ -71,6 +71,12 @@ public class JavaVersion implements Comparable {
 	/** JRE version 1.7.0 */
 	public static final JavaVersion JRE_VERSION_170 = new JavaVersion("1.7.0");
 
+	/** JRE version 1.8.0 */
+	public static final JavaVersion JRE_VERSION_180 = new JavaVersion("1.8.0");
+
+	/** JRE version 1.9.0 */
+	public static final JavaVersion JRE_VERSION_190 = new JavaVersion("1.9.0");
+
 	/**
 	 * Construct a JavaVersion object for the current Java environment.
 	 *
@@ -126,11 +132,11 @@ public class JavaVersion implements Comparable {
 		String identifierRead = null;
 
 		// No update nor identifier
-		if ((indexUpdate == -1) && (indexIdentifier == -1)) {
+		if (indexUpdate == -1 && indexIdentifier == -1) {
 			versionRead = javaVersion; // Version as a string
 		}
 		// Update but no identifier
-		else if ((indexUpdate != -1) && (indexIdentifier == -1)) {
+		else if (indexUpdate != -1 && indexIdentifier == -1) {
 			versionRead = javaVersion.substring(0, indexUpdate); // Version as a string
 			updateRead = javaVersion.substring(indexUpdate + 1); // Update as a string
 		}

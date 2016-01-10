@@ -170,7 +170,7 @@ public class JAccessDescriptions extends JPanel {
 		jtAccessDescriptions.getColumnModel().setColumnMargin(0);
 		jtAccessDescriptions.getTableHeader().setReorderingAllowed(false);
 		jtAccessDescriptions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
-		jtAccessDescriptions.setRowHeight(18);
+		jtAccessDescriptions.setRowHeight(Math.max(18, jtAccessDescriptions.getRowHeight()));
 
 		for (int i = 0; i < jtAccessDescriptions.getColumnCount(); i++) {
 			TableColumn column = jtAccessDescriptions.getColumnModel().getColumn(i);
@@ -204,14 +204,14 @@ public class JAccessDescriptions extends JPanel {
 			public void keyPressed(KeyEvent evt) {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
-					deleteLastPressed = (evt.getKeyCode() == KeyEvent.VK_DELETE);
+					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE;
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent evt) {
 				// Delete on non-Mac if delete was pressed and is now released
-				if ((!OperatingSystem.isMacOs()) && deleteLastPressed && (evt.getKeyCode() == KeyEvent.VK_DELETE)) {
+				if (!OperatingSystem.isMacOs() && deleteLastPressed && evt.getKeyCode() == KeyEvent.VK_DELETE) {
 					try {
 						CursorUtil.setCursorBusy(JAccessDescriptions.this);
 						deleteLastPressed = false;
@@ -225,7 +225,7 @@ public class JAccessDescriptions extends JPanel {
 			@Override
 			public void keyTyped(KeyEvent evt) {
 				// Delete on Mac if back space typed
-				if ((OperatingSystem.isMacOs()) && (evt.getKeyChar() == 0x08)) {
+				if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
 					try {
 						CursorUtil.setCursorBusy(JAccessDescriptions.this);
 						removeSelectedAccessDescription();
