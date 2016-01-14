@@ -89,8 +89,11 @@ public class HelpAction extends KeyStoreExplorerAction {
 
 	private void createAndDisplayHelp() throws HelpSetException {
 		URL hsUrl = getClass().getResource(res.getString("HelpAction.HelpSet"));
-
 		HelpSet hs = new HelpSet(getClass().getClassLoader(), hsUrl);
+
+		URL hsDarculaUrl = getClass().getResource(res.getString("HelpAction.DarculaHelpSet"));
+		HelpSet hsDarcula = new HelpSet(getClass().getClassLoader(), hsDarculaUrl);
+		hs.add(hsDarcula);
 
 		helpBroker = new DefaultHelpBroker(hs);
 
@@ -102,8 +105,7 @@ public class HelpAction extends KeyStoreExplorerAction {
 		helpWindow.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 
 		// Set help icons - set lots of different sizes to give each OS the most
-		// flexibility in
-		// choosing an icon for display
+		// flexibility in choosing an icon for display
 		ArrayList<Image> icons = new ArrayList<Image>();
 		icons.add(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource(res.getString("HelpAction.image.16x16"))));

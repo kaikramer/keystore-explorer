@@ -37,11 +37,11 @@
    </maps>
 
    <!-- views -->
-   <view>
+   <view mergetype="javax.help.UniteAppendMerge">
       <name>Contents</name>
       <label>Contents</label>
       <type>javax.help.TOCView</type>
-      <data>contents</data>
+      <data>contents.xml</data>
       <image>contentstab</image>
    </view>
 

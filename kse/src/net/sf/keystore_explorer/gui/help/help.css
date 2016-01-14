@@ -20,21 +20,20 @@
 
 body {font-family: arial;
       font-style: normal;
-      font-size: 12pt;
       background: #ffffff;
       color: #123456;}
 
 h1 {font-family: arial;
     font-style: normal;
-    font-size: 20pt;}
+    font-size: 1.5 em;}
 
 h2 {font-family: arial;
     font-style: normal;
-    font-size: 15pt;}
+    font-size: 1.4 em;}
 
 h3 {font-family: arial;
     font-style: bold;
-    font-size: 12pt;}
+    font-size: 1.2 em;}
 
 ol {margin-left: 30px;
     list-style-type: decimal;}
