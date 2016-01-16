@@ -70,14 +70,8 @@ public class LnfUtil {
 		}
 
 		// Darcula is optional
-		try {
-			Class.forName(DARCULA_LAF_CLASS);
-			// Darcula has some issues in Java 6
-			if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170)) {
-				UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
-			}
-		} catch (ClassNotFoundException e) {
-			// Darcula jar not included
+		if (isDarculaAvailable()) {
+		    UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
 		}
 	}
 
@@ -212,4 +206,20 @@ public class LnfUtil {
 	public static boolean isDarkLnf() {
 		return UIManager.getLookAndFeel().getClass().getName().equals(DARCULA_LAF_CLASS);
 	}
+
+	/**
+     * Is optional Darcula LaF available?
+     */
+    public static boolean isDarculaAvailable() {
+        try {
+            Class.forName(DARCULA_LAF_CLASS);
+            // Darcula has some issues in Java 6
+            if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170)) {
+               return true;
+            }
+        } catch (ClassNotFoundException e) {
+            // Darcula jar not included
+        }
+        return false;
+    }
 }

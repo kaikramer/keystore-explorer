@@ -27,6 +27,7 @@ import javax.swing.ImageIcon;
 
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.gui.KseFrame;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.about.DAbout;
 
 /**
@@ -68,7 +69,8 @@ public class AboutAction extends KeyStoreExplorerAction {
 				res.getString("AboutAction.Acknowledgement2"), res.getString("AboutAction.Acknowledgement3"),
 				res.getString("AboutAction.Acknowledgement4"), res.getString("AboutAction.Acknowledgement5"),
 				res.getString("AboutAction.Acknowledgement6"), res.getString("AboutAction.Acknowledgement7"),
-				res.getString("AboutAction.Acknowledgement8") };
+				LnfUtil.isDarculaAvailable() ? res.getString("AboutAction.Acknowledgement8") : "",
+				 };
 
 		URL aboutDialogImageURL = AboutAction.class.getResource(res.getString("AboutAction.About.image"));
 		DAbout dAbout = new DAbout(frame,

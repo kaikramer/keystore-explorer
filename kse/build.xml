@@ -21,7 +21,7 @@
 <!--
     How to Use this Build Script:
 
-    (1) Install Apache Ant 1.8+ and setup for use with JDK 1.6+.
+    (1) Install Apache Ant 1.9+ and setup for use with JDK 1.7+.
 
     (2) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
 
@@ -34,7 +34,7 @@
  -->
 
 <!-- Build KeyStore Explorer -->
-<project basedir="." default="package" name="KeyStore Explorer">
+<project basedir="." default="package" name="KeyStore Explorer" xmlns:if="ant:if" xmlns:unless="ant:unless">
 	
     <!-- Application name and version -->
     <property file="src/net/sf/keystore_explorer/resources.properties" />
@@ -304,6 +304,7 @@
         </zip>
 
         <!-- Create manual install ZIP -->
+        <available file="${libDir}/darcula.jar" property="darcula.present"/>
         <zip destfile="${manualZip}" >
             <zipfileset file="${appJar}" prefix="${distFileNamePrefix}" />
             <zipfileset file="${appExe}" prefix="${distFileNamePrefix}" />
@@ -312,7 +313,12 @@
             <zipfileset refid="libs" prefix="${distFileNamePrefix}/lib" />
             <zipfileset file="${readmesDir}/manual/readme.txt" prefix="${distFileNamePrefix}" />
             <zipfileset file="${iconsDir}/kse_*.png" prefix="${distFileNamePrefix}/icons" />
-            <zipfileset defaultexcludes="false" dir="${licensesDir}" excludes="${excludes}" prefix="${distFileNamePrefix}/licences"/>
+            <zipfileset defaultexcludes="false" dir="${licensesDir}" prefix="${distFileNamePrefix}/licences" >
+                <include name="*.txt"/>
+                <exclude name="${excludes}"/>
+            	<!-- Include darcula license only if darcula.jar is included -->
+                <exclude name="license-darcula.txt" unless:true="${darcula.present}"/>
+            </zipfileset>
         </zip>
     </target>
 

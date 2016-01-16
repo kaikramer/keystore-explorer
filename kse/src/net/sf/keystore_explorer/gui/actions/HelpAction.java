@@ -37,6 +37,7 @@ import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 import net.sf.keystore_explorer.gui.KseFrame;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 
 /**
@@ -91,9 +92,11 @@ public class HelpAction extends KeyStoreExplorerAction {
 		URL hsUrl = getClass().getResource(res.getString("HelpAction.HelpSet"));
 		HelpSet hs = new HelpSet(getClass().getClassLoader(), hsUrl);
 
-		URL hsDarculaUrl = getClass().getResource(res.getString("HelpAction.DarculaHelpSet"));
-		HelpSet hsDarcula = new HelpSet(getClass().getClassLoader(), hsDarculaUrl);
-		hs.add(hsDarcula);
+		if (LnfUtil.isDarculaAvailable()) {
+			URL hsDarculaUrl = getClass().getResource(res.getString("HelpAction.DarculaHelpSet"));
+			HelpSet hsDarcula = new HelpSet(getClass().getClassLoader(), hsDarculaUrl);
+			hs.add(hsDarcula);
+		}
 
 		helpBroker = new DefaultHelpBroker(hs);
 
