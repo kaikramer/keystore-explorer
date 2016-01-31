@@ -1,52 +1,151 @@
 package net.sf.keystore_explorer.gui;
 
+import java.awt.Component;
+import java.awt.HeadlessException;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.swing.JFileChooser;
 
+import net.sf.keystore_explorer.gui.FileChooserFactory.KseFileExtFilter;
+
 public class JavaFXFileChooser extends JFileChooser {
 
-    public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    private static final long serialVersionUID = 706991877631924379L;
 
-        // used for initializing javafx thread (ideally called once)
-        Class.forName("javafx.embed.swing.JFXPanel").getConstructor().newInstance();
+    static private Class<?> platformClass;
+    static private Class<?> fileChooserClass;
+    static private Class<?> extensionFilterClass;
+    static private Class<?> windowClass;
 
-        Class<?> platformClass = Class.forName("javafx.application.Platform");
-        Method runLaterMethod = platformClass.getMethod("runLater", Runnable.class);
-        runLaterMethod.invoke(null, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Class<?> extensionFilterClass = Class.forName("javafx.stage.FileChooser$ExtensionFilter");
-                    Object extFilterJPG = extensionFilterClass.getConstructor(String.class, String[].class)
-                            .newInstance("KeyStore files (*.jks,*.jceks)", new String[] { "*.jks", "*.jceks" });
-                    Object extFilterPNG = extensionFilterClass.getConstructor(String.class, String[].class)
-                            .newInstance("PKCS#12 files (*.p12, *.pfx)", new String[] { "*.p12", "*.pfx" });
+    private static boolean fxAvailable = false;
 
-                    // set extension filters
-                    Class<?> fileChooserClass = Class.forName("javafx.stage.FileChooser");
-                    Object fileChooser = fileChooserClass.getConstructor().newInstance();
-                    Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
-                    List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
-                    observableList.add(extFilterPNG);
-                    observableList.add(extFilterJPG);
+    static {
+        // check for availability and initialize javafx thread
+        try {
+            Class.forName("javafx.embed.swing.JFXPanel").getConstructor().newInstance();
+            platformClass = Class.forName("javafx.application.Platform");
+            fileChooserClass = Class.forName("javafx.stage.FileChooser");
+            extensionFilterClass = Class.forName("javafx.stage.FileChooser$ExtensionFilter");
+            windowClass = Class.forName("javafx.stage.Window");
+            fxAvailable = true;
+        } catch (Exception e) {
+            fxAvailable = false;
+        }
+    }
 
-                    // set window title
-                    Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
-                    setTitleMethod.invoke(fileChooser, "Open KeyStore File");
+    private List<KseFileExtFilter> filters = new ArrayList<KseFileExtFilter>();
+    private File selectedFile;
+    private String dialogTitle;
 
-                    Class<?> windowClass = Class.forName("javafx.stage.Window");
-                    Method showOpenDialogMethod = fileChooserClass.getMethod("showOpenDialog", windowClass);
-                    Object file = showOpenDialogMethod.invoke(fileChooser, (Object) null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    public static boolean isFxAvailable() {
+        return fxAvailable;
+    }
 
+    public void addChoosableFileFilter(KseFileExtFilter filter) {
+        filters.add(filter);
+    }
+
+    @Override
+    public File getSelectedFile() {
+        return selectedFile;
+    }
+
+    @Override
+    public void setMultiSelectionEnabled(boolean b) {
+        // ignore for now
+    }
+
+    @Override
+    public void setCurrentDirectory(File dir) {
+        // ignore because native file dialog already has a memory
+    }
+
+    @Override
+    public void setSelectedFile(File file) {
+        selectedFile = file;
+    }
+
+    @Override
+    public void setDialogTitle(String dialogTitle) {
+        this.dialogTitle = dialogTitle;
+    }
+
+    @Override
+    public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
+
+        try {
+			final Object fileChooser = fileChooserClass.getConstructor().newInstance();
+
+			SynchronousJFXCaller<File> caller = new SynchronousJFXCaller<File>(new Callable<File>() {
+
+				@Override
+				public File call() throws Exception {
+					try {
+
+						// set extension filters
+						Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
+						List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
+						for (KseFileExtFilter fileFilter : filters) {
+							Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
+									.newInstance(fileFilter.getDescription(), fileFilter.getExtensions());
+							observableList.add(extFilter);
+						}
+
+						// set window title
+						Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
+						setTitleMethod.invoke(fileChooser, dialogTitle);
+
+						Method showOpenDialogMethod = fileChooserClass.getMethod("showOpenDialog", windowClass);
+						Object file = showOpenDialogMethod.invoke(fileChooser, (Object) null);
+
+						if (file != null) {
+							selectedFile = (File) file;
+						}
+					} catch (Exception e) {
+						// TODO
+						e.printStackTrace();
+					}
+
+					if (selectedFile == null) {
+						selectedFile = new File("");
+					}
+
+					return selectedFile;
+				}
+			});
+
+			caller.call();
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+
+        // TODO
+        return 0;
+    }
+
+    public static void main(String[] args) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
+
+        JavaFXFileChooser chooser = new JavaFXFileChooser();
+        chooser.addChoosableFileFilter(new KseFileExtFilter(new String[] { ".jks" }, "Description1"));
+        chooser.addChoosableFileFilter(new KseFileExtFilter(new String[] { ".p12" }, "Description2"));
+        chooser.setDialogTitle("Dialog Titel");
+        chooser.setCurrentDirectory(new File("F:\tmp"));
+        chooser.setSelectedFile(new File(""));
+        chooser.setMultiSelectionEnabled(false);
+        chooser.showDialog(null, "Button Text");
+
+        System.out.println(chooser.getSelectedFile().getAbsolutePath());
+
+        Method platformExitMethod = platformClass.getMethod("exit");
+        platformExitMethod.invoke(null);
     }
 
 }
