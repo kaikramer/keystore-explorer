@@ -104,7 +104,7 @@ public class DNetscapeComment extends DExtension {
 		jlNetscapeComment = new JLabel(res.getString("DNetscapeComment.jlNetscapeComment.text"));
 
 		jtaNetscapeComment = new JTextArea();
-		jtaNetscapeComment.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jtaNetscapeComment.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaNetscapeComment.getFont().getSize()));
 
 		jspNetscapeComment = PlatformUtil.createScrollPane(jtaNetscapeComment,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);

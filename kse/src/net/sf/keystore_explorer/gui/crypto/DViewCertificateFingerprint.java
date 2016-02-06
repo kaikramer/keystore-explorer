@@ -133,7 +133,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		jpFingerprint.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jtaFingerprint = new JTextArea();
-		jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaFingerprint.getFont().getSize()));
 		jtaFingerprint.setEditable(false);
 		jtaFingerprint.setTabSize(4);
 		jtaFingerprint.setLineWrap(true);

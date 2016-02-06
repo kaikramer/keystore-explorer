@@ -218,7 +218,7 @@ public class DViewCertCsrPem extends JEscDialog {
 		}
 		jtaPem.setCaretPosition(0);
 		jtaPem.setEditable(false);
-		jtaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jtaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaPem.getFont().getSize()));
 		// JGoodies - keep uneditable color same as editable
 		jtaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 

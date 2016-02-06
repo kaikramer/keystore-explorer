@@ -126,7 +126,7 @@ public class DErrorDetail extends JEscDialog {
 		jpError.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		jtrError = new JTree(createErrorNodes());
-		jtrError.setRowHeight(18);
+		jtrError.setRowHeight(Math.max(18, jtrError.getRowHeight()));
 		jtrError.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		ToolTipManager.sharedInstance().registerComponent(jtrError);
 		jtrError.setCellRenderer(new ErrorTreeCellRend());

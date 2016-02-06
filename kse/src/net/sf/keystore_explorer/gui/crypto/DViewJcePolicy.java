@@ -129,7 +129,7 @@ public class DViewJcePolicy extends JEscDialog {
 		jpPolicy.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jtaPolicy = new JTextArea();
-		jtaPolicy.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jtaPolicy.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaPolicy.getFont().getSize()));
 		jtaPolicy.setEditable(false);
 		jtaPolicy.setTabSize(4);
 		// JGoodies - keep uneditable color same as editable

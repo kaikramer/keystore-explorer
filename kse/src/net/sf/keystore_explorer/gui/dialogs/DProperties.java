@@ -153,7 +153,7 @@ public class DProperties extends JEscDialog {
 		jpProperties.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jtrProperties = new JTree(createPropertiesNodes());
-		jtrProperties.setRowHeight(18);
+		jtrProperties.setRowHeight(Math.max(18, jtrProperties.getRowHeight()));
 		jtrProperties.setShowsRootHandles(true);
 		jtrProperties.setRootVisible(false);
 		jtrProperties.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);

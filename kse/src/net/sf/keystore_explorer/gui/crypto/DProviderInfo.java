@@ -124,7 +124,7 @@ public class DProviderInfo extends JEscDialog {
 		jpProviders.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jtrProviders = new JTree(createProviderNodes());
-		jtrProviders.setRowHeight(18);
+		jtrProviders.setRowHeight(Math.max(18, jtrProviders.getRowHeight()));
 		jtrProviders.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		ToolTipManager.sharedInstance().registerComponent(jtrProviders);
 		jtrProviders.setCellRenderer(new ProviderTreeCellRend());

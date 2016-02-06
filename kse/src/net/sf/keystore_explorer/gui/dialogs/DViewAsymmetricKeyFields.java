@@ -172,7 +172,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		jpFieldValue.add(jlFieldValue, BorderLayout.NORTH);
 
 		jtaFieldValue = new JTextArea();
-		jtaFieldValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jtaFieldValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaFieldValue.getFont().getSize()));
 		jtaFieldValue.setEditable(false);
 		jtaFieldValue.setToolTipText(res.getString("DViewAsymmetricKeyFields.jtaFieldValue.tooltip"));
 		// JGoodies - keep uneditable color same as editable
@@ -345,7 +345,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 			for (int i = 0; i < value.length(); i++) {
 				sb.append(value.charAt(i));
 
-				if (((i + 1) % FORMATTED_FIELD_LINE_MAX_LENGTH) == 0) {
+				if ((i + 1) % FORMATTED_FIELD_LINE_MAX_LENGTH == 0) {
 					sb.append('\n');
 				}
 			}
