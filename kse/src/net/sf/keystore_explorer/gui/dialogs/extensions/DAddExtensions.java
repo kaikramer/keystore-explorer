@@ -845,7 +845,7 @@ public class DAddExtensions extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DAddExtensions.SaveCet.Title"));
 		chooser.setMultiSelectionEnabled(false);
 
-		int rtnValue = chooser.showDialog(this, res.getString("DAddExtensions.CetSave.button"));
+		int rtnValue = chooser.showSaveDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File saveFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(saveFile);

@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.swing.JFileChooser;
-
-import net.sf.keystore_explorer.gui.FileChooserFactory.KseFileExtFilter;
+import javax.swing.filechooser.FileFilter;
 
 public class JavaFXFileChooser extends JFileChooser {
 
@@ -38,16 +37,20 @@ public class JavaFXFileChooser extends JFileChooser {
         }
     }
 
-    private List<KseFileExtFilter> filters = new ArrayList<KseFileExtFilter>();
+    private List<FileExtFilter> filters = new ArrayList<FileExtFilter>();
     private File selectedFile;
     private String dialogTitle;
+    private File currentDirectory;
 
     public static boolean isFxAvailable() {
         return fxAvailable;
     }
 
-    public void addChoosableFileFilter(KseFileExtFilter filter) {
-        filters.add(filter);
+    @Override
+    public void addChoosableFileFilter(FileFilter filter) {
+        if (filter instanceof FileExtFilter) {
+            filters.add((FileExtFilter) filter);
+        }
     }
 
     @Override
@@ -62,7 +65,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
     @Override
     public void setCurrentDirectory(File dir) {
-        // ignore because native file dialog already has a memory
+        currentDirectory = dir;
     }
 
     @Override
@@ -77,6 +80,21 @@ public class JavaFXFileChooser extends JFileChooser {
 
     @Override
     public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
+        // text of approve button cannot be changed in JavaFX FileChooser
+        return showFxDialog(parent, "showOpenDialog");
+    }
+
+    @Override
+    public int showOpenDialog(Component parent) throws HeadlessException {
+        return showFxDialog(parent, "showOpenDialog");
+    }
+
+    @Override
+    public int showSaveDialog(Component parent) throws HeadlessException {
+        return showFxDialog(parent, "showSaveDialog");
+    }
+
+    public int showFxDialog(Component parent, final String method) throws HeadlessException {
 
         try {
 			final Object fileChooser = fileChooserClass.getConstructor().newInstance();
@@ -85,59 +103,64 @@ public class JavaFXFileChooser extends JFileChooser {
 
 				@Override
 				public File call() throws Exception {
-					try {
 
-						// set extension filters
-						Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
-						List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
-						for (KseFileExtFilter fileFilter : filters) {
-							Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
-									.newInstance(fileFilter.getDescription(), fileFilter.getExtensions());
-							observableList.add(extFilter);
-						}
+					// set extension filters
+					Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
+					List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
+					for (FileExtFilter fileFilter : filters) {
+					    // convert format for extensions
+						String[] extensions = fileFilter.getExtensions();
+						for (int i = 0; i < extensions.length; i++) {
+                            if (!extensions[i].startsWith("*.")) {
+                                extensions[i] = "*." + extensions[i];
+                            }
+                        }
 
-						// set window title
-						Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
-						setTitleMethod.invoke(fileChooser, dialogTitle);
-
-						Method showOpenDialogMethod = fileChooserClass.getMethod("showOpenDialog", windowClass);
-						Object file = showOpenDialogMethod.invoke(fileChooser, (Object) null);
-
-						if (file != null) {
-							selectedFile = (File) file;
-						}
-					} catch (Exception e) {
-						// TODO
-						e.printStackTrace();
+                        Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
+								.newInstance(fileFilter.getDescription(), extensions);
+						observableList.add(extFilter);
 					}
 
-					if (selectedFile == null) {
-						selectedFile = new File("");
-					}
+                    observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
+                            .newInstance("All Files", new String[] { "*.*" }));
 
-					return selectedFile;
+					// set window title
+					Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
+					setTitleMethod.invoke(fileChooser, dialogTitle);
+
+					// set current directory
+                    Method setInitialDirectory = fileChooserClass.getMethod("setInitialDirectory", File.class);
+                    setInitialDirectory.invoke(fileChooser, currentDirectory);
+
+					Method showDialogMethod = fileChooserClass.getMethod(method, windowClass);
+					Object file = showDialogMethod.invoke(fileChooser, (Object) null);
+
+					return (File) file;
 				}
 			});
 
-			caller.call();
-
+			selectedFile = caller.call();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			return JFileChooser.ERROR_OPTION;
 		}
 
-        // TODO
-        return 0;
+        if (selectedFile == null) {
+            return JFileChooser.CANCEL_OPTION;
+        }
+
+        return JFileChooser.APPROVE_OPTION;
     }
 
     public static void main(String[] args) throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
 
         JavaFXFileChooser chooser = new JavaFXFileChooser();
-        chooser.addChoosableFileFilter(new KseFileExtFilter(new String[] { ".jks" }, "Description1"));
-        chooser.addChoosableFileFilter(new KseFileExtFilter(new String[] { ".p12" }, "Description2"));
+        chooser.addChoosableFileFilter(new FileExtFilter(new String[] { ".jks" }, "Description1"));
+        chooser.addChoosableFileFilter(new FileExtFilter(new String[] { ".p12" }, "Description2"));
         chooser.setDialogTitle("Dialog Titel");
-        chooser.setCurrentDirectory(new File("F:\tmp"));
+        chooser.setCurrentDirectory(new File("F:/tmp"));
         chooser.setSelectedFile(new File(""));
         chooser.setMultiSelectionEnabled(false);
         chooser.showDialog(null, "Button Text");

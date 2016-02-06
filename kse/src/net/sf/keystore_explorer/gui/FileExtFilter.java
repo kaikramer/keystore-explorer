@@ -100,6 +100,10 @@ public class FileExtFilter extends FileFilter {
 		return description;
 	}
 
+    public String[] getExtensions() {
+        return exts;
+    }
+
 	private String getExtension(File file) {
 		String ext = null;
 		String name = file.getName();
