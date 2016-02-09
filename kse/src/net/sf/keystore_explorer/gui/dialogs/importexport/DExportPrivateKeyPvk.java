@@ -61,6 +61,7 @@ import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JavaFXFileChooser;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.password.JPasswordQualityField;
 import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
@@ -445,7 +446,8 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DExportPrivateKeyPvk.ChooseExportFile.Title"));
 		chooser.setMultiSelectionEnabled(false);
 
-		int rtnValue = chooser.showDialog(this, res.getString("DExportPrivateKeyPvk.ChooseExportFile.button"));
+		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
+		        : chooser.showDialog(this, res.getString("DExportPrivateKeyPvk.ChooseExportFile.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

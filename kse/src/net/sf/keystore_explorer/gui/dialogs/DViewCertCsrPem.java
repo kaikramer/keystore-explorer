@@ -59,6 +59,7 @@ import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JavaFXFileChooser;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 
@@ -281,7 +282,8 @@ public class DViewCertCsrPem extends JEscDialog {
 			chooser.setDialogTitle(title);
 			chooser.setMultiSelectionEnabled(false);
 
-			int rtnValue = chooser.showDialog(this, res.getString("DViewCertCsrPem.ChooseExportFile.button"));
+			int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
+	                : chooser.showDialog(this, res.getString("DViewCertCsrPem.ChooseExportFile.button"));
 
 			if (rtnValue != JFileChooser.APPROVE_OPTION) {
 				return;

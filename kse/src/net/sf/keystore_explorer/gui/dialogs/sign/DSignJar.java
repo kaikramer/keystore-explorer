@@ -68,6 +68,7 @@ import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.JavaFXFileChooser;
 import net.sf.keystore_explorer.gui.MiGUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.dialogs.DialogHelper;
@@ -586,7 +587,8 @@ public class DSignJar extends JEscDialog {
 
 		chooser.setMultiSelectionEnabled(false);
 
-		int rtnValue = chooser.showDialog(this, res.getString("DSignJar.OutputJarChooser.button"));
+		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
+                : chooser.showDialog(this, res.getString("DSignJar.OutputJarChooser.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

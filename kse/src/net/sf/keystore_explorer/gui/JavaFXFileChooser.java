@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -99,50 +101,47 @@ public class JavaFXFileChooser extends JFileChooser {
         try {
 			final Object fileChooser = fileChooserClass.getConstructor().newInstance();
 
-			SynchronousJFXCaller<File> caller = new SynchronousJFXCaller<File>(new Callable<File>() {
+            selectedFile = runLater(new Callable<File>() {
 
-				@Override
-				public File call() throws Exception {
+                @Override
+                public File call() throws Exception {
 
-					// set extension filters
-					Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
-					List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
-					for (FileExtFilter fileFilter : filters) {
-					    // convert format for extensions
-						String[] extensions = fileFilter.getExtensions();
-						for (int i = 0; i < extensions.length; i++) {
+                    // set extension filters
+                    Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
+                    List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
+                    for (FileExtFilter fileFilter : filters) {
+                        // convert format for extensions
+                        String[] extensions = fileFilter.getExtensions();
+                        for (int i = 0; i < extensions.length; i++) {
                             if (!extensions[i].startsWith("*.")) {
                                 extensions[i] = "*." + extensions[i];
                             }
                         }
 
                         Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
-								.newInstance(fileFilter.getDescription(), extensions);
-						observableList.add(extFilter);
-					}
+                                .newInstance(fileFilter.getDescription(), extensions);
+                        observableList.add(extFilter);
+                    }
 
                     observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
                             .newInstance("All Files", new String[] { "*.*" }));
 
-					// set window title
-					Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
-					setTitleMethod.invoke(fileChooser, dialogTitle);
+                    // set window title
+                    Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
+                    setTitleMethod.invoke(fileChooser, dialogTitle);
 
-					// set current directory
+                    // set current directory
                     Method setInitialDirectory = fileChooserClass.getMethod("setInitialDirectory", File.class);
                     setInitialDirectory.invoke(fileChooser, currentDirectory);
 
-					Method showDialogMethod = fileChooserClass.getMethod(method, windowClass);
-					Object file = showDialogMethod.invoke(fileChooser, (Object) null);
+                    Method showDialogMethod = fileChooserClass.getMethod(method, windowClass);
+                    Object file = showDialogMethod.invoke(fileChooser, (Object) null);
 
-					return (File) file;
-				}
-			});
-
-			selectedFile = caller.call();
+                    return (File) file;
+                }
+            });
 		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
+			// TODO: show exception?
 			return JFileChooser.ERROR_OPTION;
 		}
 
@@ -151,6 +150,22 @@ public class JavaFXFileChooser extends JFileChooser {
         }
 
         return JFileChooser.APPROVE_OPTION;
+    }
+
+
+    public File runLater(final Callable<File> callable) throws Exception {
+
+        final FutureTask<File> task = new FutureTask<File>(callable);
+
+        Class<?> platformClass = Class.forName("javafx.application.Platform");
+        Method runLaterMethod = platformClass.getMethod("runLater", Runnable.class);
+        runLaterMethod.invoke(null, task);
+
+        try {
+            return task.get();
+        } catch (ExecutionException ex) {
+            throw new Exception(ex.getCause());
+        }
     }
 
     public static void main(String[] args) throws NoSuchMethodException, SecurityException, IllegalAccessException,
