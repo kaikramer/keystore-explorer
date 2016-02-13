@@ -287,7 +287,7 @@
     </target>
     
 
-    <target name="package" depends="jar, launch4j, help" description="Create source and manual install ZIP files">
+    <target name="package" depends="launch4j, help" description="Create source and manual install ZIP files">
 
         <delete file="${mfFile}" />
 
@@ -360,7 +360,7 @@
     </target>
 
 
-    <target name="launch4j" depends="init" description="Create windows exe using Launch4j">
+    <target name="launch4j" depends="jar" description="Create windows exe using Launch4j">
         <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask">
             <classpath>
                 <pathelement location="${launch4jInstallDir}/launch4j.jar" />
@@ -409,7 +409,7 @@
                 <versionInfo fileVersion="${appVersion}.0.0"
                              fileDescription="${cuaAppName}"
                              copyright="${copyright}"
-                             internalName="${cuaSimpleName}"
+                             internalName="${cuaAppName}"
                              originalFilename="${cuaSimpleName}.exe"
                              productName="${cuaAppName}"
                              productVersion="${appVersion}.0.0"

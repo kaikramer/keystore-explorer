@@ -69,8 +69,7 @@ public class PacProxySelector extends ProxySelector {
 
 		this.pacUrl = pacUrl;
 
-		// As load and compile of pac scripts is time-comsuming we do this on
-		// first call to select
+		// As load and compile of pac scripts is time-consuming we do this on first call to select
 	}
 
 	/**
@@ -89,6 +88,7 @@ public class PacProxySelector extends ProxySelector {
 			try {
 				pacScript = compilePacScript(loadPacScript(pacUrl));
 			} catch (PacProxyException ex) {
+			    ex.printStackTrace();
 				proxies.add(Proxy.NO_PROXY);
 				return proxies;
 			}
@@ -99,9 +99,11 @@ public class PacProxySelector extends ProxySelector {
 		try {
 			pacFunctionReturn = (String) pacScript.invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
 		} catch (NoSuchMethodException ex) {
+		    ex.printStackTrace();
 			proxies.add(Proxy.NO_PROXY);
 			return proxies;
 		} catch (ScriptException ex) {
+		    ex.printStackTrace();
 			proxies.add(Proxy.NO_PROXY);
 			return proxies;
 		}
@@ -127,10 +129,7 @@ public class PacProxySelector extends ProxySelector {
 		ProxySelector defaultProxySelector = ProxySelector.getDefault();
 
 		try {
-			/*
-			 * ...and set use of no proxy selector. We don't want to try and use
-			 * any proxy to get the the pac script
-			 */
+			// ...and set use of no proxy selector. We don't want to try and use any proxy to get the the pac script
 			ProxySelector.setDefault(new NoProxySelector());
 
 			URL latestVersionUrl = new URL(pacUrl);
