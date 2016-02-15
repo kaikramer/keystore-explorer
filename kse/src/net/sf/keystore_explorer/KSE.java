@@ -59,6 +59,9 @@ public class KSE {
 	static {
 		// set default style for Bouncy Castle's X500Name class
 		X500Name.setDefaultStyle(KseX500NameStyle.INSTANCE);
+
+		// we start with system proxy settings and switch later depending on preferences
+		System.setProperty("java.net.useSystemProxies", "true");
 	}
 
 	public interface Shell32 extends Library {

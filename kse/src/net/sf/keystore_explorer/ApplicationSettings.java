@@ -46,6 +46,8 @@ import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
 import net.sf.keystore_explorer.utilities.net.NoProxySelector;
 import net.sf.keystore_explorer.utilities.net.PacProxySelector;
 import net.sf.keystore_explorer.utilities.net.ProxyAddress;
+import net.sf.keystore_explorer.utilities.net.ProxyType;
+import net.sf.keystore_explorer.utilities.net.SystemProxySelector;
 
 /**
  * KSE Application settings. Load, save and provide access to the various
@@ -71,6 +73,7 @@ public class ApplicationSettings {
 	private static final String KSE3_HEIGHT = "kse3.height";
 	private static final String KSE3_YPOS = "kse3.ypos";
 	private static final String KSE3_XPOS = "kse3.xpos";
+	private static final String KSE3_PROXY = "kse3.proxy";
 	private static final String KSE3_SOCKSPORT = "kse3.socksport";
 	private static final String KSE3_SOCKSHOST = "kse3.sockshost";
 	private static final String KSE3_HTTPSPORT = "kse3.httpsport";
@@ -214,14 +217,26 @@ public class ApplicationSettings {
 				preferences.getBoolean(KSE3_MINPWDQUALENFORCE, false), preferences.getInt(KSE3_MINPWDQUAL, 60));
 
 		// Internet proxy settings
-		String pacUrl = preferences.get(KSE3_PACURL, null);
+		ProxyType proxyType = ProxyType.resolve(preferences.get(KSE3_PROXY, ProxyType.SYSTEM.name()));
 
-		if (pacUrl != null) {
+		// default should be system settings because of "java.net.useSystemProxies=true", save it for later usage
+		SystemProxySelector.setSystemProxySelector(ProxySelector.getDefault());
+
+		switch (proxyType) {
+		case NONE:
+			ProxySelector.setDefault(new NoProxySelector());
+			break;
+		case PAC:
 			// Use PAC URL for proxy configuration
-			ProxySelector.setDefault(new PacProxySelector(pacUrl));
-		} else {
-			// Use manual settings for HTTP, HTTPS and SOCKS proxies when
-			// details are supplied
+			String pacUrl = preferences.get(KSE3_PACURL, null);
+			if (pacUrl != null) {
+				ProxySelector.setDefault(new PacProxySelector(pacUrl));
+			} else {
+				ProxySelector.setDefault(new NoProxySelector());
+			}
+			break;
+		case MANUAL:
+			// Use manual settings for HTTP, HTTPS and SOCKS
 			ProxyAddress httpProxyAddress = null;
 			ProxyAddress httpsProxyAddress = null;
 			ProxyAddress socksProxyAddress = null;
@@ -251,9 +266,14 @@ public class ApplicationSettings {
 				ProxySelector.setDefault(new ManualProxySelector(httpProxyAddress, httpsProxyAddress, null,
 						socksProxyAddress));
 			} else {
-				// No PAC and no manual settings - use no proxy to connect to the Internet
+				// no manual settings - use no proxy to connect to the Internet
 				ProxySelector.setDefault(new NoProxySelector());
 			}
+			break;
+		case SYSTEM:
+		default:
+			ProxySelector.setDefault(new SystemProxySelector());
+			break;
 		}
 
 		// Application size and position
@@ -349,7 +369,6 @@ public class ApplicationSettings {
 		preferences.putInt(KSE3_MINPWDQUAL, passwordQualityConfig.getMinimumQuality());
 
 		// Internet proxy settings
-		clearExistingProxySettings(preferences);
 		getCurrentProxySettings(preferences);
 
 		// Application size and position
@@ -413,10 +432,15 @@ public class ApplicationSettings {
 		// Get current proxy settings
 		ProxySelector proxySelector = ProxySelector.getDefault();
 
-		if (proxySelector instanceof PacProxySelector) {
+		if (proxySelector instanceof NoProxySelector) {
+			preferences.put(KSE3_PROXY, ProxyType.NONE.name());
+		} else if (proxySelector instanceof SystemProxySelector) {
+			preferences.put(KSE3_PROXY, ProxyType.SYSTEM.name());
+		}else if (proxySelector instanceof PacProxySelector) {
 			PacProxySelector pacProxySelector = (PacProxySelector) proxySelector;
 
 			preferences.put(KSE3_PACURL, pacProxySelector.getPacUrl());
+			preferences.put(KSE3_PROXY, ProxyType.PAC.name());
 		} else if (proxySelector instanceof ManualProxySelector) {
 			ManualProxySelector manualProxySelector = (ManualProxySelector) proxySelector;
 
@@ -437,18 +461,9 @@ public class ApplicationSettings {
 				preferences.put(KSE3_SOCKSHOST, socksProxyAddress.getHost());
 				preferences.putInt(KSE3_SOCKSPORT, socksProxyAddress.getPort());
 			}
-		}
-	}
 
-	private void clearExistingProxySettings(Preferences preferences) {
-		// Clear all existing proxy settings in preferences
-		preferences.remove(KSE3_HTTPHOST);
-		preferences.remove(KSE3_HTTPPORT);
-		preferences.remove(KSE3_HTTPSHOST);
-		preferences.remove(KSE3_HTTPSPORT);
-		preferences.remove(KSE3_SOCKSHOST);
-		preferences.remove(KSE3_SOCKSPORT);
-		preferences.remove(KSE3_PACURL);
+			preferences.put(KSE3_PROXY, ProxyType.MANUAL.name());
+		}
 	}
 
 	/**

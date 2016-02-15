@@ -54,6 +54,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
@@ -172,7 +173,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		jpFieldValue.add(jlFieldValue, BorderLayout.NORTH);
 
 		jtaFieldValue = new JTextArea();
-		jtaFieldValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaFieldValue.getFont().getSize()));
+		jtaFieldValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		jtaFieldValue.setEditable(false);
 		jtaFieldValue.setToolTipText(res.getString("DViewAsymmetricKeyFields.jtaFieldValue.tooltip"));
 		// JGoodies - keep uneditable color same as editable

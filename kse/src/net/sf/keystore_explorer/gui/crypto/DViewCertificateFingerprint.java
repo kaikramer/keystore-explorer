@@ -49,6 +49,7 @@ import net.sf.keystore_explorer.crypto.digest.DigestType;
 import net.sf.keystore_explorer.crypto.digest.DigestUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 
@@ -133,7 +134,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		jpFingerprint.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jtaFingerprint = new JTextArea();
-		jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaFingerprint.getFont().getSize()));
+		jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		jtaFingerprint.setEditable(false);
 		jtaFingerprint.setTabSize(4);
 		jtaFingerprint.setLineWrap(true);

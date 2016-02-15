@@ -47,6 +47,7 @@ import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicy;
 import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 
 /**
@@ -129,7 +130,7 @@ public class DViewJcePolicy extends JEscDialog {
 		jpPolicy.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jtaPolicy = new JTextArea();
-		jtaPolicy.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaPolicy.getFont().getSize()));
+		jtaPolicy.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		jtaPolicy.setEditable(false);
 		jtaPolicy.setTabSize(4);
 		// JGoodies - keep uneditable color same as editable

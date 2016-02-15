@@ -19,6 +19,9 @@
  */
 package net.sf.keystore_explorer.gui;
 
+import java.awt.Font;
+
+import javax.swing.JLabel;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -221,5 +224,15 @@ public class LnfUtil {
             // Darcula jar not included
         }
         return false;
+    }
+
+    /**
+     * Get default font size for a label.
+     *
+     * @return Font size
+     */
+    public static int getDefaultFontSize() {
+        Font defaultFont = new JLabel().getFont();
+        return defaultFont.getSize();
     }
 }
