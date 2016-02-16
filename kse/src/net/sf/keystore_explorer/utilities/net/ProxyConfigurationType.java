@@ -1,13 +1,13 @@
 package net.sf.keystore_explorer.utilities.net;
 
-public enum ProxyType {
+public enum ProxyConfigurationType {
 	NONE,
 	SYSTEM,
 	MANUAL,
 	PAC;
 
-	public static ProxyType resolve(String proxyTypeStr) {
-		for (ProxyType proxyType : values()) {
+	public static ProxyConfigurationType resolve(String proxyTypeStr) {
+		for (ProxyConfigurationType proxyType : values()) {
 			if (proxyType.name().equals(proxyTypeStr)) {
 				return proxyType;
 			}

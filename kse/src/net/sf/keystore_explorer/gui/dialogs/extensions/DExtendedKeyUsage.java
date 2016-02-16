@@ -34,7 +34,8 @@ import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.SERVER_A
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.SMARTCARD_LOGON;
 import static net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType.TIME_STAMPING;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -45,7 +46,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -53,18 +53,17 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
+import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 
+import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.x509.ExtendedKeyUsageType;
-import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 
 /**
@@ -82,9 +81,7 @@ public class DExtendedKeyUsage extends DExtension {
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpExtendedKeyUsage;
 	private JLabel jlExtendedKeyUsage;
-	private JPanel jpExtendedKeyUsages;
 	private JCheckBox jcbCodeSigning;
 	private JCheckBox jcbDocumentSigning;
 	private JCheckBox jcbEmailProtection;
@@ -102,8 +99,6 @@ public class DExtendedKeyUsage extends DExtension {
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
-
-	private JCheckBox dummy3;
 
 	private byte[] value;
 
@@ -138,8 +133,6 @@ public class DExtendedKeyUsage extends DExtension {
 
 	private void initComponents() {
 		jlExtendedKeyUsage = new JLabel(res.getString("DExtendedKeyUsage.jlExtendedKeyUsage.text"));
-		jlExtendedKeyUsage.setBorder(new EmptyBorder(5, 5, 0, 5));
-
 		jcbCodeSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbCodeSigning.text"));
 		jcbDocumentSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbDocumentSigning.text"));
 		jcbAdobePDFSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAdobePDFSigning.text"));
@@ -158,88 +151,53 @@ public class DExtendedKeyUsage extends DExtension {
 		jcbSmartcardLogon = new JCheckBox(res.getString("DExtendedKeyUsage.jcbSmartcardLogon.text"));
 		jcbAnyExtendedKeyUsage = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAnyExtendedKeyUsage.text"));
 
-		dummy3 = new JCheckBox();
-		dummy3.setEnabled(false);
-		//		dummy3.setVisible(false);
-
-		JPanel jpFirstColumn = new JPanel();
-		jpFirstColumn.setLayout(new BoxLayout(jpFirstColumn, BoxLayout.Y_AXIS));
-
-		jpFirstColumn.add(jcbCodeSigning);
-		jpFirstColumn.add(jcbEncryptedFileSystem);
-		jpFirstColumn.add(jcbEmailProtection);
-		jpFirstColumn.add(jcbIpSecurityEndSystem);
-		jpFirstColumn.add(jcbAnyExtendedKeyUsage);
-
-		JPanel jpSecondColumn = new JPanel();
-		jpSecondColumn.setLayout(new BoxLayout(jpSecondColumn, BoxLayout.Y_AXIS));
-
-		jpSecondColumn.add(jcbDocumentSigning);
-		jpSecondColumn.add(jcbIpSecurityTunnelTermination);
-		jpSecondColumn.add(jcbIpSecurityUser);
-		jpSecondColumn.add(jcbOcspStamping);
-		jpSecondColumn.add(jcbAdobePDFSigning);
-
-		JPanel jpThirdColumn = new JPanel();
-		jpThirdColumn.setLayout(new BoxLayout(jpThirdColumn, BoxLayout.Y_AXIS));
-
-		jpThirdColumn.add(jcbTimeStamping);
-		jpThirdColumn.add(jcbTlsWebClientAuthentication);
-		jpThirdColumn.add(jcbTlsWebServerAuthentication);
-		jpThirdColumn.add(jcbSmartcardLogon);
-		jpThirdColumn.add(dummy3);
-
-
-		jpExtendedKeyUsages = new JPanel();
-		jpExtendedKeyUsages.setLayout(new BoxLayout(jpExtendedKeyUsages, BoxLayout.X_AXIS));
-
-		jpExtendedKeyUsages.add(jpFirstColumn);
-		jpExtendedKeyUsages.add(jpSecondColumn);
-		jpExtendedKeyUsages.add(jpThirdColumn);
-
-		jpExtendedKeyUsage = new JPanel(new BorderLayout(5, 5));
-
-		jpExtendedKeyUsage.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
-		jpExtendedKeyUsage.add(jlExtendedKeyUsage, BorderLayout.NORTH);
-		jpExtendedKeyUsage.add(jpExtendedKeyUsages, BorderLayout.CENTER);
-
 		jbOK = new JButton(res.getString("DExtendedKeyUsage.jbOK.text"));
+		jbCancel = new JButton(res.getString("DExtendedKeyUsage.jbCancel.text"));
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
+
+		// layout
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "", ""));
+		pane.add(jlExtendedKeyUsage, "spanx, wrap unrel");
+		pane.add(jcbAdobePDFSigning, "");
+		pane.add(jcbAnyExtendedKeyUsage, "");
+		pane.add(jcbCodeSigning, "wrap");
+		pane.add(jcbDocumentSigning, "");
+		pane.add(jcbEncryptedFileSystem, "");
+		pane.add(jcbEmailProtection, "wrap");
+		pane.add(jcbIpSecurityEndSystem, "");
+		pane.add(jcbIpSecurityTunnelTermination, "");
+		pane.add(jcbIpSecurityUser, "wrap");
+		pane.add(jcbOcspStamping, "");
+		pane.add(jcbSmartcardLogon, "");
+		pane.add(jcbTimeStamping, "wrap");
+		pane.add(jcbTlsWebClientAuthentication, "");
+		pane.add(jcbTlsWebServerAuthentication, "wrap unrel");
+		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+		pane.add(jbCancel, "spanx, split 2, tag cancel");
+		pane.add(jbOK, "tag ok");
+
+		// actions
 		jbOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
 		});
-
-		jbCancel = new JButton(res.getString("DExtendedKeyUsage.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			/**
-			 *
-			 */
 			private static final long serialVersionUID = 1792160787358938936L;
-
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
-
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpExtendedKeyUsage, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
-
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent evt) {
@@ -401,15 +359,15 @@ public class DExtendedKeyUsage extends DExtension {
 	}
 
 	public static void main(String[] args) throws Exception {
-		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-		java.awt.EventQueue.invokeLater(new Runnable() {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					DExtendedKeyUsage dialog = new DExtendedKeyUsage(new javax.swing.JDialog());
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+					DExtendedKeyUsage dialog = new DExtendedKeyUsage(new JDialog());
+					dialog.addWindowListener(new WindowAdapter() {
 						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
+						public void windowClosing(WindowEvent e) {
 							System.exit(0);
 						}
 					});

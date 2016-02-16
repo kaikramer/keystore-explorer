@@ -670,25 +670,25 @@ public class DPreferences extends JEscDialog {
 
 		// layout
 		jpInternetProxy = new JPanel();
-		jpInternetProxy.setLayout(new MigLayout("insets dialog, fill", "", ""));
-		jpInternetProxy.add(jrbNoProxy, "left, span, gap rel, wrap unrel");
-		jpInternetProxy.add(jrbSystemProxySettings, "left, span, gap rel, wrap unrel");
-		jpInternetProxy.add(jrbManualProxyConfig, "left, span, gap rel, wrap unrel");
-		jpInternetProxy.add(jlHttpHost, "right");
-		jpInternetProxy.add(jtfHttpHost, "gap unrel");
-		jpInternetProxy.add(jlHttpPort, "right");
+		jpInternetProxy.setLayout(new MigLayout("insets dialog", "[20][]", ""));
+		jpInternetProxy.add(jrbNoProxy, "left, span, wrap");
+		jpInternetProxy.add(jrbSystemProxySettings, "left, span, wrap");
+		jpInternetProxy.add(jrbManualProxyConfig, "left, span, wrap");
+		jpInternetProxy.add(jlHttpHost, "skip, right");
+		jpInternetProxy.add(jtfHttpHost, "");
+		jpInternetProxy.add(jlHttpPort, "gap unrel, right");
 		jpInternetProxy.add(jtfHttpPort, "wrap");
-		jpInternetProxy.add(jlHttpsHost, "right");
-		jpInternetProxy.add(jtfHttpsHost, "gap unrel");
-		jpInternetProxy.add(jlHttpsPort, "right");
+		jpInternetProxy.add(jlHttpsHost, "skip, right");
+		jpInternetProxy.add(jtfHttpsHost, "");
+		jpInternetProxy.add(jlHttpsPort, "gap unrel, right");
 		jpInternetProxy.add(jtfHttpsPort, "wrap");
-		jpInternetProxy.add(jlSocksHost, "right");
-		jpInternetProxy.add(jtfSocksHost, "gap unrel");
-		jpInternetProxy.add(jlSocksPort, "right");
-		jpInternetProxy.add(jtfSocksPort, "wrap unrel");
-		jpInternetProxy.add(jrbAutomaticProxyConfig, "left, span, gap rel, wrap unrel");
-		jpInternetProxy.add(jlPacUrl, "right");
-		jpInternetProxy.add(jtfPacUrl, "span, gap rel, wrap unrel");
+		jpInternetProxy.add(jlSocksHost, "skip, right");
+		jpInternetProxy.add(jtfSocksHost, "");
+		jpInternetProxy.add(jlSocksPort, "gap unrel, right");
+		jpInternetProxy.add(jtfSocksPort, "wrap");
+		jpInternetProxy.add(jrbAutomaticProxyConfig, "left, span, wrap");
+		jpInternetProxy.add(jlPacUrl, "skip, right");
+		jpInternetProxy.add(jtfPacUrl, "span, wrap push");
 
 		jrbAutomaticProxyConfig.addItemListener(new ItemListener() {
 			@Override
@@ -766,7 +766,7 @@ public class DPreferences extends JEscDialog {
 		jlCountryCode = new JLabel(res.getString("DPreferences.jlCountryCode.text"));
 		jtfCountryCode = new JTextField(4);
 		jlEmailAddress = new JLabel(res.getString("DPreferences.jlEmailAddress.text"));
-		jtfEmailAddress = new JTextField(25);
+		jtfEmailAddress = new JTextField(30);
 
 		// layout
 		jpDefaultName = new JPanel();

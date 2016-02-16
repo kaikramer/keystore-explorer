@@ -46,7 +46,7 @@ import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
 import net.sf.keystore_explorer.utilities.net.NoProxySelector;
 import net.sf.keystore_explorer.utilities.net.PacProxySelector;
 import net.sf.keystore_explorer.utilities.net.ProxyAddress;
-import net.sf.keystore_explorer.utilities.net.ProxyType;
+import net.sf.keystore_explorer.utilities.net.ProxyConfigurationType;
 import net.sf.keystore_explorer.utilities.net.SystemProxySelector;
 
 /**
@@ -217,12 +217,13 @@ public class ApplicationSettings {
 				preferences.getBoolean(KSE3_MINPWDQUALENFORCE, false), preferences.getInt(KSE3_MINPWDQUAL, 60));
 
 		// Internet proxy settings
-		ProxyType proxyType = ProxyType.resolve(preferences.get(KSE3_PROXY, ProxyType.SYSTEM.name()));
+		ProxyConfigurationType proxyConfigurationType = ProxyConfigurationType.resolve(preferences.get(KSE3_PROXY,
+				ProxyConfigurationType.SYSTEM.name()));
 
 		// default should be system settings because of "java.net.useSystemProxies=true", save it for later usage
 		SystemProxySelector.setSystemProxySelector(ProxySelector.getDefault());
 
-		switch (proxyType) {
+		switch (proxyConfigurationType) {
 		case NONE:
 			ProxySelector.setDefault(new NoProxySelector());
 			break;
@@ -433,14 +434,14 @@ public class ApplicationSettings {
 		ProxySelector proxySelector = ProxySelector.getDefault();
 
 		if (proxySelector instanceof NoProxySelector) {
-			preferences.put(KSE3_PROXY, ProxyType.NONE.name());
+			preferences.put(KSE3_PROXY, ProxyConfigurationType.NONE.name());
 		} else if (proxySelector instanceof SystemProxySelector) {
-			preferences.put(KSE3_PROXY, ProxyType.SYSTEM.name());
+			preferences.put(KSE3_PROXY, ProxyConfigurationType.SYSTEM.name());
 		}else if (proxySelector instanceof PacProxySelector) {
 			PacProxySelector pacProxySelector = (PacProxySelector) proxySelector;
 
 			preferences.put(KSE3_PACURL, pacProxySelector.getPacUrl());
-			preferences.put(KSE3_PROXY, ProxyType.PAC.name());
+			preferences.put(KSE3_PROXY, ProxyConfigurationType.PAC.name());
 		} else if (proxySelector instanceof ManualProxySelector) {
 			ManualProxySelector manualProxySelector = (ManualProxySelector) proxySelector;
 
@@ -462,7 +463,7 @@ public class ApplicationSettings {
 				preferences.putInt(KSE3_SOCKSPORT, socksProxyAddress.getPort());
 			}
 
-			preferences.put(KSE3_PROXY, ProxyType.MANUAL.name());
+			preferences.put(KSE3_PROXY, ProxyConfigurationType.MANUAL.name());
 		}
 	}
 
