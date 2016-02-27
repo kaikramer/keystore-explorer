@@ -26,14 +26,13 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.MetalTheme;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.jgoodies.looks.plastic.theme.SkyBlue;
 import com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel;
 import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
-import net.sf.keystore_explorer.gui.theme.LightMetalTheme;
+import net.sf.keystore_explorer.gui.theme.LightOceanTheme;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.JavaVersion;
 
@@ -87,7 +86,6 @@ public class LnfUtil {
 	public static void useLnf(String lnfClassName) {
 		try {
 			// Make l&f specific settings - required before setting the l&f
-
 			if (lnfClassName.equals(Plastic3DLookAndFeel.class.getName())) {
 				MetalLookAndFeel.setCurrentTheme(new SkyBlue());
 				UIManager.put("jgoodies.useNarrowButtons", Boolean.FALSE);
@@ -95,26 +93,7 @@ public class LnfUtil {
 				UIManager.put("jgoodies.useNarrowButtons", Boolean.FALSE);
 			} else if (lnfClassName.equals(MetalLookAndFeel.class.getName())) {
 				// Lighten metal/ocean
-				if (JavaVersion.getJreVersion().compareTo(JavaVersion.JRE_VERSION_150) < 0) {
-					// JRE < 1.5.0
-					MetalLookAndFeel.setCurrentTheme(new LightMetalTheme());
-				} else {
-					// JRE >= 1.5.0
-					try {
-						/*
-						 * Discover LightOceanTheme using reflection to avoid
-						 * runtime errors on JDK < 1.5.0 where the theme's
-						 * superclass OceanTheme does not exist
-						 */
-						Class c = Class.forName("net.sf.keystore_explorer.gui.theme.LightOceanTheme");
-						MetalTheme oceanTheme = (MetalTheme) c.newInstance();
-
-						MetalLookAndFeel.setCurrentTheme(oceanTheme);
-					} catch (ClassNotFoundException ex) {
-					} catch (IllegalAccessException ex) {
-					} catch (InstantiationException ex) {
-					}
-				}
+				MetalLookAndFeel.setCurrentTheme(new LightOceanTheme());
 			}
 
 			UIManager.setLookAndFeel(lnfClassName);
@@ -138,7 +117,17 @@ public class LnfUtil {
 		} else if (OperatingSystem.isWindows()) {
 			lnfClassName = WindowsLookAndFeel.class.getName();
 		} else {
-			lnfClassName = Plastic3DLookAndFeel.class.getName();
+			String xdgCurrentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
+			if (xdgCurrentDesktop.equalsIgnoreCase("Unity")
+					|| xdgCurrentDesktop.equalsIgnoreCase("XFCE")
+					|| xdgCurrentDesktop.equalsIgnoreCase("GNOME")
+					|| xdgCurrentDesktop.equalsIgnoreCase("X-Cinnamon")
+					|| xdgCurrentDesktop.equalsIgnoreCase("LXDE")
+					) {
+				lnfClassName = UIManager.getSystemLookAndFeelClassName();
+			} else {
+				lnfClassName = Plastic3DLookAndFeel.class.getName();
+			}
 		}
 
 		useLnf(lnfClassName);
