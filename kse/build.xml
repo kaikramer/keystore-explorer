@@ -19,25 +19,25 @@
   along with KeyStore Explorer. If not, see <http://www.gnu.org/licenses/>.
 ========================================================================-->
 <!--
-    How to Use this Build Script:
-
-    (1) Install Apache Ant 1.9+ and setup for use with JDK 1.7+.
-
-    (2) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
-
-    (3) Install NSIS and add its top-level directory to the path.
-    
-    (4) Add WinShell plugin to NSIS (http://nsis.sourceforge.net/WinShell_plug-in)
-
-    (5) Run ant -projecthelp for a description of the various targets.
-
+	How to Use this Build Script:
+	
+	(1) Install Apache Ant 1.9+ and setup for use with JDK 1.7+.
+	
+	(2) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
+	
+	(3) Install NSIS and add its top-level directory to the path.
+	
+	(4) Add WinShell plugin to NSIS (http://nsis.sourceforge.net/WinShell_plug-in)
+	
+	(5) Run ant -projecthelp for a description of the various targets.
+	
  -->
 
 <!-- Build KeyStore Explorer -->
 <project basedir="." default="package" name="KeyStore Explorer" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
 	<!-- Application name and version -->
-	<property file="src/net/sf/keystore_explorer/resources.properties" />
+	<property file="src/net/sf/keystore_explorer/version.properties" />
 	<property name="appName" value="${KSE.Name}" />
 	<property name="appVersion" value="${KSE.Version}" />
 	<property name="appSimpleName" value="${KSE.SimpleName}" />
@@ -124,6 +124,10 @@
 	<property name="readmesDir" value="${resDir}/readmes" />
 	<property name="schemasDir" value="${resDir}/schemas" />
 	<property name="appShell" value="${resDir}/kse.sh" />
+	<property name="startShell" value="${resDir}/${appSimpleName}" />
+	<property name="desktopFile" value="${resDir}/${appSimpleName}.desktop" />
+	<property name="startShellTemplate" value="${resDir}/kse.sh.in" />
+	<property name="desktopFileTemplate" value="${resDir}/kse.desktop.in" />
 
 	<!-- Manifest file -->
 	<property name="mfFile" value="${basedir}/MANIFEST.MF" />
@@ -349,8 +353,21 @@
 		</javadoc>
 	</target>
 
+	<target name="resources" depends="init" description="Create GNU/Linux resources from templates">
+		<filterset id="var-filters" begintoken="@" endtoken="@">
+			<filter token="appName" value="${appName}" />
+			<filter token="appSimpleName" value="${appSimpleName}" />
+			<filter token="mainClass" value="${mainClass}" />
+		</filterset>
+		<copy file="${desktopFileTemplate}" tofile="${desktopFile}">
+			<filterset refid="var-filters"/>
+		</copy>
+		<copy file="${startShellTemplate}" tofile="${startShell}">
+			<filterset refid="var-filters"/>
+		</copy>
+	</target>
 
-	<target name="launch4j" depends="jar" description="Create windows exe using Launch4j">
+	<target name="launch4j" depends="jar" description="Create Windows exe using Launch4j">
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask">
 			<classpath>
 				<pathelement location="${launch4jInstallDir}/launch4j.jar" />
@@ -402,7 +419,7 @@
 
 		<taskdef name="bundleapp" classpath="lib/appbundler-1.0ea.jar" classname="com.oracle.appbundler.AppBundlerTask" />
 
-		<bundleapp outputdirectory="${distDir}" name="${appBundleName}" displayname="${appBundleName}" executableName="${appBundleName}" identifier="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}" shortversion="${appSimpleVersion}" version="${appVersion}" icon="${kseIcns}" mainclassname="net.sf.keystore_explorer.KSE" copyright="${copyright}" applicationCategory="public.app-category.developer-tools">
+		<bundleapp outputdirectory="${distDir}" name="${appBundleName}" displayname="${appBundleName}" executableName="${appBundleName}" identifier="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}" shortversion="${appSimpleVersion}" version="${appVersion}" icon="${kseIcns}" mainclassname="${mainClass}" copyright="${copyright}" applicationCategory="public.app-category.developer-tools">
 
 			<!--<runtime dir="${env.JAVA_HOME}"/>-->
 
