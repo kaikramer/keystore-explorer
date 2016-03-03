@@ -2,7 +2,7 @@
 %global sname   kse
 
 %define major 1
-%define gitversion 20160302
+%define gitversion 20160303
 %define rel 1
 
 %if %{gitversion}
@@ -99,6 +99,10 @@ for size in 16 32 48 128; do
   install -Dpm 644 res/icons/%{sname}_${size}.png \
     %{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/%{name}.png
 done
+
+install -Dpm 644 res/icons/%{sname}.svg \
+    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+
 desktop-file-install \
     --mode=644 \
     --add-mime-type="application/x-pkcs12;application/x-pkcs7-certificates" \
@@ -126,11 +130,14 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 %{_bindir}/%{name}
 %{_javadir}/%{name}.jar
 %{_datadir}/applications/%{name}.desktop
-%{_datadir}/icons/hicolor/*/apps/%{name}.png
+%{_datadir}/icons/hicolor/*/apps/%{name}.*
 
 
 %changelog
-* Sun Feb 28 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160302.1
+* Thu Mar 03 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160303.1
+- Add a home made SVG icon
+
+* Wed Mar 02 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160302.1
 - Use my own Git fork of March 2nd 2016
 - Remove patch2
 - Use the ant generated desktop file and Shell start script
