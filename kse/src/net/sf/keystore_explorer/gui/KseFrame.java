@@ -19,6 +19,12 @@
  */
 package net.sf.keystore_explorer.gui;
 
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -85,12 +91,6 @@ import javax.swing.table.TableRowSorter;
 
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
-
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
@@ -2525,6 +2525,23 @@ public final class KseFrame implements StatusBar {
 			setKeyPairPasswordAction.setEnabled(true);
 			unlockKeyAction.setEnabled(true);
 			setKeyPasswordAction.setEnabled(true);
+		}
+
+		// Special restrictions for MSCAPI type
+		if (type == KeyStoreType.MS_CAPI_PERSONAL) {
+			renameKeyAction.setEnabled(false);
+			renameKeyPairAction.setEnabled(false);
+			renameTrustedCertificateAction.setEnabled(false);
+
+			exportKeyPairAction.setEnabled(false);
+			exportKeyPairPrivateKeyAction.setEnabled(false);
+
+			jmKeyPairEditCertChain.setEnabled(false);
+			appendToCertificateChainAction.setEnabled(false);
+			removeFromCertificateChainAction.setEnabled(false);
+
+			// "UnsupportedOperationException" ...
+			jmKeyPairImportCaReply.setEnabled(false);
 		}
 
 		// KeyStore type menu items

@@ -23,6 +23,10 @@ import static net.sf.keystore_explorer.crypto.SecurityProvider.APPLE;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
 import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,24 +35,25 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.KeyStoreSpi;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
-
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.crypto.CryptoException;
@@ -290,8 +295,71 @@ public final class KeyStoreUtil {
 					msCapiStoreType.jce()), ex);
 		}
 
+		// apply workaround for duplicate aliases
+		fixDuplicateMSCAPIAliases(keyStore);
+
 		return keyStore;
 	}
+
+    /**
+     * Fix problem with duplicate key store aliases in MSCAPI store type by adding an unique postfix.
+     *
+     * NOTE: This code relies on non-public implementation details of sun.security.mscapi.KeyStore
+     * which might change in future Java releases!
+     *
+     * @param keyStore
+     */
+	private static void fixDuplicateMSCAPIAliases(KeyStore keyStore) {
+		try {
+			Field keyStoreSpiField = keyStore.getClass().getDeclaredField("keyStoreSpi");
+			keyStoreSpiField.setAccessible(true);
+			KeyStoreSpi keyStoreSpi = (KeyStoreSpi) keyStoreSpiField.get(keyStore);
+
+			Field entriesField = keyStoreSpi.getClass().getEnclosingClass().getDeclaredField("entries");
+			entriesField.setAccessible(true);
+			Collection<?> entries = (Collection<?>) entriesField.get(keyStoreSpi);
+			Map<String, Object> aliases = new HashMap<String, Object>();
+
+			for (Object entry : entries) {
+
+				Field aliasField = entry.getClass().getDeclaredField("alias");
+				aliasField.setAccessible(true);
+				String alias = (String) aliasField.get(entry);
+
+				// if duplicate was found, add postfix to both entries
+				if (aliases.containsKey(alias.toLowerCase())) {
+					addCertHashPostfix(aliases.get(alias.toLowerCase()));
+					addCertHashPostfix(entry);
+				} else {
+					// add first occurence of every alias to map
+					aliases.put(alias.toLowerCase(), entry);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void addCertHashPostfix(Object entry)
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+
+		Field certChainField = entry.getClass().getDeclaredField("certChain");
+		certChainField.setAccessible(true);
+		X509Certificate[] certificates = (X509Certificate[]) certChainField.get(entry);
+
+		String hashCode = Integer.toString(Math.abs(certificates[0].hashCode()), 16);
+
+		Field aliasField = entry.getClass().getDeclaredField("alias");
+		aliasField.setAccessible(true);
+		String alias = (String) aliasField.get(entry);
+
+		String postfix = " [" + hashCode.substring(0, 4) + "]";
+
+		if (!alias.endsWith(postfix)) {
+			aliasField.set(entry, alias + postfix);
+		}
+	}
+
 
 	/**
 	 * Save a KeyStore to a file protected by a password.

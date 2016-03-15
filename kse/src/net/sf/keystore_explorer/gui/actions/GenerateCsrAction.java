@@ -42,6 +42,7 @@ import net.sf.keystore_explorer.crypto.csr.pkcs10.Pkcs10Util;
 import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
 import net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
+import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
 import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
@@ -101,15 +102,9 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
 			String keyPairAlg = privateKey.getAlgorithm();
-			KeyPairType keyPairType = null;
+			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-			if (privateKey.getAlgorithm().equals(KeyPairType.RSA.jce())) {
-				keyPairType = KeyPairType.RSA;
-			} else if (privateKey.getAlgorithm().equals(KeyPairType.DSA.jce())) {
-				keyPairType = KeyPairType.DSA;
-			} else if (privateKey.getAlgorithm().equals(KeyPairType.EC.jce())) {
-				keyPairType = KeyPairType.EC;
-			} else {
+			if (keyPairType == null) {
 				throw new CryptoException(MessageFormat.format(
 						res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"), keyPairAlg));
 			}

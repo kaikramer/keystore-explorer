@@ -44,6 +44,7 @@ import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.ContentVerifierProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -120,13 +121,20 @@ public class Pkcs10Util {
 				}
 			}
 
-			// fallback to bouncy castle provider if given provider does not support the requested algorithm
-			if (provider == null || provider.getService("Signature", signatureType.jce()) == null) {
+			// fall back to bouncy castle provider if given provider does not support the requested algorithm
+			if (provider != null && provider.getService("Signature", signatureType.jce()) == null) {
 				provider = new BouncyCastleProvider();
 			}
 
-			PKCS10CertificationRequest csr =  csrBuilder.build(
-					new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey));
+			ContentSigner contentSigner = null;
+
+			if (provider == null) {
+				contentSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
+			} else {
+				contentSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
+			}
+
+			PKCS10CertificationRequest csr = csrBuilder.build(contentSigner);
 
 			if (!verifyCsr(csr)) {
 				throw new CryptoException(res.getString("NoVerifyGenPkcs10Csr.exception.message"));
