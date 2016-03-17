@@ -61,7 +61,7 @@ public class GeneralSubtreesTableCellRend extends DefaultTableCellRenderer {
 		GeneralSubtree generalSubtree = (GeneralSubtree) value;
 
 		if (col == 0) {
-			cell.setText(GeneralNameUtil.safeToString(generalSubtree.getBase()));
+			cell.setText(GeneralNameUtil.safeToString(generalSubtree.getBase(), false));
 		} else if (col == 1) {
 			if (generalSubtree.getMinimum() != null) {
 				String minimumStr = "" + generalSubtree.getMinimum().intValue();

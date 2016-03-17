@@ -153,8 +153,8 @@ public class GeneralSubtreesTableModel extends AbstractTableModel {
 	static class GeneralSubtreeBaseComparator implements Comparator<GeneralSubtree> {
 		@Override
 		public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
-			return GeneralNameUtil.safeToString(subtree1.getBase()).compareToIgnoreCase(
-					GeneralNameUtil.safeToString(subtree2.getBase()));
+			return GeneralNameUtil.safeToString(subtree1.getBase(), false).compareToIgnoreCase(
+					GeneralNameUtil.safeToString(subtree2.getBase(), false));
 		}
 	}
 

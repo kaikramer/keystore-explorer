@@ -19,8 +19,11 @@
  */
 package net.sf.keystore_explorer.gui.crypto.generalname;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
@@ -35,19 +38,21 @@ import net.sf.keystore_explorer.crypto.x509.GeneralNameUtil;
  *
  */
 public class GeneralNamesTableModel extends AbstractTableModel {
+
+	private static final long serialVersionUID = 4224864830348756671L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/generalname/resources");
 
-	private String[] columnNames;
-	private Object[][] data;
+	private String columnName;
+	private List<GeneralName> data;
 
 	/**
 	 * Construct a new GeneralNamesTableModel.
 	 */
 	public GeneralNamesTableModel() {
-		columnNames = new String[1];
-		columnNames[0] = res.getString("GeneralNamesTableModel.GeneralNameColumn");
+		columnName = res.getString("GeneralNamesTableModel.GeneralNameColumn");
 
-		data = new Object[0][0];
+		data = new ArrayList<GeneralName>();
 	}
 
 	/**
@@ -58,15 +63,9 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	 */
 	public void load(GeneralNames generalNames) {
 		GeneralName[] generalNamesArray = generalNames.getNames();
-		Arrays.sort(generalNamesArray, new GeneralNameComparator());
 
-		data = new Object[generalNamesArray.length][1];
-
-		int i = 0;
-		for (GeneralName generalName : generalNamesArray) {
-			data[i][0] = generalName;
-			i++;
-		}
+		data = new ArrayList<GeneralName>(Arrays.asList(generalNamesArray));
+		Collections.sort(data, new GeneralNameComparator());
 
 		fireTableDataChanged();
 	}
@@ -78,7 +77,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public int getColumnCount() {
-		return columnNames.length;
+		return 1;
 	}
 
 	/**
@@ -88,7 +87,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public int getRowCount() {
-		return data.length;
+		return data.size();
 	}
 
 	/**
@@ -100,7 +99,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public String getColumnName(int col) {
-		return columnNames[col];
+		return columnName;
 	}
 
 	/**
@@ -114,7 +113,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public Object getValueAt(int row, int col) {
-		return data[row][col];
+		return data.get(row);
 	}
 
 	/**
@@ -143,10 +142,41 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 		return false;
 	}
 
+	/**
+	 * Add a row
+	 *
+	 * @param row
+	 */
+	public void addRow(GeneralName generalName) {
+		data.add(generalName);
+		Collections.sort(data, new GeneralNameComparator());
+		fireTableDataChanged();
+	}
+
+	/**
+	 * Remove a row
+	 *
+	 * @param row
+	 */
+	public void removeRow(int row) {
+		data.remove(row);
+		fireTableDataChanged();
+	}
+
+	/**
+	 * Returns the table data
+	 *
+	 * @return
+	 */
+	public List<GeneralName> getData() {
+		return data;
+	}
+
 	static class GeneralNameComparator implements Comparator<GeneralName> {
 		@Override
 		public int compare(GeneralName name1, GeneralName name2) {
-			return GeneralNameUtil.safeToString(name1).compareToIgnoreCase(GeneralNameUtil.safeToString(name2));
+			return GeneralNameUtil.safeToString(name1, false)
+					.compareToIgnoreCase(GeneralNameUtil.safeToString(name2, false));
 		}
 	}
 }
