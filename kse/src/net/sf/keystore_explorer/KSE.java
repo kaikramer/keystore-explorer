@@ -55,10 +55,14 @@ import net.sf.keystore_explorer.version.Version;
  */
 public class KSE {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/resources");
+	private static ResourceBundle props = ResourceBundle.getBundle("net/sf/keystore_explorer/version");
 
 	static {
 		// set default style for Bouncy Castle's X500Name class
 		X500Name.setDefaultStyle(KseX500NameStyle.INSTANCE);
+
+		// we start with system proxy settings and switch later depending on preferences
+		System.setProperty("java.net.useSystemProxies", "true");
 	}
 
 	public interface Shell32 extends Library {
@@ -78,7 +82,7 @@ public class KSE {
 			if (OperatingSystem.isMacOs()) {
 				setAppleSystemProperties();
 			} else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8()) {
-				String appId = res.getString("KSE.AppUserModelId");
+				String appId = props.getString("KSE.AppUserModelId");
 				Shell32 shell32 = (Shell32) Native.loadLibrary("shell32", Shell32.class);
 				shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
 			}
@@ -173,7 +177,7 @@ public class KSE {
 	 * @return Application name
 	 */
 	public static String getApplicationName() {
-		return res.getString("KSE.Name");
+		return props.getString("KSE.Name");
 	}
 
 	/**
@@ -182,7 +186,7 @@ public class KSE {
 	 * @return Application version
 	 */
 	public static Version getApplicationVersion() {
-		return new Version(res.getString("KSE.Version"));
+		return new Version(props.getString("KSE.Version"));
 	}
 
 	/**
@@ -191,7 +195,7 @@ public class KSE {
 	 * @return Full application name
 	 */
 	public static String getFullApplicationName() {
-		return MessageFormat.format(res.getString("KSE.FullName"), KSE.getApplicationName(),
+		return MessageFormat.format(props.getString("KSE.FullName"), KSE.getApplicationName(),
 				KSE.getApplicationVersion());
 	}
 }

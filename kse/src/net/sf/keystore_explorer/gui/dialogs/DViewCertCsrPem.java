@@ -60,6 +60,7 @@ import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.JavaFXFileChooser;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 
@@ -219,7 +220,7 @@ public class DViewCertCsrPem extends JEscDialog {
 		}
 		jtaPem.setCaretPosition(0);
 		jtaPem.setEditable(false);
-		jtaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jtaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		// JGoodies - keep uneditable color same as editable
 		jtaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 

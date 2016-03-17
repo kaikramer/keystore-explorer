@@ -21,6 +21,7 @@ package net.sf.keystore_explorer.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -78,6 +79,7 @@ import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
 import net.sf.keystore_explorer.utilities.net.NoProxySelector;
 import net.sf.keystore_explorer.utilities.net.PacProxySelector;
 import net.sf.keystore_explorer.utilities.net.ProxyAddress;
+import net.sf.keystore_explorer.utilities.net.SystemProxySelector;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 
 /**
@@ -118,6 +120,7 @@ public class DPreferences extends JEscDialog {
 	private JCheckBox jcbLookFeelDecorated;
 	private JPanel jpInternetProxy;
 	private JRadioButton jrbNoProxy;
+	private JRadioButton jrbSystemProxySettings;
 	private JRadioButton jrbManualProxyConfig;
 	private JLabel jlHttpHost;
 	private JTextField jtfHttpHost;
@@ -598,174 +601,94 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private void initInternetProxyTab() {
-		jrbNoProxy = new JRadioButton(res.getString("DPreferences.jrbNoProxy.text"), true);
+		jrbNoProxy = new JRadioButton(res.getString("DPreferences.jrbNoProxy.text"));
 		jrbNoProxy.setToolTipText(res.getString("DPreferences.jrbNoProxy.tooltip"));
 		PlatformUtil.setMnemonic(jrbNoProxy, res.getString("DPreferences.jrbNoProxy.mnemonic").charAt(0));
 
-		GridBagConstraints gbc_jrbNoProxy = new GridBagConstraints();
-		gbc_jrbNoProxy.gridx = 0;
-		gbc_jrbNoProxy.gridwidth = 4;
-		gbc_jrbNoProxy.gridy = 0;
-		gbc_jrbNoProxy.gridheight = 1;
-		gbc_jrbNoProxy.anchor = GridBagConstraints.WEST;
-		gbc_jrbNoProxy.insets = new Insets(5, 5, 0, 0);
+		jrbSystemProxySettings = new JRadioButton(res.getString("DPreferences.jrbSystemProxySettings.text"), true);
+		jrbSystemProxySettings.setToolTipText(res.getString("DPreferences.jrbSystemProxySettings.tooltip"));
+		PlatformUtil.setMnemonic(jrbSystemProxySettings, res.getString("DPreferences.jrbSystemProxySettings.mnemonic")
+				.charAt(0));
 
 		jrbManualProxyConfig = new JRadioButton(res.getString("DPreferences.jrbManualProxyConfig.text"));
 		jrbManualProxyConfig.setToolTipText(res.getString("DPreferences.jrbManualProxyConfig.tooltip"));
 		PlatformUtil.setMnemonic(jrbManualProxyConfig, res.getString("DPreferences.jrbManualProxyConfig.mnemonic")
 				.charAt(0));
 
-		jrbManualProxyConfig.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				updateProxyControls();
-			}
-		});
-
-		GridBagConstraints gbc_jrbManualProxyConfig = new GridBagConstraints();
-		gbc_jrbManualProxyConfig.gridx = 0;
-		gbc_jrbManualProxyConfig.gridwidth = 4;
-		gbc_jrbManualProxyConfig.gridy = 1;
-		gbc_jrbManualProxyConfig.gridheight = 1;
-		gbc_jrbManualProxyConfig.anchor = GridBagConstraints.WEST;
-		gbc_jrbManualProxyConfig.insets = new Insets(5, 5, 0, 0);
-
 		jlHttpHost = new JLabel(res.getString("DPreferences.jlHttpHost.text"));
-
-		GridBagConstraints gbc_jlHttpHost = new GridBagConstraints();
-		gbc_jlHttpHost.gridx = 0;
-		gbc_jlHttpHost.gridwidth = 1;
-		gbc_jlHttpHost.gridy = 3;
-		gbc_jlHttpHost.gridheight = 1;
-		gbc_jlHttpHost.anchor = GridBagConstraints.EAST;
-		gbc_jlHttpHost.insets = new Insets(5, 30, 0, 0);
 
 		jtfHttpHost = new JTextField(20);
 		jtfHttpHost.setToolTipText(res.getString("DPreferences.jtfHttpHost.tooltip"));
 		jtfHttpHost.setEnabled(false);
 
-		GridBagConstraints gbc_jtfHttpHost = new GridBagConstraints();
-		gbc_jtfHttpHost.gridx = 1;
-		gbc_jtfHttpHost.gridwidth = 1;
-		gbc_jtfHttpHost.gridy = 3;
-		gbc_jtfHttpHost.gridheight = 1;
-		gbc_jtfHttpHost.anchor = GridBagConstraints.WEST;
-		gbc_jtfHttpHost.insets = new Insets(5, 5, 0, 0);
-
 		jlHttpPort = new JLabel(res.getString("DPreferences.jlHttpPort.text"));
 
-		GridBagConstraints gbc_jlHttpPort = new GridBagConstraints();
-		gbc_jlHttpPort.gridx = 2;
-		gbc_jlHttpPort.gridwidth = 1;
-		gbc_jlHttpPort.gridy = 3;
-		gbc_jlHttpPort.gridheight = 1;
-		gbc_jlHttpPort.anchor = GridBagConstraints.WEST;
-		gbc_jlHttpPort.insets = new Insets(5, 5, 0, 0);
-
-		jtfHttpPort = new JTextField(4);
+		jtfHttpPort = new JTextField(5);
 		jtfHttpPort.setToolTipText(res.getString("DPreferences.jtfHttpPort.tooltip"));
 		jtfHttpPort.setEnabled(false);
 
-		GridBagConstraints gbc_jtfHttpPort = new GridBagConstraints();
-		gbc_jtfHttpPort.gridx = 3;
-		gbc_jtfHttpPort.gridwidth = 1;
-		gbc_jtfHttpPort.gridy = 3;
-		gbc_jtfHttpPort.gridheight = 1;
-		gbc_jtfHttpPort.anchor = GridBagConstraints.WEST;
-		gbc_jtfHttpPort.insets = new Insets(5, 5, 0, 0);
-
 		jlHttpsHost = new JLabel(res.getString("DPreferences.jlHttpsHost.text"));
-
-		GridBagConstraints gbc_jlHttpsHost = new GridBagConstraints();
-		gbc_jlHttpsHost.gridx = 0;
-		gbc_jlHttpsHost.gridwidth = 1;
-		gbc_jlHttpsHost.gridy = 4;
-		gbc_jlHttpsHost.gridheight = 1;
-		gbc_jlHttpsHost.anchor = GridBagConstraints.EAST;
-		gbc_jlHttpsHost.insets = new Insets(5, 30, 0, 0);
 
 		jtfHttpsHost = new JTextField(20);
 		jtfHttpsHost.setToolTipText(res.getString("DPreferences.jtfHttpsHost.tooltip"));
 		jtfHttpsHost.setEnabled(false);
 
-		GridBagConstraints gbc_jtfHttpsHost = new GridBagConstraints();
-		gbc_jtfHttpsHost.gridx = 1;
-		gbc_jtfHttpsHost.gridwidth = 1;
-		gbc_jtfHttpsHost.gridy = 4;
-		gbc_jtfHttpsHost.gridheight = 1;
-		gbc_jtfHttpsHost.anchor = GridBagConstraints.WEST;
-		gbc_jtfHttpsHost.insets = new Insets(5, 5, 0, 0);
-
 		jlHttpsPort = new JLabel(res.getString("DPreferences.jlHttpsPort.text"));
 
-		GridBagConstraints gbc_jlHttpsPort = new GridBagConstraints();
-		gbc_jlHttpsPort.gridx = 2;
-		gbc_jlHttpsPort.gridwidth = 1;
-		gbc_jlHttpsPort.gridy = 4;
-		gbc_jlHttpsPort.gridheight = 1;
-		gbc_jlHttpsPort.anchor = GridBagConstraints.WEST;
-		gbc_jlHttpsPort.insets = new Insets(5, 5, 0, 0);
-
-		jtfHttpsPort = new JTextField(4);
+		jtfHttpsPort = new JTextField(5);
 		jtfHttpsPort.setToolTipText(res.getString("DPreferences.jtfHttpsPort.tooltip"));
 		jtfHttpsPort.setEnabled(false);
 
-		GridBagConstraints gbc_jtfHttpsPort = new GridBagConstraints();
-		gbc_jtfHttpsPort.gridx = 3;
-		gbc_jtfHttpsPort.gridwidth = 1;
-		gbc_jtfHttpsPort.gridy = 4;
-		gbc_jtfHttpsPort.gridheight = 1;
-		gbc_jtfHttpsPort.anchor = GridBagConstraints.WEST;
-		gbc_jtfHttpsPort.insets = new Insets(5, 5, 0, 0);
-
 		jlSocksHost = new JLabel(res.getString("DPreferences.jlSocksHost.text"));
-
-		GridBagConstraints gbc_jlSocksHost = new GridBagConstraints();
-		gbc_jlSocksHost.gridx = 0;
-		gbc_jlSocksHost.gridwidth = 1;
-		gbc_jlSocksHost.gridy = 5;
-		gbc_jlSocksHost.gridheight = 1;
-		gbc_jlSocksHost.anchor = GridBagConstraints.EAST;
-		gbc_jlSocksHost.insets = new Insets(5, 30, 0, 0);
 
 		jtfSocksHost = new JTextField(20);
 		jtfSocksHost.setToolTipText(res.getString("DPreferences.jtfSocksHost.tooltip"));
 		jtfSocksHost.setEnabled(false);
 
-		GridBagConstraints gbc_jtfSocksHost = new GridBagConstraints();
-		gbc_jtfSocksHost.gridx = 1;
-		gbc_jtfSocksHost.gridwidth = 1;
-		gbc_jtfSocksHost.gridy = 5;
-		gbc_jtfSocksHost.gridheight = 1;
-		gbc_jtfSocksHost.anchor = GridBagConstraints.WEST;
-		gbc_jtfSocksHost.insets = new Insets(5, 5, 0, 0);
-
 		jlSocksPort = new JLabel(res.getString("DPreferences.jlSocksPort.text"));
 
-		GridBagConstraints gbc_jlSocksPort = new GridBagConstraints();
-		gbc_jlSocksPort.gridx = 2;
-		gbc_jlSocksPort.gridwidth = 1;
-		gbc_jlSocksPort.gridy = 5;
-		gbc_jlSocksPort.gridheight = 1;
-		gbc_jlSocksPort.anchor = GridBagConstraints.WEST;
-		gbc_jlSocksPort.insets = new Insets(5, 5, 0, 0);
-
-		jtfSocksPort = new JTextField(4);
+		jtfSocksPort = new JTextField(5);
 		jtfSocksPort.setToolTipText(res.getString("DPreferences.jtfSocksPort.tooltip"));
 		jtfSocksPort.setEnabled(false);
-
-		GridBagConstraints gbc_jtfSocksPort = new GridBagConstraints();
-		gbc_jtfSocksPort.gridx = 3;
-		gbc_jtfSocksPort.gridwidth = 1;
-		gbc_jtfSocksPort.gridy = 5;
-		gbc_jtfSocksPort.gridheight = 1;
-		gbc_jtfSocksPort.anchor = GridBagConstraints.WEST;
-		gbc_jtfSocksPort.insets = new Insets(5, 5, 0, 0);
 
 		jrbAutomaticProxyConfig = new JRadioButton(res.getString("DPreferences.jrbAutomaticProxyConfig.text"));
 		jrbAutomaticProxyConfig.setToolTipText(res.getString("DPreferences.jrbAutomaticProxyConfig.tooltip"));
 		PlatformUtil.setMnemonic(jrbAutomaticProxyConfig, res
 				.getString("DPreferences.jrbAutomaticProxyConfig.mnemonic").charAt(0));
+
+		jlPacUrl = new JLabel(res.getString("DPreferences.jlPacUrl.text"));
+
+		jtfPacUrl = new JTextField(30);
+		jtfPacUrl.setToolTipText(res.getString("DPreferences.jtfPacUrl.tooltip"));
+		jtfPacUrl.setEnabled(false);
+
+		ButtonGroup bgProxies = new ButtonGroup();
+		bgProxies.add(jrbNoProxy);
+		bgProxies.add(jrbSystemProxySettings);
+		bgProxies.add(jrbManualProxyConfig);
+		bgProxies.add(jrbAutomaticProxyConfig);
+
+		// layout
+		jpInternetProxy = new JPanel();
+		jpInternetProxy.setLayout(new MigLayout("insets dialog", "[20][]", ""));
+		jpInternetProxy.add(jrbNoProxy, "left, span, wrap");
+		jpInternetProxy.add(jrbSystemProxySettings, "left, span, wrap");
+		jpInternetProxy.add(jrbManualProxyConfig, "left, span, wrap");
+		jpInternetProxy.add(jlHttpHost, "skip, right");
+		jpInternetProxy.add(jtfHttpHost, "");
+		jpInternetProxy.add(jlHttpPort, "gap unrel, right");
+		jpInternetProxy.add(jtfHttpPort, "wrap");
+		jpInternetProxy.add(jlHttpsHost, "skip, right");
+		jpInternetProxy.add(jtfHttpsHost, "");
+		jpInternetProxy.add(jlHttpsPort, "gap unrel, right");
+		jpInternetProxy.add(jtfHttpsPort, "wrap");
+		jpInternetProxy.add(jlSocksHost, "skip, right");
+		jpInternetProxy.add(jtfSocksHost, "");
+		jpInternetProxy.add(jlSocksPort, "gap unrel, right");
+		jpInternetProxy.add(jtfSocksPort, "wrap");
+		jpInternetProxy.add(jrbAutomaticProxyConfig, "left, span, wrap");
+		jpInternetProxy.add(jlPacUrl, "skip, right");
+		jpInternetProxy.add(jtfPacUrl, "span, wrap push");
 
 		jrbAutomaticProxyConfig.addItemListener(new ItemListener() {
 			@Override
@@ -774,66 +697,18 @@ public class DPreferences extends JEscDialog {
 			}
 		});
 
-		GridBagConstraints gbc_jrbAutomaticProxyConfig = new GridBagConstraints();
-		gbc_jrbAutomaticProxyConfig.gridx = 0;
-		gbc_jrbAutomaticProxyConfig.gridwidth = 4;
-		gbc_jrbAutomaticProxyConfig.gridy = 6;
-		gbc_jrbAutomaticProxyConfig.gridheight = 1;
-		gbc_jrbAutomaticProxyConfig.anchor = GridBagConstraints.WEST;
-		gbc_jrbAutomaticProxyConfig.insets = new Insets(5, 5, 0, 0);
-
-		jlPacUrl = new JLabel(res.getString("DPreferences.jlPacUrl.text"));
-
-		GridBagConstraints gbc_jlPacUrl = new GridBagConstraints();
-		gbc_jlPacUrl.gridx = 0;
-		gbc_jlPacUrl.gridwidth = 1;
-		gbc_jlPacUrl.gridy = 7;
-		gbc_jlPacUrl.gridheight = 1;
-		gbc_jlPacUrl.anchor = GridBagConstraints.EAST;
-		gbc_jlPacUrl.insets = new Insets(5, 5, 0, 0);
-
-		jtfPacUrl = new JTextField(30);
-		jtfPacUrl.setToolTipText(res.getString("DPreferences.jtfPacUrl.tooltip"));
-		jtfPacUrl.setEnabled(false);
-
-		GridBagConstraints gbc_jtfPacUrl = new GridBagConstraints();
-		gbc_jtfPacUrl.gridx = 1;
-		gbc_jtfPacUrl.gridwidth = 3;
-		gbc_jtfPacUrl.gridy = 7;
-		gbc_jtfPacUrl.gridheight = 1;
-		gbc_jtfPacUrl.anchor = GridBagConstraints.WEST;
-		gbc_jtfPacUrl.insets = new Insets(5, 5, 0, 0);
-
-		ButtonGroup bgProxies = new ButtonGroup();
-		bgProxies.add(jrbNoProxy);
-		bgProxies.add(jrbManualProxyConfig);
-		bgProxies.add(jrbAutomaticProxyConfig);
-
-		jpInternetProxy = new JPanel(new GridBagLayout());
-
-		jpInternetProxy.add(jrbNoProxy, gbc_jrbNoProxy);
-		jpInternetProxy.add(jrbManualProxyConfig, gbc_jrbManualProxyConfig);
-		jpInternetProxy.add(jlHttpHost, gbc_jlHttpHost);
-		jpInternetProxy.add(jtfHttpHost, gbc_jtfHttpHost);
-		jpInternetProxy.add(jlHttpPort, gbc_jlHttpPort);
-		jpInternetProxy.add(jtfHttpPort, gbc_jtfHttpPort);
-		jpInternetProxy.add(jlHttpsHost, gbc_jlHttpsHost);
-		jpInternetProxy.add(jtfHttpsHost, gbc_jtfHttpsHost);
-		jpInternetProxy.add(jlHttpsPort, gbc_jlHttpsPort);
-		jpInternetProxy.add(jtfHttpsPort, gbc_jtfHttpsPort);
-		jpInternetProxy.add(jlSocksHost, gbc_jlSocksHost);
-		jpInternetProxy.add(jtfSocksHost, gbc_jtfSocksHost);
-		jpInternetProxy.add(jlSocksPort, gbc_jlSocksPort);
-		jpInternetProxy.add(jtfSocksPort, gbc_jtfSocksPort);
-		jpInternetProxy.add(jrbAutomaticProxyConfig, gbc_jrbAutomaticProxyConfig);
-		jpInternetProxy.add(jlPacUrl, gbc_jlPacUrl);
-		jpInternetProxy.add(jtfPacUrl, gbc_jtfPacUrl);
-
-		jpInternetProxy.setBorder(new EmptyBorder(10, 10, 10, 10));
+		jrbManualProxyConfig.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				updateProxyControls();
+			}
+		});
 
 		ProxySelector proxySelector = ProxySelector.getDefault();
 
-		if (proxySelector instanceof PacProxySelector) {
+		if (proxySelector instanceof SystemProxySelector) {
+			jrbSystemProxySettings.setSelected(true);
+		} else if (proxySelector instanceof PacProxySelector) {
 			jrbAutomaticProxyConfig.setSelected(true);
 
 			PacProxySelector pacProxySelector = (PacProxySelector) proxySelector;
@@ -891,7 +766,7 @@ public class DPreferences extends JEscDialog {
 		jlCountryCode = new JLabel(res.getString("DPreferences.jlCountryCode.text"));
 		jtfCountryCode = new JTextField(4);
 		jlEmailAddress = new JLabel(res.getString("DPreferences.jlEmailAddress.text"));
-		jtfEmailAddress = new JTextField(25);
+		jtfEmailAddress = new JTextField(30);
 
 		// layout
 		jpDefaultName = new JPanel();
@@ -1016,6 +891,12 @@ public class DPreferences extends JEscDialog {
 			if (!noProxySelector.equals(defaultProxySelector)) {
 				ProxySelector.setDefault(noProxySelector);
 			}
+		} else if (jrbSystemProxySettings.isSelected()) {
+			SystemProxySelector systemProxySelector = new SystemProxySelector();
+
+			if (!systemProxySelector.equals(defaultProxySelector)) {
+				ProxySelector.setDefault(systemProxySelector);
+			}
 		} else if (jrbManualProxyConfig.isSelected()) {
 			String httpHost = jtfHttpHost.getText().trim();
 			String httpPortStr = jtfHttpPort.getText().trim();
@@ -1028,8 +909,7 @@ public class DPreferences extends JEscDialog {
 			ProxyAddress httpsProxyAddress = null;
 			ProxyAddress socksProxyAddress = null;
 
-			// Require at least one of the HTTP host or HTTPS host or SOCKS host
-			// manual settings
+			// Require at least one of the HTTP host or HTTPS host or SOCKS host manual settings
 			if ((httpHost.length() == 0) && (httpsHost.length() == 0) && (socksHost.length() == 0)) {
 				jtpPreferences.setSelectedIndex(3);
 				JOptionPane.showMessageDialog(this, res.getString("DPreferences.ManualConfigReq.message"), getTitle(),
@@ -1261,5 +1141,32 @@ public class DPreferences extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					DPreferences dialog = new DPreferences(new javax.swing.JFrame(),true, new File(""),
+							true, true, true, new PasswordQualityConfig(true, true, 100), "");
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+
+						@Override
+						public void windowDeactivated(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

@@ -70,6 +70,7 @@ import net.sf.keystore_explorer.crypto.x509.X509Ext;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.JKseTable;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.dialogs.DViewAsn1Dump;
 import net.sf.keystore_explorer.gui.dialogs.DViewCertificate;
@@ -192,7 +193,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		jpExtensionValue.add(jlExtensionValue, BorderLayout.NORTH);
 
 		jepExtensionValue = new JEditorPane();
-		jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jepExtensionValue.getFont().getSize()));
+		jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		jepExtensionValue.setEditable(false);
 		jepExtensionValue.setToolTipText(res.getString("DViewExtensions.jtaExtensionValue.tooltip"));
 		// JGoodies - keep uneditable color same as editable

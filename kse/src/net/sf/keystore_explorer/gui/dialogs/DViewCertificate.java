@@ -164,7 +164,7 @@ public class DViewCertificate extends JEscDialog {
 		jlHierarchy = new JLabel(res.getString("DViewCertificate.jlHierarchy.text"));
 
 		jtrHierarchy = new JTree(createCertificateNodes(certs));
-		jtrHierarchy.setRowHeight(18);
+		jtrHierarchy.setRowHeight(Math.max(18, jtrHierarchy.getRowHeight()));
 		jtrHierarchy.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		ToolTipManager.sharedInstance().registerComponent(jtrHierarchy);
 		jtrHierarchy.setCellRenderer(new CertificateTreeCellRend());

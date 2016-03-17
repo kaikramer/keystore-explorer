@@ -63,7 +63,7 @@ public class AccessDescriptionsTableCellRend extends DefaultTableCellRenderer {
 		if (col == 0) {
 			cell.setText(accessDescription.getAccessMethod().getId());
 		} else {
-			cell.setText(GeneralNameUtil.safeToString(accessDescription.getAccessLocation()));
+			cell.setText(GeneralNameUtil.safeToString(accessDescription.getAccessLocation(), false));
 		}
 
 		cell.setHorizontalAlignment(LEFT);

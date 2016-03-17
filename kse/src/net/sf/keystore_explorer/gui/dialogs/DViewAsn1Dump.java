@@ -51,6 +51,7 @@ import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
 import net.sf.keystore_explorer.crypto.x509.X509Ext;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscFrame;
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Dump;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
@@ -260,7 +261,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 		jtaAsn1Dump.setCaretPosition(0);
 		jtaAsn1Dump.setEditable(false);
-		jtaAsn1Dump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, jtaAsn1Dump.getFont().getSize()));
+        jtaAsn1Dump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		// JGoodies - keep uneditable color same as editable
 		jtaAsn1Dump.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 

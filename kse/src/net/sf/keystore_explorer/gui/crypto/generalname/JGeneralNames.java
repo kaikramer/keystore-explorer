@@ -31,7 +31,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.Box;
@@ -63,6 +62,8 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
  *
  */
 public class JGeneralNames extends JPanel {
+	private static final long serialVersionUID = 459512931464920941L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/crypto/generalname/resources");
 
 	private JPanel jpGeneralNameButtons;
@@ -73,7 +74,6 @@ public class JGeneralNames extends JPanel {
 	private JKseTable jtGeneralNames;
 
 	private String title;
-	private GeneralNames generalNames;
 	private boolean enabled = true;
 
 	/**
@@ -242,7 +242,8 @@ public class JGeneralNames extends JPanel {
 		add(jspGeneralNames, BorderLayout.CENTER);
 		add(jpGeneralNameButtons, BorderLayout.EAST);
 
-		populate();
+		selectFirstGeneralNameInTable();
+		updateButtonControls();
 	}
 
 	/**
@@ -251,7 +252,7 @@ public class JGeneralNames extends JPanel {
 	 * @return General names
 	 */
 	public GeneralNames getGeneralNames() {
-		return generalNames;
+		return new GeneralNames(getGeneralNamesTableModel().getData().toArray(new GeneralName[0]));
 	}
 
 	/**
@@ -261,8 +262,7 @@ public class JGeneralNames extends JPanel {
 	 *            General names
 	 */
 	public void setGeneralNames(GeneralNames generalNames) {
-		this.generalNames = generalNames;
-		populate();
+		getGeneralNamesTableModel().load(generalNames);
 	}
 
 	/**
@@ -291,17 +291,6 @@ public class JGeneralNames extends JPanel {
 		jtGeneralNames.setToolTipText(toolTipText);
 	}
 
-	private void populate() {
-		if (generalNames == null) {
-			generalNames = new GeneralNames(new GeneralName[0]);
-		}
-
-		reloadGeneralNamesTable();
-		selectFirstGeneralNameInTable();
-		updateButtonControls();
-	}
-
-	@SuppressWarnings("unchecked")
 	private void addPressed() {
 		Container container = getTopLevelAncestor();
 
@@ -323,10 +312,10 @@ public class JGeneralNames extends JPanel {
 			return;
 		}
 
-		generalNames = addGeneralName(newGeneralName, generalNames);
+		getGeneralNamesTableModel().addRow(newGeneralName);
 
-		populate();
 		selectGeneralNameInTable(newGeneralName);
+		updateButtonControls();
 	}
 
 	private void removePressed() {
@@ -337,11 +326,8 @@ public class JGeneralNames extends JPanel {
 		int selectedRow = jtGeneralNames.getSelectedRow();
 
 		if (selectedRow != -1) {
-			GeneralName generalName = (GeneralName) jtGeneralNames.getValueAt(selectedRow, 0);
+			((GeneralNamesTableModel) jtGeneralNames.getModel()).removeRow(selectedRow);
 
-			generalNames = removeGeneralName(generalName, generalNames);
-
-			reloadGeneralNamesTable();
 			selectFirstGeneralNameInTable();
 			updateButtonControls();
 		}
@@ -388,7 +374,6 @@ public class JGeneralNames extends JPanel {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void editSelectedGeneralName() {
 		int selectedRow = jtGeneralNames.getSelectedRow();
 
@@ -415,11 +400,11 @@ public class JGeneralNames extends JPanel {
 				return;
 			}
 
-			generalNames = removeGeneralName(generalName, generalNames);
-			generalNames = addGeneralName(newGeneralName, generalNames);
+			getGeneralNamesTableModel().removeRow(selectedRow);
+			getGeneralNamesTableModel().addRow(newGeneralName);
 
-			populate();
 			selectGeneralNameInTable(newGeneralName);
+			updateButtonControls();
 		}
 	}
 
@@ -432,10 +417,6 @@ public class JGeneralNames extends JPanel {
 		}
 	}
 
-	private void reloadGeneralNamesTable() {
-		getGeneralNamesTableModel().load(generalNames);
-	}
-
 	private void selectFirstGeneralNameInTable() {
 		if (getGeneralNamesTableModel().getRowCount() > 0) {
 			jtGeneralNames.changeSelection(0, 0, false, false);
@@ -444,41 +425,5 @@ public class JGeneralNames extends JPanel {
 
 	private GeneralNamesTableModel getGeneralNamesTableModel() {
 		return (GeneralNamesTableModel) jtGeneralNames.getModel();
-	}
-
-	private GeneralNames addGeneralName(GeneralName newGeneralName, GeneralNames generalNames) {
-		GeneralName[] names = generalNames.getNames();
-		GeneralName[] newNames = Arrays.copyOf(names, names.length + 1);
-		newNames[names.length] = newGeneralName;
-		return new GeneralNames(newNames);
-	}
-
-	private GeneralNames removeGeneralName(GeneralName toBeRemoved, GeneralNames generalNames) {
-		GeneralName[] names = generalNames.getNames();
-
-		// sanity check: is toBeRemoved part of names?
-		boolean found = false;
-		for (int i = 0; i < names.length; i++) {
-			if (names[i].equals(toBeRemoved)) {
-				found = true;
-				break;
-			}
-		}
-
-		if (!found) {
-			return generalNames;
-		}
-
-		// copy to new array
-		GeneralName[] newNames = new GeneralName[names.length - 1];
-		for (int i = 0; i < newNames.length; i++) {
-			if (names[i].equals(toBeRemoved)) {
-				continue;
-			} else {
-				newNames[i] = names[i];
-			}
-		}
-
-		return new GeneralNames(newNames);
 	}
 }

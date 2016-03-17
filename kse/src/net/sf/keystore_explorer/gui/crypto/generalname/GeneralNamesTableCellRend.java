@@ -58,7 +58,7 @@ public class GeneralNamesTableCellRend extends DefaultTableCellRenderer {
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtGeneralNames, value, isSelected, hasFocus, row,
 				col);
 
-		String generalNameStr = GeneralNameUtil.safeToString((GeneralName) value);
+		String generalNameStr = GeneralNameUtil.safeToString((GeneralName) value, false);
 		cell.setText(generalNameStr);
 		cell.setToolTipText(generalNameStr);
 

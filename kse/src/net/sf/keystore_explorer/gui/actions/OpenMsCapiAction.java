@@ -78,7 +78,7 @@ public class OpenMsCapiAction  extends OpenAction {
 			// applications must not specify the SunMSCAPI provider."
 
 			// TODO
-			kseFrame.addKeyStore(openedKeyStore, "Windows User Keystore", null, null);
+			kseFrame.addKeyStore(openedKeyStore, "Windows-MY", null, null);
 
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);

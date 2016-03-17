@@ -175,7 +175,7 @@ public class JGeneralName extends JPanel {
 
 	private void populate() {
 		if (generalName != null) {
-			jtfGeneralName.setText(GeneralNameUtil.safeToString(generalName));
+			jtfGeneralName.setText(GeneralNameUtil.safeToString(generalName, false));
 			jbClearGeneralName.setEnabled(true);
 		} else {
 			jtfGeneralName.setText("");

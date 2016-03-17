@@ -99,9 +99,16 @@ public class GeneralNameUtil {
 	 *
 	 * @param generalName
 	 *            General name
+	 * @param addLinkForURI
+	 *            If true, convert URI to a clickable link
 	 * @return String representation of general name
 	 */
-	public static String safeToString(GeneralName generalName) {
+	public static String safeToString(GeneralName generalName, boolean addLinkForURI) {
+
+		if (generalName == null) {
+			return "";
+		}
+
 		switch (generalName.getTagNo()) {
 		case GeneralName.directoryName: {
 			X500Name directoryName = (X500Name) generalName.getName();
@@ -140,7 +147,8 @@ public class GeneralNameUtil {
 		case GeneralName.uniformResourceIdentifier: {
 			DERIA5String uri = (DERIA5String) generalName.getName();
 
-			String link = "<html><a href=\"" + uri.getString() + "\">" + uri.getString() + "</a></html>";
+			String link = addLinkForURI ? "<html><a href=\"" + uri.getString() + "\">" + uri.getString() + "</a></html>"
+					: uri.getString();
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.UriGeneralName"), link);
 		}
@@ -244,7 +252,7 @@ public class GeneralNameUtil {
 					HexUtil.getHexString(x400Address.toASN1Primitive().getEncoded(ASN1Encoding.DER)));
 		}
 		default: {
-			return safeToString(generalName);
+			return safeToString(generalName, true);
 		}
 		}
 	}

@@ -109,6 +109,9 @@ public class JavaFXFileChooser extends JFileChooser {
                     // set extension filters
                     Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
                     List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
+                    observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
+                    		.newInstance("All Files", new String[] { "*.*" }));
+
                     for (FileExtFilter fileFilter : filters) {
                         // convert format for extensions
                         String[] extensions = fileFilter.getExtensions();
@@ -122,9 +125,6 @@ public class JavaFXFileChooser extends JFileChooser {
                                 .newInstance(fileFilter.getDescription(), extensions);
                         observableList.add(extFilter);
                     }
-
-                    observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
-                            .newInstance("All Files", new String[] { "*.*" }));
 
                     // set window title
                     Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);

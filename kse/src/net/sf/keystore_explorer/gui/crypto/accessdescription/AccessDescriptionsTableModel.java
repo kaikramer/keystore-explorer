@@ -159,8 +159,8 @@ public class AccessDescriptionsTableModel extends AbstractTableModel {
 	static class AccessDescriptionLocationComparator implements Comparator<AccessDescription> {
 		@Override
 		public int compare(AccessDescription description1, AccessDescription description2) {
-			return GeneralNameUtil.safeToString(description1.getAccessLocation()).compareToIgnoreCase(
-					GeneralNameUtil.safeToString(description2.getAccessLocation()));
+			return GeneralNameUtil.safeToString(description1.getAccessLocation(), false).compareToIgnoreCase(
+					GeneralNameUtil.safeToString(description2.getAccessLocation(), false));
 		}
 	}
 }

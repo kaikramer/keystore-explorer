@@ -48,6 +48,7 @@ import javax.swing.border.EtchedBorder;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.DERIA5String;
 
+import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DError;
 
@@ -104,7 +105,7 @@ public class DNetscapeComment extends DExtension {
 		jlNetscapeComment = new JLabel(res.getString("DNetscapeComment.jlNetscapeComment.text"));
 
 		jtaNetscapeComment = new JTextArea();
-		jtaNetscapeComment.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 11));
+		jtaNetscapeComment.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 
 		jspNetscapeComment = PlatformUtil.createScrollPane(jtaNetscapeComment,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
