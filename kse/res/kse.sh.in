@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# @appName@ startup script
+
+_prefer_jre=true
+if [ -r /usr/share/java-utils/java-functions ]; then
+	. /usr/share/java-utils/java-functions
+fi
+if [ -f /etc/java/@appSimpleName@.conf ]; then
+	. /etc/java/@appSimpleName@.conf
+fi
+if [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/@appSimpleName@ ]; then
+	. ${XDG_CONFIG_HOME:-$HOME/.config}/@appSimpleName@
+fi
+
+MAIN_CLASS=@mainClass@
+BASE_JARS="bcprov bcpkix commons-io miglayout jgoodies-common jgoodies-looks javahelp2 @appSimpleName@"
+
+set_jvm
+set_classpath $BASE_JARS
+
+run "$@"

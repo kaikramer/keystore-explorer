@@ -19,484 +19,443 @@
   along with KeyStore Explorer. If not, see <http://www.gnu.org/licenses/>.
 ========================================================================-->
 <!--
-    How to Use this Build Script:
-
-    (1) Install Apache Ant 1.9+ and setup for use with JDK 1.7+.
-
-    (2) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
-
-    (3) Install NSIS and add its top-level directory to the path.
-    
-    (4) Add WinShell plugin to NSIS (http://nsis.sourceforge.net/WinShell_plug-in)
-
-    (5) Run ant -projecthelp for a description of the various targets.
-
+	How to Use this Build Script:
+	
+	(1) Install Apache Ant 1.9+ and setup for use with JDK 1.7+.
+	
+	(2) Install Launch4j and set "launch4jInstallDir" property appropriately (Windows only).
+	
+	(3) Install NSIS and add its top-level directory to the path.
+	
+	(4) Add WinShell plugin to NSIS (http://nsis.sourceforge.net/WinShell_plug-in)
+	
+	(5) Run ant -projecthelp for a description of the various targets.
+	
  -->
 
 <!-- Build KeyStore Explorer -->
 <project basedir="." default="package" name="KeyStore Explorer" xmlns:if="ant:if" xmlns:unless="ant:unless">
-	
-    <!-- Application name and version -->
-    <property file="src/net/sf/keystore_explorer/resources.properties" />
-    <property name="appName" value="${KSE.Name}" />
-    <property name="appVersion" value="${KSE.Version}" />
-    <property name="appSimpleName" value="${KSE.SimpleName}" />
-    <property name="appSimpleVersion" value="${KSE.SimpleVersion}" />
-    <property name="appUserModelId" value="${KSE.AppUserModelId}" />
-	<property name="distFileNamePrefix" value ="${appSimpleName}-${appSimpleVersion}" />
-	
-    <!-- Vendor details -->
-    <property name="copyright" value="Coypright 2004 - 2013 Wayne Grant, 2013 - 2016 Kai Kramer" />
-    <property name="vendor" value="Wayne Grant, Kai Kramer" />
-    <property name="website" value="keystore-explorer.sf.net" />
 
-    <!-- Main class (for manifest entry) --> 
-    <property name="mainClass" value="net.sf.keystore_explorer.KSE"/>
+	<!-- Application name and version -->
+	<property file="src/net/sf/keystore_explorer/version.properties" />
+	<property name="appName" value="${KSE.Name}" />
+	<property name="appVersion" value="${KSE.Version}" />
+	<property name="appSimpleName" value="${KSE.SimpleName}" />
+	<property name="appSimpleVersion" value="${KSE.SimpleVersion}" />
+	<property name="appUserModelId" value="${KSE.AppUserModelId}" />
+	<property name="distFileNamePrefix" value="${appSimpleName}-${appSimpleVersion}" />
+
+	<!-- Vendor details -->
+	<property name="copyright" value="Coypright 2004 - 2013 Wayne Grant, 2013 - 2016 Kai Kramer" />
+	<property name="vendor" value="Wayne Grant, Kai Kramer" />
+	<property name="website" value="keystore-explorer.sf.net" />
+
+	<!-- Main class (for manifest entry) -->
+	<property name="mainClass" value="net.sf.keystore_explorer.KSE" />
 
 	<!-- Crypto Strength Policy Files Upgrade Assistant -->
 	<property name="cuaAppName" value="Crypto Strength Upgrade Assistant" />
 	<property name="cuaSimpleName" value="cua" />
-    <property name="cuaMainClass" value="net.sf.keystore_explorer.CryptoStrengthUpgradeAssistant"/>
+	<property name="cuaMainClass" value="net.sf.keystore_explorer.CryptoStrengthUpgradeAssistant" />
 	<property name="cuaExeManifest" value="res/manifest/${cuaSimpleName}.exe.manifest" />
 
-    <!-- Source code directory -->
-    <property name="sourceDir" value="${basedir}/src" />
+	<!-- Source code directory -->
+	<property name="sourceDir" value="${basedir}/src" />
 
-    <!-- Build directory (for class files) -->
-    <property name="buildDir" value="${basedir}/build" />
-    <property name="testBuildDir" value="${basedir}/build-test" />
+	<!-- Build directory (for class files) -->
+	<property name="buildDir" value="${basedir}/build" />
+	<property name="testBuildDir" value="${basedir}/build-test" />
 
-    <!-- Unit test directory -->
-    <property name="testDir" value="${basedir}/test" />
+	<!-- Unit test directory -->
+	<property name="testDir" value="${basedir}/test" />
 
-    <!-- Distribution directory -->
-    <property name="distDir" value="${basedir}/dist" />
+	<!-- Distribution directory -->
+	<property name="distDir" value="${basedir}/dist" />
 
-    <!-- Libraries directory -->
-    <property name="libDir" value="${basedir}/lib" />
-	
-    <!-- Application JAR -->
-    <property name="appJarName" value="${appSimpleName}.jar" />
-    <property name="appJar" value="${distDir}/${appJarName}" />
-    <property name="cuaJarName" value="${cuaSimpleName}.jar" />
-    <property name="cuaJar" value="${distDir}/${cuaJarName}" />
+	<!-- Libraries directory -->
+	<property name="libDir" value="${basedir}/lib" />
 
-    <!-- Jars that are packaged together with KSE -->
+	<!-- Application JAR -->
+	<property name="appJarName" value="${appSimpleName}.jar" />
+	<property name="appJar" value="${distDir}/${appJarName}" />
+	<property name="cuaJarName" value="${cuaSimpleName}.jar" />
+	<property name="cuaJar" value="${distDir}/${cuaJarName}" />
+
+	<!-- Jars that are packaged together with KSE -->
 	<path id="distClasspath">
-	    <fileset dir="${libDir}" id="libs">
-			<include name="bcpkix.jar"/>
-			<include name="bcprov.jar"/>
-			<include name="commons-io.jar"/>
-            <include name="darcula.jar"/>
-			<include name="jgoodies-common.jar"/>
-			<include name="jgoodies-looks.jar"/>
-			<include name="jhall.jar"/>
-			<include name="jna.jar"/>
-			<include name="miglayout-core.jar"/>
-			<include name="miglayout-swing.jar"/>
-	    </fileset>
+		<fileset dir="${libDir}" id="libs">
+			<include name="bcpkix.jar" />
+			<include name="bcprov.jar" />
+			<include name="commons-io.jar" />
+			<include name="darcula.jar" />
+			<include name="jgoodies-common.jar" />
+			<include name="jgoodies-looks.jar" />
+			<include name="jhall.jar" />
+			<include name="jna.jar" />
+			<include name="miglayout-core.jar" />
+			<include name="miglayout-swing.jar" />
+		</fileset>
 	</path>
 
-    <!-- Jars that are required for CUA -->
+	<!-- Jars that are required for CUA -->
 	<path id="cuaClasspath">
-	    <path refid="distClasspath"/>
-	    <pathelement location="kse.jar"/>
+		<path refid="distClasspath" />
+		<pathelement location="kse.jar" />
 	</path>
-	
-    <!-- Jars that are required for compiling KSE -->
+
+	<!-- Jars that are required for compiling KSE -->
 	<path id="compileClasspath">
-		<pathelement location="${buildDir}"/>
-	    <path refid="distClasspath"/>
+		<pathelement location="${buildDir}" />
+		<path refid="distClasspath" />
 	</path>
-    
-    <!-- Jars that are required for running the unit tests -->
+
+	<!-- Jars that are required for running the unit tests -->
 	<path id="testClasspath">
-		<path refid="compileClasspath"/>
-	    <pathelement location="${sourceDir}"/>
-	    <pathelement location="${libDir}/junit.jar"/>
+		<path refid="compileClasspath" />
+		<pathelement location="${sourceDir}" />
+		<pathelement location="${libDir}/junit.jar" />
 		<pathelement location="${testBuildDir}" />
 	</path>
-    
-    <!-- Resource directories -->
-    <property name="resDir" value="${basedir}/res" />
-    <property name="iconsDir" value="${resDir}/icons" />
-    <property name="licensesDir" value="${resDir}/licenses" />
-    <property name="readmesDir" value="${resDir}/readmes" />
-    <property name="schemasDir" value="${resDir}/schemas" />
-    <property name="appShell" value="${resDir}/kse.sh" />
 
-    <!-- Manifest file -->
-    <property name="mfFile" value="${basedir}/MANIFEST.MF" />
+	<!-- Resource directories -->
+	<property name="resDir" value="${basedir}/res" />
+	<property name="iconsDir" value="${resDir}/icons" />
+	<property name="licensesDir" value="${resDir}/licenses" />
+	<property name="readmesDir" value="${resDir}/readmes" />
+	<property name="schemasDir" value="${resDir}/schemas" />
+	<property name="appShell" value="${resDir}/kse.sh" />
+	<property name="startShell" value="${resDir}/${appSimpleName}" />
+	<property name="desktopFile" value="${resDir}/${appSimpleName}.desktop" />
+	<property name="startShellTemplate" value="${resDir}/kse.sh.in" />
+	<property name="desktopFileTemplate" value="${resDir}/kse.desktop.in" />
 
-    <!-- Source ZIP -->
-    <property name="srcZip" value="${distDir}/${distFileNamePrefix}-src.zip" />
+	<!-- Manifest file -->
+	<property name="mfFile" value="${basedir}/MANIFEST.MF" />
 
-    <!-- Archive file excludes -->
-    <property name="excludes" value="**/.DS_Store,**/Thumbs.db,**/.svn/" />
+	<!-- Source ZIP -->
+	<property name="srcZip" value="${distDir}/${distFileNamePrefix}-src.zip" />
 
-    <!-- Launch4j properties -->
-    <property name="launch4jInstallDir" location="c:\\program files (x86)\\Launch4j" />
-    <property name="appExe" value="${distDir}/${appSimpleName}.exe" />
-    <property name="cuaExe" value="${distDir}/${cuaSimpleName}.exe" />
+	<!-- Archive file excludes -->
+	<property name="excludes" value="**/.DS_Store,**/Thumbs.db,**/.svn/" />
 
-    <!-- NSIS properties -->
-    <property name="nsisDir" value="${basedir}/nsis" />
-    <property name="nsisScript" value="${nsisDir}/kse.nsi" />
+	<!-- Launch4j properties -->
+	<property name="launch4jInstallDir" location="c:\\program files (x86)\\Launch4j" />
+	<property name="appExe" value="${distDir}/${appSimpleName}.exe" />
+	<property name="cuaExe" value="${distDir}/${cuaSimpleName}.exe" />
 
-    <!-- Jar Bundle properties -->
-    <property name="javaAppStub" value="${libDir}/JavaApplicationStub" />
-    <property name="appBundleName" value="${appName} ${appVersion}" />
-    <property name="appBundleFile" value="${appBundleName}.app" />
-    <property name="appBundle" value="${distDir}/${appBundleFile}" />
+	<!-- NSIS properties -->
+	<property name="nsisDir" value="${basedir}/nsis" />
+	<property name="nsisScript" value="${nsisDir}/kse.nsi" />
 
-    <!-- dmg properties -->
-    <property name="dmgDir" value="${basedir}/dmg" />
-    <property name="dmgTemplate" value="${dmgDir}/template.dmg.bz2" />
-    
-    <!-- Manual setup archive -->
-    <property name="manualZip" value="${distDir}/${distFileNamePrefix}.zip" />
+	<!-- Jar Bundle properties -->
+	<property name="javaAppStub" value="${libDir}/JavaApplicationStub" />
+	<property name="appBundleName" value="${appName} ${appVersion}" />
+	<property name="appBundleFile" value="${appBundleName}.app" />
+	<property name="appBundle" value="${distDir}/${appBundleFile}" />
 
-    <!-- Application bundle archive -->
-    <property name="appBundleDmg" value="${distDir}/${distFileNamePrefix}.dmg" />
+	<!-- dmg properties -->
+	<property name="dmgDir" value="${basedir}/dmg" />
+	<property name="dmgTemplate" value="${dmgDir}/template.dmg.bz2" />
 
-    <!-- Icons -->
-    <property name="kseIco" value="${iconsDir}/kse.ico" />
-    <property name="ksePng" value="${iconsDir}/kse.png" />
-    <property name="kseIcns" value="${iconsDir}/kse.icns" />
-    <property name="keystoreIcns" value="${iconsDir}/keystore.icns" />
+	<!-- Manual setup archive -->
+	<property name="manualZip" value="${distDir}/${distFileNamePrefix}.zip" />
 
-    <!-- Javadoc properties -->
-    <property name="docDir" value="${basedir}/doc" />
-    <property name="overview" value="${docDir}/overview.html" />
-    <property name="styleSheet" value="${docDir}/stylesheet.css" />
-    <property name="javadocDir" value="${basedir}/api" />
-    <property name="product" value="${appName} ${appVersion}" />
-    <property name="windowTitle" value="${product}" />
-    <property name="documentTitle" value="${product}, API Specification" />
-    <property name="header" value="${product}" />
-    <property name="footer" value="${product}" />
-    <property name="bottom" value="&lt;font size='-1'&gt;${copyright} &lt;a href='http://${website}'&gt;${website}&lt;/a&gt;&lt;/font&gt;" />
-    <property name="overview" value="${basedir}/overview.html" />
+	<!-- Application bundle archive -->
+	<property name="appBundleDmg" value="${distDir}/${distFileNamePrefix}.dmg" />
 
-    <!-- Java Help properties -->
-    <property name="helpCfgDir" value="${basedir}/help" />
-    <property name="helpCfg" value="${helpCfgDir}/help.cfg" />
-    <property name="helpDir" value="${sourceDir}/net/sf/keystore_explorer/gui/help" />
-    <property name="helpSearchIndex" value="searchindex" />
-    <property name="helpSearchIndexDir" value="${buildDir}/net/sf/keystore_explorer/gui/help/${helpSearchIndex}" />
+	<!-- Icons -->
+	<property name="kseIco" value="${iconsDir}/kse.ico" />
+	<property name="ksePng" value="${iconsDir}/kse.png" />
+	<property name="kseIcns" value="${iconsDir}/kse.icns" />
+	<property name="keystoreIcns" value="${iconsDir}/keystore.icns" />
 
-	
-    <target name="init" description="Initialize environment">
-    	<mkdir dir="${buildDir}"/>
-    	<mkdir dir="${testBuildDir}"/>
-        <mkdir dir="${distDir}" />
-        <mkdir dir="${javadocDir}" />
-    </target>
-	
+	<!-- Javadoc properties -->
+	<property name="docDir" value="${basedir}/doc" />
+	<property name="overview" value="${docDir}/overview.html" />
+	<property name="styleSheet" value="${docDir}/stylesheet.css" />
+	<property name="javadocDir" value="${basedir}/api" />
+	<property name="product" value="${appName} ${appVersion}" />
+	<property name="windowTitle" value="${product}" />
+	<property name="documentTitle" value="${product}, API Specification" />
+	<property name="header" value="${product}" />
+	<property name="footer" value="${product}" />
+	<property name="bottom" value="&lt;font size='-1'&gt;${copyright} &lt;a href='http://${website}'&gt;${website}&lt;/a&gt;&lt;/font&gt;" />
+	<property name="overview" value="${basedir}/overview.html" />
 
-    <target name="compile" depends="init" description="Compile the Java source">
-        <javac debug="on" includeantruntime="false" destdir="${buildDir}" source="1.6" target="1.6" >
+	<!-- Java Help properties -->
+	<property name="helpCfgDir" value="${basedir}/help" />
+	<property name="helpCfg" value="${helpCfgDir}/help.cfg" />
+	<property name="helpDir" value="${sourceDir}/net/sf/keystore_explorer/gui/help" />
+	<property name="helpSearchIndex" value="searchindex" />
+	<property name="helpSearchIndexDir" value="${buildDir}/net/sf/keystore_explorer/gui/help/${helpSearchIndex}" />
+
+
+	<target name="init" description="Initialize environment">
+		<mkdir dir="${buildDir}" />
+		<mkdir dir="${testBuildDir}" />
+		<mkdir dir="${distDir}" />
+		<mkdir dir="${javadocDir}" />
+	</target>
+
+
+	<target name="compile" depends="init" description="Compile the Java source">
+		<javac debug="on" includeantruntime="false" destdir="${buildDir}" source="1.6" target="1.6">
 			<src path="${sourceDir}" />
-			<classpath refid="compileClasspath"/>
-        </javac>
-    </target>
-	
+			<classpath refid="compileClasspath" />
+		</javac>
+	</target>
 
-    <target name="compile-test" depends="init" description="Compile the unit tests">
-        <javac debug="on" includeantruntime="false" destdir="${testBuildDir}" source="1.6" target="1.6" >
+
+	<target name="compile-test" depends="init" description="Compile the unit tests">
+		<javac debug="on" includeantruntime="false" destdir="${testBuildDir}" source="1.6" target="1.6">
 			<src path="${testDir}" />
-			<classpath refid="testClasspath"/>
-        </javac>
-    </target>
+			<classpath refid="testClasspath" />
+		</javac>
+	</target>
 
 
-    <target name="help" depends="compile" description="Create JavaHelp search index">
+	<target name="help" depends="compile" description="Create JavaHelp search index">
 
-        <!-- Remove any old search index -->
-        <delete dir="${helpSearchIndexDir}" />
+		<!-- Remove any old search index -->
+		<delete dir="${helpSearchIndexDir}" />
 
-        <!-- Create new search index -->
-    	<java dir="${helpDir}" classname="com.sun.java.help.search.Indexer" fork="true" failonerror="true">
-            <arg value="-verbose" />
-            <arg value="-c" />
-            <arg value="${helpCfg}" />
-            <arg value="-db" />
-            <arg value="${helpSearchIndexDir}" />
-			<classpath refid="compileClasspath"/>
+		<!-- Create new search index -->
+		<java dir="${helpDir}" classname="com.sun.java.help.search.Indexer" fork="true" failonerror="true">
+			<arg value="-verbose" />
+			<arg value="-c" />
+			<arg value="${helpCfg}" />
+			<arg value="-db" />
+			<arg value="${helpSearchIndexDir}" />
+			<classpath refid="compileClasspath" />
 		</java>
-    </target>
-    
-    <target name="jar" depends="compile">
-		
-        <tstamp>
+	</target>
+
+	<target name="jar" depends="compile">
+
+		<tstamp>
 			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
 		</tstamp>
-        
-    	<!-- KSE jar -->
+
+		<!-- KSE jar -->
 		<manifestclasspath property="classPath" jarfile="${jar}">
 			<classpath refid="distClasspath" />
 		</manifestclasspath>
-        <manifest file="${mfFile}">
-            <attribute name="Implementation-Title" value="${appName}" />
-            <attribute name="Implementation-Version" value="${appVersion}" />
-            <attribute name="Implementation-Vendor" value="${vendor}" />
-            <attribute name="Specification-Title" value="${appName}" />
-            <attribute name="Specification-Version" value="${appVersion}" />
-            <attribute name="Specification-Vendor" value="${vendor}" />
-            <attribute name="Main-Class" value="${mainClass}" />
-			<attribute name="Class-Path" value="${classPath}"/>
-			<attribute name="Built-Date" value="${TODAY}"/>
-            <attribute name="SplashScreen-Image" value="net/sf/keystore_explorer/gui/images/splash.png" />
-            <attribute name="Sealed" value="true" />
-        </manifest>
-        <jar destfile="${appJar}" manifest="${mfFile}">
-            <fileset defaultexcludes="true" dir="${buildDir}" excludes="**/package.html,**/*.java,${excludes}" />
+		<manifest file="${mfFile}">
+			<attribute name="Implementation-Title" value="${appName}" />
+			<attribute name="Implementation-Version" value="${appVersion}" />
+			<attribute name="Implementation-Vendor" value="${vendor}" />
+			<attribute name="Specification-Title" value="${appName}" />
+			<attribute name="Specification-Version" value="${appVersion}" />
+			<attribute name="Specification-Vendor" value="${vendor}" />
+			<attribute name="Main-Class" value="${mainClass}" />
+			<attribute name="Class-Path" value="${classPath}" />
+			<attribute name="Built-Date" value="${TODAY}" />
+			<attribute name="SplashScreen-Image" value="net/sf/keystore_explorer/gui/images/splash.png" />
+			<attribute name="Sealed" value="true" />
+		</manifest>
+		<jar destfile="${appJar}" manifest="${mfFile}">
+			<fileset defaultexcludes="true" dir="${buildDir}" excludes="**/package.html,**/*.java,${excludes}" />
 			<fileset dir="${sourceDir}">
 				<include name="**/*.gif" />
 				<include name="**/*.png" />
 				<include name="**/*.xml" />
 				<include name="**/*.html" />
-				<include name="**/kse.hs" /> <!-- javahelp -->
-				<include name="**/kseMap.jhm" /> <!-- javahelp -->
-				<include name="**/contents" /> <!-- javahelp -->
+				<include name="**/kse.hs" />
+				<!-- javahelp -->
+				<include name="**/kseMap.jhm" />
+				<!-- javahelp -->
+				<include name="**/contents" />
+				<!-- javahelp -->
 				<include name="**/*.css" />
 				<include name="**/*.properties" />
 				<exclude name="**/*.java" />
 				<exclude name="**/package.html" />
 			</fileset>
-        </jar>
-    	
-    	<!-- CUA jar -->
+		</jar>
+
+		<!-- CUA jar -->
 		<manifestclasspath property="cuaClassPath" jarfile="${cuaJarName}">
 			<classpath refid="cuaClasspath" />
 		</manifestclasspath>
-        <manifest file="${mfFile}">
-            <attribute name="Implementation-Title" value="${cuaAppName}" />
-            <attribute name="Implementation-Version" value="${appVersion}" />
-            <attribute name="Implementation-Vendor" value="${vendor}" />
-            <attribute name="Specification-Title" value="${cuaAppName}" />
-            <attribute name="Specification-Version" value="${appVersion}" />
-            <attribute name="Specification-Vendor" value="${vendor}" />
-            <attribute name="Main-Class" value="${cuaMainClass}" />
-			<attribute name="Class-Path" value="${cuaClassPath}"/>
-			<attribute name="Built-Date" value="${TODAY}"/>
-            <attribute name="Sealed" value="true" />
-        </manifest>
-        <jar destfile="${cuaJar}" manifest="${mfFile}">
-        </jar>
-    </target>
-    
-
-    <target name="package" depends="launch4j, help" description="Create source and manual install ZIP files">
-
-        <delete file="${mfFile}" />
-
-        <!-- Create source ZIP -->
-        <zip destfile="${srcZip}">
-            <zipfileset file="${basedir}/build.xml" />
-            <zipfileset defaultexcludes="false" dir="${sourceDir}" prefix="src" excludes="**/*.class,**/${helpSearchIndex}/*,${excludes}" />
-            <zipfileset defaultexcludes="false" dir="${testDir}" prefix="test" excludes="**/*.class,${excludes}" />
-            <zipfileset defaultexcludes="false" dir="${docDir}" prefix="doc" excludes="${excludes}" />
-            <zipfileset defaultexcludes="false" dir="${helpCfgDir}" prefix="help" excludes="${excludes}" />
-            <zipfileset defaultexcludes="false" dir="${nsisDir}" prefix="nsis" excludes="${excludes}" />
-            <zipfileset defaultexcludes="false" dir="${dmgDir}" prefix="dmg" excludes="${excludes}" />
-            <zipfileset defaultexcludes="false" dir="${resDir}" prefix="res" excludes="${excludes}" />
-        </zip>
-
-        <!-- Create manual install ZIP -->
-        <available file="${libDir}/darcula.jar" property="darcula.present"/>
-        <zip destfile="${manualZip}" >
-            <zipfileset file="${appJar}" prefix="${distFileNamePrefix}" />
-            <zipfileset file="${appExe}" prefix="${distFileNamePrefix}" />
-            <zipfileset file="${cuaExe}" prefix="${distFileNamePrefix}" />
-            <zipfileset file="${appShell}" prefix="${distFileNamePrefix}" filemode="755"/>
-            <zipfileset refid="libs" prefix="${distFileNamePrefix}/lib" />
-            <zipfileset file="${readmesDir}/manual/readme.txt" prefix="${distFileNamePrefix}" />
-            <zipfileset file="${iconsDir}/kse_*.png" prefix="${distFileNamePrefix}/icons" />
-            <zipfileset defaultexcludes="false" dir="${licensesDir}" prefix="${distFileNamePrefix}/licences" >
-                <include name="*.txt"/>
-                <exclude name="${excludes}"/>
-            	<!-- Include darcula license only if darcula.jar is included -->
-                <exclude name="license-darcula.txt" unless:true="${darcula.present}"/>
-            </zipfileset>
-        </zip>
-    </target>
+		<manifest file="${mfFile}">
+			<attribute name="Implementation-Title" value="${cuaAppName}" />
+			<attribute name="Implementation-Version" value="${appVersion}" />
+			<attribute name="Implementation-Vendor" value="${vendor}" />
+			<attribute name="Specification-Title" value="${cuaAppName}" />
+			<attribute name="Specification-Version" value="${appVersion}" />
+			<attribute name="Specification-Vendor" value="${vendor}" />
+			<attribute name="Main-Class" value="${cuaMainClass}" />
+			<attribute name="Class-Path" value="${cuaClassPath}" />
+			<attribute name="Built-Date" value="${TODAY}" />
+			<attribute name="Sealed" value="true" />
+		</manifest>
+		<jar destfile="${cuaJar}" manifest="${mfFile}">
+		</jar>
+	</target>
 
 
-    <target name="test" depends="compile, compile-test" description="Run unit tests">
-        <junit fork="yes" printsummary="no" haltonfailure="yes">
-            <classpath refid="testClasspath"/>
-            <formatter type="plain" usefile="no" />
-            <test name="net.sf.keystore_explorer.crypto.TestSuiteCrypto" />
-        </junit>
-    </target>
+	<target name="package" depends="launch4j, help" description="Create source and manual install ZIP files">
+
+		<delete file="${mfFile}" />
+
+		<!-- Create source ZIP -->
+		<zip destfile="${srcZip}">
+			<zipfileset file="${basedir}/build.xml" />
+			<zipfileset defaultexcludes="false" dir="${sourceDir}" prefix="src" excludes="**/*.class,**/${helpSearchIndex}/*,${excludes}" />
+			<zipfileset defaultexcludes="false" dir="${testDir}" prefix="test" excludes="**/*.class,${excludes}" />
+			<zipfileset defaultexcludes="false" dir="${docDir}" prefix="doc" excludes="${excludes}" />
+			<zipfileset defaultexcludes="false" dir="${helpCfgDir}" prefix="help" excludes="${excludes}" />
+			<zipfileset defaultexcludes="false" dir="${nsisDir}" prefix="nsis" excludes="${excludes}" />
+			<zipfileset defaultexcludes="false" dir="${dmgDir}" prefix="dmg" excludes="${excludes}" />
+			<zipfileset defaultexcludes="false" dir="${resDir}" prefix="res" excludes="${excludes}" />
+		</zip>
+
+		<!-- Create manual install ZIP -->
+		<available file="${libDir}/darcula.jar" property="darcula.present" />
+		<zip destfile="${manualZip}">
+			<zipfileset file="${appJar}" prefix="${distFileNamePrefix}" />
+			<zipfileset file="${appExe}" prefix="${distFileNamePrefix}" />
+			<zipfileset file="${cuaExe}" prefix="${distFileNamePrefix}" />
+			<zipfileset file="${appShell}" prefix="${distFileNamePrefix}" filemode="755" />
+			<zipfileset refid="libs" prefix="${distFileNamePrefix}/lib" />
+			<zipfileset file="${readmesDir}/manual/readme.txt" prefix="${distFileNamePrefix}" />
+			<zipfileset file="${iconsDir}/kse_*.png" prefix="${distFileNamePrefix}/icons" />
+			<zipfileset defaultexcludes="false" dir="${licensesDir}" prefix="${distFileNamePrefix}/licences">
+				<include name="*.txt" />
+				<exclude name="${excludes}" />
+				<!-- Include darcula license only if darcula.jar is included -->
+				<exclude name="license-darcula.txt" unless:true="${darcula.present}" />
+			</zipfileset>
+		</zip>
+	</target>
 
 
-    <target name="run" depends="init" description="Run built application">
-        <java fork="true" jar="${appJar}" />
-    </target>
+	<target name="test" depends="compile, compile-test" description="Run unit tests">
+		<junit fork="yes" printsummary="no" haltonfailure="yes">
+			<classpath refid="testClasspath" />
+			<formatter type="plain" usefile="no" />
+			<test name="net.sf.keystore_explorer.crypto.TestSuiteCrypto" />
+		</junit>
+	</target>
 
 
-    <target name="doc" depends="compile" description="Create Javadocs">
-        <javadoc packagenames="net.sf.keystore_explorer.*"
-                 sourcepath="${sourceDir}"
-                 destdir="${javadocDir}"
-                 windowtitle="${windowTitle}"
-                 doctitle="${documentTitle}"
-                 header="${header}"
-                 footer="${footer}"
-                 bottom="${bottom}"
-            	 classpathref="compileClasspath"
-                 source="1.6"
-                 access="protected"
-                 splitindex="true"
-                 overview="${overview}"
-                 stylesheetfile="${styleSheet}">
-            <group title="Application Packages" packages="net.sf.keystore_explorer.*" />
-            <group title="GUI Utility Packages" packages="net.sf.keystore_explorer.gui,net.sf.keystore_explorer.gui.*" />
-            <group title="Crypto Utility Packages" packages="net.sf.keystore_explorer.crypto,net.sf.keystore_explorer.crypto.*" />
-            <group title="Other Utility Packages" packages="net.sf.keystore_explorer.utilities.asn1,net.sf.keystore_explorer.utilities.io,net.sf.keystore_explorer.utilities.net,net.sf.keystore_explorer.utilities.oid,net.sf.keystore_explorer.utilities.pem,net.sf.keystore_explorer.utilities.os,net.sf.keystore_explorer.version" />
-        </javadoc>
-    </target>
+	<target name="run" depends="init" description="Run built application">
+		<java fork="true" jar="${appJar}" />
+	</target>
 
 
-    <target name="launch4j" depends="jar" description="Create windows exe using Launch4j">
-        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask">
-            <classpath>
-                <pathelement location="${launch4jInstallDir}/launch4j.jar" />
-                <pathelement location="${launch4jInstallDir}/lib/xstream.jar" />
-            </classpath>
-        </taskdef>
-    	
-        <launch4j>
-            <config 
-            	headerType="gui" 
-            	jarpath="${appJarName}" 
-            	outfile="${appExe}" 
-            	dontWrapJar="true"
-                errTitle="${appName}"  
-            	stayAlive="false" 
-            	icon="${kseIco}">
-                <jre minVersion="1.6.0" path="jre">
-                    <opt>-Dkse.exe=true</opt>
-                </jre>
-                <versionInfo fileVersion="${appVersion}.0.0"
-                             fileDescription="${appName}"
-                             copyright="${copyright}"
-                             internalName="${appSimpleName}"
-                             originalFilename="${appSimpleName}.exe"
-                             productName="${appName}"
-                             productVersion="${appVersion}.0.0"
-                             txtFileVersion="${appVersion}"
-                             txtProductVersion="${appVersion}" />
-            </config>
-        </launch4j>
-    	
-        <launch4j>
-            <config 
-            	headerType="gui" 
-            	jarpath="${cuaJar}" 
-            	outfile="${cuaExe}" 
-            	dontWrapJar="false"
-                errTitle="${cuaAppName}"  
-            	stayAlive="false" 
-            	icon="${kseIco}"
-            	manifest="${cuaExeManifest}"
-            	>
-                <jre minVersion="1.6.0" path="jre">
-                    <opt>-Dkse.exe=true</opt>
-                </jre>
-                <versionInfo fileVersion="${appVersion}.0.0"
-                             fileDescription="${cuaAppName}"
-                             copyright="${copyright}"
-                             internalName="${cuaAppName}"
-                             originalFilename="${cuaSimpleName}.exe"
-                             productName="${cuaAppName}"
-                             productVersion="${appVersion}.0.0"
-                             txtFileVersion="${appVersion}"
-                             txtProductVersion="${appVersion}" />
-            </config>
-        </launch4j>
+	<target name="doc" depends="compile" description="Create Javadocs">
+		<javadoc packagenames="net.sf.keystore_explorer.*" sourcepath="${sourceDir}" destdir="${javadocDir}" windowtitle="${windowTitle}" doctitle="${documentTitle}" header="${header}" footer="${footer}" bottom="${bottom}" classpathref="compileClasspath" source="1.6" access="protected" splitindex="true" overview="${overview}" stylesheetfile="${styleSheet}">
+			<group title="Application Packages" packages="net.sf.keystore_explorer.*" />
+			<group title="GUI Utility Packages" packages="net.sf.keystore_explorer.gui,net.sf.keystore_explorer.gui.*" />
+			<group title="Crypto Utility Packages" packages="net.sf.keystore_explorer.crypto,net.sf.keystore_explorer.crypto.*" />
+			<group title="Other Utility Packages" packages="net.sf.keystore_explorer.utilities.asn1,net.sf.keystore_explorer.utilities.io,net.sf.keystore_explorer.utilities.net,net.sf.keystore_explorer.utilities.oid,net.sf.keystore_explorer.utilities.pem,net.sf.keystore_explorer.utilities.os,net.sf.keystore_explorer.version" />
+		</javadoc>
+	</target>
 
-    </target>
+	<target name="resources" depends="init" description="Create GNU/Linux resources from templates">
+		<filterset id="var-filters" begintoken="@" endtoken="@">
+			<filter token="appName" value="${appName}" />
+			<filter token="appSimpleName" value="${appSimpleName}" />
+			<filter token="mainClass" value="${mainClass}" />
+		</filterset>
+		<copy file="${desktopFileTemplate}" tofile="${desktopFile}">
+			<filterset refid="var-filters"/>
+		</copy>
+		<copy file="${startShellTemplate}" tofile="${startShell}">
+			<filterset refid="var-filters"/>
+		</copy>
+	</target>
+
+	<target name="launch4j" depends="jar" description="Create Windows exe using Launch4j">
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask">
+			<classpath>
+				<pathelement location="${launch4jInstallDir}/launch4j.jar" />
+				<pathelement location="${launch4jInstallDir}/lib/xstream.jar" />
+			</classpath>
+		</taskdef>
+
+		<launch4j>
+			<config headerType="gui" jarpath="${appJarName}" outfile="${appExe}" dontWrapJar="true" errTitle="${appName}" stayAlive="false" icon="${kseIco}">
+				<jre minVersion="1.6.0" path="jre">
+					<opt>-Dkse.exe=true</opt>
+				</jre>
+				<versionInfo fileVersion="${appVersion}.0.0" fileDescription="${appName}" copyright="${copyright}" internalName="${appSimpleName}" originalFilename="${appSimpleName}.exe" productName="${appName}" productVersion="${appVersion}.0.0" txtFileVersion="${appVersion}" txtProductVersion="${appVersion}" />
+			</config>
+		</launch4j>
+
+		<launch4j>
+			<config headerType="gui" jarpath="${cuaJar}" outfile="${cuaExe}" dontWrapJar="false" errTitle="${cuaAppName}" stayAlive="false" icon="${kseIco}" manifest="${cuaExeManifest}">
+				<jre minVersion="1.6.0" path="jre">
+					<opt>-Dkse.exe=true</opt>
+				</jre>
+				<versionInfo fileVersion="${appVersion}.0.0" fileDescription="${cuaAppName}" copyright="${copyright}" internalName="${cuaAppName}" originalFilename="${cuaSimpleName}.exe" productName="${cuaAppName}" productVersion="${appVersion}.0.0" txtFileVersion="${appVersion}" txtProductVersion="${appVersion}" />
+			</config>
+		</launch4j>
+
+	</target>
 
 
-    <target name="nsis" depends="launch4j" description="Create NSIS install and archive it">
+	<target name="nsis" depends="launch4j" description="Create NSIS install and archive it">
 
-    	<!-- copy lib jars -->
-        <copy todir="${distDir}/lib">
-        	<fileset refid="libs"/>
-        </copy>
+		<!-- copy lib jars -->
+		<copy todir="${distDir}/lib">
+			<fileset refid="libs" />
+		</copy>
 
-    	<!-- fill template with version info --> 
-    	<copy file="${nsisScript}.template" tofile="${nsisScript}"/>
-    	<replace file="${nsisScript}" token="%KSE_VERSION%" value="${appVersion}"/>
-    	<replace file="${nsisScript}" token="%KSE_SIMPLE_VERSION%" value="${appSimpleVersion}"/>
-    	<replace file="${nsisScript}" token="%KSE_APP_USER_MODEL_ID%" value="${appUserModelId}"/>
-    	
-        <exec executable="makensis" dir="${nsisDir}">
-            <arg value="${nsisScript}" />
-        </exec>
-    </target>
+		<!-- fill template with version info -->
+		<copy file="${nsisScript}.template" tofile="${nsisScript}" />
+		<replace file="${nsisScript}" token="%KSE_VERSION%" value="${appVersion}" />
+		<replace file="${nsisScript}" token="%KSE_SIMPLE_VERSION%" value="${appSimpleVersion}" />
+		<replace file="${nsisScript}" token="%KSE_APP_USER_MODEL_ID%" value="${appUserModelId}" />
 
-
-    <target name="appbundler" depends="jar" description="Create app bundle">
-
-    	<taskdef name="bundleapp" 
-    	    classpath="lib/appbundler-1.0ea.jar"
-    	    classname="com.oracle.appbundler.AppBundlerTask"/>
-
-    	  <bundleapp 
-    	      outputdirectory="${distDir}"
-    	      name="${appBundleName}"
-    	      displayname="${appBundleName}"
-    	      executableName="${appBundleName}"
-    	      identifier="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}"
-    	      shortversion="${appSimpleVersion}"
-    	      version="${appVersion}"
-    	      icon="${kseIcns}"
-    	      mainclassname="net.sf.keystore_explorer.KSE"
-    	      copyright="${copyright}"
-    	      applicationCategory="public.app-category.developer-tools">
-
-    	      <!--<runtime dir="${env.JAVA_HOME}"/>-->
-    	  	
-	  	      <classpath dir="${distDir}" >
-	  	      	<include name="${appJarName}"/>
-	  	      </classpath>	
-	  	      <classpath refid="libs" />
-    	  	
-    	  	  <!-- TODO license files -->
-
-    	      <arch name="x86_64"/>
-    	      <arch name="i386"/>
-
-    	      <bundledocument extensions="ks,jks,jceks,keystore,bks,uber,pfx,p12"
-    	        icon="${keystoreIcns}"
-    	        name="KeyStore"
-    	        role="editor">
-    	      </bundledocument>
-
-    	      <!-- Workaround since the icon parameter for bundleapp doesn't work -->
-    	      <option value="-Xdock:icon=Contents/Resources/${kseIcns}"/>
-
-    	      <option value="-Dapple.laf.useScreenMenuBar=true"/>
-    	      <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
-    	      <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
-    	      <option value="-Dcom.apple.mrj.application.apple.menu.about.name=${appBundleName}"/>
-    	      <option value="-Dcom.apple.smallTabs=true"/>
-    	      <option value="-Dfile.encoding=UTF-8"/>
-    	  	
-    	      <option value="-Dkse.app=true"/>
-    	  </bundleapp>
-    </target>
+		<exec executable="makensis" dir="${nsisDir}">
+			<arg value="${nsisScript}" />
+		</exec>
+	</target>
 
 
-    <target name="clean" depends="init" description="Remove generated/compiled files">
-        <delete dir="${buildDir}" />
-        <delete dir="${testBuildDir}" />
-        <delete dir="${distDir}" />
-        <delete dir="${javadocDir}" />
-        <delete dir="${helpSearchIndexDir}" />
-    </target>
+	<target name="appbundler" depends="jar" description="Create app bundle">
+
+		<taskdef name="bundleapp" classpath="lib/appbundler-1.0ea.jar" classname="com.oracle.appbundler.AppBundlerTask" />
+
+		<bundleapp outputdirectory="${distDir}" name="${appBundleName}" displayname="${appBundleName}" executableName="${appBundleName}" identifier="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}" shortversion="${appSimpleVersion}" version="${appVersion}" icon="${kseIcns}" mainclassname="${mainClass}" copyright="${copyright}" applicationCategory="public.app-category.developer-tools">
+
+			<!--<runtime dir="${env.JAVA_HOME}"/>-->
+
+			<classpath dir="${distDir}">
+				<include name="${appJarName}" />
+			</classpath>
+			<classpath refid="libs" />
+
+			<!-- TODO license files -->
+
+			<arch name="x86_64" />
+			<arch name="i386" />
+
+			<bundledocument extensions="ks,jks,jceks,keystore,bks,uber,pfx,p12" icon="${keystoreIcns}" name="KeyStore" role="editor">
+			</bundledocument>
+
+			<!-- Workaround since the icon parameter for bundleapp doesn't work -->
+			<option value="-Xdock:icon=Contents/Resources/${kseIcns}" />
+
+			<option value="-Dapple.laf.useScreenMenuBar=true" />
+			<option value="-Dcom.apple.macos.use-file-dialog-packages=true" />
+			<option value="-Dcom.apple.macos.useScreenMenuBar=true" />
+			<option value="-Dcom.apple.mrj.application.apple.menu.about.name=${appBundleName}" />
+			<option value="-Dcom.apple.smallTabs=true" />
+			<option value="-Dfile.encoding=UTF-8" />
+
+			<option value="-Dkse.app=true" />
+		</bundleapp>
+	</target>
+
+
+	<target name="clean" depends="init" description="Remove generated/compiled files">
+		<delete dir="${buildDir}" />
+		<delete dir="${testBuildDir}" />
+		<delete dir="${distDir}" />
+		<delete dir="${javadocDir}" />
+		<delete dir="${helpSearchIndexDir}" />
+	</target>
 </project>

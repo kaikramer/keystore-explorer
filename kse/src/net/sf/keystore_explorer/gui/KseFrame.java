@@ -2745,13 +2745,8 @@ public final class KseFrame implements StatusBar {
 
 		KeyStoreType keyStoreType = currentState.getType();
 
-		if (size == 1) {
-			return MessageFormat.format(res.getString("KseFrame.entry.statusbar"), keyStoreType.friendly(),
-					history.getPath());
-		} else {
-			return MessageFormat.format(res.getString("KseFrame.entries.statusbar"), keyStoreType.friendly(), size,
-					history.getPath());
-		}
+		return MessageFormat.format(res.getString("KseFrame.entries.statusbar"),
+				keyStoreType.friendly(), size, history.getPath());
 	}
 
 	/**
