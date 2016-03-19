@@ -38,6 +38,7 @@ import javax.swing.UIManager;
 import org.apache.commons.io.IOUtils;
 
 import net.sf.keystore_explorer.ApplicationSettings;
+import net.sf.keystore_explorer.AuthorityCertificates;
 import net.sf.keystore_explorer.KSE;
 import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
 import net.sf.keystore_explorer.gui.actions.CheckUpdateAction;
@@ -89,7 +90,6 @@ public class CreateApplicationGui implements Runnable {
 			}
 
 			initLookAndFeel(applicationSettings);
-			//setDefaultSize(14);
 
 			if (JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
 				upgradeCryptoStrength();
@@ -102,6 +102,9 @@ public class CreateApplicationGui implements Runnable {
 			}
 
 			kseFrame.display();
+
+			// check if stored location of cacerts file still exists
+			checkCaCerts(kseFrame);
 
 			// open file list passed via command line params (basically same as if files were dropped on application)
 			DroppedFileHandler.openFiles(kseFrame, parameterFiles);
@@ -117,6 +120,36 @@ public class CreateApplicationGui implements Runnable {
 			closeSplash();
 		}
 
+	}
+
+	private void checkCaCerts(final KseFrame kseFrame) {
+
+		// if cacerts is not used, do not check
+		if (!applicationSettings.getUseCaCertificates()) {
+			return;
+		}
+
+		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
+
+		if (caCertificatesFile.exists()) {
+			return;
+		}
+
+		// cacerts file is not where we expected it => detect location and inform user
+		final File newCaCertsFile = new File(AuthorityCertificates.getDefaultCaCertificatesLocation().toString());
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				int selected = JOptionPane.showConfirmDialog(kseFrame.getUnderlyingFrame(), MessageFormat.format(
+						res.getString("CreateApplicationGui.CaCertsFileNotFound.message"), newCaCertsFile), KSE
+						.getApplicationName(), JOptionPane.YES_NO_OPTION);
+
+				if (selected == JOptionPane.YES_OPTION) {
+					applicationSettings.setCaCertificatesFile(newCaCertsFile);
+				}
+			}
+		});
 	}
 
 	private void checkForUpdates(final KseFrame kseFrame) {
