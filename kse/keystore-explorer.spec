@@ -21,7 +21,6 @@ URL:		http://www.keystore-explorer.org/
 
 %if %{gitversion}
 Source0:	https://github.com/kaikramer/%{name}/archive/%{name}-git%{gitversion}.zip
-#Source0:	%{name}-git%{gitversion}.tgz
 %else
 Source0:	https://github.com/kaikramer/%{name}/archive/%{name}-%{version}.zip
 %endif
@@ -61,8 +60,8 @@ revocation lists and more.
 
 %prep
 %if %{gitversion}
-#%%setup -qn %{name}-master
-%setup -qn %{name}
+#%%setup -qn %{name}
+%setup -qn %{name}-master
 %else
 %setup -q
 %endif
@@ -95,8 +94,8 @@ install -d -m755 %{buildroot}%{_datadir}/applications
 install -Dpm 644 res/%{name}.desktop %{buildroot}%{_datadir}/applications/
 
 for size in 16 32 48 128; do
-  install -Dpm 644 res/icons/%{sname}_${size}.png \
-    %{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/%{name}.png
+	install -Dpm 644 res/icons/%{sname}_${size}.png \
+		%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/%{name}.png
 done
 
 install -Dpm 644 res/icons/%{sname}.svg \
