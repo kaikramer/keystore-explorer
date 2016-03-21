@@ -1,58 +1,57 @@
-%global bcver   1.52
-%global sname   kse
+%global bcver 1.52
+%global sname kse
 
 %define major 1
-%define gitversion 20160303
+%define gitversion 20160319
 %define rel 1
 
 %if %{gitversion}
-  %define release %mkrel -c git%{gitversion} %rel
+	%define release %mkrel -c git%{gitversion} %rel
 %else
-  %define release %mkrel %rel
+	%define release %mkrel %rel
 %endif
 
 
-Name:           keystore-explorer
-Version:        5.2.0
-Release:        %{release}
-Summary:        Multipurpose keystore and certificate tool
-License:        GPLv3+
-URL:            http://www.keystore-explorer.org/
+Name:		keystore-explorer
+Version:	5.2.0
+Release:	%{release}
+Summary:	Multipurpose keystore and certificate tool
+License:	GPLv3+
+URL:		http://www.keystore-explorer.org/
 
 %if %{gitversion}
-#Source0:        https://github.com/kaikramer/%{name}/archive/%{name}-git%{gitversion}.zip
-Source0:        %{name}-git%{gitversion}.tgz
+Source0:	https://github.com/kaikramer/%{name}/archive/%{name}-git%{gitversion}.zip
+#Source0:	%{name}-git%{gitversion}.tgz
 %else
-Source0:        https://github.com/kaikramer/%{name}/archive/%{name}-%{version}.zip
+Source0:	https://github.com/kaikramer/%{name}/archive/%{name}-%{version}.zip
 %endif
-Patch1:         %{name}-%{version}-rename-needed-jars.patch
-BuildArch:      noarch
+Patch1:		%{name}-%{version}-rename-needed-jars.patch
+BuildArch:	noarch
 
-BuildRequires:  java-devel >= 1.7.0
-BuildRequires:  ant
-BuildRequires:  desktop-file-utils
-BuildRequires:  jpackage-utils
-BuildRequires:  apache-commons-io
-BuildRequires:  bouncycastle >= %{bcver}
-BuildRequires:  bouncycastle-pkix >= %{bcver}
-BuildRequires:  javahelp2
-BuildRequires:  jgoodies-common
-BuildRequires:  jgoodies-looks
-BuildRequires:  jna
-BuildRequires:  miglayout
+BuildRequires:	java-devel >= 1.8.0
+BuildRequires:	ant
+BuildRequires:	desktop-file-utils
+BuildRequires:	jpackage-utils
+BuildRequires:	apache-commons-io
+BuildRequires:	bouncycastle >= %{bcver}
+BuildRequires:	bouncycastle-pkix >= %{bcver}
+BuildRequires:	javahelp2
+BuildRequires:	jgoodies-common
+BuildRequires:	jgoodies-looks
+BuildRequires:	jna
+BuildRequires:	miglayout
 
-Requires:       jre >= 1.7.0
-Requires:       hicolor-icon-theme
-Requires:       apache-commons-io
-Requires:       bouncycastle >= %{bcver}
-Requires:       bouncycastle-pkix >= %{bcver}
-Requires:       jgoodies-common
-Requires:       jgoodies-looks
-Requires:       javahelp2
-Requires:       jna
-Requires:       miglayout
-# >= 1.7.5-3.9 for _prefer_jre in launcher script (#461683, #498831)
-Requires:       jpackage-utils >= 1.7.5-3.9
+Requires:		jre >= 1.8.0
+Requires:		hicolor-icon-theme
+Requires:		apache-commons-io
+Requires:		bouncycastle >= %{bcver}
+Requires:		bouncycastle-pkix >= %{bcver}
+Requires:		jgoodies-common
+Requires:		jgoodies-looks
+Requires:		javahelp2
+Requires:		jna
+Requires:		miglayout
+Recommends:		java-1.8.0-openjfx
 
 %description
 KeyStore Explorer is a user friendly GUI application for creating, managing and
@@ -101,27 +100,12 @@ for size in 16 32 48 128; do
 done
 
 install -Dpm 644 res/icons/%{sname}.svg \
-    %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+	%{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 desktop-file-install \
-    --mode=644 \
-    --add-mime-type="application/x-pkcs12;application/x-pkcs7-certificates" \
-    --dir=%{buildroot}%{_datadir}/applications res/%{name}.desktop
-
-
-%post -p <lua>
-posix.utime("%{_datadir}/icons/hicolor")
-
-%postun
-if [ $1 -eq 0 ] ; then
-    update-desktop-database %{_datadir}/applications &>/dev/null
-    touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
-fi
-
-%posttrans
-update-desktop-database %{_datadir}/applications &>/dev/null
-gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+	--mode=644 \
+	--add-mime-type="application/x-pkcs12;application/x-pkcs7-certificates" \
+	--dir=%{buildroot}%{_datadir}/applications res/%{name}.desktop
 
 
 %files
@@ -134,6 +118,13 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 
 %changelog
+* Mon Mar 21 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160319.1
+- Add new translation string
+- Requires Java 8+ instead of 7+ and add Recommends java-1.8.0-openjfx
+- Remove post, postun and postrans scriptlets because gtk icon cache updates are
+ managed by filetriggers
+- Rebuild with upstream merged code of 2016-03-19
+
 * Thu Mar 03 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160303.1
 - Add a home made SVG icon
 
