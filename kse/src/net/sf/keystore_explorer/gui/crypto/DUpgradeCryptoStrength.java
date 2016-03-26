@@ -22,11 +22,11 @@ package net.sf.keystore_explorer.gui.crypto;
 import static net.sf.keystore_explorer.crypto.jcepolicy.JcePolicy.LOCAL_POLICY;
 import static net.sf.keystore_explorer.crypto.jcepolicy.JcePolicy.US_EXPORT_POLICY;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
+import java.awt.EventQueue;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -65,11 +65,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.jcepolicy.JcePolicyUtil;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
@@ -88,18 +91,11 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpUpgrade;
-	private JPanel jpUpgradeInstructions;
 	private JLabel jlUpgradeInstructions;
-	private JPanel jpDownloadPolicy;
 	private JLabel jlDownloadPolicyInstructions;
-	private JPanel jpDownloadPolicyButton;
 	private JButton jbDownloadPolicy;
-	private JPanel jpDropPolicy;
 	private JLabel jlDropPolicyInstructions;
-	private JPanel jpPolicyZipDropTargetLabel;
 	private PolicyZipDropTarget policyZipDropTarget;
-	private JPanel jpBrowsePolicyButton;
 	private JButton jbBrowsePolicy;
 	private JPanel jpButtons;
 	private JButton jbUpgrade;
@@ -124,17 +120,43 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 	}
 
 	private void initComponents() {
+
 		jlUpgradeInstructions = new JLabel(res.getString("DUpgradeCryptoStrength.jlUpgradeInstructions.text"));
-
-		jpUpgradeInstructions = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		jpUpgradeInstructions.add(jlUpgradeInstructions);
-
 		jlDownloadPolicyInstructions = new JLabel(
 				res.getString("DUpgradeCryptoStrength.jlDownloadPolicyInstructions.text"));
-
 		jbDownloadPolicy = new JButton(res.getString("DUpgradeCryptoStrength.jbDownloadPolicy.text"));
 		PlatformUtil.setMnemonic(jbDownloadPolicy, res.getString("DUpgradeCryptoStrength.jbDownloadPolicy.mnemonic")
 				.charAt(0));
+
+		jlDropPolicyInstructions = new JLabel(res.getString("DUpgradeCryptoStrength.jlDropPolicyInstructions.text"));
+		policyZipDropTarget = new PolicyZipDropTarget();
+		jbBrowsePolicy = new JButton(res.getString("DUpgradeCryptoStrength.jbBrowsePolicy.text"));
+		PlatformUtil.setMnemonic(jbBrowsePolicy, res.getString("DUpgradeCryptoStrength.jbBrowsePolicy.mnemonic")
+				.charAt(0));
+
+		jbUpgrade = new JButton(res.getString("DUpgradeCryptoStrength.jbUpgrade.text"));
+		PlatformUtil.setMnemonic(jbUpgrade, res.getString("DUpgradeCryptoStrength.jbUpgrade.mnemonic").charAt(0));
+		jbUpgrade.setEnabled(false);
+
+		jbCancel = new JButton(res.getString("DUpgradeCryptoStrength.jbCancel.text"));
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
+
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbUpgrade, jbCancel);
+
+		// layout
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "", "[]para[]"));
+		pane.add(jlUpgradeInstructions, "wrap");
+		pane.add(jlDownloadPolicyInstructions, "wrap");
+		pane.add(jbDownloadPolicy, "wrap");
+		pane.add(jlDropPolicyInstructions, "wrap");
+		//pane.add(policyZipDropTarget, "wrap"); // DnD does not work with elevated rights...
+		pane.add(jbBrowsePolicy, "wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap para");
+		pane.add(jpButtons, "right, spanx");
+
+		// actions
 		jbDownloadPolicy.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -146,25 +168,18 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 				}
 			}
 		});
-
-		jpDownloadPolicyButton = new JPanel();
-		jpDownloadPolicyButton.add(jbDownloadPolicy);
-
-		jpDownloadPolicy = new JPanel(new BorderLayout(5, 5));
-		jpDownloadPolicy.setBorder(new EmptyBorder(5, 5, 5, 5));
-		jpDownloadPolicy.add(jlDownloadPolicyInstructions, BorderLayout.NORTH);
-		jpDownloadPolicy.add(jpDownloadPolicyButton, BorderLayout.CENTER);
-
-		jlDropPolicyInstructions = new JLabel(res.getString("DUpgradeCryptoStrength.jlDropPolicyInstructions.text"));
-
-		policyZipDropTarget = new PolicyZipDropTarget();
-
-		jpPolicyZipDropTargetLabel = new JPanel();
-		jpPolicyZipDropTargetLabel.add(policyZipDropTarget);
-
-		jbBrowsePolicy = new JButton(res.getString("DUpgradeCryptoStrength.jbBrowsePolicy.text"));
-		PlatformUtil.setMnemonic(jbBrowsePolicy, res.getString("DUpgradeCryptoStrength.jbBrowsePolicy.mnemonic")
-				.charAt(0));
+		jbUpgrade.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				upgradePressed();
+			}
+		});
+		jbCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				cancelPressed();
+			}
+		});
 		jbBrowsePolicy.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -176,42 +191,6 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 				}
 			}
 		});
-
-		jpBrowsePolicyButton = new JPanel();
-		jpBrowsePolicyButton.add(jbBrowsePolicy);
-
-		jpDropPolicy = new JPanel(new BorderLayout(5, 5));
-		jpDropPolicy.setBorder(new EmptyBorder(5, 5, 5, 5));
-		jpDropPolicy.add(jlDropPolicyInstructions, BorderLayout.WEST);
-		jpDropPolicy.add(jpPolicyZipDropTargetLabel, BorderLayout.CENTER);
-		jpDropPolicy.add(jpBrowsePolicyButton, BorderLayout.SOUTH);
-
-		jpUpgrade = new JPanel(new BorderLayout());
-		jpUpgrade.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-		jpUpgrade.add(jpUpgradeInstructions, BorderLayout.NORTH);
-		jpUpgrade.add(jpDownloadPolicy, BorderLayout.CENTER);
-		jpUpgrade.add(jpDropPolicy, BorderLayout.SOUTH);
-
-		jbUpgrade = new JButton(res.getString("DUpgradeCryptoStrength.jbUpgrade.text"));
-		PlatformUtil.setMnemonic(jbUpgrade, res.getString("DUpgradeCryptoStrength.jbUpgrade.mnemonic").charAt(0));
-		jbUpgrade.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				upgradePressed();
-			}
-		});
-		jbUpgrade.setEnabled(false);
-
-		jbCancel = new JButton(res.getString("DUpgradeCryptoStrength.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -219,11 +198,6 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbUpgrade, jbCancel, false);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpUpgrade, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -255,8 +229,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 			CopyUtil.copyClose(new FileInputStream(usExportPolicyJar), new FileOutputStream(usExportPolicyJarBkp));
 
-			// Overwrite local and US Export JARs with new unlimited strength
-			// versions
+			// Overwrite local and US Export JARs with new unlimited strength versions
 			CopyUtil.copyClose(new ByteArrayInputStream(localPolicyJarContents), new FileOutputStream(localPolicyJar));
 
 			CopyUtil.copyClose(new ByteArrayInputStream(usExportPolicyJarContents), new FileOutputStream(
@@ -342,10 +315,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 	}
 
 	private void processPolicyZipFile(File droppedFile) {
-		/*
-		 * Process the supplied drop file as a policy zip. If it is a valid
-		 * policy zip store the policy jar contents
-		 */
+		// Process the supplied drop file as a policy zip. If it is a valid policy zip store the policy jar contents
 		try {
 			ZipFile zip = null;
 
@@ -419,8 +389,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 				return;
 			}
 
-			// Checks policy zip is valid and if so allows policy upgrade to
-			// proceed
+			// Checks policy zip is valid and if so allows policy upgrade to proceed
 			try {
 				evt.acceptDrop(DnDConstants.ACTION_MOVE);
 
@@ -462,5 +431,30 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 			ImageIcon icon = new ImageIcon(getClass().getResource("images/dragged_policy.png"));
 			setIcon(icon);
 		}
+	}
+
+	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					DUpgradeCryptoStrength dialog = new DUpgradeCryptoStrength(new JFrame());
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+						@Override
+						public void windowDeactivated(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

@@ -53,7 +53,7 @@
 !define KSE_AppUserModelId "%KSE_APP_USER_MODEL_ID%"
 
 ; Product home page address
-!define HOME_PAGE_ADDRESS "http://keystore-explorer.sf.net"
+!define HOME_PAGE_ADDRESS "http://keystore-explorer.org"
 
 ; Records if file associations are required for ks/jks/jceks/keystore files
 !define KSJKS_FILE_ASSOC $1
@@ -72,7 +72,7 @@ ReserveFile ${FILE_ASSOCIATIONS_DIALOG}
 
 ; Files to install
 !define KSE_EXE "kse.exe"
-!define CUA_EXE "cua.exe"
+!define CUA_EXE "CryptoUpgradeAssistant.exe"
 !define KSE_JAR "kse.jar"
 !define KSE_ICO "kse.ico"
 !define KEYSTORE_ICO "keystore.ico"

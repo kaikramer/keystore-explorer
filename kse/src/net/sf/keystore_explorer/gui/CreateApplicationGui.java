@@ -58,8 +58,10 @@ import net.sf.keystore_explorer.version.VersionException;
  */
 public class CreateApplicationGui implements Runnable {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
+
+	private static final String UPGRADE_ASSISTANT_EXE = "CryptoUpgradeAssistant.exe";
+
 	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_160;
-	private static final String UPGRADE_ASSISTANT_EXE = "cua.exe";
 	private ApplicationSettings applicationSettings;
 	private SplashScreen splash;
 	private List<File> parameterFiles;
@@ -123,11 +125,6 @@ public class CreateApplicationGui implements Runnable {
 	}
 
 	private void checkCaCerts(final KseFrame kseFrame) {
-
-		// if cacerts is not used, do not check
-		if (!applicationSettings.getUseCaCertificates()) {
-			return;
-		}
 
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
