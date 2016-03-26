@@ -44,6 +44,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
@@ -98,7 +99,12 @@ public class DExaminingSsl extends JEscDialog {
 
 		if (useClientAuth) {
 			this.keyStore = ksh.getCurrentState().getKeyStore();
-			this.password = ksh.getCurrentState().getPassword().toCharArray();
+
+			// some keystore types like MSCAPI and PKCS#11 have no password stored in their state
+			Password pwd = ksh.getCurrentState().getPassword();
+			if (pwd != null) {
+				this.password = pwd.toCharArray();
+			}
 		}
 		initComponents();
 	}

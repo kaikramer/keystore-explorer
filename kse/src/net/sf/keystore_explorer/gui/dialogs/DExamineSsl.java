@@ -311,7 +311,7 @@ public class DExamineSsl extends JEscDialog {
 			}
 
 			Password keyStorePassword = ksh.getCurrentState().getPassword();
-			if (keyStorePassword == null) {
+			if (keyStorePassword == null && ksh.getCurrentState().getType().hasEntryPasswords()) {
 				JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.NoPasswordSetForKeyStore.message"),
 						getTitle(), JOptionPane.WARNING_MESSAGE);
 				return;
