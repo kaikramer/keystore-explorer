@@ -1,36 +1,39 @@
 %global bcver 1.52
 %global sname kse
+%global libs "bcprov bcpkix commons-io jgoodies-common jgoodies-looks jna javahelp2 miglayout-core miglayout-swing"
+%global all_jars %libs %name
+%define get_property() xmllint --xpath 'string(//property[@name="%1"]/@value)' %2
 
 %define major 1
-%define gitversion 20160319
+%define gitversion 20160324
 %define rel 1
 
-%if %{gitversion}
+%if 0%{?gitversion}
 	%define release %mkrel -c git%{gitversion} %rel
 %else
 	%define release %mkrel %rel
 %endif
-
 
 Name:		keystore-explorer
 Version:	5.2.0
 Release:	%{release}
 Summary:	Multipurpose keystore and certificate tool
 License:	GPLv3+
+Group:		Security
 URL:		http://www.keystore-explorer.org/
 
-%if %{gitversion}
+%if 0%{?gitversion}
 Source0:	https://github.com/kaikramer/%{name}/archive/%{name}-git%{gitversion}.zip
 %else
 Source0:	https://github.com/kaikramer/%{name}/archive/%{name}-%{version}.zip
 %endif
-Patch1:		%{name}-%{version}-rename-needed-jars.patch
 BuildArch:	noarch
 
 BuildRequires:	java-devel >= 1.8.0
 BuildRequires:	ant
 BuildRequires:	desktop-file-utils
 BuildRequires:	jpackage-utils
+BuildRequires:	libxml2-utils
 BuildRequires:	apache-commons-io
 BuildRequires:	bouncycastle >= %{bcver}
 BuildRequires:	bouncycastle-pkix >= %{bcver}
@@ -59,46 +62,50 @@ revocation lists and more.
 
 
 %prep
-%if %{gitversion}
+%if 0%{?gitversion}
 #%%setup -qn %{name}
 %setup -qn %{name}-master
 %else
 %setup -q
 %endif
 
-%patch1 -p1 -b .rename-needed-jars
-pushd %{sname}
-
 # Delete provided jars as we must compile with Mageia's to ensure their compatibility
-%__rm lib/*.jar
+pushd %{sname}
+%{__rm} lib/*.jar
 
 
 %build
 pushd %{sname}
-build-jar-repository -p lib \
-	bcprov bcpkix commons-io jgoodies-common jgoodies-looks \
-	jna javahelp2 miglayout
-%ant -DappSimpleName=%{name} resources jar
+build-jar-repository -p lib %{libs}
+
+%ant -DappSimpleName=%{name} -DjavaHelp=javahelp2 resources jar
 
 
 %install
 pushd %{sname}
 
-install -d -m755 %{buildroot}%{_javadir}
-install -Dpm 644 dist/%{name}.jar %{buildroot}%{_javadir}/
+%{__install} -d -m755 %{buildroot}%{_javadir}
+%{__install} -Dpm 644 dist/%{name}.jar %{buildroot}%{_javadir}/
 
-install -d -m755 %{buildroot}%{_bindir}
-install -Dpm 755 res/%{name} %{buildroot}%{_bindir}/
+%{__install} -d -m755 %{buildroot}%{_bindir}
+# We now prefer %%jpackage_script,
+# but alternately this ant generated file is still available
+#%%{__install} -Dpm 755 res/%{name} %{buildroot}%{_bindir}/
 
-install -d -m755 %{buildroot}%{_datadir}/applications
-install -Dpm 644 res/%{name}.desktop %{buildroot}%{_datadir}/applications/
+# Use macro %%jpackage_script to generate wrapper script and get the main class
+# name from the build.xml file using xmllint
+main_class=`%get_property mainClass build.xml`
+%jpackage_script "${main_class}" "" "" "%{all_jars}" %{name} true
+
+%{__install} -d -m755 %{buildroot}%{_datadir}/applications
+%{__install} -Dpm 644 res/%{name}.desktop %{buildroot}%{_datadir}/applications/
 
 for size in 16 32 48 128; do
-	install -Dpm 644 res/icons/%{sname}_${size}.png \
+	%{__install} -Dpm 644 res/icons/%{sname}_${size}.png \
 		%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/%{name}.png
 done
 
-install -Dpm 644 res/icons/%{sname}.svg \
+%{__install} -Dpm 644 res/icons/%{sname}.svg \
 	%{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 desktop-file-install \
@@ -117,6 +124,21 @@ desktop-file-install \
 
 
 %changelog
+* Thu Mar 24 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160324.1
+- Define missing Group as Security
+- Change build.xml to automate the start script classpath generation from its
+ template
+- Build with Mageia Cauldron’s MiG Layout libraries now splitted into
+ miglayout-core and miglayout-swing like upstream
+- Add libraries names as build.xml properties to be able to change them at build
+- Build with the new property javaHelp=javahelp2 and finally nuke patch 1
+- Add BuildRequires libxml2 to ensure we have xmllint to parse the build.xml
+ file and get the mainClass property dynamically
+- Define libraries list as global %libs and use it for the build and the start
+ script generation
+- Generate the start script with %{jpackage_script} instead of copying the ant
+ generated one.
+
 * Mon Mar 21 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160319.1
 - Add new translation string
 - Requires Java 8+ instead of 7+ and add Recommends java-1.8.0-openjfx
