@@ -111,8 +111,10 @@ public class CreateApplicationGui implements Runnable {
 			// open file list passed via command line params (basically same as if files were dropped on application)
 			DroppedFileHandler.openFiles(kseFrame, parameterFiles);
 
-			// start update check in background
-			checkForUpdates(kseFrame);
+			// start update check in background (disabled if KSE was packaged as rpm)
+			if (!"rpm".equalsIgnoreCase(System.getProperty("kse.packaging"))) {
+				checkForUpdates(kseFrame);
+			}
 		} catch (Throwable t) {
 			DError dError = new DError(new JFrame(), t);
 			dError.setLocationRelativeTo(null);

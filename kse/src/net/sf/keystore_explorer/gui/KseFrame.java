@@ -19,12 +19,6 @@
  */
 package net.sf.keystore_explorer.gui;
 
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -91,6 +85,12 @@ import javax.swing.table.TableRowSorter;
 
 import com.jgoodies.looks.HeaderStyle;
 import com.jgoodies.looks.Options;
+
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.KSE;
@@ -1002,7 +1002,10 @@ public final class KseFrame implements StatusBar {
 		PlatformUtil.setMnemonic(jmiCheckUpdate, res.getString("KseFrame.jmiCheckUpdate.mnemonic").charAt(0));
 		jmiCheckUpdate.setToolTipText(null);
 		new StatusBarChangeHandler(jmiCheckUpdate, (String) checkUpdateAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmOnlineResources.add(jmiCheckUpdate);
+		// no update checks if KSE was packaged as rpm
+		if (!"rpm".equalsIgnoreCase(System.getProperty("kse.packaging"))) {
+			jmOnlineResources.add(jmiCheckUpdate);
+		}
 
 		jmiSecurityProviders = new JMenuItem(securityProvidersAction);
 		PlatformUtil.setMnemonic(jmiSecurityProviders, res.getString("KseFrame.jmiSecurityProviders.mnemonic")
