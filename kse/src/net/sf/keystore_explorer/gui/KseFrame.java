@@ -193,7 +193,10 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
  *
  */
 public final class KseFrame implements StatusBar {
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
+
+	static final String KSE_UPDATE_CHECK_DISABLED = "kse.update.disabled";
 
 	// Default KeyStores tabbed pane width - dictates width of this frame
 	public static final int DEFAULT_WIDTH = 700;
@@ -1003,7 +1006,7 @@ public final class KseFrame implements StatusBar {
 		jmiCheckUpdate.setToolTipText(null);
 		new StatusBarChangeHandler(jmiCheckUpdate, (String) checkUpdateAction.getValue(Action.LONG_DESCRIPTION), this);
 		// no update checks if KSE was packaged as rpm
-		if (!"rpm".equalsIgnoreCase(System.getProperty("kse.packaging"))) {
+		if (!Boolean.getBoolean(KSE_UPDATE_CHECK_DISABLED)) {
 			jmOnlineResources.add(jmiCheckUpdate);
 		}
 

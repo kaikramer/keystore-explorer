@@ -30,6 +30,16 @@ import net.sf.keystore_explorer.KSE;
  *
  */
 public class KseRestart {
+
+	private static final String JAVA_HOME = "java.home";
+	private static final String JAVA_CLASS_PATH = "java.class.path";
+
+	private static final String KSE_INSTALL_DIR = "kse.install.dir";
+
+	private static final String KSE_EXE = "kse.exe";
+	private static final String KSE_APP = "kse.app";
+	private static final String KSE_JAR = "kse.jar";
+
 	private KseRestart() {
 	}
 
@@ -37,11 +47,11 @@ public class KseRestart {
 	 * Restart KeyStore Explorer in the same manner in which it was started.
 	 */
 	public static void restart() {
-		if (System.getProperty("kse.exe") != null) {
+		if (System.getProperty(KSE_EXE) != null) {
 			restartAsKseExe();
-		} else if (System.getProperty("kse.app") != null) {
+		} else if (System.getProperty(KSE_APP) != null) {
 			restartAsKseApp();
-		} else if (System.getProperty("java.class.path").equals("kse.jar")) {
+		} else if (System.getProperty(JAVA_CLASS_PATH).equals(KSE_JAR)) {
 			restartAsKseJar();
 		} else {
 			restartAsKseClass();
@@ -49,9 +59,9 @@ public class KseRestart {
 	}
 
 	private static void restartAsKseExe() {
-		File kseInstallDir = new File(System.getProperty("kse.install.dir"));
+		File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
 
-		File kseExe = new File(kseInstallDir, "kse.exe");
+		File kseExe = new File(kseInstallDir, KSE_EXE);
 
 		String toExec[] = new String[] { kseExe.getPath() };
 
@@ -63,11 +73,11 @@ public class KseRestart {
 	}
 
 	private static void restartAsKseJar() {
-		File javaBin = new File(new File(System.getProperty("java.home"), "bin"), "java");
+		File javaBin = new File(new File(System.getProperty(JAVA_HOME), "bin"), "java");
 
-		File kseInstallDir = new File(System.getProperty("kse.install.dir"));
+		File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
 
-		File kseJar = new File(kseInstallDir, "kse.jar");
+		File kseJar = new File(kseInstallDir, KSE_JAR);
 
 		String toExec[] = new String[] { javaBin.getPath(), "-jar", kseJar.getPath() };
 
@@ -79,7 +89,7 @@ public class KseRestart {
 	}
 
 	private static void restartAsKseApp() {
-		File kseInstallDir = new File(System.getProperty("kse.install.dir"));
+		File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
 
 		String kseApp = MessageFormat.format("{0} {1}.app", KSE.getApplicationName(), KSE.getApplicationVersion());
 
@@ -96,9 +106,9 @@ public class KseRestart {
 	}
 
 	private static void restartAsKseClass() {
-		File javaBin = new File(new File(System.getProperty("java.home"), "bin"), "java");
+		File javaBin = new File(new File(System.getProperty(JAVA_HOME), "bin"), "java");
 
-		String kseClasspath = System.getProperty("java.class.path");
+		String kseClasspath = System.getProperty(JAVA_CLASS_PATH);
 
 		String toExec[] = new String[] { javaBin.getPath(), "-classpath", kseClasspath, KSE.class.getName() };
 

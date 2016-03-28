@@ -112,7 +112,7 @@ public class CreateApplicationGui implements Runnable {
 			DroppedFileHandler.openFiles(kseFrame, parameterFiles);
 
 			// start update check in background (disabled if KSE was packaged as rpm)
-			if (!"rpm".equalsIgnoreCase(System.getProperty("kse.packaging"))) {
+			if (!Boolean.getBoolean(KseFrame.KSE_UPDATE_CHECK_DISABLED)) {
 				checkForUpdates(kseFrame);
 			}
 		} catch (Throwable t) {
