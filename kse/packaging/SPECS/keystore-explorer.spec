@@ -5,7 +5,7 @@
 %define get_property() xmllint --xpath 'string(//property[@name="%1"]/@value)' %2
 
 %define major 1
-%define gitversion 20160324
+%define gitversion 20160329
 %define rel 1
 
 %if 0%{?gitversion}
@@ -69,7 +69,7 @@ revocation lists and more.
 %setup -q
 %endif
 
-# Delete provided jars as we must compile with Mageia's to ensure their compatibility
+# Delete provided jars as we must compile with Mageia's to ensure their compat
 pushd %{sname}
 %{__rm} lib/*.jar
 
@@ -78,7 +78,8 @@ pushd %{sname}
 pushd %{sname}
 build-jar-repository -p lib %{libs}
 
-%ant -DappSimpleName=%{name} -DjavaHelp=javahelp2 resources jar
+%ant -DappSimpleName=%{name} -DjavaHelp=javahelp2 -Dkse.update.disabled=true\
+ resources jar
 
 
 %install
@@ -124,11 +125,15 @@ desktop-file-install \
 
 
 %changelog
+* Tue Mar 29 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160329.1
+- Git snapshot of March 29th 2016
+- Build with new build option disabling update checks
+
 * Thu Mar 24 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160324.1
 - Define missing Group as Security
 - Change build.xml to automate the start script classpath generation from its
  template
-- Build with Mageia Cauldron’s MiG Layout libraries now splitted into
+- Build with Mageia Cauldron's MiG Layout libraries now splitted into
  miglayout-core and miglayout-swing like upstream
 - Add libraries names as build.xml properties to be able to change them at build
 - Build with the new property javaHelp=javahelp2 and finally nuke patch 1
