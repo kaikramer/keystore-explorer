@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -15,6 +16,8 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 public class JavaFXFileChooser extends JFileChooser {
+
+	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 
     private static final long serialVersionUID = 706991877631924379L;
 
@@ -110,7 +113,7 @@ public class JavaFXFileChooser extends JFileChooser {
                     Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
                     List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
                     observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
-                    		.newInstance("All Files", new String[] { "*.*" }));
+                    		.newInstance(res.getString("JavaFXFileChooser.AllFiles"), new String[] { "*.*" }));
 
                     for (FileExtFilter fileFilter : filters) {
                         // convert format for extensions

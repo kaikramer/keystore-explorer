@@ -77,8 +77,7 @@ public class OpenMsCapiAction  extends OpenAction {
 			// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
 			// applications must not specify the SunMSCAPI provider."
 
-			// TODO
-			kseFrame.addKeyStore(openedKeyStore, "Windows-MY", null, null);
+			kseFrame.addKeyStore(openedKeyStore, res.getString("OpenMsCapiAction.TabTitle"), null, null);
 
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
