@@ -78,8 +78,7 @@ pushd %{sname}
 pushd %{sname}
 build-jar-repository -p lib %{libs}
 
-%ant -DappSimpleName=%{name} -DjavaHelp=javahelp2 -Dkse.update.disabled=true\
- resources jar
+%ant -DappSimpleName=%{name} -DjavaHelp=javahelp2 resources jar
 
 
 %install
@@ -96,7 +95,7 @@ pushd %{sname}
 # Use macro %%jpackage_script to generate wrapper script and get the main class
 # name from the build.xml file using xmllint
 main_class=`%get_property mainClass build.xml`
-%jpackage_script "${main_class}" "" "" "%{all_jars}" %{name} true
+%jpackage_script "${main_class}" "" "-Dkse.update.disabled=true" "%{all_jars}" %{name} true
 
 %{__install} -d -m755 %{buildroot}%{_datadir}/applications
 %{__install} -Dpm 644 res/%{name}.desktop %{buildroot}%{_datadir}/applications/
@@ -125,9 +124,11 @@ desktop-file-install \
 
 
 %changelog
+
+
 * Tue Mar 29 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160329.1
 - Git snapshot of March 29th 2016
-- Build with new build option disabling update checks
+- Add start option disabling update checks
 
 * Thu Mar 24 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160324.1
 - Define missing Group as Security

@@ -14,9 +14,11 @@ if [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/@appSimpleName@ ]; then
 fi
 
 MAIN_CLASS=@mainClass@
+BASE_OPTIONS="-Dkse.update.disabled=true"
 BASE_JARS="@classPath@ @appSimpleName@"
 
 set_jvm
 set_classpath $BASE_JARS
+set_options $BASE_OPTIONS
 
 run "$@"
