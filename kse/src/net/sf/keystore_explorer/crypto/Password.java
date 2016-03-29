@@ -107,6 +107,7 @@ public class Password {
 		for (int i = 0; i < wrappedPassword.length; i++) {
 			wrappedPassword[i] = 0;
 		}
+		nulled = true;
 	}
 
 	/**

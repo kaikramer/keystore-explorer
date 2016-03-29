@@ -41,6 +41,9 @@ import net.sf.keystore_explorer.gui.error.DError;
  *
  */
 public class OpenCaCertificatesAction extends OpenAction {
+
+	private static final String CACERTS_DEFAULT_PWD = "changeit";
+
 	/**
 	 * Construct action.
 	 *
@@ -71,7 +74,7 @@ public class OpenCaCertificatesAction extends OpenAction {
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
 		if (caCertificatesFile.isFile()) {
-			openKeyStore(caCertificatesFile);
+			openKeyStore(caCertificatesFile, CACERTS_DEFAULT_PWD);
 			return;
 		}
 

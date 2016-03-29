@@ -161,9 +161,11 @@ public class DProblem extends JEscDialog {
 			}
 		});
 
-		getRootPane().setDefaultButton(jbOK);
-
 		pack();
+
+		// "requestFocusInWindow() has to be called after component has been realized, but before frame is displayed"
+		getRootPane().setDefaultButton(jbOK);
+		jbOK.requestFocusInWindow();
 	}
 
 	private String formatProblem() {

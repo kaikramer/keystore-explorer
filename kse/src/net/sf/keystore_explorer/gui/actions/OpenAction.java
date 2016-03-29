@@ -92,6 +92,16 @@ public class OpenAction extends KeyStoreExplorerAction {
 	 *            The KeyStore file
 	 */
 	public void openKeyStore(File keyStoreFile) {
+		openKeyStore(keyStoreFile, null);
+	}
+
+	/**
+	 * Open the supplied KeyStore file from disk.
+	 *
+	 * @param keyStoreFile
+	 *            The KeyStore file
+	 */
+	public void openKeyStore(File keyStoreFile, String defaultPassword) {
 		try {
 			if (!keyStoreFile.isFile()) {
 				JOptionPane.showMessageDialog(frame,
@@ -107,44 +117,43 @@ public class OpenAction extends KeyStoreExplorerAction {
 				return;
 			}
 
+			// use (optional) default password for first try
+			Password password = (defaultPassword != null) ? new Password(defaultPassword.toCharArray()) : null;
+
 			KeyStore openedKeyStore = null;
-			Password password = null;
+			boolean firstTry = true;
 			while (true) {
 
-				DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-						res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()));
-				dGetPassword.setLocationRelativeTo(frame);
-				dGetPassword.setVisible(true);
-				password = dGetPassword.getPassword();
+				// show password dialog if no default password was passed or if last try to unlock ks has failed
+				if (password == null) {
+					password = showPasswordDialog(keyStoreFile);
+				}
 
+				// user did not enter password -> abort
 				if (password == null) {
 					return;
 				}
 
+				// try to load keystore
 				try {
 					openedKeyStore = KeyStoreUtil.load(keyStoreFile, password);
 					break;
 				} catch (KeyStoreLoadException klex) {
-					String problemStr = MessageFormat.format(res.getString("OpenAction.NoOpenKeyStore.Problem"), klex
-							.getKeyStoreType().friendly(), keyStoreFile.getName());
 
-					String[] causes = new String[] { res.getString("OpenAction.PasswordIncorrectKeyStore.Cause"),
-							res.getString("OpenAction.CorruptedKeyStore.Cause") };
+					// show error message only after first try with default password or if no default password set
+					if (defaultPassword == null || !firstTry) {
 
-					Problem problem = new Problem(problemStr, causes, klex);
-
-					DProblem dProblem = new DProblem(frame, res.getString("OpenAction.ProblemOpeningKeyStore.Title"),
-							problem);
-					dProblem.setLocationRelativeTo(frame);
-					dProblem.setVisible(true);
-
-					int choice = JOptionPane.showConfirmDialog(frame, res.getString("OpenAction.TryAgain.message"),
-							res.getString("OpenAction.TryAgain.Title"), JOptionPane.YES_NO_OPTION);
-
-					if (choice == JOptionPane.NO_OPTION) {
-						return;
+						int tryAgainChoice = showErrorMessage(keyStoreFile, klex);
+						if (tryAgainChoice == JOptionPane.NO_OPTION) {
+							return;
+						}
 					}
 				}
+
+				// failure, reset password
+				password.nullPassword();
+				password = null;
+				firstTry = false;
 			}
 
 			if (openedKeyStore == null) {
@@ -164,5 +173,32 @@ public class OpenAction extends KeyStoreExplorerAction {
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
+	}
+
+	private Password showPasswordDialog(File keyStoreFile) {
+		DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
+				res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()));
+		dGetPassword.setLocationRelativeTo(frame);
+		dGetPassword.setVisible(true);
+		return dGetPassword.getPassword();
+	}
+
+	private int showErrorMessage(File keyStoreFile, KeyStoreLoadException klex) {
+		String problemStr = MessageFormat.format(res.getString("OpenAction.NoOpenKeyStore.Problem"),
+				klex.getKeyStoreType().friendly(), keyStoreFile.getName());
+
+		String[] causes = new String[] { res.getString("OpenAction.PasswordIncorrectKeyStore.Cause"),
+				res.getString("OpenAction.CorruptedKeyStore.Cause") };
+
+		Problem problem = new Problem(problemStr, causes, klex);
+
+		DProblem dProblem = new DProblem(frame,
+				res.getString("OpenAction.ProblemOpeningKeyStore.Title"), problem);
+		dProblem.setLocationRelativeTo(frame);
+		dProblem.setVisible(true);
+
+		int choice = JOptionPane.showConfirmDialog(frame, res.getString("OpenAction.TryAgain.message"),
+				res.getString("OpenAction.TryAgain.Title"), JOptionPane.YES_NO_OPTION);
+		return choice;
 	}
 }
