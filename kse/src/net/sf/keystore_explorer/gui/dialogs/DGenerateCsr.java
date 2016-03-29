@@ -292,7 +292,7 @@ public class DGenerateCsr extends JEscDialog {
 
 		File currentExportFile = new File(jtfCsrFile.getText().trim());
 
-		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
+		if (currentExportFile.getParentFile() != null && currentExportFile.getParentFile().exists()) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
 			chooser.setSelectedFile(currentExportFile);
 		} else {
@@ -303,7 +303,7 @@ public class DGenerateCsr extends JEscDialog {
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-                : chooser.showDialog(this, res.getString("DGenerateCsr.ChooseCsrFile.button"));
+				: chooser.showDialog(this, res.getString("DGenerateCsr.ChooseCsrFile.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

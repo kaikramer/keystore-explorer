@@ -100,16 +100,16 @@ public class FileExtFilter extends FileFilter {
 		return description;
 	}
 
-    public String[] getExtensions() {
-        return exts;
-    }
+	public String[] getExtensions() {
+		return exts;
+	}
 
 	private String getExtension(File file) {
 		String ext = null;
 		String name = file.getName();
 		int i = name.lastIndexOf('.');
 
-		if ((i > -1) && (i < name.length() - 1)) {
+		if (i > -1 && i < name.length() - 1) {
 			ext = name.substring(i + 1).toLowerCase();
 		}
 		return ext;

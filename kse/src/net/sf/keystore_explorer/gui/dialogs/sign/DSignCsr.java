@@ -561,7 +561,7 @@ public class DSignCsr extends JEscDialog {
 
 		File currentExportFile = new File(jtfCaReplyFile.getText().trim());
 
-		if ((currentExportFile.getParentFile() != null) && (currentExportFile.getParentFile().exists())) {
+		if (currentExportFile.getParentFile() != null && currentExportFile.getParentFile().exists()) {
 			chooser.setCurrentDirectory(currentExportFile.getParentFile());
 			chooser.setSelectedFile(currentExportFile);
 		} else {
@@ -572,7 +572,7 @@ public class DSignCsr extends JEscDialog {
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-                : chooser.showDialog(this, res.getString("DSignCsr.SaveCaReply.button"));
+				: chooser.showDialog(this, res.getString("DSignCsr.SaveCaReply.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

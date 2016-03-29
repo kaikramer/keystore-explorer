@@ -684,7 +684,7 @@ public class X509Ext {
 	}
 
 	private boolean hasKeyUsage(int keyUsages, int keyUsage) {
-		return ((keyUsages & keyUsage) == keyUsage);
+		return (keyUsages & keyUsage) == keyUsage;
 	}
 
 	private String getPrivateKeyUsagePeriodStringValue(byte[] value) throws IOException {
@@ -1045,8 +1045,8 @@ public class X509Ext {
 		NameConstraints nameConstraints = NameConstraints.getInstance(value);
 
 		GeneralSubtrees permittedSubtrees = null;
-		if ((nameConstraints.getPermittedSubtrees() != null) &&
-				(nameConstraints.getPermittedSubtrees().length != 0)) {
+		if (nameConstraints.getPermittedSubtrees() != null &&
+				nameConstraints.getPermittedSubtrees().length != 0) {
 			permittedSubtrees = new GeneralSubtrees(nameConstraints.getPermittedSubtrees());
 		}
 
@@ -1628,7 +1628,7 @@ public class X509Ext {
 	}
 
 	private boolean isCertType(int netscapeCertTypes, int certType) {
-		return ((netscapeCertTypes & certType) == certType);
+		return (netscapeCertTypes & certType) == certType;
 	}
 
 	private String getNetscapeBaseUrlStringValue(byte[] value) throws IOException {
@@ -1924,7 +1924,7 @@ public class X509Ext {
 	}
 
 	private boolean hasReasonFlag(int reasonFlags, int reasonFlag) {
-		return ((reasonFlags & reasonFlag) == reasonFlag);
+		return (reasonFlags & reasonFlag) == reasonFlag;
 	}
 
 	private String getAttributeTypeString(ASN1ObjectIdentifier oid) {
@@ -2747,9 +2747,9 @@ public class X509Ext {
 
 			SMIMECapability ::= SEQUENCE
 			{
-                capabilityID OBJECT IDENTIFIER,
-                parameters ANY DEFINED BY capabilityID OPTIONAL
-            }
+				capabilityID OBJECT IDENTIFIER,
+				parameters ANY DEFINED BY capabilityID OPTIONAL
+			}
 		 */
 
 		// @formatter:on

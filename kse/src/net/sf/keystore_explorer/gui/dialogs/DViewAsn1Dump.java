@@ -261,7 +261,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 		jtaAsn1Dump.setCaretPosition(0);
 		jtaAsn1Dump.setEditable(false);
-        jtaAsn1Dump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+		jtaAsn1Dump.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		// JGoodies - keep uneditable color same as editable
 		jtaAsn1Dump.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 

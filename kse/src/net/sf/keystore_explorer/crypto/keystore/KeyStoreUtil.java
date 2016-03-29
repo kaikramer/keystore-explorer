@@ -23,10 +23,6 @@ import static net.sf.keystore_explorer.crypto.SecurityProvider.APPLE;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static net.sf.keystore_explorer.crypto.SecurityProvider.MS_CAPI;
 import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.EC;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,6 +50,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
+
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS_V1;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.KEYCHAIN;
+import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 
 import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.crypto.CryptoException;
@@ -301,14 +302,14 @@ public final class KeyStoreUtil {
 		return keyStore;
 	}
 
-    /**
-     * Fix problem with duplicate key store aliases in MSCAPI store type by adding an unique postfix.
-     *
-     * NOTE: This code relies on non-public implementation details of sun.security.mscapi.KeyStore
-     * which might change in future Java releases!
-     *
-     * @param keyStore
-     */
+	/**
+	 * Fix problem with duplicate key store aliases in MSCAPI store type by adding an unique postfix.
+	 *
+	 * NOTE: This code relies on non-public implementation details of sun.security.mscapi.KeyStore which might change in
+	 * future Java releases!
+	 *
+	 * @param keyStore
+	 */
 	private static void fixDuplicateMSCAPIAliases(KeyStore keyStore) {
 		try {
 			Field keyStoreSpiField = keyStore.getClass().getDeclaredField("keyStoreSpi");
@@ -447,8 +448,8 @@ public final class KeyStoreUtil {
 	 *             If there was a problem accessing the KeyStore.
 	 */
 	public static boolean isKeyPairEntry(String alias, KeyStore keyStore) throws KeyStoreException {
-		return (keyStore.isKeyEntry(alias))
-				&& ((keyStore.getCertificateChain(alias) != null) && (keyStore.getCertificateChain(alias).length != 0));
+		return keyStore.isKeyEntry(alias)
+				&& keyStore.getCertificateChain(alias) != null && keyStore.getCertificateChain(alias).length != 0;
 	}
 
 	/**
@@ -463,8 +464,8 @@ public final class KeyStoreUtil {
 	 *             If there was a problem accessing the KeyStore.
 	 */
 	public static boolean isKeyEntry(String alias, KeyStore keyStore) throws KeyStoreException {
-		return (keyStore.isKeyEntry(alias))
-				&& ((keyStore.getCertificateChain(alias) == null) || (keyStore.getCertificateChain(alias).length == 0));
+		return keyStore.isKeyEntry(alias)
+				&& (keyStore.getCertificateChain(alias) == null || keyStore.getCertificateChain(alias).length == 0);
 	}
 
 	/**
@@ -479,7 +480,7 @@ public final class KeyStoreUtil {
 	 *             If there was a problem accessing the KeyStore.
 	 */
 	public static boolean isTrustedCertificateEntry(String alias, KeyStore keyStore) throws KeyStoreException {
-		return (keyStore.isCertificateEntry(alias));
+		return keyStore.isCertificateEntry(alias);
 	}
 
 	/**
@@ -516,7 +517,7 @@ public final class KeyStoreUtil {
 
 	private static KeyStore getKeyStoreInstance(KeyStoreType keyStoreType) throws CryptoException {
 		try {
-			if ((keyStoreType == BKS) || (keyStoreType == BKS_V1) || (keyStoreType == UBER)) {
+			if (keyStoreType == BKS || keyStoreType == BKS_V1 || keyStoreType == UBER) {
 				if (Security.getProvider(BOUNCY_CASTLE.jce()) == null) {
 					throw new CryptoException(MessageFormat.format(res.getString("NoProvider.exception.message"),
 							BOUNCY_CASTLE.jce()));

@@ -432,7 +432,7 @@ public class DSignMidlet extends JEscDialog {
 
 		File currentFile = new File(jtfInputJad.getText());
 
-		if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
+		if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
 			chooser.setCurrentDirectory(currentFile.getParentFile());
 			chooser.setSelectedFile(currentFile);
 		} else {
@@ -467,7 +467,7 @@ public class DSignMidlet extends JEscDialog {
 
 		File currentFile = new File(jtfOutputJad.getText());
 
-		if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
+		if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
 			chooser.setCurrentDirectory(currentFile.getParentFile());
 			chooser.setSelectedFile(currentFile);
 		} else {
@@ -479,7 +479,7 @@ public class DSignMidlet extends JEscDialog {
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-                : chooser.showDialog(this, res.getString("DSignMidlet.OutputJadChooser.button"));
+				: chooser.showDialog(this, res.getString("DSignMidlet.OutputJadChooser.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
@@ -493,7 +493,7 @@ public class DSignMidlet extends JEscDialog {
 
 		File currentFile = new File(jtfJar.getText());
 
-		if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
+		if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
 			chooser.setCurrentDirectory(currentFile.getParentFile());
 		} else {
 			chooser.setCurrentDirectory(CurrentDirectory.get());

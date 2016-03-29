@@ -200,28 +200,28 @@ public class LnfUtil {
 	}
 
 	/**
-     * Is optional Darcula LaF available?
-     */
-    public static boolean isDarculaAvailable() {
-        try {
-            Class.forName(DARCULA_LAF_CLASS);
-            // Darcula has some issues in Java 6
-            if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170)) {
-               return true;
-            }
-        } catch (ClassNotFoundException e) {
-            // Darcula jar not included
-        }
-        return false;
-    }
+	 * Is optional Darcula LaF available?
+	 */
+	public static boolean isDarculaAvailable() {
+		try {
+			Class.forName(DARCULA_LAF_CLASS);
+			// Darcula has some issues in Java 6
+			if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170)) {
+				return true;
+			}
+		} catch (ClassNotFoundException e) {
+			// Darcula jar not included
+		}
+		return false;
+	}
 
-    /**
-     * Get default font size for a label.
-     *
-     * @return Font size
-     */
-    public static int getDefaultFontSize() {
-        Font defaultFont = new JLabel().getFont();
-        return defaultFont.getSize();
-    }
+	/**
+	 * Get default font size for a label.
+	 *
+	 * @return Font size
+	 */
+	public static int getDefaultFontSize() {
+		Font defaultFont = new JLabel().getFont();
+		return defaultFont.getSize();
+	}
 }
