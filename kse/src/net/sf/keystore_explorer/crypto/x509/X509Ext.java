@@ -103,7 +103,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -174,6 +173,7 @@ import org.bouncycastle.asn1.x509.qualified.QCStatement;
 import org.bouncycastle.asn1.x509.qualified.SemanticsInformation;
 import org.bouncycastle.asn1.x509.qualified.TypeOfBiometricData;
 
+import net.sf.keystore_explorer.utilities.StringUtils;
 import net.sf.keystore_explorer.utilities.io.HexUtil;
 import net.sf.keystore_explorer.utilities.io.IndentChar;
 import net.sf.keystore_explorer.utilities.io.IndentSequence;
@@ -2017,10 +2017,7 @@ public class X509Ext {
 			throw new IllegalArgumentException("Cannot parse date");
 		}
 
-		// Format date
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss.SSS z");
-
-		return sdf.format(date);
+		return StringUtils.formatDate(date);
 	}
 
 	private String getBiometricInfoStringValue(byte[] octets) {

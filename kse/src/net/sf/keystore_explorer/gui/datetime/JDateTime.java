@@ -25,8 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -38,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import net.sf.keystore_explorer.gui.CursorUtil;
+import net.sf.keystore_explorer.utilities.StringUtils;
 
 /**
  * Component to edit a date/time value.
@@ -45,8 +44,6 @@ import net.sf.keystore_explorer.gui.CursorUtil;
  */
 public class JDateTime extends JPanel {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/datetime/resources");
-
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss");
 
 	private JTextField jtfDateTime;
 	private JButton jbEditDateTime;
@@ -175,7 +172,7 @@ public class JDateTime extends JPanel {
 
 	private void populate() {
 		if (date != null) {
-			jtfDateTime.setText(DATE_FORMAT.format(date));
+			jtfDateTime.setText(StringUtils.formatDate(date));
 			jbClearDateTime.setEnabled(true);
 		} else {
 			jtfDateTime.setText("");

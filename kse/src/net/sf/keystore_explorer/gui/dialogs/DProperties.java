@@ -46,7 +46,6 @@ import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
@@ -81,6 +80,7 @@ import net.sf.keystore_explorer.crypto.x509.X509CertUtil;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.utilities.StringUtils;
 import net.sf.keystore_explorer.utilities.history.KeyStoreHistory;
 import net.sf.keystore_explorer.utilities.history.KeyStoreState;
 import net.sf.keystore_explorer.utilities.io.IndentChar;
@@ -93,7 +93,6 @@ import net.sf.keystore_explorer.utilities.io.IndentSequence;
 public class DProperties extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
 	private static final String NEWLINE = "\n";
 
 	private JPanel jpButtons;
@@ -307,12 +306,12 @@ public class DProperties extends JEscDialog {
 
 			Date validFromDate = certificate.getNotBefore();
 			String validFrom = MessageFormat.format(res.getString("DProperties.properties.ValidFrom"),
-					DATE_FORMAT.format(validFromDate));
+					StringUtils.formatDate(validFromDate));
 			certificateNode.add(new DefaultMutableTreeNode(validFrom));
 
 			Date validUntilDate = certificate.getNotAfter();
 			String validUntil = MessageFormat.format(res.getString("DProperties.properties.ValidUntil"),
-					DATE_FORMAT.format(validUntilDate));
+					StringUtils.formatDate(validUntilDate));
 			certificateNode.add(new DefaultMutableTreeNode(validUntil));
 
 			createPublicKeyNodes(certificateNode, certificate);
@@ -714,7 +713,7 @@ public class DProperties extends JEscDialog {
 
 			if (KeyStoreType.resolveJce(keyStore.getType()) != KeyStoreType.PKCS12) {
 				String lastModified = MessageFormat.format(res.getString("DProperties.properties.LastModified"),
-						DATE_FORMAT.format(keyStore.getCreationDate(alias)));
+						StringUtils.formatDate(keyStore.getCreationDate(alias)));
 				parentNode.add(new DefaultMutableTreeNode(lastModified));
 			}
 		} catch (ProviderException e) {

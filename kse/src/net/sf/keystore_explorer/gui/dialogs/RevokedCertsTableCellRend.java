@@ -21,7 +21,6 @@ package net.sf.keystore_explorer.gui.dialogs;
 
 import java.awt.Component;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JLabel;
@@ -29,12 +28,13 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import net.sf.keystore_explorer.utilities.StringUtils;
+
 /**
  * Custom cell renderer for the cells of the RevokedCerts table of DViewCrl.
  *
  */
 public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
 
 	/**
 	 * Returns the rendered cell.
@@ -62,7 +62,7 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 		if (col == 0) {
 			cell.setText(formatSerialNumberAsHexString((BigInteger) value));
 		} else {
-			cell.setText(DATE_FORMAT.format((Date) value));
+			cell.setText(StringUtils.formatDate((Date) value));
 		}
 
 		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
@@ -81,7 +81,7 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 		for (int i = 0; i < hexSerialNumber.length(); i++) {
 			strBuff.append(hexSerialNumber.charAt(i));
 
-			if ((((i + 1) % 4) == 0) && ((i + 1) != hexSerialNumber.length())) {
+			if ((i + 1) % 4 == 0 && i + 1 != hexSerialNumber.length()) {
 				strBuff.append(' ');
 			}
 		}

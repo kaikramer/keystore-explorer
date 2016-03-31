@@ -39,7 +39,6 @@ import java.math.BigInteger;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -74,6 +73,7 @@ import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DViewExtensions;
 import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.StringUtils;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
 
 /**
@@ -82,8 +82,6 @@ import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
  */
 public class DViewCrl extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
-
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
 
 	private JPanel jpOK;
 	private JButton jbOK;
@@ -415,7 +413,7 @@ public class DViewCrl extends JEscDialog {
 
 		jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(crl.getIssuerX500Principal()));
 
-		jtfEffectiveDate.setText(DATE_FORMAT.format(effectiveDate));
+		jtfEffectiveDate.setText(StringUtils.formatDate(effectiveDate));
 
 		if (effective) {
 			jtfEffectiveDate.setText(MessageFormat.format(res.getString("DViewCrl.jtfEffectiveDate.noteffective.text"),
@@ -427,7 +425,7 @@ public class DViewCrl extends JEscDialog {
 		jtfEffectiveDate.setCaretPosition(0);
 
 		if (updateDate != null) {
-			jtfNextUpdate.setText(DATE_FORMAT.format(updateDate));
+			jtfNextUpdate.setText(StringUtils.formatDate(updateDate));
 		} else {
 			jtfNextUpdate.setText(res.getString("DViewCrl.jtfNextUpdate.none.text"));
 		}
@@ -447,7 +445,7 @@ public class DViewCrl extends JEscDialog {
 		Set critExts = crl.getCriticalExtensionOIDs();
 		Set nonCritExts = crl.getNonCriticalExtensionOIDs();
 
-		if (((critExts != null) && (critExts.size() != 0)) || ((nonCritExts != null) && (nonCritExts.size() != 0))) {
+		if (critExts != null && critExts.size() != 0 || nonCritExts != null && nonCritExts.size() != 0) {
 			jbCrlExtensions.setEnabled(true);
 		} else {
 			jbCrlExtensions.setEnabled(false);
@@ -458,7 +456,7 @@ public class DViewCrl extends JEscDialog {
 			revokedCertsSet = new HashSet<X509CRLEntry>();
 		}
 		X509CRLEntry[] revokedCerts = revokedCertsSet.toArray(new X509CRLEntry[revokedCertsSet.size()]);
-		RevokedCertsTableModel revokedCertsTableModel = ((RevokedCertsTableModel) jtRevokedCerts.getModel());
+		RevokedCertsTableModel revokedCertsTableModel = (RevokedCertsTableModel) jtRevokedCerts.getModel();
 		revokedCertsTableModel.load(revokedCerts);
 
 		if (revokedCertsTableModel.getRowCount() > 0) {

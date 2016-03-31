@@ -37,7 +37,6 @@ import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -82,6 +81,7 @@ import net.sf.keystore_explorer.gui.crypto.JCertificateFingerprint;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DViewExtensions;
 import net.sf.keystore_explorer.gui.error.DError;
+import net.sf.keystore_explorer.utilities.StringUtils;
 import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
 
 /**
@@ -92,8 +92,6 @@ import net.sf.keystore_explorer.utilities.asn1.Asn1Exception;
  */
 public class DViewCertificate extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
-
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
 
 	public static int NONE = 0;
 	public static int IMPORT = 1;
@@ -634,7 +632,7 @@ public class DViewCertificate extends JEscDialog {
 						+ new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase());
 				jtfSerialNumber.setCaretPosition(0);
 
-				jtfValidFrom.setText(DATE_FORMAT.format(startDate));
+				jtfValidFrom.setText(StringUtils.formatDate(startDate));
 
 				if (notYetValid) {
 					jtfValidFrom.setText(MessageFormat.format(
@@ -645,7 +643,7 @@ public class DViewCertificate extends JEscDialog {
 				}
 				jtfValidFrom.setCaretPosition(0);
 
-				jtfValidUntil.setText(DATE_FORMAT.format(endDate));
+				jtfValidUntil.setText(StringUtils.formatDate(endDate));
 
 				if (noLongerValid) {
 					jtfValidUntil.setText(MessageFormat.format(

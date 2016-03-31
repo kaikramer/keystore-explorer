@@ -19,6 +19,10 @@
  */
 package net.sf.keystore_explorer.utilities;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class StringUtils {
 
 	/**
@@ -85,5 +89,23 @@ public class StringUtils {
 		}
 
 		return sb.toString();
+	}
+
+	/**
+	 * Returns a localized short/medium date time string.
+	 *
+	 * @param date The date to convert into a string
+	 * @return localized short/medium date time string
+	 */
+	public static String formatDate(Date date) {
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+
+		if (dateFormat instanceof SimpleDateFormat) {
+			SimpleDateFormat sdf = (SimpleDateFormat) dateFormat;
+			// we want short date format but with 4 digit year
+			sdf.applyPattern(sdf.toPattern().replaceAll("y+", "yyyy").concat(" z"));
+		}
+
+		return dateFormat.format(date);
 	}
 }

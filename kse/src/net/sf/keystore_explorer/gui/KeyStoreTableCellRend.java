@@ -21,7 +21,6 @@ package net.sf.keystore_explorer.gui;
 
 import java.awt.Component;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -30,6 +29,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import net.sf.keystore_explorer.utilities.StringUtils;
+
 /**
  * Custom cell renderer for the cells of the KeyStore table of KeyStore
  * Explorer.
@@ -37,7 +38,6 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MMM/yyyy HH:mm:ss z");
 
 	/**
 	 * Returns the rendered cell for the supplied value and column.
@@ -175,7 +175,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 		// Certificate Expiry column - format date (if any) and indicate any expiry
 		else if (col == 6) {
 			if (value != null) {
-				cell.setText(DATE_FORMAT.format((Date) value));
+				cell.setText(StringUtils.formatDate((Date) value));
 				cell.setHorizontalAlignment(LEFT);
 
 				// If expiry passed add to the tool tip to suggest expiry
@@ -198,7 +198,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 		// Last Modified column - format date (if any)
 		else if (col == 7) {
 			if (value != null) {
-				cell.setText(DATE_FORMAT.format((Date) value));
+				cell.setText(StringUtils.formatDate((Date) value));
 				cell.setToolTipText(getText());
 				cell.setHorizontalAlignment(LEFT);
 			} else {
