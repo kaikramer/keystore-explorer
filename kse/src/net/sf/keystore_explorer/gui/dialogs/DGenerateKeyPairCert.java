@@ -319,6 +319,18 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			caName = X500Name.getInstance(issuerCert.getSubjectDN());
 			caPublicKey = issuerCert.getPublicKey();
 			caSerialNumber = issuerCert.getSerialNumber();
+		} else {
+			caName = jdnName.getDistinguishedName(); // May be null
+			caPublicKey = keyPair.getPublic();
+
+			String serialNumberStr = jtfSerialNumber.getText().trim();
+			if (serialNumberStr.length() != 0) {
+				try {
+					caSerialNumber = new BigInteger(serialNumberStr);
+				} catch (NumberFormatException ex) {
+					// Don't set serial number
+				}
+			}
 		}
 
 		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, caPublicKey, caName, caSerialNumber, subjectPublicKey);
