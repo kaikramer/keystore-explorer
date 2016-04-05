@@ -311,21 +311,29 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	}
 
 	private void addExtensionsPressed() {
-		PublicKey publicKey = keyPair.getPublic();
-		X500Name name = jdnName.getDistinguishedName(); // May be null
-		BigInteger serialNumber = null;
+		PublicKey subjectPublicKey = keyPair.getPublic();
+		PublicKey caPublicKey = null;
+		X500Name caName = null;
+		BigInteger caSerialNumber = null;
+		if (issuerCert != null) {
+			caName = X500Name.getInstance(issuerCert.getSubjectDN());
+			caPublicKey = issuerCert.getPublicKey();
+			caSerialNumber = issuerCert.getSerialNumber();
+		} else {
+			caName = jdnName.getDistinguishedName(); // May be null
+			caPublicKey = keyPair.getPublic();
 
-		String serialNumberStr = jtfSerialNumber.getText().trim();
-
-		if (serialNumberStr.length() != 0) {
-			try {
-				serialNumber = new BigInteger(serialNumberStr);
-			} catch (NumberFormatException ex) {
-				// Don't set serial number
+			String serialNumberStr = jtfSerialNumber.getText().trim();
+			if (serialNumberStr.length() != 0) {
+				try {
+					caSerialNumber = new BigInteger(serialNumberStr);
+				} catch (NumberFormatException ex) {
+					// Don't set serial number
+				}
 			}
 		}
 
-		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, publicKey, name, serialNumber, publicKey);
+		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, caPublicKey, caName, caSerialNumber, subjectPublicKey);
 		dAddExtensions.setLocationRelativeTo(this);
 		dAddExtensions.setVisible(true);
 
