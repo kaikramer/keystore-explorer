@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import net.sf.keystore_explorer.crypto.CryptoRestrictions;
 import org.apache.commons.io.IOUtils;
 
 import net.sf.keystore_explorer.ApplicationSettings;
@@ -93,7 +94,7 @@ public class CreateApplicationGui implements Runnable {
 
 			initLookAndFeel(applicationSettings);
 
-			if (JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
+			if (!CryptoRestrictions.remove() && JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
 				upgradeCryptoStrength();
 			}
 
