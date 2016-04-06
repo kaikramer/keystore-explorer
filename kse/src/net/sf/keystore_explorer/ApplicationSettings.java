@@ -25,6 +25,7 @@ import static net.sf.keystore_explorer.crypto.secretkey.SecretKeyType.AES;
 
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.IOException;
 import java.net.ProxySelector;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -178,8 +179,13 @@ public class ApplicationSettings {
 
 		// Authority certificates
 		useCaCertificates = preferences.getBoolean(KSE3_USECACERTS, false);
-		caCertificatesFile = new File(preferences.get(KSE3_CACERTSFILE, AuthorityCertificates
-				.getDefaultCaCertificatesLocation().toString()));
+		String cacertsPath = preferences.get(KSE3_CACERTSFILE,
+				AuthorityCertificates.getDefaultCaCertificatesLocation().toString());
+		try {
+			caCertificatesFile = new File(cacertsPath).getCanonicalFile();
+		} catch (IOException e) {
+			caCertificatesFile = new File(cacertsPath);
+		}
 		useWindowsTrustedRootCertificates = preferences.getBoolean(KSE3_USEWINTRUSTROOTCERTS, false);
 
 		// Trust checks

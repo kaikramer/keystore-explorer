@@ -99,7 +99,20 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 	private KeyStore loadCaCertificatesKeyStore() {
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
+		KeyStore caCertificatesKeyStore = null;
 		try {
+
+			// first try to open cacerts with default password
+			try {
+				Password password = new Password(AuthorityCertificates.CACERTS_DEFAULT_PWD.toCharArray());
+				caCertificatesKeyStore = KeyStoreUtil.load(caCertificatesFile, password);
+				if (caCertificatesFile != null) {
+					return caCertificatesKeyStore;
+				}
+			} catch (KeyStoreLoadException ex) {
+				// not default password, continue with password dialog
+			}
+
 			DGetPassword dGetPassword = new DGetPassword(frame,
 					res.getString("AuthorityCertificatesAction.CaCertificatesKeyStorePassword.Title")
 					);
@@ -110,8 +123,6 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 			if (password == null) {
 				return null;
 			}
-
-			KeyStore caCertificatesKeyStore = null;
 
 			try {
 				caCertificatesKeyStore = KeyStoreUtil.load(caCertificatesFile, password);

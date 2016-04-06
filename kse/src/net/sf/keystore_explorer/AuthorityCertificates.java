@@ -20,6 +20,7 @@
 package net.sf.keystore_explorer;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.KeyStore;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
@@ -31,6 +32,9 @@ import net.sf.keystore_explorer.crypto.keystore.MsCapiStoreType;
  *
  */
 public class AuthorityCertificates {
+
+	public static final String CACERTS_DEFAULT_PWD = "changeit";
+
 	private static AuthorityCertificates authorityCertificates;
 	private KeyStore caCertificates;
 	private KeyStore windowsTrustedRootCertificates;
@@ -79,7 +83,12 @@ public class AuthorityCertificates {
 	public static File getDefaultCaCertificatesLocation() {
 		String javaInstallDir = System.getProperty("java.home");
 		String fileSep = System.getProperty("file.separator");
-		return new File(javaInstallDir, "lib" + fileSep + "security" + fileSep + "cacerts");
+		File cacertsFile = new File(javaInstallDir, "lib" + fileSep + "security" + fileSep + "cacerts");
+		try {
+			return cacertsFile.getCanonicalFile();
+		} catch (IOException e) {
+			return cacertsFile;
+		}
 	}
 
 	/**

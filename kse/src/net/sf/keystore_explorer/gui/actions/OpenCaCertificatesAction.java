@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import net.sf.keystore_explorer.AuthorityCertificates;
 import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
 import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
@@ -41,8 +42,6 @@ import net.sf.keystore_explorer.gui.error.DError;
  *
  */
 public class OpenCaCertificatesAction extends OpenAction {
-
-	private static final String CACERTS_DEFAULT_PWD = "changeit";
 
 	/**
 	 * Construct action.
@@ -74,7 +73,7 @@ public class OpenCaCertificatesAction extends OpenAction {
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
 		if (caCertificatesFile.isFile()) {
-			openKeyStore(caCertificatesFile, CACERTS_DEFAULT_PWD);
+			openKeyStore(caCertificatesFile, AuthorityCertificates.CACERTS_DEFAULT_PWD);
 			return;
 		}
 
