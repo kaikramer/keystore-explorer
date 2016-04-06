@@ -26,9 +26,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.security.NoSuchAlgorithmException;
+import java.security.Permission;
+import java.security.PermissionCollection;
 import java.text.MessageFormat;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -61,7 +65,7 @@ public class JcePolicyUtil {
 	 *             If there was a problem getting the policy or crypto strength
 	 */
 	public static boolean isLocalPolicyCrytoStrengthLimited() throws CryptoException {
-		return JcePolicyUtil.getCryptoStrength(JcePolicy.LOCAL_POLICY) == CryptoStrength.LIMITED;
+		return unlimitedStrengthTest() == CryptoStrength.LIMITED;
 	}
 
 	/**
@@ -199,4 +203,36 @@ public class JcePolicyUtil {
 
 		return url;
 	}
+
+
+	/**
+	 * Hack to disable crypto restrictions.
+	 *
+	 * See http://stackoverflow.com/a/22492582/2672392
+	 */
+	public static void removeRestrictions() {
+		try {
+			Class<?> jceSecurityClass = Class.forName("javax.crypto.JceSecurity");
+			Class<?> cryptoPermissionsClass = Class.forName("javax.crypto.CryptoPermissions");
+			Class<?> cryptoAllPermissionClass = Class.forName("javax.crypto.CryptoAllPermission");
+
+			Field isRestrictedField = jceSecurityClass.getDeclaredField("isRestricted");
+			isRestrictedField.setAccessible(true);
+			isRestrictedField.set(null, false);
+
+			Field defaultPolicyField = jceSecurityClass.getDeclaredField("defaultPolicy");
+			defaultPolicyField.setAccessible(true);
+			PermissionCollection defaultPolicy = (PermissionCollection) defaultPolicyField.get(null);
+
+			Field permsField = cryptoPermissionsClass.getDeclaredField("perms");
+			permsField.setAccessible(true);
+			((Map<?, ?>) permsField.get(defaultPolicy)).clear();
+
+			Field cryptoAllPermissionInstanceField = cryptoAllPermissionClass.getDeclaredField("INSTANCE");
+			cryptoAllPermissionInstanceField.setAccessible(true);
+			defaultPolicy.add((Permission) cryptoAllPermissionInstanceField.get(null));
+		} catch (Exception e) {
+			// ignore
+		}
+    }
 }

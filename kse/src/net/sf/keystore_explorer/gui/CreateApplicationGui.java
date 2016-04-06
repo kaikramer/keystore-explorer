@@ -93,6 +93,10 @@ public class CreateApplicationGui implements Runnable {
 
 			initLookAndFeel(applicationSettings);
 
+			// try to remove crypto restrictions
+			JcePolicyUtil.removeRestrictions();
+
+			// if crypto strength still limited, start upgrade assistant
 			if (JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
 				upgradeCryptoStrength();
 			}
