@@ -656,7 +656,10 @@ public final class KseFrame implements StatusBar {
 		jmiOpenMsCapiKeyStore.setToolTipText(null);
 		new StatusBarChangeHandler(jmiOpenMsCapiKeyStore, (String) openMsCapiAction.getValue(Action.LONG_DESCRIPTION),
 				this);
-		jmOpenSpecial.add(jmiOpenMsCapiKeyStore);
+		// show menu item for MSCAPI Windows-MY only on Windows
+		if (OperatingSystem.isWindows()) {
+			jmOpenSpecial.add(jmiOpenMsCapiKeyStore);
+		}
 
 		jmFile.addSeparator();
 
