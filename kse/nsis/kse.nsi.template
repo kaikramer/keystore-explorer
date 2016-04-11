@@ -72,7 +72,6 @@ ReserveFile ${FILE_ASSOCIATIONS_DIALOG}
 
 ; Files to install
 !define KSE_EXE "kse.exe"
-!define CUA_EXE "CryptoUpgradeAssistant.exe"
 !define KSE_JAR "kse.jar"
 !define KSE_ICO "kse.ico"
 !define KEYSTORE_ICO "keystore.ico"
@@ -176,7 +175,6 @@ Section "${PRODUCT}"
 
     ; Files to install
     File "..\dist\${KSE_EXE}"
-    File "..\dist\${CUA_EXE}"
     File "..\dist\${KSE_JAR}"
     File /r "..\dist\lib"
     File "..\res\icons\${KSE_ICO}"
@@ -268,7 +266,6 @@ Section "Uninstall"
 
     ; Remove installed files
     Delete "$INSTDIR\${KSE_EXE}"
-    Delete "$INSTDIR\${CUA_EXE}"
     Delete "$INSTDIR\${KSE_JAR}"
     RmDir /r "$INSTDIR\lib"
     Delete "$INSTDIR\${KSE_ICO}"

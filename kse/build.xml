@@ -53,14 +53,6 @@
 	<!-- Main class (for manifest entry) -->
 	<property name="mainClass" value="net.sf.keystore_explorer.KSE" />
 
-	<!-- Crypto Strength Policy Files Upgrade Assistant -->
-	<property name="cuaAppName" value="CryptoUpgradeAssistant" />
-	<property name="cuaProductName" value="Crypto Upgrade Assistant" />
-	<property name="cuaSimpleName" value="cua" />
-	<property name="cuaAppDescr" value="Crypto Strength Policy Files Upgrade Assistant" />
-	<property name="cuaMainClass" value="net.sf.keystore_explorer.CryptoStrengthUpgradeAssistant" />
-	<property name="cuaExeManifest" value="res/manifest/${cuaAppName}.exe.manifest" />
-
 	<!-- Source code directory -->
 	<property name="sourceDir" value="${basedir}/src" />
 
@@ -80,8 +72,6 @@
 	<!-- Application JAR -->
 	<property name="appJarName" value="${appSimpleName}.jar" />
 	<property name="appJar" value="${distDir}/${appJarName}" />
-	<property name="cuaJarName" value="${cuaSimpleName}.jar" />
-	<property name="cuaJar" value="${distDir}/${cuaJarName}" />
 
 	<!-- Needed libraries names (to be able to change them at build time) -->
 	<property name="bouncyCastlePkix" value="bcpkix" />
@@ -124,12 +114,6 @@
 		</filterchain>
 	</loadresource>
 
-	<!-- Jars that are required for CUA -->
-	<path id="cuaClasspath">
-		<path refid="distClasspath" />
-		<pathelement location="kse.jar" />
-	</path>
-
 	<!-- Jars that are required for compiling KSE -->
 	<path id="compileClasspath">
 		<pathelement location="${buildDir}" />
@@ -168,7 +152,6 @@
 	<!-- Launch4j properties -->
 	<property name="launch4jInstallDir" location="c:\\program files (x86)\\Launch4j" />
 	<property name="appExe" value="${distDir}/${appSimpleName}.exe" />
-	<property name="cuaExe" value="${distDir}/${cuaAppName}.exe" />
 
 	<!-- NSIS properties -->
 	<property name="nsisDir" value="${basedir}/nsis" />
@@ -299,25 +282,6 @@
 				<exclude name="**/package.html" />
 			</fileset>
 		</jar>
-
-		<!-- CUA jar -->
-		<manifestclasspath property="cuaClassPath" jarfile="${cuaJarName}">
-			<classpath refid="cuaClasspath" />
-		</manifestclasspath>
-		<manifest file="${mfFile}">
-			<attribute name="Implementation-Title" value="${cuaAppName}" />
-			<attribute name="Implementation-Version" value="${appVersion}" />
-			<attribute name="Implementation-Vendor" value="${vendor}" />
-			<attribute name="Specification-Title" value="${cuaAppName}" />
-			<attribute name="Specification-Version" value="${appVersion}" />
-			<attribute name="Specification-Vendor" value="${vendor}" />
-			<attribute name="Main-Class" value="${cuaMainClass}" />
-			<attribute name="Class-Path" value="${cuaClassPath}" />
-			<attribute name="Built-Date" value="${TODAY}" />
-			<attribute name="Sealed" value="true" />
-		</manifest>
-		<jar destfile="${cuaJar}" manifest="${mfFile}">
-		</jar>
 	</target>
 
 
@@ -342,7 +306,6 @@
 		<zip destfile="${manualZip}">
 			<zipfileset file="${appJar}" prefix="${distFileNamePrefix}" />
 			<zipfileset file="${appExe}" prefix="${distFileNamePrefix}" />
-			<zipfileset file="${cuaExe}" prefix="${distFileNamePrefix}" />
 			<zipfileset file="${appShell}" prefix="${distFileNamePrefix}" filemode="755" />
 			<zipfileset refid="libs" prefix="${distFileNamePrefix}/lib" />
 			<zipfileset file="${readmesDir}/manual/readme.txt" prefix="${distFileNamePrefix}" />
@@ -422,32 +385,6 @@
 					internalName="${appSimpleName}" 
 					originalFilename="${appSimpleName}.exe" 
 					productName="${appName}" 
-					productVersion="${appVersion}.0.0" 
-					txtFileVersion="${appVersion}" 
-					txtProductVersion="${appVersion}" />
-			</config>
-		</launch4j>
-
-		<launch4j>
-			<config 
-				headerType="gui" 
-				jarpath="${cuaJar}" 
-				outfile="${cuaExe}" 
-				dontWrapJar="false" 
-				errTitle="${cuaAppName}" 
-				stayAlive="false" 
-				icon="${kseIco}" 
-				manifest="${cuaExeManifest}">
-				<jre minVersion="1.6.0" path="jre">
-					<opt>-Dkse.exe=true</opt>
-				</jre>
-				<versionInfo 
-					fileVersion="${appVersion}.0.0" 
-					fileDescription="${cuaAppDescr}" 
-					copyright="${copyright}" 
-					internalName="${cuaAppName}" 
-					originalFilename="${cuaAppName}.exe" 
-					productName="${cuaProductName}" 
 					productVersion="${appVersion}.0.0" 
 					txtFileVersion="${appVersion}" 
 					txtProductVersion="${appVersion}" />

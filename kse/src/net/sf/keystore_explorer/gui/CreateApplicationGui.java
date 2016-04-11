@@ -45,8 +45,6 @@ import net.sf.keystore_explorer.gui.actions.CheckUpdateAction;
 import net.sf.keystore_explorer.gui.crypto.DUpgradeCryptoStrength;
 import net.sf.keystore_explorer.gui.dnd.DroppedFileHandler;
 import net.sf.keystore_explorer.gui.error.DError;
-import net.sf.keystore_explorer.gui.error.DProblem;
-import net.sf.keystore_explorer.gui.error.Problem;
 import net.sf.keystore_explorer.utilities.net.URLs;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.JavaVersion;
@@ -58,8 +56,6 @@ import net.sf.keystore_explorer.version.VersionException;
  */
 public class CreateApplicationGui implements Runnable {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
-
-	private static final String UPGRADE_ASSISTANT_EXE = "CryptoUpgradeAssistant.exe";
 
 	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_160;
 	private ApplicationSettings applicationSettings;
@@ -245,57 +241,27 @@ public class CreateApplicationGui implements Runnable {
 		JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.UpgradeRequired.message"),
 				KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
-		File cuaExe = determinePathToCryptoPolicyUpgradeAssistantExe();
+		DUpgradeCryptoStrength dUpgradeCryptoStrength = new DUpgradeCryptoStrength(new JFrame());
+		dUpgradeCryptoStrength.setLocationRelativeTo(null);
+		dUpgradeCryptoStrength.setVisible(true);
 
-		// if on windows, start upgrade assistant with elevated permissions
-		if (OperatingSystem.isWindows() && cuaExe.exists()) {
+		if (dUpgradeCryptoStrength.hasCryptoStrengthBeenUpgraded()) {
+			// Crypto strength upgraded - restart required to take effect
+			JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.Upgraded.message"),
+					KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
-			// cmd.exe is workaround for http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6410605
-			String toExec[] = new String[]{"cmd.exe", "/C", cuaExe.getPath()};
-
-			try {
-				Process process = Runtime.getRuntime().exec(toExec);
-			} catch (Exception ex) {
-				Problem problem = new Problem("Cannot run Crypto Strength Upgrade Assistant.", null, ex);
-				JFrame frame = new JFrame();
-				DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCrl.Title"),
-						problem);
-				dProblem.setLocationRelativeTo(frame);
-				dProblem.setVisible(true);
-			} finally {
-				System.exit(0);
-			}
-
+			KseRestart.restart();
+			System.exit(0);
+		} else if (dUpgradeCryptoStrength.hasCryptoStrengthUpgradeFailed()) {
+			// Manual install instructions have already been displayed
+			System.exit(1);
 		} else {
+			// Crypto strength not upgraded - exit as upgrade required
+			JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.NotUpgraded.message"),
+					KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
 
-			DUpgradeCryptoStrength dUpgradeCryptoStrength = new DUpgradeCryptoStrength(new JFrame());
-			dUpgradeCryptoStrength.setLocationRelativeTo(null);
-			dUpgradeCryptoStrength.setVisible(true);
-
-			if (dUpgradeCryptoStrength.hasCryptoStrengthBeenUpgraded()) {
-				// Crypto strength upgraded - restart required to take effect
-				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.Upgraded.message"),
-						KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-
-				KseRestart.restart();
-				System.exit(0);
-			} else if (dUpgradeCryptoStrength.hasCryptoStrengthUpgradeFailed()) {
-				// Manual install instructions have already been displayed
-				System.exit(1);
-			} else {
-				// Crypto strength not upgraded - exit as upgrade required
-				JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.NotUpgraded.message"),
-						KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
-
-				System.exit(1);
-			}
+			System.exit(1);
 		}
-	}
-
-	private File determinePathToCryptoPolicyUpgradeAssistantExe() {
-		File kseInstallDir = new File(System.getProperty("kse.install.dir"));
-		File cuaExe = new File(kseInstallDir, UPGRADE_ASSISTANT_EXE);
-		return cuaExe;
 	}
 
 	private void integrateWithMacOs(KseFrame kseFrame) throws ClassNotFoundException, SecurityException,

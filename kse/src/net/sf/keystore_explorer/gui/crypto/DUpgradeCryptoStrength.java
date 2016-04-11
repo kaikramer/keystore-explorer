@@ -150,8 +150,8 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		pane.add(jlUpgradeInstructions, "wrap");
 		pane.add(jlDownloadPolicyInstructions, "wrap");
 		pane.add(jbDownloadPolicy, "wrap");
-		pane.add(jlDropPolicyInstructions, "wrap");
-		//pane.add(policyZipDropTarget, "wrap"); // DnD does not work with elevated rights...
+		pane.add(jlDropPolicyInstructions, "split");
+		pane.add(policyZipDropTarget, "gap para, pad para, wrap");
 		pane.add(jbBrowsePolicy, "wrap");
 		pane.add(new JSeparator(), "spanx, growx, wrap para");
 		pane.add(jpButtons, "right, spanx");
