@@ -98,10 +98,8 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 			// TODO handle other flavor types
 
 		} catch (UnsupportedFlavorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// ignore
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -176,7 +174,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 			dProblem.setVisible(true);
 		}
 
-		if ((certs != null) && (certs.length > 0)) {
+		if (certs != null && certs.length > 0) {
 			DViewCertificate dViewCertificate = new DViewCertificate(frame,
 					res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame, DViewCertificate.IMPORT);
 			dViewCertificate.setLocationRelativeTo(frame);

@@ -144,7 +144,6 @@ public class JavaFXFileChooser extends JFileChooser {
 				}
 			});
 		} catch (Exception e) {
-			// TODO: show exception?
 			return JFileChooser.ERROR_OPTION;
 		}
 

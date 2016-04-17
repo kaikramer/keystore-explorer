@@ -118,11 +118,11 @@ public class LnfUtil {
 			lnfClassName = WindowsLookAndFeel.class.getName();
 		} else {
 			String xdgCurrentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
-			if (xdgCurrentDesktop.equalsIgnoreCase("Unity")
-					|| xdgCurrentDesktop.equalsIgnoreCase("XFCE")
-					|| xdgCurrentDesktop.equalsIgnoreCase("GNOME")
-					|| xdgCurrentDesktop.equalsIgnoreCase("X-Cinnamon")
-					|| xdgCurrentDesktop.equalsIgnoreCase("LXDE")
+			if ("Unity".equalsIgnoreCase(xdgCurrentDesktop)
+					|| "XFCE".equalsIgnoreCase(xdgCurrentDesktop)
+					|| "GNOME".equalsIgnoreCase(xdgCurrentDesktop)
+					|| "X-Cinnamon".equalsIgnoreCase(xdgCurrentDesktop)
+					|| "LXDE".equalsIgnoreCase(xdgCurrentDesktop)
 					) {
 				lnfClassName = UIManager.getSystemLookAndFeelClassName();
 			} else {

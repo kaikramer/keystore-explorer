@@ -232,7 +232,6 @@ public final class KeyPairUtil {
 					BigInteger modulus = keySpec.getModulus();
 					return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
 				} else {
-					// TODO handle P11 keys!
 					return new KeyInfo(ASYMMETRIC, algorithm, 0);
 				}
 			} else if (algorithm.equals(DSA.jce())) {

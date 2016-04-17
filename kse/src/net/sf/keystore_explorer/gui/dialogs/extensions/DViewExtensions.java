@@ -378,7 +378,6 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 					}
 				}
 			} catch (Exception ex) {
-				// TODO
 				ex.printStackTrace();
 			}
 		}

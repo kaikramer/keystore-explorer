@@ -81,7 +81,7 @@ public class KSE {
 			// To take affect these must be set before the splash sceen is instantiated
 			if (OperatingSystem.isMacOs()) {
 				setAppleSystemProperties();
-			} else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8()) {
+			} else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8() || OperatingSystem.isWindows10()) {
 				String appId = props.getString("KSE.AppUserModelId");
 				Shell32 shell32 = (Shell32) Native.loadLibrary("shell32", Shell32.class);
 				shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();

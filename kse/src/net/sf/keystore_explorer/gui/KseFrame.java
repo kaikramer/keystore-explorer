@@ -442,8 +442,8 @@ public final class KseFrame implements StatusBar {
 	private final HelpAction helpAction = new HelpAction(this);
 	private final TipOfTheDayAction tipOfTheDayAction = new TipOfTheDayAction(this);
 	private final WebsiteAction websiteAction = new WebsiteAction(this, WebsiteAction.Target.MAIN);
-	private final WebsiteAction sfProjectSiteAction = new WebsiteAction(this, WebsiteAction.Target.GITHUB);
-	private final WebsiteAction sfBugsAction = new WebsiteAction(this, WebsiteAction.Target.ISSUE_TRACKER);
+	private final WebsiteAction gitHubProjectSiteAction = new WebsiteAction(this, WebsiteAction.Target.GITHUB);
+	private final WebsiteAction gitHubIssueTrackerAction = new WebsiteAction(this, WebsiteAction.Target.ISSUE_TRACKER);
 	private final CheckUpdateAction checkUpdateAction = new CheckUpdateAction(this);
 	private final SecurityProvidersAction securityProvidersAction = new SecurityProvidersAction(this);
 	private final CryptographyStrengthAction cryptographyStrengthAction = new CryptographyStrengthAction(this);
@@ -992,16 +992,16 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiWebsite, (String) websiteAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmOnlineResources.add(jmiWebsite);
 
-		jmiSourceforge = new JMenuItem(sfProjectSiteAction);
+		jmiSourceforge = new JMenuItem(gitHubProjectSiteAction);
 		PlatformUtil.setMnemonic(jmiSourceforge, res.getString("KseFrame.jmiSourceforge.mnemonic").charAt(0));
 		jmiSourceforge.setToolTipText(null);
-		new StatusBarChangeHandler(jmiSourceforge, (String) sfProjectSiteAction.getValue(Action.LONG_DESCRIPTION), this);
+		new StatusBarChangeHandler(jmiSourceforge, (String) gitHubProjectSiteAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmOnlineResources.add(jmiSourceforge);
 
-		jmiSfBugs = new JMenuItem(sfBugsAction);
+		jmiSfBugs = new JMenuItem(gitHubIssueTrackerAction);
 		PlatformUtil.setMnemonic(jmiSfBugs, res.getString("KseFrame.jmiSfBugs.mnemonic").charAt(0));
 		jmiSfBugs.setToolTipText(null);
-		new StatusBarChangeHandler(jmiSfBugs, (String) sfBugsAction.getValue(Action.LONG_DESCRIPTION), this);
+		new StatusBarChangeHandler(jmiSfBugs, (String) gitHubIssueTrackerAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmOnlineResources.add(jmiSfBugs);
 
 		jmiCheckUpdate = new JMenuItem(checkUpdateAction);
@@ -2536,8 +2536,12 @@ public final class KseFrame implements StatusBar {
 			setKeyPasswordAction.setEnabled(true);
 		}
 
-		// Special restrictions for MSCAPI type
-		if (type == KeyStoreType.MS_CAPI_PERSONAL) {
+		// Special restrictions for MSCAPI and PKCS#11 type
+		if (type == KeyStoreType.MS_CAPI_PERSONAL || type == KeyStoreType.PKCS11) {
+
+			keyPairPrivateKeyDetailsAction.setEnabled(false);
+			keyDetailsAction.setEnabled(false);
+
 			renameKeyAction.setEnabled(false);
 			renameKeyPairAction.setEnabled(false);
 			renameTrustedCertificateAction.setEnabled(false);

@@ -81,12 +81,10 @@ public class TimeStampingClient {
 			// process response
 			response = new TimeStampResponse(respBytes);
 
-			// TODO check nonce
-
 			// validate communication level attributes (RFC 3161 PKIStatus)
 			response.validate(request);
 			PKIFailureInfo failure = response.getFailInfo();
-			int value = (failure == null) ? 0 : failure.intValue();
+			int value = failure == null ? 0 : failure.intValue();
 			if (value != 0) {
 				throw new IOException("Server returned error code: " + String.valueOf(value));
 			}
