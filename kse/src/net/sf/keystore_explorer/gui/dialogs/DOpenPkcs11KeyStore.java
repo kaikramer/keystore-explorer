@@ -49,12 +49,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
+import net.sf.keystore_explorer.ApplicationSettings;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
@@ -73,6 +73,8 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
+	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
 	private JRadioButton jrbUseExisting;
@@ -81,7 +83,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 	private JRadioButton jrbCreateNew;
 	private JLabel jlP11Library;
-	private JTextField jtfP11Library;
+	private JComboBox<String> jtfP11Library;
 	private JButton jbP11LibraryBrowse;
 	private JLabel jlSlotListIndex;
 	private JSpinner jspSlotListIndex;
@@ -134,8 +136,11 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 		jlP11Library = new JLabel(res.getString("DOpenPkcs11KeyStore.jlP11Library.text"));
 
-		jtfP11Library = new JTextField(30);
+		jtfP11Library = new JComboBox<String>();
 		jtfP11Library.setToolTipText(res.getString("DOpenPkcs11KeyStore.jtfP11Library.tooltip"));
+		jtfP11Library.setEditable(true);
+		jtfP11Library.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		jtfP11Library.setModel(new DefaultComboBoxModel<String>(getLibraryList()));
 
 		jbP11LibraryBrowse = new JButton();
 		jbP11LibraryBrowse.setIcon(new ImageIcon(getClass().getResource(res.getString("DOpenPkcs11KeyStore.jbP11LibraryBrowse.image"))));
@@ -233,12 +238,18 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 		return providerNames;
 	}
 
+	private String[] getLibraryList() {
+		String p11Libs = applicationSettings.getP11Libs();
+		String[] libs = p11Libs.split(";");
+		return libs;
+	}
+
 	private void browsePressed() {
 		JFileChooser chooser = FileChooserFactory.getLibFileChooser();
 
-		File currentLibFile = new File(jtfP11Library.getText().trim());
+		File currentLibFile = new File(((String) jtfP11Library.getSelectedItem()).trim());
 
-		if ((currentLibFile.getParentFile() != null) && (currentLibFile.getParentFile().exists())) {
+		if (currentLibFile.getParentFile() != null && currentLibFile.getParentFile().exists()) {
 			chooser.setCurrentDirectory(currentLibFile.getParentFile());
 			chooser.setSelectedFile(currentLibFile);
 		} else {
@@ -252,13 +263,15 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
-			jtfP11Library.setText(chosenFile.toString());
-			jtfP11Library.setCaretPosition(0);
+			String libPath = chosenFile.toString();
+			jtfP11Library.addItem(libPath);
+			jtfP11Library.setSelectedItem(libPath);
 		}
 	}
 
 	private void okPressed() {
 
+		final String selectedLib = ((String) jtfP11Library.getSelectedItem()).trim();
 		try {
 			if (jrbUseExisting.isSelected()) {
 
@@ -272,20 +285,24 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 				}
 			} else {
 
-				if (jtfP11Library.getText().isEmpty()) {
+				if (selectedLib.isEmpty()) {
 					JOptionPane.showMessageDialog(this, res.getString("DOpenPkcs11KeyStore.noLibSelected.message"),
 							getTitle(), JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 
 				String pkcs11ConfigSettings = "name = Slot" + jspSlotListIndex.getValue() + "\n" + "library = "
-						+ jtfP11Library.getText() + "\n" + "slotListIndex = " + jspSlotListIndex.getValue() + "";
+						+ ((String) jtfP11Library.getSelectedItem()).trim() + "\n" + "slotListIndex = "
+						+ jspSlotListIndex.getValue() + "";
 				ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11ConfigSettings.getBytes());
 
 				// instantiate the provider
 				SunPKCS11 pkcs11 = new SunPKCS11(confStream);
 				Security.addProvider(pkcs11);
 				selectedProvider = pkcs11;
+
+				// save library in preferences
+				applicationSettings.addP11Lib(selectedLib);
 			}
 
 			closeDialog();
@@ -295,7 +312,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 				public void run() {
 					if (DOpenPkcs11KeyStore.this.isShowing()) {
 						String problemStr = MessageFormat.format(
-								res.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Problem"), jtfP11Library.getText());
+								res.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Problem"), selectedLib);
 
 						String[] causes = new String[] { res.getString("DOpenPkcs11KeyStore.NotPkcs11Lib.Cause"),
 								res.getString("DOpenPkcs11KeyStore.32with64bit.Cause"),

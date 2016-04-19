@@ -99,6 +99,7 @@ public class ApplicationSettings {
 	private static final String KSE3_AUTO_UPDATE_CHECK_LAST_CHECK = "kse3.autoupdatechecklastcheck";
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL_UNIT = "kse3.autoupdatecheckintervalunit";
+	private static final String KSE3_PKCS11_LIBS = "kse3.autoupdatecheckintervalunit";
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -131,6 +132,7 @@ public class ApplicationSettings {
 	private boolean autoUpdateCheckEnabled;
 	private Date autoUpdateCheckLastCheck;
 	private int autoUpdateCheckInterval;
+	private String p11Libs;
 
 	private ApplicationSettings() {
 
@@ -334,6 +336,9 @@ public class ApplicationSettings {
 		autoUpdateCheckEnabled = preferences.getBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, true);
 		autoUpdateCheckInterval = preferences.getInt(KSE3_AUTO_UPDATE_CHECK_INTERVAL, 14);
 		autoUpdateCheckLastCheck = getDate(preferences, KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, new Date());
+
+		// PKCS#11 libraries
+		p11Libs = preferences.get(KSE3_PKCS11_LIBS, "");
 	}
 
 	private Date getDate(Preferences preferences, String name,  Date def) {
@@ -420,6 +425,9 @@ public class ApplicationSettings {
 		preferences.putBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, isAutoUpdateCheckEnabled());
 		preferences.putInt(KSE3_AUTO_UPDATE_CHECK_INTERVAL, getAutoUpdateCheckInterval());
 		preferences.put(KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, DATE_FORMAT.format(getAutoUpdateCheckLastCheck()));
+
+		// PKCS#11 libraries
+		preferences.put(KSE3_PKCS11_LIBS, getP11Libs());
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
@@ -517,6 +525,20 @@ public class ApplicationSettings {
 		String newSslHosts = StringUtils.addToList(newSslHost, getSslHosts(), 10);
 
 		setSslHosts(newSslHosts);
+	}
+
+	/**
+	 * Add a new PKCS#11 library path host to start of current list of libraries.
+	 *
+	 * Maximum number is 10. If host is already in list, it is brought to the first position.
+	 *
+	 * @param newSslHost New SSL host
+	 */
+	public void addP11Lib(String p11Lib) {
+
+		String newP11Libs = StringUtils.addToList(p11Lib, getP11Libs(), 10);
+
+		setP11Libs(newP11Libs);
 	}
 
 	public boolean getUseCaCertificates() {
@@ -733,5 +755,13 @@ public class ApplicationSettings {
 
 	public void setAutoUpdateCheckInterval(int autoUpdateCheckInterval) {
 		this.autoUpdateCheckInterval = autoUpdateCheckInterval;
+	}
+
+	public String getP11Libs() {
+		return p11Libs;
+	}
+
+	public void setP11Libs(String p11Libs) {
+		this.p11Libs = p11Libs;
 	}
 }
