@@ -104,7 +104,7 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 
 			X509Certificate[] certs = openCaReply();
 
-			if ((certs == null) || (certs.length == 0)) {
+			if (certs == null || certs.length == 0) {
 				return;
 			}
 
@@ -134,18 +134,16 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 					X509Certificate rootCert = certs[certs.length - 1];
 					String matchAlias = null;
 
-					if (caCertificates != null) // Match against CA Certificates KeyStore
-					{
+					if (caCertificates != null) { // Match against CA Certificates KeyStore
 						matchAlias = X509CertUtil.matchCertificate(caCertificates, rootCert);
 					}
 
 					// Match against Windows Trusted Root Certificates KeyStore
-					if ((windowsTrustedRootCertificates != null) && (matchAlias == null)) {
+					if (windowsTrustedRootCertificates != null && matchAlias == null) {
 						matchAlias = X509CertUtil.matchCertificate(windowsTrustedRootCertificates, rootCert);
 					}
 
-					if (matchAlias == null) // Match against current KeyStore
-					{
+					if (matchAlias == null) { // Match against current KeyStore
 						matchAlias = X509CertUtil.matchCertificate(keyStore, rootCert);
 					}
 

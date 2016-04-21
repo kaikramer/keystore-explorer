@@ -57,6 +57,9 @@ import net.sf.keystore_explorer.utilities.net.SystemProxySelector;
  */
 public class ApplicationSettings {
 
+	private static final String PREFS_NODE = "/org/kse";
+	private static final String PREFS_NODE_OLD = "/net/sf/keystore_explorer";
+
 	private static final String KSE3_DEFAULTDN = "kse3.defaultdn";
 	private static final String KSE3_SSLHOSTS = "kse3.sslhosts";
 	private static final String KSE3_SSLPORTS = "kse3.sslports";
@@ -139,12 +142,12 @@ public class ApplicationSettings {
 		// one-time conversion from old to new preferences location:
 		Preferences root = Preferences.userRoot();
 		try {
-			// if preferences exist under /com/lazgosoftware but not under /net/sf/keystore_explorer ...
-			if (root.nodeExists("/com/lazgosoftware") && !root.nodeExists("/net/sf/keystore_explorer")) {
+			// if preferences exist under /net/sf/keystore_explorer but not under /org/kse ...
+			if (root.nodeExists(PREFS_NODE_OLD) && !root.nodeExists(PREFS_NODE)) {
 
 				// ... then copy settings from old to new subtree
-				Preferences prefsOld = root.node("/com/lazgosoftware/utilities/kse");
-				Preferences prefsNew = root.node("/net/sf/keystore_explorer");
+				Preferences prefsOld = root.node(PREFS_NODE_OLD);
+				Preferences prefsNew = root.node(PREFS_NODE);
 
 				for (String key : prefsOld.keys()) {
 					prefsNew.put(key, prefsOld.get(key, ""));
@@ -183,11 +186,7 @@ public class ApplicationSettings {
 		useCaCertificates = preferences.getBoolean(KSE3_USECACERTS, false);
 		String cacertsPath = preferences.get(KSE3_CACERTSFILE,
 				AuthorityCertificates.getDefaultCaCertificatesLocation().toString());
-		try {
-			caCertificatesFile = new File(cacertsPath).getCanonicalFile();
-		} catch (IOException e) {
-			caCertificatesFile = new File(cacertsPath);
-		}
+		caCertificatesFile = cleanFilePath(new File(cacertsPath));
 		useWindowsTrustedRootCertificates = preferences.getBoolean(KSE3_USEWINTRUSTROOTCERTS, false);
 
 		// Trust checks
@@ -303,7 +302,7 @@ public class ApplicationSettings {
 			if (recentFile == null) {
 				break;
 			} else {
-				recentFilesList.add(new File(recentFile));
+				recentFilesList.add(cleanFilePath(new File(recentFile)));
 			}
 		}
 		recentFiles = recentFilesList.toArray(new File[recentFilesList.size()]);
@@ -311,7 +310,7 @@ public class ApplicationSettings {
 		// Current directory
 		String currentDirectoryStr = preferences.get(KSE3_CURRENTDIR, null);
 		if (currentDirectoryStr != null) {
-			currentDirectory = new File(currentDirectoryStr);
+			currentDirectory = cleanFilePath(new File(currentDirectoryStr));
 		}
 
 		// Look and feel
@@ -339,6 +338,14 @@ public class ApplicationSettings {
 
 		// PKCS#11 libraries
 		p11Libs = preferences.get(KSE3_PKCS11_LIBS, "");
+	}
+
+	private File cleanFilePath(File filePath) {
+		try {
+			return filePath.getCanonicalFile();
+		} catch (IOException e) {
+			return filePath;
+		}
 	}
 
 	private Date getDate(Preferences preferences, String name,  Date def) {
@@ -494,7 +501,7 @@ public class ApplicationSettings {
 
 	private Preferences getUnderlyingPreferences() {
 		// Get underlying Java preferences
-		Preferences preferences = Preferences.userNodeForPackage(ApplicationSettings.class);
+		Preferences preferences = Preferences.userRoot().node(PREFS_NODE);
 		return preferences;
 	}
 
