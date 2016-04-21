@@ -24,7 +24,9 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.SplashScreen;
+import java.awt.Toolkit;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
@@ -85,6 +87,8 @@ public class KSE {
 				String appId = props.getString("KSE.AppUserModelId");
 				Shell32 shell32 = (Shell32) Native.loadLibrary("shell32", Shell32.class);
 				shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
+			} else if (OperatingSystem.isLinux()) {
+				 fixAppClassName();
 			}
 
 			setInstallDirProperty();
@@ -111,6 +115,18 @@ public class KSE {
 			dError.setLocationRelativeTo(null);
 			dError.setVisible(true);
 			System.exit(1);
+		}
+	}
+
+	private static void fixAppClassName() {
+		// Fix application name in Gnome top bar, see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6528430
+		Toolkit xToolkit = Toolkit.getDefaultToolkit();
+		try {
+			Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
+			awtAppClassNameField.setAccessible(true);
+			awtAppClassNameField.set(xToolkit, getApplicationName());
+		} catch (Exception x) {
+			// ignore
 		}
 	}
 
