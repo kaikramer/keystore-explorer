@@ -36,4 +36,7 @@ public class URLs {
 	// URL of page that forwards to unlimited strength policy download site for the respective Java version
 	public static final String JCE_POLICY_DOWNLOAD_URL =
 			"http://www.keystore-explorer.org/jcePolicyDownload.php?jreversion={0}";
+
+	// list of contributors
+	public static final String KSE_WEBSITE_CONTRIBUTORS = "http://keystore-explorer.org/contribute.php#contributions";
 }

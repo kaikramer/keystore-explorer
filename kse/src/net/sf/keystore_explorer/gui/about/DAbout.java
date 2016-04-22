@@ -20,26 +20,36 @@
 package net.sf.keystore_explorer.gui.about;
 
 import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.EventQueue;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.KSE;
-import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.LnfUtil;
 import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.actions.AboutAction;
 import net.sf.keystore_explorer.gui.ticker.JTicker;
+import net.sf.keystore_explorer.utilities.net.URLs;
 
 /**
  * An About dialog which displays an image of about information, a ticker for
@@ -62,7 +72,7 @@ public class DAbout extends JEscDialog {
 
 	private JTicker jtkDetails;
 	private JButton jbOK;
-	private JButton jbSystemInformation;
+	private JButton jbCredits;
 
 	/**
 	 * Creates new DAbout dialog.
@@ -109,17 +119,12 @@ public class DAbout extends JEscDialog {
 			}
 		});
 
-		jbSystemInformation = new JButton(res.getString("DAbout.jbSystemInformation.text"));
-		PlatformUtil.setMnemonic(jbSystemInformation, res.getString("DAbout.jbSystemInformation.mnemonic").charAt(0));
-		jbSystemInformation.addActionListener(new ActionListener() {
+		jbCredits = new JButton(res.getString("DAbout.jbCredits.text"));
+		PlatformUtil.setMnemonic(jbCredits, res.getString("DAbout.jbCredits.mnemonic").charAt(0));
+		jbCredits.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAbout.this);
-					showSystemInformation();
-				} finally {
-					CursorUtil.setCursorFree(DAbout.this);
-				}
+				openCreditsPageInBrowser();
 			}
 		});
 
@@ -131,7 +136,7 @@ public class DAbout extends JEscDialog {
 		jpAbout.add(jlLicense, "span, wrap unrel");
 		jpAbout.add(jtkDetails, "width 100%, span, wrap para:push");
 
-		jpAbout.add(jbSystemInformation, "");
+		jpAbout.add(jbCredits, "");
 		jpAbout.add(jbOK, "tag ok");
 
 		addWindowListener(new WindowAdapter() {
@@ -152,10 +157,15 @@ public class DAbout extends JEscDialog {
 		jbOK.requestFocusInWindow();
 	}
 
-	private void showSystemInformation() {
-		DSystemInformation dSystemInformation = new DSystemInformation(this);
-		dSystemInformation.setLocationRelativeTo(this);
-		dSystemInformation.setVisible(true);
+	protected void openCreditsPageInBrowser() {
+		try {
+			Desktop.getDesktop().browse(URI.create(URLs.KSE_WEBSITE_CONTRIBUTORS));
+		} catch (IOException ex) {
+			JOptionPane.showMessageDialog(this,
+							MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"),
+									URLs.KSE_WEBSITE_CONTRIBUTORS),
+							KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
 	private void okPressed() {
@@ -166,5 +176,37 @@ public class DAbout extends JEscDialog {
 		setVisible(false);
 		jtkDetails.stop();
 		dispose();
+	}
+
+
+	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+
+					Object[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2016 Kai Kramer ..." };
+					javax.swing.JFrame frame = new javax.swing.JFrame();
+					URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
+					DAbout dialog = new DAbout(frame, "About", "See help for details of the end user license agreement.",
+							Toolkit.getDefaultToolkit().createImage(kseIconUrl), tickerItems);
+					dialog.setLocationRelativeTo(frame);
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+						@Override
+						public void windowDeactivated(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

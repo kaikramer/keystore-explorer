@@ -166,6 +166,7 @@ import net.sf.keystore_explorer.gui.actions.SignCsrAction;
 import net.sf.keystore_explorer.gui.actions.SignJarAction;
 import net.sf.keystore_explorer.gui.actions.SignMidletAction;
 import net.sf.keystore_explorer.gui.actions.SignNewKeyPairAction;
+import net.sf.keystore_explorer.gui.actions.SystemInformationAction;
 import net.sf.keystore_explorer.gui.actions.TabStyleScrollAction;
 import net.sf.keystore_explorer.gui.actions.TabStyleWrapAction;
 import net.sf.keystore_explorer.gui.actions.TipOfTheDayAction;
@@ -277,6 +278,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiSfBugs;
 	private JMenuItem jmiCheckUpdate;
 	private JMenuItem jmiSecurityProviders;
+	private JMenuItem jmiSystemInformation;
 	private JMenuItem jmiCryptographyStrength;
 	private JMenuItem jmiJars;
 	private JMenuItem jmiAbout;
@@ -446,6 +448,7 @@ public final class KseFrame implements StatusBar {
 	private final WebsiteAction gitHubIssueTrackerAction = new WebsiteAction(this, WebsiteAction.Target.ISSUE_TRACKER);
 	private final CheckUpdateAction checkUpdateAction = new CheckUpdateAction(this);
 	private final SecurityProvidersAction securityProvidersAction = new SecurityProvidersAction(this);
+	private final SystemInformationAction systemInformationAction = new SystemInformationAction(this);
 	private final CryptographyStrengthAction cryptographyStrengthAction = new CryptographyStrengthAction(this);
 	private final JarsAction jarsAction = new JarsAction(this);
 	private final AboutAction aboutAction = new AboutAction(this);
@@ -1034,6 +1037,14 @@ public final class KseFrame implements StatusBar {
 		jmiJars.setToolTipText(null);
 		new StatusBarChangeHandler(jmiJars, (String) jarsAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmHelp.add(jmiJars);
+
+		jmiSystemInformation = new JMenuItem(systemInformationAction);
+		PlatformUtil.setMnemonic(jmiSystemInformation, res.getString("KseFrame.jmiSystemInformation.mnemonic")
+				.charAt(0));
+		jmiSystemInformation.setToolTipText(null);
+		new StatusBarChangeHandler(jmiSystemInformation,
+				(String) systemInformationAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmHelp.add(jmiSystemInformation);
 
 		if (!OperatingSystem.isMacOs()) {
 			jmHelp.addSeparator();

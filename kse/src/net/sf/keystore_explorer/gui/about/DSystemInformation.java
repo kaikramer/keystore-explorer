@@ -38,6 +38,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -91,13 +92,14 @@ public class DSystemInformation extends JEscDialog {
 	private Thread memoryUpdater;
 
 	/**
-	 * Creates new DSystemInformation dialog where the parent is a dialog.
+	 * Creates new DSystemInformation dialog where the parent is a frame.
 	 *  @param parent
 	 *            Parent dialog
 	 *
 	 */
-	public DSystemInformation(JDialog parent) {
-		this(parent, res.getString("DSystemInformation.Title"), ModalityType.DOCUMENT_MODAL);
+	public DSystemInformation(JFrame parent) {
+		super(parent, res.getString("DSystemInformation.Title"), ModalityType.DOCUMENT_MODAL);
+		initComponents();
 	}
 
 	/**
@@ -379,7 +381,7 @@ public class DSystemInformation extends JEscDialog {
 	}
 
 	private void stopMemoryUpdater() {
-		if ((memoryUpdater != null) && (memoryUpdater.isAlive())) {
+		if (memoryUpdater != null && memoryUpdater.isAlive()) {
 			memoryUpdater.interrupt();
 		}
 	}
