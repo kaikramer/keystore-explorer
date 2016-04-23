@@ -33,6 +33,7 @@ import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ResourceBundle;
 
@@ -120,7 +121,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 	 * @param rsaPrivateKey
 	 *            RSA private key to display fields of
 	 */
-	public DViewAsymmetricKeyFields(JDialog parent, String title, RSAPrivateCrtKey rsaPrivateKey) {
+	public DViewAsymmetricKeyFields(JDialog parent, String title, RSAPrivateKey rsaPrivateKey) {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		key = rsaPrivateKey;
 		initFields();
@@ -271,6 +272,14 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 							rsaPvk.getPrimeExponentQ()),
 					new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaCrtCoefficient.text"),
 							rsaPvk.getCrtCoefficient()),
+					new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrivateExponent.text"),
+							rsaPvk.getPrivateExponent()) };
+		} else if (key instanceof RSAPrivateKey) {
+			RSAPrivateKey rsaPvk = (RSAPrivateKey) key;
+
+			fields = new Field[] {
+					new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaModulus.text"),
+							rsaPvk.getModulus()),
 					new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrivateExponent.text"),
 							rsaPvk.getPrivateExponent()) };
 		} else if (key instanceof DSAPrivateKey) {

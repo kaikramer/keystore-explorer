@@ -34,6 +34,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -275,7 +276,7 @@ public class DViewPrivateKey extends JEscDialog {
 		jtfEncoded.setText("0x" + new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase());
 		jtfEncoded.setCaretPosition(0);
 
-		if ((privateKey instanceof RSAPrivateCrtKey) || (privateKey instanceof DSAPrivateKey)) {
+		if ((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)) {
 			jbFields.setEnabled(true);
 		} else {
 			jbFields.setEnabled(false);
@@ -283,8 +284,8 @@ public class DViewPrivateKey extends JEscDialog {
 	}
 
 	private void fieldsPressed() {
-		if (privateKey instanceof RSAPrivateCrtKey) {
-			RSAPrivateCrtKey rsaPvk = (RSAPrivateCrtKey) privateKey;
+		if (privateKey instanceof RSAPrivateKey) {
+			RSAPrivateKey rsaPvk = (RSAPrivateKey) privateKey;
 
 			DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this,
 					res.getString("DViewPrivateKey.RsaFields.Title"), rsaPvk);
