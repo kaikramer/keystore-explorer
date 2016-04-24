@@ -5,7 +5,7 @@
 %define get_property() xmllint --xpath 'string(//property[@name="%1"]/@value)' %2
 
 %define major 1
-%define gitversion 20160329
+%define gitversion 20160424
 %define rel 1
 
 %if 0%{?gitversion}
@@ -100,7 +100,7 @@ main_class=`%get_property mainClass build.xml`
 %{__install} -d -m755 %{buildroot}%{_datadir}/applications
 %{__install} -Dpm 644 res/%{name}.desktop %{buildroot}%{_datadir}/applications/
 
-for size in 16 32 48 128; do
+for size in 16 32 48 128 256 512; do
 	%{__install} -Dpm 644 res/icons/%{sname}_${size}.png \
 		%{buildroot}%{_datadir}/icons/hicolor/${size}x${size}/apps/%{name}.png
 done
@@ -124,7 +124,9 @@ desktop-file-install \
 
 
 %changelog
-
+* Sun Apr 24 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160424.1
+- Git snapshot of April 24th 2016
+- Add 256x256 pixel an 512x512 pixel icons
 
 * Tue Mar 29 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160329.1
 - Git snapshot of March 29th 2016
