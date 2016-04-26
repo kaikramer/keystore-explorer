@@ -1,7 +1,6 @@
 %global bcver 1.52
 %global sname kse
 %global libs "bcprov bcpkix commons-io jgoodies-common jgoodies-looks jna javahelp2 miglayout-core miglayout-swing"
-%global all_jars %libs %name
 %define get_property() xmllint --xpath 'string(//property[@name="%1"]/@value)' %2
 
 %define major 1
@@ -76,9 +75,12 @@ pushd %{sname}
 
 %build
 pushd %{sname}
-build-jar-repository -p lib %{libs}
+#build-jar-repository -p lib %{libs}
 
-%ant -DappSimpleName=%{name} -DjavaHelp=javahelp2 resources jar
+classPath=`echo %{libs} | sed -re 's|(\S+)|\1.jar|g'`
+
+%ant -DappSimpleName=%{name} -DjavaHelp=javahelp2 -DlibDir=%{_javadir} \
+ -DclassPath="$classPath" resources jar
 
 
 %install
@@ -88,14 +90,7 @@ pushd %{sname}
 %{__install} -Dpm 644 dist/%{name}.jar %{buildroot}%{_javadir}/
 
 %{__install} -d -m755 %{buildroot}%{_bindir}
-# We now prefer %%jpackage_script,
-# but alternately this ant generated file is still available
-#%%{__install} -Dpm 755 res/%{name} %{buildroot}%{_bindir}/
-
-# Use macro %%jpackage_script to generate wrapper script and get the main class
-# name from the build.xml file using xmllint
-main_class=`%get_property mainClass build.xml`
-%jpackage_script "${main_class}" "" "-Dkse.update.disabled=true" "%{all_jars}" %{name} true
+%{__install} -Dpm 755 res/%{name} %{buildroot}%{_bindir}/
 
 %{__install} -d -m755 %{buildroot}%{_datadir}/applications
 %{__install} -Dpm 644 res/%{name}.desktop %{buildroot}%{_datadir}/applications/
@@ -124,6 +119,17 @@ desktop-file-install \
 
 
 %changelog
+* Tue Apr 26 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160426.1
+- Add unless:set="classPath" in the build.xml manifestclasspath tag to be able
+ to set the classpath in the manifest at build time
+- Set the manifest classpath at build time to correct its bad values (remove the
+ lib directory) to be able to start KSE in jar mode (java -jar)
+- Rework the template start up script to start KSE in jar mode to able to see
+ the splash screen that was not visible with jpackage_script
+- Drop the %{jpackage_script} macro in favor of our template start up script
+- Clean up the deps and the spec file: remove our get_property() macro and 
+ the libxml2-utils build requirement.
+
 * Sun Apr 24 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160424.1
 - Git snapshot of April 24th 2016
 - Add 256x256 pixel an 512x512 pixel icons
