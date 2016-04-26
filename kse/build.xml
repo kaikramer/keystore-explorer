@@ -270,14 +270,12 @@
 				<include name="**/*.png" />
 				<include name="**/*.xml" />
 				<include name="**/*.html" />
-				<include name="**/kse.hs" />
-				<!-- javahelp -->
-				<include name="**/kseMap.jhm" />
-				<!-- javahelp -->
-				<include name="**/contents" />
-				<!-- javahelp -->
-				<include name="**/*.css" />
 				<include name="**/*.properties" />
+				<!-- javahelp -->
+				<include name="**/*.hs" />
+				<include name="**/*.jhm" />
+				<include name="**/contents" />
+				<include name="**/*.css" />
 				<exclude name="**/*.java" />
 				<exclude name="**/package.html" />
 			</fileset>
