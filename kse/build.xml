@@ -247,7 +247,7 @@
 		</tstamp>
 
 		<!-- KSE jar -->
-		<manifestclasspath property="classPath" jarfile="${jar}">
+		<manifestclasspath property="classPath" jarfile="${jar}" unless:set="classPath" maxParentLevels="1">
 			<classpath refid="distClasspath" />
 		</manifestclasspath>
 		<manifest file="${mfFile}">
