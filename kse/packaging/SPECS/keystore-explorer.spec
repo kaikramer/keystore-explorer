@@ -4,7 +4,7 @@
 %define get_property() xmllint --xpath 'string(//property[@name="%1"]/@value)' %2
 
 %define major 1
-%define gitversion 20160424
+%define gitversion 20160427
 %define rel 1
 
 %if 0%{?gitversion}
@@ -119,7 +119,7 @@ desktop-file-install \
 
 
 %changelog
-* Tue Apr 26 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160426.1
+* Tue Apr 26 2016 Davy Defaud <davy.defaud@free.fr> 5.2.0-0.git20160427.1
 - Add unless:set="classPath" in the build.xml manifestclasspath tag to be able
  to set the classpath in the manifest at build time
 - Set the manifest classpath at build time to correct its bad values (remove the
