@@ -41,6 +41,8 @@
         <tocitem text="Open an Exisiting KeyStore" target="openExistingKeyStore" />
         <tocitem text="Open the Default KeyStore" target="openDefaultKeyStore" />
         <tocitem text="Open the CA Certificates KeyStore" target="openCaCertificatesKeyStore" />
+        <tocitem text="Open a PKCS#11 KeyStore" target="openPKCS11KeyStore" />
+        <tocitem text="Open the Windows User KeyStore" target="openMSCAPIKeyStore" />
         <tocitem text="Close a KeyStore" target="closeKeyStore" />
         <tocitem text="Close All KeyStores" target="closeAllKeyStores" />
         <tocitem text="Save a KeyStore" target="saveKeyStore" />

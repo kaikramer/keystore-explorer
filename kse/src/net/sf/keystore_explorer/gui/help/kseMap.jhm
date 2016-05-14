@@ -47,6 +47,8 @@
     <mapID target="openExistingKeyStore" url="openExistingKeyStore.html" />
     <mapID target="openDefaultKeyStore" url="openDefaultKeyStore.html" />
     <mapID target="openCaCertificatesKeyStore" url="openCaCertificatesKeyStore.html" />
+    <mapID target="openMSCAPIKeyStore" url="openMSCAPIKeyStore.html" />
+    <mapID target="openPKCS11KeyStore" url="openPKCS11KeyStore.html" />
     <mapID target="closeKeyStore" url="closeKeyStore.html" />
     <mapID target="closeAllKeyStores" url="closeAllKeyStores.html" />
     <mapID target="saveKeyStore" url="saveKeyStore.html" />
