@@ -80,7 +80,7 @@ public class KSE {
 	 */
 	public static void main(String args[]) {
 		try {
-			// To take affect these must be set before the splash sceen is instantiated
+			// To take affect these must be set before the splash screen is instantiated
 			if (OperatingSystem.isMacOs()) {
 				setAppleSystemProperties();
 			} else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8() || OperatingSystem.isWindows10()) {
@@ -102,9 +102,13 @@ public class KSE {
 			updateSplashMessage(splash, res.getString("KSE.InitializingSecurity.splash.message"));
 			initialiseSecurity();
 
+			// list of files to open after start
 			List<File> parameterFiles = new ArrayList<File>();
 			for (String arg : args) {
-				parameterFiles.add(new File(arg));
+				File parameterFile = new File(arg);
+				if (parameterFile.exists()) {
+					parameterFiles.add(parameterFile);
+				}
 			}
 
 			// Create application GUI on the event handler thread
