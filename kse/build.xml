@@ -240,7 +240,7 @@
 		</java>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="jar" depends="compile, help">
 
 		<tstamp>
 			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
@@ -283,7 +283,7 @@
 	</target>
 
 
-	<target name="package" depends="launch4j, help" description="Create source and manual install ZIP files">
+	<target name="package" depends="launch4j" description="Create source and manual install ZIP files">
 
 		<delete file="${mfFile}" />
 
