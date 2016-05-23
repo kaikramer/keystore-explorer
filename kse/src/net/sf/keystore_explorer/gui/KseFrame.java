@@ -2440,7 +2440,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	/**
-	 * Update the frame's controls dependant on the state of its open and active
+	 * Update the frame's controls dependent on the state of its open and active
 	 * KeyStores.
 	 *
 	 * @param keyStoreContentsChanged
@@ -2566,6 +2566,22 @@ public final class KseFrame implements StatusBar {
 
 			// "UnsupportedOperationException" ...
 			jmKeyPairImportCaReply.setEnabled(false);
+		} else {
+			keyPairPrivateKeyDetailsAction.setEnabled(true);
+			keyDetailsAction.setEnabled(true);
+
+			renameKeyAction.setEnabled(true);
+			renameKeyPairAction.setEnabled(true);
+			renameTrustedCertificateAction.setEnabled(true);
+
+			exportKeyPairAction.setEnabled(true);
+			exportKeyPairPrivateKeyAction.setEnabled(true);
+
+			jmKeyPairEditCertChain.setEnabled(true);
+			appendToCertificateChainAction.setEnabled(true);
+			removeFromCertificateChainAction.setEnabled(true);
+
+			jmKeyPairImportCaReply.setEnabled(true);
 		}
 
 		// KeyStore type menu items
