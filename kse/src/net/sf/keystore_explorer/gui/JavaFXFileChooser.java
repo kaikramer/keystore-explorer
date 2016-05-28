@@ -173,11 +173,16 @@ public class JavaFXFileChooser extends JFileChooser {
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, IllegalAccessException,
 	IllegalArgumentException, InvocationTargetException {
 
+		if (!fxAvailable) {
+			System.out.println("JavaFX not available");
+			System.exit(1);
+		}
+
 		JavaFXFileChooser chooser = new JavaFXFileChooser();
 		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { ".jks" }, "Description1"));
 		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { ".p12" }, "Description2"));
 		chooser.setDialogTitle("Dialog Titel");
-		chooser.setCurrentDirectory(new File("F:/tmp"));
+		chooser.setCurrentDirectory(new File("."));
 		chooser.setSelectedFile(new File(""));
 		chooser.setMultiSelectionEnabled(false);
 		chooser.showDialog(null, "Button Text");

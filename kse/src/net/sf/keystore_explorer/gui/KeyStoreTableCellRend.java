@@ -210,8 +210,10 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 		}
 		// Alias column - just use alias text
 		else {
-			cell.setText(value.toString());
-			cell.setToolTipText(getText());
+			if (value != null) {
+				cell.setText(value.toString());
+				cell.setToolTipText(getText());
+			}
 		}
 
 		return cell;
