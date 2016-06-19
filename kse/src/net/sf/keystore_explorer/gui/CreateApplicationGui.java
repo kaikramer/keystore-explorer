@@ -99,6 +99,11 @@ public class CreateApplicationGui implements Runnable {
 
 			final KseFrame kseFrame = new KseFrame();
 
+			// workaround to a bug in initializing JEditorPane that seems to be a 1-in-10000 problem
+			if (Thread.currentThread().getContextClassLoader() == null) {
+				Thread.currentThread().setContextClassLoader(ClassLoader.getSystemClassLoader());
+			}
+
 			if (OperatingSystem.isMacOs()) {
 				integrateWithMacOs(kseFrame);
 			}

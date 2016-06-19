@@ -50,6 +50,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.text.html.HTMLEditorKit;
 
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.JEscDialog;
@@ -131,7 +132,11 @@ public class DTipOfTheDay extends JEscDialog {
 
 		jpTipHeader.add(jlTipHeader);
 
-		jepTip = new JEditorPane("text/html", getCurrentTip());
+		jepTip = new JEditorPane();
+		// workaround for rare NPE, see https://community.oracle.com/thread/1478325?start=0&tstart=0
+		jepTip.setEditorKit(new HTMLEditorKit());
+		jepTip.setContentType("text/html");
+		jepTip.setText(getCurrentTip());
 		jepTip.setEditable(false);
 		jepTip.setBackground(Color.WHITE);
 		jepTip.setCaretPosition(0);
@@ -266,7 +271,7 @@ public class DTipOfTheDay extends JEscDialog {
 	}
 
 	private String getNextTip() {
-		if ((tipIndex + 1) >= tipsText.length) {
+		if (tipIndex + 1 >= tipsText.length) {
 			tipIndex = 0;
 		} else {
 			tipIndex++;
@@ -276,7 +281,7 @@ public class DTipOfTheDay extends JEscDialog {
 	}
 
 	private String getPreviousTip() {
-		if ((tipIndex - 1) < 0) {
+		if (tipIndex - 1 < 0) {
 			tipIndex = tipsText.length - 1;
 		} else {
 			tipIndex--;
@@ -286,7 +291,7 @@ public class DTipOfTheDay extends JEscDialog {
 	}
 
 	private String getCurrentTip() {
-		if ((tipIndex < 0) || (tipIndex >= tipsText.length)) {
+		if (tipIndex < 0 || tipIndex >= tipsText.length) {
 			tipIndex = 0;
 		}
 
@@ -308,7 +313,7 @@ public class DTipOfTheDay extends JEscDialog {
 	 * @return Tip index
 	 */
 	public int nextTipIndex() {
-		if ((tipIndex + 1) >= tipsText.length) {
+		if (tipIndex + 1 >= tipsText.length) {
 			return 0;
 		}
 
