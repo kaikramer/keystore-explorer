@@ -1099,7 +1099,7 @@ public class X509Ext {
 
 					sb.append(INDENT);
 					sb.append(INDENT);
-					sb.append(MessageFormat.format(res.getString("Minimum"), maximumInt));
+					sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
 					sb.append(NEWLINE);
 				}
 			}
@@ -1149,12 +1149,15 @@ public class X509Ext {
 				sb.append(NEWLINE);
 
 				BigInteger maximum = excludedSubtree.getMaximum();
-				int maximumInt = maximum.intValue();
 
-				sb.append(INDENT);
-				sb.append(INDENT);
-				sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
-				sb.append(NEWLINE);
+				if (maximum != null) {
+					int maximumInt = maximum.intValue();
+
+					sb.append(INDENT);
+					sb.append(INDENT);
+					sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
+					sb.append(NEWLINE);
+				}
 			}
 		}
 
