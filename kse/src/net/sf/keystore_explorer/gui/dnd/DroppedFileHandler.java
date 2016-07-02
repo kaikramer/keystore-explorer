@@ -40,25 +40,37 @@ public class DroppedFileHandler {
 		evt.acceptDrop(DnDConstants.ACTION_MOVE);
 		Transferable trans = evt.getTransferable();
 
-		if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-			try {
+		try {
+			if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 
-				@SuppressWarnings("unchecked")
-				final List<File> droppedFiles = (List<File>) trans.getTransferData(DataFlavor.javaFileListFlavor);
+					@SuppressWarnings("unchecked")
+					final List<File> droppedFiles = (List<File>) trans.getTransferData(DataFlavor.javaFileListFlavor);
 
-				// open files in new thread, so we can return quickly
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						openFiles(kseFrame, droppedFiles);
-					}
-				});
+					// open files in new thread, so we can return quickly
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							openFiles(kseFrame, droppedFiles);
+						}
+					});
 
-			} catch (IOException e) {
-				DError.displayError(kseFrame.getUnderlyingFrame(), e);
-			} catch (UnsupportedFlavorException e) {
-				DError.displayError(kseFrame.getUnderlyingFrame(), e);
 			}
+/*			TODO
+				else if (trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				String str = trans.getTransferData(DataFlavor.stringFlavor).toString();
+				X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toInputStream(str, "UTF-8"));
+				if ((certs != null) && (certs.length > 0)) {
+					DViewCertificate dViewCertificate = new DViewCertificate(kseFrame.getUnderlyingFrame(),
+							MessageFormat.format("Title", ""), certs, kseFrame, DViewCertificate.IMPORT);
+					dViewCertificate.setLocationRelativeTo(kseFrame.getUnderlyingFrame());
+					dViewCertificate.setVisible(true);
+				}
+			}
+*/
+		} catch (IOException e) {
+			DError.displayError(kseFrame.getUnderlyingFrame(), e);
+		} catch (UnsupportedFlavorException e) {
+			DError.displayError(kseFrame.getUnderlyingFrame(), e);
 		}
 	}
 
