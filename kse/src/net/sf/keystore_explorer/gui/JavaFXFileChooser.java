@@ -15,6 +15,8 @@ import java.util.concurrent.FutureTask;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import net.sf.keystore_explorer.utilities.os.OperatingSystem;
+
 public class JavaFXFileChooser extends JFileChooser {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
@@ -31,12 +33,15 @@ public class JavaFXFileChooser extends JFileChooser {
 	static {
 		// check for availability and initialize javafx thread
 		try {
-			Class.forName("javafx.embed.swing.JFXPanel").getConstructor().newInstance();
-			platformClass = Class.forName("javafx.application.Platform");
-			fileChooserClass = Class.forName("javafx.stage.FileChooser");
-			extensionFilterClass = Class.forName("javafx.stage.FileChooser$ExtensionFilter");
-			windowClass = Class.forName("javafx.stage.Window");
-			fxAvailable = true;
+			// disabled for Mac OS because there are incompatibilities between JavaFX file chooser and some mac tools
+			if (!OperatingSystem.isMacOs()) {
+				Class.forName("javafx.embed.swing.JFXPanel").getConstructor().newInstance();
+				platformClass = Class.forName("javafx.application.Platform");
+				fileChooserClass = Class.forName("javafx.stage.FileChooser");
+				extensionFilterClass = Class.forName("javafx.stage.FileChooser$ExtensionFilter");
+				windowClass = Class.forName("javafx.stage.Window");
+				fxAvailable = true;
+			}
 		} catch (Exception e) {
 			fxAvailable = false;
 		}
