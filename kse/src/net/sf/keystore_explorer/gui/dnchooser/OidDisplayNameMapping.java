@@ -1,3 +1,22 @@
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 - 2016 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.sf.keystore_explorer.gui.dnchooser;
 
 import java.util.HashMap;
@@ -8,6 +27,7 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 
 public class OidDisplayNameMapping {
 
+	// TODO use resource bundle for display names
 	private static final String DC = "Domain Component (DC):";
 	private static final String SURNAME = "Surname (SURNAME):";
 	private static final String GIVENNAME = "Given Name (GN):";
