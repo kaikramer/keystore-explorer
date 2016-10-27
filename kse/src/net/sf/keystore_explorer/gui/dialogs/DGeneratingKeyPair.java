@@ -103,10 +103,11 @@ public class DGeneratingKeyPair extends JEscDialog {
 	 * @param curveName
 	 *            The name of the curve to create
 	 */
-	public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, String curveName) {
+	public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, String curveName, Provider provider) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keyPairType = keyPairType;
 		this.curveName = curveName;
+		this.provider = provider;
 		initComponents();
 	}
 
@@ -205,9 +206,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 				if (keyPairType != KeyPairType.EC) {
 					keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, provider);
 				} else {
-
-					// TODO handle hardware providers
-					keyPair = KeyPairUtil.generateECKeyPair(curveName);
+					keyPair = KeyPairUtil.generateECKeyPair(curveName, provider);
 				}
 
 				SwingUtilities.invokeLater(new Runnable() {

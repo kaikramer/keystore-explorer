@@ -154,14 +154,20 @@ public final class KeyPairUtil {
 	 *
 	 * @param curveName
 	 *            Name of the ECC curve
+	 * @param provider A JCE provider.
 	 * @return A key pair
 	 * @throws CryptoException
 	 *             If there was a problem generating the key pair
 	 */
-	public static KeyPair generateECKeyPair(String curveName) throws CryptoException {
+	public static KeyPair generateECKeyPair(String curveName, Provider provider) throws CryptoException {
 		try {
 			// Get a key pair generator
-			KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
+			KeyPairGenerator keyPairGen;
+			if (provider != null) {
+				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
+			} else {
+				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
+			}
 
 			keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
 
