@@ -46,7 +46,8 @@ public enum KeyStoreType {
 	KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
 	MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
 	MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
-	PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null);
+	PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
+	SC_HSM("SmartCardHSMKeyStore", "KeyStoreType.SmartCardHSM", false, null);
 
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/crypto/keystore/resources");
 	private String jce;
@@ -94,7 +95,7 @@ public enum KeyStoreType {
 	 * @return True if it has, false otherwise
 	 */
 	public boolean hasEntryPasswords() {
-		return this != PKCS11 && this != MS_CAPI_PERSONAL;
+		return this != PKCS11 && this != MS_CAPI_PERSONAL && this != SC_HSM;
 	}
 
 	/**
