@@ -2536,7 +2536,11 @@ public final class KseFrame implements StatusBar {
 		generateKeyPairAction.setEnabled(true);
 		generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
 		importTrustedCertificateAction.setEnabled(true);
-		importKeyPairAction.setEnabled(true);
+		
+		if (type != KeyStoreType.SC_HSM) {
+			importKeyPairAction.setEnabled(true);
+		}
+		
 		propertiesAction.setEnabled(true);
 		if (type.isFileBased()) {
 			setPasswordAction.setEnabled(true);
