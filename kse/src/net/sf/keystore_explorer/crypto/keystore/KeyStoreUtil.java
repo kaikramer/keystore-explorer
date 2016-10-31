@@ -557,4 +557,24 @@ public final class KeyStoreUtil {
 		String algorithm = certificate.getPublicKey().getAlgorithm();
 		return algorithm.equals(EC.jce());
 	}
+	
+	/**
+	 * Is the certificate type supported (e.g. exclude Card Verifiable Certificates)
+	 * 
+	 * @param alias
+	 *            Alias of key pair entry
+	 * @param keyStore
+	 *            KeyStore that contains the key pair or certificate
+	 * @return True, if certificate is supported or entry is a secret key
+	 * @throws KeyStoreException
+	 *                If there was a problem accessing the KeyStore.
+	 */
+	public static boolean isSupportedCertificateType(String alias, KeyStore keyStore) throws KeyStoreException {
+		if (!isKeyPairEntry(alias, keyStore)) {
+			return true;
+		}
+
+		Certificate certificate = keyStore.getCertificate(alias);
+		return (certificate instanceof X509Certificate);
+	}
 }

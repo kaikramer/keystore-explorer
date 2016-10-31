@@ -110,6 +110,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 		while (aliases.hasMoreElements()) {
 			String alias = aliases.nextElement();
+			if (!KeyStoreUtil.isSupportedCertificateType(alias, keyStore)) {
+				continue;
+			}
 			sortedAliases.put(alias, alias);
 		}
 

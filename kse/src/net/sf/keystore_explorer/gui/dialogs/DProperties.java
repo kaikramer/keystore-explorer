@@ -38,6 +38,7 @@ import java.security.PrivateKey;
 import java.security.ProviderException;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAParams;
@@ -448,6 +449,10 @@ public class DProperties extends JEscDialog {
 
 			createPrivateKeyNodes(keyPairNode, alias);
 
+			if (!KeyStoreUtil.isSupportedCertificateType(alias, keyStore)) {
+				return;
+			}
+
 			X509Certificate[] certificates = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
 
 			DefaultMutableTreeNode certificatesNode = new DefaultMutableTreeNode(
@@ -525,7 +530,13 @@ public class DProperties extends JEscDialog {
 		privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
 				res.getString("DProperties.properties.Format"), keyFormat)));
 
-		String keyEncoded = "0x" + new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase();
+		String keyEncoded;
+		byte[] encodedKey = privateKey.getEncoded();
+		if (encodedKey != null) {
+			keyEncoded = "0x" + new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase();
+		} else {
+			keyEncoded = "*****";
+		}
 
 		privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
 				res.getString("DProperties.properties.Encoded"), keyEncoded)));
