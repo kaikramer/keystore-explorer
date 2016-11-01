@@ -39,6 +39,7 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
@@ -488,10 +489,10 @@ public final class KeyStoreUtil {
 		String algorithm = certificate.getPublicKey().getAlgorithm();
 		return algorithm.equals(EC.jce());
 	}
-	
+
 	/**
 	 * Is the keystore entry type supported (e.g. exclude Card Verifiable Certificates)
-	 * 
+	 *
 	 * @param alias
 	 *            Alias of keystore entry
 	 * @param keyStore
