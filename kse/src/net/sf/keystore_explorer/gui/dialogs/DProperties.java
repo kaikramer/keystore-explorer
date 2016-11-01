@@ -230,7 +230,11 @@ public class DProperties extends JEscDialog {
 			Enumeration<String> enumAliases = keyStore.aliases();
 
 			while (enumAliases.hasMoreElements()) {
-				aliases.add(enumAliases.nextElement());
+				String alias = enumAliases.nextElement();
+
+				if (KeyStoreUtil.isSupportedEntryType(alias, keyStore)) {
+					aliases.add(alias);
+				}
 			}
 			return aliases;
 		} catch (KeyStoreException ex) {
@@ -525,7 +529,13 @@ public class DProperties extends JEscDialog {
 		privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
 				res.getString("DProperties.properties.Format"), keyFormat)));
 
-		String keyEncoded = "0x" + new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase();
+		String keyEncoded;
+		byte[] encodedKey = privateKey.getEncoded();
+		if (encodedKey != null) {
+			keyEncoded = "0x" + new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase();
+		} else {
+			keyEncoded = "*****";
+		}
 
 		privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
 				res.getString("DProperties.properties.Encoded"), keyEncoded)));
