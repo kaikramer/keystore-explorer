@@ -19,7 +19,6 @@
 			<accessrule kind="accessible" pattern="**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/sc-hsm-jceprovider"/>
 	<classpathentry kind="lib" path="lib/smartcard-hsm-provider.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

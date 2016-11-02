@@ -124,7 +124,9 @@ public class RenameKeyPairAction extends KeyStoreExplorerAction implements Histo
 			keyStore.setKeyEntry(newAlias, privateKey, password.toCharArray(), certs);
 			newState.setEntryPassword(newAlias, new Password(password));
 
-			keyStore.deleteEntry(alias);
+			if (keyStore.containsAlias(alias)) {
+				keyStore.deleteEntry(alias);
+			}
 			newState.removeEntryPassword(alias);
 
 			currentState.append(newState);

@@ -662,7 +662,9 @@ public final class KseFrame implements StatusBar {
 		jmiOpenSmartCardHSMKeyStore.setToolTipText(null);
 		new StatusBarChangeHandler(jmiOpenSmartCardHSMKeyStore,
 				(String) openSmartCardHSMKeyStoreAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmOpenSpecial.add(jmiOpenSmartCardHSMKeyStore);
+		if (KeyStoreUtil.isSmartCardHSMSupported()) {
+			jmOpenSpecial.add(jmiOpenSmartCardHSMKeyStore);
+		}
 
 		jmiOpenMsCapiKeyStore = new JMenuItem(openMsCapiAction);
 		PlatformUtil.setMnemonic(jmiOpenMsCapiKeyStore, res.getString("KseFrame.jmiOpenPkcs11KeyStore.mnemonic")
@@ -2537,7 +2539,9 @@ public final class KseFrame implements StatusBar {
 		generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
 		importTrustedCertificateAction.setEnabled(true);
 		
-		if (type != KeyStoreType.SC_HSM) {
+		if (type == KeyStoreType.SC_HSM) {
+			importKeyPairAction.setEnabled(false);
+		} else {
 			importKeyPairAction.setEnabled(true);
 		}
 		
@@ -2581,6 +2585,22 @@ public final class KseFrame implements StatusBar {
 
 			// "UnsupportedOperationException" ...
 			jmKeyPairImportCaReply.setEnabled(false);
+		} else if (type == KeyStoreType.SC_HSM) {
+			keyPairPrivateKeyDetailsAction.setEnabled(false);
+			keyDetailsAction.setEnabled(false);
+
+			renameKeyAction.setEnabled(true);
+			renameKeyPairAction.setEnabled(true);
+			renameTrustedCertificateAction.setEnabled(true);
+
+			exportKeyPairAction.setEnabled(false);
+			exportKeyPairPrivateKeyAction.setEnabled(false);
+
+			jmKeyPairEditCertChain.setEnabled(false);
+			appendToCertificateChainAction.setEnabled(false);
+			removeFromCertificateChainAction.setEnabled(false);
+
+			jmKeyPairImportCaReply.setEnabled(true);
 		} else {
 			keyPairPrivateKeyDetailsAction.setEnabled(true);
 			keyDetailsAction.setEnabled(true);

@@ -28,8 +28,6 @@ import java.security.Provider;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-import de.cardcontact.smartcardhsmprovider.SmartCardHSMProvider;
-
 import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.SC_HSM;
 
 import net.sf.keystore_explorer.gui.KseFrame;
@@ -70,13 +68,10 @@ public class OpenSmartCardHSMAction extends OpenAction {
 	protected void doAction() {
 
 		try {
-			Provider scHSMProvider = new SmartCardHSMProvider();
+			Class<?> clazz = Class.forName("de.cardcontact.smartcardhsmprovider.SmartCardHSMProvider");
+			Provider scHSMProvider = (Provider)clazz.newInstance();
 
 			KeyStore keyStore = KeyStore.getInstance(SC_HSM.jce(), scHSMProvider);
-
-			// register password handler
-//			AuthProvider authProvider = (AuthProvider) scHSMProvider;
-//			authProvider.setCallbackHandler(new PasswordCallbackHandler(frame));
 
 			keyStore.load(null, null);
 

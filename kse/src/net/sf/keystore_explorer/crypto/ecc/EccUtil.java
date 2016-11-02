@@ -40,6 +40,8 @@ public class EccUtil {
 
 	private static boolean sunECProviderAvailable = true;
 	private static String[] availableSunCurves = new String[0];
+	private static String scHSMCurves = "secp192r1,prime192v1,secp256r1,prime256v1,brainpoolP192r1,brainpoolP224r1,brainpoolP256r1,brainpoolP320r1,secp192k1,secp256k1";
+	
 	static {
 		// read available curves provided by SunEC
 		Provider sunECProvider = Security.getProvider("SunEC");
@@ -83,7 +85,7 @@ public class EccUtil {
 	 */
 	public static boolean isECAvailable(KeyStoreType keyStoreType) {
 		return ((JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170) && sunECProviderAvailable)
-				|| isBouncyCastleKeyStore(keyStoreType));
+				|| isBouncyCastleKeyStore(keyStoreType) || (keyStoreType == KeyStoreType.SC_HSM));
 	}
 
 	/**
@@ -110,6 +112,10 @@ public class EccUtil {
 		// BC provides all curves
 		if (isBouncyCastleKeyStore(keyStoreType)) {
 			return true;
+		}
+
+		if (keyStoreType == KeyStoreType.SC_HSM) {
+			return scHSMCurves.contains(curveName);
 		}
 
 		// no SunEC provider found?

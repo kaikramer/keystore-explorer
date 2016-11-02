@@ -59,7 +59,7 @@ public enum CurveSet {
 		sets.add(ANSI_X9_62.visibleName);
 		sets.add(NIST.visibleName);
 		sets.add(SEC.visibleName);
-		if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
+		if (EccUtil.isBouncyCastleKeyStore(keyStoreType) || (keyStoreType == KeyStoreType.SC_HSM)) {
 			sets.add(TELETRUST.visibleName);
 		}
 		return sets.toArray(new String[sets.size()]);
@@ -75,7 +75,7 @@ public enum CurveSet {
 		sets.add(ANSI_X9_62);
 		sets.add(NIST);
 		sets.add(SEC);
-		if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
+		if (EccUtil.isBouncyCastleKeyStore(keyStoreType) || (keyStoreType == KeyStoreType.SC_HSM)) {
 			sets.add(TELETRUST);
 		}
 		return sets;
