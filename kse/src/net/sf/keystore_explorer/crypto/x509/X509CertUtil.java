@@ -57,6 +57,7 @@ import org.bouncycastle.util.encoders.Base64;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.signing.SignatureType;
+import net.sf.keystore_explorer.utilities.ArrayUtils;
 import net.sf.keystore_explorer.utilities.io.ReadUtil;
 import net.sf.keystore_explorer.utilities.pem.PemInfo;
 import net.sf.keystore_explorer.utilities.pem.PemUtil;
@@ -164,19 +165,27 @@ public final class X509CertUtil {
 		String certsStr = new String(certs);
 		if (certsStr.startsWith(BEGIN_CERTIFICATE)) {
 			certsStr = certsStr.replaceAll(BEGIN_CERTIFICATE, "");
-			certsStr = certsStr.replaceAll(END_CERTIFICATE, "");
+			certsStr = certsStr.replaceAll(END_CERTIFICATE, "!");
 		}
 
-		// If base 64 encoded then decode
-		byte[] decoded = attemptBase64Decode(certsStr);
-		if (decoded != null) {
-			return decoded;
+		// If one or more base 64 encoded certs then decode
+		String[] splitCertsStr = certsStr.split("!");
+		byte[] allDecoded = null;
+		for (String singleCertB64 : splitCertsStr) {
+			byte[] decoded = attemptBase64Decode(singleCertB64.trim());
+			if (decoded != null) {
+				allDecoded = ArrayUtils.add(allDecoded, decoded);
+			}
+		}
+		if (allDecoded != null) {
+			return allDecoded;
 		}
 
 		return certs;
 	}
 
 	private static byte[] attemptBase64Decode(String toTest) {
+
 		// Attempt to decode the supplied byte array as a base 64 encoded SPC.
 		// Character set may be UTF-16 big endian or ASCII.
 
@@ -188,30 +197,36 @@ public final class X509CertUtil {
 		// remove all non visible characters (like newlines) and whitespace
 		toTest = toTest.replaceAll("\\s", "");
 
-		/*
-		 * Check all characters are base 64. Discard any zero bytes that be
-		 * present if UTF-16 encoding is used but will mess up a base 64 decode
-		 */
+		// Check all characters are base 64. Discard any zero bytes that be
+		// present if UTF-16 encoding is used but will mess up a base 64 decode
 		StringBuffer sb = new StringBuffer();
 
 		nextChar: for (int i = 0; i < toTest.length(); i++) {
 			char c = toTest.charAt(i);
 
 			for (int j = 0; j < base64.length; j++) {
-				if (c == base64[j]) // Append base 64 byte
-				{
+				// append base 64 byte
+				if (c == base64[j]) {
 					sb.append(c);
 					continue nextChar;
-				} else if (c == 0) // Discard zero byte
-				{
+				} else if (c == 0) {
+					// discard zero byte
 					continue nextChar;
 				}
 			}
 
-			return null; // Not base 64
+			// not base 64
+			return null;
 		}
 
-		return Base64.decode(sb.toString());
+		// use BC for actual decoding
+		try {
+			return Base64.decode(sb.toString());
+		} catch (Exception e) {
+			// not base 64
+		}
+
+		return null;
 	}
 
 
