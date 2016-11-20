@@ -54,11 +54,15 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSAttributeTableGenerator;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
+import org.bouncycastle.cms.SignerInfoGenerator;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
@@ -781,16 +785,26 @@ public class JarSigner {
 			Collections.addAll(certList, certificateChain);
 
 			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
-			JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
-
 			JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
 					.setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
 			if (provider != null) {
 				csb.setProvider(provider);
 			}
+			JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
+
+			// remove cmsAlgorithmProtect for compatibility reasons
+			SignerInfoGenerator sigGen = siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]);
+			final CMSAttributeTableGenerator sAttrGen = sigGen.getSignedAttributeTableGenerator();
+			sigGen = new SignerInfoGenerator(sigGen, new DefaultSignedAttributeTableGenerator() {
+				@Override
+				public AttributeTable getAttributes(@SuppressWarnings("rawtypes") Map parameters) {
+					AttributeTable ret = sAttrGen.getAttributes(parameters);
+					return ret.remove(CMSAttributes.cmsAlgorithmProtect);
+				}
+			}, sigGen.getUnsignedAttributeTableGenerator());
 
 			CMSSignedDataGenerator dataGen = new CMSSignedDataGenerator();
-			dataGen.addSignerInfoGenerator(siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]));
+			dataGen.addSignerInfoGenerator(sigGen);
 			dataGen.addCertificates(new JcaCertStore(certList));
 
 			CMSSignedData signedData = dataGen.generate(new CMSProcessableByteArray(toSign), true);
