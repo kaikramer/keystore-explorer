@@ -399,7 +399,7 @@
 		</copy>
 
 		<!-- fill template with version info -->
-		<copy file="${nsisScript}.template" tofile="${nsisScript}" />
+		<copy file="${nsisScript}.template" tofile="${nsisScript}" overwrite="true" />
 		<replace file="${nsisScript}" token="%KSE_VERSION%" value="${appVersion}" />
 		<replace file="${nsisScript}" token="%KSE_SIMPLE_VERSION%" value="${appSimpleVersion}" />
 		<replace file="${nsisScript}" token="%KSE_APP_USER_MODEL_ID%" value="${appUserModelId}" />
