@@ -313,14 +313,14 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	private void addExtensionsPressed() {
 		PublicKey subjectPublicKey = keyPair.getPublic();
 		PublicKey caPublicKey = null;
-		X500Name caName = null;
+		X500Name caIssuerName = null;
 		BigInteger caSerialNumber = null;
 		if (issuerCert != null) {
-			caName = X500Name.getInstance(issuerCert.getSubjectDN());
+			caIssuerName = X500Name.getInstance(issuerCert.getIssuerDN());
 			caPublicKey = issuerCert.getPublicKey();
 			caSerialNumber = issuerCert.getSerialNumber();
 		} else {
-			caName = jdnName.getDistinguishedName(); // May be null
+			caIssuerName = jdnName.getDistinguishedName(); // May be null
 			caPublicKey = keyPair.getPublic();
 
 			String serialNumberStr = jtfSerialNumber.getText().trim();
@@ -333,7 +333,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			}
 		}
 
-		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, caPublicKey, caName, caSerialNumber, subjectPublicKey);
+		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, caPublicKey, caIssuerName, caSerialNumber,
+				subjectPublicKey);
 		dAddExtensions.setLocationRelativeTo(this);
 		dAddExtensions.setVisible(true);
 

@@ -46,9 +46,9 @@
 	<property name="distFileNamePrefix" value="${appSimpleName}-${appSimpleVersion}" />
 
 	<!-- Vendor details -->
-	<property name="copyright" value="Coypright 2004 - 2013 Wayne Grant, 2013 - 2016 Kai Kramer" />
+	<property name="copyright" value="Copyright 2004 - 2013 Wayne Grant, 2013 - 2016 Kai Kramer" />
 	<property name="vendor" value="Wayne Grant, Kai Kramer" />
-	<property name="website" value="keystore-explorer.sf.net" />
+	<property name="website" value="keystore-explorer.org" />
 
 	<!-- Main class (for manifest entry) -->
 	<property name="mainClass" value="net.sf.keystore_explorer.KSE" />
@@ -399,7 +399,7 @@
 		</copy>
 
 		<!-- fill template with version info -->
-		<copy file="${nsisScript}.template" tofile="${nsisScript}" />
+		<copy file="${nsisScript}.template" tofile="${nsisScript}" overwrite="true" />
 		<replace file="${nsisScript}" token="%KSE_VERSION%" value="${appVersion}" />
 		<replace file="${nsisScript}" token="%KSE_SIMPLE_VERSION%" value="${appSimpleVersion}" />
 		<replace file="${nsisScript}" token="%KSE_APP_USER_MODEL_ID%" value="${appUserModelId}" />

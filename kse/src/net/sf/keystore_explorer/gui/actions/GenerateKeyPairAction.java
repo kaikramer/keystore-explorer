@@ -132,7 +132,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 				applicationSettings.setGenerateKeyPairType(keyPairType);
 			} else {
 				String curveName = dGenerateKeyPair.getCurveName();
-				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName);
+				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName, provider);
 			}
 
 			dGeneratingKeyPair.setLocationRelativeTo(frame);

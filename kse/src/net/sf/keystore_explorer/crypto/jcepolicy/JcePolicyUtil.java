@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.security.NoSuchAlgorithmException;
 import java.security.Permission;
 import java.security.PermissionCollection;
@@ -206,7 +207,7 @@ public class JcePolicyUtil {
 
 
 	/**
-	 * Hack to disable crypto restrictions.
+	 * Hack to disable crypto restrictions until Java 9 is out.
 	 *
 	 * See http://stackoverflow.com/a/22492582/2672392
 	 */
@@ -218,6 +219,9 @@ public class JcePolicyUtil {
 
 			Field isRestrictedField = jceSecurityClass.getDeclaredField("isRestricted");
 			isRestrictedField.setAccessible(true);
+			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			modifiersField.setAccessible(true);
+			modifiersField.setInt(isRestrictedField, isRestrictedField.getModifiers() & ~Modifier.FINAL);
 			isRestrictedField.set(null, false);
 
 			Field defaultPolicyField = jceSecurityClass.getDeclaredField("defaultPolicy");
@@ -234,5 +238,5 @@ public class JcePolicyUtil {
 		} catch (Exception e) {
 			// ignore
 		}
-    }
+	}
 }
