@@ -20,6 +20,8 @@
 package net.sf.keystore_explorer.gui.dnchooser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -48,7 +50,11 @@ public class RdnPanelList extends JPanel {
 	public RdnPanelList(X500Name x500Name, boolean editable) {
 		setLayout(new MigLayout("insets dialog, flowy", "[right]", "[]rel[]"));
 
-		for (RDN rdn : x500Name.getRDNs()) {
+		// we have to reverse RDN order for dialog
+		List<RDN> rdnsAsList = Arrays.asList(x500Name.getRDNs());
+		Collections.reverse(rdnsAsList);
+
+		for (RDN rdn : rdnsAsList) {
 			this.editable = editable;
 			for (AttributeTypeAndValue atav : rdn.getTypesAndValues()) {
 				String type = OidDisplayNameMapping.getDisplayNameForOid(atav.getType().getId());

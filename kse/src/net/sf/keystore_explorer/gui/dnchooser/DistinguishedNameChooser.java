@@ -22,9 +22,11 @@ package net.sf.keystore_explorer.gui.dnchooser;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
 import java.util.List;
 
 import javax.naming.InvalidNameException;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,6 +34,8 @@ import javax.swing.JScrollPane;
 
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
+
+import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
 
 /**
  * Flexible DN chooser/viewer component.
@@ -46,10 +50,42 @@ public class DistinguishedNameChooser extends JPanel {
 	private String defaultName;
 	private RdnPanelList listPanel;
 
+	//	jlCommonName = new JLabel(res.getString("DDistinguishedNameChooser.jlCommonName.text"));
+	//	jlOrganisationUnit = new JLabel(res.getString("DDistinguishedNameChooser.jlOrganisationUnit.text"));
+	//	jlOrganisationName = new JLabel(res.getString("DDistinguishedNameChooser.jlOrganisationName.text"));
+	//	jlLocalityName = new JLabel(res.getString("DDistinguishedNameChooser.jlLocalityName.text"));
+	//	jlStateName = new JLabel(res.getString("DDistinguishedNameChooser.jlStateName.text"));
+	//	jlCountryCode = new JLabel(res.getString("DDistinguishedNameChooser.jlCountryCode.text"));
+	//	jlEmailAddress = new JLabel(res.getString("DDistinguishedNameChooser.jlEmailAddress.text"));
+
+	//	jtfCommonName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCommonName.edit.tooltip"));
+	//	jtfOrganisationUnit.setToolTipText(res
+	//			.getString("DDistinguishedNameChooser.jtfOrganisationUnit.edit.tooltip"));
+	//	jtfOrganisationName.setToolTipText(res
+	//			.getString("DDistinguishedNameChooser.jtfOrganisationName.edit.tooltip"));
+	//	jtfLocalityName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfLocalityName.edit.tooltip"));
+	//	jtfStateName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfStateName.edit.tooltip"));
+	//	jtfCountryCode.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCountryCode.edit.tooltip"));
+	//	jtfEmailAddress.setToolTipText(res.getString("DDistinguishedNameChooser.jtfEmailAddress.edit.tooltip"));
+
+	//	jtfCommonName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCommonName.view.tooltip"));
+	//	jtfOrganisationUnit.setToolTipText(res
+	//			.getString("DDistinguishedNameChooser.jtfOrganisationUnit.view.tooltip"));
+	//	jtfOrganisationName.setToolTipText(res
+	//			.getString("DDistinguishedNameChooser.jtfOrganisationName.view.tooltip"));
+	//	jtfLocalityName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfLocalityName.view.tooltip"));
+	//	jtfStateName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfStateName.view.tooltip"));
+	//	jtfCountryCode.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCountryCode.view.tooltip"));
+	//	jtfEmailAddress.setToolTipText(res.getString("DDistinguishedNameChooser.jtfEmailAddress.view.tooltip"));
+
+
 	public DistinguishedNameChooser(X500Name dn, boolean editable, String defaultDN) {
 		this.editable = editable;
-		if (dn == null) {
-			currentName = new X500Name(defaultDN);
+		if (dn == null || dn.getRDNs().length == 0) {
+			if (defaultDN == null || defaultDN.isEmpty()) {
+				defaultDN = "CN=, OU=, O=, C=";
+			}
+			currentName = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
 		} else {
 			this.currentName = dn;
 		}
@@ -61,7 +97,9 @@ public class DistinguishedNameChooser extends JPanel {
 		listPanel = new RdnPanelList(currentName, editable);
 
 		JScrollPane jScrollPane = new JScrollPane(listPanel);
-		jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		jScrollPane.setViewportBorder(null);
+		jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+		jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
 		setLayout(new BorderLayout());
@@ -71,11 +109,13 @@ public class DistinguishedNameChooser extends JPanel {
 	public X500Name getDN() throws InvalidNameException {
 		boolean noEmptyRdns = true;
 		List<RDN> rdns = listPanel.getRdns(noEmptyRdns);
+		Collections.reverse(rdns);
 		return new X500Name(rdns.toArray(new RDN[rdns.size()]));
 	}
 
 	public X500Name getDNWithEmptyRdns() throws InvalidNameException {
 		List<RDN> rdns = listPanel.getRdns(false);
+		Collections.reverse(rdns);
 		return new X500Name(rdns.toArray(new RDN[rdns.size()]));
 	}
 
@@ -92,7 +132,8 @@ public class DistinguishedNameChooser extends JPanel {
 		JFrame frame = new JFrame();
 		frame.setSize(800, 400);
 
-		X500Name dn = new X500Name("CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com");
+		X500Name dn = new X500Name(KseX500NameStyle.INSTANCE,
+				"CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com");
 		String defaultDN = "CN=, OU=, O=, C=";
 
 		final DistinguishedNameChooser nameChooser = new DistinguishedNameChooser(dn, true, defaultDN);
