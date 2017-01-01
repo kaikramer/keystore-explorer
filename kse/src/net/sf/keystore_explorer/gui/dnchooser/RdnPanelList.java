@@ -37,6 +37,10 @@ import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.x509.KseX500NameStyle;
 import net.sf.keystore_explorer.utilities.StringUtils;
 
+/**
+ * GUI item for a DN (which is a list of RDNs)
+ *
+ */
 public class RdnPanelList extends JPanel {
 
 	private static final long serialVersionUID = 1L;

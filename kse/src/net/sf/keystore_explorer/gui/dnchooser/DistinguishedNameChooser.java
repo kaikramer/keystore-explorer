@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -49,35 +50,6 @@ public class DistinguishedNameChooser extends JPanel {
 	private X500Name currentName;
 	private String defaultName;
 	private RdnPanelList listPanel;
-
-	//	jlCommonName = new JLabel(res.getString("DDistinguishedNameChooser.jlCommonName.text"));
-	//	jlOrganisationUnit = new JLabel(res.getString("DDistinguishedNameChooser.jlOrganisationUnit.text"));
-	//	jlOrganisationName = new JLabel(res.getString("DDistinguishedNameChooser.jlOrganisationName.text"));
-	//	jlLocalityName = new JLabel(res.getString("DDistinguishedNameChooser.jlLocalityName.text"));
-	//	jlStateName = new JLabel(res.getString("DDistinguishedNameChooser.jlStateName.text"));
-	//	jlCountryCode = new JLabel(res.getString("DDistinguishedNameChooser.jlCountryCode.text"));
-	//	jlEmailAddress = new JLabel(res.getString("DDistinguishedNameChooser.jlEmailAddress.text"));
-
-	//	jtfCommonName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCommonName.edit.tooltip"));
-	//	jtfOrganisationUnit.setToolTipText(res
-	//			.getString("DDistinguishedNameChooser.jtfOrganisationUnit.edit.tooltip"));
-	//	jtfOrganisationName.setToolTipText(res
-	//			.getString("DDistinguishedNameChooser.jtfOrganisationName.edit.tooltip"));
-	//	jtfLocalityName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfLocalityName.edit.tooltip"));
-	//	jtfStateName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfStateName.edit.tooltip"));
-	//	jtfCountryCode.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCountryCode.edit.tooltip"));
-	//	jtfEmailAddress.setToolTipText(res.getString("DDistinguishedNameChooser.jtfEmailAddress.edit.tooltip"));
-
-	//	jtfCommonName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCommonName.view.tooltip"));
-	//	jtfOrganisationUnit.setToolTipText(res
-	//			.getString("DDistinguishedNameChooser.jtfOrganisationUnit.view.tooltip"));
-	//	jtfOrganisationName.setToolTipText(res
-	//			.getString("DDistinguishedNameChooser.jtfOrganisationName.view.tooltip"));
-	//	jtfLocalityName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfLocalityName.view.tooltip"));
-	//	jtfStateName.setToolTipText(res.getString("DDistinguishedNameChooser.jtfStateName.view.tooltip"));
-	//	jtfCountryCode.setToolTipText(res.getString("DDistinguishedNameChooser.jtfCountryCode.view.tooltip"));
-	//	jtfEmailAddress.setToolTipText(res.getString("DDistinguishedNameChooser.jtfEmailAddress.view.tooltip"));
-
 
 	public DistinguishedNameChooser(X500Name dn, boolean editable, String defaultDN) {
 		this.editable = editable;
@@ -127,7 +99,9 @@ public class DistinguishedNameChooser extends JPanel {
 		repaint(50L);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		JFrame frame = new JFrame();
 		frame.setSize(800, 400);

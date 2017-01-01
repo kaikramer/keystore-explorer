@@ -21,24 +21,39 @@ package net.sf.keystore_explorer.gui.dnchooser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 
+/**
+ * This class holds the mapping between the OIDs and the display names of RDN components.
+ *
+ */
 public class OidDisplayNameMapping {
 
-	// TODO use resource bundle for display names
-	private static final String DC = "Domain Component (DC):";
-	private static final String SURNAME = "Surname (SURNAME):";
-	private static final String GIVENNAME = "Given Name (GN):";
-	private static final String SN = "Serial Number (SN):";
-	private static final String E = "Email (E):";
-	private static final String C = "Country (C):";
-	private static final String ST = "State Name (ST):";
-	private static final String L = "Locality Name (L):";
-	private static final String O = "Organization Name (O):";
-	private static final String OU = "Organization Unit (OU):";
-	private static final String CN = "Common Name (CN):";
+	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dnchooser/resources");
+
+	private static final String DC = res.getString("DistinguishedNameChooser.jlDomainComponent.text");
+	private static final String SURNAME = res.getString("DistinguishedNameChooser.jlSurname.text");
+	private static final String GIVENNAME = res.getString("DistinguishedNameChooser.jlGivenName.text");
+	private static final String SN = res.getString("DistinguishedNameChooser.jlSerialNumber.text");
+	private static final String E = res.getString("DistinguishedNameChooser.jlEmailAddress.text");
+	private static final String C = res.getString("DistinguishedNameChooser.jlCountryCode.text");
+	private static final String ST = res.getString("DistinguishedNameChooser.jlStateName.text");
+	private static final String L = res.getString("DistinguishedNameChooser.jlLocalityName.text");
+	private static final String O = res.getString("DistinguishedNameChooser.jlOrganisationName.text");
+	private static final String OU = res.getString("DistinguishedNameChooser.jlOrganisationUnit.text");
+	private static final String CN = res.getString("DistinguishedNameChooser.jlCommonName.text");
+
+	// TODO tool tips?!
+	//	res.getString("DDistinguishedNameChooser.jtfCommonName.edit.tooltip")
+	//	res.getString("DDistinguishedNameChooser.jtfOrganisationUnit.edit.tooltip")
+	//	res.getString("DDistinguishedNameChooser.jtfOrganisationName.edit.tooltip")
+	//	res.getString("DDistinguishedNameChooser.jtfLocalityName.edit.tooltip")
+	//	res.getString("DDistinguishedNameChooser.jtfStateName.edit.tooltip")
+	//	res.getString("DDistinguishedNameChooser.jtfCountryCode.edit.tooltip")
+	//	res.getString("DDistinguishedNameChooser.jtfEmailAddress.edit.tooltip")
 
 	private static Map<String, ASN1ObjectIdentifier> displayNameToOID = new HashMap<String, ASN1ObjectIdentifier>();
 	static {

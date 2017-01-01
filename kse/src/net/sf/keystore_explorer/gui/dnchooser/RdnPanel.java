@@ -28,6 +28,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * GUI item for RDN.
+ *
+ */
 public class RdnPanel extends JPanel {
 
 	private JComboBox comboBox;
