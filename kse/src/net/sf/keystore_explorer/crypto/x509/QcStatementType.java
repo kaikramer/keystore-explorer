@@ -35,7 +35,9 @@ public enum QcStatementType {
 	QC_COMPLIANCE("0.4.0.1862.1.1", "QCCompliance"),
 	QC_EU_LIMIT_VALUE("0.4.0.1862.1.2", "QCEuLimitValue"),
 	QC_RETENTION_PERIOD("0.4.0.1862.1.3", "QCRetentionPeriod"),
-	QC_SSCD("0.4.0.1862.1.4", "QCSSCD");
+	QC_SSCD("0.4.0.1862.1.4", "QCSSCD"),
+	QC_PDS("0.4.0.1862.1.5", "QCPDS"),
+	QC_TYPE("0.4.0.1862.1.6", "QCType");
 
 	// @formatter:on
 
