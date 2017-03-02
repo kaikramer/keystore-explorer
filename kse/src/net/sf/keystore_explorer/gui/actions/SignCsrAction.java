@@ -32,6 +32,7 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -195,7 +196,8 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 
 			X509CertificateVersion version = dSignCsr.getVersion();
 			SignatureType signatureType = dSignCsr.getSignatureType();
-			long validityPeriod = dSignCsr.getValidityPeriod();
+			Date validityStart = dSignCsr.getValidityStart();
+			Date validityEnd = dSignCsr.getValidityEnd();
 			BigInteger serialNumber = dSignCsr.getSerialNumber();
 			caReplyFile = dSignCsr.getCaReplyFile();
 			X509ExtensionSet extensions = dSignCsr.getExtensions();
@@ -208,7 +210,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 
 			// CA Reply is a cert with subject from CSR and issuer from signing cert's subject
 			X509CertificateGenerator generator = new X509CertificateGenerator(version);
-			X509Certificate caReplyCert = generator.generate(subject, issuer, validityPeriod, publicKey, privateKey,
+			X509Certificate caReplyCert = generator.generate(subject, issuer, validityStart, validityEnd, publicKey, privateKey,
 					signatureType, serialNumber, extensions, provider);
 
 			X509Certificate[] caReplyChain = new X509Certificate[signingChain.length + 1];
