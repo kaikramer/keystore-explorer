@@ -270,13 +270,13 @@ public class DSignCsr extends JEscDialog {
 
 		jlValidityStart = new JLabel(res.getString("DSignCsr.jlValidityStart.text"));
 
-		jdtValidityStart = new JDateTime(res.getString("DSignCsr.jdtValidityStart.text"));
+		jdtValidityStart = new JDateTime(res.getString("DSignCsr.jdtValidityStart.text"), false);
 		jdtValidityStart.setDateTime(now);
 		jdtValidityStart.setToolTipText(res.getString("DSignCsr.jdtValidityStart.tooltip"));
 
 		jlValidityEnd = new JLabel(res.getString("DSignCsr.jlValidityEnd.text"));
 
-		jdtValidityEnd = new JDateTime(res.getString("DSignCsr.jdtValidityEnd.text"));
+		jdtValidityEnd = new JDateTime(res.getString("DSignCsr.jdtValidityEnd.text"), false);
 		jdtValidityEnd.setDateTime(new Date(now.getTime() + TimeUnit.DAYS.toMillis(365)));
 		jdtValidityEnd.setToolTipText(res.getString("DSignCsr.jdtValidityEnd.tooltip"));
 		

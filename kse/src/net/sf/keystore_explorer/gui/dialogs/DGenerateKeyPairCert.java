@@ -209,7 +209,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		GridBagConstraints gbc_jlValidityStart = (GridBagConstraints) gbcLbl.clone();
 		gbc_jlValidityStart.gridy = 2;
 
-		jdtValidityStart = new JDateTime(res.getString("DGenerateKeyPairCert.jdtValidityStart.text"));
+		jdtValidityStart = new JDateTime(res.getString("DGenerateKeyPairCert.jdtValidityStart.text"), false);
 		jdtValidityStart.setDateTime(now);
 		jdtValidityStart.setToolTipText(res.getString("DGenerateKeyPairCert.jdtValidityStart.tooltip"));
 		GridBagConstraints gbc_jdtValidityStart = (GridBagConstraints) gbcEdCtrl.clone();
@@ -241,7 +241,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		GridBagConstraints gbc_jlValidityEnd = (GridBagConstraints) gbcLbl.clone();
 		gbc_jlValidityEnd.gridy = 4;
 
-		jdtValidityEnd = new JDateTime(res.getString("DGenerateKeyPairCert.jdtValidityEnd.text"));
+		jdtValidityEnd = new JDateTime(res.getString("DGenerateKeyPairCert.jdtValidityEnd.text"), false);
 		jdtValidityEnd.setDateTime(new Date(now.getTime() + TimeUnit.DAYS.toMillis(365)));
 		jdtValidityEnd.setToolTipText(res.getString("DGenerateKeyPairCert.jdtValidityEnd.tooltip"));
 		GridBagConstraints gbc_jdtValidityEnd = (GridBagConstraints) gbcEdCtrl.clone();

@@ -51,6 +51,7 @@ public class JDateTime extends JPanel {
 
 	private String title;
 	private Date date;
+	private boolean showClearButton = true;
 
 	/**
 	 * Construct a JDateTime.
@@ -59,12 +60,25 @@ public class JDateTime extends JPanel {
 	 *            Title of edit dialog
 	 */
 	public JDateTime(String title) {
+		this(title, true);
+	}
+
+	/**
+	 * Construct a JDateTime.
+	 *
+	 * @param title
+	 *            Title of edit dialog
+	 * @param showClearButton
+	 *            if clear button is shown
+	 */
+	public JDateTime(String title, boolean showClearButton) {
 		this.title = title;
+		this.showClearButton = showClearButton;
 		initComponents();
 	}
 
 	private void initComponents() {
-		jtfDateTime = new JTextField(15);
+		jtfDateTime = new JTextField(16);
 		jtfDateTime.setEditable(false);
 
 		GridBagConstraints gbc_jtfDateTime = new GridBagConstraints();
@@ -96,32 +110,36 @@ public class JDateTime extends JPanel {
 		gbc_jbEditDateTime.gridy = 0;
 		gbc_jbEditDateTime.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon clearIcon = new ImageIcon(getClass().getResource(res.getString("JDateTime.jbClearDateTime.image")));
-		jbClearDateTime = new JButton(clearIcon);
-		jbClearDateTime.setToolTipText(res.getString("JDateTime.jbClearDateTime.tooltip"));
-		jbClearDateTime.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JDateTime.this);
-					clearDateTime();
-				} finally {
-					CursorUtil.setCursorFree(JDateTime.this);
-				}
-			}
-		});
-
-		GridBagConstraints gbc_jbClearDateTime = new GridBagConstraints();
-		gbc_jbClearDateTime.gridwidth = 1;
-		gbc_jbClearDateTime.gridheight = 1;
-		gbc_jbClearDateTime.gridx = 2;
-		gbc_jbClearDateTime.gridy = 0;
-		gbc_jbClearDateTime.insets = new Insets(0, 0, 0, 0);
-
 		setLayout(new GridBagLayout());
 		add(jtfDateTime, gbc_jtfDateTime);
 		add(jbEditDateTime, gbc_jbEditDateTime);
-		add(jbClearDateTime, gbc_jbClearDateTime);
+
+		if (showClearButton) {
+			ImageIcon clearIcon = new ImageIcon(
+					getClass().getResource(res.getString("JDateTime.jbClearDateTime.image")));
+			jbClearDateTime = new JButton(clearIcon);
+			jbClearDateTime.setToolTipText(res.getString("JDateTime.jbClearDateTime.tooltip"));
+			jbClearDateTime.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					try {
+						CursorUtil.setCursorBusy(JDateTime.this);
+						clearDateTime();
+					} finally {
+						CursorUtil.setCursorFree(JDateTime.this);
+					}
+				}
+			});
+
+			GridBagConstraints gbc_jbClearDateTime = new GridBagConstraints();
+			gbc_jbClearDateTime.gridwidth = 1;
+			gbc_jbClearDateTime.gridheight = 1;
+			gbc_jbClearDateTime.gridx = 2;
+			gbc_jbClearDateTime.gridy = 0;
+			gbc_jbClearDateTime.insets = new Insets(0, 0, 0, 0);
+
+			add(jbClearDateTime, gbc_jbClearDateTime);
+		}
 
 		populate();
 	}
@@ -173,10 +191,14 @@ public class JDateTime extends JPanel {
 	private void populate() {
 		if (date != null) {
 			jtfDateTime.setText(StringUtils.formatDate(date));
-			jbClearDateTime.setEnabled(true);
+			if (showClearButton) {
+				jbClearDateTime.setEnabled(true);
+			}
 		} else {
 			jtfDateTime.setText("");
-			jbClearDateTime.setEnabled(false);
+			if (showClearButton) {
+				jbClearDateTime.setEnabled(false);
+			}
 		}
 
 		jtfDateTime.setCaretPosition(0);
