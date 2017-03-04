@@ -195,8 +195,8 @@ public class JcePolicyUtil {
 		JavaVersion jreVersion = JavaVersion.getJreVersion();
 
 		int major = jreVersion.getMajor();
-		int middle = jreVersion.getMiddle();
-		int minor = jreVersion.getMinor();
+		int middle = jreVersion.getMinor();
+		int minor = jreVersion.getSecurity();
 
 		String version = MessageFormat.format("{0}.{1}.{2}", major, middle, minor);
 

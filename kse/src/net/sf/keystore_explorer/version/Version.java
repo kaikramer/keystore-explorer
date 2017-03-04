@@ -21,9 +21,10 @@ package net.sf.keystore_explorer.version;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  * Immutable version class constructed from a version string. Used to compare
@@ -34,7 +35,7 @@ import java.util.Vector;
 public class Version implements Comparable, Serializable {
 	private static final long serialVersionUID = 775513157889646154L;
 	private static transient ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/version/resources");
-	private int[] iSections;
+	private List<Integer> iSections;
 
 	/**
 	 * Construct a Version object from the supplied string assuming that the
@@ -60,9 +61,9 @@ public class Version implements Comparable, Serializable {
 	 *             If the version string cannot be parsed.
 	 */
 	public Version(String version, String delimiters) throws VersionException {
-		StringTokenizer strTok = new StringTokenizer(version.trim(), delimiters);
 
-		Vector<Integer> versionSections = new Vector<Integer>();
+		StringTokenizer strTok = new StringTokenizer(version.trim(), delimiters);
+		List<Integer> versionSections = new ArrayList<Integer>();
 
 		while (strTok.hasMoreTokens()) {
 			try {
@@ -80,51 +81,80 @@ public class Version implements Comparable, Serializable {
 		}
 
 		if (versionSections.size() == 0) {
-			iSections = new int[] { 0 };
+			throw new VersionException(MessageFormat.format(res.getString("NoParseVersion.exception.message"),
+					version, delimiters));
 		} else {
-			iSections = new int[versionSections.size()];
-
-			for (int i = 0; i < versionSections.size(); i++) {
-				iSections[i] = Math.abs(versionSections.get(i).intValue());
-			}
+			iSections = versionSections;
 		}
 	}
 
-	private int[] getSections() {
-		return iSections.clone();
+	private List<Integer> getSections() {
+		return new ArrayList<Integer>(iSections);
 	}
 
 	@Override
 	public int compareTo(Object object) {
 		Version cmpVersion = (Version) object;
 
-		int[] cmpSections = cmpVersion.getSections();
+		List<Integer> cmpSections = cmpVersion.getSections();
 
-		for (int i = 0; ((i < iSections.length) && (i < cmpSections.length)); i++) {
-			if (iSections[i] > cmpSections[i]) {
+		for (int i = 0; ((i < iSections.size()) && (i < cmpSections.size())); i++) {
+			if (iSections.get(i) > cmpSections.get(i)) {
 				return 1;
-			} else if (iSections[i] < cmpSections[i]) {
+			} else if (iSections.get(i) < cmpSections.get(i)) {
 				return -1;
 			}
 		}
 
-		if (cmpSections.length > iSections.length) {
-			for (int i = iSections.length; i < cmpSections.length; i++) {
-				if (cmpSections[i] != 0) {
+		if (cmpSections.size() > iSections.size()) {
+			for (int i = iSections.size(); i < cmpSections.size(); i++) {
+				if (cmpSections.get(i) != 0) {
 					return -1;
 				}
 			}
 		}
 
-		if (iSections.length > cmpSections.length) {
-			for (int i = cmpSections.length; i < iSections.length; i++) {
-				if (iSections[i] != 0) {
+		if (iSections.size() > cmpSections.size()) {
+			for (int i = cmpSections.size(); i < iSections.size(); i++) {
+				if (iSections.get(i) != 0) {
 					return 1;
 				}
 			}
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Gets major version (first part of a version string, e.g. for version "1.2.3" it returns "1")
+	 * @return Major version
+	 */
+	public int getMajor() {
+		return iSections.get(0);
+	}
+
+	/**
+	 * Gets minor version (second part of a version string, e.g. for version "1.2.3" it returns "2")
+	 * @return Minor version or 0 if there is none
+	 */
+	public int getMinor() {
+		if (iSections.size() > 1) {
+			return iSections.get(1);
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Gets bug fix version (third part of a version string, e.g. for version "1.2.3" it returns "3")
+	 * @return Bug fix version or 0 if there is none
+	 */
+	public int getBugfix() {
+		if (iSections.size() > 2) {
+			return iSections.get(2);
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
@@ -145,8 +175,8 @@ public class Version implements Comparable, Serializable {
 	public int hashCode() {
 		int result = 27;
 
-		for (int i = 0; i < iSections.length; i++) {
-			result = 53 * result + iSections[i];
+		for (Integer integer : iSections) {
+			result = 53 * result + integer;
 		}
 
 		return result;
@@ -163,10 +193,10 @@ public class Version implements Comparable, Serializable {
 	public String toString() {
 		StringBuffer strBuff = new StringBuffer();
 
-		for (int i = 0; i < iSections.length; i++) {
-			strBuff.append(iSections[i]);
+		for (int i = 0; i < iSections.size(); i++) {
+			strBuff.append(iSections.get(i));
 
-			if ((i + 1) < iSections.length) {
+			if ((i + 1) < iSections.size()) {
 				strBuff.append('.');
 			}
 		}
