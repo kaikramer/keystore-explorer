@@ -22,12 +22,15 @@ package net.sf.keystore_explorer.gui.crypto;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -44,6 +47,7 @@ public class JValidityPeriod extends JPanel {
 
 	private JSpinner jsValue;
 	private JComboBox jcbType;
+	private JButton jbApply;
 
 	/** Years period type */
 	public static final int YEARS = 0;
@@ -87,7 +91,7 @@ public class JValidityPeriod extends JPanel {
 		gbc_jcbType.gridwidth = 1;
 		gbc_jcbType.gridx = 1;
 		gbc_jcbType.gridy = 0;
-		gbc_jcbType.insets = new Insets(0, 0, 0, 0);
+		gbc_jcbType.insets = new Insets(0, 0, 0, 5);
 
 		switch (periodType) {
 		case YEARS: {
@@ -118,10 +122,20 @@ public class JValidityPeriod extends JPanel {
 				typeChanged(((JComboBox) evt.getSource()).getSelectedIndex());
 			}
 		});
+		
+		jbApply = new JButton(res.getString("JValidityPeriod.jbApply.text"));
+		
+		GridBagConstraints gbc_jbApply = new GridBagConstraints();
+		gbc_jbApply.gridheight = 1;
+		gbc_jbApply.gridwidth = 1;
+		gbc_jbApply.gridx = 2;
+		gbc_jbApply.gridy = 0;
+		gbc_jbApply.insets = new Insets(0, 0, 0, 0);
 
 		setLayout(new GridBagLayout());
 		add(jsValue, gbc_jsValue);
 		add(jcbType, gbc_jcbType);
+		add(jbApply, gbc_jbApply);
 	}
 
 	/**
@@ -180,7 +194,34 @@ public class JValidityPeriod extends JPanel {
 		 * we cross a DST-shift, we'll be an hour out
 		 */
 		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		return getValidityPeriodMs(now.getTime());
+	}
+	
+	/**
+	 * Get chosen validity period in msecs, relative to validity start date.
+	 *
+	 * @return Validity period
+	 */
+	public long getValidityPeriodMs(Date validityStart) {
+		Date validityEnd = getValidityEnd(validityStart);
+		
+		return validityEnd.getTime() - validityStart.getTime();
+	}
+	
+	/**
+	 * Compute validity end date, based on chosen period and relative to validity 
+	 * start date.
+	 *
+	 * @return Validity End Date
+	 */
+	public Date getValidityEnd(Date validityStart)
+	{
+		/*
+		 * Use a non-shifting timezone to calculate validity date otherwise, if
+		 * we cross a DST-shift, we'll be an hour out
+		 */
 		Calendar validityDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		validityDate.setTime(validityStart);
 
 		int periodType = jcbType.getSelectedIndex();
 		int periodValue = ((Number) jsValue.getValue()).intValue();
@@ -204,6 +245,18 @@ public class JValidityPeriod extends JPanel {
 		}
 		}
 
-		return validityDate.getTimeInMillis() - now.getTimeInMillis();
+		return validityDate.getTime();
+	}
+
+	
+	/**
+	 * Adds an action listener to the apply button.
+	 *
+	 * @param listener
+	 *            the listener
+	 */
+	public void addApplyActionListener(ActionListener listener)
+	{
+		jbApply.addActionListener(listener);
 	}
 }

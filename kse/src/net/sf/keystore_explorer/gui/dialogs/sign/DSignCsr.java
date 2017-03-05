@@ -40,8 +40,9 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.ResourceBundle;
-
+import java.util.concurrent.TimeUnit;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -59,14 +60,12 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
-
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
@@ -86,6 +85,7 @@ import net.sf.keystore_explorer.gui.JavaFXFileChooser;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.crypto.JValidityPeriod;
+import net.sf.keystore_explorer.gui.datetime.JDateTime;
 import net.sf.keystore_explorer.gui.dialogs.DViewPublicKey;
 import net.sf.keystore_explorer.gui.dialogs.DialogHelper;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DAddExtensions;
@@ -119,6 +119,10 @@ public class DSignCsr extends JEscDialog {
 	private JRadioButton jrbVersion3;
 	private JLabel jlSignatureAlgorithm;
 	private JComboBox jcbSignatureAlgorithm;
+	private JLabel jlValidityStart;
+	private JDateTime jdtValidityStart;
+	private JLabel jlValidityEnd;
+	private JDateTime jdtValidityEnd;
 	private JLabel jlValidityPeriod;
 	private JValidityPeriod jvpValidityPeriod;
 	private JLabel jlSerialNumber;
@@ -139,7 +143,8 @@ public class DSignCsr extends JEscDialog {
 	private PublicKey csrPublicKey;
 	private X509CertificateVersion version;
 	private SignatureType signatureType;
-	private long validityPeriod;
+	private Date validityStart;
+	private Date validityEnd;
 	private BigInteger serialNumber;
 	private File caReplyFile;
 	private X509ExtensionSet extensions = new X509ExtensionSet();
@@ -261,10 +266,37 @@ public class DSignCsr extends JEscDialog {
 		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, provider, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jcbSignatureAlgorithm.tooltip"));
 
+		Date now = new Date();
+
+		jlValidityStart = new JLabel(res.getString("DSignCsr.jlValidityStart.text"));
+
+		jdtValidityStart = new JDateTime(res.getString("DSignCsr.jdtValidityStart.text"), false);
+		jdtValidityStart.setDateTime(now);
+		jdtValidityStart.setToolTipText(res.getString("DSignCsr.jdtValidityStart.tooltip"));
+
+		jlValidityEnd = new JLabel(res.getString("DSignCsr.jlValidityEnd.text"));
+
+		jdtValidityEnd = new JDateTime(res.getString("DSignCsr.jdtValidityEnd.text"), false);
+		jdtValidityEnd.setDateTime(new Date(now.getTime() + TimeUnit.DAYS.toMillis(365)));
+		jdtValidityEnd.setToolTipText(res.getString("DSignCsr.jdtValidityEnd.tooltip"));
+		
 		jlValidityPeriod = new JLabel(res.getString("DSignCsr.jlValidityPeriod.text"));
 
 		jvpValidityPeriod = new JValidityPeriod(JValidityPeriod.YEARS);
 		jvpValidityPeriod.setToolTipText(res.getString("DSignCsr.jvpValidityPeriod.tooltip"));
+		jvpValidityPeriod.addApplyActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Date startDate = jdtValidityStart.getDateTime();
+				if(startDate == null) {
+					startDate = new Date();
+					jdtValidityStart.setDateTime(startDate);
+				}
+				Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
+				jdtValidityEnd.setDateTime(validityEnd);
+				
+			}
+		});
 
 		jlSerialNumber = new JLabel(res.getString("DSignCsr.jlSerialNumber.text"));
 
@@ -353,8 +385,12 @@ public class DSignCsr extends JEscDialog {
 		jpSignOptions.add(jrbVersion3, "wrap");
 		jpSignOptions.add(jlSignatureAlgorithm, "");
 		jpSignOptions.add(jcbSignatureAlgorithm, "wrap");
+		jpSignOptions.add(jlValidityStart, "");
+		jpSignOptions.add(jdtValidityStart, "wrap");
 		jpSignOptions.add(jlValidityPeriod, "");
 		jpSignOptions.add(jvpValidityPeriod, "wrap");
+		jpSignOptions.add(jlValidityEnd, "");
+		jpSignOptions.add(jdtValidityEnd, "wrap");
 		jpSignOptions.add(jlSerialNumber, "");
 		jpSignOptions.add(jtfSerialNumber, "wrap");
 		jpSignOptions.add(jlCaReplyFile, "");
@@ -521,12 +557,23 @@ public class DSignCsr extends JEscDialog {
 	}
 
 	/**
-	 * Get chosen validity period.
+	 * Get chosen validity start date.
 	 *
-	 * @return Validity period or -1 if dialog cancelled
+	 * @return Validity start date or null if dialog cancelled
 	 */
-	public long getValidityPeriod() {
-		return validityPeriod;
+	public Date getValidityStart()
+	{
+		return validityStart;
+	}
+
+	/**
+	 * Get chosen validity end date.
+	 *
+	 * @return Validity end date or null if dialog cancelled
+	*/
+	public Date getValidityEnd()
+	{
+		return validityEnd;
 	}
 
 	/**
@@ -644,7 +691,8 @@ public class DSignCsr extends JEscDialog {
 		}
 
 		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
-		validityPeriod = jvpValidityPeriod.getValidityPeriodMs();
+		validityStart = jdtValidityStart.getDateTime();
+		validityEnd = jdtValidityEnd.getDateTime();
 		serialNumber = BigInteger.valueOf(serialNumberLong);
 
 		closeDialog();
