@@ -2373,9 +2373,11 @@ public final class KseFrame implements StatusBar {
 			KeyStoreState currentState = history.getCurrentState();
 			KeyStore keyStore = currentState.getKeyStore();
 			String alias = getSelectedEntryAlias();
+			KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
 			if (alias == null) {
-				return null; // No selected entry to drag
+				// No selected entry to drag
+				return null;
 			}
 
 			if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
@@ -2384,11 +2386,10 @@ public final class KseFrame implements StatusBar {
 				return null;
 			}
 
-			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore) && type.hasExportablePrivateKeys()) {
 
 				// Otherwise entry must already be unlocked to get password
 				Password password = currentState.getEntryPassword(alias);
-				KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
 				if (password == null && type.hasEntryPasswords()) {
 					JOptionPane.showMessageDialog(frame, res.getString("KseFrame.NoDragLockedKeyPairEntry.message"),

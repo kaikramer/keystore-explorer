@@ -97,6 +97,15 @@ public enum KeyStoreType {
 		return this != PKCS11 && this != MS_CAPI_PERSONAL;
 	}
 
+	/*
+	 * Are private keys exportable for this keystore type?
+	 *
+	 * @return True if private keys are exportable, false otherwise
+	 */
+	public boolean hasExportablePrivateKeys() {
+		return this != PKCS11 && this != MS_CAPI_PERSONAL;
+	}
+
 	/**
 	 * Does this KeyStore type support secret key entries?
 	 *
