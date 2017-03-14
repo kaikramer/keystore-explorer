@@ -128,6 +128,9 @@
 		<pathelement location="${testBuildDir}" />
 	</path>
 
+	<!-- Optional jars that my be added at runtime -->
+	<property name="optionalJARs" value="lib/smartcard-hsm-provider.jar" />
+	
 	<!-- Resource directories -->
 	<property name="resDir" value="${basedir}/res" />
 	<property name="iconsDir" value="${resDir}/icons" />
@@ -258,7 +261,7 @@
 			<attribute name="Specification-Version" value="${appVersion}" />
 			<attribute name="Specification-Vendor" value="${vendor}" />
 			<attribute name="Main-Class" value="${mainClass}" />
-			<attribute name="Class-Path" value="${classPath}" />
+			<attribute name="Class-Path" value="${classPath} ${optionalJARs}" />
 			<attribute name="Built-Date" value="${TODAY}" />
 			<attribute name="SplashScreen-Image" value="net/sf/keystore_explorer/gui/images/splash.png" />
 			<attribute name="Sealed" value="true" />

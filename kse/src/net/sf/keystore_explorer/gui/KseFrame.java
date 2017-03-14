@@ -145,6 +145,7 @@ import net.sf.keystore_explorer.gui.actions.OpenCaCertificatesAction;
 import net.sf.keystore_explorer.gui.actions.OpenDefaultAction;
 import net.sf.keystore_explorer.gui.actions.OpenMsCapiAction;
 import net.sf.keystore_explorer.gui.actions.OpenPkcs11Action;
+import net.sf.keystore_explorer.gui.actions.OpenSmartCardHSMAction;
 import net.sf.keystore_explorer.gui.actions.PasteAction;
 import net.sf.keystore_explorer.gui.actions.PreferencesAction;
 import net.sf.keystore_explorer.gui.actions.PropertiesAction;
@@ -224,6 +225,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiOpenDefaultKeyStore;
 	private JMenuItem jmiOpenCaCertificatesKeyStore;
 	private JMenuItem jmiOpenPkcs11KeyStore;
+	private JMenuItem jmiOpenSmartCardHSMKeyStore;
 	private JMenuItem jmiOpenMsCapiKeyStore;
 	private JMenuItem jmiClose;
 	private JMenuItem jmiCloseAll;
@@ -406,6 +408,7 @@ public final class KseFrame implements StatusBar {
 	private final OpenDefaultAction openDefaultKeyStoreAction = new OpenDefaultAction(this);
 	private final OpenCaCertificatesAction openCaCertificatesKeyStoreAction = new OpenCaCertificatesAction(this);
 	private final OpenPkcs11Action openPkcs11KeyStoreAction = new OpenPkcs11Action(this);
+	private final OpenSmartCardHSMAction openSmartCardHSMKeyStoreAction = new OpenSmartCardHSMAction(this);
 	private final OpenMsCapiAction openMsCapiAction = new OpenMsCapiAction(this);
 	private final SaveAction saveAction = new SaveAction(this);
 	private final SaveAsAction saveAsAction = new SaveAsAction(this);
@@ -652,6 +655,16 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiOpenPkcs11KeyStore,
 				(String) openPkcs11KeyStoreAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmOpenSpecial.add(jmiOpenPkcs11KeyStore);
+
+		jmiOpenSmartCardHSMKeyStore = new JMenuItem(openSmartCardHSMKeyStoreAction);
+		PlatformUtil.setMnemonic(jmiOpenSmartCardHSMKeyStore,
+				res.getString("KseFrame.jmiOpenPkcs11KeyStore.mnemonic").charAt(0));
+		jmiOpenSmartCardHSMKeyStore.setToolTipText(null);
+		new StatusBarChangeHandler(jmiOpenSmartCardHSMKeyStore,
+				(String) openSmartCardHSMKeyStoreAction.getValue(Action.LONG_DESCRIPTION), this);
+		if (KeyStoreUtil.isSmartCardHSMSupported()) {
+			jmOpenSpecial.add(jmiOpenSmartCardHSMKeyStore);
+		}
 
 		jmiOpenMsCapiKeyStore = new JMenuItem(openMsCapiAction);
 		PlatformUtil.setMnemonic(jmiOpenMsCapiKeyStore, res.getString("KseFrame.jmiOpenPkcs11KeyStore.mnemonic")
@@ -2526,7 +2539,13 @@ public final class KseFrame implements StatusBar {
 		generateKeyPairAction.setEnabled(true);
 		generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
 		importTrustedCertificateAction.setEnabled(true);
-		importKeyPairAction.setEnabled(true);
+		
+		if (type == KeyStoreType.SC_HSM) {
+			importKeyPairAction.setEnabled(false);
+		} else {
+			importKeyPairAction.setEnabled(true);
+		}
+		
 		propertiesAction.setEnabled(true);
 		if (type.isFileBased()) {
 			setPasswordAction.setEnabled(true);
@@ -2567,6 +2586,22 @@ public final class KseFrame implements StatusBar {
 
 			// "UnsupportedOperationException" ...
 			jmKeyPairImportCaReply.setEnabled(false);
+		} else if (type == KeyStoreType.SC_HSM) {
+			keyPairPrivateKeyDetailsAction.setEnabled(false);
+			keyDetailsAction.setEnabled(false);
+
+			renameKeyAction.setEnabled(true);
+			renameKeyPairAction.setEnabled(true);
+			renameTrustedCertificateAction.setEnabled(true);
+
+			exportKeyPairAction.setEnabled(false);
+			exportKeyPairPrivateKeyAction.setEnabled(false);
+
+			jmKeyPairEditCertChain.setEnabled(false);
+			appendToCertificateChainAction.setEnabled(false);
+			removeFromCertificateChainAction.setEnabled(false);
+
+			jmKeyPairImportCaReply.setEnabled(true);
 		} else {
 			keyPairPrivateKeyDetailsAction.setEnabled(true);
 			keyDetailsAction.setEnabled(true);

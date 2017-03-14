@@ -241,6 +241,23 @@ public final class KeyStoreUtil {
 	}
 
 	/**
+	 * Is the SmartCard-HSM Provider available in the classpath
+	 *
+	 * @return True if it is, false otherwise
+	 * @throws ClassNotFoundException 
+	 */
+	public static boolean isSmartCardHSMSupported() {
+		try	{
+			Class.forName("de.cardcontact.smartcardhsmprovider.SmartCardHSMProvider");
+			return true;
+		}
+		catch (ClassNotFoundException e) {
+			// Ignore
+		}
+		return false;
+	}
+
+	/**
 	 * Are MSCAPI Stores supported?
 	 *
 	 * @return True if they are, false otherwise

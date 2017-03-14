@@ -19,5 +19,6 @@
 			<accessrule kind="accessible" pattern="**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/smartcard-hsm-provider.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
