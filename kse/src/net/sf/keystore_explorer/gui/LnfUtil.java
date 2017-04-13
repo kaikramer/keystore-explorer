@@ -28,11 +28,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
-import com.jgoodies.looks.plastic.theme.SkyBlue;
-import com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel;
-import com.sun.java.swing.plaf.windows.WindowsLookAndFeel;
 
-import net.sf.keystore_explorer.gui.theme.LightOceanTheme;
 import net.sf.keystore_explorer.utilities.os.OperatingSystem;
 import net.sf.keystore_explorer.version.JavaVersion;
 
@@ -67,13 +63,14 @@ public class LnfUtil {
 	public static void installLnfs() {
 		UIManager.installLookAndFeel("JGoodies Plastic 3D", Plastic3DLookAndFeel.class.getName());
 
-		if (OperatingSystem.isWindows()) {
-			UIManager.installLookAndFeel("JGoodies Windows", com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName());
+		if (OperatingSystem.isWindows() && JavaVersion.getJreVersion().isBelow(JavaVersion.JRE_VERSION_9)) {
+			UIManager.installLookAndFeel("JGoodies Windows",
+					com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName());
 		}
 
 		// Darcula is optional
 		if (isDarculaAvailable()) {
-		    UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
+			UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
 		}
 	}
 
@@ -85,17 +82,6 @@ public class LnfUtil {
 	 */
 	public static void useLnf(String lnfClassName) {
 		try {
-			// Make l&f specific settings - required before setting the l&f
-			if (lnfClassName.equals(Plastic3DLookAndFeel.class.getName())) {
-				MetalLookAndFeel.setCurrentTheme(new SkyBlue());
-				UIManager.put("jgoodies.useNarrowButtons", Boolean.FALSE);
-			} else if (lnfClassName.equals(com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName())) {
-				UIManager.put("jgoodies.useNarrowButtons", Boolean.FALSE);
-			} else if (lnfClassName.equals(MetalLookAndFeel.class.getName())) {
-				// Lighten metal/ocean
-				MetalLookAndFeel.setCurrentTheme(new LightOceanTheme());
-			}
-
 			UIManager.setLookAndFeel(lnfClassName);
 		} catch (UnsupportedLookAndFeelException e) {
 		} catch (ClassNotFoundException e) {
@@ -112,10 +98,8 @@ public class LnfUtil {
 	public static String useLnfForPlatform() {
 		String lnfClassName = null;
 
-		if (OperatingSystem.isMacOs()) {
+		if (OperatingSystem.isMacOs() || OperatingSystem.isWindows()) {
 			lnfClassName = UIManager.getSystemLookAndFeelClassName();
-		} else if (OperatingSystem.isWindows()) {
-			lnfClassName = WindowsLookAndFeel.class.getName();
 		} else {
 			String xdgCurrentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
 			if ("Unity".equalsIgnoreCase(xdgCurrentDesktop)
@@ -152,7 +136,7 @@ public class LnfUtil {
 	 * @return True if it is
 	 */
 	public static boolean usingPlastic3DLnf() {
-		return usingLnf(Plastic3DLookAndFeel.class);
+		return usingLnf(Plastic3DLookAndFeel.class.getName());
 	}
 
 	/**
@@ -161,7 +145,7 @@ public class LnfUtil {
 	 * @return True if it is
 	 */
 	public static boolean usingMetalLnf() {
-		return usingLnf(MetalLookAndFeel.class);
+		return usingLnf(MetalLookAndFeel.class.getName());
 	}
 
 	/**
@@ -170,16 +154,7 @@ public class LnfUtil {
 	 * @return True if it is
 	 */
 	public static boolean usingWindowsLnf() {
-		return usingLnf(WindowsLookAndFeel.class);
-	}
-
-	/**
-	 * Is the Windows Classic l&f currently being used?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean usingWindowsClassicLnf() {
-		return usingLnf(WindowsClassicLookAndFeel.class);
+		return usingLnf(UIManager.getSystemLookAndFeelClassName());
 	}
 
 	/**
@@ -187,9 +162,9 @@ public class LnfUtil {
 	 *
 	 * @return l&f class
 	 */
-	private static boolean usingLnf(Class lnfClass) {
+	private static boolean usingLnf(String lnfClass) {
 		String currentLnfClass = UIManager.getLookAndFeel().getClass().getName();
-		return currentLnfClass.equals(lnfClass.getName());
+		return currentLnfClass.equals(lnfClass);
 	}
 
 	/**

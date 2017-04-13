@@ -77,7 +77,7 @@ public class Password {
 	 *
 	 * @return Wrapped password
 	 * @throws IllegalStateException
-	 *             If pasword requested after it has been nulled
+	 *             If password requested after it has been nulled
 	 */
 	public byte[] toByteArray() throws IllegalStateException {
 		if (nulled) {

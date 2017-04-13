@@ -149,6 +149,17 @@ public class JavaVersion implements Comparable {
 		return compareTo(javaVersion) >= 0;
 	}
 
+	/**
+	 * Compares version of the current JRE with the passed version.
+	 *
+	 * @param javaVersion
+	 *             Java version to compare to.
+	 * @return True, if current JRE is lower version.
+	 */
+	public boolean isBelow(JavaVersion javaVersion) {
+		return compareTo(javaVersion) < 0;
+	}
+
 	@Override
 	public int compareTo(Object object) throws ClassCastException {
 		JavaVersion cmpJavaVersion = (JavaVersion) object;

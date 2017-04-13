@@ -1394,7 +1394,7 @@ public final class KseFrame implements StatusBar {
 
 		// If using Windows need a bottom line on the toolbar to seperate it
 		// from the main view
-		if (LnfUtil.usingWindowsLnf() || LnfUtil.usingWindowsClassicLnf()) {
+		if (LnfUtil.usingWindowsLnf()) {
 			jtbToolBar.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 		}
 
