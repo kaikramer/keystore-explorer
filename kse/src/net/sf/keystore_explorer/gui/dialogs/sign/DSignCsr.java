@@ -43,6 +43,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
+
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -60,12 +61,14 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.KeyInfo;
@@ -279,7 +282,7 @@ public class DSignCsr extends JEscDialog {
 		jdtValidityEnd = new JDateTime(res.getString("DSignCsr.jdtValidityEnd.text"), false);
 		jdtValidityEnd.setDateTime(new Date(now.getTime() + TimeUnit.DAYS.toMillis(365)));
 		jdtValidityEnd.setToolTipText(res.getString("DSignCsr.jdtValidityEnd.tooltip"));
-		
+
 		jlValidityPeriod = new JLabel(res.getString("DSignCsr.jlValidityPeriod.text"));
 
 		jvpValidityPeriod = new JValidityPeriod(JValidityPeriod.YEARS);
@@ -294,7 +297,7 @@ public class DSignCsr extends JEscDialog {
 				}
 				Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
 				jdtValidityEnd.setDateTime(validityEnd);
-				
+
 			}
 		});
 
@@ -570,7 +573,7 @@ public class DSignCsr extends JEscDialog {
 	 * Get chosen validity end date.
 	 *
 	 * @return Validity end date or null if dialog cancelled
-	*/
+	 */
 	public Date getValidityEnd()
 	{
 		return validityEnd;
@@ -648,10 +651,9 @@ public class DSignCsr extends JEscDialog {
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		long serialNumberLong;
 		try {
-			serialNumberLong = Integer.parseInt(serialNumberStr);
-			if (serialNumberLong < 0) {
+			serialNumber = new BigInteger(serialNumberStr);
+			if (serialNumber.compareTo(BigInteger.ONE) < 0) {
 				JOptionPane.showMessageDialog(this, res.getString("DSignCsr.SerialNumberNonZero.message"), getTitle(),
 						JOptionPane.WARNING_MESSAGE);
 				return;
@@ -693,7 +695,6 @@ public class DSignCsr extends JEscDialog {
 		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
 		validityStart = jdtValidityStart.getDateTime();
 		validityEnd = jdtValidityEnd.getDateTime();
-		serialNumber = BigInteger.valueOf(serialNumberLong);
 
 		closeDialog();
 	}
