@@ -101,7 +101,7 @@ public final class X509CertUtil {
 
 			is = new ByteArrayInputStream(certsBytes);
 
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
 
 			Collection<? extends Certificate> certs = cf.generateCertificates(is);
 
@@ -118,8 +118,6 @@ public final class X509CertUtil {
 			return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
-		} catch (NoSuchProviderException e) {
-			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), e);
 		} catch (CertificateException ex) {
 			// Failed to load certificates, may be pki path encoded - try loading as that
 			try {
