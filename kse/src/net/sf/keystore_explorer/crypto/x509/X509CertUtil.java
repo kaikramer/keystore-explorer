@@ -396,6 +396,23 @@ public final class X509CertUtil {
 	}
 
 	/**
+	 * X.509 encode a number of certificates and PEM the encoding.
+	 *
+	 * @return The PEM'd encoding
+	 * @param cert
+	 *            The certificates
+	 * @throws CryptoException
+	 *             If there was a problem encoding the certificates
+	 */
+	public static String getCertsEncodedX509Pem(X509Certificate[] certs) throws CryptoException {
+		StringBuilder sb = new StringBuilder();
+		for (X509Certificate cert : certs) {
+			sb.append(getCertEncodedX509Pem(cert));
+		}
+		return sb.toString();
+	}
+
+	/**
 	 * PKCS #7 encode a certificate.
 	 *
 	 * @return The encoding

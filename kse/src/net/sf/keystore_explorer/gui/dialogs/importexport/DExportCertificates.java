@@ -32,6 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -51,6 +52,8 @@ import javax.swing.KeyStroke;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
@@ -269,17 +272,14 @@ public class DExportCertificates extends JEscDialog {
 		jpOptions.add(jtfExportFile, gbc_jtfExportFile);
 		jpOptions.add(jbBrowse, gbc_jbBrowse);
 
-		jrbExportHead.addItemListener(new ItemListener() {
+		jrbExportChain.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent evt) {
-				if (jrbExportHead.isSelected()) {
-					jrbExportX509.setEnabled(true);
+				if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
+					jcbExportPem.setEnabled(false);
+					jcbExportPem.setSelected(true);
 				} else {
-					jrbExportX509.setEnabled(false);
-
-					if (jrbExportX509.isSelected()) {
-						jrbExportPkcs7.setSelected(true);
-					}
+					jcbExportPem.setEnabled(true);
 				}
 			}
 		});
@@ -289,6 +289,13 @@ public class DExportCertificates extends JEscDialog {
 			public void itemStateChanged(ItemEvent evt) {
 				if (jrbExportX509.isSelected()) {
 					updateFileExtension(FileChooserFactory.X509_EXT_1);
+
+					if (jrbExportChain.isSelected()) {
+						jcbExportPem.setEnabled(false);
+						jcbExportPem.setSelected(true);
+					} else {
+						jcbExportPem.setEnabled(true);
+					}
 				}
 			}
 		});
@@ -297,6 +304,7 @@ public class DExportCertificates extends JEscDialog {
 			@Override
 			public void itemStateChanged(ItemEvent evt) {
 				if (jrbExportPkcs7.isSelected()) {
+					jcbExportPem.setEnabled(true);
 					updateFileExtension(FileChooserFactory.PKCS7_EXT_1);
 				}
 			}
@@ -507,7 +515,7 @@ public class DExportCertificates extends JEscDialog {
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-		        : chooser.showDialog(this, res.getString("DExportCertificates.ChooseExportFile.button"));
+				: chooser.showDialog(this, res.getString("DExportCertificates.ChooseExportFile.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
@@ -564,5 +572,28 @@ public class DExportCertificates extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick testing
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					DExportCertificates dialog = new DExportCertificates(new javax.swing.JFrame(), "alias (test)", true);
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

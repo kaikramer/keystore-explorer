@@ -91,7 +91,9 @@ public class ExportKeyPairCertificateChainAction extends KeyStoreExplorerAction 
 			if (exportChain) {
 				X509Certificate[] certChain = getCertificateChain(alias);
 
-				if (dExportCertificates.exportFormatPkcs7()) {
+				if (dExportCertificates.exportFormatX509()) {
+					encoded = X509CertUtil.getCertsEncodedX509Pem(certChain).getBytes();
+				} else if (dExportCertificates.exportFormatPkcs7()) {
 					if (pemEncode) {
 						encoded = X509CertUtil.getCertsEncodedPkcs7Pem(certChain).getBytes();
 					} else {
