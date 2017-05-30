@@ -113,7 +113,15 @@ public class OpenSslPvkUtil {
 		// DER encoding for each key type is a sequence
 		ASN1EncodableVector vec = new ASN1EncodableVector();
 
-		if (privateKey instanceof RSAPrivateCrtKey) {
+		if (privateKey instanceof ECPrivateKey) {
+			try {
+				org.bouncycastle.asn1.sec.ECPrivateKey ecPrivateKey = org.bouncycastle.asn1.sec.ECPrivateKey
+						.getInstance(privateKey.getEncoded());
+				return ecPrivateKey.toASN1Primitive().getEncoded();
+			} catch (IOException e) {
+				throw new CryptoException(res.getString("NoDerEncodeOpenSslPrivateKey.exception.message"), e);
+			}
+		} else if (privateKey instanceof RSAPrivateCrtKey) {
 			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
 
 			vec.add(new ASN1Integer(VERSION));
@@ -125,15 +133,6 @@ public class OpenSslPvkUtil {
 			vec.add(new ASN1Integer(rsaPrivateKey.getPrimeExponentP()));
 			vec.add(new ASN1Integer(rsaPrivateKey.getPrimeExponentQ()));
 			vec.add(new ASN1Integer(rsaPrivateKey.getCrtCoefficient()));
-		} else if (privateKey instanceof ECPrivateKey) {
-			// TODO clean this up
-			org.bouncycastle.asn1.sec.ECPrivateKey ecPrivateKey = org.bouncycastle.asn1.sec.ECPrivateKey
-					.getInstance(privateKey.getEncoded());
-			try {
-				return ecPrivateKey.toASN1Primitive().getEncoded();
-			} catch (IOException e) {
-				throw new CryptoException(e);
-			}
 		} else {
 			DSAPrivateKey dsaPrivateKey = (DSAPrivateKey) privateKey;
 			DSAParams dsaParams = dsaPrivateKey.getParams();

@@ -12,7 +12,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/darcula.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/appbundler-1.0ea.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-9">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<accessrules>
 			<accessrule kind="accessible" pattern="**"/>
 		</accessrules>
