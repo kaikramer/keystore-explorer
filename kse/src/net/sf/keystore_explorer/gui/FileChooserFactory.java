@@ -52,8 +52,8 @@ public class FileChooserFactory {
 	public static final String CET_EXT = "cet";
 	public static final String PKCS8_EXT = "pkcs8";
 	public static final String PVK_EXT = "pvk";
-	public static final String OPENSSL_PVK_EXT = "openssl";
-	public static final String PUBLIC_KEY_EXT = "openssl";
+	public static final String OPENSSL_PVK_EXT = "key";
+	public static final String PUBLIC_KEY_EXT = "pub";
 	public static final String PKCS10_CSR_EXT_1 = "p10";
 	public static final String PKCS10_CSR_EXT_2 = "csr";
 	public static final String SPKAC_CSR_EXT = "spkac";
@@ -385,7 +385,7 @@ public class FileChooserFactory {
 	}
 
 	private static JFileChooser getFileChooser() {
-	    return JavaFXFileChooser.isFxAvailable() ? new JavaFXFileChooser() : new JFileChooser();
+		return JavaFXFileChooser.isFxAvailable() ? new JavaFXFileChooser() : new JFileChooser();
 	}
 
 }
