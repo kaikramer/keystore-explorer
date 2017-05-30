@@ -245,7 +245,7 @@ Section "${PRODUCT}"
     noksbcfileassoc:
 
     ; Ask if a shortcut is required on the desktop
-    MessageBox MB_YESNO "Do you want a shortcut to KeyStore Explorer to be placed on the desktop?" IDNO NoShortcut
+    MessageBox MB_YESNO "Do you want a shortcut to KeyStore Explorer to be placed on the desktop?" /SD IDNO IDNO NoShortcut
         CreateShortCut "$DESKTOP\${PRODUCT_KEY}.lnk" "$INSTDIR\${KSE_EXE}" "" "$INSTDIR\${KSE_EXE}" 0
     NoShortcut:
 
