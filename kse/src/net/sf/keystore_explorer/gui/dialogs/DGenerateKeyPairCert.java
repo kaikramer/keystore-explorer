@@ -202,7 +202,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			// self-signed
 			DialogHelper.populateSigAlgs(keyPairType, keyPair.getPrivate(), provider, jcbSignatureAlgorithm);
 		}
-		
+
 		Date now = new Date();
 
 		jlValidityStart = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityStart.text"));
@@ -214,7 +214,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		jdtValidityStart.setToolTipText(res.getString("DGenerateKeyPairCert.jdtValidityStart.tooltip"));
 		GridBagConstraints gbc_jdtValidityStart = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jdtValidityStart.gridy = 2;
-		
+
 		jlValidityPeriod = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityPeriod.text"));
 		GridBagConstraints gbc_jlValidityPeriod = (GridBagConstraints) gbcLbl.clone();
 		gbc_jlValidityPeriod.gridy = 3;
@@ -231,7 +231,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 				}
 				Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
 				jdtValidityEnd.setDateTime(validityEnd);
-				
+
 			}
 		});
 		GridBagConstraints gbc_jvpValidityPeriod = (GridBagConstraints) gbcEdCtrl.clone();
@@ -365,7 +365,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		X500Name caIssuerName = null;
 		BigInteger caSerialNumber = null;
 		if (issuerCert != null) {
-			caIssuerName = X500Name.getInstance(issuerCert.getIssuerDN());
+			caIssuerName = X500NameUtils.x500PrincipalToX500Name(issuerCert.getIssuerX500Principal());
 			caPublicKey = issuerCert.getPublicKey();
 			caSerialNumber = issuerCert.getSerialNumber();
 		} else {
@@ -483,7 +483,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
@@ -496,7 +496,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 					keyGen.initialize(1024);
 					KeyPair keyPair = keyGen.genKeyPair();
 
-					DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), "test", keyPair, KeyPairType.RSA, null, null, 
+					DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), "test", keyPair, KeyPairType.RSA, null, null,
 							new BouncyCastleProvider());
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override
