@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -18,8 +18,6 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.keystore_explorer.crypto.x509;
-
-import static net.sf.keystore_explorer.crypto.SecurityProvider.BOUNCY_CASTLE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -101,7 +99,7 @@ public final class X509CertUtil {
 
 			is = new ByteArrayInputStream(certsBytes);
 
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
 
 			Collection<? extends Certificate> certs = cf.generateCertificates(is);
 
@@ -118,8 +116,6 @@ public final class X509CertUtil {
 			return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
-		} catch (NoSuchProviderException e) {
-			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), e);
 		} catch (CertificateException ex) {
 			// Failed to load certificates, may be pki path encoded - try loading as that
 			try {
@@ -134,7 +130,7 @@ public final class X509CertUtil {
 
 	private static X509Certificate[] loadCertificatesPkiPath(InputStream is) throws CryptoException {
 		try {
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
 			CertPath certPath = cf.generateCertPath(is, PKI_PATH_ENCODING);
 
 			List<? extends Certificate> certs = certPath.getCertificates();
@@ -151,8 +147,6 @@ public final class X509CertUtil {
 
 			return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
 		} catch (CertificateException e) {
-			throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), e);
-		} catch (NoSuchProviderException e) {
 			throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), e);
 		} finally {
 			IOUtils.closeQuietly(is);
@@ -290,12 +284,10 @@ public final class X509CertUtil {
 	 */
 	public static X509Certificate convertCertificate(Certificate certIn) throws CryptoException {
 		try {
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
 			ByteArrayInputStream bais = new ByteArrayInputStream(certIn.getEncoded());
 			return (X509Certificate) cf.generateCertificate(bais);
 		} catch (CertificateException e) {
-			throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), e);
-		} catch (NoSuchProviderException e) {
 			throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), e);
 		}
 	}
@@ -404,6 +396,23 @@ public final class X509CertUtil {
 	}
 
 	/**
+	 * X.509 encode a number of certificates and PEM the encoding.
+	 *
+	 * @return The PEM'd encoding
+	 * @param cert
+	 *            The certificates
+	 * @throws CryptoException
+	 *             If there was a problem encoding the certificates
+	 */
+	public static String getCertsEncodedX509Pem(X509Certificate[] certs) throws CryptoException {
+		StringBuilder sb = new StringBuilder();
+		for (X509Certificate cert : certs) {
+			sb.append(getCertEncodedX509Pem(cert));
+		}
+		return sb.toString();
+	}
+
+	/**
 	 * PKCS #7 encode a certificate.
 	 *
 	 * @return The encoding
@@ -431,14 +440,12 @@ public final class X509CertUtil {
 
 			Collections.addAll(encodedCerts, certs);
 
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
 
 			CertPath cp = cf.generateCertPath(encodedCerts);
 
 			return cp.getEncoded(PKCS7_ENCODING);
 		} catch (CertificateException e) {
-			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
-		} catch (NoSuchProviderException e) {
 			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
 		}
 	}
@@ -498,14 +505,12 @@ public final class X509CertUtil {
 
 			Collections.addAll(encodedCerts, certs);
 
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
 
 			CertPath cp = cf.generateCertPath(encodedCerts);
 
 			return cp.getEncoded(PKI_PATH_ENCODING);
 		} catch (CertificateException e) {
-			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
-		} catch (NoSuchProviderException e) {
 			throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
 		}
 	}

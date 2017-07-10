@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -382,6 +382,11 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("0.4.0.1862.1.2", "EtsiQcsLimitValue");
 		oidToNameMapping.put("0.4.0.1862.1.3", "EtsiQcsRetentionPeriod");
 		oidToNameMapping.put("0.4.0.1862.1.4", "EtsiQcsQcSSCD");
+		oidToNameMapping.put("0.4.0.1862.1.5", "EtsiQcsQcPSD");
+		oidToNameMapping.put("0.4.0.1862.1.6", "EtsiQcsQcType");
+		oidToNameMapping.put("0.4.0.1862.1.6.1", "EtsiQctEsign");
+		oidToNameMapping.put("0.4.0.1862.1.6.2", "EtsiQctEseal");
+		oidToNameMapping.put("0.4.0.1862.1.6.3", "EtsiQctWeb");
 		oidToNameMapping.put("0.9.2342.19200300.100.1.1", "UserID");
 		oidToNameMapping.put("0.9.2342.19200300.100.1.3", "Rfc822Mailbox");
 		oidToNameMapping.put("0.9.2342.19200300.100.1.25", "DomainComponent");

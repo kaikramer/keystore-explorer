@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,8 +28,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.security.Provider;
-import java.security.ProviderException;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -62,7 +64,7 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.error.DProblem;
 import net.sf.keystore_explorer.gui.error.Problem;
-import sun.security.pkcs11.SunPKCS11;
+import net.sf.keystore_explorer.version.JavaVersion;
 
 /**
  * Dialog used to retrieve the type to use in the creation of a new KeyStore.
@@ -296,16 +298,29 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 				ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11ConfigSettings.getBytes());
 
 				// instantiate the provider
-				SunPKCS11 pkcs11 = new SunPKCS11(confStream);
-				Security.addProvider(pkcs11);
-				selectedProvider = pkcs11;
+				Provider p11Provider = null;
+				if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_9)) {
+					p11Provider = Security.getProvider("SunPKCS11");
+					// add marker ("--") for inline config
+					pkcs11ConfigSettings = "--" + pkcs11ConfigSettings;
+					// p11Provider.configure(pkcs11ConfigSettings);
+					Method method = Provider.class.getMethod("configure", String.class);
+					method.invoke(p11Provider, pkcs11ConfigSettings);
+				} else {
+					Class<?> cl = Class.forName("sun.security.pkcs11.SunPKCS11");
+					Constructor<?> cons = cl.getConstructor(InputStream.class);
+					p11Provider = (Provider) cons.newInstance(confStream);
+				}
+
+				Security.addProvider(p11Provider);
+				selectedProvider = p11Provider;
 
 				// save library in preferences
 				applicationSettings.addP11Lib(selectedLib);
 			}
 
 			closeDialog();
-		} catch (final ProviderException e) {
+		} catch (final Exception e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {

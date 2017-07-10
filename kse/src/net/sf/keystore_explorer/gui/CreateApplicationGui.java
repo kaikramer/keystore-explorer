@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -57,7 +57,7 @@ import net.sf.keystore_explorer.version.VersionException;
 public class CreateApplicationGui implements Runnable {
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/resources");
 
-	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_160;
+	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_170;
 	private ApplicationSettings applicationSettings;
 	private SplashScreen splash;
 	private List<File> parameterFiles;

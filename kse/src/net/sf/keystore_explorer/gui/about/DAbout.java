@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -162,9 +162,9 @@ public class DAbout extends JEscDialog {
 			Desktop.getDesktop().browse(URI.create(URLs.KSE_WEBSITE_CONTRIBUTORS));
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(this,
-							MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"),
-									URLs.KSE_WEBSITE_CONTRIBUTORS),
-							KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+					MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"),
+							URLs.KSE_WEBSITE_CONTRIBUTORS),
+					KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
@@ -186,11 +186,11 @@ public class DAbout extends JEscDialog {
 			public void run() {
 				try {
 
-					Object[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2016 Kai Kramer ..." };
+					Object[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2017 Kai Kramer ..." };
 					javax.swing.JFrame frame = new javax.swing.JFrame();
 					URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
 					DAbout dialog = new DAbout(frame, "About", "See help for details of the end user license agreement.",
-							Toolkit.getDefaultToolkit().createImage(kseIconUrl), tickerItems);
+							Toolkit.getDefaultToolkit().getImage(kseIconUrl), tickerItems);
 					dialog.setLocationRelativeTo(frame);
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override

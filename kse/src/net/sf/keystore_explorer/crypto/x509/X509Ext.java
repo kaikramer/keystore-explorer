@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -124,6 +124,7 @@ import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERGeneralString;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERPrintableString;
+import org.bouncycastle.asn1.DLSequence;
 import org.bouncycastle.asn1.isismtt.x509.AdmissionSyntax;
 import org.bouncycastle.asn1.isismtt.x509.Admissions;
 import org.bouncycastle.asn1.isismtt.x509.DeclarationOfMajority;
@@ -2128,42 +2129,74 @@ public class X509Ext {
 			sb.append(NEWLINE);
 
 			QcStatementType qcStatementType = QcStatementType.resolveOid(statementId.getId());
-			switch (qcStatementType) {
-			case QC_SYNTAX_V1:
-			case QC_SYNTAX_V2:
-				SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
-				sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
-				break;
-			case QC_COMPLIANCE:
+			if (qcStatementType != null) {
+				switch (qcStatementType) {
+				case QC_SYNTAX_V1:
+				case QC_SYNTAX_V2:
+					SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
+					sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
+					break;
+				case QC_COMPLIANCE:
+					// no statementInfo
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
+					sb.append(NEWLINE);
+					break;
+				case QC_EU_LIMIT_VALUE:
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
+					sb.append(NEWLINE);
+					sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
+					break;
+				case QC_RETENTION_PERIOD:
+					ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
+							asn1Integer.getValue().toString()));
+					sb.append(NEWLINE);
+					break;
+				case QC_SSCD:
+					// no statementInfo
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
+					sb.append(NEWLINE);
+					break;
+				case QC_PDS:
+					ASN1Sequence pdsLocations = ASN1Sequence.getInstance(statementInfo);
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(res.getString(QcStatementType.QC_PDS.getResKey()));
+					for (ASN1Encodable pdsLoc : pdsLocations) {
+						sb.append(NEWLINE);
+						sb.append(INDENT.toString(indentLevel + 1));
+						DLSequence pds = (DLSequence) pdsLoc;
+						sb.append(MessageFormat.format(res.getString("QCPDS.locations"), pds.getObjectAt(1), pds.getObjectAt(0)));
+					}
+					sb.append(NEWLINE);
+					break;
+				case QC_TYPE:
+					sb.append(INDENT.toString(indentLevel));
+					sb.append(res.getString(QcStatementType.QC_TYPE.getResKey()));
+					ASN1Sequence qcTypes = ASN1Sequence.getInstance(statementInfo);
+					for (ASN1Encodable type : qcTypes) {
+						sb.append(NEWLINE);
+						sb.append(INDENT.toString(indentLevel + 1));
+						sb.append(ObjectIdUtil.toString((ASN1ObjectIdentifier) type));
+					}
+					sb.append(NEWLINE);
+				}
+			} else {
 				// no statementInfo
 				sb.append(INDENT.toString(indentLevel));
-				sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
+				sb.append(statementId.getId());
+				sb.append(statementInfo.toString());
 				sb.append(NEWLINE);
-				break;
-			case QC_EU_LIMIT_VALUE:
-				sb.append(INDENT.toString(indentLevel));
-				sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
-				sb.append(NEWLINE);
-				sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
-				break;
-			case QC_RETENTION_PERIOD:
-				ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
-				sb.append(INDENT.toString(indentLevel));
-				sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
-						asn1Integer.getValue().toString()));
-				sb.append(NEWLINE);
-				break;
-			case QC_SSCD:
-				// no statementInfo
-				sb.append(INDENT.toString(indentLevel));
-				sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
-				sb.append(NEWLINE);
-				break;
 			}
 		}
 
 		return sb.toString();
+
 	}
+
 
 	private String getSemanticInformationValueString(QcStatementType qcStatementType, SemanticsInformation
 			semanticsInfo, int baseIndentLevel) throws IOException {

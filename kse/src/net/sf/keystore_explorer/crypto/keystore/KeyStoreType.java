@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -94,6 +94,15 @@ public enum KeyStoreType {
 	 * @return True if it has, false otherwise
 	 */
 	public boolean hasEntryPasswords() {
+		return this != PKCS11 && this != MS_CAPI_PERSONAL;
+	}
+
+	/*
+	 * Are private keys exportable for this keystore type?
+	 *
+	 * @return True if private keys are exportable, false otherwise
+	 */
+	public boolean hasExportablePrivateKeys() {
 		return this != PKCS11 && this != MS_CAPI_PERSONAL;
 	}
 

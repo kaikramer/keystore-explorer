@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -77,7 +77,7 @@ public class Password {
 	 *
 	 * @return Wrapped password
 	 * @throws IllegalStateException
-	 *             If pasword requested after it has been nulled
+	 *             If password requested after it has been nulled
 	 */
 	public byte[] toByteArray() throws IllegalStateException {
 		if (nulled) {

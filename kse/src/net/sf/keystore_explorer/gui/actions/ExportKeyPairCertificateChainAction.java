@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -91,7 +91,9 @@ public class ExportKeyPairCertificateChainAction extends KeyStoreExplorerAction 
 			if (exportChain) {
 				X509Certificate[] certChain = getCertificateChain(alias);
 
-				if (dExportCertificates.exportFormatPkcs7()) {
+				if (dExportCertificates.exportFormatX509()) {
+					encoded = X509CertUtil.getCertsEncodedX509Pem(certChain).getBytes();
+				} else if (dExportCertificates.exportFormatPkcs7()) {
 					if (pemEncode) {
 						encoded = X509CertUtil.getCertsEncodedPkcs7Pem(certChain).getBytes();
 					} else {

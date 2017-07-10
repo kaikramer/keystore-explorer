@@ -1,7 +1,7 @@
 ;========================================================================
 ;
 ; Copyright 2004 - 2013 Wayne Grant
-;           2013 - 2016 Kai Kramer
+;           2013 - 2017 Kai Kramer
 ; 
 ; This file is part of KeyStore Explorer.
 ; 
@@ -37,7 +37,7 @@
 ; Globals
 ;--------------------------------
 
- BrandingText "Copyright 2004 - 2013 Wayne Grant, 2013 - 2016 Kai Kramer"
+ BrandingText "Copyright 2004 - 2013 Wayne Grant, 2013 - 2017 Kai Kramer"
 
 ; Product name
 !define PRODUCT "KeyStore Explorer"
@@ -245,7 +245,7 @@ Section "${PRODUCT}"
     noksbcfileassoc:
 
     ; Ask if a shortcut is required on the desktop
-    MessageBox MB_YESNO "Do you want a shortcut to KeyStore Explorer to be placed on the desktop?" IDNO NoShortcut
+    MessageBox MB_YESNO "Do you want a shortcut to KeyStore Explorer to be placed on the desktop?" /SD IDNO IDNO NoShortcut
         CreateShortCut "$DESKTOP\${PRODUCT_KEY}.lnk" "$INSTDIR\${KSE_EXE}" "" "$INSTDIR\${KSE_EXE}" 0
     NoShortcut:
 

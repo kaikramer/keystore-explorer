@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -195,8 +195,8 @@ public class JcePolicyUtil {
 		JavaVersion jreVersion = JavaVersion.getJreVersion();
 
 		int major = jreVersion.getMajor();
-		int middle = jreVersion.getMiddle();
-		int minor = jreVersion.getMinor();
+		int middle = jreVersion.getMinor();
+		int minor = jreVersion.getSecurity();
 
 		String version = MessageFormat.format("{0}.{1}.{2}", major, middle, minor);
 

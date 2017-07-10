@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,6 +34,7 @@ import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
@@ -78,6 +79,9 @@ public class OpenSslPvkUtil {
 	// Begin OpenSSL DSA private key PEM
 	private static final String OPENSSL_DSA_PVK_PEM_TYPE = "DSA PRIVATE KEY";
 
+	// Begin OpenSSL EC private key PEM
+	private static final String OPENSSL_EC_PVK_PEM_TYPE = "EC PRIVATE KEY";
+
 	// OpenSSL version
 	private static final BigInteger VERSION = BigInteger.ZERO;
 
@@ -90,7 +94,7 @@ public class OpenSslPvkUtil {
 	// DEK-Info PEM header attribute name
 	private static final String DEK_INFO_ATTR_NAME = "DEK-Info";
 
-	// DEK-Info PEM headere attribute value template (pbe algoithm,salt)
+	// DEK-Info PEM headere attribute value template (pbe algorithm,salt)
 	private static final String DEK_INFO_ATTR_VALUE_TEMPLATE = "{0},{1}";
 
 	private OpenSslPvkUtil() {
@@ -109,7 +113,15 @@ public class OpenSslPvkUtil {
 		// DER encoding for each key type is a sequence
 		ASN1EncodableVector vec = new ASN1EncodableVector();
 
-		if (privateKey instanceof RSAPrivateCrtKey) {
+		if (privateKey instanceof ECPrivateKey) {
+			try {
+				org.bouncycastle.asn1.sec.ECPrivateKey ecPrivateKey = org.bouncycastle.asn1.sec.ECPrivateKey
+						.getInstance(privateKey.getEncoded());
+				return ecPrivateKey.toASN1Primitive().getEncoded();
+			} catch (IOException e) {
+				throw new CryptoException(res.getString("NoDerEncodeOpenSslPrivateKey.exception.message"), e);
+			}
+		} else if (privateKey instanceof RSAPrivateCrtKey) {
 			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
 
 			vec.add(new ASN1Integer(VERSION));
@@ -165,6 +177,8 @@ public class OpenSslPvkUtil {
 
 		if (privateKey instanceof RSAPrivateCrtKey) {
 			pemType = OPENSSL_RSA_PVK_PEM_TYPE;
+		} else if (privateKey instanceof ECPrivateKey) {
+			pemType = OPENSSL_EC_PVK_PEM_TYPE;
 		} else {
 			pemType = OPENSSL_DSA_PVK_PEM_TYPE;
 		}
@@ -197,6 +211,8 @@ public class OpenSslPvkUtil {
 
 		if (privateKey instanceof RSAPrivateCrtKey) {
 			pemType = OPENSSL_RSA_PVK_PEM_TYPE;
+		} else if (privateKey instanceof ECPrivateKey) {
+			pemType = OPENSSL_EC_PVK_PEM_TYPE;
 		} else {
 			pemType = OPENSSL_DSA_PVK_PEM_TYPE;
 		}

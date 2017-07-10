@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2017 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,11 +34,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -59,6 +63,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
@@ -71,6 +76,7 @@ import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
 import net.sf.keystore_explorer.gui.crypto.JDistinguishedName;
 import net.sf.keystore_explorer.gui.crypto.JValidityPeriod;
+import net.sf.keystore_explorer.gui.datetime.JDateTime;
 import net.sf.keystore_explorer.gui.dialogs.extensions.DAddExtensions;
 import net.sf.keystore_explorer.gui.error.DError;
 
@@ -89,6 +95,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	private JRadioButton jrbVersion3;
 	private JLabel jlSigAlg;
 	private JComboBox jcbSignatureAlgorithm;
+	private JLabel jlValidityStart;
+	private JDateTime jdtValidityStart;
+	private JLabel jlValidityEnd;
+	private JDateTime jdtValidityEnd;
 	private JLabel jlValidityPeriod;
 	private JValidityPeriod jvpValidityPeriod;
 	private JLabel jlSerialNumber;
@@ -193,39 +203,74 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			DialogHelper.populateSigAlgs(keyPairType, keyPair.getPrivate(), provider, jcbSignatureAlgorithm);
 		}
 
+		Date now = new Date();
+
+		jlValidityStart = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityStart.text"));
+		GridBagConstraints gbc_jlValidityStart = (GridBagConstraints) gbcLbl.clone();
+		gbc_jlValidityStart.gridy = 2;
+
+		jdtValidityStart = new JDateTime(res.getString("DGenerateKeyPairCert.jdtValidityStart.text"), false);
+		jdtValidityStart.setDateTime(now);
+		jdtValidityStart.setToolTipText(res.getString("DGenerateKeyPairCert.jdtValidityStart.tooltip"));
+		GridBagConstraints gbc_jdtValidityStart = (GridBagConstraints) gbcEdCtrl.clone();
+		gbc_jdtValidityStart.gridy = 2;
+
 		jlValidityPeriod = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityPeriod.text"));
 		GridBagConstraints gbc_jlValidityPeriod = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlValidityPeriod.gridy = 2;
+		gbc_jlValidityPeriod.gridy = 3;
 
 		jvpValidityPeriod = new JValidityPeriod(JValidityPeriod.YEARS);
 		jvpValidityPeriod.setToolTipText(res.getString("DGenerateKeyPairCert.jvpValidityPeriod.tooltip"));
+		jvpValidityPeriod.addApplyActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Date startDate = jdtValidityStart.getDateTime();
+				if(startDate == null) {
+					startDate = new Date();
+					jdtValidityStart.setDateTime(startDate);
+				}
+				Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
+				jdtValidityEnd.setDateTime(validityEnd);
+
+			}
+		});
 		GridBagConstraints gbc_jvpValidityPeriod = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jvpValidityPeriod.gridy = 2;
+		gbc_jvpValidityPeriod.gridy = 3;
+
+		jlValidityEnd = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityEnd.text"));
+		GridBagConstraints gbc_jlValidityEnd = (GridBagConstraints) gbcLbl.clone();
+		gbc_jlValidityEnd.gridy = 4;
+
+		jdtValidityEnd = new JDateTime(res.getString("DGenerateKeyPairCert.jdtValidityEnd.text"), false);
+		jdtValidityEnd.setDateTime(new Date(now.getTime() + TimeUnit.DAYS.toMillis(365)));
+		jdtValidityEnd.setToolTipText(res.getString("DGenerateKeyPairCert.jdtValidityEnd.tooltip"));
+		GridBagConstraints gbc_jdtValidityEnd = (GridBagConstraints) gbcEdCtrl.clone();
+		gbc_jdtValidityEnd.gridy = 4;
 
 		jlSerialNumber = new JLabel(res.getString("DGenerateKeyPairCert.jlSerialNumber.text"));
 		GridBagConstraints gbc_jlSerialNumber = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlSerialNumber.gridy = 3;
+		gbc_jlSerialNumber.gridy = 5;
 
 		jtfSerialNumber = new JTextField("" + generateSerialNumber(), 20);
 		jtfSerialNumber.setToolTipText(res.getString("DGenerateKeyPairCert.jtfSerialNumber.tooltip"));
 		GridBagConstraints gbc_jtfSerialNumber = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jtfSerialNumber.gridy = 3;
+		gbc_jtfSerialNumber.gridy = 5;
 
 		jlName = new JLabel(res.getString("DGenerateKeyPairCert.jlName.text"));
 		GridBagConstraints gbc_jlName = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlName.gridy = 4;
+		gbc_jlName.gridy = 6;
 
 		jdnName = new JDistinguishedName("Name", 30, true);
 		jdnName.setToolTipText(res.getString("DGenerateKeyPairCert.jdnName.tooltip"));
 		GridBagConstraints gbc_jdnName = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jdnName.gridy = 4;
+		gbc_jdnName.gridy = 6;
 
 		jbAddExtensions = new JButton(res.getString("DGenerateKeyPairCert.jbAddExtensions.text"));
 		jbAddExtensions.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
 		jbAddExtensions.setToolTipText(res.getString("DGenerateKeyPairCert.jbAddExtensions.tooltip"));
 		GridBagConstraints gbc_jbAddExtensions = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jbAddExtensions.gridy = 5;
-		gbc_jbAddExtensions.gridwidth = 6;
+		gbc_jbAddExtensions.gridy = 7;
+		gbc_jbAddExtensions.gridwidth = 8;
 		gbc_jbAddExtensions.anchor = GridBagConstraints.EAST;
 
 		jbAddExtensions.addActionListener(new ActionListener() {
@@ -257,8 +302,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		jpOptions.add(jrbVersion3, gbc_jrbVersion3);
 		jpOptions.add(jlSigAlg, gbc_jlSigAlg);
 		jpOptions.add(jcbSignatureAlgorithm, gbc_jcbSigAlg);
+		jpOptions.add(jlValidityStart, gbc_jlValidityStart);
+		jpOptions.add(jdtValidityStart, gbc_jdtValidityStart);
 		jpOptions.add(jlValidityPeriod, gbc_jlValidityPeriod);
 		jpOptions.add(jvpValidityPeriod, gbc_jvpValidityPeriod);
+		jpOptions.add(jlValidityEnd, gbc_jlValidityEnd);
+		jpOptions.add(jdtValidityEnd, gbc_jdtValidityEnd);
 		jpOptions.add(jlSerialNumber, gbc_jlSerialNumber);
 		jpOptions.add(jtfSerialNumber, gbc_jtfSerialNumber);
 		jpOptions.add(jlName, gbc_jlName);
@@ -316,7 +365,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		X500Name caIssuerName = null;
 		BigInteger caSerialNumber = null;
 		if (issuerCert != null) {
-			caIssuerName = X500Name.getInstance(issuerCert.getIssuerDN());
+			caIssuerName = X500NameUtils.x500PrincipalToX500Name(issuerCert.getIssuerX500Principal());
 			caPublicKey = issuerCert.getPublicKey();
 			caSerialNumber = issuerCert.getSerialNumber();
 		} else {
@@ -344,7 +393,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	}
 
 	private boolean generateCertificate() {
-		long validityPeriodMs = jvpValidityPeriod.getValidityPeriodMs();
+		Date validityStart = jdtValidityStart.getDateTime();
+		Date validityEnd = jdtValidityEnd.getDateTime();
 
 		String serialNumberStr = jtfSerialNumber.getText().trim();
 		if (serialNumberStr.length() == 0) {
@@ -387,12 +437,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 			// self-signed or signed by other key pair?
 			if (issuerPrivateKey == null) {
-				certificate = generator.generateSelfSigned(name, validityPeriodMs, keyPair.getPublic(),
+				certificate = generator.generateSelfSigned(name, validityStart, validityEnd, keyPair.getPublic(),
 						keyPair.getPrivate(), signatureType, serialNumber, extensions, provider);
 			} else {
 				certificate = generator.generate(name,
 						X500NameUtils.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
-						validityPeriodMs, keyPair.getPublic(), issuerPrivateKey, signatureType, serialNumber,
+						validityStart, validityEnd, keyPair.getPublic(), issuerPrivateKey, signatureType, serialNumber,
 						extensions, provider);
 			}
 		} catch (CryptoException ex) {
@@ -432,5 +482,33 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick testing
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+					keyGen.initialize(1024);
+					KeyPair keyPair = keyGen.genKeyPair();
+
+					DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), "test", keyPair, KeyPairType.RSA, null, null,
+							new BouncyCastleProvider());
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }
