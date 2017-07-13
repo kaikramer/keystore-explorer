@@ -180,7 +180,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 			try {
 				dn = distinguishedNameChooser.getDN();
 			} catch (InvalidNameException e) {
-				// TODO Auto-generated catch block
+				// FIXME Auto-generated catch block
 				e.printStackTrace();
 			}
 

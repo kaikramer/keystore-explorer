@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
+import javax.naming.InvalidNameException;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -61,20 +62,17 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
 
 import net.miginfocom.swing.MigLayout;
 import net.sf.keystore_explorer.crypto.SecurityProvider;
-import net.sf.keystore_explorer.crypto.x509.X500NameUtils;
 import net.sf.keystore_explorer.gui.CurrentDirectory;
 import net.sf.keystore_explorer.gui.CursorUtil;
 import net.sf.keystore_explorer.gui.FileChooserFactory;
 import net.sf.keystore_explorer.gui.JEscDialog;
 import net.sf.keystore_explorer.gui.PlatformUtil;
+import net.sf.keystore_explorer.gui.dnchooser.DistinguishedNameChooser;
 import net.sf.keystore_explorer.gui.password.PasswordQualityConfig;
-import net.sf.keystore_explorer.utilities.StringUtils;
 import net.sf.keystore_explorer.utilities.net.ManualProxySelector;
 import net.sf.keystore_explorer.utilities.net.NoProxySelector;
 import net.sf.keystore_explorer.utilities.net.PacProxySelector;
@@ -87,6 +85,8 @@ import net.sf.keystore_explorer.utilities.os.OperatingSystem;
  *
  */
 public class DPreferences extends JEscDialog {
+	private static final long serialVersionUID = 8804918466790662761L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("net/sf/keystore_explorer/gui/dialogs/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
@@ -115,7 +115,7 @@ public class DPreferences extends JEscDialog {
 	private JLabel jlLookFeelNote;
 	private JPanel jpLookFeelControls;
 	private JLabel jlLookFeel;
-	private JComboBox jcbLookFeel;
+	private JComboBox<String> jcbLookFeel;
 	private JPanel jpLookFeelDecoratedControls;
 	private JCheckBox jcbLookFeelDecorated;
 	private JPanel jpInternetProxy;
@@ -142,20 +142,8 @@ public class DPreferences extends JEscDialog {
 	private JButton jbCancel;
 
 	private JPanel jpDefaultName;
-	private JLabel jlCommonName;
-	private JTextField jtfCommonName;
-	private JLabel jlOrganisationUnit;
-	private JTextField jtfOrganisationUnit;
-	private JLabel jlOrganisationName;
-	private JTextField jtfOrganisationName;
-	private JLabel jlLocalityName;
-	private JTextField jtfLocalityName;
-	private JLabel jlStateName;
-	private JTextField jtfStateName;
-	private JLabel jlCountryCode;
-	private JTextField jtfCountryCode;
-	private JLabel jlEmailAddress;
-	private JTextField jtfEmailAddress;
+	private DistinguishedNameChooser distinguishedNameChooser;
+	private X500Name distinguishedName;
 
 	private boolean useCaCertificates;
 	private File caCertificatesFile;
@@ -536,7 +524,7 @@ public class DPreferences extends JEscDialog {
 
 		jlLookFeel = new JLabel(res.getString("DPreferences.jlLookFeel.text"));
 
-		jcbLookFeel = new JComboBox();
+		jcbLookFeel = new JComboBox<String>();
 		jcbLookFeel.setToolTipText(res.getString("DPreferences.jcbLookFeel.tooltip"));
 
 		// This may contain duplicates
@@ -546,19 +534,19 @@ public class DPreferences extends JEscDialog {
 
 		TreeSet<String> lookFeelClasses = new TreeSet<String>();
 
-		for (UIManager.LookAndFeelInfo lookFeelInfo : lookFeelInfos) {
+		for (UIManager.LookAndFeelInfo lfi : lookFeelInfos) {
 			// Avoid duplicates
-			if (!lookFeelClasses.contains(lookFeelInfo.getClassName())) {
-				lookFeelClasses.add(lookFeelInfo.getClassName());
+			if (!lookFeelClasses.contains(lfi.getClassName())) {
+				lookFeelClasses.add(lfi.getClassName());
 
-				lookFeelInfoList.add(lookFeelInfo);
-				jcbLookFeel.addItem(lookFeelInfo.getName());
+				lookFeelInfoList.add(lfi);
+				jcbLookFeel.addItem(lfi.getName());
 
 				// Pre-select current look & feel - compare by class as the look
 				// and feel name can differ from the look and feel info name
 				if ((currentLookAndFeel != null)
-						&& (currentLookAndFeel.getClass().getName().equals(lookFeelInfo.getClassName()))) {
-					this.lookFeelInfo = lookFeelInfo;
+						&& (currentLookAndFeel.getClass().getName().equals(lfi.getClassName()))) {
+					this.lookFeelInfo = lfi;
 					jcbLookFeel.setSelectedIndex(jcbLookFeel.getItemCount() - 1);
 				}
 			}
@@ -753,59 +741,17 @@ public class DPreferences extends JEscDialog {
 
 	private void initDefaultNameTab() {
 
-		jlCommonName = new JLabel(res.getString("DPreferences.jlCommonName.text"));
-		jtfCommonName = new JTextField(25);
-		jlOrganisationUnit = new JLabel(res.getString("DPreferences.jlOrganisationUnit.text"));
-		jtfOrganisationUnit = new JTextField(25);
-		jlOrganisationName = new JLabel(res.getString("DPreferences.jlOrganisationName.text"));
-		jtfOrganisationName = new JTextField(25);
-		jlLocalityName = new JLabel(res.getString("DPreferences.jlLocalityName.text"));
-		jtfLocalityName = new JTextField(25);
-		jlStateName = new JLabel(res.getString("DPreferences.jlStateName.text"));
-		jtfStateName = new JTextField(25);
-		jlCountryCode = new JLabel(res.getString("DPreferences.jlCountryCode.text"));
-		jtfCountryCode = new JTextField(4);
-		jlEmailAddress = new JLabel(res.getString("DPreferences.jlEmailAddress.text"));
-		jtfEmailAddress = new JTextField(30);
+		distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
 
 		// layout
 		jpDefaultName = new JPanel();
-		jpDefaultName.setLayout(new MigLayout("insets dialog, fill", "[right][][]", "[]"));
-		jpDefaultName.add(jlCommonName, "");
-		jpDefaultName.add(jtfCommonName, "gap rel, wrap unrel");
-		jpDefaultName.add(jlOrganisationUnit, "");
-		jpDefaultName.add(jtfOrganisationUnit, "gap rel, wrap unrel");
-		jpDefaultName.add(jlOrganisationName, "");
-		jpDefaultName.add(jtfOrganisationName, "gap rel, wrap unrel");
-		jpDefaultName.add(jlLocalityName, "");
-		jpDefaultName.add(jtfLocalityName, "gap rel, wrap unrel");
-		jpDefaultName.add(jlStateName, "");
-		jpDefaultName.add(jtfStateName, "gap rel, wrap unrel");
-		jpDefaultName.add(jlCountryCode, "");
-		jpDefaultName.add(jtfCountryCode, "gap rel, wrap unrel");
-		jpDefaultName.add(jlEmailAddress, "");
-		jpDefaultName.add(jtfEmailAddress, "gap rel, wrap unrel");
+		jpDefaultName.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+		jpDefaultName.add(distinguishedNameChooser, "left, spanx, wrap para");
 
 		// populate fields with content from saved preferences
 		if (defaultDN != null) {
-			try {
-				X500Name x500Name = new X500Name(defaultDN);
-				populateRdnField(x500Name, jtfCommonName, BCStyle.CN);
-				populateRdnField(x500Name, jtfOrganisationUnit, BCStyle.OU);
-				populateRdnField(x500Name, jtfOrganisationName, BCStyle.O);
-				populateRdnField(x500Name, jtfLocalityName, BCStyle.L);
-				populateRdnField(x500Name, jtfStateName, BCStyle.ST);
-				populateRdnField(x500Name, jtfCountryCode, BCStyle.C);
-				populateRdnField(x500Name, jtfEmailAddress, BCStyle.E);
-			} catch (Exception e) {
-				// reset invalid DN by leaving fields empty
-			}
+			// TODO
 		}
-	}
-
-	private void populateRdnField(X500Name distinguishedName, JTextField rdnField, ASN1ObjectIdentifier rdnOid) {
-		rdnField.setText(X500NameUtils.getRdn(distinguishedName, rdnOid));
-		rdnField.setCaretPosition(0);
 	}
 
 	private void updateProxyControls() {
@@ -868,16 +814,17 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private boolean storeDefaultDN() {
-		String commonName = StringUtils.trimAndConvertEmptyToNull(jtfCommonName.getText());
-		String organisationUnit = StringUtils.trimAndConvertEmptyToNull(jtfOrganisationUnit.getText());
-		String organisationName = StringUtils.trimAndConvertEmptyToNull(jtfOrganisationName.getText());
-		String localityName = StringUtils.trimAndConvertEmptyToNull(jtfLocalityName.getText());
-		String stateName = StringUtils.trimAndConvertEmptyToNull(jtfStateName.getText());
-		String countryCode = StringUtils.trimAndConvertEmptyToNull(jtfCountryCode.getText());
-		String emailAddress = StringUtils.trimAndConvertEmptyToNull(jtfEmailAddress.getText());
 
-		defaultDN = X500NameUtils.buildX500Name(commonName, organisationUnit, organisationName,
-				localityName, stateName, countryCode, emailAddress).toString();
+		X500Name dn = null;
+		try {
+			dn = distinguishedNameChooser.getDN();
+		} catch (InvalidNameException e) {
+			// FIXME Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		defaultDN = dn.toString();
+
 		return true;
 	}
 
