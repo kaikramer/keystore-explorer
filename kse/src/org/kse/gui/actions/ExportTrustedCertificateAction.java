@@ -46,6 +46,7 @@ import org.kse.utilities.history.KeyStoreHistory;
  */
 public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 
+	private static final long serialVersionUID = 1L;
 	private X509Certificate certFromConstructor;
 
 	/**

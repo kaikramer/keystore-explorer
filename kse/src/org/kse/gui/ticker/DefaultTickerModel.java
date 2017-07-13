@@ -25,7 +25,9 @@ import javax.swing.DefaultListModel;
  * Default data model to use with the JTicker Swing control.
  *
  */
-public class DefaultTickerModel extends DefaultListModel implements TickerModel {
+public class DefaultTickerModel extends DefaultListModel<Object> implements TickerModel {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Add an item to the model.
 	 *

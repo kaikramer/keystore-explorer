@@ -24,6 +24,8 @@ package org.kse.utilities.net;
  *
  */
 public class PacProxyException extends Exception {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new PacProxyException.
 	 */

@@ -39,6 +39,8 @@ import javax.swing.JPasswordField;
  *
  */
 public class JPasswordQualityField extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/password/resources");
 
 	private JPasswordField jpfPassword;
@@ -334,6 +336,7 @@ public class JPasswordQualityField extends JPanel {
 		 * whether or not the required password quality has been met
 		 */
 
+		private static final long serialVersionUID = 1L;
 		private Color BACKGROUND_COLOUR = Color.WHITE;
 		private Color BORDER_COLOUR = Color.LIGHT_GRAY;
 		private Color QUALITY_SATISIFIED_COLOUR = new Color(129, 180, 88); // green

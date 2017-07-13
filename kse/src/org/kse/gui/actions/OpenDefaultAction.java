@@ -41,6 +41,8 @@ import org.kse.gui.error.DError;
  *
  */
 public class OpenDefaultAction extends OpenAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

@@ -27,6 +27,8 @@ import javax.swing.JLabel;
  *
  */
 public class DefaultTickerRenderer extends JLabel implements TickerRenderer {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Get the rendering component for the specified JTicker and ticker item
 	 *

@@ -58,6 +58,8 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DSystemInformation extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
 	private static final int TEXT_FIELD_WIDTH = 30;

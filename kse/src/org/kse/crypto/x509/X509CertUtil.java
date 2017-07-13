@@ -620,8 +620,8 @@ public final class X509CertUtil {
 		try {
 			List<X509Certificate> certs = new ArrayList<X509Certificate>();
 
-			for (Enumeration aliases = keyStore.aliases(); aliases.hasMoreElements();) {
-				String alias = (String) aliases.nextElement();
+			for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+				String alias = aliases.nextElement();
 
 				if (keyStore.isCertificateEntry(alias)) {
 					certs.add(X509CertUtil.convertCertificate(keyStore.getCertificate(alias)));
@@ -649,8 +649,8 @@ public final class X509CertUtil {
 	 */
 	public static String matchCertificate(KeyStore keyStore, X509Certificate cert) throws CryptoException {
 		try {
-			for (Enumeration aliases = keyStore.aliases(); aliases.hasMoreElements();) {
-				String alias = (String) aliases.nextElement();
+			for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
+				String alias = aliases.nextElement();
 				if (keyStore.isCertificateEntry(alias)) {
 					X509Certificate compCert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
 

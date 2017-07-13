@@ -34,14 +34,15 @@ import javax.swing.JTextField;
  */
 public class RdnPanel extends JPanel {
 
-	private JComboBox comboBox;
+	private static final long serialVersionUID = 1L;
+	private JComboBox<?> comboBox;
 	private JLabel label;
 	private JTextField textField;
 	private JButton plus;
 	private JButton minus;
 	private RdnPanelList parent;
 
-	public RdnPanel(JComboBox comboBox, String selectedItem, String textFieldText, RdnPanelList list, boolean editable) {
+	public RdnPanel(JComboBox<?> comboBox, String selectedItem, String textFieldText, RdnPanelList list, boolean editable) {
 
 		this.comboBox = comboBox;
 		if (editable) {
@@ -69,11 +70,13 @@ public class RdnPanel extends JPanel {
 		}
 	}
 
-	public JComboBox getComboBox() {
+	public JComboBox<?> getComboBox() {
 		return comboBox;
 	}
 
 	public class AddEntryAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1L;
 
 		public AddEntryAction() {
 			super("+");
@@ -87,6 +90,8 @@ public class RdnPanel extends JPanel {
 	}
 
 	public class RemoveEntryAction extends AbstractAction {
+
+		private static final long serialVersionUID = 1L;
 
 		public RemoveEntryAction() {
 			super("-");

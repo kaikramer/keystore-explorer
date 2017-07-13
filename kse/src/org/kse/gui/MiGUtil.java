@@ -19,7 +19,6 @@
  */
 package org.kse.gui;
 
-import java.awt.Color;
 import java.awt.Container;
 
 import javax.swing.JLabel;
@@ -29,9 +28,7 @@ import javax.swing.SwingConstants;
 public class MiGUtil {
 
 	public static void addSeparator(Container container, String text) {
-		@SuppressWarnings("UnusedAssignment") Color LABEL_COLOR = new Color(0, 70, 213);
 		JLabel l = new JLabel(text, SwingConstants.LEADING);
-		//l.setForeground(LABEL_COLOR);
 
 		container.add(l, "gapbottom 1, span, split 2, aligny center");
 		container.add(new JSeparator(), "gapleft rel, growx");

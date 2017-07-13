@@ -52,6 +52,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.commons.io.IOUtils;
 import org.kse.crypto.signing.MidletSigner;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -68,6 +69,8 @@ import org.kse.utilities.io.FileNameUtil;
  *
  */
 public class DSignMidlet extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/sign/resources");
 
@@ -266,6 +269,8 @@ public class DSignMidlet extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
@@ -390,8 +395,9 @@ public class DSignMidlet extends JEscDialog {
 			return;
 		}
 
+		JarFile jarFileTest = null;
 		try {
-			new JarFile(jarFile);
+			jarFileTest = new JarFile(jarFile);
 		} catch (IOException ex) {
 			String problemStr = MessageFormat.format(res.getString("DSignMidlet.NoOpenJar.Problem"), jarFile.getName());
 
@@ -406,6 +412,8 @@ public class DSignMidlet extends JEscDialog {
 			dProblem.setVisible(true);
 
 			return;
+		} finally {
+			IOUtils.closeQuietly(jarFileTest);
 		}
 
 		if (!signDirectly) {

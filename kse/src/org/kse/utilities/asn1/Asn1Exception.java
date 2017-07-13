@@ -24,6 +24,8 @@ package org.kse.utilities.asn1;
  *
  */
 public class Asn1Exception extends Exception {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new Asn1Exception.
 	 */

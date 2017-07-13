@@ -35,6 +35,7 @@ import org.kse.gui.dnd.DroppedFileHandler;
  *
  */
 public class JKeyStoreTabbedPane extends JTabbedPane implements DropTargetListener {
+	private static final long serialVersionUID = 1L;
 	private KseFrame kseFrame;
 
 	/**

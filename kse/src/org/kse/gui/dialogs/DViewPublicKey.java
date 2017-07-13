@@ -62,6 +62,8 @@ import org.kse.utilities.asn1.Asn1Exception;
  *
  */
 public class DViewPublicKey extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private JPanel jpPublicKey;

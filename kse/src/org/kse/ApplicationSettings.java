@@ -101,7 +101,6 @@ public class ApplicationSettings {
 	private static final String KSE3_AUTO_UPDATE_CHECK_ENABLED = "kse3.autoupdatecheckenabled";
 	private static final String KSE3_AUTO_UPDATE_CHECK_LAST_CHECK = "kse3.autoupdatechecklastcheck";
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
-	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL_UNIT = "kse3.autoupdatecheckintervalunit";
 	private static final String KSE3_PKCS11_LIBS = "kse3.pkcs11libs";
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -26,6 +26,8 @@ import org.kse.crypto.CryptoException;
  *
  */
 public class X509ExtensionSetLoadException extends CryptoException {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new X509ExtensionSetLoadException.
 	 */

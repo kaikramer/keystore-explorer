@@ -46,6 +46,8 @@ import org.kse.gui.password.DGetPassword;
  *
  */
 public class OpenAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

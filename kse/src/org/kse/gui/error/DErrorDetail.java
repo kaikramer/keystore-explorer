@@ -57,6 +57,8 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DErrorDetail extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
 	private JPanel jpButtons;
@@ -186,7 +188,7 @@ public class DErrorDetail extends JEscDialog {
 	private void expandTree(JTree tree, TreePath parent) {
 		TreeNode node = (TreeNode) parent.getLastPathComponent();
 		if (node.getChildCount() >= 0) {
-			for (Enumeration children = node.children(); children.hasMoreElements();) {
+			for (Enumeration<?> children = node.children(); children.hasMoreElements();) {
 				TreeNode subNode = (TreeNode) children.nextElement();
 				TreePath path = parent.pathByAddingChild(subNode);
 				expandTree(tree, path);

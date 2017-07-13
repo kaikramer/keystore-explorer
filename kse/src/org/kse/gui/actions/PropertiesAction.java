@@ -36,6 +36,8 @@ import org.kse.utilities.history.KeyStoreHistory;
  *
  */
 public class PropertiesAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

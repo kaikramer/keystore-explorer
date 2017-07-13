@@ -43,6 +43,8 @@ import org.kse.gui.CursorUtil;
  *
  */
 public class JUserNotice extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/crypto/policyinformation/resources");
 

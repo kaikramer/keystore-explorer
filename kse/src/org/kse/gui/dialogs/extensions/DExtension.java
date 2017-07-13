@@ -28,6 +28,8 @@ import org.kse.gui.JEscDialog;
  *
  */
 public abstract class DExtension extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new AbstractDExtension dialog.
 	 *  @param parent

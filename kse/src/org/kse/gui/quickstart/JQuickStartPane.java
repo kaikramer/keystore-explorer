@@ -54,6 +54,8 @@ import org.kse.gui.gradient.JGradientPanel;
  *
  */
 public class JQuickStartPane extends JGradientPanel implements DropTargetListener {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/quickstart/resources");
 
 	// set dark or light colors (depending on active LaF)

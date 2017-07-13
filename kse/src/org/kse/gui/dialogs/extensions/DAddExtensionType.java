@@ -81,8 +81,9 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DAddExtensionType extends JEscDialog {
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+	private static final long serialVersionUID = 1L;
+
+	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 	private static final X509ExtensionType[] SUPPORTED_EXTENSIONS = { AUTHORITY_INFORMATION_ACCESS,
@@ -94,7 +95,7 @@ public class DAddExtensionType extends JEscDialog {
 
 	private JPanel jpExtensionTypes;
 	private JLabel jlExtensionTypes;
-	private JList jltExtensionTypes;
+	private JList<X509ExtensionType> jltExtensionTypes;
 	private JScrollPane jspExtensionTypes;
 	private JCheckBox jcbCriticalExtension;
 	private JPanel jpButtons;
@@ -127,9 +128,9 @@ public class DAddExtensionType extends JEscDialog {
 
 		jlExtensionTypes = new JLabel(res.getString("DAddExtensionType.jlExtensionTypes.text"));
 
-		jltExtensionTypes = new JList();
+		jltExtensionTypes = new JList<X509ExtensionType>();
 		// Longest name to define constant width
-		jltExtensionTypes.setPrototypeCellValue(NETSCAPE_CERTIFICATE_RENEWAL_URL.friendly());
+		jltExtensionTypes.setPrototypeCellValue(NETSCAPE_CERTIFICATE_RENEWAL_URL);
 		jltExtensionTypes.setToolTipText(res.getString("DAddExtensionType.jltExtensionTypes.tooltip"));
 		jltExtensionTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jltExtensionTypes.setBorder(new EtchedBorder());
@@ -169,6 +170,8 @@ public class DAddExtensionType extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
@@ -239,7 +242,7 @@ public class DAddExtensionType extends JEscDialog {
 			return;
 		}
 
-		extension = (X509ExtensionType) jltExtensionTypes.getSelectedValue();
+		extension = jltExtensionTypes.getSelectedValue();
 		isCritical = jcbCriticalExtension.isSelected();
 
 		closeDialog();
@@ -248,7 +251,7 @@ public class DAddExtensionType extends JEscDialog {
 	private void maybeAddExtension(MouseEvent evt) {
 		if (evt.getClickCount() > 1) {
 			int index = jltExtensionTypes.locationToIndex(evt.getPoint());
-			extension = (X509ExtensionType) jltExtensionTypes.getModel().getElementAt(index);
+			extension = jltExtensionTypes.getModel().getElementAt(index);
 			isCritical = jcbCriticalExtension.isSelected();
 			closeDialog();
 		}

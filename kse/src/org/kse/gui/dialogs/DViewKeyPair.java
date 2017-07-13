@@ -51,6 +51,8 @@ import org.kse.gui.error.DError;
  *
  */
 public class DViewKeyPair extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private JPanel jpKeyPairDetails;

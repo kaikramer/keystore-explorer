@@ -31,6 +31,8 @@ import org.kse.gui.about.DSystemInformation;
  *
  */
 public class SystemInformationAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

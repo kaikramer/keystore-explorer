@@ -63,6 +63,8 @@ import org.kse.utilities.os.OperatingSystem;
  *
  */
 public class JPolicyMappings extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/crypto/policymapping/resources");
 
@@ -304,7 +306,6 @@ public class JPolicyMappings extends JPanel {
 		updateButtonControls();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addPressed() {
 		Container container = getTopLevelAncestor();
 
@@ -391,7 +392,6 @@ public class JPolicyMappings extends JPanel {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void editSelectedPolicyMapping() {
 		int selectedRow = jtPolicyMappings.getSelectedRow();
 

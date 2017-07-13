@@ -72,6 +72,8 @@ import org.kse.utilities.io.FileNameUtil;
  *
  */
 public class DExportPrivateKeyOpenSsl extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/importexport/resources");
 
@@ -81,7 +83,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 	private JLabel jlEncrypt;
 	private JCheckBox jcbEncrypt;
 	private JLabel jlPbeAlg;
-	private JComboBox jcbPbeAlg;
+	private JComboBox<OpenSslPbeType> jcbPbeAlg;
 	private JLabel jlPassword;
 	private JComponent jpfPassword;
 	private JLabel jlConfirmPassword;
@@ -162,7 +164,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		GridBagConstraints gbc_jlPbeAlg = (GridBagConstraints) gbcLbl.clone();
 		gbc_jlPbeAlg.gridy = 1;
 
-		jcbPbeAlg = new JComboBox();
+		jcbPbeAlg = new JComboBox<OpenSslPbeType>();
 		populatePbeAlgs();
 		jcbPbeAlg.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jcbPbeAlg.tooltip"));
 		jcbPbeAlg.setSelectedIndex(0);
@@ -307,6 +309,8 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();

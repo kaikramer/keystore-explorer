@@ -63,12 +63,14 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DViewAsymmetricKeyFields extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private JPanel jpFields;
 	private JPanel jpFieldsList;
 	private JLabel jlFields;
-	private JList jltFields;
+	private JList<Field> jltFields;
 	private JPanel jpFieldValue;
 	private JLabel jlFieldValue;
 	private JPanel jpFieldValueTextArea;
@@ -146,7 +148,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 	private void initFields() {
 		jlFields = new JLabel(res.getString("DViewAsymmetricKeyFields.jlFields.text"));
 
-		jltFields = new JList();
+		jltFields = new JList<Field>();
 		jltFields.setToolTipText(res.getString("DViewAsymmetricKeyFields.jltFields.tooltip"));
 		jltFields.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jltFields.setBorder(new EtchedBorder());
@@ -308,7 +310,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		if (selectedRow == -1) {
 			jtaFieldValue.setText("");
 		} else {
-			Field field = (Field) jltFields.getSelectedValue();
+			Field field = jltFields.getSelectedValue();
 
 			jtaFieldValue.setText(field.getFormattedValue());
 			jtaFieldValue.setCaretPosition(0);

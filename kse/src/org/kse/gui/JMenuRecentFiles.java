@@ -31,6 +31,7 @@ import javax.swing.JMenu;
  *
  */
 public class JMenuRecentFiles extends JMenu {
+	private static final long serialVersionUID = 1L;
 	private JMenuItemRecentFile[] jmiRecentFiles;
 	private static final int MAX_LENGTH = 9;
 

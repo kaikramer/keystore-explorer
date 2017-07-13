@@ -91,6 +91,8 @@ import org.kse.utilities.asn1.Asn1Exception;
  *
  */
 public class DViewCertificate extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	public static int NONE = 0;
@@ -561,7 +563,7 @@ public class DViewCertificate extends JEscDialog {
 	private void expandTree(JTree tree, TreePath parent) {
 		TreeNode node = (TreeNode) parent.getLastPathComponent();
 		if (node.getChildCount() >= 0) {
-			for (Enumeration enumNodes = node.children(); enumNodes.hasMoreElements();) {
+			for (Enumeration<?> enumNodes = node.children(); enumNodes.hasMoreElements();) {
 				TreeNode subNode = (TreeNode) enumNodes.nextElement();
 				TreePath path = parent.pathByAddingChild(subNode);
 				expandTree(tree, path);
@@ -681,8 +683,8 @@ public class DViewCertificate extends JEscDialog {
 
 				jcfFingerprint.setFingerprintAlg(ApplicationSettings.getInstance().getCertificateFingerprintType());
 
-				Set critExts = cert.getCriticalExtensionOIDs();
-				Set nonCritExts = cert.getNonCriticalExtensionOIDs();
+				Set<?> critExts = cert.getCriticalExtensionOIDs();
+				Set<?> nonCritExts = cert.getNonCriticalExtensionOIDs();
 
 				if (critExts != null && critExts.size() != 0
 						|| nonCritExts != null && nonCritExts.size() != 0) {

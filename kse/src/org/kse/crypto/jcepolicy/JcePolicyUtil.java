@@ -78,6 +78,7 @@ public class JcePolicyUtil {
 	 *             If there was a problem getting the crypto strength
 	 */
 	public static CryptoStrength getCryptoStrength(JcePolicy jcePolicy) throws CryptoException {
+		JarFile jarFile = null;
 		try {
 			File file = getJarFile(jcePolicy);
 
@@ -86,9 +87,9 @@ public class JcePolicyUtil {
 				return UNLIMITED;
 			}
 
-			JarFile jar = new JarFile(file);
+			jarFile = new JarFile(file);
 
-			Manifest jarManifest = jar.getManifest();
+			Manifest jarManifest = jarFile.getManifest();
 			String strength = jarManifest.getMainAttributes().getValue("Crypto-Strength");
 
 			// workaround for IBM JDK: test for maximum key size
@@ -104,6 +105,8 @@ public class JcePolicyUtil {
 		} catch (IOException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoGetCryptoStrength.exception.message"),
 					jcePolicy), ex);
+		} finally {
+			IOUtils.closeQuietly(jarFile);
 		}
 	}
 
@@ -128,6 +131,7 @@ public class JcePolicyUtil {
 	 *             If there was a problem getting the policy details
 	 */
 	public static String getPolicyDetails(JcePolicy jcePolicy) throws CryptoException {
+		JarFile jarFile = null;
 		try {
 			StringWriter sw = new StringWriter();
 
@@ -138,9 +142,9 @@ public class JcePolicyUtil {
 				return "";
 			}
 
-			JarFile jar = new JarFile(file);
+			jarFile = new JarFile(file);
 
-			Enumeration<JarEntry> jarEntries = jar.entries();
+			Enumeration<JarEntry> jarEntries = jarFile.entries();
 
 			while (jarEntries.hasMoreElements()) {
 				JarEntry jarEntry = jarEntries.nextElement();
@@ -152,7 +156,7 @@ public class JcePolicyUtil {
 
 					InputStreamReader isr = null;
 					try {
-						isr = new InputStreamReader(jar.getInputStream(jarEntry));
+						isr = new InputStreamReader(jarFile.getInputStream(jarEntry));
 						CopyUtil.copy(isr, sw);
 					} finally {
 						IOUtils.closeQuietly(isr);
@@ -166,6 +170,8 @@ public class JcePolicyUtil {
 		} catch (IOException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoGetPolicyDetails.exception.message"),
 					jcePolicy), ex);
+		} finally {
+			IOUtils.closeQuietly(jarFile);
 		}
 	}
 

@@ -39,6 +39,8 @@ import org.kse.utilities.ssl.SslConnectionInfos;
  *
  */
 public class ExamineSslAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

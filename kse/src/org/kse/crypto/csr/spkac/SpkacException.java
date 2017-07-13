@@ -26,6 +26,8 @@ import org.kse.crypto.CryptoException;
  *
  */
 public class SpkacException extends CryptoException {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new SpkacException.
 	 */

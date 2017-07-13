@@ -26,6 +26,8 @@ import org.kse.gui.KseFrame;
  *
  */
 public class ShowHideStatusBarAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

@@ -33,6 +33,8 @@ import javax.swing.table.AbstractTableModel;
  *
  */
 public class EnvironmentVariablesTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
 	private String[] columnNames;

@@ -45,6 +45,8 @@ import org.kse.utilities.oid.ObjectIdUtil;
  *
  */
 public class JObjectId extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/oid/resources");
 
 	private JTextField jtfObjectId;

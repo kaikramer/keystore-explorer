@@ -31,6 +31,8 @@ import org.kse.gui.tipoftheday.DTipOfTheDay;
  *
  */
 public class TipOfTheDayAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

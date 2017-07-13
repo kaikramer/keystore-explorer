@@ -43,6 +43,8 @@ import org.kse.utilities.StringUtils;
  *
  */
 public class JDateTime extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/datetime/resources");
 
 	private JTextField jtfDateTime;

@@ -32,6 +32,8 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class AccessDescriptionsTableHeadRend extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/crypto/accessdescription/resources");
 

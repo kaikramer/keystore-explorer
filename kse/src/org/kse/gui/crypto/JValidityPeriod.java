@@ -43,10 +43,12 @@ import javax.swing.SpinnerNumberModel;
  *
  */
 public class JValidityPeriod extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
 	private JSpinner jsValue;
-	private JComboBox jcbType;
+	private JComboBox<?> jcbType;
 	private JButton jbApply;
 
 	/** Years period type */
@@ -81,7 +83,7 @@ public class JValidityPeriod extends JPanel {
 		gbc_jsValue.gridy = 0;
 		gbc_jsValue.insets = new Insets(0, 0, 0, 5);
 
-		jcbType = new JComboBox(new String[] { res.getString("JValidityPeriod.jcbType.years.text"),
+		jcbType = new JComboBox<Object>(new String[] { res.getString("JValidityPeriod.jcbType.years.text"),
 				res.getString("JValidityPeriod.jcbType.months.text"),
 				res.getString("JValidityPeriod.jcbType.weeks.text"),
 				res.getString("JValidityPeriod.jcbType.days.text"), });
@@ -119,7 +121,7 @@ public class JValidityPeriod extends JPanel {
 		jcbType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent evt) {
-				typeChanged(((JComboBox) evt.getSource()).getSelectedIndex());
+				typeChanged(((JComboBox<?>) evt.getSource()).getSelectedIndex());
 			}
 		});
 		

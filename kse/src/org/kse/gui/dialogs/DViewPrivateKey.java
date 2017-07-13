@@ -33,7 +33,6 @@ import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -64,6 +63,8 @@ import org.kse.utilities.asn1.Asn1Exception;
  *
  */
 public class DViewPrivateKey extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private JPanel jpPrivateKey;
@@ -82,8 +83,6 @@ public class DViewPrivateKey extends JEscDialog {
 
 	private PrivateKey privateKey;
 
-	private Provider provider;
-
 	/**
 	 * Creates a new DViewPrivateKey dialog.
 	 *
@@ -100,7 +99,6 @@ public class DViewPrivateKey extends JEscDialog {
 			throws CryptoException {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
-		this.provider = provider;
 		initComponents();
 	}
 
@@ -120,7 +118,6 @@ public class DViewPrivateKey extends JEscDialog {
 			Provider provider) throws CryptoException {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
-		this.provider = provider;
 		initComponents();
 	}
 
@@ -140,56 +137,56 @@ public class DViewPrivateKey extends JEscDialog {
 		gbcTf.anchor = GridBagConstraints.WEST;
 
 		jlAlgorithm = new JLabel(res.getString("DViewPrivateKey.jlAlgorithm.text"));
-		GridBagConstraints gbc_jlAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlAlgorithm.gridy = 0;
+		GridBagConstraints gbcJlAlgorithm = (GridBagConstraints) gbcLbl.clone();
+		gbcJlAlgorithm.gridy = 0;
 
 		jtfAlgorithm = new JTextField(10);
 		jtfAlgorithm.setEditable(false);
 		jtfAlgorithm.setToolTipText(res.getString("DViewPrivateKey.jtfAlgorithm.tooltip"));
-		GridBagConstraints gbc_jtfAlgorithm = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfAlgorithm.gridy = 0;
+		GridBagConstraints gbcJtfAlgorithm = (GridBagConstraints) gbcTf.clone();
+		gbcJtfAlgorithm.gridy = 0;
 
 		jlKeySize = new JLabel(res.getString("DViewPrivateKey.jlKeySize.text"));
-		GridBagConstraints gbc_jlKeySize = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlKeySize.gridy = 1;
+		GridBagConstraints gbcJlKeySize = (GridBagConstraints) gbcLbl.clone();
+		gbcJlKeySize.gridy = 1;
 
 		jtfKeySize = new JTextField(10);
 		jtfKeySize.setEditable(false);
 		jtfKeySize.setToolTipText(res.getString("DViewPrivateKey.jtfKeySize.tooltip"));
-		GridBagConstraints gbc_jtfKeySize = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfKeySize.gridy = 1;
+		GridBagConstraints gbcJtfKeySize = (GridBagConstraints) gbcTf.clone();
+		gbcJtfKeySize.gridy = 1;
 
 		jlFormat = new JLabel(res.getString("DViewPrivateKey.jlFormat.text"));
-		GridBagConstraints gbc_jlFormat = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlFormat.gridy = 2;
+		GridBagConstraints gbcJlFormat = (GridBagConstraints) gbcLbl.clone();
+		gbcJlFormat.gridy = 2;
 
 		jtfFormat = new JTextField(10);
 		jtfFormat.setEditable(false);
 		jtfFormat.setToolTipText(res.getString("DViewPrivateKey.jtfFormat.tooltip"));
-		GridBagConstraints gbc_jtfFormat = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfFormat.gridy = 2;
+		GridBagConstraints gbcJtfFormat = (GridBagConstraints) gbcTf.clone();
+		gbcJtfFormat.gridy = 2;
 
 		jlEncoded = new JLabel(res.getString("DViewPrivateKey.jlEncoded.text"));
-		GridBagConstraints gbc_jlEncoded = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlEncoded.gridy = 3;
+		GridBagConstraints gbcJlEncoded = (GridBagConstraints) gbcLbl.clone();
+		gbcJlEncoded.gridy = 3;
 
 		jtfEncoded = new JTextField(20);
 		jtfEncoded.setEditable(false);
 		jtfEncoded.setToolTipText(res.getString("DViewPrivateKey.jtfEncoded.tooltip"));
-		GridBagConstraints gbc_jtfEncoded = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfEncoded.gridy = 3;
+		GridBagConstraints gbcJtfEncoded = (GridBagConstraints) gbcTf.clone();
+		gbcJtfEncoded.gridy = 3;
 
 		jpPrivateKey = new JPanel(new GridBagLayout());
 		jpPrivateKey.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
-		jpPrivateKey.add(jlAlgorithm, gbc_jlAlgorithm);
-		jpPrivateKey.add(jtfAlgorithm, gbc_jtfAlgorithm);
-		jpPrivateKey.add(jlKeySize, gbc_jlKeySize);
-		jpPrivateKey.add(jtfKeySize, gbc_jtfKeySize);
-		jpPrivateKey.add(jlFormat, gbc_jlFormat);
-		jpPrivateKey.add(jtfFormat, gbc_jtfFormat);
-		jpPrivateKey.add(jlEncoded, gbc_jlEncoded);
-		jpPrivateKey.add(jtfEncoded, gbc_jtfEncoded);
+		jpPrivateKey.add(jlAlgorithm, gbcJlAlgorithm);
+		jpPrivateKey.add(jtfAlgorithm, gbcJtfAlgorithm);
+		jpPrivateKey.add(jlKeySize, gbcJlKeySize);
+		jpPrivateKey.add(jtfKeySize, gbcJtfKeySize);
+		jpPrivateKey.add(jlFormat, gbcJlFormat);
+		jpPrivateKey.add(jtfFormat, gbcJtfFormat);
+		jpPrivateKey.add(jlEncoded, gbcJlEncoded);
+		jpPrivateKey.add(jtfEncoded, gbcJtfEncoded);
 
 		jbOK = new JButton(res.getString("DViewPrivateKey.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {

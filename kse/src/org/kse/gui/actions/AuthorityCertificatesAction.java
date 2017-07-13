@@ -42,6 +42,8 @@ import org.kse.gui.password.DGetPassword;
  *
  */
 public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

@@ -31,6 +31,8 @@ import javax.swing.JLabel;
  *
  */
 public class JQuickStartLabel extends JLabel {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct Quick Start label.
 	 *

@@ -27,6 +27,8 @@ import org.kse.crypto.CryptoException;
  *
  */
 public class PrivateKeyUnencryptedException extends CryptoException {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new PrivateKeyUnencryptedException.
 	 */

@@ -27,6 +27,7 @@ import org.kse.crypto.CryptoException;
  *
  */
 public class PrivateKeyPbeNotSupportedException extends CryptoException {
+	private static final long serialVersionUID = 1L;
 	private String unsupportedPbe;
 
 	/**

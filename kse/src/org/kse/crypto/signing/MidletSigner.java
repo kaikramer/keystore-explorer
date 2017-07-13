@@ -34,7 +34,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
@@ -126,7 +126,7 @@ public class MidletSigner {
 
 		// Copy over existing attrs (excepting digest and any certificates at
 		// provided number)
-		for (Enumeration enumPropNames = jadProperties.propertyNames(); enumPropNames.hasMoreElements();) {
+		for (Enumeration<?> enumPropNames = jadProperties.propertyNames(); enumPropNames.hasMoreElements();) {
 			String propName = (String) enumPropNames.nextElement();
 
 			// Ignore digest attr
@@ -164,7 +164,7 @@ public class MidletSigner {
 		// Sort properties alphabetically
 		TreeMap<String, String> sortedJadProperties = new TreeMap<String, String>();
 
-		for (Enumeration names = newJadProperties.propertyNames(); names.hasMoreElements();) {
+		for (Enumeration<?> names = newJadProperties.propertyNames(); names.hasMoreElements();) {
 			String name = (String) names.nextElement();
 			String value = newJadProperties.getProperty(name);
 
@@ -177,8 +177,8 @@ public class MidletSigner {
 		try {
 			fw = new FileWriter(outputJadFile);
 
-			for (Iterator itrSorted = sortedJadProperties.entrySet().iterator(); itrSorted.hasNext();) {
-				Map.Entry property = (Map.Entry) itrSorted.next();
+			for (Iterator<Entry<String, String>> itrSorted = sortedJadProperties.entrySet().iterator(); itrSorted.hasNext();) {
+				Entry<String, String> property = itrSorted.next();
 
 				fw.write(MessageFormat.format(JAD_ATTR_TEMPLATE, property.getKey(), property.getValue()));
 				fw.write(CRLF);

@@ -34,6 +34,8 @@ import org.kse.crypto.x509.GeneralNameUtil;
  *
  */
 public class AccessDescriptionsTableCellRend extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Returns the rendered cell.
 	 *

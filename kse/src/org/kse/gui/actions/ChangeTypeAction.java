@@ -48,8 +48,8 @@ import org.kse.utilities.history.KeyStoreState;
  *
  */
 public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryAction {
+	private static final long serialVersionUID = 1L;
 	private KeyStoreType newType;
-	private boolean warnPkcs12Password;
 	private boolean warnNoChangeKey;
 	private boolean warnNoECC;
 
@@ -147,9 +147,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 	}
 
 	private void resetWarnings() {
-		// Only warn the user once about key pair entry passwords when changing from PKCS #12
-		warnPkcs12Password = false;
-
 		// Only warn the user once about key entries not being carried over by the change
 		warnNoChangeKey = false;
 

@@ -24,6 +24,8 @@ package org.kse.crypto.csr.spkac;
  *
  */
 public class SpkacMissingPropertyException extends SpkacException {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new SpkacMissingPropertyException.
 	 */

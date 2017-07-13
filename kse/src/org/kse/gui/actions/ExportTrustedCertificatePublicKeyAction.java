@@ -47,6 +47,8 @@ import org.kse.utilities.history.KeyStoreHistory;
  *
  */
 public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

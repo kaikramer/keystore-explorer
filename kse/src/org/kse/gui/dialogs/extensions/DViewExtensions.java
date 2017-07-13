@@ -83,6 +83,8 @@ import org.kse.utilities.oid.ObjectIdComparator;
  *
  */
 public class DViewExtensions extends JEscDialog implements HyperlinkListener {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/extensions/resources");
 

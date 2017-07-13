@@ -52,7 +52,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -96,7 +95,6 @@ public class DExtendedKeyUsage extends DExtension {
 	private JCheckBox jcbSmartcardLogon;
 	private JCheckBox jcbAnyExtendedKeyUsage;
 	private JCheckBox jcbAdobePDFSigning;
-	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
 

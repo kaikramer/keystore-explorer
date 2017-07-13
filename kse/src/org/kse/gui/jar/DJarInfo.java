@@ -56,6 +56,8 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DJarInfo extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
 
 	private JButton jbOK;

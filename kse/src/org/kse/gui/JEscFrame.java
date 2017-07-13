@@ -60,6 +60,7 @@ public class JEscFrame extends JFrame {
 		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "escapeKey");
 		rootPane.getActionMap().put("escapeKey", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);

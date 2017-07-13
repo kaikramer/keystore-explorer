@@ -35,6 +35,8 @@ import org.kse.gui.KseRestart;
  *
  */
 public class ExitAction extends CloseAllAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

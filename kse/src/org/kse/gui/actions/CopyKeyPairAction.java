@@ -26,6 +26,8 @@ import org.kse.gui.KseFrame;
  *
  */
 public class CopyKeyPairAction extends CopyAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

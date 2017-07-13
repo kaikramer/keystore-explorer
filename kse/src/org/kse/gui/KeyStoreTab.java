@@ -43,6 +43,7 @@ import org.kse.utilities.history.KeyStoreHistory;
  *
  */
 public class KeyStoreTab extends JPanel {
+	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 	private JLabel jlTitle;
 	private JButton jbClose;

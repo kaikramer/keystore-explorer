@@ -74,6 +74,8 @@ import net.miginfocom.swing.MigLayout;
  */
 public class DGeneralNameChooser extends JEscDialog {
 
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
@@ -254,6 +256,8 @@ public class DGeneralNameChooser extends JEscDialog {
 			}
 		});
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();

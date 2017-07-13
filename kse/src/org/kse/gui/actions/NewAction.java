@@ -37,6 +37,7 @@ import org.kse.gui.error.DError;
  *
  */
 public class NewAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
 	private static int untitledCount = 0;
 
 	/**

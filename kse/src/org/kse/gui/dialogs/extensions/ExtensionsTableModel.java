@@ -38,6 +38,8 @@ import org.kse.crypto.x509.X509Ext;
  *
  */
 public class ExtensionsTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/extensions/resources");
 

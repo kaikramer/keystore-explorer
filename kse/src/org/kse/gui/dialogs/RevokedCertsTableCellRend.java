@@ -36,6 +36,8 @@ import org.kse.utilities.StringUtils;
  */
 public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Returns the rendered cell.
 	 *

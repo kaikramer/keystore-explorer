@@ -55,15 +55,17 @@ import org.kse.utilities.oid.ObjectIdUtil;
  *
  */
 public class DObjectIdChooser extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/oid/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
 	private JPanel jpObjectId;
 	private JLabel jlObjectId;
-	private JComboBox jcbFirstArc;
+	private JComboBox<?> jcbFirstArc;
 	private JLabel jlFirstPeriod;
-	private JComboBox jcbSecondArc;
+	private JComboBox<Integer> jcbSecondArc;
 	private JTextField jtfRemainingArcs;
 	private JLabel jlSecondPeriod;
 	private JPanel jpButtons;
@@ -110,12 +112,12 @@ public class DObjectIdChooser extends JEscDialog {
 	private void initComponents(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
 		jlObjectId = new JLabel(res.getString("DObjectIdChooser.jlObjectId.text"));
 
-		jcbFirstArc = new JComboBox(new Integer[] { 0, 1, 2 });
+		jcbFirstArc = new JComboBox<Object>(new Integer[] { 0, 1, 2 });
 		jcbFirstArc.setToolTipText(res.getString("DObjectIdChooser.jcbFirstArc.tooltip"));
 
 		jlFirstPeriod = new JLabel(".");
 
-		jcbSecondArc = new JComboBox();
+		jcbSecondArc = new JComboBox<Integer>();
 		jcbSecondArc.setToolTipText(res.getString("DObjectIdChooser.jcbSecondArc.tooltip"));
 
 		jlSecondPeriod = new JLabel(".");
@@ -162,6 +164,8 @@ public class DObjectIdChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();

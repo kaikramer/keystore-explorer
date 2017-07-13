@@ -35,6 +35,8 @@ import javax.swing.table.AbstractTableModel;
  *
  */
 public class RevokedCertsTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private String[] columnNames;
@@ -67,7 +69,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 		data = new Object[sortedRevokedCerts.size()][2];
 
 		int i = 0;
-		for (Iterator itr = sortedRevokedCerts.entrySet().iterator(); itr.hasNext(); i++) {
+		for (Iterator<?> itr = sortedRevokedCerts.entrySet().iterator(); itr.hasNext(); i++) {
 			X509CRLEntry x509CrlEntry = (X509CRLEntry) ((Map.Entry) itr.next()).getValue();
 
 			data[i][0] = x509CrlEntry.getSerialNumber();

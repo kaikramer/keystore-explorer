@@ -24,6 +24,8 @@ package org.kse.crypto;
  *
  */
 public class CryptoException extends Exception {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new CryptoException.
 	 */

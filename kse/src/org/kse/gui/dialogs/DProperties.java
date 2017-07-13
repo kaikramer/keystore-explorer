@@ -91,6 +91,8 @@ import org.kse.utilities.io.IndentSequence;
  *
  */
 public class DProperties extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private static final String NEWLINE = "\n";
@@ -506,7 +508,7 @@ public class DProperties extends JEscDialog {
 		DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
 				res.getString("DProperties.properties.PrivateKey"));
 		parentNode.add(privateKeyNode);
-		KeyStore keyStore = currentState.getKeyStore();
+		currentState.getKeyStore();
 
 		KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
 		String keyAlg = keyInfo.getAlgorithm();
@@ -749,7 +751,7 @@ public class DProperties extends JEscDialog {
 		TreeNode node = (TreeNode) treePath.getLastPathComponent();
 
 		if (node.getChildCount() >= 0) {
-			for (Enumeration enumChildren = node.children(); enumChildren.hasMoreElements();) {
+			for (Enumeration<?> enumChildren = node.children(); enumChildren.hasMoreElements();) {
 				TreeNode subNode = (TreeNode) enumChildren.nextElement();
 				TreePath path = treePath.pathByAddingChild(subNode);
 				expandTwoLevels(path);

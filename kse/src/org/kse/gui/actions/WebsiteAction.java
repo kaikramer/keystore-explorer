@@ -38,6 +38,7 @@ import org.kse.utilities.net.URLs;
  */
 public class WebsiteAction extends KeyStoreExplorerAction {
 
+	private static final long serialVersionUID = 1L;
 	private String websiteAddress;
 
 	public enum Target {

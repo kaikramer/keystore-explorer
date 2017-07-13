@@ -62,6 +62,8 @@ import org.kse.utilities.os.OperatingSystem;
  *
  */
 public class JGeneralSubtrees extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/crypto/generalsubtree/resources");
 

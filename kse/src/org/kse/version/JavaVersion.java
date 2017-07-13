@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * Object's of this class can be used to compare Java different versions.
  */
 // @formatter:on
-public class JavaVersion implements Comparable {
+public class JavaVersion implements Comparable<Object> {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/version/resources");
 

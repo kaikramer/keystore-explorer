@@ -24,7 +24,6 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -32,14 +31,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
-import org.kse.gui.CurrentDirectory;
-import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.error.DError;
@@ -221,22 +217,6 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
-	}
-
-	private File chooseCaFile() {
-		JFileChooser chooser = FileChooserFactory.getCaReplyFileChooser();
-		chooser.setCurrentDirectory(CurrentDirectory.get());
-		chooser.setDialogTitle(res.getString("ImportCaReplyFromClipboardAction.ImportCaReply.Title"));
-		chooser.setMultiSelectionEnabled(false);
-
-		int rtnValue = chooser.showDialog(frame, res.getString("ImportCaReplyFromClipboardAction.ImportCaReply.button"));
-		if (rtnValue == JFileChooser.APPROVE_OPTION) {
-			File openFile = chooser.getSelectedFile();
-			CurrentDirectory.updateForFile(openFile);
-			return openFile;
-		}
-
-		return null;
 	}
 
 	private X509Certificate[] openCaReply() {

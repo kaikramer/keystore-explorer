@@ -43,6 +43,8 @@ import org.kse.gui.error.DError;
  */
 public class OpenCaCertificatesAction extends OpenAction {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

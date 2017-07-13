@@ -53,6 +53,8 @@ import org.kse.utilities.history.KeyStoreState;
  *
  */
 public abstract class KeyStoreExplorerAction extends AbstractAction {
+	private static final long serialVersionUID = 1L;
+
 	/** Resource bundle */
 	protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/actions/resources");
 

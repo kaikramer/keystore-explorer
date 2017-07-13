@@ -40,6 +40,8 @@ import org.kse.utilities.history.KeyStoreState;
  *
  */
 public class SaveAction extends SaveAsAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

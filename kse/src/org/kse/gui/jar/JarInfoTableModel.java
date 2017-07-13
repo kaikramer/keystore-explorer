@@ -33,6 +33,8 @@ import javax.swing.table.AbstractTableModel;
  *
  */
 public class JarInfoTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
 
 	private String[] columnNames;

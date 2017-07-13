@@ -36,6 +36,8 @@ import javax.swing.event.ListDataListener;
  *
  */
 public class JTicker extends JComponent implements ActionListener, ListDataListener {
+	private static final long serialVersionUID = 1L;
+
 	/** Renderer to display ticker */
 	protected TickerRenderer renderer;
 

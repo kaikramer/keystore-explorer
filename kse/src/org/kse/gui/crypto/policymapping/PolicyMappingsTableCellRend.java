@@ -33,6 +33,8 @@ import org.kse.crypto.x509.PolicyMapping;
  *
  */
 public class PolicyMappingsTableCellRend extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Returns the rendered cell.
 	 *

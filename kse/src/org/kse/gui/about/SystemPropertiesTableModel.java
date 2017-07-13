@@ -22,7 +22,7 @@ package org.kse.gui.about;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
@@ -34,6 +34,8 @@ import javax.swing.table.AbstractTableModel;
  *
  */
 public class SystemPropertiesTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
 	private String[] columnNames;
@@ -57,12 +59,12 @@ public class SystemPropertiesTableModel extends AbstractTableModel {
 		Properties sysProps = System.getProperties();
 		TreeMap<String, String> sortedSysProps = new TreeMap<String, String>(new SystemPropertyComparator());
 
-		for (Enumeration names = sysProps.propertyNames(); names.hasMoreElements();) {
+		for (Enumeration<?> names = sysProps.propertyNames(); names.hasMoreElements();) {
 			String name = (String) names.nextElement();
 			String value = sysProps.getProperty(name);
 
 			if (name.equals("line.separator")) {
-				value = convertLineSeperatorToBePrintable(name, value);
+				value = convertLineSeperatorToBePrintable(value);
 			}
 
 			sortedSysProps.put(name, value);
@@ -71,8 +73,8 @@ public class SystemPropertiesTableModel extends AbstractTableModel {
 		data = new Object[sortedSysProps.size()][2];
 
 		int i = 0;
-		for (Iterator itrSorted = sortedSysProps.entrySet().iterator(); itrSorted.hasNext(); i++) {
-			Map.Entry property = (Map.Entry) itrSorted.next();
+		for (Iterator<Entry<String, String>> itrSorted = sortedSysProps.entrySet().iterator(); itrSorted.hasNext(); i++) {
+			Entry<String, String> property = itrSorted.next();
 
 			data[i][0] = property.getKey();
 			data[i][1] = property.getValue();
@@ -81,8 +83,8 @@ public class SystemPropertiesTableModel extends AbstractTableModel {
 		fireTableDataChanged();
 	}
 
-	private String convertLineSeperatorToBePrintable(String name, String value) {
-		StringBuffer sbValue = new StringBuffer();
+	private String convertLineSeperatorToBePrintable(String value) {
+		StringBuilder sbValue = new StringBuilder();
 
 		for (int i = 0; i < value.length(); i++) {
 			if (value.charAt(i) == '\r') {

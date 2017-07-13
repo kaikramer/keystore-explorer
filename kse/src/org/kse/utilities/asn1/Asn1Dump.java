@@ -414,7 +414,7 @@ public class Asn1Dump {
 
 		sb.append(indentSequence.toString(indentLevel));
 
-		Enumeration components;
+		Enumeration<?> components;
 
 		// Sequence or Set?
 		if (asn1ConstructedType instanceof ASN1Sequence) {

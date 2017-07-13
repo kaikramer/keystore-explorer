@@ -32,6 +32,8 @@ import org.kse.gui.error.DError;
  *
  */
 public class CryptographyStrengthAction extends ExitAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

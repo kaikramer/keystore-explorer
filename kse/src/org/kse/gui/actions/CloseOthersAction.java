@@ -31,6 +31,8 @@ import org.kse.utilities.history.KeyStoreHistory;
  *
  */
 public class CloseOthersAction extends CloseAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

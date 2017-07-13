@@ -32,6 +32,8 @@ import org.kse.gui.jar.DJarInfo;
  *
  */
 public class JarsAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

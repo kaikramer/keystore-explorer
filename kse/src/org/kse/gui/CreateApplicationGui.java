@@ -19,7 +19,6 @@
  */
 package org.kse.gui;
 
-import java.awt.Font;
 import java.awt.SplashScreen;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -27,13 +26,11 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.apache.commons.io.IOUtils;
 import org.kse.ApplicationSettings;
@@ -180,22 +177,6 @@ public class CreateApplicationGui implements Runnable {
 			}
 		}.start();
 	}
-
-	private static void setDefaultSize(int size) {
-		Set<Object> keySet = UIManager.getLookAndFeelDefaults().keySet();
-		Object[] keys = keySet.toArray(new Object[keySet.size()]);
-
-		for (Object key : keys) {
-			if (key != null && key.toString().toLowerCase().contains("font")) {
-				Font font = UIManager.getDefaults().getFont(key);
-				if (font != null) {
-					font = font.deriveFont((float) size);
-					UIManager.put(key, font);
-				}
-			}
-		}
-	}
-
 
 	private static void initLookAndFeel(ApplicationSettings applicationSettings) {
 		LnfUtil.installLnfs();

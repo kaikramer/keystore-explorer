@@ -41,6 +41,7 @@ import javax.swing.JOptionPane;
  */
 public class ClickableLinkTickerRenderer extends JLabel implements TickerRenderer {
 
+	private static final long serialVersionUID = 1L;
 	private static final Pattern PATTERN_LINK = Pattern.compile("<a href=['\"]([^']*?)['\"][^>]*?>.*?</a>");
 	private static final Pattern PATTERN_TAG = Pattern.compile("<[^>]*?>");
 	private List<LinkDescriptor> listLinks;

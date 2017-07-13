@@ -35,6 +35,7 @@ import org.kse.utilities.history.KeyStoreState;
  *
  */
 public class RedoAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
 	private String defaultName;
 
 	/**

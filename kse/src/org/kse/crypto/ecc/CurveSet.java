@@ -106,6 +106,7 @@ public enum CurveSet {
 	 *
 	 * @return The named curves that belong to this set
 	 */
+	@SuppressWarnings("unchecked")
 	public List<String> getAllCurveNames() {
 		Enumeration<String> en = null;
 

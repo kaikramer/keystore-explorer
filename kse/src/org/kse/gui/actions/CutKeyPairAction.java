@@ -26,6 +26,8 @@ import org.kse.gui.KseFrame;
  *
  */
 public class CutKeyPairAction extends CutAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

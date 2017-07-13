@@ -48,6 +48,8 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DError extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
 	private JPanel jpError;

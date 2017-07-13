@@ -42,6 +42,8 @@ import org.bouncycastle.asn1.x509.Extension;
  *
  */
 public class X509ExtensionSet implements X509Extension, Cloneable, Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 
 	private Map<String, byte[]> criticalExtensions = new HashMap<String, byte[]>();

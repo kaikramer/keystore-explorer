@@ -72,6 +72,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.commons.io.IOUtils;
 import org.kse.crypto.jcepolicy.JcePolicyUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -88,6 +89,8 @@ import net.miginfocom.swing.MigLayout;
  *
  */
 public class DUpgradeCryptoStrength extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
@@ -193,6 +196,8 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 			}
 		});
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
@@ -324,6 +329,8 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 				zip = new ZipFile(droppedFile);
 			} catch (ZipException ex) {
 				return;
+			} finally {
+				IOUtils.closeQuietly(zip);
 			}
 
 			Enumeration<? extends ZipEntry> zipEntries = zip.entries();
@@ -369,6 +376,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 	}
 
 	private class PolicyZipDropTarget extends JLabel implements DropTargetListener {
+		private static final long serialVersionUID = 1L;
 		private boolean policyZipAccepted;
 
 		public PolicyZipDropTarget() {
@@ -397,7 +405,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 				Transferable trans = evt.getTransferable();
 
 				if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-					List droppedFiles = (List) trans.getTransferData(DataFlavor.javaFileListFlavor);
+					List<?> droppedFiles = (List<?>) trans.getTransferData(DataFlavor.javaFileListFlavor);
 
 					if (droppedFiles.size() == 1) {
 						File droppedFile = (File) droppedFiles.get(0);

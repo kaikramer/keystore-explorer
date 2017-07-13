@@ -33,6 +33,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
  *
  */
 public class ErrorTreeCellRend extends DefaultTreeCellRenderer {
+	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
 	/**

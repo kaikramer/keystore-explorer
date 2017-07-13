@@ -101,6 +101,8 @@ import net.miginfocom.swing.MigLayout;
  *
  */
 public class DSignCsr extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/sign/resources");
 
@@ -121,7 +123,7 @@ public class DSignCsr extends JEscDialog {
 	private JRadioButton jrbVersion1;
 	private JRadioButton jrbVersion3;
 	private JLabel jlSignatureAlgorithm;
-	private JComboBox jcbSignatureAlgorithm;
+	private JComboBox<SignatureType> jcbSignatureAlgorithm;
 	private JLabel jlValidityStart;
 	private JDateTime jdtValidityStart;
 	private JLabel jlValidityEnd;
@@ -264,7 +266,7 @@ public class DSignCsr extends JEscDialog {
 
 		jlSignatureAlgorithm = new JLabel(res.getString("DSignCsr.jlSignatureAlgorithm.text"));
 
-		jcbSignatureAlgorithm = new JComboBox();
+		jcbSignatureAlgorithm = new JComboBox<SignatureType>();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, provider, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jcbSignatureAlgorithm.tooltip"));
@@ -427,6 +429,8 @@ public class DSignCsr extends JEscDialog {
 			}
 		});
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();

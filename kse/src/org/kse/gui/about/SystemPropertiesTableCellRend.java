@@ -32,6 +32,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  */
 public class SystemPropertiesTableCellRend extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Returns the rendered cell for the supplied value and column.
 	 *

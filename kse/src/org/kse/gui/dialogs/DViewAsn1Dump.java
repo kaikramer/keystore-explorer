@@ -61,6 +61,8 @@ import org.kse.utilities.asn1.Asn1Exception;
  *
  */
 public class DViewAsn1Dump extends JEscFrame {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private JPanel jpButtons;

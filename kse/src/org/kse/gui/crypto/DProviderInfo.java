@@ -61,6 +61,8 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DProviderInfo extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
 	private JPanel jpButtons;
@@ -291,7 +293,7 @@ public class DProviderInfo extends JEscDialog {
 
 		ArrayList<String> algorithmList = new ArrayList<String>();
 
-		for (Enumeration names = provider.propertyNames(); names.hasMoreElements();) {
+		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
 
 			if (key.startsWith(match) && key.indexOf(' ') == -1) {
@@ -314,7 +316,7 @@ public class DProviderInfo extends JEscDialog {
 		 */
 		String match = serviceType + "." + algorithm;
 
-		for (Enumeration names = provider.propertyNames(); names.hasMoreElements();) {
+		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
 
 			if (key.equals(match)) {
@@ -336,7 +338,7 @@ public class DProviderInfo extends JEscDialog {
 
 		TreeMap<String, String> attributeMap = new TreeMap<String, String>();
 
-		for (Enumeration names = provider.propertyNames(); names.hasMoreElements();) {
+		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
 
 			if (key.startsWith(matchAttr)) {
@@ -366,7 +368,7 @@ public class DProviderInfo extends JEscDialog {
 
 		ArrayList<String> aliasList = new ArrayList<String>();
 
-		for (Enumeration names = provider.propertyNames(); names.hasMoreElements();) {
+		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
 
 			if (provider.getProperty(key).equals(algorithm)) {

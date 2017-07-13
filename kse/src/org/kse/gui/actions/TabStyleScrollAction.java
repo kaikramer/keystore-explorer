@@ -28,6 +28,8 @@ import org.kse.gui.KseFrame;
  *
  */
 public class TabStyleScrollAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

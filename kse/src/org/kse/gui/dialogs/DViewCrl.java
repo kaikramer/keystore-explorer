@@ -81,6 +81,8 @@ import org.kse.utilities.asn1.Asn1Exception;
  *
  */
 public class DViewCrl extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private JPanel jpOK;
@@ -442,8 +444,8 @@ public class DViewCrl extends JEscDialog {
 		jtfSignatureAlgorithm.setText(crl.getSigAlgName());
 		jtfSignatureAlgorithm.setCaretPosition(0);
 
-		Set critExts = crl.getCriticalExtensionOIDs();
-		Set nonCritExts = crl.getNonCriticalExtensionOIDs();
+		Set<?> critExts = crl.getCriticalExtensionOIDs();
+		Set<?> nonCritExts = crl.getNonCriticalExtensionOIDs();
 
 		if (critExts != null && critExts.size() != 0 || nonCritExts != null && nonCritExts.size() != 0) {
 			jbCrlExtensions.setEnabled(true);
@@ -470,11 +472,11 @@ public class DViewCrl extends JEscDialog {
 		if (row != -1) {
 			BigInteger serialNumber = (BigInteger) jtRevokedCerts.getValueAt(row, 0);
 
-			Set revokedCertsSet = crl.getRevokedCertificates();
+			Set<?> revokedCertsSet = crl.getRevokedCertificates();
 
 			X509CRLEntry x509CrlEntry = null;
 
-			for (Iterator itr = revokedCertsSet.iterator(); itr.hasNext();) {
+			for (Iterator<?> itr = revokedCertsSet.iterator(); itr.hasNext();) {
 				X509CRLEntry entry = (X509CRLEntry) itr.next();
 				if (serialNumber.equals(entry.getSerialNumber())) {
 					x509CrlEntry = entry;
@@ -540,11 +542,11 @@ public class DViewCrl extends JEscDialog {
 		if (row != -1) {
 			BigInteger serialNumber = (BigInteger) jtRevokedCerts.getValueAt(row, 0);
 
-			Set revokedCertsSet = crl.getRevokedCertificates();
+			Set<?> revokedCertsSet = crl.getRevokedCertificates();
 
 			X509CRLEntry x509CrlEntry = null;
 
-			for (Iterator itr = revokedCertsSet.iterator(); itr.hasNext();) {
+			for (Iterator<?> itr = revokedCertsSet.iterator(); itr.hasNext();) {
 				X509CRLEntry entry = (X509CRLEntry) itr.next();
 				if (serialNumber.equals(entry.getSerialNumber())) {
 					x509CrlEntry = entry;

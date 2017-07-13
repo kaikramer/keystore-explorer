@@ -45,6 +45,7 @@ import org.kse.gui.error.DError;
  *
  */
 public class HelpAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
 	private DefaultHelpBroker helpBroker;
 
 	/**

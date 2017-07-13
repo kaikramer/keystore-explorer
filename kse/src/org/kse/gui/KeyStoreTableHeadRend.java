@@ -34,6 +34,8 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
 	private TableCellRenderer delegate;

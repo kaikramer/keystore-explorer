@@ -116,7 +116,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
 					// set extension filters
 					Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
-					List observableList = (List) getExtensionFiltersMethod.invoke(fileChooser);
+					List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
 					observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
 							.newInstance(res.getString("JavaFXFileChooser.AllFiles"), new String[] { "*.*" }));
 

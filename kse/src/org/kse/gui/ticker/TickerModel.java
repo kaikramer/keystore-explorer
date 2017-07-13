@@ -25,7 +25,7 @@ import javax.swing.ListModel;
  * Interface for data models to use with the JTicker Swing control.
  *
  */
-public interface TickerModel extends ListModel {
+public interface TickerModel extends ListModel<Object> {
 	/**
 	 * Get the item in the model at the specified index.
 	 *

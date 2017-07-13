@@ -153,7 +153,7 @@ public class PemUtil {
 
 						attributes = new PemAttributes();
 
-						attributesDone: while (line != null) {
+						while (line != null) {
 							line = line.trim();
 
 							// Empty line - end of attributes

@@ -56,6 +56,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
@@ -442,8 +443,9 @@ public class DSignJar extends JEscDialog {
 			return;
 		}
 
+		JarFile jarFile = null;
 		try {
-			new JarFile(inputJarFile);
+			jarFile = new JarFile(inputJarFile);
 		} catch (IOException ex) {
 			String problemStr = MessageFormat.format(res.getString("DSignJar.NoOpenJar.Problem"),
 					inputJarFile.getName());
@@ -459,6 +461,8 @@ public class DSignJar extends JEscDialog {
 			dProblem.setVisible(true);
 
 			return;
+		} finally {
+			IOUtils.closeQuietly(jarFile);
 		}
 
 		boolean signDirectly = jcbSignDirectly.isSelected();
@@ -492,15 +496,13 @@ public class DSignJar extends JEscDialog {
 			return;
 		}
 
-		if (!signDirectly) {
-			if (outputJarFile.isFile()) {
-				String message = MessageFormat.format(res.getString("DSignJar.OverWriteOutputJarFile.message"),
-						outputJarFile);
+		if (!signDirectly && outputJarFile.isFile()) {
+			String message = MessageFormat.format(res.getString("DSignJar.OverWriteOutputJarFile.message"),
+					outputJarFile);
 
-				int selected = JOptionPane.showConfirmDialog(this, message, getTitle(), JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return;
-				}
+			int selected = JOptionPane.showConfirmDialog(this, message, getTitle(), JOptionPane.YES_NO_OPTION);
+			if (selected != JOptionPane.YES_OPTION) {
+				return;
 			}
 		}
 

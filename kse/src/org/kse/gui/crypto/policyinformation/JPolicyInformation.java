@@ -64,6 +64,8 @@ import org.kse.utilities.os.OperatingSystem;
  *
  */
 public class JPolicyInformation extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/crypto/policyinformation/resources");
 

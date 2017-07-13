@@ -37,7 +37,7 @@ public abstract class TestCaseCrypto {
 
 	private void addBcProvider() {
 		try {
-			Class bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
+			Class<?> bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
 			Provider bcProv = (Provider) bcProvClass.newInstance();
 			Security.addProvider(bcProv);
 		} catch (Throwable thw) {

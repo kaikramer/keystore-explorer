@@ -26,6 +26,7 @@ import org.kse.crypto.CryptoException;
  *
  */
 public class KeyStoreLoadException extends CryptoException {
+	private static final long serialVersionUID = 1L;
 	private KeyStoreType keyStoreType;
 
 	/**

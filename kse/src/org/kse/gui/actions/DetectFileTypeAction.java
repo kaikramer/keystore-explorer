@@ -41,6 +41,8 @@ import org.kse.gui.error.DError;
  *
  */
 public class DetectFileTypeAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

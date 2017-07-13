@@ -35,6 +35,8 @@ import org.kse.crypto.x509.PolicyInformationUtil;
  *
  */
 public class PolicyQualifierInfoTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/crypto/policyinformation/resources");
 

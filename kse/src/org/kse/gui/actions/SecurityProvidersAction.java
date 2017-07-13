@@ -31,6 +31,8 @@ import org.kse.gui.crypto.DProviderInfo;
  *
  */
 public class SecurityProvidersAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

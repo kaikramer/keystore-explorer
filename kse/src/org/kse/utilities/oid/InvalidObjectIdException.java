@@ -24,6 +24,8 @@ package org.kse.utilities.oid;
  *
  */
 public class InvalidObjectIdException extends Exception {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Creates a new InvalidObjectIdException.
 	 */

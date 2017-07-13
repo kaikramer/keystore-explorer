@@ -41,6 +41,8 @@ import org.kse.gui.error.DError;
  *
  */
 public class OpenPkcs11Action extends OpenAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

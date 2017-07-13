@@ -38,6 +38,8 @@ import org.kse.gui.dialogs.DPreferences;
  *
  */
 public class PreferencesAction extends ExitAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

@@ -82,6 +82,8 @@ import org.kse.gui.PlatformUtil;
  *
  */
 public class DDateTimeChooser extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/datetime/resources");
 
 	private static final String[] MONTH_NAMES = new String[] { res.getString("DDateTimeChooser.Month.January"),
@@ -135,7 +137,7 @@ public class DDateTimeChooser extends JEscDialog {
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
 	private JPanel jpMonthYear;
-	private JComboBox jcbMonth;
+	private JComboBox<?> jcbMonth;
 	private JSpinner jsYear;
 	private JPanel jpDaysOfMonth;
 	private JLabel[][] jlDaysOfMonth;
@@ -185,7 +187,7 @@ public class DDateTimeChooser extends JEscDialog {
 	}
 
 	private void initComponents(Date date) {
-		jcbMonth = new JComboBox(MONTH_NAMES);
+		jcbMonth = new JComboBox<Object>(MONTH_NAMES);
 		jcbMonth.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent evt) {
@@ -300,6 +302,8 @@ public class DDateTimeChooser extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();

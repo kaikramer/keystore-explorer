@@ -60,6 +60,8 @@ import org.kse.gui.error.DError;
  *
  */
 public class DAuthorityInformationAccess extends DExtension {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/extensions/resources");
 
@@ -151,6 +153,8 @@ public class DAuthorityInformationAccess extends DExtension {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
@@ -177,7 +181,6 @@ public class DAuthorityInformationAccess extends DExtension {
 		pack();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void prepopulateWithValue(byte[] value) throws IOException {
 		AuthorityInformationAccess authorityInformationAccess = AuthorityInformationAccess.getInstance(value);
 

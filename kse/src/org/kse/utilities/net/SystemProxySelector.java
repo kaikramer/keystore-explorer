@@ -25,15 +25,12 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Proxy Selector for system proxy settings.
  *
  */
 public class SystemProxySelector extends ProxySelector {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/net/resources");
-
 	private static ProxySelector systemProxySelector;
 
 	@Override

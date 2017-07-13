@@ -43,6 +43,8 @@ import org.kse.version.VersionException;
  *
  */
 public class CheckUpdateAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

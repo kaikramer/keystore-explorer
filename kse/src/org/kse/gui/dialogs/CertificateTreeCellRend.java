@@ -37,6 +37,7 @@ import org.kse.crypto.x509.X509CertUtil;
  *
  */
 public class CertificateTreeCellRend extends DefaultTreeCellRenderer {
+	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	/**

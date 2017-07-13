@@ -35,6 +35,8 @@ import org.kse.crypto.x509.PolicyInformationUtil;
  *
  */
 public class PolicyInformationTableCellRend extends DefaultTableCellRenderer {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Returns the rendered cell.
 	 *

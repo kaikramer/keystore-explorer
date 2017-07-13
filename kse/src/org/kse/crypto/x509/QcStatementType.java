@@ -19,8 +19,6 @@
  */
 package org.kse.crypto.x509;
 
-import java.util.ResourceBundle;
-
 /**
  *
  * Qualified Certificate Statements (1.3.6.1.5.5.7.1.3).
@@ -41,7 +39,6 @@ public enum QcStatementType {
 
 	// @formatter:on
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 	private String oid;
 	private String friendlyKey;
 

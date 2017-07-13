@@ -74,6 +74,8 @@ import net.miginfocom.swing.MigLayout;
  *
  */
 public class DGenerateCsr extends JEscDialog {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
@@ -82,7 +84,7 @@ public class DGenerateCsr extends JEscDialog {
 	private JRadioButton jrbPkcs10;
 	private JRadioButton jrbSpkac;
 	private JLabel jlSignatureAlgorithm;
-	private JComboBox jcbSignatureAlgorithm;
+	private JComboBox<SignatureType> jcbSignatureAlgorithm;
 	private JLabel jlChallenge;
 	private JTextField jtfChallenge;
 	private JLabel jlUnstructuredName;
@@ -154,7 +156,7 @@ public class DGenerateCsr extends JEscDialog {
 
 		jlSignatureAlgorithm = new JLabel(res.getString("DGenerateCsr.jlSignatureAlgorithm.text"));
 
-		jcbSignatureAlgorithm = new JComboBox();
+		jcbSignatureAlgorithm = new JComboBox<SignatureType>();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateCsr.jcbSignatureAlgorithm.tooltip"));
 		DialogHelper.populateSigAlgs(keyPairType, privateKey, provider, jcbSignatureAlgorithm);
@@ -255,6 +257,8 @@ public class DGenerateCsr extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();

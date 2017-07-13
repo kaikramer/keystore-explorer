@@ -36,6 +36,8 @@ import org.kse.crypto.x509.GeneralSubtrees;
  *
  */
 public class GeneralSubtreesTableModel extends AbstractTableModel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/crypto/generalsubtree/resources");
 

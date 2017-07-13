@@ -48,9 +48,11 @@ import org.kse.gui.error.DError;
  *
  */
 public class JCertificateFingerprint extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private JComboBox jcbFingerprintAlg;
+	private JComboBox<DigestType> jcbFingerprintAlg;
 	private JTextField jtfCertificateFingerprint;
 	private JButton jbViewCertificateFingerprint;
 
@@ -67,7 +69,7 @@ public class JCertificateFingerprint extends JPanel {
 	}
 
 	private void initComponents(int columns) {
-		jcbFingerprintAlg = new JComboBox();
+		jcbFingerprintAlg = new JComboBox<DigestType>();
 		jcbFingerprintAlg.setToolTipText(res.getString("JCertificateFingerprint.jcbFingerprintAlg.tooltip"));
 		jcbFingerprintAlg.setMaximumRowCount(10);
 		jcbFingerprintAlg.addItemListener(new ItemListener() {

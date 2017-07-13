@@ -36,6 +36,8 @@ import org.kse.utilities.history.KeyStoreState;
  *
  */
 public class UnlockKeyAction extends KeyStoreExplorerAction {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Construct action.
 	 *

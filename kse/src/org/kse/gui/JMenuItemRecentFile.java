@@ -33,6 +33,7 @@ import javax.swing.JMenuItem;
  *
  */
 public class JMenuItemRecentFile extends JMenuItem {
+	private static final long serialVersionUID = 1L;
 	private JMenuRecentFiles jmRecentFiles;
 	private File recentFile;
 	private int position;
