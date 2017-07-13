@@ -37,7 +37,7 @@
 <project basedir="." default="package" name="KeyStore Explorer" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
 	<!-- Application name and version -->
-	<property file="src/net/sf/keystore_explorer/version.properties" />
+	<property file="src/org/kse/version.properties" />
 	<property name="appName" value="${KSE.Name}" />
 	<property name="appVersion" value="${KSE.Version}" />
 	<property name="appSimpleName" value="${KSE.SimpleName}" />
@@ -51,7 +51,7 @@
 	<property name="website" value="keystore-explorer.org" />
 
 	<!-- Main class (for manifest entry) -->
-	<property name="mainClass" value="net.sf.keystore_explorer.KSE" />
+	<property name="mainClass" value="org.kse.KSE" />
 
 	<!-- Source code directory -->
 	<property name="sourceDir" value="${basedir}/src" />
@@ -195,9 +195,9 @@
 	<!-- Java Help properties -->
 	<property name="helpCfgDir" value="${basedir}/help" />
 	<property name="helpCfg" value="${helpCfgDir}/help.cfg" />
-	<property name="helpDir" value="${sourceDir}/net/sf/keystore_explorer/gui/help" />
+	<property name="helpDir" value="${sourceDir}/org/kse/gui/help" />
 	<property name="helpSearchIndex" value="searchindex" />
-	<property name="helpSearchIndexDir" value="${buildDir}/net/sf/keystore_explorer/gui/help/${helpSearchIndex}" />
+	<property name="helpSearchIndexDir" value="${buildDir}/org/kse/gui/help/${helpSearchIndex}" />
 
 
 	<target name="init" description="Initialize environment">
@@ -260,7 +260,7 @@
 			<attribute name="Main-Class" value="${mainClass}" />
 			<attribute name="Class-Path" value="${classPath}" />
 			<attribute name="Built-Date" value="${TODAY}" />
-			<attribute name="SplashScreen-Image" value="net/sf/keystore_explorer/gui/images/splash.png" />
+			<attribute name="SplashScreen-Image" value="org/kse/gui/images/splash.png" />
 			<attribute name="Sealed" value="true" />
 		</manifest>
 		<jar destfile="${appJar}" manifest="${mfFile}">
@@ -322,7 +322,7 @@
 		<junit fork="yes" printsummary="no" haltonfailure="yes">
 			<classpath refid="testClasspath" />
 			<formatter type="plain" usefile="no" />
-			<test name="net.sf.keystore_explorer.crypto.TestSuiteCrypto" />
+			<test name="org.kse.crypto.TestSuiteCrypto" />
 		</junit>
 	</target>
 
@@ -333,11 +333,11 @@
 
 
 	<target name="doc" depends="compile" description="Create Javadocs">
-		<javadoc packagenames="net.sf.keystore_explorer.*" sourcepath="${sourceDir}" destdir="${javadocDir}" windowtitle="${windowTitle}" doctitle="${documentTitle}" header="${header}" footer="${footer}" bottom="${bottom}" classpathref="compileClasspath" source="1.6" access="protected" splitindex="true" overview="${overview}" stylesheetfile="${styleSheet}">
-			<group title="Application Packages" packages="net.sf.keystore_explorer.*" />
-			<group title="GUI Utility Packages" packages="net.sf.keystore_explorer.gui,net.sf.keystore_explorer.gui.*" />
-			<group title="Crypto Utility Packages" packages="net.sf.keystore_explorer.crypto,net.sf.keystore_explorer.crypto.*" />
-			<group title="Other Utility Packages" packages="net.sf.keystore_explorer.utilities.asn1,net.sf.keystore_explorer.utilities.io,net.sf.keystore_explorer.utilities.net,net.sf.keystore_explorer.utilities.oid,net.sf.keystore_explorer.utilities.pem,net.sf.keystore_explorer.utilities.os,net.sf.keystore_explorer.version" />
+		<javadoc packagenames="org.kse.*" sourcepath="${sourceDir}" destdir="${javadocDir}" windowtitle="${windowTitle}" doctitle="${documentTitle}" header="${header}" footer="${footer}" bottom="${bottom}" classpathref="compileClasspath" source="1.6" access="protected" splitindex="true" overview="${overview}" stylesheetfile="${styleSheet}">
+			<group title="Application Packages" packages="org.kse.*" />
+			<group title="GUI Utility Packages" packages="org.kse.gui,org.kse.gui.*" />
+			<group title="Crypto Utility Packages" packages="org.kse.crypto,org.kse.crypto.*" />
+			<group title="Other Utility Packages" packages="org.kse.utilities.asn1,org.kse.utilities.io,org.kse.utilities.net,org.kse.utilities.oid,org.kse.utilities.pem,org.kse.utilities.os,org.kse.version" />
 		</javadoc>
 	</target>
 
@@ -414,7 +414,7 @@
 
 		<taskdef name="bundleapp" classpath="lib/appbundler-1.0ea.jar" classname="com.oracle.appbundler.AppBundlerTask" />
 
-		<bundleapp outputdirectory="${distDir}" name="${appBundleName}" displayname="${appBundleName}" executableName="${appBundleName}" identifier="net.sf.keystore_explorer.${appSimpleName}${appSimpleVersion}" shortversion="${appSimpleVersion}" version="${appVersion}" icon="${kseIcns}" mainclassname="${mainClass}" copyright="${copyright}" applicationCategory="public.app-category.developer-tools">
+		<bundleapp outputdirectory="${distDir}" name="${appBundleName}" displayname="${appBundleName}" executableName="${appBundleName}" identifier="org.kse.${appSimpleName}${appSimpleVersion}" shortversion="${appSimpleVersion}" version="${appVersion}" icon="${kseIcns}" mainclassname="${mainClass}" copyright="${copyright}" applicationCategory="public.app-category.developer-tools">
 
 			<!--<runtime dir="${env.JAVA_HOME}"/>-->
 

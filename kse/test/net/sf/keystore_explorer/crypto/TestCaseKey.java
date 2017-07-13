@@ -25,10 +25,11 @@ import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 
-import net.sf.keystore_explorer.crypto.keypair.KeyPairType;
-import net.sf.keystore_explorer.crypto.keypair.KeyPairUtil;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.Password;
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 
 /**
  * Abstract base class for all private or public key test cases.

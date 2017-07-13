@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.kse.version.Version;
+import org.kse.version.VersionException;
 
 public class VersionTest {
 

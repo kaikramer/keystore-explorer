@@ -19,17 +19,17 @@
  */
 package net.sf.keystore_explorer.crypto.publickey;
 
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 import static org.junit.Assert.assertEquals;
+import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 
 import java.io.ByteArrayInputStream;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.TestCaseKey;
-import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
-import net.sf.keystore_explorer.crypto.publickey.OpenSslPubUtil;
 
 import org.junit.Test;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.publickey.OpenSslPubUtil;
 
 /**
  * Unit tests for OpenSslPubUtil. Encodes a RSA and DSA private keys using

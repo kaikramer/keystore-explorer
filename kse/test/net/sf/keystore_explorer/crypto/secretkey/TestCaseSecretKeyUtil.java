@@ -19,10 +19,12 @@
  */
 package net.sf.keystore_explorer.crypto.secretkey;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
 import org.junit.Test;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.KeyInfo;
+import org.kse.crypto.secretkey.SecretKeyType;
+import org.kse.crypto.secretkey.SecretKeyUtil;
 
 import javax.crypto.SecretKey;
 

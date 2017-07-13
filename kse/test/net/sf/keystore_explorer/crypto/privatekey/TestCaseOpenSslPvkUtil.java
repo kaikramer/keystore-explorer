@@ -19,22 +19,22 @@
  */
 package net.sf.keystore_explorer.crypto.privatekey;
 
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.kse.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
+import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 
 import java.io.ByteArrayInputStream;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.TestCaseKey;
-import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
-import net.sf.keystore_explorer.crypto.privatekey.OpenSslPbeType;
-import net.sf.keystore_explorer.crypto.privatekey.OpenSslPvkUtil;
-import net.sf.keystore_explorer.crypto.privatekey.PrivateKeyEncryptedException;
-import net.sf.keystore_explorer.crypto.privatekey.PrivateKeyUnencryptedException;
 
 import org.junit.Test;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.privatekey.OpenSslPbeType;
+import org.kse.crypto.privatekey.OpenSslPvkUtil;
+import org.kse.crypto.privatekey.PrivateKeyEncryptedException;
+import org.kse.crypto.privatekey.PrivateKeyUnencryptedException;
 
 /**
  * Unit tests for OpenSslPvkUtil. Encodes a RSA and DSA private keys using

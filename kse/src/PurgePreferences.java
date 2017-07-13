@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-import net.sf.keystore_explorer.ApplicationSettings;
+import org.kse.ApplicationSettings;
 
 /**
  * Erase all KSE application preferences.

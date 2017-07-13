@@ -23,16 +23,18 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import net.sf.keystore_explorer.crypto.KeyInfo;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Test;
+import org.kse.crypto.KeyInfo;
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.DSA;
-import static net.sf.keystore_explorer.crypto.keypair.KeyPairType.RSA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.kse.crypto.keypair.KeyPairType.DSA;
+import static org.kse.crypto.keypair.KeyPairType.RSA;
 
 /**
  * Unit tests for KeyPairUtil. Runs a test to create a key pair for supported

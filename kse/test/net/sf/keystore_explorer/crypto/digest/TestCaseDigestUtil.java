@@ -19,23 +19,24 @@
  */
 package net.sf.keystore_explorer.crypto.digest;
 
-import static net.sf.keystore_explorer.crypto.digest.DigestType.MD2;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.MD4;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.MD5;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.RIPEMD128;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.RIPEMD160;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.RIPEMD256;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA1;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA224;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA256;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA384;
-import static net.sf.keystore_explorer.crypto.digest.DigestType.SHA512;
 import static org.junit.Assert.assertTrue;
+import static org.kse.crypto.digest.DigestType.MD2;
+import static org.kse.crypto.digest.DigestType.MD4;
+import static org.kse.crypto.digest.DigestType.MD5;
+import static org.kse.crypto.digest.DigestType.RIPEMD128;
+import static org.kse.crypto.digest.DigestType.RIPEMD160;
+import static org.kse.crypto.digest.DigestType.RIPEMD256;
+import static org.kse.crypto.digest.DigestType.SHA1;
+import static org.kse.crypto.digest.DigestType.SHA224;
+import static org.kse.crypto.digest.DigestType.SHA256;
+import static org.kse.crypto.digest.DigestType.SHA384;
+import static org.kse.crypto.digest.DigestType.SHA512;
+
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-import net.sf.keystore_explorer.crypto.digest.DigestType;
-import net.sf.keystore_explorer.crypto.digest.DigestUtil;
 
 import org.junit.Test;
+import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.digest.DigestUtil;
 
 /**
  * Unit tests for DigestUtil. Runs tests to create a digest for each of the

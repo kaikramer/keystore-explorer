@@ -19,20 +19,20 @@
  */
 package net.sf.keystore_explorer.crypto.csr.spkac;
 
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.MD2_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.MD5_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_DSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA1_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA224_DSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA224_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA256_DSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA256_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA384_RSA;
-import static net.sf.keystore_explorer.crypto.signing.SignatureType.SHA512_RSA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.kse.crypto.signing.SignatureType.MD2_RSA;
+import static org.kse.crypto.signing.SignatureType.MD5_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
+import static org.kse.crypto.signing.SignatureType.SHA1_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA224_DSA;
+import static org.kse.crypto.signing.SignatureType.SHA224_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA256_DSA;
+import static org.kse.crypto.signing.SignatureType.SHA256_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA384_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA512_RSA;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,14 +40,14 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
-import net.sf.keystore_explorer.crypto.csr.spkac.Spkac;
-import net.sf.keystore_explorer.crypto.csr.spkac.SpkacMissingPropertyException;
-import net.sf.keystore_explorer.crypto.csr.spkac.SpkacSubject;
 import net.sf.keystore_explorer.crypto.keypair.TestCaseKeyPair;
-import net.sf.keystore_explorer.crypto.signing.SignatureType;
 
 import org.junit.Test;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.csr.spkac.Spkac;
+import org.kse.crypto.csr.spkac.SpkacMissingPropertyException;
+import org.kse.crypto.csr.spkac.SpkacSubject;
+import org.kse.crypto.signing.SignatureType;
 
 /**
  * Unit tests for SPKAC.

@@ -21,10 +21,12 @@ package net.sf.keystore_explorer.crypto.keypair;
 
 import java.security.KeyPair;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 
 /**
  * Abstract base class for all key pair test cases. Sets up test key pairs.

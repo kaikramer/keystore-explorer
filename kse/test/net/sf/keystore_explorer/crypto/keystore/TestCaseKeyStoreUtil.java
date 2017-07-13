@@ -19,25 +19,25 @@
  */
 package net.sf.keystore_explorer.crypto.keystore;
 
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.BKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JCEKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.JKS;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.PKCS12;
-import static net.sf.keystore_explorer.crypto.keystore.KeyStoreType.UBER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.kse.crypto.keystore.KeyStoreType.BKS;
+import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
+import static org.kse.crypto.keystore.KeyStoreType.JKS;
+import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
+import static org.kse.crypto.keystore.KeyStoreType.UBER;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 
-import net.sf.keystore_explorer.crypto.Password;
 import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
-import net.sf.keystore_explorer.crypto.keystore.KeyStoreType;
-import net.sf.keystore_explorer.crypto.keystore.KeyStoreUtil;
 
 import org.junit.Test;
+import org.kse.crypto.Password;
+import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.crypto.keystore.KeyStoreUtil;
 
 /**
  * Unit tests for KeyStoreUtil. Runs tests to create, save and load a KeyStore

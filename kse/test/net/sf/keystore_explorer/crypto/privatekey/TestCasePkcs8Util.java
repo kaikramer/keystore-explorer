@@ -19,23 +19,23 @@
  */
 package net.sf.keystore_explorer.crypto.privatekey;
 
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
-import static net.sf.keystore_explorer.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
-import static net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.kse.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
+import static org.kse.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
+import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
 
 import java.io.ByteArrayInputStream;
 
-import net.sf.keystore_explorer.crypto.CryptoException;
 import net.sf.keystore_explorer.crypto.TestCaseKey;
-import net.sf.keystore_explorer.crypto.filetype.CryptoFileUtil;
-import net.sf.keystore_explorer.crypto.privatekey.Pkcs8PbeType;
-import net.sf.keystore_explorer.crypto.privatekey.Pkcs8Util;
-import net.sf.keystore_explorer.crypto.privatekey.PrivateKeyEncryptedException;
-import net.sf.keystore_explorer.crypto.privatekey.PrivateKeyUnencryptedException;
 
 import org.junit.Test;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.privatekey.Pkcs8PbeType;
+import org.kse.crypto.privatekey.Pkcs8Util;
+import org.kse.crypto.privatekey.PrivateKeyEncryptedException;
+import org.kse.crypto.privatekey.PrivateKeyUnencryptedException;
 
 /**
  * Unit tests for Pkcs8Util. Encodes RSA And DSA private keys using PKCS #8 and
