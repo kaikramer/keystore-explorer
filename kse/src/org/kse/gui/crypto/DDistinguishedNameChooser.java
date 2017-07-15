@@ -35,12 +35,15 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.kse.ApplicationSettings;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
@@ -184,29 +187,29 @@ public class DDistinguishedNameChooser extends JEscDialog {
 			try {
 				dn = distinguishedNameChooser.getDN();
 			} catch (InvalidNameException e) {
-				// FIXME Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			if (dn.toString().isEmpty()) {
-
-				//			if ((commonName == null) && (organisationUnit == null) && (organisationName == null)
-				//					&& (localityName == null) && (stateName == null) && (countryCode == null) && (emailAddress == null)) {
-				//				JOptionPane.showMessageDialog(this,
-				//						res.getString("DDistinguishedNameChooser.ValueReqAtLeastOneField.message"), getTitle(),
-				//						JOptionPane.WARNING_MESSAGE);
-				//				return;
-				//			}
-				//
-				//			if ((countryCode != null) && (countryCode.length() != 2)) {
-				//				JOptionPane.showMessageDialog(this,
-				//						res.getString("DDistinguishedNameChooser.CountryCodeTwoChars.message"), getTitle(),
-				//						JOptionPane.WARNING_MESSAGE);
-				//				return;
-				//			}
-
+			if (dn == null) {
+				return;
 			}
 
+			if (dn.toString().isEmpty()) {
+				JOptionPane.showMessageDialog(this,
+						res.getString("DDistinguishedNameChooser.ValueReqAtLeastOneField.message"), getTitle(),
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+
+			for (RDN rdn : dn.getRDNs(BCStyle.C)) {
+				String countryCode = rdn.getFirst().getValue().toString();
+				if ((countryCode != null) && (countryCode.length() != 2)) {
+					JOptionPane.showMessageDialog(this,
+							res.getString("DDistinguishedNameChooser.CountryCodeTwoChars.message"), getTitle(),
+							JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+			}
 
 			distinguishedName = dn;
 		}

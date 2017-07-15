@@ -749,11 +749,6 @@ public class DPreferences extends JEscDialog {
 		jpDefaultName = new JPanel();
 		jpDefaultName.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
 		jpDefaultName.add(distinguishedNameChooser, "left, spanx, wrap para");
-
-		// populate fields with content from saved preferences
-		if (defaultDN != null) {
-			// FIXME
-		}
 	}
 
 	private void updateProxyControls() {

@@ -419,9 +419,9 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			return false;
 		}
 
-		X500Name name = jdnName.getDistinguishedName();
+		X500Name x500Name = jdnName.getDistinguishedName();
 
-		if (name == null) {
+		if (x500Name == null || x500Name.toString().isEmpty()) {
 			JOptionPane.showMessageDialog(this, res.getString("DGenerateKeyPairCert.NameValueReq.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return false;
@@ -440,10 +440,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 			// self-signed or signed by other key pair?
 			if (issuerPrivateKey == null) {
-				certificate = generator.generateSelfSigned(name, validityStart, validityEnd, keyPair.getPublic(),
+				certificate = generator.generateSelfSigned(x500Name, validityStart, validityEnd, keyPair.getPublic(),
 						keyPair.getPrivate(), signatureType, serialNumber, extensions, provider);
 			} else {
-				certificate = generator.generate(name,
+				certificate = generator.generate(x500Name,
 						X500NameUtils.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
 						validityStart, validityEnd, keyPair.getPublic(), issuerPrivateKey, signatureType, serialNumber,
 						extensions, provider);
