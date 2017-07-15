@@ -46,6 +46,9 @@ import org.kse.gui.error.DError;
  */
 public class HelpAction extends KeyStoreExplorerAction {
 	private static final long serialVersionUID = 1L;
+
+	private static final String START_ID = "introduction";
+
 	private DefaultHelpBroker helpBroker;
 
 	/**
@@ -122,7 +125,7 @@ public class HelpAction extends KeyStoreExplorerAction {
 
 		helpBroker.setLocation(new Point(frame.getX() + 25, frame.getY() + 25));
 		helpBroker.setSize(new Dimension(850, 600));
-		helpBroker.setCurrentID(res.getString("HelpAction.StartHelpId"));
+		helpBroker.setCurrentID(START_ID);
 
 		helpBroker.setDisplayed(true);
 	}
