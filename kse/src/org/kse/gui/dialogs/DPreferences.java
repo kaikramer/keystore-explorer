@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
 
-import javax.naming.InvalidNameException;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -811,17 +810,8 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private boolean storeDefaultDN() {
-
-		X500Name dn = null;
-		try {
-			dn = distinguishedNameChooser.getDN();
-		} catch (InvalidNameException e) {
-			// FIXME Auto-generated catch block
-			e.printStackTrace();
-		}
-
+		X500Name dn = distinguishedNameChooser.getDN();
 		defaultDN = dn.toString();
-
 		return true;
 	}
 

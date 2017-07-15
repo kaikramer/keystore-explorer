@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 
-import javax.naming.InvalidNameException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -77,14 +76,14 @@ public class DistinguishedNameChooser extends JPanel {
 		add(jScrollPane, BorderLayout.CENTER);
 	}
 
-	public X500Name getDN() throws InvalidNameException {
+	public X500Name getDN() {
 		boolean noEmptyRdns = true;
 		List<RDN> rdns = listPanel.getRdns(noEmptyRdns);
 		Collections.reverse(rdns);
 		return new X500Name(rdns.toArray(new RDN[rdns.size()]));
 	}
 
-	public X500Name getDNWithEmptyRdns() throws InvalidNameException {
+	public X500Name getDNWithEmptyRdns() {
 		List<RDN> rdns = listPanel.getRdns(false);
 		Collections.reverse(rdns);
 		return new X500Name(rdns.toArray(new RDN[rdns.size()]));
@@ -127,11 +126,7 @@ public class DistinguishedNameChooser extends JPanel {
 		showNameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				try {
-					System.out.println(nameChooser.getDN().toString());
-				} catch (InvalidNameException e) {
-					e.printStackTrace();
-				}
+				System.out.println(nameChooser.getDN().toString());
 			}
 		});
 		frame.getContentPane().add(showNameButton, BorderLayout.SOUTH);

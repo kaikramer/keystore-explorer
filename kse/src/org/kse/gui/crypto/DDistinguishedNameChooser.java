@@ -29,7 +29,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 
-import javax.naming.InvalidNameException;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -183,12 +182,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	private void okPressed() {
 		if (editable) {
 
-			X500Name dn = null;
-			try {
-				dn = distinguishedNameChooser.getDN();
-			} catch (InvalidNameException e) {
-				e.printStackTrace();
-			}
+			X500Name dn = distinguishedNameChooser.getDN();
 
 			if (dn == null) {
 				return;
