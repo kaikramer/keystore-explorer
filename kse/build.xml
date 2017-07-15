@@ -414,7 +414,16 @@
 
 		<taskdef name="bundleapp" classpath="lib/appbundler-1.0ea.jar" classname="com.oracle.appbundler.AppBundlerTask" />
 
-		<bundleapp outputdirectory="${distDir}" name="${appBundleName}" displayname="${appBundleName}" executableName="${appBundleName}" identifier="org.kse.${appSimpleName}${appSimpleVersion}" shortversion="${appSimpleVersion}" version="${appVersion}" icon="${kseIcns}" mainclassname="${mainClass}" copyright="${copyright}" applicationCategory="public.app-category.developer-tools">
+		<bundleapp outputdirectory="${distDir}" name="${appBundleName}" 
+					displayname="${appBundleName}" 
+					executableName="${appBundleName}" 
+					identifier="org.kse.${appSimpleName}${appSimpleVersion}" 
+					shortversion="${appSimpleVersion}" 
+					version="${appVersion}" 
+					icon="${kseIcns}" 
+					mainclassname="${mainClass}" 
+					copyright="${copyright}" 
+					applicationCategory="public.app-category.developer-tools">
 
 			<!--<runtime dir="${env.JAVA_HOME}"/>-->
 
@@ -444,7 +453,22 @@
 			<option value="-Dkse.app=true" />
 		</bundleapp>
 	</target>
+	
+	<target name="signapp" depends="appbundler" description="Sign app bundle">
+		<exec executable="codesign" dir="${distDir}">
+			<arg value="-s" />
+			<arg value="Kai Kramer" />			
+			<arg value="${distDir}/${appBundleName}.app" />			
+		</exec>
+	</target>
 
+	<target name="dmg" depends="signapp" description="Create DMG file">
+		<exec executable="/usr/local/bin/dropdmg" dir="${distDir}">
+			<arg value="-g" />
+			<arg value="KSE" />			
+			<arg value="${distDir}/${appBundleName}.app" />			
+		</exec>
+	</target>
 
 	<target name="clean" depends="init" description="Remove generated/compiled files">
 		<delete dir="${buildDir}" />
