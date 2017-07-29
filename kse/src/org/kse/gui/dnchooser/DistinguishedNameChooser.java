@@ -53,7 +53,7 @@ public class DistinguishedNameChooser extends JPanel {
 		this.editable = editable;
 		if (dn == null || dn.getRDNs().length == 0) {
 			if (defaultDN == null || defaultDN.isEmpty()) {
-				defaultDN = "CN=, OU=, O=, C=";
+				defaultDN = "CN=, OU=, O=, L=, ST=, C=";
 			}
 			currentName = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
 		} else {
