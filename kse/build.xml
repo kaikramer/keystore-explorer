@@ -209,7 +209,7 @@
 
 
 	<target name="compile" depends="init" description="Compile the Java source">
-		<javac debug="on" includeantruntime="false" destdir="${buildDir}" source="1.6" target="1.6">
+		<javac debug="on" includeantruntime="false" destdir="${buildDir}" source="1.7" target="1.7">
 			<src path="${sourceDir}" />
 			<classpath refid="compileClasspath" />
 		</javac>
@@ -217,7 +217,7 @@
 
 
 	<target name="compile-test" depends="init" description="Compile the unit tests">
-		<javac debug="on" includeantruntime="false" destdir="${testBuildDir}" source="1.6" target="1.6">
+		<javac debug="on" includeantruntime="false" destdir="${testBuildDir}" source="1.7" target="1.7">
 			<src path="${testDir}" />
 			<classpath refid="testClasspath" />
 		</javac>
