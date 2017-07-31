@@ -7,7 +7,7 @@ Prerequisites
 
 KeyStore Explorer requires that an Oracle Java Runtime
 Environment (JRE) be installed on your computer.
-KeyStore Explorer requires JRE version 1.6 or
+KeyStore Explorer requires JRE version 1.7 or
 greater.  The latest version of the Oracle JRE is
 available free of charge from www.java.com.
 
@@ -21,7 +21,7 @@ KSE directory. If it exists, it is used for running KSE.
 This allows to use another JRE for KSE than the default 
 system JRE.
 
-All you have to do is copy the jre, jre6, jre7 or jre8 
+All you have to do is copy the jre, jre7 or jre8 
 directory into the KSE directory and rename it to "jre". 
 
 

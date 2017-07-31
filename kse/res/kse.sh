@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Oracle/OpenJDK JRE version 1.6+ has to be present on your path
+# Oracle/OpenJDK JRE version 1.7+ has to be present on your path
 # OR in a directory called "jre" in the same directory as this script
 
 # detect parent folder of script, regardless aliases and symlinks
