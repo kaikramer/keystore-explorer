@@ -47,10 +47,22 @@ public class MacOsIntegration implements InvocationHandler {
 
 		// using reflection to avoid Mac specific classes being required for compiling KSE on other platforms
 		Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
-		Class<?> quitHandlerClass = Class.forName("com.apple.eawt.QuitHandler");
-		Class<?> aboutHandlerClass = Class.forName("com.apple.eawt.AboutHandler");
-		Class<?> openFilesHandlerClass = Class.forName("com.apple.eawt.OpenFilesHandler");
-		Class<?> preferencesHandlerClass = Class.forName("com.apple.eawt.PreferencesHandler");
+		Class<?> quitHandlerClass;
+		Class<?> aboutHandlerClass;
+		Class<?> openFilesHandlerClass;
+		Class<?> preferencesHandlerClass;
+
+                if ("9".equals(System.getProperty("java.version"))) {
+                    quitHandlerClass = Class.forName("java.awt.desktop.QuitHandler");
+                    aboutHandlerClass = Class.forName("java.awt.desktop.AboutHandler");
+                    openFilesHandlerClass = Class.forName("java.awt.desktop.OpenFilesHandler");
+                    preferencesHandlerClass = Class.forName("java.awt.desktop.PreferencesHandler");
+                } else {
+                    quitHandlerClass = Class.forName("com.apple.eawt.QuitHandler");
+                    aboutHandlerClass = Class.forName("com.apple.eawt.AboutHandler");
+                    openFilesHandlerClass = Class.forName("com.apple.eawt.OpenFilesHandler");
+                    preferencesHandlerClass = Class.forName("com.apple.eawt.PreferencesHandler");    
+                }
 
 		Object application = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
 		Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(), new Class<?>[]{
