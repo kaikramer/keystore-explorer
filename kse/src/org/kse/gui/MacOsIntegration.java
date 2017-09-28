@@ -30,6 +30,7 @@ import org.kse.gui.actions.AboutAction;
 import org.kse.gui.actions.ExitAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PreferencesAction;
+import org.kse.version.JavaVersion;
 
 /**
  * Integrate KSE with Mac OS. Handles call backs from Mac OS.
@@ -52,7 +53,7 @@ public class MacOsIntegration implements InvocationHandler {
 		Class<?> openFilesHandlerClass;
 		Class<?> preferencesHandlerClass;
 
-                if ("9".equals(System.getProperty("java.version"))) {
+                if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_9)) {
                     quitHandlerClass = Class.forName("java.awt.desktop.QuitHandler");
                     aboutHandlerClass = Class.forName("java.awt.desktop.AboutHandler");
                     openFilesHandlerClass = Class.forName("java.awt.desktop.OpenFilesHandler");
