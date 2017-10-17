@@ -27,13 +27,9 @@ import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.kse.crypto.x509.KseX500NameStyle;
-import org.kse.utilities.StringUtils;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -45,7 +41,7 @@ public class RdnPanelList extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<RdnPanel> entries = new ArrayList<RdnPanel>();
+	private List<RdnPanelEntry> entries = new ArrayList<RdnPanelEntry>();
 
 	private boolean editable;
 
@@ -63,34 +59,34 @@ public class RdnPanelList extends JPanel {
 			for (AttributeTypeAndValue atav : rdn.getTypesAndValues()) {
 				String type = OidDisplayNameMapping.getDisplayNameForOid(atav.getType().getId());
 				String value = atav.getValue().toString();
-				addItem(new RdnPanel(new JComboBox<Object>(comboBoxEntries), type, value, this, editable));
+				addItem(new RdnPanelEntry(new JComboBox<Object>(comboBoxEntries), type, value, this, editable));
 			}
 		}
 	}
 
-	public void cloneEntry(RdnPanel entry) {
+	public void cloneEntry(RdnPanelEntry entry) {
 		Object selected = entry.getComboBox().getSelectedItem();
-		RdnPanel clone = new RdnPanel(new JComboBox<Object>(comboBoxEntries), selected.toString(), "", this, editable);
+		RdnPanelEntry clone = new RdnPanelEntry(new JComboBox<Object>(comboBoxEntries), selected.toString(), "", this, editable);
 
 		addItemAfter(clone, entry);
 	}
 
-	private void addItem(RdnPanel entry) {
+	private void addItem(RdnPanelEntry entry) {
 		entries.add(entry);
 		add(entry);
 		refresh();
 	}
 
-	private void addItemAfter(RdnPanel entryToAdd, RdnPanel afterThisEntry) {
+	private void addItemAfter(RdnPanelEntry entryToAdd, RdnPanelEntry afterThisEntry) {
 		entries.add(entries.indexOf(afterThisEntry) + 1, entryToAdd);
 		removeAll();
-		for (RdnPanel entry : entries) {
+		for (RdnPanelEntry entry : entries) {
 			add(entry);
 		}
 		refresh();
 	}
 
-	public void removeItem(RdnPanel entry) {
+	public void removeItem(RdnPanelEntry entry) {
 		entries.remove(entry);
 		remove(entry);
 		refresh();
@@ -98,13 +94,12 @@ public class RdnPanelList extends JPanel {
 
 	public List<RDN> getRdns(boolean noEmptyRdns) {
 		List<RDN> rdns = new ArrayList<RDN>();
-		for (RdnPanel rdnPanel : entries) {
-			ASN1ObjectIdentifier attrType = OidDisplayNameMapping.getOidForDisplayName(rdnPanel.getAttributeName());
-			if (noEmptyRdns && StringUtils.trimAndConvertEmptyToNull(rdnPanel.getAttributeValue()) == null) {
+		for (RdnPanelEntry rdnPanel : entries) {
+			RDN rdn = rdnPanel.getRDN(noEmptyRdns);
+			if (noEmptyRdns && rdn == null) {
 				continue;
 			}
-			ASN1Encodable attrValue = KseX500NameStyle.INSTANCE.stringToValue(attrType, rdnPanel.getAttributeValue());
-			rdns.add(new RDN(new AttributeTypeAndValue(attrType, attrValue)));
+			rdns.add(rdn);
 		}
 		return rdns;
 	}
@@ -116,7 +111,7 @@ public class RdnPanelList extends JPanel {
 		if (entries.size() == 1) {
 			entries.get(0).enableMinus(false);
 		} else {
-			for (RdnPanel e : entries) {
+			for (RdnPanelEntry e : entries) {
 				e.enableMinus(true);
 			}
 		}

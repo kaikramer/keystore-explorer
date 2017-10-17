@@ -51,6 +51,16 @@ public class DistinguishedNameChooser extends JPanel {
 
 	public DistinguishedNameChooser(X500Name dn, boolean editable, String defaultDN) {
 		this.editable = editable;
+		setDN(dn, defaultDN);
+		this.defaultName = defaultDN;
+		init();
+	}
+
+	public void setDN(X500Name dn) {
+		setDN(dn, null);
+	}
+
+	public void setDN(X500Name dn, String defaultDN) {
 		if (dn == null || dn.getRDNs().length == 0) {
 			if (defaultDN == null || defaultDN.isEmpty()) {
 				defaultDN = "CN=, OU=, O=, L=, ST=, C=";
@@ -60,7 +70,6 @@ public class DistinguishedNameChooser extends JPanel {
 			this.currentName = dn;
 		}
 		this.defaultName = defaultDN;
-		init();
 	}
 
 	private void init() {
