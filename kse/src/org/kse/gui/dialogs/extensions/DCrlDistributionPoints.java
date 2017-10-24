@@ -36,7 +36,7 @@ import javax.swing.border.EtchedBorder;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.kse.crypto.x509.CRLDistributionPoints;
-import org.kse.gui.crypto.crlDistributionPoints.JCrlDistributionPointsPanel;
+import org.kse.gui.crypto.crldistributionpoints.JCrlDistributionPointsPanel;
 
 /**
  * Dialog used to add or edit an CRL Distribution Points extension.

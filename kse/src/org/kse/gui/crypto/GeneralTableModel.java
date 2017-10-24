@@ -42,6 +42,11 @@ public class GeneralTableModel<T> extends AbstractTableModel {
 		return false;
 	}
 	
+	public void addRow(int index, T object) {
+		data.add(index, object);
+		fireTableDataChanged();
+	}
+	
 	public void addRow(T object) {
 		data.add(object);
 		fireTableDataChanged();

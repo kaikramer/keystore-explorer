@@ -1,4 +1,4 @@
-package org.kse.gui.crypto.crlDistributionPoints;
+package org.kse.gui.crypto.crldistributionpoints;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -95,6 +95,7 @@ public class DDistributionPoint extends DAsn1Object<DistributionPoint> {
 
 	protected JPanel createDialogBody() {
 		rdnpDistributionPoint = new RdnPanel(null);
+		rdnpDistributionPoint.setPreferredSize(new Dimension(410, 150));
 
 		JPanel jpDistributionPointNameType = new JPanel();
 		jpDistributionPointNameType.setLayout(new BoxLayout(jpDistributionPointNameType, BoxLayout.X_AXIS));
@@ -107,7 +108,7 @@ public class DDistributionPoint extends DAsn1Object<DistributionPoint> {
 		bgDistributionPointName.add(jrbRelativeName);
 		
 		jgnDistributionPoint = new JGeneralNames(res.getString("DDistributionPoints.DistributionPoints.Title"));
-		jgnDistributionPoint.setPreferredSize(new Dimension(400, 150));
+		jgnDistributionPoint.setPreferredSize(new Dimension(410, 150));
 		
 
 		JPanel jpDistributionPointName = new JPanel();
@@ -118,7 +119,7 @@ public class DDistributionPoint extends DAsn1Object<DistributionPoint> {
 		jbfReasons = new JBitFlag(3, REASON_OPTIONS);
 
 		jgnCrlIssuer = new JGeneralNames(res.getString("DDistributionPoints.CrlIssuer.Title"));
-		jgnCrlIssuer.setPreferredSize(new Dimension(400, 150));
+		jgnCrlIssuer.setPreferredSize(new Dimension(410, 150));
 
 
 		final JPanel jpPanel = new JPanel(new GridBagLayout());
@@ -152,9 +153,7 @@ public class DDistributionPoint extends DAsn1Object<DistributionPoint> {
 				jpPanel.repaint();
 			}
 		});
-		if (getObject() == null) {
-			jrbRelativeName.doClick();
-		}
+		jrbFullName.doClick();
 		
 		return jpPanel;
 	}
@@ -176,9 +175,13 @@ public class DDistributionPoint extends DAsn1Object<DistributionPoint> {
 		gbc_panel.gridwidth = 1;
 		gbc_panel.gridheight = 1;
 		gbc_panel.insets = new Insets(5, 5, 5, 5);
-		gbc_panel.anchor = GridBagConstraints.WEST;
-		gbc_panel.gridwidth  = GridBagConstraints.RELATIVE;
-		gbc_panel.fill  = GridBagConstraints.BOTH;
+		if (columnNumber == 0) {
+			gbc_panel.anchor = GridBagConstraints.NORTHEAST;
+		} else {
+			gbc_panel.anchor = GridBagConstraints.WEST;
+			gbc_panel.gridwidth  = GridBagConstraints.RELATIVE;
+			gbc_panel.fill  = GridBagConstraints.BOTH;
+		}
 		return gbc_panel;
 	}
 

@@ -1,4 +1,4 @@
-package org.kse.gui.crypto.crlDistributionPoints;
+package org.kse.gui.crypto.crldistributionpoints;
 
 import java.util.List;
 import java.util.ResourceBundle;

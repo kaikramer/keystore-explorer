@@ -331,6 +331,9 @@ public class JAsn1List<T extends ASN1Object> extends JPanel {
 				return;
 			}
 
+			getObjectTableModel().removeRow(selectedRow);
+			getObjectTableModel().addRow(selectedRow, newObject);
+
 			populate();
 			selectObjectInTable(newObject);
 		}
@@ -361,6 +364,7 @@ public class JAsn1List<T extends ASN1Object> extends JPanel {
 	}
 
 	public void reloadObjectsTable() {
+		getObjectTableModel().fireTableDataChanged();
 	}
 
 	public void addPressed() {

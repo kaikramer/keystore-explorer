@@ -1,4 +1,4 @@
-package org.kse.gui.crypto.crlDistributionPoints;
+package org.kse.gui.crypto.crldistributionpoints;
 
 import java.awt.Component;
 import java.util.BitSet;
@@ -48,9 +48,9 @@ public class CrlDistributionPointsTableCellRend extends DefaultTableCellRenderer
 		};
 	
 	@Override
-	public Component getTableCellRendererComponent(JTable jtAccessDescriptions, Object value, boolean isSelected,
+	public Component getTableCellRendererComponent(JTable jtDistributionPoints, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtAccessDescriptions, value, isSelected, hasFocus,
+		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtDistributionPoints, value, isSelected, hasFocus,
 				row, col);
 
 
@@ -87,7 +87,9 @@ public class CrlDistributionPointsTableCellRend extends DefaultTableCellRenderer
 				text.append(REASON_OPTIONS_TEXT[i]).append(",");
 			}
 		}
-		text.setLength(text.length()-1);
+		if (text.length() > 0) {
+			text.setLength(text.length()-1);
+		}
 		
 		return text.toString();
 	}
