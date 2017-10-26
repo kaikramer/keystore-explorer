@@ -41,7 +41,7 @@ public class JKseTable extends JTable {
 		fixRowHeight();
 	}
 
-	public JKseTable(Vector<?> rowData, Vector<?> columnNames) {
+	public JKseTable(Vector<? extends Vector> rowData, Vector<?> columnNames) {
 		super(rowData, columnNames);
 		fixRowHeight();
 	}
