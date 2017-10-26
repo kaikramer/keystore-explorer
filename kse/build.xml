@@ -68,7 +68,7 @@
 
 	<!-- Libraries directory -->
 	<property name="libDir" value="${basedir}/lib" />
-	
+
 	<!-- Application JAR -->
 	<property name="appJarName" value="${appSimpleName}.jar" />
 	<property name="appJar" value="${distDir}/${appJarName}" />
@@ -199,6 +199,13 @@
 	<property name="helpSearchIndex" value="searchindex" />
 	<property name="helpSearchIndexDir" value="${buildDir}/org/kse/gui/help/${helpSearchIndex}" />
 
+	<condition property="isMac">
+		<os family="mac" />
+	</condition>
+
+	<condition property="isWindows">
+		<os family="windows" />
+	</condition>
 
 	<target name="init" description="Initialize environment">
 		<mkdir dir="${buildDir}" />
@@ -356,7 +363,7 @@
 		</copy>
 	</target>
 
-	<target name="launch4j" depends="jar" description="Create Windows exe using Launch4j">
+	<target name="launch4j" depends="jar" description="Create Windows exe using Launch4j" if="isWindows">
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask">
 			<classpath>
 				<pathelement location="${launch4jInstallDir}/launch4j.jar" />
@@ -453,20 +460,20 @@
 			<option value="-Dkse.app=true" />
 		</bundleapp>
 	</target>
-	
+
 	<target name="signapp" depends="appbundler" description="Sign app bundle">
 		<exec executable="codesign" dir="${distDir}">
 			<arg value="-s" />
-			<arg value="Kai Kramer" />			
-			<arg value="${distDir}/${appBundleName}.app" />			
+			<arg value="Kai Kramer" />
+			<arg value="${distDir}/${appBundleName}.app" />
 		</exec>
 	</target>
 
 	<target name="dmg" depends="signapp" description="Create DMG file">
 		<exec executable="/usr/local/bin/dropdmg" dir="${distDir}">
 			<arg value="-g" />
-			<arg value="KSE" />			
-			<arg value="${distDir}/${appBundleName}.app" />			
+			<arg value="KSE" />
+			<arg value="${distDir}/${appBundleName}.app" />
 		</exec>
 	</target>
 
