@@ -34,7 +34,10 @@
  -->
 
 <!-- Build KeyStore Explorer -->
-<project basedir="." default="package" name="KeyStore Explorer" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<project basedir="." default="package" name="KeyStore Explorer" 
+	xmlns:if="ant:if" 
+	xmlns:unless="ant:unless"
+	xmlns:fx="javafx:com.sun.javafx.tools.ant">
 
 	<!-- Application name and version -->
 	<property file="src/org/kse/version.properties" />
@@ -159,7 +162,7 @@
 
 	<!-- Jar Bundle properties -->
 	<property name="javaAppStub" value="${libDir}/JavaApplicationStub" />
-	<property name="appBundleName" value="${appName} ${appVersion}" />
+	<property name="appBundleName" value="${appName}" />
 	<property name="appBundleFile" value="${appBundleName}.app" />
 	<property name="appBundle" value="${distDir}/${appBundleFile}" />
 
@@ -416,7 +419,6 @@
 		</exec>
 	</target>
 
-
 	<target name="appbundler" depends="jar" description="Create app bundle">
 
 		<taskdef name="bundleapp" classpath="lib/appbundler-1.0ea.jar" classname="com.oracle.appbundler.AppBundlerTask" />
@@ -461,6 +463,56 @@
 		</bundleapp>
 	</target>
 
+	<target name="packagemac" depends="jar" description="Create app bundle, sign it">
+		
+		<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"      
+		                uri="javafx:com.sun.javafx.tools.ant"
+		                classpath=".:${java.home}/../lib/ant-javafx.jar"/>
+
+		<fx:deploy nativeBundles="image" outdir="${distDir}" outfile="${appBundleName}">
+			
+			<fx:application name="${appBundleName}" 
+				version="${appVersion}" 
+				mainClass="${mainClass}" />
+			
+		    <fx:resources>
+		        <fx:fileset dir="${distDir}" includes="${appJarName}"/>
+		        <fx:fileset dir="." includes="lib/*.jar"/>
+		    </fx:resources>
+			
+		    <fx:info title="${appBundleName}" 
+		    	vendor="${vendor}" 
+		    	copyright="${copyright}"
+		    	category="public.app-category.developer-tools"/>
+			
+			<fx:bundleArgument arg="dropinResourcesRoot" value="."/>
+			<fx:bundleArgument arg="icon" value="${kseIcns}"/>
+			
+			<!-- macOS Application Bundler Arguments -->
+			<fx:bundleArgument arg="mac.category" value="public.app-category.developer-tools"/>
+			<fx:bundleArgument arg="mac.CFBundleIdentifier" value="org.kse.${appSimpleName}${appSimpleVersion}"/>
+			<fx:bundleArgument arg="mac.CFBundleName" value="${appBundleName}"/>
+			<fx:bundleArgument arg="mac.CFBundleVersion" value="${appVersion}"/>
+			<fx:bundleArgument arg="mac.signing-key-user-name" value="Kai Kramer"/>
+			
+			<fx:platform>
+				<fx:jvmarg value="-Dapple.laf.useScreenMenuBar=true" />
+				<fx:jvmarg value="-Dcom.apple.macos.use-file-dialog-packages=true" />
+				<fx:jvmarg value="-Dcom.apple.macos.useScreenMenuBar=true" />
+				<fx:jvmarg value="-Dcom.apple.mrj.application.apple.menu.about.name=${appBundleName}" />
+				<fx:jvmarg value="-Dcom.apple.smallTabs=true" />
+				<fx:jvmarg value="-Dfile.encoding=UTF-8" />
+				<fx:jvmarg value="-Dkse.app=true" />
+			</fx:platform>
+		</fx:deploy>	
+			
+		<!-- 
+		<classpath refid="libs" />
+		TODO license files 
+		<bundledocument extensions="ks,jks,jceks,keystore,bks,uber,pfx,p12" icon="${keystoreIcns}" name="KeyStore" role="editor">
+		-->
+	</target>
+
 	<target name="signapp" depends="appbundler" description="Sign app bundle">
 		<exec executable="codesign" dir="${distDir}">
 			<arg value="-s" />
@@ -473,6 +525,8 @@
 		<exec executable="/usr/local/bin/dropdmg" dir="${distDir}">
 			<arg value="-g" />
 			<arg value="KSE" />
+			<arg value="-b" />
+			<arg value="${appSimpleName}-${appSimpleVersion}" />
 			<arg value="${distDir}/${appBundleName}.app" />
 		</exec>
 	</target>
