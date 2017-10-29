@@ -320,7 +320,7 @@ public class JarSigner {
 
 		// Entries to be ignored are all in the "META-INF" folder
 		if (entryName.startsWith("META-INF/")) {
-			if (entryName.toUpperCase().equals(MANIFEST_LOCATION)) {
+			if (entryName.equalsIgnoreCase(MANIFEST_LOCATION)) {
 				return true; // Manifest file - ignore
 			}
 
@@ -442,7 +442,7 @@ public class JarSigner {
 				}
 
 				if (!firstEntry) {
-					// Entries subequent to the first are split by a newline
+					// Entries subsequent to the first are split by a newline
 					sbManifest.append(CRLF);
 				}
 
@@ -779,7 +779,7 @@ public class JarSigner {
 			SignatureType signatureType, String tsaUrl, Provider provider) throws CryptoException {
 
 		try {
-			List<X509Certificate> certList = new ArrayList<X509Certificate>();
+			List<X509Certificate> certList = new ArrayList<>();
 
 			Collections.addAll(certList, certificateChain);
 

@@ -161,7 +161,7 @@ public class X509CertificateGenerator {
 		Date validityEnd = new Date(validityStart.getTime() + validity);
 		return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber);
 	}
-	
+
 	/**
 	 * Generate a self-signed certificate.
 	 *
@@ -230,11 +230,7 @@ public class X509CertificateGenerator {
 			ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(
 					privateKey);
 			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		} catch (IllegalStateException ex) {
-			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		} catch (OperatorCreationException ex) {
+		} catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
 		}
 	}
@@ -263,17 +259,13 @@ public class X509CertificateGenerator {
 			ContentSigner certSigner = null;
 
 			if (provider == null) {
-				certSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
+				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(privateKey);
 			} else {
 				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
 			}
 
 			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		} catch (IllegalStateException ex) {
-			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		} catch (OperatorCreationException ex) {
+		} catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
 		}
 	}
