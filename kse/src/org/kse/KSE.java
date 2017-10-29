@@ -64,6 +64,9 @@ public class KSE {
 
 		// we start with system proxy settings and switch later depending on preferences
 		System.setProperty("java.net.useSystemProxies", "true");
+
+		// allow lax parsing of malformed ASN.1 integers
+		System.setProperty("org.bouncycastle.asn1.allow_unsafe_integer", "true");
 	}
 
 	public interface Shell32 extends Library {
