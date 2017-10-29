@@ -50,6 +50,8 @@ public class GeneralNameUtil {
 	// other name
 	public static final String UPN_OID = "1.3.6.1.4.1.311.20.2.3";
 
+	private GeneralNameUtil() {
+	}
 
 	// @formatter:off
 
@@ -109,18 +111,16 @@ public class GeneralNameUtil {
 		}
 
 		switch (generalName.getTagNo()) {
-		case GeneralName.directoryName: {
+		case GeneralName.directoryName:
 			X500Name directoryName = (X500Name) generalName.getName();
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.DirectoryGeneralName"), directoryName
 					.toString());
-		}
-		case GeneralName.dNSName: {
+		case GeneralName.dNSName:
 			DERIA5String dnsName = (DERIA5String) generalName.getName();
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.DnsGeneralName"), dnsName.getString());
-		}
-		case GeneralName.iPAddress: {
+		case GeneralName.iPAddress:
 			byte[] ipAddressBytes = ((ASN1OctetString) generalName.getName()).getOctets();
 
 			String ipAddressString = "";
@@ -131,34 +131,28 @@ public class GeneralNameUtil {
 			}
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.IpAddressGeneralName"), ipAddressString);
-		}
-		case GeneralName.registeredID: {
+		case GeneralName.registeredID:
 			ASN1ObjectIdentifier registeredId = (ASN1ObjectIdentifier) generalName.getName();
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.RegisteredIdGeneralName"),
 					ObjectIdUtil.toString(registeredId));
-		}
-		case GeneralName.rfc822Name: {
+		case GeneralName.rfc822Name:
 			DERIA5String rfc822Name = (DERIA5String) generalName.getName();
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.Rfc822GeneralName"), rfc822Name.getString());
-		}
-		case GeneralName.uniformResourceIdentifier: {
+		case GeneralName.uniformResourceIdentifier:
 			DERIA5String uri = (DERIA5String) generalName.getName();
 
-			String link = addLinkForURI ? "<html><a href=\"" + uri.getString() + "\">" + uri.getString() + "</a></html>"
+			String link = addLinkForURI ? "<a href=\"" + uri.getString() + "\">" + uri.getString() + "</a>"
 					: uri.getString();
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.UriGeneralName"), link);
-		}
-		case GeneralName.otherName: {
+		case GeneralName.otherName:
 			// we currently only support UPN in otherName
 			String upn = parseUPN(generalName);
 			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"), "UPN", upn);
-		}
-		default: {
+		default:
 			return "";
-		}
 		}
 	}
 
@@ -211,7 +205,7 @@ public class GeneralNameUtil {
 		}
 
 		switch (generalName.getTagNo()) {
-		case GeneralName.ediPartyName: {
+		case GeneralName.ediPartyName:
 
 			/* EDIPartyName ::= SEQUENCE {
 			 *      nameAssigner            [0]     DirectoryString OPTIONAL,
@@ -235,12 +229,9 @@ public class GeneralNameUtil {
 				return MessageFormat.format(res.getString("GeneralNameUtil.EdiPartyGeneralNameNoAssigner"),
 						partyNameStr);
 			}
-		}
-		case GeneralName.otherName: {
-
+		case GeneralName.otherName:
 			return parseUPN(generalName);
-		}
-		case GeneralName.x400Address: {
+		case GeneralName.x400Address:
 			/*
 			 * No support for this at the moment - just get a hex dump
 			 * The Oracle CertificateFactory blows up if a certificate extension contains this anyway
@@ -249,10 +240,8 @@ public class GeneralNameUtil {
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.X400AddressGeneralName"),
 					HexUtil.getHexString(x400Address.toASN1Primitive().getEncoded(ASN1Encoding.DER)));
-		}
-		default: {
+		default:
 			return safeToString(generalName, true);
-		}
 		}
 	}
 }

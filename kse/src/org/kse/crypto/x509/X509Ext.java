@@ -19,85 +19,8 @@
  */
 package org.kse.crypto.x509;
 
-import static org.kse.crypto.x509.AttributeTypeType.COMMON_NAME;
-import static org.kse.crypto.x509.AttributeTypeType.COUNTRY_NAME;
-import static org.kse.crypto.x509.AttributeTypeType.DOMAIN_COMPONENT;
-import static org.kse.crypto.x509.AttributeTypeType.EMAIL_ADDRESS;
-import static org.kse.crypto.x509.AttributeTypeType.LOCALITY_NAME;
-import static org.kse.crypto.x509.AttributeTypeType.MAIL;
-import static org.kse.crypto.x509.AttributeTypeType.ORGANIZATIONAL_UNIT;
-import static org.kse.crypto.x509.AttributeTypeType.ORGANIZATION_NAME;
-import static org.kse.crypto.x509.AttributeTypeType.SERIAL_NUMBER;
-import static org.kse.crypto.x509.AttributeTypeType.STATE_NAME;
-import static org.kse.crypto.x509.AttributeTypeType.STREET_ADDRESS;
-import static org.kse.crypto.x509.AttributeTypeType.TITLE;
-import static org.kse.crypto.x509.AttributeTypeType.UNSTRUCTURED_ADDRESS;
-import static org.kse.crypto.x509.AttributeTypeType.UNSTRUCTURED_NAME;
-import static org.kse.crypto.x509.AttributeTypeType.USER_ID;
 import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_CPS_POINTER_QUALIFIER;
 import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTICE_QUALIFIER;
-import static org.kse.crypto.x509.X509ExtensionType.ADDITIONAL_INFORMATION;
-import static org.kse.crypto.x509.X509ExtensionType.ADMISSION;
-import static org.kse.crypto.x509.X509ExtensionType.AUTHORITY_INFORMATION_ACCESS;
-import static org.kse.crypto.x509.X509ExtensionType.AUTHORITY_KEY_IDENTIFIER;
-import static org.kse.crypto.x509.X509ExtensionType.BASIC_CONSTRAINTS;
-import static org.kse.crypto.x509.X509ExtensionType.BIOMETRIC_INFO;
-import static org.kse.crypto.x509.X509ExtensionType.CERTIFICATE_ISSUER;
-import static org.kse.crypto.x509.X509ExtensionType.CERTIFICATE_POLICIES;
-import static org.kse.crypto.x509.X509ExtensionType.CRL_DISTRIBUTION_POINTS;
-import static org.kse.crypto.x509.X509ExtensionType.CRL_NUMBER;
-import static org.kse.crypto.x509.X509ExtensionType.DATE_OF_CERT_GEN;
-import static org.kse.crypto.x509.X509ExtensionType.DECLARATION_OF_MAJORITY;
-import static org.kse.crypto.x509.X509ExtensionType.DELTA_CRL_INDICATOR;
-import static org.kse.crypto.x509.X509ExtensionType.ENTRUST_VERSION_INFORMATION;
-import static org.kse.crypto.x509.X509ExtensionType.EXTENDED_KEY_USAGE;
-import static org.kse.crypto.x509.X509ExtensionType.FRESHEST_CRL;
-import static org.kse.crypto.x509.X509ExtensionType.HOLD_INSTRUCTION_CODE;
-import static org.kse.crypto.x509.X509ExtensionType.ICCSN;
-import static org.kse.crypto.x509.X509ExtensionType.INHIBIT_ANY_POLICY;
-import static org.kse.crypto.x509.X509ExtensionType.INVALIDITY_DATE;
-import static org.kse.crypto.x509.X509ExtensionType.ISSUER_ALTERNATIVE_NAME;
-import static org.kse.crypto.x509.X509ExtensionType.ISSUING_DISTRIBUTION_POINT;
-import static org.kse.crypto.x509.X509ExtensionType.KEY_USAGE;
-import static org.kse.crypto.x509.X509ExtensionType.LIABILITY_LIMITATION_FLAG;
-import static org.kse.crypto.x509.X509ExtensionType.MONETARY_LIMIT;
-import static org.kse.crypto.x509.X509ExtensionType.MS_APPLICATION_POLICIES;
-import static org.kse.crypto.x509.X509ExtensionType.MS_CA_VERSION;
-import static org.kse.crypto.x509.X509ExtensionType.MS_CERTIFICATE_TEMPLATE;
-import static org.kse.crypto.x509.X509ExtensionType.MS_CRL_NEXT_PUBLISH;
-import static org.kse.crypto.x509.X509ExtensionType.MS_ENROLL_CERT_TYPE_EXTENSION;
-import static org.kse.crypto.x509.X509ExtensionType.NAME_CONSTRAINTS;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_BASE_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CA_POLICY_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CA_REVOCATION_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_RENEWAL_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_TYPE;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_COMMENT;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_REVOCATION_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_SSL_SERVER_NAME;
-import static org.kse.crypto.x509.X509ExtensionType.OCSP_NO_CHECK;
-import static org.kse.crypto.x509.X509ExtensionType.POLICY_CONSTRAINTS;
-import static org.kse.crypto.x509.X509ExtensionType.POLICY_MAPPINGS;
-import static org.kse.crypto.x509.X509ExtensionType.PRIVATE_KEY_USAGE_PERIOD;
-import static org.kse.crypto.x509.X509ExtensionType.PROCURATION;
-import static org.kse.crypto.x509.X509ExtensionType.QC_STATEMENTS;
-import static org.kse.crypto.x509.X509ExtensionType.REASON_CODE;
-import static org.kse.crypto.x509.X509ExtensionType.RESTRICTION;
-import static org.kse.crypto.x509.X509ExtensionType.SMIME_CAPABILITIES;
-import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_ALTERNATIVE_NAME;
-import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_DIRECTORY_ATTRIBUTES;
-import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_INFORMATION_ACCESS;
-import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_KEY_IDENTIFIER;
-import static org.kse.crypto.x509.X509ExtensionType.VALIDITY_MODEL;
-import static org.kse.crypto.x509.X509ExtensionType.VS_CZAG;
-import static org.kse.crypto.x509.X509ExtensionType.VS_FIDELITY_TOKEN;
-import static org.kse.crypto.x509.X509ExtensionType.VS_IN_BOX_V1;
-import static org.kse.crypto.x509.X509ExtensionType.VS_IN_BOX_V2;
-import static org.kse.crypto.x509.X509ExtensionType.VS_NON_VERIFIED;
-import static org.kse.crypto.x509.X509ExtensionType.VS_ON_SITE_JURISDICTION_HASH;
-import static org.kse.crypto.x509.X509ExtensionType.VS_SERIAL_NUMBER_ROLLOVER;
-import static org.kse.crypto.x509.X509ExtensionType.VS_TOKEN_TYPE;
-import static org.kse.crypto.x509.X509ExtensionType.VS_UNKNOWN;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -280,127 +203,128 @@ public class X509Ext {
 
 		X509ExtensionType type = X509ExtensionType.resolveOid(oid.getId());
 
-		if (type == ENTRUST_VERSION_INFORMATION) {
+		switch (type) {
+		case ENTRUST_VERSION_INFORMATION:
 			return getEntrustVersionInformationStringValue(octets);
-		} else if (type == AUTHORITY_INFORMATION_ACCESS) {
+		case AUTHORITY_INFORMATION_ACCESS:
 			return getAuthorityInformationAccessStringValue(octets);
-		} else if (type == SUBJECT_INFORMATION_ACCESS) {
+		case SUBJECT_INFORMATION_ACCESS:
 			return getSubjectInformationAccessStringValue(octets);
-		} else if (type == SUBJECT_DIRECTORY_ATTRIBUTES) {
+		case SUBJECT_DIRECTORY_ATTRIBUTES:
 			return getSubjectDirectoryAttributesStringValue(octets);
-		} else if (type == SUBJECT_KEY_IDENTIFIER) {
+		case SUBJECT_KEY_IDENTIFIER:
 			return getSubjectKeyIndentifierStringValue(octets);
-		} else if (type == KEY_USAGE) {
+		case KEY_USAGE:
 			return getKeyUsageStringValue(octets);
-		} else if (type == PRIVATE_KEY_USAGE_PERIOD) {
+		case PRIVATE_KEY_USAGE_PERIOD:
 			return getPrivateKeyUsagePeriodStringValue(octets);
-		} else if (type == SUBJECT_ALTERNATIVE_NAME) {
+		case SUBJECT_ALTERNATIVE_NAME:
 			return getSubjectAlternativeNameStringValue(octets);
-		} else if (type == ISSUER_ALTERNATIVE_NAME) {
+		case ISSUER_ALTERNATIVE_NAME:
 			return getIssuerAlternativeNameStringValue(octets);
-		} else if (type == BASIC_CONSTRAINTS) {
+		case BASIC_CONSTRAINTS:
 			return getBasicConstraintsStringValue(octets);
-		} else if (type == CRL_NUMBER) {
+		case CRL_NUMBER:
 			return getCrlNumberStringValue(octets);
-		} else if (type == REASON_CODE) {
+		case REASON_CODE:
 			return getReasonCodeStringValue(octets);
-		} else if (type == HOLD_INSTRUCTION_CODE) {
+		case HOLD_INSTRUCTION_CODE:
 			return getHoldInstructionCodeStringValue(octets);
-		} else if (type == INVALIDITY_DATE) {
+		case INVALIDITY_DATE:
 			return getInvalidityDateStringValue(octets);
-		} else if (type == DELTA_CRL_INDICATOR) {
+		case DELTA_CRL_INDICATOR:
 			return getDeltaCrlIndicatorStringValue(octets);
-		} else if (type == ISSUING_DISTRIBUTION_POINT) {
+		case ISSUING_DISTRIBUTION_POINT:
 			return getIssuingDistributionPointStringValue(octets);
-		} else if (type == CERTIFICATE_ISSUER) {
+		case CERTIFICATE_ISSUER:
 			return getCertificateIssuerStringValue(octets);
-		} else if (type == NAME_CONSTRAINTS) {
+		case NAME_CONSTRAINTS:
 			return getNameConstraintsStringValue(octets);
-		} else if (type == CRL_DISTRIBUTION_POINTS) {
+		case CRL_DISTRIBUTION_POINTS:
 			return getCrlDistributionPointsStringValue(octets);
-		} else if (type == CERTIFICATE_POLICIES) {
+		case CERTIFICATE_POLICIES:
 			return getCertificatePoliciesStringValue(octets);
-		} else if (type == POLICY_MAPPINGS) {
+		case POLICY_MAPPINGS:
 			return getPolicyMappingsStringValue(octets);
-		} else if (type == AUTHORITY_KEY_IDENTIFIER) {
+		case AUTHORITY_KEY_IDENTIFIER:
 			return getAuthorityKeyIdentifierStringValue(octets);
-		} else if (type == POLICY_CONSTRAINTS) {
+		case POLICY_CONSTRAINTS:
 			return getPolicyConstraintsStringValue(octets);
-		} else if (type == EXTENDED_KEY_USAGE) {
+		case EXTENDED_KEY_USAGE:
 			return getExtendedKeyUsageStringValue(octets);
-		} else if (type == FRESHEST_CRL) {
+		case FRESHEST_CRL:
 			return getFreshestCrlStringValue(octets);
-		} else if (type == INHIBIT_ANY_POLICY) {
+		case INHIBIT_ANY_POLICY:
 			return getInhibitAnyPolicyStringValue(octets);
-		} else if (type == NETSCAPE_CERTIFICATE_TYPE) {
+		case NETSCAPE_CERTIFICATE_TYPE:
 			return getNetscapeCertificateTypeStringValue(octets);
-		} else if (type == NETSCAPE_BASE_URL) {
+		case NETSCAPE_BASE_URL:
 			return getNetscapeBaseUrlStringValue(octets);
-		} else if (type == NETSCAPE_REVOCATION_URL) {
+		case NETSCAPE_REVOCATION_URL:
 			return getNetscapeRevocationUrlStringValue(octets);
-		} else if (type == NETSCAPE_CA_REVOCATION_URL) {
+		case NETSCAPE_CA_REVOCATION_URL:
 			return getNetscapeCaRevocationUrlStringValue(octets);
-		} else if (type == NETSCAPE_CERTIFICATE_RENEWAL_URL) {
+		case NETSCAPE_CERTIFICATE_RENEWAL_URL:
 			return getNetscapeCertificateRenewalStringValue(octets);
-		} else if (type == NETSCAPE_CA_POLICY_URL) {
+		case NETSCAPE_CA_POLICY_URL:
 			return getNetscapeCaPolicyUrlStringValue(octets);
-		} else if (type == NETSCAPE_SSL_SERVER_NAME) {
+		case NETSCAPE_SSL_SERVER_NAME:
 			return getNetscapeSslServerNameStringValue(octets);
-		} else if (type == NETSCAPE_COMMENT) {
+		case NETSCAPE_COMMENT:
 			return getNetscapeCommentStringValue(octets);
-		} else if (type == BIOMETRIC_INFO) {
+		case BIOMETRIC_INFO:
 			return getBiometricInfoStringValue(octets);
-		} else if (type == QC_STATEMENTS) {
+		case QC_STATEMENTS:
 			return getQcStatementsStringValue(octets);
-		} else if (type == OCSP_NO_CHECK) {
+		case OCSP_NO_CHECK:
 			return getOcspNoCheckStringValue(octets);
-		} else if (type == LIABILITY_LIMITATION_FLAG) {
+		case LIABILITY_LIMITATION_FLAG:
 			return getLiabilityLimitationFlagStringValue(octets);
-		} else if (type == DATE_OF_CERT_GEN) {
+		case DATE_OF_CERT_GEN:
 			return getDateOfCertGenStringValue(octets);
-		} else if (type == PROCURATION) {
+		case PROCURATION:
 			return getProcurationStringValue(octets);
-		} else if (type == ADMISSION) {
+		case ADMISSION:
 			return getAdmissionStringValue(octets);
-		} else if (type == MONETARY_LIMIT) {
+		case MONETARY_LIMIT:
 			return getMonetaryLimitStringValue(octets);
-		} else if (type == DECLARATION_OF_MAJORITY) {
+		case DECLARATION_OF_MAJORITY:
 			return getDeclarationOfMajorityStringValue(octets);
-		} else if (type == ICCSN) {
+		case ICCSN:
 			return getICCSNStringValue(octets);
-		} else if (type == RESTRICTION) {
+		case RESTRICTION:
 			return getRestrictionStringValue(octets);
-		} else if (type == ADDITIONAL_INFORMATION) {
+		case ADDITIONAL_INFORMATION:
 			return getAdditionalInformationStringValue(octets);
-		} else if (type == VALIDITY_MODEL) {
+		case VALIDITY_MODEL:
 			return getValidityModelStringValue(octets);
-		} else if (type == MS_ENROLL_CERT_TYPE_EXTENSION) {
+		case MS_ENROLL_CERT_TYPE_EXTENSION:
 			return getMsCertTypeStringValue(octets);
-		} else if (type == MS_CA_VERSION) {
+		case MS_CA_VERSION:
 			return  getMsCaVersionStringValue(octets);
-		} else if (type == MS_CRL_NEXT_PUBLISH) {
+		case MS_CRL_NEXT_PUBLISH:
 			return  getMsCrlNextPublishStringValue(octets);
-		} else if (type == MS_CERTIFICATE_TEMPLATE) {
+		case MS_CERTIFICATE_TEMPLATE:
 			return getMsCertificateTemplateStringValue(octets);
-		} else if (type == MS_APPLICATION_POLICIES) {
+		case MS_APPLICATION_POLICIES:
 			return HexUtil.getHexClearDump(octets);
-		} else if (type == SMIME_CAPABILITIES) {
+		case SMIME_CAPABILITIES:
 			return getSMIMECapabilitiesStringValue(octets);
-		} else if (type == VS_CZAG
-				|| type == VS_FIDELITY_TOKEN
-				|| type == VS_IN_BOX_V1
-				|| type == VS_IN_BOX_V2
-				|| type == VS_SERIAL_NUMBER_ROLLOVER
-				|| type == VS_ON_SITE_JURISDICTION_HASH) {
+		case VS_CZAG:
+		case VS_FIDELITY_TOKEN:
+		case VS_IN_BOX_V1:
+		case VS_IN_BOX_V2:
+		case VS_SERIAL_NUMBER_ROLLOVER:
+		case VS_ON_SITE_JURISDICTION_HASH:
 			// most VeriSign extensions contain just an IA5STRING
 			return DERIA5String.getInstance(octets).getString();
-		} else if (type == VS_TOKEN_TYPE
-				|| type == VS_UNKNOWN) {
+		case VS_TOKEN_TYPE:
+		case VS_UNKNOWN:
 			return getBitString(octets);
-		} else if (type == VS_NON_VERIFIED) {
+		case VS_NON_VERIFIED:
 			return getVeriSignNonVerified(octets);
-		} else {
-			// X509Extension not recognised or means to output it not defined - just dump out hex and clear text
+		default:
+			// X509Extension not recognized or means to output it not defined - just dump out hex and clear text
 			return HexUtil.getHexClearDump(octets);
 		}
 	}
@@ -479,9 +403,8 @@ public class X509Ext {
 
 			if (accessMethodType != null) {
 				accessMethodStr = accessMethodType.friendly();
-			}
-			// Unrecognised Access Method OID
-			else {
+			} else {
+				// Unrecognised Access Method OID
 				accessMethodStr = ObjectIdUtil.toString(accessMethod);
 			}
 
@@ -1758,9 +1681,11 @@ public class X509Ext {
 		// @formatter:off
 
 		/*
-		 * DistributionPoint ::= ASN1Sequence { distributionPoint [0]
-		 * DistributionPointName OPTIONAL, reasons [1] ReasonFlags OPTIONAL,
-		 * cRLIssuer [2] GeneralNames OPTIONAL }
+		 * DistributionPoint ::= ASN1Sequence {
+		 * 		distributionPoint [0] DistributionPointName OPTIONAL,
+		 * 		reasons [1] ReasonFlags OPTIONAL,
+		 * 		cRLIssuer [2] GeneralNames OPTIONAL
+		 * }
 		 *
 		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
 		 */
@@ -1773,13 +1698,11 @@ public class X509Ext {
 		ReasonFlags reasons = distributionPoint.getReasons();
 		GeneralNames crlIssuer = distributionPoint.getCRLIssuer();
 
-		if (distributionPointName != null) // Optional
-		{
+		if (distributionPointName != null) { // Optional
 			sb.append(getDistributionPointNameString(distributionPointName, baseIndent));
 		}
 
-		if (reasons != null) // Optional
-		{
+		if (reasons != null) { // Optional
 			sb.append(baseIndent);
 			sb.append(res.getString("DistributionPointReasons"));
 			sb.append(NEWLINE);
@@ -1794,8 +1717,7 @@ public class X509Ext {
 			}
 		}
 
-		if (crlIssuer != null) // Optional
-		{
+		if (crlIssuer != null) { // Optional
 			sb.append(baseIndent);
 			sb.append(res.getString("DistributionPointCrlIssuer"));
 			sb.append(NEWLINE);
@@ -1816,8 +1738,10 @@ public class X509Ext {
 		// @formatter:off
 
 		/*
-		 * DistributionPointName ::= CHOICE { fullname [0] GeneralNames,
-		 * nameRelativeToCRLIssuer [1] RelativeDistinguishedName }
+		 * DistributionPointName ::= CHOICE {
+		 * 		fullname [0] GeneralNames,
+		 * 		nameRelativeToCRLIssuer [1] RelativeDistinguishedName
+		 * }
 		 *
 		 * RelativeDistinguishedName ::= SET SIZE (1 .. MAX) OF
 		 * AttributeTypeAndValue
@@ -1950,64 +1874,42 @@ public class X509Ext {
 
 	private String getAttributeValueString(ASN1ObjectIdentifier attributeType, ASN1Encodable attributeValue)
 			throws IOException {
-		// @formatter:off
 
 		/* AttributeValue ::= ANY */
-
-		// @formatter:on
 
 		// Get value string for recognized attribute types
 		AttributeTypeType attributeTypeType = AttributeTypeType.resolveOid(attributeType.getId());
 
-		if (attributeTypeType == COMMON_NAME) {
-			DirectoryString commonName = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return commonName.getString();
-		} else if (attributeTypeType == SERIAL_NUMBER) {
-			DERPrintableString serialNumber = DERPrintableString.getInstance(value);
-			return serialNumber.getString();
-		} else if (attributeTypeType == COUNTRY_NAME) {
-			DERPrintableString countryName = DERPrintableString.getInstance(value);
-			return countryName.getString();
-		} else if (attributeTypeType == LOCALITY_NAME) {
-			DirectoryString localityName = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return localityName.getString();
-		} else if (attributeTypeType == STATE_NAME) {
-			DirectoryString stateName = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return stateName.getString();
-		} else if (attributeTypeType == STREET_ADDRESS) {
-			DirectoryString street = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return street.getString();
-		} else if (attributeTypeType == ORGANIZATION_NAME) {
-			DirectoryString organizationName = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return organizationName.getString();
-		} else if (attributeTypeType == ORGANIZATIONAL_UNIT) {
-			DirectoryString organizationalUnitName = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return organizationalUnitName.getString();
-		} else if (attributeTypeType == TITLE) {
-			DirectoryString title = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return title.getString();
-		} else if (attributeTypeType == EMAIL_ADDRESS) {
-			DERIA5String emailAddress = DERIA5String.getInstance(value);
-			return emailAddress.getString();
-		} else if (attributeTypeType == UNSTRUCTURED_NAME) {
-			DERIA5String emailAddress = DERIA5String.getInstance(value);
-			return emailAddress.getString();
-		} else if (attributeTypeType == UNSTRUCTURED_ADDRESS) {
-			DERPrintableString serialNumber = DERPrintableString.getInstance(value);
-			return serialNumber.getString();
-		} else if (attributeTypeType == USER_ID) {
-			DirectoryString title = DirectoryString.getInstance(ASN1Primitive.fromByteArray(value));
-			return title.getString();
-		} else if (attributeTypeType == MAIL) {
-			DERIA5String emailAddress = DERIA5String.getInstance(value);
-			return emailAddress.getString();
-		} else if (attributeTypeType == DOMAIN_COMPONENT) {
-			DERIA5String domainComponent = DERIA5String.getInstance(value);
-			return domainComponent.getString();
-		}
-		// Attribute type not recognized - return hex string for value
-		else {
-			return HexUtil.getHexString(value);
+		switch (attributeTypeType) {
+		case COMMON_NAME:
+			return DirectoryString.getInstance(attributeValue).getString();
+		case SERIAL_NUMBER:
+		case UNSTRUCTURED_ADDRESS:
+			return DERPrintableString.getInstance(attributeValue).getString();
+		case COUNTRY_NAME:
+			return DERPrintableString.getInstance(attributeValue).getString();
+		case LOCALITY_NAME:
+			return DirectoryString.getInstance(attributeValue).getString();
+		case STATE_NAME:
+			return DirectoryString.getInstance(attributeValue).getString();
+		case STREET_ADDRESS:
+			return DirectoryString.getInstance(attributeValue).getString();
+		case ORGANIZATION_NAME:
+			return DirectoryString.getInstance(attributeValue).getString();
+		case ORGANIZATIONAL_UNIT:
+			return DirectoryString.getInstance(attributeValue).getString();
+		case TITLE:
+		case USER_ID:
+			return DirectoryString.getInstance(attributeValue).getString();
+		case MAIL:
+		case EMAIL_ADDRESS:
+		case UNSTRUCTURED_NAME:
+			return DERIA5String.getInstance(attributeValue).getString();
+		case DOMAIN_COMPONENT:
+			return DERIA5String.getInstance(attributeValue).getString();
+		default:
+			// Attribute type not recognized - return hex string for value
+			return HexUtil.getHexString(attributeValue.toASN1Primitive().getEncoded());
 		}
 	}
 
