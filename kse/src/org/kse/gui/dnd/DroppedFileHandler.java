@@ -43,19 +43,19 @@ public class DroppedFileHandler {
 		try {
 			if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 
-					@SuppressWarnings("unchecked")
-					final List<File> droppedFiles = (List<File>) trans.getTransferData(DataFlavor.javaFileListFlavor);
+				@SuppressWarnings("unchecked")
+				final List<File> droppedFiles = (List<File>) trans.getTransferData(DataFlavor.javaFileListFlavor);
 
-					// open files in new thread, so we can return quickly
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							openFiles(kseFrame, droppedFiles);
-						}
-					});
+				// open files in new thread, so we can return quickly
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						openFiles(kseFrame, droppedFiles);
+					}
+				});
 
 			}
-/*			TODO
+			/*			TODO
 				else if (trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				String str = trans.getTransferData(DataFlavor.stringFlavor).toString();
 				X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toInputStream(str, "UTF-8"));
@@ -66,10 +66,8 @@ public class DroppedFileHandler {
 					dViewCertificate.setVisible(true);
 				}
 			}
-*/
-		} catch (IOException e) {
-			DError.displayError(kseFrame.getUnderlyingFrame(), e);
-		} catch (UnsupportedFlavorException e) {
+			 */
+		} catch (IOException | UnsupportedFlavorException e) {
 			DError.displayError(kseFrame.getUnderlyingFrame(), e);
 		}
 	}
@@ -79,11 +77,8 @@ public class DroppedFileHandler {
 		ExamineFileAction examineFileAction = new ExamineFileAction(kseFrame);
 
 		for (File droppedFile : droppedFiles) {
-
 			try {
-
 				examineFileAction.openFile(droppedFile);
-
 			} catch (Exception e) {
 				DError.displayError(kseFrame.getUnderlyingFrame(), e);
 			}

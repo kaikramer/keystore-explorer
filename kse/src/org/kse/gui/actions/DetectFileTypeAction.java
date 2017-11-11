@@ -33,6 +33,7 @@ import javax.swing.KeyStroke;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.gui.CurrentDirectory;
+import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 
@@ -71,9 +72,9 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
 		File detectTypeFile = null;
 
 		try {
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = FileChooserFactory.getCertFileChooser();
 			chooser.setCurrentDirectory(CurrentDirectory.get());
-			chooser.setDialogTitle(res.getString("DetectFileTypeAction.DetectFileType.Title"));
+			chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
 			chooser.setMultiSelectionEnabled(false);
 
 			int rtnValue = chooser.showDialog(frame, res.getString("DetectFileTypeAction.DetectFileType.button"));
