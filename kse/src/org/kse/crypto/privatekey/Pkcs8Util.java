@@ -23,12 +23,6 @@ import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 import static org.kse.crypto.privatekey.EncryptionType.ENCRYPTED;
 import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
-import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC2;
-import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
-import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_2KEY_DESEDE;
-import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_3KEY_DESEDE;
-import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC2;
-import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_40BIT_RC4;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,7 +35,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -53,7 +46,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -61,6 +53,11 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
+import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.utilities.io.ReadUtil;
@@ -259,76 +256,51 @@ public class Pkcs8Util {
 	 */
 	public static PrivateKey loadEncrypted(InputStream is, Password password) throws
 	CryptoException, IOException {
+
 		byte[] streamContents = ReadUtil.readFully(is);
 
-		// Check pkcs #8 is not unencrypted
+		// Check PKCS#8 is encrypted
 		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
-
 		if (encType == null) {
 			// Not a valid PKCS #8 private key
 			throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
 		}
-
 		if (encType == UNENCRYPTED) {
-			throw new PrivateKeyUnencryptedException(res.getString("Pkcs8IsUnencrypted.exception.message"));
+			throw new PrivateKeyEncryptedException(res.getString("Pkcs8IsEncrypted.exception.message"));
 		}
 
-		byte[] encPvk = null;
 		// Check if stream is PEM encoded
 		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
-
+		byte[] encPvk = null;
 		if (pemInfo != null) {
 			// It is - get DER from PEM
 			encPvk = pemInfo.getContent();
 		}
 
-		/*
-		 * If we haven't got the encrypted bytes via PEM then just use
-		 * stream contents directly (assume it is DER encoded)
-		 */
+		// If we haven't got the encrypted bytes via PEM then assume it is DER encoded
 		if (encPvk == null) {
-			// Read in encrypted private key bytes
 			encPvk = streamContents;
 		}
 
+		// try to read PKCS#8 info
+		PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = null;
 		try {
-			// Create encrypted private key information from bytes
-			EncryptedPrivateKeyInfo epki = new EncryptedPrivateKeyInfo(encPvk);
+			encryptedPrivateKeyInfo = new PKCS8EncryptedPrivateKeyInfo(
+					org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(encPvk));
+		} catch (Exception e) {
+			// Not a valid PKCS #8 private key
+			throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
+		}
 
-			// Get wrapping algorithm
-			String encAlg = epki.getAlgName();
+		// decrypt and create PrivateKey object from ASN.1 structure
+		try {
+			InputDecryptorProvider decProv = new JceOpenSSLPKCS8DecryptorProviderBuilder()
+					.setProvider("BC")
+					.build(password.toCharArray());
+			PrivateKeyInfo privateKeyInfo = encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decProv);
 
-			// Check algorithm is supported
-			if (!checkSupportedForDecrypt(encAlg)) {
-				throw new PrivateKeyPbeNotSupportedException(encAlg, MessageFormat.format(
-						res.getString("PrivateKeyWrappingAlgUnsupported.exception.message"), encAlg));
-			}
-
-			// Create algorithm parameters and decryption key
-			AlgorithmParameters encAlgParams = epki.getAlgParameters();
-			PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
-			SecretKeyFactory keyFact = SecretKeyFactory.getInstance(encAlg);
-			SecretKey pbeKey = keyFact.generateSecret(pbeKeySpec);
-
-			// Create cipher to create
-			Cipher cipher = Cipher.getInstance(encAlg);
-
-			// Do decryption
-			cipher.init(Cipher.DECRYPT_MODE, pbeKey, encAlgParams);
-			PKCS8EncodedKeySpec privateKeySpec = epki.getKeySpec(cipher);
-
-			// Get encoding of private key
-			byte[] pvkBytes = privateKeySpec.getEncoded();
-
-			// Determine private key algorithm from key bytes
-			String privateKeyAlgorithm = getPrivateKeyAlgorithm(pvkBytes);
-
-			// Use Key Factory to create private key from encoding
-			KeyFactory keyFactory = KeyFactory.getInstance(privateKeyAlgorithm);
-			PrivateKey pvk = keyFactory.generatePrivate(privateKeySpec);
-
-			return pvk;
-		} catch (GeneralSecurityException ex) {
+			return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+		} catch (Exception ex) {
 			throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
 		}
 	}
@@ -461,12 +433,12 @@ public class Pkcs8Util {
 
 	private static boolean sequenceIsAlgorithmIdentifier(ASN1Sequence sequence) {
 		// @formatter:off
-
 		/*
-		 * AlgorithmIdentifier ::= ASN1Sequence { algorithm OBJECT IDENTIFIER,
-		 * parameters ANY DEFINED BY algorithm OPTIONAL }
+		 * AlgorithmIdentifier ::= ASN1Sequence {
+		 * 		algorithm OBJECT IDENTIFIER,
+		 * 		parameters ANY DEFINED BY algorithm OPTIONAL
+		 * }
 		 */
-
 		// @formatter:on
 
 		if ((sequence.size() != 1) && (sequence.size() != 2)) {
@@ -476,24 +448,6 @@ public class Pkcs8Util {
 		Object obj1 = sequence.getObjectAt(0);
 
 		return obj1 instanceof ASN1ObjectIdentifier;
-
-	}
-
-	private static boolean checkSupportedForDecrypt(String algorithm) {
-		if ((algorithm.equals(SHA1_128BIT_RC2.jce())) || (algorithm.equals(SHA1_128BIT_RC4.jce()))
-				|| (algorithm.equals(SHA1_2KEY_DESEDE.jce())) || (algorithm.equals(SHA1_3KEY_DESEDE.jce()))
-				|| (algorithm.equals(SHA1_40BIT_RC2.jce())) || (algorithm.equals(SHA1_40BIT_RC4.jce())))
-
-		{
-			return true;
-		}
-
-		/*
-		 * Also supported if algorithm is one of the following strings that the
-		 * OpenSSL pkcs8 tool sets
-		 */
-		return (algorithm.equals("PBEWithSHA1AndDESede")) || (algorithm.equals("PBEWithSHA1AndRC2_40"))
-				|| (algorithm.equals("1.2.840.113549.1.5.13"));
 
 	}
 
@@ -523,33 +477,30 @@ public class Pkcs8Util {
 
 	private static String getPrivateKeyAlgorithm(byte[] unencPkcs8) throws IOException, CryptoException {
 		// @formatter:off
-
 		/*
 		 * Get private key algorithm from unencrypted PKCS #8 bytes:
 		 *
-		 * PrivateKeyInfo ::= ASN1Sequence { version Version,
-		 * privateKeyAlgorithm PrivateKeyAlgorithmIdentifier, privateKey
-		 * PrivateKey, attributes [0] IMPLICIT Attributes OPTIONAL }
+		 * PrivateKeyInfo ::= ASN1Sequence {
+		 * 		version Version,
+		 * 		privateKeyAlgorithm PrivateKeyAlgorithmIdentifier, privateKey
+		 * 		PrivateKey, attributes [0] IMPLICIT Attributes OPTIONAL
+		 * }
 		 *
 		 * PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
 		 *
-		 * AlgorithmIdentifier ::= ASN1Sequence { algorithm OBJECT IDENTIFIER,
-		 * parameters ANY DEFINED BY algorithm OPTIONAL }
+		 * AlgorithmIdentifier ::= ASN1Sequence {
+		 * 		algorithm OBJECT IDENTIFIER,
+		 * 		parameters ANY DEFINED BY algorithm OPTIONAL
+		 * }
 		 */
-
 		// @formatter:on
 
-		ASN1InputStream ais = null;
-
-		try {
-			ais = new ASN1InputStream(new ByteArrayInputStream(unencPkcs8));
+		try (ASN1InputStream ais = new ASN1InputStream(new ByteArrayInputStream(unencPkcs8))) {
 
 			ASN1Encodable derEnc;
-
 			try {
 				derEnc = ais.readObject();
-			} catch (OutOfMemoryError err) // Happens with some non ASN.1 files
-			{
+			} catch (OutOfMemoryError err) { // Happens with some non ASN.1 files
 				throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
 			}
 
@@ -584,8 +535,6 @@ public class Pkcs8Util {
 			} else {
 				return oid; // Unknown algorithm
 			}
-		} finally {
-			IOUtils.closeQuietly(ais);
 		}
 	}
 }
