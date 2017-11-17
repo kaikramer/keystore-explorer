@@ -203,6 +203,11 @@ public class X509Ext {
 
 		X509ExtensionType type = X509ExtensionType.resolveOid(oid.getId());
 
+		// handle unknown OID
+		if (type == null) {
+			return HexUtil.getHexClearDump(octets);
+		}
+
 		switch (type) {
 		case ENTRUST_VERSION_INFORMATION:
 			return getEntrustVersionInformationStringValue(octets);
