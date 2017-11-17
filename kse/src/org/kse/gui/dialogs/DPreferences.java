@@ -810,7 +810,7 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private boolean storeDefaultDN() {
-		X500Name dn = distinguishedNameChooser.getDN();
+		X500Name dn = distinguishedNameChooser.getDNWithEmptyRdns();
 		defaultDN = dn.toString();
 		return true;
 	}
@@ -1026,6 +1026,10 @@ public class DPreferences extends JEscDialog {
 		return lookFeelDecorated;
 	}
 
+	/**
+	 * Read the new default DN (RDNs can be empty here)
+	 * @return
+	 */
 	public String getDefaultDN() {
 		return defaultDN;
 	}
