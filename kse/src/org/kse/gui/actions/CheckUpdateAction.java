@@ -94,6 +94,9 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 			int checkInterval = applicationSettings.getAutoUpdateCheckInterval();
 			if (TimeUnit.MILLISECONDS.toDays(now.getTime() - lastCheck.getTime()) < checkInterval) {
 				return;
+			} else {
+				// save when last check happened
+				applicationSettings.setAutoUpdateCheckLastCheck(new Date());
 			}
 		}
 
@@ -113,17 +116,21 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 						.getApplicationName(), JOptionPane.YES_NO_OPTION);
 
 				if (selected == JOptionPane.YES_OPTION) {
-					try {
-						Desktop.getDesktop().browse(URI.create(URLs.DOWNLOADS_WEB_ADDRESS));
-					} catch (IOException ex) {
-						JOptionPane.showMessageDialog(frame, MessageFormat.format(
-								res.getString("CheckUpdateAction.NoLaunchBrowser.message"),
-								URLs.DOWNLOADS_WEB_ADDRESS), KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-					}
+					openDownloadWebSite();
 				}
 			}
 		} catch (VersionException ex) {
 			DError.displayError(frame, ex);
+		}
+	}
+
+	private void openDownloadWebSite() {
+		try {
+			Desktop.getDesktop().browse(URI.create(URLs.DOWNLOADS_WEB_ADDRESS));
+		} catch (IOException ex) {
+			JOptionPane.showMessageDialog(frame, MessageFormat.format(
+					res.getString("CheckUpdateAction.NoLaunchBrowser.message"),
+					URLs.DOWNLOADS_WEB_ADDRESS), KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 }
