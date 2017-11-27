@@ -308,7 +308,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 					pkcs11ConfigSettings = "--" + pkcs11ConfigSettings;
 					// p11Provider.configure(pkcs11ConfigSettings);
 					Method method = Provider.class.getMethod("configure", String.class);
-					method.invoke(p11Provider, pkcs11ConfigSettings);
+					p11Provider = (Provider) method.invoke(p11Provider, pkcs11ConfigSettings);
 				} else {
 					Class<?> cl = Class.forName("sun.security.pkcs11.SunPKCS11");
 					Constructor<?> cons = cl.getConstructor(InputStream.class);
