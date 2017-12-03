@@ -25,29 +25,49 @@ import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECParameterSpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.asn1.ASN1String;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.x509.X509CertUtil;
 
 /**
  * Provides utility methods relating to asymmetric key pairs.
@@ -198,18 +218,33 @@ public final class KeyPairUtil {
 				KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
 				RSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
 				BigInteger modulus = keySpec.getModulus();
-				return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
+				BigInteger exponent =keySpec.getPublicExponent();
+				if (exponent.intValue()<0x10001)
+				{
+					return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length(), algorithm.toUpperCase()+modulus.toString(2).length());
+				}
+				else
+				{
+					return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length(),algorithm.toLowerCase()+modulus.toString(2).length());
+				}
 			} else if (algorithm.equals(DSA.jce())) {
 				KeyFactory keyFact = KeyFactory.getInstance(algorithm);
 				DSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
 				BigInteger prime = keySpec.getP();
-				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
+				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length(),algorithm.toUpperCase()+ prime.toString(2).length() );
 			} else if (algorithm.equals(EC.jce())) {
 				ECPublicKey pubk = (ECPublicKey) publicKey;
-				int size = pubk.getParams().getOrder().bitLength();
+				ECParameterSpec spec =pubk.getParams();
+				int size = spec.getOrder().bitLength();
+				if (spec instanceof ECNamedCurveSpec)
+				{
+					return new KeyInfo(ASYMMETRIC,algorithm, size,  ((ECNamedCurveSpec) spec).getName());
+				}
+				else
+				{
 				return new KeyInfo(ASYMMETRIC, algorithm, size);
 			}
-
+			}
 			return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("NoPublicKeysize.exception.message"), ex);
@@ -248,8 +283,16 @@ public final class KeyPairUtil {
 				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
 			} else if (algorithm.equals(EC.jce())) {
 				ECPrivateKey pubk = (ECPrivateKey) privateKey;
-				int size = pubk.getParams().getOrder().bitLength();
+				ECParameterSpec spec =pubk.getParams();
+				int size = spec.getOrder().bitLength();
+				if (spec instanceof ECNamedCurveSpec)
+				{
+					return new KeyInfo(ASYMMETRIC,algorithm, size,  ((ECNamedCurveSpec) spec).getName());
+				}
+				else
+				{
 				return new KeyInfo(ASYMMETRIC, algorithm, size);
+			}
 			}
 
 			return new KeyInfo(ASYMMETRIC, algorithm); // size unknown

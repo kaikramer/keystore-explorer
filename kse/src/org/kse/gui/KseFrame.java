@@ -1514,7 +1514,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private JTable createEmptyKeyStoreTable() {
-		KeyStoreTableModel ksModel = new KeyStoreTableModel();
+		KeyStoreTableModel ksModel = new KeyStoreTableModel(applicationSettings.getKeyStoreTableColumns());
 		final JTable jtKeyStore = new JKseTable(ksModel);
 
 		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ksModel);
@@ -1563,7 +1563,7 @@ public final class KseFrame implements StatusBar {
 		// Add custom renderers for headers and cells
 		for (int i = 0; i < jtKeyStore.getColumnCount(); i++) {
 			TableColumn column = jtKeyStore.getColumnModel().getColumn(i);
-			column.setHeaderRenderer(new KeyStoreTableHeadRend(jtKeyStore.getTableHeader().getDefaultRenderer()));
+			column.setHeaderRenderer(new KeyStoreTableHeadRend(jtKeyStore.getTableHeader().getDefaultRenderer(),applicationSettings.getKeyStoreTableColumns()));
 			column.setCellRenderer(new KeyStoreTableCellRend());
 		}
 

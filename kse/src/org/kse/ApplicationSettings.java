@@ -40,6 +40,7 @@ import javax.swing.JTabbedPane;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.secretkey.SecretKeyType;
+import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
 import org.kse.utilities.StringUtils;
@@ -102,6 +103,8 @@ public class ApplicationSettings {
 	private static final String KSE3_AUTO_UPDATE_CHECK_LAST_CHECK = "kse3.autoupdatechecklastcheck";
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
 	private static final String KSE3_PKCS11_LIBS = "kse3.pkcs11libs";
+	private static final String KSE3_COLUMNS = "kse3.columns";
+	private static final String KSE3_EXPIRY_WARN_DAYS = "kse3.expirywarndays";
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -135,6 +138,8 @@ public class ApplicationSettings {
 	private Date autoUpdateCheckLastCheck;
 	private int autoUpdateCheckInterval;
 	private String p11Libs;
+	private KeyStoreTableColumns kstColumns = new KeyStoreTableColumns();
+	private int expiryWarndays;
 
 	private ApplicationSettings() {
 
@@ -337,6 +342,23 @@ public class ApplicationSettings {
 
 		// PKCS#11 libraries
 		p11Libs = preferences.get(KSE3_PKCS11_LIBS, "");
+		// Table columns, set to default layout if absent
+		try { //TODO: are these catches correct? I get a null pointer exception when introducing a new preference value.
+			kstColumns.setColumns(preferences.getInt(KSE3_COLUMNS, 0x1F));
+		}
+		catch (NullPointerException e)
+		{
+			kstColumns.setColumns(0x1F);
+		}
+		try {
+			kstColumns.setExpiryWarnDays(preferences.getInt(KSE3_EXPIRY_WARN_DAYS, 0));
+			expiryWarndays = preferences.getInt(KSE3_EXPIRY_WARN_DAYS, 0);
+		}
+		catch (NullPointerException e)
+		{
+			kstColumns.setExpiryWarnDays(0);
+			expiryWarndays = 0;
+		}
 	}
 
 	private File cleanFilePath(File filePath) {
@@ -434,6 +456,10 @@ public class ApplicationSettings {
 
 		// PKCS#11 libraries
 		preferences.put(KSE3_PKCS11_LIBS, getP11Libs());
+		// Table layout
+		preferences.putInt(KSE3_COLUMNS,getKeyStoreTableColumns().getColumns());
+		preferences.putInt(KSE3_EXPIRY_WARN_DAYS,getKeyStoreTableColumns().getExpiryWarnDays());
+		
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
@@ -770,4 +796,20 @@ public class ApplicationSettings {
 	public void setP11Libs(String p11Libs) {
 		this.p11Libs = p11Libs;
 	}
+	public KeyStoreTableColumns getKeyStoreTableColumns()
+	{
+		return this.kstColumns;	
+	}
+	public  void setKeyStoreTableColumns(KeyStoreTableColumns kstColumns)
+	{
+		this.kstColumns = kstColumns;	
+	}
+	public int getExpiryWarndays() {
+		return expiryWarndays;
+	}
+
+	public void setExpiryWarndays(int expiryWarnDays) {
+		this.expiryWarndays = expiryWarnDays;
+	}
+
 }

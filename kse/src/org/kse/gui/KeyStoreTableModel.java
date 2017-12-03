@@ -29,6 +29,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
@@ -39,7 +40,13 @@ import java.util.TreeMap;
 
 import javax.crypto.SecretKey;
 import javax.swing.table.AbstractTableModel;
+import javax.xml.bind.DatatypeConverter;
 
+import org.bouncycastle.asn1.ASN1String;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -48,6 +55,7 @@ import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.X509CertUtil;
+import org.kse.gui.KeyStoreTableColumns;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -59,6 +67,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 	private String[] columnNames;
+	private Class[] columnTypes;
 	private Object[][] data;
 
 	/** Type column value for a key pair entry */
@@ -70,20 +79,128 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	/** Type column value for a key entry */
 	public static final String KEY_ENTRY = res.getString("KeyStoreTableModel.KeyEntry");
 
-	/**
-	 * Construct a new KeyStoreTableModel.
-	 */
-	public KeyStoreTableModel() {
-		columnNames = new String[8];
-		columnNames[0] = res.getString("KeyStoreTableModel.TypeColumn");
-		columnNames[1] = res.getString("KeyStoreTableModel.LockStatusColumn");
-		columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
-		columnNames[3] = res.getString("KeyStoreTableModel.NameColumn");
-		columnNames[4] = res.getString("KeyStoreTableModel.AlgorithmColumn");
-		columnNames[5] = res.getString("KeyStoreTableModel.KeySizeColumn");
-		columnNames[6] = res.getString("KeyStoreTableModel.CertExpiryColumn");
-		columnNames[7] = res.getString("KeyStoreTableModel.LastModifiedColumn");
+	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
+	private int nofColumns = 5;
+	/** Column for a property */
+	private static int expiryWarnDays = 0;
+	private static int iNameColumn = -1;
+	private static int iAlgorithmColumn = -1;
+	private static int iKeySizeColumn = -1;
+	private static int iCurveColumn = -1;
+	private static int iCertExpiryColumn = -1;
+	private static int iLastModifiedColumn = -1;
+	private static int iAKIColumn = -1;
+	private static int iSKIColumn = -1;
+	private static int iIssuerDNColumn = -1;
+	private static int iSubjectDNColumn = -1;
+	private static int iIssuerCNColumn = -1;
+	private static int iSubjectCNColumn = -1;
+	private static int iIssuerOColumn = -1;
+	private static int iSubjectOColumn = -1;
 
+
+	/**
+	 * Construct a new KeyStoreTableModel with a variable layout.
+	 */
+	public KeyStoreTableModel(KeyStoreTableColumns keyStoreTableColumnsParm) {
+		keyStoreTableColumns = keyStoreTableColumnsParm;
+		nofColumns = 3+keyStoreTableColumns.getNofColumns();
+		expiryWarnDays = keyStoreTableColumns.getExpiryWarnDays();
+		int col = 2;
+		columnNames = new String[nofColumns];
+		columnTypes = new Class[nofColumns];
+		columnNames[0] = res.getString("KeyStoreTableModel.TypeColumn");
+		columnTypes[0] = String.class;
+		columnNames[1] = res.getString("KeyStoreTableModel.LockStatusColumn");
+		columnTypes[1] = Boolean.class;
+		columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
+		columnTypes[2] = Integer.class;
+		if (keyStoreTableColumns.getEnableEntryName())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.NameColumn");
+			columnTypes[col] = String.class;
+			iNameColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableAlgorithm())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
+			columnTypes[col] = String.class;
+			iAlgorithmColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableKeySize())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.KeySizeColumn");
+			columnTypes[col] =  Integer.class;
+			 iKeySizeColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableCurve())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.CurveColumn");
+			columnTypes[col] = String.class;
+			iCurveColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableCertificateExpiry())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
+			columnTypes[col] = Date.class;
+			iCertExpiryColumn = col;
+			
+		}
+		if (keyStoreTableColumns.getEnableLastModified())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
+			columnTypes[col] = Date.class;
+			iLastModifiedColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableAKI())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.AKIColumn");
+			columnTypes[col] = String.class;
+			iAKIColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableSKI())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.SKIColumn");
+			columnTypes[col] = String.class;
+			iSKIColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableIssuerDN())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
+			columnTypes[col] = String.class;
+			iIssuerDNColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableSubjectDN())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
+			columnTypes[col] = String.class;
+			iSubjectDNColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableIssuerCN())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
+			columnTypes[col] = String.class;
+			iIssuerCNColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableSubjectCN())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
+			columnTypes[col] = String.class;
+			iSubjectCNColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableIssuerO())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.IssuerOColumn");
+			columnTypes[col] = String.class;
+			iIssuerOColumn = col;
+		}
+		if (keyStoreTableColumns.getEnableSubjectO())
+		{
+			columnNames[++col] = res.getString("KeyStoreTableModel.SubjectOColumn");
+			columnTypes[col] = String.class;
+			iSubjectOColumn = col;
+		}
+		assert (col == nofColumns);
 		data = new Object[0][0];
 	}
 
@@ -117,7 +234,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			sortedAliases.put(alias, alias);
 		}
 
-		data = new Object[sortedAliases.size()][8];
+		data = new Object[sortedAliases.size()][nofColumns];
 
 		int i = 0;
 		for (Iterator<Entry<String, String>> itr = sortedAliases.entrySet().iterator(); itr.hasNext(); i++) {
@@ -136,7 +253,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 			data[i][0] = entryType;
 
-			// Lock column - only applies to KeyStores types that actually support passwords for entries
+			// Lock column - only applies to KeyStores types that actually
+			// support passwords for entries
 			if ((entryType.equals(KEY_PAIR_ENTRY) || entryType.equals(KEY_ENTRY)) && type.hasEntryPasswords()) {
 				if (currentState.getEntryPassword(alias) != null) {
 					data[i][1] = Boolean.FALSE; // Unlocked
@@ -149,41 +267,122 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 			// Expiry status column
 			Date expiry = getCertificateExpiry(alias, keyStore);
-
+			Calendar c = Calendar.getInstance();
+			Calendar a = Calendar.getInstance();
+			c.setTime(new Date()); // Now use today date.
+			a.setTime(new Date()); // Now use today date.
+			a.add(Calendar.DATE, expiryWarnDays); // Adding warning interval
 			if (expiry == null) {
 				data[i][2] = null; // No expiry - must be a key entry
-			} else if (new Date().after(expiry)) {
-				data[i][2] = Boolean.TRUE; // Expired
 			} else {
-				data[i][2] = Boolean.FALSE; // Not expired
+				if (expiry.before(c.getTime())) {
+					data[i][2] = 2; // Expired
+				} else {
+					if (expiry.before(a.getTime())) {
+						data[i][2] = 1; // Almost expired
+					} else {
+						data[i][2] = 0; // Not expired
+					}
+				}
 			}
 
+			if (keyStoreTableColumns.getEnableEntryName()) {
 			// Alias column
-			data[i][3] = alias;
+				data[i][iNameColumn] = alias;
+			}
 
 			KeyInfo keyInfo = getKeyInfo(alias, keyStore, currentState);
 
 			if (keyInfo != null) {
 				// Algorithm column
-				data[i][4] = getAlgorithmName(keyInfo);
+				if (keyStoreTableColumns.getEnableAlgorithm()) {
+					data[i][iAlgorithmColumn] = getAlgorithmName(keyInfo);
+				}
 
 				// Key Size column
-				data[i][5] = keyInfo.getSize();
+				if (keyStoreTableColumns.getEnableKeySize()) {
+					data[i][iKeySizeColumn] = keyInfo.getSize();
 			}
-
+				// Key Size column
+				if (keyStoreTableColumns.getEnableCurve()) {
+					data[i][iCurveColumn] = keyInfo.getDetailedAlgorithm();
+				}
+			}
+			if (keyStoreTableColumns.getEnableCertificateExpiry()) {
 			// Expiry date column
 			if (expiry != null) {
-				data[i][6] = expiry;
-			} else {
-				data[i][6] = null; // No expiry date - must be a key entry
-			}
 
-			// Modified date column - only applies to non-PKCS #11/#12 KeyStores
+					data[i][iCertExpiryColumn] = expiry;
+			} else {
+					data[i][iCertExpiryColumn] = null; // No expiry date - must
+														// be a key entry
+				}
+			}
+			if (keyStoreTableColumns.getEnableLastModified()) {
+				// Modified date column - only applies to non-PKCS #11/#12
+				// KeyStores
 			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())
 					&& !keyStore.getType().equals(KeyStoreType.PKCS11.jce())) {
-				data[i][7] = keyStore.getCreationDate(alias);
+					data[i][iLastModifiedColumn] = keyStore.getCreationDate(alias);
 			} else {
-				data[i][7] = null;
+					data[i][iLastModifiedColumn] = null;
+				}
+			}
+			if (keyStoreTableColumns.getEnableSubjectDN()) {
+				if (entryType != KEY_ENTRY) {
+					data[i][iSubjectDNColumn] = getCertificateSubjectDN( alias, keyStore) ;
+				} else {
+					data[i][iSubjectDNColumn] = null; 
+				}
+			}
+			if (keyStoreTableColumns.getEnableIssuerDN()) {
+				if (entryType != KEY_ENTRY) { 
+					data[i][iIssuerDNColumn] = getCertificateIssuerDN( alias, keyStore) ;
+				} else {
+					data[i][iIssuerDNColumn] = null; 
+				}
+			}
+			if (keyStoreTableColumns.getEnableSubjectCN()) {
+				if (entryType != KEY_ENTRY) { // assume a certificate
+					data[i][iSubjectCNColumn] = getCertificateSubjectCN( alias, keyStore) ;
+				} else {
+					data[i][iSubjectCNColumn] = null; 
+				}
+			}
+			if (keyStoreTableColumns.getEnableIssuerCN()) {
+				if (entryType != KEY_ENTRY) { // assume a certificate
+					data[i][iIssuerCNColumn] = getCertificateIssuerCN( alias, keyStore) ;
+				} else {
+					data[i][iIssuerCNColumn] = null; 
+				}
+			}
+			if (keyStoreTableColumns.getEnableSubjectO()) {
+				if (entryType != KEY_ENTRY) { // assume a certificate
+					data[i][iSubjectOColumn] = getCertificateSubjectO( alias, keyStore) ;
+				} else {
+					data[i][iSubjectOColumn] = null; 
+				}
+			}
+			if (keyStoreTableColumns.getEnableIssuerO()) {
+				if (entryType != KEY_ENTRY) { // assume a certificate
+					data[i][iIssuerOColumn] = getCertificateIssuerO( alias, keyStore) ;
+				} else {
+					data[i][iIssuerOColumn] = null; 
+				}
+			}
+			if (keyStoreTableColumns.getEnableAKI()) {
+				if (entryType != KEY_ENTRY) { // assume a certificate
+					data[i][iAKIColumn] = getCertificateAKI( alias, keyStore) ;
+				} else {
+					data[i][iAKIColumn] = null; 
+				}
+			}
+			if (keyStoreTableColumns.getEnableSKI()) {
+				if (entryType != KEY_ENTRY) { // assume a certificate
+					data[i][iSKIColumn] = getCertificateSKI( alias, keyStore) ;
+				} else {
+					data[i][iSKIColumn] = null; 
+				}
 			}
 		}
 
@@ -203,10 +402,25 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 			// Key pair - first certificate in chain will be for the private key
 			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-
+			if (expiryWarnDays < 1)
+			{
 			return x509Chain[0].getNotAfter();
 		}
+			else
+			{
+				Date earliest = new Date();
+				earliest.setYear(9998);
+				for (int i=0;i<x509Chain.length;i++)
+				{
+					if (x509Chain[i].getNotAfter().before(earliest))
+						earliest = x509Chain[i].getNotAfter();
+				}
+				return earliest;
 	}
+		}
+	}
+
+	
 
 	private KeyInfo getKeyInfo(String alias, KeyStore keyStore, KeyStoreState currentState) throws CryptoException,
 	GeneralSecurityException {
@@ -258,7 +472,167 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 		return algorithm;
 	}
+	private String getCertificateSubjectDN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getSubjectDN().getName();
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			return x509Chain[0].getSubjectDN().getName();
+		}
+	}
+	private String getCertificateIssuerDN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getIssuerDN().getName();
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			return x509Chain[0].getIssuerDN().getName();
+		}
+	}
+	private String getCertificateSubjectCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = null;
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			x509Cert = x509Chain[0];
+		}
+		X500Name subject;
+		try {
+			subject = new JcaX509CertificateHolder(x509Cert).getSubject();
+			RDN cn = subject.getRDNs(BCStyle.CN)[0];
+			return ((ASN1String) cn.getFirst().getValue()).getString();
+		} catch (Exception e) {
+			return "";
+		}
+	}
 
+	private String getCertificateIssuerCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = null;
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			x509Cert = x509Chain[0];
+		}
+		try {
+			RDN cn = new JcaX509CertificateHolder(x509Cert).getIssuer().getRDNs(BCStyle.CN)[0];
+			return ((ASN1String) cn.getFirst().getValue()).getString();
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
+	private String getCertificateAKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = null;
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			x509Cert = x509Chain[0];
+		}
+		try {
+			String aki = DatatypeConverter.printHexBinary(x509Cert.getExtensionValue("2.5.29.35"));
+			return aki.substring(12); // remove object header 041830168014
+		} catch (Exception e) {
+			return "-";
+		}
+	}
+	
+	private String getCertificateSKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = null;
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			x509Cert = x509Chain[0];
+		}
+		try {
+			String ski = DatatypeConverter.printHexBinary(x509Cert.getExtensionValue("2.5.29.14"));
+			return ski.substring(8); // remove object header 04160414		
+		} catch (Exception e) {
+			return "-";
+		}
+	}
+	
+	private String getCertificateSubjectO(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = null;
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			x509Cert = x509Chain[0];
+		}
+		X500Name subject;
+		try {
+			subject = new JcaX509CertificateHolder(x509Cert).getSubject();
+			RDN cn = subject.getRDNs(BCStyle.O)[0];
+			if (cn.size()>0)
+			    return ((ASN1String) cn.getFirst().getValue()).getString();
+			else
+				return "";
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
+	private String getCertificateIssuerO(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = null;
+		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+		} else {
+			Certificate[] chain = keyStore.getCertificateChain(alias);
+			if (chain == null) {
+				return null;
+			}
+			// Key pair - first certificate in chain will be for the private key
+			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+			x509Cert = x509Chain[0];
+		}
+		try {
+			RDN cn = new JcaX509CertificateHolder(x509Cert).getIssuer().getRDNs(BCStyle.O)[0];
+			if (cn.size()>0)
+			    return ((ASN1String) cn.getFirst().getValue()).getString();
+			else
+				return "";
+		} catch (Exception e) {
+			return "";
+		}
+	}
 	/**
 	 * Get the number of columns in the table.
 	 *
@@ -314,22 +688,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public Class<?> getColumnClass(int col) {
-		switch (col) {
-		case 0:
-			return String.class;
-		case 1:
-			return Boolean.class;
-		case 2:
-			return Boolean.class;
-		case 3:
-			return String.class;
-		case 4:
-			return String.class;
-		case 5:
-			return Integer.class;
-		default:
-			return Date.class;
-		}
+		return columnTypes[col];
 	}
 
 	/**
@@ -344,6 +703,68 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		return false;
+	}
+
+	public KeyStoreTableColumns getKeyStoreTableColumns() {
+		return keyStoreTableColumns;
+	}
+
+	public void setKeyStoreTableColumns(KeyStoreTableColumns keyStoreTableColumns) {
+		this.keyStoreTableColumns = keyStoreTableColumns;
+	}
+
+	public int getNameColumn() {
+		return iNameColumn;
+	}
+
+	public int getAlgorithmColumn() {
+		return iAlgorithmColumn;
+	}
+
+	public int getKeySizeColumn() {
+		return iKeySizeColumn;
+	}
+
+	public int getCurveColumn() {
+		return iCurveColumn;
+	}
+
+	public int getCertExpiryColumn() {
+		return iCertExpiryColumn;
+	}
+
+	public int getLastModifiedColumn() {
+		return iLastModifiedColumn;
+	}
+
+	public int getAKIColumn() {
+		return iAKIColumn;
+	}
+
+	public int getSKIColumn() {
+		return iSKIColumn;
+	}
+
+	public int getIssuerDNColumn() {
+		return iIssuerDNColumn;
+	}
+
+	public int getSubjectDNColumn() {
+		return iSubjectDNColumn;
+	}
+	public int getIssuerCNColumn() {
+		return iIssuerCNColumn;
+	}
+
+	public int getSubjectCNColumn() {
+		return iSubjectCNColumn;
+	}
+	public int getIssuerOColumn() {
+		return iIssuerOColumn;
+	}
+
+	public int getSubjectOColumn() {
+		return iSubjectOColumn;
 	}
 
 	private class AliasComparator implements Comparator<String> {
