@@ -730,7 +730,7 @@ public class DViewCertificate extends JEscDialog {
 		X509Certificate cert = getSelectedCertificate();
 
 		try {
-			DViewCertCsrPem dViewCertPem = new DViewCertCsrPem(this, res.getString("DViewCertificate.Pem.Title"),
+			DViewPem dViewCertPem = new DViewPem(this, res.getString("DViewCertificate.Pem.Title"),
 					cert);
 			dViewCertPem.setLocationRelativeTo(this);
 			dViewCertPem.setVisible(true);

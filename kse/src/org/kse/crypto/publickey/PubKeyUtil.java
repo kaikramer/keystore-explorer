@@ -36,47 +36,12 @@ import org.kse.utilities.pem.PemUtil;
 
 // @formatter:off
 /**
- * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo encoded public keys.
- * 
- * <pre>
- * -----BEGIN PUBLIC KEY-----
- * ...
- * -----END PUBLIC KEY-----
- * </pre>
- *
- * <pre>
- * OpenSSL Public Key structure:
- *
- *     SubjectPublicKeyInfo ::= ASN1Sequence {
- *         algorithm AlgorithmIdentifier,
- *         subjectPublicKey BIT STRING }
- *
- *     AlgorithmIdentifier ::= ASN1Sequence {
- *         algorithm OBJECT IDENTIFIER,
- *         parameters ANY DEFINED BY algorithm OPTIONAL }
- *
- *     Rsa-Parms ::= ASN1Null
- *
- *     Dss-Parms ::= ASN1Sequence {
- *         p ASN1Integer,
- *         q ASN1Integer,
- *         g ASN1Integer }
- *
- *     subjectPublicKey as DERBitString:
- *
- *     RSAPublicKey ::= ASN1Sequence {
- *         modulus ASN1Integer,
- *         publicExponent ASN1Integer}
- *
- *     DSAPublicKey ::= ASN1Integer
- * </pre>
+ * Provides utility methods relating to PKCS#1/OpenSSL PEM encoded public keys (using BCs PEMReader and JcaPEMWriter).
  *
  */
 // @formatter:on
-public class OpenSslPubUtil {
+public class PubKeyUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/publickey/resources");
-
-	private static final String OPENSSL_PUB_PEM_TYPE = "PUBLIC KEY";
 
 	/**
 	 * OpenSSL encode a public key.
@@ -86,8 +51,6 @@ public class OpenSslPubUtil {
 	 *            The public key
 	 */
 	public static byte[] get(PublicKey publicKey) {
-		// The public key encoding is a DER-encoded subjectPublicKeyInfo
-		// structure - the OpenSSL format
 		return publicKey.getEncoded();
 	}
 
@@ -101,7 +64,7 @@ public class OpenSslPubUtil {
 	public static String getPem(PublicKey publicKey) {
 		byte[] openSsl = get(publicKey);
 
-		PemInfo pemInfo = new PemInfo(OPENSSL_PUB_PEM_TYPE, null, openSsl);
+		PemInfo pemInfo = new PemInfo("", null, openSsl);
 		String openSslPem = PemUtil.encode(pemInfo);
 
 		return openSslPem;
@@ -131,8 +94,6 @@ public class OpenSslPubUtil {
 		}
 
 		try {
-			// X509EncodedKeySpec accepts a DER-encoded subjectPublicKeyInfo
-			// structure - the OpenSSL format
 			X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(streamContents);
 
 			// We have to specify a valid algorithm, but do not know which one
@@ -143,6 +104,7 @@ public class OpenSslPubUtil {
 				// ok, not RSA, try DSA
 				pubKey = KeyFactory.getInstance("DSA").generatePublic(x509EncodedKeySpec);
 			}
+			// TODO EC
 
 			return pubKey;
 		} catch (GeneralSecurityException ex) {

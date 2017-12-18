@@ -414,7 +414,7 @@ public class DViewCsr extends JEscDialog {
 
 	private void pemEncodingPressed() {
 		try {
-			DViewCertCsrPem dViewCsrPem = new DViewCertCsrPem(this, res.getString("DViewCsr.Pem.Title"),
+			DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewCsr.Pem.Title"),
 					pkcs10Csr);
 			dViewCsrPem.setLocationRelativeTo(this);
 			dViewCsrPem.setVisible(true);
