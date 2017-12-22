@@ -26,7 +26,8 @@ package org.kse.crypto.keypair;
 public enum KeyPairType {
 	RSA("RSA", "1.2.840.113549.1.1.1", 512, 16384, 8),
 	DSA("DSA", "1.2.840.10040.4.1", 512, 2048, 64),
-	EC("EC", "1.2.840.10045.2.1", 160, 571, 32);
+	EC("EC", "1.2.840.10045.2.1", 160, 571, 32),
+	ECDSA("ECDSA", "1.2.840.10045.2.1", 160, 571, 32);
 
 	private String jce;
 	private String oid;

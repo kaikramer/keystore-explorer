@@ -48,13 +48,16 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.digest.DigestType;
@@ -282,33 +285,25 @@ public class OpenSslPvkUtil {
 		}
 
 		try {
-			// Read OpenSSL der structure
+			// Read OpenSSL DER structure
 			ASN1InputStream asn1InputStream = new ASN1InputStream(streamContents);
 			ASN1Primitive openSsl = asn1InputStream.readObject();
 			asn1InputStream.close();
 
 			if (openSsl instanceof ASN1Sequence) {
-				ASN1Sequence sequence = (ASN1Sequence) openSsl;
+				ASN1Sequence seq = (ASN1Sequence) openSsl;
 
-				for (int i = 0; i < sequence.size(); i++) {
-					ASN1Encodable obj = sequence.getObjectAt(i);
+				if (seq.size() == 9) { // RSA private key
 
-					if (!(obj instanceof ASN1Integer)) {
-						throw new CryptoException(res.getString("OpenSslSequenceContainsNonIntegers.exception.message"));
-					}
-				}
-
-				if (sequence.size() == 9) { // RSA private key
-
-					BigInteger version = ((ASN1Integer) sequence.getObjectAt(0)).getValue();
-					BigInteger modulus = ((ASN1Integer) sequence.getObjectAt(1)).getValue();
-					BigInteger publicExponent = ((ASN1Integer) sequence.getObjectAt(2)).getValue();
-					BigInteger privateExponent = ((ASN1Integer) sequence.getObjectAt(3)).getValue();
-					BigInteger primeP = ((ASN1Integer) sequence.getObjectAt(4)).getValue();
-					BigInteger primeQ = ((ASN1Integer) sequence.getObjectAt(5)).getValue();
-					BigInteger primeExponentP = ((ASN1Integer) sequence.getObjectAt(6)).getValue();
-					BigInteger primeExponenetQ = ((ASN1Integer) sequence.getObjectAt(7)).getValue();
-					BigInteger crtCoefficient = ((ASN1Integer) sequence.getObjectAt(8)).getValue();
+					BigInteger version = ((ASN1Integer) seq.getObjectAt(0)).getValue();
+					BigInteger modulus = ((ASN1Integer) seq.getObjectAt(1)).getValue();
+					BigInteger publicExponent = ((ASN1Integer) seq.getObjectAt(2)).getValue();
+					BigInteger privateExponent = ((ASN1Integer) seq.getObjectAt(3)).getValue();
+					BigInteger primeP = ((ASN1Integer) seq.getObjectAt(4)).getValue();
+					BigInteger primeQ = ((ASN1Integer) seq.getObjectAt(5)).getValue();
+					BigInteger primeExponentP = ((ASN1Integer) seq.getObjectAt(6)).getValue();
+					BigInteger primeExponenetQ = ((ASN1Integer) seq.getObjectAt(7)).getValue();
+					BigInteger crtCoefficient = ((ASN1Integer) seq.getObjectAt(8)).getValue();
 
 					if (!version.equals(VERSION)) {
 						throw new CryptoException(MessageFormat.format(
@@ -321,14 +316,14 @@ public class OpenSslPvkUtil {
 
 					KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 					return keyFactory.generatePrivate(rsaPrivateCrtKeySpec);
-				} else if (sequence.size() == 6) { // DSA private key
+				} else if (seq.size() == 6) { // DSA private key
 
-					BigInteger version = ((ASN1Integer) sequence.getObjectAt(0)).getValue();
-					BigInteger primeModulusP = ((ASN1Integer) sequence.getObjectAt(1)).getValue();
-					BigInteger primeQ = ((ASN1Integer) sequence.getObjectAt(2)).getValue();
-					BigInteger generatorG = ((ASN1Integer) sequence.getObjectAt(3)).getValue();
-					/* publicExponentY not req for pvk */sequence.getObjectAt(4);
-					BigInteger secretExponentX = ((ASN1Integer) sequence.getObjectAt(5)).getValue();
+					BigInteger version = ((ASN1Integer) seq.getObjectAt(0)).getValue();
+					BigInteger primeModulusP = ((ASN1Integer) seq.getObjectAt(1)).getValue();
+					BigInteger primeQ = ((ASN1Integer) seq.getObjectAt(2)).getValue();
+					BigInteger generatorG = ((ASN1Integer) seq.getObjectAt(3)).getValue();
+					// publicExponentY not req for pvk: sequence.getObjectAt(4);
+					BigInteger secretExponentX = ((ASN1Integer) seq.getObjectAt(5)).getValue();
 
 					if (!version.equals(VERSION)) {
 						throw new CryptoException(MessageFormat.format(
@@ -341,14 +336,28 @@ public class OpenSslPvkUtil {
 
 					KeyFactory keyFactory = KeyFactory.getInstance("DSA");
 					return keyFactory.generatePrivate(dsaPrivateKeySpec);
+				} else if (seq.size() >= 2) { // EC private key (RFC 5915)
+
+					/*
+					  ECPrivateKey ::= SEQUENCE {
+  						version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
+  						privateKey     OCTET STRING,
+  						parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
+  						publicKey  [1] BIT STRING OPTIONAL}
+					 */
+
+					org.bouncycastle.asn1.sec.ECPrivateKey pKey = org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(seq);
+					AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, pKey.getParameters());
+					PrivateKeyInfo privInfo = new PrivateKeyInfo(algId, pKey);
+					return new JcaPEMKeyConverter().getPrivateKey(privInfo);
 				} else {
 					throw new CryptoException(MessageFormat.format(
-							res.getString("OpenSslSequenceIncorrectSize.exception.message"), "" + sequence.size()));
+							res.getString("OpenSslSequenceIncorrectSize.exception.message"), "" + seq.size()));
 				}
 			} else {
 				throw new CryptoException(res.getString("OpenSslSequenceNotFound.exception.message"));
 			}
-		} catch (GeneralSecurityException ex) {
+		} catch (Exception ex) {
 			throw new CryptoException(res.getString("NoLoadOpenSslPrivateKey.exception.message"), ex);
 		}
 	}
@@ -439,16 +448,17 @@ public class OpenSslPvkUtil {
 	public static EncryptionType getEncryptionType(InputStream is) throws IOException {
 		byte[] openSsl = ReadUtil.readFully(is);
 
-		// In pem format?
+		// In PEM format?
 		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(openSsl));
 
 		if (pemInfo != null) {
 			String pemType = pemInfo.getType();
 
 			// PEM type of OpenSSL?
-			if ((pemType.equals(OPENSSL_RSA_PVK_PEM_TYPE)) || (pemType.equals(OPENSSL_DSA_PVK_PEM_TYPE))) {
-				// Encrypted? It is if pem contains appropriate header
-				// attributes/values
+			if (OPENSSL_RSA_PVK_PEM_TYPE.equals(pemType) || OPENSSL_DSA_PVK_PEM_TYPE.equals(pemType)
+					|| OPENSSL_EC_PVK_PEM_TYPE.equals(pemType)) {
+
+				// Encrypted? It is if PEM contains appropriate header attributes/values
 				PemAttributes pemAttributes = pemInfo.getAttributes();
 
 				if ((pemAttributes != null) && (pemAttributes.get(PROC_TYPE_ATTR_NAME) != null)
@@ -461,29 +471,7 @@ public class OpenSslPvkUtil {
 			}
 		}
 
-		// In ASN.1 format?
-		try {
-			// If OpenSSL will be a sequence of 9 (RSA) or 6 (DSA) integers
-			ASN1Primitive key = ASN1Primitive.fromByteArray(openSsl);
-
-			if (key instanceof ASN1Sequence) {
-				ASN1Sequence sequence = (ASN1Sequence) key;
-
-				for (int i = 0; i < sequence.size(); i++) {
-					if (!(sequence.getObjectAt(i) instanceof ASN1Integer)) {
-						return null; // Not OpenSSL
-					}
-				}
-
-				if ((sequence.size() == 9) || (sequence.size() == 6)) {
-					return UNENCRYPTED; // ASN.1 OpenSSL is always unencrypted
-				}
-			}
-		} catch (IOException ex) {
-			return null; // Not an OpenSSL file
-		}
-
-		return null; // Not an OpenSSL file
+		return UNENCRYPTED; // ASN.1 (binary) OpenSSL format  is always unencrypted
 	}
 
 	private static byte[] generateSalt(int size) {

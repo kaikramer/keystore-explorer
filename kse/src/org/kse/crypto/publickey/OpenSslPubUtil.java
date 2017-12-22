@@ -36,8 +36,9 @@ import org.kse.utilities.pem.PemUtil;
 
 // @formatter:off
 /**
- * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo encoded public keys.
- * 
+ * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo encoded public keys. The PKCS#1 RSA public key
+ * format is not supported.
+ *
  * <pre>
  * -----BEGIN PUBLIC KEY-----
  * ...
@@ -77,6 +78,9 @@ public class OpenSslPubUtil {
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/publickey/resources");
 
 	private static final String OPENSSL_PUB_PEM_TYPE = "PUBLIC KEY";
+
+	private OpenSslPubUtil() {
+	}
 
 	/**
 	 * OpenSSL encode a public key.

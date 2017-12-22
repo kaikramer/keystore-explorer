@@ -23,6 +23,7 @@ import static org.kse.crypto.KeyType.ASYMMETRIC;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.EC;
+import static org.kse.crypto.keypair.KeyPairType.ECDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 
 import java.math.BigInteger;
@@ -246,7 +247,7 @@ public final class KeyPairUtil {
 				DSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey, DSAPrivateKeySpec.class);
 				BigInteger prime = keySpec.getP();
 				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
-			} else if (algorithm.equals(EC.jce())) {
+			} else if (algorithm.equals(EC.jce()) || algorithm.equals(ECDSA.jce())) {
 				ECPrivateKey pubk = (ECPrivateKey) privateKey;
 				int size = pubk.getParams().getOrder().bitLength();
 				return new KeyInfo(ASYMMETRIC, algorithm, size);

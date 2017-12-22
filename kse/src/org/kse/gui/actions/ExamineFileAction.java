@@ -295,6 +295,8 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 			case UNENC_MS_PVK:
 				privKey = MsPvkUtil.load(new FileInputStream(file));
 				break;
+			default:
+				break;
 			}
 		} catch (FileNotFoundException ex) {
 			JOptionPane.showMessageDialog(frame,
