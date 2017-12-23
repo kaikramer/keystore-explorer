@@ -51,6 +51,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
@@ -86,6 +87,9 @@ public class OpenSslPvkUtil {
 
 	// OpenSSL version
 	private static final BigInteger VERSION = BigInteger.ZERO;
+
+	// EC private key ASN.1 structure has version 1
+	private static final BigInteger VERSION_EC = BigInteger.ONE;
 
 	// Proc-Type PEM header attribute name
 	private static final String PROC_TYPE_ATTR_NAME = "Proc-Type";
@@ -338,14 +342,6 @@ public class OpenSslPvkUtil {
 					return keyFactory.generatePrivate(dsaPrivateKeySpec);
 				} else if (seq.size() >= 2) { // EC private key (RFC 5915)
 
-					/*
-					  ECPrivateKey ::= SEQUENCE {
-  						version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
-  						privateKey     OCTET STRING,
-  						parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
-  						publicKey  [1] BIT STRING OPTIONAL}
-					 */
-
 					org.bouncycastle.asn1.sec.ECPrivateKey pKey = org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(seq);
 					AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, pKey.getParameters());
 					PrivateKeyInfo privInfo = new PrivateKeyInfo(algId, pKey);
@@ -471,7 +467,47 @@ public class OpenSslPvkUtil {
 			}
 		}
 
-		return UNENCRYPTED; // ASN.1 (binary) OpenSSL format  is always unencrypted
+		// In ASN.1 format?
+		try {
+			// If OpenSSL will be a sequence of 9 (RSA) or 6 (DSA) integers or 2-4 mixed elements (EC)
+			ASN1Primitive key = ASN1Primitive.fromByteArray(openSsl);
+
+			if (key instanceof ASN1Sequence) {
+				ASN1Sequence seq = (ASN1Sequence) key;
+
+				// handle EC structure first
+				//   ECPrivateKey ::= SEQUENCE {
+				//	     version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
+				//	     privateKey     OCTET STRING,
+				//	     parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
+				//	     publicKey  [1] BIT STRING OPTIONAL
+				//	   }
+				if ((seq.size() >= 2) && (seq.size() <= 4) && seq.getObjectAt(0) instanceof ASN1Integer) {
+					BigInteger version = ((ASN1Integer) seq.getObjectAt(0)).getValue();
+					if (version.equals(VERSION_EC)) {
+						if (seq.getObjectAt(1) instanceof ASN1OctetString) {
+							return UNENCRYPTED; // ASN.1 OpenSSL is always unencrypted
+						} else {
+							return null; // Not OpenSSL
+						}
+					}
+				}
+
+				for (int i = 0; i < seq.size(); i++) {
+					if (!(seq.getObjectAt(i) instanceof ASN1Integer)) {
+						return null; // Not OpenSSL
+					}
+				}
+
+				if ((seq.size() == 9) || (seq.size() == 6)) {
+					return UNENCRYPTED; // ASN.1 OpenSSL is always unencrypted
+				}
+			}
+		} catch (IOException ex) {
+			return null; // Not an OpenSSL file
+		}
+
+		return null; // Not an OpenSSL file
 	}
 
 	private static byte[] generateSalt(int size) {

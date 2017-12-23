@@ -266,7 +266,7 @@ public class Pkcs8Util {
 			throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
 		}
 		if (encType == UNENCRYPTED) {
-			throw new PrivateKeyEncryptedException(res.getString("Pkcs8IsEncrypted.exception.message"));
+			throw new PrivateKeyUnencryptedException(res.getString("Pkcs8IsEncrypted.exception.message"));
 		}
 
 		// Check if stream is PEM encoded
