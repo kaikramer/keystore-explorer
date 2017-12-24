@@ -1,6 +1,7 @@
 package org.kse.version;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -83,6 +84,17 @@ public class JavaVersionTest {
 	public void isBelow(@ConvertWith(JavaVersionConstantArgumentConverter.class) JavaVersion version1,
 			@ConvertWith(JavaVersionConstantArgumentConverter.class) JavaVersion version2, boolean result) {
 		assertEquals(version1.isBelow(version2), result);
+	}
+
+	@ParameterizedTest
+	@CsvSource({
+		"a.b.c",
+		"a.1.0",
+		"X",
+		"ea",
+	})
+	public void invalidVersion(String verString) {
+		assertThrows(VersionException.class, () -> new JavaVersion(verString));
 	}
 
 
