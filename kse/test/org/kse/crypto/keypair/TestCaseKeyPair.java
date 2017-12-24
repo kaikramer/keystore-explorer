@@ -17,14 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto.keypair;
+package org.kse.crypto.keypair;
 
 import java.security.KeyPair;
 
-import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.TestCaseCrypto;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 

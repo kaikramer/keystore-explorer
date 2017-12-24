@@ -17,20 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto;
+package org.kse.crypto;
 
 import junit.framework.TestSuite;
-import net.sf.keystore_explorer.crypto.csr.spkac.TestCaseSpkac;
-import net.sf.keystore_explorer.crypto.digest.TestCaseDigestUtil;
-import net.sf.keystore_explorer.crypto.keypair.TestCaseKeyPairUtil;
-import net.sf.keystore_explorer.crypto.keystore.TestCaseKeyStoreUtil;
-import net.sf.keystore_explorer.crypto.privatekey.TestCaseOpenSslPvkUtil;
-import net.sf.keystore_explorer.crypto.privatekey.TestCasePkcs8Util;
-import net.sf.keystore_explorer.crypto.privatekey.TestCasePvkUtil;
-import net.sf.keystore_explorer.crypto.publickey.TestCaseOpenSslPubUtil;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.kse.crypto.csr.spkac.TestCaseSpkac;
+import org.kse.crypto.digest.TestCaseDigestUtil;
+import org.kse.crypto.keypair.TestCaseKeyPairUtil;
+import org.kse.crypto.keystore.TestCaseKeyStoreUtil;
+import org.kse.crypto.privatekey.TestCaseOpenSslPvkUtil;
+import org.kse.crypto.privatekey.TestCasePkcs8Util;
+import org.kse.crypto.privatekey.TestCasePvkUtil;
+import org.kse.crypto.publickey.TestCaseOpenSslPubUtil;
 
 /**
  * Unit tests for crypto package.

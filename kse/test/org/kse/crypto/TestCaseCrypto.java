@@ -19,7 +19,7 @@
  */
 
 
-package net.sf.keystore_explorer.crypto;
+package org.kse.crypto;
 
 import static org.junit.Assert.fail;
 

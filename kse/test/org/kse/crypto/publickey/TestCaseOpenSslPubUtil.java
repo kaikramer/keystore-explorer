@@ -17,17 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto.publickey;
+package org.kse.crypto.publickey;
 
 import static org.junit.Assert.assertEquals;
 import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 
 import java.io.ByteArrayInputStream;
 
-import net.sf.keystore_explorer.crypto.TestCaseKey;
-
 import org.junit.Test;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.TestCaseKey;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 

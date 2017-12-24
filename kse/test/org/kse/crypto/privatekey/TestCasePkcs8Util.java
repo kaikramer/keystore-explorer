@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto.privatekey;
+package org.kse.crypto.privatekey;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -27,10 +27,9 @@ import static org.kse.crypto.privatekey.Pkcs8PbeType.SHA1_128BIT_RC4;
 
 import java.io.ByteArrayInputStream;
 
-import net.sf.keystore_explorer.crypto.TestCaseKey;
-
 import org.junit.Test;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.TestCaseKey;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.crypto.privatekey.Pkcs8Util;

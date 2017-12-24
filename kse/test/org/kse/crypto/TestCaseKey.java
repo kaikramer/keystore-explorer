@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto;
+package org.kse.crypto;
 
 import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;

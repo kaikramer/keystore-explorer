@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto.keystore;
+package org.kse.crypto.keystore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -31,10 +31,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 
-import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-
 import org.junit.Test;
 import org.kse.crypto.Password;
+import org.kse.crypto.TestCaseCrypto;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;

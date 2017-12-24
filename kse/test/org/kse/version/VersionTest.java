@@ -1,4 +1,4 @@
-package net.sf.keystore_explorer.version;
+package org.kse.version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

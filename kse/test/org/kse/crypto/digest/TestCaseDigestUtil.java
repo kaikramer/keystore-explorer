@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto.digest;
+package org.kse.crypto.digest;
 
 import static org.junit.Assert.assertTrue;
 import static org.kse.crypto.digest.DigestType.MD2;
@@ -32,9 +32,8 @@ import static org.kse.crypto.digest.DigestType.SHA256;
 import static org.kse.crypto.digest.DigestType.SHA384;
 import static org.kse.crypto.digest.DigestType.SHA512;
 
-import net.sf.keystore_explorer.crypto.TestCaseCrypto;
-
 import org.junit.Test;
+import org.kse.crypto.TestCaseCrypto;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 

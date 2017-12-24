@@ -17,12 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto.secretkey;
+package org.kse.crypto.secretkey;
 
-import net.sf.keystore_explorer.crypto.TestCaseCrypto;
 import org.junit.Test;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.TestCaseCrypto;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 

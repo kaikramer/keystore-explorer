@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.sf.keystore_explorer.crypto.csr.spkac;
+package org.kse.crypto.csr.spkac;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,13 +40,12 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import net.sf.keystore_explorer.crypto.keypair.TestCaseKeyPair;
-
 import org.junit.Test;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.csr.spkac.SpkacMissingPropertyException;
 import org.kse.crypto.csr.spkac.SpkacSubject;
+import org.kse.crypto.keypair.TestCaseKeyPair;
 import org.kse.crypto.signing.SignatureType;
 
 /**
