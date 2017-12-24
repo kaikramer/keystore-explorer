@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-swing.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jhall.jar"/>
