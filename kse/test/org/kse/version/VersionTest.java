@@ -1,73 +1,76 @@
 package org.kse.version;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
-import org.kse.version.Version;
-import org.kse.version.VersionException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class VersionTest {
 
-	@Test
-	public void testVersionString() {
-
-		new Version("5.2.2");
-		new Version("5.2.2\n");
-
-		try {
-			new Version("");
-			new Version("a");
-			fail();
-		} catch (VersionException e) {
-			// expected exception
-		}
+	@ParameterizedTest
+	@CsvSource({
+		"5.2.2",
+		"5.2.2\n",
+		"5.3",
+		"5",
+		"5.0",
+		"5.0.0",
+	})
+	public void testVersionString(String verString) {
+		new Version(verString);
 	}
 
-	@Test
-	public void testMajorMinorVersion() {
-		assertEquals(1, new Version("1").getMajor());
-		assertEquals(1, new Version("01").getMajor());
-		assertEquals(1, new Version("1.2").getMajor());
-		assertEquals(1, new Version("1.2.3").getMajor());
 
-		assertEquals(2, new Version("1.2").getMinor());
-		assertEquals(2, new Version("1.2.3").getMinor());
-		assertEquals(0, new Version("1").getMinor());
-		assertEquals(0, new Version("1.0").getMinor());
-		assertEquals(0, new Version("1.0.0").getMinor());
-
-		assertEquals(3, new Version("1.2.3").getBugfix());
-		assertEquals(3, new Version("1.2.3.4").getBugfix());
-		assertEquals(0, new Version("1").getBugfix());
-		assertEquals(0, new Version("1.2").getBugfix());
-		assertEquals(0, new Version("1.2.0").getBugfix());
+	@ParameterizedTest
+	@CsvSource({
+		"''",
+		"a",
+		"ea",
+		"1-0-0",
+	})
+	public void invalidVersion(String verString) {
+		assertThrows(VersionException.class, () -> new Version(verString));
 	}
 
-	@Test
-	public void testCompare() {
-		assertTrue(new Version("1").compareTo(new Version("2")) < 0);
-		assertTrue(new Version("1").compareTo(new Version("1")) == 0);
-		assertTrue(new Version("2").compareTo(new Version("1")) > 0);
+	@ParameterizedTest
+	@CsvSource({
+		"01, 		1, 0, 0",
+		"1, 		1, 0, 0",
+		"1.0, 		1, 0, 0",
+		"1.0.0,		1, 0, 0",
+		"1.2, 		1, 2, 0",
+		"1.2.3, 	1, 2, 3",
+		"1.2.3, 	1, 2, 3",
+		"1.2.3.4, 	1, 2, 3",
+	})
+	public void testMajorMinorVersion(String versionString, int major, int minor, int bugfix) {
+		assertEquals(major, new Version(versionString).getMajor());
+		assertEquals(minor, new Version(versionString).getMinor());
+		assertEquals(bugfix, new Version(versionString).getBugfix());
+	}
 
-		assertTrue(new Version("1.2").compareTo(new Version("1.3")) < 0);
-		assertTrue(new Version("1.2").compareTo(new Version("1.2")) == 0);
-		assertTrue(new Version("1.3").compareTo(new Version("1.2")) > 0);
-
-		assertTrue(new Version("1").compareTo(new Version("1.1")) < 0);
-		assertTrue(new Version("1.1").compareTo(new Version("1.1.1")) < 0);
-		assertTrue(new Version("1.1.1").compareTo(new Version("1.1.1.1")) < 0);
-
-
-		assertTrue(new Version("1").compareTo(new Version("1.0.0")) == 0);
-		assertTrue(new Version("1.1").compareTo(new Version("1.1.0")) == 0);
-		assertTrue(new Version("1.1.1").compareTo(new Version("1.1.1.0")) == 0);
-
-		assertTrue(new Version("9").compareTo(new Version("10.0.0")) < 0);
-		assertTrue(new Version("9.20.20.20").compareTo(new Version("10.0.0")) < 0);
-		assertTrue(new Version("9.9.9.9").compareTo(new Version("10")) < 0);
-		assertTrue(new Version("9.9.1").compareTo(new Version("9.10.3")) < 0);
-		assertTrue(new Version("9.1.2").compareTo(new Version("9.1.2.1")) < 0);
+	@ParameterizedTest
+	@CsvSource({
+		"01, 		1, 		0",
+		"1, 		1, 		0",
+		"1.0, 		1, 		0",
+		"1.0.0,		1, 		0",
+		"1.0, 		1.0, 	0",
+		"1.0.0,		1.0.0, 	0",
+		"1.2, 		1, 		1",
+		"1.2, 		1.3, 	-1",
+		"1.2.3, 	1, 		1",
+		"1.2.3.4, 	1, 		1",
+		"1.3.1, 	1.3,	1",
+		"1.2.3, 	1.3,	-1",
+		"1.2.3.4, 	1.3, 	-1",
+		"1.3.1, 	1.3.2, 	-1",
+		"1.3.2, 	1.3.2.1,-1",
+		"9.9.9.9,	10.0.0, -1",
+		"9.20.20,	10.0.0, -1",
+	})
+	public void testCompare(String version1, String version2, int resultSignum) {
+		assertEquals(Integer.signum(new Version(version1).compareTo(new Version(version2))), resultSignum);
 	}
 }
