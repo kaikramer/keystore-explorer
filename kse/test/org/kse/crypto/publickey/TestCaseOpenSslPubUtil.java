@@ -19,16 +19,16 @@
  */
 package org.kse.crypto.publickey;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 
 import java.io.ByteArrayInputStream;
+import java.security.PublicKey;
 
-import org.junit.Test;
-import org.kse.crypto.CryptoException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.kse.crypto.TestCaseKey;
 import org.kse.crypto.filetype.CryptoFileUtil;
-import org.kse.crypto.publickey.OpenSslPubUtil;
 
 /**
  * Unit tests for OpenSslPubUtil. Encodes a RSA and DSA private keys using
@@ -36,37 +36,20 @@ import org.kse.crypto.publickey.OpenSslPubUtil;
  *
  */
 public class TestCaseOpenSslPubUtil extends TestCaseKey {
-	public TestCaseOpenSslPubUtil() throws CryptoException {
-		super();
+
+	@ParameterizedTest
+	@MethodSource("publicKeys")
+	public void openSslPub(PublicKey publicKey) throws Exception {
+		byte[] key = OpenSslPubUtil.get(publicKey);
+		assertEquals(publicKey, OpenSslPubUtil.load(new ByteArrayInputStream(key)));
+		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
 	}
 
-	@Test
-	public void openSslPub() throws Exception {
-		{
-			byte[] key = OpenSslPubUtil.get(rsaPublicKey);
-			assertEquals(rsaPublicKey, OpenSslPubUtil.load(new ByteArrayInputStream(key)));
-			assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
-		}
-
-		{
-			byte[] key = OpenSslPubUtil.get(dsaPublicKey);
-			assertEquals(dsaPublicKey, OpenSslPubUtil.load(new ByteArrayInputStream(key)));
-			assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
-		}
-	}
-
-	@Test
-	public void openSslPubPem() throws Exception {
-		{
-			String pemKey = OpenSslPubUtil.getPem(rsaPublicKey);
-			assertEquals(rsaPublicKey, OpenSslPubUtil.load(new ByteArrayInputStream(pemKey.getBytes())));
-			assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(pemKey.getBytes())));
-		}
-
-		{
-			String pemKey = OpenSslPubUtil.getPem(dsaPublicKey);
-			assertEquals(dsaPublicKey, OpenSslPubUtil.load(new ByteArrayInputStream(pemKey.getBytes())));
-			assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(pemKey.getBytes())));
-		}
+	@ParameterizedTest
+	@MethodSource("publicKeys")
+	public void openSslPubPem(PublicKey publicKey) throws Exception {
+		String pemKey = OpenSslPubUtil.getPem(publicKey);
+		assertEquals(publicKey, OpenSslPubUtil.load(new ByteArrayInputStream(pemKey.getBytes())));
+		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(pemKey.getBytes())));
 	}
 }

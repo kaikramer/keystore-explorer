@@ -20,14 +20,17 @@
 package org.kse.crypto;
 
 import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
+import java.util.List;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.junit.jupiter.api.BeforeAll;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 
@@ -42,11 +45,19 @@ public abstract class TestCaseKey extends TestCaseCrypto {
 	protected static DSAPrivateKey dsaPrivateKey;
 	protected static DSAPublicKey dsaPublicKey;
 
-	public TestCaseKey() throws CryptoException {
-		super();
+	public static List<PrivateKey> privateKeys() {
+		return Arrays.asList(rsaPrivateKey, dsaPrivateKey);
+	}
+
+	public static List<PublicKey> publicKeys() {
+		return Arrays.asList(rsaPublicKey, dsaPublicKey);
+	}
+
+	@BeforeAll
+	public static void initKeys() throws CryptoException {
 
 		if (rsaPrivateKey == null) {
-			KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, new BouncyCastleProvider());
+			KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
 			rsaPrivateKey = (RSAPrivateCrtKey) rsaKeyPair.getPrivate();
 			rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
 		}
@@ -56,6 +67,6 @@ public abstract class TestCaseKey extends TestCaseCrypto {
 			dsaPrivateKey = (DSAPrivateKey) dsaKeyPair.getPrivate();
 			dsaPublicKey = (DSAPublicKey) dsaKeyPair.getPublic();
 		}
-
 	}
+
 }

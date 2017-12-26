@@ -19,17 +19,16 @@
  */
 package org.kse.crypto.secretkey;
 
-import org.junit.Test;
-import org.kse.crypto.CryptoException;
-import org.kse.crypto.KeyInfo;
-import org.kse.crypto.TestCaseCrypto;
-import org.kse.crypto.secretkey.SecretKeyType;
-import org.kse.crypto.secretkey.SecretKeyUtil;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.crypto.SecretKey;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.KeyInfo;
+import org.kse.crypto.TestCaseCrypto;
+
 
 public class TestCaseSecretKeyUtil extends TestCaseCrypto {
 	@Test

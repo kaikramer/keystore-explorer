@@ -19,9 +19,16 @@
  */
 package org.kse.crypto.signing;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.kse.crypto.keypair.KeyPairType.DSA;
+import static org.kse.crypto.keypair.KeyPairType.RSA;
+import static org.kse.crypto.x509.X509CertificateVersion.VERSION1;
+import static org.kse.crypto.x509.X509CertificateVersion.VERSION3;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -30,8 +37,9 @@ import java.security.cert.X509Certificate;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.TestCaseCrypto;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -39,214 +47,90 @@ import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.csr.spkac.SpkacSubject;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
-
-import static org.junit.Assert.assertTrue;
-import static org.kse.crypto.csr.CsrType.PKCS10;
-import static org.kse.crypto.csr.CsrType.SPKAC;
-import static org.kse.crypto.keypair.KeyPairType.DSA;
-import static org.kse.crypto.keypair.KeyPairType.RSA;
-import static org.kse.crypto.signing.SignatureType.MD2_RSA;
-import static org.kse.crypto.signing.SignatureType.MD5_RSA;
-import static org.kse.crypto.signing.SignatureType.RIPEMD128_RSA;
-import static org.kse.crypto.signing.SignatureType.RIPEMD160_RSA;
-import static org.kse.crypto.signing.SignatureType.RIPEMD256_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA1_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA224_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA224_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA256_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA256_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA384_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA384_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA512_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA512_RSA;
-import static org.kse.crypto.x509.X509CertificateVersion.VERSION1;
-import static org.kse.crypto.x509.X509CertificateVersion.VERSION3;
 
 /**
  * Unit tests for all signature algorithms for certificate and CSR generation.
  *
  */
 public class TestSignatureAlgorithms extends TestCaseCrypto {
-	private KeyPair rsaKeyPair;
-	private KeyPair dsaKeyPair;
-	private X509CertificateGenerator generatorv1;
-	private X509CertificateGenerator generatorv3;
+	private static KeyPair rsaKeyPair;
+	private static KeyPair dsaKeyPair;
+	private static KeyPair ecKeyPair;
+	private static X509CertificateGenerator generatorv1;
+	private static X509CertificateGenerator generatorv3;
 
-	@Before
-	public void setUp() throws Exception {
-		rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 1024, new BouncyCastleProvider());
-		dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 512, new BouncyCastleProvider());
+	@BeforeAll
+	private static void setUp() throws Exception {
+		rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, new BouncyCastleProvider());
+		dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, new BouncyCastleProvider());
+		ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", new BouncyCastleProvider());
 		generatorv1 = new X509CertificateGenerator(VERSION1);
 		generatorv3 = new X509CertificateGenerator(VERSION3);
 	}
 
-	@Test
-	public void rsaMd2Spkac() throws Exception {
-		doTest(RSA, MD2_RSA, SPKAC);
+	@ParameterizedTest
+	@CsvSource({
+		"RSA, MD2_RSA, SPKAC",
+		"RSA, MD5_RSA, SPKAC",
+		"RSA, SHA1_RSA, SPKAC",
+		"RSA, SHA224_RSA, SPKAC",
+		"RSA, SHA256_RSA, SPKAC",
+		"RSA, SHA384_RSA, SPKAC",
+		"RSA, SHA512_RSA, SPKAC",
+		"RSA, RIPEMD128_RSA, SPKAC",
+		"RSA, RIPEMD160_RSA, SPKAC",
+		"RSA, RIPEMD256_RSA, SPKAC",
+		"DSA, SHA1_DSA, SPKAC",
+		"DSA, SHA224_DSA, SPKAC",
+		"DSA, SHA256_DSA, SPKAC",
+		"DSA, SHA384_DSA, SPKAC",
+		"DSA, SHA512_DSA, SPKAC",
+		"RSA, MD2_RSA, PKCS10",
+		"RSA, MD5_RSA, PKCS10",
+		"RSA, SHA1_RSA, PKCS10",
+		"RSA, SHA224_RSA, PKCS10",
+		"RSA, SHA256_RSA, PKCS10",
+		"RSA, SHA384_RSA, PKCS10",
+		"RSA, SHA512_RSA, PKCS10",
+		"RSA, RIPEMD128_RSA, PKCS10",
+		"RSA, RIPEMD160_RSA, PKCS10",
+		"RSA, RIPEMD256_RSA, PKCS10",
+		"DSA, SHA1_DSA, PKCS10",
+		"DSA, SHA224_DSA, PKCS10",
+		"DSA, SHA256_DSA, PKCS10",
+		"DSA, SHA384_DSA, PKCS10",
+		"DSA, SHA512_DSA, PKCS10",
+		"EC, SHA1_ECDSA, PKCS10",
+		"EC, SHA224_ECDSA, PKCS10",
+		"EC, SHA256_ECDSA, PKCS10",
+		"EC, SHA384_ECDSA, PKCS10",
+		"EC, SHA512_ECDSA, PKCS10",
+		// combination EC/SPKAC not supported right now and probably never will be
+	})
+	public void testSignCertificateAndCSR(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType)
+			throws Exception {
+		doTest(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION1);
+		doTest(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION3);
 	}
 
-	@Test
-	public void rsaMd5Spkac() throws Exception {
-		doTest(RSA, MD5_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaSha1Spkac() throws Exception {
-		doTest(RSA, SHA1_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaSha224Spkac() throws Exception {
-		doTest(RSA, SHA224_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaSha256Spkac() throws Exception {
-		doTest(RSA, SHA256_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaSha384Spkac() throws Exception {
-		doTest(RSA, SHA384_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaSha512Spkac() throws Exception {
-		doTest(RSA, SHA512_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaRipemd128Spkac() throws Exception {
-		doTest(RSA, RIPEMD128_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaRipemd160Spkac() throws Exception {
-		doTest(RSA, RIPEMD160_RSA, SPKAC);
-	}
-
-	@Test
-	public void rsaRipemd256Spkac() throws Exception {
-		doTest(RSA, RIPEMD256_RSA, SPKAC);
-	}
-
-	@Test
-	public void dsaSha1Spkac() throws Exception {
-		doTest(DSA, SHA1_DSA, SPKAC);
-	}
-
-	@Test
-	public void dsaSha224Spkac() throws Exception {
-		doTest(DSA, SHA224_DSA, SPKAC);
-	}
-
-	@Test
-	public void dsaSha256Spkac() throws Exception {
-		doTest(DSA, SHA256_DSA, SPKAC);
-	}
-
-	@Test
-	public void dsaSha384Spkac() throws Exception {
-		doTest(DSA, SHA384_DSA, SPKAC);
-	}
-
-	@Test
-	public void dsaSha512Spkac() throws Exception {
-		doTest(DSA, SHA512_DSA, SPKAC);
-	}
-
-	@Test
-	public void rsaMd2Pkcs10() throws Exception {
-		doTest(RSA, MD2_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaMd5Pkcs10() throws Exception {
-		doTest(RSA, MD5_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaSha1Pkcs10() throws Exception {
-		doTest(RSA, SHA1_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaSha224Pkcs10() throws Exception {
-		doTest(RSA, SHA224_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaSha256Pkcs10() throws Exception {
-		doTest(RSA, SHA256_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaSha384Pkcs10() throws Exception {
-		doTest(RSA, SHA384_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaSha512Pkcs10() throws Exception {
-		doTest(RSA, SHA512_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaRipemd128Pkcs10() throws Exception {
-		doTest(RSA, RIPEMD128_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaRipemd160Pkcs10() throws Exception {
-		doTest(RSA, RIPEMD160_RSA, PKCS10);
-	}
-
-	@Test
-	public void rsaRipemd256Pkcs10() throws Exception {
-		doTest(RSA, RIPEMD256_RSA, PKCS10);
-	}
-
-	@Test
-	public void dsaSha1Pkcs10() throws Exception {
-		doTest(DSA, SHA1_DSA, PKCS10);
-	}
-
-	@Test
-	public void dsaSha224Pkcs10() throws Exception {
-		doTest(DSA, SHA224_DSA, PKCS10);
-	}
-
-	@Test
-	public void dsaSha256Pkcs10() throws Exception {
-		doTest(DSA, SHA256_DSA, PKCS10);
-	}
-
-	@Test
-	public void dsaSha384Pkcs10() throws Exception {
-		doTest(DSA, SignatureType.SHA384_DSA, PKCS10);
-	}
-
-	@Test
-	public void dsaSha512Pkcs10() throws Exception {
-		doTest(DSA, SignatureType.SHA512_DSA, PKCS10);
-	}
-
-	private void doTest(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType) throws Exception {
-		doTest2(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION1);
-		doTest2(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION3);
-	}
-
-	private void doTest2(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType,
+	private void doTest(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType,
 			X509CertificateVersion version) throws Exception {
 		KeyPair keyPair = null;
 
-		if (keyPairType == KeyPairType.RSA) {
+		switch (keyPairType) {
+		case RSA:
 			keyPair = rsaKeyPair;
-		} else {
+			break;
+		case DSA:
 			keyPair = dsaKeyPair;
+			break;
+		case EC:
+			keyPair = ecKeyPair;
+			break;
+		default:
+			throw new InvalidParameterException();
 		}
 
 		X500Name name = new X500Name("cn=this");

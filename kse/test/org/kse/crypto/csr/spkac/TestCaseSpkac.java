@@ -22,17 +22,7 @@ package org.kse.crypto.csr.spkac;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.kse.crypto.signing.SignatureType.MD2_RSA;
-import static org.kse.crypto.signing.SignatureType.MD5_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA1_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA224_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA224_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA256_DSA;
-import static org.kse.crypto.signing.SignatureType.SHA256_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA384_RSA;
-import static org.kse.crypto.signing.SignatureType.SHA512_RSA;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,12 +30,10 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.csr.spkac.Spkac;
-import org.kse.crypto.csr.spkac.SpkacMissingPropertyException;
-import org.kse.crypto.csr.spkac.SpkacSubject;
-import org.kse.crypto.keypair.TestCaseKeyPair;
+import org.kse.crypto.TestCaseKeyPair;
 import org.kse.crypto.signing.SignatureType;
 
 /**
@@ -62,91 +50,38 @@ public class TestCaseSpkac extends TestCaseKeyPair {
 		super();
 	}
 
-	@Test
-	public void loadSpkacWithNoSubjectPropertiesFails() throws Exception {
-		String spkacWithNoSubjectText = "SPKAC=blah,blah,blah";
+	@ParameterizedTest
+	@CsvSource({
+		"SPKAC=blah,blah,blah",
+		"CN=blah,blah,blah",
+	})
+	public void invalidVersion(String spkac) {
+		assertThrows(SpkacMissingPropertyException.class, () -> new Spkac(new ByteArrayInputStream(spkac.getBytes())));
+	}
 
-		try {
-			new Spkac(new ByteArrayInputStream(spkacWithNoSubjectText.getBytes()));
-			fail("Did not throw SpkacMissingPropertyException for spkac with no subject properties");
-		} catch (SpkacMissingPropertyException ex) {
+	@ParameterizedTest
+	@CsvSource({
+		"MD2_RSA",
+		"MD5_RSA",
+		"RIPEMD128_RSA",
+		"RIPEMD160_RSA",
+		"RIPEMD256_RSA",
+		"SHA1_RSA",
+		"SHA224_RSA",
+		"SHA256_RSA",
+		"SHA384_RSA",
+		"SHA512_RSA",
+		"SHA1_DSA",
+		"SHA224_DSA",
+		"SHA256_DSA",
+	})
+	public void ripemd160RsaSpkac(SignatureType signatureAlgorithm) throws Exception {
+
+		if (signatureAlgorithm.name().endsWith("_RSA")) {
+			doTestSpkac(rsaKeyPair, signatureAlgorithm);
+		} else {
+			doTestSpkac(dsaKeyPair, signatureAlgorithm);
 		}
-	}
-
-	@Test
-	public void loadSpkacWithNoSpkacPropertyFails() throws Exception {
-		String spkacWithNoSubjectText = "CN=blah,blah,blah";
-
-		try {
-			new Spkac(new ByteArrayInputStream(spkacWithNoSubjectText.getBytes()));
-			fail("Did not throw SpkacMissingPropertyException for spkac with no SPKAC property");
-		} catch (SpkacMissingPropertyException ex) {
-		}
-	}
-
-	@Test
-	public void md2RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, MD2_RSA);
-	}
-
-	@Test
-	public void md5RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, MD5_RSA);
-	}
-
-	@Test
-	public void ripemd128RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SignatureType.RIPEMD128_RSA);
-	}
-
-	@Test
-	public void ripemd160RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SignatureType.RIPEMD160_RSA);
-	}
-
-	@Test
-	public void ripemd256RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SignatureType.RIPEMD256_RSA);
-	}
-
-	@Test
-	public void sha1RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SHA1_RSA);
-	}
-
-	@Test
-	public void sha224RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SHA224_RSA);
-	}
-
-	@Test
-	public void sha256RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SHA256_RSA);
-	}
-
-	@Test
-	public void sha384RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SHA384_RSA);
-	}
-
-	@Test
-	public void sha512RsaSpkac() throws Exception {
-		doTestSpkac(rsaKeyPair, SHA512_RSA);
-	}
-
-	@Test
-	public void sha1DsaSpkac() throws Exception {
-		doTestSpkac(dsaKeyPair, SHA1_DSA);
-	}
-
-	@Test
-	public void sha224DsaSpkac() throws Exception {
-		doTestSpkac(dsaKeyPair, SHA224_DSA);
-	}
-
-	@Test
-	public void sha256DsaSpkac() throws Exception {
-		doTestSpkac(dsaKeyPair, SHA256_DSA);
 	}
 
 	private void doTestSpkac(KeyPair keyPair, SignatureType signatureAlgorithm) throws Exception {

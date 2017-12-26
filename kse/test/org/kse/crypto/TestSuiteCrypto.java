@@ -19,8 +19,6 @@
  */
 package org.kse.crypto;
 
-import junit.framework.TestSuite;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.kse.crypto.csr.spkac.TestCaseSpkac;
@@ -31,6 +29,8 @@ import org.kse.crypto.privatekey.TestCaseOpenSslPvkUtil;
 import org.kse.crypto.privatekey.TestCasePkcs8Util;
 import org.kse.crypto.privatekey.TestCasePvkUtil;
 import org.kse.crypto.publickey.TestCaseOpenSslPubUtil;
+
+import junit.framework.TestSuite;
 
 /**
  * Unit tests for crypto package.

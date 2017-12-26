@@ -19,21 +19,18 @@
  */
 package org.kse.crypto.keypair;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.TestCaseCrypto;
-import org.kse.crypto.keypair.KeyPairType;
-import org.kse.crypto.keypair.KeyPairUtil;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.kse.crypto.keypair.KeyPairType.DSA;
-import static org.kse.crypto.keypair.KeyPairType.RSA;
 
 /**
  * Unit tests for KeyPairUtil. Runs a test to create a key pair for supported
@@ -45,32 +42,17 @@ public class TestCaseKeyPairUtil extends TestCaseCrypto {
 		super();
 	}
 
-	@Test
-	public void dsa512() throws Exception {
-		doTest(DSA, 512);
-	}
-
-	@Test
-	public void dsa1024() throws Exception {
-		doTest(DSA, 1024);
-	}
-
-	@Test
-	public void rsa512() throws Exception {
-		doTest(RSA, 512);
-	}
-
-	@Test
-	public void rsa1024() throws Exception {
-		doTest(RSA, 1024);
-	}
-
-	@Test
-	public void rsa2048() throws Exception {
-		doTest(RSA, 2048);
-	}
-
-	private void doTest(KeyPairType keyPairType, Integer keySize) throws Exception {
+	@ParameterizedTest
+	@CsvSource({
+		"DSA, 512",
+		"DSA, 1024",
+		"RSA, 512",
+		"RSA, 1024",
+		"RSA, 2048",
+		"RSA, 3072",
+		//"RSA, 4096", takes too long
+	})
+	public void doTests(KeyPairType keyPairType, Integer keySize) throws Exception {
 		KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, new BouncyCastleProvider());
 
 		PrivateKey privateKey = keyPair.getPrivate();

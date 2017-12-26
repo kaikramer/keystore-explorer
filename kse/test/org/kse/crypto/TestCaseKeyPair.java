@@ -17,13 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.crypto.keypair;
+package org.kse.crypto;
 
 import java.security.KeyPair;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.kse.crypto.CryptoException;
-import org.kse.crypto.TestCaseCrypto;
+import org.junit.jupiter.api.BeforeAll;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 
@@ -35,8 +34,8 @@ public abstract class TestCaseKeyPair extends TestCaseCrypto {
 	protected static KeyPair rsaKeyPair;
 	protected static KeyPair dsaKeyPair;
 
-	public TestCaseKeyPair() throws CryptoException {
-		super();
+	@BeforeAll
+	public static void initKeyPairs() throws CryptoException {
 
 		if (rsaKeyPair == null) {
 			rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, new BouncyCastleProvider());

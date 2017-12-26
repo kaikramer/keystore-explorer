@@ -19,21 +19,24 @@
  */
 package org.kse.crypto.privatekey;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 
 import java.io.ByteArrayInputStream;
+import java.security.PrivateKey;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.junit.Test;
-import org.kse.crypto.CryptoException;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.kse.crypto.TestCaseKey;
 import org.kse.crypto.filetype.CryptoFileUtil;
-import org.kse.crypto.privatekey.OpenSslPbeType;
-import org.kse.crypto.privatekey.OpenSslPvkUtil;
-import org.kse.crypto.privatekey.PrivateKeyEncryptedException;
-import org.kse.crypto.privatekey.PrivateKeyUnencryptedException;
 
 /**
  * Unit tests for OpenSslPvkUtil. Encodes a RSA and DSA private keys using
@@ -41,83 +44,51 @@ import org.kse.crypto.privatekey.PrivateKeyUnencryptedException;
  *
  */
 public class TestCaseOpenSslPvkUtil extends TestCaseKey {
-	public TestCaseOpenSslPvkUtil() throws CryptoException {
-		super();
+
+	@ParameterizedTest
+	@MethodSource("privateKeys")
+	public void unencryptedOpenSslPvk(PrivateKey privateKey) throws Exception {
+		byte[] key = OpenSslPvkUtil.get(privateKey);
+		assertEquals(privateKey, OpenSslPvkUtil.load(new ByteArrayInputStream(key)));
+		assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
 	}
 
-	@Test
-	public void unencryptedOpenSslPvk() throws Exception {
-		{
-			byte[] key = OpenSslPvkUtil.get(rsaPrivateKey);
-			assertEquals(rsaPrivateKey, OpenSslPvkUtil.load(new ByteArrayInputStream(key)));
-			assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
-		}
-
-		{
-			byte[] key = OpenSslPvkUtil.get(dsaPrivateKey);
-			assertEquals(dsaPrivateKey, OpenSslPvkUtil.load(new ByteArrayInputStream(key)));
-			assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
-		}
+	@ParameterizedTest
+	@MethodSource("privateKeys")
+	public void unencryptedOpenSslPvkPem(PrivateKey privateKey) throws Exception {
+		String pemKey = OpenSslPvkUtil.getPem(privateKey);
+		assertEquals(privateKey, OpenSslPvkUtil.load(new ByteArrayInputStream(pemKey.getBytes())));
+		assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(pemKey.getBytes())));
 	}
 
-	@Test
-	public void unencryptedOpenSslPvkPem() throws Exception {
-		{
-			String pemKey = OpenSslPvkUtil.getPem(rsaPrivateKey);
-			assertEquals(rsaPrivateKey, OpenSslPvkUtil.load(new ByteArrayInputStream(pemKey.getBytes())));
-			assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(pemKey.getBytes())));
-		}
+	@TestFactory
+	Iterable<DynamicTest> testAllPbeTypes() throws Exception {
 
-		{
-			String pemKey = OpenSslPvkUtil.getPem(dsaPrivateKey);
-			assertEquals(dsaPrivateKey, OpenSslPvkUtil.load(new ByteArrayInputStream(pemKey.getBytes())));
-			assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(pemKey.getBytes())));
-		}
-	}
+		List<DynamicTest> tests = new ArrayList<>();
 
-	@Test
-	public void encryptedOpenSslPvk() throws Exception {
-		for (OpenSslPbeType pbeType : OpenSslPbeType.values()) {
-			{
-				String encKey = OpenSslPvkUtil.getEncrypted(rsaPrivateKey, pbeType, PASSWORD);
-				assertEquals(rsaPrivateKey,
-						OpenSslPvkUtil.loadEncrypted(new ByteArrayInputStream(encKey.getBytes()), PASSWORD));
-				assertEquals(ENC_OPENSSL_PVK,
-						CryptoFileUtil.detectFileType(new ByteArrayInputStream(encKey.getBytes())));
-			}
-
-			{
-				String encKey = OpenSslPvkUtil.getEncrypted(dsaPrivateKey, pbeType, PASSWORD);
-				assertEquals(dsaPrivateKey,
-						OpenSslPvkUtil.loadEncrypted(new ByteArrayInputStream(encKey.getBytes()), PASSWORD));
-				assertEquals(ENC_OPENSSL_PVK,
-						CryptoFileUtil.detectFileType(new ByteArrayInputStream(encKey.getBytes())));
+		for (PrivateKey privateKey : privateKeys()) {
+			for (OpenSslPbeType pbeType : OpenSslPbeType.values()) {
+				tests.add(dynamicTest("test " + pbeType.name() + "/" + privateKey.getClass().getSimpleName(), () -> {
+					byte[] encKey = OpenSslPvkUtil.getEncrypted(privateKey, pbeType, PASSWORD).getBytes();
+					assertEquals(privateKey, OpenSslPvkUtil.loadEncrypted(new ByteArrayInputStream(encKey), PASSWORD));
+					assertEquals(ENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(encKey)));
+				}));
 			}
 		}
+
+		return tests;
 	}
 
 	@Test
 	public void incorrectLoadTypeDetected() throws Exception {
-		{
-			byte[] key = OpenSslPvkUtil.get(rsaPrivateKey);
-			assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+		byte[] key = OpenSslPvkUtil.get(rsaPrivateKey);
+		assertEquals(UNENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+		assertThrows(PrivateKeyUnencryptedException.class,
+				() -> OpenSslPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
 
-			try {
-				OpenSslPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD);
-				fail("Load encrypted for unencrypted OpenSSL succeeded");
-			} catch (PrivateKeyUnencryptedException ex) {
-			}
-		}
-
-		{
-			String encKey = OpenSslPvkUtil.getEncrypted(rsaPrivateKey, OpenSslPbeType.DESEDE_CBC, PASSWORD);
-			assertEquals(ENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(encKey.getBytes())));
-
-			try {
-				OpenSslPvkUtil.load(new ByteArrayInputStream(encKey.getBytes()));
-				fail("Load unencrypted for encrypted OpenSSL succeeded");
-			} catch (PrivateKeyEncryptedException ex) {
-			}
-		}
+		String encKey = OpenSslPvkUtil.getEncrypted(rsaPrivateKey, OpenSslPbeType.DESEDE_CBC, PASSWORD);
+		assertEquals(ENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(encKey.getBytes())));
+		assertThrows(PrivateKeyEncryptedException.class,
+				() -> OpenSslPvkUtil.load(new ByteArrayInputStream(encKey.getBytes())));
 	}
 }

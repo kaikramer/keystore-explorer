@@ -26,16 +26,16 @@ import static org.junit.Assert.fail;
 import java.security.Provider;
 import java.security.Security;
 
+import org.junit.jupiter.api.BeforeAll;
+
 /**
  * Abstract base class for all test cases. Sets up the BC provider.
  *
  */
 public abstract class TestCaseCrypto {
-	public TestCaseCrypto() {
-		addBcProvider();
-	}
 
-	private void addBcProvider() {
+	@BeforeAll
+	public static void addBcProvider() {
 		try {
 			Class<?> bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
 			Provider bcProv = (Provider) bcProvClass.newInstance();

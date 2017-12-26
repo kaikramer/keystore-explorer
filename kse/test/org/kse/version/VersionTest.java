@@ -10,12 +10,12 @@ public class VersionTest {
 
 	@ParameterizedTest
 	@CsvSource({
-		"5.2.2",
-		"5.2.2\n",
-		"5.3",
 		"5",
 		"5.0",
 		"5.0.0",
+		"5.2.2",
+		"5.2.2\n",
+		"5.3",
 	})
 	public void testVersionString(String verString) {
 		new Version(verString);

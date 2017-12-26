@@ -19,24 +19,18 @@
  */
 package org.kse.crypto.keystore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.kse.crypto.keystore.KeyStoreType.BKS;
-import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
-import static org.kse.crypto.keystore.KeyStoreType.JKS;
-import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
-import static org.kse.crypto.keystore.KeyStoreType.UBER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.Password;
 import org.kse.crypto.TestCaseCrypto;
 import org.kse.crypto.filetype.CryptoFileUtil;
-import org.kse.crypto.keystore.KeyStoreType;
-import org.kse.crypto.keystore.KeyStoreUtil;
 
 /**
  * Unit tests for KeyStoreUtil. Runs tests to create, save and load a KeyStore
@@ -50,32 +44,16 @@ public class TestCaseKeyStoreUtil extends TestCaseCrypto {
 		super();
 	}
 
-	@Test
-	public void jks() throws Exception {
-		doTest(JKS);
-	}
-
-	@Test
-	public void jceks() throws Exception {
-		doTest(JCEKS);
-	}
-
-	@Test
-	public void pkcs12() throws Exception {
-		doTest(PKCS12);
-	}
-
-	@Test
-	public void bks() throws Exception {
-		doTest(BKS);
-	}
-
-	@Test
-	public void uber() throws Exception {
-		doTest(UBER);
-	}
-
-	private void doTest(KeyStoreType keyStoreType) throws Exception {
+	@ParameterizedTest
+	@CsvSource({
+		"JKS",
+		"JCEKS",
+		"PKCS12",
+		"BKS",
+		"BKS_V1",
+		"UBER",
+	})
+	public void doTests(KeyStoreType keyStoreType) throws Exception {
 		KeyStore keyStore = KeyStoreUtil.create(keyStoreType);
 
 		assertNotNull(keyStore);

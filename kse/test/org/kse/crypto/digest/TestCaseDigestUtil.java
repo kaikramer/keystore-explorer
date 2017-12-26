@@ -19,90 +19,35 @@
  */
 package org.kse.crypto.digest;
 
-import static org.junit.Assert.assertTrue;
-import static org.kse.crypto.digest.DigestType.MD2;
-import static org.kse.crypto.digest.DigestType.MD4;
-import static org.kse.crypto.digest.DigestType.MD5;
-import static org.kse.crypto.digest.DigestType.RIPEMD128;
-import static org.kse.crypto.digest.DigestType.RIPEMD160;
-import static org.kse.crypto.digest.DigestType.RIPEMD256;
-import static org.kse.crypto.digest.DigestType.SHA1;
-import static org.kse.crypto.digest.DigestType.SHA224;
-import static org.kse.crypto.digest.DigestType.SHA256;
-import static org.kse.crypto.digest.DigestType.SHA384;
-import static org.kse.crypto.digest.DigestType.SHA512;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.TestCaseCrypto;
-import org.kse.crypto.digest.DigestType;
-import org.kse.crypto.digest.DigestUtil;
 
 /**
- * Unit tests for DigestUtil. Runs tests to create a digest for each of the
- * supported types.
+ * Unit tests for DigestUtil. Runs tests to create a digest for each of the supported types.
  *
  */
 public class TestCaseDigestUtil extends TestCaseCrypto {
 	private String MESSAGE = "This is a really good test message honestly";
 
-	@Test
-	public void md2() throws Exception {
-		doTest(MD2);
-	}
-
-	@Test
-	public void md4() throws Exception {
-		doTest(MD4);
-	}
-
-	@Test
-	public void md5() throws Exception {
-		doTest(MD5);
-	}
-
-	@Test
-	public void sha1() throws Exception {
-		doTest(SHA1);
-	}
-
-	@Test
-	public void sha224() throws Exception {
-		doTest(SHA224);
-	}
-
-	@Test
-	public void sha256() throws Exception {
-		doTest(SHA256);
-	}
-
-	@Test
-	public void sha384() throws Exception {
-		doTest(SHA384);
-	}
-
-	@Test
-	public void sha512() throws Exception {
-		doTest(SHA512);
-	}
-
-	@Test
-	public void ripemd128() throws Exception {
-		doTest(RIPEMD128);
-	}
-
-	@Test
-	public void ripemd160() throws Exception {
-		doTest(RIPEMD160);
-	}
-
-	@Test
-	public void ripemd256() throws Exception {
-		doTest(RIPEMD256);
-	}
-
-	private void doTest(DigestType digestType) throws Exception {
+	@ParameterizedTest
+	@CsvSource({
+		"MD2",
+		"MD4",
+		"MD5",
+		"SHA1",
+		"SHA224",
+		"SHA256",
+		"SHA384",
+		"SHA512",
+		"RIPEMD128",
+		"RIPEMD160",
+		"RIPEMD256",
+	})
+	public void testMessageDigests(DigestType digestType) throws Exception {
 		String digest = DigestUtil.getFriendlyMessageDigest(MESSAGE.getBytes(), digestType);
-
 		assertTrue(!digest.equals(MESSAGE));
 	}
 }
