@@ -21,11 +21,10 @@
 
 package org.kse.crypto;
 
-import static org.junit.Assert.fail;
-
 import java.security.Provider;
 import java.security.Security;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 
 /**
@@ -34,15 +33,10 @@ import org.junit.jupiter.api.BeforeAll;
  */
 public abstract class TestCaseCrypto {
 
+	protected static Provider BC = new BouncyCastleProvider();
+
 	@BeforeAll
 	public static void addBcProvider() {
-		try {
-			Class<?> bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
-			Provider bcProv = (Provider) bcProvClass.newInstance();
-			Security.addProvider(bcProv);
-		} catch (Throwable thw) {
-			fail("Could not instantiate BC provider");
-		}
+		Security.addProvider(BC);
 	}
-
 }

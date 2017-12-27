@@ -49,7 +49,7 @@ public class TestCaseKeyPairUtil extends TestCaseCrypto {
 		"RSA, 512",
 		"RSA, 1024",
 		"RSA, 2048",
-		"RSA, 3072",
+		//"RSA, 3072", takes too long
 		//"RSA, 4096", takes too long
 	})
 	public void doTests(KeyPairType keyPairType, Integer keySize) throws Exception {

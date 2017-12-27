@@ -21,7 +21,6 @@ package org.kse.crypto;
 
 import java.security.KeyPair;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -38,11 +37,11 @@ public abstract class TestCaseKeyPair extends TestCaseCrypto {
 	public static void initKeyPairs() throws CryptoException {
 
 		if (rsaKeyPair == null) {
-			rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, new BouncyCastleProvider());
+			rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, BC);
 		}
 
 		if (dsaKeyPair == null) {
-			dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, new BouncyCastleProvider());
+			dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
 		}
 	}
 }

@@ -24,12 +24,13 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -44,28 +45,36 @@ public abstract class TestCaseKey extends TestCaseCrypto {
 	protected static RSAPublicKey rsaPublicKey;
 	protected static DSAPrivateKey dsaPrivateKey;
 	protected static DSAPublicKey dsaPublicKey;
+	protected static ECPrivateKey ecPrivateKey;
+	protected static ECPublicKey ecPublicKey;
 
 	public static List<PrivateKey> privateKeys() {
-		return Arrays.asList(rsaPrivateKey, dsaPrivateKey);
+		return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey);
 	}
 
 	public static List<PublicKey> publicKeys() {
-		return Arrays.asList(rsaPublicKey, dsaPublicKey);
+		return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey);
 	}
 
 	@BeforeAll
 	public static void initKeys() throws CryptoException {
 
 		if (rsaPrivateKey == null) {
-			KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
+			KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, BC);
 			rsaPrivateKey = (RSAPrivateCrtKey) rsaKeyPair.getPrivate();
 			rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
 		}
 
 		if (dsaPrivateKey == null) {
-			KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, new BouncyCastleProvider());
+			KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
 			dsaPrivateKey = (DSAPrivateKey) dsaKeyPair.getPrivate();
 			dsaPublicKey = (DSAPublicKey) dsaKeyPair.getPublic();
+		}
+
+		if (ecPrivateKey == null) {
+			KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
+			ecPrivateKey = (ECPrivateKey) ecKeyPair.getPrivate();
+			ecPublicKey = (ECPublicKey) ecKeyPair.getPublic();
 		}
 	}
 
