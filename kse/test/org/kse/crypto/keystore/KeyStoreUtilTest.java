@@ -29,7 +29,7 @@ import java.security.KeyStore;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.Password;
-import org.kse.crypto.TestCaseCrypto;
+import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
 /**
@@ -37,10 +37,10 @@ import org.kse.crypto.filetype.CryptoFileUtil;
  * of each of the supported types.
  *
  */
-public class TestCaseKeyStoreUtil extends TestCaseCrypto {
+public class KeyStoreUtilTest extends CryptoTestsBase {
 	private static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });
 
-	public TestCaseKeyStoreUtil() {
+	public KeyStoreUtilTest() {
 		super();
 	}
 

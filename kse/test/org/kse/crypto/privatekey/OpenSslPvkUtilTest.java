@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.kse.crypto.TestCaseKey;
+import org.kse.crypto.KeyTestsBase;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
 /**
@@ -43,7 +43,7 @@ import org.kse.crypto.filetype.CryptoFileUtil;
  * OpenSSL format and reads them back using a variety of options.
  *
  */
-public class TestCaseOpenSslPvkUtil extends TestCaseKey {
+public class OpenSslPvkUtilTest extends KeyTestsBase {
 
 	@ParameterizedTest
 	@MethodSource("privateKeys")

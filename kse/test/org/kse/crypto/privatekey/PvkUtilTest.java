@@ -27,7 +27,7 @@ import static org.kse.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 import java.io.ByteArrayInputStream;
 
 import org.junit.jupiter.api.Test;
-import org.kse.crypto.TestCaseKey;
+import org.kse.crypto.KeyTestsBase;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
 /**
@@ -35,7 +35,7 @@ import org.kse.crypto.filetype.CryptoFileUtil;
  * PVK format and reads them back using a variety of options.
  *
  */
-public class TestCasePvkUtil extends TestCaseKey {
+public class PvkUtilTest extends KeyTestsBase {
 
 	@Test
 	public void unencryptedPvk() throws Exception {

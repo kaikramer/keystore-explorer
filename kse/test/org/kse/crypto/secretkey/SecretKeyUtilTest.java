@@ -27,10 +27,10 @@ import javax.crypto.SecretKey;
 import org.junit.jupiter.api.Test;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.TestCaseCrypto;
+import org.kse.crypto.CryptoTestsBase;
 
 
-public class TestCaseSecretKeyUtil extends TestCaseCrypto {
+public class SecretKeyUtilTest extends CryptoTestsBase {
 	@Test
 	public void testAllSecretKeyTypes() throws CryptoException {
 		for (SecretKeyType secretKeyType : SecretKeyType.values()) {

@@ -30,15 +30,15 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.TestCaseCrypto;
+import org.kse.crypto.CryptoTestsBase;
 
 /**
  * Unit tests for KeyPairUtil. Runs a test to create a key pair for supported
  * types and a selection of key sizes.
  *
  */
-public class TestCaseKeyPairUtil extends TestCaseCrypto {
-	public TestCaseKeyPairUtil() {
+public class KeyPairUtilTest extends CryptoTestsBase {
+	public KeyPairUtilTest() {
 		super();
 	}
 

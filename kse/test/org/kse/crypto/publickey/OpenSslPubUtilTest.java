@@ -27,7 +27,7 @@ import java.security.PublicKey;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.kse.crypto.TestCaseKey;
+import org.kse.crypto.KeyTestsBase;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
 /**
@@ -35,7 +35,7 @@ import org.kse.crypto.filetype.CryptoFileUtil;
  * OpenSSL format and reads them back using a variety of options.
  *
  */
-public class TestCaseOpenSslPubUtil extends TestCaseKey {
+public class OpenSslPubUtilTest extends KeyTestsBase {
 
 	@ParameterizedTest
 	@MethodSource("publicKeys")

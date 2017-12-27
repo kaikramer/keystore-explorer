@@ -40,7 +40,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.kse.crypto.TestCaseCrypto;
+import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
@@ -54,7 +54,7 @@ import org.kse.crypto.x509.X509CertificateVersion;
  * Unit tests for all signature algorithms for certificate and CSR generation.
  *
  */
-public class TestSignatureAlgorithms extends TestCaseCrypto {
+public class SignatureAlgorithmsTest extends CryptoTestsBase {
 	private static KeyPair rsaKeyPair;
 	private static KeyPair dsaKeyPair;
 	private static KeyPair ecKeyPair;

@@ -23,13 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.kse.crypto.TestCaseCrypto;
+import org.kse.crypto.CryptoTestsBase;
 
 /**
  * Unit tests for DigestUtil. Runs tests to create a digest for each of the supported types.
  *
  */
-public class TestCaseDigestUtil extends TestCaseCrypto {
+public class DigestUtilTest extends CryptoTestsBase {
 	private String MESSAGE = "This is a really good test message honestly";
 
 	@ParameterizedTest

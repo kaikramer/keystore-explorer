@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.kse.crypto.TestCaseKey;
+import org.kse.crypto.KeyTestsBase;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
 /**
@@ -44,7 +44,7 @@ import org.kse.crypto.filetype.CryptoFileUtil;
  * reads it back using a variety of options.
  *
  */
-public class TestCasePkcs8Util extends TestCaseKey {
+public class Pkcs8UtilTest extends KeyTestsBase {
 
 	@ParameterizedTest
 	@MethodSource("privateKeys")

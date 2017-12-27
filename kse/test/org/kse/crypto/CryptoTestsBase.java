@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
  * Abstract base class for all test cases. Sets up the BC provider.
  *
  */
-public abstract class TestCaseCrypto {
+public abstract class CryptoTestsBase {
 
 	protected static Provider BC = new BouncyCastleProvider();
 

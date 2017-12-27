@@ -29,7 +29,7 @@ import org.kse.crypto.keypair.KeyPairUtil;
  * Abstract base class for all key pair test cases. Sets up test key pairs.
  *
  */
-public abstract class TestCaseKeyPair extends TestCaseCrypto {
+public abstract class KeyPairTestsBase extends CryptoTestsBase {
 	protected static KeyPair rsaKeyPair;
 	protected static KeyPair dsaKeyPair;
 

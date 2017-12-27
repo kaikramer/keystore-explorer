@@ -33,20 +33,20 @@ import java.security.PublicKey;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.TestCaseKeyPair;
+import org.kse.crypto.KeyPairTestsBase;
 import org.kse.crypto.signing.SignatureType;
 
 /**
  * Unit tests for SPKAC.
  *
  */
-public class TestCaseSpkac extends TestCaseKeyPair {
+public class SpkacTest extends KeyPairTestsBase {
 	private static final String CHALLENGE = "hello";
 	private static final String FALSE_CHALLENGE = "goodbye";
 	private static final SpkacSubject SUBJECT = new SpkacSubject("Wayne Grant", "Development", "Lazgo Software",
 			"Maddiston", "Falkirk", "GB");
 
-	public TestCaseSpkac() throws CryptoException {
+	public SpkacTest() throws CryptoException {
 		super();
 	}
 

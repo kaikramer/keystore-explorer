@@ -39,7 +39,7 @@ import org.kse.crypto.keypair.KeyPairUtil;
  * Abstract base class for all private or public key test cases.
  *
  */
-public abstract class TestCaseKey extends TestCaseCrypto {
+public abstract class KeyTestsBase extends CryptoTestsBase {
 	protected static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });
 	protected static RSAPrivateCrtKey rsaPrivateKey;
 	protected static RSAPublicKey rsaPublicKey;
