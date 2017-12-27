@@ -61,10 +61,6 @@
 
 	<!-- Build directory (for class files) -->
 	<property name="buildDir" value="${basedir}/build" />
-	<property name="testBuildDir" value="${basedir}/build-test" />
-
-	<!-- Unit test directory -->
-	<property name="testDir" value="${basedir}/test" />
 
 	<!-- Distribution directory -->
 	<property name="distDir" value="${basedir}/dist" />
@@ -76,31 +72,19 @@
 	<property name="appJarName" value="${appSimpleName}.jar" />
 	<property name="appJar" value="${distDir}/${appJarName}" />
 
-	<!-- Needed libraries names (to be able to change them at build time) -->
-	<property name="bouncyCastlePkix" value="bcpkix" />
-	<property name="bouncyCastleProvider" value="bcprov" />
-	<property name="apacheCommonsIo" value="commons-io" />
-	<property name="darcula" value="darcula" />
-	<property name="jgoodiesCommon" value="jgoodies-common" />
-	<property name="jgoodiesLooks" value="jgoodies-looks" />
-	<property name="javaHelp" value="jhall" />
-	<property name="javaNativeAccess" value="jna" />
-	<property name="migLayoutCore" value="miglayout-core" />
-	<property name="migLayoutSwing" value="miglayout-swing" />
-
 	<!-- Jars that are packaged together with KSE -->
 	<path id="distClasspath">
 		<fileset dir="${libDir}" id="libs">
-			<include name="${bouncyCastlePkix}.jar" />
-			<include name="${bouncyCastleProvider}.jar" />
-			<include name="${apacheCommonsIo}.jar" />
-			<include name="${darcula}.jar" />
-			<include name="${jgoodiesCommon}.jar" />
-			<include name="${jgoodiesLooks}.jar" />
-			<include name="${javaHelp}.jar" />
-			<include name="${javaNativeAccess}.jar" />
-			<include name="${migLayoutCore}.jar" />
-			<include name="${migLayoutSwing}.jar" />
+			<include name="bcpkix.jar" />
+			<include name="bcprov.jar" />
+			<include name="commons-io.jar" />
+			<include name="darcula.jar" />
+			<include name="jgoodies-common.jar" />
+			<include name="jgoodies-looks.jar" />
+			<include name="jhall.jar" />
+			<include name="jna.jar" />
+			<include name="miglayout-core.jar" />
+			<include name="miglayout-swing.jar" />
 		</fileset>
 	</path>
 
@@ -121,14 +105,6 @@
 	<path id="compileClasspath">
 		<pathelement location="${buildDir}" />
 		<path refid="distClasspath" />
-	</path>
-
-	<!-- Jars that are required for running the unit tests -->
-	<path id="testClasspath">
-		<path refid="compileClasspath" />
-		<pathelement location="${sourceDir}" />
-		<pathelement location="${libDir}/junit.jar" />
-		<pathelement location="${testBuildDir}" />
 	</path>
 
 	<!-- Resource directories -->
@@ -166,34 +142,14 @@
 	<property name="appBundleFile" value="${appBundleName}.app" />
 	<property name="appBundle" value="${distDir}/${appBundleFile}" />
 
-	<!-- dmg properties -->
-	<property name="dmgDir" value="${basedir}/dmg" />
-	<property name="dmgTemplate" value="${dmgDir}/template.dmg.bz2" />
-
 	<!-- Manual setup archive -->
 	<property name="manualZip" value="${distDir}/${distFileNamePrefix}.zip" />
-
-	<!-- Application bundle archive -->
-	<property name="appBundleDmg" value="${distDir}/${distFileNamePrefix}.dmg" />
 
 	<!-- Icons -->
 	<property name="kseIco" value="${iconsDir}/kse.ico" />
 	<property name="ksePng" value="${iconsDir}/kse.png" />
 	<property name="kseIcns" value="${iconsDir}/kse.icns" />
 	<property name="keystoreIcns" value="${iconsDir}/keystore.icns" />
-
-	<!-- Javadoc properties -->
-	<property name="docDir" value="${basedir}/doc" />
-	<property name="overview" value="${docDir}/overview.html" />
-	<property name="styleSheet" value="${docDir}/stylesheet.css" />
-	<property name="javadocDir" value="${basedir}/api" />
-	<property name="product" value="${appName} ${appVersion}" />
-	<property name="windowTitle" value="${product}" />
-	<property name="documentTitle" value="${product}, API Specification" />
-	<property name="header" value="${product}" />
-	<property name="footer" value="${product}" />
-	<property name="bottom" value="&lt;font size='-1'&gt;${copyright} &lt;a href='http://${website}'&gt;${website}&lt;/a&gt;&lt;/font&gt;" />
-	<property name="overview" value="${basedir}/overview.html" />
 
 	<!-- Java Help properties -->
 	<property name="helpCfgDir" value="${basedir}/help" />
@@ -212,9 +168,7 @@
 
 	<target name="init" description="Initialize environment">
 		<mkdir dir="${buildDir}" />
-		<mkdir dir="${testBuildDir}" />
 		<mkdir dir="${distDir}" />
-		<mkdir dir="${javadocDir}" />
 	</target>
 
 
@@ -222,14 +176,6 @@
 		<javac debug="on" includeantruntime="false" destdir="${buildDir}" source="1.7" target="1.7">
 			<src path="${sourceDir}" />
 			<classpath refid="compileClasspath" />
-		</javac>
-	</target>
-
-
-	<target name="compile-test" depends="init" description="Compile the unit tests">
-		<javac debug="on" includeantruntime="false" destdir="${testBuildDir}" source="1.7" target="1.7">
-			<src path="${testDir}" />
-			<classpath refid="testClasspath" />
 		</javac>
 	</target>
 
@@ -250,6 +196,7 @@
 		</java>
 	</target>
 
+	
 	<target name="jar" depends="compile, help">
 
 		<tstamp>
@@ -297,18 +244,6 @@
 
 		<delete file="${mfFile}" />
 
-		<!-- Create source ZIP -->
-		<zip destfile="${srcZip}">
-			<zipfileset file="${basedir}/build.xml" />
-			<zipfileset defaultexcludes="false" dir="${sourceDir}" prefix="src" excludes="**/*.class,**/${helpSearchIndex}/*,${excludes}" />
-			<zipfileset defaultexcludes="false" dir="${testDir}" prefix="test" excludes="**/*.class,${excludes}" />
-			<zipfileset defaultexcludes="false" dir="${docDir}" prefix="doc" excludes="${excludes}" />
-			<zipfileset defaultexcludes="false" dir="${helpCfgDir}" prefix="help" excludes="${excludes}" />
-			<zipfileset defaultexcludes="false" dir="${nsisDir}" prefix="nsis" excludes="${excludes}" />
-			<zipfileset defaultexcludes="false" dir="${dmgDir}" prefix="dmg" excludes="${excludes}" />
-			<zipfileset defaultexcludes="false" dir="${resDir}" prefix="res" excludes="${excludes}" />
-		</zip>
-
 		<!-- Create manual install ZIP -->
 		<available file="${libDir}/darcula.jar" property="darcula.present" />
 		<zip destfile="${manualZip}">
@@ -328,29 +263,11 @@
 	</target>
 
 
-	<target name="test" depends="compile, compile-test" description="Run unit tests">
-		<junit fork="yes" printsummary="no" haltonfailure="yes">
-			<classpath refid="testClasspath" />
-			<formatter type="plain" usefile="no" />
-			<test name="org.kse.crypto.TestSuiteCrypto" />
-		</junit>
-	</target>
-
-
 	<target name="run" depends="init" description="Run built application">
 		<java fork="true" jar="${appJar}" />
 	</target>
 
-
-	<target name="doc" depends="compile" description="Create Javadocs">
-		<javadoc packagenames="org.kse.*" sourcepath="${sourceDir}" destdir="${javadocDir}" windowtitle="${windowTitle}" doctitle="${documentTitle}" header="${header}" footer="${footer}" bottom="${bottom}" classpathref="compileClasspath" source="1.6" access="protected" splitindex="true" overview="${overview}" stylesheetfile="${styleSheet}">
-			<group title="Application Packages" packages="org.kse.*" />
-			<group title="GUI Utility Packages" packages="org.kse.gui,org.kse.gui.*" />
-			<group title="Crypto Utility Packages" packages="org.kse.crypto,org.kse.crypto.*" />
-			<group title="Other Utility Packages" packages="org.kse.utilities.asn1,org.kse.utilities.io,org.kse.utilities.net,org.kse.utilities.oid,org.kse.utilities.pem,org.kse.utilities.os,org.kse.version" />
-		</javadoc>
-	</target>
-
+	
 	<target name="resources" depends="init" description="Create GNU/Linux resources from templates">
 		<filterset id="var-filters" begintoken="@" endtoken="@">
 			<filter token="appName" value="${appName}" />
@@ -366,6 +283,7 @@
 		</copy>
 	</target>
 
+	
 	<target name="launch4j" depends="jar" description="Create Windows exe using Launch4j" if="isWindows">
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask">
 			<classpath>
@@ -419,6 +337,7 @@
 		</exec>
 	</target>
 
+	
 	<target name="appbundler" depends="jar" description="Create app bundle">
 
 		<taskdef name="bundleapp" classpath="lib/appbundler-1.0ea.jar" classname="com.oracle.appbundler.AppBundlerTask" />
@@ -463,56 +382,7 @@
 		</bundleapp>
 	</target>
 
-	<target name="packagemac" depends="jar" description="Create app bundle, sign it">
-		
-		<taskdef resource="com/sun/javafx/tools/ant/antlib.xml"      
-		                uri="javafx:com.sun.javafx.tools.ant"
-		                classpath=".:${java.home}/../lib/ant-javafx.jar"/>
-
-		<fx:deploy nativeBundles="image" outdir="${distDir}" outfile="${appBundleName}">
-			
-			<fx:application name="${appBundleName}" 
-				version="${appVersion}" 
-				mainClass="${mainClass}" />
-			
-		    <fx:resources>
-		        <fx:fileset dir="${distDir}" includes="${appJarName}"/>
-		        <fx:fileset dir="." includes="lib/*.jar"/>
-		    </fx:resources>
-			
-		    <fx:info title="${appBundleName}" 
-		    	vendor="${vendor}" 
-		    	copyright="${copyright}"
-		    	category="public.app-category.developer-tools"/>
-			
-			<fx:bundleArgument arg="dropinResourcesRoot" value="."/>
-			<fx:bundleArgument arg="icon" value="${kseIcns}"/>
-			
-			<!-- macOS Application Bundler Arguments -->
-			<fx:bundleArgument arg="mac.category" value="public.app-category.developer-tools"/>
-			<fx:bundleArgument arg="mac.CFBundleIdentifier" value="org.kse.${appSimpleName}${appSimpleVersion}"/>
-			<fx:bundleArgument arg="mac.CFBundleName" value="${appBundleName}"/>
-			<fx:bundleArgument arg="mac.CFBundleVersion" value="${appVersion}"/>
-			<fx:bundleArgument arg="mac.signing-key-user-name" value="Kai Kramer"/>
-			
-			<fx:platform>
-				<fx:jvmarg value="-Dapple.laf.useScreenMenuBar=true" />
-				<fx:jvmarg value="-Dcom.apple.macos.use-file-dialog-packages=true" />
-				<fx:jvmarg value="-Dcom.apple.macos.useScreenMenuBar=true" />
-				<fx:jvmarg value="-Dcom.apple.mrj.application.apple.menu.about.name=${appBundleName}" />
-				<fx:jvmarg value="-Dcom.apple.smallTabs=true" />
-				<fx:jvmarg value="-Dfile.encoding=UTF-8" />
-				<fx:jvmarg value="-Dkse.app=true" />
-			</fx:platform>
-		</fx:deploy>	
-			
-		<!-- 
-		<classpath refid="libs" />
-		TODO license files 
-		<bundledocument extensions="ks,jks,jceks,keystore,bks,uber,pfx,p12" icon="${keystoreIcns}" name="KeyStore" role="editor">
-		-->
-	</target>
-
+	
 	<target name="signapp" depends="appbundler" description="Sign app bundle">
 		<exec executable="codesign" dir="${distDir}">
 			<arg value="-s" />
@@ -521,6 +391,7 @@
 		</exec>
 	</target>
 
+	
 	<target name="dmg" depends="signapp" description="Create DMG file">
 		<exec executable="/usr/local/bin/dropdmg" dir="${distDir}">
 			<arg value="-g" />
@@ -531,11 +402,10 @@
 		</exec>
 	</target>
 
+			
 	<target name="clean" depends="init" description="Remove generated/compiled files">
 		<delete dir="${buildDir}" />
-		<delete dir="${testBuildDir}" />
 		<delete dir="${distDir}" />
-		<delete dir="${javadocDir}" />
 		<delete dir="${helpSearchIndexDir}" />
 	</target>
 </project>
