@@ -63,6 +63,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
+import org.kse.crypto.ecc.EccUtil;
 import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemAttribute;
 import org.kse.utilities.pem.PemAttributes;
@@ -121,9 +122,9 @@ public class OpenSslPvkUtil {
 
 		if (privateKey instanceof ECPrivateKey) {
 			try {
-				org.bouncycastle.asn1.sec.ECPrivateKey ecPrivateKey = org.bouncycastle.asn1.sec.ECPrivateKey
-						.getInstance(privateKey.getEncoded());
-				return ecPrivateKey.toASN1Primitive().getEncoded();
+				ECPrivateKey ecPrivKey = (ECPrivateKey) privateKey;
+				org.bouncycastle.asn1.sec.ECPrivateKey keyStructure = EccUtil.convertToECPrivateKeyStructure(ecPrivKey);
+				return keyStructure.toASN1Primitive().getEncoded();
 			} catch (IOException e) {
 				throw new CryptoException(res.getString("NoDerEncodeOpenSslPrivateKey.exception.message"), e);
 			}
@@ -475,7 +476,7 @@ public class OpenSslPvkUtil {
 			if (key instanceof ASN1Sequence) {
 				ASN1Sequence seq = (ASN1Sequence) key;
 
-				// handle EC structure first
+				// handle EC structure first (RFC 5915)
 				//   ECPrivateKey ::= SEQUENCE {
 				//	     version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
 				//	     privateKey     OCTET STRING,
