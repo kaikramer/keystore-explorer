@@ -7,3 +7,5 @@
 /nsis/kse.nsi
 /MANIFEST.MF
 .gradle
+.classpath
+.project
