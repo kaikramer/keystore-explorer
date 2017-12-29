@@ -122,9 +122,6 @@
 	<!-- Manifest file -->
 	<property name="mfFile" value="${basedir}/MANIFEST.MF" />
 
-	<!-- Source ZIP -->
-	<property name="srcZip" value="${distDir}/${distFileNamePrefix}-src.zip" />
-
 	<!-- Archive file excludes -->
 	<property name="excludes" value="**/.DS_Store,**/Thumbs.db,**/.svn/" />
 
@@ -263,11 +260,6 @@
 	</target>
 
 
-	<target name="run" depends="init" description="Run built application">
-		<java fork="true" jar="${appJar}" />
-	</target>
-
-	
 	<target name="resources" depends="init" description="Create GNU/Linux resources from templates">
 		<filterset id="var-filters" begintoken="@" endtoken="@">
 			<filter token="appName" value="${appName}" />

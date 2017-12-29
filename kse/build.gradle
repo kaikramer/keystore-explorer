@@ -12,9 +12,9 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
-// TODO should be 1.7 for app and 1.8 for unit tests
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+repositories {
+    mavenCentral()
+}
 
 configurations.all {
 	resolutionStrategy {
@@ -29,15 +29,38 @@ configurations.all {
 	}
 }
 
-repositories {
-    mavenCentral()
+Properties props = new Properties()
+props.load(project.rootProject.file('src/org/kse/version.properties').newDataInputStream())
+version = props."KSE.Version"
+
+ext {
+	appName = props."KSE.Name"
+	appVersion = props."KSE.Version"
+	appSimpleName = props."KSE.SimpleName"
+	appSimpleVersion = props."KSE.SimpleVersion"
+	appUserModelId = props."KSE.AppUserModelId"
+	distFileNamePrefix = appSimpleName + "-" + appSimpleVersion
+
+	// Vendor details
+	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2017 Kai Kramer"
+	vendor = "Wayne Grant, Kai Kramer"
+	website = "keystore-explorer.org"
+
+	// Main class (for manifest entry)
+	mainClass = "org.kse.KSE"
 }
+
+// TODO should be 1.7 for app and 1.8 for unit tests
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 sourceSets {
     main.java.srcDirs = ['src']
     main.resources.srcDirs = ['src']
+    main.resources.excludes = [ '**/*.java', '**/Thumbs.db' ]
     test.java.srcDirs = ['test']
     test.resources.srcDirs = ['test']
+    test.resources.excludes = [ '**/*.java' ]
 }
 
 dependencies {
@@ -59,6 +82,62 @@ dependencies {
 	
 	// To avoid compiler warnings about @API annotations in JUnit code:
 	testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+}
+
+jar {
+	version = null
+    manifest {
+        attributes('Built-JDK': System.getProperty('java.version'),
+					'Implementation-Title': project.appName,
+                   	'Implementation-Version': project.version,
+                   	'Implementation-Vendor': project.vendor,
+        			'Specification-Title': project.appName,
+                   	'Specification-Version': project.version,
+					'Specification-Vendor': project.vendor,
+                   	'Main-Class': project.mainClass,
+                   	'Class-Path': configurations.compile.collect { 'lib/' + it.getName() }.join(' '),
+                   	'Built-Date': new Date().format("yyyy-MM-dd HH:mm:ss"),
+                   	'SplashScreen-Image': 'org/kse/gui/images/splash.png',
+                   	'Sealed': 'true'
+                   	)
+    }
+}
+
+task dist(type: Zip) {
+    dependsOn jar
+    
+    //<available file="${libDir}/darcula.jar" property="darcula.present" />
+	//<exclude name="license-darcula.txt" unless:true="${darcula.present}" />
+	//<zipfileset file="${appExe}" prefix="${distFileNamePrefix}" />
+	
+    into('.') { 
+        from jar.archivePath
+	    from('res') {
+		    include 'kse.sh'
+		} 
+	    from('res/readmes') {
+		    include 'readme.txt'
+		} 
+	}
+    into('lib') {
+        from configurations.runtime
+    }
+    into('licenses') { 
+	    from('res/licenses') {
+		    include '**/*.txt'
+		} 
+	}
+    into('icons') { 
+	    from('res/icons') {
+		    include '**/kse_*.png'
+		} 
+	}
+	doLast {
+        copy {
+            from outputs.files
+            into "dist"
+        }
+    }
 }
 
 compileTestJava {
