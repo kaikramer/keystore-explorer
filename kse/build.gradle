@@ -1,0 +1,69 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+// TODO should be 1.7 for app and 1.8 for unit tests
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations.all {
+	resolutionStrategy {
+		// fail eagerly on version conflict
+    	failOnVersionConflict()
+	    
+	    // cache dynamic versions for 10 minutes
+	    cacheDynamicVersionsFor 10*60, 'seconds'
+	    
+	    // don't cache changing modules at all
+	    cacheChangingModulesFor 0, 'seconds'
+	}
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main.java.srcDirs = ['src']
+    main.resources.srcDirs = ['src']
+    test.java.srcDirs = ['test']
+    test.resources.srcDirs = ['test']
+}
+
+dependencies {
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.58'
+	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
+	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
+	compile group: 'com.miglayout', name: 'miglayout-swing', version: '4.2' // TODO try 5.0
+	
+	// jars that are not available in a public repository
+    compile fileTree(dir: 'lib', include: '*.jar')
+    
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
+    testCompile("org.junit.jupiter:junit-jupiter-params:5.0.2")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+    
+    // for eclipse
+    testRuntime('org.junit.platform:junit-platform-launcher:1.0.2')
+	
+	// To avoid compiler warnings about @API annotations in JUnit code:
+	testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+}
+
+compileTestJava {
+	// unit tests make use of Java 8 features
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	options.compilerArgs += '-parameters'
+}

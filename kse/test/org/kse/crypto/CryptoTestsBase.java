@@ -26,6 +26,7 @@ import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
+import org.kse.crypto.jcepolicy.JcePolicyUtil;
 
 /**
  * Abstract base class for all test cases. Sets up the BC provider.
@@ -33,10 +34,12 @@ import org.junit.jupiter.api.BeforeAll;
  */
 public abstract class CryptoTestsBase {
 
-	protected static Provider BC = new BouncyCastleProvider();
+	protected static Provider BC;
 
 	@BeforeAll
 	public static void addBcProvider() {
+		BC = new BouncyCastleProvider();
 		Security.addProvider(BC);
+		JcePolicyUtil.removeRestrictions();
 	}
 }

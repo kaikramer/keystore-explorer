@@ -19,10 +19,10 @@
  */
 package org.kse.crypto.csr.spkac;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +32,6 @@ import java.security.PublicKey;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyPairTestsBase;
 import org.kse.crypto.signing.SignatureType;
 
@@ -45,10 +44,6 @@ public class SpkacTest extends KeyPairTestsBase {
 	private static final String FALSE_CHALLENGE = "goodbye";
 	private static final SpkacSubject SUBJECT = new SpkacSubject("Wayne Grant", "Development", "Lazgo Software",
 			"Maddiston", "Falkirk", "GB");
-
-	public SpkacTest() throws CryptoException {
-		super();
-	}
 
 	@ParameterizedTest
 	@CsvSource({
