@@ -88,12 +88,14 @@ dependencies {
 	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
-	compile group: 'com.miglayout', name: 'miglayout-swing', version: '4.2' // TODO try 5.0
+	compile group: 'com.miglayout', name: 'miglayout-swing', version: '5.0'
 	compile group: 'com.jgoodies', name: 'jgoodies-common', version: '1.8.1'
 	compile group: 'com.jgoodies', name: 'jgoodies-looks', version: '2.7.0'
 
-	// jars that are not available in a public repository
-	compile fileTree(dir: 'lib', include: '*.jar')
+	// Darcula lnf not in a public repository yet
+	if (file("lib/darcula.jar").exists()) {
+		compile files('lib/darcula.jar')
+	}
 	
 	testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
 	testCompile("org.junit.jupiter:junit-jupiter-params:5.0.2")
