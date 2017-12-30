@@ -202,7 +202,7 @@ task nsis(dependsOn: launch4j) {
 	}
 }
 
-task package(type: Zip, dependsOn: launch4j) {
+task dist(type: Zip, dependsOn: launch4j) {
 	
 	into(distFileNamePrefix) { 
 		from jar.archivePath
@@ -248,6 +248,14 @@ task appbundler(dependsOn: jar) {
 				fileset(dir: 'lib', includes: 'appbundler-1.0ea.jar' )
 			}
 		}
+		copy {
+			from configurations.runtime
+			into "$distDir/lib"
+		}
+		copy {
+			from jar.archivePath
+			into distDir
+		}
 		ant.bundleapp(outputdirectory: distDir, 
 					name: appName, 
 					displayname: appName, 
@@ -260,10 +268,8 @@ task appbundler(dependsOn: jar) {
 					copyright: copyright, 
 					applicationCategory: "public.app-category.developer-tools"					
 					) {
-			classpath() {
-				from configurations.runtime
-				from jar.archivePath
-			}
+			classpath(dir: "$distDir/lib")
+			classpath(file: "$distDir/$appJarName")
 			arch(name: "x86_64")
 			bundledocument(extensions: "ks,jks,jceks,keystore,bks,uber,pfx,p12",
 							icon: keystoreIcns,
@@ -273,7 +279,7 @@ task appbundler(dependsOn: jar) {
 			option(value: "-Dapple.laf.useScreenMenuBar=true")
 			option(value: "-Dcom.apple.macos.use-file-dialog-packages=true")
 			option(value: "-Dcom.apple.macos.useScreenMenuBar=true")
-			option(value: "-Dcom.apple.mrj.application.apple.menu.about.name=${appBundleName}")
+			option(value: "-Dcom.apple.mrj.application.apple.menu.about.name=${appName}")
 			option(value: "-Dcom.apple.smallTabs=true")
 			option(value: "-Dfile.encoding=UTF-8")
 			// Workaround since the icon parameter for bundleapp doesn't work
@@ -284,12 +290,12 @@ task appbundler(dependsOn: jar) {
 
 task signapp(type: Exec, dependsOn: appbundler) {
   workingDir distDir
-  commandLine 'codesign', '-s', 'Kai Kramer', "${distDir}/${appName}.app"
+  commandLine 'codesign', '-s', 'Kai Kramer', "${appName}.app"
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
   workingDir distDir
-  commandLine '/usr/local/bin/dropdmg', '-g', 'KSE', '-b', "${appSimpleName}-${appSimpleVersion}", "${distDir}/${appBundleName}.app"
+  commandLine '/usr/local/bin/dropdmg', '-g', 'KSE', '-b', "${appSimpleName}-${appSimpleVersion}", "${appName}.app"
 }
 
 compileTestJava {

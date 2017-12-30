@@ -8,3 +8,4 @@
 /MANIFEST.MF
 .gradle
 .classpath
+.DS_Store
