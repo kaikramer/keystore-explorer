@@ -1,3 +1,22 @@
+/*
+  Copyright 2004 - 2013 Wayne Grant
+            2013 - 2017 Kai Kramer
+  
+  This file is part of KeyStore Explorer.
+  
+  KeyStore Explorer is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  KeyStore Explorer is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with KeyStore Explorer. If not, see <http://www.gnu.org/licenses/>.
+*/
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.ReplaceTokens
 
@@ -17,19 +36,6 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 
 repositories {
 	mavenCentral()
-}
-
-configurations.all {
-	resolutionStrategy {
-		// fail eagerly on version conflict
-		failOnVersionConflict()
-		
-		// cache dynamic versions for 10 minutes
-		cacheDynamicVersionsFor 10*60, 'seconds'
-		
-		// don't cache changing modules at all
-		cacheChangingModulesFor 0, 'seconds'
-	}
 }
 
 sourceSets {
@@ -54,6 +60,7 @@ ext {
 	distFileNamePrefix = "$appSimpleName-$appSimpleVersion"
 	appJarName = "${appSimpleName}.jar"
 	appExe = "${appSimpleName}.exe"
+	appBundle = "${appName}.app"
 
 	// Icons
 	iconsDir = "res/icons"
@@ -188,7 +195,6 @@ task nsis(dependsOn: launch4j) {
 			])
 			into("nsis")
 		}
-
 		exec {
 			workingDir "$projectDir/nsis"
 			commandLine "makensis", "/V2", nsisScript
@@ -196,7 +202,7 @@ task nsis(dependsOn: launch4j) {
 	}
 }
 
-task dist(type: Zip, dependsOn: launch4j) {
+task package(type: Zip, dependsOn: launch4j) {
 	
 	into(distFileNamePrefix) { 
 		from jar.archivePath
@@ -233,6 +239,57 @@ task dist(type: Zip, dependsOn: launch4j) {
 			into distDir
 		}
 	}
+}
+
+task appbundler(dependsOn: jar) {
+	doLast {
+		ant.taskdef(name: 'bundleapp', classname: 'com.oracle.appbundler.AppBundlerTask') {
+			classpath {
+				fileset(dir: 'lib', includes: 'appbundler-1.0ea.jar' )
+			}
+		}
+		ant.bundleapp(outputdirectory: distDir, 
+					name: appName, 
+					displayname: appName, 
+					executableName: appName, 
+					identifier: "org.kse.${appSimpleName}${appSimpleVersion}", 
+					shortversion: appSimpleVersion, 
+					version: appVersion, 
+					icon: kseIcns,
+					mainclassname: mainClass, 
+					copyright: copyright, 
+					applicationCategory: "public.app-category.developer-tools"					
+					) {
+			classpath() {
+				from configurations.runtime
+				from jar.archivePath
+			}
+			arch(name: "x86_64")
+			bundledocument(extensions: "ks,jks,jceks,keystore,bks,uber,pfx,p12",
+							icon: keystoreIcns,
+							name: "KeyStore",
+							role: "editor")
+			option(value: "-Dkse.app=true")
+			option(value: "-Dapple.laf.useScreenMenuBar=true")
+			option(value: "-Dcom.apple.macos.use-file-dialog-packages=true")
+			option(value: "-Dcom.apple.macos.useScreenMenuBar=true")
+			option(value: "-Dcom.apple.mrj.application.apple.menu.about.name=${appBundleName}")
+			option(value: "-Dcom.apple.smallTabs=true")
+			option(value: "-Dfile.encoding=UTF-8")
+			// Workaround since the icon parameter for bundleapp doesn't work
+			option(value: "-Xdock:icon=Contents/Resources/${kseIcns}") 
+		}
+	}
+}
+
+task signapp(type: Exec, dependsOn: appbundler) {
+  workingDir distDir
+  commandLine 'codesign', '-s', 'Kai Kramer', "${distDir}/${appName}.app"
+}
+
+task dmg(type: Exec, dependsOn: signapp) {
+  workingDir distDir
+  commandLine '/usr/local/bin/dropdmg', '-g', 'KSE', '-b', "${appSimpleName}-${appSimpleVersion}", "${distDir}/${appBundleName}.app"
 }
 
 compileTestJava {
