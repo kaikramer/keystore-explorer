@@ -1,12 +1,12 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
-    }
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+	}
 }
 
 apply plugin: 'java'
@@ -15,19 +15,19 @@ apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 configurations.all {
 	resolutionStrategy {
 		// fail eagerly on version conflict
-    	failOnVersionConflict()
-	    
-	    // cache dynamic versions for 10 minutes
-	    cacheDynamicVersionsFor 10*60, 'seconds'
-	    
-	    // don't cache changing modules at all
-	    cacheChangingModulesFor 0, 'seconds'
+		failOnVersionConflict()
+		
+		// cache dynamic versions for 10 minutes
+		cacheDynamicVersionsFor 10*60, 'seconds'
+		
+		// don't cache changing modules at all
+		cacheChangingModulesFor 0, 'seconds'
 	}
 }
 
@@ -42,7 +42,7 @@ ext {
 	appSimpleVersion = props."KSE.SimpleVersion"
 	appUserModelId = props."KSE.AppUserModelId"
 	distFileNamePrefix = appSimpleName + "-" + appSimpleVersion
-	appJarName = appSimpleName  + ".jar"
+	appJarName = appSimpleName	+ ".jar"
 	appExe = appSimpleName + ".exe"
 
 	// Icons
@@ -66,12 +66,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 sourceSets {
-    main.java.srcDirs = ['src']
-    main.resources.srcDirs = ['src']
-    main.resources.excludes = [ '**/*.java', '**/Thumbs.db' ]
-    test.java.srcDirs = ['test']
-    test.resources.srcDirs = ['test']
-    test.resources.excludes = [ '**/*.java' ]
+	main.java.srcDirs = ['src']
+	main.resources.srcDirs = ['src']
+	main.resources.excludes = [ '**/*.java', '**/Thumbs.db' ]
+	test.java.srcDirs = ['test']
+	test.resources.srcDirs = ['test']
+	test.resources.excludes = [ '**/*.java' ]
 }
 
 dependencies {
@@ -82,14 +82,14 @@ dependencies {
 	compile group: 'com.miglayout', name: 'miglayout-swing', version: '4.2' // TODO try 5.0
 	
 	// jars that are not available in a public repository
-    compile fileTree(dir: 'lib', include: '*.jar')
-    
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
-    testCompile("org.junit.jupiter:junit-jupiter-params:5.0.2")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
-    
-    // for eclipse
-    testRuntime('org.junit.platform:junit-platform-launcher:1.0.2')
+	compile fileTree(dir: 'lib', include: '*.jar')
+	
+	testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
+	testCompile("org.junit.jupiter:junit-jupiter-params:5.0.2")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+	
+	// for eclipse
+	testRuntime('org.junit.platform:junit-platform-launcher:1.0.2')
 	
 	// To avoid compiler warnings about @API annotations in JUnit code:
 	testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
@@ -97,86 +97,86 @@ dependencies {
 
 jar {
 	version = null
-    manifest {
-        attributes('Built-JDK': System.getProperty('java.version'),
+	manifest {
+		attributes('Built-JDK': System.getProperty('java.version'),
 					'Implementation-Title': project.appName,
-                   	'Implementation-Version': project.version,
-                   	'Implementation-Vendor': project.vendor,
-        			'Specification-Title': project.appName,
-                   	'Specification-Version': project.version,
+					'Implementation-Version': project.version,
+					'Implementation-Vendor': project.vendor,
+					'Specification-Title': project.appName,
+					'Specification-Version': project.version,
 					'Specification-Vendor': project.vendor,
-                   	'Main-Class': project.mainClass,
-                   	'Class-Path': configurations.compile.collect { 'lib/' + it.getName() }.join(' '),
-                   	'Built-Date': new Date().format("yyyy-MM-dd HH:mm:ss"),
-                   	'SplashScreen-Image': 'org/kse/gui/images/splash.png',
-                   	'Sealed': 'true'
-                   	)
-    }
+					'Main-Class': project.mainClass,
+					'Class-Path': configurations.compile.collect { 'lib/' + it.getName() }.join(' '),
+					'Built-Date': new Date().format("yyyy-MM-dd HH:mm:ss"),
+					'SplashScreen-Image': 'org/kse/gui/images/splash.png',
+					'Sealed': 'true'
+					)
+	}
 }
 
 task launch4j(dependsOn: jar) {
 	onlyIf {
-        Os.isFamily(Os.FAMILY_WINDOWS)
-    }
+		Os.isFamily(Os.FAMILY_WINDOWS)
+	}
 
-    doLast {
-        ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
-            classpath {
-                fileset(dir: 'launch4j', includes: 'launch4j.jar,lib/xstream.jar' )
-            }
-        }
-        ant.launch4j() {
-            config(headerType: "gui", jarpath: appJarName, outfile: "dist/" + appExe, 
-            	dontWrapJar: "true", errTitle: appName, stayAlive: "false", icon: kseIco ) {
-            	jre(minVersion: "1.7.0", path: "jre") {
-            		opt = "-Dkse.exe=true"
-            	}
-            	versionInfo(fileVersion: appVersion + ".0", fileDescription: appName, copyright: copyright,
-            		internalName: appSimpleName,  originalFilename: appExe, 
-            		productName: appName, productVersion: appVersion + ".0", txtFileVersion: appVersion, 
-            		txtProductVersion: appVersion )
-            }
-        }
-    }
+	doLast {
+		ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
+			classpath {
+				fileset(dir: 'launch4j', includes: 'launch4j.jar,lib/xstream.jar' )
+			}
+		}
+		ant.launch4j() {
+			config(headerType: "gui", jarpath: appJarName, outfile: "dist/" + appExe, 
+				dontWrapJar: "true", errTitle: appName, stayAlive: "false", icon: kseIco ) {
+				jre(minVersion: "1.7.0", path: "jre") {
+					opt = "-Dkse.exe=true"
+				}
+				versionInfo(fileVersion: appVersion + ".0", fileDescription: appName, copyright: copyright,
+					internalName: appSimpleName,  originalFilename: appExe, 
+					productName: appName, productVersion: appVersion + ".0", txtFileVersion: appVersion, 
+					txtProductVersion: appVersion )
+			}
+		}
+	}
 }
 
 task dist(type: Zip, dependsOn: launch4j) {
-    
-    into(distFileNamePrefix) { 
-        from jar.archivePath
-	    from('res') {
-		    include 'kse.sh'
-		    fileMode 755
+	
+	into(distFileNamePrefix) { 
+		from jar.archivePath
+		from('res') {
+			include 'kse.sh'
+			fileMode 755
 		} 
-	    from('dist') {
-		    include appExe
+		from('dist') {
+			include appExe
 		} 
-	    from('res/readmes') {
-		    include 'readme.txt'
-		} 
-	}
-    into(distFileNamePrefix + '/lib') {
-        from configurations.runtime
-    }
-    into(distFileNamePrefix + '/licenses') { 
-	    from('res/licenses') {
-		    include '**/*.txt'
-		    if (!file("lib/darcula.jar").exists()) {
-		    	exclude 'license-darcula.txt' 
-		    } 
+		from('res/readmes') {
+			include 'readme.txt'
 		} 
 	}
-    into(distFileNamePrefix + '/icons') { 
-	    from('res/icons') {
-		    include '**/kse_*.png'
+	into(distFileNamePrefix + '/lib') {
+		from configurations.runtime
+	}
+	into(distFileNamePrefix + '/licenses') { 
+		from('res/licenses') {
+			include '**/*.txt'
+			if (!file("lib/darcula.jar").exists()) {
+				exclude 'license-darcula.txt' 
+			} 
+		} 
+	}
+	into(distFileNamePrefix + '/icons') { 
+		from('res/icons') {
+			include '**/kse_*.png'
 		} 
 	}
 	doLast {
-        copy {
-            from outputs.files
-            into "dist"
-        }
-    }
+		copy {
+			from outputs.files
+			into "dist"
+		}
+	}
 }
 
 compileTestJava {
