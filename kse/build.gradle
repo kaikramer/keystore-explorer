@@ -1,4 +1,5 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
 	repositories {
@@ -74,6 +75,8 @@ ext {
 
 	// Main class (for manifest entry)
 	mainClass = "org.kse.KSE"
+	
+	distDir = "dist"
 }
 
 // TODO should be 1.7 for app and 1.8 for unit tests
@@ -146,7 +149,7 @@ task launch4j(dependsOn: jar) {
 			}
 		}
 		ant.launch4j() {
-			config(headerType: "gui", jarpath: appJarName, outfile: "dist/" + appExe, 
+			config(headerType: "gui", jarpath: appJarName, outfile: "$distDir/$appExe", 
 				dontWrapJar: "true", errTitle: appName, stayAlive: "false", icon: kseIco ) {
 				jre(minVersion: "1.7.0", path: "jre") {
 					opt = "-Dkse.exe=true"
@@ -160,6 +163,36 @@ task launch4j(dependsOn: jar) {
 	}
 }
 
+task nsis(dependsOn: launch4j) {
+	doLast {
+		def nsisScript = "kse.nsi"
+		
+		copy {
+			configurations.runtime
+			into distDir
+		}
+		copy {
+			from jar.archivePath
+			into distDir
+		}
+		copy {
+			from("nsis/${nsisScript}.template")
+			rename("${nsisScript}.template", nsisScript)
+			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
+				KSE_VERSION: appVersion, 
+				KSE_SIMPLE_VERSION: appSimpleVersion, 
+				KSE_APP_USER_MODEL_ID: appUserModelId
+			])
+			into("nsis")
+		}
+
+		exec {
+			workingDir "$projectDir/nsis"
+			commandLine "makensis", "/V2", nsisScript
+		}
+	}
+}
+
 task dist(type: Zip, dependsOn: launch4j) {
 	
 	into(distFileNamePrefix) { 
@@ -168,17 +201,17 @@ task dist(type: Zip, dependsOn: launch4j) {
 			include 'kse.sh'
 			fileMode 755
 		} 
-		from('dist') {
+		from(distDir) {
 			include appExe
 		} 
 		from('res/readmes') {
 			include 'readme.txt'
 		} 
 	}
-	into(distFileNamePrefix + '/lib') {
+	into("$distFileNamePrefix/lib") {
 		from configurations.runtime
 	}
-	into(distFileNamePrefix + '/licenses') { 
+	into("$distFileNamePrefix/licenses") { 
 		from('res/licenses') {
 			include '**/*.txt'
 			if (!file("lib/darcula.jar").exists()) {
@@ -186,7 +219,7 @@ task dist(type: Zip, dependsOn: launch4j) {
 			} 
 		} 
 	}
-	into(distFileNamePrefix + '/icons') { 
+	into("$distFileNamePrefix/icons") { 
 		from('res/icons') {
 			include '**/kse_*.png'
 		} 
@@ -194,7 +227,7 @@ task dist(type: Zip, dependsOn: launch4j) {
 	doLast {
 		copy {
 			from outputs.files
-			into "dist"
+			into distDir
 		}
 	}
 }
