@@ -168,8 +168,8 @@ task nsis(dependsOn: launch4j) {
 		def nsisScript = "kse.nsi"
 		
 		copy {
-			configurations.runtime
-			into distDir
+			from configurations.runtime
+			into "$distDir/lib"
 		}
 		copy {
 			from jar.archivePath
