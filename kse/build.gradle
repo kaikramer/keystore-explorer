@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         mavenCentral()
@@ -40,6 +42,15 @@ ext {
 	appSimpleVersion = props."KSE.SimpleVersion"
 	appUserModelId = props."KSE.AppUserModelId"
 	distFileNamePrefix = appSimpleName + "-" + appSimpleVersion
+	appJarName = appSimpleName  + ".jar"
+	appExe = appSimpleName + ".exe"
+
+	// Icons
+	iconsDir = "res/icons"
+	kseIco = iconsDir + "/kse.ico"
+	ksePng = iconsDir + "/kse.png"
+	kseIcns = iconsDir + "/kse.icns"
+	keystoreIcns = iconsDir + "/keystore.icns"
 
 	// Vendor details
 	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2017 Kai Kramer"
@@ -103,31 +114,59 @@ jar {
     }
 }
 
-task dist(type: Zip) {
-    dependsOn jar
+task launch4j(dependsOn: jar) {
+	onlyIf {
+        Os.isFamily(Os.FAMILY_WINDOWS)
+    }
+
+    doLast {
+        ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
+            classpath {
+                fileset(dir: 'launch4j', includes: 'launch4j.jar,lib/xstream.jar' )
+            }
+        }
+        ant.launch4j() {
+            config(headerType: "gui", jarpath: appJarName, outfile: "dist/" + appExe, 
+            	dontWrapJar: "true", errTitle: appName, stayAlive: "false", icon: kseIco ) {
+            	jre(minVersion: "1.7.0", path: "jre") {
+            		opt = "-Dkse.exe=true"
+            	}
+            	versionInfo(fileVersion: appVersion + ".0", fileDescription: appName, copyright: copyright,
+            		internalName: appSimpleName,  originalFilename: appExe, 
+            		productName: appName, productVersion: appVersion + ".0", txtFileVersion: appVersion, 
+            		txtProductVersion: appVersion )
+            }
+        }
+    }
+}
+
+task dist(type: Zip, dependsOn: launch4j) {
     
-    //<available file="${libDir}/darcula.jar" property="darcula.present" />
-	//<exclude name="license-darcula.txt" unless:true="${darcula.present}" />
-	//<zipfileset file="${appExe}" prefix="${distFileNamePrefix}" />
-	
-    into('.') { 
+    into(distFileNamePrefix) { 
         from jar.archivePath
 	    from('res') {
 		    include 'kse.sh'
+		    fileMode 755
+		} 
+	    from('dist') {
+		    include appExe
 		} 
 	    from('res/readmes') {
 		    include 'readme.txt'
 		} 
 	}
-    into('lib') {
+    into(distFileNamePrefix + '/lib') {
         from configurations.runtime
     }
-    into('licenses') { 
+    into(distFileNamePrefix + '/licenses') { 
 	    from('res/licenses') {
 		    include '**/*.txt'
+		    if (!file("lib/darcula.jar").exists()) {
+		    	exclude 'license-darcula.txt' 
+		    } 
 		} 
 	}
-    into('icons') { 
+    into(distFileNamePrefix + '/icons') { 
 	    from('res/icons') {
 		    include '**/kse_*.png'
 		} 
