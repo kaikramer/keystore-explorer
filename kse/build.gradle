@@ -31,6 +31,15 @@ configurations.all {
 	}
 }
 
+sourceSets {
+	main.java.srcDirs = ['src']
+	main.resources.srcDirs = ['src']
+	main.resources.excludes = [ '**/*.java', '**/Thumbs.db' ]
+	test.java.srcDirs = ['test']
+	test.resources.srcDirs = ['test']
+	test.resources.excludes = [ '**/*.java' ]
+}
+
 Properties props = new Properties()
 props.load(project.rootProject.file('src/org/kse/version.properties').newDataInputStream())
 version = props."KSE.Version"
@@ -41,21 +50,27 @@ ext {
 	appSimpleName = props."KSE.SimpleName"
 	appSimpleVersion = props."KSE.SimpleVersion"
 	appUserModelId = props."KSE.AppUserModelId"
-	distFileNamePrefix = appSimpleName + "-" + appSimpleVersion
-	appJarName = appSimpleName	+ ".jar"
-	appExe = appSimpleName + ".exe"
+	distFileNamePrefix = "$appSimpleName-$appSimpleVersion"
+	appJarName = "${appSimpleName}.jar"
+	appExe = "${appSimpleName}.exe"
 
 	// Icons
 	iconsDir = "res/icons"
-	kseIco = iconsDir + "/kse.ico"
-	ksePng = iconsDir + "/kse.png"
-	kseIcns = iconsDir + "/kse.icns"
-	keystoreIcns = iconsDir + "/keystore.icns"
+	kseIco = "$iconsDir/kse.ico"
+	ksePng = "$iconsDir/kse.png"
+	kseIcns = "$iconsDir/kse.icns"
+	keystoreIcns = "$iconsDir/keystore.icns"
 
 	// Vendor details
 	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2017 Kai Kramer"
 	vendor = "Wayne Grant, Kai Kramer"
 	website = "keystore-explorer.org"
+	
+	// Java Help properties
+	helpCfg = "$projectDir/help/help.cfg"
+	helpDir = sourceSets.main.resources.srcDirs.first().getAbsolutePath() + "/org/kse/gui/help"
+	helpSearchIndexDir = "$buildDir/org/kse/gui/help/searchindex" 
+	helpSearchIndexDirDist = "org/kse/gui/help/searchindex" 
 
 	// Main class (for manifest entry)
 	mainClass = "org.kse.KSE"
@@ -65,15 +80,6 @@ ext {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-sourceSets {
-	main.java.srcDirs = ['src']
-	main.resources.srcDirs = ['src']
-	main.resources.excludes = [ '**/*.java', '**/Thumbs.db' ]
-	test.java.srcDirs = ['test']
-	test.resources.srcDirs = ['test']
-	test.resources.excludes = [ '**/*.java' ]
-}
-
 dependencies {
 	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.58'
 	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
@@ -81,6 +87,7 @@ dependencies {
 	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
 	compile group: 'com.miglayout', name: 'miglayout-swing', version: '4.2' // TODO try 5.0
 	
+
 	// jars that are not available in a public repository
 	compile fileTree(dir: 'lib', include: '*.jar')
 	
@@ -95,8 +102,21 @@ dependencies {
 	testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
 }
 
+task javaHelpIndex(type: JavaExec, dependsOn: compileJava) {
+	// TODO remove old searchindex?   
+	main = 'com.sun.java.help.search.Indexer'
+	classpath = sourceSets.main.runtimeClasspath
+	ignoreExitValue = false
+	workingDir = helpDir
+	args '-c', helpCfg, '-db', helpSearchIndexDir
+}
+
 jar {
+	dependsOn javaHelpIndex
 	version = null
+	into(helpSearchIndexDirDist) {
+		from helpSearchIndexDir
+	} 
 	manifest {
 		attributes('Built-JDK': System.getProperty('java.version'),
 					'Implementation-Title': project.appName,
@@ -131,9 +151,9 @@ task launch4j(dependsOn: jar) {
 				jre(minVersion: "1.7.0", path: "jre") {
 					opt = "-Dkse.exe=true"
 				}
-				versionInfo(fileVersion: appVersion + ".0", fileDescription: appName, copyright: copyright,
+				versionInfo(fileVersion: "$appVersion.0", fileDescription: appName, copyright: copyright,
 					internalName: appSimpleName,  originalFilename: appExe, 
-					productName: appName, productVersion: appVersion + ".0", txtFileVersion: appVersion, 
+					productName: appName, productVersion: "$appVersion.0", txtFileVersion: appVersion, 
 					txtProductVersion: appVersion )
 			}
 		}
