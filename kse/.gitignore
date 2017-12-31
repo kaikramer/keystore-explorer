@@ -5,6 +5,8 @@
 /api
 /lib/AppleJavaExtensions.jar
 /nsis/kse.nsi
+/res/kse
+/res/kse.desktop
 /MANIFEST.MF
 .gradle
 .classpath

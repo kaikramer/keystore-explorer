@@ -83,7 +83,9 @@ ext {
 	// Main class (for manifest entry)
 	mainClass = "org.kse.KSE"
 	
+	// directories
 	distDir = "dist"
+	resDir = "res"
 }
 
 // TODO should be 1.7 for app and 1.8 for unit tests
@@ -206,14 +208,14 @@ task dist(type: Zip, dependsOn: launch4j) {
 	
 	into(distFileNamePrefix) { 
 		from jar.archivePath
-		from('res') {
+		from(resDir) {
 			include 'kse.sh'
 			fileMode 755
 		} 
 		from(distDir) {
 			include appExe
 		} 
-		from('res/readmes') {
+		from("$resDir/readmes") {
 			include 'readme.txt'
 		} 
 	}
@@ -221,7 +223,7 @@ task dist(type: Zip, dependsOn: launch4j) {
 		from configurations.runtime
 	}
 	into("$distFileNamePrefix/licenses") { 
-		from('res/licenses') {
+		from("$resDir/licenses") {
 			include '**/*.txt'
 			if (!file("lib/darcula.jar").exists()) {
 				exclude 'license-darcula.txt' 
@@ -229,7 +231,7 @@ task dist(type: Zip, dependsOn: launch4j) {
 		} 
 	}
 	into("$distFileNamePrefix/icons") { 
-		from('res/icons') {
+		from("$resDir/icons") {
 			include '**/kse_*.png'
 		} 
 	}
@@ -296,6 +298,28 @@ task signapp(type: Exec, dependsOn: appbundler) {
 task dmg(type: Exec, dependsOn: signapp) {
   workingDir distDir
   commandLine '/usr/local/bin/dropdmg', '-g', 'KSE', '-b', "${appSimpleName}-${appSimpleVersion}", "${appName}.app"
+}
+
+task resources {
+	description 'Create GNU/Linux resources from templates'
+	
+	def filterProps = [ beginToken: '@', endToken: '@', tokens: [
+			appName: appName, 
+			appSimpleName: appSimpleName, 
+		]]
+
+	copy {
+		from("$resDir/kse.sh.in")
+		into("$resDir")
+		rename("kse.sh.in", "${appSimpleName}")
+		filter(filterProps, ReplaceTokens)
+	}
+	copy {
+		from("$resDir/kse.desktop.in")
+		into("$resDir")
+		rename("kse.desktop.in", "${appSimpleName}.desktop")
+		filter(filterProps, ReplaceTokens)
+	}
 }
 
 compileTestJava {
