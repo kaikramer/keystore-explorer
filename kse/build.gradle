@@ -20,6 +20,13 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.ReplaceTokens
 
+/*
+Notes:
+- Tasks 'launch4j' and 'nsis' work only under Windows.
+- Task 'nsis' requires an installation of NSIS and its top-level directory added to the path.
+  Also, the WinShell plugin (http://nsis.sourceforge.net/WinShell_plug-in) has to be added to the NSIS installation.
+- Tasks 'signapp' and 'dmg' work only under macOS.
+*/
 buildscript {
 	repositories {
 		mavenCentral()
@@ -54,7 +61,7 @@ version = props."KSE.Version"
 ext {
 	appName = props."KSE.Name"
 	appVersion = props."KSE.Version"
-	appSimpleName = props."KSE.SimpleName"
+	appSimpleName = project.hasProperty('appSimpleName') ? project.getProperty('appSimpleName') : props."KSE.SimpleName"
 	appSimpleVersion = props."KSE.SimpleVersion"
 	appUserModelId = props."KSE.AppUserModelId"
 	distFileNamePrefix = "$appSimpleName-$appSimpleVersion"
