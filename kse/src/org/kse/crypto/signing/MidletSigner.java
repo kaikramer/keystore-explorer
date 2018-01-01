@@ -39,7 +39,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.io.CopyUtil;
@@ -172,32 +171,22 @@ public class MidletSigner {
 		}
 
 		// Write out new JAD properties to JAD file
-		FileWriter fw = null;
-
-		try {
-			fw = new FileWriter(outputJadFile);
-
+		try (FileWriter fw = new FileWriter(outputJadFile)) {
 			for (Iterator<Entry<String, String>> itrSorted = sortedJadProperties.entrySet().iterator(); itrSorted.hasNext();) {
 				Entry<String, String> property = itrSorted.next();
 
 				fw.write(MessageFormat.format(JAD_ATTR_TEMPLATE, property.getKey(), property.getValue()));
 				fw.write(CRLF);
 			}
-		} finally {
-			IOUtils.closeQuietly(fw);
 		}
 	}
 
 	private static byte[] signJarDigest(File jarFile, RSAPrivateKey privateKey) throws CryptoException {
+
 		// Create a SHA-1 signature for the supplied JAR file
-
-		FileInputStream fis = null;
-
-		try {
+		try (FileInputStream fis = new FileInputStream(jarFile)) {
 			Signature signature = Signature.getInstance(SignatureType.SHA1_RSA.jce());
-
 			signature.initSign(privateKey);
-			fis = new FileInputStream(jarFile);
 
 			byte buffer[] = new byte[1024];
 			int read = 0;
@@ -211,8 +200,6 @@ public class MidletSigner {
 			throw new CryptoException(res.getString("JarDigestSignatureFailed.exception.message"), ex);
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("JarDigestSignatureFailed.exception.message"), ex);
-		} finally {
-			IOUtils.closeQuietly(fis);
 		}
 	}
 
@@ -226,12 +213,12 @@ public class MidletSigner {
 	 *             If an I/O problem occurred or supplied file is not a JAD file
 	 */
 	public static Properties readJadFile(File jadFile) throws IOException {
-		LineNumberReader lnr = null;
 
-		try {
+		try (FileInputStream fileInputStream = new FileInputStream(jadFile);
+				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
+
 			Properties jadProperties = new Properties();
-
-			lnr = new LineNumberReader(new InputStreamReader(new FileInputStream(jadFile)));
 
 			String line = null;
 			while ((line = lnr.readLine()) != null) {
@@ -247,8 +234,6 @@ public class MidletSigner {
 			}
 
 			return jadProperties;
-		} finally {
-			IOUtils.closeQuietly(lnr);
 		}
 	}
 }

@@ -52,7 +52,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.signing.MidletSigner;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -63,6 +62,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.io.FileNameUtil;
+import org.kse.utilities.io.IOUtils;
 
 /**
  * Dialog that displays the presents MIDlet signing options.

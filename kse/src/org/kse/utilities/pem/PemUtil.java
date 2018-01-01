@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.utilities.io.ReadUtil;
 
@@ -130,10 +129,9 @@ public class PemUtil {
 	public static PemInfo decode(InputStream is) throws IOException {
 		byte[] streamContents = ReadUtil.readFully(is);
 
-		LineNumberReader lnr = null;
-
-		try {
-			lnr = new LineNumberReader(new InputStreamReader(new ByteArrayInputStream(streamContents)));
+		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(streamContents);
+				InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
+				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
 			String line = lnr.readLine();
 			StringBuffer sbBase64 = new StringBuffer();
@@ -202,8 +200,6 @@ public class PemUtil {
 					}
 				}
 			}
-		} finally {
-			IOUtils.closeQuietly(lnr);
 		}
 
 		return null; // Not PEM

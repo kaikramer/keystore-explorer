@@ -41,9 +41,9 @@ import java.util.jar.Manifest;
 
 import javax.crypto.Cipher;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.io.CopyUtil;
+import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.net.URLs;
 import org.kse.version.JavaVersion;
 
@@ -154,12 +154,8 @@ public class JcePolicyUtil {
 				if (!jarEntry.isDirectory() && entryName.endsWith(".policy")) {
 					sw.write(entryName + ":\n\n");
 
-					InputStreamReader isr = null;
-					try {
-						isr = new InputStreamReader(jarFile.getInputStream(jarEntry));
+					try (InputStreamReader isr = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
 						CopyUtil.copy(isr, sw);
-					} finally {
-						IOUtils.closeQuietly(isr);
 					}
 
 					sw.write('\n');

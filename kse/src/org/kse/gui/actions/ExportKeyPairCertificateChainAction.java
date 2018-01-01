@@ -32,7 +32,6 @@ import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -166,13 +165,9 @@ public class ExportKeyPairCertificateChainAction extends KeyStoreExplorerAction 
 	}
 
 	private void exportEncodedCertificates(byte[] encoded, File exportFile) throws IOException {
-		FileOutputStream fos = null;
-
-		try {
-			fos = new FileOutputStream(exportFile);
+		try (FileOutputStream fos = new FileOutputStream(exportFile)) {
 			fos.write(encoded);
-		} finally {
-			IOUtils.closeQuietly(fos);
+			fos.flush();
 		}
 	}
 }

@@ -48,7 +48,6 @@ import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.ApplicationSettings;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
@@ -164,16 +163,11 @@ public final class KeyStoreUtil {
 					keyStoreType.jce()));
 		}
 
-		FileInputStream fis = new FileInputStream(keyStoreFile);
-
 		KeyStore keyStore = getKeyStoreInstance(keyStoreType);
 
-		try {
+		try (FileInputStream fis = new FileInputStream(keyStoreFile)) {
 			keyStore.load(fis, password.toCharArray());
-		} catch (CertificateException ex) {
-			throw new KeyStoreLoadException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
-					keyStoreType), ex, keyStoreType);
-		} catch (NoSuchAlgorithmException ex) {
+		} catch (CertificateException | NoSuchAlgorithmException ex) {
 			throw new KeyStoreLoadException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
 					keyStoreType), ex, keyStoreType);
 		} catch (FileNotFoundException ex) {
@@ -181,8 +175,6 @@ public final class KeyStoreUtil {
 		} catch (IOException ex) {
 			throw new KeyStoreLoadException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
 					keyStoreType), ex, keyStoreType);
-		} finally {
-			IOUtils.closeQuietly(fis);
 		}
 
 		return keyStore;
@@ -319,11 +311,7 @@ public final class KeyStoreUtil {
 					keyStoreType.jce()));
 		}
 
-		FileOutputStream fos = null;
-
-		fos = new FileOutputStream(keyStoreFile);
-
-		try {
+		try (FileOutputStream fos = new FileOutputStream(keyStoreFile)) {
 			keyStore.store(fos, password.toCharArray());
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
@@ -333,8 +321,6 @@ public final class KeyStoreUtil {
 			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
 		} catch (NoSuchAlgorithmException ex) {
 			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
-		} finally {
-			IOUtils.closeQuietly(fos);
 		}
 	}
 

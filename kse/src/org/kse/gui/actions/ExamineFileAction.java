@@ -35,7 +35,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
@@ -106,11 +105,9 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 		}
 
 		OpenAction openAction = new OpenAction(kseFrame);
-		FileInputStream is = null;
-		try {
+		try (FileInputStream is = new FileInputStream(file)) {
 
 			// detect file type and use the right action class for opening the file
-			is = new FileInputStream(file);
 			CryptoFileType fileType = CryptoFileUtil.detectFileType(is);
 
 			switch (fileType) {
@@ -157,8 +154,6 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 			return;
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 	}
 

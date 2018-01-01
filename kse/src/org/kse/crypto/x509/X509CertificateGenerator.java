@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -271,15 +270,10 @@ public class X509CertificateGenerator {
 	}
 
 	private ASN1Encodable getExtensionValue(X509Extension extensions, String oid) throws CryptoException {
-		ASN1InputStream ais = null;
-
-		try {
-			ais = new ASN1InputStream(extensions.getExtensionValue(oid));
+		try (ASN1InputStream ais = new ASN1InputStream(extensions.getExtensionValue(oid))) {
 			return ais.readObject();
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		} finally {
-			IOUtils.closeQuietly(ais);
 		}
 	}
 }

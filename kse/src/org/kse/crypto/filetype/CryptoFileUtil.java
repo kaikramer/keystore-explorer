@@ -45,7 +45,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -190,10 +189,7 @@ public class CryptoFileUtil {
 	public static KeyStoreType detectKeyStoreType(InputStream is) throws IOException {
 		byte[] contents = ReadUtil.readFully(is);
 
-		DataInputStream dis = null;
-
-		try {
-			dis = new DataInputStream(new ByteArrayInputStream(contents));
+		try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(contents))) {
 
 			// If less than 4 bytes are available it isn't a KeyStore
 			if (dis.available() < 4) {
@@ -247,8 +243,6 @@ public class CryptoFileUtil {
 					return UBER;
 				}
 			}
-		} finally {
-			IOUtils.closeQuietly(dis);
 		}
 
 		// @formatter:off

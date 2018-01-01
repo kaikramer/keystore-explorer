@@ -61,7 +61,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
@@ -385,32 +384,17 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 	}
 
 	private X509CRL downloadCrl(URL url) throws IOException, CryptoException {
-		InputStream is = null;
-		try {
-			URLConnection urlConn = url.openConnection();
-
-			is = urlConn.getInputStream();
-
-			X509CRL crl = X509CertUtil.loadCRL(is);
-
-			return crl;
-		} finally {
-			IOUtils.closeQuietly(is);
+		URLConnection urlConn = url.openConnection();
+		try (InputStream is = urlConn.getInputStream()) {
+			return X509CertUtil.loadCRL(is);
 		}
 	}
 
 	private X509Certificate[] downloadCert(URL url) throws IOException, CryptoException {
-		InputStream is = null;
-		try {
-			URLConnection urlConn = url.openConnection();
-
-			is = urlConn.getInputStream();
-
+		URLConnection urlConn = url.openConnection();
+		try (InputStream is = urlConn.getInputStream()) {
 			X509Certificate[] certs = X509CertUtil.loadCertificates(is);
-
 			return certs;
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 	}
 }
