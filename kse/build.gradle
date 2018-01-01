@@ -95,9 +95,15 @@ ext {
 	resDir = "res"
 }
 
-// TODO should be 1.7 for app and 1.8 for unit tests
+// Unit tests make use of Java 8 features, but KSE should be compatible with Java 7 and Eclipse has only per-project settings 
+// (see bug report for same problem in m2e: https://bugs.eclipse.org/bugs/show_bug.cgi?id=464505)
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+compileJava {
+	sourceCompatibility = 1.7
+	targetCompatibility = 1.7
+}
 
 dependencies {
 	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.58'
@@ -122,6 +128,10 @@ dependencies {
 	
 	// To avoid compiler warnings about @API annotations in JUnit code:
 	testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+}
+
+clean {
+	delete "${distDir}"
 }
 
 task javaHelpIndex(type: JavaExec, dependsOn: compileJava) {
@@ -160,6 +170,9 @@ task launch4j(dependsOn: jar) {
 	onlyIf {
 		Os.isFamily(Os.FAMILY_WINDOWS)
 	}
+	
+	// create dist dir
+	outputs.dir(distDir)
 
 	doLast {
 		ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
@@ -168,15 +181,25 @@ task launch4j(dependsOn: jar) {
 			}
 		}
 		ant.launch4j() {
-			config(headerType: "gui", jarpath: appJarName, outfile: "$distDir/$appExe", 
-				dontWrapJar: "true", errTitle: appName, stayAlive: "false", icon: kseIco ) {
+			config(headerType: "gui", 
+					jarpath: appJarName, 
+					outfile: "$distDir/$appExe", 
+					dontWrapJar: "true", 
+					errTitle: appName, 
+					stayAlive: "false", 
+					icon: kseIco ) {
 				jre(minVersion: "1.7.0", path: "jre") {
 					opt = "-Dkse.exe=true"
 				}
-				versionInfo(fileVersion: "$appVersion.0", fileDescription: appName, copyright: copyright,
-					internalName: appSimpleName,  originalFilename: appExe, 
-					productName: appName, productVersion: "$appVersion.0", txtFileVersion: appVersion, 
-					txtProductVersion: appVersion )
+				versionInfo(fileVersion: "$appVersion.0", 
+							fileDescription: appName, 
+							copyright: copyright,
+							internalName: appSimpleName, 
+							originalFilename: appExe, 
+							productName: appName, 
+							productVersion: "$appVersion.0", 
+							txtFileVersion: appVersion, 
+							txtProductVersion: appVersion )
 			}
 		}
 	}
@@ -327,11 +350,4 @@ task resources {
 		rename("kse.desktop.in", "${appSimpleName}.desktop")
 		filter(filterProps, ReplaceTokens)
 	}
-}
-
-compileTestJava {
-	// unit tests make use of Java 8 features
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
-	options.compilerArgs += '-parameters'
 }
