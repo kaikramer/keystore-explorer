@@ -19,6 +19,7 @@
 */
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.ReplaceTokens
+import java.nio.file.Paths
 
 /*
 Notes:
@@ -68,9 +69,16 @@ ext {
 	appJarName = "${appSimpleName}.jar"
 	appExe = "${appSimpleName}.exe"
 	appBundle = "${appName}.app"
+	
+	// Directories
+	resDir = "$projectDir/res"
+	iconsDir = "$resDir/icons"
+	licensesDir = "$resDir/licenses"
+	readmesDir = "$resDir/readmes"
+	launch4jOutDir = "$buildDir/launch4j"
+	dmgDir = "$buildDir/dmg"
 
 	// Icons
-	iconsDir = "res/icons"
 	kseIco = "$iconsDir/kse.ico"
 	ksePng = "$iconsDir/kse.png"
 	kseIcns = "$iconsDir/kse.icns"
@@ -84,15 +92,11 @@ ext {
 	// Java Help properties
 	helpCfg = "$projectDir/help/help.cfg"
 	helpDir = sourceSets.main.resources.srcDirs.first().getAbsolutePath() + "/org/kse/gui/help"
-	helpSearchIndexDir = "$buildDir/org/kse/gui/help/searchindex" 
+	helpSearchIndexDir = "$buildDir/searchindex" 
 	helpSearchIndexDirDist = "org/kse/gui/help/searchindex" 
 
 	// Main class (for manifest entry)
 	mainClass = "org.kse.KSE"
-	
-	// directories
-	distDir = "dist"
-	resDir = "res"
 }
 
 // Unit tests make use of Java 8 features, but KSE should be compatible with Java 7 and Eclipse has only per-project settings 
@@ -130,17 +134,13 @@ dependencies {
 	testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
 }
 
-clean {
-	delete "${distDir}"
-}
-
 task javaHelpIndex(type: JavaExec, dependsOn: compileJava) {
-	// TODO remove old searchindex?   
 	main = 'com.sun.java.help.search.Indexer'
 	classpath = sourceSets.main.runtimeClasspath
 	ignoreExitValue = false
 	workingDir = helpDir
 	args '-c', helpCfg, '-db', helpSearchIndexDir
+	outputs.dir(helpSearchIndexDir)
 }
 
 jar {
@@ -171,8 +171,7 @@ task launch4j(dependsOn: jar) {
 		Os.isFamily(Os.FAMILY_WINDOWS)
 	}
 	
-	// create dist dir
-	outputs.dir(distDir)
+	outputs.dir(launch4jOutDir)
 
 	doLast {
 		ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
@@ -183,7 +182,7 @@ task launch4j(dependsOn: jar) {
 		ant.launch4j() {
 			config(headerType: "gui", 
 					jarpath: appJarName, 
-					outfile: "$distDir/$appExe", 
+					outfile: "$launch4jOutDir/$appExe", 
 					dontWrapJar: "true", 
 					errTitle: appName, 
 					stayAlive: "false", 
@@ -205,47 +204,16 @@ task launch4j(dependsOn: jar) {
 	}
 }
 
-task nsis(dependsOn: launch4j) {
-	doLast {
-		def nsisScript = "kse.nsi"
-		
-		copy {
-			from configurations.runtime
-			into "$distDir/lib"
-		}
-		copy {
-			from jar.archivePath
-			into distDir
-		}
-		copy {
-			from("nsis/${nsisScript}.template")
-			rename("${nsisScript}.template", nsisScript)
-			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
-				KSE_VERSION: appVersion, 
-				KSE_SIMPLE_VERSION: appSimpleVersion, 
-				KSE_APP_USER_MODEL_ID: appUserModelId
-			])
-			into("nsis")
-		}
-		exec {
-			workingDir "$projectDir/nsis"
-			commandLine "makensis", "/V2", nsisScript
-		}
-	}
-}
-
-task dist(type: Zip, dependsOn: launch4j) {
+task zip(type: Zip, dependsOn: launch4j) {
 	
 	into(distFileNamePrefix) { 
 		from jar.archivePath
+		from launch4j.outputs.files
 		from(resDir) {
 			include 'kse.sh'
 			fileMode 755
 		} 
-		from(distDir) {
-			include appExe
-		} 
-		from("$resDir/readmes") {
+		from(readmesDir) {
 			include 'readme.txt'
 		} 
 	}
@@ -253,7 +221,7 @@ task dist(type: Zip, dependsOn: launch4j) {
 		from configurations.runtime
 	}
 	into("$distFileNamePrefix/licenses") { 
-		from("$resDir/licenses") {
+		from(licensesDir) {
 			include '**/*.txt'
 			if (!file("lib/darcula.jar").exists()) {
 				exclude 'license-darcula.txt' 
@@ -261,14 +229,42 @@ task dist(type: Zip, dependsOn: launch4j) {
 		} 
 	}
 	into("$distFileNamePrefix/icons") { 
-		from("$resDir/icons") {
+		from(iconsDir) {
 			include '**/kse_*.png'
 		} 
 	}
+}
+
+task nsis(dependsOn: launch4j) {
+	
+	outputs.dir(distsDir)
+	
 	doLast {
+		def nsisScript = "kse.nsi"
+		def libDir = Paths.get(buildDir.toString(), "nsis", "lib")
 		copy {
-			from outputs.files
-			into distDir
+			from configurations.runtime
+			into libDir
+		}
+		copy {
+			from("nsis/${nsisScript}.template")
+			rename("${nsisScript}.template", nsisScript)
+			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
+				KSE_VERSION: appVersion, 
+				KSE_SIMPLE_VERSION: appSimpleVersion, 
+				KSE_APP_USER_MODEL_ID: appUserModelId,
+				ICONS_DIR: iconsDir.toString(),
+				LICENSES_DIR: licensesDir.toString(),
+				JAR_DIR: libsDir.toString(),
+				LIB_DIR: libDir.toString(),
+				LAUNCH4J_DIR: launch4jOutDir.toString(),
+				DIST_DIR: distsDir.toString()
+			])
+			into("nsis")
+		}
+		exec {
+			workingDir "$projectDir/nsis"
+			commandLine "makensis", "/V2", nsisScript
 		}
 	}
 }
@@ -282,13 +278,13 @@ task appbundler(dependsOn: jar) {
 		}
 		copy {
 			from configurations.runtime
-			into "$distDir/lib"
+			into "$dmgDir/lib"
 		}
 		copy {
 			from jar.archivePath
-			into distDir
+			into dmgDir
 		}
-		ant.bundleapp(outputdirectory: distDir, 
+		ant.bundleapp(outputdirectory: distsDir.toString(), 
 					name: appName, 
 					displayname: appName, 
 					executableName: appName, 
@@ -300,8 +296,8 @@ task appbundler(dependsOn: jar) {
 					copyright: copyright, 
 					applicationCategory: "public.app-category.developer-tools"					
 					) {
-			classpath(dir: "$distDir/lib")
-			classpath(file: "$distDir/$appJarName")
+			classpath(dir: "$dmgDir/lib")
+			classpath(file: "$dmgDir/$appJarName")
 			arch(name: "x86_64")
 			bundledocument(extensions: "ks,jks,jceks,keystore,bks,uber,pfx,p12",
 							icon: keystoreIcns,
@@ -321,12 +317,12 @@ task appbundler(dependsOn: jar) {
 }
 
 task signapp(type: Exec, dependsOn: appbundler) {
-  workingDir distDir
+  workingDir dmgDir
   commandLine 'codesign', '-s', 'Kai Kramer', "${appName}.app"
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
-  workingDir distDir
+  workingDir dmgDir
   commandLine '/usr/local/bin/dropdmg', '-g', 'KSE', '-b', "${appSimpleName}-${appSimpleVersion}", "${appName}.app"
 }
 

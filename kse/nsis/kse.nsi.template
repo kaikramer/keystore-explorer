@@ -87,10 +87,10 @@ ReserveFile ${FILE_ASSOCIATIONS_DIALOG}
 !define SHCNF_IDLIST 0
 
 ; Install icon
-!define MUI_ICON "..\res\icons\${INSTALL_ICO}"
+!define MUI_ICON "%ICONS_DIR%\${INSTALL_ICO}"
 
 ; Uninstall icon
-!define MUI_UNICON "..\res\icons\${UNINSTALL_ICO}"
+!define MUI_UNICON "%ICONS_DIR%\${UNINSTALL_ICO}"
 
 ; Required for menu shortcuts to be removed on uninstall
 RequestExecutionLevel admin
@@ -103,7 +103,7 @@ RequestExecutionLevel admin
 Name "${PRODUCT} ${VERSION}"
 
 ; Install file to create
-OutFile "..\dist\kse-${SIMPLE_VERSION}-setup.exe"
+OutFile "%DIST_DIR%\kse-${SIMPLE_VERSION}-setup.exe"
 
 ; Only one component therefore no customization is required
 InstType /NOCUSTOM
@@ -174,22 +174,22 @@ Section "${PRODUCT}"
     SetOutPath "$INSTDIR"
 
     ; Files to install
-    File "..\dist\${KSE_EXE}"
-    File "..\dist\${KSE_JAR}"
-    File /r "..\dist\lib"
-    File "..\res\icons\${KSE_ICO}"
-    File "..\res\icons\${KEYSTORE_ICO}"
-    File "..\res\icons\${WWW_ICO}"
-    File "..\res\icons\${LICENSES_ICO}"
+    File "%LAUNCH4J_DIR%\${KSE_EXE}"
+    File "%JAR_DIR%\${KSE_JAR}"
+    File /r "%LIB_DIR%"
+    File "%ICONS_DIR%\${KSE_ICO}"
+    File "%ICONS_DIR%\${KEYSTORE_ICO}"
+    File "%ICONS_DIR%\${WWW_ICO}"
+    File "%ICONS_DIR%\${LICENSES_ICO}"
     CreateDirectory $INSTDIR\${LICENSE_DIR}
-    File /oname=${LICENSE_DIR}\bouncycastle.txt "..\res\licenses\license-bouncycastle.txt"
-    File /oname=${LICENSE_DIR}\javahelp.txt "..\res\licenses\license-javahelp.txt"
-    File /oname=${LICENSE_DIR}\jgoodies.txt "..\res\licenses\license-jgoodies.txt"
-    File /oname=${LICENSE_DIR}\kse.txt "..\res\licenses\license-kse.txt"
-    File /oname=${LICENSE_DIR}\miglayout.txt "..\res\licenses\license-miglayout.txt"
-    File /oname=${LICENSE_DIR}\jna.txt "..\res\licenses\license-jna.txt"
-    File /oname=${LICENSE_DIR}\apache-commons.txt "..\res\licenses\license-apache-commons.txt"
-    File /oname=${LICENSE_DIR}\darcula.txt "..\res\licenses\license-darcula.txt"
+    File /oname=${LICENSE_DIR}\bouncycastle.txt "%LICENSES_DIR%\license-bouncycastle.txt"
+    File /oname=${LICENSE_DIR}\javahelp.txt "%LICENSES_DIR%\license-javahelp.txt"
+    File /oname=${LICENSE_DIR}\jgoodies.txt "%LICENSES_DIR%\license-jgoodies.txt"
+    File /oname=${LICENSE_DIR}\kse.txt "%LICENSES_DIR%\license-kse.txt"
+    File /oname=${LICENSE_DIR}\miglayout.txt "%LICENSES_DIR%\license-miglayout.txt"
+    File /oname=${LICENSE_DIR}\jna.txt "%LICENSES_DIR%\license-jna.txt"
+    File /oname=${LICENSE_DIR}\apache-commons.txt "%LICENSES_DIR%\license-apache-commons.txt"
+    File /oname=${LICENSE_DIR}\darcula.txt "%LICENSES_DIR%\license-darcula.txt"
 
     ; Write the installation path into the registry
     WriteRegStr HKLM "SOFTWARE\${PRODUCT_KEY}" "Install_Dir" "$INSTDIR"
