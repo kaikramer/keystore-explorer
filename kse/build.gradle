@@ -42,6 +42,8 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
+defaultTasks 'zip'
+
 repositories {
 	mavenCentral()
 }
@@ -205,6 +207,8 @@ task launch4j(dependsOn: jar) {
 }
 
 task zip(type: Zip, dependsOn: launch4j) {
+
+	version = appSimpleVersion
 	
 	into(distFileNamePrefix) { 
 		from jar.archivePath
@@ -270,6 +274,9 @@ task nsis(dependsOn: launch4j) {
 }
 
 task appbundler(dependsOn: jar) {
+
+	outputs.dir("$dmgDir/$appBundle")
+
 	doLast {
 		ant.taskdef(name: 'bundleapp', classname: 'com.oracle.appbundler.AppBundlerTask') {
 			classpath {
@@ -284,7 +291,7 @@ task appbundler(dependsOn: jar) {
 			from jar.archivePath
 			into dmgDir
 		}
-		ant.bundleapp(outputdirectory: distsDir.toString(), 
+		ant.bundleapp(outputdirectory: dmgDir, 
 					name: appName, 
 					displayname: appName, 
 					executableName: appName, 
@@ -317,13 +324,16 @@ task appbundler(dependsOn: jar) {
 }
 
 task signapp(type: Exec, dependsOn: appbundler) {
-  workingDir dmgDir
-  commandLine 'codesign', '-s', 'Kai Kramer', "${appName}.app"
+	workingDir dmgDir
+	outputs.dir("$dmgDir/$appBundle")
+	commandLine 'codesign', '-s', 'Kai Kramer', "${appBundle}"
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
-  workingDir dmgDir
-  commandLine '/usr/local/bin/dropdmg', '-g', 'KSE', '-b', "${appSimpleName}-${appSimpleVersion}", "${appName}.app"
+	workingDir dmgDir
+	outputs.file("$distsDir/${appSimpleName}-${appSimpleVersion}.dmg")
+	commandLine '/usr/local/bin/dropdmg', '-y', 'KSE 5', '-o', distsDir, '-b', "${appSimpleName}-${appSimpleVersion}", 
+				'--signing-identity=683348D91DCE57101313B0F2C88C084E1C2C7A31', "${appBundle}"
 }
 
 task resources {
