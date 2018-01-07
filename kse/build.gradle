@@ -78,7 +78,8 @@ ext {
 	licensesDir = "$resDir/licenses"
 	readmesDir = "$resDir/readmes"
 	launch4jOutDir = "$buildDir/launch4j"
-	dmgDir = "$buildDir/dmg"
+	appBundleDir = "$buildDir/appBundle"
+	dependenciesDir = Paths.get(buildDir.toString(), "dependencies") // for NSIS we need Windows path separators
 
 	// Icons
 	kseIco = "$iconsDir/kse.ico"
@@ -172,9 +173,7 @@ task launch4j(dependsOn: jar) {
 	onlyIf {
 		Os.isFamily(Os.FAMILY_WINDOWS)
 	}
-	
 	outputs.dir(launch4jOutDir)
-
 	doLast {
 		ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
 			classpath {
@@ -207,9 +206,7 @@ task launch4j(dependsOn: jar) {
 }
 
 task zip(type: Zip, dependsOn: launch4j) {
-
 	version = appSimpleVersion
-	
 	into(distFileNamePrefix) { 
 		from jar.archivePath
 		from launch4j.outputs.files
@@ -239,17 +236,15 @@ task zip(type: Zip, dependsOn: launch4j) {
 	}
 }
 
-task nsis(dependsOn: launch4j) {
-	
+task copyDependencies(type: Copy) {
+   from configurations.compile
+   into dependenciesDir
+}
+
+task nsis(dependsOn: [launch4j, copyDependencies]) {
 	outputs.dir(distsDir)
-	
 	doLast {
 		def nsisScript = "kse.nsi"
-		def libDir = Paths.get(buildDir.toString(), "nsis", "lib")
-		copy {
-			from configurations.runtime
-			into libDir
-		}
 		copy {
 			from("nsis/${nsisScript}.template")
 			rename("${nsisScript}.template", nsisScript)
@@ -260,7 +255,7 @@ task nsis(dependsOn: launch4j) {
 				ICONS_DIR: iconsDir.toString(),
 				LICENSES_DIR: licensesDir.toString(),
 				JAR_DIR: libsDir.toString(),
-				LIB_DIR: libDir.toString(),
+				LIB_DIR: dependenciesDir.toString(),
 				LAUNCH4J_DIR: launch4jOutDir.toString(),
 				DIST_DIR: distsDir.toString()
 			])
@@ -273,25 +268,15 @@ task nsis(dependsOn: launch4j) {
 	}
 }
 
-task appbundler(dependsOn: jar) {
-
-	outputs.dir("$dmgDir/$appBundle")
-
+task appbundler(dependsOn: [jar, copyDependencies]) {
+	outputs.dir("$appBundleDir/$appBundle")
 	doLast {
 		ant.taskdef(name: 'bundleapp', classname: 'com.oracle.appbundler.AppBundlerTask') {
 			classpath {
 				fileset(dir: 'lib', includes: 'appbundler-1.0ea.jar' )
 			}
 		}
-		copy {
-			from configurations.runtime
-			into "$dmgDir/lib"
-		}
-		copy {
-			from jar.archivePath
-			into dmgDir
-		}
-		ant.bundleapp(outputdirectory: dmgDir, 
+		ant.bundleapp(outputdirectory: appBundleDir, 
 					name: appName, 
 					displayname: appName, 
 					executableName: appName, 
@@ -303,8 +288,8 @@ task appbundler(dependsOn: jar) {
 					copyright: copyright, 
 					applicationCategory: "public.app-category.developer-tools"					
 					) {
-			classpath(dir: "$dmgDir/lib")
-			classpath(file: "$dmgDir/$appJarName")
+			classpath(dir: dependenciesDir)
+			classpath(file: jar.archivePath)
 			arch(name: "x86_64")
 			bundledocument(extensions: "ks,jks,jceks,keystore,bks,uber,pfx,p12",
 							icon: keystoreIcns,
@@ -317,20 +302,18 @@ task appbundler(dependsOn: jar) {
 			option(value: "-Dcom.apple.mrj.application.apple.menu.about.name=${appName}")
 			option(value: "-Dcom.apple.smallTabs=true")
 			option(value: "-Dfile.encoding=UTF-8")
-			// Workaround since the icon parameter for bundleapp doesn't work
-			option(value: "-Xdock:icon=Contents/Resources/${kseIcns}") 
 		}
 	}
 }
 
 task signapp(type: Exec, dependsOn: appbundler) {
-	workingDir dmgDir
-	outputs.dir("$dmgDir/$appBundle")
+	workingDir appBundleDir
+	outputs.dir("$appBundleDir/$appBundle")
 	commandLine 'codesign', '-s', 'Kai Kramer', "${appBundle}"
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
-	workingDir dmgDir
+	workingDir appBundleDir
 	outputs.file("$distsDir/${appSimpleName}-${appSimpleVersion}.dmg")
 	commandLine '/usr/local/bin/dropdmg', '-y', 'KSE 5', '-o', distsDir, '-b', "${appSimpleName}-${appSimpleVersion}", 
 				'--signing-identity=683348D91DCE57101313B0F2C88C084E1C2C7A31', "${appBundle}"
@@ -338,12 +321,10 @@ task dmg(type: Exec, dependsOn: signapp) {
 
 task resources {
 	description 'Create GNU/Linux resources from templates'
-	
 	def filterProps = [ beginToken: '@', endToken: '@', tokens: [
 			appName: appName, 
 			appSimpleName: appSimpleName, 
 		]]
-
 	copy {
 		from("$resDir/kse.sh.in")
 		into("$resDir")
