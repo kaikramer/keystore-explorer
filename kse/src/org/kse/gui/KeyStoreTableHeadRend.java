@@ -20,6 +20,7 @@
 package org.kse.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -56,6 +57,9 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	private static int iSubjectCNColumn = -1;
 	private static int iIssuerOColumn = -1;
 	private static int iSubjectOColumn = -1;
+	private static int iFontSize = 	LnfUtil.getDefaultFontSize();
+	private static int iHeight = 	(int)(1.2 *LnfUtil.getDefaultFontSize());
+
 	public KeyStoreTableHeadRend(TableCellRenderer delegate) {
 		this.delegate = delegate;
 	}
@@ -142,13 +146,11 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable jtKeyStore, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
-
+		int iWidth;
 		Component c = delegate.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
-
 		if (c instanceof JLabel) {
 
 			JLabel header = (JLabel) c;
-
 			// The entry type header contains an icon (entry type)
 			if (col == 0) {
 				header.setText("");
@@ -157,7 +159,6 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);
-
 				header.setToolTipText(res.getString("KeyStoreTableHeadRend.TypeColumn.tooltip"));
 			}
 			// As does the lock status
@@ -184,7 +185,10 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 			}
 			// The other headers contain text
 			else {
-				header.setText((String) value);
+				String text = (String) value;
+				iWidth = iFontSize * (2 +text.length());
+				header.setSize(iWidth, iHeight);
+				header.setText(text);
 				header.setHorizontalAlignment(LEFT);
 
 				if (col == iNameColumn) {

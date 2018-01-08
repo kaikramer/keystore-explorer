@@ -20,6 +20,7 @@
 package org.kse.gui;
 
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -49,7 +50,7 @@ public class KeyStoreTab extends JPanel {
 	private JButton jbClose;
 	private KseFrame kseFrame;
 	private KeyStoreHistory history;
-
+	
 	/**
 	 * Construct KeyStore tab.
 	 *
