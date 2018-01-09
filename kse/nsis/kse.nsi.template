@@ -40,14 +40,14 @@
  BrandingText "Copyright 2004 - 2013 Wayne Grant, 2013 - 2018 Kai Kramer"
 
 ; Product name
-!define PRODUCT "KeyStore Explorer"
+!define PRODUCT "%KSE_NAME%"
 
 ; Product version
 !define VERSION "%KSE_VERSION%"
 !define SIMPLE_VERSION "%KSE_SIMPLE_VERSION%"
 
 ; Product key (name and version)
-!define PRODUCT_KEY "${PRODUCT} ${VERSION}"
+!define PRODUCT_KEY "${PRODUCT}"
 
 ; AppUserModelId (see http://stackoverflow.com/questions/5438651/launch4j-nsis-and-duplicate-pinned-windows-7-taskbar-icons)
 !define KSE_AppUserModelId "%KSE_APP_USER_MODEL_ID%"
@@ -176,7 +176,6 @@ Section "${PRODUCT}"
     ; Files to install
     File "%LAUNCH4J_DIR%\${KSE_EXE}"
     File "%JAR_DIR%\${KSE_JAR}"
-    File /r "%LIB_DIR%"
     File "%ICONS_DIR%\${KSE_ICO}"
     File "%ICONS_DIR%\${KEYSTORE_ICO}"
     File "%ICONS_DIR%\${WWW_ICO}"
@@ -191,6 +190,11 @@ Section "${PRODUCT}"
     File /oname=${LICENSE_DIR}\apache-commons.txt "%LICENSES_DIR%\license-apache-commons.txt"
     File /oname=${LICENSE_DIR}\darcula.txt "%LICENSES_DIR%\license-darcula.txt"
 
+	; Lib directory    
+    CreateDirectory "$INSTDIR\lib"
+    SetOutPath "$INSTDIR\lib"
+    File "%LIB_DIR%\*.jar"
+
     ; Write the installation path into the registry
     WriteRegStr HKLM "SOFTWARE\${PRODUCT_KEY}" "Install_Dir" "$INSTDIR"
 
@@ -200,7 +204,7 @@ Section "${PRODUCT}"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayIcon" "$INSTDIR\${KSE_ICO}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "Publisher" "Kai Kramer"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayVersion" "${VERSION}"
-	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "EstimatedSize" 9800 ;KB
+	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "EstimatedSize" 10700 ;KB
 	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "NoModify" 1
 	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "NoRepair" 1
 
@@ -312,7 +316,10 @@ Function .onInit
     StrCpy ${KSJKS_FILE_ASSOC} 1
     StrCpy ${PKCS12_FILE_ASSOC} 1
     StrCpy ${KSBC_FILE_ASSOC} 1
-
+    
+    ; TODO Check for running instances before starting the installation
+	; http://nsis.sourceforge.net/Check_whether_your_application_is_running#Using_the_name_of_the_process
+	; http://nsis.sourceforge.net/NsProcess_plugin
 FunctionEnd
 
 ;

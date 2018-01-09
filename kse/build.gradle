@@ -143,7 +143,6 @@ task javaHelpIndex(type: JavaExec, dependsOn: compileJava) {
 	ignoreExitValue = false
 	workingDir = helpDir
 	args '-c', helpCfg, '-db', helpSearchIndexDir
-	outputs.dir(helpSearchIndexDir)
 }
 
 jar {
@@ -173,7 +172,6 @@ task launch4j(dependsOn: jar) {
 	onlyIf {
 		Os.isFamily(Os.FAMILY_WINDOWS)
 	}
-	outputs.dir(launch4jOutDir)
 	doLast {
 		ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
 			classpath {
@@ -209,7 +207,7 @@ task zip(type: Zip, dependsOn: launch4j) {
 	version = appSimpleVersion
 	into(distFileNamePrefix) { 
 		from jar.archivePath
-		from launch4j.outputs.files
+		from "$launch4jOutDir/$appExe"
 		from(resDir) {
 			include 'kse.sh'
 			fileMode 755
@@ -242,13 +240,13 @@ task copyDependencies(type: Copy) {
 }
 
 task nsis(dependsOn: [launch4j, copyDependencies]) {
-	outputs.dir(distsDir)
 	doLast {
 		def nsisScript = "kse.nsi"
 		copy {
 			from("nsis/${nsisScript}.template")
 			rename("${nsisScript}.template", nsisScript)
 			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
+				KSE_NAME: appName, 
 				KSE_VERSION: appVersion, 
 				KSE_SIMPLE_VERSION: appSimpleVersion, 
 				KSE_APP_USER_MODEL_ID: appUserModelId,
@@ -269,7 +267,6 @@ task nsis(dependsOn: [launch4j, copyDependencies]) {
 }
 
 task appbundler(dependsOn: [jar, copyDependencies]) {
-	outputs.dir("$appBundleDir/$appBundle")
 	doLast {
 		ant.taskdef(name: 'bundleapp', classname: 'com.oracle.appbundler.AppBundlerTask') {
 			classpath {
@@ -308,13 +305,11 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 
 task signapp(type: Exec, dependsOn: appbundler) {
 	workingDir appBundleDir
-	outputs.dir("$appBundleDir/$appBundle")
 	commandLine 'codesign', '-s', 'Kai Kramer', "${appBundle}"
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
 	workingDir appBundleDir
-	outputs.file("$distsDir/${appSimpleName}-${appSimpleVersion}.dmg")
 	commandLine '/usr/local/bin/dropdmg', '-y', 'KSE 5', '-o', distsDir, '-b', "${appSimpleName}-${appSimpleVersion}", 
 				'--signing-identity=683348D91DCE57101313B0F2C88C084E1C2C7A31', "${appBundle}"
 }
