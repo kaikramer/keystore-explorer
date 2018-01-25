@@ -19,8 +19,7 @@
  */
 package org.kse.crypto.keystore;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,8 +27,8 @@ import java.security.KeyStore;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.kse.crypto.Password;
 import org.kse.crypto.CryptoTestsBase;
+import org.kse.crypto.Password;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
 /**
@@ -56,20 +55,20 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
 	public void doTests(KeyStoreType keyStoreType) throws Exception {
 		KeyStore keyStore = KeyStoreUtil.create(keyStoreType);
 
-		assertNotNull(keyStore);
-		assertEquals(keyStore.getType(), keyStoreType.jce());
+		assertThat(keyStore).isNotNull();
+		assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
 
 		File keyStoreFile = File.createTempFile("keystore", null);
 		keyStoreFile.deleteOnExit();
 
 		KeyStoreUtil.save(keyStore, keyStoreFile, PASSWORD);
 
-		assertEquals(keyStoreType, CryptoFileUtil.detectKeyStoreType(new FileInputStream(keyStoreFile)));
-		assertEquals(keyStoreType.getCryptoFileType(), CryptoFileUtil.detectFileType(new FileInputStream(keyStoreFile)));
+		assertThat(keyStoreType).isEqualTo(CryptoFileUtil.detectKeyStoreType(new FileInputStream(keyStoreFile)));
+		assertThat(keyStoreType.getCryptoFileType()).isEqualTo(CryptoFileUtil.detectFileType(new FileInputStream(keyStoreFile)));
 
 		KeyStoreUtil.load(keyStoreFile, PASSWORD);
 
-		assertNotNull(keyStore);
-		assertEquals(keyStore.getType(), keyStoreType.jce());
+		assertThat(keyStore).isNotNull();
+		assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
 	}
 }

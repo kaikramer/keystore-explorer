@@ -19,15 +19,14 @@
  */
 package org.kse.crypto.secretkey;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.crypto.SecretKey;
 
 import org.junit.jupiter.api.Test;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.KeyInfo;
 import org.kse.crypto.CryptoTestsBase;
+import org.kse.crypto.KeyInfo;
 
 
 public class SecretKeyUtilTest extends CryptoTestsBase {
@@ -45,9 +44,9 @@ public class SecretKeyUtilTest extends CryptoTestsBase {
 
 			KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
 
-			assertTrue(secretKeyType.jce().equalsIgnoreCase(keyInfo.getAlgorithm()));
-			assertEquals(secretKeyType, SecretKeyType.resolveJce(keyInfo.getAlgorithm()));
-			assertEquals(keySize, keyInfo.getSize().intValue());
+			assertThat(secretKeyType.jce()).isEqualToIgnoringCase(keyInfo.getAlgorithm());
+			assertThat(secretKeyType).isEqualTo(SecretKeyType.resolveJce(keyInfo.getAlgorithm()));
+			assertThat(keySize).isEqualTo(keyInfo.getSize().intValue());
 		}
 	}
 }

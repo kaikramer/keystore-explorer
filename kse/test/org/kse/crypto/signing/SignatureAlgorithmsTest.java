@@ -19,7 +19,7 @@
  */
 package org.kse.crypto.signing;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 import static org.kse.crypto.x509.X509CertificateVersion.VERSION1;
@@ -151,13 +151,13 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			spkac.output(baos);
 			spkac = new Spkac(new ByteArrayInputStream(baos.toByteArray()));
-			assertTrue(spkac.verify());
+			assertThat(spkac.verify()).isTrue();
 		} else {
 			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(cert, privateKey, signatureType, "w/e", "w/e",
 					false, new BouncyCastleProvider());
 			byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
 			pkcs10 = Pkcs10Util.loadCsr(new ByteArrayInputStream(encoded));
-			assertTrue(Pkcs10Util.verifyCsr(pkcs10));
+			assertThat(Pkcs10Util.verifyCsr(pkcs10)).isTrue();
 		}
 	}
 }

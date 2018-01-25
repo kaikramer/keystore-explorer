@@ -19,7 +19,7 @@
  */
 package org.kse.crypto.digest;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -48,6 +48,6 @@ public class DigestUtilTest extends CryptoTestsBase {
 	})
 	public void testMessageDigests(DigestType digestType) throws Exception {
 		String digest = DigestUtil.getFriendlyMessageDigest(MESSAGE.getBytes(), digestType);
-		assertTrue(!digest.equals(MESSAGE));
+		assertThat(digest).isNotEqualTo(MESSAGE);
 	}
 }
