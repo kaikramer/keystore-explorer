@@ -26,10 +26,15 @@ import static org.kse.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
@@ -38,8 +43,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.kse.crypto.KeyTestsBase;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
- * Unit tests for OpenSslPvkUtil. Encodes a RSA and DSA private keys using
+ * Unit tests for OpenSslPvkUtil. Encodes a RSA, EC and DSA private keys using
  * OpenSSL format and reads them back using a variety of options.
  *
  */
@@ -63,9 +70,7 @@ public class OpenSslPvkUtilTest extends KeyTestsBase {
 
 	@TestFactory
 	Iterable<DynamicTest> testAllPbeTypes() throws Exception {
-
 		List<DynamicTest> tests = new ArrayList<>();
-
 		for (PrivateKey privateKey : privateKeys()) {
 			for (OpenSslPbeType pbeType : OpenSslPbeType.values()) {
 				tests.add(dynamicTest("test " + pbeType.name() + "/" + privateKey.getClass().getSimpleName(), () -> {
@@ -75,8 +80,19 @@ public class OpenSslPvkUtilTest extends KeyTestsBase {
 				}));
 			}
 		}
-
 		return tests;
+	}
+
+	@ParameterizedTest
+	@MethodSource("privateKeys")
+	public void checkCompatibilityWithBC(PrivateKey privateKey) throws Exception {
+		String key = OpenSslPvkUtil.getPem(privateKey);
+		try (PEMParser pemParser = new PEMParser(new StringReader(key))) {
+			Object obj = pemParser.readObject();
+			assertThat(obj).isInstanceOf(PEMKeyPair.class);
+			KeyPair keyPair = new JcaPEMKeyConverter().getKeyPair((PEMKeyPair) obj);
+			assertThat(keyPair.getPrivate()).isEqualTo(privateKey);
+		}
 	}
 
 	@Test
