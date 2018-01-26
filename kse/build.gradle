@@ -179,6 +179,7 @@ task launch4j(dependsOn: jar) {
 				fileset(dir: 'launch4j', includes: 'launch4j.jar,lib/xstream.jar' )
 			}
 		}
+		mkdir launch4jOutDir
 		ant.launch4j() {
 			config(headerType: "gui", 
 					jarpath: appJarName, 
