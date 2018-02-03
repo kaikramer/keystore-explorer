@@ -10,7 +10,7 @@ The following is a set of guidelines and suggestions for contributing to KSE. Th
 
 One of the best ways you can help us improve KSE is to let us know about any problems you find with it.
 
-The KSE project uses [GitHub issues](https://guides.github.com/features/issues/) to report and track bugs.
+The KSE project uses [GitHub issues](https://github.com/kaikramer/keystore-explorer/issues) to report and track bugs.
 
 Before you file an issue, search for it to see if anyone has already reported it. If you find your issue, check if you can provide additional information, that might be useful to resolve the issue.
 
@@ -35,14 +35,14 @@ In order to make the review of the PR a pleasant experience for contributors and
 * Check that the code formatting matches the existing code.
 * Make sure no unrelated or unnecessary reformatting changes are included.
 
-If you intend to implement a non-trivial enhancement or a new feature, please make sure there is an [issue](https://guides.github.com/features/issues/) that corresponds to your contribution &ndash; either created by you or by somebody else. Announce in the issue that you intend to work on it to make sure that the work is not done twice. This is also a good way to get some guidance on how 	to beste tackle a problem or discuss implementation ideas. It is also necessary to sign a Contributor License Agreement (CLA) in this case.
+If you intend to implement a non-trivial enhancement or a new feature, please make sure there is an [issue](https://github.com/kaikramer/keystore-explorer/issues) that corresponds to your contribution &ndash; either created by you or by somebody else. Announce in the issue that you intend to work on it to make sure that the work is not done twice. This is also a good way to get some guidance on how 	to beste tackle a problem or discuss implementation ideas. It is also necessary to sign a Contributor License Agreement (CLA) in this case.
 
 ### Contributing to the Documentation or Website
 
 Good documentation is crucial for any kind of software. You can help improving the documentation:
-* Please report missing, incorrect, or out-dated documentation as an [issue](https://guides.github.com/features/issues/).
-* Please open an [issue](https://guides.github.com/features/issues/) as well if you think the website could be improved.
+* Please report missing, incorrect, or out-dated documentation as an [issue](https://github.com/kaikramer/keystore-explorer/issues).
+* The [KSE website](http://keystore-explorer.org) is in a [GitHub repository](https://github.com/kaikramer/kaikramer.github.io) just like the KSE source code, which means improvements for the website can be contributed in the same way. Or you could open an [issue](https://github.com/kaikramer/keystore-explorer/issues) if you think the website could be improved, but don't want to do it yourself.
 
 ### Translations
 
-You are welcome to translate the KSE application or documentation into your own language. Just create a	[issue](https://guides.github.com/features/issues/) where you announce that you want to work on translating KSE in a certain language.
+You are welcome to translate the KSE application or documentation into your own language. Just create a	[issue](https://github.com/kaikramer/keystore-explorer/issues) where you announce that you want to work on translating KSE in a certain language.
