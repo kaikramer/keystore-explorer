@@ -52,6 +52,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -196,7 +197,7 @@ public class DViewPem extends JEscDialog {
 		this.privKey = privateKey;
 		initComponents();
 	}
-	
+
 
 	/**
 	 * @param parent
@@ -221,7 +222,7 @@ public class DViewPem extends JEscDialog {
 		this.pubKey = publicKey;
 		initComponents();
 	}
-	
+
 	private void initComponents() throws CryptoException {
 		jbOK = new JButton(res.getString("DViewPem.jbOK.text"));
 
@@ -251,7 +252,7 @@ public class DViewPem extends JEscDialog {
 		jbExport = new JButton(res.getString("DViewPem.jbExport.text"));
 		PlatformUtil.setMnemonic(jbExport, res.getString("DViewPem.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DViewPem.jbExport.tooltip"));
-		
+
 		jbExport.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -306,7 +307,7 @@ public class DViewPem extends JEscDialog {
 	}
 
 	private String getPemString() throws CryptoException {
-		
+
 		if (cert != null) {
 			return X509CertUtil.getCertEncodedX509Pem(cert);
 		} else if (pkcs10Csr != null) {
@@ -346,7 +347,7 @@ public class DViewPem extends JEscDialog {
 			chooser.setMultiSelectionEnabled(false);
 
 			int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-	                : chooser.showDialog(this, res.getString("DViewPem.ChooseExportFile.button"));
+					: chooser.showDialog(this, res.getString("DViewPem.ChooseExportFile.button"));
 
 			if (rtnValue != JFileChooser.APPROVE_OPTION) {
 				return;
@@ -386,11 +387,11 @@ public class DViewPem extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {

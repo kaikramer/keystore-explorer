@@ -43,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
@@ -157,7 +158,7 @@ public class DViewPublicKey extends JEscDialog {
 		jbAsn1.setToolTipText(res.getString("DViewPublicKey.jbAsn1.tooltip"));
 
 		jbOK = new JButton(res.getString("DViewPublicKey.jbOK.text"));
-		
+
 		// layout
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
@@ -174,9 +175,9 @@ public class DViewPublicKey extends JEscDialog {
 		pane.add(jbAsn1, "wrap");
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jbOK, "spanx, tag ok");
-		
+
 		// actions
-		
+
 		jbOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -267,7 +268,7 @@ public class DViewPublicKey extends JEscDialog {
 			jbFields.setEnabled(false);
 		}
 	}
-	
+
 	private void pemEncodingPressed() {
 		try {
 			DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewPublicKey.Pem.Title"), publicKey);
@@ -322,11 +323,11 @@ public class DViewPublicKey extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {

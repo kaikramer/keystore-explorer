@@ -44,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
@@ -153,11 +154,11 @@ public class DViewPrivateKey extends JEscDialog {
 		jbFields = new JButton(res.getString("DViewPrivateKey.jbFields.text"));
 		PlatformUtil.setMnemonic(jbFields, res.getString("DViewPrivateKey.jbFields.mnemonic").charAt(0));
 		jbFields.setToolTipText(res.getString("DViewPrivateKey.jbFields.tooltip"));
-		
+
 		jbAsn1 = new JButton(res.getString("DViewPrivateKey.jbAsn1.text"));
 		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewPrivateKey.jbAsn1.mnemonic").charAt(0));
 		jbAsn1.setToolTipText(res.getString("DViewPrivateKey.jbAsn1.tooltip"));
-		
+
 		jbOK = new JButton(res.getString("DViewPrivateKey.jbOK.text"));
 
 		// layout
@@ -178,7 +179,7 @@ public class DViewPrivateKey extends JEscDialog {
 		pane.add(jbOK, "spanx, tag ok");
 
 		// actions
-		
+
 		jbOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -270,7 +271,7 @@ public class DViewPrivateKey extends JEscDialog {
 			jbFields.setEnabled(false);
 		}
 	}
-	
+
 	private void pemEncodingPressed() {
 		try {
 			DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewPrivateKey.Pem.Title"),
@@ -326,11 +327,11 @@ public class DViewPrivateKey extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
