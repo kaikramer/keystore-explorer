@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2017 Kai Kramer
+ *           2013 - 2018 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,7 +27,6 @@ import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CreateApplicationGui;
 import org.kse.gui.CurrentDirectory;
@@ -184,13 +184,10 @@ public class KSE {
 		}
 	}
 
-	private static void initialiseSecurity() throws ClassNotFoundException, InstantiationException,
-	IllegalAccessException {
+	private static void initialiseSecurity()  {
 
 		// Add BouncyCastle provider
-		Class<?> bcProvClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
-		Provider bcProv = (Provider) bcProvClass.newInstance();
-		Security.addProvider(bcProv);
+		Security.addProvider(new BouncyCastleProvider());
 	}
 
 	/**
