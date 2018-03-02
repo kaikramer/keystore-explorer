@@ -27,6 +27,7 @@ import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -85,6 +86,7 @@ import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.TabbedPaneUI;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -212,6 +214,12 @@ public final class KseFrame implements StatusBar {
 	private ArrayList<JTable> keyStoreTables = new ArrayList<JTable>();
 	private JFrame frame = new JFrame();
 	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
+	private static final double FF = 0.75;	
+	private static int iFontSize = 	(int)(LnfUtil.getDefaultFontSize()*FF);
+	private static final int ICON_SIZE = 28;	
+
+
 
 	//
 	// Menu bar controls
@@ -1514,9 +1522,10 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private JTable createEmptyKeyStoreTable() {
-		KeyStoreTableModel ksModel = new KeyStoreTableModel(applicationSettings.getKeyStoreTableColumns());
+		keyStoreTableColumns = applicationSettings.getKeyStoreTableColumns();
+		KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
 		final JTable jtKeyStore = new JKseTable(ksModel);
-
+		iFontSize = (int)(jtKeyStore.getFont().getSize()*FF);
 		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ksModel);
 		jtKeyStore.setRowSorter(sorter);
 
@@ -1559,33 +1568,108 @@ public final class KseFrame implements StatusBar {
 		DragSource ds = DragSource.getDefaultDragSource();
 		ds.createDefaultDragGestureRecognizer(jtKeyStore, DnDConstants.ACTION_MOVE,
 				new KeyStoreEntryDragGestureListener(this));
-
+		ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
+		//jtKeyStore.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		jtKeyStore.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		// Add custom renderers for headers and cells
 		for (int i = 0; i < jtKeyStore.getColumnCount(); i++) {
+			int l= 1; 
+     	    int width = 0;
 			TableColumn column = jtKeyStore.getColumnModel().getColumn(i);
-			column.setHeaderRenderer(new KeyStoreTableHeadRend(jtKeyStore.getTableHeader().getDefaultRenderer(),applicationSettings.getKeyStoreTableColumns()));
+			// new, size columns based on title. Columns are resizable by default
+			TableCellRenderer renderer = column.getHeaderRenderer(); // from: http://www.java2s.com/Tutorial/Java/0240__Swing/Setcolumnwidthbasedoncellrenderer.htm
+			for (int row = 0; row < jtKeyStore.getRowCount(); row++) {
+				width = 0;
+				renderer = jtKeyStore.getCellRenderer(row, i);
+				Component comp = renderer.getTableCellRendererComponent(jtKeyStore, jtKeyStore.getValueAt(row, i),
+						false, false, row, i);
+				width = Math.max(width, comp.getPreferredSize().width);
+			}
+			l = width ;
+
+			if (i == keyStoreTableColumns.colEntryName())
+			{
+				column.setMinWidth((2+res.getString("KeyStoreTableModel.NameColumn")).length()*iFontSize);
+				column.setMaxWidth(60000);
+				column.setPreferredWidth(30);
+				//column.setPreferredWidth((2+res.getString("KeyStoreTableModel.NameColumn")).length()*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colAlgorithm())
+			{
+				column.setMinWidth((l+1) * iFontSize);
+				column.setPreferredWidth(Math.max(1+res.getString("KeyStoreTableModel.AlgorithmColumn").length(),4)*iFontSize);
+				column.setMaxWidth(Math.max(2+res.getString("KeyStoreTableModel.AlgorithmColumn").length(),4)*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colKeySize())
+			{
+				column.setMinWidth((l+1) * iFontSize);
+				column.setPreferredWidth(Math.max(1+res.getString("KeyStoreTableModel.KeySizeColumn").length(),(l+1))*iFontSize);
+				column.setMaxWidth(Math.max(2+res.getString("KeyStoreTableModel.KeySizeColumn").length(),l+1)*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colCurve())
+			{
+				l="brainpool512r1".length();
+				column.setMinWidth(l * iFontSize);
+				column.setPreferredWidth(1+Math.max(res.getString("KeyStoreTableModel.CurveColumn").length(),l)*iFontSize);
+				column.setMaxWidth(2+Math.max(res.getString("KeyStoreTableModel.CurveColumn").length(),l)*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colCertificateExpiry())
+			{
+				column.setMinWidth("20.09.2017".length() * iFontSize);
+				column.setPreferredWidth(1+Math.max(res.getString("KeyStoreTableModel.CertExpiryColumn").length(),l)*iFontSize);
+				column.setMaxWidth(2+Math.max(res.getString("KeyStoreTableModel.CertExpiryColumn").length(),l)*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colLastModified())
+			{
+				column.setMinWidth("20.09.2017".length() * iFontSize);
+				column.setPreferredWidth(1+Math.max(res.getString("KeyStoreTableModel.LastModifiedColumn").length(),l)*iFontSize);
+				column.setMaxWidth(2+Math.max(res.getString("KeyStoreTableModel.LastModifiedColumn").length(),l)*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colAKI())
+			{
+				column.setPreferredWidth(1+Math.max(res.getString("KeyStoreTableModel.AKIColumn").length(),l)*iFontSize);
+				column.setMaxWidth(Math.max(2+res.getString("KeyStoreTableModel.AKIColumn").length(),(l+1))*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colSKI())
+			{
+				column.setPreferredWidth(Math.max(2+res.getString("KeyStoreTableModel.SKIColumn").length(),(l+1))*iFontSize);
+				column.setMaxWidth(Math.max(2+res.getString("KeyStoreTableModel.SKIColumn").length(),(l+1))*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colIssuerCN())
+			{
+				column.setPreferredWidth(Math.max(2+res.getString("KeyStoreTableModel.IssuerCNColumn").length(),(l+1))*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colIssuerDN())
+			{
+				column.setPreferredWidth(Math.max(2+res.getString("KeyStoreTableModel.IssuerDNColumn").length(),(l+1))*iFontSize);
+			}
+			if (i == keyStoreTableColumns.colIssuerO())
+			{
+				column.setPreferredWidth(Math.max(2+res.getString("KeyStoreTableModel.IssuerOColumn").length(),(l+1))*iFontSize);
+			}
+			column.setHeaderRenderer(new KeyStoreTableHeadRend(jtKeyStore.getTableHeader().getDefaultRenderer(),keyStoreTableColumns));
 			column.setCellRenderer(new KeyStoreTableCellRend());
 		}
 
 		// Make the first three columns small and not resizable as they hold icons
 		TableColumn typeCol = jtKeyStore.getColumnModel().getColumn(0);
 		typeCol.setResizable(false);
-		typeCol.setMinWidth(28);
-		typeCol.setMaxWidth(28);
-		typeCol.setPreferredWidth(28);
+		typeCol.setMinWidth(ICON_SIZE);
+		typeCol.setMaxWidth(ICON_SIZE);
+		typeCol.setPreferredWidth(ICON_SIZE);
 
 		TableColumn statusCol = jtKeyStore.getColumnModel().getColumn(1);
 		statusCol.setResizable(false);
-		statusCol.setMinWidth(28);
-		statusCol.setMaxWidth(28);
-		statusCol.setPreferredWidth(28);
+		statusCol.setMinWidth(ICON_SIZE);
+		statusCol.setMaxWidth(ICON_SIZE);
+		statusCol.setPreferredWidth(ICON_SIZE);
 
 		TableColumn certExpiredCol = jtKeyStore.getColumnModel().getColumn(2);
 		certExpiredCol.setResizable(false);
-		certExpiredCol.setMinWidth(28);
-		certExpiredCol.setMaxWidth(28);
-		certExpiredCol.setPreferredWidth(28);
-
+		certExpiredCol.setMinWidth(ICON_SIZE);
+		certExpiredCol.setMaxWidth(ICON_SIZE);
+		certExpiredCol.setPreferredWidth(ICON_SIZE);
+		
 		jtKeyStore.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -2246,6 +2330,8 @@ public final class KseFrame implements StatusBar {
 		histories.add(history);
 
 		JTable jtKeyStore = createEmptyKeyStoreTable();
+		TableColumnAdjuster tca = new TableColumnAdjuster(jtKeyStore);
+		tca.adjustColumns();
 		keyStoreTables.add(jtKeyStore);
 
 		JScrollPane jspKeyStore = wrapKeyStoreTableInScrollPane(jtKeyStore);

@@ -39,6 +39,82 @@ public class KeyStoreTableColumns {
 	private boolean bEnableIssuerO;
 	private boolean bEnableSubjectO;
 	private boolean bEnableCurve;
+	/** Column for a property */
+	private int iNameColumn = -1;
+	private int iAlgorithmColumn = -1;
+	private int iKeySizeColumn = -1;
+	private int iCurveColumn = -1;
+	private int iCertExpiryColumn = -1;
+	private int iLastModifiedColumn = -1;
+	private int iAKIColumn = -1;
+	private int iSKIColumn = -1;
+	private int iIssuerDNColumn = -1;
+	private int iSubjectDNColumn = -1;
+	private static int iIssuerCNColumn = -1;
+	private int iSubjectCNColumn = -1;
+	private int iIssuerOColumn = -1;
+	private int iSubjectOColumn = -1;
+
+	private void sortCol() {
+		int col = 2;
+		iNameColumn = -1;
+		iAlgorithmColumn = -1;
+		iKeySizeColumn = -1;
+		iCurveColumn = -1;
+		iCertExpiryColumn = -1;
+		iLastModifiedColumn = -1;
+		iAKIColumn = -1;
+		iSKIColumn = -1;
+		iIssuerDNColumn = -1;
+		iSubjectDNColumn = -1;
+		iIssuerCNColumn = -1;
+		iSubjectCNColumn = -1;
+		iIssuerOColumn = -1;
+		iSubjectOColumn = -1;
+		if (bEnableEntryName) {
+			iNameColumn = ++col;
+		}
+		if (bEnableAlgorithm) {
+			iAlgorithmColumn = ++col;
+		}
+		if (bEnableKeySize) {
+			iKeySizeColumn = ++col;
+		}
+		if (bEnableCurve) {
+			iCurveColumn = ++col;
+		}
+		if (bEnableCertificateExpiry) {
+			iCertExpiryColumn = ++col;
+		}
+		if (bEnableLastModified) {
+			iLastModifiedColumn = ++col;
+		}
+		if (bEnableAKI) {
+			iAKIColumn = ++col;
+		}
+		if (bEnableSKI) {
+			iSKIColumn = ++col;
+		}
+		if (bEnableIssuerDN) {
+			iIssuerDNColumn = ++col;
+		}
+		if (bEnableSubjectDN) {
+			iSubjectDNColumn = ++col;
+		}
+		if (bEnableIssuerCN) {
+			iIssuerCNColumn = ++col;
+		}
+		if (bEnableSubjectCN) {
+			iSubjectCNColumn = ++col;
+		}
+		if (bEnableIssuerO) {
+			iIssuerOColumn = ++col;
+		}
+		if (bEnableSubjectO) {
+			iSubjectOColumn = ++col;
+		}
+	}
+
 	// set to previous layout
 	public KeyStoreTableColumns() {
  expiryWarnDays = 0;
@@ -56,7 +132,9 @@ public class KeyStoreTableColumns {
  bEnableSubjectCN= false;
  bEnableIssuerO= false;
  bEnableSubjectO= false;
-	}
+
+
+ 	}
 	public KeyStoreTableColumns(boolean p1,boolean p2,boolean p3,boolean p4,boolean p5,boolean p6,boolean p7,boolean p8,boolean p9,boolean p10,boolean p11,boolean p12,boolean p13,boolean p14, int p15  ) {
 		 bEnableEntryName = p1;
 		 bEnableAlgorithm = p2;
@@ -67,13 +145,13 @@ public class KeyStoreTableColumns {
 		 bEnableAKI = p7;
 		 bEnableIssuerDN = p8;
 		 bEnableSubjectDN = p9;
-			bEnableIssuerCN = p10;
-			bEnableSubjectCN = p11;
-			bEnableIssuerO = p12;
-			bEnableSubjectO = p13;
-			bEnableCurve = p14;
-			expiryWarnDays = p15;
-		 
+		 bEnableIssuerCN = p10;
+		 bEnableSubjectCN = p11;
+		 bEnableIssuerO = p12;
+		 bEnableSubjectO = p13;
+		 bEnableCurve = p14;
+		 expiryWarnDays = p15;
+		 sortCol();
 	}	
 	
 	public void setColumns(boolean p1,boolean p2,boolean p3,boolean p4,boolean p5,boolean p6,boolean p7,boolean p8,boolean p9,boolean p10,boolean p11,boolean p12,boolean p13,boolean p14, int p15 ) {
@@ -86,13 +164,13 @@ public class KeyStoreTableColumns {
 		 bEnableAKI = p7;
 		 bEnableIssuerDN = p8;
 		 bEnableSubjectDN = p9;
-			bEnableIssuerCN = p10;
-			bEnableSubjectCN = p11;
-			bEnableIssuerO = p12;
-			bEnableSubjectO = p13;
-			bEnableCurve = p14;
-			expiryWarnDays = p15;
-
+		 bEnableIssuerCN = p10;
+		 bEnableSubjectCN = p11;
+		 bEnableIssuerO = p12;
+		 bEnableSubjectO = p13;
+		 bEnableCurve = p14;
+		 expiryWarnDays = p15;
+		 sortCol();
 	}
 	/**
 	 * Restore from bitmap
@@ -114,6 +192,7 @@ public class KeyStoreTableColumns {
 		 bEnableSubjectCN= ((col & 0x800)!=0);
 		 bEnableIssuerO= ((col & 0x1000)!=0);
 		 bEnableSubjectO= ((col & 0x2000)!=0);
+		 sortCol();
 	}
 	/**
 	 * Get as bitmap
@@ -138,7 +217,7 @@ public class KeyStoreTableColumns {
 		 return col;
 	}
 	/**
-	 * Get number of columns selected
+	 * Get number of columns selected. The actual table has 3 columns more, as the first 3 are fixed. 
 	 * @return number of columns selected
 	 */
 	public int getNofColumns() {
@@ -225,4 +304,61 @@ public class KeyStoreTableColumns {
 		this.expiryWarnDays = expiryWarnDays ; 
 	}
 
+
+	public int colEntryName()
+	{
+		return iNameColumn; 
+	}
+	public int colAlgorithm ()
+	{
+		return iAlgorithmColumn ; 
+	}
+	public int colKeySize ()
+	{
+		return iKeySizeColumn ; 
+	}
+	public int colCertificateExpiry ()
+	{
+		return iCertExpiryColumn ; 
+	}
+	public int colLastModified ()
+	{
+		return iLastModifiedColumn ; 
+	}
+	public int colSKI ()
+	{
+		return iSKIColumn ; 
+	}
+	public int colAKI ()
+	{
+		return iAKIColumn ; 
+	}
+	public int colCurve ()
+	{
+		return iCurveColumn ; 
+	}
+	public int colIssuerDN ()
+	{
+		return iIssuerDNColumn ; 
+	}
+	public int colSubjectDN ()
+	{
+		return iSubjectDNColumn ; 
+	}
+	public int colIssuerCN ()
+	{
+		return iIssuerCNColumn ; 
+	}
+	public int colSubjectCN ()
+	{
+		return iSubjectCNColumn ; 
+	}
+	public int colIssuerO ()
+	{
+		return iIssuerOColumn ; 
+	}
+	public int colSubjectO ()
+	{
+		return iSubjectOColumn ; 
+	}
 }

@@ -42,21 +42,6 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	private TableCellRenderer delegate;
 	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
 
-	/** Column for a property */
-	private static int iNameColumn = -1;
-	private static int iAlgorithmColumn = -1;
-	private static int iKeySizeColumn = -1;
-	private static int iCurveColumn = -1;
-	private static int iCertExpiryColumn = -1;
-	private static int iLastModifiedColumn = -1;
-	private static int iAKIColumn = -1;
-	private static int iSKIColumn = -1;
-	private static int iIssuerDNColumn = -1;
-	private static int iSubjectDNColumn = -1;
-	private static int iIssuerCNColumn = -1;
-	private static int iSubjectCNColumn = -1;
-	private static int iIssuerOColumn = -1;
-	private static int iSubjectOColumn = -1;
 	private static int iFontSize = 	LnfUtil.getDefaultFontSize();
 	private static int iHeight = 	(int)(1.2 *LnfUtil.getDefaultFontSize());
 
@@ -66,65 +51,7 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	public KeyStoreTableHeadRend(TableCellRenderer delegate, KeyStoreTableColumns keyStoreTableColumnsParm) {
 		this.delegate = delegate;
 		keyStoreTableColumns =  keyStoreTableColumnsParm;
-		int col = 2;
-		if (keyStoreTableColumns.getEnableEntryName())
-		{
-			iNameColumn = ++col;
 		}
-		if (keyStoreTableColumns.getEnableAlgorithm())
-		{
-			iAlgorithmColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableKeySize())
-		{
-			 iKeySizeColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableCurve())
-		{
-			iCurveColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableCertificateExpiry())
-		{
-			iCertExpiryColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableLastModified())
-		{
-			iLastModifiedColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableAKI())
-		{
-			iAKIColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableSKI())
-		{
-			iSKIColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableIssuerDN())
-		{
-			iIssuerDNColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableSubjectDN())
-		{
-			iSubjectDNColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableIssuerCN())
-		{
-			iIssuerCNColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableSubjectCN())
-		{
-			iSubjectCNColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableIssuerO())
-		{
-			iIssuerOColumn = ++col;
-		}
-		if (keyStoreTableColumns.getEnableSubjectO())
-		{
-			iSubjectOColumn = ++col;
-		}
-
-	}
 
 	/**
 	 * Returns the rendered header cell for the supplied value and column.
@@ -146,7 +73,6 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable jtKeyStore, Object value, boolean isSelected,
 			boolean hasFocus, int row, int col) {
-		int iWidth;
 		Component c = delegate.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
 		if (c instanceof JLabel) {
 
@@ -186,38 +112,35 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 			// The other headers contain text
 			else {
 				String text = (String) value;
-				iWidth = iFontSize * (2 +text.length());
-				header.setSize(iWidth, iHeight);
-				header.setText(text);
 				header.setHorizontalAlignment(LEFT);
 
-				if (col == iNameColumn) {
+				if (col == keyStoreTableColumns.colEntryName()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.NameColumn.tooltip"));
-				} else if (col == iAlgorithmColumn) {
+				} else if (col ==  keyStoreTableColumns.colAlgorithm()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.AlgorithmColumn.tooltip"));
-				} else if (col == iKeySizeColumn) {
+				} else if (col ==  keyStoreTableColumns.colKeySize()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.KeySizeColumn.tooltip"));
-				} else if (col == iCertExpiryColumn) {
+				} else if (col ==  keyStoreTableColumns.colCertificateExpiry()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertExpiryColumn.tooltip"));
-				} else if (col == iLastModifiedColumn) {
+				} else if (col ==  keyStoreTableColumns.colLastModified()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.LastModifiedColumn.tooltip"));
-				} else if (col == iAKIColumn) {
+				} else if (col ==  keyStoreTableColumns.colAKI()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.AKIColumn.tooltip"));
-				} else if (col == iSKIColumn) {
+				} else if (col ==  keyStoreTableColumns.colSKI()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.SKIColumn.tooltip"));
-				} else if (col == iIssuerDNColumn) {
+				} else if (col ==  keyStoreTableColumns.colIssuerDN()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerDNColumn.tooltip"));
-				} else if (col == iSubjectDNColumn) {
+				} else if (col ==  keyStoreTableColumns.colSubjectDN()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectDNColumn.tooltip"));
-				} else if (col == iIssuerCNColumn) {
+				} else if (col ==  keyStoreTableColumns.colIssuerCN()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerCNColumn.tooltip"));
-				} else if (col == iSubjectCNColumn) {
+				} else if (col ==  keyStoreTableColumns.colSubjectCN()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectCNColumn.tooltip"));
-				} else if (col == iIssuerOColumn) {
+				} else if (col ==  keyStoreTableColumns.colIssuerO()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerOColumn.tooltip"));
-				} else if (col == iSubjectOColumn) {
+				} else if (col ==  keyStoreTableColumns.colSubjectO()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectOColumn.tooltip"));
-				} else if (col == iCurveColumn) {
+				} else if (col ==  keyStoreTableColumns.colCurve()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.CurveColumn.tooltip"));
 				}
 			}

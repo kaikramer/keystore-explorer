@@ -97,8 +97,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	private static int iSubjectCNColumn = -1;
 	private static int iIssuerOColumn = -1;
 	private static int iSubjectOColumn = -1;
-
-
 	/**
 	 * Construct a new KeyStoreTableModel with a variable layout.
 	 */
@@ -115,92 +113,98 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		columnTypes[1] = Boolean.class;
 		columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
 		columnTypes[2] = Integer.class;
-		if (keyStoreTableColumns.getEnableEntryName())
+		for (col=3;col<nofColumns;col++)
 		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.NameColumn");
-			columnTypes[col] = String.class;
-			iNameColumn = col;
+			if (col == keyStoreTableColumns.colEntryName())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.NameColumn");
+				columnTypes[col] = String.class;
+				iNameColumn = col;
+			}
+
+			if (col == keyStoreTableColumns.colAlgorithm())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
+				columnTypes[col] = String.class;
+				iAlgorithmColumn = col;
+				
+			}
+			if (col == keyStoreTableColumns.colKeySize())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.KeySizeColumn");
+				columnTypes[col] =  Integer.class;
+				iKeySizeColumn = col;
+			}
+			if (col == keyStoreTableColumns.colCurve())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
+				columnTypes[col] = String.class;
+				iCurveColumn = col;
+				
+			}
+			if (col == keyStoreTableColumns.colCertificateExpiry())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
+				columnTypes[col] = Date.class;
+				iCertExpiryColumn = col;
+			}
+			if (col == keyStoreTableColumns.colLastModified())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
+				columnTypes[col] = Date.class;
+				iLastModifiedColumn = col;
+				
+			}
+			if (col == keyStoreTableColumns.colAKI())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.AKIColumn");
+				columnTypes[col] = String.class;
+				iAKIColumn = col;
+				
+			}
+			if (col == keyStoreTableColumns.colSKI())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.SKIColumn");
+				columnTypes[col] = String.class;
+				iSKIColumn = col;
+			}
+			if (col == keyStoreTableColumns.colIssuerDN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
+				columnTypes[col] = String.class;
+				iIssuerDNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSubjectDN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
+				columnTypes[col] = String.class;
+				iSubjectDNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colIssuerCN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
+				columnTypes[col] = String.class;
+				iIssuerCNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSubjectCN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
+				columnTypes[col] = String.class;
+				iSubjectCNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colIssuerO())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.IssuerOColumn");
+				columnTypes[col] = String.class;
+				iIssuerOColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSubjectO())
+			{
+				columnNames[++col] = res.getString("KeyStoreTableModel.SubjectOColumn");
+				columnTypes[col] = String.class;
+				iSubjectOColumn = col;
+			}
 		}
-		if (keyStoreTableColumns.getEnableAlgorithm())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
-			columnTypes[col] = String.class;
-			iAlgorithmColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableKeySize())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.KeySizeColumn");
-			columnTypes[col] =  Integer.class;
-			 iKeySizeColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableCurve())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.CurveColumn");
-			columnTypes[col] = String.class;
-			iCurveColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableCertificateExpiry())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
-			columnTypes[col] = Date.class;
-			iCertExpiryColumn = col;
-			
-		}
-		if (keyStoreTableColumns.getEnableLastModified())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
-			columnTypes[col] = Date.class;
-			iLastModifiedColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableAKI())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.AKIColumn");
-			columnTypes[col] = String.class;
-			iAKIColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableSKI())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.SKIColumn");
-			columnTypes[col] = String.class;
-			iSKIColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableIssuerDN())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
-			columnTypes[col] = String.class;
-			iIssuerDNColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableSubjectDN())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
-			columnTypes[col] = String.class;
-			iSubjectDNColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableIssuerCN())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
-			columnTypes[col] = String.class;
-			iIssuerCNColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableSubjectCN())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
-			columnTypes[col] = String.class;
-			iSubjectCNColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableIssuerO())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.IssuerOColumn");
-			columnTypes[col] = String.class;
-			iIssuerOColumn = col;
-		}
-		if (keyStoreTableColumns.getEnableSubjectO())
-		{
-			columnNames[++col] = res.getString("KeyStoreTableModel.SubjectOColumn");
-			columnTypes[col] = String.class;
-			iSubjectOColumn = col;
-		}
-		assert (col == nofColumns);
 		data = new Object[0][0];
 	}
 
@@ -286,7 +290,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 
-			if (keyStoreTableColumns.getEnableEntryName()) {
+			if (iNameColumn>0) {
 			// Alias column
 				data[i][iNameColumn] = alias;
 			}
@@ -295,12 +299,12 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 			if (keyInfo != null) {
 				// Algorithm column
-				if (keyStoreTableColumns.getEnableAlgorithm()) {
+				if (iAlgorithmColumn>0) {
 					data[i][iAlgorithmColumn] = getAlgorithmName(keyInfo);
 				}
 
 				// Key Size column
-				if (keyStoreTableColumns.getEnableKeySize()) {
+				if (iKeySizeColumn>0) {
 					data[i][iKeySizeColumn] = keyInfo.getSize();
 			}
 				// Key Size column
@@ -308,7 +312,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iCurveColumn] = keyInfo.getDetailedAlgorithm();
 				}
 			}
-			if (keyStoreTableColumns.getEnableCertificateExpiry()) {
+			if (iCertExpiryColumn>0) {
 			// Expiry date column
 			if (expiry != null) {
 
@@ -318,7 +322,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 														// be a key entry
 				}
 			}
-			if (keyStoreTableColumns.getEnableLastModified()) {
+			if (iLastModifiedColumn>0) {
 				// Modified date column - only applies to non-PKCS #11/#12
 				// KeyStores
 			if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())
@@ -328,56 +332,56 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iLastModifiedColumn] = null;
 				}
 			}
-			if (keyStoreTableColumns.getEnableSubjectDN()) {
+			if (iSubjectDNColumn>0) {
 				if (entryType != KEY_ENTRY) {
 					data[i][iSubjectDNColumn] = getCertificateSubjectDN( alias, keyStore) ;
 				} else {
 					data[i][iSubjectDNColumn] = null; 
 				}
 			}
-			if (keyStoreTableColumns.getEnableIssuerDN()) {
+			if (iIssuerDNColumn>0) {
 				if (entryType != KEY_ENTRY) { 
 					data[i][iIssuerDNColumn] = getCertificateIssuerDN( alias, keyStore) ;
 				} else {
 					data[i][iIssuerDNColumn] = null; 
 				}
 			}
-			if (keyStoreTableColumns.getEnableSubjectCN()) {
+			if (iSubjectCNColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iSubjectCNColumn] = getCertificateSubjectCN( alias, keyStore) ;
 				} else {
 					data[i][iSubjectCNColumn] = null; 
 				}
 			}
-			if (keyStoreTableColumns.getEnableIssuerCN()) {
+			if (iIssuerCNColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iIssuerCNColumn] = getCertificateIssuerCN( alias, keyStore) ;
 				} else {
 					data[i][iIssuerCNColumn] = null; 
 				}
 			}
-			if (keyStoreTableColumns.getEnableSubjectO()) {
+			if (iSubjectOColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iSubjectOColumn] = getCertificateSubjectO( alias, keyStore) ;
 				} else {
 					data[i][iSubjectOColumn] = null; 
 				}
 			}
-			if (keyStoreTableColumns.getEnableIssuerO()) {
+			if (iIssuerOColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iIssuerOColumn] = getCertificateIssuerO( alias, keyStore) ;
 				} else {
 					data[i][iIssuerOColumn] = null; 
 				}
 			}
-			if (keyStoreTableColumns.getEnableAKI()) {
+			if (iAKIColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iAKIColumn] = getCertificateAKI( alias, keyStore) ;
 				} else {
 					data[i][iAKIColumn] = null; 
 				}
 			}
-			if (keyStoreTableColumns.getEnableSKI()) {
+			if (iSKIColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iSKIColumn] = getCertificateSKI( alias, keyStore) ;
 				} else {
@@ -711,60 +715,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	public void setKeyStoreTableColumns(KeyStoreTableColumns keyStoreTableColumns) {
 		this.keyStoreTableColumns = keyStoreTableColumns;
-	}
-
-	public int getNameColumn() {
-		return iNameColumn;
-	}
-
-	public int getAlgorithmColumn() {
-		return iAlgorithmColumn;
-	}
-
-	public int getKeySizeColumn() {
-		return iKeySizeColumn;
-	}
-
-	public int getCurveColumn() {
-		return iCurveColumn;
-	}
-
-	public int getCertExpiryColumn() {
-		return iCertExpiryColumn;
-	}
-
-	public int getLastModifiedColumn() {
-		return iLastModifiedColumn;
-	}
-
-	public int getAKIColumn() {
-		return iAKIColumn;
-	}
-
-	public int getSKIColumn() {
-		return iSKIColumn;
-	}
-
-	public int getIssuerDNColumn() {
-		return iIssuerDNColumn;
-	}
-
-	public int getSubjectDNColumn() {
-		return iSubjectDNColumn;
-	}
-	public int getIssuerCNColumn() {
-		return iIssuerCNColumn;
-	}
-
-	public int getSubjectCNColumn() {
-		return iSubjectCNColumn;
-	}
-	public int getIssuerOColumn() {
-		return iIssuerOColumn;
-	}
-
-	public int getSubjectOColumn() {
-		return iSubjectOColumn;
 	}
 
 	private class AliasComparator implements Comparator<String> {
