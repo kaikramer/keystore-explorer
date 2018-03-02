@@ -80,7 +80,7 @@ public class PreferencesAction extends ExitAction {
 				caCertificatesFile, applicationSettings.getUseWindowsTrustedRootCertificates(),
 				applicationSettings.getEnableImportTrustedCertTrustCheck(),
 				applicationSettings.getEnableImportCaReplyTrustCheck(), applicationSettings.getPasswordQualityConfig(),
-				applicationSettings.getDefaultDN());
+				applicationSettings.getDefaultDN(), applicationSettings.getKeyStoreTableColumns());
 		dPreferences.setLocationRelativeTo(frame);
 		dPreferences.setVisible(true);
 

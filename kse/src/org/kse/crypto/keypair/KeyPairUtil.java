@@ -63,6 +63,7 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -198,37 +199,6 @@ public final class KeyPairUtil {
 		}
 
 		return sunJCE.isInstance(provider);
-	}
-
-	/**
-	 * Generate a EC key pair.
-	 *
-	 * @param curveName
-	 *            Name of the ECC curve
-	 * @param provider A JCE provider.
-	 * @return A key pair
-	 * @throws CryptoException
-	 *             If there was a problem generating the key pair
-	 */
-	public static KeyPair generateECKeyPair(String curveName, Provider provider) throws CryptoException {
-		try {
-			// Get a key pair generator
-			KeyPairGenerator keyPairGen;
-			if (provider != null) {
-				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
-			} else {
-				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
-			}
-
-			keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
-
-			// Generate and return the key pair
-			KeyPair keyPair = keyPairGen.generateKeyPair();
-			return keyPair;
-		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"),
-					KeyPairType.EC), ex);
-		}
 	}
 
 

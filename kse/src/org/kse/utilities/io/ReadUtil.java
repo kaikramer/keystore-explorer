@@ -22,7 +22,7 @@ package org.kse.utilities.io;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+import org.kse.utilities.io.IOUtils;
 /**
  * Class of utility methods to read from streams.
  *
