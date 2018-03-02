@@ -3,11 +3,11 @@ KSE.Name=KeyStore Explorer
 KSE.SimpleName=kse
 
 # Application Version
-KSE.Version=5.4.0
-KSE.SimpleVersion=540
+KSE.Version=5.3.1
+KSE.SimpleVersion=531
 
 # AppUserModelId
-KSE.AppUserModelId=KeyStoreExplorer.App.54
+KSE.AppUserModelId=SourceForge.KeyStoreExplorer531
 
 # Full Application Name (name, version number)
 KSE.FullName={0} version {1}
