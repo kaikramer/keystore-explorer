@@ -19,14 +19,18 @@
  */
 package org.kse.crypto.ecc;
 
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.security.Key;
 import java.security.Provider;
 import java.security.Security;
 import java.security.interfaces.ECKey;
+import java.security.interfaces.ECPrivateKey;
 import java.security.spec.ECParameterSpec;
 import java.util.List;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.version.JavaVersion;
@@ -143,5 +147,49 @@ public class EccUtil {
 			}
 		}
 		return longestCurveName;
+	}
+
+	/**
+	 * Converts PKCS#8 EC private key (RFC 5208 ASN.1 PrivateKeyInfo structure) to "traditional" OpenSSL
+	 * ASN.1 structure ECPrivateKey from RFC 5915. As ECPrivateKey is already in the PrivateKey field of PrivateKeyInfo,
+	 * this must only be extracted:
+	 *
+	 * SEQUENCE {
+	 *	  INTEGER 0
+	 *	  SEQUENCE {
+	 *	    OBJECT IDENTIFIER ecPublicKey (1 2 840 10045 2 1)
+	 *	    OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
+	 *	    }
+	 *	  OCTET STRING, encapsulates {
+	 *	    SEQUENCE {
+	 *	      INTEGER 1
+	 *	      OCTET STRING
+	 *	        17 12 CA 42 16 79 1B 45    ...B.y.E
+	 *	        ...
+	 *	        C8 B2 66 0A E5 60 50 0B
+	 *	      [0] {
+	 *	        OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
+	 *	        }
+	 *	      [1] {
+	 *	        BIT STRING
+	 *	          04 61 C0 08 B4 89 A0 50    .a.....P
+	 *            ...
+	 *	          AE D5 ED C3 4D 0E 47 91    ....M.G.
+	 *	          89                         .
+	 *	        }
+	 *	      }
+	 *	    }
+	 *	  }
+	 *
+	 * @param ecPrivateKey An EC key
+	 * @return Object holding ASN1 ECPrivateKey structure
+	 * @throws IOException When ECPrivateKey structure in PrivateKeyInfo's PrivateKey field cannot be parsed
+	 */
+	public static org.bouncycastle.asn1.sec.ECPrivateKey convertToECPrivateKeyStructure(ECPrivateKey ecPrivateKey)
+			throws IOException {
+		byte[] encoded = ecPrivateKey.getEncoded();
+		PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(encoded);
+		ASN1Encodable privateKey = privateKeyInfo.parsePrivateKey();
+		return org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(privateKey);
 	}
 }

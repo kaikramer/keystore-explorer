@@ -27,8 +27,8 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
+import org.kse.utilities.io.IOUtils;
 
 /**
  * Provides utility methods for the creation of message digests.

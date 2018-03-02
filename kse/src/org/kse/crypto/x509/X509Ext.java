@@ -2091,10 +2091,12 @@ public class X509Ext {
 					sb.append(NEWLINE);
 				}
 			} else {
-				// no statementInfo
+				// unknown statement type
 				sb.append(INDENT.toString(indentLevel));
-				sb.append(statementId.getId());
+				sb.append(ObjectIdUtil.toString(statementId));
+				if (statementInfo != null) {
 				sb.append(statementInfo.toString());
+				}
 				sb.append(NEWLINE);
 			}
 		}

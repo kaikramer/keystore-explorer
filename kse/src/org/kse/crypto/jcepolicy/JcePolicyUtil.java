@@ -26,14 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.security.NoSuchAlgorithmException;
-import java.security.Permission;
-import java.security.PermissionCollection;
+import java.security.Security;
 import java.text.MessageFormat;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -41,9 +37,9 @@ import java.util.jar.Manifest;
 
 import javax.crypto.Cipher;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.io.CopyUtil;
+import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.net.URLs;
 import org.kse.version.JavaVersion;
 
@@ -154,12 +150,8 @@ public class JcePolicyUtil {
 				if (!jarEntry.isDirectory() && entryName.endsWith(".policy")) {
 					sw.write(entryName + ":\n\n");
 
-					InputStreamReader isr = null;
-					try {
-						isr = new InputStreamReader(jarFile.getInputStream(jarEntry));
+					try (InputStreamReader isr = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
 						CopyUtil.copy(isr, sw);
-					} finally {
-						IOUtils.closeQuietly(isr);
 					}
 
 					sw.write('\n');
@@ -212,36 +204,9 @@ public class JcePolicyUtil {
 
 
 	/**
-	 * Hack to disable crypto restrictions until Java 9 is out.
-	 *
-	 * See http://stackoverflow.com/a/22492582/2672392
+	 * Disable crypto restrictions (for Java 8u151/8u152, later versions are unrestricted by default)
 	 */
 	public static void removeRestrictions() {
-		try {
-			Class<?> jceSecurityClass = Class.forName("javax.crypto.JceSecurity");
-			Class<?> cryptoPermissionsClass = Class.forName("javax.crypto.CryptoPermissions");
-			Class<?> cryptoAllPermissionClass = Class.forName("javax.crypto.CryptoAllPermission");
-
-			Field isRestrictedField = jceSecurityClass.getDeclaredField("isRestricted");
-			isRestrictedField.setAccessible(true);
-			Field modifiersField = Field.class.getDeclaredField("modifiers");
-			modifiersField.setAccessible(true);
-			modifiersField.setInt(isRestrictedField, isRestrictedField.getModifiers() & ~Modifier.FINAL);
-			isRestrictedField.set(null, false);
-
-			Field defaultPolicyField = jceSecurityClass.getDeclaredField("defaultPolicy");
-			defaultPolicyField.setAccessible(true);
-			PermissionCollection defaultPolicy = (PermissionCollection) defaultPolicyField.get(null);
-
-			Field permsField = cryptoPermissionsClass.getDeclaredField("perms");
-			permsField.setAccessible(true);
-			((Map<?, ?>) permsField.get(defaultPolicy)).clear();
-
-			Field cryptoAllPermissionInstanceField = cryptoAllPermissionClass.getDeclaredField("INSTANCE");
-			cryptoAllPermissionInstanceField.setAccessible(true);
-			defaultPolicy.add((Permission) cryptoAllPermissionInstanceField.get(null));
-		} catch (Exception e) {
-			// ignore
-		}
+		Security.setProperty("crypto.policy", "unlimited");
 	}
 }

@@ -19,19 +19,19 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.Security;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
@@ -41,13 +41,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
+import javax.swing.UIManager;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -56,6 +55,8 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.asn1.Asn1Exception;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the details of a private key with the option to display its fields
@@ -67,7 +68,6 @@ public class DViewPrivateKey extends JEscDialog {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private JPanel jpPrivateKey;
 	private JLabel jlAlgorithm;
 	private JTextField jtfAlgorithm;
 	private JLabel jlKeySize;
@@ -76,7 +76,7 @@ public class DViewPrivateKey extends JEscDialog {
 	private JTextField jtfFormat;
 	private JLabel jlEncoded;
 	private JTextField jtfEncoded;
-	private JPanel jpButtons;
+	private JButton jbPem;
 	private JButton jbFields;
 	private JButton jbAsn1;
 	private JButton jbOK;
@@ -122,73 +122,64 @@ public class DViewPrivateKey extends JEscDialog {
 	}
 
 	private void initComponents() throws CryptoException {
-		GridBagConstraints gbcLbl = new GridBagConstraints();
-		gbcLbl.gridx = 0;
-		gbcLbl.gridwidth = 1;
-		gbcLbl.gridheight = 1;
-		gbcLbl.insets = new Insets(5, 5, 5, 5);
-		gbcLbl.anchor = GridBagConstraints.EAST;
-
-		GridBagConstraints gbcTf = new GridBagConstraints();
-		gbcTf.gridx = 1;
-		gbcTf.gridwidth = 1;
-		gbcTf.gridheight = 1;
-		gbcTf.insets = new Insets(5, 5, 5, 5);
-		gbcTf.anchor = GridBagConstraints.WEST;
 
 		jlAlgorithm = new JLabel(res.getString("DViewPrivateKey.jlAlgorithm.text"));
-		GridBagConstraints gbcJlAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbcJlAlgorithm.gridy = 0;
 
 		jtfAlgorithm = new JTextField(10);
 		jtfAlgorithm.setEditable(false);
 		jtfAlgorithm.setToolTipText(res.getString("DViewPrivateKey.jtfAlgorithm.tooltip"));
-		GridBagConstraints gbcJtfAlgorithm = (GridBagConstraints) gbcTf.clone();
-		gbcJtfAlgorithm.gridy = 0;
 
 		jlKeySize = new JLabel(res.getString("DViewPrivateKey.jlKeySize.text"));
-		GridBagConstraints gbcJlKeySize = (GridBagConstraints) gbcLbl.clone();
-		gbcJlKeySize.gridy = 1;
 
 		jtfKeySize = new JTextField(10);
 		jtfKeySize.setEditable(false);
 		jtfKeySize.setToolTipText(res.getString("DViewPrivateKey.jtfKeySize.tooltip"));
-		GridBagConstraints gbcJtfKeySize = (GridBagConstraints) gbcTf.clone();
-		gbcJtfKeySize.gridy = 1;
 
 		jlFormat = new JLabel(res.getString("DViewPrivateKey.jlFormat.text"));
-		GridBagConstraints gbcJlFormat = (GridBagConstraints) gbcLbl.clone();
-		gbcJlFormat.gridy = 2;
 
 		jtfFormat = new JTextField(10);
 		jtfFormat.setEditable(false);
 		jtfFormat.setToolTipText(res.getString("DViewPrivateKey.jtfFormat.tooltip"));
-		GridBagConstraints gbcJtfFormat = (GridBagConstraints) gbcTf.clone();
-		gbcJtfFormat.gridy = 2;
 
 		jlEncoded = new JLabel(res.getString("DViewPrivateKey.jlEncoded.text"));
-		GridBagConstraints gbcJlEncoded = (GridBagConstraints) gbcLbl.clone();
-		gbcJlEncoded.gridy = 3;
 
-		jtfEncoded = new JTextField(20);
+		jtfEncoded = new JTextField(30);
 		jtfEncoded.setEditable(false);
 		jtfEncoded.setToolTipText(res.getString("DViewPrivateKey.jtfEncoded.tooltip"));
-		GridBagConstraints gbcJtfEncoded = (GridBagConstraints) gbcTf.clone();
-		gbcJtfEncoded.gridy = 3;
 
-		jpPrivateKey = new JPanel(new GridBagLayout());
-		jpPrivateKey.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
+		jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
+		PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
+		jbPem.setToolTipText(res.getString("DViewPrivateKey.jbPem.tooltip"));
 
-		jpPrivateKey.add(jlAlgorithm, gbcJlAlgorithm);
-		jpPrivateKey.add(jtfAlgorithm, gbcJtfAlgorithm);
-		jpPrivateKey.add(jlKeySize, gbcJlKeySize);
-		jpPrivateKey.add(jtfKeySize, gbcJtfKeySize);
-		jpPrivateKey.add(jlFormat, gbcJlFormat);
-		jpPrivateKey.add(jtfFormat, gbcJtfFormat);
-		jpPrivateKey.add(jlEncoded, gbcJlEncoded);
-		jpPrivateKey.add(jtfEncoded, gbcJtfEncoded);
+		jbFields = new JButton(res.getString("DViewPrivateKey.jbFields.text"));
+		PlatformUtil.setMnemonic(jbFields, res.getString("DViewPrivateKey.jbFields.mnemonic").charAt(0));
+		jbFields.setToolTipText(res.getString("DViewPrivateKey.jbFields.tooltip"));
+
+		jbAsn1 = new JButton(res.getString("DViewPrivateKey.jbAsn1.text"));
+		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewPrivateKey.jbAsn1.mnemonic").charAt(0));
+		jbAsn1.setToolTipText(res.getString("DViewPrivateKey.jbAsn1.tooltip"));
 
 		jbOK = new JButton(res.getString("DViewPrivateKey.jbOK.text"));
+
+		// layout
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+		pane.add(jlAlgorithm, "");
+		pane.add(jtfAlgorithm, "growx, wrap");
+		pane.add(jlKeySize, "");
+		pane.add(jtfKeySize, "growx, wrap");
+		pane.add(jlFormat, "");
+		pane.add(jtfFormat, "growx, wrap");
+		pane.add(jlEncoded, "");
+		pane.add(jtfEncoded, "growx, wrap");
+		pane.add(jbPem, "spanx, split");
+		pane.add(jbFields, "");
+		pane.add(jbAsn1, "wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		pane.add(jbOK, "spanx, tag ok");
+
+		// actions
+
 		jbOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -196,9 +187,18 @@ public class DViewPrivateKey extends JEscDialog {
 			}
 		});
 
-		jbFields = new JButton(res.getString("DViewPrivateKey.jbFields.text"));
-		PlatformUtil.setMnemonic(jbFields, res.getString("DViewPrivateKey.jbFields.mnemonic").charAt(0));
-		jbFields.setToolTipText(res.getString("DViewPrivateKey.jbFields.tooltip"));
+		jbPem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DViewPrivateKey.this);
+					pemEncodingPressed();
+				} finally {
+					CursorUtil.setCursorFree(DViewPrivateKey.this);
+				}
+			}
+		});
+
 		jbFields.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -211,10 +211,7 @@ public class DViewPrivateKey extends JEscDialog {
 			}
 		});
 
-		jbAsn1 = new JButton(res.getString("DViewPrivateKey.jbAsn1.text"));
 
-		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewPrivateKey.jbAsn1.mnemonic").charAt(0));
-		jbAsn1.setToolTipText(res.getString("DViewPrivateKey.jbAsn1.tooltip"));
 		jbAsn1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -226,11 +223,6 @@ public class DViewPrivateKey extends JEscDialog {
 				}
 			}
 		});
-
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, new JButton[] { jbFields, jbAsn1 }, false);
-
-		getContentPane().add(jpPrivateKey, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		setResizable(false);
 
@@ -280,6 +272,19 @@ public class DViewPrivateKey extends JEscDialog {
 		}
 	}
 
+	private void pemEncodingPressed() {
+		try {
+			DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewPrivateKey.Pem.Title"),
+					privateKey);
+			dViewCsrPem.setLocationRelativeTo(this);
+			dViewCsrPem.setVisible(true);
+		} catch (CryptoException ex) {
+			DError dError = new DError(this, ex);
+			dError.setLocationRelativeTo(this);
+			dError.setVisible(true);
+		}
+	}
+
 	private void fieldsPressed() {
 		if (privateKey instanceof RSAPrivateKey) {
 			RSAPrivateKey rsaPvk = (RSAPrivateKey) privateKey;
@@ -321,5 +326,32 @@ public class DViewPrivateKey extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick testing
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+					KeyPair keyPair = keyGen.genKeyPair();
+
+					PrivateKey privKey = keyPair.getPrivate();
+					DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey, null);
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

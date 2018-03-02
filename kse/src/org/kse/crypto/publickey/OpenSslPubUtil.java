@@ -22,13 +22,11 @@ package org.kse.crypto.publickey;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemInfo;
@@ -36,7 +34,14 @@ import org.kse.utilities.pem.PemUtil;
 
 // @formatter:off
 /**
- * Provides utility methods relating to OpenSSL encoded public keys.
+ * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo encoded public keys. The PKCS#1 RSA public key
+ * format is not supported.
+ *
+ * <pre>
+ * -----BEGIN PUBLIC KEY-----
+ * ...
+ * -----END PUBLIC KEY-----
+ * </pre>
  *
  * <pre>
  * OpenSSL Public Key structure:
@@ -56,6 +61,11 @@ import org.kse.utilities.pem.PemUtil;
  *         q ASN1Integer,
  *         g ASN1Integer }
  *
+ *     ECParameters ::= CHOICE {                      // RFC 5480
+ *         namedCurve         OBJECT IDENTIFIER
+ *         -- implicitCurve   NULL
+ *         -- specifiedCurve  SpecifiedECDomain }
+ *
  *     subjectPublicKey as DERBitString:
  *
  *     RSAPublicKey ::= ASN1Sequence {
@@ -63,6 +73,8 @@ import org.kse.utilities.pem.PemUtil;
  *         publicExponent ASN1Integer}
  *
  *     DSAPublicKey ::= ASN1Integer
+ *
+ *     ECPoint ::= OCTET STRING
  * </pre>
  *
  */
@@ -72,6 +84,9 @@ public class OpenSslPubUtil {
 
 	private static final String OPENSSL_PUB_PEM_TYPE = "PUBLIC KEY";
 
+	private OpenSslPubUtil() {
+	}
+
 	/**
 	 * OpenSSL encode a public key.
 	 *
@@ -80,8 +95,7 @@ public class OpenSslPubUtil {
 	 *            The public key
 	 */
 	public static byte[] get(PublicKey publicKey) {
-		// The public key encoding is a DER-encoded subjectPublicKeyInfo
-		// structure - the OpenSSL format
+		// The public key encoding is a DER-encoded subjectPublicKeyInfo structure - the OpenSSL format
 		return publicKey.getEncoded();
 	}
 
@@ -125,21 +139,10 @@ public class OpenSslPubUtil {
 		}
 
 		try {
-			// X509EncodedKeySpec accepts a DER-encoded subjectPublicKeyInfo
-			// structure - the OpenSSL format
-			X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(streamContents);
-
-			// We have to specify a valid algorithm, but do not know which one
-			PublicKey pubKey = null;
-			try {
-				pubKey = KeyFactory.getInstance("RSA").generatePublic(x509EncodedKeySpec);
-			} catch (InvalidKeySpecException e) {
-				// ok, not RSA, try DSA
-				pubKey = KeyFactory.getInstance("DSA").generatePublic(x509EncodedKeySpec);
-			}
-
-			return pubKey;
-		} catch (GeneralSecurityException ex) {
+			// DER-encoded subjectPublicKeyInfo structure - the OpenSSL format
+			SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(streamContents);
+			return new JcaPEMKeyConverter().getPublicKey(publicKeyInfo);
+		} catch (Exception ex) {
 			throw new CryptoException(res.getString("NoLoadOpenSslPublicKey.exception.message"), ex);
 		}
 	}

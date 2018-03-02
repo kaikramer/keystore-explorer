@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
@@ -80,13 +79,9 @@ public class DragKeyPairEntry extends DragEntry {
 			KeyStore p12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
 			p12.setKeyEntry(name, privateKey, new char[] {}, certificateChain);
 
-			ByteArrayOutputStream baos = null;
-			try {
-				baos = new ByteArrayOutputStream();
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 				p12.store(baos, password.toCharArray());
 				contentBytes = baos.toByteArray();
-			} finally {
-				IOUtils.closeQuietly(baos);
 			}
 
 			/*

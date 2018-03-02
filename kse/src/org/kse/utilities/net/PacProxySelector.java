@@ -41,7 +41,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.utilities.io.CopyUtil;
 
 /**
@@ -134,19 +133,11 @@ public class PacProxySelector extends ProxySelector {
 			URL latestVersionUrl = new URL(pacUrl);
 			connection = latestVersionUrl.openConnection();
 
-			InputStreamReader isr = null;
-			StringWriter sw = null;
-
-			try {
-				isr = new InputStreamReader(connection.getInputStream());
-				sw = new StringWriter();
-
+			try (InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+					StringWriter sw = new StringWriter()) {
 				CopyUtil.copy(isr, sw);
 
 				return sw.toString();
-			} finally {
-				IOUtils.closeQuietly(isr);
-				IOUtils.closeQuietly(sw);
 			}
 		} catch (IOException ex) {
 			throw new PacProxyException(

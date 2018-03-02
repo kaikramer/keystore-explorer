@@ -125,6 +125,37 @@ public final class KeyPairUtil {
 	}
 
 	/**
+	 * Generate a EC key pair.
+	 *
+	 * @param curveName
+	 *            Name of the ECC curve
+	 * @param provider A JCE provider.
+	 * @return A key pair
+	 * @throws CryptoException
+	 *             If there was a problem generating the key pair
+	 */
+	public static KeyPair generateECKeyPair(String curveName, Provider provider) throws CryptoException {
+		try {
+			// Get a key pair generator
+			KeyPairGenerator keyPairGen;
+			if (provider != null) {
+				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
+			} else {
+				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
+			}
+
+			keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
+
+			// Generate and return the key pair
+			KeyPair keyPair = keyPairGen.generateKeyPair();
+			return keyPair;
+		} catch (GeneralSecurityException ex) {
+			throw new CryptoException(MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"),
+					KeyPairType.EC), ex);
+		}
+	}
+
+	/**
 	 * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
 	 *
 	 * @param provider A JCE provider.
@@ -366,7 +397,7 @@ public final class KeyPairUtil {
 
 	private static byte[] sign(byte[] toSign, PrivateKey privateKey, String signatureAlgorithm)
 			throws GeneralSecurityException {
-		Signature signature = Signature.getInstance(signatureAlgorithm);
+		Signature signature = Signature.getInstance(signatureAlgorithm, new BouncyCastleProvider());
 		signature.initSign(privateKey);
 		signature.update(toSign);
 		return signature.sign();
@@ -374,7 +405,7 @@ public final class KeyPairUtil {
 
 	private static boolean verify(byte[] signed, byte[] signaureToVerify, PublicKey publicKey, String signatureAlgorithm)
 			throws GeneralSecurityException {
-		Signature signature = Signature.getInstance(signatureAlgorithm);
+		Signature signature = Signature.getInstance(signatureAlgorithm, new BouncyCastleProvider());
 		signature.initVerify(publicKey);
 		signature.update(signed);
 		return signature.verify(signaureToVerify);

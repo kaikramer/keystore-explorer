@@ -56,7 +56,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
@@ -75,6 +74,7 @@ import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.io.FileNameUtil;
+import org.kse.utilities.io.IOUtils;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -610,7 +610,7 @@ public class DSignJar extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		Security.addProvider(new BouncyCastleProvider());
 
 		java.awt.EventQueue.invokeLater(new Runnable() {

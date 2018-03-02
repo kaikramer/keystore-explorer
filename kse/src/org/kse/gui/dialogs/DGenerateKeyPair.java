@@ -444,7 +444,7 @@ public class DGenerateKeyPair extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 		java.awt.EventQueue.invokeLater(new Runnable() {
 

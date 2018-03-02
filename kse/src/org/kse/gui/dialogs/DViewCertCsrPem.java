@@ -49,7 +49,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -62,6 +61,7 @@ import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.io.IOUtils;
 
 /**
  * Displays an X.509 certificate's PEM'd DER encoding and provides the
@@ -285,7 +285,7 @@ public class DViewCertCsrPem extends JEscDialog {
 			chooser.setMultiSelectionEnabled(false);
 
 			int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-	                : chooser.showDialog(this, res.getString("DViewCertCsrPem.ChooseExportFile.button"));
+					: chooser.showDialog(this, res.getString("DViewCertCsrPem.ChooseExportFile.button"));
 
 			if (rtnValue != JFileChooser.APPROVE_OPTION) {
 				return;
@@ -305,6 +305,7 @@ public class DViewCertCsrPem extends JEscDialog {
 
 			fw = new FileWriter(chosenFile);
 			fw.write(certPem);
+			fw.flush();
 		} catch (FileNotFoundException ex) {
 			JOptionPane.showMessageDialog(this,
 					MessageFormat.format(res.getString("DViewCertCsrPem.NoWriteFile.message"), chosenFile),

@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.Extension;
@@ -207,10 +206,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	 *             If an I/O problem occurred
 	 */
 	public static X509ExtensionSet load(InputStream is) throws X509ExtensionSetLoadException, IOException {
-		DataInputStream dis = null;
-
-		try {
-			dis = new DataInputStream(is);
+		try (DataInputStream dis = new DataInputStream(is)) {
 
 			long magicNumber = dis.readLong();
 
@@ -235,8 +231,6 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 		} catch (EOFException ex) {
 			throw new X509ExtensionSetLoadException(
 					res.getString("NoLoadX509ExtensionSet.NotEnoughBytes.exception.message"));
-		} finally {
-			IOUtils.closeQuietly(dis);
 		}
 	}
 
@@ -288,18 +282,13 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	 *             If an I/O problem occurred
 	 */
 	public void save(OutputStream os) throws IOException {
-		DataOutputStream dos = null;
-
-		try {
-			dos = new DataOutputStream(os);
+		try (DataOutputStream dos = new DataOutputStream(os)) {
 
 			dos.writeLong(FILE_MAGIC_NUMBER);
 			dos.writeInt(FILE_VERSION);
 
 			saveExtensions(criticalExtensions, dos);
 			saveExtensions(nonCriticalExtensions, dos);
-		} finally {
-			IOUtils.closeQuietly(dos);
 		}
 	}
 

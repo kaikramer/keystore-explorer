@@ -38,7 +38,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x509.Certificate;
@@ -247,11 +246,10 @@ public class Pkcs10Util {
 		byte[] streamContents = ReadUtil.readFully(is);
 
 		byte[] csrBytes = null;
-		LineNumberReader lnr = null;
-
 		// Assume file is PEM until we find out otherwise
-		try {
-			lnr = new LineNumberReader(new InputStreamReader(new ByteArrayInputStream(streamContents)));
+		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(streamContents);
+				InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
+				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
 			String line = lnr.readLine();
 			StringBuffer sbPem = new StringBuffer();
@@ -266,8 +264,6 @@ public class Pkcs10Util {
 					sbPem.append(line);
 				}
 			}
-		} finally {
-			IOUtils.closeQuietly(lnr);
 		}
 
 		// Not PEM - must be DER encoded

@@ -48,7 +48,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DERSet;
@@ -200,15 +199,11 @@ public class JarSigner {
 			X509Certificate[] certificateChain, SignatureType signatureType, String signatureName, String signer,
 			DigestType digestType, String tsaUrl, Provider provider) throws IOException, CryptoException {
 
-		JarFile jar = null;
-		JarOutputStream jos = null;
+		try (JarFile jar = new JarFile(jarFile);
+				JarOutputStream jos = new JarOutputStream(new FileOutputStream(signedJarFile));	) {
 
-		try {
 			// Replace illegal characters in signature name
 			signatureName = convertSignatureName(signatureName);
-
-			// Create Jar File accessor for JAR to be signed
-			jar = new JarFile(jarFile);
 
 			// Write manifest content to here
 			StringBuilder sbManifest = new StringBuilder();
@@ -289,9 +284,6 @@ public class JarSigner {
 			// Signature file complete
 			byte[] sf = sbSf.toString().getBytes();
 
-			// Create output stream to write signed JAR
-			jos = new JarOutputStream(new FileOutputStream(signedJarFile));
-
 			// Write JAR files from JAR to be signed to signed JAR
 			writeJarEntries(jar, jos, signatureName);
 
@@ -304,9 +296,6 @@ public class JarSigner {
 			// Create signature block and write it out to signed JAR
 			byte[] sigBlock = createSignatureBlock(sf, privateKey, certificateChain, signatureType, tsaUrl, provider);
 			writeSignatureBlock(sigBlock, signatureType, signatureName, jos);
-		} finally {
-			IOUtils.closeQuietly(jar);
-			IOUtils.closeQuietly(jos);
 		}
 	}
 
@@ -352,12 +341,9 @@ public class JarSigner {
 	 *             If an I/O problem occurs while examining the JAR file
 	 */
 	public static boolean hasSignature(File jarFile, String signatureName) throws IOException {
-		JarFile jar = null;
+		try (JarFile jar = new JarFile(jarFile)) {
 
-		try {
 			// Look for signature file (DSA or RSA)
-			jar = new JarFile(jarFile);
-
 			for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
 				JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
 				if (!jarEntry.isDirectory()) {
@@ -371,8 +357,6 @@ public class JarSigner {
 			}
 
 			return false;
-		} finally {
-			IOUtils.closeQuietly(jar);
 		}
 	}
 
@@ -467,11 +451,8 @@ public class JarSigner {
 	private static String getDigestManifestAttrs(JarFile jar, JarEntry jarEntry, DigestType digestType)
 			throws IOException, CryptoException {
 
-		InputStream jis = null;
-
-		try {
 			// Get input stream to JAR entry's content
-			jis = jar.getInputStream(jarEntry);
+		try (InputStream jis = jar.getInputStream(jarEntry)){
 
 			// Get the digest of content in Base64
 			byte[] md = DigestUtil.getMessageDigest(jis, digestType);
@@ -487,8 +468,6 @@ public class JarSigner {
 			sbManifestEntry.append(CRLF);
 
 			return sbManifestEntry.toString();
-		} finally {
-			IOUtils.closeQuietly(jis);
 		}
 	}
 
@@ -499,22 +478,11 @@ public class JarSigner {
 
 		JarEntry manifestEntry = jar.getJarEntry(MANIFEST_LOCATION);
 
-		InputStream jis = null;
-		ByteArrayOutputStream baos = null;
-
-		try {
-			jis = jar.getInputStream(manifestEntry);
-			baos = new ByteArrayOutputStream();
+		try (InputStream jis = jar.getInputStream(manifestEntry);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream()){
 
 			CopyUtil.copyClose(jis, baos);
-			baos.close();
-
-			String manifest = baos.toString();
-
-			return manifest;
-		} finally {
-			IOUtils.closeQuietly(jis);
-			IOUtils.closeQuietly(baos);
+			return baos.toString();
 		}
 	}
 
@@ -526,9 +494,9 @@ public class JarSigner {
 		// Get full manifest content
 		String manifestContent = getManifest(jar);
 
-		LineNumberReader lnr = new LineNumberReader(new StringReader(manifestContent));
+		try (StringReader stringReader = new StringReader(manifestContent);
+				LineNumberReader lnr = new LineNumberReader(stringReader)) {
 
-		try {
 			StringBuilder sb = new StringBuilder();
 
 			String line = null;
@@ -546,8 +514,6 @@ public class JarSigner {
 			}
 
 			return sb.toString();
-		} finally {
-			IOUtils.closeQuietly(lnr);
 		}
 	}
 
@@ -559,9 +525,10 @@ public class JarSigner {
 		// Get full manifest content
 		String manifestContent = getManifest(jar);
 
-		LineNumberReader lnr = new LineNumberReader(new StringReader(manifestContent));
 
-		try {
+		try (StringReader in = new StringReader(manifestContent);
+				LineNumberReader lnr = new LineNumberReader(in)) {
+
 			StringBuilder sb = new StringBuilder();
 
 			String line = null;
@@ -597,8 +564,6 @@ public class JarSigner {
 			}
 
 			return sb.toString();
-		} finally {
-			IOUtils.closeQuietly(lnr);
 		}
 	}
 
@@ -632,11 +597,7 @@ public class JarSigner {
 					newJarEntry.setCrc(jarEntry.getCrc());
 					jos.putNextEntry(newJarEntry);
 
-					InputStream jis = null;
-
-					try {
-						jis = jar.getInputStream(jarEntry);
-
+					try (InputStream jis = jar.getInputStream(jarEntry)) {
 						byte[] buffer = new byte[2048];
 						int read = -1;
 
@@ -645,8 +606,6 @@ public class JarSigner {
 						}
 
 						jos.closeEntry();
-					} finally {
-						IOUtils.closeQuietly(jis);
 					}
 				}
 			}
@@ -662,12 +621,8 @@ public class JarSigner {
 		JarEntry mfJarEntry = new JarEntry(MANIFEST_LOCATION);
 		jos.putNextEntry(mfJarEntry);
 
+		try (ByteArrayInputStream bais = new ByteArrayInputStream(manifest);) {
 		// Write content
-		ByteArrayInputStream bais = null;
-
-		try {
-			bais = new ByteArrayInputStream(manifest);
-
 			byte[] buffer = new byte[2048];
 			int read = -1;
 
@@ -676,8 +631,6 @@ public class JarSigner {
 			}
 
 			jos.closeEntry();
-		} finally {
-			IOUtils.closeQuietly(bais);
 		}
 	}
 
@@ -692,10 +645,7 @@ public class JarSigner {
 		jos.putNextEntry(sfJarEntry);
 
 		// Write content
-		ByteArrayInputStream bais = null;
-
-		try {
-			bais = new ByteArrayInputStream(sf);
+		try (ByteArrayInputStream bais = new ByteArrayInputStream(sf)) {
 
 			byte[] buffer = new byte[2048];
 			int read = -1;
@@ -705,8 +655,6 @@ public class JarSigner {
 			}
 
 			jos.closeEntry();
-		} finally {
-			IOUtils.closeQuietly(bais);
 		}
 	}
 

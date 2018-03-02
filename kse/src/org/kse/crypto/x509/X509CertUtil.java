@@ -48,7 +48,6 @@ import java.util.ResourceBundle;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -57,6 +56,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.utilities.ArrayUtils;
+import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;

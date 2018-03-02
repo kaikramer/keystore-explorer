@@ -51,6 +51,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -387,7 +388,7 @@ public class DGenerateCsr extends JEscDialog {
 			format = SPKAC;
 		}
 
-		signatureAlgorithm = (SignatureType) jcbSignatureAlgorithm.getItemAt(jcbSignatureAlgorithm.getSelectedIndex());
+		signatureAlgorithm = jcbSignatureAlgorithm.getItemAt(jcbSignatureAlgorithm.getSelectedIndex());
 
 		challenge = jtfChallenge.getText();
 		if (challenge.length() == 0) {
@@ -446,7 +447,7 @@ public class DGenerateCsr extends JEscDialog {
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		javax.swing.UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {

@@ -595,6 +595,7 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("1.2.840.10045.3.0.1", "C2pnb163v1");
 		oidToNameMapping.put("1.2.840.10045.3.0.2", "C2pnb163v2");
 		oidToNameMapping.put("1.2.840.10045.3.0.3", "C2pnb163v3");
+		oidToNameMapping.put("1.2.840.10045.3.0.4", "C2pnb176w1");
 		oidToNameMapping.put("1.2.840.10045.3.0.5", "C2tnb191v1");
 		oidToNameMapping.put("1.2.840.10045.3.0.6", "C2tnb191v2");
 		oidToNameMapping.put("1.2.840.10045.3.0.7", "C2tnb191v3");
@@ -603,6 +604,7 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("1.2.840.10045.3.0.12", "C2tnb239v2");
 		oidToNameMapping.put("1.2.840.10045.3.0.13", "C2tnb239v3");
 		oidToNameMapping.put("1.2.840.10045.3.0.16", "C2pnb272w1");
+		oidToNameMapping.put("1.2.840.10045.3.0.17", "C2pnb304w1");
 		oidToNameMapping.put("1.2.840.10045.3.0.18", "C2tnb359v1");
 		oidToNameMapping.put("1.2.840.10045.3.0.19", "C2pnb368w1");
 		oidToNameMapping.put("1.2.840.10045.3.0.20", "C2tnb431r1");

@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-
 /**
  * Transferable for KeyStore entries. <code>DataFlavor.javaFileListFlavor</code>
  * and <code>DataFlavor.stringFlavor</code> are supported.
@@ -93,12 +91,9 @@ public class KeyStoreEntryTransferable implements Transferable {
 			File tmpFile = new File(tempDir, dragEntry.getFileName());
 			tmpFile.deleteOnExit();
 
-			FileOutputStream fos = null;
-			try {
-				fos = new FileOutputStream(tmpFile);
+			try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
 				fos.write(dragEntry.getContent());
-			} finally {
-				IOUtils.closeQuietly(fos);
+				fos.flush();
 			}
 
 			List<File> list = new ArrayList<File>();
