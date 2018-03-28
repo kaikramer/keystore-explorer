@@ -41,6 +41,7 @@ public class FileChooserFactory {
 	public static final String JCEKS_EXT = "jceks";
 	public static final String BKS_EXT = "bks";
 	public static final String UBER_EXT = "uber";
+	public static final String BCFKS_EXT = "bcfks";
 	public static final String PKCS12_KEYSTORE_EXT_1 = "pfx";
 	public static final String PKCS12_KEYSTORE_EXT_2 = "p12";
 	public static final String X509_EXT_1 = "cer";
@@ -68,7 +69,7 @@ public class FileChooserFactory {
 
 	private static final String KEYSTORE_FILE_DESC = MessageFormat.format(
 			res.getString("FileChooserFactory.KeyStoreFiles"), KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT,
-			BKS_EXT, UBER_EXT);
+			BKS_EXT, UBER_EXT, BCFKS_EXT);
 
 	private static final String X509_FILE_DESC = MessageFormat.format(
 			res.getString("FileChooserFactory.CertificateFiles"), X509_EXT_1, X509_EXT_2);
@@ -143,7 +144,7 @@ public class FileChooserFactory {
 		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2 },
 				PKCS12_FILE_DESC));
 		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT,
-				JCEKS_EXT, BKS_EXT, UBER_EXT }, KEYSTORE_FILE_DESC));
+				JCEKS_EXT, BKS_EXT, UBER_EXT, BCFKS_EXT }, KEYSTORE_FILE_DESC));
 		return chooser;
 	}
 
