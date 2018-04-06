@@ -117,7 +117,7 @@ dependencies {
 	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
-	compile group: 'com.miglayout', name: 'miglayout-swing', version: '5.0'
+	compile group: 'com.miglayout', name: 'miglayout-swing', version: '5.1'
 	compile group: 'com.jgoodies', name: 'jgoodies-common', version: '1.8.1'
 	compile group: 'com.jgoodies', name: 'jgoodies-looks', version: '2.7.0'
 
