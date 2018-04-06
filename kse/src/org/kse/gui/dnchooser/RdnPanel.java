@@ -19,14 +19,17 @@
  */
 package org.kse.gui.dnchooser;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.RDN;
+import org.kse.crypto.x509.KseX500NameStyle;
+import org.kse.utilities.StringUtils;
 
 /**
  * GUI item for RDN.
@@ -38,12 +41,14 @@ public class RdnPanel extends JPanel {
 	private JComboBox<?> comboBox;
 	private JLabel label;
 	private JTextField textField;
-	private JButton plus;
-	private JButton minus;
-	private RdnPanelList parent;
+	private static final String[] DEFAULT_COMBO_ENTRIES = OidDisplayNameMapping.getDisplayNames();
 
-	public RdnPanel(JComboBox<?> comboBox, String selectedItem, String textFieldText, RdnPanelList list, boolean editable) {
+	public RdnPanel(RDN rdn) {
+		this(new JComboBox<Object>(DEFAULT_COMBO_ENTRIES), DEFAULT_COMBO_ENTRIES[0], "", true);
+		setRDN(rdn);
+	}
 
+	public RdnPanel(JComboBox<?> comboBox, String selectedItem, String textFieldText, boolean editable) {
 		this.comboBox = comboBox;
 		if (editable) {
 			this.comboBox.setSelectedItem(selectedItem);
@@ -54,65 +59,22 @@ public class RdnPanel extends JPanel {
 			add(this.label);
 		}
 
-		this.parent = list;
-
 		this.textField = new JTextField(30);
 		this.textField.setText(textFieldText);
 		this.textField.setEditable(editable);
 		add(this.textField);
+	}
 
-		if (editable) {
-			this.plus = new JButton(new AddEntryAction());
-			add(this.plus);
-
-			this.minus = new JButton(new RemoveEntryAction());
-			add(this.minus);
+	public void setRDN(RDN rdn) {
+		if (rdn == null || rdn.getFirst() == null) {
+			return;
 		}
+		comboBox.setSelectedItem(OidDisplayNameMapping.getDisplayNameForOid(rdn.getFirst().getType().toString()));
+		textField.setText(rdn.getFirst().getValue().toString());
 	}
 
 	public JComboBox<?> getComboBox() {
 		return comboBox;
-	}
-
-	public class AddEntryAction extends AbstractAction {
-
-		private static final long serialVersionUID = 1L;
-
-		public AddEntryAction() {
-			super("+");
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			parent.cloneEntry(RdnPanel.this);
-		}
-
-	}
-
-	public class RemoveEntryAction extends AbstractAction {
-
-		private static final long serialVersionUID = 1L;
-
-		public RemoveEntryAction() {
-			super("-");
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			parent.removeItem(RdnPanel.this);
-		}
-	}
-
-	public void enableAdd(boolean enabled) {
-		if (this.plus != null) {
-			this.plus.setEnabled(enabled);
-		}
-	}
-
-	public void enableMinus(boolean enabled) {
-		if (this.minus != null) {
-			this.minus.setEnabled(enabled);
-		}
 	}
 
 	public String getAttributeName() {
@@ -121,5 +83,34 @@ public class RdnPanel extends JPanel {
 
 	public String getAttributeValue() {
 		return textField.getText();
+	}
+
+	public boolean isEditable() {
+		return this.textField.isEditable();
+	}
+	
+	public RDN getRDN(boolean noEmptyRdns) {
+		ASN1ObjectIdentifier attrType = OidDisplayNameMapping.getOidForDisplayName(getAttributeName());
+		if (noEmptyRdns && StringUtils.trimAndConvertEmptyToNull(getAttributeValue()) == null) {
+			return null;
+		}
+		ASN1Encodable attrValue = KseX500NameStyle.INSTANCE.stringToValue(attrType, getAttributeValue());
+		return new RDN(new AttributeTypeAndValue(attrType, attrValue));
+		
+	}
+	
+	public static String toString(RDN value) {
+		if (value == null || value.getFirst() == null) {
+			return null;
+		}
+		StringBuilder builder = new StringBuilder();
+		for(AttributeTypeAndValue typeAndValue : value.getTypesAndValues()) {
+			builder
+				.append(OidDisplayNameMapping.getDisplayNameForOid(typeAndValue.getType().toString()))
+				.append(typeAndValue.getValue().toString())
+				.append(",");
+		}
+		builder.setLength(builder.length()-1);
+		return builder.toString();
 	}
 }

@@ -565,6 +565,10 @@ public class DAddExtensions extends JEscDialog {
 			dExtension = new DSubjectKeyIdentifier(this, subjectPublicKey);
 			break;
 		}
+		case CRL_DISTRIBUTION_POINTS: {
+			dExtension = new DCrlDistributionPoints(this);
+			break;
+		}
 		default: {
 			return;
 		}
@@ -712,6 +716,10 @@ public class DAddExtensions extends JEscDialog {
 				}
 				case SUBJECT_KEY_IDENTIFIER: {
 					dExtension = new DSubjectKeyIdentifier(this, extensionValue, subjectPublicKey);
+					break;
+				}
+				case CRL_DISTRIBUTION_POINTS: {
+					dExtension = new DCrlDistributionPoints(this, extensionValue);
 					break;
 				}
 				default: {
