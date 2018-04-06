@@ -315,9 +315,14 @@ public class DSignJar extends JEscDialog {
 	}
 
 	private String[] getTsaUrls() {
-		return new String[] { "https://timestamp.geotrust.com/tsa", "http://tsa.starfieldtech.com",
-				"http://www.startssl.com/timestamp", "http://timestamp.globalsign.com/scripts/timstamp.dll",
-		"http://timestamp.comodoca.com/rfc3161"};
+		return new String[] {
+				"http://timestamp.digicert.com",
+				"http://timestamp.globalsign.com/scripts/timstamp.dll",
+				"http://tsa.starfieldtech.com",
+				"http://time.certum.pl",
+				"http://sha256timestamp.ws.symantec.com/sha256/timestamp",
+				"http://timestamp.comodoca.com/?td=sha256"
+		};
 	}
 
 	private String convertSignatureName(String signatureName) {
