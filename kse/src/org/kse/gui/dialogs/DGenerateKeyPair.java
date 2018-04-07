@@ -452,9 +452,8 @@ public class DGenerateKeyPair extends JEscDialog {
 			public void run() {
 				DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.JKS, KeyPairType.RSA, 1024);
 				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
 					@Override
-					public void windowClosing(java.awt.event.WindowEvent e) {
+					public void windowClosed(java.awt.event.WindowEvent e) {
 						System.exit(0);
 					}
 				});
