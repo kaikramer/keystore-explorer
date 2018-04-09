@@ -98,7 +98,8 @@ public class EccUtil {
 	public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
 		return (keyStoreType == KeyStoreType.BKS
 				|| keyStoreType == KeyStoreType.BKS_V1
-				|| keyStoreType == KeyStoreType.UBER);
+				|| keyStoreType == KeyStoreType.UBER
+				|| keyStoreType == KeyStoreType.BCFKS);
 	}
 
 	/**

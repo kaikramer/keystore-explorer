@@ -41,6 +41,9 @@ public enum CryptoFileType {
 	/** BKS KeyStore */
 	BKS_KS("CryptoFileType.BksKs"),
 
+	/** BCFKS FIPS KeyStore */
+	BCFKS_KS("CryptoFileType.BcfKs"),
+
 	/** UBER KeyStore */
 	UBER_KS("CryptoFileType.UberKs"),
 

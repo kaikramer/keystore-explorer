@@ -32,6 +32,7 @@ import static org.kse.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNKNOWN;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
+import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
 import static org.kse.crypto.keystore.KeyStoreType.JKS;
 import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
@@ -49,6 +50,7 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DLSequence;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
@@ -277,7 +279,9 @@ public class CryptoFileUtil {
 					if (version.getValue().intValue() == 3) {
 						return PKCS12;
 					}
-				}
+				} else if(firstComponent instanceof DLSequence){
+                    return BCFKS;
+                }
 			}
 		}
 
