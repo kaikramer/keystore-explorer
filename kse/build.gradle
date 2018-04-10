@@ -244,6 +244,7 @@ task copyDependencies(type: Copy) {
 task nsis(dependsOn: [launch4j, copyDependencies]) {
 	doLast {
 		def nsisScript = "kse.nsi"
+		mkdir distsDir
 		copy {
 			from("nsis/${nsisScript}.template")
 			rename("${nsisScript}.template", nsisScript)
@@ -313,6 +314,7 @@ task signapp(type: Exec, dependsOn: appbundler) {
 
 task dmg(type: Exec, dependsOn: signapp) {
 	workingDir appBundleDir
+	mkdir distsDir
 	commandLine '/usr/local/bin/dropdmg', '-y', 'KSE 5', '-o', distsDir, '-b', "${appSimpleName}-${appSimpleVersion}", 
 				'--signing-identity=683348D91DCE57101313B0F2C88C084E1C2C7A31', "${appBundle}"
 }
