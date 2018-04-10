@@ -25,7 +25,21 @@ To do a clean build, issue the following command:
 
     $ ./gradlew clean build
 
-The `build.gradle` file contains further instructions for building the platform specific distribution packages.
+This runs the unit tests and compiles a new `kse.jar` into `build/libs`. You can then update an existing KSE installation by replacing its kse.jar with this one.
+
+The `build.gradle` file contains further instructions for building the platform specific distribution packages. In a nutshell:
+
+For the ZIP package:
+
+    $ ./gradlew zip 
+
+For the Windows installer:    
+
+    $ ./gradlew nsis
+
+For the MacOS application:    
+
+    $ ./gradlew appbundler
 
 ## Contributing
 
