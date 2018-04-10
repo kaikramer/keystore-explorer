@@ -275,6 +275,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 				fileset(dir: 'lib', includes: 'appbundler-1.0ea.jar' )
 			}
 		}
+		mkdir appBundleDir
 		ant.bundleapp(outputdirectory: appBundleDir, 
 					name: appName, 
 					displayname: appName, 
