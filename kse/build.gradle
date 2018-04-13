@@ -212,7 +212,7 @@ task zip(type: Zip, dependsOn: launch4j) {
 		from "$launch4jOutDir/$appExe"
 		from(resDir) {
 			include 'kse.sh'
-			fileMode 755
+			fileMode 0755
 		} 
 		from(readmesDir) {
 			include 'readme.txt'
