@@ -105,7 +105,7 @@ public class KSE {
 			initialiseSecurity();
 
 			// list of files to open after start
-			List<File> parameterFiles = new ArrayList<File>();
+			List<File> parameterFiles = new ArrayList<>();
 			for (String arg : args) {
 				File parameterFile = new File(arg);
 				if (parameterFile.exists()) {

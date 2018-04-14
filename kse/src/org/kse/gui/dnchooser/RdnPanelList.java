@@ -45,7 +45,7 @@ public class RdnPanelList extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<RdnPanel> entries = new ArrayList<RdnPanel>();
+	private List<RdnPanel> entries = new ArrayList<>();
 
 	private boolean editable;
 
@@ -97,7 +97,7 @@ public class RdnPanelList extends JPanel {
 	}
 
 	public List<RDN> getRdns(boolean noEmptyRdns) {
-		List<RDN> rdns = new ArrayList<RDN>();
+		List<RDN> rdns = new ArrayList<>();
 		for (RdnPanel rdnPanel : entries) {
 			ASN1ObjectIdentifier attrType = OidDisplayNameMapping.getOidForDisplayName(rdnPanel.getAttributeName());
 			if (noEmptyRdns && StringUtils.trimAndConvertEmptyToNull(rdnPanel.getAttributeValue()) == null) {

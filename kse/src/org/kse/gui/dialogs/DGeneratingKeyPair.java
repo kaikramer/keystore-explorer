@@ -149,7 +149,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 			}
 		});
 
-		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel, false);
+		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
 
 		getContentPane().add(jpGenKeyPair, BorderLayout.NORTH);
 		getContentPane().add(jpProgress, BorderLayout.CENTER);

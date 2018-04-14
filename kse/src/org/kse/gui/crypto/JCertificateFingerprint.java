@@ -69,7 +69,7 @@ public class JCertificateFingerprint extends JPanel {
 	}
 
 	private void initComponents(int columns) {
-		jcbFingerprintAlg = new JComboBox<DigestType>();
+		jcbFingerprintAlg = new JComboBox<>();
 		jcbFingerprintAlg.setToolTipText(res.getString("JCertificateFingerprint.jcbFingerprintAlg.tooltip"));
 		jcbFingerprintAlg.setMaximumRowCount(10);
 		jcbFingerprintAlg.addItemListener(new ItemListener() {
@@ -186,7 +186,7 @@ public class JCertificateFingerprint extends JPanel {
 
 				if (container instanceof JDialog) {
 					dError = new DError((JDialog) container, ex);
-				} else if (container instanceof JFrame) {
+				} else {
 					dError = new DError((JFrame) container, ex);
 				}
 

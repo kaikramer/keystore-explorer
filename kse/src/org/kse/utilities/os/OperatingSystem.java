@@ -24,8 +24,8 @@ package org.kse.utilities.os;
  *
  */
 public class OperatingSystem {
-	private static final String osName = System.getProperty("os.name");
-	private static final String osVersion = System.getProperty("os.version");
+	private static final String OS_NAME = System.getProperty("os.name");
+	private static final String OS_VERSION = System.getProperty("os.version");
 
 	// @formatter:off
 
@@ -54,7 +54,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindowsNt4() {
-		return osName.indexOf("Windows NT") > -1 && osVersion.equals("4.0");
+		return OS_NAME.indexOf("Windows NT") > -1 && OS_VERSION.equals("4.0");
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows95() {
-		return osName.indexOf("Windows 95") > -1 && osVersion.equals("4.0");
+		return OS_NAME.indexOf("Windows 95") > -1 && OS_VERSION.equals("4.0");
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows98() {
-		return osName.indexOf("Windows") > -1 && osVersion.equals("4.1");
+		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("4.1");
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindowsMe() {
-		return osName.indexOf("Windows") > -1 && osVersion.equals("4.9");
+		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("4.9");
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows2000() {
-		return osName.indexOf("Windows") > -1 && osVersion.equals("5.0");
+		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("5.0");
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindowsXp() {
-		return osName.indexOf("Windows") > -1 && osVersion.equals("5.1");
+		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("5.1");
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindowsVista() {
-		return osName.indexOf("Windows") > -1 && osVersion.equals("6.0");
+		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("6.0");
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows7() {
-		return osName.indexOf("Windows") > -1 && osVersion.equals("6.1");
+		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("6.1");
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows8() {
-		return osName.indexOf("Windows") > -1 && (osVersion.equals("6.2") || osVersion.equals("6.3"));
+		return OS_NAME.indexOf("Windows") > -1 && (OS_VERSION.equals("6.2") || OS_VERSION.equals("6.3"));
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows10() {
-		return osName.indexOf("Windows") > -1 && osVersion.equals("10.0");
+		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("10.0");
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isWindows() {
-		return osName.indexOf("Windows") > -1;
+		return OS_NAME.indexOf("Windows") > -1;
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isLinux() {
-		return osName.indexOf("Linux") > -1;
+		return OS_NAME.indexOf("Linux") > -1;
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isMacOs() {
-		return osName.indexOf("Mac OS") > -1;
+		return OS_NAME.indexOf("Mac OS") > -1;
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isSolaris() {
-		return osName.indexOf("Solaris") > -1 || osName.indexOf("SunOS") > -1;
+		return OS_NAME.indexOf("Solaris") > -1 || OS_NAME.indexOf("SunOS") > -1;
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isAix() {
-		return osName.indexOf("AIX") > -1;
+		return OS_NAME.indexOf("AIX") > -1;
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isFreeBsd() {
-		return osName.indexOf("FreeBSD") > -1;
+		return OS_NAME.indexOf("FreeBSD") > -1;
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isHpUx() {
-		return osName.indexOf("HP-UX") > -1;
+		return OS_NAME.indexOf("HP-UX") > -1;
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isIrix() {
-		return osName.indexOf("Irix") > -1;
+		return OS_NAME.indexOf("Irix") > -1;
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isDigitalUnix() {
-		return osName.indexOf("Digital Unix") > -1;
+		return OS_NAME.indexOf("Digital Unix") > -1;
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class OperatingSystem {
 	 * @return True if it is
 	 */
 	public static boolean isOs2() {
-		return osName.indexOf("OS/2") > -1;
+		return OS_NAME.indexOf("OS/2") > -1;
 	}
 
 	/**

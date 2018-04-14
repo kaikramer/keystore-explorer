@@ -25,6 +25,9 @@ import java.util.Date;
 
 public class StringUtils {
 
+	private StringUtils() {
+	}
+
 	/**
 	 * Trims passed string and converts it to null if the resulting string has length zero.
 	 *

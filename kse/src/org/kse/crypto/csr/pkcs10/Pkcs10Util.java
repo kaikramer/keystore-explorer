@@ -139,9 +139,7 @@ public class Pkcs10Util {
 			}
 
 			return csr;
-		} catch (CertificateEncodingException e) {
-			throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
-		} catch (OperatorCreationException e) {
+		} catch (CertificateEncodingException | OperatorCreationException e) {
 			throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
 		}
 	}
@@ -162,13 +160,7 @@ public class Pkcs10Util {
 			ContentVerifierProvider contentVerifierProvider =
 					new JcaContentVerifierProviderBuilder().setProvider("BC").build(pubKey);
 			return csr.isSignatureValid(contentVerifierProvider);
-		} catch (InvalidKeyException e) {
-			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
-		} catch (OperatorCreationException e) {
-			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
-		} catch (NoSuchAlgorithmException e) {
-			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
-		} catch (PKCSException e) {
+		} catch (InvalidKeyException | OperatorCreationException | NoSuchAlgorithmException | PKCSException e) {
 			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);
 		}
 	}
@@ -254,7 +246,7 @@ public class Pkcs10Util {
 			String line = lnr.readLine();
 			StringBuffer sbPem = new StringBuffer();
 
-			if ((line != null) && ((line.equals(BEGIN_CSR_FORM_1) || line.equals(BEGIN_CSR_FORM_2)))) {
+			if ((line != null) && (line.equals(BEGIN_CSR_FORM_1) || line.equals(BEGIN_CSR_FORM_2))) {
 				while ((line = lnr.readLine()) != null) {
 					if (line.equals(END_CSR_FORM_1) || line.equals(END_CSR_FORM_2)) {
 						csrBytes = Base64.decode(sbPem.toString());

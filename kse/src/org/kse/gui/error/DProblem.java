@@ -149,7 +149,7 @@ public class DProblem extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDisplayError, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDisplayError);
 
 		getContentPane().add(jpProblem, BorderLayout.NORTH);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);

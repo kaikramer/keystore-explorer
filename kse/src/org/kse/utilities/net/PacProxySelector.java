@@ -80,7 +80,7 @@ public class PacProxySelector extends ProxySelector {
 	@Override
 	public List<Proxy> select(URI uri) {
 		// If there are any issues with the PAC return 'no proxy'
-		ArrayList<Proxy> proxies = new ArrayList<Proxy>();
+		ArrayList<Proxy> proxies = new ArrayList<>();
 
 		if (pacScript == null) {
 			try {
@@ -96,11 +96,7 @@ public class PacProxySelector extends ProxySelector {
 
 		try {
 			pacFunctionReturn = (String) pacScript.invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
-		} catch (NoSuchMethodException ex) {
-			ex.printStackTrace();
-			proxies.add(Proxy.NO_PROXY);
-			return proxies;
-		} catch (ScriptException ex) {
+		} catch (NoSuchMethodException | ScriptException ex) {
 			ex.printStackTrace();
 			proxies.add(Proxy.NO_PROXY);
 			return proxies;
@@ -113,7 +109,7 @@ public class PacProxySelector extends ProxySelector {
 
 		proxies.addAll(parsePacProxies(pacFunctionReturn));
 
-		if (proxies.size() == 0) {
+		if (proxies.isEmpty()) {
 			proxies.add(Proxy.NO_PROXY);
 		}
 
@@ -168,7 +164,7 @@ public class PacProxySelector extends ProxySelector {
 	}
 
 	private List<Proxy> parsePacProxies(String pacFunctionReturn) {
-		ArrayList<Proxy> proxies = new ArrayList<Proxy>();
+		ArrayList<Proxy> proxies = new ArrayList<>();
 
 		// PAC function return delimits different proxies by ';'
 		StringTokenizer strTok = new StringTokenizer(pacFunctionReturn, ";");

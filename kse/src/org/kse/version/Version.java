@@ -63,7 +63,7 @@ public class Version implements Comparable<Object>, Serializable {
 	public Version(String version, String delimiters) throws VersionException {
 
 		StringTokenizer strTok = new StringTokenizer(version.trim(), delimiters);
-		List<Integer> versionSections = new ArrayList<Integer>();
+		List<Integer> versionSections = new ArrayList<>();
 
 		while (strTok.hasMoreTokens()) {
 			try {
@@ -80,7 +80,7 @@ public class Version implements Comparable<Object>, Serializable {
 			}
 		}
 
-		if (versionSections.size() == 0) {
+		if (versionSections.isEmpty()) {
 			throw new VersionException(MessageFormat.format(res.getString("NoParseVersion.exception.message"),
 					version, delimiters));
 		} else {
@@ -89,7 +89,7 @@ public class Version implements Comparable<Object>, Serializable {
 	}
 
 	private List<Integer> getSections() {
-		return new ArrayList<Integer>(iSections);
+		return new ArrayList<>(iSections);
 	}
 
 	@Override

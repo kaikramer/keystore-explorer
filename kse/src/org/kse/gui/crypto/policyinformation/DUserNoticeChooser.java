@@ -206,7 +206,7 @@ public class DUserNoticeChooser extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(BorderLayout.CENTER, jpUserNotice);
@@ -305,7 +305,7 @@ public class DUserNoticeChooser extends JEscDialog {
 		NoticeReference noticeReference = null;
 		if (organizationString.length() > 0) { // If organization is present then so is al of notice reference
 
-			Vector<ASN1Integer> noticeNumbers = new Vector<ASN1Integer>();
+			Vector<ASN1Integer> noticeNumbers = new Vector<>();
 
 			for (int noticeNumber : noticeNumberInts) {
 				noticeNumbers.add(new ASN1Integer(noticeNumber));

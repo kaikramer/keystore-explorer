@@ -20,7 +20,6 @@
 package org.kse.gui.dialogs;
 
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -43,6 +42,8 @@ import org.kse.crypto.signing.SignatureType;
  */
 public class DialogHelper {
 
+	private DialogHelper() {
+	}
 
 	/**
 	 * Populate a JComboBox with signature algorithms depending on the key pair type.
@@ -52,7 +53,7 @@ public class DialogHelper {
 	 * @param jcbSignatureAlgorithm
 	 * @throws CryptoException
 	 */
-	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, Provider provider, JComboBox<SignatureType> jcbSignatureAlgorithm)
+	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, JComboBox<SignatureType> jcbSignatureAlgorithm)
 			throws CryptoException {
 
 		List<SignatureType> sigAlgs;

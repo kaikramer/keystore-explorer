@@ -215,7 +215,7 @@ public class JDateTime extends JPanel {
 			dDateTimeChooser = new DDateTimeChooser((JDialog) container, title, date);
 			dDateTimeChooser.setLocationRelativeTo(container);
 			dDateTimeChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dDateTimeChooser = new DDateTimeChooser((JFrame) container, title, date);
 			dDateTimeChooser.setLocationRelativeTo(container);
 			dDateTimeChooser.setVisible(true);

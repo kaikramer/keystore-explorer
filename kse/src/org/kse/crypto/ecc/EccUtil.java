@@ -53,6 +53,9 @@ public class EccUtil {
 		}
 	}
 
+	private EccUtil() {
+	}
+
 	/**
 	 * Determines the name of the domain parameters that were used for generating the key.
 	 *

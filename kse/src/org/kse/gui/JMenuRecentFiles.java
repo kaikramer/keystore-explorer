@@ -176,7 +176,7 @@ public class JMenuRecentFiles extends JMenu {
 	 * @return The recent files
 	 */
 	public File[] getRecentFiles() {
-		ArrayList<File> recentFiles = new ArrayList<File>();
+		ArrayList<File> recentFiles = new ArrayList<>();
 
 		for (int i = 0; i < jmiRecentFiles.length; i++) {
 			if (jmiRecentFiles[i] == null) {

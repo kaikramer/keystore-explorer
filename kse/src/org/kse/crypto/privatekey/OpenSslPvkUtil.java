@@ -238,7 +238,7 @@ public class OpenSslPvkUtil {
 
 			encOpenSsl = cipher.doFinal(openSsl);
 		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(MessageFormat.format("OpenSslEncryptionFailed.exception.message",
+			throw new CryptoException(MessageFormat.format(res.getString("OpenSslEncryptionFailed.exception.message"),
 					pbeType.friendly()), ex);
 		}
 
@@ -289,9 +289,8 @@ public class OpenSslPvkUtil {
 			streamContents = pemInfo.getContent();
 		}
 
-		try {
+		try (ASN1InputStream asn1InputStream = new ASN1InputStream(streamContents)) {
 			// Read OpenSSL DER structure
-			ASN1InputStream asn1InputStream = new ASN1InputStream(streamContents);
 			ASN1Primitive openSsl = asn1InputStream.readObject();
 			asn1InputStream.close();
 
@@ -403,7 +402,8 @@ public class OpenSslPvkUtil {
 		int separator = dekInfo.indexOf(',');
 
 		if (separator == -1) {
-			throw new CryptoException(MessageFormat.format("OpenSslDekInfoMalformed.exception.message", dekInfo));
+			throw new CryptoException(
+					MessageFormat.format(res.getString("OpenSslDekInfoMalformed.exception.message"), dekInfo));
 		}
 
 		String encAlg = dekInfo.substring(0, separator);
@@ -428,7 +428,7 @@ public class OpenSslPvkUtil {
 
 			return load(new ByteArrayInputStream(key));
 		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(MessageFormat.format("OpenSslDecryptionFailed.exception.message",
+			throw new CryptoException(MessageFormat.format(res.getString("OpenSslDecryptionFailed.exception.message"),
 					pbeType.friendly()), ex);
 		}
 	}
@@ -601,7 +601,7 @@ public class OpenSslPvkUtil {
 			cipher.init(operation, secretKey, ivParams);
 			return cipher;
 		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(MessageFormat.format("OpenSslCreateCipherFailed.exception.message",
+			throw new CryptoException(MessageFormat.format(res.getString("OpenSslCreateCipherFailed.exception.message"),
 					transformation), ex);
 		}
 	}

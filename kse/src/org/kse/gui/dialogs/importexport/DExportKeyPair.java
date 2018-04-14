@@ -226,7 +226,7 @@ public class DExportKeyPair extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpOptions, BorderLayout.CENTER);
@@ -299,7 +299,7 @@ public class DExportKeyPair extends JEscDialog {
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-		        : chooser.showDialog(this, res.getString("DExportKeyPair.ChooseExportFile.button"));
+				: chooser.showDialog(this, res.getString("DExportKeyPair.ChooseExportFile.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

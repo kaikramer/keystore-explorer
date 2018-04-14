@@ -188,7 +188,7 @@ public class DViewSecretKey extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpSecretKey, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);

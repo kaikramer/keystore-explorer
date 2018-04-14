@@ -80,6 +80,9 @@ public class PolicyInformationUtil {
 
 	// @formatter:on
 
+	private PolicyInformationUtil() {
+	}
+
 	/**
 	 * Get string representation of policy information.
 	 *

@@ -158,7 +158,7 @@ public class JGeneralNames extends JPanel {
 		GeneralNamesTableModel generalNamesTableModel = new GeneralNamesTableModel();
 		jtGeneralNames = new JKseTable(generalNamesTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(generalNamesTableModel);
+		TableRowSorter<TableModel> sorter = new TableRowSorter<>(generalNamesTableModel);
 		sorter.setComparator(0, new GeneralNamesTableModel.GeneralNameComparator());
 		jtGeneralNames.setRowSorter(sorter);
 
@@ -297,13 +297,11 @@ public class JGeneralNames extends JPanel {
 
 		if (container instanceof JDialog) {
 			dGeneralNameChooser = new DGeneralNameChooser((JDialog) container, title, null);
-			dGeneralNameChooser.setLocationRelativeTo(container);
-			dGeneralNameChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dGeneralNameChooser = new DGeneralNameChooser((JFrame) container, title, null);
-			dGeneralNameChooser.setLocationRelativeTo(container);
-			dGeneralNameChooser.setVisible(true);
 		}
+		dGeneralNameChooser.setLocationRelativeTo(container);
+		dGeneralNameChooser.setVisible(true);
 
 		GeneralName newGeneralName = dGeneralNameChooser.getGeneralName();
 
@@ -385,13 +383,11 @@ public class JGeneralNames extends JPanel {
 
 			if (container instanceof JDialog) {
 				dGeneralNameChooser = new DGeneralNameChooser((JDialog) container, title, generalName);
-				dGeneralNameChooser.setLocationRelativeTo(container);
-				dGeneralNameChooser.setVisible(true);
 			} else if (container instanceof JFrame) {
 				dGeneralNameChooser = new DGeneralNameChooser((JFrame) container, title, generalName);
-				dGeneralNameChooser.setLocationRelativeTo(container);
-				dGeneralNameChooser.setVisible(true);
 			}
+			dGeneralNameChooser.setLocationRelativeTo(container);
+			dGeneralNameChooser.setVisible(true);
 
 			GeneralName newGeneralName = dGeneralNameChooser.getGeneralName();
 

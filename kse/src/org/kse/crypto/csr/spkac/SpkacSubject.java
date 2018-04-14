@@ -296,7 +296,7 @@ public class SpkacSubject {
 	 */
 	@Override
 	public String toString() {
-		ArrayList<String> properties = new ArrayList<String>();
+		ArrayList<String> properties = new ArrayList<>();
 
 		if (getCN() != null) {
 			properties.add(formatNameValue(CN_PROPERTY, getCN()));

@@ -96,7 +96,7 @@ public class KeyStoreEntryTransferable implements Transferable {
 				fos.flush();
 			}
 
-			List<File> list = new ArrayList<File>();
+			List<File> list = new ArrayList<>();
 			list.add(tmpFile);
 			return list;
 		} else {

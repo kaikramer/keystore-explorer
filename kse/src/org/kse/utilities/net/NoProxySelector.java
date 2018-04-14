@@ -47,7 +47,7 @@ public class NoProxySelector extends ProxySelector {
 	 */
 	@Override
 	public List<Proxy> select(URI uri) {
-		ArrayList<Proxy> proxies = new ArrayList<Proxy>();
+		ArrayList<Proxy> proxies = new ArrayList<>();
 		proxies.add(Proxy.NO_PROXY);
 
 		return proxies;

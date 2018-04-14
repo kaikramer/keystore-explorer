@@ -24,6 +24,9 @@ package org.kse.utilities.net;
  */
 public class URLs {
 
+	private URLs() {
+	}
+
 	// general project URLs
 	public static final String KSE_WEB_SITE = "http://www.keystore-explorer.org";
 	public static final String GITHUB_PROJECT = "https://github.com/kaikramer/keystore-explorer";

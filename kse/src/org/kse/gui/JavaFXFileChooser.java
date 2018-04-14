@@ -47,7 +47,7 @@ public class JavaFXFileChooser extends JFileChooser {
 		}
 	}
 
-	private List<FileExtFilter> filters = new ArrayList<FileExtFilter>();
+	private List<FileExtFilter> filters = new ArrayList<>();
 	private File selectedFile;
 	private String dialogTitle;
 	private File currentDirectory;
@@ -91,20 +91,20 @@ public class JavaFXFileChooser extends JFileChooser {
 	@Override
 	public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
 		// text of approve button cannot be changed in JavaFX FileChooser
-		return showFxDialog(parent, "showOpenDialog");
+		return showFxDialog("showOpenDialog");
 	}
 
 	@Override
 	public int showOpenDialog(Component parent) throws HeadlessException {
-		return showFxDialog(parent, "showOpenDialog");
+		return showFxDialog("showOpenDialog");
 	}
 
 	@Override
 	public int showSaveDialog(Component parent) throws HeadlessException {
-		return showFxDialog(parent, "showSaveDialog");
+		return showFxDialog("showSaveDialog");
 	}
 
-	public int showFxDialog(Component parent, final String method) throws HeadlessException {
+	public int showFxDialog(final String method) {
 
 		try {
 			final Object fileChooser = fileChooserClass.getConstructor().newInstance();
@@ -162,7 +162,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
 	public File runLater(final Callable<File> callable) throws Exception {
 
-		final FutureTask<File> task = new FutureTask<File>(callable);
+		final FutureTask<File> task = new FutureTask<>(callable);
 
 		Class<?> platformClass = Class.forName("javafx.application.Platform");
 		Method runLaterMethod = platformClass.getMethod("runLater", Runnable.class);

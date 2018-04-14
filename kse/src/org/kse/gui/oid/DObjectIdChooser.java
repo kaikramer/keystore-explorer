@@ -112,12 +112,12 @@ public class DObjectIdChooser extends JEscDialog {
 	private void initComponents(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
 		jlObjectId = new JLabel(res.getString("DObjectIdChooser.jlObjectId.text"));
 
-		jcbFirstArc = new JComboBox<Object>(new Integer[] { 0, 1, 2 });
+		jcbFirstArc = new JComboBox<>(new Integer[] { 0, 1, 2 });
 		jcbFirstArc.setToolTipText(res.getString("DObjectIdChooser.jcbFirstArc.tooltip"));
 
 		jlFirstPeriod = new JLabel(".");
 
-		jcbSecondArc = new JComboBox<Integer>();
+		jcbSecondArc = new JComboBox<>();
 		jcbSecondArc.setToolTipText(res.getString("DObjectIdChooser.jcbSecondArc.tooltip"));
 
 		jlSecondPeriod = new JLabel(".");
@@ -172,7 +172,7 @@ public class DObjectIdChooser extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(BorderLayout.CENTER, jpObjectId);

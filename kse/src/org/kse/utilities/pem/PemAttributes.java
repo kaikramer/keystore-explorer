@@ -26,7 +26,7 @@ import java.util.ArrayList;
  *
  */
 public class PemAttributes {
-	private ArrayList<PemAttribute> attributes = new ArrayList<PemAttribute>();
+	private ArrayList<PemAttribute> attributes = new ArrayList<>();
 
 	/**
 	 * Add an attribute.

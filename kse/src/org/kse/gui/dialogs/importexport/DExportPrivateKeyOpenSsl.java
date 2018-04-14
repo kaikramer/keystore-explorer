@@ -164,7 +164,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		GridBagConstraints gbc_jlPbeAlg = (GridBagConstraints) gbcLbl.clone();
 		gbc_jlPbeAlg.gridy = 1;
 
-		jcbPbeAlg = new JComboBox<OpenSslPbeType>();
+		jcbPbeAlg = new JComboBox<>();
 		populatePbeAlgs();
 		jcbPbeAlg.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jcbPbeAlg.tooltip"));
 		jcbPbeAlg.setSelectedIndex(0);
@@ -317,7 +317,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpOptions, BorderLayout.CENTER);
@@ -427,7 +427,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-		        : chooser.showDialog(this, res.getString("DExportPrivateKeyOpenSsl.ChooseExportFile.button"));
+				: chooser.showDialog(this, res.getString("DExportPrivateKeyOpenSsl.ChooseExportFile.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

@@ -30,7 +30,6 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.Security;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -95,7 +94,7 @@ public class DViewPrivateKey extends JEscDialog {
 	 * @throws CryptoException
 	 *             A problem was encountered getting the private key's details
 	 */
-	public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey, Provider provider)
+	public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey)
 			throws CryptoException {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
@@ -114,8 +113,7 @@ public class DViewPrivateKey extends JEscDialog {
 	 * @throws CryptoException
 	 *             A problem was encountered getting the private key's details
 	 */
-	public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey,
-			Provider provider) throws CryptoException {
+	public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey) throws CryptoException {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
 		initComponents();
@@ -308,11 +306,7 @@ public class DViewPrivateKey extends JEscDialog {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, privateKey);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
-		} catch (IOException ex) {
+		} catch (Asn1Exception | IOException ex) {
 			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);
@@ -340,7 +334,7 @@ public class DViewPrivateKey extends JEscDialog {
 					KeyPair keyPair = keyGen.genKeyPair();
 
 					PrivateKey privKey = keyPair.getPrivate();
-					DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey, null);
+					DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey);
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override
 						public void windowClosing(java.awt.event.WindowEvent e) {

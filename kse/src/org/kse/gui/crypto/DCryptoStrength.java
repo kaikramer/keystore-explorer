@@ -209,7 +209,7 @@ public class DCryptoStrength extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpCryptoStrength, BorderLayout.CENTER);
 		getContentPane().add(jpOK, BorderLayout.SOUTH);

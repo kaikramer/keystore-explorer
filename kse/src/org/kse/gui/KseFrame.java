@@ -19,12 +19,12 @@
  */
 package org.kse.gui;
 
+import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
 import static org.kse.crypto.keystore.KeyStoreType.JKS;
 import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
-import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -209,8 +209,8 @@ public final class KseFrame implements StatusBar {
 	// Maximum number of recent files to maintain in file menu
 	public static final int RECENT_FILES_SIZE = 6;
 
-	private ArrayList<KeyStoreHistory> histories = new ArrayList<KeyStoreHistory>();
-	private ArrayList<JTable> keyStoreTables = new ArrayList<JTable>();
+	private ArrayList<KeyStoreHistory> histories = new ArrayList<>();
+	private ArrayList<JTable> keyStoreTables = new ArrayList<>();
 	private JFrame frame = new JFrame();
 	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
@@ -510,6 +510,7 @@ public final class KseFrame implements StatusBar {
 	private static final String CUT_KEY = "CUT_KEY";
 	private static final String COPY_KEY = "COPY_KEY";
 	private static final String PASTE_KEY = "PASTE_KEY";
+	private static final String RENAME_KEY = "RENAME_KEY";
 
 	KseFrame() {
 		initComponents();
@@ -590,7 +591,7 @@ public final class KseFrame implements StatusBar {
 	private void initApplicationIcons() {
 		// Adds many different sizes to give each OS flexibility in choosing a
 		// suitable icon for display
-		ArrayList<Image> icons = new ArrayList<Image>();
+		ArrayList<Image> icons = new ArrayList<>();
 		icons.add(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource(res.getString("KseFrame.Icon.image.16x16"))));
 		icons.add(Toolkit.getDefaultToolkit().createImage(
@@ -1529,7 +1530,7 @@ public final class KseFrame implements StatusBar {
 		KeyStoreTableModel ksModel = new KeyStoreTableModel();
 		final JTable jtKeyStore = new JKseTable(ksModel);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ksModel);
+		RowSorter<TableModel> sorter = new TableRowSorter<>(ksModel);
 		jtKeyStore.setRowSorter(sorter);
 
 		jtKeyStore.setShowGrid(false);
@@ -1547,6 +1548,9 @@ public final class KseFrame implements StatusBar {
 
 		jtKeyStore.getInputMap().put((KeyStroke) pasteAction.getValue(Action.ACCELERATOR_KEY), PASTE_KEY);
 		jtKeyStore.getActionMap().put(PASTE_KEY, pasteAction);
+
+		jtKeyStore.getInputMap().put((KeyStroke) renameKeyPairAction.getValue(Action.ACCELERATOR_KEY), RENAME_KEY);
+		jtKeyStore.getActionMap().put(RENAME_KEY, renameKeyPairAction);
 
 		// open keystore entry details when user presses enter key
 		KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -2339,7 +2343,7 @@ public final class KseFrame implements StatusBar {
 	 * @return The KeyStore history or null if no KeyStore is active
 	 */
 	public KeyStoreHistory getActiveKeyStoreHistory() {
-		if (histories.size() == 0) {
+		if (histories.isEmpty()) {
 			return null;
 		}
 
@@ -2371,7 +2375,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private JTable getActiveKeyStoreTable() {
-		if (keyStoreTables.size() == 0) {
+		if (keyStoreTables.isEmpty()) {
 			return null;
 		}
 
@@ -2490,9 +2494,7 @@ public final class KseFrame implements StatusBar {
 				if (selectedAlias != null) {
 					setSelectedEntryByAlias(selectedAlias);
 				}
-			} catch (GeneralSecurityException ex) {
-				DError.displayError(frame, ex);
-			} catch (CryptoException ex) {
+			} catch (GeneralSecurityException | CryptoException ex) {
 				DError.displayError(frame, ex);
 			}
 		}

@@ -61,7 +61,7 @@ import net.miginfocom.swing.MigLayout;
 public class DExamineSsl extends JEscDialog {
 	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+	private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -98,7 +98,7 @@ public class DExamineSsl extends JEscDialog {
 
 		jlSslHost = new JLabel(res.getString("DExamineSsl.jlSslHost.text"));
 
-		jcbSslHost = new JComboBox<String>();
+		jcbSslHost = new JComboBox<>();
 		jcbSslHost.setEditable(true);
 		jcbSslHost.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		jcbSslHost.setToolTipText(res.getString("DExamineSsl.jtfSslHost.tooltip"));
@@ -106,14 +106,14 @@ public class DExamineSsl extends JEscDialog {
 
 		jlSslPort = new JLabel(res.getString("DExamineSsl.jlSslPort.text"));
 
-		jcbSslPort = new JComboBox<String>();
+		jcbSslPort = new JComboBox<>();
 		jcbSslPort.setEditable(true);
 		jcbSslPort.setToolTipText(res.getString("DExamineSsl.jtfSslPort.tooltip"));
 		jcbSslPort.setModel(new DefaultComboBoxModel<String>(getSslPorts()));
 
 		jcbClientAuth = new JCheckBox(res.getString("DExamineSsl.jlEnableClientAuth.text"));
 
-		jcbKeyStore = new JComboBox<KeyStoreHistory>(getKeystoreNames());
+		jcbKeyStore = new JComboBox<>(getKeystoreNames());
 		jcbKeyStore.setToolTipText(res.getString("DExamineSsl.jcbKeyStore.tooltip"));
 
 		jbLoadKeystore = new JButton();
@@ -200,7 +200,7 @@ public class DExamineSsl extends JEscDialog {
 
 	private ComboBoxModel<KeyStoreHistory> getKeystoreNames() {
 		KeyStoreHistory[] keyStoreHistories = kseFrame.getKeyStoreHistories();
-		return new DefaultComboBoxModel<KeyStoreHistory>(keyStoreHistories);
+		return new DefaultComboBoxModel<>(keyStoreHistories);
 	}
 
 	/**

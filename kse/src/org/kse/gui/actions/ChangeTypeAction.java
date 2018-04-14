@@ -103,7 +103,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 			KeyStoreState currentState = history.getCurrentState();
 
 			KeyStore currentKeyStore = currentState.getKeyStore();
-			String currentType = currentState.getKeyStore().getType();
 
 			KeyStore newKeyStore = KeyStoreUtil.create(newKeyStoreType);
 
@@ -118,8 +117,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 					Certificate trustedCertificate = currentKeyStore.getCertificate(alias);
 					newKeyStore.setCertificateEntry(alias, trustedCertificate);
 				} else if (KeyStoreUtil.isKeyPairEntry(alias, currentKeyStore)) {
-					if (!copyKeyPairEntry(newKeyStoreType, currentState, currentKeyStore, currentType,
-							newKeyStore, alias)) {
+					if (!copyKeyPairEntry(newKeyStoreType, currentState, currentKeyStore, newKeyStore, alias)) {
 						return false;
 					}
 				} else if (KeyStoreUtil.isKeyEntry(alias, currentKeyStore)) {
@@ -155,7 +153,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 	}
 
 	private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState,
-			KeyStore currentKeyStore, String currentType, KeyStore newKeyStore, String alias) throws KeyStoreException,
+			KeyStore currentKeyStore, KeyStore newKeyStore, String alias) throws KeyStoreException,
 	CryptoException, NoSuchAlgorithmException, UnrecoverableKeyException {
 
 		Certificate[] certificateChain = currentKeyStore.getCertificateChain(alias);

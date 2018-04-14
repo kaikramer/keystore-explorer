@@ -194,13 +194,11 @@ public class JObjectId extends JPanel {
 
 			if (container instanceof JDialog) {
 				dObjectIdChooser = new DObjectIdChooser((JDialog) container, title, objectId);
-				dObjectIdChooser.setLocationRelativeTo(container);
-				dObjectIdChooser.setVisible(true);
-			} else if (container instanceof JFrame) {
+			} else {
 				dObjectIdChooser = new DObjectIdChooser((JFrame) container, title, objectId);
-				dObjectIdChooser.setLocationRelativeTo(container);
-				dObjectIdChooser.setVisible(true);
 			}
+			dObjectIdChooser.setLocationRelativeTo(container);
+			dObjectIdChooser.setVisible(true);
 
 			ASN1ObjectIdentifier newObjectId = dObjectIdChooser.getObjectId();
 

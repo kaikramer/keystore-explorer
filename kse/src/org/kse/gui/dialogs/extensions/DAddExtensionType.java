@@ -128,7 +128,7 @@ public class DAddExtensionType extends JEscDialog {
 
 		jlExtensionTypes = new JLabel(res.getString("DAddExtensionType.jlExtensionTypes.text"));
 
-		jltExtensionTypes = new JList<X509ExtensionType>();
+		jltExtensionTypes = new JList<>();
 		// Longest name to define constant width
 		jltExtensionTypes.setPrototypeCellValue(NETSCAPE_CERTIFICATE_RENEWAL_URL);
 		jltExtensionTypes.setToolTipText(res.getString("DAddExtensionType.jltExtensionTypes.tooltip"));
@@ -178,7 +178,7 @@ public class DAddExtensionType extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		populateExtensionTypes();
 
@@ -202,7 +202,7 @@ public class DAddExtensionType extends JEscDialog {
 
 	private void populateExtensionTypes() {
 		// Population is the supported set minus those already added
-		ArrayList<X509ExtensionType> availableExtensions = new ArrayList<X509ExtensionType>();
+		ArrayList<X509ExtensionType> availableExtensions = new ArrayList<>();
 
 		for (X509ExtensionType extentionType : SUPPORTED_EXTENSIONS) {
 			if (extensions.getExtensionValue(extentionType.oid()) == null) {

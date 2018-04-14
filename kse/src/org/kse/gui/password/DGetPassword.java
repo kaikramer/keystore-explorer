@@ -130,7 +130,7 @@ public class DGetPassword extends JEscDialog {
 		jpPassword.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
 				new EmptyBorder(5, 5, 5, 5))));
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().add(jpPassword, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);

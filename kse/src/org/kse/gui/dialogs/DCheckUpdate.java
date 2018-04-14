@@ -121,7 +121,7 @@ public class DCheckUpdate extends JEscDialog {
 			}
 		});
 
-		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel, false);
+		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
 
 		getContentPane().add(jpCheckUpdate, BorderLayout.NORTH);
 		getContentPane().add(jpProgress, BorderLayout.CENTER);

@@ -277,7 +277,7 @@ public class DSignMidlet extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpOptions, BorderLayout.NORTH);

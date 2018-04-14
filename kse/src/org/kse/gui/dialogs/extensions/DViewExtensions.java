@@ -139,7 +139,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
 		jtExtensions = new JKseTable(extensionsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(extensionsTableModel);
+		TableRowSorter<TableModel> sorter = new TableRowSorter<>(extensionsTableModel);
 		sorter.setComparator(2, new ObjectIdComparator());
 		jtExtensions.setRowSorter(sorter);
 
@@ -251,7 +251,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		extensionsTableModel.load(extensions);
 
@@ -329,11 +329,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, extension);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
-		} catch (IOException ex) {
+		} catch (Asn1Exception | IOException ex) {
 			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);

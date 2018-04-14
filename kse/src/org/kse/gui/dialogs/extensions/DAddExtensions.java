@@ -273,7 +273,7 @@ public class DAddExtensions extends JEscDialog {
 		ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
 		jtExtensions = new JKseTable(extensionsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(extensionsTableModel);
+		TableRowSorter<TableModel> sorter = new TableRowSorter<>(extensionsTableModel);
 		sorter.setComparator(2, new ObjectIdComparator());
 		jtExtensions.setRowSorter(sorter);
 
@@ -455,7 +455,7 @@ public class DAddExtensions extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		reloadExtensionsTable();
 		selectFirstExtensionInTable();

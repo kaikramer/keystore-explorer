@@ -184,12 +184,12 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 				publicKey = new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
 				subject = pkcs10Csr.getSubject();
 
-				dSignCsr = new DSignCsr(frame, pkcs10Csr, csrFile, privateKey, keyPairType, signingCert, provider);
+				dSignCsr = new DSignCsr(frame, pkcs10Csr, csrFile, privateKey, keyPairType, signingCert);
 			} else {
 				publicKey = spkacCsr.getPublicKey();
 				subject = spkacCsr.getSubject().getName();
 
-				dSignCsr = new DSignCsr(frame, spkacCsr, csrFile, privateKey, keyPairType, signingCert, provider);
+				dSignCsr = new DSignCsr(frame, spkacCsr, csrFile, privateKey, keyPairType, signingCert);
 			}
 
 			dSignCsr.setLocationRelativeTo(frame);

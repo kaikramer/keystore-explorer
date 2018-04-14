@@ -60,7 +60,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	 *            The X.509 CRL entries
 	 */
 	public void load(X509CRLEntry[] revokedCerts) {
-		TreeMap<BigInteger, X509CRLEntry> sortedRevokedCerts = new TreeMap<BigInteger, X509CRLEntry>();
+		TreeMap<BigInteger, X509CRLEntry> sortedRevokedCerts = new TreeMap<>();
 
 		for (int i = 0; i < revokedCerts.length; i++) {
 			sortedRevokedCerts.put(revokedCerts[i].getSerialNumber(), revokedCerts[i]);
@@ -134,10 +134,9 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	 */
 	@Override
 	public Class<?> getColumnClass(int col) {
-		switch (col) {
-		case 0:
+		if (col == 0) {
 			return BigInteger.class;
-		default:
+		} else {
 			return Date.class;
 		}
 	}

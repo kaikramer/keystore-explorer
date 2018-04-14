@@ -64,7 +64,7 @@ public class SubjectInfoAccess extends ASN1Object {
 	}
 
 	private SubjectInfoAccess(ASN1Sequence seq) {
-		accessDescriptions = new Vector<AccessDescription>();
+		accessDescriptions = new Vector<>();
 
 		for (int i = 0; i != seq.size(); i++) {
 			accessDescriptions.add(AccessDescription.getInstance(seq.getObjectAt(i)));

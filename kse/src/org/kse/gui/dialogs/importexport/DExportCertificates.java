@@ -371,7 +371,7 @@ public class DExportCertificates extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpOptions, BorderLayout.CENTER);

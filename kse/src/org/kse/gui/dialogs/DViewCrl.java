@@ -258,7 +258,7 @@ public class DViewCrl extends JEscDialog {
 
 		jtRevokedCerts = new JKseTable(rcModel);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(rcModel);
+		RowSorter<TableModel> sorter = new TableRowSorter<>(rcModel);
 		jtRevokedCerts.setRowSorter(sorter);
 
 		jtRevokedCerts.setShowGrid(false);
@@ -370,7 +370,7 @@ public class DViewCrl extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpCRL, BorderLayout.CENTER);
 		getContentPane().add(jpOK, BorderLayout.SOUTH);
@@ -455,7 +455,7 @@ public class DViewCrl extends JEscDialog {
 
 		Set<? extends X509CRLEntry> revokedCertsSet = crl.getRevokedCertificates();
 		if (revokedCertsSet == null) {
-			revokedCertsSet = new HashSet<X509CRLEntry>();
+			revokedCertsSet = new HashSet<>();
 		}
 		X509CRLEntry[] revokedCerts = revokedCertsSet.toArray(new X509CRLEntry[revokedCertsSet.size()]);
 		RevokedCertsTableModel revokedCertsTableModel = (RevokedCertsTableModel) jtRevokedCerts.getModel();
@@ -504,11 +504,7 @@ public class DViewCrl extends JEscDialog {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, crl);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
-		} catch (IOException ex) {
+		} catch (Asn1Exception | IOException ex) {
 			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);

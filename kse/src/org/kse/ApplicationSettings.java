@@ -103,7 +103,7 @@ public class ApplicationSettings {
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
 	private static final String KSE3_PKCS11_LIBS = "kse3.pkcs11libs";
 
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private static ApplicationSettings applicationSettings;
 	private boolean useCaCertificates;
@@ -294,7 +294,7 @@ public class ApplicationSettings {
 		tabLayout = preferences.getInt(KSE3_TABLAYOUT, JTabbedPane.WRAP_TAB_LAYOUT);
 
 		// Recent files
-		ArrayList<File> recentFilesList = new ArrayList<File>();
+		ArrayList<File> recentFilesList = new ArrayList<>();
 		for (int i = 1; i <= KseFrame.RECENT_FILES_SIZE; i++) {
 			String recentFile = preferences.get(KSE3_RECENTFILE + i, null);
 
@@ -349,7 +349,7 @@ public class ApplicationSettings {
 
 	private Date getDate(Preferences preferences, String name,  Date def) {
 		try {
-			return DATE_FORMAT.parse(preferences.get(name, DATE_FORMAT.format(def)));
+			return dateFormat.parse(preferences.get(name, dateFormat.format(def)));
 		} catch (ParseException e) {
 			return def;
 		}
@@ -430,7 +430,7 @@ public class ApplicationSettings {
 		// auto update check settings
 		preferences.putBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, isAutoUpdateCheckEnabled());
 		preferences.putInt(KSE3_AUTO_UPDATE_CHECK_INTERVAL, getAutoUpdateCheckInterval());
-		preferences.put(KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, DATE_FORMAT.format(getAutoUpdateCheckLastCheck()));
+		preferences.put(KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, dateFormat.format(getAutoUpdateCheckLastCheck()));
 
 		// PKCS#11 libraries
 		preferences.put(KSE3_PKCS11_LIBS, getP11Libs());

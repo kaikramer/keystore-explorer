@@ -33,6 +33,9 @@ import org.bouncycastle.asn1.x509.PolicyMappings;
  */
 public class PolicyMappingsUtil {
 
+	private PolicyMappingsUtil() {
+	}
+
 	/**
 	 * Creates list of <code>PolicyMapping</code> objects from an <code>PolicyMappings</code> object.
 	 *
@@ -44,7 +47,7 @@ public class PolicyMappingsUtil {
 		ASN1Sequence policyMappingsSeq = (ASN1Sequence) policyMappings.toASN1Primitive();
 		ASN1Encodable[] policyMappingsArray = policyMappingsSeq.toArray();
 
-		List<PolicyMapping> policyMappingsList = new ArrayList<PolicyMapping>();
+		List<PolicyMapping> policyMappingsList = new ArrayList<>();
 
 		for (ASN1Encodable asn1Encodable : policyMappingsArray) {
 			policyMappingsList.add(PolicyMapping.getInstance(asn1Encodable));

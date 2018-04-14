@@ -117,7 +117,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 				path = keyStoreFile.getAbsoluteFile().getParent();
 			}
 
-			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, path, provider);
+			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, path);
 			dGenerateCsr.setLocationRelativeTo(frame);
 			dGenerateCsr.setVisible(true);
 

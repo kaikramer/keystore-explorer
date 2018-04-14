@@ -184,7 +184,7 @@ public class DKeyUsage extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpKeyUsage, BorderLayout.CENTER);
@@ -205,20 +205,21 @@ public class DKeyUsage extends DExtension {
 	}
 
 	private void prepopulateWithValue(byte[] value) throws IOException {
-		@SuppressWarnings("resource") // we have a ByteArrayInputStream here which does not need to be closed
-		DERBitString keyUsage = DERBitString.getInstance(new ASN1InputStream(value).readObject());
+		try (ASN1InputStream asn1InputStream = new ASN1InputStream(value)) {
+			DERBitString keyUsage = DERBitString.getInstance(asn1InputStream.readObject());
 
-		int keyUsageValue = keyUsage.intValue();
+			int keyUsageValue = keyUsage.intValue();
 
-		jcbDigitalSignature.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.digitalSignature));
-		jcbNonRepudiation.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.nonRepudiation));
-		jcbKeyEncipherment.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.keyEncipherment));
-		jcbDataEncipherment.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.dataEncipherment));
-		jcbKeyAgreement.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.keyAgreement));
-		jcbCertificateSigning.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.keyCertSign));
-		jcbCrlSign.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.cRLSign));
-		jcbEncipherOnly.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.encipherOnly));
-		jcbDecipherOnly.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.decipherOnly));
+			jcbDigitalSignature.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.digitalSignature));
+			jcbNonRepudiation.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.nonRepudiation));
+			jcbKeyEncipherment.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.keyEncipherment));
+			jcbDataEncipherment.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.dataEncipherment));
+			jcbKeyAgreement.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.keyAgreement));
+			jcbCertificateSigning.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.keyCertSign));
+			jcbCrlSign.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.cRLSign));
+			jcbEncipherOnly.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.encipherOnly));
+			jcbDecipherOnly.setSelected(hasKeyUsage(keyUsageValue, KeyUsage.decipherOnly));
+		}
 	}
 
 	private boolean hasKeyUsage(int keyUsages, int keyusage) {

@@ -152,7 +152,7 @@ public class DBasicConstraints extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpBasicConstraints, BorderLayout.CENTER);

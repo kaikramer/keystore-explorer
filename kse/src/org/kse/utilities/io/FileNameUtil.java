@@ -24,6 +24,9 @@ package org.kse.utilities.io;
  */
 public class FileNameUtil {
 
+	private FileNameUtil() {
+	}
+
 	/**
 	 * Make a string safely usable as a file name by removing all illegal characters (and a few
 	 * more).
@@ -51,7 +54,7 @@ public class FileNameUtil {
 		}
 
 		// find position in string where extension begins (and handle paths like "C:\my.dir\fileName")
-		int extensionPos = fileName.lastIndexOf(".");
+		int extensionPos = fileName.lastIndexOf('.');
 		int lastSeparator = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
 		int index = (lastSeparator > extensionPos) ? -1 : extensionPos;
 

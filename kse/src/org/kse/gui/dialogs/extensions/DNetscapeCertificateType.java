@@ -183,7 +183,7 @@ public class DNetscapeCertificateType extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpNetscapeCertificateType, BorderLayout.CENTER);
@@ -204,19 +204,20 @@ public class DNetscapeCertificateType extends DExtension {
 	}
 
 	private void prepopulateWithValue(byte[] value) throws IOException {
-		@SuppressWarnings("resource") // we have a ByteArrayInputStream here which does not need to be closed
-		DERBitString netscapeCertType = DERBitString.getInstance(new ASN1InputStream(value).readObject());
+		try (ASN1InputStream asn1InputStream = new ASN1InputStream(value)) {
+			DERBitString netscapeCertType = DERBitString.getInstance(asn1InputStream.readObject());
 
-		int netscapeCertTypes = netscapeCertType.intValue();
+			int netscapeCertTypes = netscapeCertType.intValue();
 
-		jcbSslClient.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.sslClient));
-		jcbSslServer.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.sslServer));
-		jcbSmime.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.smime));
-		jcbObjectSigning.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.objectSigning));
-		jcbReserved.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.reserved));
-		jcbSslCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.sslCA));
-		jcbSmimeCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.smimeCA));
-		jcbObjectSigningCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.objectSigningCA));
+			jcbSslClient.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.sslClient));
+			jcbSslServer.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.sslServer));
+			jcbSmime.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.smime));
+			jcbObjectSigning.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.objectSigning));
+			jcbReserved.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.reserved));
+			jcbSslCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.sslCA));
+			jcbSmimeCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.smimeCA));
+			jcbObjectSigningCa.setSelected(isCertType(netscapeCertTypes, NetscapeCertType.objectSigningCA));
+		}
 	}
 
 	private boolean isCertType(int netscapeCertTypes, int certType) {

@@ -350,7 +350,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpOptions, BorderLayout.CENTER);
@@ -451,7 +451,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-		        : chooser.showDialog(this, res.getString("DExportPrivateKeyPvk.ChooseExportFile.button"));
+				: chooser.showDialog(this, res.getString("DExportPrivateKeyPvk.ChooseExportFile.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

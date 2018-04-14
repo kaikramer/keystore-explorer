@@ -156,7 +156,7 @@ public class DIssuerAlternativeName extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpIssuerAlternativeName, BorderLayout.CENTER);

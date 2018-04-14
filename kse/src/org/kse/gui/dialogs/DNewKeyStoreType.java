@@ -113,9 +113,9 @@ public class DNewKeyStoreType extends JEscDialog {
 		PlatformUtil.setMnemonic(jrbUberKeyStore, res.getString("DNewKeyStoreType.jrbUberKeyStore.mnemonic").charAt(0));
 		jrbUberKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbUberKeyStore.tooltip"));
 
-        jrbBcfksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBcfksKeyStore.text"));
-        PlatformUtil.setMnemonic(jrbBcfksKeyStore, res.getString("DNewKeyStoreType.jrbBcfksKeyStore.mnemonic").charAt(0));
-        jrbBcfksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBcfksKeyStore.tooltip"));
+		jrbBcfksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBcfksKeyStore.text"));
+		PlatformUtil.setMnemonic(jrbBcfksKeyStore, res.getString("DNewKeyStoreType.jrbBcfksKeyStore.mnemonic").charAt(0));
+		jrbBcfksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBcfksKeyStore.tooltip"));
 
 		ButtonGroup keyStoreTypes = new ButtonGroup();
 
@@ -166,7 +166,7 @@ public class DNewKeyStoreType extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpKeyStoreType, BorderLayout.CENTER);

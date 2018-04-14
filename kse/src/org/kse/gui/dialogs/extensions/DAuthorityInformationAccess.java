@@ -161,7 +161,7 @@ public class DAuthorityInformationAccess extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpAccessDescriptions, BorderLayout.CENTER);
@@ -185,7 +185,7 @@ public class DAuthorityInformationAccess extends DExtension {
 		AuthorityInformationAccess authorityInformationAccess = AuthorityInformationAccess.getInstance(value);
 
 		List<AccessDescription> accessDescriptionList =
-				new ArrayList<AccessDescription>(Arrays.asList(authorityInformationAccess.getAccessDescriptions()));
+				new ArrayList<>(Arrays.asList(authorityInformationAccess.getAccessDescriptions()));
 
 		jadAccessDescriptions.setAccessDescriptions(accessDescriptionList);
 	}
@@ -193,7 +193,7 @@ public class DAuthorityInformationAccess extends DExtension {
 	private void okPressed() {
 		List<AccessDescription> accessDescriptions = jadAccessDescriptions.getAccessDescriptions();
 
-		if (accessDescriptions.size() == 0) {
+		if (accessDescriptions.isEmpty()) {
 			JOptionPane.showMessageDialog(this, res.getString("DAuthorityInformationAccess.ValueReq.message"),
 					getTitle(), JOptionPane.WARNING_MESSAGE);
 			return;

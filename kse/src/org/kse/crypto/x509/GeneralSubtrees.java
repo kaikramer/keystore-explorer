@@ -58,11 +58,11 @@ public class GeneralSubtrees implements ASN1Encodable {
 	 * @param subtrees
 	 */
 	public GeneralSubtrees(GeneralSubtree[] subtrees) {
-		this.subtrees = new ArrayList<GeneralSubtree>(Arrays.asList(subtrees));
+		this.subtrees = new ArrayList<>(Arrays.asList(subtrees));
 	}
 
 	private GeneralSubtrees(ASN1Sequence seq) {
-		subtrees = new ArrayList<GeneralSubtree>();
+		subtrees = new ArrayList<>();
 		for (int i = 0; i < seq.size(); i++) {
 			subtrees.add(GeneralSubtree.getInstance(seq.getObjectAt(i)));
 		}

@@ -5,6 +5,9 @@ import java.io.IOException;
 
 public class IOUtils {
 
+	private IOUtils() {
+	}
+
 	/**
 	 * Close without ever throwing an IOException
 	 *

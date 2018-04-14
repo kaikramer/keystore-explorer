@@ -107,7 +107,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 		Enumeration<String> aliases = keyStore.aliases();
 
-		TreeMap<String, String> sortedAliases = new TreeMap<String, String>(new AliasComparator());
+		TreeMap<String, String> sortedAliases = new TreeMap<>(new AliasComparator());
 
 		while (aliases.hasMoreElements()) {
 			String alias = aliases.nextElement();

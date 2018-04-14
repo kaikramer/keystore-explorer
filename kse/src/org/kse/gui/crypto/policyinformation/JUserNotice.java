@@ -193,13 +193,11 @@ public class JUserNotice extends JPanel {
 
 		if (container instanceof JDialog) {
 			dUserNoticeChooser = new DUserNoticeChooser((JDialog) container, title, userNotice);
-			dUserNoticeChooser.setLocationRelativeTo(container);
-			dUserNoticeChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dUserNoticeChooser = new DUserNoticeChooser((JFrame) container, title, userNotice);
-			dUserNoticeChooser.setLocationRelativeTo(container);
-			dUserNoticeChooser.setVisible(true);
 		}
+		dUserNoticeChooser.setLocationRelativeTo(container);
+		dUserNoticeChooser.setVisible(true);
 
 		UserNotice newUserNotice = dUserNoticeChooser.getUserNotice();
 

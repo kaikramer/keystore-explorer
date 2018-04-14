@@ -148,7 +148,7 @@ public class DProperties extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, true);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
 		jpProperties = new JPanel(new BorderLayout());
 		jpProperties.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -495,11 +495,7 @@ public class DProperties extends JEscDialog {
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
 			createPrivateKeyNodes(parentNode, privateKey);
-		} catch (NoSuchAlgorithmException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		} catch (UnrecoverableKeyException ex) {
+		} catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
 			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
 		}
 	}
@@ -671,11 +667,7 @@ public class DProperties extends JEscDialog {
 			} else if (key instanceof SecretKey) {
 				createSecretKeyNodes(keyNode, (SecretKey) key);
 			}
-		} catch (NoSuchAlgorithmException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		} catch (UnrecoverableKeyException ex) {
+		} catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
 			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
 		}
 	}

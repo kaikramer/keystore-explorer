@@ -104,7 +104,7 @@ public final class X509CertUtil {
 
 			Collection<? extends Certificate> certs = cf.generateCertificates(is);
 
-			ArrayList<X509Certificate> loadedCerts = new ArrayList<X509Certificate>();
+			ArrayList<X509Certificate> loadedCerts = new ArrayList<>();
 
 			for (Iterator<? extends Certificate> itr = certs.iterator(); itr.hasNext();) {
 				X509Certificate cert = (X509Certificate) itr.next();
@@ -136,7 +136,7 @@ public final class X509CertUtil {
 
 			List<? extends Certificate> certs = certPath.getCertificates();
 
-			ArrayList<X509Certificate> loadedCerts = new ArrayList<X509Certificate>();
+			ArrayList<X509Certificate> loadedCerts = new ArrayList<>();
 
 			for (Iterator<? extends Certificate> itr = certs.iterator(); itr.hasNext();) {
 				X509Certificate cert = (X509Certificate) itr.next();
@@ -154,7 +154,7 @@ public final class X509CertUtil {
 		}
 	}
 
-	private static byte[] fixCommonInputCertProblems(byte[] certs) throws IOException {
+	private static byte[] fixCommonInputCertProblems(byte[] certs) {
 
 		// remove PEM header/footer
 		String certsStr = new String(certs);
@@ -240,9 +240,7 @@ public final class X509CertUtil {
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
 			X509CRL crl = (X509CRL) cf.generateCRL(is);
 			return crl;
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("NoLoadCrl.exception.message"), ex);
-		} catch (CRLException ex) {
+		} catch (CertificateException | CRLException ex) {
 			throw new CryptoException(res.getString("NoLoadCrl.exception.message"), ex);
 		} finally {
 			IOUtils.closeQuietly(is);
@@ -311,12 +309,12 @@ public final class X509CertUtil {
 		}
 
 		// Put together each possible certificate path...
-		ArrayList<ArrayList<X509Certificate>> paths = new ArrayList<ArrayList<X509Certificate>>();
+		ArrayList<ArrayList<X509Certificate>> paths = new ArrayList<>();
 
 		// For each possible path...
 		for (int i = 0; i < certs.length; i++) {
 			// Each possible path assumes a different certificate is the root issuer
-			ArrayList<X509Certificate> path = new ArrayList<X509Certificate>();
+			ArrayList<X509Certificate> path = new ArrayList<>();
 			X509Certificate issuerCert = certs[i];
 			path.add(issuerCert);
 
@@ -437,7 +435,7 @@ public final class X509CertUtil {
 	 */
 	public static byte[] getCertsEncodedPkcs7(X509Certificate[] certs) throws CryptoException {
 		try {
-			ArrayList<Certificate> encodedCerts = new ArrayList<Certificate>();
+			ArrayList<Certificate> encodedCerts = new ArrayList<>();
 
 			Collections.addAll(encodedCerts, certs);
 
@@ -502,7 +500,7 @@ public final class X509CertUtil {
 	 */
 	public static byte[] getCertsEncodedPkiPath(X509Certificate[] certs) throws CryptoException {
 		try {
-			ArrayList<Certificate> encodedCerts = new ArrayList<Certificate>();
+			ArrayList<Certificate> encodedCerts = new ArrayList<>();
 
 			Collections.addAll(encodedCerts, certs);
 
@@ -534,19 +532,11 @@ public final class X509CertUtil {
 		try {
 			signedCert.verify(signingCert.getPublicKey());
 			return true;
-		}
-		// Verification failed
-		catch (InvalidKeyException ex) {
+		} catch (InvalidKeyException | SignatureException ex) {
+			// Verification failed
 			return false;
-		} catch (SignatureException ex) {
-			return false;
-		}
-		// Problem verifying
-		catch (NoSuchProviderException ex) {
-			throw new CryptoException(res.getString("NoVerifyCertificate.exception.message"), ex);
-		} catch (NoSuchAlgorithmException ex) {
-			throw new CryptoException(res.getString("NoVerifyCertificate.exception.message"), ex);
-		} catch (CertificateException ex) {
+		} catch (NoSuchProviderException | NoSuchAlgorithmException | CertificateException ex) {
+			// Problem verifying
 			throw new CryptoException(res.getString("NoVerifyCertificate.exception.message"), ex);
 		}
 	}
@@ -567,7 +557,7 @@ public final class X509CertUtil {
 	 *             If there is a problem establishing trust
 	 */
 	public static X509Certificate[] establishTrust(X509Certificate cert, KeyStore keyStores[]) throws CryptoException {
-		ArrayList<X509Certificate> ksCerts = new ArrayList<X509Certificate>();
+		ArrayList<X509Certificate> ksCerts = new ArrayList<>();
 
 		for (int i = 0; i < keyStores.length; i++) {
 			ksCerts.addAll(extractCertificates(keyStores[i]));
@@ -620,7 +610,7 @@ public final class X509CertUtil {
 
 	private static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
 		try {
-			List<X509Certificate> certs = new ArrayList<X509Certificate>();
+			List<X509Certificate> certs = new ArrayList<>();
 
 			for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();) {
 				String alias = aliases.nextElement();

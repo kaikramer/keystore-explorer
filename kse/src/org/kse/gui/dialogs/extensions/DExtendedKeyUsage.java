@@ -264,7 +264,7 @@ public class DExtendedKeyUsage extends DExtension {
 			return;
 		}
 
-		ArrayList<KeyPurposeId> keyPurposeIds = new ArrayList<KeyPurposeId>();
+		ArrayList<KeyPurposeId> keyPurposeIds = new ArrayList<>();
 
 		if (jcbTlsWebServerAuthentication.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(SERVER_AUTH.oid())));

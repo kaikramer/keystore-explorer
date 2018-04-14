@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.text.MessageFormat;
@@ -121,8 +120,6 @@ public class DSignJar extends JEscDialog {
 	private DigestType digestType;
 	private String tsaUrl;
 
-	private Provider provider;
-
 
 	/**
 	 * Creates a new DSignJar dialog.
@@ -138,12 +135,11 @@ public class DSignJar extends JEscDialog {
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
-	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName,
-			Provider provider) throws CryptoException {
+	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName)
+			throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
-		this.provider = provider;
 		setTitle(res.getString("DSignJar.Title"));
 		initComponents(signatureName);
 	}
@@ -182,11 +178,11 @@ public class DSignJar extends JEscDialog {
 
 		jlSignatureAlgorithm = new JLabel(res.getString("DSignJar.jlSignatureAlgorithm.text"));
 		jcbSignatureAlgorithm = new JComboBox<SignatureType>();
-		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, provider, jcbSignatureAlgorithm);
+		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJar.jcbSignatureAlgorithm.tooltip"));
 
 		jlDigestAlgorithm = new JLabel(res.getString("DSignJar.jlDigestAlgorithm.text"));
-		jcbDigestAlgorithm = new JComboBox<DigestType>();
+		jcbDigestAlgorithm = new JComboBox<>();
 		populateDigestAlgs();
 		jcbDigestAlgorithm.setToolTipText(res.getString("DSignJar.jcbDigestAlgorithm.tooltip"));
 
@@ -196,7 +192,7 @@ public class DSignJar extends JEscDialog {
 		jcbAddTimestamp.setToolTipText(res.getString("DSignJar.jcbAddTimestamp.tooltip"));
 
 		jlTimestampServerUrl = new JLabel(res.getString("DSignJar.jlTimestampServerUrl.text"));
-		jcbTimestampServerUrl = new JComboBox<String>();
+		jcbTimestampServerUrl = new JComboBox<>();
 		jcbTimestampServerUrl.setEditable(true);
 		jcbTimestampServerUrl.setEnabled(false);
 		jcbTimestampServerUrl.setToolTipText(res.getString("DSignJar.jcbTimestampServerUrl.tooltip"));
@@ -626,7 +622,7 @@ public class DSignJar extends JEscDialog {
 					KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
 					kpg.initialize(1024, new SecureRandom());
 					KeyPair kp = kpg.generateKeyPair();
-					DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name", null);
+					DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name");
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override
 						public void windowClosing(java.awt.event.WindowEvent e) {

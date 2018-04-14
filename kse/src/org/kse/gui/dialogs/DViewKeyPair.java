@@ -27,7 +27,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
 
@@ -64,8 +63,6 @@ public class DViewKeyPair extends JEscDialog {
 	private PrivateKey privateKey;
 	private X509Certificate[] certificateChain;
 
-	private Provider provider;
-
 	/**
 	 * Creates a new DViewKeyPair dialog where the parent is a frame.
 	 *
@@ -81,11 +78,10 @@ public class DViewKeyPair extends JEscDialog {
 	 *            Certificates Certificates part of keypair
 	 */
 	public DViewKeyPair(JFrame parent, String title, Dialog.ModalityType modality, PrivateKey privateKey,
-			X509Certificate[] certificateChain, Provider provider) {
+			X509Certificate[] certificateChain) {
 		super(parent, title, modality);
 		this.privateKey = privateKey;
 		this.certificateChain = certificateChain;
-		this.provider = provider;
 		initComponents();
 	}
 
@@ -100,11 +96,10 @@ public class DViewKeyPair extends JEscDialog {
 	 * @param certificateChain
 	 */
 	public DViewKeyPair(JDialog parent, String title, PrivateKey privateKey,
-			X509Certificate[] certificateChain, Provider provider) {
+			X509Certificate[] certificateChain) {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.privateKey = privateKey;
 		this.certificateChain = certificateChain;
-		this.provider = provider;
 		initComponents();
 	}
 
@@ -157,7 +152,7 @@ public class DViewKeyPair extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpKeyPairDetails, BorderLayout.CENTER);
@@ -188,7 +183,7 @@ public class DViewKeyPair extends JEscDialog {
 		try {
 			DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this,
 					res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"),
-					privateKey, provider);
+					privateKey);
 			dViewPrivateKey.setLocationRelativeTo(this);
 			dViewPrivateKey.setVisible(true);
 		} catch (CryptoException ex) {

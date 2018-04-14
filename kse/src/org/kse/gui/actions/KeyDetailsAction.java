@@ -101,8 +101,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
 				PrivateKey privateKey = (PrivateKey) key;
 
 				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
-						res.getString("KeyDetailsAction.PrivateKeyDetailsEntry.Title"), alias), privateKey,
-						history.getExplicitProvider());
+						res.getString("KeyDetailsAction.PrivateKeyDetailsEntry.Title"), alias), privateKey);
 				dViewPrivateKey.setLocationRelativeTo(frame);
 				dViewPrivateKey.setVisible(true);
 			} else if (key instanceof PublicKey) {

@@ -69,7 +69,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
 		Set<String> nonCritExts = extensions.getNonCriticalExtensionOIDs();
 
 		// Rows will be sorted by extension name
-		List<X509Ext> sortedExts = new ArrayList<X509Ext>();
+		List<X509Ext> sortedExts = new ArrayList<>();
 
 		for (Iterator<String> itr = critExts.iterator(); itr.hasNext();) {
 			String extOid = itr.next();

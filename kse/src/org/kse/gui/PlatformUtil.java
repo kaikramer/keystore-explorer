@@ -47,12 +47,10 @@ public class PlatformUtil {
 	 *
 	 * @param jbPositive
 	 *            Positive button
-	 * @param resizable
-	 *            Is the dialog resizable?
 	 * @return Dialog button panel
 	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, boolean resizable) {
-		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), resizable);
+	public static JPanel createDialogButtonPanel(JButton jbPositive) {
+		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }));
 	}
 
 	/**
@@ -65,8 +63,8 @@ public class PlatformUtil {
 	 *            Is the dialog resizable?
 	 * @return Dialog button panel
 	 */
-	public static JPanel createDialogButtonPanel(JButton[] jbPositives, boolean resizable) {
-		return createDialogButtonPanel(jbPositives, null, null, resizable, null);
+	public static JPanel createDialogButtonPanel(JButton[] jbPositives) {
+		return createDialogButtonPanel(jbPositives, null, null, null);
 	}
 
 	/**
@@ -77,13 +75,10 @@ public class PlatformUtil {
 	 *            Positive button
 	 * @param jbNegative
 	 *            Negative button
-	 * @param resizable
-	 *            Is the dialog resizable?
 	 * @return Dialog button panel
 	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, boolean resizable) {
-		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative,
-				resizable);
+	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative) {
+		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative);
 	}
 
 	/**
@@ -94,12 +89,10 @@ public class PlatformUtil {
 	 *            Positive buttons
 	 * @param jbNegative
 	 *            Negative button
-	 * @param resizable
-	 *            Is the dialog resizable?
 	 * @return Dialog button panel
 	 */
-	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, boolean resizable) {
-		return createDialogButtonPanel(jbPositives, jbNegative, null, resizable, null);
+	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative) {
+		return createDialogButtonPanel(jbPositives, jbNegative, null, null);
 	}
 
 	/**
@@ -112,14 +105,10 @@ public class PlatformUtil {
 	 *            Negative button
 	 * @param jbOther
 	 *            Other button
-	 * @param resizable
-	 *            Is the dialog resizable?
 	 * @return Dialog button panel
 	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton jbOther,
-			boolean resizable) {
-		return createDialogButtonPanel(jbPositive, jbNegative, (jbOther == null ? null : new JButton[] { jbOther }),
-				resizable);
+	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton jbOther) {
+		return createDialogButtonPanel(jbPositive, jbNegative, (jbOther == null ? null : new JButton[] { jbOther }));
 	}
 
 	/**
@@ -132,14 +121,11 @@ public class PlatformUtil {
 	 *            Negative button
 	 * @param jbOther
 	 *            Other button
-	 * @param resizable
-	 *            Is the dialog resizable?
 	 * @return Dialog button panel
 	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther,
-			boolean resizable) {
+	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther) {
 		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, jbOther,
-				resizable, null);
+				null);
 	}
 
 	/**
@@ -152,14 +138,12 @@ public class PlatformUtil {
 	 *            Negative button
 	 * @param jbOthers
 	 *            Other buttons
-	 * @param resizable
-	 *            Is the dialog resizable?
 	 * @param insets
 	 *            Insets for panel (MiGLayout constraint)
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, JButton[] jbOthers,
-			boolean resizable, String insets) {
+			String insets) {
 
 		if (insets == null) {
 			insets = "";
@@ -188,34 +172,6 @@ public class PlatformUtil {
 		return panel;
 	}
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 * <br>
-	 * This method creates zero spacing around the buttons.
-	 *
-	 * @param jbPositive
-	 *            Positive button
-	 * @param jbNegative
-	 *            Negative button
-	 * @param jbOthers
-	 *            Other buttons
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative) {
-
-		JPanel panel = new JPanel(new MigLayout("insets 0, nogrid, fillx, aligny 100%"));
-
-		if (jbPositive != null) {
-			panel.add(jbPositive, "tag ok");
-		}
-
-		if (jbNegative != null) {
-			panel.add(jbNegative, "tag cancel");
-		}
-
-		return panel;
-	}
 
 	/**
 	 * Create a scroll pane whose scroll bar policy conforms with the current

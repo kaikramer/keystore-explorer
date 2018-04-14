@@ -2,6 +2,9 @@ package org.kse.utilities;
 
 public class ArrayUtils {
 
+	private ArrayUtils() {
+	}
+
 	/**
 	 * Concatenate two byte arrays.
 	 *

@@ -282,7 +282,7 @@ public class X509Ext {
 		case QC_STATEMENTS:
 			return getQcStatementsStringValue(octets);
 		case OCSP_NO_CHECK:
-			return getOcspNoCheckStringValue(octets);
+			return getOcspNoCheckStringValue();
 		case LIABILITY_LIMITATION_FLAG:
 			return getLiabilityLimitationFlagStringValue(octets);
 		case DATE_OF_CERT_GEN:
@@ -1817,7 +1817,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-		List<String> reasonFlagsList = new ArrayList<String>();
+		List<String> reasonFlagsList = new ArrayList<>();
 
 		DERBitString reasonFlagsBitString = (DERBitString) reasonFlags.toASN1Primitive();
 
@@ -2206,7 +2206,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getOcspNoCheckStringValue(byte[] octets) {
+	private String getOcspNoCheckStringValue() {
 
 		/*	OCSPNoCheck ::= NULL */
 

@@ -192,7 +192,7 @@ public class DPrivateKeyUsagePeriod extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpPrivateKeyUsagePeriod, BorderLayout.CENTER);

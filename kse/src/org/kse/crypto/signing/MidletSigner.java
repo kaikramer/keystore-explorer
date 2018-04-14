@@ -161,7 +161,7 @@ public class MidletSigner {
 		newJadProperties.put(MIDLET_JAR_RSA_SHA1_ATTR, base64SignedJarDigest);
 
 		// Sort properties alphabetically
-		TreeMap<String, String> sortedJadProperties = new TreeMap<String, String>();
+		TreeMap<String, String> sortedJadProperties = new TreeMap<>();
 
 		for (Enumeration<?> names = newJadProperties.propertyNames(); names.hasMoreElements();) {
 			String name = (String) names.nextElement();
@@ -196,9 +196,7 @@ public class MidletSigner {
 			}
 
 			return signature.sign();
-		} catch (IOException ex) {
-			throw new CryptoException(res.getString("JarDigestSignatureFailed.exception.message"), ex);
-		} catch (GeneralSecurityException ex) {
+		} catch (IOException | GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("JarDigestSignatureFailed.exception.message"), ex);
 		}
 	}
