@@ -74,22 +74,20 @@ public class DragKeyPairEntry extends DragEntry {
 			throws CryptoException {
 		super(name);
 
-		try {
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
 			// Binary content is PKCS #12 protected by password
 			KeyStore p12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
-			p12.setKeyEntry(name, privateKey, new char[] {}, certificateChain);
-
-			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-				p12.store(baos, password.toCharArray());
-				contentBytes = baos.toByteArray();
-			}
+			p12.setKeyEntry(name, privateKey, password.toCharArray(), certificateChain);
+			p12.store(baos, password.toCharArray());
+			contentBytes = baos.toByteArray();
 
 			/*
 			 * String content is PKCS #8 PEM (private key) protected by PBE
 			 * (SHA-1 and 128 bit RC4) concatenated with PCKS #7 PEM
 			 * (certificate chain)
 			 */
-			StringBuffer sbContent = new StringBuffer();
+			StringBuilder sbContent = new StringBuilder();
 			String pkcs8 = Pkcs8Util.getEncryptedPem(privateKey, Pkcs8PbeType.SHA1_128BIT_RC4, password);
 			String pkcs7 = X509CertUtil.getCertsEncodedPkcs7Pem(X509CertUtil.convertCertificates(certificateChain));
 
@@ -107,9 +105,7 @@ public class DragKeyPairEntry extends DragEntry {
 			// Get drag image
 			image = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 					getClass().getResource(res.getString("DragKeyPairEntry.Drag.image"))));
-		} catch (IOException ex) {
-			throw new CryptoException(res.getString("NoGetKeyPairEntryContent.exception.message"), ex);
-		} catch (GeneralSecurityException ex) {
+		} catch (IOException | GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("NoGetKeyPairEntryContent.exception.message"), ex);
 		}
 	}
