@@ -172,10 +172,10 @@ public class DGetAlias extends JEscDialog {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				jtfAlias.requestFocus();
 				if (alias != null) {
-					jbOK.requestFocus();
-				} else {
-					jtfAlias.requestFocus();
+					jtfAlias.setSelectionStart(0);
+					jtfAlias.setSelectionEnd(alias.length());
 				}
 			}
 		});
