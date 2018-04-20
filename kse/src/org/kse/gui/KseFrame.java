@@ -1628,6 +1628,10 @@ public final class KseFrame implements StatusBar {
 				if (!OperatingSystem.isMacOs()) {
 					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE;
 				}
+
+				if (evt.getKeyCode() == KeyEvent.VK_F2) {
+					renameSelectedEntry();
+				}
 			}
 
 			@Override
@@ -1863,6 +1867,11 @@ public final class KseFrame implements StatusBar {
 
 
 	private void initKeyStoreEntryPopupMenus() {
+
+		//
+		// Popup menu for key pair entry
+		//
+
 		jpmKeyPair = new JPopupMenu();
 
 		jmKeyPairDetails = new JMenu(res.getString("KseFrame.jmKeyPairDetails.text"));
@@ -2023,6 +2032,10 @@ public final class KseFrame implements StatusBar {
 		jpmKeyPair.add(jmiKeyPairDelete);
 		jpmKeyPair.add(jmiKeyPairRename);
 
+		//
+		// Popup menu for trusted cert entry
+		//
+
 		jpmTrustedCertificate = new JPopupMenu();
 
 		jmTrustedCertificateDetails = new JMenu(res.getString("KseFrame.jmTrustedCertificateDetails.text"));
@@ -2086,6 +2099,10 @@ public final class KseFrame implements StatusBar {
 		jpmTrustedCertificate.addSeparator();
 		jpmTrustedCertificate.add(jmiTrustedCertificateDelete);
 		jpmTrustedCertificate.add(jmiTrustedCertificateRename);
+
+		//
+		// Popup menu for secret key entry
+		//
 
 		jpmKey = new JPopupMenu();
 
@@ -2230,6 +2247,29 @@ public final class KseFrame implements StatusBar {
 				jpmKeyStoreTab.show(evt.getComponent(), evt.getX(), evt.getY());
 				break;
 			}
+		}
+	}
+
+	private void renameSelectedEntry() {
+
+		KeyStoreHistory history = getActiveKeyStoreHistory();
+		KeyStore keyStore = history.getCurrentState().getKeyStore();
+		String alias = getSelectedEntryAlias();
+
+		if (alias == null) {
+			return;
+		}
+
+		try {
+			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+				renameKeyPairAction.renameSelectedEntry();
+			} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+				renameTrustedCertificateAction.renameSelectedEntry();
+			} else {
+				renameKeyAction.renameSelectedEntry();
+			}
+		} catch (Exception ex) {
+			DError.displayError(frame, ex);
 		}
 	}
 

@@ -69,6 +69,13 @@ public class RenameTrustedCertificateAction extends KeyStoreExplorerAction imple
 	 */
 	@Override
 	protected void doAction() {
+		renameSelectedEntry();
+	}
+
+	/**
+	 * Rename the currently selected entry
+	 */
+	public void renameSelectedEntry() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
