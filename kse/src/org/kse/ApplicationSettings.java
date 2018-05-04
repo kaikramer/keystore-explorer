@@ -57,6 +57,8 @@ import org.kse.utilities.net.SystemProxySelector;
  */
 public class ApplicationSettings {
 
+	public static final String SYSTEM_LANGUAGE = "system";
+
 	private static final String PREFS_NODE = "/org/kse";
 	private static final String PREFS_NODE_OLD = "/net/sf/keystore_explorer";
 
@@ -102,6 +104,7 @@ public class ApplicationSettings {
 	private static final String KSE3_AUTO_UPDATE_CHECK_LAST_CHECK = "kse3.autoupdatechecklastcheck";
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
 	private static final String KSE3_PKCS11_LIBS = "kse3.pkcs11libs";
+	private static final String KSE3_LANGUAGE = "kse3.locale";
 
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -135,6 +138,7 @@ public class ApplicationSettings {
 	private Date autoUpdateCheckLastCheck;
 	private int autoUpdateCheckInterval;
 	private String p11Libs;
+	private String language;
 
 	private ApplicationSettings() {
 
@@ -337,6 +341,9 @@ public class ApplicationSettings {
 
 		// PKCS#11 libraries
 		p11Libs = preferences.get(KSE3_PKCS11_LIBS, "");
+
+		// language
+		language = preferences.get(KSE3_LANGUAGE, SYSTEM_LANGUAGE);
 	}
 
 	private File cleanFilePath(File filePath) {
@@ -434,6 +441,9 @@ public class ApplicationSettings {
 
 		// PKCS#11 libraries
 		preferences.put(KSE3_PKCS11_LIBS, getP11Libs());
+
+		// language
+		preferences.put(KSE3_LANGUAGE, language);
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
@@ -500,8 +510,7 @@ public class ApplicationSettings {
 
 	private Preferences getUnderlyingPreferences() {
 		// Get underlying Java preferences
-		Preferences preferences = Preferences.userRoot().node(PREFS_NODE);
-		return preferences;
+		return Preferences.userRoot().node(PREFS_NODE);
 	}
 
 	/**
@@ -546,6 +555,8 @@ public class ApplicationSettings {
 
 		setP11Libs(newP11Libs);
 	}
+
+
 
 	public boolean getUseCaCertificates() {
 		return useCaCertificates;
@@ -769,5 +780,13 @@ public class ApplicationSettings {
 
 	public void setP11Libs(String p11Libs) {
 		this.p11Libs = p11Libs;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 }

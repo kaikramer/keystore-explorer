@@ -31,6 +31,7 @@ import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
@@ -100,6 +101,11 @@ public class KSE {
 			updateSplashMessage(splash, res.getString("KSE.LoadingApplicationSettings.splash.message"));
 			ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 			setCurrentDirectory(applicationSettings);
+
+			String languageCode = applicationSettings.getLanguage();
+			if (!ApplicationSettings.SYSTEM_LANGUAGE.equals(languageCode)) {
+				Locale.setDefault(new Locale(languageCode));
+			}
 
 			updateSplashMessage(splash, res.getString("KSE.InitializingSecurity.splash.message"));
 			initialiseSecurity();

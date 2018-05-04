@@ -80,7 +80,7 @@ public class PreferencesAction extends ExitAction {
 				caCertificatesFile, applicationSettings.getUseWindowsTrustedRootCertificates(),
 				applicationSettings.getEnableImportTrustedCertTrustCheck(),
 				applicationSettings.getEnableImportCaReplyTrustCheck(), applicationSettings.getPasswordQualityConfig(),
-				applicationSettings.getDefaultDN());
+				applicationSettings.getDefaultDN(), applicationSettings.getLanguage());
 		dPreferences.setLocationRelativeTo(frame);
 		dPreferences.setVisible(true);
 
@@ -111,9 +111,14 @@ public class PreferencesAction extends ExitAction {
 		boolean lookAndFeelDecorated = dPreferences.getLookFeelDecoration();
 		applicationSettings.setLookAndFeelDecorated(lookAndFeelDecorated);
 
+		String language = dPreferences.getLanguage();
+		boolean languageHasChanged = !language.equals(applicationSettings.getLanguage());
+		applicationSettings.setLanguage(language);
+
 		if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName()))
-				|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())) {
-			// L&F changed - restart required for upgrade to take effect
+				|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())
+				|| languageHasChanged) {
+			// L&F or language changed - restart required for upgrade to take effect
 			JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
 					res.getString("PreferencesAction.LookFeelChanged.Title"), JOptionPane.INFORMATION_MESSAGE);
 
