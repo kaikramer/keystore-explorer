@@ -45,8 +45,8 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 
-	private Map<String, byte[]> criticalExtensions = new HashMap<String, byte[]>();
-	private Map<String, byte[]> nonCriticalExtensions = new HashMap<String, byte[]>();
+	private Map<String, byte[]> criticalExtensions = new HashMap<>();
+	private Map<String, byte[]> nonCriticalExtensions = new HashMap<>();
 
 	private static final long FILE_MAGIC_NUMBER = 0x47911131;
 	private static final int FILE_VERSION = 1;
@@ -209,21 +209,18 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 		try (DataInputStream dis = new DataInputStream(is)) {
 
 			long magicNumber = dis.readLong();
-
 			if (magicNumber != FILE_MAGIC_NUMBER) {
 				throw new X509ExtensionSetLoadException(
 						res.getString("NoLoadX509ExtensionSet.BadMagicNumber.exception.message"));
 			}
 
 			int version = dis.readInt();
-
 			if (version != FILE_VERSION) {
 				throw new X509ExtensionSetLoadException(
 						res.getString("NoLoadX509ExtensionSet.WrongVersion.exception.message"));
 			}
 
 			X509ExtensionSet x509ExtensionSet = new X509ExtensionSet();
-
 			x509ExtensionSet.criticalExtensions = loadExtensions(dis);
 			x509ExtensionSet.nonCriticalExtensions = loadExtensions(dis);
 
@@ -235,7 +232,7 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	}
 
 	private static Map<String, byte[]> loadExtensions(DataInputStream dis) throws IOException {
-		Map<String, byte[]> extensions = new HashMap<String, byte[]>();
+		Map<String, byte[]> extensions = new HashMap<>();
 
 		int extensionCnt = dis.readInt();
 

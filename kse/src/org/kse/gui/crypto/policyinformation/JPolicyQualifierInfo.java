@@ -163,7 +163,7 @@ public class JPolicyQualifierInfo extends JPanel {
 		PolicyQualifierInfoTableModel policyQualifierInfoTableModel = new PolicyQualifierInfoTableModel();
 		jtPolicyQualifierInfo = new JKseTable(policyQualifierInfoTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(policyQualifierInfoTableModel);
+		TableRowSorter<PolicyQualifierInfoTableModel> sorter = new TableRowSorter<>(policyQualifierInfoTableModel);
 		sorter.setComparator(0, new PolicyQualifierInfoTableModel.PolicyQualifierInfoComparator());
 		jtPolicyQualifierInfo.setRowSorter(sorter);
 
@@ -297,7 +297,7 @@ public class JPolicyQualifierInfo extends JPanel {
 
 	private void populate() {
 		if (policyQualifierInfo == null) {
-			policyQualifierInfo = new ArrayList<PolicyQualifierInfo>();
+			policyQualifierInfo = new ArrayList<>();
 		}
 
 		reloadPolicyQualifierInfoTable();
@@ -313,13 +313,11 @@ public class JPolicyQualifierInfo extends JPanel {
 
 			if (container instanceof JDialog) {
 				dPolicyQualifierInfoChooser = new DPolicyQualifierInfoChooser((JDialog) container, title, null);
-				dPolicyQualifierInfoChooser.setLocationRelativeTo(container);
-				dPolicyQualifierInfoChooser.setVisible(true);
-			} else if (container instanceof JFrame) {
+			} else {
 				dPolicyQualifierInfoChooser = new DPolicyQualifierInfoChooser((JFrame) container, title, null);
-				dPolicyQualifierInfoChooser.setLocationRelativeTo(container);
-				dPolicyQualifierInfoChooser.setVisible(true);
 			}
+			dPolicyQualifierInfoChooser.setLocationRelativeTo(container);
+			dPolicyQualifierInfoChooser.setVisible(true);
 
 			PolicyQualifierInfo newPolicyQualifierInfo = dPolicyQualifierInfoChooser.getPolicyQualifierInfo();
 
@@ -418,14 +416,12 @@ public class JPolicyQualifierInfo extends JPanel {
 				if (container instanceof JDialog) {
 					dPolicyQualifierInfoChooser = new DPolicyQualifierInfoChooser((JDialog) container, title,
 							policyQualInfo);
-					dPolicyQualifierInfoChooser.setLocationRelativeTo(container);
-					dPolicyQualifierInfoChooser.setVisible(true);
-				} else if (container instanceof JFrame) {
+				} else {
 					dPolicyQualifierInfoChooser = new DPolicyQualifierInfoChooser((JFrame) container, title,
 							policyQualInfo);
-					dPolicyQualifierInfoChooser.setLocationRelativeTo(container);
-					dPolicyQualifierInfoChooser.setVisible(true);
 				}
+				dPolicyQualifierInfoChooser.setLocationRelativeTo(container);
+				dPolicyQualifierInfoChooser.setVisible(true);
 
 				PolicyQualifierInfo newPolicyQualifierInfo = dPolicyQualifierInfoChooser.getPolicyQualifierInfo();
 

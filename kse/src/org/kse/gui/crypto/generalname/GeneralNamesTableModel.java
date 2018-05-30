@@ -51,7 +51,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	public GeneralNamesTableModel() {
 		columnName = res.getString("GeneralNamesTableModel.GeneralNameColumn");
 
-		data = new ArrayList<GeneralName>();
+		data = new ArrayList<>();
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	public void load(GeneralNames generalNames) {
 		GeneralName[] generalNamesArray = generalNames.getNames();
 
-		data = new ArrayList<GeneralName>(Arrays.asList(generalNamesArray));
+		data = new ArrayList<>(Arrays.asList(generalNamesArray));
 		Collections.sort(data, new GeneralNameComparator());
 
 		fireTableDataChanged();

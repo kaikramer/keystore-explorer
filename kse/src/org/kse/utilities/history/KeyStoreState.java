@@ -46,7 +46,7 @@ public class KeyStoreState {
 	HistoryAction action;
 	private KeyStore keyStore;
 	private Password password;
-	private HashMap<String, Password> entryPasswords = new HashMap<String, Password>();
+	private HashMap<String, Password> entryPasswords = new HashMap<>();
 	private KeyStoreState previous;
 	private KeyStoreState next;
 
@@ -310,7 +310,7 @@ public class KeyStoreState {
 			copy.password = new Password(this.password); // Copy as may be cleared
 		}
 
-		HashMap<String, Password> keyPairPasswordsCopy = new HashMap<String, Password>();
+		HashMap<String, Password> keyPairPasswordsCopy = new HashMap<>();
 
 		for (String alias : entryPasswords.keySet()) {
 			keyPairPasswordsCopy.put(alias, new Password(entryPasswords.get(alias)));

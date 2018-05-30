@@ -27,6 +27,9 @@ import javax.swing.SwingConstants;
 
 public class MiGUtil {
 
+	private MiGUtil() {
+	}
+
 	public static void addSeparator(Container container, String text) {
 		JLabel l = new JLabel(text, SwingConstants.LEADING);
 

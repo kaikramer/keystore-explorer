@@ -163,7 +163,7 @@ public class JPolicyInformation extends JPanel {
 		PolicyInformationTableModel policyInformationTableModel = new PolicyInformationTableModel();
 		jtPolicyInformation = new JKseTable(policyInformationTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(policyInformationTableModel);
+		TableRowSorter<PolicyInformationTableModel> sorter = new TableRowSorter<>(policyInformationTableModel);
 		sorter.setComparator(0, new PolicyInformationTableModel.PolicyInformationComparator());
 		jtPolicyInformation.setRowSorter(sorter);
 
@@ -298,7 +298,7 @@ public class JPolicyInformation extends JPanel {
 
 	private void populate() {
 		if (policyInformation == null) {
-			policyInformation = new ArrayList<PolicyInformation>();
+			policyInformation = new ArrayList<>();
 		}
 
 		reloadPolicyInformationTable();
@@ -314,13 +314,11 @@ public class JPolicyInformation extends JPanel {
 
 			if (container instanceof JDialog) {
 				dPolicyInformationChooser = new DPolicyInformationChooser((JDialog) container, title, null);
-				dPolicyInformationChooser.setLocationRelativeTo(container);
-				dPolicyInformationChooser.setVisible(true);
-			} else if (container instanceof JFrame) {
+			} else {
 				dPolicyInformationChooser = new DPolicyInformationChooser((JFrame) container, title, null);
-				dPolicyInformationChooser.setLocationRelativeTo(container);
-				dPolicyInformationChooser.setVisible(true);
 			}
+			dPolicyInformationChooser.setLocationRelativeTo(container);
+			dPolicyInformationChooser.setVisible(true);
 
 			PolicyInformation newPolicyInfo = dPolicyInformationChooser.getPolicyInformation();
 
@@ -418,13 +416,11 @@ public class JPolicyInformation extends JPanel {
 
 				if (container instanceof JDialog) {
 					dPolicyNameChooser = new DPolicyInformationChooser((JDialog) container, title, policyInfo);
-					dPolicyNameChooser.setLocationRelativeTo(container);
-					dPolicyNameChooser.setVisible(true);
-				} else if (container instanceof JFrame) {
+				} else {
 					dPolicyNameChooser = new DPolicyInformationChooser((JFrame) container, title, policyInfo);
-					dPolicyNameChooser.setLocationRelativeTo(container);
-					dPolicyNameChooser.setVisible(true);
 				}
+				dPolicyNameChooser.setLocationRelativeTo(container);
+				dPolicyNameChooser.setVisible(true);
 
 				PolicyInformation newPolicyInfo = dPolicyNameChooser.getPolicyInformation();
 

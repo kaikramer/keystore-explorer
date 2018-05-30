@@ -108,7 +108,7 @@ public class DJarInfo extends JEscDialog {
 		jtJarInfo.getTableHeader().setReorderingAllowed(false);
 		jtJarInfo.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(jiModel);
+		RowSorter<JarInfoTableModel> sorter = new TableRowSorter<>(jiModel);
 		jtJarInfo.setRowSorter(sorter);
 
 		for (int i = 0; i < jtJarInfo.getColumnCount(); i++) {
@@ -135,7 +135,7 @@ public class DJarInfo extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, true);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpJarInfoTable, BorderLayout.CENTER);
 		getContentPane().add(jpOK, BorderLayout.SOUTH);
@@ -162,7 +162,7 @@ public class DJarInfo extends JEscDialog {
 	}
 
 	private JarFile[] getClassPathJars() throws IOException {
-		Vector<JarFile> jars = new Vector<JarFile>();
+		Vector<JarFile> jars = new Vector<>();
 
 		String classPath = System.getProperty("java.class.path");
 		String pathSeparator = System.getProperty("path.separator");

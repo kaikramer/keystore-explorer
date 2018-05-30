@@ -130,7 +130,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, true);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
 		jpFingerprint = new JPanel(new BorderLayout());
 		jpFingerprint.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -189,7 +189,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
 				if (container instanceof JDialog) {
 					dError = new DError((JDialog) container, ex);
-				} else if (container instanceof JFrame) {
+				} else {
 					dError = new DError((JFrame) container, ex);
 				}
 

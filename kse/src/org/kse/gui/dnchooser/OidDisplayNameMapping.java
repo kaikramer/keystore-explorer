@@ -46,16 +46,7 @@ public class OidDisplayNameMapping {
 	private static final String OU = res.getString("DistinguishedNameChooser.jlOrganisationUnit.text");
 	private static final String CN = res.getString("DistinguishedNameChooser.jlCommonName.text");
 
-	// TODO tool tips?!
-	//	res.getString("DDistinguishedNameChooser.jtfCommonName.edit.tooltip")
-	//	res.getString("DDistinguishedNameChooser.jtfOrganisationUnit.edit.tooltip")
-	//	res.getString("DDistinguishedNameChooser.jtfOrganisationName.edit.tooltip")
-	//	res.getString("DDistinguishedNameChooser.jtfLocalityName.edit.tooltip")
-	//	res.getString("DDistinguishedNameChooser.jtfStateName.edit.tooltip")
-	//	res.getString("DDistinguishedNameChooser.jtfCountryCode.edit.tooltip")
-	//	res.getString("DDistinguishedNameChooser.jtfEmailAddress.edit.tooltip")
-
-	private static Map<String, ASN1ObjectIdentifier> displayNameToOID = new HashMap<String, ASN1ObjectIdentifier>();
+	private static Map<String, ASN1ObjectIdentifier> displayNameToOID = new HashMap<>();
 	static {
 		displayNameToOID.put(CN, BCStyle.CN);
 		displayNameToOID.put(OU, BCStyle.OU);
@@ -71,7 +62,7 @@ public class OidDisplayNameMapping {
 		displayNameToOID.put(DC, BCStyle.DC);
 	}
 
-	private static Map<String, String> oidToDisplayName = new HashMap<String, String>();
+	private static Map<String, String> oidToDisplayName = new HashMap<>();
 	static {
 		oidToDisplayName.put(BCStyle.CN.getId(), CN);
 		oidToDisplayName.put(BCStyle.OU.getId(), OU);
@@ -102,5 +93,8 @@ public class OidDisplayNameMapping {
 			displayName = oid;
 		}
 		return displayName;
+	}
+
+	private OidDisplayNameMapping() {
 	}
 }

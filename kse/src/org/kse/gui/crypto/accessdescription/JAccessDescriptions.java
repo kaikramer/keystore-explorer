@@ -161,7 +161,7 @@ public class JAccessDescriptions extends JPanel {
 		AccessDescriptionsTableModel accessDescriptionsTableModel = new AccessDescriptionsTableModel();
 		jtAccessDescriptions = new JKseTable(accessDescriptionsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(accessDescriptionsTableModel);
+		TableRowSorter<AccessDescriptionsTableModel> sorter = new TableRowSorter<>(accessDescriptionsTableModel);
 		sorter.setComparator(0, new AccessDescriptionsTableModel.AccessDescriptionMethodComparator());
 		sorter.setComparator(1, new AccessDescriptionsTableModel.AccessDescriptionLocationComparator());
 		jtAccessDescriptions.setRowSorter(sorter);
@@ -297,7 +297,7 @@ public class JAccessDescriptions extends JPanel {
 
 	private void populate() {
 		if (accessDescriptions == null) {
-			accessDescriptions = new ArrayList<AccessDescription>();
+			accessDescriptions = new ArrayList<>();
 		}
 
 		reloadAccessDescriptionsTable();
@@ -312,13 +312,11 @@ public class JAccessDescriptions extends JPanel {
 
 		if (container instanceof JDialog) {
 			dAccessDescriptionChooser = new DAccessDescriptionChooser((JDialog) container, title, null);
-			dAccessDescriptionChooser.setLocationRelativeTo(container);
-			dAccessDescriptionChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dAccessDescriptionChooser = new DAccessDescriptionChooser((JFrame) container, title, null);
-			dAccessDescriptionChooser.setLocationRelativeTo(container);
-			dAccessDescriptionChooser.setVisible(true);
 		}
+		dAccessDescriptionChooser.setLocationRelativeTo(container);
+		dAccessDescriptionChooser.setVisible(true);
 
 		AccessDescription newAccessDescription = dAccessDescriptionChooser.getAccessDescription();
 
@@ -403,13 +401,11 @@ public class JAccessDescriptions extends JPanel {
 
 			if (container instanceof JDialog) {
 				dAccessDescriptionChooser = new DAccessDescriptionChooser((JDialog) container, title, accessDescription);
-				dAccessDescriptionChooser.setLocationRelativeTo(container);
-				dAccessDescriptionChooser.setVisible(true);
-			} else if (container instanceof JFrame) {
+			} else {
 				dAccessDescriptionChooser = new DAccessDescriptionChooser((JFrame) container, title, accessDescription);
-				dAccessDescriptionChooser.setLocationRelativeTo(container);
-				dAccessDescriptionChooser.setVisible(true);
 			}
+			dAccessDescriptionChooser.setLocationRelativeTo(container);
+			dAccessDescriptionChooser.setVisible(true);
 
 			AccessDescription newAccessDescription = dAccessDescriptionChooser.getAccessDescription();
 

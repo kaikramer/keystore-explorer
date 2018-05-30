@@ -39,6 +39,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.PublicKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -58,6 +59,7 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -69,6 +71,9 @@ import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetLoadException;
 import org.kse.crypto.x509.X509ExtensionType;
@@ -103,6 +108,7 @@ public class DAddExtensions extends JEscDialog {
 	private JScrollPane jspExtensionsTable;
 	private JKseTable jtExtensions;
 	private JPanel jpLoadSaveTemplate;
+	private JButton jbSelectStandardTemplate;
 	private JButton jbLoadTemplate;
 	private JButton jbSaveTemplate;
 	private JPanel jpButtons;
@@ -267,7 +273,7 @@ public class DAddExtensions extends JEscDialog {
 		ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
 		jtExtensions = new JKseTable(extensionsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(extensionsTableModel);
+		TableRowSorter<ExtensionsTableModel> sorter = new TableRowSorter<>(extensionsTableModel);
 		sorter.setComparator(2, new ObjectIdComparator());
 		jtExtensions.setRowSorter(sorter);
 
@@ -357,6 +363,22 @@ public class DAddExtensions extends JEscDialog {
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		jspExtensionsTable.getViewport().setBackground(jtExtensions.getBackground());
 
+		jbSelectStandardTemplate = new JButton(res.getString("DAddExtensions.jbSelectStandardTemplate.text"));
+		jbSelectStandardTemplate.setMnemonic(res.getString("DAddExtensions.jbSelectStandardTemplate.mnemonic").charAt(0));
+		jbSelectStandardTemplate.setToolTipText(res.getString("DAddExtensions.jbSelectStandardTemplate.tooltip"));
+
+		jbSelectStandardTemplate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DAddExtensions.this);
+					selectStandardTemplatePressed();
+				} finally {
+					CursorUtil.setCursorFree(DAddExtensions.this);
+				}
+			}
+		});
+
 		jbLoadTemplate = new JButton(res.getString("DAddExtensions.jbLoadTemplate.text"));
 		jbLoadTemplate.setMnemonic(res.getString("DAddExtensions.jbLoadTemplate.mnemonic").charAt(0));
 		jbLoadTemplate.setToolTipText(res.getString("DAddExtensions.jbLoadTemplate.tooltip"));
@@ -392,6 +414,8 @@ public class DAddExtensions extends JEscDialog {
 		jpLoadSaveTemplate = new JPanel();
 		jpLoadSaveTemplate.setLayout(new BoxLayout(jpLoadSaveTemplate, BoxLayout.X_AXIS));
 		jpLoadSaveTemplate.add(Box.createHorizontalGlue());
+		jpLoadSaveTemplate.add(jbSelectStandardTemplate);
+		jpLoadSaveTemplate.add(Box.createHorizontalStrut(5));
 		jpLoadSaveTemplate.add(jbLoadTemplate);
 		jpLoadSaveTemplate.add(Box.createHorizontalStrut(5));
 		jpLoadSaveTemplate.add(jbSaveTemplate);
@@ -431,7 +455,7 @@ public class DAddExtensions extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		reloadExtensionsTable();
 		selectFirstExtensionInTable();
@@ -809,6 +833,17 @@ public class DAddExtensions extends JEscDialog {
 		}
 	}
 
+	private void selectStandardTemplatePressed() {
+		DSelectStdCertTemplate dSelectStdCertTemplate = new DSelectStdCertTemplate(this, authorityPublicKey,
+				subjectPublicKey);
+		dSelectStdCertTemplate.setLocationRelativeTo(this);
+		dSelectStdCertTemplate.setVisible(true);
+
+		this.extensions = dSelectStdCertTemplate.getExtensionSet();
+		reloadExtensionsTable();
+		selectFirstExtensionInTable();
+	}
+
 	private void loadTemplatePressed() {
 		JFileChooser chooser = FileChooserFactory.getCetFileChooser();
 
@@ -896,5 +931,27 @@ public class DAddExtensions extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick UI testing
+	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		final KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
+
+		java.awt.EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				DAddExtensions dialog = new DAddExtensions(new JFrame(), "Add Extensions", new X509ExtensionSet(),
+						keyPair.getPublic(), new X500Name("cn=test"), BigInteger.ONE, keyPair.getPublic());
+				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+					@Override
+					public void windowClosed(java.awt.event.WindowEvent e) {
+						System.exit(0);
+					}
+				});
+				dialog.setVisible(true);
+			}
+		});
 	}
 }

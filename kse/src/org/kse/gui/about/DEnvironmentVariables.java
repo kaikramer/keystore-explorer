@@ -95,7 +95,7 @@ public class DEnvironmentVariables extends JEscDialog {
 		jtEnvironmentVariables.getTableHeader().setReorderingAllowed(false);
 		jtEnvironmentVariables.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(evModel);
+		RowSorter<EnvironmentVariablesTableModel> sorter = new TableRowSorter<>(evModel);
 		jtEnvironmentVariables.setRowSorter(sorter);
 
 		for (int i = 0; i < jtEnvironmentVariables.getColumnCount(); i++) {
@@ -127,7 +127,7 @@ public class DEnvironmentVariables extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpEnvironmentVariablesTable, BorderLayout.CENTER);
 		getContentPane().add(jpOK, BorderLayout.SOUTH);

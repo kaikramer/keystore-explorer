@@ -126,7 +126,7 @@ public class DViewJcePolicy extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, true);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
 		jpPolicy = new JPanel(new BorderLayout());
 		jpPolicy.setBorder(new EmptyBorder(5, 5, 5, 5));

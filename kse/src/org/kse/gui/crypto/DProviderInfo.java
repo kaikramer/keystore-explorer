@@ -120,7 +120,7 @@ public class DProviderInfo extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, true);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
 		jpProviders = new JPanel(new BorderLayout());
 		jpProviders.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -297,7 +297,7 @@ public class DProviderInfo extends JEscDialog {
 			String key = (String) names.nextElement();
 
 			if (key.startsWith(match) && key.indexOf(' ') == -1) {
-				String algorithm = key.substring(key.indexOf(".") + 1);
+				String algorithm = key.substring(key.indexOf('.') + 1);
 				algorithmList.add(algorithm);
 			}
 		}
@@ -342,7 +342,7 @@ public class DProviderInfo extends JEscDialog {
 			String key = (String) names.nextElement();
 
 			if (key.startsWith(matchAttr)) {
-				String attrName = key.substring(key.indexOf(" ") + 1);
+				String attrName = key.substring(key.indexOf(' ') + 1);
 				String attributeDisplay = MessageFormat.format(res.getString("DProviderInfo.AttributeNode.text"),
 						attrName, provider.getProperty(key));
 				attributeMap.put(attrName, attributeDisplay);

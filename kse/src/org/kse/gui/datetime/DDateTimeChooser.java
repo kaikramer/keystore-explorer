@@ -105,22 +105,22 @@ public class DDateTimeChooser extends JEscDialog {
 	private static final List<SpinnerTime> SECONDS;
 
 	static {
-		YEARS = new ArrayList<SpinnerTime>();
+		YEARS = new ArrayList<>();
 		for (int i = 1900; i < 2100; i++) {
 			YEARS.add(new SpinnerTime(i));
 		}
 
-		HOURS = new ArrayList<SpinnerTime>();
+		HOURS = new ArrayList<>();
 		for (int i = 0; i < 24; i++) {
 			HOURS.add(new SpinnerTime(i));
 		}
 
-		MINUTES = new ArrayList<SpinnerTime>();
+		MINUTES = new ArrayList<>();
 		for (int i = 0; i < 60; i++) {
 			MINUTES.add(new SpinnerTime(i));
 		}
 
-		SECONDS = new ArrayList<SpinnerTime>();
+		SECONDS = new ArrayList<>();
 		for (int i = 0; i < 60; i++) {
 			SECONDS.add(new SpinnerTime(i));
 		}
@@ -187,7 +187,7 @@ public class DDateTimeChooser extends JEscDialog {
 	}
 
 	private void initComponents(Date date) {
-		jcbMonth = new JComboBox<Object>(MONTH_NAMES);
+		jcbMonth = new JComboBox<>(MONTH_NAMES);
 		jcbMonth.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent evt) {
@@ -310,7 +310,7 @@ public class DDateTimeChooser extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(BorderLayout.CENTER, jpDateTime);
@@ -403,8 +403,9 @@ public class DDateTimeChooser extends JEscDialog {
 		}
 
 		if (day != -1) {
-			if (day > lastDayOfSelectedMonth)
+			if (day > lastDayOfSelectedMonth) {
 				day = lastDayOfSelectedMonth;
+			}
 			setSelectedDay(day);
 		}
 	}

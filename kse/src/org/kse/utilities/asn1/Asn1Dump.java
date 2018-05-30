@@ -107,9 +107,7 @@ public class Asn1Dump {
 	public String dump(X509Certificate certificate) throws Asn1Exception, IOException {
 		try {
 			return dump(certificate.getEncoded());
-		} catch (IOException ex) {
-			throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"), ex);
-		} catch (CertificateEncodingException ex) {
+		} catch (IOException | CertificateEncodingException ex) {
 			throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"), ex);
 		}
 	}
@@ -128,9 +126,7 @@ public class Asn1Dump {
 	public String dump(X509CRL crl) throws Asn1Exception, IOException {
 		try {
 			return dump(crl.getEncoded());
-		} catch (IOException ex) {
-			throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"), ex);
-		} catch (CRLException ex) {
+		} catch (IOException | CRLException ex) {
 			throw new Asn1Exception(res.getString("NoAsn1DumpObject.exception.message"), ex);
 		}
 	}
@@ -249,7 +245,7 @@ public class Asn1Dump {
 			} else if (asn1Object instanceof ASN1Integer) {
 				return dumpInteger((ASN1Integer) asn1Object);
 			} else if (asn1Object instanceof ASN1Null) {
-				return dumpNull((ASN1Null) asn1Object);
+				return dumpNull();
 			} else if (asn1Object instanceof ASN1ObjectIdentifier) {
 				return dumpObjectIdentifier((ASN1ObjectIdentifier) asn1Object);
 			} else if (asn1Object instanceof ASN1OctetString) {
@@ -258,9 +254,7 @@ public class Asn1Dump {
 				throw new Asn1Exception("Unknown ASN.1 object: " + asn1Object.toString());
 			}
 		} finally {
-			if (true) {
-				indentLevel--;
-			}
+			indentLevel--;
 		}
 	}
 
@@ -355,7 +349,7 @@ public class Asn1Dump {
 		return sb.toString();
 	}
 
-	private String dumpNull(ASN1Null asn1Null) {
+	private String dumpNull() {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(indentSequence.toString(indentLevel));

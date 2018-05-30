@@ -39,41 +39,41 @@ public class KseX500NameStyle extends BCStyle {
 
 	private static final ASN1ObjectIdentifier DNQ = new ASN1ObjectIdentifier("2.5.4.46");
 
-	private static final Hashtable<ASN1ObjectIdentifier, String> DefaultSymbols = new Hashtable<ASN1ObjectIdentifier, String>();
+	private static final Hashtable<ASN1ObjectIdentifier, String> DEFAULT_SYMBOLS = new Hashtable<>();
 
 	static {
-		DefaultSymbols.put(C, "C");
-		DefaultSymbols.put(O, "O");
-		DefaultSymbols.put(T, "T");
-		DefaultSymbols.put(OU, "OU");
-		DefaultSymbols.put(CN, "CN");
-		DefaultSymbols.put(L, "L");
-		DefaultSymbols.put(ST, "ST");
-		DefaultSymbols.put(SN, "SERIALNUMBER");
-		DefaultSymbols.put(EmailAddress, "E");
-		DefaultSymbols.put(DC, "DC");
-		DefaultSymbols.put(UID, "UID");
-		DefaultSymbols.put(STREET, "STREET");
-		DefaultSymbols.put(SURNAME, "SURNAME");
-		DefaultSymbols.put(GIVENNAME, "GIVENNAME");
-		DefaultSymbols.put(INITIALS, "INITIALS");
-		DefaultSymbols.put(GENERATION, "GENERATION");
-		DefaultSymbols.put(UnstructuredAddress, "unstructuredAddress");
-		DefaultSymbols.put(UnstructuredName, "unstructuredName");
-		DefaultSymbols.put(UNIQUE_IDENTIFIER, "UniqueIdentifier");
-		DefaultSymbols.put(DN_QUALIFIER, "DN");
-		DefaultSymbols.put(PSEUDONYM, "Pseudonym");
-		DefaultSymbols.put(POSTAL_ADDRESS, "PostalAddress");
-		DefaultSymbols.put(NAME_AT_BIRTH, "NameAtBirth");
-		DefaultSymbols.put(COUNTRY_OF_CITIZENSHIP, "CountryOfCitizenship");
-		DefaultSymbols.put(COUNTRY_OF_RESIDENCE, "CountryOfResidence");
-		DefaultSymbols.put(GENDER, "Gender");
-		DefaultSymbols.put(PLACE_OF_BIRTH, "PlaceOfBirth");
-		DefaultSymbols.put(DATE_OF_BIRTH, "DateOfBirth");
-		DefaultSymbols.put(POSTAL_CODE, "PostalCode");
-		DefaultSymbols.put(BUSINESS_CATEGORY, "BusinessCategory");
-		DefaultSymbols.put(TELEPHONE_NUMBER, "TelephoneNumber");
-		DefaultSymbols.put(NAME, "Name");
+		DEFAULT_SYMBOLS.put(C, "C");
+		DEFAULT_SYMBOLS.put(O, "O");
+		DEFAULT_SYMBOLS.put(T, "T");
+		DEFAULT_SYMBOLS.put(OU, "OU");
+		DEFAULT_SYMBOLS.put(CN, "CN");
+		DEFAULT_SYMBOLS.put(L, "L");
+		DEFAULT_SYMBOLS.put(ST, "ST");
+		DEFAULT_SYMBOLS.put(SN, "SERIALNUMBER");
+		DEFAULT_SYMBOLS.put(EmailAddress, "E");
+		DEFAULT_SYMBOLS.put(DC, "DC");
+		DEFAULT_SYMBOLS.put(UID, "UID");
+		DEFAULT_SYMBOLS.put(STREET, "STREET");
+		DEFAULT_SYMBOLS.put(SURNAME, "SURNAME");
+		DEFAULT_SYMBOLS.put(GIVENNAME, "GIVENNAME");
+		DEFAULT_SYMBOLS.put(INITIALS, "INITIALS");
+		DEFAULT_SYMBOLS.put(GENERATION, "GENERATION");
+		DEFAULT_SYMBOLS.put(UnstructuredAddress, "unstructuredAddress");
+		DEFAULT_SYMBOLS.put(UnstructuredName, "unstructuredName");
+		DEFAULT_SYMBOLS.put(UNIQUE_IDENTIFIER, "UniqueIdentifier");
+		DEFAULT_SYMBOLS.put(DN_QUALIFIER, "DN");
+		DEFAULT_SYMBOLS.put(PSEUDONYM, "Pseudonym");
+		DEFAULT_SYMBOLS.put(POSTAL_ADDRESS, "PostalAddress");
+		DEFAULT_SYMBOLS.put(NAME_AT_BIRTH, "NameAtBirth");
+		DEFAULT_SYMBOLS.put(COUNTRY_OF_CITIZENSHIP, "CountryOfCitizenship");
+		DEFAULT_SYMBOLS.put(COUNTRY_OF_RESIDENCE, "CountryOfResidence");
+		DEFAULT_SYMBOLS.put(GENDER, "Gender");
+		DEFAULT_SYMBOLS.put(PLACE_OF_BIRTH, "PlaceOfBirth");
+		DEFAULT_SYMBOLS.put(DATE_OF_BIRTH, "DateOfBirth");
+		DEFAULT_SYMBOLS.put(POSTAL_CODE, "PostalCode");
+		DEFAULT_SYMBOLS.put(BUSINESS_CATEGORY, "BusinessCategory");
+		DEFAULT_SYMBOLS.put(TELEPHONE_NUMBER, "TelephoneNumber");
+		DEFAULT_SYMBOLS.put(NAME, "Name");
 	}
 
 	private KseX500NameStyle() {
@@ -128,10 +128,10 @@ public class KseX500NameStyle extends BCStyle {
 						buf.append('+');
 					}
 
-					IETFUtils.appendTypeAndValue(buf, atv[j], DefaultSymbols);
+					IETFUtils.appendTypeAndValue(buf, atv[j], DEFAULT_SYMBOLS);
 				}
 			} else {
-				IETFUtils.appendTypeAndValue(buf, rdns[i].getFirst(), DefaultSymbols);
+				IETFUtils.appendTypeAndValue(buf, rdns[i].getFirst(), DEFAULT_SYMBOLS);
 			}
 		}
 

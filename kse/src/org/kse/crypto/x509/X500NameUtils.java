@@ -34,6 +34,9 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
  */
 public class X500NameUtils {
 
+	private X500NameUtils() {
+	}
+
 	/**
 	 * Convert an X.500 Principal to an X.500 Name.
 	 *

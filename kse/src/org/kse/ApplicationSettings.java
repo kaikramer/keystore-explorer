@@ -58,6 +58,8 @@ import org.kse.utilities.net.SystemProxySelector;
  */
 public class ApplicationSettings {
 
+	public static final String SYSTEM_LANGUAGE = "system";
+
 	private static final String PREFS_NODE = "/org/kse";
 	private static final String PREFS_NODE_OLD = "/net/sf/keystore_explorer";
 
@@ -103,10 +105,12 @@ public class ApplicationSettings {
 	private static final String KSE3_AUTO_UPDATE_CHECK_LAST_CHECK = "kse3.autoupdatechecklastcheck";
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
 	private static final String KSE3_PKCS11_LIBS = "kse3.pkcs11libs";
-	private static final String KSE3_COLUMNS = "kse3.columns";
+	private static final String KSE3_LANGUAGE = "kse3.locale";
 	private static final String KSE3_EXPIRY_WARN_DAYS = "kse3.expirywarndays";
+	private static final String KSE3_COLUMNS = "kse3.columns";
 
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private static ApplicationSettings applicationSettings;
 	private boolean useCaCertificates;
@@ -138,9 +142,9 @@ public class ApplicationSettings {
 	private Date autoUpdateCheckLastCheck;
 	private int autoUpdateCheckInterval;
 	private String p11Libs;
+	private String language;
 	private KeyStoreTableColumns kstColumns = new KeyStoreTableColumns();
 	private int expiryWarndays;
-
 	private ApplicationSettings() {
 
 		// one-time conversion from old to new preferences location:
@@ -299,7 +303,7 @@ public class ApplicationSettings {
 		tabLayout = preferences.getInt(KSE3_TABLAYOUT, JTabbedPane.WRAP_TAB_LAYOUT);
 
 		// Recent files
-		ArrayList<File> recentFilesList = new ArrayList<File>();
+		ArrayList<File> recentFilesList = new ArrayList<>();
 		for (int i = 1; i <= KseFrame.RECENT_FILES_SIZE; i++) {
 			String recentFile = preferences.get(KSE3_RECENTFILE + i, null);
 
@@ -342,10 +346,13 @@ public class ApplicationSettings {
 
 		// PKCS#11 libraries
 		p11Libs = preferences.get(KSE3_PKCS11_LIBS, "");
-		// Table columns, set to default layout if absent
+
+		// language
+		language = preferences.get(KSE3_LANGUAGE, SYSTEM_LANGUAGE);
 		try { //TODO: are these catches correct? I get a null pointer exception when introducing a new preference value.
 			kstColumns.setColumns(preferences.getInt(KSE3_COLUMNS, 0x1F));
 		}
+
 		catch (NullPointerException e)
 		{
 			kstColumns.setColumns(0x1F);
@@ -371,7 +378,7 @@ public class ApplicationSettings {
 
 	private Date getDate(Preferences preferences, String name,  Date def) {
 		try {
-			return DATE_FORMAT.parse(preferences.get(name, DATE_FORMAT.format(def)));
+			return dateFormat.parse(preferences.get(name, dateFormat.format(def)));
 		} catch (ParseException e) {
 			return def;
 		}
@@ -452,7 +459,7 @@ public class ApplicationSettings {
 		// auto update check settings
 		preferences.putBoolean(KSE3_AUTO_UPDATE_CHECK_ENABLED, isAutoUpdateCheckEnabled());
 		preferences.putInt(KSE3_AUTO_UPDATE_CHECK_INTERVAL, getAutoUpdateCheckInterval());
-		preferences.put(KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, DATE_FORMAT.format(getAutoUpdateCheckLastCheck()));
+		preferences.put(KSE3_AUTO_UPDATE_CHECK_LAST_CHECK, dateFormat.format(getAutoUpdateCheckLastCheck()));
 
 		// PKCS#11 libraries
 		preferences.put(KSE3_PKCS11_LIBS, getP11Libs());
@@ -460,6 +467,8 @@ public class ApplicationSettings {
 		preferences.putInt(KSE3_COLUMNS,getKeyStoreTableColumns().getColumns());
 		preferences.putInt(KSE3_EXPIRY_WARN_DAYS,getKeyStoreTableColumns().getExpiryWarnDays());
 		
+		// language
+		preferences.put(KSE3_LANGUAGE, language);
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
@@ -526,8 +535,8 @@ public class ApplicationSettings {
 
 	private Preferences getUnderlyingPreferences() {
 		// Get underlying Java preferences
-		Preferences preferences = Preferences.userRoot().node(PREFS_NODE);
-		return preferences;
+		return Preferences.userRoot().node(PREFS_NODE);
+
 	}
 
 	/**
@@ -811,5 +820,11 @@ public class ApplicationSettings {
 	public void setExpiryWarndays(int expiryWarnDays) {
 		this.expiryWarndays = expiryWarnDays;
 	}
+	public String getLanguage() {
+		return language;
+	}
 
+	public void setLanguage(String language) {
+		this.language = language;
+	}
 }

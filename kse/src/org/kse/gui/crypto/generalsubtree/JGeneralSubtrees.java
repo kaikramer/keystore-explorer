@@ -161,7 +161,7 @@ public class JGeneralSubtrees extends JPanel {
 		GeneralSubtreesTableModel generalSubtreesTableModel = new GeneralSubtreesTableModel();
 		jtGeneralSubtrees = new JKseTable(generalSubtreesTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(generalSubtreesTableModel);
+		TableRowSorter<GeneralSubtreesTableModel> sorter = new TableRowSorter<>(generalSubtreesTableModel);
 		sorter.setComparator(0, new GeneralSubtreesTableModel.GeneralSubtreeBaseComparator());
 		sorter.setComparator(1, new GeneralSubtreesTableModel.GeneralSubtreeMinimumComparator());
 		sorter.setComparator(2, new GeneralSubtreesTableModel.GeneralSubtreeMaximumComparator());
@@ -312,13 +312,11 @@ public class JGeneralSubtrees extends JPanel {
 
 		if (container instanceof JDialog) {
 			dGeneralSubtreeChooser = new DGeneralSubtreeChooser((JDialog) container, title, null);
-			dGeneralSubtreeChooser.setLocationRelativeTo(container);
-			dGeneralSubtreeChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dGeneralSubtreeChooser = new DGeneralSubtreeChooser((JFrame) container, title, null);
-			dGeneralSubtreeChooser.setLocationRelativeTo(container);
-			dGeneralSubtreeChooser.setVisible(true);
 		}
+		dGeneralSubtreeChooser.setLocationRelativeTo(container);
+		dGeneralSubtreeChooser.setVisible(true);
 
 		GeneralSubtree newGeneralSubtree = dGeneralSubtreeChooser.getGeneralSubtree();
 
@@ -403,13 +401,11 @@ public class JGeneralSubtrees extends JPanel {
 
 			if (container instanceof JDialog) {
 				dGeneralSubtreeChooser = new DGeneralSubtreeChooser((JDialog) container, title, generalSubtree);
-				dGeneralSubtreeChooser.setLocationRelativeTo(container);
-				dGeneralSubtreeChooser.setVisible(true);
-			} else if (container instanceof JFrame) {
+			} else {
 				dGeneralSubtreeChooser = new DGeneralSubtreeChooser((JFrame) container, title, generalSubtree);
-				dGeneralSubtreeChooser.setLocationRelativeTo(container);
-				dGeneralSubtreeChooser.setVisible(true);
 			}
+			dGeneralSubtreeChooser.setLocationRelativeTo(container);
+			dGeneralSubtreeChooser.setVisible(true);
 
 			GeneralSubtree newGeneralSubtree = dGeneralSubtreeChooser.getGeneralSubtree();
 

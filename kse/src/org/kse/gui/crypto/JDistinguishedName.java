@@ -254,14 +254,12 @@ public class JDistinguishedName extends JPanel {
 		if (container instanceof JDialog) {
 			dDistinguishedNameChooser = new DDistinguishedNameChooser((JDialog) container, title, distinguishedName,
 					true);
-			dDistinguishedNameChooser.setLocationRelativeTo(container);
-			dDistinguishedNameChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dDistinguishedNameChooser = new DDistinguishedNameChooser((JFrame) container, title, distinguishedName,
 					true);
-			dDistinguishedNameChooser.setLocationRelativeTo(container);
-			dDistinguishedNameChooser.setVisible(true);
 		}
+		dDistinguishedNameChooser.setLocationRelativeTo(container);
+		dDistinguishedNameChooser.setVisible(true);
 
 		X500Name newDistinguishedName = dDistinguishedNameChooser.getDistinguishedName();
 

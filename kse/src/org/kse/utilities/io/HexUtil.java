@@ -132,7 +132,7 @@ public class HexUtil {
 			int i = b & 0xFF;
 
 			// First part of byte will be one hex char
-			int i1 = (int) Math.floor(i / 16);
+			int i1 = (int) Math.floor(i / 16d);
 
 			// Second part of byte will be one hex char
 			int i2 = i % 16;
@@ -154,7 +154,7 @@ public class HexUtil {
 
 			// Not a control character and defined in Unicode
 			if ((!Character.isISOControl((char) i)) && (Character.isDefined((char) i))) {
-				Character clr = new Character((char) i);
+				Character clr = Character.valueOf((char) i);
 				c = clr.charValue();
 			}
 

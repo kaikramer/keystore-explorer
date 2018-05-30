@@ -157,14 +157,14 @@ public class DGenerateKeyPair extends JEscDialog {
 		jlECCurveSet = new JLabel(res.getString("DGenerateKeyPair.jlECCurveSet.text"));
 		jlECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jlECCurveSet.tooltip"));
 
-		jcbECCurveSet = new JComboBox<String>();
+		jcbECCurveSet = new JComboBox<>();
 		jcbECCurveSet.setModel(new DefaultComboBoxModel<String>(CurveSet.getAvailableSetNames(keyStoreType)));
 		jcbECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurveSet.tooltip"));
 
 		jlECCurve = new JLabel(res.getString("DGenerateKeyPair.jlECCurve.text"));
 		jlECCurve.setToolTipText(res.getString("DGenerateKeyPair.jlECCurve.tooltip"));
 
-		jcbECCurve = new JComboBox<String>();
+		jcbECCurve = new JComboBox<>();
 		// make combo box wide enough for longest curve name
 		jcbECCurve.setPrototypeDisplayValue(EccUtil.findLongestCurveName());
 		jcbECCurve.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurve.tooltip"));
@@ -194,7 +194,6 @@ public class DGenerateKeyPair extends JEscDialog {
 
 		JPanel jpContent = new JPanel();
 		jpContent.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DGenerateKeyPair.jpContent.text")));
-		//jpContent.setBorder(BorderFactory.createTitledBorder(res.getString("DGenerateKeyPair.jpContent.text")));
 		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		// layout
@@ -452,9 +451,8 @@ public class DGenerateKeyPair extends JEscDialog {
 			public void run() {
 				DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.JKS, KeyPairType.RSA, 1024);
 				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
 					@Override
-					public void windowClosing(java.awt.event.WindowEvent e) {
+					public void windowClosed(java.awt.event.WindowEvent e) {
 						System.exit(0);
 					}
 				});

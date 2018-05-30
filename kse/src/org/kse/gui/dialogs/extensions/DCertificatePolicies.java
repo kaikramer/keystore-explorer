@@ -160,7 +160,7 @@ public class DCertificatePolicies extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpCertificatePolicies, BorderLayout.CENTER);
@@ -184,7 +184,7 @@ public class DCertificatePolicies extends DExtension {
 		CertificatePolicies certificatePolicies = CertificatePolicies.getInstance(value);
 
 		List<PolicyInformation> accessDescriptionList =
-				new ArrayList<PolicyInformation>(Arrays.asList(certificatePolicies.getPolicyInformation()));
+				new ArrayList<>(Arrays.asList(certificatePolicies.getPolicyInformation()));
 
 		jpiCertificatePolicies.setPolicyInformation(accessDescriptionList);
 	}
@@ -192,7 +192,7 @@ public class DCertificatePolicies extends DExtension {
 	private void okPressed() {
 		List<PolicyInformation> policyInformation = jpiCertificatePolicies.getPolicyInformation();
 
-		if (policyInformation.size() == 0) {
+		if (policyInformation.isEmpty()) {
 			JOptionPane.showMessageDialog(this, res.getString("DCertificatePolicies.ValueReq.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return;

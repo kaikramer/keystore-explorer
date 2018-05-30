@@ -209,7 +209,7 @@ public class DViewCertCsrPem extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, new JButton[] { jbCopy, jbExport }, true);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, new JButton[] { jbCopy, jbExport });
 
 		jpPem = new JPanel(new BorderLayout());
 		jpPem.setBorder(new EmptyBorder(5, 5, 5, 5));

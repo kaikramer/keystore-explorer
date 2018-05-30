@@ -57,7 +57,7 @@ public class SystemPropertiesTableModel extends AbstractTableModel {
 	 */
 	public void load() {
 		Properties sysProps = System.getProperties();
-		TreeMap<String, String> sortedSysProps = new TreeMap<String, String>(new SystemPropertyComparator());
+		TreeMap<String, String> sortedSysProps = new TreeMap<>(new SystemPropertyComparator());
 
 		for (Enumeration<?> names = sysProps.propertyNames(); names.hasMoreElements();) {
 			String name = (String) names.nextElement();

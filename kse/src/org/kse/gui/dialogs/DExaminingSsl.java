@@ -147,7 +147,7 @@ public class DExaminingSsl extends JEscDialog {
 			}
 		});
 
-		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel, false);
+		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
 
 		getContentPane().add(jpExaminingSsl, BorderLayout.NORTH);
 		getContentPane().add(jpProgress, BorderLayout.CENTER);

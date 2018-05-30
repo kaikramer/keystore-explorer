@@ -113,7 +113,7 @@ public class HelpAction extends KeyStoreExplorerAction {
 
 		// Set help icons - set lots of different sizes to give each OS the most
 		// flexibility in choosing an icon for display
-		ArrayList<Image> icons = new ArrayList<Image>();
+		ArrayList<Image> icons = new ArrayList<>();
 		icons.add(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource(res.getString("HelpAction.image.16x16"))));
 		icons.add(Toolkit.getDefaultToolkit().createImage(

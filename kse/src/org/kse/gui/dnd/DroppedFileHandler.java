@@ -36,6 +36,9 @@ import org.kse.gui.error.DError;
 
 public class DroppedFileHandler {
 
+	private DroppedFileHandler() {
+	}
+
 	public static void drop(DropTargetDropEvent evt, final KseFrame kseFrame) {
 		evt.acceptDrop(DnDConstants.ACTION_MOVE);
 		Transferable trans = evt.getTransferable();

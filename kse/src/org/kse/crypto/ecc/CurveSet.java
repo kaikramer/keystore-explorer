@@ -70,7 +70,7 @@ public enum CurveSet {
 	 * @return All available sets of named curves
 	 */
 	public static List<CurveSet> getAvailableSets(KeyStoreType keyStoreType) {
-		List<CurveSet> sets = new ArrayList<CurveSet>();
+		List<CurveSet> sets = new ArrayList<>();
 		sets.add(ANSI_X9_62);
 		sets.add(NIST);
 		sets.add(SEC);
@@ -126,7 +126,7 @@ public enum CurveSet {
 		}
 
 		if (en == null) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 
 		return Collections.list(en);

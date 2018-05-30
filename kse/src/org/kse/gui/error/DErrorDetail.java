@@ -122,7 +122,7 @@ public class DErrorDetail extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, true);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
 		jpError = new JPanel(new BorderLayout());
 		jpError.setBorder(new EmptyBorder(10, 10, 10, 10));

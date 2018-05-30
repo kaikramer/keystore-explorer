@@ -128,7 +128,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 		Enumeration<String> aliases = keyStore.aliases();
 
-		TreeMap<String, String> sortedAliases = new TreeMap<String, String>(new AliasComparator());
+		TreeMap<String, String> sortedAliases = new TreeMap<>(new AliasComparator());
 
 		while (aliases.hasMoreElements()) {
 			String alias = aliases.nextElement();
@@ -157,8 +157,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 			data[i][0] = entryType;
 
-			// Lock column - only applies to KeyStores types that actually
-			// support passwords for entries
+			// Lock column - only applies to KeyStores types that actually support passwords for entries
 			if ((entryType.equals(KEY_PAIR_ENTRY) || entryType.equals(KEY_ENTRY)) && type.hasEntryPasswords()) {
 				if (currentState.getEntryPassword(alias) != null) {
 					data[i][1] = Boolean.FALSE; // Unlocked

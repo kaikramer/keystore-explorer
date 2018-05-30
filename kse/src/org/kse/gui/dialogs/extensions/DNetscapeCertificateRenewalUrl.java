@@ -136,7 +136,7 @@ public class DNetscapeCertificateRenewalUrl extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpNetscapeCertificateRenewalUrl, BorderLayout.CENTER);

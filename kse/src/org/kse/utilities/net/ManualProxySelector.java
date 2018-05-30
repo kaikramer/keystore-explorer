@@ -77,7 +77,7 @@ public class ManualProxySelector extends ProxySelector {
 	public List<Proxy> select(URI uri) {
 		createProxies();
 
-		ArrayList<Proxy> proxies = new ArrayList<Proxy>();
+		ArrayList<Proxy> proxies = new ArrayList<>();
 
 		if ((uri.getScheme().equals("http")) && (httpProxy != null)) {
 			proxies.add(httpProxy);
@@ -85,13 +85,12 @@ public class ManualProxySelector extends ProxySelector {
 			proxies.add(httpsProxy);
 		} else if ((uri.getScheme().equals("ftp")) && (ftpProxy != null)) {
 			proxies.add(ftpProxy);
-		} else if (socksProxy != null) // Use SOCKS if available and no proxy
-			// yet identified
+		} else if (socksProxy != null) // Use SOCKS if available and no proxy yet identified
 		{
 			proxies.add(socksProxy);
 		}
 
-		if (proxies.size() == 0) {
+		if (proxies.isEmpty()) {
 			proxies.add(Proxy.NO_PROXY);
 		}
 
@@ -101,8 +100,7 @@ public class ManualProxySelector extends ProxySelector {
 	private void createProxies() {
 		// Create proxies if they have not been created already
 		if ((httpProxy == null) && (httpsProxy == null) && (ftpProxy == null) && (socksProxy == null)) {
-			// Note: Proxy.Type.HTTP is used by Proxy to represent al of http,
-			// https and ftp
+			// Note: Proxy.Type.HTTP is used by Proxy to represent al of http,  https and ftp
 			if (httpProxyAddress != null) {
 				httpProxy = new Proxy(Proxy.Type.HTTP, httpProxyAddress.getInetSocketAddress());
 			}

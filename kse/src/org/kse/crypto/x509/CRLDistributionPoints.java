@@ -63,7 +63,7 @@ public class CRLDistributionPoints extends ASN1Object {
 	}
 
 	private CRLDistributionPoints(ASN1Sequence seq) {
-		distributionPointList = new ArrayList<DistributionPoint>();
+		distributionPointList = new ArrayList<>();
 		for (int i = 0; i != seq.size(); i++) {
 			distributionPointList.add(DistributionPoint.getInstance(seq.getObjectAt(i)));
 		}

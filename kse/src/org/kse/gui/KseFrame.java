@@ -19,6 +19,7 @@
  */
 package org.kse.gui;
 
+import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
@@ -210,8 +211,8 @@ public final class KseFrame implements StatusBar {
 	// Maximum number of recent files to maintain in file menu
 	public static final int RECENT_FILES_SIZE = 6;
 
-	private ArrayList<KeyStoreHistory> histories = new ArrayList<KeyStoreHistory>();
-	private ArrayList<JTable> keyStoreTables = new ArrayList<JTable>();
+	private ArrayList<KeyStoreHistory> histories = new ArrayList<>();
+	private ArrayList<JTable> keyStoreTables = new ArrayList<>();
 	private JFrame frame = new JFrame();
 	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
@@ -267,6 +268,7 @@ public final class KseFrame implements StatusBar {
 	private JRadioButtonMenuItem jrbmiChangeTypePkcs12;
 	private JRadioButtonMenuItem jrbmiChangeTypeBksV1;
 	private JRadioButtonMenuItem jrbmiChangeTypeBks;
+	private JRadioButtonMenuItem jrbmiChangeTypeBcfks;
 	private JRadioButtonMenuItem jrbmiChangeTypeUber;
 	private JMenuItem jmiSetPassword;
 	private JMenuItem jmiProperties;
@@ -340,6 +342,7 @@ public final class KseFrame implements StatusBar {
 	private JRadioButtonMenuItem jrbmiKeyStoreChangeTypePkcs12;
 	private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeBksV1;
 	private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeBks;
+	private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeBcfks;
 	private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeUber;
 	private JMenuItem jmiKeyStoreSetPassword;
 	private JMenuItem jmiKeyStoreProperties;
@@ -443,6 +446,7 @@ public final class KseFrame implements StatusBar {
 	private final ChangeTypeAction changeTypePkcs12Action = new ChangeTypeAction(this, KeyStoreType.PKCS12);
 	private final ChangeTypeAction changeTypeBksV1Action = new ChangeTypeAction(this, KeyStoreType.BKS_V1);
 	private final ChangeTypeAction changeTypeBksAction = new ChangeTypeAction(this, KeyStoreType.BKS);
+	private final ChangeTypeAction changeTypeBcfksAction = new ChangeTypeAction(this, KeyStoreType.BCFKS);
 	private final ChangeTypeAction changeTypeUberAction = new ChangeTypeAction(this, KeyStoreType.UBER);
 	private final PropertiesAction propertiesAction = new PropertiesAction(this);
 	private final PreferencesAction preferencesAction = new PreferencesAction(this);
@@ -515,6 +519,7 @@ public final class KseFrame implements StatusBar {
 	private static final String CUT_KEY = "CUT_KEY";
 	private static final String COPY_KEY = "COPY_KEY";
 	private static final String PASTE_KEY = "PASTE_KEY";
+	private static final String RENAME_KEY = "RENAME_KEY";
 
 	KseFrame() {
 		initComponents();
@@ -595,7 +600,7 @@ public final class KseFrame implements StatusBar {
 	private void initApplicationIcons() {
 		// Adds many different sizes to give each OS flexibility in choosing a
 		// suitable icon for display
-		ArrayList<Image> icons = new ArrayList<Image>();
+		ArrayList<Image> icons = new ArrayList<>();
 		icons.add(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource(res.getString("KseFrame.Icon.image.16x16"))));
 		icons.add(Toolkit.getDefaultToolkit().createImage(
@@ -911,6 +916,13 @@ public final class KseFrame implements StatusBar {
 				this);
 		jmChangeType.add(jrbmiChangeTypeBks);
 
+		jrbmiChangeTypeBcfks = new JRadioButtonMenuItem(changeTypeBcfksAction);
+		PlatformUtil.setMnemonic(jrbmiChangeTypeBcfks, res.getString("KseFrame.jrbmiChangeTypeBcfks.mnemonic").charAt(0));
+		jrbmiChangeTypeBcfks.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiChangeTypeBcfks, (String) changeTypeBcfksAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		jmChangeType.add(jrbmiChangeTypeBcfks);
+
 		jrbmiChangeTypeUber = new JRadioButtonMenuItem(changeTypeUberAction);
 		PlatformUtil.setMnemonic(jrbmiChangeTypeUber, res.getString("KseFrame.jrbmiChangeTypeUber.mnemonic").charAt(0));
 		jrbmiChangeTypeUber.setToolTipText(null);
@@ -923,6 +935,7 @@ public final class KseFrame implements StatusBar {
 		changeTypeGroup.add(jrbmiChangeTypeJceks);
 		changeTypeGroup.add(jrbmiChangeTypePkcs12);
 		changeTypeGroup.add(jrbmiChangeTypeBks);
+		changeTypeGroup.add(jrbmiChangeTypeBcfks);
 		changeTypeGroup.add(jrbmiChangeTypeBksV1);
 		changeTypeGroup.add(jrbmiChangeTypeUber);
 
@@ -1526,8 +1539,8 @@ public final class KseFrame implements StatusBar {
 		keyStoreTableColumns = applicationSettings.getKeyStoreTableColumns();
 		KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
 		final JTable jtKeyStore = new JKseTable(ksModel);
-		iFontSize = (int)(jtKeyStore.getFont().getSize()*FF);
-		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(ksModel);
+
+		RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
 		jtKeyStore.setRowSorter(sorter);
 
 		jtKeyStore.setShowGrid(false);
@@ -1545,6 +1558,9 @@ public final class KseFrame implements StatusBar {
 
 		jtKeyStore.getInputMap().put((KeyStroke) pasteAction.getValue(Action.ACCELERATOR_KEY), PASTE_KEY);
 		jtKeyStore.getActionMap().put(PASTE_KEY, pasteAction);
+
+		jtKeyStore.getInputMap().put((KeyStroke) renameKeyPairAction.getValue(Action.ACCELERATOR_KEY), RENAME_KEY);
+		jtKeyStore.getActionMap().put(RENAME_KEY, renameKeyPairAction);
 
 		// open keystore entry details when user presses enter key
 		KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -1618,6 +1634,10 @@ public final class KseFrame implements StatusBar {
 				// Record delete pressed on non-Macs
 				if (!OperatingSystem.isMacOs()) {
 					deleteLastPressed = evt.getKeyCode() == KeyEvent.VK_DELETE;
+				}
+
+				if (evt.getKeyCode() == KeyEvent.VK_F2) {
+					renameSelectedEntry();
 				}
 			}
 
@@ -1819,6 +1839,14 @@ public final class KseFrame implements StatusBar {
 				(String) changeTypeBksAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmKeyStoreChangeType.add(jrbmiKeyStoreChangeTypeBks);
 
+		jrbmiKeyStoreChangeTypeBcfks = new JRadioButtonMenuItem(changeTypeBcfksAction);
+		PlatformUtil.setMnemonic(jrbmiKeyStoreChangeTypeBcfks, res.getString("KseFrame.jrbmiChangeTypeBcfks.mnemonic")
+				.charAt(0));
+		jrbmiKeyStoreChangeTypeBcfks.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiKeyStoreChangeTypeBcfks,
+				(String) changeTypeBcfksAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmKeyStoreChangeType.add(jrbmiKeyStoreChangeTypeBcfks);
+
 		jrbmiKeyStoreChangeTypeUber = new JRadioButtonMenuItem(changeTypeUberAction);
 		PlatformUtil.setMnemonic(jrbmiKeyStoreChangeTypeUber, res.getString("KseFrame.jrbmiChangeTypeUber.mnemonic")
 				.charAt(0));
@@ -1833,6 +1861,7 @@ public final class KseFrame implements StatusBar {
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypePkcs12);
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypeBks);
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypeBksV1);
+		changeTypeGroup.add(jrbmiKeyStoreChangeTypeBcfks);
 		changeTypeGroup.add(jrbmiKeyStoreChangeTypeUber);
 
 		jmiKeyStoreProperties = new JMenuItem(propertiesAction);
@@ -1845,6 +1874,11 @@ public final class KseFrame implements StatusBar {
 
 
 	private void initKeyStoreEntryPopupMenus() {
+
+		//
+		// Popup menu for key pair entry
+		//
+
 		jpmKeyPair = new JPopupMenu();
 
 		jmKeyPairDetails = new JMenu(res.getString("KseFrame.jmKeyPairDetails.text"));
@@ -2005,6 +2039,10 @@ public final class KseFrame implements StatusBar {
 		jpmKeyPair.add(jmiKeyPairDelete);
 		jpmKeyPair.add(jmiKeyPairRename);
 
+		//
+		// Popup menu for trusted cert entry
+		//
+
 		jpmTrustedCertificate = new JPopupMenu();
 
 		jmTrustedCertificateDetails = new JMenu(res.getString("KseFrame.jmTrustedCertificateDetails.text"));
@@ -2068,6 +2106,10 @@ public final class KseFrame implements StatusBar {
 		jpmTrustedCertificate.addSeparator();
 		jpmTrustedCertificate.add(jmiTrustedCertificateDelete);
 		jpmTrustedCertificate.add(jmiTrustedCertificateRename);
+
+		//
+		// Popup menu for secret key entry
+		//
 
 		jpmKey = new JPopupMenu();
 
@@ -2212,6 +2254,29 @@ public final class KseFrame implements StatusBar {
 				jpmKeyStoreTab.show(evt.getComponent(), evt.getX(), evt.getY());
 				break;
 			}
+		}
+	}
+
+	private void renameSelectedEntry() {
+
+		KeyStoreHistory history = getActiveKeyStoreHistory();
+		KeyStore keyStore = history.getCurrentState().getKeyStore();
+		String alias = getSelectedEntryAlias();
+
+		if (alias == null) {
+			return;
+		}
+
+		try {
+			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+				renameKeyPairAction.renameSelectedEntry();
+			} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+				renameTrustedCertificateAction.renameSelectedEntry();
+			} else {
+				renameKeyAction.renameSelectedEntry();
+			}
+		} catch (Exception ex) {
+			DError.displayError(frame, ex);
 		}
 	}
 
@@ -2384,7 +2449,7 @@ public final class KseFrame implements StatusBar {
 	 * @return The KeyStore history or null if no KeyStore is active
 	 */
 	public KeyStoreHistory getActiveKeyStoreHistory() {
-		if (histories.size() == 0) {
+		if (histories.isEmpty()) {
 			return null;
 		}
 
@@ -2416,7 +2481,7 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private JTable getActiveKeyStoreTable() {
-		if (keyStoreTables.size() == 0) {
+		if (keyStoreTables.isEmpty()) {
 			return null;
 		}
 
@@ -2534,9 +2599,7 @@ public final class KseFrame implements StatusBar {
 				if (selectedAlias != null) {
 					setSelectedEntryByAlias(selectedAlias);
 				}
-			} catch (GeneralSecurityException ex) {
-				DError.displayError(frame, ex);
-			} catch (CryptoException ex) {
+			} catch (GeneralSecurityException | CryptoException ex) {
 				DError.displayError(frame, ex);
 			}
 		}
@@ -2670,6 +2733,9 @@ public final class KseFrame implements StatusBar {
 			} else if (type == BKS) {
 				jrbmiChangeTypeBks.setSelected(true);
 				jrbmiKeyStoreChangeTypeBks.setSelected(true);
+			} else if (type == BCFKS) {
+				jrbmiChangeTypeBcfks.setSelected(true);
+				jrbmiKeyStoreChangeTypeBcfks.setSelected(true);
 			} else {
 				jrbmiChangeTypeUber.setSelected(true);
 				jrbmiKeyStoreChangeTypeUber.setSelected(true);
@@ -2726,6 +2792,7 @@ public final class KseFrame implements StatusBar {
 		jrbmiChangeTypeJceks.setSelected(false);
 		jrbmiChangeTypePkcs12.setSelected(false);
 		jrbmiChangeTypeBks.setSelected(false);
+		jrbmiChangeTypeBcfks.setSelected(false);
 		jrbmiChangeTypeBksV1.setSelected(false);
 		jrbmiChangeTypeUber.setSelected(false);
 		jrbmiKeyStoreChangeTypeJks.setSelected(false);
@@ -2733,6 +2800,7 @@ public final class KseFrame implements StatusBar {
 		jrbmiKeyStoreChangeTypePkcs12.setSelected(false);
 		jrbmiKeyStoreChangeTypeBks.setSelected(false);
 		jrbmiKeyStoreChangeTypeBksV1.setSelected(false);
+		jrbmiKeyStoreChangeTypeBcfks.setSelected(false);
 		jrbmiKeyStoreChangeTypeUber.setSelected(false);
 
 		// Show Quick Start pane

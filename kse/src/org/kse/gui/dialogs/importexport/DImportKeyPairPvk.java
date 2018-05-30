@@ -57,7 +57,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -312,7 +311,7 @@ public class DImportKeyPairPvk extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbImport, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbImport, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpKeyPair, BorderLayout.CENTER);
@@ -390,7 +389,7 @@ public class DImportKeyPairPvk extends JEscDialog {
 			if (privateKey != null) {
 				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, MessageFormat.format(
 						res.getString("DImportKeyPairPvk.ViewPrivateKeyDetails.Title"), path),
-						privateKey, new BouncyCastleProvider());
+						privateKey);
 				dViewPrivateKey.setLocationRelativeTo(this);
 				dViewPrivateKey.setVisible(true);
 			}
@@ -453,7 +452,7 @@ public class DImportKeyPairPvk extends JEscDialog {
 
 	private Problem createLoadPvkProblem(Exception exception, File pvkFile) {
 		String problemStr = null;
-		ArrayList<String> causeList = new ArrayList<String>();
+		ArrayList<String> causeList = new ArrayList<>();
 
 		if (jcbEncrypted.isSelected()) {
 			problemStr = MessageFormat.format(res.getString("DImportKeyPairPvk.NoLoadEncryptedPvk.Problem"),

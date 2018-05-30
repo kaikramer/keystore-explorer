@@ -219,8 +219,7 @@ public class DTipOfTheDay extends JEscDialog {
 			}
 		});
 
-		jpNavigation = PlatformUtil.createDialogButtonPanel(jbClose, null, new JButton[] { jbPreviousTip, jbNextTip },
-				false);
+		jpNavigation = PlatformUtil.createDialogButtonPanel(jbClose, null, new JButton[] { jbPreviousTip, jbNextTip });
 		jpNavigation.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jpControls = new JPanel(new BorderLayout());
@@ -248,10 +247,9 @@ public class DTipOfTheDay extends JEscDialog {
 	}
 
 	private void readTips(ResourceBundle tips, String tipPrefix) {
-		ArrayList<String> tipList = new ArrayList<String>();
+		ArrayList<String> tipList = new ArrayList<>();
 
-		// Look for all properties "<tip prefix>x" where x is a sequential
-		// 0-index
+		// Look for all properties "<tip prefix>x" where x is a sequential 0-index
 		int i = 0;
 
 		while (true) {

@@ -193,13 +193,11 @@ public class JGeneralName extends JPanel {
 
 		if (container instanceof JDialog) {
 			dGeneralNameChooser = new DGeneralNameChooser((JDialog) container, title, generalName);
-			dGeneralNameChooser.setLocationRelativeTo(container);
-			dGeneralNameChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dGeneralNameChooser = new DGeneralNameChooser((JFrame) container, title, generalName);
-			dGeneralNameChooser.setLocationRelativeTo(container);
-			dGeneralNameChooser.setVisible(true);
 		}
+		dGeneralNameChooser.setLocationRelativeTo(container);
+		dGeneralNameChooser.setVisible(true);
 
 		GeneralName newGeneralName = dGeneralNameChooser.getGeneralName();
 

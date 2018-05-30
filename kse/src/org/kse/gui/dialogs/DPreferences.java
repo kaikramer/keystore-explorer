@@ -62,6 +62,7 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.kse.ApplicationSettings;
 import org.kse.crypto.SecurityProvider;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -111,12 +112,11 @@ public class DPreferences extends JEscDialog {
 	private JLabel jlMinimumPasswordQuality;
 	private JSlider jsMinimumPasswordQuality;
 	private JPanel jpLookFeel;
-	private JPanel jpLookFeelNote;
 	private JLabel jlLookFeelNote;
-	private JPanel jpLookFeelControls;
 	private JLabel jlLookFeel;
 	private JComboBox<String> jcbLookFeel;
-	private JPanel jpLookFeelDecoratedControls;
+	private JLabel jlLanguage;
+	private JComboBox<LanguageItem> jcbLanguage;
 	private JCheckBox jcbLookFeelDecorated;
 	private JPanel jpInternetProxy;
 	private JRadioButton jrbNoProxy;
@@ -156,6 +156,8 @@ public class DPreferences extends JEscDialog {
 	private ArrayList<UIManager.LookAndFeelInfo> lookFeelInfoList = new ArrayList<UIManager.LookAndFeelInfo>();
 	private UIManager.LookAndFeelInfo lookFeelInfo;
 	private boolean lookFeelDecorated;
+	private String language;
+
 	private String defaultDN;
 	private boolean cancelled = false;
 
@@ -215,7 +217,7 @@ public class DPreferences extends JEscDialog {
 	public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
 			boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
 			boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
-			String defaultDN,KeyStoreTableColumns kstColumns) {
+			String defaultDN, String language,KeyStoreTableColumns kstColumns) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.useCaCertificates = useCaCertificates;
 		this.caCertificatesFile = caCertificatesFile;
@@ -224,8 +226,9 @@ public class DPreferences extends JEscDialog {
 		this.enableImportCaReplyTrustCheck = enableImportCaReplyTrustCheck;
 		this.passwordQualityConfig = passwordQualityConfig;
 		this.defaultDN = defaultDN;
-		this.kstColumns = kstColumns;
+		this.language = language;
 		this.expiryWarnDays =  kstColumns.getExpiryWarnDays();
+		this.kstColumns = kstColumns;
 		initComponents();
 	}
 
@@ -312,7 +315,7 @@ public class DPreferences extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jtpPreferences, BorderLayout.CENTER);
@@ -557,21 +560,11 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private void initLookFeelTab() {
+
 		jlLookFeelNote = new JLabel(res.getString("DPreferences.jlLookFeelNote.text"));
 
-		jpLookFeelNote = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpLookFeelNote.add(jlLookFeelNote);
-
-		GridBagConstraints gbcLookFeelNote = new GridBagConstraints();
-		gbcLookFeelNote.gridx = 0;
-		gbcLookFeelNote.gridwidth = 1;
-		gbcLookFeelNote.gridy = 0;
-		gbcLookFeelNote.gridheight = 1;
-		gbcLookFeelNote.anchor = GridBagConstraints.WEST;
-
 		jlLookFeel = new JLabel(res.getString("DPreferences.jlLookFeel.text"));
-
-		jcbLookFeel = new JComboBox<String>();
+		jcbLookFeel = new JComboBox<>();
 		jcbLookFeel.setToolTipText(res.getString("DPreferences.jcbLookFeel.tooltip"));
 
 		// This may contain duplicates
@@ -579,7 +572,7 @@ public class DPreferences extends JEscDialog {
 
 		LookAndFeel currentLookAndFeel = UIManager.getLookAndFeel();
 
-		TreeSet<String> lookFeelClasses = new TreeSet<String>();
+		TreeSet<String> lookFeelClasses = new TreeSet<>();
 
 		for (UIManager.LookAndFeelInfo lfi : lookFeelInfos) {
 			// Avoid duplicates
@@ -599,40 +592,38 @@ public class DPreferences extends JEscDialog {
 			}
 		}
 
-		jpLookFeelControls = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpLookFeelControls.add(jlLookFeel);
-		jpLookFeelControls.add(jcbLookFeel);
-
-		GridBagConstraints gbcLookFeelControls = new GridBagConstraints();
-		gbcLookFeelControls.gridx = 0;
-		gbcLookFeelControls.gridwidth = 1;
-		gbcLookFeelControls.gridy = 1;
-		gbcLookFeelControls.gridheight = 1;
-		gbcLookFeelControls.anchor = GridBagConstraints.WEST;
-
-		// Create and populate check box with look & feel decorated setting
 		jcbLookFeelDecorated = new JCheckBox(res.getString("DPreferences.jcbLookFeelDecorated.text"),
 				JFrame.isDefaultLookAndFeelDecorated());
 		jcbLookFeelDecorated.setToolTipText(res.getString("DPreferences.jcbLookFeelDecorated.tooltip"));
 		PlatformUtil.setMnemonic(jcbLookFeelDecorated, res.getString("DPreferences.jcbLookFeelDecorated.menmonic")
 				.charAt(0));
 
-		jpLookFeelDecoratedControls = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpLookFeelDecoratedControls.add(jcbLookFeelDecorated);
+		jlLanguage = new JLabel(res.getString("DPreferences.jlLanguage.text"));
+		jcbLanguage = new JComboBox<>();
+		jcbLanguage.setToolTipText(res.getString("DPreferences.jcbLanguage.tooltip"));
 
-		GridBagConstraints gbcLookFeelDecoratedControls = new GridBagConstraints();
-		gbcLookFeelDecoratedControls.gridx = 0;
-		gbcLookFeelDecoratedControls.gridwidth = 1;
-		gbcLookFeelDecoratedControls.gridy = 2;
-		gbcLookFeelDecoratedControls.gridheight = 1;
-		gbcLookFeelDecoratedControls.anchor = GridBagConstraints.WEST;
+		LanguageItem[] languageItems = new LanguageItem[] {
+				new LanguageItem("System", ApplicationSettings.SYSTEM_LANGUAGE),
+				new LanguageItem("English", "en"),
+				new LanguageItem("German", "de"),
+				new LanguageItem("French", "fr") };
 
-		jpLookFeel = new JPanel(new GridBagLayout());
-		jpLookFeel.add(jpLookFeelNote, gbcLookFeelNote);
-		jpLookFeel.add(jpLookFeelControls, gbcLookFeelControls);
-		jpLookFeel.add(jpLookFeelDecoratedControls, gbcLookFeelDecoratedControls);
+		for (LanguageItem languageItem : languageItems) {
+			jcbLanguage.addItem(languageItem);
+			if (languageItem.getIsoCode().equals(language)) {
+				jcbLanguage.setSelectedItem(languageItem);
+			}
+		}
 
-		jpLookFeel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		// layout
+		jpLookFeel = new JPanel();
+		jpLookFeel.setLayout(new MigLayout("insets dialog", "20lp[]rel[]rel[]", ""));
+		jpLookFeel.add(jlLookFeelNote, "left, span, wrap unrel");
+		jpLookFeel.add(jlLookFeel, "");
+		jpLookFeel.add(jcbLookFeel, "growx");
+		jpLookFeel.add(jcbLookFeelDecorated, "wrap");
+		jpLookFeel.add(jlLanguage, "");
+		jpLookFeel.add(jcbLanguage, "growx, wrap unrel");
 	}
 
 	private void initInternetProxyTab() {
@@ -960,6 +951,8 @@ public class DPreferences extends JEscDialog {
 
 		lookFeelDecorated = jcbLookFeelDecorated.isSelected();
 		storeColumns();
+		language = ((LanguageItem) jcbLanguage.getSelectedItem()).getIsoCode();
+
 		// These may fail:
 		boolean returnValue = storeDefaultDN();
 		returnValue &= storeProxyPreferences();
@@ -1158,7 +1151,7 @@ public class DPreferences extends JEscDialog {
 	}
 
 	/**
-	 * Get the chosen password quality configuration settings.
+	 * Get the chosen password quality confiruration settings.
 	 *
 	 * @return Password quality configuration settings
 	 */
@@ -1182,6 +1175,14 @@ public class DPreferences extends JEscDialog {
 	 */
 	public boolean getLookFeelDecoration() {
 		return lookFeelDecorated;
+	}
+
+	/**
+	 * Read the new language setting
+	 * @return ISO code of selected language or system (for system default)
+	 */
+	public String getLanguage() {
+		return language;
 	}
 
 	/**
@@ -1277,6 +1278,23 @@ public class DPreferences extends JEscDialog {
 		dispose();
 	}
 
+	private static class LanguageItem {
+		private String displayName;
+		private String isoCode;
+		public LanguageItem(String displayName, String isoCode) {
+			super();
+			this.displayName = displayName;
+			this.isoCode = isoCode;
+		}
+		public String getIsoCode() {
+			return isoCode;
+		}
+		@Override
+		public String toString() {
+			return displayName;
+		}
+	}
+
 	public static void main(String[] args) throws Exception {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		EventQueue.invokeLater(new Runnable() {
@@ -1284,7 +1302,7 @@ public class DPreferences extends JEscDialog {
 			public void run() {
 				try {
 					DPreferences dialog = new DPreferences(new javax.swing.JFrame(),true, new File(""),
-							true, true, true, new PasswordQualityConfig(true, true, 100), "",new KeyStoreTableColumns());
+							true, true, true, new PasswordQualityConfig(true, true, 100), "", "en", new KeyStoreTableColumns() );
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override
 						public void windowClosing(java.awt.event.WindowEvent e) {

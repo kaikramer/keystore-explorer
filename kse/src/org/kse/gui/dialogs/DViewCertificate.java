@@ -450,7 +450,7 @@ public class DViewCertificate extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpCertificates, BorderLayout.CENTER);
 		getContentPane().add(jpOK, BorderLayout.SOUTH);
@@ -481,7 +481,7 @@ public class DViewCertificate extends JEscDialog {
 	private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {
 		DefaultMutableTreeNode certsNode = new DefaultMutableTreeNode();
 
-		TreeSet<X509Certificate> certSet = new TreeSet<X509Certificate>(new X509CertificateComparator());
+		TreeSet<X509Certificate> certSet = new TreeSet<>(new X509CertificateComparator());
 		Collections.addAll(certSet, certs);
 
 		// TODO rewrite
@@ -748,11 +748,7 @@ public class DViewCertificate extends JEscDialog {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, cert);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
-		} catch (IOException ex) {
+		} catch (Asn1Exception | IOException ex) {
 			DError dError = new DError(this, ex);
 			dError.setLocationRelativeTo(this);
 			dError.setVisible(true);

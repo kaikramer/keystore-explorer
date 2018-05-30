@@ -56,7 +56,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
@@ -224,7 +223,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbImport, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbImport, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpKeyPair, BorderLayout.CENTER);
@@ -277,7 +276,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		if (keypair != null) {
 			DViewKeyPair dViewKeyPair = new DViewKeyPair(this, MessageFormat.format(
 					res.getString("DImportKeyPairPkcs12.ViewKeyPairDetails.Title"), path),
-					keypair.getPrivateKey(), keypair.getCertificateChain(), new BouncyCastleProvider());
+					keypair.getPrivateKey(), keypair.getCertificateChain());
 			dViewKeyPair.setLocationRelativeTo(this);
 			dViewKeyPair.setVisible(true);
 		}
@@ -301,7 +300,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 			// Find a key pair in the PKCS #12 KeyStore
 			PrivateKey privKey = null;
-			ArrayList<Certificate> certsList = new ArrayList<Certificate>();
+			ArrayList<Certificate> certsList = new ArrayList<>();
 
 			// Look for key pair entries first
 			for (Enumeration<?> aliases = pkcs12.aliases(); aliases.hasMoreElements();) {
@@ -319,7 +318,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 			// No key pair entries found - look for a key entry and certificate
 			// entries
-			if ((privKey == null) || (certsList.size() == 0)) {
+			if ((privKey == null) || (certsList.isEmpty())) {
 				for (Enumeration<?> aliases = pkcs12.aliases(); aliases.hasMoreElements();) {
 					String alias = (String) aliases.nextElement();
 

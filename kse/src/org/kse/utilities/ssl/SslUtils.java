@@ -46,6 +46,9 @@ public class SslUtils {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/ssl/resources");
 
+	private SslUtils() {
+	}
+
 	/**
 	 * Load certificates from an SSL connection.
 	 *

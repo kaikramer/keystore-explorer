@@ -39,7 +39,7 @@ import org.kse.gui.dialogs.DPreferences;
  */
 public class PreferencesAction extends ExitAction {
 	private static final long serialVersionUID = 1L;
-private KseFrame kseFrame;
+	private KseFrame kseFrame;
 	/**
 	 * Construct action.
 	 *
@@ -79,10 +79,8 @@ private KseFrame kseFrame;
 		DPreferences dPreferences = new DPreferences(frame, applicationSettings.getUseCaCertificates(),
 				caCertificatesFile, applicationSettings.getUseWindowsTrustedRootCertificates(),
 				applicationSettings.getEnableImportTrustedCertTrustCheck(),
-				applicationSettings.getEnableImportCaReplyTrustCheck(), 
-				applicationSettings.getPasswordQualityConfig(),
-				applicationSettings.getDefaultDN(), 
-				applicationSettings.getKeyStoreTableColumns());
+				applicationSettings.getEnableImportCaReplyTrustCheck(), applicationSettings.getPasswordQualityConfig(),
+				applicationSettings.getDefaultDN(), applicationSettings.getLanguage(),applicationSettings.getKeyStoreTableColumns() );
 		dPreferences.setLocationRelativeTo(frame);
 		dPreferences.setVisible(true);
 
@@ -113,9 +111,14 @@ private KseFrame kseFrame;
 		boolean lookAndFeelDecorated = dPreferences.getLookFeelDecoration();
 		applicationSettings.setLookAndFeelDecorated(lookAndFeelDecorated);
 
+		String language = dPreferences.getLanguage();
+		boolean languageHasChanged = !language.equals(applicationSettings.getLanguage());
+		applicationSettings.setLanguage(language);
+
 		if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName()))
-				|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())) {
-			// L&F changed - restart required for upgrade to take effect
+				|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())
+				|| languageHasChanged) {
+			// L&F or language changed - restart required for upgrade to take effect
 			JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
 					res.getString("PreferencesAction.LookFeelChanged.Title"), JOptionPane.INFORMATION_MESSAGE);
 
@@ -124,5 +127,6 @@ private KseFrame kseFrame;
 		if (dPreferences.columnsChanged()) {
 			kseFrame.redrawKeyStores(applicationSettings);
 		}
+
 	}
 }

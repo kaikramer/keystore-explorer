@@ -162,7 +162,7 @@ public class JPolicyMappings extends JPanel {
 		PolicyMappingsTableModel policyMappingsTableModel = new PolicyMappingsTableModel();
 		jtPolicyMappings = new JKseTable(policyMappingsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(policyMappingsTableModel);
+		TableRowSorter<PolicyMappingsTableModel> sorter = new TableRowSorter<>(policyMappingsTableModel);
 		sorter.setComparator(0, new PolicyMappingsTableModel.IssuerDomainPolicyComparator());
 		sorter.setComparator(1, new PolicyMappingsTableModel.SubjectDomainPolicyComparator());
 		jtPolicyMappings.setRowSorter(sorter);
@@ -313,13 +313,11 @@ public class JPolicyMappings extends JPanel {
 
 		if (container instanceof JDialog) {
 			dPolicyMappingChooser = new DPolicyMappingChooser((JDialog) container, title, null);
-			dPolicyMappingChooser.setLocationRelativeTo(container);
-			dPolicyMappingChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
+		} else {
 			dPolicyMappingChooser = new DPolicyMappingChooser((JFrame) container, title, null);
-			dPolicyMappingChooser.setLocationRelativeTo(container);
-			dPolicyMappingChooser.setVisible(true);
 		}
+		dPolicyMappingChooser.setLocationRelativeTo(container);
+		dPolicyMappingChooser.setVisible(true);
 
 		PolicyMapping newPolicyMapping = dPolicyMappingChooser.getPolicyMapping();
 
@@ -404,13 +402,11 @@ public class JPolicyMappings extends JPanel {
 
 			if (container instanceof JDialog) {
 				dPolicyMappingChooser = new DPolicyMappingChooser((JDialog) container, title, policyMapping);
-				dPolicyMappingChooser.setLocationRelativeTo(container);
-				dPolicyMappingChooser.setVisible(true);
-			} else if (container instanceof JFrame) {
+			} else {
 				dPolicyMappingChooser = new DPolicyMappingChooser((JFrame) container, title, policyMapping);
-				dPolicyMappingChooser.setLocationRelativeTo(container);
-				dPolicyMappingChooser.setVisible(true);
 			}
+			dPolicyMappingChooser.setLocationRelativeTo(container);
+			dPolicyMappingChooser.setVisible(true);
 
 			PolicyMapping newPolicyMapping = dPolicyMappingChooser.getPolicyMapping();
 

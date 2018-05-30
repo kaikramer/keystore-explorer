@@ -141,7 +141,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 				KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
 
 				// Establish against current KeyStore
-				ArrayList<KeyStore> compKeyStores = new ArrayList<KeyStore>();
+				ArrayList<KeyStore> compKeyStores = new ArrayList<>();
 				compKeyStores.add(keyStore);
 
 				if (caCertificates != null) {

@@ -57,7 +57,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -313,7 +312,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbImport, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbImport, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpKeyPair, BorderLayout.CENTER);
@@ -391,7 +390,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 			if (privateKey != null) {
 				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, MessageFormat.format(
 						res.getString("DImportKeyPairOpenSsl.ViewPrivateKeyDetails.Title"), path),
-						privateKey, new BouncyCastleProvider());
+						privateKey);
 				dViewPrivateKey.setLocationRelativeTo(this);
 				dViewPrivateKey.setVisible(true);
 			}
@@ -460,7 +459,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 
 	private Problem createLoadOpenSslProblem(Exception exception, File openSslFile) {
 		String problemStr = null;
-		ArrayList<String> causeList = new ArrayList<String>();
+		ArrayList<String> causeList = new ArrayList<>();
 
 		if (jcbEncrypted.isSelected()) {
 			problemStr = MessageFormat.format(res.getString("DImportKeyPairOpenSsl.NoLoadEncryptedOpenSsl.Problem"),

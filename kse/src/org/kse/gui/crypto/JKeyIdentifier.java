@@ -200,13 +200,11 @@ public class JKeyIdentifier extends JPanel {
 
 			if (container instanceof JDialog) {
 				dKeyIdentifierChooser = new DKeyIdentifierChooser((JDialog) container, title, publicKey, keyIdentifier);
-				dKeyIdentifierChooser.setLocationRelativeTo(container);
-				dKeyIdentifierChooser.setVisible(true);
-			} else if (container instanceof JFrame) {
+			} else {
 				dKeyIdentifierChooser = new DKeyIdentifierChooser((JFrame) container, title, publicKey, keyIdentifier);
-				dKeyIdentifierChooser.setLocationRelativeTo(container);
-				dKeyIdentifierChooser.setVisible(true);
 			}
+			dKeyIdentifierChooser.setLocationRelativeTo(container);
+			dKeyIdentifierChooser.setVisible(true);
 
 			byte[] newKeyIdentifier = dKeyIdentifierChooser.getKeyIdentifier();
 

@@ -110,7 +110,7 @@ public class DGenerateSecretKey extends JEscDialog {
 
 		jlKeyAlg = new JLabel(res.getString("DGenerateSecretKey.jlKeyAlg.text"));
 
-		jcbKeyAlg = new JComboBox<SecretKeyType>();
+		jcbKeyAlg = new JComboBox<>();
 		jcbKeyAlg.setToolTipText(res.getString("DGenerateSecretKey.jcbKeyAlg.tooltip"));
 
 		populateKeyAlgs();
@@ -166,7 +166,7 @@ public class DGenerateSecretKey extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpOptions, BorderLayout.CENTER);

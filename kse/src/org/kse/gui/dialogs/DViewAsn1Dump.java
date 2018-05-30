@@ -237,7 +237,7 @@ public class DViewAsn1Dump extends JEscFrame {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy, true);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
 		jpAsn1Dump = new JPanel(new BorderLayout());
 		jpAsn1Dump.setBorder(new EmptyBorder(5, 5, 5, 5));

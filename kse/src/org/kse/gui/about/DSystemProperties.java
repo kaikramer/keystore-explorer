@@ -95,7 +95,7 @@ public class DSystemProperties extends JEscDialog {
 		jtSystemProperties.getTableHeader().setReorderingAllowed(false);
 		jtSystemProperties.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<TableModel>(spModel);
+		RowSorter<SystemPropertiesTableModel> sorter = new TableRowSorter<>(spModel);
 		jtSystemProperties.setRowSorter(sorter);
 
 		for (int i = 0; i < jtSystemProperties.getColumnCount(); i++) {
@@ -127,7 +127,7 @@ public class DSystemProperties extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpSystemPropertiesTable, BorderLayout.CENTER);
 		getContentPane().add(jpOK, BorderLayout.SOUTH);

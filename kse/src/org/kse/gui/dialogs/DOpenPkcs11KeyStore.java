@@ -76,7 +76,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+	private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -306,7 +306,6 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 					p11Provider = Security.getProvider("SunPKCS11");
 					// add marker ("--") for inline config
 					pkcs11ConfigSettings = "--" + pkcs11ConfigSettings;
-					// p11Provider.configure(pkcs11ConfigSettings);
 					Method method = Provider.class.getMethod("configure", String.class);
 					p11Provider = (Provider) method.invoke(p11Provider, pkcs11ConfigSettings);
 				} else {

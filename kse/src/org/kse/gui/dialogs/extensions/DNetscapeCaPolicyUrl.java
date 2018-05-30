@@ -135,7 +135,7 @@ public class DNetscapeCaPolicyUrl extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpNetscapeCaPolicyUrl, BorderLayout.CENTER);

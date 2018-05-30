@@ -69,7 +69,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	private boolean editable;
 	private X500Name distinguishedName;
 
-	private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+	private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
 	/**
 	 * Creates a new DDistinguishedNameChooser dialog.
@@ -142,11 +142,11 @@ public class DDistinguishedNameChooser extends JEscDialog {
 				}
 			});
 
-			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 		} else {
 
 			distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, false, defaultDN);
-			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, false);
+			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK);
 		}
 
 		// layout

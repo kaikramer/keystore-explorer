@@ -182,7 +182,7 @@ public class DError extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDetails, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDetails);
 
 		getContentPane().add(jpError, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);

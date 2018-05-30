@@ -355,7 +355,7 @@ public class DSystemInformation extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		getContentPane().add(jpSystemInformation, BorderLayout.CENTER);
 		getContentPane().add(jpOK, BorderLayout.SOUTH);
@@ -404,15 +404,15 @@ public class DSystemInformation extends JEscDialog {
 
 	private void updateMemoryFields(Runtime runtime) {
 		jtfJvmMaximumMemory.setText(MessageFormat.format(res.getString("DSystemInformation.jtfJvmMaximumMemory.text"),
-				Math.round(runtime.maxMemory() / 1024)));
+				runtime.maxMemory() / 1024));
 		jtfJvmMaximumMemory.setCaretPosition(0);
 
 		jtfJvmTotalMemory.setText(MessageFormat.format(res.getString("DSystemInformation.jtfJvmTotalMemory.text"),
-				Math.round(runtime.totalMemory() / 1024)));
+				runtime.totalMemory() / 1024));
 		jtfJvmTotalMemory.setCaretPosition(0);
 
 		jtfJvmFreeMemory.setText(MessageFormat.format(res.getString("DSystemInformation.jtfJvmFreeMemory.text"),
-				Math.round(runtime.freeMemory() / 1024)));
+				runtime.freeMemory() / 1024));
 		jtfJvmFreeMemory.setCaretPosition(0);
 	}
 

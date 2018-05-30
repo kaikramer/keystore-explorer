@@ -148,7 +148,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 	private void initFields() {
 		jlFields = new JLabel(res.getString("DViewAsymmetricKeyFields.jlFields.text"));
 
-		jltFields = new JList<Field>();
+		jltFields = new JList<>();
 		jltFields.setToolTipText(res.getString("DViewAsymmetricKeyFields.jltFields.tooltip"));
 		jltFields.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jltFields.setBorder(new EtchedBorder());
@@ -206,7 +206,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 			}
 		});
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK, false);
+		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
 		populateFields();
 

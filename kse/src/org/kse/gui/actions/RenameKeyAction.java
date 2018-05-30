@@ -70,6 +70,13 @@ public class RenameKeyAction extends KeyStoreExplorerAction implements HistoryAc
 	 */
 	@Override
 	protected void doAction() {
+		renameSelectedEntry();
+	}
+
+	/**
+	 * Rename the currently selected entry
+	 */
+	public void renameSelectedEntry() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStoreState currentState = history.getCurrentState();

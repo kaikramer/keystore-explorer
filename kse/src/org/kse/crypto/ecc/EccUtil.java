@@ -53,6 +53,9 @@ public class EccUtil {
 		}
 	}
 
+	private EccUtil() {
+	}
+
 	/**
 	 * Determines the name of the domain parameters that were used for generating the key.
 	 *
@@ -98,7 +101,8 @@ public class EccUtil {
 	public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
 		return (keyStoreType == KeyStoreType.BKS
 				|| keyStoreType == KeyStoreType.BKS_V1
-				|| keyStoreType == KeyStoreType.UBER);
+				|| keyStoreType == KeyStoreType.UBER
+				|| keyStoreType == KeyStoreType.BCFKS);
 	}
 
 	/**

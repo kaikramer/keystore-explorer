@@ -83,7 +83,7 @@ public class JValidityPeriod extends JPanel {
 		gbc_jsValue.gridy = 0;
 		gbc_jsValue.insets = new Insets(0, 0, 0, 5);
 
-		jcbType = new JComboBox<Object>(new String[] { res.getString("JValidityPeriod.jcbType.years.text"),
+		jcbType = new JComboBox<>(new String[] { res.getString("JValidityPeriod.jcbType.years.text"),
 				res.getString("JValidityPeriod.jcbType.months.text"),
 				res.getString("JValidityPeriod.jcbType.weeks.text"),
 				res.getString("JValidityPeriod.jcbType.days.text"), });
@@ -96,26 +96,22 @@ public class JValidityPeriod extends JPanel {
 		gbc_jcbType.insets = new Insets(0, 0, 0, 5);
 
 		switch (periodType) {
-		case YEARS: {
+		case YEARS:
 			jcbType.setSelectedIndex(YEARS);
 			typeChanged(YEARS);
 			break;
-		}
-		case MONTHS: {
+		case MONTHS:
 			jcbType.setSelectedIndex(MONTHS);
 			typeChanged(MONTHS);
 			break;
-		}
-		case WEEKS: {
+		case WEEKS:
 			jcbType.setSelectedIndex(WEEKS);
 			typeChanged(WEEKS);
 			break;
-		}
-		default: {
+		default:
 			jcbType.setSelectedIndex(DAYS);
 			typeChanged(DAYS);
 			break;
-		}
 		}
 
 		jcbType.addItemListener(new ItemListener() {
@@ -124,9 +120,9 @@ public class JValidityPeriod extends JPanel {
 				typeChanged(((JComboBox<?>) evt.getSource()).getSelectedIndex());
 			}
 		});
-		
+
 		jbApply = new JButton(res.getString("JValidityPeriod.jbApply.text"));
-		
+
 		GridBagConstraints gbc_jbApply = new GridBagConstraints();
 		gbc_jbApply.gridheight = 1;
 		gbc_jbApply.gridwidth = 1;
@@ -160,22 +156,18 @@ public class JValidityPeriod extends JPanel {
 		SpinnerNumberModel model;
 
 		switch (periodType) {
-		case YEARS: {
+		case YEARS:
 			model = new SpinnerNumberModel(1, 1, 999, 1);
 			break;
-		}
-		case MONTHS: {
+		case MONTHS:
 			model = new SpinnerNumberModel(1, 1, 12, 1);
 			break;
-		}
-		case WEEKS: {
+		case WEEKS:
 			model = new SpinnerNumberModel(1, 1, 52, 1);
 			break;
-		}
-		default: {
+		default:
 			model = new SpinnerNumberModel(1, 1, 365, 1);
 			break;
-		}
 		}
 
 		if (((Comparable<Object>) model.getMaximum()).compareTo(value) >= 0
@@ -199,7 +191,7 @@ public class JValidityPeriod extends JPanel {
 		Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		return getValidityPeriodMs(now.getTime());
 	}
-	
+
 	/**
 	 * Get chosen validity period in msecs, relative to validity start date.
 	 *
@@ -207,12 +199,12 @@ public class JValidityPeriod extends JPanel {
 	 */
 	public long getValidityPeriodMs(Date validityStart) {
 		Date validityEnd = getValidityEnd(validityStart);
-		
+
 		return validityEnd.getTime() - validityStart.getTime();
 	}
-	
+
 	/**
-	 * Compute validity end date, based on chosen period and relative to validity 
+	 * Compute validity end date, based on chosen period and relative to validity
 	 * start date.
 	 *
 	 * @return Validity End Date
@@ -230,28 +222,24 @@ public class JValidityPeriod extends JPanel {
 		int periodValue = ((Number) jsValue.getValue()).intValue();
 
 		switch (periodType) {
-		case YEARS: {
+		case YEARS:
 			validityDate.add(Calendar.YEAR, periodValue);
 			break;
-		}
-		case MONTHS: {
+		case MONTHS:
 			validityDate.add(Calendar.MONTH, periodValue);
 			break;
-		}
-		case WEEKS: {
+		case WEEKS:
 			validityDate.add(Calendar.WEEK_OF_MONTH, periodValue);
 			break;
-		}
-		default: {
+		default:
 			validityDate.add(Calendar.DAY_OF_WEEK, periodValue);
 			break;
-		}
 		}
 
 		return validityDate.getTime();
 	}
 
-	
+
 	/**
 	 * Adds an action listener to the apply button.
 	 *

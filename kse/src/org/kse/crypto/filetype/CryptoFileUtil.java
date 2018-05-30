@@ -30,6 +30,7 @@ import static org.kse.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNKNOWN;
+import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
@@ -49,6 +50,7 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DLSequence;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
@@ -69,6 +71,9 @@ import org.kse.utilities.io.ReadUtil;
 public class CryptoFileUtil {
 	private static final int JKS_MAGIC_NUMBER = 0xFEEDFEED;
 	private static final int JCEKS_MAGIC_NUMBER = 0xCECECECE;
+
+	private CryptoFileUtil() {
+	}
 
 	/**
 	 * Detect the cryptographic file type of the supplied input stream.
@@ -228,7 +233,7 @@ public class CryptoFileUtil {
 				}
 
 				// Skip to 21st from last byte (file length minus 21 and the 4 bytes already read)
-				dis.skip(contents.length - 25);
+				dis.skip(contents.length - 25l);
 
 				// Read what may be the null byte
 				if (dis.readByte() == 0) {
@@ -277,6 +282,8 @@ public class CryptoFileUtil {
 					if (version.getValue().intValue() == 3) {
 						return PKCS12;
 					}
+				} else if(firstComponent instanceof DLSequence){
+					return BCFKS;
 				}
 			}
 		}

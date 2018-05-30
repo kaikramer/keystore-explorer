@@ -219,7 +219,7 @@ public class DGetNewPassword extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().add(jpPassword, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);

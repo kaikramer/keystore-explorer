@@ -232,10 +232,10 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 	public void setModel(TickerModel model) {
 		if (model != null) {
 			model.removeListDataListener(this);
+			model.addListDataListener(this);
 		}
 
 		this.model = model;
-		model.addListDataListener(this);
 		calculatePositionArray();
 	}
 

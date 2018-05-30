@@ -55,7 +55,7 @@ public class EnvironmentVariablesTableModel extends AbstractTableModel {
 	 * Load the EnvironmentVariablesTableModel with Environment Variables.
 	 */
 	public void load() {
-		TreeMap<String, String> envs = new TreeMap<String, String>(new EnvironmentVariableComparator());
+		TreeMap<String, String> envs = new TreeMap<>(new EnvironmentVariableComparator());
 		envs.putAll(System.getenv());
 
 		data = new String[envs.size()][2];

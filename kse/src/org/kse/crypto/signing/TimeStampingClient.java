@@ -49,6 +49,9 @@ import org.kse.crypto.digest.DigestType;
 
 public class TimeStampingClient {
 
+	private TimeStampingClient() {
+	}
+
 	/**
 	 * Get RFC 3161 timeStampToken.
 	 *
@@ -85,11 +88,9 @@ public class TimeStampingClient {
 			PKIFailureInfo failure = response.getFailInfo();
 			int value = failure == null ? 0 : failure.intValue();
 			if (value != 0) {
-				throw new IOException("Server returned error code: " + String.valueOf(value));
+				throw new IOException("Server returned error code: " + value);
 			}
-		} catch (NoSuchAlgorithmException e) {
-			throw new IOException(e);
-		} catch (TSPException e) {
+		} catch (NoSuchAlgorithmException | TSPException e) {
 			throw new IOException(e);
 		}
 
@@ -127,9 +128,7 @@ public class TimeStampingClient {
 				}
 			}
 			}, new java.security.SecureRandom());
-		} catch (NoSuchAlgorithmException e) {
-			throw new IOException(e);
-		} catch (KeyManagementException e) {
+		} catch (NoSuchAlgorithmException | KeyManagementException e) {
 			throw new IOException(e);
 		}
 		SSLSocketFactory defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();

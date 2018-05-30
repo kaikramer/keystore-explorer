@@ -72,6 +72,13 @@ public class RenameKeyPairAction extends KeyStoreExplorerAction implements Histo
 	 */
 	@Override
 	protected void doAction() {
+		renameSelectedEntry();
+	}
+
+	/**
+	 * Rename the currently selected entry
+	 */
+	public void renameSelectedEntry() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStoreState currentState = history.getCurrentState();

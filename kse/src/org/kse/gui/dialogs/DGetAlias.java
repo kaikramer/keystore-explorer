@@ -151,7 +151,7 @@ public class DGetAlias extends JEscDialog {
 		jpAlias.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
 				new EmptyBorder(5, 5, 5, 5))));
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().add(jpAlias, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
@@ -172,10 +172,10 @@ public class DGetAlias extends JEscDialog {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				jtfAlias.requestFocus();
 				if (alias != null) {
-					jbOK.requestFocus();
-				} else {
-					jtfAlias.requestFocus();
+					jtfAlias.setSelectionStart(0);
+					jtfAlias.setSelectionEnd(alias.length());
 				}
 			}
 		});

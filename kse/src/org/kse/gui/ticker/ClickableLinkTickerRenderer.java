@@ -99,13 +99,13 @@ public class ClickableLinkTickerRenderer extends JLabel implements TickerRendere
 	public void determineLinks(String text) {
 
 		if (listLinks == null) {
-			listLinks = new ArrayList<LinkDescriptor>();
+			listLinks = new ArrayList<>();
 		} else {
 			listLinks.clear();
 		}
 
 		final Matcher mLink = PATTERN_LINK.matcher(text);
-		final List<LinkDescriptor> lLinks = new ArrayList<LinkDescriptor>();
+		final List<LinkDescriptor> lLinks = new ArrayList<>();
 		while (mLink.find()) {
 			lLinks.add(new LinkDescriptor(mLink.start(), mLink.end(), mLink.group(1)));
 		}
@@ -113,7 +113,7 @@ public class ClickableLinkTickerRenderer extends JLabel implements TickerRendere
 			return;
 		}
 		final Matcher mTag = PATTERN_TAG.matcher(text);
-		final List<Integer[]> lTags = new ArrayList<Integer[]>();
+		final List<Integer[]> lTags = new ArrayList<>();
 		while (mTag.find()) {
 			lTags.add(new Integer[] { mTag.start(), mTag.end(), 0 });
 		}

@@ -64,17 +64,17 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 
 		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtKeyStore, value, isSelected, hasFocus, row, col);
 
-		// Entry Type column - display an icon representing the type and
-		// tool-tip text
+		// Entry Type column - display an icon representing the type and tool-tip text
 		if (col == 0) {
 			ImageIcon icon = null;
 
 			if (KeyStoreTableModel.KEY_PAIR_ENTRY.equals(value)) {
-				icon = new ImageIcon(getClass().getResource(res.getString("KeyStoreTableCellRend.KeyPairEntry.image")));
+				icon = new ImageIcon(getClass().getResource(
+						res.getString("KeyStoreTableCellRend.KeyPairEntry.image")));
 				cell.setToolTipText(res.getString("KeyStoreTableCellRend.KeyPairEntry.tooltip"));
 			} else if (KeyStoreTableModel.TRUST_CERT_ENTRY.equals(value)) {
-				icon = new ImageIcon(
-						getClass().getResource(res.getString("KeyStoreTableCellRend.TrustCertEntry.image")));
+				icon = new ImageIcon(getClass().getResource(
+						res.getString("KeyStoreTableCellRend.TrustCertEntry.image")));
 				cell.setToolTipText(res.getString("KeyStoreTableCellRend.TrustCertEntry.tooltip"));
 			} else {
 				icon = new ImageIcon(getClass().getResource(res.getString("KeyStoreTableCellRend.KeyEntry.image")));
@@ -86,12 +86,10 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 			cell.setVerticalAlignment(CENTER);
 			cell.setHorizontalAlignment(CENTER);
 		}
-		// Lock column - if entry is a key or key pair display an icon for the
-		// lock status
+		// Lock column - if entry is a key or key pair display an icon for the lock status
 		else if (col == 1) {
 			if (value == null) {
-				// No lock status available (not a key pair entry or PKCS #12
-				// KeyStore)
+				// No lock status available (not a key pair entry or PKCS #12 KeyStore)
 				cell.setIcon(null);
 				cell.setText("-");
 				cell.setToolTipText(res.getString("KeyStoreTableCellRend.NoLockStatus.tooltip"));
@@ -101,13 +99,13 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 
 				if (value.equals(Boolean.TRUE)) {
 					// Locked
-					icon = new ImageIcon(
-							getClass().getResource(res.getString("KeyStoreTableCellRend.LockedEntry.image")));
+					icon = new ImageIcon(getClass().getResource(
+							res.getString("KeyStoreTableCellRend.LockedEntry.image")));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.LockedEntry.tooltip"));
 				} else {
 					// Unlocked
-					icon = new ImageIcon(
-							getClass().getResource(res.getString("KeyStoreTableCellRend.UnlockedEntry.image")));
+					icon = new ImageIcon(getClass().getResource(
+							res.getString("KeyStoreTableCellRend.UnlockedEntry.image")));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.UnlockedEntry.tooltip"));
 				}
 
@@ -117,8 +115,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				cell.setHorizontalAlignment(CENTER);
 			}
 		}
-		// Expiry column - if entry is a key pair display an icon for the
-		// expired/unexpired
+		// Expiry column - if entry is a key pair display an icon for the expired/unexpired
 		else if (col == 2) {
 			if (value == null) {
 				// No cert expired status available (must be a key entry)
@@ -130,8 +127,8 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				ImageIcon icon = null;
 				if (value.equals(2)) {
 					// Expired
-					icon = new ImageIcon(
-							getClass().getResource(res.getString("KeyStoreTableCellRend.CertExpiredEntry.image")));
+					icon = new ImageIcon(getClass().getResource(
+							res.getString("KeyStoreTableCellRend.CertExpiredEntry.image")));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertExpiredEntry.tooltip"));
 				} else {
 					if (value.equals(1)) {
@@ -141,8 +138,8 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 						cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertAlmostExpiredEntry.tooltip"));
 					} else {
 					// Unexpired
-						icon = new ImageIcon(getClass()
-								.getResource(res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.image")));
+					icon = new ImageIcon(getClass().getResource(
+							res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.image")));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.tooltip"));
 				}
 				}

@@ -65,6 +65,7 @@ public class DNewKeyStoreType extends JEscDialog {
 	private JRadioButton jrbBksV1KeyStore;
 	private JRadioButton jrbBksKeyStore;
 	private JRadioButton jrbUberKeyStore;
+	private JRadioButton jrbBcfksKeyStore;
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
@@ -112,6 +113,10 @@ public class DNewKeyStoreType extends JEscDialog {
 		PlatformUtil.setMnemonic(jrbUberKeyStore, res.getString("DNewKeyStoreType.jrbUberKeyStore.mnemonic").charAt(0));
 		jrbUberKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbUberKeyStore.tooltip"));
 
+		jrbBcfksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBcfksKeyStore.text"));
+		PlatformUtil.setMnemonic(jrbBcfksKeyStore, res.getString("DNewKeyStoreType.jrbBcfksKeyStore.mnemonic").charAt(0));
+		jrbBcfksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBcfksKeyStore.tooltip"));
+
 		ButtonGroup keyStoreTypes = new ButtonGroup();
 
 		keyStoreTypes.add(jrbJceksKeyStore);
@@ -120,8 +125,9 @@ public class DNewKeyStoreType extends JEscDialog {
 		keyStoreTypes.add(jrbBksV1KeyStore);
 		keyStoreTypes.add(jrbBksKeyStore);
 		keyStoreTypes.add(jrbUberKeyStore);
+		keyStoreTypes.add(jrbBcfksKeyStore);
 
-		jpKeyStoreType = new JPanel(new GridLayout(7, 1));
+		jpKeyStoreType = new JPanel(new GridLayout(8, 1));
 		jpKeyStoreType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
 				new EmptyBorder(5, 5, 5, 5))));
 
@@ -132,6 +138,7 @@ public class DNewKeyStoreType extends JEscDialog {
 		jpKeyStoreType.add(jrbBksV1KeyStore);
 		jpKeyStoreType.add(jrbBksKeyStore);
 		jpKeyStoreType.add(jrbUberKeyStore);
+		jpKeyStoreType.add(jrbBcfksKeyStore);
 
 		jbOK = new JButton(res.getString("DNewKeyStoreType.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
@@ -159,7 +166,7 @@ public class DNewKeyStoreType extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, false);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpKeyStoreType, BorderLayout.CENTER);
@@ -199,6 +206,8 @@ public class DNewKeyStoreType extends JEscDialog {
 			keyStoreType = KeyStoreType.BKS_V1;
 		} else if (jrbBksKeyStore.isSelected()) {
 			keyStoreType = KeyStoreType.BKS;
+		} else if (jrbBcfksKeyStore.isSelected()) {
+			keyStoreType = KeyStoreType.BCFKS;
 		} else {
 			keyStoreType = KeyStoreType.UBER;
 		}

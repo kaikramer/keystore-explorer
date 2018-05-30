@@ -108,7 +108,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 			try {
 				Password password = new Password(AuthorityCertificates.CACERTS_DEFAULT_PWD.toCharArray());
 				caCertificatesKeyStore = KeyStoreUtil.load(caCertificatesFile, password);
-				if (caCertificatesFile != null) {
+				if (caCertificatesKeyStore != null) {
 					return caCertificatesKeyStore;
 				}
 			} catch (KeyStoreLoadException ex) {

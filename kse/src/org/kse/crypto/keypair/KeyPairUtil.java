@@ -23,6 +23,7 @@ import static org.kse.crypto.KeyType.ASYMMETRIC;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.EC;
+import static org.kse.crypto.keypair.KeyPairType.ECDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 
 import java.io.IOException;
