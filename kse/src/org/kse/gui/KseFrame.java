@@ -2295,34 +2295,51 @@ public final class KseFrame implements StatusBar {
 	public void redrawKeyStores(ApplicationSettings applicationSettings) {
 		if (keyStoreTables != null) {
 			KeyStoreHistory[] histories = getKeyStoreHistories();
-			char[][] passwords = new char[histories.length][];
-			KeyStoreState currentState;
+			if (histories != null) {
+				char[][] passwords = new char[histories.length][];
+				KeyStoreState currentState;
 
-			for (int index = 0; index < histories.length; index++) {
-				currentState = histories[index].getCurrentState();
-				if (currentState!=null )
-				{
-					if (!currentState.getPassword().isNulled())
-						passwords[index] = currentState.getPassword().toCharArray();
-					// when changes have been made, try to retrieve the password from the chain of histories
-					while (((passwords[index].length==0) ||(passwords[index][0]=='\0')) && currentState.hasPreviousState())
-						{ passwords[index] = currentState.previousState().getPassword().toCharArray();}
-					KeyStore keyStore = currentState.getKeyStore();
-					if (keyStore != null)
-						removeKeyStore(keyStore);
+				for (int index = 0; index < histories.length; index++) {
+					currentState = histories[index].getCurrentState();
+					if (currentState != null) {
+						Password pw = currentState.getPassword();
+						if (pw != null) {
+							if (!pw.isNulled())
+								passwords[index] = currentState.getPassword().toCharArray();
+							// when changes have been made, try to retrieve the
+							// password from the chain of histories
+							while (((passwords[index].length == 0) || (passwords[index][0] == '\0'))
+									&& currentState.hasPreviousState()) {
+								passwords[index] = currentState.previousState().getPassword().toCharArray();
+							}
+						}
+						if (!currentState.isSavedState()) {
+							SaveAction saveAction = new SaveAction(this);
+							saveAction.saveKeyStore(histories[index]);
+						}
+						KeyStore keyStore = currentState.getKeyStore();
+						if (keyStore != null) {
+							removeKeyStore(keyStore);
+						}
+					}
 				}
-			}
-			// tell new layout
-			this.applicationSettings = applicationSettings;
-			// and reopen all keystores from the histories
-			for (int index = 0; index < histories.length; index++) {
-				currentState = histories[index].getCurrentState();
-				if (currentState!=null )
-				{
-				if (histories[index].getExplicitProvider() != null)
-					addKeyStore(currentState.getKeyStore(),histories[index].getName(), new Password(passwords[index]), histories[index].getExplicitProvider());
-				else
-					addKeyStore(currentState.getKeyStore(),histories[index].getFile(), new Password(passwords[index]));
+				// tell new layout
+				this.applicationSettings = applicationSettings;
+				// and reopen all keystores from the histories
+				for (int index = 0; index < histories.length; index++) {
+					currentState = histories[index].getCurrentState();
+					if (currentState != null) {
+						Password pw = null;
+						if (passwords[index] != null)
+							pw = new Password(passwords[index]);
+						if (pw != null) {
+							if (histories[index].getExplicitProvider() != null)
+								addKeyStore(currentState.getKeyStore(), histories[index].getName(), pw,
+										histories[index].getExplicitProvider());
+							else
+								addKeyStore(currentState.getKeyStore(), histories[index].getFile(), pw);
+						}
+					}
 				}
 			}
 		}

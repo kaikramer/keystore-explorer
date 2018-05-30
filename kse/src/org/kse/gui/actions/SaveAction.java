@@ -78,7 +78,7 @@ public class SaveAction extends SaveAsAction {
 	 *            KeyStore history
 	 * @return True if the KeyStore is saved to disk, false otherwise
 	 */
-	protected boolean saveKeyStore(KeyStoreHistory history) {
+	public boolean saveKeyStore(KeyStoreHistory history) {
 		File saveFile = null;
 
 		try {
