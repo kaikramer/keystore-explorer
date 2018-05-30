@@ -81,6 +81,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
 	private int nofColumns = 5;
+	private int iColWidth[];
+	private static final int ICON_SIZE = 28;	
 	/** Column for a property */
 	private static int expiryWarnDays = 0;
 	private static int iNameColumn = -1;
@@ -101,110 +103,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 * Construct a new KeyStoreTableModel with a variable layout.
 	 */
 	public KeyStoreTableModel(KeyStoreTableColumns keyStoreTableColumnsParm) {
-		keyStoreTableColumns = keyStoreTableColumnsParm;
-		nofColumns = 3+keyStoreTableColumns.getNofColumns();
-		expiryWarnDays = keyStoreTableColumns.getExpiryWarnDays();
-		int col = 2;
-		columnNames = new String[nofColumns];
-		columnTypes = new Class[nofColumns];
-		columnNames[0] = res.getString("KeyStoreTableModel.TypeColumn");
-		columnTypes[0] = String.class;
-		columnNames[1] = res.getString("KeyStoreTableModel.LockStatusColumn");
-		columnTypes[1] = Boolean.class;
-		columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
-		columnTypes[2] = Integer.class;
-		for (col=3;col<nofColumns;col++)
-		{
-			if (col == keyStoreTableColumns.colEntryName())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.NameColumn");
-				columnTypes[col] = String.class;
-				iNameColumn = col;
-			}
-
-			if (col == keyStoreTableColumns.colAlgorithm())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
-				columnTypes[col] = String.class;
-				iAlgorithmColumn = col;
-				
-			}
-			if (col == keyStoreTableColumns.colKeySize())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.KeySizeColumn");
-				columnTypes[col] =  Integer.class;
-				iKeySizeColumn = col;
-			}
-			if (col == keyStoreTableColumns.colCurve())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
-				columnTypes[col] = String.class;
-				iCurveColumn = col;
-				
-			}
-			if (col == keyStoreTableColumns.colCertificateExpiry())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
-				columnTypes[col] = Date.class;
-				iCertExpiryColumn = col;
-			}
-			if (col == keyStoreTableColumns.colLastModified())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
-				columnTypes[col] = Date.class;
-				iLastModifiedColumn = col;
-				
-			}
-			if (col == keyStoreTableColumns.colAKI())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.AKIColumn");
-				columnTypes[col] = String.class;
-				iAKIColumn = col;
-				
-			}
-			if (col == keyStoreTableColumns.colSKI())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.SKIColumn");
-				columnTypes[col] = String.class;
-				iSKIColumn = col;
-			}
-			if (col == keyStoreTableColumns.colIssuerDN())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
-				columnTypes[col] = String.class;
-				iIssuerDNColumn = col;
-			}
-			if (col == keyStoreTableColumns.colSubjectDN())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
-				columnTypes[col] = String.class;
-				iSubjectDNColumn = col;
-			}
-			if (col == keyStoreTableColumns.colIssuerCN())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
-				columnTypes[col] = String.class;
-				iIssuerCNColumn = col;
-			}
-			if (col == keyStoreTableColumns.colSubjectCN())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
-				columnTypes[col] = String.class;
-				iSubjectCNColumn = col;
-			}
-			if (col == keyStoreTableColumns.colIssuerO())
-			{
-				columnNames[col] = res.getString("KeyStoreTableModel.IssuerOColumn");
-				columnTypes[col] = String.class;
-				iIssuerOColumn = col;
-			}
-			if (col == keyStoreTableColumns.colSubjectO())
-			{
-				columnNames[++col] = res.getString("KeyStoreTableModel.SubjectOColumn");
-				columnTypes[col] = String.class;
-				iSubjectOColumn = col;
-			}
-		}
+		this.keyStoreTableColumns = keyStoreTableColumnsParm;
+		adjustColumns(keyStoreTableColumnsParm);
 		data = new Object[0][0];
 	}
 
@@ -293,6 +193,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iNameColumn>0) {
 			// Alias column
 				data[i][iNameColumn] = alias;
+				if (alias.length()> iColWidth[iNameColumn])
+					iColWidth[iNameColumn] = alias.length(); 
 			}
 
 			KeyInfo keyInfo = getKeyInfo(alias, keyStore, currentState);
@@ -301,6 +203,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				// Algorithm column
 				if (iAlgorithmColumn>0) {
 					data[i][iAlgorithmColumn] = getAlgorithmName(keyInfo);
+					if (iColWidth[iAlgorithmColumn] < data[i][iAlgorithmColumn].toString().length() )
+						iColWidth[iAlgorithmColumn] = data[i][iAlgorithmColumn].toString().length();
 				}
 
 				// Key Size column
@@ -310,6 +214,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				// Key Size column
 				if (keyStoreTableColumns.getEnableCurve()) {
 					data[i][iCurveColumn] = keyInfo.getDetailedAlgorithm();
+					if (iColWidth[iCurveColumn] < data[i][iCurveColumn].toString().length() )
+						iColWidth[iCurveColumn] = data[i][iCurveColumn].toString().length();
 				}
 			}
 			if (iCertExpiryColumn>0) {
@@ -335,6 +241,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iSubjectDNColumn>0) {
 				if (entryType != KEY_ENTRY) {
 					data[i][iSubjectDNColumn] = getCertificateSubjectDN( alias, keyStore) ;
+					if (iColWidth[iSubjectDNColumn] < data[i][iSubjectDNColumn].toString().length())
+						iColWidth[iSubjectDNColumn] = data[i][iSubjectDNColumn].toString().length();
 				} else {
 					data[i][iSubjectDNColumn] = null; 
 				}
@@ -342,6 +250,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iIssuerDNColumn>0) {
 				if (entryType != KEY_ENTRY) { 
 					data[i][iIssuerDNColumn] = getCertificateIssuerDN( alias, keyStore) ;
+					if (iColWidth[iIssuerDNColumn] < data[i][iIssuerDNColumn].toString().length())
+						iColWidth[iIssuerDNColumn] = data[i][iIssuerDNColumn].toString().length();
 				} else {
 					data[i][iIssuerDNColumn] = null; 
 				}
@@ -349,6 +259,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iSubjectCNColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iSubjectCNColumn] = getCertificateSubjectCN( alias, keyStore) ;
+					if (iColWidth[iSubjectCNColumn] < data[i][iSubjectCNColumn].toString().length())
+						iColWidth[iSubjectCNColumn] = data[i][iSubjectCNColumn].toString().length();
 				} else {
 					data[i][iSubjectCNColumn] = null; 
 				}
@@ -356,6 +268,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iIssuerCNColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iIssuerCNColumn] = getCertificateIssuerCN( alias, keyStore) ;
+					if (iColWidth[iIssuerCNColumn] < data[i][iIssuerCNColumn].toString().length())
+						iColWidth[iIssuerCNColumn] = data[i][iIssuerCNColumn].toString().length();
 				} else {
 					data[i][iIssuerCNColumn] = null; 
 				}
@@ -363,6 +277,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iSubjectOColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iSubjectOColumn] = getCertificateSubjectO( alias, keyStore) ;
+					if (iColWidth[iSubjectOColumn] < data[i][iSubjectOColumn].toString().length())
+						iColWidth[iSubjectOColumn] = data[i][iSubjectOColumn].toString().length();
 				} else {
 					data[i][iSubjectOColumn] = null; 
 				}
@@ -370,6 +286,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iIssuerOColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iIssuerOColumn] = getCertificateIssuerO( alias, keyStore) ;
+					if (iColWidth[iIssuerOColumn] < data[i][iIssuerOColumn].toString().length())
+						iColWidth[iIssuerOColumn] = data[i][iIssuerOColumn].toString().length();
+
 				} else {
 					data[i][iIssuerOColumn] = null; 
 				}
@@ -377,6 +296,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iAKIColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iAKIColumn] = getCertificateAKI( alias, keyStore) ;
+					if (iColWidth[iAKIColumn] < data[i][iAKIColumn].toString().length())
+						iColWidth[iAKIColumn] = data[i][iAKIColumn].toString().length();
+
 				} else {
 					data[i][iAKIColumn] = null; 
 				}
@@ -384,6 +306,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iSKIColumn>0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
 					data[i][iSKIColumn] = getCertificateSKI( alias, keyStore) ;
+					if (iColWidth[iSKIColumn] < data[i][iSKIColumn].toString().length())
+						iColWidth[iSKIColumn] = data[i][iSKIColumn].toString().length();
 				} else {
 					data[i][iSKIColumn] = null; 
 				}
@@ -637,6 +561,118 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			return "";
 		}
 	}
+	private void adjustColumns(KeyStoreTableColumns keyStoreTableColumnsParm)
+	{
+		keyStoreTableColumns = keyStoreTableColumnsParm;
+		nofColumns = 3+keyStoreTableColumns.getNofColumns();
+		expiryWarnDays = keyStoreTableColumns.getExpiryWarnDays();
+		iColWidth = new int[nofColumns];
+		int col = 2;
+		columnNames = new String[nofColumns];
+		columnTypes = new Class[nofColumns];
+		columnNames[0] = res.getString("KeyStoreTableModel.TypeColumn");
+		columnTypes[0] = String.class;
+		iColWidth[0] = ICON_SIZE;
+		columnNames[1] = res.getString("KeyStoreTableModel.LockStatusColumn");
+		columnTypes[1] = Boolean.class;
+		iColWidth[1] = ICON_SIZE;
+		columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
+		columnTypes[2] = Integer.class;
+		iColWidth[2] = ICON_SIZE;
+		for (col=3;col<nofColumns;col++)
+		{
+			if (col == keyStoreTableColumns.colEntryName())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.NameColumn");
+				columnTypes[col] = String.class;
+				iNameColumn = col;
+			}
+			if (col == keyStoreTableColumns.colAlgorithm())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
+				columnTypes[col] = String.class;
+				iAlgorithmColumn = col;
+			}
+			if (col == keyStoreTableColumns.colKeySize())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.KeySizeColumn");
+				columnTypes[col] =  Integer.class;
+				iKeySizeColumn = col;
+			}
+			if (col == keyStoreTableColumns.colCurve())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
+				columnTypes[col] = String.class;
+				iCurveColumn = col;
+			}
+			if (col == keyStoreTableColumns.colCertificateExpiry())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
+				columnTypes[col] = Date.class;
+				iCertExpiryColumn = col;
+				iColWidth[col] =" 20.00.2000 00:00:00 MESZ ".length();
+			}
+			if (col == keyStoreTableColumns.colLastModified())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
+				columnTypes[col] = Date.class;
+				iLastModifiedColumn = col;
+				iColWidth[col] =" 20.00.2000 00:00:00 MESZ ".length();
+			}
+			if (col == keyStoreTableColumns.colAKI())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.AKIColumn");
+				columnTypes[col] = String.class;
+				iAKIColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSKI())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.SKIColumn");
+				columnTypes[col] = String.class;
+				iSKIColumn = col;
+			}
+			if (col == keyStoreTableColumns.colIssuerDN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
+				columnTypes[col] = String.class;
+				iIssuerDNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSubjectDN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
+				columnTypes[col] = String.class;
+				iSubjectDNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colIssuerCN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
+				columnTypes[col] = String.class;
+				iIssuerCNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSubjectCN())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
+				columnTypes[col] = String.class;
+				iSubjectCNColumn = col;
+			}
+			if (col == keyStoreTableColumns.colIssuerO())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.IssuerOColumn");
+				columnTypes[col] = String.class;
+				iIssuerOColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSubjectO())
+			{
+				columnNames[col] = res.getString("KeyStoreTableModel.SubjectOColumn");
+				columnTypes[col] = String.class;
+				iSubjectOColumn = col;
+			}
+			if (iColWidth[col]<1)
+			{
+				iColWidth[col] =columnNames[col].length();
+			}
+		}
+	}
 	/**
 	 * Get the number of columns in the table.
 	 *
@@ -715,8 +751,25 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	public void setKeyStoreTableColumns(KeyStoreTableColumns keyStoreTableColumns) {
 		this.keyStoreTableColumns = keyStoreTableColumns;
+		adjustColumns(keyStoreTableColumns);
 	}
-
+	
+	/**
+	 * Maximum width of a column
+	 *
+	 * @param col
+	 *            The column 
+	 *            
+	 * @return Maximum length of the contents (or title) in characters
+	 * @
+	 */	
+	public int getColumnWidth(int col) {
+		if ((col < nofColumns) && (col >= 0))
+			return iColWidth[col];
+		else 
+			return 0;
+	}
+	
 	private class AliasComparator implements Comparator<String> {
 		@Override
 		public int compare(String name1, String name2) {

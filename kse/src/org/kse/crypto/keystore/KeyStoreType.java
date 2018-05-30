@@ -46,7 +46,8 @@ public enum KeyStoreType {
 	KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
 	MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
 	MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
-	PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null);
+	PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
+	LUNA("LUNA", "KeyStoreType.Luna", false, null);
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
 	private String jce;
@@ -103,7 +104,7 @@ public enum KeyStoreType {
 	 * @return True if private keys are exportable, false otherwise
 	 */
 	public boolean hasExportablePrivateKeys() {
-		return this != PKCS11 && this != MS_CAPI_PERSONAL;
+		return this != PKCS11  && this != MS_CAPI_PERSONAL && this != LUNA;
 	}
 
 	/**
@@ -112,7 +113,7 @@ public enum KeyStoreType {
 	 * @return True, if secret key entries are supported by this KeyStore type
 	 */
 	public boolean supportsKeyEntries() {
-		return this == JCEKS || this == BKS || this == BKS_V1 || this == UBER;
+		return this == JCEKS || this == BKS || this == BKS_V1 || this == UBER || this == LUNA;
 	}
 
 	/**

@@ -27,6 +27,7 @@ import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
 import static org.kse.crypto.keystore.KeyStoreType.KEYCHAIN;
 import static org.kse.crypto.keystore.KeyStoreType.UBER;
+import static org.kse.crypto.keystore.KeyStoreType.LUNA;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -283,6 +284,46 @@ public final class KeyStoreUtil {
 
 		return keyStore;
 	}
+	/**
+	 * Load a Luna Store as a KeyStore. The KeyStore is not file based and
+	 * therefore does not need to be saved.
+	 *
+	 * @param msCapiStoreType
+	 *            MS CAPI Store Type
+	 * @return The MS CAPI Store as a KeyStore
+	 * @throws CryptoException
+	 *             Problem encountered loading the KeyStore
+	 */
+	public static KeyStore loadLunaStore(KeyStoreType keyStoreType, Password password) throws CryptoException {
+
+		KeyStore keyStore = null;
+
+		try {
+			
+			keyStore = KeyStore.getInstance(keyStoreType.jce(), LUNA.jce());
+		} catch (KeyStoreException ex) {
+			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
+					keyStoreType.jce()), ex);
+		} catch (NoSuchProviderException ex) {
+			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
+					keyStoreType.jce()), ex);
+		}
+
+		try {
+			keyStore.load(null, null);
+		} catch (NoSuchAlgorithmException ex) {
+			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
+					keyStoreType.jce()), ex);
+		} catch (CertificateException ex) {
+			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
+					keyStoreType.jce()), ex);
+		} catch (IOException ex) {
+			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
+					keyStoreType.jce()), ex);
+		}
+
+		return keyStore;
+	}
 
 	/**
 	 * Save a KeyStore to a file protected by a password.
@@ -441,7 +482,11 @@ public final class KeyStoreUtil {
 
 				return KeyStore.getInstance(keyStoreType.jce(), BOUNCY_CASTLE.jce());
 			} else {
-				return KeyStore.getInstance(keyStoreType.jce());
+				if (keyStoreType == LUNA) {
+					return KeyStore.getInstance(keyStoreType.jce(),"LunaProvider");
+				}
+				else
+					return KeyStore.getInstance(keyStoreType.jce());
 			}
 		} catch (KeyStoreException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),

@@ -39,7 +39,7 @@ import org.kse.gui.dialogs.DPreferences;
  */
 public class PreferencesAction extends ExitAction {
 	private static final long serialVersionUID = 1L;
-
+private KseFrame kseFrame;
 	/**
 	 * Construct action.
 	 *
@@ -48,7 +48,7 @@ public class PreferencesAction extends ExitAction {
 	 */
 	public PreferencesAction(KseFrame kseFrame) {
 		super(kseFrame);
-
+		this.kseFrame = kseFrame;
 		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("PreferencesAction.accelerator").charAt(0),
 				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		putValue(LONG_DESCRIPTION, res.getString("PreferencesAction.statusbar"));
@@ -79,8 +79,10 @@ public class PreferencesAction extends ExitAction {
 		DPreferences dPreferences = new DPreferences(frame, applicationSettings.getUseCaCertificates(),
 				caCertificatesFile, applicationSettings.getUseWindowsTrustedRootCertificates(),
 				applicationSettings.getEnableImportTrustedCertTrustCheck(),
-				applicationSettings.getEnableImportCaReplyTrustCheck(), applicationSettings.getPasswordQualityConfig(),
-				applicationSettings.getDefaultDN(), applicationSettings.getKeyStoreTableColumns());
+				applicationSettings.getEnableImportCaReplyTrustCheck(), 
+				applicationSettings.getPasswordQualityConfig(),
+				applicationSettings.getDefaultDN(), 
+				applicationSettings.getKeyStoreTableColumns());
 		dPreferences.setLocationRelativeTo(frame);
 		dPreferences.setVisible(true);
 
@@ -118,6 +120,9 @@ public class PreferencesAction extends ExitAction {
 					res.getString("PreferencesAction.LookFeelChanged.Title"), JOptionPane.INFORMATION_MESSAGE);
 
 			exitApplication(true);
+		}
+		if (dPreferences.columnsChanged()) {
+			kseFrame.redrawKeyStores(applicationSettings);
 		}
 	}
 }

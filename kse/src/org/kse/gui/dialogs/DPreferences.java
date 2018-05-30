@@ -192,6 +192,7 @@ public class DPreferences extends JEscDialog {
 	private boolean bEnableSubjectO;
 	private JLabel jlExpirationWarnDays;
 	private JTextField jtfExpirationWarnDays;
+	private boolean bColumnsChanged;
 
 	/**
 	 * Creates a new DPreferences dialog.
@@ -796,7 +797,9 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private void initDisplayColumnsTab() {
+		bColumnsChanged =false;
 		jpDisplayColumns = new JPanel();
+		jpDisplayColumns.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
 		jlDisplayColumns = new JLabel(res.getString("DPreferences.jlDisplayColumns.text"));
 
 		  bEnableEntryName = kstColumns.getEnableEntryName();
@@ -886,25 +889,23 @@ public class DPreferences extends JEscDialog {
 		jtfExpirationWarnDays.setColumns(3);
 		jtfExpirationWarnDays.setText(Integer.toString(expiryWarnDays));
 
-	
-		jpDisplayColumns.setLayout(new MigLayout("insets dialog", "[20][]", ""));
-		jpDisplayColumns.add(jlDisplayColumns, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableEntryName, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableAlgorithm, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableKeySize, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableCurve, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableCertificateExpiry, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableLastModified, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableSKI, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableAKI, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableIssuerDN, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableIssuerCN, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableIssuerO, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableSubjectDN, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableSubjectCN, "left, span, wrap");
-		jpDisplayColumns.add(jcbEnableSubjectO, "left, span, wrap");
-		jpDisplayColumns.add(jlExpirationWarnDays, "left, span, wrap");
-		jpDisplayColumns.add(jtfExpirationWarnDays, "left, span, wrap");
+		jpDisplayColumns.add(jlDisplayColumns, "left, wrap");
+		jpDisplayColumns.add(jcbEnableEntryName, "left");
+		jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
+		jpDisplayColumns.add(jcbEnableKeySize, "left");
+		jpDisplayColumns.add(jcbEnableCurve, "left, wrap");
+		jpDisplayColumns.add(jcbEnableCertificateExpiry, "left");
+		jpDisplayColumns.add(jcbEnableLastModified, "left, wrap");
+		jpDisplayColumns.add(jcbEnableSKI, "left");
+		jpDisplayColumns.add(jcbEnableAKI, "left, wrap");
+		jpDisplayColumns.add(jcbEnableIssuerDN, "left");
+		jpDisplayColumns.add(jcbEnableIssuerCN, "left, wrap");
+		jpDisplayColumns.add(jcbEnableIssuerO, "left");
+		jpDisplayColumns.add(jcbEnableSubjectDN, "left, wrap");
+		jpDisplayColumns.add(jcbEnableSubjectCN, "left");
+		jpDisplayColumns.add(jcbEnableSubjectO, "left, wrap");
+		jpDisplayColumns.add(jlExpirationWarnDays, "left");
+		jpDisplayColumns.add(jtfExpirationWarnDays, "left, wrap");
 		}
 
 	private void updateProxyControls() {
@@ -1195,8 +1196,12 @@ public class DPreferences extends JEscDialog {
 		return kstColumns;
 	}
 
-	private void storeColumns() {
+	public boolean columnsChanged() {
+		return bColumnsChanged;
+	}
 
+	private void storeColumns() {
+		int ist = kstColumns.getColumns();
 		bEnableEntryName = jcbEnableEntryName.isSelected();
 		bEnableAlgorithm = jcbEnableAlgorithm.isSelected();
 		bEnableKeySize = jcbEnableKeySize.isSelected();
@@ -1221,6 +1226,7 @@ public class DPreferences extends JEscDialog {
 		kstColumns.setColumns(bEnableEntryName, bEnableAlgorithm, bEnableKeySize,
 				bEnableCertificateExpiry, bEnableLastModified, bEnableSKI, bEnableAKI, bEnableIssuerDN,
 				bEnableSubjectDN,bEnableIssuerCN,bEnableSubjectCN,bEnableIssuerO,bEnableSubjectO, bEnableCurve, expiryWarnDays);
+		bColumnsChanged = (kstColumns.getColumns() != ist);
 	}
 
 	/**
@@ -1262,6 +1268,7 @@ public class DPreferences extends JEscDialog {
 
 	private void cancelPressed() {
 		cancelled = true;
+		bColumnsChanged = false;
 		closeDialog();
 	}
 
