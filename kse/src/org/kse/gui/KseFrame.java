@@ -25,7 +25,7 @@ import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
 import static org.kse.crypto.keystore.KeyStoreType.JKS;
 import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
-
+import static org.kse.crypto.keystore.KeyStoreType.UBER;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -50,6 +50,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -143,6 +144,7 @@ import org.kse.gui.actions.NewAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.OpenCaCertificatesAction;
 import org.kse.gui.actions.OpenDefaultAction;
+import org.kse.gui.actions.OpenLunaAction;
 import org.kse.gui.actions.OpenMsCapiAction;
 import org.kse.gui.actions.OpenPkcs11Action;
 import org.kse.gui.actions.PasteAction;
@@ -220,7 +222,7 @@ public final class KseFrame implements StatusBar {
 	private static int iFontSize = 	(int)(LnfUtil.getDefaultFontSize()*FF);
 	private int autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS;
 	private static final int ICON_SIZE = 28;	
-
+	private boolean bLuna;
 
 
 	//
@@ -235,6 +237,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiOpenCaCertificatesKeyStore;
 	private JMenuItem jmiOpenPkcs11KeyStore;
 	private JMenuItem jmiOpenMsCapiKeyStore;
+	private JMenuItem jmiOpenLunaKeyStore;
 	private JMenuItem jmiClose;
 	private JMenuItem jmiCloseAll;
 	private JMenuItem jmiSave;
@@ -419,6 +422,7 @@ public final class KseFrame implements StatusBar {
 	private final OpenCaCertificatesAction openCaCertificatesKeyStoreAction = new OpenCaCertificatesAction(this);
 	private final OpenPkcs11Action openPkcs11KeyStoreAction = new OpenPkcs11Action(this);
 	private final OpenMsCapiAction openMsCapiAction = new OpenMsCapiAction(this);
+	private final OpenLunaAction openLunaKeystoreAction = new OpenLunaAction(this);
 	private final SaveAction saveAction = new SaveAction(this);
 	private final SaveAsAction saveAsAction = new SaveAsAction(this);
 	private final SaveAllAction saveAllAction = new SaveAllAction(this);
@@ -522,6 +526,7 @@ public final class KseFrame implements StatusBar {
 	private static final String RENAME_KEY = "RENAME_KEY";
 
 	KseFrame() {
+		bLuna = (Security.getProviders("KeyStore.Luna") != null);
 		initComponents();
 	}
 
@@ -677,7 +682,16 @@ public final class KseFrame implements StatusBar {
 		if (OperatingSystem.isWindows()) {
 			jmOpenSpecial.add(jmiOpenMsCapiKeyStore);
 		}
-
+		if (bLuna)
+		{
+			jmiOpenLunaKeyStore = new JMenuItem(openLunaKeystoreAction);
+			PlatformUtil.setMnemonic(jmiOpenLunaKeyStore,
+				res.getString("KseFrame.jmiOpenLunaKeyStore.mnemonic").charAt(0));
+			jmiOpenLunaKeyStore.setToolTipText(null);
+			new StatusBarChangeHandler(jmiOpenLunaKeyStore,
+				(String) openLunaKeystoreAction.getValue(Action.LONG_DESCRIPTION), this);
+			jmOpenSpecial.add(jmiOpenLunaKeyStore);
+		}
 		jmFile.addSeparator();
 
 		jmiClose = new JMenuItem(closeAction);
@@ -2611,6 +2625,7 @@ public final class KseFrame implements StatusBar {
 			saveAction.setEnabled(false);
 		}
 
+
 		// Can save all if any KeyStore has been changed since saved
 		boolean saveAll = false;
 		for (int i = 0; i < histories.size(); i++) {
@@ -2642,7 +2657,10 @@ public final class KseFrame implements StatusBar {
 		if (type.isFileBased()) {
 			saveAsAction.setEnabled(true);
 		}
-
+		if ( type == KeyStoreType.LUNA) {
+			saveAsAction.setEnabled(false);
+			saveAction.setEnabled(false);
+		}
 		// May be able to undo/redo
 		updateUndoRedoControls(currentState);
 
@@ -2678,7 +2696,7 @@ public final class KseFrame implements StatusBar {
 		}
 
 		// Special restrictions for MSCAPI and PKCS#11 type
-		if (type == KeyStoreType.MS_CAPI_PERSONAL || type == KeyStoreType.PKCS11) {
+		if (type == KeyStoreType.MS_CAPI_PERSONAL || type == KeyStoreType.PKCS11 || type == KeyStoreType.LUNA) {
 
 			keyPairPrivateKeyDetailsAction.setEnabled(false);
 			keyDetailsAction.setEnabled(false);
@@ -2736,9 +2754,11 @@ public final class KseFrame implements StatusBar {
 			} else if (type == BCFKS) {
 				jrbmiChangeTypeBcfks.setSelected(true);
 				jrbmiKeyStoreChangeTypeBcfks.setSelected(true);
-			} else {
+			} else if (type == UBER) {
 				jrbmiChangeTypeUber.setSelected(true);
 				jrbmiKeyStoreChangeTypeUber.setSelected(true);
+			} else { // a Luna keystore is not really file based
+				jmKeyStoreChangeType.setEnabled(false);
 			}
 		} else {
 			jmKeyStoreChangeType.setEnabled(false);
