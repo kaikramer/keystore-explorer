@@ -2324,7 +2324,6 @@ public final class KseFrame implements StatusBar {
 	 */
 	public void addKeyStore(KeyStore keyStore, File keyStoreFile, Password password) {
 		KeyStoreHistory history = new KeyStoreHistory(keyStore, keyStoreFile, password);
-
 		addKeyStoreHistory(history);
 	}
 

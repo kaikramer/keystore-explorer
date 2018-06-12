@@ -303,9 +303,15 @@ public class KeyStoreState {
 	 */
 	public KeyStoreState createBasisForNextState(HistoryAction action) throws CryptoException {
 		KeyStoreState copy = new KeyStoreState();
+		if (this.keyStore.getType().contains("Luna")) {
+			setAsSavedState();    // the new state is saved as well, as a Luna does not require a save command
+			copy.keyStore = this.keyStore; // a Luna is not really file based, so creating a new a load/store does not make sense
+		}
+		else	
+		{
+			copy.keyStore = KeyStoreUtil.copy(this.keyStore );
+		}
 		copy.history = this.history;
-		copy.keyStore = KeyStoreUtil.copy(this.keyStore);
-
 		if (this.password != null) {
 			copy.password = new Password(this.password); // Copy as may be cleared
 		}
