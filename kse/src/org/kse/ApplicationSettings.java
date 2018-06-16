@@ -40,6 +40,7 @@ import javax.swing.JTabbedPane;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.secretkey.SecretKeyType;
+import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
 import org.kse.utilities.StringUtils;
@@ -49,7 +50,6 @@ import org.kse.utilities.net.PacProxySelector;
 import org.kse.utilities.net.ProxyAddress;
 import org.kse.utilities.net.ProxyConfigurationType;
 import org.kse.utilities.net.SystemProxySelector;
-
 /**
  * KSE Application settings. Load, save and provide access to the various
  * application settings. Settings persist to Java preferences.
@@ -105,6 +105,8 @@ public class ApplicationSettings {
 	private static final String KSE3_AUTO_UPDATE_CHECK_INTERVAL = "kse3.autoupdatecheckinterval";
 	private static final String KSE3_PKCS11_LIBS = "kse3.pkcs11libs";
 	private static final String KSE3_LANGUAGE = "kse3.locale";
+	private static final String KSE3_EXPIRY_WARN_DAYS = "kse3.expirywarndays";
+	private static final String KSE3_COLUMNS = "kse3.columns";
 
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -139,6 +141,8 @@ public class ApplicationSettings {
 	private int autoUpdateCheckInterval;
 	private String p11Libs;
 	private String language;
+	private KeyStoreTableColumns kstColumns = new KeyStoreTableColumns();
+	private int expiryWarnDays;
 
 	private ApplicationSettings() {
 
@@ -344,6 +348,13 @@ public class ApplicationSettings {
 
 		// language
 		language = preferences.get(KSE3_LANGUAGE, SYSTEM_LANGUAGE);
+		
+		// displayed columns
+		kstColumns.setColumns(preferences.getInt(KSE3_COLUMNS, 0x1F));
+		
+		// number of days before expiration warning is shown
+		expiryWarnDays = preferences.getInt(KSE3_EXPIRY_WARN_DAYS, 0);
+		kstColumns.setExpiryWarnDays(expiryWarnDays);
 	}
 
 	private File cleanFilePath(File filePath) {
@@ -444,6 +455,12 @@ public class ApplicationSettings {
 
 		// language
 		preferences.put(KSE3_LANGUAGE, language);
+		
+		// table columns
+		preferences.putInt(KSE3_COLUMNS, kstColumns.getColumns());
+		
+		// expiration warning
+		preferences.putInt(KSE3_EXPIRY_WARN_DAYS, kstColumns.getExpiryWarnDays());
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
@@ -788,5 +805,21 @@ public class ApplicationSettings {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+	
+	public KeyStoreTableColumns getKeyStoreTableColumns() {
+		return this.kstColumns;	
+	}
+	
+	public  void setKeyStoreTableColumns(KeyStoreTableColumns kstColumns) {
+		this.kstColumns = kstColumns;	
+	}
+	
+	public int getExpiryWarndays() {
+		return expiryWarnDays;
+	}
+
+	public void setExpiryWarndays(int expiryWarnDays) {
+		this.expiryWarnDays = expiryWarnDays;
 	}
 }
