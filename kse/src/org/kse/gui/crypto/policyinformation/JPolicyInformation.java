@@ -49,7 +49,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.PolicyInformation;
@@ -163,7 +162,7 @@ public class JPolicyInformation extends JPanel {
 		PolicyInformationTableModel policyInformationTableModel = new PolicyInformationTableModel();
 		jtPolicyInformation = new JKseTable(policyInformationTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(policyInformationTableModel);
+		TableRowSorter<PolicyInformationTableModel> sorter = new TableRowSorter<>(policyInformationTableModel);
 		sorter.setComparator(0, new PolicyInformationTableModel.PolicyInformationComparator());
 		jtPolicyInformation.setRowSorter(sorter);
 

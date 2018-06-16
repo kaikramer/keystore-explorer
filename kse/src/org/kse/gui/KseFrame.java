@@ -87,7 +87,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.ApplicationSettings;
@@ -1530,7 +1529,7 @@ public final class KseFrame implements StatusBar {
 		KeyStoreTableModel ksModel = new KeyStoreTableModel();
 		final JTable jtKeyStore = new JKseTable(ksModel);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<>(ksModel);
+		RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
 		jtKeyStore.setRowSorter(sorter);
 
 		jtKeyStore.setShowGrid(false);

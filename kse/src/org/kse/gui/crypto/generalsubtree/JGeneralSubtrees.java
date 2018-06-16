@@ -47,7 +47,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.GeneralSubtree;
@@ -161,7 +160,7 @@ public class JGeneralSubtrees extends JPanel {
 		GeneralSubtreesTableModel generalSubtreesTableModel = new GeneralSubtreesTableModel();
 		jtGeneralSubtrees = new JKseTable(generalSubtreesTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(generalSubtreesTableModel);
+		TableRowSorter<GeneralSubtreesTableModel> sorter = new TableRowSorter<>(generalSubtreesTableModel);
 		sorter.setComparator(0, new GeneralSubtreesTableModel.GeneralSubtreeBaseComparator());
 		sorter.setComparator(1, new GeneralSubtreesTableModel.GeneralSubtreeMinimumComparator());
 		sorter.setComparator(2, new GeneralSubtreesTableModel.GeneralSubtreeMaximumComparator());

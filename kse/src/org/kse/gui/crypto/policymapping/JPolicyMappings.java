@@ -46,7 +46,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.CertPolicyId;
@@ -162,7 +161,7 @@ public class JPolicyMappings extends JPanel {
 		PolicyMappingsTableModel policyMappingsTableModel = new PolicyMappingsTableModel();
 		jtPolicyMappings = new JKseTable(policyMappingsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(policyMappingsTableModel);
+		TableRowSorter<PolicyMappingsTableModel> sorter = new TableRowSorter<>(policyMappingsTableModel);
 		sorter.setComparator(0, new PolicyMappingsTableModel.IssuerDomainPolicyComparator());
 		sorter.setComparator(1, new PolicyMappingsTableModel.SubjectDomainPolicyComparator());
 		jtPolicyMappings.setRowSorter(sorter);

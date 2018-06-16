@@ -62,7 +62,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.crypto.x509.X500NameUtils;
@@ -258,7 +257,7 @@ public class DViewCrl extends JEscDialog {
 
 		jtRevokedCerts = new JKseTable(rcModel);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<>(rcModel);
+		RowSorter<RevokedCertsTableModel> sorter = new TableRowSorter<>(rcModel);
 		jtRevokedCerts.setRowSorter(sorter);
 
 		jtRevokedCerts.setShowGrid(false);

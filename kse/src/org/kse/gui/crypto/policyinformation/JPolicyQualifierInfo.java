@@ -49,7 +49,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
@@ -163,7 +162,7 @@ public class JPolicyQualifierInfo extends JPanel {
 		PolicyQualifierInfoTableModel policyQualifierInfoTableModel = new PolicyQualifierInfoTableModel();
 		jtPolicyQualifierInfo = new JKseTable(policyQualifierInfoTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(policyQualifierInfoTableModel);
+		TableRowSorter<PolicyQualifierInfoTableModel> sorter = new TableRowSorter<>(policyQualifierInfoTableModel);
 		sorter.setComparator(0, new PolicyQualifierInfoTableModel.PolicyQualifierInfoComparator());
 		jtPolicyQualifierInfo.setRowSorter(sorter);
 

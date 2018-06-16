@@ -48,7 +48,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.AccessDescription;
@@ -161,7 +160,7 @@ public class JAccessDescriptions extends JPanel {
 		AccessDescriptionsTableModel accessDescriptionsTableModel = new AccessDescriptionsTableModel();
 		jtAccessDescriptions = new JKseTable(accessDescriptionsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(accessDescriptionsTableModel);
+		TableRowSorter<AccessDescriptionsTableModel> sorter = new TableRowSorter<>(accessDescriptionsTableModel);
 		sorter.setComparator(0, new AccessDescriptionsTableModel.AccessDescriptionMethodComparator());
 		sorter.setComparator(1, new AccessDescriptionsTableModel.AccessDescriptionLocationComparator());
 		jtAccessDescriptions.setRowSorter(sorter);

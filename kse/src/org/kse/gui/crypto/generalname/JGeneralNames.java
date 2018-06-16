@@ -46,7 +46,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -158,7 +157,7 @@ public class JGeneralNames extends JPanel {
 		GeneralNamesTableModel generalNamesTableModel = new GeneralNamesTableModel();
 		jtGeneralNames = new JKseTable(generalNamesTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(generalNamesTableModel);
+		TableRowSorter<GeneralNamesTableModel> sorter = new TableRowSorter<>(generalNamesTableModel);
 		sorter.setComparator(0, new GeneralNamesTableModel.GeneralNameComparator());
 		jtGeneralNames.setRowSorter(sorter);
 
