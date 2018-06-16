@@ -66,7 +66,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -273,7 +272,7 @@ public class DAddExtensions extends JEscDialog {
 		ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
 		jtExtensions = new JKseTable(extensionsTableModel);
 
-		TableRowSorter<TableModel> sorter = new TableRowSorter<>(extensionsTableModel);
+		TableRowSorter<ExtensionsTableModel> sorter = new TableRowSorter<>(extensionsTableModel);
 		sorter.setComparator(2, new ObjectIdComparator());
 		jtExtensions.setRowSorter(sorter);
 

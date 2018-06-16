@@ -37,7 +37,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.gui.JEscDialog;
@@ -95,7 +94,7 @@ public class DSystemProperties extends JEscDialog {
 		jtSystemProperties.getTableHeader().setReorderingAllowed(false);
 		jtSystemProperties.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
-		RowSorter<TableModel> sorter = new TableRowSorter<>(spModel);
+		RowSorter<SystemPropertiesTableModel> sorter = new TableRowSorter<>(spModel);
 		jtSystemProperties.setRowSorter(sorter);
 
 		for (int i = 0; i < jtSystemProperties.getColumnCount(); i++) {
