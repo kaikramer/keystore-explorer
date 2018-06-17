@@ -48,7 +48,8 @@ public enum KeyStoreType {
 	MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
 	MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
 	PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
-	BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS);
+	BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS),
+	LUNA("Luna","KeyStoreType.Luna",true,null);
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
 	private String jce;
@@ -105,7 +106,7 @@ public enum KeyStoreType {
 	 * @return True if private keys are exportable, false otherwise
 	 */
 	public boolean hasExportablePrivateKeys() {
-		return this != PKCS11 && this != MS_CAPI_PERSONAL;
+		return this != PKCS11 && this != MS_CAPI_PERSONAL  && this != LUNA;
 	}
 
 	/**

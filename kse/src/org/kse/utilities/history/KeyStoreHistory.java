@@ -55,7 +55,7 @@ public class KeyStoreHistory {
 
 		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-		if (type.isFileBased()) {
+		if ((type.isFileBased()) && (type.getCryptoFileType() != null)) { // The Luna is file based, but does not store its data there
 			initialState = new KeyStoreState(this, keyStore, password);
 		} else {
 			// we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike

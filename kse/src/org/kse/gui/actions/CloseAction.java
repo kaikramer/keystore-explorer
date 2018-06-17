@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.KseFrame;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -115,7 +116,7 @@ public class CloseAction extends SaveAction {
 
 	private boolean needSave(KeyStoreState state) {
 		if (state != null) {
-			if (!state.isSavedState() && !state.isInitialState()) {
+			if (!state.isSavedState() && !state.isInitialState() && !(state.getType() == KeyStoreType.LUNA)) {
 				return true;
 			}
 		}

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2018 Kai Kramer           2013 - 2018 Kai Kramer
+ *           2013 - 2018 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,6 +25,7 @@ import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
 import static org.kse.crypto.keystore.KeyStoreType.JKS;
 import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
+import static org.kse.crypto.keystore.KeyStoreType.UBER;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -50,6 +51,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -219,6 +221,7 @@ public final class KseFrame implements StatusBar {
 	private static int iFontSize = (int) (LnfUtil.getDefaultFontSize() * FF);
 	private int autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS;
 	private static final int ICON_SIZE = 28;
+	private boolean bLuna;
 
 
 	//
@@ -233,6 +236,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiOpenCaCertificatesKeyStore;
 	private JMenuItem jmiOpenPkcs11KeyStore;
 	private JMenuItem jmiOpenMsCapiKeyStore;
+	private JMenuItem jmiOpenLunaKeyStore;
 	private JMenuItem jmiClose;
 	private JMenuItem jmiCloseAll;
 	private JMenuItem jmiSave;
@@ -520,6 +524,7 @@ public final class KseFrame implements StatusBar {
 	private static final String RENAME_KEY = "RENAME_KEY";
 
 	KseFrame() {
+		bLuna = (Security.getProviders("KeyStore.Luna") != null);
 		initComponents();
 	}
 
@@ -2376,6 +2381,7 @@ public final class KseFrame implements StatusBar {
 								passwords[index] = currentState.previousState().getPassword().toCharArray();
 							}
 						}
+						// FIXME why save here???
 						if (!currentState.isSavedState()) {
 							new SaveAction(this).saveKeyStore(histories[index]);
 						}
@@ -2642,7 +2648,10 @@ public final class KseFrame implements StatusBar {
 		if (type.isFileBased()) {
 			saveAsAction.setEnabled(true);
 		}
-
+		if ( type == KeyStoreType.LUNA) {
+			saveAsAction.setEnabled(false);
+			saveAction.setEnabled(false);
+		}
 		// May be able to undo/redo
 		updateUndoRedoControls(currentState);
 
@@ -2678,7 +2687,7 @@ public final class KseFrame implements StatusBar {
 		}
 
 		// Special restrictions for MSCAPI and PKCS#11 type
-		if (type == KeyStoreType.MS_CAPI_PERSONAL || type == KeyStoreType.PKCS11) {
+		if (type == KeyStoreType.MS_CAPI_PERSONAL || type == KeyStoreType.PKCS11 || type == KeyStoreType.LUNA) {
 
 			keyPairPrivateKeyDetailsAction.setEnabled(false);
 			keyDetailsAction.setEnabled(false);
@@ -2736,9 +2745,11 @@ public final class KseFrame implements StatusBar {
 			} else if (type == BCFKS) {
 				jrbmiChangeTypeBcfks.setSelected(true);
 				jrbmiKeyStoreChangeTypeBcfks.setSelected(true);
-			} else {
+			} else if (type == UBER) {
 				jrbmiChangeTypeUber.setSelected(true);
 				jrbmiKeyStoreChangeTypeUber.setSelected(true);
+			} else { // a Luna keystore is not really file based
+				jmKeyStoreChangeType.setEnabled(false);
 			}
 		} else {
 			jmKeyStoreChangeType.setEnabled(false);
