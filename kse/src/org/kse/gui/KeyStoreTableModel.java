@@ -40,7 +40,6 @@ import java.util.TreeMap;
 
 import javax.crypto.SecretKey;
 import javax.swing.table.AbstractTableModel;
-import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.x500.RDN;
@@ -512,7 +511,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			x509Cert = x509Chain[0];
 		}
 		try {
-			String ski = DatatypeConverter.printHexBinary(x509Cert.getExtensionValue("2.5.29.14"));
+			String ski = Hex.toHexString(x509Cert.getExtensionValue("2.5.29.14"));
 			return ski.substring(8); // remove object header 04160414
 		} catch (Exception e) {
 			return "-";
