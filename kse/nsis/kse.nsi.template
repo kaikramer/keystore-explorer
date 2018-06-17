@@ -30,8 +30,15 @@
 ; Includes
 ;--------------------------------
 
+; MultiUser
+!define MULTIUSER_EXECUTIONLEVEL Highest
+!define MULTIUSER_MUI
+!define MULTIUSER_INSTALLMODE_COMMANDLINE
+!define MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER 
+!include MultiUser.nsh
+
 ; Modern interface
-!include "MUI.nsh"
+!include "MUI2.nsh"
 
 ;--------------------------------
 ; Globals
@@ -147,6 +154,7 @@ ShowUninstDetails Show
 ; Install
 
 !insertmacro MUI_PAGE_WELCOME
+!insertmacro MULTIUSER_PAGE_INSTALLMODE
 Page custom fileAssociationsPage "" ": File Associations"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -313,6 +321,8 @@ SectionEnd
 ;
 Function .onInit
 
+	!insertmacro MULTIUSER_INIT
+
     StrCpy ${KSJKS_FILE_ASSOC} 1
     StrCpy ${PKCS12_FILE_ASSOC} 1
     StrCpy ${KSBC_FILE_ASSOC} 1
@@ -358,4 +368,8 @@ Function RefreshShellIcons
   System::Call 'shell32.dll::SHChangeNotify(l, l, i, i) v \
   (${SHCNE_ASSOCCHANGED}, ${SHCNF_IDLIST}, 0, 0)'
 
+FunctionEnd
+
+Function un.onInit
+  !insertmacro MULTIUSER_UNINIT
 FunctionEnd
