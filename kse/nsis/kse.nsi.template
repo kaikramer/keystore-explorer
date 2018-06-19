@@ -20,12 +20,6 @@
 ;
 ;========================================================================
 
-;=================================;
-;                                 ;
-;  Install for Key Store Explorer ;
-;                                 ;
-;=================================;
-
 ;--------------------------------
 ; Includes
 ;--------------------------------
@@ -53,7 +47,7 @@
 !define VERSION "%KSE_VERSION%"
 !define SIMPLE_VERSION "%KSE_SIMPLE_VERSION%"
 
-; Product key (name and version)
+; Product key (used to be name _and_ version before KSE 5.4.0)
 !define PRODUCT_KEY "${PRODUCT}"
 
 ; AppUserModelId (see http://stackoverflow.com/questions/5438651/launch4j-nsis-and-duplicate-pinned-windows-7-taskbar-icons)
@@ -208,20 +202,20 @@ Section "${PRODUCT}"
 
     ; Write the uninstall keys for Windows
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayName" "${PRODUCT_KEY}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "UninstallString" "$INSTDIR\${UNINSTALL_EXE}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "UninstallString" "$INSTDIR\${UNINSTALL_EXE} /$MultiUser.InstallMode"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayIcon" "$INSTDIR\${KSE_ICO}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "Publisher" "Kai Kramer"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayVersion" "${VERSION}"
 	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "EstimatedSize" 10700 ;KB
 	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "NoModify" 1
 	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "NoRepair" 1
-
+	
     ; Create uninstall
     WriteUninstaller "${UNINSTALL_EXE}"
 
     ; Create program shortcuts to KeyStore Explorer, KeyStore Explorer home page and the uninstall
     CreateDirectory "$SMPROGRAMS\${PRODUCT_KEY}"
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Uninstall.lnk" "$INSTDIR\${UNINSTALL_EXE}" "" "$INSTDIR\${UNINSTALL_EXE}" 0
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Uninstall.lnk" "$INSTDIR\${UNINSTALL_EXE}" "/$MultiUser.InstallMode" "$INSTDIR\${UNINSTALL_EXE}" 0
     CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Visit Website.lnk" "${HOME_PAGE_ADDRESS}" "" "$INSTDIR\${WWW_ICO}" 0
     CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Licenses.lnk" "$INSTDIR\licenses" "" "$INSTDIR\${LICENSES_ICO}" 0
     CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\${PRODUCT_KEY}.lnk" "$INSTDIR\${KSE_EXE}" "" "$INSTDIR\${KSE_EXE}" 0
