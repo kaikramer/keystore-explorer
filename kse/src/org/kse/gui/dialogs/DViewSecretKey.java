@@ -19,16 +19,15 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
+import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -37,19 +36,24 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
+import javax.swing.UIManager;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.gui.JEscDialog;
+import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the details of a secret key.
@@ -60,7 +64,6 @@ public class DViewSecretKey extends JEscDialog {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private JPanel jpSecretKey;
 	private JLabel jlAlgorithm;
 	private JTextField jtfAlgorithm;
 	private JLabel jlKeySize;
@@ -68,8 +71,8 @@ public class DViewSecretKey extends JEscDialog {
 	private JLabel jlFormat;
 	private JTextField jtfFormat;
 	private JLabel jlEncoded;
-	private JTextField jtfEncoded;
-	private JPanel jpButtons;
+	private JTextArea jtaEncoded;
+	private JScrollPane jspEncoded;
 	private JButton jbOK;
 
 	private SecretKey secretKey;
@@ -83,10 +86,8 @@ public class DViewSecretKey extends JEscDialog {
 	 *            The dialog title
 	 * @param secretKey
 	 *            Secret key to display
-	 * @throws CryptoException
-	 *             A problem was encountered getting the secret key's details
 	 */
-	public DViewSecretKey(JFrame parent, String title, SecretKey secretKey) throws CryptoException {
+	public DViewSecretKey(JFrame parent, String title, SecretKey secretKey) {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.secretKey = secretKey;
 		initComponents();
@@ -113,85 +114,63 @@ public class DViewSecretKey extends JEscDialog {
 		initComponents();
 	}
 
-	private void initComponents() throws CryptoException {
-		GridBagConstraints gbcLbl = new GridBagConstraints();
-		gbcLbl.gridx = 0;
-		gbcLbl.gridwidth = 1;
-		gbcLbl.gridheight = 1;
-		gbcLbl.insets = new Insets(5, 5, 5, 5);
-		gbcLbl.anchor = GridBagConstraints.EAST;
-
-		GridBagConstraints gbcTf = new GridBagConstraints();
-		gbcTf.gridx = 1;
-		gbcTf.gridwidth = 1;
-		gbcTf.gridheight = 1;
-		gbcTf.insets = new Insets(5, 5, 5, 5);
-		gbcTf.anchor = GridBagConstraints.WEST;
+	private void initComponents() {
 
 		jlAlgorithm = new JLabel(res.getString("DViewSecretKey.jlAlgorithm.text"));
-		GridBagConstraints gbc_jlAlgorithm = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlAlgorithm.gridy = 0;
 
-		jtfAlgorithm = new JTextField(10);
+		jtfAlgorithm = new JTextField();
 		jtfAlgorithm.setEditable(false);
 		jtfAlgorithm.setToolTipText(res.getString("DViewSecretKey.jtfAlgorithm.tooltip"));
-		GridBagConstraints gbc_jtfAlgorithm = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfAlgorithm.gridy = 0;
 
 		jlKeySize = new JLabel(res.getString("DViewSecretKey.jlKeySize.text"));
-		GridBagConstraints gbc_jlKeySize = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlKeySize.gridy = 1;
 
-		jtfKeySize = new JTextField(10);
+		jtfKeySize = new JTextField();
 		jtfKeySize.setEditable(false);
 		jtfKeySize.setToolTipText(res.getString("DViewSecretKey.jtfKeySize.tooltip"));
-		GridBagConstraints gbc_jtfKeySize = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfKeySize.gridy = 1;
 
 		jlFormat = new JLabel(res.getString("DViewSecretKey.jlFormat.text"));
-		GridBagConstraints gbc_jlFormat = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlFormat.gridy = 2;
 
-		jtfFormat = new JTextField(10);
+		jtfFormat = new JTextField();
 		jtfFormat.setEditable(false);
 		jtfFormat.setToolTipText(res.getString("DViewSecretKey.jtfFormat.tooltip"));
-		GridBagConstraints gbc_jtfFormat = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfFormat.gridy = 2;
 
 		jlEncoded = new JLabel(res.getString("DViewSecretKey.jlEncoded.text"));
-		GridBagConstraints gbc_jlEncoded = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlEncoded.gridy = 3;
 
-		jtfEncoded = new JTextField(20);
-		jtfEncoded.setEditable(false);
-		jtfEncoded.setToolTipText(res.getString("DViewSecretKey.jtfEncoded.tooltip"));
-		GridBagConstraints gbc_jtfEncoded = (GridBagConstraints) gbcTf.clone();
-		gbc_jtfEncoded.gridy = 3;
+		jtaEncoded = new JTextArea();
+		jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+		jtaEncoded.setBackground(jtfFormat.getBackground());
+		jtaEncoded.setEditable(false);
+		jtaEncoded.setLineWrap(true);
+		jtaEncoded.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+		jtaEncoded.setToolTipText(res.getString("DViewSecretKey.jtfEncoded.tooltip"));
 
-		jpSecretKey = new JPanel(new GridBagLayout());
-		jpSecretKey.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-		jpSecretKey.add(jlAlgorithm, gbc_jlAlgorithm);
-		jpSecretKey.add(jtfAlgorithm, gbc_jtfAlgorithm);
-		jpSecretKey.add(jlKeySize, gbc_jlKeySize);
-		jpSecretKey.add(jtfKeySize, gbc_jtfKeySize);
-		jpSecretKey.add(jlFormat, gbc_jlFormat);
-		jpSecretKey.add(jtfFormat, gbc_jtfFormat);
-		jpSecretKey.add(jlEncoded, gbc_jlEncoded);
-		jpSecretKey.add(jtfEncoded, gbc_jtfEncoded);
+		jspEncoded = PlatformUtil.createScrollPane(jtaEncoded,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		jspEncoded.setBorder(jtfFormat.getBorder());
 
 		jbOK = new JButton(res.getString("DViewSecretKey.jbOK.text"));
+
+		// layout
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+		pane.add(jlAlgorithm, "");
+		pane.add(jtfAlgorithm, "growx, pushx, wrap");
+		pane.add(jlKeySize, "");
+		pane.add(jtfKeySize, "growx, pushx, wrap");
+		pane.add(jlFormat, "");
+		pane.add(jtfFormat, "growx, pushx, wrap");
+		pane.add(jlEncoded, "");
+		pane.add(jspEncoded, "width 260lp:260lp:260lp, height 50lp:50lp:50lp, wrap"); // sp determines dialog size
+		pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+		pane.add(jbOK, "spanx, tag ok");
+
 		jbOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
 			}
 		});
-
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK);
-
-		getContentPane().add(jpSecretKey, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		setResizable(false);
 
@@ -216,7 +195,7 @@ public class DViewSecretKey extends JEscDialog {
 		});
 	}
 
-	private void populateDialog() throws CryptoException {
+	private void populateDialog() {
 		KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
 
 		String algorithm = keyInfo.getAlgorithm();
@@ -240,8 +219,8 @@ public class DViewSecretKey extends JEscDialog {
 
 		jtfFormat.setText(secretKey.getFormat());
 
-		jtfEncoded.setText("0x" + new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase());
-		jtfEncoded.setCaretPosition(0);
+		jtaEncoded.setText(new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase());
+		jtaEncoded.setCaretPosition(0);
 	}
 
 	private void okPressed() {
@@ -251,5 +230,27 @@ public class DViewSecretKey extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick UI testing
+	public static void main(String[] args) throws Exception {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+		Security.addProvider(new BouncyCastleProvider());
+		final SecretKey secretKey = SecretKeyUtil.generateSecretKey(SecretKeyType.AES, 256);
+
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey);
+				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+					@Override
+					public void windowClosed(java.awt.event.WindowEvent e) {
+						System.exit(0);
+					}
+				});
+				dialog.setVisible(true);
+			}
+		});
 	}
 }
