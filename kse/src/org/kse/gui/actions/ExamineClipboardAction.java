@@ -176,7 +176,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 		if (certs != null && certs.length > 0) {
 			DViewCertificate dViewCertificate = new DViewCertificate(frame,
-					res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame, DViewCertificate.IMPORT);
+					res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame, DViewCertificate.IMPORT_EXPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);
 		}

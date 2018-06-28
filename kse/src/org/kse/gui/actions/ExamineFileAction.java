@@ -164,7 +164,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 		if ((certs != null) && (certs.length > 0)) {
 			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
 					res.getString("ExamineFileAction.CertDetailsFile.Title"), file.getName()),
-					certs, kseFrame, DViewCertificate.IMPORT);
+					certs, kseFrame, DViewCertificate.IMPORT_EXPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);
 		}
