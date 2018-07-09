@@ -22,10 +22,6 @@ package org.kse.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -54,10 +50,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
@@ -93,24 +91,20 @@ public class DPreferences extends JEscDialog {
 
 	private JTabbedPane jtpPreferences;
 	private JPanel jpAuthorityCertificates;
-	private JPanel jpCaCertificatesFile;
 	private JLabel jlCaCertificatesFile;
 	private JTextField jtfCaCertificatesFile;
 	private JButton jbBrowseCaCertificatesFile;
-	private JPanel jpUseCaCertificates;
 	private JCheckBox jcbUseCaCertificates;
-	private JPanel jpUseWinTrustedRootCertificates;
 	private JCheckBox jcbUseWinTrustedRootCertificates;
-	private JPanel jpTrustChecks;
 	private JLabel jlTrustChecks;
 	private JCheckBox jcbEnableImportTrustedCertTrustCheck;
 	private JCheckBox jcbEnableImportCaReplyTrustCheck;
-	private JPanel jpPasswordQuality;
+	private JLabel jlPasswordQuality;
 	private JCheckBox jcbEnablePasswordQuality;
 	private JCheckBox jcbEnforceMinimumPasswordQuality;
 	private JLabel jlMinimumPasswordQuality;
 	private JSlider jsMinimumPasswordQuality;
-	private JPanel jpLookFeel;
+	private JPanel jpUI;
 	private JLabel jlLookFeelNote;
 	private JLabel jlLookFeel;
 	private JComboBox<String> jcbLookFeel;
@@ -136,6 +130,11 @@ public class DPreferences extends JEscDialog {
 	private JRadioButton jrbAutomaticProxyConfig;
 	private JLabel jlPacUrl;
 	private JTextField jtfPacUrl;
+	private JLabel jlAutoUpdateChecks;
+	private JCheckBox jcbEnableAutoUpdateChecks;
+	private JSpinner jspAutoUpdateCheckInterval;
+	private JLabel jlAutoUpdateChecksDays;
+
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
@@ -150,13 +149,17 @@ public class DPreferences extends JEscDialog {
 	private boolean enableImportTrustedCertTrustCheck;
 	private boolean enableImportCaReplyTrustCheck;
 	private PasswordQualityConfig passwordQualityConfig;
-	private ArrayList<UIManager.LookAndFeelInfo> lookFeelInfoList = new ArrayList<UIManager.LookAndFeelInfo>();
+	private ArrayList<UIManager.LookAndFeelInfo> lookFeelInfoList = new ArrayList<>();
 	private UIManager.LookAndFeelInfo lookFeelInfo;
 	private boolean lookFeelDecorated;
 	private String language;
+	private boolean autoUpdateChecksEnabled;
+	private int autoUpdateChecksInterval;
 
 	private String defaultDN;
 	private boolean cancelled = false;
+
+
 
 	/**
 	 * Creates a new DPreferences dialog.
@@ -179,7 +182,7 @@ public class DPreferences extends JEscDialog {
 	public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
 			boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
 			boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
-			String defaultDN, String language) {
+			String defaultDN, String language, boolean autoUpdateChecksEnabled, int autoUpdateChecksInterval) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.useCaCertificates = useCaCertificates;
 		this.caCertificatesFile = caCertificatesFile;
@@ -189,14 +192,14 @@ public class DPreferences extends JEscDialog {
 		this.passwordQualityConfig = passwordQualityConfig;
 		this.defaultDN = defaultDN;
 		this.language = language;
+		this.autoUpdateChecksEnabled = autoUpdateChecksEnabled;
+		this.autoUpdateChecksInterval = autoUpdateChecksInterval;
 		initComponents();
 	}
 
 	private void initComponents() {
 		initAuthorityCertificatesTab();
-		initTrustChecksTab();
-		initPasswordQualityTab();
-		initLookFeelTab();
+		initUserInterfaceTab();
 		initInternetProxyTab();
 		initDefaultNameTab();
 
@@ -207,17 +210,9 @@ public class DPreferences extends JEscDialog {
 				.getResource(res.getString("DPreferences.jpAuthorityCertificates.image"))), jpAuthorityCertificates,
 				res.getString("DPreferences.jpAuthorityCertificates.tooltip"));
 
-		jtpPreferences.addTab(res.getString("DPreferences.jpTrustChecks.text"),
-				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpTrustChecks.image"))),
-				jpTrustChecks, res.getString("DPreferences.jpTrustChecks.tooltip"));
-
-		jtpPreferences.addTab(res.getString("DPreferences.jpPasswordQuality.text"), new ImageIcon(getClass()
-				.getResource(res.getString("DPreferences.jpPasswordQuality.image"))), jpPasswordQuality, res
-				.getString("DPreferences.jpPasswordQuality.tooltip"));
-
-		jtpPreferences.addTab(res.getString("DPreferences.jpLookFeel.text"),
-				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpLookFeel.image"))), jpLookFeel,
-				res.getString("DPreferences.jpLookFeel.tooltip"));
+		jtpPreferences.addTab(res.getString("DPreferences.jpUI.text"),
+				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpUI.image"))), jpUI,
+				res.getString("DPreferences.jpUI.tooltip"));
 
 		jtpPreferences.addTab(res.getString("DPreferences.jpInternetProxy.text"),
 				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpInternetProxy.image"))),
@@ -231,10 +226,9 @@ public class DPreferences extends JEscDialog {
 
 		if (!OperatingSystem.isMacOs()) {
 			jtpPreferences.setMnemonicAt(0, res.getString("DPreferences.jpAuthorityCertificates.mnemonic").charAt(0));
-			jtpPreferences.setMnemonicAt(1, res.getString("DPreferences.jpTrustChecks.mnemonic").charAt(0));
-			jtpPreferences.setMnemonicAt(2, res.getString("DPreferences.jpPasswordQuality.mnemonic").charAt(0));
-			jtpPreferences.setMnemonicAt(3, res.getString("DPreferences.jpLookFeel.mnemonic").charAt(0));
-			jtpPreferences.setMnemonicAt(4, res.getString("DPreferences.jpInternetProxy.mnemonic").charAt(0));
+			jtpPreferences.setMnemonicAt(1, res.getString("DPreferences.jpUI.mnemonic").charAt(0));
+			jtpPreferences.setMnemonicAt(2, res.getString("DPreferences.jpInternetProxy.mnemonic").charAt(0));
+			jtpPreferences.setMnemonicAt(3, res.getString("DPreferences.jpDefaultName.mnemonic").charAt(0));
 		}
 
 		jbOK = new JButton(res.getString("DPreferences.jbOK.text"));
@@ -290,24 +284,63 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private void initAuthorityCertificatesTab() {
-		jcbUseCaCertificates = new JCheckBox(res.getString("DPreferences.jcbUseCaCertificates.text"), useCaCertificates);
-		jcbUseCaCertificates.setToolTipText(res.getString("DPreferences.jcbUseCaCertificates.tooltip"));
-		PlatformUtil.setMnemonic(jcbUseCaCertificates, res.getString("DPreferences.jcbUseCaCertificates.mnemonic")
-				.charAt(0));
 
 		jlCaCertificatesFile = new JLabel(res.getString("DPreferences.jlCaCertificatesFile.text"));
 		jtfCaCertificatesFile = new JTextField(caCertificatesFile.toString(), 25);
 		jtfCaCertificatesFile.setToolTipText(res.getString("DPreferences.jtfCaCertificatesFile.tooltip"));
 		jtfCaCertificatesFile.setCaretPosition(0);
 		jtfCaCertificatesFile.setEditable(false);
-		jpCaCertificatesFile = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpCaCertificatesFile.add(jlCaCertificatesFile);
-		jpCaCertificatesFile.add(jtfCaCertificatesFile);
 
 		jbBrowseCaCertificatesFile = new JButton(res.getString("DPreferences.jbBrowseCaCertificatesFile.text"));
 		PlatformUtil.setMnemonic(jbBrowseCaCertificatesFile,
 				res.getString("DPreferences.jbBrowseCaCertificatesFile.mnemonic").charAt(0));
 		jbBrowseCaCertificatesFile.setToolTipText(res.getString("DPreferences.jbBrowseCaCertificatesFile.tooltip"));
+
+		jcbUseCaCertificates = new JCheckBox(res.getString("DPreferences.jcbUseCaCertificates.text"), useCaCertificates);
+		jcbUseCaCertificates.setToolTipText(res.getString("DPreferences.jcbUseCaCertificates.tooltip"));
+		PlatformUtil.setMnemonic(jcbUseCaCertificates, res.getString("DPreferences.jcbUseCaCertificates.mnemonic")
+				.charAt(0));
+
+		jcbUseWinTrustedRootCertificates = new JCheckBox(
+				res.getString("DPreferences.jcbUseWinTrustRootCertificates.text"), useWinTrustRootCertificates);
+		jcbUseWinTrustedRootCertificates.setToolTipText(res
+				.getString("DPreferences.jcbUseWinTrustRootCertificates.tooltip"));
+		PlatformUtil.setMnemonic(jcbUseWinTrustedRootCertificates,
+				res.getString("DPreferences.jcbUseWinTrustRootCertificates.menmonic").charAt(0));
+
+
+		jlTrustChecks = new JLabel(res.getString("DPreferences.jlTrustChecks.text"));
+
+		jcbEnableImportTrustedCertTrustCheck = new JCheckBox(
+				res.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.text"),
+				enableImportTrustedCertTrustCheck);
+		jcbEnableImportTrustedCertTrustCheck.setToolTipText(res
+				.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.tooltip"));
+		jcbEnableImportTrustedCertTrustCheck.setMnemonic(res.getString(
+				"DPreferences.jcbEnableImportTrustedCertTrustCheck.mnemonic").charAt(0));
+
+		jcbEnableImportCaReplyTrustCheck = new JCheckBox(
+				res.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.text"), enableImportCaReplyTrustCheck);
+		jcbEnableImportCaReplyTrustCheck.setToolTipText(res
+				.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.tooltip"));
+		jcbEnableImportCaReplyTrustCheck.setMnemonic(res.getString(
+				"DPreferences.jcbEnableImportCaReplyTrustCheck.mnemonic").charAt(0));
+
+		// layout
+		jpAuthorityCertificates = new JPanel();
+		jpAuthorityCertificates.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
+		jpAuthorityCertificates.add(jlCaCertificatesFile, "split");
+		jpAuthorityCertificates.add(jtfCaCertificatesFile, "");
+		jpAuthorityCertificates.add(jbBrowseCaCertificatesFile, "wrap rel");
+		jpAuthorityCertificates.add(jcbUseCaCertificates, "wrap rel");
+		if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
+			jpAuthorityCertificates.add(jcbUseWinTrustedRootCertificates, "wrap para");
+		}
+		jpAuthorityCertificates.add(jlTrustChecks, "wrap unrel");
+		jpAuthorityCertificates.add(jcbEnableImportTrustedCertTrustCheck, "wrap rel");
+		jpAuthorityCertificates.add(jcbEnableImportCaReplyTrustCheck, "wrap unrel");
+
+
 		jbBrowseCaCertificatesFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -319,127 +352,43 @@ public class DPreferences extends JEscDialog {
 				}
 			}
 		});
-		jpCaCertificatesFile.add(jbBrowseCaCertificatesFile);
-
-		GridBagConstraints gbcCaCertificatesFile = new GridBagConstraints();
-		gbcCaCertificatesFile.gridx = 0;
-		gbcCaCertificatesFile.gridwidth = 1;
-		gbcCaCertificatesFile.gridy = 0;
-		gbcCaCertificatesFile.gridheight = 1;
-		gbcCaCertificatesFile.anchor = GridBagConstraints.WEST;
-
-		jpUseCaCertificates = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpUseCaCertificates.add(jcbUseCaCertificates);
-
-		GridBagConstraints gbcUseCaCertificates = new GridBagConstraints();
-		gbcUseCaCertificates.gridx = 0;
-		gbcUseCaCertificates.gridwidth = 1;
-		gbcUseCaCertificates.gridy = 1;
-		gbcUseCaCertificates.gridheight = 1;
-		gbcUseCaCertificates.anchor = GridBagConstraints.WEST;
-
-		jpAuthorityCertificates = new JPanel(new GridBagLayout());
-		jpAuthorityCertificates.add(jpCaCertificatesFile, gbcCaCertificatesFile);
-		jpAuthorityCertificates.add(jpUseCaCertificates, gbcUseCaCertificates);
-
-		if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
-			jcbUseWinTrustedRootCertificates = new JCheckBox(
-					res.getString("DPreferences.jcbUseWinTrustRootCertificates.text"), useWinTrustRootCertificates);
-			jcbUseWinTrustedRootCertificates.setToolTipText(res
-					.getString("DPreferences.jcbUseWinTrustRootCertificates.tooltip"));
-			PlatformUtil.setMnemonic(jcbUseWinTrustedRootCertificates,
-					res.getString("DPreferences.jcbUseWinTrustRootCertificates.menmonic").charAt(0));
-
-			jpUseWinTrustedRootCertificates = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			jpUseWinTrustedRootCertificates.add(jcbUseWinTrustedRootCertificates);
-
-			GridBagConstraints gbcUseWinTrustRootCertificates = new GridBagConstraints();
-			gbcUseWinTrustRootCertificates.gridx = 0;
-			gbcUseWinTrustRootCertificates.gridwidth = 1;
-			gbcUseWinTrustRootCertificates.gridy = 2;
-			gbcUseWinTrustRootCertificates.gridheight = 1;
-			gbcUseWinTrustRootCertificates.anchor = GridBagConstraints.WEST;
-
-			jpAuthorityCertificates.add(jpUseWinTrustedRootCertificates, gbcUseWinTrustRootCertificates);
-		}
-
-		jpAuthorityCertificates.setBorder(new EmptyBorder(10, 10, 10, 10));
 	}
 
-	private void initTrustChecksTab() {
-		jlTrustChecks = new JLabel(res.getString("DPreferences.jlTrustChecks.text"));
+	private void initUserInterfaceTab() {
 
-		GridBagConstraints gbc_jlTrustChecks = new GridBagConstraints();
-		gbc_jlTrustChecks.gridx = 0;
-		gbc_jlTrustChecks.gridwidth = 1;
-		gbc_jlTrustChecks.gridy = 0;
-		gbc_jlTrustChecks.gridheight = 1;
-		gbc_jlTrustChecks.anchor = GridBagConstraints.WEST;
-		gbc_jlTrustChecks.insets = new Insets(5, 5, 0, 0);
+		jlLookFeelNote = new JLabel(res.getString("DPreferences.jlLookFeelNote.text"));
+		jlLookFeel = new JLabel(res.getString("DPreferences.jlLookFeel.text"));
 
-		jcbEnableImportTrustedCertTrustCheck = new JCheckBox(
-				res.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.text"),
-				enableImportTrustedCertTrustCheck);
-		jcbEnableImportTrustedCertTrustCheck.setToolTipText(res
-				.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.tooltip"));
-		jcbEnableImportTrustedCertTrustCheck.setMnemonic(res.getString(
-				"DPreferences.jcbEnableImportTrustedCertTrustCheck.mnemonic").charAt(0));
+		jcbLookFeel = new JComboBox<>();
+		jcbLookFeel.setToolTipText(res.getString("DPreferences.jcbLookFeel.tooltip"));
 
-		GridBagConstraints gbc_jcbEnableImportTrustedCertTrustCheck = new GridBagConstraints();
-		gbc_jcbEnableImportTrustedCertTrustCheck.gridx = 0;
-		gbc_jcbEnableImportTrustedCertTrustCheck.gridwidth = 1;
-		gbc_jcbEnableImportTrustedCertTrustCheck.gridy = 1;
-		gbc_jcbEnableImportTrustedCertTrustCheck.gridheight = 1;
-		gbc_jcbEnableImportTrustedCertTrustCheck.anchor = GridBagConstraints.WEST;
-		gbc_jcbEnableImportTrustedCertTrustCheck.insets = new Insets(5, 5, 0, 0);
+		initLookAndFeelSelection();
 
-		jcbEnableImportCaReplyTrustCheck = new JCheckBox(
-				res.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.text"), enableImportCaReplyTrustCheck);
-		jcbEnableImportCaReplyTrustCheck.setToolTipText(res
-				.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.tooltip"));
-		jcbEnableImportCaReplyTrustCheck.setMnemonic(res.getString(
-				"DPreferences.jcbEnableImportCaReplyTrustCheck.mnemonic").charAt(0));
+		jcbLookFeelDecorated = new JCheckBox(res.getString("DPreferences.jcbLookFeelDecorated.text"),
+				JFrame.isDefaultLookAndFeelDecorated());
+		jcbLookFeelDecorated.setToolTipText(res.getString("DPreferences.jcbLookFeelDecorated.tooltip"));
+		PlatformUtil.setMnemonic(jcbLookFeelDecorated, res.getString("DPreferences.jcbLookFeelDecorated.menmonic")
+				.charAt(0));
 
-		GridBagConstraints gbc_jcbEnableImportCaReplyTrustCheck = new GridBagConstraints();
-		gbc_jcbEnableImportCaReplyTrustCheck.gridx = 0;
-		gbc_jcbEnableImportCaReplyTrustCheck.gridwidth = 1;
-		gbc_jcbEnableImportCaReplyTrustCheck.gridy = 2;
-		gbc_jcbEnableImportCaReplyTrustCheck.gridheight = 1;
-		gbc_jcbEnableImportCaReplyTrustCheck.anchor = GridBagConstraints.WEST;
-		gbc_jcbEnableImportCaReplyTrustCheck.insets = new Insets(5, 5, 0, 0);
+		jlLanguage = new JLabel(res.getString("DPreferences.jlLanguage.text"));
 
-		jpTrustChecks = new JPanel(new GridBagLayout());
+		jcbLanguage = new JComboBox<>();
+		jcbLanguage.setToolTipText(res.getString("DPreferences.jcbLanguage.tooltip"));
+		initLanguageSelection();
 
-		jpTrustChecks.add(jlTrustChecks, gbc_jlTrustChecks);
-		jpTrustChecks.add(jcbEnableImportTrustedCertTrustCheck, gbc_jcbEnableImportTrustedCertTrustCheck);
-		jpTrustChecks.add(jcbEnableImportCaReplyTrustCheck, gbc_jcbEnableImportCaReplyTrustCheck);
+		jlAutoUpdateChecks = new JLabel(res.getString("DPreferences.jlAutoUpdateChecks.text"));
+		jcbEnableAutoUpdateChecks = new JCheckBox(res.getString("DPreferences.jcbEnableAutoUpdateChecks.text"));
+		jcbEnableAutoUpdateChecks.setSelected(autoUpdateChecksEnabled);
+		SpinnerNumberModel spinnerModel = new SpinnerNumberModel(autoUpdateChecksInterval, 1.0, 999.0, 1.0);
+		jspAutoUpdateCheckInterval = new JSpinner(spinnerModel);
+		jspAutoUpdateCheckInterval.setEnabled(autoUpdateChecksEnabled);
+		jlAutoUpdateChecksDays = new JLabel(res.getString("DPreferences.jlAutoUpdateChecksDays.text"));
 
-		jpTrustChecks.setBorder(new EmptyBorder(10, 10, 10, 10));
-	}
+		jlPasswordQuality = new JLabel(res.getString("DPreferences.jpPasswordQuality.text"));
 
-	private void initPasswordQualityTab() {
 		jcbEnablePasswordQuality = new JCheckBox(res.getString("DPreferences.jcbEnablePasswordQuality.text"));
 		jcbEnablePasswordQuality.setMnemonic(res.getString("DPreferences.jcbEnablePasswordQuality.mnemonic").charAt(0));
 		jcbEnablePasswordQuality.setToolTipText(res.getString("DPreferences.jcbEnablePasswordQuality.tooltip"));
-
-		jcbEnablePasswordQuality.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jcbEnforceMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected());
-				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-				jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-			}
-		});
-
-		GridBagConstraints gbcEnablePasswordQuality = new GridBagConstraints();
-		gbcEnablePasswordQuality.gridx = 0;
-		gbcEnablePasswordQuality.gridwidth = 1;
-		gbcEnablePasswordQuality.gridy = 0;
-		gbcEnablePasswordQuality.gridheight = 1;
-		gbcEnablePasswordQuality.anchor = GridBagConstraints.WEST;
-		gbcEnablePasswordQuality.insets = new Insets(5, 5, 0, 0);
 
 		jcbEnforceMinimumPasswordQuality = new JCheckBox(
 				res.getString("DPreferences.jcbEnforceMinimumPasswordQuality.text"));
@@ -448,55 +397,12 @@ public class DPreferences extends JEscDialog {
 		jcbEnforceMinimumPasswordQuality.setToolTipText(res
 				.getString("DPreferences.jcbEnforceMinimumPasswordQuality.tooltip"));
 
-		jcbEnforceMinimumPasswordQuality.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-				jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-			}
-		});
-
-		GridBagConstraints gbcEnforceMinimumPasswordQuality = new GridBagConstraints();
-		gbcEnforceMinimumPasswordQuality.gridx = 0;
-		gbcEnforceMinimumPasswordQuality.gridwidth = 1;
-		gbcEnforceMinimumPasswordQuality.gridy = 1;
-		gbcEnforceMinimumPasswordQuality.gridheight = 1;
-		gbcEnforceMinimumPasswordQuality.anchor = GridBagConstraints.WEST;
-		gbcEnforceMinimumPasswordQuality.insets = new Insets(5, 30, 0, 0);
-
 		jlMinimumPasswordQuality = new JLabel(res.getString("DPreferences.jlMinimumPasswordQuality.text"));
-
-		GridBagConstraints gbcMinimumPasswordQualityLabel = new GridBagConstraints();
-		gbcMinimumPasswordQualityLabel.gridx = 0;
-		gbcMinimumPasswordQualityLabel.gridwidth = 1;
-		gbcMinimumPasswordQualityLabel.gridy = 2;
-		gbcMinimumPasswordQualityLabel.gridheight = 1;
-		gbcMinimumPasswordQualityLabel.anchor = GridBagConstraints.NORTHWEST;
-		gbcMinimumPasswordQualityLabel.insets = new Insets(10, 60, 0, 0);
 
 		jsMinimumPasswordQuality = new JSlider(0, 100);
 		jsMinimumPasswordQuality.setPaintLabels(true);
 		jsMinimumPasswordQuality.setMajorTickSpacing(25);
 		jsMinimumPasswordQuality.setToolTipText(res.getString("DPreferences.jsMinimumPasswordQuality.tooltip"));
-
-		GridBagConstraints gbcMinimumPasswordQualitySlider = new GridBagConstraints();
-		gbcMinimumPasswordQualitySlider.gridx = 1;
-		gbcMinimumPasswordQualitySlider.gridwidth = 1;
-		gbcMinimumPasswordQualitySlider.gridy = 2;
-		gbcMinimumPasswordQualitySlider.gridheight = 1;
-		gbcMinimumPasswordQualitySlider.anchor = GridBagConstraints.WEST;
-		gbcMinimumPasswordQualitySlider.insets = new Insets(5, 5, 0, 0);
-
-		jpPasswordQuality = new JPanel(new GridBagLayout());
-
-		jpPasswordQuality.add(jcbEnablePasswordQuality, gbcEnablePasswordQuality);
-		jpPasswordQuality.add(jcbEnforceMinimumPasswordQuality, gbcEnforceMinimumPasswordQuality);
-		jpPasswordQuality.add(jlMinimumPasswordQuality, gbcMinimumPasswordQualityLabel);
-		jpPasswordQuality.add(jsMinimumPasswordQuality, gbcMinimumPasswordQualitySlider);
-
-		jpPasswordQuality.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		boolean passwordQualityEnabled = passwordQualityConfig.getEnabled();
 		boolean passwordQualityEnforced = passwordQualityConfig.getEnforced();
@@ -510,21 +416,59 @@ public class DPreferences extends JEscDialog {
 
 		jlMinimumPasswordQuality.setEnabled(passwordQualityEnabled && passwordQualityEnforced);
 		jsMinimumPasswordQuality.setEnabled(passwordQualityEnabled && passwordQualityEnforced);
+
+		// layout
+		jpUI = new JPanel();
+		jpUI.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
+		jpUI.add(jlLookFeelNote, "split, span, wrap unrel");
+		jpUI.add(jlLookFeel, "");
+		jpUI.add(jcbLookFeel, "growx");
+		jpUI.add(jcbLookFeelDecorated, "wrap");
+		jpUI.add(jlLanguage, "");
+		jpUI.add(jcbLanguage, "growx, wrap unrel");
+		jpUI.add(jlAutoUpdateChecks, "spanx, split 4");
+		jpUI.add(jcbEnableAutoUpdateChecks, "");
+		jpUI.add(jspAutoUpdateCheckInterval, "");
+		jpUI.add(jlAutoUpdateChecksDays, "wrap unrel");
+		jpUI.add(jlPasswordQuality, "spanx, wrap");
+		jpUI.add(jcbEnablePasswordQuality, "spanx, wrap");
+		jpUI.add(jcbEnforceMinimumPasswordQuality, "spanx, gapx indent, wrap");
+		jpUI.add(jlMinimumPasswordQuality, "gapx 4*indent, top, spanx, split 3");
+		jpUI.add(jsMinimumPasswordQuality, "wrap");
+
+		jcbEnableAutoUpdateChecks.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected());
+			}
+		});
+
+		jcbEnablePasswordQuality.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				jcbEnforceMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected());
+				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+						&& jcbEnforceMinimumPasswordQuality.isSelected());
+				jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+						&& jcbEnforceMinimumPasswordQuality.isSelected());
+			}
+		});
+
+		jcbEnforceMinimumPasswordQuality.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+						&& jcbEnforceMinimumPasswordQuality.isSelected());
+				jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+						&& jcbEnforceMinimumPasswordQuality.isSelected());
+			}
+		});
 	}
 
-	private void initLookFeelTab() {
-
-		jlLookFeelNote = new JLabel(res.getString("DPreferences.jlLookFeelNote.text"));
-
-		jlLookFeel = new JLabel(res.getString("DPreferences.jlLookFeel.text"));
-		jcbLookFeel = new JComboBox<>();
-		jcbLookFeel.setToolTipText(res.getString("DPreferences.jcbLookFeel.tooltip"));
-
+	private void initLookAndFeelSelection() {
 		// This may contain duplicates
 		UIManager.LookAndFeelInfo[] lookFeelInfos = UIManager.getInstalledLookAndFeels();
-
 		LookAndFeel currentLookAndFeel = UIManager.getLookAndFeel();
-
 		TreeSet<String> lookFeelClasses = new TreeSet<>();
 
 		for (UIManager.LookAndFeelInfo lfi : lookFeelInfos) {
@@ -544,17 +488,9 @@ public class DPreferences extends JEscDialog {
 				}
 			}
 		}
+	}
 
-		jcbLookFeelDecorated = new JCheckBox(res.getString("DPreferences.jcbLookFeelDecorated.text"),
-				JFrame.isDefaultLookAndFeelDecorated());
-		jcbLookFeelDecorated.setToolTipText(res.getString("DPreferences.jcbLookFeelDecorated.tooltip"));
-		PlatformUtil.setMnemonic(jcbLookFeelDecorated, res.getString("DPreferences.jcbLookFeelDecorated.menmonic")
-				.charAt(0));
-
-		jlLanguage = new JLabel(res.getString("DPreferences.jlLanguage.text"));
-		jcbLanguage = new JComboBox<>();
-		jcbLanguage.setToolTipText(res.getString("DPreferences.jcbLanguage.tooltip"));
-
+	private void initLanguageSelection() {
 		LanguageItem[] languageItems = new LanguageItem[] {
 				new LanguageItem("System", ApplicationSettings.SYSTEM_LANGUAGE),
 				new LanguageItem("English", "en"),
@@ -567,16 +503,6 @@ public class DPreferences extends JEscDialog {
 				jcbLanguage.setSelectedItem(languageItem);
 			}
 		}
-
-		// layout
-		jpLookFeel = new JPanel();
-		jpLookFeel.setLayout(new MigLayout("insets dialog", "20lp[]rel[]rel[]", ""));
-		jpLookFeel.add(jlLookFeelNote, "left, span, wrap unrel");
-		jpLookFeel.add(jlLookFeel, "");
-		jpLookFeel.add(jcbLookFeel, "growx");
-		jpLookFeel.add(jcbLookFeelDecorated, "wrap");
-		jpLookFeel.add(jlLanguage, "");
-		jpLookFeel.add(jcbLanguage, "growx, wrap unrel");
 	}
 
 	private void initInternetProxyTab() {
@@ -649,24 +575,24 @@ public class DPreferences extends JEscDialog {
 
 		// layout
 		jpInternetProxy = new JPanel();
-		jpInternetProxy.setLayout(new MigLayout("insets dialog", "[20][]", ""));
+		jpInternetProxy.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
 		jpInternetProxy.add(jrbNoProxy, "left, span, wrap");
 		jpInternetProxy.add(jrbSystemProxySettings, "left, span, wrap");
 		jpInternetProxy.add(jrbManualProxyConfig, "left, span, wrap");
-		jpInternetProxy.add(jlHttpHost, "skip, right");
+		jpInternetProxy.add(jlHttpHost, "gap unrel, skip, right");
 		jpInternetProxy.add(jtfHttpHost, "");
 		jpInternetProxy.add(jlHttpPort, "gap unrel, right");
 		jpInternetProxy.add(jtfHttpPort, "wrap");
-		jpInternetProxy.add(jlHttpsHost, "skip, right");
+		jpInternetProxy.add(jlHttpsHost, "gap unrel, skip, right");
 		jpInternetProxy.add(jtfHttpsHost, "");
 		jpInternetProxy.add(jlHttpsPort, "gap unrel, right");
 		jpInternetProxy.add(jtfHttpsPort, "wrap");
-		jpInternetProxy.add(jlSocksHost, "skip, right");
+		jpInternetProxy.add(jlSocksHost, "gap unrel, skip, right");
 		jpInternetProxy.add(jtfSocksHost, "");
 		jpInternetProxy.add(jlSocksPort, "gap unrel, right");
 		jpInternetProxy.add(jtfSocksPort, "wrap");
 		jpInternetProxy.add(jrbAutomaticProxyConfig, "left, span, wrap");
-		jpInternetProxy.add(jlPacUrl, "skip, right");
+		jpInternetProxy.add(jlPacUrl, "gap unrel, skip, right");
 		jpInternetProxy.add(jtfPacUrl, "span, wrap push");
 
 		jrbAutomaticProxyConfig.addItemListener(new ItemListener() {
@@ -793,6 +719,9 @@ public class DPreferences extends JEscDialog {
 		lookFeelDecorated = jcbLookFeelDecorated.isSelected();
 
 		language = ((LanguageItem) jcbLanguage.getSelectedItem()).getIsoCode();
+
+		autoUpdateChecksEnabled = jcbEnableAutoUpdateChecks.isSelected();
+		autoUpdateChecksInterval = ((Number) jspAutoUpdateCheckInterval.getValue()).intValue();
 
 		// These may fail:
 		boolean returnValue = storeDefaultDN();
@@ -1026,6 +955,14 @@ public class DPreferences extends JEscDialog {
 		return language;
 	}
 
+	public boolean isAutoUpdateChecksEnabled() {
+		return autoUpdateChecksEnabled;
+	}
+
+	public int getAutoUpdateChecksInterval() {
+		return autoUpdateChecksInterval;
+	}
+
 	/**
 	 * Read the new default DN (RDNs can be empty here)
 	 * @return
@@ -1105,7 +1042,7 @@ public class DPreferences extends JEscDialog {
 			public void run() {
 				try {
 					DPreferences dialog = new DPreferences(new javax.swing.JFrame(),true, new File(""),
-							true, true, true, new PasswordQualityConfig(true, true, 100), "", "en");
+							true, true, true, new PasswordQualityConfig(true, true, 100), "", "en", true, 14);
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override
 						public void windowClosing(java.awt.event.WindowEvent e) {
