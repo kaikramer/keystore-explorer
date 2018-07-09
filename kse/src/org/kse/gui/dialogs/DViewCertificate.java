@@ -98,6 +98,7 @@ public class DViewCertificate extends JEscDialog {
 	public static int NONE = 0;
 	public static int IMPORT = 1;
 	public static int EXPORT = 2;
+	public static int IMPORT_EXPORT = 3;
 	private int importExport = 0;
 
 	private KseFrame kseFrame;
@@ -132,7 +133,8 @@ public class DViewCertificate extends JEscDialog {
 	private JButton jbExtensions;
 	private JButton jbPem;
 	private JButton jbAsn1;
-	private JButton jbImportExport;
+	private JButton jbImport;
+	private JButton jbExport;
 	private JPanel jpOK;
 	private JButton jbOK;
 
@@ -378,21 +380,32 @@ public class DViewCertificate extends JEscDialog {
 			}
 		});
 
-		if (importExport == IMPORT) {
-			jbImportExport = new JButton(res.getString("DViewCertificate.jbImportExport.import.text"));
-			jbImportExport.setToolTipText(res.getString("DViewCertificate.jbImportExport.import.tooltip"));
-		} else {
-			jbImportExport = new JButton(res.getString("DViewCertificate.jbImportExport.export.text"));
-			jbImportExport.setToolTipText(res.getString("DViewCertificate.jbImportExport.export.tooltip"));
-		}
+		jbImport = new JButton(res.getString("DViewCertificate.jbImportExport.import.text"));
+		jbImport.setToolTipText(res.getString("DViewCertificate.jbImportExport.import.tooltip"));
 
-		PlatformUtil.setMnemonic(jbImportExport, res.getString("DViewCertificate.jbImportExport.mnemonic").charAt(0));
-		jbImportExport.addActionListener(new ActionListener() {
+		PlatformUtil.setMnemonic(jbImport, res.getString("DViewCertificate.jbImport.mnemonic").charAt(0));
+		jbImport.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DViewCertificate.this);
-					importExportPressed();
+					importPressed();
+				} finally {
+					CursorUtil.setCursorFree(DViewCertificate.this);
+				}
+			}
+		});
+
+		jbExport = new JButton(res.getString("DViewCertificate.jbImportExport.export.text"));
+		jbExport.setToolTipText(res.getString("DViewCertificate.jbImportExport.export.tooltip"));
+
+		PlatformUtil.setMnemonic(jbExport, res.getString("DViewCertificate.jbExport.mnemonic").charAt(0));
+		jbExport.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DViewCertificate.this);
+					exportPressed();
 				} finally {
 					CursorUtil.setCursorFree(DViewCertificate.this);
 				}
@@ -400,8 +413,11 @@ public class DViewCertificate extends JEscDialog {
 		});
 
 		jpButtons = new JPanel();
-		if (importExport != NONE) {
-			jpButtons.add(jbImportExport);
+		if (importExport == IMPORT || importExport == IMPORT_EXPORT) {
+			jpButtons.add(jbImport);
+		}
+		if (importExport == EXPORT || importExport == IMPORT_EXPORT) {
+			jpButtons.add(jbExport);
 		}
 		jpButtons.add(jbExtensions);
 		jpButtons.add(jbPem);
@@ -755,14 +771,14 @@ public class DViewCertificate extends JEscDialog {
 		}
 	}
 
-	private void importExportPressed() {
+	private void importPressed() {
 		X509Certificate cert = getSelectedCertificate();
+		new ImportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
+	}
 
-		if (importExport == IMPORT) {
-			new ImportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
-		} else {
-			new ExportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
-		}
+	private void exportPressed() {
+		X509Certificate cert = getSelectedCertificate();
+		new ExportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
 	}
 
 	private void okPressed() {
