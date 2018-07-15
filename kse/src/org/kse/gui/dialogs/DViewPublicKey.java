@@ -21,6 +21,7 @@ package org.kse.gui.dialogs;
 
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -40,8 +41,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -51,6 +55,7 @@ import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
+import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -74,7 +79,8 @@ public class DViewPublicKey extends JEscDialog {
 	private JLabel jlFormat;
 	private JTextField jtfFormat;
 	private JLabel jlEncoded;
-	private JTextField jtfEncoded;
+	private JTextArea jtaEncoded;
+	private JScrollPane jspEncoded;
 	private JButton jbPem;
 	private JButton jbFields;
 	private JButton jbAsn1;
@@ -123,27 +129,35 @@ public class DViewPublicKey extends JEscDialog {
 
 		jlAlgorithm = new JLabel(res.getString("DViewPublicKey.jlAlgorithm.text"));
 
-		jtfAlgorithm = new JTextField(10);
+		jtfAlgorithm = new JTextField();
 		jtfAlgorithm.setEditable(false);
 		jtfAlgorithm.setToolTipText(res.getString("DViewPublicKey.jtfAlgorithm.tooltip"));
 
 		jlKeySize = new JLabel(res.getString("DViewPublicKey.jlKeySize.text"));
 
-		jtfKeySize = new JTextField(10);
+		jtfKeySize = new JTextField();
 		jtfKeySize.setEditable(false);
 		jtfKeySize.setToolTipText(res.getString("DViewPublicKey.jtfKeySize.tooltip"));
 
 		jlFormat = new JLabel(res.getString("DViewPublicKey.jlFormat.text"));
 
-		jtfFormat = new JTextField(10);
+		jtfFormat = new JTextField();
 		jtfFormat.setEditable(false);
 		jtfFormat.setToolTipText(res.getString("DViewPublicKey.jtfFormat.tooltip"));
 
 		jlEncoded = new JLabel(res.getString("DViewPublicKey.jlEncoded.text"));
 
-		jtfEncoded = new JTextField(30);
-		jtfEncoded.setEditable(false);
-		jtfEncoded.setToolTipText(res.getString("DViewPublicKey.jtfEncoded.tooltip"));
+		jtaEncoded = new JTextArea();
+		jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+		jtaEncoded.setBackground(jtfFormat.getBackground());
+		jtaEncoded.setEditable(false);
+		jtaEncoded.setLineWrap(true);
+		jtaEncoded.setToolTipText(res.getString("DViewPublicKey.jtfEncoded.tooltip"));
+
+		jspEncoded = PlatformUtil.createScrollPane(jtaEncoded,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		jspEncoded.setBorder(jtfFormat.getBorder());
 
 		jbPem = new JButton(res.getString("DViewPublicKey.jbPem.text"));
 		PlatformUtil.setMnemonic(jbPem, res.getString("DViewPublicKey.jbPem.mnemonic").charAt(0));
@@ -163,13 +177,13 @@ public class DViewPublicKey extends JEscDialog {
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 		pane.add(jlAlgorithm, "");
-		pane.add(jtfAlgorithm, "growx, wrap");
+		pane.add(jtfAlgorithm, "growx, pushx, wrap");
 		pane.add(jlKeySize, "");
-		pane.add(jtfKeySize, "growx, wrap");
+		pane.add(jtfKeySize, "growx, pushx, wrap");
 		pane.add(jlFormat, "");
-		pane.add(jtfFormat, "growx, wrap");
+		pane.add(jtfFormat, "growx, pushx, wrap");
 		pane.add(jlEncoded, "");
-		pane.add(jtfEncoded, "growx, wrap");
+		pane.add(jspEncoded, "width 400lp:400lp:400lp, height 150lp:150lp:150lp, wrap");
 		pane.add(jbPem, "spanx, split");
 		pane.add(jbFields, "");
 		pane.add(jbAsn1, "wrap");
@@ -259,8 +273,8 @@ public class DViewPublicKey extends JEscDialog {
 
 		jtfFormat.setText(publicKey.getFormat());
 
-		jtfEncoded.setText("0x" + new BigInteger(1, publicKey.getEncoded()).toString(16).toUpperCase());
-		jtfEncoded.setCaretPosition(0);
+		jtaEncoded.setText(new BigInteger(1, publicKey.getEncoded()).toString(16).toUpperCase());
+		jtaEncoded.setCaretPosition(0);
 
 		if ((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey)) {
 			jbFields.setEnabled(true);
@@ -338,7 +352,7 @@ public class DViewPublicKey extends JEscDialog {
 					DViewPublicKey dialog = new DViewPublicKey(new javax.swing.JFrame(), "Title", keyPair.getPublic());
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
+						public void windowClosed(java.awt.event.WindowEvent e) {
 							System.exit(0);
 						}
 					});

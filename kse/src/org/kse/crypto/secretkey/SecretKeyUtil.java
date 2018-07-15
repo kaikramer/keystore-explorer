@@ -74,16 +74,14 @@ public class SecretKeyUtil {
 		String algorithm = secretKey.getAlgorithm();
 
 		if (algorithm.equals("RC4")) {
-			algorithm = "ARC4"; // RC4 is trademarked so we never want to
-			// display it
+			algorithm = "ARC4"; // RC4 is trademarked so we never want to display it
 		}
 
 		if (secretKey.getFormat().equals("RAW")) {
 			int keySize = secretKey.getEncoded().length * 8;
 			return new KeyInfo(SYMMETRIC, algorithm, keySize);
-		} else
+		} else {
 			// Key size unknown
-		{
 			return new KeyInfo(SYMMETRIC, algorithm);
 		}
 	}
