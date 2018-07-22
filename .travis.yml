@@ -5,4 +5,5 @@ jdk:
   - oraclejdk8
   
 script:
+  - cd kse
   - ./gradlew build --scan -s
