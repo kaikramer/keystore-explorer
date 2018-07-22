@@ -6,4 +6,4 @@ jdk:
   
 script:
   - cd kse
-  - ./gradlew build --scan -s
+  - ./gradlew build
