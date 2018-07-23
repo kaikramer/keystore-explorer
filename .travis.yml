@@ -2,13 +2,13 @@ language: java
 
 jdk:
   - oraclejdk8
-  
-addons:
-  apt:
-    packages:
-    - nsis
+ 
+# NSIS version in Travis CI's Ubuntu Trusty image is 2.46 from 2009, which is way too old  
+#addons:
+#  apt:
+#    packages:
+#    - nsis
 
 script:
   - cd kse
-  - ./gradlew zip
-  - ./gradlew nsis
+  - ./gradlew build

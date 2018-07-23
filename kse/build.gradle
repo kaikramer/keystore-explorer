@@ -23,8 +23,7 @@ import java.nio.file.Paths
 
 /*
 Notes:
-- Tasks 'launch4j' and 'nsis' work only under Windows.
-- Task 'nsis' requires an installation of NSIS and its top-level directory added to the path.
+- Task 'nsis' requires an installation of NSIS 3 and its top-level directory added to the path.
 - Tasks 'signapp' and 'dmg' work only under macOS.
 */
 buildscript {
@@ -260,7 +259,7 @@ task nsis(dependsOn: [launch4j, copyDependencies]) {
 		}
 		exec {
 			workingDir "$projectDir/nsis"
-			commandLine "makensis", nsisScript
+			commandLine "makensis", "/V2", nsisScript
 		}
 	}
 }
