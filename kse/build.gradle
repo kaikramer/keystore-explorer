@@ -170,9 +170,9 @@ jar {
 }
 
 task launch4j(dependsOn: jar) {
-	onlyIf {
-		Os.isFamily(Os.FAMILY_WINDOWS)
-	}
+	//onlyIf {
+	//	Os.isFamily(Os.FAMILY_WINDOWS)
+	//}
 	doLast {
 		ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
 			classpath {
