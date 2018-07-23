@@ -1,9 +1,14 @@
 language: java
-install: true
 
 jdk:
   - oraclejdk8
   
+addons:
+  apt:
+    packages:
+    - nsis
+
 script:
   - cd kse
   - ./gradlew zip
+  - ./gradlew nsis
