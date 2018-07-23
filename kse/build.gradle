@@ -260,7 +260,7 @@ task nsis(dependsOn: [launch4j, copyDependencies]) {
 		}
 		exec {
 			workingDir "$projectDir/nsis"
-			commandLine "makensis", "/V2", nsisScript
+			commandLine "makensis", nsisScript
 		}
 	}
 }
