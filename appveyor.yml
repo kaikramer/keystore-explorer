@@ -26,24 +26,15 @@ build:
 build_script:
   - gradlew.bat zip nsis
 
-#artifacts:
-#  # pushing a single file
-#  - path: test.zip
-#
-#  # pushing a single file with environment variable in path and "Deployment name" specified
-#  - path: MyProject\bin\$(configuration)
-#    name: myapp
-#
-#  # pushing entire folder as a zip archive
-#  - path: logs
-#
-#  # pushing all *.nupkg files in build directory recursively
-#  - path: '**\*.nupkg'
+artifacts:
+  - path: build\distributions\kse-*.zip
+    name: zip
+  - path: build\distributions\kse-*-setup.exe
+    name: nsis
 
 #deploy:
-#    # Deploy to GitHub Releases
 #  - provider: GitHub
-#    artifact: /.*\.nupkg/           # upload all NuGet packages to release assets
+#    artifact: /.*\.nupkg/
 #    draft: false
 #    prerelease: false
 #    on:
