@@ -27,9 +27,9 @@ build_script:
   - gradlew.bat zip nsis
 
 artifacts:
-  - path: build\distributions\kse-*.zip
+  - path: kse\build\distributions\kse-*.zip
     name: zip
-  - path: build\distributions\kse-*-setup.exe
+  - path: kse\build\distributions\kse-*-setup.exe
     name: nsis
 
 #deploy:
