@@ -29,12 +29,13 @@ artifacts:
 deploy:
   - provider: GitHub
     artifact: zip,nsis
-    description: 'Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)'
+    description: Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)
     tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: KSE Release $(APPVEYOR_REPO_TAG_NAME)
     auth_token:
       secure: kqOvIw9phqJZInkIF6xiOFOM0TPvrdv0Ff7mbLBrPU0uL9v+Ij3S5u9j6oRRtexh    
     draft: true
     prerelease: false
-    force_update: false
+    force_update: true
     on:
       appveyor_repo_tag: true       # deploy on tag push only
