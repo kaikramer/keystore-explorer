@@ -1,0 +1,53 @@
+# https://ci.appveyor.com/tools/validate-yaml
+
+branches:
+  only:
+    - master
+
+# Start builds on tags only (GitHub and BitBucket)
+# skip_non_tags: true
+
+environment:
+  JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+  NSIS: C:\Program Files (x86)\NSIS
+  # this is how to set encrypted variable. Go to "Encrypt data" page in account menu to encrypt data.
+  #my_secure_var1:
+  #  secure: FW3tJ3fMncxvs58/ifSP7w==
+
+install:
+  - SET PATH=%JAVA_HOME%\bin;%NSIS%;%PATH%
+
+before_build:
+  - cd kse
+
+build:
+  verbosity: detailed
+
+build_script:
+  - gradlew.bat zip nsis
+
+#artifacts:
+#  # pushing a single file
+#  - path: test.zip
+#
+#  # pushing a single file with environment variable in path and "Deployment name" specified
+#  - path: MyProject\bin\$(configuration)
+#    name: myapp
+#
+#  # pushing entire folder as a zip archive
+#  - path: logs
+#
+#  # pushing all *.nupkg files in build directory recursively
+#  - path: '**\*.nupkg'
+
+#deploy:
+#    # Deploy to GitHub Releases
+#  - provider: GitHub
+#    artifact: /.*\.nupkg/           # upload all NuGet packages to release assets
+#    draft: false
+#    prerelease: false
+#    on:
+#      branch: master                # release from master branch only
+#      appveyor_repo_tag: true       # deploy on tag push only
+
+	  
