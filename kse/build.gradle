@@ -77,6 +77,7 @@ ext {
 	readmesDir = "$resDir/readmes"
 	launch4jOutDir = "$buildDir/launch4j"
 	appBundleDir = "$buildDir/appBundle"
+	dmgDir = "$projectDir/dmg"
 	dependenciesDir = Paths.get(buildDir.toString(), "dependencies") // for NSIS we need Windows path separators
 
 	// Icons
@@ -308,10 +309,27 @@ task signapp(type: Exec, dependsOn: appbundler) {
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
+	doFirst {
+		// appdmg does not have an overwrite option yet (see https://github.com/LinusU/node-appdmg/pull/151)
+		file("${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg").delete()
+		
+		copy {
+			from("${dmgDir}/appdmg.template.json")
+			rename("appdmg.template.json", "appdmg.json")
+			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
+				KSE_NAME: appName, 
+				KSE_APP_BUNDLE: "${appBundleDir}/${appBundle}".toString(), 
+				KSE_ICNS: kseIcns.toString(),
+				BACKGROUND_IMG: "${dmgDir}/background.png".toString(),
+				SIGNING_ID: '683348D91DCE57101313B0F2C88C084E1C2C7A31'
+			])
+			into("${dmgDir}")
+		}
+	}
 	workingDir appBundleDir
 	mkdir distsDir
-	commandLine '/usr/local/bin/dropdmg', '-y', 'KSE 5', '-o', distsDir, '-b', "${appSimpleName}-${appSimpleVersion}", 
-				'--signing-identity=683348D91DCE57101313B0F2C88C084E1C2C7A31', "${appBundle}"
+	environment 'PATH', '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin' 
+	commandLine '/usr/local/bin/appdmg', "${dmgDir}/appdmg.json", "${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg"
 }
 
 task resources {

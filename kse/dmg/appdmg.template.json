@@ -1,0 +1,15 @@
+{
+  "title": "%KSE_NAME%",
+  "icon": "%KSE_ICNS%",
+  "icon-size": 128,
+  "background": "%BACKGROUND_IMG%",
+  "code-sign": { "signing-identity": "%SIGNING_ID%" },
+  "contents": [
+    { "x": 150, "y": 140, "type": "file", "path": "%KSE_APP_BUNDLE%" },
+    { "x": 370, "y": 140, "type": "link", "path": "/Applications" },
+    { "x": 999, "y": 140, "type": "position", "path": ".VolumeIcon.icns'" },
+    { "x": 999, "y": 140, "type": "position", "path": ".background" },
+    { "x": 999, "y": 140, "type": "position", "path": ".Trashes" },
+    { "x": 999, "y": 140, "type": "position", "path": ".DS_Store" }
+  ]
+}
