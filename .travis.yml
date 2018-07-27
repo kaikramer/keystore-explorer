@@ -3,11 +3,7 @@ osx_image: xcode9
 
 language: java
 
-before_install:
-  - brew update
-
 install:
-  - brew install node
   - npm install appdmg
 
 before_script:
