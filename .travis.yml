@@ -1,14 +1,23 @@
+os: osx
+osx_image: xcode9
+
 language: java
 
-jdk:
-  - oraclejdk8
- 
-# NSIS version in Travis CI's Ubuntu Trusty image is 2.46 from 2009, which is way too old  
-#addons:
-#  apt:
-#    packages:
-#    - nsis
+install:
+  - brew install node
+  - npm install appdmg
+
+before_script:
+  - export P12="CodeSigningCert.p12"
+  - export KEYCHAIN="build.keychain"
+  - echo $CODE_SIGN_CERT | base64 --decode > $P12
+  - security create-keychain -p mysecretpassword $KEYCHAIN
+  - security default-keychain -s $KEYCHAIN
+  - security unlock-keychain -p mysecretpassword $KEYCHAIN
+  - security import $P12 -k $KEYCHAIN -P $CODE_SIGN_PWD -T /usr/bin/codesign
 
 script:
   - cd kse
-  - ./gradlew build
+  - ./gradlew dmg
+
+  
