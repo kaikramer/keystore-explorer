@@ -149,8 +149,7 @@ public class GeneralNameUtil {
 			return MessageFormat.format(res.getString("GeneralNameUtil.UriGeneralName"), link);
 		case GeneralName.otherName:
 			// we currently only support UPN in otherName
-			String upn = parseUPN(generalName);
-			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"), "UPN", upn);
+			return parseUPN(generalName);
 		default:
 			return "";
 		}
