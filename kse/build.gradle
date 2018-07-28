@@ -329,7 +329,7 @@ task dmg(type: Exec, dependsOn: signapp) {
 	workingDir appBundleDir
 	mkdir distsDir
 	environment 'PATH', '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin' 
-	commandLine '/usr/local/bin/appdmg', "${dmgDir}/appdmg.json", "${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg"
+	commandLine 'appdmg', "${dmgDir}/appdmg.json", "${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg"
 }
 
 task resources {
