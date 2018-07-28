@@ -15,7 +15,7 @@ before_script:
   - security unlock-keychain -p mysecretpassword $KEYCHAIN
   - security set-keychain-settings $KEYCHAIN
   - |-
-    security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k mysecretpassword $KEYCHAIN
+    security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
   - security import $P12 -k $KEYCHAIN -P $CODE_SIGN_PWD -T /usr/bin/codesign
 
 script:
