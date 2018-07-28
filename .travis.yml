@@ -4,7 +4,7 @@ osx_image: xcode9
 language: java
 
 install:
-  - npm install appdmg
+  - npm install -g appdmg
 
 before_script:
   - export P12="CodeSigningCert.p12"
