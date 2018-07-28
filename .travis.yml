@@ -23,6 +23,8 @@ before_script:
 
 script:
   - cd kse
+  - node --version
+  - nvm which 8
   - which appdmg
   - ./gradlew dmg --stacktrace
 
