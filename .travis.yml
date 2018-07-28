@@ -4,8 +4,8 @@ osx_image: xcode9
 language: java
 
 node_js:
-  - "node"
-
+  - "8"
+  
 install:
   - npm install -g appdmg
 
@@ -23,6 +23,7 @@ before_script:
 
 script:
   - cd kse
+  - which appdmg
   - ./gradlew dmg --stacktrace
 
   
