@@ -13,6 +13,7 @@ before_script:
   - security create-keychain -p mysecretpassword $KEYCHAIN
   - security default-keychain -s $KEYCHAIN
   - security unlock-keychain -p mysecretpassword $KEYCHAIN
+  - security set-keychain-settings $KEYCHAIN
   - security import $P12 -k $KEYCHAIN -P $CODE_SIGN_PWD -T /usr/bin/codesign
 
 script:
