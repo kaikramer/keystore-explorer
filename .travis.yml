@@ -3,11 +3,13 @@ osx_image: xcode9
 
 language: java
 
-node_js:
-  - "8"
-  
 install:
+  - nvm install node
+  - nvm use node
+  - nvm which node
+  - node --version
   - npm install -g appdmg
+  - which appdmg
 
 before_script:
   - export P12="CodeSigningCert.p12"
@@ -23,9 +25,6 @@ before_script:
 
 script:
   - cd kse
-  - node --version
-  - nvm which 8
-  - which appdmg
   - ./gradlew dmg --stacktrace
 
   
