@@ -309,27 +309,9 @@ task signapp(type: Exec, dependsOn: appbundler) {
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
-	doFirst {
-		// appdmg does not have an overwrite option yet (see https://github.com/LinusU/node-appdmg/pull/151)
-		file("${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg").delete()
-		
-		copy {
-			from("${dmgDir}/appdmg.template.json")
-			rename("appdmg.template.json", "appdmg.json")
-			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
-				KSE_NAME: appName, 
-				KSE_APP_BUNDLE: "${appBundleDir}/${appBundle}".toString(), 
-				KSE_ICNS: kseIcns.toString(),
-				BACKGROUND_IMG: "${dmgDir}/background.png".toString(),
-				SIGNING_ID: '683348D91DCE57101313B0F2C88C084E1C2C7A31'
-			])
-			into("${dmgDir}")
-		}
-	}
 	workingDir appBundleDir
 	mkdir distsDir
-	environment 'PATH', '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin' 
-	commandLine '/usr/local/bin/appdmg', "${dmgDir}/appdmg.json", "${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg"
+	commandLine 'sh', "${dmgDir}/create-dmg.sh", "${appBundleDir}/${appBundle}", "${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg"
 }
 
 task resources {
