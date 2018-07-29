@@ -18,5 +18,14 @@ before_script:
 script:
   - cd kse
   - ./gradlew dmg
+  - export DMG_FILE=$(ls kse/build/distributions/kse-*.dmg)
 
-  
+deploy:
+  provider: releases
+  api_key:
+    secure: "CfG60H4ut77byX9Nn6A9khS9XzQ/pW3warAbp+GROEZ7lBGgvbKzUvfaUvYaU42Gj9u66AtAriWLWR+gQsOBO4Bf9d8Nm2kCbUObXAEeaqZiuxS0O6ygSXh5zOwf4rGJGvQNuz8TyGqcXCoCrqNxXLn9LN0rqM8We3Fr3oGo2o5G78YdwH205eSGKoZqAHwRCpbaHQtF+uOxidZbUpSX7eGRR1j4lE/UP9ILYwxX61yNnGHT3ruE+bkEZ/da4RH5KHSjJKxca8E3BlgjwMOmIqMkKrzdXBqlKIKRn2HyPTy/l8Lk3g68rD7vRJgwKaKnJ+o7w/wYSqzjgwK7f6XUp+BD8Ci2r/2swHP+LMa+0Uq+Uvk4vs0fB+AadRgM0B8JRn5Tnfc2tGISgYTqjGEBKu/5cufuxEvlIRGx/nd8QMKatMfWbiLqDF0paobNQ+tJ5xK/ixx826bZavKuOuRSIuykwmRtsuoVcxqogoJ/vJgyROGel+iwAEjMmbo4sLSXjC80IflteIZkT255VMEvlqLFmdP75/vzwWDepueFkXg9CP8O5AWAPDeSTFm/lMxmTRaV6yyCUNZCZuTlsFKTpEdLCDBnt58rRUbT6itSN5XEB6ssEU9HADOfHyFGLixJhtkCv/XTz9Ft0uOlmsn7x9aSy65XtI40LnkvgjBPiOU="
+  file: "${DMG_FILE}"
+  skip_cleanup: true
+  draft: true
+  on:
+    tags: true
