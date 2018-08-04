@@ -41,12 +41,11 @@ import java.util.TreeMap;
 import javax.crypto.SecretKey;
 import javax.swing.table.AbstractTableModel;
 
-import org.bouncycastle.asn1.ASN1String;
-import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -54,9 +53,12 @@ import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
+import org.kse.crypto.x509.KseX500NameStyle;
+import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.io.HexUtil;
 
 /**
  * The table model used to display a KeyStore's entries sorted by alias name.
@@ -355,9 +357,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		}
 	}
 
-
-	private KeyInfo getKeyInfo(String alias, KeyStore keyStore, KeyStoreState currentState) throws CryptoException,
-	GeneralSecurityException {
+	private KeyInfo getKeyInfo(String alias, KeyStore keyStore, KeyStoreState currentState)
+			throws CryptoException, GeneralSecurityException {
 		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
 			// Get key info from certificate
 			X509Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
@@ -406,146 +407,64 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 		return algorithm;
 	}
+
 	private String getCertificateSubjectDN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
-		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-			return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getSubjectDN().getName();
-		} else {
-			Certificate[] chain = keyStore.getCertificateChain(alias);
-			if (chain == null) {
-				return null;
-			}
-			// Key pair - first certificate in chain will be for the private key
-			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-			return x509Chain[0].getSubjectDN().getName();
-		}
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
+		return X500NameUtils.x500PrincipalToX500Name(x509Cert.getSubjectX500Principal()).toString();
 	}
+
 	private String getCertificateIssuerDN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
-		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-			return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getIssuerDN().getName();
-		} else {
-			Certificate[] chain = keyStore.getCertificateChain(alias);
-			if (chain == null) {
-				return null;
-			}
-			// Key pair - first certificate in chain will be for the private key
-			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-			return x509Chain[0].getIssuerDN().getName();
-		}
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
+		return X500NameUtils.x500PrincipalToX500Name(x509Cert.getIssuerX500Principal()).toString();
 	}
+
 	private String getCertificateSubjectCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
-		X509Certificate x509Cert = null;
-		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-		} else {
-			Certificate[] chain = keyStore.getCertificateChain(alias);
-			if (chain == null) {
-				return null;
-			}
-			// Key pair - first certificate in chain will be for the private key
-			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-			x509Cert = x509Chain[0];
-		}
-		X500Name subject;
-		try {
-			subject = new JcaX509CertificateHolder(x509Cert).getSubject();
-			RDN cn = subject.getRDNs(BCStyle.CN)[0];
-			return ((ASN1String) cn.getFirst().getValue()).getString();
-		} catch (Exception e) {
-			return "";
-		}
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
+		return X500NameUtils.extractCN(x509Cert.getSubjectX500Principal());
 	}
 
 	private String getCertificateIssuerCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
-		X509Certificate x509Cert = null;
-		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-		} else {
-			Certificate[] chain = keyStore.getCertificateChain(alias);
-			if (chain == null) {
-				return null;
-			}
-			// Key pair - first certificate in chain will be for the private key
-			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-			x509Cert = x509Chain[0];
-		}
-		try {
-			RDN cn = new JcaX509CertificateHolder(x509Cert).getIssuer().getRDNs(BCStyle.CN)[0];
-			return ((ASN1String) cn.getFirst().getValue()).getString();
-		} catch (Exception e) {
-			return "";
-		}
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
+		return X500NameUtils.extractCN(x509Cert.getIssuerX500Principal());
 	}
 
-	private String getCertificateAKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
-		X509Certificate x509Cert = null;
-		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-		} else {
-			Certificate[] chain = keyStore.getCertificateChain(alias);
-			if (chain == null) {
-				return null;
-			}
-			// Key pair - first certificate in chain will be for the private key
-			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-			x509Cert = x509Chain[0];
-		}
+	private String getCertificateSKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
 		try {
-			String aki = Hex.toHexString(x509Cert.getExtensionValue("2.5.29.35"));
-			return aki.substring(12); // remove object header 041830168014
+			byte[] skiValue = x509Cert.getExtensionValue(Extension.subjectKeyIdentifier.getId());
+			byte[] octets = DEROctetString.getInstance(skiValue).getOctets();
+			byte[] skiBytes = SubjectKeyIdentifier.getInstance(octets).getKeyIdentifier();
+			return HexUtil.getHexString(skiBytes);
 		} catch (Exception e) {
 			return "-";
 		}
 	}
 
-	private String getCertificateSKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
-		X509Certificate x509Cert = null;
-		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-		} else {
-			Certificate[] chain = keyStore.getCertificateChain(alias);
-			if (chain == null) {
-				return null;
-			}
-			// Key pair - first certificate in chain will be for the private key
-			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-			x509Cert = x509Chain[0];
-		}
+	private String getCertificateAKI(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
 		try {
-			String ski = Hex.toHexString(x509Cert.getExtensionValue("2.5.29.14"));
-			return ski.substring(8); // remove object header 04160414
+			byte[] akiValue = x509Cert.getExtensionValue(Extension.authorityKeyIdentifier.getId());
+			byte[] octets = DEROctetString.getInstance(akiValue).getOctets();
+			byte[] akiBytes = AuthorityKeyIdentifier.getInstance(octets).getKeyIdentifier();
+			return HexUtil.getHexString(akiBytes);
 		} catch (Exception e) {
 			return "-";
 		}
 	}
 
 	private String getCertificateSubjectO(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
-		X509Certificate x509Cert = null;
-		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-		} else {
-			Certificate[] chain = keyStore.getCertificateChain(alias);
-			if (chain == null) {
-				return null;
-			}
-			// Key pair - first certificate in chain will be for the private key
-			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
-			x509Cert = x509Chain[0];
-		}
-		X500Name subject;
-		try {
-			subject = new JcaX509CertificateHolder(x509Cert).getSubject();
-			RDN cn = subject.getRDNs(BCStyle.O)[0];
-			if (cn.size()>0) {
-				return ((ASN1String) cn.getFirst().getValue()).getString();
-			} else {
-				return "";
-			}
-		} catch (Exception e) {
-			return "";
-		}
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
+		X500Name subject = X500NameUtils.x500PrincipalToX500Name(x509Cert.getSubjectX500Principal());
+		return X500NameUtils.getRdn(subject, KseX500NameStyle.O);
 	}
 
 	private String getCertificateIssuerO(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = getCertificate(alias, keyStore);
+		X500Name issuer = X500NameUtils.x500PrincipalToX500Name(x509Cert.getIssuerX500Principal());
+		return X500NameUtils.getRdn(issuer, KseX500NameStyle.O);
+	}
+
+	private X509Certificate getCertificate(String alias, KeyStore keyStore) throws KeyStoreException, CryptoException {
 		X509Certificate x509Cert = null;
 		if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
 			x509Cert= X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
@@ -558,21 +477,12 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
 			x509Cert = x509Chain[0];
 		}
-		try {
-			RDN cn = new JcaX509CertificateHolder(x509Cert).getIssuer().getRDNs(BCStyle.O)[0];
-			if (cn.size()>0) {
-				return ((ASN1String) cn.getFirst().getValue()).getString();
-			} else {
-				return "";
-			}
-		} catch (Exception e) {
-			return "";
-		}
+		return x509Cert;
 	}
-	private void adjustColumns(KeyStoreTableColumns keyStoreTableColumnsParm)
-	{
+
+	private void adjustColumns(KeyStoreTableColumns keyStoreTableColumnsParm) {
 		keyStoreTableColumns = keyStoreTableColumnsParm;
-		nofColumns = 3+keyStoreTableColumns.getNofColumns();
+		nofColumns = 3 + keyStoreTableColumns.getNofColumns();
 		expiryWarnDays = keyStoreTableColumns.getExpiryWarnDays();
 		iColWidth = new int[nofColumns];
 		int col = 2;
@@ -601,97 +511,81 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
 		columnTypes[2] = Integer.class;
 		iColWidth[2] = ICON_SIZE;
-		for (col=3;col<nofColumns;col++)
-		{
-			if (col == keyStoreTableColumns.colEntryName())
-			{
+		for (col = 3; col < nofColumns; col++) {
+			if (col == keyStoreTableColumns.colEntryName()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.NameColumn");
 				columnTypes[col] = String.class;
 				iNameColumn = col;
 			}
-			if (col == keyStoreTableColumns.colAlgorithm())
-			{
+			if (col == keyStoreTableColumns.colAlgorithm()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
 				columnTypes[col] = String.class;
 				iAlgorithmColumn = col;
 			}
-			if (col == keyStoreTableColumns.colKeySize())
-			{
+			if (col == keyStoreTableColumns.colKeySize()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.KeySizeColumn");
-				columnTypes[col] =  Integer.class;
+				columnTypes[col] = Integer.class;
 				iKeySizeColumn = col;
 			}
-			if (col == keyStoreTableColumns.colCurve())
-			{
+			if (col == keyStoreTableColumns.colCurve()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
 				columnTypes[col] = String.class;
 				iCurveColumn = col;
 			}
-			if (col == keyStoreTableColumns.colCertificateExpiry())
-			{
+			if (col == keyStoreTableColumns.colCertificateExpiry()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
 				columnTypes[col] = Date.class;
 				iCertExpiryColumn = col;
-				iColWidth[col] =" 20.00.2000 00:00:00 MESZ ".length();
+				iColWidth[col] = " 20.00.2000 00:00:00 MESZ ".length();
 			}
-			if (col == keyStoreTableColumns.colLastModified())
-			{
+			if (col == keyStoreTableColumns.colLastModified()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
 				columnTypes[col] = Date.class;
 				iLastModifiedColumn = col;
-				iColWidth[col] =" 20.00.2000 00:00:00 MESZ ".length();
+				iColWidth[col] = " 20.00.2000 00:00:00 MESZ ".length();
 			}
-			if (col == keyStoreTableColumns.colAKI())
-			{
+			if (col == keyStoreTableColumns.colAKI()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.AKIColumn");
 				columnTypes[col] = String.class;
 				iAKIColumn = col;
 			}
-			if (col == keyStoreTableColumns.colSKI())
-			{
+			if (col == keyStoreTableColumns.colSKI()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.SKIColumn");
 				columnTypes[col] = String.class;
 				iSKIColumn = col;
 			}
-			if (col == keyStoreTableColumns.colIssuerDN())
-			{
+			if (col == keyStoreTableColumns.colIssuerDN()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
 				columnTypes[col] = String.class;
 				iIssuerDNColumn = col;
 			}
-			if (col == keyStoreTableColumns.colSubjectDN())
-			{
+			if (col == keyStoreTableColumns.colSubjectDN()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
 				columnTypes[col] = String.class;
 				iSubjectDNColumn = col;
 			}
-			if (col == keyStoreTableColumns.colIssuerCN())
-			{
+			if (col == keyStoreTableColumns.colIssuerCN()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
 				columnTypes[col] = String.class;
 				iIssuerCNColumn = col;
 			}
-			if (col == keyStoreTableColumns.colSubjectCN())
-			{
+			if (col == keyStoreTableColumns.colSubjectCN()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
 				columnTypes[col] = String.class;
 				iSubjectCNColumn = col;
 			}
-			if (col == keyStoreTableColumns.colIssuerO())
-			{
+			if (col == keyStoreTableColumns.colIssuerO()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.IssuerOColumn");
 				columnTypes[col] = String.class;
 				iIssuerOColumn = col;
 			}
-			if (col == keyStoreTableColumns.colSubjectO())
-			{
+			if (col == keyStoreTableColumns.colSubjectO()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.SubjectOColumn");
 				columnTypes[col] = String.class;
 				iSubjectOColumn = col;
 			}
-			if (iColWidth[col]<1)
-			{
-				iColWidth[col] =columnNames[col].length();
+			if (iColWidth[col] < 1) {
+				iColWidth[col] = columnNames[col].length();
 			}
 		}
 	}

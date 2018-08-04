@@ -48,14 +48,12 @@ import java.util.ResourceBundle;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
-import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.utilities.ArrayUtils;
+import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemInfo;
@@ -672,31 +670,20 @@ public final class X509CertUtil {
 		X500Principal subject = cert.getSubjectX500Principal();
 		X500Principal issuer = cert.getIssuerX500Principal();
 
-		String subjectCn = extractCommonName(X500NameUtils.x500PrincipalToX500Name(subject));
-		String issuerCn = extractCommonName(X500NameUtils.x500PrincipalToX500Name(issuer));
+		String subjectCn = X500NameUtils.extractCN(X500NameUtils.x500PrincipalToX500Name(subject));
+		String issuerCn = X500NameUtils.extractCN(X500NameUtils.x500PrincipalToX500Name(issuer));
 
-		if (subjectCn == null) {
+		if (StringUtils.isBlank(subjectCn)) {
 			return "";
 		}
 
-		if (issuerCn == null || subjectCn.equals(issuerCn)) {
+		if (StringUtils.isBlank(issuerCn) || subjectCn.equals(issuerCn)) {
 			return subjectCn;
 		}
 
 		return MessageFormat.format("{0} ({1})", subjectCn, issuerCn);
 	}
 
-	private static String extractCommonName(X500Name name) {
-		for (RDN rdn : name.getRDNs()) {
-			AttributeTypeAndValue atav = rdn.getFirst();
-
-			if (atav.getType().equals(BCStyle.CN)) {
-				return atav.getValue().toString();
-			}
-		}
-
-		return null;
-	}
 
 	/**
 	 * Get short name for certificate. Common name if available, otherwise use
@@ -709,9 +696,9 @@ public final class X509CertUtil {
 	public static String getShortName(X509Certificate cert) {
 		X500Name subject = X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal());
 
-		String shortName = extractCommonName(subject);
+		String shortName = X500NameUtils.extractCN(subject);
 
-		if (shortName == null) {
+		if (StringUtils.isBlank(shortName)) {
 			shortName = subject.toString();
 		}
 

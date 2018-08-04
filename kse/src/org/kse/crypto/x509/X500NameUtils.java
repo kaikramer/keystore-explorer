@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
@@ -84,6 +85,34 @@ public class X500NameUtils {
 		}
 
 		return value;
+	}
+
+	/**
+	 * Return CN of a X.500 name
+	 *
+	 * @param name X.500 name object
+	 * @return CN from Name or an empty string if no CN found
+	 */
+	public static String extractCN(X500Name name) {
+		for (RDN rdn : name.getRDNs()) {
+			AttributeTypeAndValue atav = rdn.getFirst();
+
+			if (atav.getType().equals(BCStyle.CN)) {
+				return atav.getValue().toString();
+			}
+		}
+
+		return "";
+	}
+
+	/**
+	 * Return CN of a X.500 principal
+	 *
+	 * @param name X.500 principal object
+	 * @return CN from DN or an empty string if no CN found
+	 */
+	public static String extractCN(X500Principal principal) {
+		return extractCN(x500PrincipalToX500Name(principal));
 	}
 
 	/**

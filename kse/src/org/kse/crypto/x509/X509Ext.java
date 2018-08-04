@@ -554,6 +554,61 @@ public class X509Ext {
 		return sb.toString();
 	}
 
+	private String getAuthorityKeyIdentifierStringValue(byte[] value) throws IOException {
+		// @formatter:off
+
+		/*
+		 * AuthorityKeyIdentifier ::= ASN1Sequence {
+		 *   keyIdentifier [0] KeyIdentifier OPTIONAL,
+		 *   authorityCertIssuer [1] GeneralNames OPTIONAL,
+		 *   authorityCertSerialNumber [2] CertificateSerialNumber OPTIONAL
+		 * }
+		 *
+		 * KeyIdentifier ::= OCTET STRING
+		 *
+		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
+		 *
+		 * CertificateSerialNumber ::= ASN1Integer
+		 */
+
+		// @formatter:on
+
+		StringBuilder sb = new StringBuilder();
+
+		AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(value);
+
+		byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifier();
+		GeneralNames authorityCertIssuer = authorityKeyIdentifier.getAuthorityCertIssuer();
+		BigInteger certificateSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
+
+		if (keyIdentifier != null) { // Optional
+			// Output as a hex string
+			sb.append(MessageFormat.format(res.getString("AuthorityKeyIdentifier"),
+					HexUtil.getHexString(keyIdentifier)));
+			sb.append(NEWLINE);
+		}
+
+		if (authorityCertIssuer != null) { // Optional
+			sb.append(res.getString("CertificateIssuer"));
+			sb.append(NEWLINE);
+
+			for (GeneralName generalName : authorityCertIssuer.getNames()) {
+				sb.append(INDENT);
+				sb.append(GeneralNameUtil.toString(generalName));
+				sb.append(NEWLINE);
+			}
+		}
+
+		if (certificateSerialNumber != null) { // Optional
+			// Output as an integer
+			sb.append(MessageFormat.format(res.getString("CertificateSerialNumber"),
+					HexUtil.getHexString(certificateSerialNumber)));
+			sb.append(NEWLINE);
+		}
+
+		return sb.toString();
+	}
+
 	private String getKeyUsageStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
@@ -1319,60 +1374,6 @@ public class X509Ext {
 			sb.append(INDENT);
 			sb.append(MessageFormat.format(res.getString("SubjectDomainPolicy"),
 					ObjectIdUtil.toString(subjectDomainPolicy)));
-			sb.append(NEWLINE);
-		}
-
-		return sb.toString();
-	}
-
-	private String getAuthorityKeyIdentifierStringValue(byte[] value) throws IOException {
-		// @formatter:off
-
-		/*
-		 * AuthorityKeyIdentifier ::= ASN1Sequence { keyIdentifier [0]
-		 * KeyIdentifier OPTIONAL, authorityCertIssuer [1] GeneralNames
-		 * OPTIONAL, authorityCertSerialNumber [2] CertificateSerialNumber
-		 * OPTIONAL }
-		 *
-		 * KeyIdentifier ::= OCTET STRING
-		 *
-		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-		 *
-		 * CertificateSerialNumber ::= ASN1Integer
-		 */
-
-		// @formatter:on
-
-		StringBuilder sb = new StringBuilder();
-
-		AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(value);
-
-		byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifier();
-		GeneralNames authorityCertIssuer = authorityKeyIdentifier.getAuthorityCertIssuer();
-		BigInteger certificateSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
-
-		if (keyIdentifier != null) { // Optional
-			// Output as a hex string
-			sb.append(MessageFormat.format(res.getString("AuthorityKeyIdentifier"),
-					HexUtil.getHexString(keyIdentifier)));
-			sb.append(NEWLINE);
-		}
-
-		if (authorityCertIssuer != null) { // Optional
-			sb.append(res.getString("CertificateIssuer"));
-			sb.append(NEWLINE);
-
-			for (GeneralName generalName : authorityCertIssuer.getNames()) {
-				sb.append(INDENT);
-				sb.append(GeneralNameUtil.toString(generalName));
-				sb.append(NEWLINE);
-			}
-		}
-
-		if (certificateSerialNumber != null) { // Optional
-			// Output as an integer
-			sb.append(MessageFormat.format(res.getString("CertificateSerialNumber"),
-					HexUtil.getHexString(certificateSerialNumber)));
 			sb.append(NEWLINE);
 		}
 

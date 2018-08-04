@@ -816,13 +816,13 @@ public class DPreferences extends JEscDialog {
 		jpDisplayColumns.add(jcbEnableSKI, "left");
 		jpDisplayColumns.add(jcbEnableAKI, "left, wrap");
 		jpDisplayColumns.add(jcbEnableIssuerDN, "left");
-		jpDisplayColumns.add(jcbEnableIssuerCN, "left, wrap");
-		jpDisplayColumns.add(jcbEnableIssuerO, "left");
 		jpDisplayColumns.add(jcbEnableSubjectDN, "left, wrap");
-		jpDisplayColumns.add(jcbEnableSubjectCN, "left");
+		jpDisplayColumns.add(jcbEnableIssuerCN, "left");
+		jpDisplayColumns.add(jcbEnableSubjectCN, "left, wrap");
+		jpDisplayColumns.add(jcbEnableIssuerO, "left");
 		jpDisplayColumns.add(jcbEnableSubjectO, "left, wrap");
-		jpDisplayColumns.add(jlExpirationWarnDays, "left");
-		jpDisplayColumns.add(jtfExpirationWarnDays, "left, wrap");
+		jpDisplayColumns.add(jlExpirationWarnDays, "left, spanx, split");
+		jpDisplayColumns.add(jtfExpirationWarnDays, "wrap");
 	}
 
 	private void updateProxyControls() {
