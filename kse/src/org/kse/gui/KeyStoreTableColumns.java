@@ -18,9 +18,9 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kse.gui;
+
 /**
- * POJO class to configure the cells shown in the KeyStore table of KeyStore
- * Explorer.
+ * POJO class to configure the cells shown in the KeyStore table of KeyStore Explorer.
  *
  */
 public class KeyStoreTableColumns {
@@ -117,248 +117,309 @@ public class KeyStoreTableColumns {
 
 	// set to previous layout
 	public KeyStoreTableColumns() {
- expiryWarnDays = 0;
- bEnableEntryName = true;
- bEnableAlgorithm = true;
- bEnableKeySize = true;
- bEnableCertificateExpiry =true;
- bEnableLastModified = true;
- bEnableSKI = false;
- bEnableAKI = false;
- bEnableIssuerDN = false;
- bEnableSubjectDN = false;
- bEnableCurve = false;
- bEnableIssuerCN= false;
- bEnableSubjectCN= false;
- bEnableIssuerO= false;
- bEnableSubjectO= false;
+		expiryWarnDays = 0;
+		bEnableEntryName = true;
+		bEnableAlgorithm = true;
+		bEnableKeySize = true;
+		bEnableCertificateExpiry = true;
+		bEnableLastModified = true;
+		bEnableSKI = false;
+		bEnableAKI = false;
+		bEnableIssuerDN = false;
+		bEnableSubjectDN = false;
+		bEnableCurve = false;
+		bEnableIssuerCN = false;
+		bEnableSubjectCN = false;
+		bEnableIssuerO = false;
+		bEnableSubjectO = false;
 
-
- 	}
-	public KeyStoreTableColumns(boolean p1,boolean p2,boolean p3,boolean p4,boolean p5,boolean p6,boolean p7,boolean p8,boolean p9,boolean p10,boolean p11,boolean p12,boolean p13,boolean p14, int p15  ) {
-		 bEnableEntryName = p1;
-		 bEnableAlgorithm = p2;
-		 bEnableKeySize = p3;
-		 bEnableCertificateExpiry =p4;
-		 bEnableLastModified = p5;
-		 bEnableSKI = p6;
-		 bEnableAKI = p7;
-		 bEnableIssuerDN = p8;
-		 bEnableSubjectDN = p9;
-		 bEnableIssuerCN = p10;
-		 bEnableSubjectCN = p11;
-		 bEnableIssuerO = p12;
-		 bEnableSubjectO = p13;
-		 bEnableCurve = p14;
-		 expiryWarnDays = p15;
-		 sortCol();
-	}	
-	
-	public void setColumns(boolean p1,boolean p2,boolean p3,boolean p4,boolean p5,boolean p6,boolean p7,boolean p8,boolean p9,boolean p10,boolean p11,boolean p12,boolean p13,boolean p14, int p15 ) {
-		 bEnableEntryName = p1;
-		 bEnableAlgorithm = p2;
-		 bEnableKeySize = p3;
-		 bEnableCertificateExpiry =p4;
-		 bEnableLastModified = p5;
-		 bEnableSKI = p6;
-		 bEnableAKI = p7;
-		 bEnableIssuerDN = p8;
-		 bEnableSubjectDN = p9;
-		 bEnableIssuerCN = p10;
-		 bEnableSubjectCN = p11;
-		 bEnableIssuerO = p12;
-		 bEnableSubjectO = p13;
-		 bEnableCurve = p14;
-		 expiryWarnDays = p15;
-		 sortCol();
 	}
+
+	public KeyStoreTableColumns(boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7,
+			boolean p8, boolean p9, boolean p10, boolean p11, boolean p12, boolean p13, boolean p14, int p15) {
+		bEnableEntryName = p1;
+		bEnableAlgorithm = p2;
+		bEnableKeySize = p3;
+		bEnableCertificateExpiry = p4;
+		bEnableLastModified = p5;
+		bEnableSKI = p6;
+		bEnableAKI = p7;
+		bEnableIssuerDN = p8;
+		bEnableSubjectDN = p9;
+		bEnableIssuerCN = p10;
+		bEnableSubjectCN = p11;
+		bEnableIssuerO = p12;
+		bEnableSubjectO = p13;
+		bEnableCurve = p14;
+		expiryWarnDays = p15;
+		sortCol();
+	}
+
+	public void setColumns(boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7,
+			boolean p8, boolean p9, boolean p10, boolean p11, boolean p12, boolean p13, boolean p14, int p15) {
+		bEnableEntryName = p1;
+		bEnableAlgorithm = p2;
+		bEnableKeySize = p3;
+		bEnableCertificateExpiry = p4;
+		bEnableLastModified = p5;
+		bEnableSKI = p6;
+		bEnableAKI = p7;
+		bEnableIssuerDN = p8;
+		bEnableSubjectDN = p9;
+		bEnableIssuerCN = p10;
+		bEnableSubjectCN = p11;
+		bEnableIssuerO = p12;
+		bEnableSubjectO = p13;
+		bEnableCurve = p14;
+		expiryWarnDays = p15;
+		sortCol();
+	}
+
 	/**
 	 * Restore from bitmap
+	 *
 	 * @param col
 	 */
 	public void setColumns(int col) {
 
-		 bEnableEntryName = ((col & 1)!=0);
-		 bEnableAlgorithm = ((col & 2)!=0);
-		 bEnableKeySize =((col & 4)!=0);
-		 bEnableCertificateExpiry =((col & 8)!=0);
-		 bEnableLastModified = ((col & 0x10)!=0);
-		 bEnableSKI = ((col & 0x20)!=0);
-		 bEnableAKI = ((col & 0x40)!=0);
-		 bEnableIssuerDN =((col & 0x80)!=0);
-		 bEnableSubjectDN = ((col & 0x100)!=0);
-		 bEnableCurve = ((col & 0x200)!=0);
-		 bEnableIssuerCN= ((col & 0x400)!=0);
-		 bEnableSubjectCN= ((col & 0x800)!=0);
-		 bEnableIssuerO= ((col & 0x1000)!=0);
-		 bEnableSubjectO= ((col & 0x2000)!=0);
-		 sortCol();
+		bEnableEntryName = ((col & 1) != 0);
+		bEnableAlgorithm = ((col & 2) != 0);
+		bEnableKeySize = ((col & 4) != 0);
+		bEnableCertificateExpiry = ((col & 8) != 0);
+		bEnableLastModified = ((col & 0x10) != 0);
+		bEnableSKI = ((col & 0x20) != 0);
+		bEnableAKI = ((col & 0x40) != 0);
+		bEnableIssuerDN = ((col & 0x80) != 0);
+		bEnableSubjectDN = ((col & 0x100) != 0);
+		bEnableCurve = ((col & 0x200) != 0);
+		bEnableIssuerCN = ((col & 0x400) != 0);
+		bEnableSubjectCN = ((col & 0x800) != 0);
+		bEnableIssuerO = ((col & 0x1000) != 0);
+		bEnableSubjectO = ((col & 0x2000) != 0);
+		sortCol();
 	}
+
 	/**
 	 * Get as bitmap
+	 *
 	 * @return col
 	 */
 	public int getColumns() {
-		 int col= 0;
-		 if (bEnableEntryName) col+=1;
-		 if (bEnableAlgorithm) col+=2;
-		 if (bEnableKeySize) col+=4;
-		 if (bEnableCertificateExpiry) col+=8;
-		 if (bEnableLastModified) col+=0x10;
-		 if (bEnableSKI) col+=0x20;
-		 if (bEnableAKI) col+=0x40;
-		 if (bEnableIssuerDN) col+=0x80;
-		 if (bEnableSubjectDN) col+=0x100;
-		 if (bEnableCurve) col+=0x200;
-		 if (bEnableIssuerCN) col+=0x400;
-		 if (bEnableSubjectCN) col+=0x800;
-		 if (bEnableIssuerO) col+=0x1000;
-		 if (bEnableSubjectO) col+=0x2000;
-		 return col;
+		int col = 0;
+		if (bEnableEntryName) {
+			col += 1;
+		}
+		if (bEnableAlgorithm) {
+			col += 2;
+		}
+		if (bEnableKeySize) {
+			col += 4;
+		}
+		if (bEnableCertificateExpiry) {
+			col += 8;
+		}
+		if (bEnableLastModified) {
+			col += 0x10;
+		}
+		if (bEnableSKI) {
+			col += 0x20;
+		}
+		if (bEnableAKI) {
+			col += 0x40;
+		}
+		if (bEnableIssuerDN) {
+			col += 0x80;
+		}
+		if (bEnableSubjectDN) {
+			col += 0x100;
+		}
+		if (bEnableCurve) {
+			col += 0x200;
+		}
+		if (bEnableIssuerCN) {
+			col += 0x400;
+		}
+		if (bEnableSubjectCN) {
+			col += 0x800;
+		}
+		if (bEnableIssuerO) {
+			col += 0x1000;
+		}
+		if (bEnableSubjectO) {
+			col += 0x2000;
+		}
+		return col;
 	}
+
 	/**
-	 * Get number of columns selected. The actual table has 3 columns more, as the first 3 are fixed. 
+	 * Get number of columns selected. The actual table has 3 columns more, as the first 3 are fixed.
+	 *
 	 * @return number of columns selected
 	 */
 	public int getNofColumns() {
-		 int col= 0;
-		 if (bEnableEntryName) col++;
-		 if (bEnableAlgorithm) col++;
-		 if (bEnableKeySize) col++;
-		 if (bEnableCertificateExpiry) col++;
-		 if (bEnableLastModified) col++;
-		 if (bEnableSKI) col++;
-		 if (bEnableAKI) col++;
-		 if (bEnableIssuerDN) col++;
-		 if (bEnableSubjectDN) col++;
-		 if (bEnableCurve) col++;
-		 if (bEnableIssuerCN) col++;
-		 if (bEnableSubjectCN) col++;
-		 if (bEnableIssuerO)  col++;
-		 if (bEnableSubjectO) col++;
-		 return col;
+		int col = 0;
+		if (bEnableEntryName) {
+			col++;
+		}
+		if (bEnableAlgorithm) {
+			col++;
+		}
+		if (bEnableKeySize) {
+			col++;
+		}
+		if (bEnableCertificateExpiry) {
+			col++;
+		}
+		if (bEnableLastModified) {
+			col++;
+		}
+		if (bEnableSKI) {
+			col++;
+		}
+		if (bEnableAKI) {
+			col++;
+		}
+		if (bEnableIssuerDN) {
+			col++;
+		}
+		if (bEnableSubjectDN) {
+			col++;
+		}
+		if (bEnableCurve) {
+			col++;
+		}
+		if (bEnableIssuerCN) {
+			col++;
+		}
+		if (bEnableSubjectCN) {
+			col++;
+		}
+		if (bEnableIssuerO) {
+			col++;
+		}
+		if (bEnableSubjectO) {
+			col++;
+		}
+		return col;
 	}
 
-	public boolean getEnableEntryName()
-	{
-		return bEnableEntryName; 
-	}
-	public boolean getEnableAlgorithm ()
-	{
-		return bEnableAlgorithm ; 
-	}
-	public boolean getEnableKeySize ()
-	{
-		return bEnableKeySize ; 
-	}
-	public boolean getEnableCertificateExpiry ()
-	{
-		return bEnableCertificateExpiry ; 
-	}
-	public boolean getEnableLastModified ()
-	{
-		return bEnableLastModified ; 
-	}
-	public boolean getEnableSKI ()
-	{
-		return bEnableSKI ; 
-	}
-	public boolean getEnableAKI ()
-	{
-		return bEnableAKI ; 
-	}
-	public boolean getEnableCurve ()
-	{
-		return bEnableCurve ; 
-	}
-	public boolean getEnableIssuerDN ()
-	{
-		return bEnableIssuerDN ; 
-	}
-	public boolean getEnableSubjectDN ()
-	{
-		return bEnableSubjectDN ; 
-	}
-	public boolean getEnableIssuerCN ()
-	{
-		return bEnableIssuerCN ; 
-	}
-	public boolean getEnableSubjectCN ()
-	{
-		return bEnableSubjectCN ; 
-	}
-	public boolean getEnableIssuerO ()
-	{
-		return bEnableIssuerO ; 
-	}
-	public boolean getEnableSubjectO ()
-	{
-		return bEnableSubjectO ; 
-	}
-	public int getExpiryWarnDays ()
-	{
-		return expiryWarnDays ; 
-	}
-	public void setExpiryWarnDays (int expiryWarnDays)
-	{
-		this.expiryWarnDays = expiryWarnDays ; 
+	public boolean getEnableEntryName() {
+		return bEnableEntryName;
 	}
 
+	public boolean getEnableAlgorithm() {
+		return bEnableAlgorithm;
+	}
 
-	public int colEntryName()
-	{
-		return iNameColumn; 
+	public boolean getEnableKeySize() {
+		return bEnableKeySize;
 	}
-	public int colAlgorithm ()
-	{
-		return iAlgorithmColumn ; 
+
+	public boolean getEnableCertificateExpiry() {
+		return bEnableCertificateExpiry;
 	}
-	public int colKeySize ()
-	{
-		return iKeySizeColumn ; 
+
+	public boolean getEnableLastModified() {
+		return bEnableLastModified;
 	}
-	public int colCertificateExpiry ()
-	{
-		return iCertExpiryColumn ; 
+
+	public boolean getEnableSKI() {
+		return bEnableSKI;
 	}
-	public int colLastModified ()
-	{
-		return iLastModifiedColumn ; 
+
+	public boolean getEnableAKI() {
+		return bEnableAKI;
 	}
-	public int colSKI ()
-	{
-		return iSKIColumn ; 
+
+	public boolean getEnableCurve() {
+		return bEnableCurve;
 	}
-	public int colAKI ()
-	{
-		return iAKIColumn ; 
+
+	public boolean getEnableIssuerDN() {
+		return bEnableIssuerDN;
 	}
-	public int colCurve ()
-	{
-		return iCurveColumn ; 
+
+	public boolean getEnableSubjectDN() {
+		return bEnableSubjectDN;
 	}
-	public int colIssuerDN ()
-	{
-		return iIssuerDNColumn ; 
+
+	public boolean getEnableIssuerCN() {
+		return bEnableIssuerCN;
 	}
-	public int colSubjectDN ()
-	{
-		return iSubjectDNColumn ; 
+
+	public boolean getEnableSubjectCN() {
+		return bEnableSubjectCN;
 	}
-	public int colIssuerCN ()
-	{
-		return iIssuerCNColumn ; 
+
+	public boolean getEnableIssuerO() {
+		return bEnableIssuerO;
 	}
-	public int colSubjectCN ()
-	{
-		return iSubjectCNColumn ; 
+
+	public boolean getEnableSubjectO() {
+		return bEnableSubjectO;
 	}
-	public int colIssuerO ()
-	{
-		return iIssuerOColumn ; 
+
+	public int getExpiryWarnDays() {
+		return expiryWarnDays;
 	}
-	public int colSubjectO ()
-	{
-		return iSubjectOColumn ; 
+
+	public void setExpiryWarnDays(int expiryWarnDays) {
+		this.expiryWarnDays = expiryWarnDays;
+	}
+
+	public int colEntryName() {
+		return iNameColumn;
+	}
+
+	public int colAlgorithm() {
+		return iAlgorithmColumn;
+	}
+
+	public int colKeySize() {
+		return iKeySizeColumn;
+	}
+
+	public int colCertificateExpiry() {
+		return iCertExpiryColumn;
+	}
+
+	public int colLastModified() {
+		return iLastModifiedColumn;
+	}
+
+	public int colSKI() {
+		return iSKIColumn;
+	}
+
+	public int colAKI() {
+		return iAKIColumn;
+	}
+
+	public int colCurve() {
+		return iCurveColumn;
+	}
+
+	public int colIssuerDN() {
+		return iIssuerDNColumn;
+	}
+
+	public int colSubjectDN() {
+		return iSubjectDNColumn;
+	}
+
+	public int colIssuerCN() {
+		return iIssuerCNColumn;
+	}
+
+	public int colSubjectCN() {
+		return iSubjectCNColumn;
+	}
+
+	public int colIssuerO() {
+		return iIssuerOColumn;
+	}
+
+	public int colSubjectO() {
+		return iSubjectOColumn;
 	}
 }
