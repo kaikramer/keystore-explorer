@@ -23,7 +23,6 @@ import static org.kse.crypto.privatekey.EncryptionType.ENCRYPTED;
 import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -47,7 +46,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
-import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.io.UnsignedUtil;
 
 // @formatter:off
@@ -180,8 +178,7 @@ public class MsPvkUtil {
 	/**
 	 * Load an unencrypted PVK private key from the stream.
 	 *
-	 * @param is
-	 *            Stream to load the unencrypted private key from
+	 * @param pvk BA to load the unencrypted private key from
 	 * @return The private key
 	 * @throws PrivateKeyEncryptedException
 	 *             If private key is encrypted
@@ -190,8 +187,7 @@ public class MsPvkUtil {
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PrivateKey load(InputStream is) throws IOException, CryptoException {
-		byte[] pvk = ReadUtil.readFully(is);
+	public static PrivateKey load(byte[] pvk) throws IOException, CryptoException {
 
 		// Wrap in a byte buffer set up to read little endian
 		ByteBuffer bb = ByteBuffer.wrap(pvk);
@@ -242,8 +238,7 @@ public class MsPvkUtil {
 	/**
 	 * Load an encrypted PVK private key from the specified stream.
 	 *
-	 * @param is
-	 *            Stream load the encrypted private key from
+	 * @param pvk BA to load the encrypted private key from
 	 * @param password
 	 *            Password to decrypt
 	 * @return The private key
@@ -254,11 +249,8 @@ public class MsPvkUtil {
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PrivateKey loadEncrypted(InputStream is, Password password) throws IOException,
-	CryptoException {
+	public static PrivateKey loadEncrypted(byte[] pvk, Password password) throws IOException, CryptoException {
 		try {
-			byte[] pvk = ReadUtil.readFully(is);
-
 			// Wrap in a byte buffer set up to read little endian
 			ByteBuffer bb = ByteBuffer.wrap(pvk);
 			bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -292,7 +284,7 @@ public class MsPvkUtil {
 			byte[] weakKey = new byte[16]; // Weak version
 
 			// Read Salt
-			byte salt[] = new byte[(int) saltLength];
+			byte[] salt = new byte[(int) saltLength];
 			bb.get(salt);
 
 			// Concatenate salt and password and derive key using SHA-1
@@ -381,14 +373,12 @@ public class MsPvkUtil {
 	/**
 	 * Detect if a Microsoft PVK private key is encrypted or not.
 	 *
-	 * @param is
-	 *            Input stream containing Microsoft PVK private key
+	 * @param pvk BA containing Microsoft PVK private key
 	 * @return Encryption type or null if not a valid Microsoft PVK private key
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public static EncryptionType getEncryptionType(InputStream is) throws IOException {
-		byte[] pvk = ReadUtil.readFully(is);
+	public static EncryptionType getEncryptionType(byte[] pvk) throws IOException {
 
 		// Wrap in a byte buffer set up to read little endian
 		ByteBuffer bb = ByteBuffer.wrap(pvk);

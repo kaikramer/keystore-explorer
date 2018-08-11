@@ -22,7 +22,6 @@ package org.kse.crypto.publickey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 
-import java.io.ByteArrayInputStream;
 import java.security.PublicKey;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,15 +40,15 @@ public class OpenSslPubUtilTest extends KeyTestsBase {
 	@MethodSource("publicKeys")
 	public void openSslPub(PublicKey publicKey) throws Exception {
 		byte[] key = OpenSslPubUtil.get(publicKey);
-		assertEquals(publicKey, OpenSslPubUtil.load(new ByteArrayInputStream(key)));
-		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+		assertEquals(publicKey, OpenSslPubUtil.load(key));
+		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(key));
 	}
 
 	@ParameterizedTest
 	@MethodSource("publicKeys")
 	public void openSslPubPem(PublicKey publicKey) throws Exception {
 		String pemKey = OpenSslPubUtil.getPem(publicKey);
-		assertEquals(publicKey, OpenSslPubUtil.load(new ByteArrayInputStream(pemKey.getBytes())));
-		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(new ByteArrayInputStream(pemKey.getBytes())));
+		assertEquals(publicKey, OpenSslPubUtil.load(pemKey.getBytes()));
+		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(pemKey.getBytes()));
 	}
 }

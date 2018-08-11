@@ -21,12 +21,10 @@ package org.kse.utilities.pem;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 import org.bouncycastle.util.encoders.Base64;
-import org.kse.utilities.io.ReadUtil;
 
 /**
  * Provides utility methods relating to PEM.
@@ -120,21 +118,19 @@ public class PemUtil {
 	/**
 	 * Decode the PEM included in the supplied input stream.
 	 *
-	 * @param is
-	 *            Input stream
+	 * @param pemData PEM data as byte array
 	 * @return PEM information or null if stream does not contain PEM
 	 * @throws IOException
 	 *             If an I/O problem occurs
 	 */
-	public static PemInfo decode(InputStream is) throws IOException {
-		byte[] streamContents = ReadUtil.readFully(is);
+	public static PemInfo decode(byte[] pemData) throws IOException {
 
-		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(streamContents);
+		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pemData);
 				InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
 				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
 			String line = lnr.readLine();
-			StringBuffer sbBase64 = new StringBuffer();
+			StringBuilder sbBase64 = new StringBuilder();
 
 			if (line != null) {
 				line = line.trim();

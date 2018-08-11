@@ -60,6 +60,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
@@ -351,45 +352,45 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 				URL url = e.getURL();
 				if (url != null) {
 					if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
-						X509Certificate[] certs = downloadCert(url);
-						if (certs != null && certs.length > 0) {
-							DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
-									res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs, null,
-									DViewCertificate.NONE);
-							dViewCertificate.setLocationRelativeTo(this);
-							dViewCertificate.setVisible(true);
-						}
+						downloadCert(url);
 					} else if (url.getPath().endsWith(".crl")) {
-						X509CRL crl = downloadCrl(url);
-						if (crl != null) {
-							DViewCrl dViewCrl = new DViewCrl(this, MessageFormat.format(
-									res.getString("DViewExtensions.ViewCrl.Title"), url.toString()),
-									ModalityType.DOCUMENT_MODAL, crl);
-							dViewCrl.setLocationRelativeTo(this);
-							dViewCrl.setVisible(true);
-						}
+						downloadCrl(url);
 					} else {
 						Desktop.getDesktop().browse(url.toURI());
 					}
 				}
 			} catch (Exception ex) {
+				// TODO proper error message
 				ex.printStackTrace();
 			}
 		}
 	}
 
-	private X509CRL downloadCrl(URL url) throws IOException, CryptoException {
+	private void downloadCrl(URL url) throws IOException, CryptoException {
 		URLConnection urlConn = url.openConnection();
 		try (InputStream is = urlConn.getInputStream()) {
-			return X509CertUtil.loadCRL(is);
+			X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+			if (crl != null) {
+				DViewCrl dViewCrl = new DViewCrl(this,
+						MessageFormat.format(res.getString("DViewExtensions.ViewCrl.Title"), url.toString()),
+						ModalityType.DOCUMENT_MODAL, crl);
+				dViewCrl.setLocationRelativeTo(this);
+				dViewCrl.setVisible(true);
+			}
 		}
 	}
 
-	private X509Certificate[] downloadCert(URL url) throws IOException, CryptoException {
+	private void downloadCert(URL url) throws IOException, CryptoException {
 		URLConnection urlConn = url.openConnection();
 		try (InputStream is = urlConn.getInputStream()) {
-			X509Certificate[] certs = X509CertUtil.loadCertificates(is);
-			return certs;
+			X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
+			if (certs != null && certs.length > 0) {
+				DViewCertificate dViewCertificate = new DViewCertificate(this,
+						MessageFormat.format(res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
+						null, DViewCertificate.NONE);
+				dViewCertificate.setLocationRelativeTo(this);
+				dViewCertificate.setVisible(true);
+			}
 		}
 	}
 }

@@ -42,10 +42,11 @@ import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -62,7 +63,6 @@ import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
-import org.kse.utilities.io.ReadUtil;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
@@ -75,19 +75,29 @@ public class CryptoFileUtil {
 	private CryptoFileUtil() {
 	}
 
+
 	/**
 	 * Detect the cryptographic file type of the supplied input stream.
 	 *
-	 * @param is
-	 *            Input stream to detect type for
+	 * @param file File with cryptographic data
+	 * @return Type or null if file not of a recognised type
+	 * @throws IOException If an I/O problem occurred
+	 */
+	public static CryptoFileType detectFileType(File file) throws IOException {
+		return detectFileType(FileUtils.readFileToByteArray(file));
+	}
+
+	/**
+	 * Detect the cryptographic file type of the supplied input stream.
+	 *
+	 * @param data Cryptographic data
 	 * @return Type or null if file not of a recognised type
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public static CryptoFileType detectFileType(InputStream is) throws IOException {
-		byte[] contents = ReadUtil.readFully(is);
+	public static CryptoFileType detectFileType(byte[] data) throws IOException {
 
-		EncryptionType pkcs8EncType = Pkcs8Util.getEncryptionType(new ByteArrayInputStream(contents));
+		EncryptionType pkcs8EncType = Pkcs8Util.getEncryptionType(data);
 
 		if (pkcs8EncType != null) {
 			if (pkcs8EncType == ENCRYPTED) {
@@ -97,7 +107,7 @@ public class CryptoFileUtil {
 			}
 		}
 
-		EncryptionType msPvkEncType = MsPvkUtil.getEncryptionType(new ByteArrayInputStream(contents));
+		EncryptionType msPvkEncType = MsPvkUtil.getEncryptionType(data);
 
 		if (msPvkEncType != null) {
 			if (msPvkEncType == ENCRYPTED) {
@@ -107,7 +117,7 @@ public class CryptoFileUtil {
 			}
 		}
 
-		EncryptionType openSslPvkEncType = OpenSslPvkUtil.getEncryptionType(new ByteArrayInputStream(contents));
+		EncryptionType openSslPvkEncType = OpenSslPvkUtil.getEncryptionType(data);
 
 		if (openSslPvkEncType != null) {
 			if (openSslPvkEncType == ENCRYPTED) {
@@ -118,7 +128,7 @@ public class CryptoFileUtil {
 		}
 
 		try {
-			OpenSslPubUtil.load(new ByteArrayInputStream(contents));
+			OpenSslPubUtil.load(data);
 			return OPENSSL_PUB;
 		} catch (Exception ex) {
 			// Ignore - not an OpenSSL public key file
@@ -128,7 +138,7 @@ public class CryptoFileUtil {
 		}
 
 		try {
-			if (X509CertUtil.loadCertificates(new ByteArrayInputStream(contents)).length > 0) {
+			if (X509CertUtil.loadCertificates(data).length > 0) {
 				return CERT;
 			}
 		} catch (Exception ex) {
@@ -136,19 +146,19 @@ public class CryptoFileUtil {
 		}
 
 		try {
-			X509CertUtil.loadCRL(new ByteArrayInputStream(contents));
+			X509CertUtil.loadCRL(data);
 			return CRL;
 		} catch (Exception ex) {
 			// Ignore - not a CRL file
 		}
 
-		CsrType csrType = detectCsrType(contents);
+		CsrType csrType = detectCsrType(data);
 
 		if (csrType != null) {
 			return csrType.getCryptoFileType();
 		}
 
-		KeyStoreType keyStoreType = detectKeyStoreType(new ByteArrayInputStream(contents));
+		KeyStoreType keyStoreType = detectKeyStoreType(data);
 
 		if (keyStoreType != null) {
 			return keyStoreType.getCryptoFileType();
@@ -158,21 +168,20 @@ public class CryptoFileUtil {
 		return UNKNOWN;
 	}
 
-	private static CsrType detectCsrType(byte[] contents) throws IOException {
+	private static CsrType detectCsrType(byte[] csrData) throws IOException {
 		try {
-			Pkcs10Util.loadCsr(new ByteArrayInputStream(contents));
+			Pkcs10Util.loadCsr(csrData);
 			return PKCS10;
 		} catch (FileNotFoundException ex) {
 			throw ex;
 		} catch (Exception ex) {
 			// Ignore - not a PKCS #10 file
 		} catch (OutOfMemoryError ex) {
-			// Ignore - not a PKCS #10 file, some files cause the heap space to
-			// fill up with the load call
+			// Ignore - not a PKCS #10 file, some files cause the heap space to fill up with the load call
 		}
 
 		try {
-			new Spkac(new ByteArrayInputStream(contents));
+			new Spkac(csrData);
 			return CsrType.SPKAC;
 		} catch (SpkacException ex) {
 			// Ignore - not an SPKAC file
@@ -182,19 +191,28 @@ public class CryptoFileUtil {
 		return null;
 	}
 
+
 	/**
 	 * Detect the KeyStore type contained in the supplied file.
 	 *
-	 * @param is
-	 *            Input stream to detect type for
+	 * @param file Keystore file
 	 * @return KeyStore type or null if none matched
-	 * @throws IOException
-	 *             If an I/O problem occurred
+	 * @throws IOException If an I/O problem occurred
 	 */
-	public static KeyStoreType detectKeyStoreType(InputStream is) throws IOException {
-		byte[] contents = ReadUtil.readFully(is);
+	public static KeyStoreType detectKeyStoreType(File file) throws IOException {
+		return detectKeyStoreType(FileUtils.readFileToByteArray(file));
+	}
 
-		try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(contents))) {
+	/**
+	 * Detect the KeyStore type contained in the supplied file.
+	 *
+	 * @param data Keystore data as byte array
+	 * @return KeyStore type or null if none matched
+	 * @throws IOException If an I/O problem occurred
+	 */
+	public static KeyStoreType detectKeyStoreType(byte[] data) throws IOException {
+
+		try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data))) {
 
 			// If less than 4 bytes are available it isn't a KeyStore
 			if (dis.available() < 4) {
@@ -227,13 +245,13 @@ public class CryptoFileUtil {
 				 * the file is a ASN1Null then the KeyStore is BKS
 				 */
 
-				if (contents.length < 26) {
+				if (data.length < 26) {
 					// Insufficient bytes to be BKS or UBER
 					return null;
 				}
 
 				// Skip to 21st from last byte (file length minus 21 and the 4 bytes already read)
-				dis.skip(contents.length - 25l);
+				dis.skip(data.length - 25l);
 
 				// Read what may be the null byte
 				if (dis.readByte() == 0) {
@@ -261,7 +279,7 @@ public class CryptoFileUtil {
 
 		ASN1Primitive pfx = null;
 		try {
-			pfx = ASN1Primitive.fromByteArray(contents);
+			pfx = ASN1Primitive.fromByteArray(data);
 		} catch (IOException e) {
 			// if it cannot be parsed as ASN1, it is certainly not a pfx key store
 			return null;

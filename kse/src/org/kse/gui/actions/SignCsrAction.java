@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
@@ -38,6 +37,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
@@ -126,9 +126,9 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			Spkac spkacCsr = null;
 
 			try {
-				CryptoFileType fileType = CryptoFileUtil.detectFileType(new FileInputStream(csrFile));
+				CryptoFileType fileType = CryptoFileUtil.detectFileType(csrFile);
 				if (fileType == CryptoFileType.PKCS10_CSR) {
-					pkcs10Csr = Pkcs10Util.loadCsr(new FileInputStream(csrFile));
+					pkcs10Csr = Pkcs10Util.loadCsr(FileUtils.readFileToByteArray(csrFile));
 
 					if (!Pkcs10Util.verifyCsr(pkcs10Csr)) {
 						JOptionPane.showMessageDialog(frame, res.getString("SignCsrAction.NoVerifyPkcs10Csr.message"),
@@ -136,7 +136,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 						return;
 					}
 				} else if (fileType == CryptoFileType.SPKAC_CSR) {
-					spkacCsr = new Spkac(new FileInputStream(csrFile));
+					spkacCsr = new Spkac(FileUtils.readFileToByteArray(csrFile));
 
 					if (!spkacCsr.verify()) {
 						JOptionPane.showMessageDialog(frame, res.getString("SignCsrAction.NoVerifySpkacCsr.message"),

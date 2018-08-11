@@ -23,9 +23,9 @@ import static org.kse.crypto.SecurityProvider.APPLE;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static org.kse.crypto.SecurityProvider.MS_CAPI;
 import static org.kse.crypto.keypair.KeyPairType.EC;
+import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
-import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.KEYCHAIN;
 import static org.kse.crypto.keystore.KeyStoreType.UBER;
 
@@ -123,7 +123,7 @@ public final class KeyStoreUtil {
 		KeyStoreType keyStoreType = null;
 
 		try {
-			keyStoreType = CryptoFileUtil.detectKeyStoreType(new FileInputStream(keyStoreFile));
+			keyStoreType = CryptoFileUtil.detectKeyStoreType(keyStoreFile);
 		} catch (FileNotFoundException ex) {
 			throw ex;
 		} catch (IOException ex) {

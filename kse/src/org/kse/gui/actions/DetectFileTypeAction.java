@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.MessageFormat;
 
@@ -88,7 +87,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
 				return;
 			}
 
-			CryptoFileType fileType = CryptoFileUtil.detectFileType(new FileInputStream(detectTypeFile));
+			CryptoFileType fileType = CryptoFileUtil.detectFileType(detectTypeFile);
 
 			String message = null;
 

@@ -21,9 +21,7 @@ package org.kse.gui.actions;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -34,6 +32,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
 import org.kse.ApplicationSettings;
 import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
@@ -185,27 +184,26 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 	 */
 	protected X509Certificate[] openCertificate(File certificateFile) {
 		try {
-			FileInputStream is = new FileInputStream(certificateFile);
-			return openCertificate(is, certificateFile.getName());
-		} catch (FileNotFoundException ex) {
+			return openCertificate(FileUtils.readFileToByteArray(certificateFile), certificateFile.getName());
+		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(frame,
 					MessageFormat.format(res.getString("KeyStoreExplorerAction.NoReadFile.message"), certificateFile),
 					res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
-			return null;
+			return new X509Certificate[0];
 		}
 	}
 
 	/**
 	 * Open a certificate input stream.
 	 *
-	 * @param certificateFile
-	 *            The certificate file
+	 * @param data Certificate data
+	 * @param name The name of the certificate (could be a file name for example)
 	 * @return The certificates found in the file or null if open failed
 	 */
-	protected X509Certificate[] openCertificate(InputStream is, String name) {
+	protected X509Certificate[] openCertificate(byte[] data, String name) {
 
 		try {
-			X509Certificate[] certs = X509CertUtil.loadCertificates(is);
+			X509Certificate[] certs = X509CertUtil.loadCertificates(data);
 
 			if (certs.length == 0) {
 				JOptionPane.showMessageDialog(frame,

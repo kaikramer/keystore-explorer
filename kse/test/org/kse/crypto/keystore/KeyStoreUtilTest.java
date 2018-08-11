@@ -22,7 +22,6 @@ package org.kse.crypto.keystore;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.security.KeyStore;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -63,8 +62,8 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
 
 		KeyStoreUtil.save(keyStore, keyStoreFile, PASSWORD);
 
-		assertThat(keyStoreType).isEqualTo(CryptoFileUtil.detectKeyStoreType(new FileInputStream(keyStoreFile)));
-		assertThat(keyStoreType.getCryptoFileType()).isEqualTo(CryptoFileUtil.detectFileType(new FileInputStream(keyStoreFile)));
+		assertThat(keyStoreType).isEqualTo(CryptoFileUtil.detectKeyStoreType(keyStoreFile));
+		assertThat(keyStoreType.getCryptoFileType()).isEqualTo(CryptoFileUtil.detectFileType(keyStoreFile));
 
 		KeyStoreUtil.load(keyStoreFile, PASSWORD);
 

@@ -26,7 +26,6 @@ import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.pkcs_9_at_unstruc
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.security.InvalidKeyException;
@@ -55,7 +54,6 @@ import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.utilities.io.ReadUtil;
 
 /**
  * Provides utility methods relating to PKCS #10 CSRs.
@@ -228,19 +226,17 @@ public class Pkcs10Util {
 	 * Load a PKCS #10 CSR from the specified stream. The encoding of the CSR
 	 * may be PEM or DER.
 	 *
-	 * @param is
-	 *            Stream to load CSR from
+	 * @param data Byte array to load CSR from
 	 * @return The CSR
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PKCS10CertificationRequest loadCsr(InputStream is) throws IOException {
-		byte[] streamContents = ReadUtil.readFully(is);
+	public static PKCS10CertificationRequest loadCsr(byte[] data) throws IOException {
 
 		byte[] csrBytes = null;
 		// Assume file is PEM until we find out otherwise
-		try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(streamContents);
-				InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
+		try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+				InputStreamReader inputStreamReader = new InputStreamReader(bais);
 				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
 			String line = lnr.readLine();
@@ -260,11 +256,9 @@ public class Pkcs10Util {
 
 		// Not PEM - must be DER encoded
 		if (csrBytes == null) {
-			csrBytes = streamContents;
+			csrBytes = data;
 		}
 
-		PKCS10CertificationRequest csr = new PKCS10CertificationRequest(csrBytes);
-
-		return csr;
+		return new PKCS10CertificationRequest(csrBytes);
 	}
 }

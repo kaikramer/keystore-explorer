@@ -22,7 +22,6 @@ package org.kse.crypto.x509;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -55,7 +54,6 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.utilities.ArrayUtils;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.IOUtils;
-import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
@@ -81,26 +79,19 @@ public final class X509CertUtil {
 	/**
 	 * Load one or more certificates from the specified stream.
 	 *
-	 * @param is
-	 *            Stream to load certificates from
+	 * @param certsBytes BA to load certificates from
 	 * @return The certificates
 	 * @throws CryptoException
 	 *             Problem encountered while loading the certificate(s)
 	 */
-	public static X509Certificate[] loadCertificates(InputStream is) throws CryptoException {
-		byte[] certsBytes = null;
-
+	public static X509Certificate[] loadCertificates(byte[] certsBytes) throws CryptoException {
 		try {
-			certsBytes = ReadUtil.readFully(is);
-
 			// fix common input certificate problems by converting PEM/B64 to DER
 			certsBytes = fixCommonInputCertProblems(certsBytes);
 
-			is = new ByteArrayInputStream(certsBytes);
-
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
-			Collection<? extends Certificate> certs = cf.generateCertificates(is);
+			Collection<? extends Certificate> certs = cf.generateCertificates(new ByteArrayInputStream(certsBytes));
 
 			ArrayList<X509Certificate> loadedCerts = new ArrayList<>();
 
@@ -113,7 +104,7 @@ public final class X509CertUtil {
 			}
 
 			return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
-		} catch (IOException | NoSuchProviderException ex) {
+		} catch (NoSuchProviderException ex) {
 			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
 		} catch (CertificateException ex) {
 			// Failed to load certificates, may be pki path encoded - try loading as that
@@ -122,8 +113,6 @@ public final class X509CertUtil {
 			} catch (CryptoException ex2) {
 				throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
 			}
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 	}
 
@@ -227,21 +216,17 @@ public final class X509CertUtil {
 	/**
 	 * Load a CRL from the specified stream.
 	 *
-	 * @param is
-	 *            Stream to load CRL from
+	 * @param crlData BA to load CRL from
 	 * @return The CRL
 	 * @throws CryptoException
 	 *             Problem encountered while loading the CRL
 	 */
-	public static X509CRL loadCRL(InputStream is) throws CryptoException {
+	public static X509CRL loadCRL(byte[] crlData) throws CryptoException {
 		try {
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
-			X509CRL crl = (X509CRL) cf.generateCRL(is);
-			return crl;
+			return (X509CRL) cf.generateCRL(new ByteArrayInputStream(crlData));
 		} catch (CertificateException | CRLException ex) {
 			throw new CryptoException(res.getString("NoLoadCrl.exception.message"), ex);
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
 	}
 

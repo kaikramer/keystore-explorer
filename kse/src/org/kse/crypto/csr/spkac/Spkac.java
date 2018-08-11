@@ -29,11 +29,12 @@ import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -143,8 +144,7 @@ public class Spkac {
 	/**
 	 * Load a SPKAC.
 	 *
-	 * @param is
-	 *            Stream to load from
+	 * @param spac BA to load from
 	 * @throws IOException
 	 *             If an I/O problem occurs
 	 * @throws SpkacMissingPropertyException
@@ -152,8 +152,8 @@ public class Spkac {
 	 * @throws SpkacException
 	 *             If load fails
 	 */
-	public Spkac(InputStream is) throws IOException, SpkacException {
-		Properties properties = readProperties(is);
+	public Spkac(byte[] data) throws IOException, SpkacException {
+		Properties properties = readProperties(data);
 
 		if (!properties.containsKey(SPKAC_PROPERTY)) {
 			throw new SpkacMissingPropertyException(MessageFormat.format(
@@ -169,14 +169,14 @@ public class Spkac {
 		decodeSpkac(derSpkac);
 	}
 
-	private Properties readProperties(InputStream is) throws IOException {
-		try {
-			// Properies are defined as name=value pairs where value may be over several lines
-			Properties properties = new Properties();
+	private Properties readProperties(byte[] data) throws IOException {
+		// Properties are defined as name=value pairs where value may be over several lines
+		Properties properties = new Properties();
 
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		try (Reader isr = new InputStreamReader(new ByteArrayInputStream(data));
+				BufferedReader br = new BufferedReader(isr)) {
+
 			String line;
-
 			String lastName = null;
 
 			while ((line = br.readLine()) != null) {
@@ -195,11 +195,8 @@ public class Spkac {
 					properties.setProperty(lastName, String.valueOf(properties.get(lastName)) + line);
 				}
 			}
-
-			return properties;
-		} finally {
-			IOUtils.closeQuietly(is);
 		}
+		return properties;
 	}
 
 	private SpkacSubject getSubject(Properties properties) throws SpkacMissingPropertyException {

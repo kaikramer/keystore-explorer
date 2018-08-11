@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.security.Key;
 import java.security.KeyStore;
@@ -33,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
 import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
@@ -246,7 +246,8 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 
 	private X509Certificate[] openCaReply(File caReply) {
 		try {
-			X509Certificate[] certs = X509CertUtil.loadCertificates(new FileInputStream(caReply));
+			byte[] caReplyData = FileUtils.readFileToByteArray(caReply);
+			X509Certificate[] certs = X509CertUtil.loadCertificates(caReplyData);
 
 			if (certs.length == 0) {
 				JOptionPane.showMessageDialog(frame,

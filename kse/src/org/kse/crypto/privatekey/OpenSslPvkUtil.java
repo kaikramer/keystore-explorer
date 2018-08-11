@@ -24,9 +24,7 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
 import static org.kse.crypto.privatekey.EncryptionType.ENCRYPTED;
 import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -64,7 +62,6 @@ import org.kse.crypto.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.ecc.EccUtil;
-import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemAttribute;
 import org.kse.utilities.pem.PemAttributes;
 import org.kse.utilities.pem.PemInfo;
@@ -258,8 +255,7 @@ public class OpenSslPvkUtil {
 	 * Load an unencrypted OpenSSL private key from the stream. The encoding of
 	 * the private key may be PEM or DER.
 	 *
-	 * @param is
-	 *            Stream to load the unencrypted private key from
+	 * @param pvkData Stream to load the unencrypted private key from
 	 * @return The private key
 	 * @throws PrivateKeyEncryptedException
 	 *             If private key is encrypted
@@ -268,10 +264,9 @@ public class OpenSslPvkUtil {
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PrivateKey load(InputStream is) throws CryptoException, IOException {
-		byte[] streamContents = ReadUtil.readFully(is);
+	public static PrivateKey load(byte[] pvkData) throws CryptoException, IOException {
 
-		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
+		EncryptionType encType = getEncryptionType(pvkData);
 
 		if (encType == null) {
 			throw new CryptoException(res.getString("NotValidOpenSsl.exception.message"));
@@ -282,14 +277,14 @@ public class OpenSslPvkUtil {
 		}
 
 		// Check if stream is PEM encoded
-		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
+		PemInfo pemInfo = PemUtil.decode(pvkData);
 
 		if (pemInfo != null) {
 			// It is - get DER from PEM
-			streamContents = pemInfo.getContent();
+			pvkData = pemInfo.getContent();
 		}
 
-		try (ASN1InputStream asn1InputStream = new ASN1InputStream(streamContents)) {
+		try (ASN1InputStream asn1InputStream = new ASN1InputStream(pvkData)) {
 			// Read OpenSSL DER structure
 			ASN1Primitive openSsl = asn1InputStream.readObject();
 			asn1InputStream.close();
@@ -362,8 +357,7 @@ public class OpenSslPvkUtil {
 	 * Load an encrypted OpenSSL private key from the specified stream. The
 	 * encoding of the private key will be PEM.
 	 *
-	 * @param is
-	 *            Stream load the encrypted private key from
+	 * @param pvkData BA to load the encrypted private key from
 	 * @param password
 	 *            Password to decrypt
 	 * @return The private key
@@ -376,11 +370,9 @@ public class OpenSslPvkUtil {
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PrivateKey loadEncrypted(InputStream is, Password password) throws
-	CryptoException, IOException {
-		byte[] streamContents = ReadUtil.readFully(is);
+	public static PrivateKey loadEncrypted(byte[] pvkData, Password password) throws CryptoException, IOException {
 
-		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
+		EncryptionType encType = getEncryptionType(pvkData);
 
 		if (encType == null) {
 			throw new CryptoException(res.getString("NotValidOpenSsl.exception.message"));
@@ -391,7 +383,7 @@ public class OpenSslPvkUtil {
 		}
 
 		// OpenSSL must be encrypted and therefore must be PEM
-		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
+		PemInfo pemInfo = PemUtil.decode(pvkData);
 
 		byte[] encKey = pemInfo.getContent();
 
@@ -426,7 +418,7 @@ public class OpenSslPvkUtil {
 
 			byte[] key = cipher.doFinal(encKey);
 
-			return load(new ByteArrayInputStream(key));
+			return load(key);
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("OpenSslDecryptionFailed.exception.message"),
 					pbeType.friendly()), ex);
@@ -436,17 +428,15 @@ public class OpenSslPvkUtil {
 	/**
 	 * Detect if a OpenSSL private key is encrypted or not.
 	 *
-	 * @param is
-	 *            Input stream containing OpenSSL private key
+	 * @param openSsl BA data containing OpenSSL private key
 	 * @return Encryption type or null if not a valid OpenSSL private key
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public static EncryptionType getEncryptionType(InputStream is) throws IOException {
-		byte[] openSsl = ReadUtil.readFully(is);
+	public static EncryptionType getEncryptionType(byte[] openSsl) throws IOException {
 
 		// In PEM format?
-		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(openSsl));
+		PemInfo pemInfo = PemUtil.decode(openSsl);
 
 		if (pemInfo != null) {
 			String pemType = pemInfo.getType();

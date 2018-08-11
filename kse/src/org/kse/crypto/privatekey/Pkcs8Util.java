@@ -26,7 +26,6 @@ import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
@@ -60,7 +59,6 @@ import org.bouncycastle.operator.InputDecryptorProvider;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
-import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
@@ -175,8 +173,7 @@ public class Pkcs8Util {
 	 * Load an unencrypted PKCS #8 private key from the stream. The encoding of
 	 * the private key may be PEM or DER.
 	 *
-	 * @param is
-	 *            Stream to load the unencrypted private key from
+	 * @param pvkData BA to load the unencrypted private key from
 	 * @return The private key
 	 * @throws PrivateKeyEncryptedException
 	 *             If private key is encrypted
@@ -185,11 +182,10 @@ public class Pkcs8Util {
 	 * @throws IOException
 	 *             If an I/O error occurred
 	 */
-	public static PrivateKey load(InputStream is) throws CryptoException, IOException {
-		byte[] streamContents = ReadUtil.readFully(is);
+	public static PrivateKey load(byte[] pvkData) throws CryptoException, IOException {
 
 		// Check pkcs #8 is unencrypted
-		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
+		EncryptionType encType = getEncryptionType(pvkData);
 
 		if (encType == null) {
 			// Not a valid PKCS #8 private key
@@ -202,7 +198,7 @@ public class Pkcs8Util {
 
 		byte[] pvkBytes = null;
 		// Check if stream is PEM encoded
-		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
+		PemInfo pemInfo = PemUtil.decode(pvkData);
 
 		if (pemInfo != null) {
 			// It is - get DER from PEM
@@ -215,7 +211,7 @@ public class Pkcs8Util {
 		 */
 		if (pvkBytes == null) {
 			// Read in private key bytes
-			pvkBytes = streamContents;
+			pvkBytes = pvkData;
 		}
 
 
@@ -240,8 +236,7 @@ public class Pkcs8Util {
 	 * Load an encrypted PKCS #8 private key from the specified stream. The
 	 * encoding of the private key may be PEM or DER.
 	 *
-	 * @param is
-	 *            Stream load the encrypted private key from
+	 * @param pvkData Stream load the encrypted private key from
 	 * @param password
 	 *            Password to decrypt
 	 * @return The private key
@@ -254,13 +249,11 @@ public class Pkcs8Util {
 	 * @throws IOException
 	 *             If an I/O error occurred
 	 */
-	public static PrivateKey loadEncrypted(InputStream is, Password password) throws
+	public static PrivateKey loadEncrypted(byte[] pvkData, Password password) throws
 	CryptoException, IOException {
 
-		byte[] streamContents = ReadUtil.readFully(is);
-
 		// Check PKCS#8 is encrypted
-		EncryptionType encType = getEncryptionType(new ByteArrayInputStream(streamContents));
+		EncryptionType encType = getEncryptionType(pvkData);
 		if (encType == null) {
 			// Not a valid PKCS #8 private key
 			throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
@@ -270,7 +263,7 @@ public class Pkcs8Util {
 		}
 
 		// Check if stream is PEM encoded
-		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
+		PemInfo pemInfo = PemUtil.decode(pvkData);
 		byte[] encPvk = null;
 		if (pemInfo != null) {
 			// It is - get DER from PEM
@@ -279,7 +272,7 @@ public class Pkcs8Util {
 
 		// If we haven't got the encrypted bytes via PEM then assume it is DER encoded
 		if (encPvk == null) {
-			encPvk = streamContents;
+			encPvk = pvkData;
 		}
 
 		// try to read PKCS#8 info
@@ -308,16 +301,14 @@ public class Pkcs8Util {
 	/**
 	 * Detect if a PKCS #8 private key is encrypted or not.
 	 *
-	 * @param is
-	 *            Input stream containing PKCS #8 private key
+	 * @param pkcs8 BA containing PKCS #8 private key
 	 * @return Encryption type or null if not a valid PKCS #8 private key
 	 * @throws IOException
 	 *             If an I/O problem occurred
 	 */
-	public static EncryptionType getEncryptionType(InputStream is) throws IOException {
-		byte[] pkcs8 = ReadUtil.readFully(is);
+	public static EncryptionType getEncryptionType(byte[] pkcs8) throws IOException {
 
-		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(pkcs8));
+		PemInfo pemInfo = PemUtil.decode(pkcs8);
 
 		// PEM encoded?
 		if (pemInfo != null) {

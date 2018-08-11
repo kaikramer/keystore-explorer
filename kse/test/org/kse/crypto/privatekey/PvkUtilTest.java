@@ -24,8 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 
-import java.io.ByteArrayInputStream;
-
 import org.junit.jupiter.api.Test;
 import org.kse.crypto.KeyTestsBase;
 import org.kse.crypto.filetype.CryptoFileUtil;
@@ -41,20 +39,20 @@ public class PvkUtilTest extends KeyTestsBase {
 	public void unencryptedPvk() throws Exception {
 		{
 			byte[] key = MsPvkUtil.get(rsaPrivateKey, MsPvkUtil.PVK_KEY_EXCHANGE);
-			assertEquals(rsaPrivateKey, MsPvkUtil.load(new ByteArrayInputStream(key)));
-			assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(rsaPrivateKey, MsPvkUtil.load(key));
+			assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 
 		{
 			byte[] key = MsPvkUtil.get(rsaPrivateKey, MsPvkUtil.PVK_KEY_SIGNATURE);
-			assertEquals(rsaPrivateKey, MsPvkUtil.load(new ByteArrayInputStream(key)));
-			assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(rsaPrivateKey, MsPvkUtil.load(key));
+			assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 
 		{
 			byte[] key = MsPvkUtil.get(dsaPrivateKey);
-			assertEquals(dsaPrivateKey, MsPvkUtil.load(new ByteArrayInputStream(key)));
-			assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(dsaPrivateKey, MsPvkUtil.load(key));
+			assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 	}
 
@@ -62,20 +60,20 @@ public class PvkUtilTest extends KeyTestsBase {
 	public void weakEncryptedPvk() throws Exception {
 		{
 			byte[] key = MsPvkUtil.getEncrypted(rsaPrivateKey, MsPvkUtil.PVK_KEY_EXCHANGE, PASSWORD, false);
-			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
-			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(key, PASSWORD));
+			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 
 		{
 			byte[] key = MsPvkUtil.getEncrypted(rsaPrivateKey, MsPvkUtil.PVK_KEY_SIGNATURE, PASSWORD, false);
-			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
-			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(key, PASSWORD));
+			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 
 		{
 			byte[] key = MsPvkUtil.getEncrypted(dsaPrivateKey, PASSWORD, false);
-			assertEquals(dsaPrivateKey, MsPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
-			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(dsaPrivateKey, MsPvkUtil.loadEncrypted(key, PASSWORD));
+			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 	}
 
@@ -83,33 +81,33 @@ public class PvkUtilTest extends KeyTestsBase {
 	public void strongEncryptedPvk() throws Exception {
 		{
 			byte[] key = MsPvkUtil.getEncrypted(rsaPrivateKey, MsPvkUtil.PVK_KEY_EXCHANGE, PASSWORD, true);
-			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
-			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(key, PASSWORD));
+			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 
 		{
 			byte[] key = MsPvkUtil.getEncrypted(rsaPrivateKey, MsPvkUtil.PVK_KEY_SIGNATURE, PASSWORD, true);
-			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
-			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(rsaPrivateKey, MsPvkUtil.loadEncrypted(key, PASSWORD));
+			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 
 		{
 			byte[] key = MsPvkUtil.getEncrypted(dsaPrivateKey, PASSWORD, false);
-			assertEquals(dsaPrivateKey, MsPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
-			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+			assertEquals(dsaPrivateKey, MsPvkUtil.loadEncrypted(key, PASSWORD));
+			assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		}
 	}
 
 	@Test
 	public void incorrectLoadTypeDetected() throws Exception {
 		byte[] key = MsPvkUtil.get(rsaPrivateKey, MsPvkUtil.PVK_KEY_EXCHANGE);
-		assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(key)));
+		assertEquals(UNENC_MS_PVK, CryptoFileUtil.detectFileType(key));
 		assertThrows(PrivateKeyUnencryptedException.class,
-				() -> MsPvkUtil.loadEncrypted(new ByteArrayInputStream(key), PASSWORD));
+				() -> MsPvkUtil.loadEncrypted(key, PASSWORD));
 
 		byte[] encKey = MsPvkUtil.getEncrypted(rsaPrivateKey, MsPvkUtil.PVK_KEY_EXCHANGE, PASSWORD, true);
-		assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(new ByteArrayInputStream(encKey)));
-		assertThrows(PrivateKeyEncryptedException.class, () -> MsPvkUtil.load(new ByteArrayInputStream(encKey)));
+		assertEquals(ENC_MS_PVK, CryptoFileUtil.detectFileType(encKey));
+		assertThrows(PrivateKeyEncryptedException.class, () -> MsPvkUtil.load(encKey));
 	}
 
 }

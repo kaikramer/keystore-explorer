@@ -24,9 +24,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 
@@ -36,18 +36,26 @@ import javax.swing.KeyStroke;
 
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.Password;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.privatekey.MsPvkUtil;
+import org.kse.crypto.privatekey.OpenSslPvkUtil;
+import org.kse.crypto.privatekey.Pkcs8Util;
+import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewCrl;
 import org.kse.gui.dialogs.DViewCsr;
+import org.kse.gui.dialogs.DViewPrivateKey;
+import org.kse.gui.dialogs.DViewPublicKey;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
+import org.kse.gui.password.DGetPassword;
 
 /**
  * Action to examine a certificate.
@@ -116,18 +124,29 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 		try {
 
-			CryptoFileType fileType = CryptoFileUtil.detectFileType(new ByteArrayInputStream(data.getBytes()));
+			CryptoFileType fileType = CryptoFileUtil.detectFileType(data.getBytes());
 
 			switch (fileType) {
 			case CERT:
-				showCert(new ByteArrayInputStream(data.getBytes()));
+				showCert(data.getBytes());
 				break;
 			case CRL:
-				showCrl(new ByteArrayInputStream(data.getBytes()));
+				showCrl(data.getBytes());
 				break;
 			case PKCS10_CSR:
 			case SPKAC_CSR:
-				showCsr(new ByteArrayInputStream(data.getBytes()), fileType);
+				showCsr(data.getBytes(), fileType);
+				break;
+			case ENC_PKCS8_PVK:
+			case UNENC_PKCS8_PVK:
+			case ENC_OPENSSL_PVK:
+			case UNENC_OPENSSL_PVK:
+			case ENC_MS_PVK:
+			case UNENC_MS_PVK:
+				showPrivateKey(data.getBytes(), fileType);
+				break;
+			case OPENSSL_PUB:
+				showPublicKey(data.getBytes());
 				break;
 			case JCEKS_KS:
 			case JKS_KS:
@@ -149,11 +168,73 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private void showCert(InputStream is) throws CryptoException {
+	private void showPrivateKey(byte[] data, CryptoFileType fileType) throws IOException, CryptoException {
+		PrivateKey privKey = null;
+		Password password = null;
+
+		switch (fileType) {
+		case ENC_PKCS8_PVK:
+			password = getPassword();
+			if (password == null || password.isNulled()) {
+				return;
+			}
+			privKey = Pkcs8Util.loadEncrypted(data, password);
+			break;
+		case UNENC_PKCS8_PVK:
+			privKey = Pkcs8Util.load(data);
+			break;
+		case ENC_OPENSSL_PVK:
+			password = getPassword();
+			if (password == null || password.isNulled()) {
+				return;
+			}
+			privKey = OpenSslPvkUtil.loadEncrypted(data, password);
+			break;
+		case UNENC_OPENSSL_PVK:
+			privKey = OpenSslPvkUtil.load(data);
+			break;
+		case ENC_MS_PVK:
+			password = getPassword();
+			if (password == null || password.isNulled()) {
+				return;
+			}
+			privKey = MsPvkUtil.loadEncrypted(data, password);
+			break;
+		case UNENC_MS_PVK:
+			privKey = MsPvkUtil.load(data);
+			break;
+		default:
+			break;
+		}
+
+		DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame,
+				res.getString("ExamineClipboardAction.PrivateKeyDetails.Title"), privKey);
+		dViewPrivateKey.setLocationRelativeTo(frame);
+		dViewPrivateKey.setVisible(true);
+	}
+
+	private Password getPassword() {
+		DGetPassword dGetPassword = new DGetPassword(frame,
+				res.getString("ExamineClipboardAction.EnterPassword.Title"));
+		dGetPassword.setLocationRelativeTo(frame);
+		dGetPassword.setVisible(true);
+		return dGetPassword.getPassword();
+	}
+
+	private void showPublicKey(byte[] data) throws IOException, CryptoException {
+		PublicKey publicKey = OpenSslPubUtil.load(data);
+
+		DViewPublicKey dViewPublicKey = new DViewPublicKey(frame,
+				res.getString("ExamineClipboardAction.PublicKeyDetails.Title"), publicKey);
+		dViewPublicKey.setLocationRelativeTo(frame);
+		dViewPublicKey.setVisible(true);
+	}
+
+	private void showCert(byte[] data) throws CryptoException {
 
 		X509Certificate[] certs = null;
 		try {
-			certs = X509CertUtil.loadCertificates(is);
+			certs = X509CertUtil.loadCertificates(data);
 
 			if (certs.length == 0) {
 				JOptionPane.showMessageDialog(frame,
@@ -182,14 +263,14 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private void showCrl(InputStream is) {
-		if (is == null) {
+	private void showCrl(byte[] data) {
+		if (data == null) {
 			return;
 		}
 
 		X509CRL crl = null;
 		try {
-			crl = X509CertUtil.loadCRL(is);
+			crl = X509CertUtil.loadCRL(data);
 		} catch (Exception ex) {
 			String problemStr = res.getString("ExamineClipboardAction.NoOpenCrl.Problem");
 
@@ -212,8 +293,8 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 	}
 
 
-	private void showCsr(InputStream is, CryptoFileType fileType) {
-		if (is == null) {
+	private void showCsr(byte[] data, CryptoFileType fileType) {
+		if (data == null) {
 			return;
 		}
 
@@ -223,9 +304,9 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 			try {
 				if (fileType == CryptoFileType.PKCS10_CSR) {
-					pkcs10Csr = Pkcs10Util.loadCsr(is);
+					pkcs10Csr = Pkcs10Util.loadCsr(data);
 				} else if (fileType == CryptoFileType.SPKAC_CSR) {
-					spkacCsr = new Spkac(is);
+					spkacCsr = new Spkac(data);
 				}
 			} catch (Exception ex) {
 				String problemStr = res.getString("ExamineClipboardAction.NoOpenCsr.Problem");

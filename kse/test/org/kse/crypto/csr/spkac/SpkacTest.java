@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -51,7 +50,7 @@ public class SpkacTest extends KeyPairTestsBase {
 		"CN=blah,blah,blah",
 	})
 	public void invalidVersion(String spkac) {
-		assertThrows(SpkacMissingPropertyException.class, () -> new Spkac(new ByteArrayInputStream(spkac.getBytes())));
+		assertThrows(SpkacMissingPropertyException.class, () -> new Spkac(spkac.getBytes()));
 	}
 
 	@ParameterizedTest
@@ -98,7 +97,7 @@ public class SpkacTest extends KeyPairTestsBase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		spkac.output(baos);
 
-		spkac = new Spkac(new ByteArrayInputStream(baos.toByteArray()));
+		spkac = new Spkac(baos.toByteArray());
 
 		assertEquals(CHALLENGE, spkac.getChallenge());
 		assertEquals(signatureAlgorithm, spkac.getSignatureAlgorithm());

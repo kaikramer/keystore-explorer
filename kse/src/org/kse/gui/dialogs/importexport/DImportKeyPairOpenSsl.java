@@ -32,7 +32,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -57,6 +56,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.commons.io.FileUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -412,13 +412,13 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 
 		try {
 			PrivateKey privateKey = null;
+			byte[] pvkData = FileUtils.readFileToByteArray(privateKeyFile);
 
 			if (!jcbEncrypted.isSelected()) {
-				privateKey = OpenSslPvkUtil.load(new FileInputStream(privateKeyFile));
+				privateKey = OpenSslPvkUtil.load(pvkData);
 			} else {
 				Password password = new Password(jpfPassword.getPassword());
-
-				privateKey = OpenSslPvkUtil.loadEncrypted(new FileInputStream(privateKeyFile), password);
+				privateKey = OpenSslPvkUtil.loadEncrypted(pvkData, password);
 			}
 
 			return privateKey;
@@ -511,7 +511,8 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		File certificateFile = new File(certificatePath);
 
 		try {
-			X509Certificate[] certs = X509CertUtil.loadCertificates(new FileInputStream(certificateFile));
+			byte[] certData = FileUtils.readFileToByteArray(certificateFile);
+			X509Certificate[] certs = X509CertUtil.loadCertificates(certData);
 
 			if (certs.length == 0) {
 				JOptionPane.showMessageDialog(this, MessageFormat.format(

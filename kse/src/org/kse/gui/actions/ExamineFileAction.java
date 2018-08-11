@@ -21,7 +21,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -35,6 +34,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.apache.commons.io.FileUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
@@ -99,16 +99,13 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 	}
 
 	public void openFile(File file) {
-
 		if (file == null) {
 			return;
 		}
 
-		OpenAction openAction = new OpenAction(kseFrame);
-		try (FileInputStream is = new FileInputStream(file)) {
-
+		try {
 			// detect file type and use the right action class for opening the file
-			CryptoFileType fileType = CryptoFileUtil.detectFileType(is);
+			CryptoFileType fileType = CryptoFileUtil.detectFileType(file);
 
 			switch (fileType) {
 			case JCEKS_KS:
@@ -118,6 +115,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 			case BKS_V1_KS:
 			case BCFKS_KS:
 			case UBER_KS:
+				OpenAction openAction = new OpenAction(kseFrame);
 				openAction.openKeyStore(file);
 				break;
 			case CERT:
@@ -152,7 +150,6 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 			JOptionPane.showMessageDialog(frame,
 					MessageFormat.format(res.getString("ExamineFileAction.NotFile.message"), file),
 					res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
-			return;
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
@@ -170,18 +167,18 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private void openCrl(File crlFile) {
-
-		if (crlFile == null) {
+	private void openCrl(File file) {
+		if (file == null) {
 			return;
 		}
 
 		X509CRL crl = null;
 		try {
-			crl = X509CertUtil.loadCRL(new FileInputStream(crlFile));
+			byte[] data = FileUtils.readFileToByteArray(file);
+			crl = X509CertUtil.loadCRL(data);
 		} catch (Exception ex) {
 			String problemStr = MessageFormat.format(res.getString("ExamineFileAction.NoOpenCrl.Problem"),
-					crlFile.getName());
+					file.getName());
 
 			String[] causes = new String[] { res.getString("ExamineFileAction.NotCrl.Cause"),
 					res.getString("ExamineFileAction.CorruptedCrl.Cause") };
@@ -196,7 +193,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
 		if (crl != null) {
 			DViewCrl dViewCrl = new DViewCrl(frame, MessageFormat.format(
-					res.getString("ExamineFileAction.CrlDetailsFile.Title"), crlFile.getName()), crl);
+					res.getString("ExamineFileAction.CrlDetailsFile.Title"), file.getName()), crl);
 			dViewCrl.setLocationRelativeTo(frame);
 			dViewCrl.setVisible(true);
 		}
@@ -211,10 +208,11 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 		Spkac spkacCsr = null;
 
 		try {
+			byte[] data = FileUtils.readFileToByteArray(file);
 			if (fileType == CryptoFileType.PKCS10_CSR) {
-				pkcs10Csr = Pkcs10Util.loadCsr(new FileInputStream(file));
+				pkcs10Csr = Pkcs10Util.loadCsr(data);
 			} else if (fileType == CryptoFileType.SPKAC_CSR) {
-				spkacCsr = new Spkac(new FileInputStream(file));
+				spkacCsr = new Spkac(data);
 			}
 		} catch (Exception ex) {
 			String problemStr = MessageFormat.format(res.getString("ExamineFileAction.NoOpenCsr.Problem"),
@@ -248,6 +246,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
 	private void openPrivateKey(File file, CryptoFileType fileType) throws IOException, CryptoException {
 
+		byte[] data = FileUtils.readFileToByteArray(file);
 		PrivateKey privKey = null;
 		Password password = null;
 
@@ -257,30 +256,30 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 			if (password == null || password.isNulled()) {
 				return;
 			}
-			privKey = Pkcs8Util.loadEncrypted(new FileInputStream(file), password);
+			privKey = Pkcs8Util.loadEncrypted(data, password);
 			break;
 		case UNENC_PKCS8_PVK:
-			privKey = Pkcs8Util.load(new FileInputStream(file));
+			privKey = Pkcs8Util.load(data);
 			break;
 		case ENC_OPENSSL_PVK:
 			password = getPassword(file);
 			if (password == null || password.isNulled()) {
 				return;
 			}
-			privKey = OpenSslPvkUtil.loadEncrypted(new FileInputStream(file), password);
+			privKey = OpenSslPvkUtil.loadEncrypted(data, password);
 			break;
 		case UNENC_OPENSSL_PVK:
-			privKey = OpenSslPvkUtil.load(new FileInputStream(file));
+			privKey = OpenSslPvkUtil.load(data);
 			break;
 		case ENC_MS_PVK:
 			password = getPassword(file);
 			if (password == null || password.isNulled()) {
 				return;
 			}
-			privKey = MsPvkUtil.loadEncrypted(new FileInputStream(file), password);
+			privKey = MsPvkUtil.loadEncrypted(data, password);
 			break;
 		case UNENC_MS_PVK:
-			privKey = MsPvkUtil.load(new FileInputStream(file));
+			privKey = MsPvkUtil.load(data);
 			break;
 		default:
 			break;
@@ -293,8 +292,8 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 	}
 
 	private void openPublicKey(File file) throws IOException, CryptoException {
-
-		PublicKey publicKey = OpenSslPubUtil.load(new FileInputStream(file));
+		byte[] data = FileUtils.readFileToByteArray(file);
+		PublicKey publicKey = OpenSslPubUtil.load(data);
 
 		DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
 				res.getString("ExamineFileAction.PublicKeyDetailsFile.Title"), file.getName()), publicKey);

@@ -19,16 +19,13 @@
  */
 package org.kse.crypto.publickey;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.PublicKey;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.kse.crypto.CryptoException;
-import org.kse.utilities.io.ReadUtil;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
@@ -119,28 +116,26 @@ public class OpenSslPubUtil {
 	 * Load an unencrypted OpenSSL public key from the stream. The encoding of
 	 * the public key may be PEM or DER.
 	 *
-	 * @param is
-	 *            Stream to load the unencrypted public key from
+	 * @param pkData BA to load the unencrypted public key from
 	 * @return The public key
 	 * @throws CryptoException
 	 *             Problem encountered while loading the public key
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static PublicKey load(InputStream is) throws CryptoException, IOException {
-		byte[] streamContents = ReadUtil.readFully(is);
+	public static PublicKey load(byte[] pkData) throws CryptoException, IOException {
 
 		// Check if stream is PEM encoded
-		PemInfo pemInfo = PemUtil.decode(new ByteArrayInputStream(streamContents));
+		PemInfo pemInfo = PemUtil.decode(pkData);
 
 		if (pemInfo != null) {
 			// It is - get DER from PEM
-			streamContents = pemInfo.getContent();
+			pkData = pemInfo.getContent();
 		}
 
 		try {
 			// DER-encoded subjectPublicKeyInfo structure - the OpenSSL format
-			SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(streamContents);
+			SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(pkData);
 			return new JcaPEMKeyConverter().getPublicKey(publicKeyInfo);
 		} catch (Exception ex) {
 			throw new CryptoException(res.getString("NoLoadOpenSslPublicKey.exception.message"), ex);

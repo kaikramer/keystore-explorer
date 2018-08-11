@@ -23,7 +23,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.io.ByteArrayInputStream;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -231,10 +230,9 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				String data;
 				data = (String) t.getTransferData(DataFlavor.stringFlavor);
-				ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
 
 				// try to extract certs from clip board data
-				certs = X509CertUtil.loadCertificates(bais);
+				certs = X509CertUtil.loadCertificates(data.getBytes());
 				if (certs.length == 0) {
 					JOptionPane.showMessageDialog(frame, MessageFormat.format(
 							res.getString("ImportCaReplyFromClipboardAction.NoCertsFound.message"), "Clipboard"), res
