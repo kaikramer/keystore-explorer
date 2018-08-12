@@ -379,9 +379,11 @@ public class DPreferences extends JEscDialog {
 		jpAuthorityCertificates.add(jlCaCertificatesFile, "split");
 		jpAuthorityCertificates.add(jtfCaCertificatesFile, "");
 		jpAuthorityCertificates.add(jbBrowseCaCertificatesFile, "wrap rel");
-		jpAuthorityCertificates.add(jcbUseCaCertificates, "wrap rel");
 		if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
+			jpAuthorityCertificates.add(jcbUseCaCertificates, "wrap rel");
 			jpAuthorityCertificates.add(jcbUseWinTrustedRootCertificates, "wrap para");
+		} else {
+			jpAuthorityCertificates.add(jcbUseCaCertificates, "wrap para");
 		}
 		jpAuthorityCertificates.add(jlTrustChecks, "wrap unrel");
 		jpAuthorityCertificates.add(jcbEnableImportTrustedCertTrustCheck, "wrap rel");
@@ -714,38 +716,34 @@ public class DPreferences extends JEscDialog {
 	}
 
 	private void initDisplayColumnsTab() {
-		bColumnsChanged =false;
+		bColumnsChanged = false;
 		jpDisplayColumns = new JPanel();
-		jpDisplayColumns.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
 		jlDisplayColumns = new JLabel(res.getString("DPreferences.jlDisplayColumns.text"));
 
 		bEnableEntryName = kstColumns.getEnableEntryName();
-		jcbEnableEntryName = new JCheckBox(res.getString("DPreferences.jcbEnableEntryName.text"),
-				bEnableEntryName);
+		jcbEnableEntryName = new JCheckBox(res.getString("DPreferences.jcbEnableEntryName.text"), bEnableEntryName);
 		jcbEnableEntryName.setMnemonic(res.getString("DPreferences.jcbEnableEntryName.mnemonic").charAt(0));
 		jcbEnableEntryName.setSelected(bEnableEntryName);
 
 		bEnableAlgorithm = kstColumns.getEnableAlgorithm();
-		jcbEnableAlgorithm = new JCheckBox(	res.getString("DPreferences.jcbEnableAlgorithm.text"),
-				bEnableAlgorithm);
+		jcbEnableAlgorithm = new JCheckBox(res.getString("DPreferences.jcbEnableAlgorithm.text"), bEnableAlgorithm);
 		jcbEnableAlgorithm.setMnemonic(res.getString("DPreferences.jcbEnableAlgorithm.mnemonic").charAt(0));
 
 		bEnableKeySize = kstColumns.getEnableKeySize();
-		jcbEnableKeySize = new JCheckBox(res.getString("DPreferences.jcbEnableKeySize.text"),
-				bEnableKeySize);
+		jcbEnableKeySize = new JCheckBox(res.getString("DPreferences.jcbEnableKeySize.text"), bEnableKeySize);
 		jcbEnableKeySize.setMnemonic(res.getString("DPreferences.jcbEnableKeySize.mnemonic").charAt(0));
 		jcbEnableKeySize.setSelected(bEnableKeySize);
 
 		bEnableCurve = kstColumns.getEnableCurve();
-		jcbEnableCurve = new JCheckBox(res.getString("DPreferences.jcbEnableCurve.text"),
-				bEnableCurve);
+		jcbEnableCurve = new JCheckBox(res.getString("DPreferences.jcbEnableCurve.text"), bEnableCurve);
 		jcbEnableCurve.setMnemonic(res.getString("DPreferences.jcbEnableCurve.mnemonic").charAt(0));
 		jcbEnableCurve.setSelected(bEnableCurve);
 
 		bEnableCertificateExpiry = kstColumns.getEnableCertificateExpiry();
 		jcbEnableCertificateExpiry = new JCheckBox(res.getString("DPreferences.jcbEnableCertificateExpiry.text"),
 				bEnableCertificateExpiry);
-		jcbEnableCertificateExpiry.setMnemonic(res.getString("DPreferences.jcbEnableCertificateExpiry.mnemonic").charAt(0));
+		jcbEnableCertificateExpiry
+		.setMnemonic(res.getString("DPreferences.jcbEnableCertificateExpiry.mnemonic").charAt(0));
 		jcbEnableCertificateExpiry.setSelected(bEnableCertificateExpiry);
 
 		bEnableLastModified = kstColumns.getEnableLastModified();
@@ -755,49 +753,41 @@ public class DPreferences extends JEscDialog {
 		jcbEnableLastModified.setSelected(bEnableLastModified);
 
 		bEnableSKI = kstColumns.getEnableSKI();
-		jcbEnableSKI = new JCheckBox(res.getString("DPreferences.jcbEnableSKI.text"),
-				bEnableSKI);
+		jcbEnableSKI = new JCheckBox(res.getString("DPreferences.jcbEnableSKI.text"), bEnableSKI);
 		jcbEnableSKI.setMnemonic(res.getString("DPreferences.jcbEnableSKI.mnemonic").charAt(0));
 		jcbEnableSKI.setSelected(bEnableSKI);
 
 		bEnableAKI = kstColumns.getEnableAKI();
-		jcbEnableAKI = new JCheckBox(res.getString("DPreferences.jcbEnableAKI.text"),
-				bEnableAKI);
+		jcbEnableAKI = new JCheckBox(res.getString("DPreferences.jcbEnableAKI.text"), bEnableAKI);
 		jcbEnableAKI.setMnemonic(res.getString("DPreferences.jcbEnableAKI.mnemonic").charAt(0));
 		jcbEnableAKI.setSelected(bEnableAKI);
 
-		bEnableIssuerDN =  kstColumns.getEnableIssuerDN();
-		jcbEnableIssuerDN = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerDN.text"),
-				bEnableIssuerDN);
+		bEnableIssuerDN = kstColumns.getEnableIssuerDN();
+		jcbEnableIssuerDN = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerDN.text"), bEnableIssuerDN);
 		jcbEnableIssuerDN.setMnemonic(res.getString("DPreferences.jcbEnableIssuerDN.mnemonic").charAt(0));
 		jcbEnableIssuerDN.setSelected(bEnableIssuerDN);
 
-		bEnableSubjectDN =  kstColumns.getEnableSubjectDN();
-		jcbEnableSubjectDN = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectDN.text"),
-				bEnableSubjectDN);
+		bEnableSubjectDN = kstColumns.getEnableSubjectDN();
+		jcbEnableSubjectDN = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectDN.text"), bEnableSubjectDN);
 		jcbEnableSubjectDN.setMnemonic(res.getString("DPreferences.jcbEnableSubjectDN.mnemonic").charAt(0));
 		jcbEnableSubjectDN.setSelected(bEnableSubjectDN);
 
-		bEnableIssuerCN =  kstColumns.getEnableIssuerCN();
-		jcbEnableIssuerCN = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerCN.text"),
-				bEnableIssuerCN);
+		bEnableIssuerCN = kstColumns.getEnableIssuerCN();
+		jcbEnableIssuerCN = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerCN.text"), bEnableIssuerCN);
 		jcbEnableIssuerCN.setMnemonic(res.getString("DPreferences.jcbEnableIssuerCN.mnemonic").charAt(0));
 		jcbEnableIssuerCN.setSelected(bEnableIssuerCN);
 
-		bEnableSubjectCN =  kstColumns.getEnableSubjectCN();
-		jcbEnableSubjectCN = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectCN.text"),
-				bEnableSubjectCN);
+		bEnableSubjectCN = kstColumns.getEnableSubjectCN();
+		jcbEnableSubjectCN = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectCN.text"), bEnableSubjectCN);
 		jcbEnableSubjectCN.setMnemonic(res.getString("DPreferences.jcbEnableSubjectCN.mnemonic").charAt(0));
 		jcbEnableSubjectCN.setSelected(bEnableSubjectCN);
-		bEnableIssuerO =  kstColumns.getEnableIssuerO();
-		jcbEnableIssuerO = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerO.text"),
-				bEnableIssuerO);
+		bEnableIssuerO = kstColumns.getEnableIssuerO();
+		jcbEnableIssuerO = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerO.text"), bEnableIssuerO);
 		jcbEnableIssuerO.setMnemonic(res.getString("DPreferences.jcbEnableIssuerO.mnemonic").charAt(0));
 		jcbEnableIssuerO.setSelected(bEnableIssuerO);
 
-		bEnableSubjectO =  kstColumns.getEnableSubjectO();
-		jcbEnableSubjectO = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectO.text"),
-				bEnableSubjectO);
+		bEnableSubjectO = kstColumns.getEnableSubjectO();
+		jcbEnableSubjectO = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectO.text"), bEnableSubjectO);
 		jcbEnableSubjectO.setMnemonic(res.getString("DPreferences.jcbEnableSubjectO.mnemonic").charAt(0));
 		jcbEnableSubjectO.setSelected(bEnableSubjectO);
 
@@ -806,6 +796,7 @@ public class DPreferences extends JEscDialog {
 		jtfExpirationWarnDays.setColumns(3);
 		jtfExpirationWarnDays.setText(Integer.toString(expiryWarnDays));
 
+		jpDisplayColumns.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
 		jpDisplayColumns.add(jlDisplayColumns, "left, wrap");
 		jpDisplayColumns.add(jcbEnableEntryName, "left");
 		jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
