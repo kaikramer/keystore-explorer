@@ -122,4 +122,8 @@ public class RdnPanel extends JPanel {
 	public String getAttributeValue() {
 		return textField.getText();
 	}
+
+	public JTextField getTextField() {
+		return textField;
+	}
 }

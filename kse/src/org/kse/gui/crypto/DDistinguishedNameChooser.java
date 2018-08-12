@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.x500.RDN;
@@ -168,6 +169,13 @@ public class DDistinguishedNameChooser extends JEscDialog {
 		getRootPane().setDefaultButton(jbOK);
 
 		pack();
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				distinguishedNameChooser.getFirstTextField().requestFocus();
+			}
+		});
 	}
 
 	/**

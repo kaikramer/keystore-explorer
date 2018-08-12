@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -107,6 +108,14 @@ public class RdnPanelList extends JPanel {
 			rdns.add(new RDN(new AttributeTypeAndValue(attrType, attrValue)));
 		}
 		return rdns;
+	}
+
+	public JTextField getFirstTextField() {
+		RdnPanel rdnPanel = entries.get(0);
+		if (rdnPanel != null) {
+			return rdnPanel.getTextField();
+		}
+		return new JTextField();
 	}
 
 	private void refresh() {

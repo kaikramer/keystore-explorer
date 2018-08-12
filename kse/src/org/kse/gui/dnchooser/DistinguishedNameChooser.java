@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.x500.RDN;
@@ -87,6 +88,10 @@ public class DistinguishedNameChooser extends JPanel {
 		List<RDN> rdns = listPanel.getRdns(false);
 		Collections.reverse(rdns);
 		return new X500Name(rdns.toArray(new RDN[rdns.size()]));
+	}
+
+	public JTextField getFirstTextField() {
+		return listPanel.getFirstTextField();
 	}
 
 	public void reset() {

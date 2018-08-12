@@ -41,11 +41,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
 import org.kse.crypto.Password;
 import org.kse.gui.JEscDialog;
@@ -237,18 +236,10 @@ public class DGetNewPassword extends JEscDialog {
 
 		pack();
 
-		// fix for focus issues: request focus after dialog was made visible
-		jpfFirst.addAncestorListener(new AncestorListener() {
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
-			public void ancestorRemoved(AncestorEvent event) {
-			}
-			@Override
-			public void ancestorMoved(AncestorEvent event) {
-			}
-			@Override
-			public void ancestorAdded(AncestorEvent event) {
-				JComponent component = event.getComponent();
-				component.requestFocusInWindow();
+			public void run() {
+				jpfFirst.requestFocus();
 			}
 		});
 	}
