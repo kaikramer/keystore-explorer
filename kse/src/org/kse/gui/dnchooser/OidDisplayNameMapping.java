@@ -45,6 +45,7 @@ public class OidDisplayNameMapping {
 	private static final String O = res.getString("DistinguishedNameChooser.jlOrganisationName.text");
 	private static final String OU = res.getString("DistinguishedNameChooser.jlOrganisationUnit.text");
 	private static final String CN = res.getString("DistinguishedNameChooser.jlCommonName.text");
+	private static final String UID = res.getString("DistinguishedNameChooser.jlUserID.text");
 
 	private static Map<String, ASN1ObjectIdentifier> displayNameToOID = new HashMap<>();
 	static {
@@ -60,6 +61,7 @@ public class OidDisplayNameMapping {
 		displayNameToOID.put(GIVENNAME, BCStyle.GIVENNAME);
 		displayNameToOID.put(SURNAME, BCStyle.SURNAME);
 		displayNameToOID.put(DC, BCStyle.DC);
+		displayNameToOID.put(UID, BCStyle.UID);
 	}
 
 	private static Map<String, String> oidToDisplayName = new HashMap<>();
@@ -76,10 +78,11 @@ public class OidDisplayNameMapping {
 		oidToDisplayName.put(BCStyle.GIVENNAME.getId(), GIVENNAME);
 		oidToDisplayName.put(BCStyle.SURNAME.getId(), SURNAME);
 		oidToDisplayName.put(BCStyle.DC.getId(), DC);
+		oidToDisplayName.put(BCStyle.UID.getId(), UID);
 	}
 
 	public static String[] getDisplayNames() {
-		return new String[]{ CN, OU, O, L, ST, C, E, SN, GIVENNAME, SURNAME, DC };
+		return new String[]{ CN, OU, O, L, ST, C, E, SN, GIVENNAME, SURNAME, DC, UID };
 	}
 
 	public static ASN1ObjectIdentifier getOidForDisplayName(String displayName) {

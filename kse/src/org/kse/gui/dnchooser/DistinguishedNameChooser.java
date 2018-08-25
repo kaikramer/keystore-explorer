@@ -110,7 +110,7 @@ public class DistinguishedNameChooser extends JPanel {
 		frame.setSize(800, 400);
 
 		X500Name dn = new X500Name(KseX500NameStyle.INSTANCE,
-				"CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com");
+				"CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com, UID=123456");
 		String defaultDN = "CN=, OU=, O=, C=";
 
 		final DistinguishedNameChooser nameChooser = new DistinguishedNameChooser(dn, true, defaultDN);
