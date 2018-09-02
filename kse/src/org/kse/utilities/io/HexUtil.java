@@ -23,6 +23,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import org.bouncycastle.util.encoders.Hex;
+
 /**
  * Class of utility methods to output data in hex.
  *
@@ -35,7 +37,7 @@ public class HexUtil {
 
 	/**
 	 * Get hex string for the supplied big integer: "0x<hex string>" where hex
-	 * string is outputted in groups of exactly four characters sub-divided by
+	 * string is output in groups of exactly four characters sub-divided by
 	 * spaces.
 	 *
 	 * @param bigInt
@@ -51,7 +53,7 @@ public class HexUtil {
 
 		// Insert any required padding to get groups of exactly 4 characters
 		if ((padding > 0) && (padding < 4)) {
-			StringBuffer sb = new StringBuffer(hex);
+			StringBuilder sb = new StringBuilder(hex);
 
 			for (int i = 0; i < padding; i++) {
 				sb.insert(0, '0');
@@ -61,7 +63,7 @@ public class HexUtil {
 		}
 
 		// Output with leading "0x" and spaces to form groups
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		strBuff.append("0x");
 
@@ -77,8 +79,36 @@ public class HexUtil {
 	}
 
 	/**
+	 * Get bytes as a formatted String. Returned in base-16
+	 * with given separator every two characters padded with a leading 0 if
+	 * necessary to make for an even number of hex characters.
+	 *
+	 * @param data
+	 *            The bytes
+	 * @param separator
+	 *            Separator character
+	 * @return The message digest
+	 */
+	public static String getHexStringWithSep(byte[] data, char separator) {
+
+		StringBuilder strBuff = new StringBuilder(Hex.toHexString(data).toUpperCase());
+
+		if ((strBuff.length() % 2) == 1) {
+			strBuff.insert(0, '0');
+		}
+
+		if (strBuff.length() > 2) {
+			for (int i = 2; i < strBuff.length(); i += 3) {
+				strBuff.insert(i, separator);
+			}
+		}
+
+		return strBuff.toString();
+	}
+
+	/**
 	 * Get hex string for the supplied byte array: "0x<hex string>" where hex
-	 * string is outputted in groups of exactly four characters sub-divided by
+	 * string is output in groups of exactly four characters sub-divided by
 	 * spaces.
 	 *
 	 * @param bytes
@@ -101,7 +131,7 @@ public class HexUtil {
 	public static String getHexClearDump(byte[] bytes) throws IOException {
 		try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
 			// Divide dump into 8 byte lines
-			StringBuffer strBuff = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 
 			byte[] line = new byte[8];
@@ -112,19 +142,19 @@ public class HexUtil {
 				if (firstLine) {
 					firstLine = false;
 				} else {
-					strBuff.append(NEWLINE);
+					sb.append(NEWLINE);
 				}
 
-				strBuff.append(getHexClearLineDump(line, read));
+				sb.append(getHexClearLineDump(line, read));
 			}
 
-			return strBuff.toString();
+			return sb.toString();
 		}
 	}
 
 	private static String getHexClearLineDump(byte[] bytes, int len) {
-		StringBuffer sbHex = new StringBuffer();
-		StringBuffer sbClr = new StringBuffer();
+		StringBuilder sbHex = new StringBuilder();
+		StringBuilder sbClr = new StringBuilder();
 
 		for (int cnt = 0; cnt < len; cnt++) {
 			// Convert byte to int
@@ -165,7 +195,7 @@ public class HexUtil {
 		 * Put both dumps together in one string (hex, clear) with appropriate
 		 * padding between them (pad to array length)
 		 */
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		strBuff.append(sbHex.toString());
 

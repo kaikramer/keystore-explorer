@@ -21,13 +21,13 @@ package org.kse.crypto.digest;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.kse.crypto.CryptoException;
+import org.kse.utilities.io.HexUtil;
 import org.kse.utilities.io.IOUtils;
 
 /**
@@ -105,19 +105,7 @@ public final class DigestUtil {
 	public static String getFriendlyMessageDigest(byte[] message, DigestType digestType) throws CryptoException {
 		byte[] messageDigest = getMessageDigest(message, digestType);
 
-		StringBuffer strBuff = new StringBuffer(new BigInteger(1, messageDigest).toString(16).toUpperCase());
-
-		if ((strBuff.length() % 2) == 1) {
-			strBuff.insert(0, '0');
-		}
-
-		if (strBuff.length() > 2) {
-			for (int i = 2; i < strBuff.length(); i += 3) {
-				strBuff.insert(i, ':');
-			}
-		}
-
-		return strBuff.toString();
+		return HexUtil.getHexStringWithSep(messageDigest, ':');
 	}
 
 	/**
