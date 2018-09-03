@@ -70,6 +70,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	private String[] columnNames;
 	private Class[] columnTypes;
 	private Object[][] data;
+	private KeyStoreHistory history;
 
 	/** Type column value for a key pair entry */
 	public static final String KEY_PAIR_ENTRY = res.getString("KeyStoreTableModel.KeyPairEntry");
@@ -100,6 +101,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	private static int iSubjectCNColumn = -1;
 	private static int iIssuerOColumn = -1;
 	private static int iSubjectOColumn = -1;
+
 	/**
 	 * Construct a new KeyStoreTableModel with a variable layout.
 	 */
@@ -122,6 +124,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	 *             entries
 	 */
 	public void load(KeyStoreHistory history) throws GeneralSecurityException, CryptoException {
+		this.history = history;
 		KeyStoreState currentState = history.getCurrentState();
 
 		KeyStore keyStore = currentState.getKeyStore();
@@ -685,6 +688,10 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		} else {
 			return 0;
 		}
+	}
+
+	public KeyStoreHistory getHistory() {
+		return history;
 	}
 
 	private class AliasComparator implements Comparator<String> {

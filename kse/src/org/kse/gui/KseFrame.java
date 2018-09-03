@@ -1584,27 +1584,11 @@ public final class KseFrame implements StatusBar {
 		ds.createDefaultDragGestureRecognizer(jtKeyStore, DnDConstants.ACTION_MOVE,
 				new KeyStoreEntryDragGestureListener(this));
 		jtKeyStore.setAutoResizeMode(autoResizeMode);
+
 		// Add custom renderers for headers and cells
 		colAdjust(jtKeyStore);
 
-		// Make the first three columns small and not resizable as they hold icons
-		TableColumn typeCol = jtKeyStore.getColumnModel().getColumn(0);
-		typeCol.setResizable(false);
-		typeCol.setMinWidth(ICON_SIZE);
-		typeCol.setMaxWidth(ICON_SIZE);
-		typeCol.setPreferredWidth(ICON_SIZE);
-
-		TableColumn statusCol = jtKeyStore.getColumnModel().getColumn(1);
-		statusCol.setResizable(false);
-		statusCol.setMinWidth(ICON_SIZE);
-		statusCol.setMaxWidth(ICON_SIZE);
-		statusCol.setPreferredWidth(ICON_SIZE);
-
-		TableColumn certExpiredCol = jtKeyStore.getColumnModel().getColumn(2);
-		certExpiredCol.setResizable(false);
-		certExpiredCol.setMinWidth(ICON_SIZE);
-		certExpiredCol.setMaxWidth(ICON_SIZE);
-		certExpiredCol.setPreferredWidth(ICON_SIZE);
+		setColumnsToIconSize(jtKeyStore, 0, 1, 2);
 
 		jtKeyStore.addMouseListener(new MouseAdapter() {
 			@Override
@@ -2351,61 +2335,40 @@ public final class KseFrame implements StatusBar {
 	}
 
 	/**
-	 * Remove all tables and recreate them from the set of histories.
-	 *
+	 * Re-draw all keystore tables
+	 * @param applicationSettings
 	 */
 	public void redrawKeyStores(ApplicationSettings applicationSettings) {
 		if (keyStoreTables != null) {
-			KeyStoreHistory[] histories = getKeyStoreHistories();
-			if (histories != null) {
-				char[][] passwords = new char[histories.length][];
-				KeyStoreState currentState;
 
-				for (int index = 0; index < histories.length; index++) {
-					currentState = histories[index].getCurrentState();
-					if (currentState != null) {
-						Password pw = currentState.getPassword();
-						if (pw != null) {
-							if (!pw.isNulled()) {
-								passwords[index] = currentState.getPassword().toCharArray();
-							}
-							// when changes have been made, try to retrieve the
-							// password from the chain of histories
-							while (((passwords[index].length == 0) || (passwords[index][0] == '\0'))
-									&& currentState.hasPreviousState()) {
-								passwords[index] = currentState.previousState().getPassword().toCharArray();
-							}
-						}
-						if (!currentState.isSavedState()) {
-							new SaveAction(this).saveKeyStore(histories[index]);
-						}
-						KeyStore keyStore = currentState.getKeyStore();
-						if (keyStore != null) {
-							removeKeyStore(keyStore);
-						}
-					}
-				}
-				// tell new layout
-				this.applicationSettings = applicationSettings;
-				// and reopen all keystores from the histories
-				for (int index = 0; index < histories.length; index++) {
-					currentState = histories[index].getCurrentState();
-					if (currentState != null) {
-						Password pw = null;
-						if (passwords[index] != null) {
-							pw = new Password(passwords[index]);
-						}
-						if (pw != null) {
-							if (histories[index].getExplicitProvider() != null) {
-								addKeyStore(currentState.getKeyStore(), histories[index].getName(), pw,
-										histories[index].getExplicitProvider());
-							} else {
-								addKeyStore(currentState.getKeyStore(), histories[index].getFile(), pw);
-							}
-						}
-					}
+			keyStoreTableColumns = applicationSettings.getKeyStoreTableColumns();
+
+			for (JTable keyStoreTable : keyStoreTables) {
+				KeyStoreHistory history = ((KeyStoreTableModel) keyStoreTable.getModel()).getHistory();
+				KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
+				try {
+					ksModel.load(history);
+					keyStoreTable.setModel(ksModel);
+
+					RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
+					keyStoreTable.setRowSorter(sorter);
+
+					setColumnsToIconSize(keyStoreTable, 0, 1, 2);
+					colAdjust(keyStoreTable);
+				} catch (GeneralSecurityException | CryptoException e) {
+					DError.displayError(frame, e);
 				}
 			}
+		}
+	}
+
+	private void setColumnsToIconSize(JTable keyStoreTable, int... columnNumbers) {
+		for (int i : columnNumbers) {
+			TableColumn typeCol = keyStoreTable.getColumnModel().getColumn(i);
+			typeCol.setResizable(false);
+			typeCol.setMinWidth(ICON_SIZE);
+			typeCol.setMaxWidth(ICON_SIZE);
+			typeCol.setPreferredWidth(ICON_SIZE);
 		}
 	}
 

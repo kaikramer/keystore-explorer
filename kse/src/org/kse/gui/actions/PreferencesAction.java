@@ -119,6 +119,11 @@ public class PreferencesAction extends ExitAction {
 		boolean languageHasChanged = !language.equals(applicationSettings.getLanguage());
 		applicationSettings.setLanguage(language);
 
+		if (dPreferences.columnsChanged()) {
+			applicationSettings.setKeyStoreTableColumns(dPreferences.getColumns());
+			kseFrame.redrawKeyStores(applicationSettings);
+		}
+
 		if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName()))
 				|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())
 				|| languageHasChanged) {
@@ -128,9 +133,5 @@ public class PreferencesAction extends ExitAction {
 
 			exitApplication(true);
 		}
-		if (dPreferences.columnsChanged()) {
-			kseFrame.redrawKeyStores(applicationSettings);
-		}
-
 	}
 }
