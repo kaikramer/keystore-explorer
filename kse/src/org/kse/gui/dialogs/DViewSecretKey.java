@@ -20,7 +20,6 @@
 package org.kse.gui.dialogs;
 
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,10 +31,12 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -45,6 +46,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.DecoderException;
+import org.bouncycastle.util.encoders.Hex;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.secretkey.SecretKeyType;
@@ -73,9 +76,13 @@ public class DViewSecretKey extends JEscDialog {
 	private JLabel jlEncoded;
 	private JTextArea jtaEncoded;
 	private JScrollPane jspEncoded;
+	private JButton jbCancel;
 	private JButton jbOK;
 
 	private SecretKey secretKey;
+
+	private boolean editable;
+	private boolean keyHasChanged = false;
 
 	/**
 	 * Creates a new DViewSecretKey dialog.
@@ -86,10 +93,13 @@ public class DViewSecretKey extends JEscDialog {
 	 *            The dialog title
 	 * @param secretKey
 	 *            Secret key to display
+	 * @param editable
+	 *            Secret key can be edited/replaced
 	 */
-	public DViewSecretKey(JFrame parent, String title, SecretKey secretKey) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+	public DViewSecretKey(JFrame parent, String title, SecretKey secretKey, boolean editable) {
+		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		this.secretKey = secretKey;
+		this.editable = editable;
 		initComponents();
 	}
 
@@ -104,13 +114,16 @@ public class DViewSecretKey extends JEscDialog {
 	 *            Dialog modality
 	 * @param secretKey
 	 *            Secret key to display
+	 * @param editable
+	 *            Secret key can be edited/replaced
 	 * @throws CryptoException
 	 *             A problem was encountered getting the secret key's details
 	 */
-	public DViewSecretKey(JDialog parent, String title, Dialog.ModalityType modality, SecretKey secretKey)
+	public DViewSecretKey(JDialog parent, String title, ModalityType modality, SecretKey secretKey, boolean editable)
 			throws CryptoException {
 		super(parent, title, modality);
 		this.secretKey = secretKey;
+		this.editable = editable;
 		initComponents();
 	}
 
@@ -138,8 +151,10 @@ public class DViewSecretKey extends JEscDialog {
 
 		jtaEncoded = new JTextArea();
 		jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		jtaEncoded.setBackground(jtfFormat.getBackground());
-		jtaEncoded.setEditable(false);
+		if (!editable) {
+			jtaEncoded.setBackground(jtfFormat.getBackground());
+		}
+		jtaEncoded.setEditable(editable);
 		jtaEncoded.setLineWrap(true);
 		jtaEncoded.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 		jtaEncoded.setToolTipText(res.getString("DViewSecretKey.jtfEncoded.tooltip"));
@@ -149,6 +164,7 @@ public class DViewSecretKey extends JEscDialog {
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		jspEncoded.setBorder(jtfFormat.getBorder());
 
+		jbCancel = new JButton(res.getString("DViewSecretKey.jbCancel.text"));
 		jbOK = new JButton(res.getString("DViewSecretKey.jbOK.text"));
 
 		// layout
@@ -163,12 +179,24 @@ public class DViewSecretKey extends JEscDialog {
 		pane.add(jlEncoded, "");
 		pane.add(jspEncoded, "width 260lp:260lp:260lp, height 50lp:50lp:50lp, wrap"); // sp determines dialog size
 		pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
-		pane.add(jbOK, "spanx, tag ok");
+		if (editable) {
+			pane.add(jbCancel, "spanx, split 2, tag cancel");
+			pane.add(jbOK, "tag ok");
+		} else {
+			pane.add(jbOK, "spanx, tag ok");
+		}
 
 		jbOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				okPressed();
+			}
+		});
+
+		jbCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				cancelPressed();
 			}
 		});
 
@@ -223,8 +251,39 @@ public class DViewSecretKey extends JEscDialog {
 		jtaEncoded.setCaretPosition(0);
 	}
 
-	private void okPressed() {
+	private void cancelPressed() {
 		closeDialog();
+	}
+
+	private void okPressed() {
+
+		if (editable) {
+			String text = jtaEncoded.getText();
+			try {
+				byte[] newKeyRaw = Hex.decode(text.replace(':', ' '));
+				SecretKey newKey = new SecretKeySpec(newKeyRaw, 0, newKeyRaw.length, secretKey.getAlgorithm());
+				this.secretKey = newKey;
+				this.keyHasChanged = true;
+			} catch (DecoderException e) {
+				JOptionPane.showMessageDialog(this, res.getString("DViewSecretKey.NotAValidHexString.message"),
+						getTitle(), JOptionPane.ERROR_MESSAGE);
+				return;
+			} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+				JOptionPane.showMessageDialog(this, res.getString("DViewSecretKey.NotAValidKey.message"),
+						getTitle(), JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+
+		closeDialog();
+	}
+
+	public boolean keyHasChanged() {
+		return keyHasChanged;
+	}
+
+	public SecretKey getSecretKey() {
+		return secretKey;
 	}
 
 	private void closeDialog() {
@@ -242,14 +301,24 @@ public class DViewSecretKey extends JEscDialog {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey);
-				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-					@Override
-					public void windowClosed(java.awt.event.WindowEvent e) {
-						System.exit(0);
-					}
-				});
-				dialog.setVisible(true);
+				try {
+					DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey, true);
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							super.windowClosing(e);
+							System.exit(0);
+						}
+						@Override
+						public void windowDeactivated(WindowEvent e) {
+							super.windowDeactivated(e);
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}

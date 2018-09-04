@@ -365,7 +365,13 @@ public class DExtendedKeyUsage extends DExtension {
 					DExtendedKeyUsage dialog = new DExtendedKeyUsage(new JDialog());
 					dialog.addWindowListener(new WindowAdapter() {
 						@Override
-						public void windowClosing(WindowEvent e) {
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							super.windowClosing(e);
+							System.exit(0);
+						}
+						@Override
+						public void windowDeactivated(WindowEvent e) {
+							super.windowDeactivated(e);
 							System.exit(0);
 						}
 					});

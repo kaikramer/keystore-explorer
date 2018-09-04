@@ -22,6 +22,7 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.security.Key;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.text.MessageFormat;
@@ -29,6 +30,7 @@ import java.text.MessageFormat;
 import javax.crypto.SecretKey;
 import javax.swing.ImageIcon;
 
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewPrivateKey;
@@ -94,9 +96,13 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
 				SecretKey secretKey = (SecretKey) key;
 
 				DViewSecretKey dViewSecretKey = new DViewSecretKey(frame, MessageFormat.format(
-						res.getString("KeyDetailsAction.SecretKeyDetailsEntry.Title"), alias), secretKey);
+						res.getString("KeyDetailsAction.SecretKeyDetailsEntry.Title"), alias), secretKey, true);
 				dViewSecretKey.setLocationRelativeTo(frame);
 				dViewSecretKey.setVisible(true);
+
+				if (dViewSecretKey.keyHasChanged()) {
+					updateSecretKey(currentState, alias, password, dViewSecretKey);
+				}
 			} else if (key instanceof PrivateKey) {
 				PrivateKey privateKey = (PrivateKey) key;
 
@@ -115,5 +121,19 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
+	}
+
+	private void updateSecretKey(KeyStoreState currentState, String alias, Password password,
+			DViewSecretKey dViewSecretKey) throws CryptoException, KeyStoreException {
+		KeyStore keyStore;
+		KeyStoreState newState = currentState.createBasisForNextState(new GenerateSecretKeyAction(kseFrame));
+		keyStore = newState.getKeyStore();
+		SecretKey newSecretKey = dViewSecretKey.getSecretKey();
+		keyStore.deleteEntry(alias);
+		newState.removeEntryPassword(alias);
+		keyStore.setKeyEntry(alias, newSecretKey, password.toCharArray(), null);
+		newState.setEntryPassword(alias, password);
+		currentState.append(newState);
+		kseFrame.updateControls(true);
 	}
 }
