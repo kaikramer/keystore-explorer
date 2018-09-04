@@ -112,7 +112,7 @@ compileJava {
 }
 
 dependencies {
-	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.59'
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.60'
 	compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
