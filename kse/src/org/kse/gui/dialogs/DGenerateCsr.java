@@ -30,12 +30,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import javax.security.auth.x500.X500Principal;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -59,12 +61,14 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.SignatureType;
+import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.utilities.io.FileNameUtil;
 
 import net.miginfocom.swing.MigLayout;
@@ -85,6 +89,8 @@ public class DGenerateCsr extends JEscDialog {
 	private JRadioButton jrbSpkac;
 	private JLabel jlSignatureAlgorithm;
 	private JComboBox<SignatureType> jcbSignatureAlgorithm;
+	private JLabel jlName;
+	private JDistinguishedName jdnName;
 	private JLabel jlChallenge;
 	private JTextField jtfChallenge;
 	private JLabel jlUnstructuredName;
@@ -99,6 +105,7 @@ public class DGenerateCsr extends JEscDialog {
 
 	private boolean generateSelected = false;
 	private String alias;
+	private X500Principal subjectDN;
 	private PrivateKey privateKey;
 	private KeyPairType keyPairType;
 	private CsrType format;
@@ -110,24 +117,22 @@ public class DGenerateCsr extends JEscDialog {
 
 	private String path;
 
+
 	/**
 	 * Creates a new DGenerateCsr dialog.
 	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param privateKey
-	 *            Private key
-	 * @param keyPairType
-	 *            Key pair algorithm
-	 * @param path
-	 *             Path to keystore file
-	 * @throws CryptoException
-	 *             A problem was encountered with the supplied private key
+	 * @param parent The parent frame
+	 * @param subjectDN Subject DN of certificate
+	 * @param privateKey Private key
+	 * @param keyPairType Key pair algorithm
+	 * @param path Path to keystore file
+	 * @throws CryptoException A problem was encountered with the supplied private key
 	 */
-	public DGenerateCsr(JFrame parent, String alias, PrivateKey privateKey, KeyPairType keyPairType, String path)
-			throws CryptoException {
+	public DGenerateCsr(JFrame parent, String alias, X500Principal subjectDN, PrivateKey privateKey,
+			KeyPairType keyPairType, String path) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.alias = alias;
+		this.subjectDN = subjectDN;
 		this.privateKey = privateKey;
 		this.keyPairType = keyPairType;
 		this.path = path;
@@ -158,6 +163,12 @@ public class DGenerateCsr extends JEscDialog {
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateCsr.jcbSignatureAlgorithm.tooltip"));
 		DialogHelper.populateSigAlgs(keyPairType, privateKey, jcbSignatureAlgorithm);
+
+		jlName = new JLabel(res.getString("DGenerateCsr.jlName.text"));
+
+		jdnName = new JDistinguishedName(res.getString("DGenerateCsr.jdnName.title"), 30, true);
+		jdnName.setToolTipText(res.getString("DGenerateCsr.jdnName.tooltip"));
+		jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(subjectDN));
 
 		jlChallenge = new JLabel(res.getString("DGenerateCsr.jlChallenge.text"));
 
@@ -195,11 +206,14 @@ public class DGenerateCsr extends JEscDialog {
 		pane.add(jrbSpkac, "wrap");
 		pane.add(jlSignatureAlgorithm, "");
 		pane.add(jcbSignatureAlgorithm, "wrap");
+		pane.add(jlName, "");
+		pane.add(jdnName, "spanx, wrap");
 		pane.add(jlChallenge, "");
 		pane.add(jtfChallenge, "wrap");
 		pane.add(jlUnstructuredName, "");
 		pane.add(jtfUnstructuredName, "wrap");
-		pane.add(jcbExtensions, "skip, wrap");
+		pane.add(jlExtensions, "");
+		pane.add(jcbExtensions, "wrap");
 		pane.add(jlCsrFile, "");
 		pane.add(jtfCsrFile, "");
 		pane.add(jbBrowse, "wrap");
@@ -377,6 +391,15 @@ public class DGenerateCsr extends JEscDialog {
 		return csrFile;
 	}
 
+	/**
+	 * Get chosen DN (might be the same that was taken from certificate or a completely different one).
+	 *
+	 * @return DN for CSR
+	 */
+	public X500Principal getSubjectDN() {
+		return subjectDN;
+	}
+
 	private void okPressed() {
 		if (jrbPkcs10.isSelected()) {
 			format = PKCS10;
@@ -385,6 +408,19 @@ public class DGenerateCsr extends JEscDialog {
 		}
 
 		signatureAlgorithm = jcbSignatureAlgorithm.getItemAt(jcbSignatureAlgorithm.getSelectedIndex());
+
+		if (jdnName.getDistinguishedName().toString().isEmpty()) {
+			JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"),
+					getTitle(), JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		try {
+			subjectDN = X500NameUtils.x500NameToX500Principal(jdnName.getDistinguishedName());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"),
+					getTitle(), JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 
 		challenge = jtfChallenge.getText();
 		if (challenge.length() == 0) {
@@ -450,7 +486,8 @@ public class DGenerateCsr extends JEscDialog {
 				try {
 					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
 					PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
-					DGenerateCsr dialog = new DGenerateCsr(new javax.swing.JFrame(), "alias (test)", privateKey,
+					X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
+					DGenerateCsr dialog = new DGenerateCsr(new javax.swing.JFrame(), "alias (test)", dn, privateKey,
 							KeyPairType.RSA, "");
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override

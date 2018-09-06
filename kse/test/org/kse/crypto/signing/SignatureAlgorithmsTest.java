@@ -26,12 +26,12 @@ import static org.kse.crypto.x509.X509CertificateVersion.VERSION1;
 import static org.kse.crypto.x509.X509CertificateVersion.VERSION3;
 
 import java.io.ByteArrayOutputStream;
-import java.math.BigInteger;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.X509Certificate;
+
+import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -46,6 +46,7 @@ import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.csr.spkac.SpkacSubject;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
 
@@ -132,28 +133,21 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
 			throw new InvalidParameterException();
 		}
 
-		X500Name name = new X500Name("cn=this");
+		X500Principal x500Principal = new X500Principal("cn=this");
+		X500Name x500Name = X500NameUtils.x500PrincipalToX500Name(x500Principal);
 
 		PublicKey publicKey = keyPair.getPublic();
 		PrivateKey privateKey = keyPair.getPrivate();
 
-		X509Certificate cert = null;
-
-		if (version == X509CertificateVersion.VERSION1) {
-			cert = generatorv1.generateSelfSigned(name, 1000, publicKey, privateKey, signatureType, BigInteger.ONE);
-		} else {
-			cert = generatorv3.generateSelfSigned(name, 1000, publicKey, privateKey, signatureType, BigInteger.ONE);
-		}
-
 		if (csrType == CsrType.SPKAC) {
-			Spkac spkac = new Spkac("whatever", signatureType, new SpkacSubject(name), publicKey, privateKey);
+			Spkac spkac = new Spkac("whatever", signatureType, new SpkacSubject(x500Name), publicKey, privateKey);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			spkac.output(baos);
 			spkac = new Spkac(baos.toByteArray());
 			assertThat(spkac.verify()).isTrue();
 		} else {
-			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(cert, privateKey, signatureType, "w/e", "w/e",
-					false, new BouncyCastleProvider());
+			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(x500Principal, publicKey, privateKey,
+					signatureType, "w/e", "w/e", null, new BouncyCastleProvider());
 			byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
 			pkcs10 = Pkcs10Util.loadCsr(encoded);
 			assertThat(Pkcs10Util.verifyCsr(pkcs10)).isTrue();

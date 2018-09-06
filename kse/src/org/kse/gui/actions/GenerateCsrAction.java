@@ -30,9 +30,12 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
+import javax.security.auth.x500.X500Principal;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.bouncycastle.asn1.x509.Certificate;
+import org.bouncycastle.asn1.x509.Extensions;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.csr.CsrType;
@@ -117,7 +120,11 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 				path = keyStoreFile.getAbsoluteFile().getParent();
 			}
 
-			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, privateKey, keyPairType, path);
+			X509Certificate firstCertInChain = X509CertUtil.orderX509CertChain(X509CertUtil
+					.convertCertificates(keyStore.getCertificateChain(alias)))[0];
+			X500Principal subjectDN = firstCertInChain.getSubjectX500Principal();
+
+			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, subjectDN, privateKey, keyPairType, path);
 			dGenerateCsr.setLocationRelativeTo(frame);
 			dGenerateCsr.setVisible(true);
 
@@ -125,46 +132,50 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 				return;
 			}
 
+			csrFile = dGenerateCsr.getCsrFile();
+			subjectDN = dGenerateCsr.getSubjectDN();
 			CsrType format = dGenerateCsr.getFormat();
 			SignatureType signatureType = dGenerateCsr.getSignatureType();
 			String challenge = dGenerateCsr.getChallenge();
 			String unstructuredName = dGenerateCsr.getUnstructuredName();
 			boolean useCertificateExtensions = dGenerateCsr.isAddExtensionsWanted();
-			csrFile = dGenerateCsr.getCsrFile();
 
-			X509Certificate firstCertInChain = X509CertUtil.orderX509CertChain(X509CertUtil
-					.convertCertificates(keyStore.getCertificateChain(alias)))[0];
+			PublicKey publicKey = firstCertInChain.getPublicKey();
+
+			// add extensionRequest attribute with all extensions from the certificate
+			Extensions extensions = null;
+			if (useCertificateExtensions) {
+				Certificate certificate = Certificate.getInstance(firstCertInChain.getEncoded());
+				extensions = certificate.getTBSCertificate().getExtensions();
+			}
 
 			fos = new FileOutputStream(csrFile);
 
 			if (format == CsrType.PKCS10) {
-				String csr = Pkcs10Util.getCsrEncodedDerPem(Pkcs10Util.generateCsr(firstCertInChain, privateKey,
-						signatureType, challenge, unstructuredName, useCertificateExtensions, provider));
+				String csr = Pkcs10Util.getCsrEncodedDerPem(Pkcs10Util.generateCsr(subjectDN, publicKey, privateKey,
+						signatureType, challenge, unstructuredName, extensions, provider));
 
 				fos.write(csr.getBytes());
 			} else {
 				SpkacSubject subject = new SpkacSubject(X500NameUtils.x500PrincipalToX500Name(firstCertInChain
 						.getSubjectX500Principal()));
-				PublicKey publicKey = firstCertInChain.getPublicKey();
 
 				// TODO handle other providers (PKCS11 etc)
 				Spkac spkac = new Spkac(challenge, signatureType, subject, publicKey, privateKey);
 
 				spkac.output(fos);
 			}
+
+			JOptionPane.showMessageDialog(frame, res.getString("GenerateCsrAction.CsrGenerationSuccessful.message"),
+					res.getString("GenerateCsrAction.GenerateCsr.Title"), JOptionPane.INFORMATION_MESSAGE);
 		} catch (FileNotFoundException ex) {
 			JOptionPane.showMessageDialog(frame,
 					MessageFormat.format(res.getString("GenerateCsrAction.NoWriteFile.message"), csrFile),
 					res.getString("GenerateCsrAction.GenerateCsr.Title"), JOptionPane.WARNING_MESSAGE);
-			return;
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
-			return;
 		} finally {
 			IOUtils.closeQuietly(fos);
 		}
-
-		JOptionPane.showMessageDialog(frame, res.getString("GenerateCsrAction.CsrGenerationSuccessful.message"),
-				res.getString("GenerateCsrAction.GenerateCsr.Title"), JOptionPane.INFORMATION_MESSAGE);
 	}
 }

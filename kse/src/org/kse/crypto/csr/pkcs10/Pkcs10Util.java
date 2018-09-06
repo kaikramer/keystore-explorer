@@ -33,13 +33,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
+
+import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERUTF8String;
-import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
@@ -74,29 +73,24 @@ public class Pkcs10Util {
 	 * Create a PKCS #10 certificate signing request (CSR) using the supplied
 	 * certificate, private key and signature algorithm.
 	 *
-	 * @param cert
-	 *            The certificate
-	 * @param privateKey
-	 *            The private key
-	 * @param signatureType
-	 *            Signature
-	 * @param challenge
-	 *            Challenge, optional, pass null if not required
-	 * @param unstructuredName
-	 *            An optional company name, pass null if not required
-	 * @param useExtensions
-	 *            Use extensions from cert for extensionRequest attribute?
-	 * @throws CryptoException
-	 *             If there was a problem generating the CSR
+	 * @param subjectDN Distinguished name for CSR
+	 * @param publicKey Public key for CSR
+	 * @param privateKey Private key for CSR
+	 * @param signatureType Signature algorithm
+	 * @param challenge Challenge, optional, pass null if not required
+	 * @param unstructuredName An optional company name, pass null if not required
+	 * @param extensions Optional extensions from cert for extensionRequest attribute, pass null if not required
+	 * @param provider Optional provider (for example for PKCS11)
 	 * @return The CSR
+	 * @throws CryptoException If there was a problem generating the CSR
 	 */
-	public static PKCS10CertificationRequest generateCsr(X509Certificate cert, PrivateKey privateKey,
-			SignatureType signatureType, String challenge, String unstructuredName, boolean useExtensions,
-			Provider provider) throws CryptoException {
+	public static PKCS10CertificationRequest generateCsr(X500Principal subjectDN, PublicKey publicKey,
+			PrivateKey privateKey, SignatureType signatureType, String challenge, String unstructuredName,
+			Extensions extensions, Provider provider) throws CryptoException {
 
 		try {
-			JcaPKCS10CertificationRequestBuilder csrBuilder =
-					new JcaPKCS10CertificationRequestBuilder(cert.getSubjectX500Principal(), cert.getPublicKey());
+			JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(subjectDN,
+					publicKey);
 
 			// add challenge attribute
 			if (challenge != null) {
@@ -108,13 +102,8 @@ public class Pkcs10Util {
 				csrBuilder.addAttribute(pkcs_9_at_unstructuredName, new DERUTF8String(unstructuredName));
 			}
 
-			if (useExtensions) {
-				// add extensionRequest attribute with all extensions from the certificate
-				Certificate certificate = Certificate.getInstance(cert.getEncoded());
-				Extensions extensions = certificate.getTBSCertificate().getExtensions();
-				if (extensions != null) {
-					csrBuilder.addAttribute(pkcs_9_at_extensionRequest, extensions.toASN1Primitive());
-				}
+			if (extensions != null) {
+				csrBuilder.addAttribute(pkcs_9_at_extensionRequest, extensions.toASN1Primitive());
 			}
 
 			// fall back to bouncy castle provider if given provider does not support the requested algorithm
@@ -137,7 +126,7 @@ public class Pkcs10Util {
 			}
 
 			return csr;
-		} catch (CertificateEncodingException | OperatorCreationException e) {
+		} catch (OperatorCreationException e) {
 			throw new CryptoException(res.getString("NoGeneratePkcs10Csr.exception.message"), e);
 		}
 	}

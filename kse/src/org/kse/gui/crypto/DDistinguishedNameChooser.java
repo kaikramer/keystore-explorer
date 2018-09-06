@@ -63,12 +63,16 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
 	private DistinguishedNameChooser distinguishedNameChooser;
+	private JButton jbReset;
+	private JButton jbDefault;
 	private JButton jbOK;
 	private JButton jbCancel;
 	private JPanel jpButtons;
 
 	private boolean editable;
 	private X500Name distinguishedName;
+
+	String defaultDN;
 
 	private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
@@ -112,15 +116,12 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 	private void initComponents() {
 
-		String defaultDN = applicationSettings.getDefaultDN();
+		defaultDN = applicationSettings.getDefaultDN();
+
+		jbReset = new JButton(res.getString("DDistinguishedNameChooser.jbReset.text"));
+		jbDefault = new JButton(res.getString("DDistinguishedNameChooser.jbDefault.text"));
 
 		jbOK = new JButton(res.getString("DDistinguishedNameChooser.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
 
 		if (editable) {
 			distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
@@ -153,9 +154,28 @@ public class DDistinguishedNameChooser extends JEscDialog {
 		// layout
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-		pane.add(distinguishedNameChooser, "left, spanx, wrap para");
-		pane.add(new JSeparator(), "spanx, growx, wrap");
-		pane.add(jpButtons, "right, spanx");
+		layoutContentPane();
+
+		jbOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				okPressed();
+			}
+		});
+
+		jbReset.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				resetPressed();
+			}
+		});
+
+		jbDefault.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				defaultPressed();
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -164,11 +184,9 @@ public class DDistinguishedNameChooser extends JEscDialog {
 			}
 		});
 
-		setResizable(false);
+		setResizable(true); // FIXME
 
 		getRootPane().setDefaultButton(jbOK);
-
-		pack();
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -178,6 +196,22 @@ public class DDistinguishedNameChooser extends JEscDialog {
 		});
 	}
 
+	private void layoutContentPane() {
+		Container pane = getContentPane();
+		pane.removeAll();
+		pane.add(distinguishedNameChooser, "left, spanx, wrap para");
+		if (editable) {
+			pane.add(jbReset, "right, spanx, split 2");
+			pane.add(jbDefault, "wrap");
+		}
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		pane.add(jpButtons, "right, spanx");
+
+		pack();
+		validate();
+		repaint();
+	}
+
 	/**
 	 * Get selected distinguished name.
 	 *
@@ -185,6 +219,16 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	 */
 	public X500Name getDistinguishedName() {
 		return distinguishedName;
+	}
+
+	protected void defaultPressed() {
+		distinguishedNameChooser = new DistinguishedNameChooser(new X500Name(defaultDN), true, defaultDN);
+		layoutContentPane();
+	}
+
+	protected void resetPressed() {
+		distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
+		layoutContentPane();
 	}
 
 	private void okPressed() {
