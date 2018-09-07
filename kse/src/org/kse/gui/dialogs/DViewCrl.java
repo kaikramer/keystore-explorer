@@ -503,10 +503,8 @@ public class DViewCrl extends JEscDialog {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, crl);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception | IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Asn1Exception | IOException e) {
+			DError.displayError(this, e);
 		}
 	}
 

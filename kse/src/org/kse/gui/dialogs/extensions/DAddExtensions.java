@@ -68,7 +68,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.keypair.KeyPairType;
@@ -495,102 +498,78 @@ public class DAddExtensions extends JEscDialog {
 		DExtension dExtension = null;
 
 		switch (extensionTypeToAdd) {
-		case AUTHORITY_INFORMATION_ACCESS: {
+		case AUTHORITY_INFORMATION_ACCESS:
 			dExtension = new DAuthorityInformationAccess(this);
 			break;
-		}
-		case AUTHORITY_KEY_IDENTIFIER: {
+		case AUTHORITY_KEY_IDENTIFIER:
 			dExtension = new DAuthorityKeyIdentifier(this, authorityPublicKey, authorityCertName,
 					authorityCertSerialNumber);
 			break;
-		}
-		case BASIC_CONSTRAINTS: {
+		case BASIC_CONSTRAINTS:
 			dExtension = new DBasicConstraints(this);
 			break;
-		}
-		case CERTIFICATE_POLICIES: {
+		case CERTIFICATE_POLICIES:
 			dExtension = new DCertificatePolicies(this);
 			break;
-		}
-		case EXTENDED_KEY_USAGE: {
+		case EXTENDED_KEY_USAGE:
 			dExtension = new DExtendedKeyUsage(this);
 			break;
-		}
-		case INHIBIT_ANY_POLICY: {
+		case INHIBIT_ANY_POLICY:
 			dExtension = new DInhibitAnyPolicy(this);
 			break;
-		}
-		case ISSUER_ALTERNATIVE_NAME: {
+		case ISSUER_ALTERNATIVE_NAME:
 			dExtension = new DIssuerAlternativeName(this);
 			break;
-		}
-		case KEY_USAGE: {
+		case KEY_USAGE:
 			dExtension = new DKeyUsage(this);
 			break;
-		}
-		case NAME_CONSTRAINTS: {
+		case NAME_CONSTRAINTS:
 			dExtension = new DNameConstraints(this);
 			break;
-		}
-		case NETSCAPE_BASE_URL: {
+		case NETSCAPE_BASE_URL:
 			dExtension = new DNetscapeBaseUrl(this);
 			break;
-		}
-		case NETSCAPE_CA_POLICY_URL: {
+		case NETSCAPE_CA_POLICY_URL:
 			dExtension = new DNetscapeCaPolicyUrl(this);
 			break;
-		}
-		case NETSCAPE_CA_REVOCATION_URL: {
+		case NETSCAPE_CA_REVOCATION_URL:
 			dExtension = new DNetscapeCaRevocationUrl(this);
 			break;
-		}
-		case NETSCAPE_CERTIFICATE_RENEWAL_URL: {
+		case NETSCAPE_CERTIFICATE_RENEWAL_URL:
 			dExtension = new DNetscapeCertificateRenewalUrl(this);
 			break;
-		}
-		case NETSCAPE_CERTIFICATE_TYPE: {
+		case NETSCAPE_CERTIFICATE_TYPE:
 			dExtension = new DNetscapeCertificateType(this);
 			break;
-		}
-		case NETSCAPE_COMMENT: {
+		case NETSCAPE_COMMENT:
 			dExtension = new DNetscapeComment(this);
 			break;
-		}
-		case NETSCAPE_REVOCATION_URL: {
+		case NETSCAPE_REVOCATION_URL:
 			dExtension = new DNetscapeRevocationUrl(this);
 			break;
-		}
-		case NETSCAPE_SSL_SERVER_NAME: {
+		case NETSCAPE_SSL_SERVER_NAME:
 			dExtension = new DNetscapeSslServerName(this);
 			break;
-		}
-		case POLICY_CONSTRAINTS: {
+		case POLICY_CONSTRAINTS:
 			dExtension = new DPolicyConstraints(this);
 			break;
-		}
-		case POLICY_MAPPINGS: {
+		case POLICY_MAPPINGS:
 			dExtension = new DPolicyMappings(this);
 			break;
-		}
-		case PRIVATE_KEY_USAGE_PERIOD: {
+		case PRIVATE_KEY_USAGE_PERIOD:
 			dExtension = new DPrivateKeyUsagePeriod(this);
 			break;
-		}
-		case SUBJECT_ALTERNATIVE_NAME: {
+		case SUBJECT_ALTERNATIVE_NAME:
 			dExtension = new DSubjectAlternativeName(this);
 			break;
-		}
-		case SUBJECT_INFORMATION_ACCESS: {
+		case SUBJECT_INFORMATION_ACCESS:
 			dExtension = new DSubjectInformationAccess(this);
 			break;
-		}
-		case SUBJECT_KEY_IDENTIFIER: {
+		case SUBJECT_KEY_IDENTIFIER:
 			dExtension = new DSubjectKeyIdentifier(this, subjectPublicKey);
 			break;
-		}
-		default: {
+		default:
 			return;
-		}
 		}
 
 		dExtension.setLocationRelativeTo(this);
@@ -601,7 +580,15 @@ public class DAddExtensions extends JEscDialog {
 			return;
 		}
 
-		extensions.addExtension(extensionTypeToAdd.oid(), isCritical, extensionValue);
+		// value has to be wrapped in a DER-encoded OCTET STRING
+		byte[] extensionValueOctet = null;
+		try {
+			extensionValueOctet = new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+		} catch (IOException e) {
+			return;
+		}
+
+		extensions.addExtension(extensionTypeToAdd.oid(), isCritical, extensionValueOctet);
 
 		reloadExtensionsTable();
 		selectExtensionInTable(extensionTypeToAdd.oid());
@@ -637,7 +624,7 @@ public class DAddExtensions extends JEscDialog {
 				String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
 				X509ExtensionType extensionType = X509ExtensionType.resolveOid(oid);
 
-				byte[] extensionValue = extensions.getExtensionValue(oid);
+				byte[] extensionValue = ASN1OctetString.getInstance(extensions.getExtensionValue(oid)).getOctets();
 				boolean isCritical = extensions.getCriticalExtensionOIDs().contains(oid);
 
 				byte[] newExtensionValue = null;
@@ -645,101 +632,77 @@ public class DAddExtensions extends JEscDialog {
 				DExtension dExtension = null;
 
 				switch (extensionType) {
-				case AUTHORITY_INFORMATION_ACCESS: {
+				case AUTHORITY_INFORMATION_ACCESS:
 					dExtension = new DAuthorityInformationAccess(this, extensionValue);
 					break;
-				}
-				case AUTHORITY_KEY_IDENTIFIER: {
+				case AUTHORITY_KEY_IDENTIFIER:
 					dExtension = new DAuthorityKeyIdentifier(this, extensionValue, authorityPublicKey);
 					break;
-				}
-				case BASIC_CONSTRAINTS: {
+				case BASIC_CONSTRAINTS:
 					dExtension = new DBasicConstraints(this, extensionValue);
 					break;
-				}
-				case CERTIFICATE_POLICIES: {
+				case CERTIFICATE_POLICIES:
 					dExtension = new DCertificatePolicies(this, extensionValue);
 					break;
-				}
-				case EXTENDED_KEY_USAGE: {
+				case EXTENDED_KEY_USAGE:
 					dExtension = new DExtendedKeyUsage(this, extensionValue);
 					break;
-				}
-				case INHIBIT_ANY_POLICY: {
+				case INHIBIT_ANY_POLICY:
 					dExtension = new DInhibitAnyPolicy(this, extensionValue);
 					break;
-				}
-				case ISSUER_ALTERNATIVE_NAME: {
+				case ISSUER_ALTERNATIVE_NAME:
 					dExtension = new DIssuerAlternativeName(this, extensionValue);
 					break;
-				}
-				case KEY_USAGE: {
+				case KEY_USAGE:
 					dExtension = new DKeyUsage(this, extensionValue);
 					break;
-				}
-				case NAME_CONSTRAINTS: {
+				case NAME_CONSTRAINTS:
 					dExtension = new DNameConstraints(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_BASE_URL: {
+				case NETSCAPE_BASE_URL:
 					dExtension = new DNetscapeBaseUrl(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_CERTIFICATE_RENEWAL_URL: {
+				case NETSCAPE_CERTIFICATE_RENEWAL_URL:
 					dExtension = new DNetscapeCertificateRenewalUrl(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_CA_POLICY_URL: {
+				case NETSCAPE_CA_POLICY_URL:
 					dExtension = new DNetscapeCaPolicyUrl(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_CA_REVOCATION_URL: {
+				case NETSCAPE_CA_REVOCATION_URL:
 					dExtension = new DNetscapeCaRevocationUrl(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_CERTIFICATE_TYPE: {
+				case NETSCAPE_CERTIFICATE_TYPE:
 					dExtension = new DNetscapeCertificateType(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_COMMENT: {
+				case NETSCAPE_COMMENT:
 					dExtension = new DNetscapeComment(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_REVOCATION_URL: {
+				case NETSCAPE_REVOCATION_URL:
 					dExtension = new DNetscapeRevocationUrl(this, extensionValue);
 					break;
-				}
-				case NETSCAPE_SSL_SERVER_NAME: {
+				case NETSCAPE_SSL_SERVER_NAME:
 					dExtension = new DNetscapeSslServerName(this, extensionValue);
 					break;
-				}
-				case POLICY_CONSTRAINTS: {
+				case POLICY_CONSTRAINTS:
 					dExtension = new DPolicyConstraints(this, extensionValue);
 					break;
-				}
-				case POLICY_MAPPINGS: {
+				case POLICY_MAPPINGS:
 					dExtension = new DPolicyMappings(this, extensionValue);
 					break;
-				}
-				case PRIVATE_KEY_USAGE_PERIOD: {
+				case PRIVATE_KEY_USAGE_PERIOD:
 					dExtension = new DPrivateKeyUsagePeriod(this, extensionValue);
 					break;
-				}
-				case SUBJECT_ALTERNATIVE_NAME: {
+				case SUBJECT_ALTERNATIVE_NAME:
 					dExtension = new DSubjectAlternativeName(this, extensionValue);
 					break;
-				}
-				case SUBJECT_INFORMATION_ACCESS: {
+				case SUBJECT_INFORMATION_ACCESS:
 					dExtension = new DSubjectInformationAccess(this, extensionValue);
 					break;
-				}
-				case SUBJECT_KEY_IDENTIFIER: {
+				case SUBJECT_KEY_IDENTIFIER:
 					dExtension = new DSubjectKeyIdentifier(this, extensionValue, subjectPublicKey);
 					break;
-				}
-				default: {
+				default:
 					return;
-				}
 				}
 
 				dExtension.setLocationRelativeTo(this);
@@ -750,16 +713,17 @@ public class DAddExtensions extends JEscDialog {
 					return;
 				}
 
-				extensions.addExtension(oid, isCritical, newExtensionValue);
+				// value has to be wrapped in a DER-encoded OCTET STRING
+				byte[] newExtensionValueOctet = new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+
+				extensions.addExtension(oid, isCritical, newExtensionValueOctet);
 
 				reloadExtensionsTable();
 				selectExtensionInTable(oid);
 				updateButtonControls();
 			}
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (IOException e) {
+			DError.displayError(this, e);
 		}
 	}
 

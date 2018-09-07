@@ -201,10 +201,8 @@ public class DInhibitAnyPolicy extends DExtension {
 
 		try {
 			value = inhibitAnyPolicy.getEncoded(ASN1Encoding.DER);
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (IOException e) {
+			DError.displayError(this, e);
 			return;
 		}
 

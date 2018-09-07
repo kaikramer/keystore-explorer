@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
@@ -270,7 +271,8 @@ public class X509CertificateGenerator {
 	}
 
 	private ASN1Encodable getExtensionValue(X509Extension extensions, String oid) throws CryptoException {
-		try (ASN1InputStream ais = new ASN1InputStream(extensions.getExtensionValue(oid))) {
+		byte[] octets = ASN1OctetString.getInstance(extensions.getExtensionValue(oid)).getOctets();
+		try (ASN1InputStream ais = new ASN1InputStream(octets)) {
 			return ais.readObject();
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);

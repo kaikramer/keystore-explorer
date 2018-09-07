@@ -212,7 +212,7 @@ public class DAddExtensionType extends JEscDialog {
 
 		jltExtensionTypes.setListData(availableExtensions.toArray(new X509ExtensionType[availableExtensions.size()]));
 
-		if (availableExtensions.size() > 0) {
+		if (!availableExtensions.isEmpty()) {
 			jltExtensionTypes.setSelectedIndex(0);
 		}
 	}

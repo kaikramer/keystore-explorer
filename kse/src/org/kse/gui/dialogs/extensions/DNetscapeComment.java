@@ -186,10 +186,8 @@ public class DNetscapeComment extends DExtension {
 
 		try {
 			value = netscapeComment.getEncoded(ASN1Encoding.DER);
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (IOException e) {
+			DError.displayError(this, e);
 			return;
 		}
 

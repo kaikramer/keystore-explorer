@@ -300,11 +300,9 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 				jepExtensionValue.setText("<html><body>" + ext.getStringValue()
 				.replace(X509Ext.INDENT.getIndentChar().toString(), "&nbsp;")
 				.replace(X509Ext.NEWLINE, "<br/>") + "</body></html>");
-			} catch (Exception ex) {
+			} catch (Exception e) {
 				jepExtensionValue.setText("");
-				DError dError = new DError(this, ex);
-				dError.setLocationRelativeTo(this);
-				dError.setVisible(true);
+				DError.displayError(this, e);
 			}
 			jepExtensionValue.setCaretPosition(0);
 
@@ -329,10 +327,8 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, extension);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception | IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Asn1Exception | IOException e) {
+			DError.displayError(this, e);
 		}
 	}
 

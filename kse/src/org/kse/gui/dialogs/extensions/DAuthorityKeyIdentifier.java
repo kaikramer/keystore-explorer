@@ -253,10 +253,8 @@ public class DAuthorityKeyIdentifier extends DExtension {
 				GeneralNames generalNames = new GeneralNames(generalName);
 
 				jgnAuthorityCertIssuer.setGeneralNames(generalNames);
-			} catch (Exception ex) {
-				DError dError = new DError(this, ex);
-				dError.setLocationRelativeTo(this);
-				dError.setVisible(true);
+			} catch (Exception e) {
+				DError.displayError(this, e);
 				return;
 			}
 		}
@@ -342,10 +340,8 @@ public class DAuthorityKeyIdentifier extends DExtension {
 
 		try {
 			value = authorityKeyIdentifier.getEncoded(ASN1Encoding.DER);
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (IOException e) {
+			DError.displayError(this, e);
 			return;
 		}
 

@@ -251,10 +251,8 @@ public class DKeyUsage extends DExtension {
 
 		try {
 			value = keyUsage.getEncoded(ASN1Encoding.DER);
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (IOException e) {
+			DError.displayError(this, e);
 			return;
 		}
 

@@ -166,7 +166,7 @@ public class DGenerateCsr extends JEscDialog {
 
 		jlName = new JLabel(res.getString("DGenerateCsr.jlName.text"));
 
-		jdnName = new JDistinguishedName(res.getString("DGenerateCsr.jdnName.title"), 30, true);
+		jdnName = new JDistinguishedName(res.getString("DGenerateCsr.jdnName.title"), 40, true);
 		jdnName.setToolTipText(res.getString("DGenerateCsr.jdnName.tooltip"));
 		jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(subjectDN));
 
@@ -177,7 +177,7 @@ public class DGenerateCsr extends JEscDialog {
 
 		jlUnstructuredName = new JLabel(res.getString("DGenerateCsr.jlUnstructuredName.text"));
 
-		jtfUnstructuredName = new JTextField(30);
+		jtfUnstructuredName = new JTextField(40);
 		jtfUnstructuredName.setToolTipText(res.getString("DGenerateCsr.jtfUnstructuredName.tooltip"));
 
 		jlExtensions = new JLabel(res.getString("DGenerateCsr.jlExtensions.text"));
@@ -187,7 +187,7 @@ public class DGenerateCsr extends JEscDialog {
 
 		jlCsrFile = new JLabel(res.getString("DGenerateCsr.jlCsrFile.text"));
 
-		jtfCsrFile = new JTextField(30);
+		jtfCsrFile = new JTextField(40);
 		jtfCsrFile.setToolTipText(res.getString("DGenerateCsr.jtfCsrFile.tooltip"));
 		populateCsrFileName();
 

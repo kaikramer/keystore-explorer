@@ -290,10 +290,8 @@ public class DViewPrivateKey extends JEscDialog {
 					privateKey);
 			dViewCsrPem.setLocationRelativeTo(this);
 			dViewCsrPem.setVisible(true);
-		} catch (CryptoException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (CryptoException e) {
+			DError.displayError(this, e);
 		}
 	}
 
@@ -320,10 +318,8 @@ public class DViewPrivateKey extends JEscDialog {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, privateKey);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception | IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Asn1Exception | IOException e) {
+			DError.displayError(this, e);
 		}
 	}
 

@@ -393,10 +393,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 						validityStart, validityEnd, keyPair.getPublic(), issuerPrivateKey, signatureType, serialNumber,
 						extensions, provider);
 			}
-		} catch (CryptoException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(getParent());
-			dError.setVisible(true);
+		} catch (CryptoException e) {
+			DError.displayError(this, e);
 			closeDialog();
 		}
 

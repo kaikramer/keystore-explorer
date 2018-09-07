@@ -42,7 +42,9 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -195,63 +197,70 @@ public class DSelectStdCertTemplate extends JEscDialog {
 
 		X509ExtensionSet extensionSet = new X509ExtensionSet();
 		try {
-			// AKI
-			KeyIdentifierGenerator akiGenerator = new KeyIdentifierGenerator(authorityPublicKey);
-			AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(akiGenerator.generate160BitHashId());
-			extensionSet.addExtension(X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid(), false, aki.getEncoded());
-
-			// SKI
-			KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(subjectPublicKey);
-			SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
-			extensionSet.addExtension(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid(), false, ski.getEncoded());
+			addAuthorityKeyIdentifier(extensionSet);
+			addSubjectKeyIdentifier(extensionSet);
 
 			if (jrbCA.isSelected()) {
-				// BC
-				BasicConstraints bc = new BasicConstraints(true);
-				extensionSet.addExtension(X509ExtensionType.BASIC_CONSTRAINTS.oid(), true, bc.getEncoded());
-
-				// key usage
-				KeyUsage ku = new KeyUsage(KeyUsage.keyCertSign | KeyUsage.cRLSign);
-				extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), false, ku.getEncoded());
+				addBasicConstraints(extensionSet);
+				addKeyUsage(extensionSet, KeyUsage.keyCertSign | KeyUsage.cRLSign);
 			}
 
 			if (jrbSslClient.isSelected()) {
-				// key usage
-				KeyUsage ku = new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment);
-				extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), false, ku.getEncoded());
-
-				// EKU
-				ExtendedKeyUsage eku = new ExtendedKeyUsage(new KeyPurposeId[] {
-						KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ExtendedKeyUsageType.CLIENT_AUTH.oid())) });
-				extensionSet.addExtension(X509ExtensionType.EXTENDED_KEY_USAGE.oid(), false, eku.getEncoded());
+				addKeyUsage(extensionSet, KeyUsage.digitalSignature | KeyUsage.keyEncipherment);
+				addExtKeyUsage(extensionSet, ExtendedKeyUsageType.CLIENT_AUTH.oid());
 			}
 
 			if (jrbSslServer.isSelected()) {
-				// key usage
-				KeyUsage ku = new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment);
-				extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), false, ku.getEncoded());
-
-				// EKU
-				ExtendedKeyUsage eku = new ExtendedKeyUsage(new KeyPurposeId[] {
-						KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ExtendedKeyUsageType.SERVER_AUTH.oid())) });
-				extensionSet.addExtension(X509ExtensionType.EXTENDED_KEY_USAGE.oid(), false, eku.getEncoded());
+				addKeyUsage(extensionSet, KeyUsage.digitalSignature | KeyUsage.keyEncipherment);
+				addExtKeyUsage(extensionSet, ExtendedKeyUsageType.SERVER_AUTH.oid());
 			}
 
 			if (jrbCodeSigning.isSelected()) {
-				// key usage
-				KeyUsage ku = new KeyUsage(KeyUsage.digitalSignature);
-				extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), false, ku.getEncoded());
-
-				// EKU
-				ExtendedKeyUsage eku = new ExtendedKeyUsage(new KeyPurposeId[] {
-						KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ExtendedKeyUsageType.CODE_SIGNING.oid())) });
-				extensionSet.addExtension(X509ExtensionType.EXTENDED_KEY_USAGE.oid(), false, eku.getEncoded());
+				addKeyUsage(extensionSet, KeyUsage.digitalSignature);
+				addExtKeyUsage(extensionSet, ExtendedKeyUsageType.CODE_SIGNING.oid());
 			}
 
 			this.extensions = extensionSet;
 		} catch (CryptoException | IOException e) {
 			DError.displayError(this, e);
 		}
+	}
+
+	private void addAuthorityKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
+		KeyIdentifierGenerator akiGenerator = new KeyIdentifierGenerator(authorityPublicKey);
+		AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(akiGenerator.generate160BitHashId());
+		byte[] akiEncoded = wrapInOctetString(aki.getEncoded());
+		extensionSet.addExtension(X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid(), false, akiEncoded);
+	}
+
+	private void addSubjectKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
+		KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(subjectPublicKey);
+		SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
+		byte[] skiEncoded = wrapInOctetString(ski.getEncoded());
+		extensionSet.addExtension(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid(), false, skiEncoded);
+	}
+
+	private void addBasicConstraints(X509ExtensionSet extensionSet) throws IOException {
+		BasicConstraints bc = new BasicConstraints(true);
+		byte[] bcEncoded = wrapInOctetString(bc.getEncoded());
+		extensionSet.addExtension(X509ExtensionType.BASIC_CONSTRAINTS.oid(), true, bcEncoded);
+	}
+
+	private void addKeyUsage(X509ExtensionSet extensionSet, int usage) throws IOException {
+		KeyUsage ku = new KeyUsage(usage);
+		byte[] kuEncoded = wrapInOctetString(ku.getEncoded());
+		extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), false, kuEncoded);
+	}
+
+	private void addExtKeyUsage(X509ExtensionSet extensionSet, String ekuOid) throws IOException {
+		ExtendedKeyUsage eku = new ExtendedKeyUsage(
+				new KeyPurposeId[] { KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ekuOid)) });
+		byte[] ekuEncoded = wrapInOctetString(eku.getEncoded());
+		extensionSet.addExtension(X509ExtensionType.EXTENDED_KEY_USAGE.oid(), false, ekuEncoded);
+	}
+
+	private byte[] wrapInOctetString(byte[] extensionValue) throws IOException {
+		return new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
 	}
 
 	private void cancelPressed() {

@@ -80,7 +80,7 @@ public class JDateTime extends JPanel {
 	}
 
 	private void initComponents() {
-		jtfDateTime = new JTextField(16);
+		jtfDateTime = new JTextField(18);
 		jtfDateTime.setEditable(false);
 
 		GridBagConstraints gbc_jtfDateTime = new GridBagConstraints();

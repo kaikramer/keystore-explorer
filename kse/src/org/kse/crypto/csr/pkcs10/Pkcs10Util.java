@@ -37,8 +37,11 @@ import java.util.ResourceBundle;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
@@ -53,6 +56,7 @@ import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
+import org.kse.crypto.x509.X509ExtensionSet;
 
 /**
  * Provides utility methods relating to PKCS #10 CSRs.
@@ -229,7 +233,7 @@ public class Pkcs10Util {
 				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
 			String line = lnr.readLine();
-			StringBuffer sbPem = new StringBuffer();
+			StringBuilder sbPem = new StringBuilder();
 
 			if ((line != null) && (line.equals(BEGIN_CSR_FORM_1) || line.equals(BEGIN_CSR_FORM_2))) {
 				while ((line = lnr.readLine()) != null) {
@@ -250,4 +254,24 @@ public class Pkcs10Util {
 
 		return new PKCS10CertificationRequest(csrBytes);
 	}
+
+	/**
+	 * Extract sequence with extensions from CSR
+	 *
+	 * @param pkcs10Csr The CSR
+	 * @return Extensions from that CSR (if any)
+	 */
+	public static X509ExtensionSet getExtensions(PKCS10CertificationRequest pkcs10Csr) {
+		Attribute[] attributes = pkcs10Csr.getAttributes(pkcs_9_at_extensionRequest);
+		X509ExtensionSet x509ExtensionSet = new X509ExtensionSet();
+		if ((attributes != null) && (attributes.length > 0)) {
+			ASN1Encodable[] attributeValues = attributes[0].getAttributeValues();
+			if (attributeValues.length > 0) {
+				ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(attributeValues[0]);
+				x509ExtensionSet = new X509ExtensionSet(asn1Sequence);
+			}
+		}
+		return x509ExtensionSet;
+	}
+
 }

@@ -45,8 +45,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -56,6 +54,7 @@ import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.csr.spkac.SpkacSubject;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -180,12 +179,10 @@ public class DViewCsr extends JEscDialog {
 		jtfUnstructuredName.setToolTipText(res.getString("DViewCsr.jtfUnstructuredName.tooltip"));
 
 		jbExtensions = new JButton(res.getString("DViewCsr.jbExtensions.text"));
-
 		PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewCsr.jbExtensions.mnemonic").charAt(0));
 		jbExtensions.setToolTipText(res.getString("DViewCsr.jbExtensions.tooltip"));
 
 		jbPem = new JButton(res.getString("DViewCsr.jbPem.text"));
-
 		PlatformUtil.setMnemonic(jbPem, res.getString("DViewCsr.jbPem.mnemonic").charAt(0));
 		jbPem.setToolTipText(res.getString("DViewCsr.jbPem.tooltip"));
 
@@ -254,13 +251,6 @@ public class DViewCsr extends JEscDialog {
 			}
 		});
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
-
 		jbAsn1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -270,6 +260,13 @@ public class DViewCsr extends JEscDialog {
 				} finally {
 					CursorUtil.setCursorFree(DViewCsr.this);
 				}
+			}
+		});
+
+		jbOK.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				okPressed();
 			}
 		});
 
@@ -374,17 +371,7 @@ public class DViewCsr extends JEscDialog {
 	}
 
 	private void extensionsPressed() {
-
-		// extract sequence with extensions from csr
-		Attribute[] attributes = pkcs10Csr.getAttributes(pkcs_9_at_extensionRequest);
-		X509ExtensionSet x509ExtensionSet = new X509ExtensionSet();
-		if ((attributes != null) && (attributes.length > 0)) {
-			ASN1Encodable[] attributeValues = attributes[0].getAttributeValues();
-			if (attributeValues.length > 0) {
-				ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(attributeValues[0]);
-				x509ExtensionSet = new X509ExtensionSet(asn1Sequence);
-			}
-		}
+		X509ExtensionSet x509ExtensionSet = Pkcs10Util.getExtensions(pkcs10Csr);
 
 		DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCertificate.Extensions.Title"),
 				x509ExtensionSet);
@@ -406,10 +393,8 @@ public class DViewCsr extends JEscDialog {
 					publicKey);
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
-		} catch (CryptoException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (CryptoException e) {
+			DError.displayError(this, e);
 		}
 	}
 
@@ -419,10 +404,8 @@ public class DViewCsr extends JEscDialog {
 					pkcs10Csr);
 			dViewCsrPem.setLocationRelativeTo(this);
 			dViewCsrPem.setVisible(true);
-		} catch (CryptoException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (CryptoException e) {
+			DError.displayError(this, e);
 		}
 	}
 
@@ -437,14 +420,8 @@ public class DViewCsr extends JEscDialog {
 			}
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Asn1Exception | IOException e) {
+			DError.displayError(this, e);
 		}
 	}
 
@@ -476,6 +453,12 @@ public class DViewCsr extends JEscDialog {
 					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 						@Override
 						public void windowClosing(java.awt.event.WindowEvent e) {
+							super.windowClosing(e);
+							System.exit(0);
+						}
+						@Override
+						public void windowDeactivated(WindowEvent e) {
+							super.windowDeactivated(e);
 							System.exit(0);
 						}
 					});

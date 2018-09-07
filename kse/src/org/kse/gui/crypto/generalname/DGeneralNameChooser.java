@@ -450,10 +450,8 @@ public class DGeneralNameChooser extends JEscDialog {
 			}
 
 			generalName = newGeneralName;
-		} catch (Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Exception e) {
+			DError.displayError(this, e);
 			return;
 		}
 

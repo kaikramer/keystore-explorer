@@ -327,10 +327,8 @@ public class DExtendedKeyUsage extends DExtension {
 
 		try {
 			value = extendedKeyUsage.getEncoded(ASN1Encoding.DER);
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (IOException e) {
+			DError.displayError(this, e);
 			return;
 		}
 

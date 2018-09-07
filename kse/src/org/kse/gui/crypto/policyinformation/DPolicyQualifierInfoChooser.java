@@ -327,10 +327,8 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 						new ASN1ObjectIdentifier(PKIX_USER_NOTICE_QUALIFIER.oid()),
 						userNotice);
 			}
-		} catch (Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Exception e) {
+			DError.displayError(this, e);
 			return;
 		}
 

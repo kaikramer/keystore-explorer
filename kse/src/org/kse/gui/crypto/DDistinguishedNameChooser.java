@@ -119,7 +119,10 @@ public class DDistinguishedNameChooser extends JEscDialog {
 		defaultDN = applicationSettings.getDefaultDN();
 
 		jbReset = new JButton(res.getString("DDistinguishedNameChooser.jbReset.text"));
+		// FIXME tool tip and mnemonic
+
 		jbDefault = new JButton(res.getString("DDistinguishedNameChooser.jbDefault.text"));
+		// FIXME tool tip and mnemonic
 
 		jbOK = new JButton(res.getString("DDistinguishedNameChooser.jbOK.text"));
 

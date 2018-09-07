@@ -252,16 +252,14 @@ public class DPolicyInformationChooser extends JEscDialog {
 
 		List<PolicyQualifierInfo> policyQualifierInfo = jpqPolicyQualifiers.getPolicyQualifierInfo();
 
-		if (policyQualifierInfo.size() > 0) {
+		if (!policyQualifierInfo.isEmpty()) {
 			ASN1EncodableVector policyQualifiersVec = new ASN1EncodableVector ();
 
 			for (PolicyQualifierInfo policyQualInfo : policyQualifierInfo) {
 				try {
 					policyQualifiersVec.add(policyQualInfo);
-				} catch (Exception ex) {
-					DError dError = new DError(this, ex);
-					dError.setLocationRelativeTo(this);
-					dError.setVisible(true);
+				} catch (Exception e) {
+					DError.displayError(this, e);
 					return;
 				}
 			}

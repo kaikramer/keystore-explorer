@@ -288,10 +288,8 @@ public class DViewPublicKey extends JEscDialog {
 			DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewPublicKey.Pem.Title"), publicKey);
 			dViewCsrPem.setLocationRelativeTo(this);
 			dViewCsrPem.setVisible(true);
-		} catch (CryptoException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (CryptoException e) {
+			DError.displayError(this, e);
 		}
 	}
 
@@ -318,14 +316,8 @@ public class DViewPublicKey extends JEscDialog {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, publicKey);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
-		} catch (IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Asn1Exception | IOException e) {
+			DError.displayError(this, e);
 		}
 	}
 

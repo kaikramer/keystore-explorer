@@ -708,10 +708,8 @@ public class DViewCertificate extends JEscDialog {
 				} else {
 					jbExtensions.setEnabled(false);
 				}
-			} catch (CryptoException ex) {
-				DError dError = new DError(this, ex);
-				dError.setLocationRelativeTo(this);
-				dError.setVisible(true);
+			} catch (CryptoException e) {
+				DError.displayError(this, e);
 				dispose();
 			}
 		}
@@ -726,10 +724,8 @@ public class DViewCertificate extends JEscDialog {
 					cert.getPublicKey());
 			dViewPublicKey.setLocationRelativeTo(this);
 			dViewPublicKey.setVisible(true);
-		} catch (CryptoException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (CryptoException e) {
+			DError.displayError(this, e);
 		}
 	}
 
@@ -750,10 +746,8 @@ public class DViewCertificate extends JEscDialog {
 					cert);
 			dViewCertPem.setLocationRelativeTo(this);
 			dViewCertPem.setVisible(true);
-		} catch (CryptoException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (CryptoException e) {
+			DError.displayError(this, e);
 		}
 	}
 
@@ -764,10 +758,8 @@ public class DViewCertificate extends JEscDialog {
 			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, cert);
 			dViewAsn1Dump.setLocationRelativeTo(this);
 			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception | IOException ex) {
-			DError dError = new DError(this, ex);
-			dError.setLocationRelativeTo(this);
-			dError.setVisible(true);
+		} catch (Asn1Exception | IOException e) {
+			DError.displayError(this, e);
 		}
 	}
 
