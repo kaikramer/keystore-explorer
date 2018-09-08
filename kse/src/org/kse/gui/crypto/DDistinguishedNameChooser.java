@@ -119,10 +119,12 @@ public class DDistinguishedNameChooser extends JEscDialog {
 		defaultDN = applicationSettings.getDefaultDN();
 
 		jbReset = new JButton(res.getString("DDistinguishedNameChooser.jbReset.text"));
-		// FIXME tool tip and mnemonic
+		PlatformUtil.setMnemonic(jbReset, res.getString("DDistinguishedNameChooser.jbReset.mnemonic").charAt(0));
+		jbReset.setToolTipText(res.getString("DDistinguishedNameChooser.jbReset.tooltip"));
 
 		jbDefault = new JButton(res.getString("DDistinguishedNameChooser.jbDefault.text"));
-		// FIXME tool tip and mnemonic
+		PlatformUtil.setMnemonic(jbDefault, res.getString("DDistinguishedNameChooser.jbDefault.mnemonic").charAt(0));
+		jbDefault.setToolTipText(res.getString("DDistinguishedNameChooser.jbDefault.tooltip"));
 
 		jbOK = new JButton(res.getString("DDistinguishedNameChooser.jbOK.text"));
 
@@ -187,7 +189,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 			}
 		});
 
-		setResizable(true); // FIXME
+		setResizable(false);
 
 		getRootPane().setDefaultButton(jbOK);
 
@@ -202,10 +204,15 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	private void layoutContentPane() {
 		Container pane = getContentPane();
 		pane.removeAll();
-		pane.add(distinguishedNameChooser, "left, spanx, wrap para");
+		pane.add(distinguishedNameChooser, "left, spanx, wrap");
 		if (editable) {
-			pane.add(jbReset, "right, spanx, split 2");
-			pane.add(jbDefault, "wrap");
+			// when no DN was given, the default and reset button do exactly the same thing
+			if (distinguishedName == null || distinguishedName.getRDNs().length == 0) {
+				pane.add(jbReset, "right, spanx, wrap");
+			} else {
+				pane.add(jbReset, "right, spanx, split 2");
+				pane.add(jbDefault, "wrap");
+			}
 		}
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");

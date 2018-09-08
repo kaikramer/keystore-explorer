@@ -76,12 +76,12 @@ public class JDistinguishedName extends JPanel {
 		jtfDistinguishedName = new JTextField(columns);
 		jtfDistinguishedName.setEditable(false);
 
-		GridBagConstraints gbc_jtfDistinguishedName = new GridBagConstraints();
-		gbc_jtfDistinguishedName.gridwidth = 1;
-		gbc_jtfDistinguishedName.gridheight = 1;
-		gbc_jtfDistinguishedName.gridx = 0;
-		gbc_jtfDistinguishedName.gridy = 0;
-		gbc_jtfDistinguishedName.insets = new Insets(0, 0, 0, 5);
+		GridBagConstraints gbcJtfDistinguishedName = new GridBagConstraints();
+		gbcJtfDistinguishedName.gridwidth = 1;
+		gbcJtfDistinguishedName.gridheight = 1;
+		gbcJtfDistinguishedName.gridx = 0;
+		gbcJtfDistinguishedName.gridy = 0;
+		gbcJtfDistinguishedName.insets = new Insets(0, 0, 0, 5);
 
 		ImageIcon viewEditIcon = new ImageIcon(getClass().getResource(
 				res.getString("JDistinguishedName.jbViewEditDistinguishedName.image")));
@@ -117,16 +117,16 @@ public class JDistinguishedName extends JPanel {
 			});
 		}
 
-		GridBagConstraints gbc_jbViewEditDistinguishedName = new GridBagConstraints();
-		gbc_jbViewEditDistinguishedName.gridwidth = 1;
-		gbc_jbViewEditDistinguishedName.gridheight = 1;
-		gbc_jbViewEditDistinguishedName.gridx = 1;
-		gbc_jbViewEditDistinguishedName.gridy = 0;
+		GridBagConstraints gbcJbViewEditDistinguishedName = new GridBagConstraints();
+		gbcJbViewEditDistinguishedName.gridwidth = 1;
+		gbcJbViewEditDistinguishedName.gridheight = 1;
+		gbcJbViewEditDistinguishedName.gridx = 1;
+		gbcJbViewEditDistinguishedName.gridy = 0;
 
 		if (editable) {
-			gbc_jbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 5);
+			gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 5);
 		} else {
-			gbc_jbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 0);
+			gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 0);
 		}
 
 		ImageIcon clearIcon = new ImageIcon(getClass().getResource(
@@ -145,19 +145,19 @@ public class JDistinguishedName extends JPanel {
 			}
 		});
 
-		GridBagConstraints gbc_jbClearDistinguishedName = new GridBagConstraints();
-		gbc_jbClearDistinguishedName.gridwidth = 1;
-		gbc_jbClearDistinguishedName.gridheight = 1;
-		gbc_jbClearDistinguishedName.gridx = 2;
-		gbc_jbClearDistinguishedName.gridy = 0;
-		gbc_jbClearDistinguishedName.insets = new Insets(0, 0, 0, 0);
+		GridBagConstraints gbcJbClearDistinguishedName = new GridBagConstraints();
+		gbcJbClearDistinguishedName.gridwidth = 1;
+		gbcJbClearDistinguishedName.gridheight = 1;
+		gbcJbClearDistinguishedName.gridx = 2;
+		gbcJbClearDistinguishedName.gridy = 0;
+		gbcJbClearDistinguishedName.insets = new Insets(0, 0, 0, 0);
 
 		setLayout(new GridBagLayout());
-		add(jtfDistinguishedName, gbc_jtfDistinguishedName);
-		add(jbViewEditDistinguishedName, gbc_jbViewEditDistinguishedName);
+		add(jtfDistinguishedName, gbcJtfDistinguishedName);
+		add(jbViewEditDistinguishedName, gbcJbViewEditDistinguishedName);
 
 		if (editable) {
-			add(jbClearDistinguishedName, gbc_jbClearDistinguishedName);
+			add(jbClearDistinguishedName, gbcJbClearDistinguishedName);
 		}
 
 		populate();
