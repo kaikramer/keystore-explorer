@@ -26,25 +26,16 @@ import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.ECDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -57,19 +48,10 @@ import java.security.spec.RSAPublicKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import org.bouncycastle.asn1.ASN1String;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.keystore.KeyStoreUtil;
-import org.kse.crypto.x509.X509CertUtil;
 
 /**
  * Provides utility methods relating to asymmetric key pairs.
