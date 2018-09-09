@@ -24,7 +24,7 @@ In general, put as much information in bugs as you can. The more detail you prov
 
 **Important:** Please be on the lookout for any follow-up questions we may have.
 
-###<a name="code"></a> Contributing to the Code 
+### Contributing to the Code 
 
 If you want to contribute to the code, go to GitHub, fork the KSE repository, apply your changes and open a pull request (PR). GitHub provides detailed information on the process on their website:
 [GitHub - Contributing to a Project](https://guides.github.com/activities/contributing-to-open-source/#contributing)
@@ -47,4 +47,4 @@ Good documentation is crucial for any kind of software. You can help improving t
 
 You are welcome to translate the KSE application or documentation into your own language. Just create an [issue](https://github.com/kaikramer/keystore-explorer/issues) where you announce that you want to work on translating KSE in a certain language.
 
-Also, if you find any problems with existing translations, either create a new [issue](https://github.com/kaikramer/keystore-explorer/issues) or fix them and create a pull request as described [above](#code).
+Also, if you find any problems with existing translations, either create a new [issue](https://github.com/kaikramer/keystore-explorer/issues) or fix them and create a pull request.
