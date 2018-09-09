@@ -3,6 +3,9 @@ name: Bug report
 about: Create a report to help us improve
 
 ---
+<!--
+NOTE: Before you file an issue, search for it to see if anyone has already reported it. 
+-->
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -20,16 +23,12 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Environment**
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+ * Version of KSE: 
+ * Version of Java: 
+ * Platform (OS): 
 
-**Additional context**
-Add any other context about the problem here.
+<!--
+IMPORTANT: After submitting the issue, please be on the lookout for any follow-up questions we may have.
+-->
