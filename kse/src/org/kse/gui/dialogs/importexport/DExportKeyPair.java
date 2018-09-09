@@ -19,21 +19,22 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -42,12 +43,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
+import javax.swing.UIManager;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.Password;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -59,6 +61,8 @@ import org.kse.gui.password.JPasswordQualityField;
 import org.kse.gui.password.PasswordQualityConfig;
 import org.kse.utilities.io.FileNameUtil;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Dialog used to display options to export a key pair from a KeyStore entry.
  *
@@ -66,12 +70,16 @@ import org.kse.utilities.io.FileNameUtil;
 public class DExportKeyPair extends JEscDialog {
 	private static final long serialVersionUID = 1L;
 
+	public enum ExportFormat { PKCS12, PEM };
+
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/importexport/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpOptions;
+	private JLabel jlFormat;
+	private JRadioButton jrbFormatPkcs12;
+	private JRadioButton jrbFormatPEM;
 	private JLabel jlPassword;
 	private JComponent jpfPassword;
 	private JLabel jlConfirmPassword;
@@ -88,6 +96,7 @@ public class DExportKeyPair extends JEscDialog {
 	private boolean exportSelected = false;
 	private File exportFile;
 	private Password exportPassword;
+	private ExportFormat exportFormat = ExportFormat.PKCS12;
 
 	/**
 	 * Creates a new DExportKeyPair dialog.
@@ -109,23 +118,21 @@ public class DExportKeyPair extends JEscDialog {
 	}
 
 	private void initComponents() {
-		GridBagConstraints gbcLbl = new GridBagConstraints();
-		gbcLbl.gridx = 0;
-		gbcLbl.gridwidth = 3;
-		gbcLbl.gridheight = 1;
-		gbcLbl.insets = new Insets(5, 5, 5, 5);
-		gbcLbl.anchor = GridBagConstraints.EAST;
 
-		GridBagConstraints gbcEdCtrl = new GridBagConstraints();
-		gbcEdCtrl.gridx = 3;
-		gbcEdCtrl.gridwidth = 3;
-		gbcEdCtrl.gridheight = 1;
-		gbcEdCtrl.insets = new Insets(5, 5, 5, 5);
-		gbcEdCtrl.anchor = GridBagConstraints.WEST;
+		jlFormat = new JLabel(res.getString("DExportKeyPair.jlFormat.text"));
+
+		jrbFormatPkcs12 = new JRadioButton(res.getString("DExportKeyPair.jrbFormatPkcs12.text"));
+		jrbFormatPkcs12.setToolTipText(res.getString("DExportKeyPair.jrbFormatPkcs12.tooltip"));
+
+		jrbFormatPEM = new JRadioButton(res.getString("DExportKeyPair.jrbFormatPEM.text"));
+		jrbFormatPEM.setToolTipText(res.getString("DExportKeyPair.jrbFormatPEM.tooltip"));
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(jrbFormatPkcs12);
+		buttonGroup.add(jrbFormatPEM);
+		jrbFormatPkcs12.setSelected(true);
 
 		jlPassword = new JLabel(res.getString("DExportKeyPair.jlPassword.text"));
-		GridBagConstraints gbc_jlPassword = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlPassword.gridy = 0;
 
 		if (passwordQualityConfig.getEnabled()) {
 			if (passwordQualityConfig.getEnforced()) {
@@ -138,34 +145,62 @@ public class DExportKeyPair extends JEscDialog {
 		}
 
 		jpfPassword.setToolTipText(res.getString("DExportKeyPair.jpqfPassword.tooltip"));
-		GridBagConstraints gbc_jpfPassword = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jpfPassword.gridy = 0;
 
 		jlConfirmPassword = new JLabel(res.getString("DExportKeyPair.jlConfirmPassword.text"));
-		GridBagConstraints gbc_jlConfirmPassword = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlConfirmPassword.gridy = 1;
 
 		jpfConfirmPassword = new JPasswordField(15);
 		jpfConfirmPassword.setToolTipText(res.getString("DExportKeyPair.jpfConfirmPassword.tooltip"));
-		GridBagConstraints gbc_jpfConfirmPassword = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jpfConfirmPassword.gridy = 1;
 
 		jlExportFile = new JLabel(res.getString("DExportKeyPair.jlExportFile.text"));
-		GridBagConstraints gbc_jlExportFile = (GridBagConstraints) gbcLbl.clone();
-		gbc_jlExportFile.gridy = 2;
 
 		jtfExportFile = new JTextField(30);
 		jtfExportFile.setToolTipText(res.getString("DExportKeyPair.jtfExportFile.tooltip"));
-		GridBagConstraints gbc_jtfExportFile = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jtfExportFile.gridy = 2;
-		gbc_jtfExportFile.gridwidth = 6;
 
 		jbBrowse = new JButton(res.getString("DExportKeyPair.jbBrowse.text"));
 		jbBrowse.setToolTipText(res.getString("DExportKeyPair.jbBrowse.tooltip"));
 		PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportKeyPair.jbBrowse.mnemonic").charAt(0));
-		GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcEdCtrl.clone();
-		gbc_jbBrowse.gridy = 2;
-		gbc_jbBrowse.gridx = 9;
+
+		jbExport = new JButton(res.getString("DExportKeyPair.jbExport.text"));
+		PlatformUtil.setMnemonic(jbExport, res.getString("DExportKeyPair.jbExport.mnemonic").charAt(0));
+		jbExport.setToolTipText(res.getString("DExportKeyPair.jbExport.tooltip"));
+
+		jbCancel = new JButton(res.getString("DExportKeyPair.jbCancel.text"));
+
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
+
+		// layout
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "unrel[]unrel[]"));
+		pane.add(jlFormat, "");
+		pane.add(jrbFormatPkcs12, "split 2");
+		pane.add(jrbFormatPEM, "wrap");
+		pane.add(jlPassword, "");
+		pane.add(jpfPassword, "wrap");
+		pane.add(jlConfirmPassword, "");
+		pane.add(jpfConfirmPassword, "wrap");
+		pane.add(jlExportFile, "");
+		pane.add(jtfExportFile, "");
+		pane.add(jbBrowse, "wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		pane.add(jpButtons, "right, spanx");
+
+		jrbFormatPkcs12.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				if (jrbFormatPkcs12.isSelected()) {
+					updateFileExtension(FileChooserFactory.PKCS12_KEYSTORE_EXT_2);
+				}
+			}
+		});
+
+		jrbFormatPEM.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent evt) {
+				if (jrbFormatPEM.isSelected()) {
+					updateFileExtension(FileChooserFactory.PEM_EXT);
+				}
+			}
+		});
 
 		jbBrowse.addActionListener(new ActionListener() {
 			@Override
@@ -179,23 +214,6 @@ public class DExportKeyPair extends JEscDialog {
 			}
 		});
 
-		jpOptions = new JPanel(new GridBagLayout());
-		jpOptions.setBorder(new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()),
-				new EmptyBorder(5, 5, 5, 5)));
-
-		jpOptions.add(jlPassword, gbc_jlPassword);
-		jpOptions.add(jpfPassword, gbc_jpfPassword);
-
-		jpOptions.add(jlConfirmPassword, gbc_jlConfirmPassword);
-		jpOptions.add(jpfConfirmPassword, gbc_jpfConfirmPassword);
-
-		jpOptions.add(jlExportFile, gbc_jlExportFile);
-		jpOptions.add(jtfExportFile, gbc_jtfExportFile);
-		jpOptions.add(jbBrowse, gbc_jbBrowse);
-
-		jbExport = new JButton(res.getString("DExportKeyPair.jbExport.text"));
-		PlatformUtil.setMnemonic(jbExport, res.getString("DExportKeyPair.jbExport.mnemonic").charAt(0));
-		jbExport.setToolTipText(res.getString("DExportKeyPair.jbExport.tooltip"));
 		jbExport.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -208,7 +226,6 @@ public class DExportKeyPair extends JEscDialog {
 			}
 		});
 
-		jbCancel = new JButton(res.getString("DExportKeyPair.jbCancel.text"));
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -225,12 +242,6 @@ public class DExportKeyPair extends JEscDialog {
 				cancelPressed();
 			}
 		});
-
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpOptions, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -249,6 +260,12 @@ public class DExportKeyPair extends JEscDialog {
 		pack();
 	}
 
+	private void updateFileExtension(String newExt) {
+		String currentFileName = jtfExportFile.getText();
+		String newFileName = FileNameUtil.removeExtension(currentFileName) + "." + newExt;
+		jtfExportFile.setText(newFileName);
+	}
+
 	private void populateExportFileName() {
 		File currentDirectory = CurrentDirectory.get();
 		String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
@@ -256,12 +273,16 @@ public class DExportKeyPair extends JEscDialog {
 		jtfExportFile.setText(csrFile.getPath());
 	}
 
+	public ExportFormat getExportFormat() {
+		return exportFormat;
+	}
+
 	/**
 	 * Has the user chosen to export?
 	 *
 	 * @return True if they have
 	 */
-	public boolean exportSelected() {
+	public boolean isExportSelected() {
 		return exportSelected;
 	}
 
@@ -309,6 +330,13 @@ public class DExportKeyPair extends JEscDialog {
 	}
 
 	private void exportPressed() {
+
+		if (jrbFormatPkcs12.isSelected()) {
+			exportFormat = ExportFormat.PKCS12;
+		} else {
+			exportFormat = ExportFormat.PEM;
+		}
+
 		Password firstPassword;
 
 		if (jpfPassword instanceof JPasswordQualityField) {
@@ -371,5 +399,35 @@ public class DExportKeyPair extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick testing
+	public static void main(String[] args) throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					PasswordQualityConfig pwdQualityConf = new PasswordQualityConfig(false, false, 0);
+					DExportKeyPair dialog = new DExportKeyPair(new javax.swing.JFrame(), "alias (test)", pwdQualityConf);
+					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+						@Override
+						public void windowClosing(java.awt.event.WindowEvent e) {
+							super.windowClosing(e);
+							System.exit(0);
+						}
+						@Override
+						public void windowDeactivated(WindowEvent e) {
+							super.windowDeactivated(e);
+							System.exit(0);
+						}
+					});
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

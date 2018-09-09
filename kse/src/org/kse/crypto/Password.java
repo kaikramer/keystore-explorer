@@ -113,10 +113,20 @@ public class Password {
 	/**
 	 * Has the wrapped password been nulled?
 	 *
-	 * @return True is it has
+	 * @return True if it has
 	 */
 	public boolean isNulled() {
 		return nulled;
+	}
+
+
+	/**
+	 * Is the password an empty string?
+	 *
+	 * @return True if it is
+	 */
+	public boolean isEmpty() {
+		return wrappedPassword.length == 0;
 	}
 
 	/**

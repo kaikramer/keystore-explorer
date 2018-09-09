@@ -27,9 +27,8 @@ import javax.swing.JFileChooser;
 import org.kse.utilities.os.OperatingSystem;
 
 /**
- * Simple factory that returns JFileChooser objects for the requested security
- * file types. Basically just supplies a JFileChooser object with the file
- * filter box completed appropriately.
+ * Simple factory that returns JFileChooser objects for the requested security file types. Basically just supplies a
+ * JFileChooser object with the file filter box completed appropriately.
  *
  */
 public class FileChooserFactory {
@@ -66,19 +65,20 @@ public class FileChooserFactory {
 	public static final String LIB_DLL_EXT = "dll";
 	public static final String LIB_SO_EXT = "so";
 	public static final String LIB_DYLIB_EXT = "dylib";
+	public static final String PEM_EXT = "pem";
 
 	private static final String KEYSTORE_FILE_DESC = MessageFormat.format(
 			res.getString("FileChooserFactory.KeyStoreFiles"), KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT,
 			BKS_EXT, UBER_EXT, BCFKS_EXT);
 
-	private static final String X509_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.CertificateFiles"), X509_EXT_1, X509_EXT_2);
+	private static final String X509_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.CertificateFiles"), X509_EXT_1, X509_EXT_2);
 
 	private static final String PKCS7_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.Pkcs7Files"),
 			PKCS7_EXT_1, PKCS7_EXT_2);
 
-	private static final String PKI_PATH_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.PkiPathFiles"), PKI_PATH_EXT);
+	private static final String PKI_PATH_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.PkiPathFiles"), PKI_PATH_EXT);
 
 	private static final String SPC_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.SpcFiles"),
 			SPC_EXT);
@@ -86,8 +86,8 @@ public class FileChooserFactory {
 	private static final String CET_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.CetFiles"),
 			CET_EXT);
 
-	private static final String PKCS12_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.Pkcs12Files"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2);
+	private static final String PKCS12_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.Pkcs12Files"),
+			PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2);
 
 	private static final String PKCS8_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.Pkcs8Files"),
 			PKCS8_EXT);
@@ -95,20 +95,20 @@ public class FileChooserFactory {
 	private static final String PVK_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.PvkFiles"),
 			PVK_EXT);
 
-	private static final String OPENSSL_PVK_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.OpenSslPvkFiles"), OPENSSL_PVK_EXT);
+	private static final String OPENSSL_PVK_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.OpenSslPvkFiles"), OPENSSL_PVK_EXT);
 
-	private static final String PUBLIC_KEY_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.OpenSslPvkFiles"), PUBLIC_KEY_EXT);
+	private static final String PUBLIC_KEY_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.OpenSslPvkFiles"), PUBLIC_KEY_EXT);
 
-	private static final String PKCS10_CSR_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.Pkcs10CsrFiles"), PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2);
+	private static final String PKCS10_CSR_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.Pkcs10CsrFiles"), PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2);
 
-	private static final String SPKAC_CSR_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.SpkacCsrFiles"), SPKAC_CSR_EXT);
+	private static final String SPKAC_CSR_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.SpkacCsrFiles"), SPKAC_CSR_EXT);
 
-	private static final String CA_REPLY_FILE_DESC = MessageFormat.format(
-			res.getString("FileChooserFactory.CaReplyFiles"), CA_REPLY_EXT);
+	private static final String CA_REPLY_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.CaReplyFiles"), CA_REPLY_EXT);
 
 	private static final String CRL_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.CrlFiles"),
 			CRL_EXT);
@@ -122,14 +122,14 @@ public class FileChooserFactory {
 	private static final String JAD_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.JadFiles"),
 			JAD_EXT);
 
-	private static final String LIB_DLL_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibDllFiles"),
-			LIB_DLL_EXT);
+	private static final String LIB_DLL_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.LibDllFiles"), LIB_DLL_EXT);
 
 	private static final String LIB_SO_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibSoFiles"),
 			LIB_SO_EXT);
 
-	private static final String LIB_DYLIB_FILE_DESC = MessageFormat.format(res.getString("FileChooserFactory.LibDylibFiles"),
-			LIB_DYLIB_EXT);
+	private static final String LIB_DYLIB_FILE_DESC = MessageFormat
+			.format(res.getString("FileChooserFactory.LibDylibFiles"), LIB_DYLIB_EXT);
 
 	private FileChooserFactory() {
 	}
@@ -141,10 +141,11 @@ public class FileChooserFactory {
 	 */
 	public static JFileChooser getKeyStoreFileChooser() {
 		JFileChooser chooser = getFileChooser();
-		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2 },
-				PKCS12_FILE_DESC));
-		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT,
-				JCEKS_EXT, BKS_EXT, UBER_EXT, BCFKS_EXT }, KEYSTORE_FILE_DESC));
+		chooser.addChoosableFileFilter(
+				new FileExtFilter(new String[] { PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2 }, PKCS12_FILE_DESC));
+		chooser.addChoosableFileFilter(new FileExtFilter(
+				new String[] { KEYSTORE_EXT_1, KEYSTORE_EXT_2, JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT, BCFKS_EXT },
+				KEYSTORE_FILE_DESC));
 		return chooser;
 	}
 
@@ -204,8 +205,7 @@ public class FileChooserFactory {
 	}
 
 	/**
-	 * Get a JFileChooser filtered for Certificate and PKCS #7 Certificate
-	 * files.
+	 * Get a JFileChooser filtered for Certificate and PKCS #7 Certificate files.
 	 *
 	 * @return JFileChooser object
 	 */
@@ -225,8 +225,8 @@ public class FileChooserFactory {
 	 */
 	public static JFileChooser getPkcs12FileChooser() {
 		JFileChooser chooser = getFileChooser();
-		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2 },
-				PKCS12_FILE_DESC));
+		chooser.addChoosableFileFilter(
+				new FileExtFilter(new String[] { PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2 }, PKCS12_FILE_DESC));
 		return chooser;
 	}
 
@@ -282,8 +282,8 @@ public class FileChooserFactory {
 	public static JFileChooser getCsrFileChooser() {
 		JFileChooser chooser = getFileChooser();
 		chooser.addChoosableFileFilter(new FileExtFilter(SPKAC_CSR_EXT, SPKAC_CSR_FILE_DESC));
-		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2 },
-				PKCS10_CSR_FILE_DESC));
+		chooser.addChoosableFileFilter(
+				new FileExtFilter(new String[] { PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2 }, PKCS10_CSR_FILE_DESC));
 		return chooser;
 	}
 
@@ -294,8 +294,8 @@ public class FileChooserFactory {
 	 */
 	public static JFileChooser getPkcs10FileChooser() {
 		JFileChooser chooser = getFileChooser();
-		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2 },
-				PKCS10_CSR_FILE_DESC));
+		chooser.addChoosableFileFilter(
+				new FileExtFilter(new String[] { PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2 }, PKCS10_CSR_FILE_DESC));
 		return chooser;
 	}
 

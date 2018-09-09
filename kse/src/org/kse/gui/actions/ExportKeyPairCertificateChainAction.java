@@ -154,9 +154,7 @@ public class ExportKeyPairCertificateChainAction extends KeyStoreExplorerAction 
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStore keyStore = history.getCurrentState().getKeyStore();
 
-			X509Certificate[] certChain = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
-
-			return certChain;
+			return X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
 		} catch (KeyStoreException ex) {
 			String message = MessageFormat.format(
 					res.getString("ExportKeyPairCertificateChainAction.NoAccessEntry.message"), alias);

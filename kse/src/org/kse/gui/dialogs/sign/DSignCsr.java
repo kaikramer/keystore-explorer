@@ -47,6 +47,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -289,6 +290,11 @@ public class DSignCsr extends JEscDialog {
 		jrbVersion3 = new JRadioButton(res.getString("DSignCsr.jrbVersion3.text"));
 		jrbVersion3.setToolTipText(res.getString("DSignCsr.jrbVersion3.tooltip"));
 
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(jrbVersion1);
+		buttonGroup.add(jrbVersion3);
+		jrbVersion3.setSelected(true);
+
 		jlSignatureAlgorithm = new JLabel(res.getString("DSignCsr.jlSignatureAlgorithm.text"));
 
 		jcbSignatureAlgorithm = new JComboBox<SignatureType>();
@@ -341,8 +347,6 @@ public class DSignCsr extends JEscDialog {
 		jbAddExtensions = new JButton(res.getString("DSignCsr.jbAddExtensions.text"));
 		jbAddExtensions.setMnemonic(res.getString("DSignCsr.jbAddExtensions.mnemonic").charAt(0));
 		jbAddExtensions.setToolTipText(res.getString("DSignCsr.jbAddExtensions.tooltip"));
-
-		jrbVersion3.setSelected(true);
 
 		jbOK = new JButton(res.getString("DSignCsr.jbOK.text"));
 		jbCancel = new JButton(res.getString("DSignCsr.jbCancel.text"));
