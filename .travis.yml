@@ -17,7 +17,7 @@ before_script:
 
 script:
   - cd kse
-  - ./gradlew test dmg
+  - ./gradlew dmg
 
 deploy:
   provider: releases
