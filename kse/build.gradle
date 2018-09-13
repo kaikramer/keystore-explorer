@@ -26,19 +26,12 @@ Notes:
 - Task 'nsis' requires an installation of NSIS 3 and its top-level directory added to the path.
 - Tasks 'signapp' and 'dmg' work only under macOS.
 */
-buildscript {
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
-	}
+plugins {
+	id 'java'
+	id 'eclipse'
+	id 'idea'
+	id "nebula.ospackage" version "5.0.0"
 }
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 defaultTasks 'zip'
 
@@ -89,7 +82,7 @@ ext {
 	// Vendor details
 	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2018 Kai Kramer"
 	vendor = "Wayne Grant, Kai Kramer"
-	website = "keystore-explorer.org"
+	website = "https://keystore-explorer.org"
 	
 	// Java Help properties
 	helpCfg = "$projectDir/help/help.cfg"
@@ -314,22 +307,71 @@ task dmg(type: Exec, dependsOn: signapp) {
 	commandLine 'sh', "${dmgDir}/create-dmg.sh", "${appBundleDir}/${appBundle}", "${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg"
 }
 
-task resources {
-	description 'Create GNU/Linux resources from templates'
-	def filterProps = [ beginToken: '@', endToken: '@', tokens: [
-			appName: appName, 
-			appSimpleName: appSimpleName, 
-		]]
-	copy {
-		from("$resDir/kse.sh.in")
-		into("$resDir")
-		rename("kse.sh.in", "${appSimpleName}")
-		filter(filterProps, ReplaceTokens)
+// common part for RPM and DEB
+ospackage {
+	packageName "kse"
+	version "${appVersion}"
+	release '1'
+	
+	url "${website}"
+	summary "Multipurpose keystore and certificate tool"
+	packageGroup 'Security'
+	packageDescription 'KeyStore Explorer is a user friendly GUI application for creating, managing and examining keystores, keys, certificates, certificate requests, certificate revocation lists and more.'
+	license 'GPLv3+'
+	packager ''
+	vendor "${vendor}"
+
+	os LINUX
+	type BINARY
+
+	user 'root'
+	permissionGroup 'root'
+
+	into "/opt/${packageName}"
+	from(jar.outputs.files)
+	from(configurations.runtime) {
+		into 'lib'
 	}
-	copy {
-		from("$resDir/kse.desktop.in")
-		into("$resDir")
-		rename("kse.desktop.in", "${appSimpleName}.desktop")
-		filter(filterProps, ReplaceTokens)
+	from('lib') {
+		into 'lib'
 	}
+	from(licensesDir) {
+		include '**/*.txt'
+		if (!file("lib/darcula.jar").exists()) {
+			exclude 'license-darcula.txt' 
+		} 
+		into 'licenses'
+		fileType LICENSE
+	}
+	from(iconsDir) {
+		include '**/kse_*.png'
+		into 'icons'
+	} 
+	from(resDir) {
+		include 'kse.sh'
+		fileMode 0755
+	} 	
+	from(resDir) {
+		include 'kse.desktop'
+	} 	
+
+	requires('desktop-file-utils')
+	requires('hicolor-icon-theme')
+	
+	link('/usr/bin/kse', '/opt/kse/kse.sh', 0755)
+	link('/usr/share/applications/kse.desktop', '/opt/kse/kse.desktop', 0644)
+	for (size in [16, 32, 48, 128, 256, 512]) {
+		link("/usr/share/icons/hicolor/${size}x${size}/apps/kse.png", "/opt/kse/icons/kse_${size}.png", 0644)
+	}
+}
+
+buildRpm {
+	arch NOARCH
+	requires('jre', '1.8.0', GREATER | EQUAL)
+	postInstall('update-desktop-database; touch /usr/share/icons/hicolor/')
+}	
+
+buildDeb {
+	arch = "all"
+	requires("default-jre").or("java8-runtime")
 }

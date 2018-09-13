@@ -7,8 +7,6 @@
 /nsis/kse.nsi
 /dmg/appdmg.json
 /dmg/.DS_Store
-/res/kse
-/res/kse.desktop
 /MANIFEST.MF
 .gradle
 .classpath
