@@ -44,6 +44,7 @@ import org.kse.gui.CreateApplicationGui;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.error.DError;
 import org.kse.utilities.os.OperatingSystem;
+import org.kse.version.JavaVersion;
 import org.kse.version.Version;
 
 import com.sun.jna.Library;
@@ -132,13 +133,16 @@ public class KSE {
 
 	private static void fixAppClassName() {
 		// Fix application name in Gnome top bar, see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6528430
-		Toolkit xToolkit = Toolkit.getDefaultToolkit();
-		try {
-			Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
-			awtAppClassNameField.setAccessible(true);
-			awtAppClassNameField.set(xToolkit, getApplicationName());
-		} catch (Exception x) {
-			// ignore
+		// TODO Bug is not fixed yet, but the workaround causes an "Illegal reflective access" warning since Java 9...
+		if (JavaVersion.getJreVersion().isBelow(JavaVersion.JRE_VERSION_12)) {
+			Toolkit xToolkit = Toolkit.getDefaultToolkit();
+			try {
+				Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
+				awtAppClassNameField.setAccessible(true);
+				awtAppClassNameField.set(xToolkit, getApplicationName());
+			} catch (Exception x) {
+				// ignore
+			}
 		}
 	}
 
