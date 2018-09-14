@@ -311,7 +311,7 @@ task dmg(type: Exec, dependsOn: signapp) {
 ospackage {
 	packageName "kse"
 	version "${appVersion}"
-	release '1'
+	//release '1'
 	
 	url "${website}"
 	summary "Multipurpose keystore and certificate tool"
