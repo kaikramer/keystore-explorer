@@ -74,6 +74,7 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.io.FileNameUtil;
 import org.kse.utilities.io.IOUtils;
+import org.kse.utilities.net.URLs;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -196,7 +197,7 @@ public class DSignJar extends JEscDialog {
 		jcbTimestampServerUrl.setEditable(true);
 		jcbTimestampServerUrl.setEnabled(false);
 		jcbTimestampServerUrl.setToolTipText(res.getString("DSignJar.jcbTimestampServerUrl.tooltip"));
-		jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<String>(getTsaUrls()));
+		jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<String>(URLs.TSA_URLS));
 
 		jbOK = new JButton(res.getString("DSignJar.jbOK.text"));
 
@@ -308,19 +309,8 @@ public class DSignJar extends JEscDialog {
 
 		pack();
 		setLocationRelativeTo(null);
-	}
 
-	private String[] getTsaUrls() {
-		return new String[] {
-				"http://timestamp.digicert.com",
-				"http://timestamp.globalsign.com/scripts/timstamp.dll",
-				"http://tsa.starfieldtech.com",
-				"http://time.certum.pl",
-				"http://sha256timestamp.ws.symantec.com/sha256/timestamp",
-				"http://timestamp.comodoca.com/?td=sha256"
-		};
 	}
-
 	private String convertSignatureName(String signatureName) {
 		/*
 		 * Convert the supplied signature name to make it valid for use with
