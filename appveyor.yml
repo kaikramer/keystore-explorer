@@ -18,17 +18,21 @@ build:
   verbosity: detailed
 
 build_script:
-  - gradlew.bat zip nsis
+  - gradlew.bat zip nsis buildDeb buildRpm
 
 artifacts:
   - path: kse\build\distributions\kse-*.zip
     name: zip
   - path: kse\build\distributions\kse-*-setup.exe
     name: nsis
+  - path: kse\build\distributions\*.deb
+    name: deb
+  - path: kse\build\distributions\*.rpm
+    name: rpm
 
 deploy:
   - provider: GitHub
-    artifact: zip,nsis
+    artifact: zip,nsis,deb,rpm
     description: 'Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)'
     tag: $(APPVEYOR_REPO_TAG_NAME)
     release: KSE Release $(APPVEYOR_REPO_TAG_NAME)
