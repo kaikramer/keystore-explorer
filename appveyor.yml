@@ -18,7 +18,7 @@ build:
   verbosity: detailed
 
 build_script:
-  - gradlew.bat zip nsis buildDeb buildRpm
+  - gradlew.bat test zip nsis buildDeb buildRpm
 
 artifacts:
   - path: kse\build\distributions\kse-*.zip
