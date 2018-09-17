@@ -69,7 +69,7 @@ import net.miginfocom.swing.MigLayout;
  * Allows selection of X.509 Extensions to add to a certificate.
  *
  */
-public class DSelectStdCertTemplate extends JEscDialog {
+public class DSelectStandardExtensionTemplate extends JEscDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
@@ -90,39 +90,39 @@ public class DSelectStdCertTemplate extends JEscDialog {
 	private PublicKey subjectPublicKey;
 
 	/**
-	 * Creates a new DSelectStdCertTemplate dialog.
+	 * Creates a new DSelectStandardExtensionTemplate dialog.
 	 *
 	 * @param parent
 	 *            Parent frame
 	 * @param title
 	 *            The dialog title
 	 */
-	public DSelectStdCertTemplate(JDialog parent, PublicKey authorityPublicKey, PublicKey subjectPublicKey) {
+	public DSelectStandardExtensionTemplate(JDialog parent, PublicKey authorityPublicKey, PublicKey subjectPublicKey) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.authorityPublicKey = authorityPublicKey;
 		this.subjectPublicKey = subjectPublicKey;
-		setTitle(res.getString("DSelectStdCertTemplate.Title"));
+		setTitle(res.getString("DSelectStandardExtensionTemplate.Title"));
 		initComponents();
 	}
 
 	private void initComponents() {
 
-		jrbCA = new JRadioButton(res.getString("DSelectStdCertTemplate.jrbCA.text"), false);
-		PlatformUtil.setMnemonic(jrbCA, res.getString("DSelectStdCertTemplate.jrbCA.mnemonic").charAt(0));
-		jrbCA.setToolTipText(res.getString("DSelectStdCertTemplate.jrbCA.tooltip"));
+		jrbCA = new JRadioButton(res.getString("DSelectStandardExtensionTemplate.jrbCA.text"), false);
+		PlatformUtil.setMnemonic(jrbCA, res.getString("DSelectStandardExtensionTemplate.jrbCA.mnemonic").charAt(0));
+		jrbCA.setToolTipText(res.getString("DSelectStandardExtensionTemplate.jrbCA.tooltip"));
 		jrbCA.setSelected(true);
 
-		jrbSslServer = new JRadioButton(res.getString("DSelectStdCertTemplate.jrbSslServer.text"), false);
-		PlatformUtil.setMnemonic(jrbSslServer, res.getString("DSelectStdCertTemplate.jrbSslServer.mnemonic").charAt(0));
-		jrbSslServer.setToolTipText(res.getString("DSelectStdCertTemplate.jrbSslServer.tooltip"));
+		jrbSslServer = new JRadioButton(res.getString("DSelectStandardExtensionTemplate.jrbSslServer.text"), false);
+		PlatformUtil.setMnemonic(jrbSslServer, res.getString("DSelectStandardExtensionTemplate.jrbSslServer.mnemonic").charAt(0));
+		jrbSslServer.setToolTipText(res.getString("DSelectStandardExtensionTemplate.jrbSslServer.tooltip"));
 
-		jrbSslClient = new JRadioButton(res.getString("DSelectStdCertTemplate.jrbSslClient.text"), false);
-		PlatformUtil.setMnemonic(jrbSslClient, res.getString("DSelectStdCertTemplate.jrbSslClient.mnemonic").charAt(0));
-		jrbSslClient.setToolTipText(res.getString("DSelectStdCertTemplate.jrbSslClient.tooltip"));
+		jrbSslClient = new JRadioButton(res.getString("DSelectStandardExtensionTemplate.jrbSslClient.text"), false);
+		PlatformUtil.setMnemonic(jrbSslClient, res.getString("DSelectStandardExtensionTemplate.jrbSslClient.mnemonic").charAt(0));
+		jrbSslClient.setToolTipText(res.getString("DSelectStandardExtensionTemplate.jrbSslClient.tooltip"));
 
-		jrbCodeSigning = new JRadioButton(res.getString("DSelectStdCertTemplate.jrbCodeSigning.text"), false);
-		PlatformUtil.setMnemonic(jrbCodeSigning, res.getString("DSelectStdCertTemplate.jrbCodeSigning.mnemonic").charAt(0));
-		jrbCodeSigning.setToolTipText(res.getString("DSelectStdCertTemplate.jrbCodeSigning.tooltip"));
+		jrbCodeSigning = new JRadioButton(res.getString("DSelectStandardExtensionTemplate.jrbCodeSigning.text"), false);
+		PlatformUtil.setMnemonic(jrbCodeSigning, res.getString("DSelectStandardExtensionTemplate.jrbCodeSigning.mnemonic").charAt(0));
+		jrbCodeSigning.setToolTipText(res.getString("DSelectStandardExtensionTemplate.jrbCodeSigning.tooltip"));
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jrbCA);
@@ -281,7 +281,7 @@ public class DSelectStdCertTemplate extends JEscDialog {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				DSelectStdCertTemplate dialog = new DSelectStdCertTemplate(new JDialog(),
+				DSelectStandardExtensionTemplate dialog = new DSelectStandardExtensionTemplate(new JDialog(),
 						issuerKP.getPublic(), subjectKP.getPublic());
 				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 					@Override

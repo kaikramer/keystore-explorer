@@ -797,7 +797,7 @@ public class DAddExtensions extends JEscDialog {
 	}
 
 	private void selectStandardTemplatePressed() {
-		DSelectStdCertTemplate dSelectStdCertTemplate = new DSelectStdCertTemplate(this, authorityPublicKey,
+		DSelectStandardExtensionTemplate dSelectStdCertTemplate = new DSelectStandardExtensionTemplate(this, authorityPublicKey,
 				subjectPublicKey);
 		dSelectStdCertTemplate.setLocationRelativeTo(this);
 		dSelectStdCertTemplate.setVisible(true);

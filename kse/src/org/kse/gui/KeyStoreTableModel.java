@@ -193,10 +193,10 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 
-			if (iNameColumn>0) {
+			if (iNameColumn > 0) {
 				// Alias column
 				data[i][iNameColumn] = alias;
-				if (alias.length()> iColWidth[iNameColumn]) {
+				if (alias.length() > iColWidth[iNameColumn]) {
 					iColWidth[iNameColumn] = alias.length();
 				}
 			}
@@ -205,26 +205,26 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 			if (keyInfo != null) {
 				// Algorithm column
-				if (iAlgorithmColumn>0) {
+				if (iAlgorithmColumn > 0) {
 					data[i][iAlgorithmColumn] = getAlgorithmName(keyInfo);
-					if (iColWidth[iAlgorithmColumn] < data[i][iAlgorithmColumn].toString().length() ) {
+					if (iColWidth[iAlgorithmColumn] < data[i][iAlgorithmColumn].toString().length()) {
 						iColWidth[iAlgorithmColumn] = data[i][iAlgorithmColumn].toString().length();
 					}
 				}
 
 				// Key Size column
-				if (iKeySizeColumn>0) {
+				if (iKeySizeColumn > 0) {
 					data[i][iKeySizeColumn] = keyInfo.getSize();
 				}
 				// Key Size column
 				if (keyStoreTableColumns.getEnableCurve()) {
 					data[i][iCurveColumn] = keyInfo.getDetailedAlgorithm();
-					if (iColWidth[iCurveColumn] < data[i][iCurveColumn].toString().length() ) {
+					if (iColWidth[iCurveColumn] < data[i][iCurveColumn].toString().length()) {
 						iColWidth[iCurveColumn] = data[i][iCurveColumn].toString().length();
 					}
 				}
 			}
-			if (iCertExpiryColumn>0) {
+			if (iCertExpiryColumn > 0) {
 				// Expiry date column
 				if (expiry != null) {
 
@@ -234,7 +234,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					// be a key entry
 				}
 			}
-			if (iLastModifiedColumn>0) {
+			if (iLastModifiedColumn > 0) {
 				// Modified date column - only applies to non-PKCS #11/#12
 				// KeyStores
 				if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())
@@ -244,9 +244,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iLastModifiedColumn] = null;
 				}
 			}
-			if (iSubjectDNColumn>0) {
+			if (iSubjectDNColumn > 0) {
 				if (entryType != KEY_ENTRY) {
-					data[i][iSubjectDNColumn] = getCertificateSubjectDN( alias, keyStore) ;
+					data[i][iSubjectDNColumn] = getCertificateSubjectDN(alias, keyStore);
 					if (iColWidth[iSubjectDNColumn] < data[i][iSubjectDNColumn].toString().length()) {
 						iColWidth[iSubjectDNColumn] = data[i][iSubjectDNColumn].toString().length();
 					}
@@ -254,9 +254,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iSubjectDNColumn] = null;
 				}
 			}
-			if (iIssuerDNColumn>0) {
+			if (iIssuerDNColumn > 0) {
 				if (entryType != KEY_ENTRY) {
-					data[i][iIssuerDNColumn] = getCertificateIssuerDN( alias, keyStore) ;
+					data[i][iIssuerDNColumn] = getCertificateIssuerDN(alias, keyStore);
 					if (iColWidth[iIssuerDNColumn] < data[i][iIssuerDNColumn].toString().length()) {
 						iColWidth[iIssuerDNColumn] = data[i][iIssuerDNColumn].toString().length();
 					}
@@ -264,9 +264,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iIssuerDNColumn] = null;
 				}
 			}
-			if (iSubjectCNColumn>0) {
+			if (iSubjectCNColumn > 0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
-					data[i][iSubjectCNColumn] = getCertificateSubjectCN( alias, keyStore) ;
+					data[i][iSubjectCNColumn] = getCertificateSubjectCN(alias, keyStore);
 					if (iColWidth[iSubjectCNColumn] < data[i][iSubjectCNColumn].toString().length()) {
 						iColWidth[iSubjectCNColumn] = data[i][iSubjectCNColumn].toString().length();
 					}
@@ -274,9 +274,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iSubjectCNColumn] = null;
 				}
 			}
-			if (iIssuerCNColumn>0) {
+			if (iIssuerCNColumn > 0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
-					data[i][iIssuerCNColumn] = getCertificateIssuerCN( alias, keyStore) ;
+					data[i][iIssuerCNColumn] = getCertificateIssuerCN(alias, keyStore);
 					if (iColWidth[iIssuerCNColumn] < data[i][iIssuerCNColumn].toString().length()) {
 						iColWidth[iIssuerCNColumn] = data[i][iIssuerCNColumn].toString().length();
 					}
@@ -284,9 +284,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iIssuerCNColumn] = null;
 				}
 			}
-			if (iSubjectOColumn>0) {
+			if (iSubjectOColumn > 0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
-					data[i][iSubjectOColumn] = getCertificateSubjectO( alias, keyStore) ;
+					data[i][iSubjectOColumn] = getCertificateSubjectO(alias, keyStore);
 					if (iColWidth[iSubjectOColumn] < data[i][iSubjectOColumn].toString().length()) {
 						iColWidth[iSubjectOColumn] = data[i][iSubjectOColumn].toString().length();
 					}
@@ -294,9 +294,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iSubjectOColumn] = null;
 				}
 			}
-			if (iIssuerOColumn>0) {
+			if (iIssuerOColumn > 0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
-					data[i][iIssuerOColumn] = getCertificateIssuerO( alias, keyStore) ;
+					data[i][iIssuerOColumn] = getCertificateIssuerO(alias, keyStore);
 					if (iColWidth[iIssuerOColumn] < data[i][iIssuerOColumn].toString().length()) {
 						iColWidth[iIssuerOColumn] = data[i][iIssuerOColumn].toString().length();
 					}
@@ -305,9 +305,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iIssuerOColumn] = null;
 				}
 			}
-			if (iAKIColumn>0) {
+			if (iAKIColumn > 0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
-					data[i][iAKIColumn] = getCertificateAKI( alias, keyStore) ;
+					data[i][iAKIColumn] = getCertificateAKI(alias, keyStore);
 					if (iColWidth[iAKIColumn] < data[i][iAKIColumn].toString().length()) {
 						iColWidth[iAKIColumn] = data[i][iAKIColumn].toString().length();
 					}
@@ -316,9 +316,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iAKIColumn] = null;
 				}
 			}
-			if (iSKIColumn>0) {
+			if (iSKIColumn > 0) {
 				if (entryType != KEY_ENTRY) { // assume a certificate
-					data[i][iSKIColumn] = getCertificateSKI( alias, keyStore) ;
+					data[i][iSKIColumn] = getCertificateSKI(alias, keyStore);
 					if (iColWidth[iSKIColumn] < data[i][iSKIColumn].toString().length()) {
 						iColWidth[iSKIColumn] = data[i][iSKIColumn].toString().length();
 					}

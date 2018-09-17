@@ -722,7 +722,9 @@ public class DPreferences extends JEscDialog {
 
 		bEnableEntryName = kstColumns.getEnableEntryName();
 		jcbEnableEntryName = new JCheckBox(res.getString("DPreferences.jcbEnableEntryName.text"), bEnableEntryName);
-		jcbEnableEntryName.setSelected(bEnableEntryName);
+		// fix for problem that without entry name a lot of things do not work
+		jcbEnableEntryName.setSelected(true);
+		jcbEnableEntryName.setEnabled(false);
 
 		bEnableAlgorithm = kstColumns.getEnableAlgorithm();
 		jcbEnableAlgorithm = new JCheckBox(res.getString("DPreferences.jcbEnableAlgorithm.text"), bEnableAlgorithm);
