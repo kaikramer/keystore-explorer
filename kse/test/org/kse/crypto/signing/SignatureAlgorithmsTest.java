@@ -22,8 +22,6 @@ package org.kse.crypto.signing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
-import static org.kse.crypto.x509.X509CertificateVersion.VERSION1;
-import static org.kse.crypto.x509.X509CertificateVersion.VERSION3;
 
 import java.io.ByteArrayOutputStream;
 import java.security.InvalidParameterException;
@@ -47,7 +45,6 @@ import org.kse.crypto.csr.spkac.SpkacSubject;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.X500NameUtils;
-import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
 
 /**
@@ -58,16 +55,12 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
 	private static KeyPair rsaKeyPair;
 	private static KeyPair dsaKeyPair;
 	private static KeyPair ecKeyPair;
-	private static X509CertificateGenerator generatorv1;
-	private static X509CertificateGenerator generatorv3;
 
 	@BeforeAll
 	private static void setUp() throws Exception {
 		rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, BC);
 		dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, BC);
 		ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
-		generatorv1 = new X509CertificateGenerator(VERSION1);
-		generatorv3 = new X509CertificateGenerator(VERSION3);
 	}
 
 	@ParameterizedTest
