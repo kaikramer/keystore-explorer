@@ -54,6 +54,7 @@ version = props."KSE.Version"
 
 ext {
 	appName = props."KSE.Name"
+	appAltName = props."KSE.AltName"
 	appVersion = props."KSE.Version"
 	appSimpleName = project.hasProperty('appSimpleName') ? project.getProperty('appSimpleName') : props."KSE.SimpleName"
 	appSimpleVersion = props."KSE.SimpleVersion"
@@ -270,9 +271,9 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 					name: appName, 
 					displayname: appName, 
 					executableName: appName, 
-					identifier: "org.kse.${appSimpleName}${appSimpleVersion}", 
-					shortversion: appSimpleVersion, 
-					version: appVersion, 
+					identifier: "org.kse.${appAltName}", //An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
+					shortversion: appVersion,  // The release version number is a string composed of three period-separated integers.
+					version: appVersion, // The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zero—for example, 3.1.2. 
 					icon: kseIcns,
 					mainclassname: mainClass, 
 					copyright: copyright, 
@@ -309,7 +310,7 @@ task dmg(type: Exec, dependsOn: signapp) {
 
 // common part for RPM and DEB
 ospackage {
-	packageName "kse"
+	packageName "${appSimpleName}"
 	version "${appVersion}"
 	//release '1'
 	
