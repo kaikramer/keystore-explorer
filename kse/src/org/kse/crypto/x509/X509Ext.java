@@ -459,9 +459,8 @@ public class X509Ext {
 
 			if (accessMethodType != null) {
 				accessMethodStr = accessMethodType.friendly();
-			}
-			// Unrecognised Access Method OID
-			else {
+			} else {
+				// Unrecognised Access Method OID
 				accessMethodStr = ObjectIdUtil.toString(accessMethod);
 			}
 

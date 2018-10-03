@@ -19,13 +19,13 @@
  */
 package org.kse.crypto.keystore;
 
+import static org.kse.crypto.filetype.CryptoFileType.BCFKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.BKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.BKS_V1_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JCEKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.PKCS12_KS;
 import static org.kse.crypto.filetype.CryptoFileType.UBER_KS;
-import static org.kse.crypto.filetype.CryptoFileType.BCFKS_KS;
 
 import java.util.ResourceBundle;
 
@@ -48,7 +48,8 @@ public enum KeyStoreType {
 	MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
 	MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
 	PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
-	BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS);
+	BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS),
+	UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null);
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
 	private String jce;
@@ -149,7 +150,7 @@ public enum KeyStoreType {
 			}
 		}
 
-		return null;
+		return UNKNOWN;
 	}
 
 	/**
