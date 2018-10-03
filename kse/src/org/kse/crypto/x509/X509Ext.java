@@ -203,11 +203,6 @@ public class X509Ext {
 
 		X509ExtensionType type = X509ExtensionType.resolveOid(oid.getId());
 
-		// handle unknown OID
-		if (type == null) {
-			return HexUtil.getHexClearDump(octets);
-		}
-
 		switch (type) {
 		case ENTRUST_VERSION_INFORMATION:
 			return getEntrustVersionInformationStringValue(octets);
@@ -502,6 +497,13 @@ public class X509Ext {
 		 *      type AttributeType,
 		 *      values SET OF AttributeValue
 		 * }
+		 *
+		 * RFC 3739: "Compliant implementations SHALL be able to interpret the following attributes:"
+		 *    DateOfBirth (1.3.6.1.5.5.7.9.1) ::= GeneralizedTime
+		 *    PlaceOfBirth (1.3.6.1.5.5.7.9.2) ::= DirectoryString
+		 *    Gender (1.3.6.1.5.5.7.9.3) ::= PrintableString (SIZE(1)) -- "M", "F", "m" or "f"
+		 *    CountryOfCitizenship (1.3.6.1.5.5.7.9.4) ::= PrintableString (SIZE (2)) -- ISO 3166 Country Code
+		 *    CountryOfResidence (1.3.6.1.5.5.7.9.5) ::= PrintableString (SIZE (2)) -- ISO 3166 Country Code
 		 */
 
 		// @formatter:on
@@ -513,7 +515,8 @@ public class X509Ext {
 		for (Object attribute : subjectDirectoryAttributes.getAttributes()) {
 
 			ASN1ObjectIdentifier attributeType = ((Attribute) attribute).getAttrType();
-			String attributeTypeStr = attributeType.getId();
+			AttributeTypeType att = AttributeTypeType.resolveOid(attributeType.getId());
+			String attributeTypeStr = (att == AttributeTypeType.UNKNOWN) ? attributeType.getId() : att.friendly();
 
 			ASN1Encodable[] attributeValues = ((Attribute) attribute).getAttributeValues();
 
@@ -521,7 +524,7 @@ public class X509Ext {
 
 				String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
-				sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
+				sb.append(MessageFormat.format("{0}: {1}", attributeTypeStr, attributeValueStr));
 				sb.append(NEWLINE);
 			}
 		}
@@ -1881,36 +1884,34 @@ public class X509Ext {
 	private String getAttributeValueString(ASN1ObjectIdentifier attributeType, ASN1Encodable attributeValue)
 			throws IOException {
 
-		/* AttributeValue ::= ANY */
+		/* AttributeValue ::= ANY  */
 
 		// Get value string for recognized attribute types
 		AttributeTypeType attributeTypeType = AttributeTypeType.resolveOid(attributeType.getId());
 
 		switch (attributeTypeType) {
-		case COMMON_NAME:
-			return DirectoryString.getInstance(attributeValue).getString();
+		case DATE_OF_BIRTH:
+			return getGeneralizedTimeString(ASN1GeneralizedTime.getInstance(attributeValue));
 		case SERIAL_NUMBER:
 		case UNSTRUCTURED_ADDRESS:
-			return DERPrintableString.getInstance(attributeValue).getString();
 		case COUNTRY_NAME:
+		case GENDER:
+		case COUNTRY_OF_CITIZENSHIP:
+		case COUNTRY_OF_RESIDENCE:
 			return DERPrintableString.getInstance(attributeValue).getString();
+		case COMMON_NAME:
 		case LOCALITY_NAME:
-			return DirectoryString.getInstance(attributeValue).getString();
 		case STATE_NAME:
-			return DirectoryString.getInstance(attributeValue).getString();
 		case STREET_ADDRESS:
-			return DirectoryString.getInstance(attributeValue).getString();
 		case ORGANIZATION_NAME:
-			return DirectoryString.getInstance(attributeValue).getString();
 		case ORGANIZATIONAL_UNIT:
-			return DirectoryString.getInstance(attributeValue).getString();
 		case TITLE:
 		case USER_ID:
+		case PLACE_OF_BIRTH:
 			return DirectoryString.getInstance(attributeValue).getString();
 		case MAIL:
 		case EMAIL_ADDRESS:
 		case UNSTRUCTURED_NAME:
-			return DERIA5String.getInstance(attributeValue).getString();
 		case DOMAIN_COMPONENT:
 			return DERIA5String.getInstance(attributeValue).getString();
 		default:
@@ -2036,62 +2037,62 @@ public class X509Ext {
 			sb.append(NEWLINE);
 
 			QcStatementType qcStatementType = QcStatementType.resolveOid(statementId.getId());
-			if (qcStatementType != null) {
-				switch (qcStatementType) {
-				case QC_SYNTAX_V1:
-				case QC_SYNTAX_V2:
-					SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
-					sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
-					break;
-				case QC_COMPLIANCE:
-					// no statementInfo
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
+			switch (qcStatementType) {
+			case QC_SYNTAX_V1:
+			case QC_SYNTAX_V2:
+				SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
+				sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
+				break;
+			case QC_COMPLIANCE:
+				// no statementInfo
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
+				sb.append(NEWLINE);
+				break;
+			case QC_EU_LIMIT_VALUE:
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
+				sb.append(NEWLINE);
+				sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
+				break;
+			case QC_RETENTION_PERIOD:
+				ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
+						asn1Integer.getValue().toString()));
+				sb.append(NEWLINE);
+				break;
+			case QC_SSCD:
+				// no statementInfo
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
+				sb.append(NEWLINE);
+				break;
+			case QC_PDS:
+				ASN1Sequence pdsLocations = ASN1Sequence.getInstance(statementInfo);
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_PDS.getResKey()));
+				for (ASN1Encodable pdsLoc : pdsLocations) {
 					sb.append(NEWLINE);
-					break;
-				case QC_EU_LIMIT_VALUE:
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
-					sb.append(NEWLINE);
-					sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
-					break;
-				case QC_RETENTION_PERIOD:
-					ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
-							asn1Integer.getValue().toString()));
-					sb.append(NEWLINE);
-					break;
-				case QC_SSCD:
-					// no statementInfo
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
-					sb.append(NEWLINE);
-					break;
-				case QC_PDS:
-					ASN1Sequence pdsLocations = ASN1Sequence.getInstance(statementInfo);
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_PDS.getResKey()));
-					for (ASN1Encodable pdsLoc : pdsLocations) {
-						sb.append(NEWLINE);
-						sb.append(INDENT.toString(indentLevel + 1));
-						DLSequence pds = (DLSequence) pdsLoc;
-						sb.append(MessageFormat.format(res.getString("QCPDS.locations"), pds.getObjectAt(1), pds.getObjectAt(0)));
-					}
-					sb.append(NEWLINE);
-					break;
-				case QC_TYPE:
-					sb.append(INDENT.toString(indentLevel));
-					sb.append(res.getString(QcStatementType.QC_TYPE.getResKey()));
-					ASN1Sequence qcTypes = ASN1Sequence.getInstance(statementInfo);
-					for (ASN1Encodable type : qcTypes) {
-						sb.append(NEWLINE);
-						sb.append(INDENT.toString(indentLevel + 1));
-						sb.append(ObjectIdUtil.toString((ASN1ObjectIdentifier) type));
-					}
-					sb.append(NEWLINE);
+					sb.append(INDENT.toString(indentLevel + 1));
+					DLSequence pds = (DLSequence) pdsLoc;
+					sb.append(MessageFormat.format(res.getString("QCPDS.locations"), pds.getObjectAt(1),
+							pds.getObjectAt(0)));
 				}
-			} else {
+				sb.append(NEWLINE);
+				break;
+			case QC_TYPE:
+				sb.append(INDENT.toString(indentLevel));
+				sb.append(res.getString(QcStatementType.QC_TYPE.getResKey()));
+				ASN1Sequence qcTypes = ASN1Sequence.getInstance(statementInfo);
+				for (ASN1Encodable type : qcTypes) {
+					sb.append(NEWLINE);
+					sb.append(INDENT.toString(indentLevel + 1));
+					sb.append(ObjectIdUtil.toString((ASN1ObjectIdentifier) type));
+				}
+				sb.append(NEWLINE);
+				break;
+			default:
 				// unknown statement type
 				sb.append(INDENT.toString(indentLevel));
 				sb.append(ObjectIdUtil.toString(statementId));

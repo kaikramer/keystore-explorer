@@ -44,7 +44,15 @@ public enum AttributeTypeType {
 	UNSTRUCTURED_ADDRESS("1.2.840.113549.1.9.8", "UnstructuredAddressAttributeType"),
 	USER_ID("0.9.2342.19200300.100.1.1", "UserIdAttributeType"),
 	MAIL("0.9.2342.19200300.100.1.3", "MailAttributeType"),
-	DOMAIN_COMPONENT("0.9.2342.19200300.100.1.2.25", "DomainComponentAttributeType");
+	DOMAIN_COMPONENT("0.9.2342.19200300.100.1.2.25", "DomainComponentAttributeType"),
+
+	DATE_OF_BIRTH("1.3.6.1.5.5.7.9.1", "DateOfBirth"),
+	PLACE_OF_BIRTH("1.3.6.1.5.5.7.9.2", "PlaceOfBirth"),
+	GENDER("1.3.6.1.5.5.7.9.3", "Gender"),
+	COUNTRY_OF_CITIZENSHIP("1.3.6.1.5.5.7.9.4", "CountryOfCitizenship"),
+	COUNTRY_OF_RESIDENCE("1.3.6.1.5.5.7.9.5", "CountryOfResidence"),
+
+	UNKNOWN("0", "unknown");
 
 	// @formatter:on
 
@@ -80,7 +88,7 @@ public enum AttributeTypeType {
 			}
 		}
 
-		return null;
+		return UNKNOWN;
 	}
 
 	/**

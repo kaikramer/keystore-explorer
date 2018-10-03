@@ -35,7 +35,8 @@ public enum QcStatementType {
 	QC_RETENTION_PERIOD("0.4.0.1862.1.3", "QCRetentionPeriod"),
 	QC_SSCD("0.4.0.1862.1.4", "QCSSCD"),
 	QC_PDS("0.4.0.1862.1.5", "QCPDS"),
-	QC_TYPE("0.4.0.1862.1.6", "QCType");
+	QC_TYPE("0.4.0.1862.1.6", "QCType"),
+	UNKNOWN("0", "unknown");
 
 	// @formatter:on
 
@@ -61,7 +62,7 @@ public enum QcStatementType {
 			}
 		}
 
-		return null;
+		return UNKNOWN;
 	}
 
 	/**

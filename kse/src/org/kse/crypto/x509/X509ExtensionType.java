@@ -343,7 +343,9 @@ public enum X509ExtensionType {
 	VS_IN_BOX_V2("2.16.840.1.113733.1.6.10", " VeriSignNetscapeInBoxV2"),
 	VS_ON_SITE_JURISDICTION_HASH("2.16.840.1.113733.1.6.11", "VeriSignOnSiteJurisdictionHash"),
 	VS_UNKNOWN("2.16.840.1.113733.1.6.13", "VeriSignUnknown"),
-	VS_DNB_DUNS_NUMBER("2.16.840.1.113733.1.6.15", "VeriSignDnbDunsNumber");
+	VS_DNB_DUNS_NUMBER("2.16.840.1.113733.1.6.15", "VeriSignDnbDunsNumber"),
+
+	UNKNOWN("0", "unknown");
 
 
 	// @formatter:on
@@ -389,7 +391,7 @@ public enum X509ExtensionType {
 			}
 		}
 
-		return null;
+		return UNKNOWN;
 	}
 
 	/**
