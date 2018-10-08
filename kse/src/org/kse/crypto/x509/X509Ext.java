@@ -83,6 +83,7 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.NameConstraints;
 import org.bouncycastle.asn1.x509.NoticeReference;
+import org.bouncycastle.asn1.x509.PolicyConstraints;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.PolicyMappings;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
@@ -1386,8 +1387,10 @@ public class X509Ext {
 		// @formatter:off
 
 		/*
-		 * PolicyConstraints ::= ASN1Sequence { requireExplicitPolicy [0]
-		 * SkipCerts OPTIONAL, inhibitPolicyMapping [1] SkipCerts OPTIONAL }
+		 * PolicyConstraints ::= ASN1Sequence {
+		 * 		requireExplicitPolicy [0] SkipCerts OPTIONAL,
+		 * 		inhibitPolicyMapping [1] SkipCerts OPTIONAL
+		 * }
 		 *
 		 * SkipCerts ::= ASN1Integer (0..MAX)
 		 */
@@ -1398,15 +1401,15 @@ public class X509Ext {
 
 		PolicyConstraints policyConstraints = PolicyConstraints.getInstance(value);
 
-		int requireExplicitPolicy = policyConstraints.getRequireExplicitPolicy();
-		int inhibitPolicyMapping = policyConstraints.getInhibitPolicyMapping();
+		BigInteger requireExplicitPolicy = policyConstraints.getRequireExplicitPolicyMapping();
+		BigInteger inhibitPolicyMapping = policyConstraints.getInhibitPolicyMapping();
 
-		if (requireExplicitPolicy != -1) { // Optional
+		if (requireExplicitPolicy != null) { // Optional
 			sb.append(MessageFormat.format(res.getString("RequireExplicitPolicy"), requireExplicitPolicy));
 			sb.append(NEWLINE);
 		}
 
-		if (inhibitPolicyMapping != -1) { // Optional
+		if (inhibitPolicyMapping != null) { // Optional
 			sb.append(MessageFormat.format(res.getString("InhibitPolicyMapping"), inhibitPolicyMapping));
 			sb.append(NEWLINE);
 		}
@@ -1414,7 +1417,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getExtendedKeyUsageStringValue(byte[] value) throws IOException {
+	private String getExtendedKeyUsageStringValue(byte[] value)  {
 		// @formatter:off
 
 		/*
