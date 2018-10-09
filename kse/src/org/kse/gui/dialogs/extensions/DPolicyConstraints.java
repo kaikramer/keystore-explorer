@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -45,7 +46,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
-import org.kse.crypto.x509.PolicyConstraints;
+import org.bouncycastle.asn1.x509.PolicyConstraints;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 
@@ -203,29 +204,29 @@ public class DPolicyConstraints extends DExtension {
 	private void prepopulateWithValue(byte[] value) throws IOException {
 		PolicyConstraints policyConstraints = PolicyConstraints.getInstance(value);
 
-		int requireExplictPolicy = policyConstraints.getRequireExplicitPolicy();
+		BigInteger requireExplictPolicy = policyConstraints.getRequireExplicitPolicyMapping();
 
-		if (requireExplictPolicy != -1) {
+		if (requireExplictPolicy != null) {
 			jtfRequireExplicitPolicy.setText("" + requireExplictPolicy);
 			jtfRequireExplicitPolicy.setCaretPosition(0);
 		}
 
-		int inhibitPolicyMapping = policyConstraints.getInhibitPolicyMapping();
+		BigInteger inhibitPolicyMapping = policyConstraints.getInhibitPolicyMapping();
 
-		if (inhibitPolicyMapping != -1) {
+		if (inhibitPolicyMapping != null) {
 			jtfInhibitPolicyMapping.setText("" + inhibitPolicyMapping);
 			jtfInhibitPolicyMapping.setCaretPosition(0);
 		}
 	}
 
 	private void okPressed() {
-		int requireExplicitPolicy = -1;
+		BigInteger requireExplicitPolicy = null;
 
 		String requireExplicitPolicyStr = jtfRequireExplicitPolicy.getText().trim();
 
 		if (requireExplicitPolicyStr.length() != 0) {
 			try {
-				requireExplicitPolicy = Integer.parseInt(requireExplicitPolicyStr);
+				requireExplicitPolicy = new BigInteger(requireExplicitPolicyStr);
 			} catch (NumberFormatException ex) {
 				JOptionPane.showMessageDialog(this,
 						res.getString("DPolicyConstraints.InvalidRequireExplicitPolicyValue.message"), getTitle(),
@@ -233,7 +234,7 @@ public class DPolicyConstraints extends DExtension {
 				return;
 			}
 
-			if (requireExplicitPolicy < 0) {
+			if (requireExplicitPolicy.signum() == -1) {
 				JOptionPane.showMessageDialog(this,
 						res.getString("DPolicyConstraints.InvalidRequireExplicitPolicyValue.message"), getTitle(),
 						JOptionPane.WARNING_MESSAGE);
@@ -241,13 +242,13 @@ public class DPolicyConstraints extends DExtension {
 			}
 		}
 
-		int inhibitPolicyMapping = -1;
+		BigInteger inhibitPolicyMapping = null;
 
 		String inhibitPolicyMappingStr = jtfInhibitPolicyMapping.getText().trim();
 
 		if (inhibitPolicyMappingStr.length() != 0) {
 			try {
-				inhibitPolicyMapping = Integer.parseInt(inhibitPolicyMappingStr);
+				inhibitPolicyMapping = new BigInteger(inhibitPolicyMappingStr);
 			} catch (NumberFormatException ex) {
 				JOptionPane.showMessageDialog(this,
 						res.getString("DPolicyConstraints.InvalidInhibitPolicyMappingValue.message"), getTitle(),
@@ -255,7 +256,7 @@ public class DPolicyConstraints extends DExtension {
 				return;
 			}
 
-			if (inhibitPolicyMapping < 0) {
+			if (inhibitPolicyMapping.signum() == -1) {
 				JOptionPane.showMessageDialog(this,
 						res.getString("DPolicyConstraints.InvalidInhibitPolicyMappingValue.message"), getTitle(),
 						JOptionPane.WARNING_MESSAGE);
@@ -263,7 +264,7 @@ public class DPolicyConstraints extends DExtension {
 			}
 		}
 
-		if ((requireExplicitPolicy == -1) && (inhibitPolicyMapping == -1)) {
+		if ((requireExplicitPolicy == null) && (inhibitPolicyMapping == null)) {
 			JOptionPane.showMessageDialog(this, res.getString("DPolicyConstraints.ValueReq.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return;
