@@ -53,7 +53,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import javax.swing.AbstractAction;
@@ -80,7 +79,6 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.io.CopyUtil;
-import org.kse.utilities.io.IOUtils;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -322,16 +320,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 	private void processPolicyZipFile(File droppedFile) {
 		// Process the supplied drop file as a policy zip. If it is a valid policy zip store the policy jar contents
-		try {
-			ZipFile zip = null;
-
-			try {
-				zip = new ZipFile(droppedFile);
-			} catch (ZipException ex) {
-				return;
-			} finally {
-				IOUtils.closeQuietly(zip);
-			}
+		try (ZipFile zip = new ZipFile(droppedFile);) {
 
 			Enumeration<? extends ZipEntry> zipEntries = zip.entries();
 
