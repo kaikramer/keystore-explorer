@@ -30,5 +30,5 @@ deploy:
   target_commitish: $TRAVIS_COMMIT  
   draft: true
   overwrite: true
-  on:
-    tags: true
+#  on:
+#    tags: true
