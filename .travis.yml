@@ -26,8 +26,8 @@ deploy:
   file_glob: true
   file: ${TRAVIS_BUILD_DIR}/kse/build/distributions/kse-*.dmg
   skip_cleanup: true
-  tag_name: $TRAVIS_TAG
-  target_commitish: $TRAVIS_COMMIT  
+#  tag_name: $TRAVIS_TAG
+#  target_commitish: $TRAVIS_COMMIT  
   draft: true
   overwrite: true
 #  on:
