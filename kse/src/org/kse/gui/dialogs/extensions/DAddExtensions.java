@@ -714,7 +714,7 @@ public class DAddExtensions extends JEscDialog {
 				}
 
 				// value has to be wrapped in a DER-encoded OCTET STRING
-				byte[] newExtensionValueOctet = new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+				byte[] newExtensionValueOctet = new DEROctetString(newExtensionValue).getEncoded(ASN1Encoding.DER);
 
 				extensions.addExtension(oid, isCritical, newExtensionValueOctet);
 
