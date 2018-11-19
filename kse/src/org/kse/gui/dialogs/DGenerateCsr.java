@@ -184,6 +184,7 @@ public class DGenerateCsr extends JEscDialog {
 
 		jcbExtensions = new JCheckBox(res.getString("DGenerateCsr.jcbExtensions.text"));
 		jcbExtensions.setToolTipText(res.getString("DGenerateCsr.jcbExtensions.tooltip"));
+		jcbExtensions.setSelected(true);
 
 		jlCsrFile = new JLabel(res.getString("DGenerateCsr.jlCsrFile.text"));
 
