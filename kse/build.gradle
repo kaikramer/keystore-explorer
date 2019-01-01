@@ -95,15 +95,8 @@ ext {
 	mainClass = "org.kse.KSE"
 }
 
-// Unit tests make use of Java 8 features, but KSE should be compatible with Java 7 and Eclipse has only per-project settings
-// (see bug report for same problem in m2e: https://bugs.eclipse.org/bugs/show_bug.cgi?id=464505)
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-compileJava {
-	sourceCompatibility = 1.7
-	targetCompatibility = 1.7
-}
 
 dependencies {
 	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.60'
@@ -378,10 +371,10 @@ buildDeb {
 }
 
 task jlink(type: Exec) {
-	javaHome = System.properties.'java.home'
+	def javaHome = System.properties.'java.home'
 	workingDir "$buildDir"
 
-	commandLine "${javaHome}/bin/jlink", 
+	commandLine "${javaHome}/bin/jlink",
 		'--module-path', "${javaHome}/jmods",
 		'--strip-debug', '--no-header-files', '--no-man-pages', '--include-locales=en,de,fr',
 		'--add-modules', 'java.datatransfer,java.desktop,java.logging,java.naming,java.prefs,java.scripting,jdk.localedata,jdk.charsets,jdk.crypto.ec,jdk.security.auth,jdk.crypto.cryptoki,jdk.crypto.mscapi',
