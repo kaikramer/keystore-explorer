@@ -1,6 +1,6 @@
 /*
   Copyright 2004 - 2013 Wayne Grant
-            2013 - 2018 Kai Kramer
+            2013 - 2019 Kai Kramer
 
   This file is part of KeyStore Explorer.
 
@@ -81,7 +81,7 @@ ext {
 	keystoreIcns = "$iconsDir/keystore.icns"
 
 	// Vendor details
-	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2018 Kai Kramer"
+	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2019 Kai Kramer"
 	vendor = "Wayne Grant, Kai Kramer"
 	website = "https://keystore-explorer.org"
 
@@ -271,9 +271,9 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 					name: appName,
 					displayname: appName,
 					executableName: appName,
-					identifier: "org.kse.${appAltName}", //An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
+					identifier: "org.kse.${appAltName}", //An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (Aï¿½Z, aï¿½z), the dot (ï¿½.ï¿½), and the hyphen (ï¿½-ï¿½).
 					shortversion: appVersion,  // The release version number is a string composed of three period-separated integers.
-					version: appVersion, // The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zero—for example, 3.1.2.
+					version: appVersion, // The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zeroï¿½for example, 3.1.2.
 					icon: kseIcns,
 					mainclassname: mainClass,
 					copyright: copyright,
@@ -375,4 +375,15 @@ buildRpm {
 buildDeb {
 	arch = "all"
 	requires("default-jre").or("java8-runtime")
+}
+
+task jlink(type: Exec) {
+	javaHome = System.properties.'java.home'
+	workingDir "$buildDir"
+
+	commandLine "${javaHome}/bin/jlink", 
+		'--module-path', "${javaHome}/jmods",
+		'--strip-debug', '--no-header-files', '--no-man-pages', '--include-locales=en,de,fr',
+		'--add-modules', 'java.datatransfer,java.desktop,java.logging,java.naming,java.prefs,java.scripting,jdk.localedata,jdk.charsets,jdk.crypto.ec,jdk.security.auth,jdk.crypto.cryptoki,jdk.crypto.mscapi',
+		'--output', 'jre'
 }
