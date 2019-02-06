@@ -133,7 +133,7 @@ public class X509Ext {
 
 		this.critical = critical;
 
-		name = lookupFriendlyName();
+		name = lookupFriendlyName(oid);
 	}
 
 	/**
@@ -182,10 +182,6 @@ public class X509Ext {
 	 * @return X509Extension name or null if unknown
 	 */
 	public String getName() {
-		if (name == null) {
-			return null;
-		}
-
 		return name;
 	}
 
@@ -330,14 +326,14 @@ public class X509Ext {
 		}
 	}
 
-	private String lookupFriendlyName() {
+	private String lookupFriendlyName(ASN1ObjectIdentifier oid) {
 		X509ExtensionType type = X509ExtensionType.resolveOid(oid.getId());
 
 		if (type != null) {
 			return type.friendly();
 		}
 
-		return null;
+		return oid.getId();
 	}
 
 	private String getEntrustVersionInformationStringValue(byte[] value) throws IOException {
