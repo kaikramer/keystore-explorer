@@ -345,6 +345,12 @@ public enum X509ExtensionType {
 	VS_UNKNOWN("2.16.840.1.113733.1.6.13", "VeriSignUnknown"),
 	VS_DNB_DUNS_NUMBER("2.16.840.1.113733.1.6.15", "VeriSignDnbDunsNumber"),
 
+	// ////////////////////////////////
+	// Google, RFC 6962 "Certificate Transparency"
+	// ////////////////////////////////
+
+	GO_CT_SCTS("1.3.6.1.4.1.11129.2.4.2", "SignedCertificateTimestampList"),
+
 	UNKNOWN("0", "unknown");
 
 
@@ -374,7 +380,13 @@ public enum X509ExtensionType {
 	 * @return Friendly name
 	 */
 	public String friendly() {
-		return res.getString(friendlyKey);
+
+		String friendlyName = friendlyKey;
+		if (res.containsKey(friendlyKey)) {
+			friendlyName = res.getString(friendlyKey);
+		}
+
+		return friendlyName;
 	}
 
 	/**
