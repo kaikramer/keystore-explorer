@@ -115,7 +115,7 @@ public enum KeyStoreType {
 	 * @return True, if secret key entries are supported by this KeyStore type
 	 */
 	public boolean supportsKeyEntries() {
-		return this == JCEKS || this == BKS || this == BKS_V1 || this == UBER || this == BCFKS;
+		return this == JCEKS || this == BKS || this == BKS_V1 || this == UBER || this == BCFKS || this == PKCS12;
 	}
 
 	/**
