@@ -89,6 +89,8 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 	private PublicKey authorityPublicKey;
 	private PublicKey subjectPublicKey;
 
+	private boolean cancelled = true;
+
 	/**
 	 * Creates a new DSelectStandardExtensionTemplate dialog.
 	 *
@@ -188,6 +190,10 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 		return extensions;
 	}
 
+	public boolean wasCancelled() {
+		return cancelled;
+	}
+
 	private void okPressed() {
 		setExtensionsAsSelected();
 		closeDialog();
@@ -221,6 +227,8 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 			}
 
 			this.extensions = extensionSet;
+
+			this.cancelled = false;
 		} catch (CryptoException | IOException e) {
 			DError.displayError(this, e);
 		}

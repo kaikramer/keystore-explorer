@@ -802,9 +802,11 @@ public class DAddExtensions extends JEscDialog {
 		dSelectStdCertTemplate.setLocationRelativeTo(this);
 		dSelectStdCertTemplate.setVisible(true);
 
-		this.extensions = dSelectStdCertTemplate.getExtensionSet();
-		reloadExtensionsTable();
-		selectFirstExtensionInTable();
+		if (!dSelectStdCertTemplate.wasCancelled()) {
+			this.extensions = dSelectStdCertTemplate.getExtensionSet();
+			reloadExtensionsTable();
+			selectFirstExtensionInTable();
+		}
 	}
 
 	private void loadTemplatePressed() {
