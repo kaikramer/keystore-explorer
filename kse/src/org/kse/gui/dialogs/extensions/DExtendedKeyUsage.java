@@ -44,7 +44,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -62,6 +64,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.kse.crypto.x509.ExtendedKeyUsageType;
+import org.kse.gui.CursorUtil;
 import org.kse.gui.error.DError;
 
 import net.miginfocom.swing.MigLayout;
@@ -76,8 +79,7 @@ public class DExtendedKeyUsage extends DExtension {
 	 */
 	private static final long serialVersionUID = -972351635055954L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -97,6 +99,9 @@ public class DExtendedKeyUsage extends DExtension {
 	private JCheckBox jcbAnyExtendedKeyUsage;
 	private JCheckBox jcbAdobePDFSigning;
 	private JCheckBox jcbTslSigning;
+	private JCheckBox jcbCustomExtKeyUsage;
+	private Set<ASN1ObjectIdentifier> customExtKeyUsagesOids = new HashSet<>();
+	private JButton jbAddEku;
 	private JButton jbOK;
 	private JButton jbCancel;
 
@@ -151,7 +156,8 @@ public class DExtendedKeyUsage extends DExtension {
 				res.getString("DExtendedKeyUsage.jcbTlsWebServerAuthentication.text"));
 		jcbSmartcardLogon = new JCheckBox(res.getString("DExtendedKeyUsage.jcbSmartcardLogon.text"));
 		jcbAnyExtendedKeyUsage = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAnyExtendedKeyUsage.text"));
-
+		jcbCustomExtKeyUsage = new JCheckBox(res.getString("DExtendedKeyUsage.jcbCustomExtendedKeyUsage.text"));
+		jbAddEku = new JButton(res.getString("DExtendedKeyUsage.jbAddEku.text"));
 		jbOK = new JButton(res.getString("DExtendedKeyUsage.jbOK.text"));
 		jbCancel = new JButton(res.getString("DExtendedKeyUsage.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -176,11 +182,37 @@ public class DExtendedKeyUsage extends DExtension {
 		pane.add(jcbTlsWebClientAuthentication, "");
 		pane.add(jcbTlsWebServerAuthentication, "");
 		pane.add(jcbTslSigning, "wrap unrel");
+		pane.add(jcbCustomExtKeyUsage, "");
+		pane.add(jbAddEku, "wrap unrel");
 		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
 		pane.add(jbCancel, "spanx, split 2, tag cancel");
 		pane.add(jbOK, "tag ok");
 
 		// actions
+		jcbCustomExtKeyUsage.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DExtendedKeyUsage.this);
+					if (customExtKeyUsagesOids.isEmpty()) {
+						addCustomExtKeyUsagePressed();
+					}
+				} finally {
+					CursorUtil.setCursorFree(DExtendedKeyUsage.this);
+				}
+			}
+		});
+		jbAddEku.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DExtendedKeyUsage.this);
+					addCustomExtKeyUsagePressed();
+				} finally {
+					CursorUtil.setCursorFree(DExtendedKeyUsage.this);
+				}
+			}
+		});
 		jbOK.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -233,7 +265,7 @@ public class DExtendedKeyUsage extends DExtension {
 			} else if (type == ADOBE_PDF_SIGNING) {
 				jcbAdobePDFSigning.setSelected(true);
 			} else if (type == TSL_SIGNING) {
-				jcbTslSigning.setSelected(true);			
+				jcbTslSigning.setSelected(true);
 			} else if (type == EMAIL_PROTECTION) {
 				jcbEmailProtection.setSelected(true);
 			} else if (type == ENCRYPTED_FILE_SYSTEM) {
@@ -252,8 +284,19 @@ public class DExtendedKeyUsage extends DExtension {
 				jcbOcspStamping.setSelected(true);
 			} else if (type == ANY_EXTENDED_KEY_USAGE) {
 				jcbAnyExtendedKeyUsage.setSelected(true);
+			} else {
+				customExtKeyUsagesOids.add(oid);
 			}
 		}
+		jcbCustomExtKeyUsage.setSelected(customExtKeyUsagesOids.size() > 0);
+	}
+
+	private void addCustomExtKeyUsagePressed() {
+		DCustomExtKeyUsage dCustomExtKeyUsage = new DCustomExtKeyUsage(this, customExtKeyUsagesOids);
+		dCustomExtKeyUsage.setLocationRelativeTo(this);
+		dCustomExtKeyUsage.setVisible(true);
+		customExtKeyUsagesOids = dCustomExtKeyUsage.getObjectIds();
+		jcbCustomExtKeyUsage.setSelected(customExtKeyUsagesOids.size() > 0);
 	}
 
 	private void okPressed() {
@@ -263,8 +306,7 @@ public class DExtendedKeyUsage extends DExtension {
 				&& !jcbIpSecurityUser.isSelected() && !jcbTimeStamping.isSelected() && !jcbOcspStamping.isSelected()
 				&& !jcbDocumentSigning.isSelected() && !jcbAdobePDFSigning.isSelected() && !jcbTslSigning.isSelected()
 				&& !jcbEncryptedFileSystem.isSelected() && !jcbAnyExtendedKeyUsage.isSelected()
-				)
-		{
+				&& !jcbSmartcardLogon.isSelected() && !jcbCustomExtKeyUsage.isSelected()) {
 			JOptionPane.showMessageDialog(this, res.getString("DExtendedKeyUsage.ValueReq.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return;
@@ -331,7 +373,11 @@ public class DExtendedKeyUsage extends DExtension {
 		if (jcbAnyExtendedKeyUsage.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ANY_EXTENDED_KEY_USAGE.oid())));
 		}
-
+		if (jcbCustomExtKeyUsage.isSelected()) {
+			for (ASN1ObjectIdentifier customExcKeyUsageOid : customExtKeyUsagesOids) {
+				keyPurposeIds.add(KeyPurposeId.getInstance(customExcKeyUsageOid));
+			}
+		}
 		ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage(
 				keyPurposeIds.toArray(new KeyPurposeId[keyPurposeIds.size()]));
 
