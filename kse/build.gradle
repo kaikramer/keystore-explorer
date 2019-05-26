@@ -286,6 +286,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 			option(value: "-Dcom.apple.mrj.application.apple.menu.about.name=${appName}")
 			option(value: "-Dcom.apple.smallTabs=true")
 			option(value: "-Dfile.encoding=UTF-8")
+			//environment(name: "APP_ROOT", value: '$APP_ROOT') // provide app location for restart
 		}
 	}
 }
@@ -360,6 +361,7 @@ ospackage {
 }
 
 buildRpm {
+	release '1' // for spacewalk/satellite because they require a release field
 	arch NOARCH
 	requires('jre', '1.8.0', GREATER | EQUAL)
 	postInstall('update-desktop-database; touch /usr/share/icons/hicolor/')
