@@ -37,10 +37,12 @@ import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
@@ -497,34 +499,36 @@ public class DViewCertificate extends JEscDialog {
 	private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {
 		DefaultMutableTreeNode certsNode = new DefaultMutableTreeNode();
 
-		TreeSet<X509Certificate> certSet = new TreeSet<>(new X509CertificateComparator());
+		Set<X509Certificate> certSet = new TreeSet<>(new X509CertificateComparator());
 		Collections.addAll(certSet, certs);
 
-		// TODO rewrite
-		setcheck: while (certSet.size() > 0) {
-			certs: for (X509Certificate cert : certSet) {
-				if (X509CertUtil.isCertificateSelfSigned(cert)) {
-					certsNode.add(new DefaultMutableTreeNode(cert));
-					certSet.remove(cert);
-					continue setcheck;
-				}
+		// first find certs with no issuer in set and add them to the tree
+		certSet.stream()
+		.filter(cert -> !isIssuerInSet(cert, certSet))
+		.forEach(cert -> certsNode.add(new DefaultMutableTreeNode(cert)));
+		certSet.removeIf(cert -> !isIssuerInSet(cert, certSet));
+
+		// then add root certs
+		certSet.stream()
+		.filter(X509CertUtil::isCertificateSelfSigned)
+		.forEach(cert -> certsNode.add(new DefaultMutableTreeNode(cert)));
+		certSet.removeIf(X509CertUtil::isCertificateSelfSigned);
+
+
+		// then attach the other certs to their issuers
+		while (!certSet.isEmpty()) {
+
+			List<X509Certificate> toBeRemoved = new ArrayList<>();
+			for (X509Certificate cert : certSet) {
 
 				DefaultMutableTreeNode issuerNode = findIssuer(cert, certsNode);
 
 				if (issuerNode != null) {
 					issuerNode.add(new DefaultMutableTreeNode(cert));
-					certSet.remove(cert);
-					continue setcheck;
-				}
-
-				if (isIssuerInSet(cert, certSet)) {
-					continue certs;
-				} else {
-					certsNode.add(new DefaultMutableTreeNode(cert));
-					certSet.remove(cert);
-					continue setcheck;
+					toBeRemoved.add(cert);
 				}
 			}
+			certSet.removeAll(toBeRemoved);
 		}
 
 		return certsNode;
@@ -559,7 +563,7 @@ public class DViewCertificate extends JEscDialog {
 		return null;
 	}
 
-	private boolean isIssuerInSet(X509Certificate cert, TreeSet<X509Certificate> certSet) {
+	private boolean isIssuerInSet(X509Certificate cert, Set<X509Certificate> certSet) {
 		// Matches on certificate's distinguished name
 
 		// If certificate is self-signed then finding an issuer is irrelevant
