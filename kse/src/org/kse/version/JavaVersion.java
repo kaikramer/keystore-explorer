@@ -61,6 +61,9 @@ public class JavaVersion implements Comparable<Object> {
 	public static final JavaVersion JRE_VERSION_10 = new JavaVersion("10");
 	public static final JavaVersion JRE_VERSION_11 = new JavaVersion("11");
 	public static final JavaVersion JRE_VERSION_12 = new JavaVersion("12");
+	public static final JavaVersion JRE_VERSION_13 = new JavaVersion("13");
+	public static final JavaVersion JRE_VERSION_14 = new JavaVersion("14");
+	public static final JavaVersion JRE_VERSION_15 = new JavaVersion("15");
 
 	/**
 	 * Construct a JavaVersion object for the current Java environment.
@@ -68,7 +71,7 @@ public class JavaVersion implements Comparable<Object> {
 	 * @throws VersionException
 	 *             If the Java version string cannot be parsed
 	 */
-	public JavaVersion() throws VersionException {
+	public JavaVersion() {
 		this(System.getProperty("java.version"));
 	}
 
@@ -80,7 +83,7 @@ public class JavaVersion implements Comparable<Object> {
 	 * @throws VersionException
 	 *             If the Java version string cannot be parsed
 	 */
-	public JavaVersion(String javaVersion) throws VersionException {
+	public JavaVersion(String javaVersion) {
 		this.javaVersion = javaVersion;
 
 		Matcher matcher = VERSION_STRING_PATTERN.matcher(javaVersion);
@@ -131,7 +134,7 @@ public class JavaVersion implements Comparable<Object> {
 	 * @throws VersionException
 	 *             If JRE's version is not parseable
 	 */
-	public static JavaVersion getJreVersion() throws VersionException {
+	public static JavaVersion getJreVersion() {
 		if (jreVersion == null) {
 			String jreVersionProp = System.getProperty("java.version");
 
@@ -164,7 +167,7 @@ public class JavaVersion implements Comparable<Object> {
 	}
 
 	@Override
-	public int compareTo(Object object) throws ClassCastException {
+	public int compareTo(Object object) {
 		JavaVersion cmpJavaVersion = (JavaVersion) object;
 
 		if (major > cmpJavaVersion.getMajor()) {
