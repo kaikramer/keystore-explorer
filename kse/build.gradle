@@ -99,8 +99,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.60'
-	compile group: 'net.java.dev.jna', name: 'jna', version: '4.5.2'
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.62'
+	compile group: 'net.java.dev.jna', name: 'jna', version: '5.3.1'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
 	compile group: 'com.miglayout', name: 'miglayout-swing', version: '5.2'
@@ -112,16 +112,13 @@ dependencies {
 		compile files('lib/darcula.jar')
 	}
 
-	testCompile("org.assertj:assertj-core:3.9.0")
-	testCompile("org.junit.jupiter:junit-jupiter-api:5.0.2")
-	testCompile("org.junit.jupiter:junit-jupiter-params:5.0.2")
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
-
-	// for eclipse
-	testRuntime('org.junit.platform:junit-platform-launcher:1.0.2')
+	testCompile("org.assertj:assertj-core:3.11.1")
+	testCompile("org.junit.jupiter:junit-jupiter-api:5.4.2")
+	testCompile("org.junit.jupiter:junit-jupiter-params:5.4.2")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 
 	// To avoid compiler warnings about @API annotations in JUnit code:
-	testCompileOnly('org.apiguardian:apiguardian-api:1.0.0')
+	testCompileOnly('org.apiguardian:apiguardian-api:1.1.0')
 }
 
 task javaHelpIndex(type: JavaExec, dependsOn: compileJava) {
