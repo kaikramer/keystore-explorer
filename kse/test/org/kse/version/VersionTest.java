@@ -14,8 +14,8 @@ public class VersionTest {
 		"5.0",
 		"5.0.0",
 		"5.2.2",
-		"5.2.2\n",
 		"5.3",
+		"5.2.2\n", // has to be last in list because of the the additional new line
 	})
 	public void testVersionString(String verString) {
 		new Version(verString);
