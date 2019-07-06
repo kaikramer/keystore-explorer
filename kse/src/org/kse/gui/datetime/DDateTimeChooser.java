@@ -27,7 +27,6 @@ import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.SECOND;
 import static java.util.Calendar.YEAR;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -47,15 +46,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.ResourceBundle;
-
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -65,7 +62,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
-import javax.swing.SpinnerListModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -73,7 +70,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
@@ -99,33 +95,6 @@ public class DDateTimeChooser extends JEscDialog {
 			res.getString("DDateTimeChooser.Day.Thu"), res.getString("DDateTimeChooser.Day.Fri"),
 			res.getString("DDateTimeChooser.Day.Sat"), res.getString("DDateTimeChooser.Day.Sun") };
 
-	private static final List<SpinnerTime> YEARS;
-	private static final List<SpinnerTime> HOURS;
-	private static final List<SpinnerTime> MINUTES;
-	private static final List<SpinnerTime> SECONDS;
-
-	static {
-		YEARS = new ArrayList<>();
-		for (int i = 1900; i < 2100; i++) {
-			YEARS.add(new SpinnerTime(i));
-		}
-
-		HOURS = new ArrayList<>();
-		for (int i = 0; i < 24; i++) {
-			HOURS.add(new SpinnerTime(i));
-		}
-
-		MINUTES = new ArrayList<>();
-		for (int i = 0; i < 60; i++) {
-			MINUTES.add(new SpinnerTime(i));
-		}
-
-		SECONDS = new ArrayList<>();
-		for (int i = 0; i < 60; i++) {
-			SECONDS.add(new SpinnerTime(i));
-		}
-	}
-
 	private static final Color LIGHT_BLUE = new Color(51, 119, 204);
 	private static final Color WEEK_DAY_BACKGROUND = LIGHT_BLUE;
 	private static final Color WEEK_DAY_FOREGROUND = WHITE;
@@ -148,6 +117,10 @@ public class DDateTimeChooser extends JEscDialog {
 	private JSpinner jsMinute;
 	private JLabel jlTimeSeparator2;
 	private JSpinner jsSecond;
+	private JPanel jpShortcuts;
+	private JButton jbStartOfYear;
+	private JButton jbNow;
+	private JButton jbEndOfYear;
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
@@ -187,6 +160,13 @@ public class DDateTimeChooser extends JEscDialog {
 	}
 
 	private void initComponents(Date date) {
+		if (date == null) {
+			date = new Date();
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+
 		jcbMonth = new JComboBox<>(MONTH_NAMES);
 		jcbMonth.addItemListener(new ItemListener() {
 			@Override
@@ -195,7 +175,8 @@ public class DDateTimeChooser extends JEscDialog {
 			}
 		});
 
-		jsYear = new JSpinner(new SpinnerListModel(YEARS));
+		jsYear = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 1900, 2100, 1));
+		jsYear.setEditor(new JSpinner.NumberEditor(jsYear, "0000"));
 		jsYear.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent evt) {
@@ -205,16 +186,15 @@ public class DDateTimeChooser extends JEscDialog {
 
 		jlDaysOfMonth = new JLabel[7][7];
 		for (int i = 0; i < 7; i++) {
-			jlDaysOfMonth[0][i] = new JLabel(DAY_NAMES[i], SwingConstants.RIGHT);
+			jlDaysOfMonth[0][i] = new JLabel(DAY_NAMES[i], SwingConstants.CENTER);
 			jlDaysOfMonth[0][i].setOpaque(true);
 			jlDaysOfMonth[0][i].setForeground(WEEK_DAY_FOREGROUND);
 			jlDaysOfMonth[0][i].setBackground(WEEK_DAY_BACKGROUND);
-			jlDaysOfMonth[0][i].setBorder(new EmptyBorder(0, 0, 0, 3));
 		}
 
 		for (int i = 1; i < 7; i++) {
 			for (int j = 0; j < 7; j++) {
-				jlDaysOfMonth[i][j] = new JLabel(EMPTY_DAY, SwingConstants.RIGHT);
+				jlDaysOfMonth[i][j] = new JLabel(EMPTY_DAY, SwingConstants.CENTER);
 				jlDaysOfMonth[i][j].setOpaque(true);
 				jlDaysOfMonth[i][j].setForeground(DAY_FOREGROUND);
 				jlDaysOfMonth[i][j].setBackground(DAY_BACKGROUND);
@@ -224,8 +204,7 @@ public class DDateTimeChooser extends JEscDialog {
 						selectDay((JLabel) evt.getSource());
 					}
 				});
-				jlDaysOfMonth[i][j].setBorder(new CompoundBorder(new MatteBorder(2, 0, 0, 0, Color.WHITE),
-						new EmptyBorder(0, 0, 0, 3)));
+				jlDaysOfMonth[i][j].setBorder(new MatteBorder(2, 0, 0, 0, Color.WHITE));
 			}
 		}
 
@@ -264,11 +243,14 @@ public class DDateTimeChooser extends JEscDialog {
 			}
 		}
 
-		jsHour = new JSpinner(new SpinnerListModel(HOURS));
+		jsHour = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.HOUR_OF_DAY), 0, 23, 1));
+		jsHour.setEditor(new JSpinner.NumberEditor(jsHour, "00"));
 		jlTimeSeparator1 = new JLabel(":");
-		jsMinute = new JSpinner(new SpinnerListModel(MINUTES));
+		jsMinute = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.MINUTE), 0, 59, 1));
+		jsMinute.setEditor(new JSpinner.NumberEditor(jsMinute, "00"));
 		jlTimeSeparator2 = new JLabel(":");
-		jsSecond = new JSpinner(new SpinnerListModel(SECONDS));
+		jsSecond = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.SECOND), 0, 59, 1));
+		jsSecond.setEditor(new JSpinner.NumberEditor(jsSecond, "00"));
 
 		jpTime = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		jpTime.add(jsHour);
@@ -277,12 +259,51 @@ public class DDateTimeChooser extends JEscDialog {
 		jpTime.add(jlTimeSeparator2);
 		jpTime.add(jsSecond);
 
-		JPanel jpDateTime = new JPanel(new BorderLayout(0, 0));
-		jpDateTime.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
-		jpDateTime.add(BorderLayout.NORTH, jpMonthYear);
-		jpDateTime.add(BorderLayout.CENTER, jpDaysOfMonth);
-		jpDateTime.add(BorderLayout.SOUTH, jpTime);
+		jbNow = new JButton(res.getString("DDateTimeChooser.jbNow.text"));
+		jbNow.setMargin(new Insets(2, 2, 2, 2));
+		jbNow.addActionListener(e -> populate(new Date()));
+
+		jbStartOfYear = new JButton(res.getString("DDateTimeChooser.jbStartOfYear.text"));
+		jbStartOfYear.setMargin(new Insets(2, 2, 2, 2));
+		jbStartOfYear.addActionListener(e -> {
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, (int) jsYear.getValue());
+			cal.set(Calendar.MONTH, Calendar.JANUARY);
+			cal.set(Calendar.DATE, 1);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			populate(cal.getTime());
+		});
+
+		jbEndOfYear = new JButton(res.getString("DDateTimeChooser.jbEndOfYear.text"));
+		jbEndOfYear.setMargin(new Insets(2, 2, 2, 2));
+		jbEndOfYear.addActionListener(e -> {
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, (int) jsYear.getValue());
+			cal.set(Calendar.MONTH, Calendar.DECEMBER);
+			cal.set(Calendar.DATE, 31);
+			cal.set(Calendar.HOUR_OF_DAY, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			cal.set(Calendar.MILLISECOND, 0);
+			populate(cal.getTime());
+		});
+
+		jpShortcuts = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		jpShortcuts.add(jbStartOfYear);
+		jpShortcuts.add(jbNow);
+		jpShortcuts.add(jbEndOfYear);
+
+		JPanel jpDateTime = new JPanel();
+		jpDateTime.setLayout(new BoxLayout(jpDateTime, BoxLayout.Y_AXIS));
+		jpDateTime.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+				new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+		jpDateTime.add(jpMonthYear);
+		jpDateTime.add(jpDaysOfMonth);
+		jpDateTime.add(jpTime);
+		jpDateTime.add(jpShortcuts);
 
 		jbOK = new JButton(res.getString("DDateTimeChooser.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
@@ -316,10 +337,6 @@ public class DDateTimeChooser extends JEscDialog {
 		getContentPane().add(BorderLayout.CENTER, jpDateTime);
 		getContentPane().add(BorderLayout.SOUTH, jpButtons);
 
-		if (date == null) {
-			date = new Date();
-		}
-
 		populate(date);
 
 		setResizable(false);
@@ -342,12 +359,12 @@ public class DDateTimeChooser extends JEscDialog {
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 
-		jsYear.setValue(YEARS.get(calendar.get(YEAR) - 1900));
+		jsYear.setValue(calendar.get(YEAR));
 		jcbMonth.setSelectedIndex(calendar.get(MONTH));
 		setSelectedDay(calendar.get(DATE));
-		jsHour.setValue(HOURS.get(calendar.get(HOUR_OF_DAY)));
-		jsMinute.setValue(MINUTES.get(calendar.get(MINUTE)));
-		jsSecond.setValue(SECONDS.get(calendar.get(SECOND)));
+		jsHour.setValue(calendar.get(HOUR_OF_DAY));
+		jsMinute.setValue(calendar.get(MINUTE));
+		jsSecond.setValue(calendar.get(SECOND));
 	}
 
 	private int getSelectedDayOfMonth() {
@@ -391,7 +408,7 @@ public class DDateTimeChooser extends JEscDialog {
 		Calendar calendar = new GregorianCalendar();
 		calendar.set(Calendar.DATE, 1);
 		calendar.set(Calendar.MONTH, jcbMonth.getSelectedIndex());
-		calendar.set(Calendar.YEAR, ((SpinnerTime) jsYear.getValue()).getValue());
+		calendar.set(Calendar.YEAR, (int) jsYear.getValue());
 
 		calculateIndexOfFirstDayOfMonth(calendar);
 
@@ -463,10 +480,10 @@ public class DDateTimeChooser extends JEscDialog {
 
 		calendar.set(Calendar.DATE, getSelectedDayOfMonth());
 		calendar.set(Calendar.MONTH, jcbMonth.getSelectedIndex());
-		calendar.set(Calendar.YEAR, ((SpinnerTime) jsYear.getValue()).getValue());
-		calendar.set(Calendar.HOUR_OF_DAY, ((SpinnerTime) jsHour.getValue()).getValue());
-		calendar.set(Calendar.MINUTE, ((SpinnerTime) jsMinute.getValue()).getValue());
-		calendar.set(Calendar.SECOND, ((SpinnerTime) jsSecond.getValue()).getValue());
+		calendar.set(Calendar.YEAR, (int) jsYear.getValue());
+		calendar.set(Calendar.HOUR_OF_DAY, (int) jsHour.getValue());
+		calendar.set(Calendar.MINUTE, (int) jsMinute.getValue());
+		calendar.set(Calendar.SECOND, (int) jsSecond.getValue());
 		calendar.set(Calendar.MILLISECOND, 0);
 
 		date = calendar.getTime();
@@ -481,36 +498,6 @@ public class DDateTimeChooser extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
-	}
-
-	/*
-	 * For population of JSpinners so years, minutes and seconds display nicely.
-	 * Remove commas from years and adds leading 0's to minutes and seconds as
-	 * appropriate
-	 */
-	private static class SpinnerTime {
-		private int time;
-
-		public SpinnerTime(int time) {
-			this.time = time;
-		}
-
-		public int getValue() {
-			return time;
-		}
-
-		@Override
-		public String toString() {
-			String str = "" + time;
-
-			str = str.replace(",", "");
-
-			if (str.length() == 1) {
-				str = "0" + str;
-			}
-
-			return str;
-		}
 	}
 
 	// GridLayout that distributes left over space between components
