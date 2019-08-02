@@ -33,6 +33,9 @@ import org.bouncycastle.util.encoders.Base64;
 public class PemUtil {
 	private static final int MAX_PRINTABLE_ENCODING_LINE_LENGTH = 64;
 
+	// Begin OpenSSL EC parameters PEM (see "openssl ecparam -name prime256v1 -genkey -out key.pem"; missing "-noout")
+	private static final String OPENSSL_EC_PARAMS_PEM_TYPE = "EC PARAMETERS";
+
 	private PemUtil() {
 	}
 
@@ -44,7 +47,7 @@ public class PemUtil {
 	 * @return PEM encoding
 	 */
 	public static String encode(PemInfo pemInfo) {
-		StringBuffer sbPem = new StringBuffer();
+		StringBuilder sbPem = new StringBuilder();
 
 		// Ouput header
 		sbPem.append("-----BEGIN ");
@@ -91,30 +94,6 @@ public class PemUtil {
 		return sbPem.toString();
 	}
 
-	private static String getTypeFromHeader(String header) {
-		String type = null;
-
-		if (header.startsWith("-----BEGIN ")) {
-			if (header.endsWith("-----")) {
-				type = header.substring(11, header.length() - 5);
-			}
-		}
-
-		return type;
-	}
-
-	private static String getTypeFromFooter(String footer) {
-		String type = null;
-
-		if (footer.startsWith("-----END ")) {
-			if (footer.endsWith("-----")) {
-				type = footer.substring(9, footer.length() - 5);
-			}
-		}
-
-		return type;
-	}
-
 	/**
 	 * Decode the PEM included in the supplied input stream.
 	 *
@@ -129,7 +108,8 @@ public class PemUtil {
 				InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
 				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
-			String line = lnr.readLine();
+			// we ignore EC parameter blocks for now
+			String line = skipOverEcParams(lnr);
 			StringBuilder sbBase64 = new StringBuilder();
 
 			if (line != null) {
@@ -199,5 +179,46 @@ public class PemUtil {
 		}
 
 		return null; // Not PEM
+	}
+
+
+	private static String skipOverEcParams(LineNumberReader lnr) throws IOException {
+
+		String line = lnr.readLine();
+
+		// skip over EC parameter block
+		if (line != null && OPENSSL_EC_PARAMS_PEM_TYPE.equals(getTypeFromHeader(line.trim()))) {
+
+			// now find end line
+			while( (line = lnr.readLine()) != null ) {
+				line = line.trim();
+				if (OPENSSL_EC_PARAMS_PEM_TYPE.equals(getTypeFromFooter(line))) {
+					line = lnr.readLine();
+					break;
+				}
+			}
+		}
+
+		return line;
+	}
+
+	private static String getTypeFromHeader(String header) {
+		String type = null;
+
+		if (header.startsWith("-----BEGIN ") && header.endsWith("-----")) {
+			type = header.substring(11, header.length() - 5);
+		}
+
+		return type;
+	}
+
+	private static String getTypeFromFooter(String footer) {
+		String type = null;
+
+		if (footer.startsWith("-----END ") && footer.endsWith("-----")) {
+			type = footer.substring(9, footer.length() - 5);
+		}
+
+		return type;
 	}
 }
