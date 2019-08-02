@@ -304,11 +304,13 @@ public final class KeyPairUtil {
 	public static boolean validKeyPair(PrivateKey privateKey, PublicKey publicKey) throws CryptoException {
 		try {
 			String privateAlgorithm = privateKey.getAlgorithm();
-
 			String publicAlgorithm = publicKey.getAlgorithm();
 
 			if (!privateAlgorithm.equals(publicAlgorithm)) {
-				return false;
+				// private EC key could be algorithm name "EC" or "ECDSA", which would be fine if publicAlgorithm is "EC"
+				if (!(privateAlgorithm.equals(ECDSA.jce()) && publicAlgorithm.equals(EC.jce()))) {
+					return false;
+				}
 			}
 
 			// Match private and public keys by signing some data with the
@@ -325,7 +327,7 @@ public final class KeyPairUtil {
 				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
 
 				return verify(toSign, signature, publicKey, signatureAlgorithm);
-			} else if (privateAlgorithm.equals(EC.jce())) {
+			} else if (privateAlgorithm.equals(EC.jce()) || privateAlgorithm.equals(ECDSA.jce())) {
 				byte[] toSign = "EC Digital Signature Algorithm".getBytes();
 				String signatureAlgorithm = "SHA256withECDSA";
 				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
