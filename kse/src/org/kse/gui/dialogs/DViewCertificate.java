@@ -499,21 +499,22 @@ public class DViewCertificate extends JEscDialog {
 	private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {
 		DefaultMutableTreeNode certsNode = new DefaultMutableTreeNode();
 
+		Set<X509Certificate> originalSet = new TreeSet<>(new X509CertificateComparator());
+		Collections.addAll(originalSet, certs);
 		Set<X509Certificate> certSet = new TreeSet<>(new X509CertificateComparator());
 		Collections.addAll(certSet, certs);
 
 		// first find certs with no issuer in set and add them to the tree
 		certSet.stream()
-		.filter(cert -> !isIssuerInSet(cert, certSet))
-		.forEach(cert -> certsNode.add(new DefaultMutableTreeNode(cert)));
-		certSet.removeIf(cert -> !isIssuerInSet(cert, certSet));
+			.filter(cert -> !isIssuerInSet(cert, certSet))
+			.forEach(cert -> certsNode.add(new DefaultMutableTreeNode(cert)));
+		certSet.removeIf(cert -> !isIssuerInSet(cert, originalSet));
 
 		// then add root certs
 		certSet.stream()
-		.filter(X509CertUtil::isCertificateSelfSigned)
-		.forEach(cert -> certsNode.add(new DefaultMutableTreeNode(cert)));
+			.filter(X509CertUtil::isCertificateSelfSigned)
+			.forEach(cert -> certsNode.add(new DefaultMutableTreeNode(cert)));
 		certSet.removeIf(X509CertUtil::isCertificateSelfSigned);
-
 
 		// then attach the other certs to their issuers
 		while (!certSet.isEmpty()) {
