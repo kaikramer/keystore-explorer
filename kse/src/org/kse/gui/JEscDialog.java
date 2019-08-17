@@ -35,7 +35,7 @@ import javax.swing.KeyStroke;
 /**
  * Extended dialog class that closes itself when escape key was pressed.
  *
- * This is the usual behavior under Windows and Mac OS.
+ * This is the usual behavior under Windows and macOS.
  *
  */
 public class JEscDialog extends JDialog {

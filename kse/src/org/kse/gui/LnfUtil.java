@@ -38,9 +38,10 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  */
 public class LnfUtil {
 
-	// Darcula LnF class as constant to avoid compile dependency
+	// Darcula and VAqua LnF classes as constant to avoid compile dependency
 	private static final String DARCULA_LAF_CLASS = "com.bulenkov.darcula.DarculaLaf";
-
+	private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
+	
 	private LnfUtil() {
 	}
 
@@ -68,9 +69,12 @@ public class LnfUtil {
 					com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName());
 		}
 
-		// Darcula is optional
+		// Darcula and VAqua are optional
 		if (isDarculaAvailable()) {
 			UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
+		}
+		if (isVAquaAvailable()) {
+			UIManager.installLookAndFeel("macOS (VAqua)", VAQUA_LAF_CLASS);
 		}
 	}
 
@@ -98,8 +102,14 @@ public class LnfUtil {
 	public static String useLnfForPlatform() {
 		String lnfClassName = null;
 
-		if (OperatingSystem.isMacOs() || OperatingSystem.isWindows()) {
+		if (OperatingSystem.isWindows()) {
 			lnfClassName = UIManager.getSystemLookAndFeelClassName();
+		} else if (OperatingSystem.isMacOs())  {
+			if (isVAquaAvailable()){
+				lnfClassName = VAQUA_LAF_CLASS;
+			} else {
+				lnfClassName = UIManager.getSystemLookAndFeelClassName();
+			}
 		} else {
 			String xdgCurrentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
 			if ("Unity".equalsIgnoreCase(xdgCurrentDesktop)
@@ -127,7 +137,7 @@ public class LnfUtil {
 	public static boolean usingMacLnf() {
 		String lnfClass = UIManager.getLookAndFeel().getClass().getName();
 
-		return OperatingSystem.isMacOs() && UIManager.getSystemLookAndFeelClassName().equals(lnfClass);
+		return OperatingSystem.isMacOs() && ( UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS)) ;
 	}
 
 	/**
@@ -186,6 +196,19 @@ public class LnfUtil {
 			}
 		} catch (ClassNotFoundException e) {
 			// Darcula jar not included
+		}
+		return false;
+	}
+
+	/**
+	 * Is optional VAqua LaF available?
+	 */
+	public static boolean isVAquaAvailable() {
+		try {
+			Class.forName(VAQUA_LAF_CLASS);
+			return true;
+		} catch (ClassNotFoundException e) {
+			// VAqua jar not included
 		}
 		return false;
 	}

@@ -107,9 +107,12 @@ dependencies {
 	compile group: 'com.jgoodies', name: 'jgoodies-common', version: '1.8.1'
 	compile group: 'com.jgoodies', name: 'jgoodies-looks', version: '2.7.0'
 
-	// Darcula lnf not in a public repository yet
+	// Darcula and VAqua Look & Feels not in a public repository yet
 	if (file("lib/darcula.jar").exists()) {
 		compile files('lib/darcula.jar')
+	}
+	if (file("lib/VAqua7.jar").exists()) {
+		compile files('lib/VAqua7.jar')
 	}
 
 	testCompile("org.assertj:assertj-core:3.11.1")
