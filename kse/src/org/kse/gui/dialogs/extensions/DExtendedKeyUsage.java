@@ -33,6 +33,7 @@ import static org.kse.crypto.x509.ExtendedKeyUsageType.OCSP_SIGNING;
 import static org.kse.crypto.x509.ExtendedKeyUsageType.SERVER_AUTH;
 import static org.kse.crypto.x509.ExtendedKeyUsageType.SMARTCARD_LOGON;
 import static org.kse.crypto.x509.ExtendedKeyUsageType.TIME_STAMPING;
+import static org.kse.crypto.x509.ExtendedKeyUsageType.TSL_SIGNING;
 
 import java.awt.Container;
 import java.awt.EventQueue;
@@ -95,6 +96,7 @@ public class DExtendedKeyUsage extends DExtension {
 	private JCheckBox jcbSmartcardLogon;
 	private JCheckBox jcbAnyExtendedKeyUsage;
 	private JCheckBox jcbAdobePDFSigning;
+	private JCheckBox jcbTslSigning;
 	private JButton jbOK;
 	private JButton jbCancel;
 
@@ -134,6 +136,7 @@ public class DExtendedKeyUsage extends DExtension {
 		jcbCodeSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbCodeSigning.text"));
 		jcbDocumentSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbDocumentSigning.text"));
 		jcbAdobePDFSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAdobePDFSigning.text"));
+		jcbTslSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbTslSigning.text"));
 		jcbEncryptedFileSystem = new JCheckBox(res.getString("DExtendedKeyUsage.jcbEncryptedFileSystem.text"));
 		jcbEmailProtection = new JCheckBox(res.getString("DExtendedKeyUsage.jcbEmailProtection.text"));
 		jcbIpSecurityEndSystem = new JCheckBox(res.getString("DExtendedKeyUsage.jcbIpSecurityEndSystem.text"));
@@ -171,7 +174,8 @@ public class DExtendedKeyUsage extends DExtension {
 		pane.add(jcbSmartcardLogon, "");
 		pane.add(jcbTimeStamping, "wrap");
 		pane.add(jcbTlsWebClientAuthentication, "");
-		pane.add(jcbTlsWebServerAuthentication, "wrap unrel");
+		pane.add(jcbTlsWebServerAuthentication, "");
+		pane.add(jcbTslSigning, "wrap unrel");
 		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
 		pane.add(jbCancel, "spanx, split 2, tag cancel");
 		pane.add(jbOK, "tag ok");
@@ -228,6 +232,8 @@ public class DExtendedKeyUsage extends DExtension {
 				jcbDocumentSigning.setSelected(true);
 			} else if (type == ADOBE_PDF_SIGNING) {
 				jcbAdobePDFSigning.setSelected(true);
+			} else if (type == TSL_SIGNING) {
+				jcbTslSigning.setSelected(true);			
 			} else if (type == EMAIL_PROTECTION) {
 				jcbEmailProtection.setSelected(true);
 			} else if (type == ENCRYPTED_FILE_SYSTEM) {
@@ -255,7 +261,7 @@ public class DExtendedKeyUsage extends DExtension {
 				&& !jcbCodeSigning.isSelected() && !jcbEmailProtection.isSelected()
 				&& !jcbIpSecurityEndSystem.isSelected() && !jcbIpSecurityTunnelTermination.isSelected()
 				&& !jcbIpSecurityUser.isSelected() && !jcbTimeStamping.isSelected() && !jcbOcspStamping.isSelected()
-				&& !jcbDocumentSigning.isSelected() && !jcbAdobePDFSigning.isSelected()
+				&& !jcbDocumentSigning.isSelected() && !jcbAdobePDFSigning.isSelected() && !jcbTslSigning.isSelected()
 				&& !jcbEncryptedFileSystem.isSelected() && !jcbAnyExtendedKeyUsage.isSelected()
 				)
 		{
@@ -284,6 +290,10 @@ public class DExtendedKeyUsage extends DExtension {
 
 		if (jcbAdobePDFSigning.isSelected()) {
 			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ADOBE_PDF_SIGNING.oid())));
+		}
+
+		if (jcbTslSigning.isSelected()) {
+			keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(TSL_SIGNING.oid())));
 		}
 
 		if (jcbEmailProtection.isSelected()) {
