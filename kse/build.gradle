@@ -99,7 +99,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.62'
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.64'
 	compile group: 'net.java.dev.jna', name: 'jna', version: '5.3.1'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
