@@ -41,7 +41,7 @@ public class LnfUtil {
 	// Darcula and VAqua LnF classes as constant to avoid compile dependency
 	private static final String DARCULA_LAF_CLASS = "com.bulenkov.darcula.DarculaLaf";
 	private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
-	
+
 	private LnfUtil() {
 	}
 
@@ -73,7 +73,7 @@ public class LnfUtil {
 		if (isDarculaAvailable()) {
 			UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
 		}
-		if (isVAquaAvailable()) {
+		if (OperatingSystem.isMacOs() && isVAquaAvailable()) {
 			UIManager.installLookAndFeel("macOS (VAqua)", VAQUA_LAF_CLASS);
 		}
 	}
