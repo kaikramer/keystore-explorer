@@ -33,7 +33,7 @@ public class JavaFXFileChooser extends JFileChooser {
 	static {
 		// check for availability and initialize javafx thread
 		try {
-			// disabled for Mac OS because there are incompatibilities between JavaFX file chooser and some mac tools
+			// disabled for macOS because there are incompatibilities between JavaFX file chooser and some mac tools
 			if (!OperatingSystem.isMacOs()) {
 				Class.forName("javafx.embed.swing.JFXPanel").getConstructor().newInstance();
 				platformClass = Class.forName("javafx.application.Platform");

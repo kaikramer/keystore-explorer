@@ -33,7 +33,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Platform specific GUI building utility methods. Takes care of differences
- * between Mac OS (and lnfs thereof) and other platforms. They
+ * between macOS (and lnfs thereof) and other platforms. They
  * "Think Different", you see.
  *
  */
@@ -175,7 +175,7 @@ public class PlatformUtil {
 
 	/**
 	 * Create a scroll pane whose scroll bar policy conforms with the current
-	 * platform. i.e. on Mac OS l&f if a scroll bar's policy states that it may
+	 * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
 	 * be shown as needed it should instead always be shown. For all other
 	 * platforms obey policy as provided.
 	 *
@@ -191,7 +191,7 @@ public class PlatformUtil {
 
 	/**
 	 * Create a scroll pane whose scroll bar policy conforms with the current
-	 * platform. i.e. on Mac OS l&f if a scroll bar's policy states that it may
+	 * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
 	 * be shown as needed it should instead always be shown. For all other
 	 * platforms obey policy as provided.
 	 *
@@ -276,7 +276,7 @@ public class PlatformUtil {
 	 */
 	public static void setMnemonic(AbstractButton button, char mnemonic, int index) {
 		/*
-		 * Only set mnemonic if not using Mac OS - they are not recommended by
+		 * Only set mnemonic if not using macOS - they are not recommended by
 		 * the style guidelines there and clash with established commands
 		 */
 		if (!OperatingSystem.isMacOs()) {

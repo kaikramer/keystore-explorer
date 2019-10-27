@@ -33,7 +33,7 @@ import org.kse.gui.actions.PreferencesAction;
 import org.kse.version.JavaVersion;
 
 /**
- * Integrate KSE with Mac OS. Handles call backs from Mac OS.
+ * Integrate KSE with macOS. Handles call backs from macOS.
  */
 public class MacOsIntegration implements InvocationHandler {
 

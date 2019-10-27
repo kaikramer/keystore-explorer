@@ -1668,7 +1668,7 @@ public final class KseFrame implements StatusBar {
 
 		if (OperatingSystem.isMacOs()) {
 			rightPadding = 15; // Allow extra padding in the grow box status bar
-			// if using Mac OS
+			// if using macOS
 		}
 
 		jlStatusBar.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY), new EmptyBorder(3, 3,

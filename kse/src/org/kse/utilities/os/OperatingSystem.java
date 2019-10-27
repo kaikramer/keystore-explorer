@@ -157,7 +157,7 @@ public class OperatingSystem {
 	}
 
 	/**
-	 * Is operating system Mac OS?
+	 * Is operating system macOS?
 	 *
 	 * @return True if it is
 	 */

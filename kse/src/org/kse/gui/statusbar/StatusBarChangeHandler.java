@@ -62,7 +62,7 @@ public class StatusBarChangeHandler implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent evt) {
 		/*
-		 * Only bother if not using Mac OS - on there stateChagned is not fired
+		 * Only bother if not using macOS - on there stateChagned is not fired
 		 * for the application manu bar's items so for consistency we will fire
 		 * it at all
 		 */
