@@ -79,8 +79,8 @@ public enum ExtendedKeyUsageType {
 	/** Microsoft Server Gated Crypto (SGC) */
 	VERISIGN_SGC("2.16.840.1.113733.1.8.1",  "VeriSignSGCExtKeyUsage"),
 
-	/** TLS signing specified by ETSI TS 102 231 V3.1.2 for the purpose of signing Trust-service Status Lists. */
-	TLS_SIGNING("0.4.0.2231.3.0",  "TLSSignExtKeyUsage");
+	/** TSL signing specified by ETSI TS 102 231 V3.1.2 for the purpose of signing Trust-service Status Lists. */
+	TSL_SIGNING("0.4.0.2231.3.0",  "TSLSignExtKeyUsage");
 	
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
