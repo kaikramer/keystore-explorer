@@ -251,16 +251,14 @@ public class DObjectIdChooser extends JEscDialog {
 		String secondArc = "" + jcbSecondArc.getSelectedItem();
 		String remainingArcs = jtfRemainingArcs.getText().trim();
 
-		ASN1ObjectIdentifier newObjectId = new ASN1ObjectIdentifier(firstArc + "." + secondArc + "." + remainingArcs);
-
 		try {
+			ASN1ObjectIdentifier newObjectId = new ASN1ObjectIdentifier(firstArc + "." + secondArc + "." + remainingArcs);
 			ObjectIdUtil.validate(newObjectId);
-		} catch (InvalidObjectIdException e) {
+			objectId = newObjectId;
+		} catch (InvalidObjectIdException | IllegalArgumentException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-
-		objectId = newObjectId;
 
 		closeDialog();
 	}
