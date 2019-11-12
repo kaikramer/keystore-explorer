@@ -181,8 +181,8 @@ public class DExtendedKeyUsage extends DExtension {
 		pane.add(jcbTimeStamping, "wrap");
 		pane.add(jcbTlsWebClientAuthentication, "");
 		pane.add(jcbTlsWebServerAuthentication, "");
-		pane.add(jcbTslSigning, "wrap unrel");
-		pane.add(jcbCustomExtKeyUsage, "");
+		pane.add(jcbTslSigning, "wrap");
+		pane.add(jcbCustomExtKeyUsage, "spanx, split");
 		pane.add(jbAddEku, "wrap unrel");
 		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
 		pane.add(jbCancel, "spanx, split 2, tag cancel");
