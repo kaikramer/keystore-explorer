@@ -75,7 +75,7 @@ public class CertificateTreeCellRend extends DefaultTreeCellRenderer {
 			cell.setText(X509CertUtil.getShortName(cert));
 
 			ImageIcon icon = new ImageIcon(getClass().getResource(
-					res.getString("CertificateTreeCellRend.Certificate.image")));
+					"images/certificate_node.png"));
 			cell.setIcon(icon);
 
 			cell.setToolTipText(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()).toString());

@@ -54,7 +54,7 @@ public class DeleteKeyAction extends KeyStoreExplorerAction implements HistoryAc
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("DeleteKeyAction.image")))));
+						getClass().getResource("images/delete.png"))));
 	}
 
 	@Override

@@ -70,7 +70,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ImportKeyPairAction.image")))));
+						getClass().getResource("images/importkeypair.png"))));
 	}
 
 	@Override

@@ -69,14 +69,14 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 
 			if (KeyStoreTableModel.KEY_PAIR_ENTRY.equals(value)) {
 				icon = new ImageIcon(getClass().getResource(
-						res.getString("KeyStoreTableCellRend.KeyPairEntry.image")));
+						"images/table/keypair_entry.png"));
 				cell.setToolTipText(res.getString("KeyStoreTableCellRend.KeyPairEntry.tooltip"));
 			} else if (KeyStoreTableModel.TRUST_CERT_ENTRY.equals(value)) {
 				icon = new ImageIcon(getClass().getResource(
-						res.getString("KeyStoreTableCellRend.TrustCertEntry.image")));
+						"images/table/trustcert_entry.png"));
 				cell.setToolTipText(res.getString("KeyStoreTableCellRend.TrustCertEntry.tooltip"));
 			} else {
-				icon = new ImageIcon(getClass().getResource(res.getString("KeyStoreTableCellRend.KeyEntry.image")));
+				icon = new ImageIcon(getClass().getResource("images/table/key_entry.png"));
 				cell.setToolTipText(res.getString("KeyStoreTableCellRend.KeyEntry.tooltip"));
 			}
 
@@ -99,12 +99,12 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				if (value.equals(Boolean.TRUE)) {
 					// Locked
 					icon = new ImageIcon(getClass().getResource(
-							res.getString("KeyStoreTableCellRend.LockedEntry.image")));
+							"images/table/locked_entry.png"));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.LockedEntry.tooltip"));
 				} else {
 					// Unlocked
 					icon = new ImageIcon(getClass().getResource(
-							res.getString("KeyStoreTableCellRend.UnlockedEntry.image")));
+							"images/table/unlocked_entry.png"));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.UnlockedEntry.tooltip"));
 				}
 
@@ -127,18 +127,18 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				if (value.equals(2)) {
 					// Expired
 					icon = new ImageIcon(getClass().getResource(
-							res.getString("KeyStoreTableCellRend.CertExpiredEntry.image")));
+							"images/table/cert_expired_entry.png"));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertExpiredEntry.tooltip"));
 				} else {
 					if (value.equals(1)) {
 						// Almost Expired
 						icon = new ImageIcon(getClass()
-								.getResource(res.getString("KeyStoreTableCellRend.CertAlmostExpiredEntry.image")));
+								.getResource("images/table/cert_old_entry.png"));
 						cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertAlmostExpiredEntry.tooltip"));
 					} else {
 					// Unexpired
 					icon = new ImageIcon(getClass().getResource(
-							res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.image")));
+							"images/table/cert_unexpired_entry.png"));
 					cell.setToolTipText(res.getString("KeyStoreTableCellRend.CertUnexpiredEntry.tooltip"));
 				}
 				}

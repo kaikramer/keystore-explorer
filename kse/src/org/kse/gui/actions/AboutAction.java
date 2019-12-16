@@ -52,7 +52,7 @@ public class AboutAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("AboutAction.image")))));
+						getClass().getResource("images/about.png"))));
 	}
 
 	/**
@@ -67,14 +67,20 @@ public class AboutAction extends KeyStoreExplorerAction {
 	 * Display the about dialog.
 	 */
 	public void showAbout() {
-		Object[] tickerItems = { res.getString("AboutAction.Copyright"), res.getString("AboutAction.Acknowledgement1"),
-				res.getString("AboutAction.Acknowledgement2"), res.getString("AboutAction.Acknowledgement3"),
-				res.getString("AboutAction.Acknowledgement4"), res.getString("AboutAction.Acknowledgement5"),
-				res.getString("AboutAction.Acknowledgement6"), res.getString("AboutAction.Acknowledgement7"),
-				LnfUtil.isVAquaAvailable() ? res.getString("AboutAction.Acknowledgement8") : "",
+
+		Object[] tickerItems = {
+				"Copyright 2004 - 2013 Wayne Grant, 2013 - 2019 Kai Kramer",
+				"Bouncy Castle JCE Provider Copyright 2000 - 2019 The Legion Of The Bouncy Castle (www.bouncycastle.org)",
+				"Apache Commons Copyright 2002-2017 The Apache Software Foundation (commons.apache.org)",
+				"JavaHelp Copyright 2003 Sun Microsystems, Inc. (javahelp.java.net)",
+				"MigLayout Copyright 2004, Mikael Grev, MiG InfoCom AB (www.miglayout.com)",
+				"Fugue Icons Copyright 2013 Yusuke Kamiyamane (p.yusukekamiyamane.com)",
+				"JNA Copyright 2007 Timothy Wall (github.com/twall/jna)",
+				"FlatLaf Copyright 2019 FormDev Software GmbH (www.formdev.com/flatlaf/)",
+				LnfUtil.isVAquaAvailable() ? "VAqua Copyright 2015\u20132019 Alan Snyder (violetlib.org)" : "",
 		};
 
-		URL aboutDialogImageURL = AboutAction.class.getResource(res.getString("AboutAction.About.image"));
+		URL aboutDialogImageURL = AboutAction.class.getResource("images/aboutdlg.png");
 		DAbout dAbout = new DAbout(frame,
 				MessageFormat.format(res.getString("AboutAction.About.Title"), KSE.getApplicationName()),
 				res.getString("AboutAction.License"),

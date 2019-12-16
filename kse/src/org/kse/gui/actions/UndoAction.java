@@ -57,7 +57,7 @@ public class UndoAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("UndoAction.image")))));
+						getClass().getResource("images/undo.png"))));
 	}
 
 	/**

@@ -117,7 +117,7 @@ public class DExamineSsl extends JEscDialog {
 		jcbKeyStore.setToolTipText(res.getString("DExamineSsl.jcbKeyStore.tooltip"));
 
 		jbLoadKeystore = new JButton();
-		jbLoadKeystore.setIcon(new ImageIcon(getClass().getResource(res.getString("DExamineSsl.jbOpen.image"))));
+		jbLoadKeystore.setIcon(new ImageIcon(getClass().getResource("images/open.png")));
 		jbLoadKeystore.setToolTipText(res.getString("DExamineSsl.jbLoadKeystore.tooltip"));
 
 		jbOK = new JButton(res.getString("DExamineSsl.jbOK.text"));

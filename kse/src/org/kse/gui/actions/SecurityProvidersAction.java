@@ -48,7 +48,7 @@ public class SecurityProvidersAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SecurityProvidersAction.image")))));
+						getClass().getResource("images/secprov.png"))));
 	}
 
 	/**

@@ -67,13 +67,13 @@ public class ErrorTreeCellRend extends DefaultTreeCellRenderer {
 		ImageIcon icon = null;
 
 		if (userValue instanceof Throwable) {
-			icon = new ImageIcon(getClass().getResource(res.getString("ErrorTreeCellRend.Error.image")));
+			icon = new ImageIcon(getClass().getResource("images/error_node.png"));
 			cell.setToolTipText(res.getString("ErrorTreeCellRend.Error.tooltip"));
 		} else if (userValue instanceof StackTraceElement) {
-			icon = new ImageIcon(getClass().getResource(res.getString("ErrorTreeCellRend.StackTrace.image")));
+			icon = new ImageIcon(getClass().getResource("images/stacktrace_node.png"));
 			cell.setToolTipText(res.getString("ErrorTreeCellRend.StackTrace.tooltip"));
 		} else {
-			icon = new ImageIcon(getClass().getResource(res.getString("ErrorTreeCellRend.Root.image")));
+			icon = new ImageIcon(getClass().getResource("images/root_node.png"));
 			cell.setToolTipText(res.getString("ErrorTreeCellRend.Root.tooltip"));
 		}
 

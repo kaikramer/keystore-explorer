@@ -54,7 +54,7 @@ public class CloseAction extends SaveAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("CloseAction.image")))));
+						getClass().getResource("images/close.png"))));
 	}
 
 	/**

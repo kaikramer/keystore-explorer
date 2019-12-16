@@ -53,7 +53,7 @@ public class UnlockKeyPairAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("UnlockKeyPairAction.image")))));
+						getClass().getResource("images/unlock.png"))));
 	}
 
 	/**

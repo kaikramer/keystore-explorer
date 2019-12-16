@@ -49,7 +49,7 @@ public class CloseOthersAction extends CloseAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("CloseOthersAction.image")))));
+						getClass().getResource("images/closeothers.png"))));
 	}
 
 	/**

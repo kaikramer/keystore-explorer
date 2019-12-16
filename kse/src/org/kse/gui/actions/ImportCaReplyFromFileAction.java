@@ -68,7 +68,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 		putValue(SHORT_DESCRIPTION, res.getString("ImportCaReplyFromFileAction.tooltip"));
 		putValue(SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ImportCaReplyFromFileAction.image")))));
+						getClass().getResource("images/importcareplyfile.png"))));
 	}
 
 	@Override

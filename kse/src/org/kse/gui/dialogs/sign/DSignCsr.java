@@ -255,7 +255,7 @@ public class DSignCsr extends JEscDialog {
 		jbViewCsrPublicKeyDetails = new JButton();
 		jbViewCsrPublicKeyDetails.setToolTipText(res.getString("DSignCsr.jbViewCsrPublicKeyDetails.tooltip"));
 		jbViewCsrPublicKeyDetails.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("DSignCsr.jbViewCsrPublicKeyDetails.image")))));
+				getClass().getResource("images/viewpubkey.png"))));
 
 		jlCsrSignatureAlgorithm = new JLabel(res.getString("DSignCsr.jlCsrSignatureAlgorithm.text"));
 

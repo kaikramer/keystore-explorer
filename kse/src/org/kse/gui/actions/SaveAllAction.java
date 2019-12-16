@@ -56,7 +56,7 @@ public class SaveAllAction extends SaveAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SaveAllAction.image")))));
+						getClass().getResource("images/saveall.png"))));
 	}
 
 	/**

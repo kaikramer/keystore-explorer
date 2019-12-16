@@ -82,7 +82,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ExamineClipboardAction.image")))));
+						getClass().getResource("images/examineclipboard.png"))));
 	}
 
 	/**

@@ -77,7 +77,7 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ExportTrustedCertificateAction.image")))));
+						getClass().getResource("images/exporttrustcert.png"))));
 	}
 
 	/**

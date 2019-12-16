@@ -66,7 +66,7 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("CutAction.image")))));
+						getClass().getResource("images/cut.png"))));
 	}
 
 	@Override

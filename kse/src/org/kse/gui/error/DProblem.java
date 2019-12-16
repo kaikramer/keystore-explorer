@@ -106,7 +106,7 @@ public class DProblem extends JEscDialog {
 		jpProblemHeader.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.WHITE), new CompoundBorder(
 				new MatteBorder(0, 0, 1, 0, Color.GRAY), new EmptyBorder(10, 10, 10, 10))));
 
-		ImageIcon icon = new ImageIcon(getClass().getResource(res.getString("DProblem.Problem.image")));
+		ImageIcon icon = new ImageIcon(getClass().getResource("images/problem.png"));
 
 		jlProblemHeader = new JLabel(formatProblem());
 		jlProblemHeader.setIconTextGap(15);

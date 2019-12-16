@@ -75,10 +75,10 @@ public class KeyStoreTab extends JPanel {
 		jbClose.setToolTipText(res.getString("KeyStoreTab.jbClose.tooltip"));
 
 		final ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KeyStoreTab.CloseTab.image"))));
+				getClass().getResource("images/tab/close_tab.png")));
 
 		final ImageIcon rollOverIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KeyStoreTab.CloseTabRollOver.image"))));
+				getClass().getResource("images/tab/close_tab_rollover.png")));
 
 		jbClose.setSize(icon.getImage().getWidth(null), icon.getImage().getHeight(null));
 		jbClose.setIcon(icon);

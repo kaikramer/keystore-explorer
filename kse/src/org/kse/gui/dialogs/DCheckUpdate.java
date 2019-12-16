@@ -86,7 +86,7 @@ public class DCheckUpdate extends JEscDialog {
 
 	private void initComponents() {
 		jlCheckUpdate = new JLabel(res.getString("DCheckUpdate.jlCheckUpdate.text"));
-		ImageIcon icon = new ImageIcon(getClass().getResource(res.getString("DCheckUpdate.jlCheckUpdate.image")));
+		ImageIcon icon = new ImageIcon(getClass().getResource("images/chkup.png"));
 		jlCheckUpdate.setIcon(icon);
 		jlCheckUpdate.setHorizontalTextPosition(SwingConstants.LEADING);
 		jlCheckUpdate.setIconTextGap(15);

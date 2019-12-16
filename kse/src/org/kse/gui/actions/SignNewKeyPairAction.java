@@ -51,7 +51,7 @@ public class SignNewKeyPairAction extends KeyStoreExplorerAction {
 		putValue(SHORT_DESCRIPTION, res.getString("SignNewKeyPairAction.tooltip"));
 		putValue(SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SignNewKeyPairAction.image")))));
+						getClass().getResource("images/signnewkeypair.png"))));
 	}
 
 	@Override

@@ -66,7 +66,7 @@ public class HelpAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("HelpAction.image")))));
+						getClass().getResource("images/help.png"))));
 	}
 
 	/**

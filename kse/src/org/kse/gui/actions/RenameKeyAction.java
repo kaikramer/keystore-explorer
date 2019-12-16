@@ -57,7 +57,7 @@ public class RenameKeyAction extends KeyStoreExplorerAction implements HistoryAc
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("RenameKeyAction.image")))));
+						getClass().getResource("images/rename.png"))));
 	}
 
 	@Override

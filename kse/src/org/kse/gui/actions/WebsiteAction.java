@@ -61,14 +61,14 @@ public class WebsiteAction extends KeyStoreExplorerAction {
 			setData(res.getString("WebsiteAction.GitHubProject.statusbar"),
 					res.getString("WebsiteAction.GitHubProject.text"),
 					res.getString("WebsiteAction.GitHubProject.tooltip"),
-					res.getString("WebsiteAction.image"),
+					"images/website.png",
 					URLs.GITHUB_PROJECT);
 			break;
 		case ISSUE_TRACKER:
 			setData(res.getString("WebsiteAction.GitHubIssueTracker.statusbar"),
 					res.getString("WebsiteAction.GitHubIssueTracker.text"),
 					res.getString("WebsiteAction.GitHubIssueTracker.tooltip"),
-					res.getString("WebsiteAction.image"),
+					"images/website.png",
 					URLs.GITHUB_ISSUE_TRACKER);
 			break;
 		default:
@@ -76,7 +76,7 @@ public class WebsiteAction extends KeyStoreExplorerAction {
 			setData(res.getString("WebsiteAction.statusbar"),
 					res.getString("WebsiteAction.text"),
 					res.getString("WebsiteAction.tooltip"),
-					res.getString("WebsiteAction.image"),
+					"images/website.png",
 					URLs.KSE_WEB_SITE);
 			break;
 		}

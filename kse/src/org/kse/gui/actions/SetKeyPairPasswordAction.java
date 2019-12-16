@@ -64,7 +64,7 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SetKeyPairPasswordAction.image")))));
+						getClass().getResource("images/setpass.png"))));
 	}
 
 	@Override

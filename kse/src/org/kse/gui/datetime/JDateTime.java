@@ -90,7 +90,7 @@ public class JDateTime extends JPanel {
 		gbc_jtfDateTime.gridy = 0;
 		gbc_jtfDateTime.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon editIcon = new ImageIcon(getClass().getResource(res.getString("JDateTime.jbEditDateTime.image")));
+		ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_date_time.png"));
 		jbEditDateTime = new JButton(editIcon);
 		jbEditDateTime.setToolTipText(res.getString("JDateTime.jbEditDateTime.tooltip"));
 		jbEditDateTime.addActionListener(new ActionListener() {
@@ -117,8 +117,7 @@ public class JDateTime extends JPanel {
 		add(jbEditDateTime, gbc_jbEditDateTime);
 
 		if (showClearButton) {
-			ImageIcon clearIcon = new ImageIcon(
-					getClass().getResource(res.getString("JDateTime.jbClearDateTime.image")));
+			ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_date_time.png"));
 			jbClearDateTime = new JButton(clearIcon);
 			jbClearDateTime.setToolTipText(res.getString("JDateTime.jbClearDateTime.tooltip"));
 			jbClearDateTime.addActionListener(new ActionListener() {

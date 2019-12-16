@@ -68,7 +68,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("GenerateSecretKeyAction.image")))));
+						getClass().getResource("images/genseckey.png"))));
 	}
 
 	@Override

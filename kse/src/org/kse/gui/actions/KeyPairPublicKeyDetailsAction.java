@@ -55,7 +55,7 @@ public class KeyPairPublicKeyDetailsAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("KeyPairPublicKeyDetailsAction.image")))));
+						getClass().getResource("images/keypairpubkeydetails.png"))));
 	}
 
 	/**

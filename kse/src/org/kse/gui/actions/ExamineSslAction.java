@@ -60,7 +60,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ExamineSslAction.image")))));
+						getClass().getResource("images/examinessl.png"))));
 	}
 
 	/**

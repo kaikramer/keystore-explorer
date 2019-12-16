@@ -56,7 +56,7 @@ public class RenameTrustedCertificateAction extends KeyStoreExplorerAction imple
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("RenameTrustedCertificateAction.image")))));
+						getClass().getResource("images/rename.png"))));
 	}
 
 	@Override

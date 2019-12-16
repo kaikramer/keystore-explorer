@@ -71,12 +71,12 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 		if (node.getLevel() == 0) // First level - root
 		{
 			// Root node
-			icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Root.image")));
+			icon = new ImageIcon(getClass().getResource("images/root_node.png"));
 			cell.setToolTipText(res.getString("ProviderTreeCellRend.Root.tooltip"));
 		} else if (node.getLevel() == 1) // Second level - providers
 		{
 			// Provider node - name and version
-			icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Provider.image")));
+			icon = new ImageIcon(getClass().getResource("images/provider_node.png"));
 			cell.setToolTipText(res.getString("ProviderTreeCellRend.Provider.tooltip"));
 		} else if (node.getLevel() == 2) // Third level - provider description,
 			// version, java class
@@ -87,27 +87,27 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 
 			if (index == 0) {
 				// Provider description node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Description.image")));
+				icon = new ImageIcon(getClass().getResource("images/description_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.Description.tooltip"));
 			} else if (index == 1) {
 				// Provider class node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.ProviderClass.image")));
+				icon = new ImageIcon(getClass().getResource("images/provider_class_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.ProviderClass.tooltip"));
 			} else {
 				// Provider services node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Services.image")));
+				icon = new ImageIcon(getClass().getResource("images/services_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.Services.tooltip"));
 			}
 		} else if (node.getLevel() == 3) // Fourth level - list if services
 		{
 			// Provider service node
-			icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Service.image")));
+			icon = new ImageIcon(getClass().getResource("images/service_node.png"));
 			cell.setToolTipText(res.getString("ProviderTreeCellRend.Service.tooltip"));
 		} else if (node.getLevel() == 4) // Fifth level - list of service
 			// algorithms
 		{
 			// Service algorithm node
-			icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Algorithm.image")));
+			icon = new ImageIcon(getClass().getResource("images/algorithm_node.png"));
 			cell.setToolTipText(res.getString("ProviderTreeCellRend.Algorithm.tooltip"));
 		} else if (node.getLevel() == 5) // Sixth level - algorithm java class,
 			// attributes and aliases
@@ -117,15 +117,15 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 
 			if (index == 0) {
 				// Algorithm class node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.AlgorithmClass.image")));
+				icon = new ImageIcon(getClass().getResource("images/algorithm_class_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.AlgorithmClass.tooltip"));
 			} else if (node.toString().equals(res.getString("DProviderInfo.AttributesNode.text"))) {
 				// Algorithm attributes node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Attributes.image")));
+				icon = new ImageIcon(getClass().getResource("images/attributes_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.Attributes.tooltip"));
 			} else {
 				// Algorithm aliases node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Aliases.image")));
+				icon = new ImageIcon(getClass().getResource("images/aliases_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.Aliases.tooltip"));
 			}
 		} else
@@ -135,11 +135,11 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 
 			if (parent.toString().equals(res.getString("DProviderInfo.AttributesNode.text"))) {
 				// Algorithm attribute node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Attribute.image")));
+				icon = new ImageIcon(getClass().getResource("images/attribute_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.Attribute.tooltip"));
 			} else {
 				// Algorithm alias node
-				icon = new ImageIcon(getClass().getResource(res.getString("ProviderTreeCellRend.Alias.image")));
+				icon = new ImageIcon(getClass().getResource("images/alias_node.png"));
 				cell.setToolTipText(res.getString("ProviderTreeCellRend.Alias.tooltip"));
 			}
 		}

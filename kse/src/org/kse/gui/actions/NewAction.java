@@ -57,7 +57,7 @@ public class NewAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("NewAction.image")))));
+						getClass().getResource("images/new.png"))));
 	}
 
 	/**

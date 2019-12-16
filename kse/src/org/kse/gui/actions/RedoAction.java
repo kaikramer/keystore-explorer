@@ -57,7 +57,7 @@ public class RedoAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("RedoAction.image")))));
+						getClass().getResource("images/redo.png"))));
 	}
 
 	/**

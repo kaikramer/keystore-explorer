@@ -64,7 +64,7 @@ public class OpenCaCertificatesAction extends OpenAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("OpenCaCertificatesAction.image")))));
+						getClass().getResource("images/opencacerts.png"))));
 	}
 
 	/**

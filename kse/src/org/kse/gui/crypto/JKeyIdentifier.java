@@ -83,7 +83,7 @@ public class JKeyIdentifier extends JPanel {
 		gbc_jtfKeyIdentifier.insets = new Insets(0, 0, 0, 5);
 
 		ImageIcon editIcon = new ImageIcon(getClass().getResource(
-				res.getString("JKeyIdentifier.jbEditKeyIdentifier.image")));
+				"images/edit_key_id.png"));
 		jbEditKeyIdentifier = new JButton(editIcon);
 		jbEditKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbEditKeyIdentifier.tooltip"));
 		jbEditKeyIdentifier.addActionListener(new ActionListener() {
@@ -106,7 +106,7 @@ public class JKeyIdentifier extends JPanel {
 		gbc_jbEditKeyIdentifier.insets = new Insets(0, 0, 0, 5);
 
 		ImageIcon clearIcon = new ImageIcon(getClass().getResource(
-				res.getString("JKeyIdentifier.jbClearKeyIdentifier.image")));
+				"images/clear_key_id.png"));
 		jbClearKeyIdentifier = new JButton(clearIcon);
 		jbClearKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbClearKeyIdentifier.tooltip"));
 		jbClearKeyIdentifier.addActionListener(new ActionListener() {

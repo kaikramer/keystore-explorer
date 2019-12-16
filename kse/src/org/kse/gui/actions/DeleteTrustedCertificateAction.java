@@ -54,7 +54,7 @@ public class DeleteTrustedCertificateAction extends KeyStoreExplorerAction imple
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("DeleteTrustedCertificateAction.image")))));
+						getClass().getResource("images/delete.png"))));
 	}
 
 	@Override

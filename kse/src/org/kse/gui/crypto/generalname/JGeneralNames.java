@@ -87,7 +87,7 @@ public class JGeneralNames extends JPanel {
 
 	private void initComponents() {
 		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JGeneralNames.jbAdd.image")))));
+				getClass().getResource("images/add_general_nms.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("JGeneralNames.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JGeneralNames.jbAdd.mnemonic").charAt(0));
@@ -105,7 +105,7 @@ public class JGeneralNames extends JPanel {
 		});
 
 		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JGeneralNames.jbEdit.image")))));
+				getClass().getResource("images/edit_general_nms.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("JGeneralNames.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("JGeneralNames.jbEdit.mnemonic").charAt(0));
@@ -125,7 +125,7 @@ public class JGeneralNames extends JPanel {
 		});
 
 		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JGeneralNames.jbRemove.image")))));
+				getClass().getResource("images/remove_general_nms.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("JGeneralNames.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("JGeneralNames.jbRemove.mnemonic").charAt(0));

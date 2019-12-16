@@ -94,7 +94,7 @@ public class JCustomExtendedKeyUsage extends JPanel {
 
 	private void initComponents() {
 		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit()
-				.createImage(getClass().getResource(res.getString("JCustomExtKeyUsage.jbAdd.image")))));
+				.createImage(getClass().getResource("images/add_custom_eku.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("JCustomExtKeyUsage.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JCustomExtKeyUsage.jbAdd.mnemonic").charAt(0));
@@ -112,7 +112,7 @@ public class JCustomExtendedKeyUsage extends JPanel {
 		});
 
 		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit()
-				.createImage(getClass().getResource(res.getString("JCustomExtKeyUsage.jbEdit.image")))));
+				.createImage(getClass().getResource("images/edit_custom_eku.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("JCustomExtKeyUsage.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("JCustomExtKeyUsage.jbEdit.mnemonic").charAt(0));
@@ -132,7 +132,7 @@ public class JCustomExtendedKeyUsage extends JPanel {
 		});
 
 		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit()
-				.createImage(getClass().getResource(res.getString("JCustomExtKeyUsage.jbRemove.image")))));
+				.createImage(getClass().getResource("images/remove_custom_eku.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("JCustomExtKeyUsage.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("JCustomExtKeyUsage.jbRemove.mnemonic").charAt(0));

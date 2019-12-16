@@ -48,7 +48,7 @@ public class SystemInformationAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SystemInformationAction.image")))));
+						getClass().getResource("images/systeminfo.png"))));
 	}
 
 	/**

@@ -188,9 +188,6 @@ import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 import org.kse.utilities.os.OperatingSystem;
 
-import com.jgoodies.looks.HeaderStyle;
-import com.jgoodies.looks.Options;
-
 /**
  * KeyStore Explorer application frame. Wraps an actual JFrame.
  *
@@ -596,23 +593,15 @@ public final class KseFrame implements StatusBar {
 	}
 
 	private void initApplicationIcons() {
-		// Adds many different sizes to give each OS flexibility in choosing a
-		// suitable icon for display
+		// Adds many different sizes to give each OS flexibility in choosing a suitable icon for display
 		ArrayList<Image> icons = new ArrayList<>();
-		icons.add(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.Icon.image.16x16"))));
-		icons.add(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.Icon.image.24x24"))));
-		icons.add(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.Icon.image.32x32"))));
-		icons.add(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.Icon.image.48x48"))));
-		icons.add(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.Icon.image.128x128"))));
-		icons.add(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.Icon.image.256x256"))));
-		icons.add(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.Icon.image.512x512"))));
+		icons.add(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/kse-16x16.png")));
+		icons.add(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/kse-24x24.png")));
+		icons.add(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/kse-32x32.png")));
+		icons.add(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/kse-48x48.png")));
+		icons.add(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/kse-128x128.png")));
+		icons.add(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/kse-256x256.png")));
+		icons.add(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/kse-512x512.png")));
 
 		frame.setIconImages(icons);
 	}
@@ -637,7 +626,7 @@ public final class KseFrame implements StatusBar {
 
 		jmOpenSpecial = new JMenu(res.getString("KseFrame.jmOpenSpecial.text"));
 		jmOpenSpecial.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmOpenSpecial.image")))));
+				getClass().getResource("images/menu/openspecial.png"))));
 		PlatformUtil.setMnemonic(jmOpenSpecial, res.getString("KseFrame.jmOpenSpecial.mnemonic").charAt(0));
 		jmFile.add(jmOpenSpecial);
 
@@ -715,9 +704,8 @@ public final class KseFrame implements StatusBar {
 
 		jmrfRecentFiles = new JMenuRecentFiles(res.getString("KseFrame.jmrfRecentFiles.text"), RECENT_FILES_SIZE);
 		jmrfRecentFiles.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmrfRecentFiles.image")))));
+				getClass().getResource("images/menu/recentfiles.png"))));
 		PlatformUtil.setMnemonic(jmrfRecentFiles, res.getString("KseFrame.jmrfRecentFiles.mnemonic").charAt(0));
-		jmrfRecentFiles.putClientProperty(Options.NO_ICONS_KEY, Boolean.TRUE); // For the benefit of the plastic L&F
 		jmFile.add(jmrfRecentFiles);
 
 		File[] recentFiles = applicationSettings.getRecentFiles();
@@ -798,7 +786,7 @@ public final class KseFrame implements StatusBar {
 
 		jmTabStyle = new JMenu(res.getString("KseFrame.jmTabStyle.text"));
 		jmTabStyle.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmTabStyle.image")))));
+				getClass().getResource("images/menu/tabstyle.png"))));
 		PlatformUtil.setMnemonic(jmTabStyle, res.getString("KseFrame.jmTabStyle.mnemonic").charAt(0));
 		jmView.add(jmTabStyle);
 
@@ -871,10 +859,9 @@ public final class KseFrame implements StatusBar {
 
 		jmChangeType = new JMenu(res.getString("KseFrame.jmChangeType.text"));
 		jmChangeType.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmChangeType.image")))));
+				getClass().getResource("images/menu/keystoretype.png"))));
 		PlatformUtil.setMnemonic(jmChangeType, res.getString("KseFrame.jmChangeType.mnemonic").charAt(0));
 		jmChangeType.setEnabled(false);
-		jmChangeType.putClientProperty(Options.NO_ICONS_KEY, Boolean.TRUE); // For the benefit of the plastic L&F
 		jmTools.add(jmChangeType);
 
 		jrbmiChangeTypeJks = new JRadioButtonMenuItem(changeTypeJksAction);
@@ -1005,7 +992,7 @@ public final class KseFrame implements StatusBar {
 
 		jmOnlineResources = new JMenu(res.getString("KseFrame.jmOnlineResources.text"));
 		jmOnlineResources.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmOnlineResources.image")))));
+				getClass().getResource("images/menu/online.png"))));
 		PlatformUtil.setMnemonic(jmOnlineResources, res.getString("KseFrame.jmOnlineResources.mnemonic").charAt(0));
 		jmHelp.add(jmOnlineResources);
 
@@ -1082,8 +1069,6 @@ public final class KseFrame implements StatusBar {
 		jmbMenuBar.add(jmTools);
 		jmbMenuBar.add(jmExamine);
 		jmbMenuBar.add(jmHelp);
-
-		jmbMenuBar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.BOTH);
 
 		frame.setJMenuBar(jmbMenuBar);
 	}
@@ -1456,8 +1441,6 @@ public final class KseFrame implements StatusBar {
 
 		jtbToolBar.add(jbHelp);
 
-		jtbToolBar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.BOTH);
-
 		if (applicationSettings.getShowToolBar()) {
 			frame.getContentPane().add(jtbToolBar, BorderLayout.NORTH);
 		}
@@ -1775,9 +1758,8 @@ public final class KseFrame implements StatusBar {
 
 		jmKeyStoreChangeType = new JMenu(res.getString("KseFrame.jmChangeType.text"));
 		jmKeyStoreChangeType.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmChangeType.image")))));
+				getClass().getResource("images/menu/keystoretype.png"))));
 		PlatformUtil.setMnemonic(jmKeyStoreChangeType, res.getString("KseFrame.jmChangeType.mnemonic").charAt(0));
-		jmKeyStoreChangeType.putClientProperty(Options.NO_ICONS_KEY, Boolean.TRUE); // For the benefit of the plastic L&F
 		jpmKeyStore.add(jmKeyStoreChangeType);
 
 		jrbmiKeyStoreChangeTypeJks = new JRadioButtonMenuItem(changeTypeJksAction);
@@ -1864,7 +1846,7 @@ public final class KseFrame implements StatusBar {
 
 		jmKeyPairDetails = new JMenu(res.getString("KseFrame.jmKeyPairDetails.text"));
 		jmKeyPairDetails.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmKeyPairDetails.image")))));
+				getClass().getResource("images/menu/keypairdetails.png"))));
 
 		jmiKeyPairCertificateChainDetails = new JMenuItem(keyPairCertificateChainDetailsAction);
 		jmiKeyPairCertificateChainDetails.setToolTipText(null);
@@ -1891,7 +1873,7 @@ public final class KseFrame implements StatusBar {
 
 		jmKeyPairExport = new JMenu(res.getString("KseFrame.jmKeyPairExport.text"));
 		jmKeyPairExport.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmKeyPairExport.image")))));
+				getClass().getResource("images/menu/keypairexport.png"))));
 
 		jmiKeyPairExport = new JMenuItem(exportKeyPairAction);
 		jmiKeyPairExport.setToolTipText(null);
@@ -1920,7 +1902,7 @@ public final class KseFrame implements StatusBar {
 
 		jmKeyPairImportCaReply = new JMenu(res.getString("KseFrame.jmKeyPairImportCaReply.text"));
 		jmKeyPairImportCaReply.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmKeyPairImportCaReply.image")))));
+				getClass().getResource("images/menu/keypairimportcareply.png"))));
 
 		jmiKeyPairImportCaReplyFile = new JMenuItem(importCaReplyFromFileAction);
 		jmiKeyPairImportCaReplyFile.setToolTipText(null);
@@ -1934,7 +1916,7 @@ public final class KseFrame implements StatusBar {
 
 		jmKeyPairEditCertChain = new JMenu(res.getString("KseFrame.jmKeyPairEditCertChain.text"));
 		jmKeyPairEditCertChain.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmKeyPairEditCertChain.image")))));
+				getClass().getResource("images/menu/keypaireditcertchain.png"))));
 
 		jmiKeyPairEditCertChainAppendCert = new JMenuItem(appendToCertificateChainAction);
 		jmiKeyPairEditCertChainAppendCert.setToolTipText(null);
@@ -1948,7 +1930,7 @@ public final class KseFrame implements StatusBar {
 
 		jmKeyPairSign = new JMenu(res.getString("KseFrame.jmKeyPairSign.text"));
 		jmKeyPairSign.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmKeyPairSign.image")))));
+				getClass().getResource("images/menu/keypairsign.png"))));
 
 		jmiKeyPairSignCsr = new JMenuItem(signCsrAction);
 		jmiKeyPairSignCsr.setToolTipText(null);
@@ -2028,7 +2010,7 @@ public final class KseFrame implements StatusBar {
 
 		jmTrustedCertificateDetails = new JMenu(res.getString("KseFrame.jmTrustedCertificateDetails.text"));
 		jmTrustedCertificateDetails.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmTrustedCertificateDetails.image")))));
+				getClass().getResource("images/menu/trustcertdetails.png"))));
 
 		jmiTrustedCertificateDetails = new JMenuItem(trustedCertificateDetailsAction);
 		jmiTrustedCertificateDetails.setToolTipText(null);
@@ -2052,7 +2034,7 @@ public final class KseFrame implements StatusBar {
 
 		jmTrustedCertificateExport = new JMenu(res.getString("KseFrame.jmTrustedCertificateExport.text"));
 		jmTrustedCertificateExport.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("KseFrame.jmTrustedCertificateExport.image")))));
+				getClass().getResource("images/menu/trustcertexport.png"))));
 
 		jmiTrustedCertificateExport = new JMenuItem(exportTrustedCertificateAction);
 		jmiTrustedCertificateExport.setToolTipText(null);

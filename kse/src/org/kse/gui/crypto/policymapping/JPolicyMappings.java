@@ -91,7 +91,7 @@ public class JPolicyMappings extends JPanel {
 
 	private void initComponents() {
 		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JPolicyMappings.jbAdd.image")))));
+				getClass().getResource("images/add_policy_map.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("JPolicyMappings.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JPolicyMappings.jbAdd.mnemonic").charAt(0));
@@ -109,7 +109,7 @@ public class JPolicyMappings extends JPanel {
 		});
 
 		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JPolicyMappings.jbEdit.image")))));
+				getClass().getResource("images/edit_policy_map.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("JPolicyMappings.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("JPolicyMappings.jbEdit.mnemonic").charAt(0));
@@ -129,7 +129,7 @@ public class JPolicyMappings extends JPanel {
 		});
 
 		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JPolicyMappings.jbRemove.image")))));
+				getClass().getResource("images/remove_policy_map.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("JPolicyMappings.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("JPolicyMappings.jbRemove.mnemonic").charAt(0));

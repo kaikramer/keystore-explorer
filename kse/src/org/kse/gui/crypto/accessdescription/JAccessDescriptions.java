@@ -90,7 +90,7 @@ public class JAccessDescriptions extends JPanel {
 
 	private void initComponents() {
 		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JAccessDescriptions.jbAdd.image")))));
+				getClass().getResource("images/add_access_desc.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("JAccessDescriptions.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JAccessDescriptions.jbAdd.mnemonic").charAt(0));
@@ -108,7 +108,7 @@ public class JAccessDescriptions extends JPanel {
 		});
 
 		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JAccessDescriptions.jbEdit.image")))));
+				getClass().getResource("images/edit_access_desc.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("JAccessDescriptions.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("JAccessDescriptions.jbEdit.mnemonic").charAt(0));
@@ -128,7 +128,7 @@ public class JAccessDescriptions extends JPanel {
 		});
 
 		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JAccessDescriptions.jbRemove.image")))));
+				getClass().getResource("images/remove_access_desc.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("JAccessDescriptions.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("JAccessDescriptions.jbRemove.mnemonic").charAt(0));

@@ -62,7 +62,7 @@ public class SetKeyPasswordAction extends KeyStoreExplorerAction implements Hist
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SetKeyPasswordAction.image")))));
+						getClass().getResource("images/setpass.png"))));
 	}
 
 	@Override

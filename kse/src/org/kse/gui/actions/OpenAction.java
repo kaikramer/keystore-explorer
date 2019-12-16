@@ -65,7 +65,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("OpenAction.image")))));
+						getClass().getResource("images/open.png"))));
 	}
 
 	/**

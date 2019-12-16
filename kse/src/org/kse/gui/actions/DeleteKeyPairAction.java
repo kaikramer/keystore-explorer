@@ -54,7 +54,7 @@ public class DeleteKeyPairAction extends KeyStoreExplorerAction implements Histo
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("DeleteKeyPairAction.image")))));
+						getClass().getResource("images/delete.png"))));
 	}
 
 	@Override

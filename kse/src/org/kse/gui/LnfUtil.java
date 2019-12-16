@@ -31,7 +31,7 @@ import org.kse.utilities.os.OperatingSystem;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
+import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  * Look and Feel utility methods.
@@ -115,7 +115,7 @@ public class LnfUtil {
 					) {
 				lnfClassName = UIManager.getSystemLookAndFeelClassName();
 			} else {
-				lnfClassName = Plastic3DLookAndFeel.class.getName();
+				lnfClassName = FlatLightLaf.class.getName();
 			}
 		}
 
@@ -134,15 +134,6 @@ public class LnfUtil {
 
 		return OperatingSystem.isMacOs() && (
 				UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS)) ;
-	}
-
-	/**
-	 * Is the JGoodies Plastic 3D l&f currently being used?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean usingPlastic3DLnf() {
-		return usingLnf(Plastic3DLookAndFeel.class.getName());
 	}
 
 	/**

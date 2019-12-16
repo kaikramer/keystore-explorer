@@ -49,7 +49,7 @@ public class JarsAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("JarsAction.image")))));
+						getClass().getResource("images/jars.png"))));
 	}
 
 	/**

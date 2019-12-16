@@ -76,22 +76,22 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 			int index = parent.getIndex(node);
 
 			if (index == 0) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.File.image")));
+				icon = new ImageIcon(getClass().getResource("images/file_node.png"));
 			} else if (index == 1) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Type.image")));
+				icon = new ImageIcon(getClass().getResource("images/type_node.png"));
 			} else if (index == 2) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Provider.image")));
+				icon = new ImageIcon(getClass().getResource("images/provider_node.png"));
 			} else if (index == 3) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Keys.image")));
+				icon = new ImageIcon(getClass().getResource("images/keys_node.png"));
 			} else if (index == 4) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.KeyPairs.image")));
+				icon = new ImageIcon(getClass().getResource("images/keypairs_node.png"));
 			} else if (index == 5) {
 				icon = new ImageIcon(getClass().getResource(
-						res.getString("PropertiesTreeCellRend.TrustedCertificates.image")));
+						"images/trustcerts_node.png"));
 			}
 		} else if (node.getLevel() == 2) // Third level - entries
 		{
-			icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Entry.image")));
+			icon = new ImageIcon(getClass().getResource("images/entry_node.png"));
 		} else if (node.getLevel() == 3) // Fourth level - includes private
 			// keys, certificates of key
 			// pairs, public keys of trusted
@@ -99,33 +99,33 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 			// key entries of all types
 		{
 			if (value.toString().equals(res.getString("DProperties.properties.PrivateKey"))) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.PrivateKey.image")));
+				icon = new ImageIcon(getClass().getResource("images/privatekey_node.png"));
 			} else if (value.toString().equals(res.getString("DProperties.properties.Certificates"))) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Certificates.image")));
+				icon = new ImageIcon(getClass().getResource("images/certificates_node.png"));
 			} else if (value.toString().equals(res.getString("DProperties.properties.PublicKey"))) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.PublicKey.image")));
+				icon = new ImageIcon(getClass().getResource("images/publickey_node.png"));
 			} else if (value.toString().equals(res.getString("DProperties.properties.SecretKey"))) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.SecretKey.image")));
+				icon = new ImageIcon(getClass().getResource("images/secretkey_node.png"));
 			}
 			// Otherwise use default icon
 			else {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Default.image")));
+				icon = new ImageIcon(getClass().getResource("images/default_node.png"));
 			}
 		} else if (node.getLevel() == 5) // Sixth level - includes public keys
 			// of key pair
 			// certificates
 		{
 			if (value.toString().equals(res.getString("DProperties.properties.PublicKey"))) {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.PublicKey.image")));
+				icon = new ImageIcon(getClass().getResource("images/publickey_node.png"));
 			}
 			// Otherwise use default icon
 			else {
-				icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Default.image")));
+				icon = new ImageIcon(getClass().getResource("images/default_node.png"));
 			}
 		}
 		// Otherwise use default icon
 		else {
-			icon = new ImageIcon(getClass().getResource(res.getString("PropertiesTreeCellRend.Default.image")));
+			icon = new ImageIcon(getClass().getResource("images/default_node.png"));
 		}
 
 		cell.setIcon(icon);

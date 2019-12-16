@@ -65,7 +65,7 @@ public class SaveAsAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SaveAsAction.image")))));
+						getClass().getResource("images/saveas.png"))));
 	}
 
 	/**

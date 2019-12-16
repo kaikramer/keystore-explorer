@@ -57,7 +57,7 @@ public class RemoveFromCertificateChainAction extends KeyStoreExplorerAction imp
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("RemoveFromCertificateChainAction.image")))));
+						getClass().getResource("images/removecert.png"))));
 	}
 
 	@Override

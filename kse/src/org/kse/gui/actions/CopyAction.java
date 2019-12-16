@@ -65,7 +65,7 @@ public class CopyAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("CopyAction.image")))));
+						getClass().getResource("images/copy.png"))));
 	}
 
 	/**

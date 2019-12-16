@@ -74,7 +74,7 @@ public class ExtensionsTableHeadRend extends DefaultTableCellRenderer {
 			if (col == 0) {
 				header.setText("");
 				ImageIcon icon = new ImageIcon(getClass().getResource(
-						res.getString("ExtensionsTableHeadRend.CriticalColumn.image")));
+						"images/table/critical_heading.png"));
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);

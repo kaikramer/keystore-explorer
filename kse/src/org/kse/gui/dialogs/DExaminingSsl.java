@@ -113,7 +113,7 @@ public class DExaminingSsl extends JEscDialog {
 
 	private void initComponents() {
 		jlExaminingSsl = new JLabel(res.getString("DExaminingSsl.jlExaminingSsl.text"));
-		ImageIcon icon = new ImageIcon(getClass().getResource(res.getString("DExaminingSsl.jlExaminingSsl.image")));
+		ImageIcon icon = new ImageIcon(getClass().getResource("images/exssl.png"));
 		jlExaminingSsl.setIcon(icon);
 		jlExaminingSsl.setHorizontalTextPosition(SwingConstants.LEADING);
 		jlExaminingSsl.setIconTextGap(15);

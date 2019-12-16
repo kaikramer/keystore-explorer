@@ -65,7 +65,7 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 		putValue(SHORT_DESCRIPTION, res.getString("ImportCaReplyFromClipboardAction.tooltip"));
 		putValue(SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ImportCaReplyFromClipboardAction.image")))));
+						getClass().getResource("images/importcareplyclipboard.png"))));
 	}
 
 	@Override

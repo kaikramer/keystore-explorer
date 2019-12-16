@@ -82,7 +82,7 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 			if (col == 0) {
 				header.setText("");
 				ImageIcon icon = new ImageIcon(getClass().getResource(
-						res.getString("KeyStoreTableHeadRend.TypeColumn.image")));
+						"images/table/type_heading.png"));
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);
@@ -93,7 +93,7 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 			else if (col == 1) {
 				header.setText("");
 				ImageIcon icon = new ImageIcon(getClass().getResource(
-						res.getString("KeyStoreTableHeadRend.LockStatusColumn.image")));
+						"images/table/lock_status_heading.png"));
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);
@@ -104,7 +104,7 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 			else if (col == 2) {
 				header.setText("");
 				ImageIcon icon = new ImageIcon(getClass().getResource(
-						res.getString("KeyStoreTableHeadRend.CertExpiryStatusColumn.image")));
+						"images/table/cert_expiry_status_heading.png"));
 				header.setIcon(icon);
 				header.setHorizontalAlignment(CENTER);
 				header.setVerticalAlignment(CENTER);

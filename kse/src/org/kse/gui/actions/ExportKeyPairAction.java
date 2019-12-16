@@ -71,7 +71,7 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ExportKeyPairAction.image")))));
+						getClass().getResource("images/exportkeypair.png"))));
 	}
 
 	/**

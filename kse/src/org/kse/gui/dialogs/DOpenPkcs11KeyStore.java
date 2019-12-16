@@ -146,7 +146,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 		jtfP11Library.setModel(new DefaultComboBoxModel<String>(getLibraryList()));
 
 		jbP11LibraryBrowse = new JButton();
-		jbP11LibraryBrowse.setIcon(new ImageIcon(getClass().getResource(res.getString("DOpenPkcs11KeyStore.jbP11LibraryBrowse.image"))));
+		jbP11LibraryBrowse.setIcon(new ImageIcon(getClass().getResource("images/open.png")));
 		jbP11LibraryBrowse.setToolTipText(res.getString("DOpenPkcs11KeyStore.jbP11LibraryBrowse.tooltip"));
 
 		jlSlotListIndex = new JLabel(res.getString("DOpenPkcs11KeyStore.jlSlotListIndex.text"));

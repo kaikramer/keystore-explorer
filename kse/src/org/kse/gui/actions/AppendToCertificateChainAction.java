@@ -61,7 +61,7 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("AppendToCertificateChainAction.image")))));
+						getClass().getResource("images/appendcert.png"))));
 	}
 
 	@Override

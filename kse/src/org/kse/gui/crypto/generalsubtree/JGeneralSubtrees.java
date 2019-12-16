@@ -90,7 +90,7 @@ public class JGeneralSubtrees extends JPanel {
 
 	private void initComponents() {
 		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JGeneralSubtrees.jbAdd.image")))));
+				getClass().getResource("images/add_general_subtree.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("JGeneralSubtrees.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JGeneralSubtrees.jbAdd.mnemonic").charAt(0));
@@ -108,7 +108,7 @@ public class JGeneralSubtrees extends JPanel {
 		});
 
 		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JGeneralSubtrees.jbEdit.image")))));
+				getClass().getResource("images/edit_general_subtree.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("JGeneralSubtrees.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("JGeneralSubtrees.jbEdit.mnemonic").charAt(0));
@@ -128,7 +128,7 @@ public class JGeneralSubtrees extends JPanel {
 		});
 
 		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JGeneralSubtrees.jbRemove.image")))));
+				getClass().getResource("images/remove_general_subtree.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("JGeneralSubtrees.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("JGeneralSubtrees.jbRemove.mnemonic").charAt(0));

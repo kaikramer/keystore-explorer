@@ -77,7 +77,7 @@ public class JUserNotice extends JPanel {
 		gbc_jtfUserNotice.gridy = 0;
 		gbc_jtfUserNotice.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon editIcon = new ImageIcon(getClass().getResource(res.getString("JUserNotice.jbEditUserNotice.image")));
+		ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_user_notice.png"));
 		jbEditUserNotice = new JButton(editIcon);
 		jbEditUserNotice.setToolTipText(res.getString("JUserNotice.jbEditUserNotice.tooltip"));
 		jbEditUserNotice.addActionListener(new ActionListener() {
@@ -100,7 +100,7 @@ public class JUserNotice extends JPanel {
 		gbc_jbEditUserNotice.insets = new Insets(0, 0, 0, 5);
 
 		ImageIcon clearIcon = new ImageIcon(getClass()
-				.getResource(res.getString("JUserNotice.jbClearUserNotice.image")));
+				.getResource("images/clear_user_notice.png"));
 		jbClearUserNotice = new JButton(clearIcon);
 		jbClearUserNotice.setToolTipText(res.getString("JUserNotice.jbClearUserNotice.tooltip"));
 		jbClearUserNotice.addActionListener(new ActionListener() {

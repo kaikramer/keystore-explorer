@@ -104,7 +104,7 @@ public class DragKeyPairEntry extends DragEntry {
 
 			// Get drag image
 			image = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-					getClass().getResource(res.getString("DragKeyPairEntry.Drag.image"))));
+					getClass().getResource("images/drag_keypair.png")));
 		} catch (IOException | GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("NoGetKeyPairEntryContent.exception.message"), ex);
 		}

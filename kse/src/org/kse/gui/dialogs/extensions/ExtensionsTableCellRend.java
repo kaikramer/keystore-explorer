@@ -68,11 +68,11 @@ public class ExtensionsTableCellRend extends DefaultTableCellRenderer {
 
 			if (((Boolean) value).booleanValue()) {
 				icon = new ImageIcon(getClass().getResource(
-						res.getString("ExtensionsTableCellRend.CriticalExtension.image")));
+						"images/table/crit_ext.png"));
 				cell.setToolTipText(res.getString("ExtensionsTableCellRend.CriticalExtension.tooltip"));
 			} else {
 				icon = new ImageIcon(getClass().getResource(
-						res.getString("ExtensionsTableCellRend.NonCriticalExtension.image")));
+						"images/table/noncrit_ext.png"));
 				cell.setToolTipText(res.getString("ExtensionsTableCellRend.NonCriticalExtension.tooltip"));
 			}
 

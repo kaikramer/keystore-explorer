@@ -61,7 +61,7 @@ public class SignMidletAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SignMidletAction.image")))));
+						getClass().getResource("images/signmidlet.png"))));
 	}
 
 	/**

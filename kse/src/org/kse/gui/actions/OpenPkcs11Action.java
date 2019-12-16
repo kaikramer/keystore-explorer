@@ -62,7 +62,7 @@ public class OpenPkcs11Action extends OpenAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("OpenPkcs11Action.image")))));
+						getClass().getResource("images/openpkcs11.png"))));
 	}
 
 	/**

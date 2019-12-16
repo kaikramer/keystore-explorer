@@ -248,23 +248,23 @@ public class DPreferences extends JEscDialog {
 		jtpPreferences.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
 
 		jtpPreferences.addTab(res.getString("DPreferences.jpAuthorityCertificates.text"), new ImageIcon(getClass()
-				.getResource(res.getString("DPreferences.jpAuthorityCertificates.image"))), jpAuthorityCertificates,
+				.getResource("images/tab_authcerts.png")), jpAuthorityCertificates,
 				res.getString("DPreferences.jpAuthorityCertificates.tooltip"));
 
 		jtpPreferences.addTab(res.getString("DPreferences.jpUI.text"),
-				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpUI.image"))), jpUI,
+				new ImageIcon(getClass().getResource("images/tab_lookfeel.png")), jpUI,
 				res.getString("DPreferences.jpUI.tooltip"));
 
 		jtpPreferences.addTab(res.getString("DPreferences.jpInternetProxy.text"),
-				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpInternetProxy.image"))),
+				new ImageIcon(getClass().getResource("images/tab_internetproxy.png")),
 				jpInternetProxy, res.getString("DPreferences.jpInternetProxy.tooltip"));
 
 		jtpPreferences.addTab(res.getString("DPreferences.jpDefaultName.text"),
-				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpDefaultName.image"))),
+				new ImageIcon(getClass().getResource("images/tab_defaultname.png")),
 				jpDefaultName, res.getString("DPreferences.jpDefaultName.tooltip"));
 
 		jtpPreferences.addTab(res.getString("DPreferences.jpDisplayColumns.text"),
-				new ImageIcon(getClass().getResource(res.getString("DPreferences.jpDisplayColumns.image"))),
+				new ImageIcon(getClass().getResource("images/tab_columns.png")),
 				jpDisplayColumns, res.getString("DPreferences.jpDisplayColumns.tooltip"));
 
 

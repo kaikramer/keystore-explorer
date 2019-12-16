@@ -60,7 +60,7 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("CheckUpdateAction.image")))));
+						getClass().getResource("images/update.png"))));
 	}
 
 	/**

@@ -62,7 +62,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("KeyDetailsAction.image")))));
+						getClass().getResource("images/keydetails.png"))));
 	}
 
 	/**

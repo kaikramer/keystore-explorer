@@ -51,7 +51,7 @@ public class CryptographyStrengthAction extends ExitAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("CryptographyStrengthAction.image")))));
+						getClass().getResource("images/cryptostrength.png"))));
 	}
 
 	/**

@@ -78,7 +78,7 @@ public class JObjectId extends JPanel {
 		gbc_jtfObjectId.gridy = 0;
 		gbc_jtfObjectId.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon editIcon = new ImageIcon(getClass().getResource(res.getString("JObjectId.jbEditObjectId.image")));
+		ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_object_id.png"));
 		jbEditObjectId = new JButton(editIcon);
 		jbEditObjectId.setToolTipText(res.getString("JObjectId.jbEditObjectId.tooltip"));
 		jbEditObjectId.addActionListener(new ActionListener() {
@@ -100,7 +100,7 @@ public class JObjectId extends JPanel {
 		gbc_jbEditObjectId.gridy = 0;
 		gbc_jbEditObjectId.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon clearIcon = new ImageIcon(getClass().getResource(res.getString("JObjectId.jbClearObjectId.image")));
+		ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_object_id.png"));
 		jbClearObjectId = new JButton(clearIcon);
 		jbClearObjectId.setToolTipText(res.getString("JObjectId.jbClearObjectId.tooltip"));
 		jbClearObjectId.addActionListener(new ActionListener() {

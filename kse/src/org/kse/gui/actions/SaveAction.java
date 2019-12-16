@@ -59,7 +59,7 @@ public class SaveAction extends SaveAsAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SaveAction.image")))));
+						getClass().getResource("images/save.png"))));
 	}
 
 	/**

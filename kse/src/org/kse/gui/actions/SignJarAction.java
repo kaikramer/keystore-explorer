@@ -65,7 +65,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("SignJarAction.image")))));
+						getClass().getResource("images/signjar.png"))));
 	}
 
 	/**

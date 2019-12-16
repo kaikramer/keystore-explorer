@@ -55,7 +55,7 @@ public class KeyPairCertificateChainDetailsAction extends KeyStoreExplorerAction
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("KeyPairCertificateChainDetailsAction.image")))));
+						getClass().getResource("images/certdetails.png"))));
 	}
 
 	/**

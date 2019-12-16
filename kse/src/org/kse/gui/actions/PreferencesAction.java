@@ -57,7 +57,7 @@ public class PreferencesAction extends ExitAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("PreferencesAction.image")))));
+						getClass().getResource("images/preferences.png"))));
 	}
 
 	/**

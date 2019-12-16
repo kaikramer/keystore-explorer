@@ -59,7 +59,7 @@ public class OpenMsCapiAction  extends OpenAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("OpenMsCapiAction.image")))));
+						getClass().getResource("images/openmscapi.png"))));
 	}
 
 	/**

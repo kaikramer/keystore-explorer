@@ -64,7 +64,7 @@ public class DragTrustedCertificateEntry extends DragEntry {
 
 		// Get drag image
 		image = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("DragTrustedCertificateEntry.Drag.image"))));
+				getClass().getResource("images/drag_trustcert.png")));
 	}
 
 	/**

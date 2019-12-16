@@ -77,7 +77,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("GenerateCsrAction.image")))));
+						getClass().getResource("images/gencsr.png"))));
 	}
 
 	/**

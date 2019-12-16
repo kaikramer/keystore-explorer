@@ -62,7 +62,7 @@ public class OpenDefaultAction extends OpenAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("OpenDefaultAction.image")))));
+						getClass().getResource("images/opendefault.png"))));
 	}
 
 	/**

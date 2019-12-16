@@ -69,7 +69,7 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("PasteAction.image")))));
+						getClass().getResource("images/paste.png"))));
 	}
 
 	@Override

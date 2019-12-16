@@ -92,7 +92,7 @@ public class JPolicyQualifierInfo extends JPanel {
 
 	private void initComponents() {
 		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JPolicyQualifierInfo.jbAdd.image")))));
+				getClass().getResource("images/add_policy_qualifier_info.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("JPolicyQualifierInfo.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JPolicyQualifierInfo.jbAdd.mnemonic").charAt(0));
@@ -110,7 +110,7 @@ public class JPolicyQualifierInfo extends JPanel {
 		});
 
 		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JPolicyQualifierInfo.jbEdit.image")))));
+				getClass().getResource("images/edit_policy_qualifier_info.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("JPolicyQualifierInfo.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("JPolicyQualifierInfo.jbEdit.mnemonic").charAt(0));
@@ -130,7 +130,7 @@ public class JPolicyQualifierInfo extends JPanel {
 		});
 
 		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("JPolicyQualifierInfo.jbRemove.image")))));
+				getClass().getResource("images/remove_policy_qualifier_info.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("JPolicyQualifierInfo.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("JPolicyQualifierInfo.jbRemove.mnemonic").charAt(0));

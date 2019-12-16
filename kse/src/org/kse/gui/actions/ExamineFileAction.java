@@ -86,7 +86,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ExamineFileAction.image")))));
+						getClass().getResource("images/examinefile.png"))));
 	}
 
 	/**

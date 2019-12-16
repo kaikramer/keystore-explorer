@@ -53,7 +53,7 @@ public class ExitAction extends CloseAllAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ExitAction.image")))));
+						getClass().getResource("images/exit.png"))));
 	}
 
 	/**

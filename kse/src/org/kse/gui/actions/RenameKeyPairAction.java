@@ -59,7 +59,7 @@ public class RenameKeyPairAction extends KeyStoreExplorerAction implements Histo
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("RenameKeyPairAction.image")))));
+						getClass().getResource("images/rename.png"))));
 	}
 
 	@Override

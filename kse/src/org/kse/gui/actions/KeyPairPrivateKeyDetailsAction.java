@@ -55,7 +55,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("KeyPairPrivateKeyDetailsAction.image")))));
+						getClass().getResource("images/privkeydetails.png"))));
 	}
 
 	/**

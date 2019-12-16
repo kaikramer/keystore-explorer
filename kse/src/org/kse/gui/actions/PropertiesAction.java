@@ -54,7 +54,7 @@ public class PropertiesAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("PropertiesAction.image")))));
+						getClass().getResource("images/properties.png"))));
 	}
 
 	/**

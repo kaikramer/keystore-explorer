@@ -84,7 +84,7 @@ public class JDistinguishedName extends JPanel {
 		gbcJtfDistinguishedName.insets = new Insets(0, 0, 0, 5);
 
 		ImageIcon viewEditIcon = new ImageIcon(getClass().getResource(
-				res.getString("JDistinguishedName.jbViewEditDistinguishedName.image")));
+				"images/view_edit_dn.png"));
 		jbViewEditDistinguishedName = new JButton(viewEditIcon);
 
 		if (editable) {
@@ -130,7 +130,7 @@ public class JDistinguishedName extends JPanel {
 		}
 
 		ImageIcon clearIcon = new ImageIcon(getClass().getResource(
-				res.getString("JDistinguishedName.jbClearDistinguishedName.image")));
+				"images/clear_dn.png"));
 		jbClearDistinguishedName = new JButton(clearIcon);
 		jbClearDistinguishedName.setToolTipText(res.getString("JDistinguishedName.jbClearDistinguishedName.tooltip"));
 		jbClearDistinguishedName.addActionListener(new ActionListener() {

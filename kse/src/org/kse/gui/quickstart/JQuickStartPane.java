@@ -102,54 +102,54 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 		Toolkit toolKit = Toolkit.getDefaultToolkit();
 
 		ImageIcon newImage = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbNewKeyStore.image"))));
+				"images/new.png")));
 		ImageIcon newImageRollOver = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbNewKeyStore.rollover.image"))));
+				"images/new_rollover.png")));
 		jqsbNewKeyStore = new JQuickStartButton(new NewAction(kseFrame),
 				res.getString("JQuickStartPane.jqsbNewKeyStore.text"), newImage, newImageRollOver, TEXT_COLOR,
 				TEXT_ROLLOVER_COLOR);
 		jqsbNewKeyStore.setOpaque(false);
 
 		ImageIcon openImage = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbOpenKeyStore.image"))));
+				"images/open.png")));
 		ImageIcon openImageRollOver = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbOpenKeyStore.rollover.image"))));
+				"images/open_rollover.png")));
 		jqsbOpenKeyStore = new JQuickStartButton(new OpenAction(kseFrame),
 				res.getString("JQuickStartPane.jqsbOpenKeyStore.text"), openImage, openImageRollOver, TEXT_COLOR,
 				TEXT_ROLLOVER_COLOR);
 		jqsbOpenKeyStore.setOpaque(false);
 
 		ImageIcon openDefaultImage = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbOpenDefaultKeyStore.image"))));
+				"images/opendefault.png")));
 		ImageIcon openDefaultImageRollOver = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbOpenDefaultKeyStore.rollover.image"))));
+				"images/opendefault_rollover.png")));
 		jqsbOpenDefaultKeyStore = new JQuickStartButton(new OpenDefaultAction(kseFrame),
 				res.getString("JQuickStartPane.jqsbOpenDefaultKeyStore.text"), openDefaultImage,
 				openDefaultImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
 		jqsbOpenDefaultKeyStore.setOpaque(false);
 
 		ImageIcon openCaCertificatesImage = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbOpenCaCertificatesKeyStore.image"))));
+				"images/opencacerts.png")));
 		ImageIcon openCaCertificatesImageRollOver = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbOpenCaCertificatesKeyStore.rollover.image"))));
+				"images/opencacerts_rollover.png")));
 		jqsbOpenCaCertificatesKeyStore = new JQuickStartButton(new OpenCaCertificatesAction(kseFrame),
 				res.getString("JQuickStartPane.jqsbOpenCaCertificatesKeyStore.text"), openCaCertificatesImage,
 				openCaCertificatesImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
 		jqsbOpenCaCertificatesKeyStore.setOpaque(false);
 
 		ImageIcon examineCertificateImage = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbExamineCertificate.image"))));
+				"images/examinecert.png")));
 		ImageIcon examineCertificateImageRollOver = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbExamineCertificate.rollover.image"))));
+				"images/examinecert_rollover.png")));
 		jqsbExamineCertificate = new JQuickStartButton(new ExamineFileAction(kseFrame),
 				res.getString("JQuickStartPane.jqsbExamineCertificate.text"), examineCertificateImage,
 				examineCertificateImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
 		jqsbExamineCertificate.setOpaque(false);
 
 		ImageIcon helpImage = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbHelp.image"))));
+				"images/help.png")));
 		ImageIcon helpImageRollOver = new ImageIcon(toolKit.createImage(getClass().getResource(
-				res.getString("JQuickStartPane.jqsbHelp.rollover.image"))));
+				"images/help_rollover.png")));
 		jqsbHelp = new JQuickStartButton(new HelpAction(kseFrame), res.getString("JQuickStartPane.jqsbHelp.text"),
 				helpImage, helpImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
 		jqsbHelp.setOpaque(false);

@@ -77,7 +77,7 @@ public class JGeneralName extends JPanel {
 		gbc_jtfGeneralName.insets = new Insets(0, 0, 0, 5);
 
 		ImageIcon editIcon = new ImageIcon(getClass()
-				.getResource(res.getString("JGeneralName.jbEditGeneralName.image")));
+				.getResource("images/edit_general_nm.png"));
 		jbEditGeneralName = new JButton(editIcon);
 		jbEditGeneralName.setToolTipText(res.getString("JGeneralName.jbEditGeneralName.tooltip"));
 		jbEditGeneralName.addActionListener(new ActionListener() {
@@ -100,7 +100,7 @@ public class JGeneralName extends JPanel {
 		gbc_jbEditGeneralName.insets = new Insets(0, 0, 0, 5);
 
 		ImageIcon clearIcon = new ImageIcon(getClass().getResource(
-				res.getString("JGeneralName.jbClearGeneralName.image")));
+				"images/clear_general_nm.png"));
 		jbClearGeneralName = new JButton(clearIcon);
 		jbClearGeneralName.setToolTipText(res.getString("JGeneralName.jbClearGeneralName.tooltip"));
 		jbClearGeneralName.addActionListener(new ActionListener() {

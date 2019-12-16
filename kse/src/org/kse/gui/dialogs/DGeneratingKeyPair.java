@@ -115,7 +115,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 
 	private void initComponents() {
 		jlGenKeyPair = new JLabel(res.getString("DGeneratingKeyPair.jlGenKeyPair.text"));
-		ImageIcon icon = new ImageIcon(getClass().getResource(res.getString("DGeneratingKeyPair.jlGenKeyPair.image")));
+		ImageIcon icon = new ImageIcon(getClass().getResource("images/genkp.png"));
 		jlGenKeyPair.setIcon(icon);
 		jlGenKeyPair.setHorizontalTextPosition(SwingConstants.LEADING);
 		jlGenKeyPair.setIconTextGap(15);

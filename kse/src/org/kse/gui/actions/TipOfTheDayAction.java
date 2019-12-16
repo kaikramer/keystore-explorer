@@ -48,7 +48,7 @@ public class TipOfTheDayAction extends KeyStoreExplorerAction {
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("TipOfTheDayAction.image")))));
+						getClass().getResource("images/tipoftheday.png"))));
 	}
 
 	/**

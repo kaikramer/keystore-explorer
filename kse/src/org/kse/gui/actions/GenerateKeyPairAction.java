@@ -70,7 +70,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("GenerateKeyPairAction.image")))));
+						getClass().getResource("images/genkeypair.png"))));
 	}
 
 	@Override

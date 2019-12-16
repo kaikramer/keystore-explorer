@@ -55,7 +55,7 @@ public class TrustedCertificatePublicKeyDetailsAction extends KeyStoreExplorerAc
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("TrustedCertificatePublicKeyDetailsAction.image")))));
+						getClass().getResource("images/trustcertpubkeydetails.png"))));
 	}
 
 	/**

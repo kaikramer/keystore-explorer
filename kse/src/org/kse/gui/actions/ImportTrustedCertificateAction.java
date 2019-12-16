@@ -81,7 +81,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(res.getString("ImportTrustedCertificateAction.image")))));
+						getClass().getResource("images/importcert.png"))));
 	}
 
 	@Override

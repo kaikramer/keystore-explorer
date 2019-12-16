@@ -183,7 +183,7 @@ public class DAddExtensions extends JEscDialog {
 
 	private void initComponents() {
 		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("DAddExtensions.jbAdd.image")))));
+				getClass().getResource("images/add_ext.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("DAddExtensions.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("DAddExtensions.jbAdd.mnemonic").charAt(0));
@@ -201,7 +201,7 @@ public class DAddExtensions extends JEscDialog {
 		});
 
 		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("DAddExtensions.jbEdit.image")))));
+				getClass().getResource("images/edit_ext.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("DAddExtensions.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("DAddExtensions.jbEdit.mnemonic").charAt(0));
@@ -221,7 +221,7 @@ public class DAddExtensions extends JEscDialog {
 		});
 
 		jbToggleCriticality = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("DAddExtensions.jbToggleCriticality.image")))));
+				getClass().getResource("images/toggle_ext_crit.png"))));
 		jbToggleCriticality.setMargin(new Insets(2, 2, 0, 0));
 		jbToggleCriticality.setToolTipText(res.getString("DAddExtensions.jbToggleCriticality.tooltip"));
 		jbToggleCriticality.setMnemonic(res.getString("DAddExtensions.jbToggleCriticality.mnemonic").charAt(0));
@@ -241,7 +241,7 @@ public class DAddExtensions extends JEscDialog {
 		});
 
 		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("DAddExtensions.jbRemove.image")))));
+				getClass().getResource("images/remove_ext.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("DAddExtensions.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("DAddExtensions.jbRemove.mnemonic").charAt(0));

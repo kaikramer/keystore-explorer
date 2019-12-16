@@ -282,7 +282,7 @@ public class DViewCertificate extends JEscDialog {
 		jbViewPublicKeyDetails = new JButton();
 		jbViewPublicKeyDetails.setToolTipText(res.getString("DViewCertificate.jbViewPublicKeyDetails.tooltip"));
 		jbViewPublicKeyDetails.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource(res.getString("DViewCertificate.jbViewPublicKeyDetails.image")))));
+				getClass().getResource("images/viewpubkey.png"))));
 		jbViewPublicKeyDetails.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {

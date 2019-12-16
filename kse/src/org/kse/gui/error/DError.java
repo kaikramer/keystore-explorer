@@ -151,7 +151,7 @@ public class DError extends JEscDialog {
 		jpError.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jlError = new JLabel(formatError());
-		ImageIcon icon = new ImageIcon(getClass().getResource(res.getString("DError.Error.image")));
+		ImageIcon icon = new ImageIcon(getClass().getResource("images/error.png"));
 		jlError.setIcon(icon);
 		jlError.setHorizontalTextPosition(SwingConstants.TRAILING);
 		jlError.setIconTextGap(15);
