@@ -37,7 +37,6 @@ import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 import org.kse.gui.KseFrame;
-import org.kse.gui.LnfUtil;
 import org.kse.gui.error.DError;
 
 /**
@@ -95,12 +94,6 @@ public class HelpAction extends KeyStoreExplorerAction {
 	private void createAndDisplayHelp() throws HelpSetException {
 		URL hsUrl = getClass().getResource(res.getString("HelpAction.HelpSet"));
 		HelpSet hs = new HelpSet(getClass().getClassLoader(), hsUrl);
-
-		if (LnfUtil.isDarculaAvailable()) {
-			URL hsDarculaUrl = getClass().getResource(res.getString("HelpAction.DarculaHelpSet"));
-			HelpSet hsDarcula = new HelpSet(getClass().getClassLoader(), hsDarculaUrl);
-			hs.add(hsDarcula);
-		}
 
 		helpBroker = new DefaultHelpBroker(hs);
 

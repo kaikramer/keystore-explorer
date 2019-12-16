@@ -28,8 +28,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.kse.utilities.os.OperatingSystem;
-import org.kse.version.JavaVersion;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 /**
@@ -38,8 +39,7 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  */
 public class LnfUtil {
 
-	// Darcula and VAqua LnF classes as constant to avoid compile dependency
-	private static final String DARCULA_LAF_CLASS = "com.bulenkov.darcula.DarculaLaf";
+	// VAqua LnF class as constant to avoid compile dependency
 	private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
 
 	private LnfUtil() {
@@ -62,17 +62,13 @@ public class LnfUtil {
 	 * Install L&Fs.
 	 */
 	public static void installLnfs() {
-		UIManager.installLookAndFeel("JGoodies Plastic 3D", Plastic3DLookAndFeel.class.getName());
+		// Flat LaF
+		UIManager.installLookAndFeel("Flat Light", com.formdev.flatlaf.FlatLightLaf.class.getName());
+		UIManager.installLookAndFeel("Flat Dark", com.formdev.flatlaf.FlatDarkLaf.class.getName());
+		UIManager.installLookAndFeel("Flat IntelliJ", com.formdev.flatlaf.FlatIntelliJLaf.class.getName());
+		UIManager.installLookAndFeel("Flat Darcula", com.formdev.flatlaf.FlatDarculaLaf.class.getName());
 
-		if (OperatingSystem.isWindows() && JavaVersion.getJreVersion().isBelow(JavaVersion.JRE_VERSION_9)) {
-			UIManager.installLookAndFeel("JGoodies Windows",
-					com.jgoodies.looks.windows.WindowsLookAndFeel.class.getName());
-		}
-
-		// Darcula and VAqua are optional
-		if (isDarculaAvailable()) {
-			UIManager.installLookAndFeel("Darcula", DARCULA_LAF_CLASS);
-		}
+		// VAqua is optional
 		if (OperatingSystem.isMacOs() && isVAquaAvailable()) {
 			UIManager.installLookAndFeel("macOS (VAqua)", VAQUA_LAF_CLASS);
 		}
@@ -87,10 +83,9 @@ public class LnfUtil {
 	public static void useLnf(String lnfClassName) {
 		try {
 			UIManager.setLookAndFeel(lnfClassName);
-		} catch (UnsupportedLookAndFeelException e) {
-		} catch (ClassNotFoundException e) {
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
+		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
+				| IllegalAccessException e) {
+			// ignore
 		}
 	}
 
@@ -137,7 +132,8 @@ public class LnfUtil {
 	public static boolean usingMacLnf() {
 		String lnfClass = UIManager.getLookAndFeel().getClass().getName();
 
-		return OperatingSystem.isMacOs() && ( UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS)) ;
+		return OperatingSystem.isMacOs() && (
+				UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS)) ;
 	}
 
 	/**
@@ -181,23 +177,8 @@ public class LnfUtil {
 	 * Does the currently active l&f use a dark color scheme?
 	 */
 	public static boolean isDarkLnf() {
-		return UIManager.getLookAndFeel().getClass().getName().equals(DARCULA_LAF_CLASS);
-	}
-
-	/**
-	 * Is optional Darcula LaF available?
-	 */
-	public static boolean isDarculaAvailable() {
-		try {
-			Class.forName(DARCULA_LAF_CLASS);
-			// Darcula has some issues in Java 6
-			if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170)) {
-				return true;
-			}
-		} catch (ClassNotFoundException e) {
-			// Darcula jar not included
-		}
-		return false;
+		return UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarkLaf.class)
+				|| UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarculaLaf.class);
 	}
 
 	/**

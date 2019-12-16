@@ -134,10 +134,12 @@
     <mapID target="endUserLicenseAgreement" url="endUserLicenseAgreement.html" />
     <mapID target="bouncyCastleLicenseAgreement" url="bouncyCastleLicenseAgreement.html" />
     <mapID target="javaHelpLicenseAgreement" url="javaHelpLicenseAgreement.html" />
-    <mapID target="jGoodiesLicenseAgreement" url="jGoodiesLicenseAgreement.html" />
+    <mapID target="apacheCommonsLicenseAgreement" url="apacheCommonsLicenseAgreement.html" />
     <mapID target="fugueLicense" url="fugueLicense.html" />
     <mapID target="migLayoutLicense" url="migLayoutLicense.html" />
     <mapID target="jnaLicense" url="jnaLicense.html" />
+    <mapID target="vAquaLicense" url="vAquaLicense.html" />
+    <mapID target="flatLafLicense" url="flatLafLicense.html" />
 
     <mapID target="specifications" url="specifications.html" />
 

@@ -71,7 +71,7 @@ public class AboutAction extends KeyStoreExplorerAction {
 				res.getString("AboutAction.Acknowledgement2"), res.getString("AboutAction.Acknowledgement3"),
 				res.getString("AboutAction.Acknowledgement4"), res.getString("AboutAction.Acknowledgement5"),
 				res.getString("AboutAction.Acknowledgement6"), res.getString("AboutAction.Acknowledgement7"),
-				LnfUtil.isDarculaAvailable() ? res.getString("AboutAction.Acknowledgement8") : "",
+				LnfUtil.isVAquaAvailable() ? res.getString("AboutAction.Acknowledgement8") : "",
 		};
 
 		URL aboutDialogImageURL = AboutAction.class.getResource(res.getString("AboutAction.About.image"));

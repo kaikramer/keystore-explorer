@@ -20,7 +20,6 @@
   along with KeyStore Explorer. If not, see <http://www.gnu.org/licenses/>.
 =======================================================================-->
 
-<?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE toc
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
            "http://java.sun.com/products/javahelp/toc_1_0.dtd">
@@ -156,10 +155,12 @@
 
             <tocitem text="Bouncy Castle License" target="bouncyCastleLicenseAgreement" />
             <tocitem text="JavaHelp License" target="javaHelpLicenseAgreement" />
-            <tocitem text="JGoodies License" target="jGoodiesLicenseAgreement" />
+            <tocitem text="Apache Commons License" target="apacheCommonsLicenseAgreement" />
             <tocitem text="Fugue Icons License" target="fugueLicense" />
             <tocitem text="MiGLayout License" target="migLayoutLicense" />
             <tocitem text="JNA License" target="jnaLicense" />
+            <tocitem text="VAqua License" target="vAquaLicense" />
+            <tocitem text="FlatLaf License" target="flatLafLicense" />
 
         </tocitem>
 
