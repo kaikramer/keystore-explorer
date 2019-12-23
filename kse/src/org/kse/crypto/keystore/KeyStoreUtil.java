@@ -167,7 +167,13 @@ public final class KeyStoreUtil {
 		KeyStore keyStore = getKeyStoreInstance(keyStoreType);
 
 		try (FileInputStream fis = new FileInputStream(keyStoreFile)) {
-			keyStore.load(fis, password.toCharArray());
+			if (password.isEmpty() && keyStoreType == KeyStoreType.JKS || keyStoreType == KeyStoreType.JCEKS) {
+				// allow JKS and JCEKS files to be opened without providing a password
+				password.nullPassword();
+				keyStore.load(fis, null);
+			} else {
+				keyStore.load(fis, password.toCharArray());
+			}
 		} catch (CertificateException | NoSuchAlgorithmException ex) {
 			throw new KeyStoreLoadException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
 					keyStoreType), ex, keyStoreType);

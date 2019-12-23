@@ -49,12 +49,16 @@ public class Password {
 	 *            Password wrapper to copy
 	 */
 	public Password(Password password) {
-		char[] wrappedPassword = password.toCharArray();
-		if (wrappedPassword != null) {
-			this.wrappedPassword = new char[wrappedPassword.length];
-			System.arraycopy(wrappedPassword, 0, this.wrappedPassword, 0, this.wrappedPassword.length);
+		if (password.isNulled()) {
+			nulled = true;
+			wrappedPassword = new char[] { 0 };
+		} else {
+			char[] wrappedPwd = password.toCharArray();
+			if (wrappedPwd != null) {
+				this.wrappedPassword = new char[wrappedPwd.length];
+				System.arraycopy(wrappedPwd, 0, this.wrappedPassword, 0, this.wrappedPassword.length);
+			}
 		}
-		nulled = password.isNulled();
 	}
 
 	/**

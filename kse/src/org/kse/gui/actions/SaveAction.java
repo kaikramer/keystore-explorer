@@ -94,7 +94,7 @@ public class SaveAction extends SaveAsAction {
 
 			Password password = currentState.getPassword();
 
-			if (password == null) {
+			if (password == null || password.isNulled()) {
 				SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
 
 				if (setPasswordAction.setKeyStorePassword()) {

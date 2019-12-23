@@ -24,6 +24,7 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.interfaces.DSAPrivateKey;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.jce.provider.JDKDSAPrivateKey;
@@ -286,8 +287,8 @@ public class KeyStoreState {
 		}
 
 		// Null all entry passwords
-		for (String alias : entryPasswords.keySet()) {
-			entryPasswords.get(alias).nullPassword();
+		for (Map.Entry<String, Password> entry : entryPasswords.entrySet()) {
+			entry.getValue().nullPassword();
 		}
 	}
 
@@ -306,8 +307,8 @@ public class KeyStoreState {
 		copy.history = this.history;
 		copy.keyStore = KeyStoreUtil.copy(this.keyStore);
 
-		if (this.password != null) {
-			copy.password = new Password(this.password); // Copy as may be cleared
+		if (password != null) {
+			copy.password = new Password(password); // Copy as may be cleared
 		}
 
 		HashMap<String, Password> keyPairPasswordsCopy = new HashMap<>();

@@ -92,7 +92,7 @@ public class SaveAsAction extends KeyStoreExplorerAction {
 
 			Password password = currentState.getPassword();
 
-			if (password == null) {
+			if (password == null || password.isNulled()) {
 				SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
 
 				if (setPasswordAction.setKeyStorePassword()) {
