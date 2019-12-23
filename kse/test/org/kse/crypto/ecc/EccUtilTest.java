@@ -1,5 +1,7 @@
 package org.kse.crypto.ecc;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
@@ -9,15 +11,13 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.DLTaggedObject;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.utilities.oid.ObjectIdUtil;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class EccUtilTest extends CryptoTestsBase {
 
@@ -88,7 +88,7 @@ public class EccUtilTest extends CryptoTestsBase {
 
 		// check for existence of (optional) EC parameters
 		ASN1Encodable tagged0 = sequence.getObjectAt(2);
-		DERTaggedObject derTaggedObject = (DERTaggedObject) tagged0;
+		DLTaggedObject derTaggedObject = (DLTaggedObject) tagged0;
 		assertThat(derTaggedObject.getTagNo()).isEqualTo(0);
 
 		// check that EC parameters contain the right curve name

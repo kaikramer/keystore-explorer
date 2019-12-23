@@ -2,6 +2,7 @@ package org.kse.crypto.signing;
 
 import java.io.IOException;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.kse.crypto.digest.DigestType;
@@ -14,7 +15,9 @@ class TimeStampingClientTest {
 	@ParameterizedTest
 	@MethodSource("tsaUrls")
 	public void testTsaUrls(String tsaUrl) throws IOException {
-		TimeStampingClient.getTimeStampToken(tsaUrl, DATA, DigestType.SHA1);
+		Assertions.assertThatCode(
+				() -> TimeStampingClient.getTimeStampToken(tsaUrl, DATA, DigestType.SHA1))
+				.doesNotThrowAnyException();
 	}
 
 	static String[] tsaUrls() {

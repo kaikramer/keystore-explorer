@@ -57,7 +57,7 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
 		assertThat(keyStore).isNotNull();
 		assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
 
-		File keyStoreFile = File.createTempFile("keystore", null);
+		File keyStoreFile = File.createTempFile("keystore", keyStoreType.jce().toLowerCase());
 		keyStoreFile.deleteOnExit();
 
 		KeyStoreUtil.save(keyStore, keyStoreFile, PASSWORD);
