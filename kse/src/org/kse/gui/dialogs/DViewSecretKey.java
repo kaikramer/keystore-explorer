@@ -55,6 +55,7 @@ import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -293,33 +294,8 @@ public class DViewSecretKey extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-		Security.addProvider(new BouncyCastleProvider());
 		final SecretKey secretKey = SecretKeyUtil.generateSecretKey(SecretKeyType.AES, 256);
-
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey, true);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							super.windowClosing(e);
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(WindowEvent e) {
-							super.windowDeactivated(e);
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey, true);
+		DialogViewer.run(dialog);
 	}
 }

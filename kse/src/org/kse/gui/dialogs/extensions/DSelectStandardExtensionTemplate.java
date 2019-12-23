@@ -40,7 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -62,6 +61,7 @@ import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -282,23 +282,11 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		final KeyPair issuerKP = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
 		final KeyPair subjectKP = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
 
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				DSelectStandardExtensionTemplate dialog = new DSelectStandardExtensionTemplate(new JDialog(),
-						issuerKP.getPublic(), subjectKP.getPublic());
-				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-					@Override
-					public void windowClosed(java.awt.event.WindowEvent e) {
-						System.exit(0);
-					}
-				});
-				dialog.setVisible(true);
-			}
-		});
+		DSelectStandardExtensionTemplate dialog = new DSelectStandardExtensionTemplate(new JDialog(),
+				issuerKP.getPublic(), subjectKP.getPublic());
+		DialogViewer.run(dialog);
 	}
 }

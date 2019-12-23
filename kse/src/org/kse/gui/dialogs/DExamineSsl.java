@@ -50,6 +50,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.OpenAction;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.history.KeyStoreHistory;
 
 import net.miginfocom.swing.MigLayout;
@@ -140,7 +141,7 @@ public class DExamineSsl extends JEscDialog {
 		pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
 		pane.add(jcbKeyStore, "sgx");
 		pane.add(jbLoadKeystore, "wrap para");
-		pane.add(new JSeparator(), "spanx, growx, wrap para");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
 
 		jcbClientAuth.addActionListener(new java.awt.event.ActionListener() {
@@ -337,5 +338,10 @@ public class DExamineSsl extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick testing
+	public static void main(String[] args) throws Exception {
+		DialogViewer.run(new DExamineSsl(new javax.swing.JFrame(), new KseFrame()));
 	}
 }

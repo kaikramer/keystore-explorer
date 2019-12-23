@@ -250,19 +250,13 @@ public class DTipOfTheDay extends JEscDialog {
 		ArrayList<String> tipList = new ArrayList<>();
 
 		// Look for all properties "<tip prefix>x" where x is a sequential 0-index
-		int i = 0;
-
-		while (true) {
-			String tip;
-			try {
-				tip = tips.getString(tipPrefix + i);
-			} catch (MissingResourceException ex) {
-				break;
+		try {
+			for (int i = 0; i < tipsText.length; i++) {
+				String tip = tips.getString(tipPrefix + i);
+				tipList.add(tip);
 			}
-
-			tipList.add(tip);
-
-			i++;
+		} catch (MissingResourceException ex) {
+			// no more tips
 		}
 
 		tipsText = tipList.toArray(new String[tipList.size()]);

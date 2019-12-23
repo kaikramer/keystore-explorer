@@ -21,7 +21,6 @@ package org.kse.gui.crypto;
 
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,7 +38,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -48,6 +46,7 @@ import org.kse.ApplicationSettings;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dnchooser.DistinguishedNameChooser;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -283,30 +282,8 @@ public class DDistinguishedNameChooser extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DDistinguishedNameChooser dialog = new DDistinguishedNameChooser(new javax.swing.JFrame(), "DN Chooser",
-							new X500Name("CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com"),
-							true);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-
-						@Override
-						public void windowDeactivated(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DDistinguishedNameChooser dialog = new DDistinguishedNameChooser(new javax.swing.JFrame(), "DN Chooser",
+				new X500Name("CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com"), true);
+		DialogViewer.run(dialog);
 	}
 }

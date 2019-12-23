@@ -37,7 +37,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -52,11 +51,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
@@ -73,6 +70,7 @@ import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.IOUtils;
 
 /**
@@ -390,31 +388,14 @@ public class DViewPem extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-					KeyPair keyPair = keyGen.genKeyPair();
-					JcaPKCS10CertificationRequestBuilder csrBuilder =
-							new JcaPKCS10CertificationRequestBuilder(new X500Name("cn=test"), keyPair.getPublic());
-					PKCS10CertificationRequest csr =  csrBuilder.build(
-							new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+		KeyPair keyPair = keyGen.genKeyPair();
+		JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(
+				new X500Name("cn=test"), keyPair.getPublic());
+		PKCS10CertificationRequest csr = csrBuilder
+				.build(new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
 
-					DViewPem dialog = new DViewPem(new javax.swing.JFrame(), "Title", csr);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DViewPem dialog = new DViewPem(new javax.swing.JFrame(), "Title", csr);
+		DialogViewer.run(dialog);
 	}
 }

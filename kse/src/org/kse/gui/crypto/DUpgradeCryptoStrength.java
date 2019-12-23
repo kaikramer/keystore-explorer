@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.EventQueue;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -66,7 +65,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -78,6 +76,7 @@ import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.CopyUtil;
 
 import net.miginfocom.swing.MigLayout;
@@ -432,27 +431,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DUpgradeCryptoStrength dialog = new DUpgradeCryptoStrength(new JFrame());
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DUpgradeCryptoStrength dialog = new DUpgradeCryptoStrength(new JFrame());
+		DialogViewer.run(dialog);
 	}
 }

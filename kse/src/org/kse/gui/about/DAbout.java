@@ -21,7 +21,6 @@ package org.kse.gui.about;
 
 import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.EventQueue;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -40,7 +39,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import org.kse.KSE;
 import org.kse.gui.JEscDialog;
@@ -48,6 +46,7 @@ import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.AboutAction;
 import org.kse.gui.ticker.JTicker;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.net.URLs;
 
 import net.miginfocom.swing.MigLayout;
@@ -181,33 +180,11 @@ public class DAbout extends JEscDialog {
 
 
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
+		Object[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2019 Kai Kramer ..." };
+		URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
+		DAbout dialog = new DAbout(new JFrame(), "About", "See help for details of the end user license agreement.",
+				Toolkit.getDefaultToolkit().getImage(kseIconUrl), tickerItems);
 
-					Object[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2019 Kai Kramer ..." };
-					javax.swing.JFrame frame = new javax.swing.JFrame();
-					URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
-					DAbout dialog = new DAbout(frame, "About", "See help for details of the end user license agreement.",
-							Toolkit.getDefaultToolkit().getImage(kseIconUrl), tickerItems);
-					dialog.setLocationRelativeTo(frame);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DialogViewer.run(dialog);
 	}
 }

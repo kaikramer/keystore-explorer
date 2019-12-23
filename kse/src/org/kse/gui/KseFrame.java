@@ -516,7 +516,7 @@ public final class KseFrame implements StatusBar {
 	private static final String PASTE_KEY = "PASTE_KEY";
 	private static final String RENAME_KEY = "RENAME_KEY";
 
-	KseFrame() {
+	public KseFrame() {
 		initComponents();
 	}
 

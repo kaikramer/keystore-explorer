@@ -52,7 +52,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -69,6 +68,7 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
 import net.miginfocom.swing.MigLayout;
@@ -480,33 +480,10 @@ public class DGenerateCsr extends JEscDialog {
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-					PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
-					X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
-					DGenerateCsr dialog = new DGenerateCsr(new javax.swing.JFrame(), "alias (test)", dn, privateKey,
-							KeyPairType.RSA, "");
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							super.windowClosing(e);
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(WindowEvent e) {
-							super.windowDeactivated(e);
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+		PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
+		X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
+
+		DialogViewer.run(new DGenerateCsr(new JFrame(), "alias (test)", dn, privateKey, KeyPairType.RSA, ""));
 	}
 }

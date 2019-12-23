@@ -59,7 +59,6 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -86,6 +85,7 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.oid.ObjectIdComparator;
 import org.kse.utilities.os.OperatingSystem;
 
@@ -900,23 +900,10 @@ public class DAddExtensions extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		final KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
 
-		java.awt.EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				DAddExtensions dialog = new DAddExtensions(new JFrame(), "Add Extensions", new X509ExtensionSet(),
-						keyPair.getPublic(), new X500Name("cn=test"), BigInteger.ONE, keyPair.getPublic());
-				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-					@Override
-					public void windowClosed(java.awt.event.WindowEvent e) {
-						System.exit(0);
-					}
-				});
-				dialog.setVisible(true);
-			}
-		});
+		DAddExtensions dialog = new DAddExtensions(new JFrame(), "Add Extensions", new X509ExtensionSet(),
+				keyPair.getPublic(), new X500Name("cn=test"), BigInteger.ONE, keyPair.getPublic());
+		DialogViewer.run(dialog);
 	}
 }

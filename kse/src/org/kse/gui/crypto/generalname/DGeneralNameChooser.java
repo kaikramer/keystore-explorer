@@ -21,7 +21,6 @@ package org.kse.gui.crypto.generalname;
 
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +29,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.Security;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -46,7 +44,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -57,7 +54,6 @@ import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.IPAddress;
 import org.kse.crypto.x509.GeneralNameUtil;
 import org.kse.gui.JEscDialog;
@@ -65,6 +61,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.error.DError;
 import org.kse.gui.oid.JObjectId;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -197,7 +194,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		pane.add(jrbPrincipalName, "wrap");
 		pane.add(jlGeneralNameValue, "spanx");
 		pane.add(jpGeneralNameValue, "spanx, wrap");
-		pane.add(new JSeparator(), "spanx, growx, wrap para");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
 
 		// actions
@@ -468,29 +465,6 @@ public class DGeneralNameChooser extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DGeneralNameChooser dialog = new DGeneralNameChooser(new javax.swing.JFrame(), "GeneralNameChooser",
-							null);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DialogViewer.run(new DGeneralNameChooser(new javax.swing.JFrame(), "GeneralNameChooser", null));
 	}
 }

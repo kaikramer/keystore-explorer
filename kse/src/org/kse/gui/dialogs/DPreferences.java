@@ -21,7 +21,6 @@ package org.kse.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -70,6 +69,7 @@ import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dnchooser.DistinguishedNameChooser;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.net.ManualProxySelector;
 import org.kse.utilities.net.NoProxySelector;
 import org.kse.utilities.net.PacProxySelector;
@@ -1210,30 +1210,8 @@ public class DPreferences extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DPreferences dialog = new DPreferences(new javax.swing.JFrame(),true, new File(""),
-							true, true, true, new PasswordQualityConfig(true, true, 100), "", "en", true, 14,
-							new KeyStoreTableColumns());
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-
-						@Override
-						public void windowDeactivated(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
+				new PasswordQualityConfig(true, true, 100), "", "en", true, 14, new KeyStoreTableColumns());
+		DialogViewer.run(dialog);
 	}
 }

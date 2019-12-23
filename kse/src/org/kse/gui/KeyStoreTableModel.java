@@ -227,16 +227,13 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			if (iCertExpiryColumn > 0) {
 				// Expiry date column
 				if (expiry != null) {
-
 					data[i][iCertExpiryColumn] = expiry;
 				} else {
-					data[i][iCertExpiryColumn] = null; // No expiry date - must
-					// be a key entry
+					data[i][iCertExpiryColumn] = null; // No expiry date - must be a key entry
 				}
 			}
 			if (iLastModifiedColumn > 0) {
-				// Modified date column - only applies to non-PKCS #11/#12
-				// KeyStores
+				// Modified date column - only applies to non-PKCS #11/#12 KeyStores
 				if (!keyStore.getType().equals(KeyStoreType.PKCS12.jce())
 						&& !keyStore.getType().equals(KeyStoreType.PKCS11.jce())) {
 					data[i][iLastModifiedColumn] = keyStore.getCreationDate(alias);
@@ -245,7 +242,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iSubjectDNColumn > 0) {
-				if (entryType != KEY_ENTRY) {
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iSubjectDNColumn] = getCertificateSubjectDN(alias, keyStore);
 					if (iColWidth[iSubjectDNColumn] < data[i][iSubjectDNColumn].toString().length()) {
 						iColWidth[iSubjectDNColumn] = data[i][iSubjectDNColumn].toString().length();
@@ -255,7 +252,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iIssuerDNColumn > 0) {
-				if (entryType != KEY_ENTRY) {
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iIssuerDNColumn] = getCertificateIssuerDN(alias, keyStore);
 					if (iColWidth[iIssuerDNColumn] < data[i][iIssuerDNColumn].toString().length()) {
 						iColWidth[iIssuerDNColumn] = data[i][iIssuerDNColumn].toString().length();
@@ -265,7 +262,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iSubjectCNColumn > 0) {
-				if (entryType != KEY_ENTRY) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) { // assume a certificate
 					data[i][iSubjectCNColumn] = getCertificateSubjectCN(alias, keyStore);
 					if (iColWidth[iSubjectCNColumn] < data[i][iSubjectCNColumn].toString().length()) {
 						iColWidth[iSubjectCNColumn] = data[i][iSubjectCNColumn].toString().length();
@@ -275,7 +272,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iIssuerCNColumn > 0) {
-				if (entryType != KEY_ENTRY) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) { // assume a certificate
 					data[i][iIssuerCNColumn] = getCertificateIssuerCN(alias, keyStore);
 					if (iColWidth[iIssuerCNColumn] < data[i][iIssuerCNColumn].toString().length()) {
 						iColWidth[iIssuerCNColumn] = data[i][iIssuerCNColumn].toString().length();
@@ -285,7 +282,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iSubjectOColumn > 0) {
-				if (entryType != KEY_ENTRY) { // assume a certificate
+				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
 					data[i][iSubjectOColumn] = getCertificateSubjectO(alias, keyStore);
 					if (iColWidth[iSubjectOColumn] < data[i][iSubjectOColumn].toString().length()) {
 						iColWidth[iSubjectOColumn] = data[i][iSubjectOColumn].toString().length();
@@ -295,7 +292,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iIssuerOColumn > 0) {
-				if (entryType != KEY_ENTRY) { // assume a certificate
+				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
 					data[i][iIssuerOColumn] = getCertificateIssuerO(alias, keyStore);
 					if (iColWidth[iIssuerOColumn] < data[i][iIssuerOColumn].toString().length()) {
 						iColWidth[iIssuerOColumn] = data[i][iIssuerOColumn].toString().length();
@@ -306,7 +303,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iAKIColumn > 0) {
-				if (entryType != KEY_ENTRY) { // assume a certificate
+				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
 					data[i][iAKIColumn] = getCertificateAKI(alias, keyStore);
 					if (iColWidth[iAKIColumn] < data[i][iAKIColumn].toString().length()) {
 						iColWidth[iAKIColumn] = data[i][iAKIColumn].toString().length();
@@ -317,7 +314,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iSKIColumn > 0) {
-				if (entryType != KEY_ENTRY) { // assume a certificate
+				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
 					data[i][iSKIColumn] = getCertificateSKI(alias, keyStore);
 					if (iColWidth[iSKIColumn] < data[i][iSKIColumn].toString().length()) {
 						iColWidth[iSKIColumn] = data[i][iSKIColumn].toString().length();

@@ -31,7 +31,6 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
@@ -47,9 +46,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -58,6 +55,7 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
 
 import net.miginfocom.swing.MigLayout;
@@ -334,28 +332,11 @@ public class DViewPrivateKey extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
-					KeyPair keyPair = keyGen.genKeyPair();
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+		KeyPair keyPair = keyGen.genKeyPair();
 
-					PrivateKey privKey = keyPair.getPrivate();
-					DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosed(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		PrivateKey privKey = keyPair.getPrivate();
+		DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey);
+		DialogViewer.run(dialog);
 	}
 }

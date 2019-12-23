@@ -44,7 +44,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.UIManager;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -56,6 +55,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -443,21 +443,7 @@ public class DGenerateKeyPair extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-		java.awt.EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.JKS, KeyPairType.RSA, 1024);
-				dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-					@Override
-					public void windowClosed(java.awt.event.WindowEvent e) {
-						System.exit(0);
-					}
-				});
-				dialog.setVisible(true);
-			}
-		});
+		DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.JKS, KeyPairType.RSA, 1024);
+		DialogViewer.run(dialog);
 	}
 }

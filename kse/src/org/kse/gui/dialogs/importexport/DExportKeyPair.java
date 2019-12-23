@@ -29,7 +29,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -47,9 +46,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.Password;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -59,6 +56,7 @@ import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.password.JPasswordQualityField;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
 import net.miginfocom.swing.MigLayout;
@@ -403,31 +401,8 @@ public class DExportKeyPair extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					PasswordQualityConfig pwdQualityConf = new PasswordQualityConfig(false, false, 0);
-					DExportKeyPair dialog = new DExportKeyPair(new javax.swing.JFrame(), "alias (test)", pwdQualityConf);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							super.windowClosing(e);
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(WindowEvent e) {
-							super.windowDeactivated(e);
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		PasswordQualityConfig pwdQualityConf = new PasswordQualityConfig(false, false, 0);
+		DExportKeyPair dialog = new DExportKeyPair(new javax.swing.JFrame(), "alias (test)", pwdQualityConf);
+		DialogViewer.run(dialog);
 	}
 }

@@ -32,7 +32,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -49,18 +48,17 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
 /**
@@ -580,24 +578,7 @@ public class DExportCertificates extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DExportCertificates dialog = new DExportCertificates(new javax.swing.JFrame(), "alias (test)", true);
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DExportCertificates dialog = new DExportCertificates(new javax.swing.JFrame(), "alias (test)", true);
+		DialogViewer.run(dialog);
 	}
 }

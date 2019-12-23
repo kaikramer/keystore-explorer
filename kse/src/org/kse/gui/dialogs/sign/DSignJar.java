@@ -34,7 +34,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.jar.JarFile;
@@ -53,9 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
@@ -72,6 +69,7 @@ import org.kse.gui.dialogs.DialogHelper;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.net.URLs;
@@ -601,33 +599,10 @@ public class DSignJar extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		Security.addProvider(new BouncyCastleProvider());
-
-		java.awt.EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
-					kpg.initialize(1024, new SecureRandom());
-					KeyPair kp = kpg.generateKeyPair();
-					DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name");
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
+		kpg.initialize(1024, new SecureRandom());
+		KeyPair kp = kpg.generateKeyPair();
+		DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name");
+		DialogViewer.run(dialog);
 	}
 }

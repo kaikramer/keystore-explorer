@@ -36,7 +36,6 @@ import static org.kse.crypto.x509.ExtendedKeyUsageType.TIME_STAMPING;
 import static org.kse.crypto.x509.ExtendedKeyUsageType.TSL_SIGNING;
 
 import java.awt.Container;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -57,7 +56,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -66,6 +64,7 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.kse.crypto.x509.ExtendedKeyUsageType;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -411,29 +410,7 @@ public class DExtendedKeyUsage extends DExtension {
 	}
 
 	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					DExtendedKeyUsage dialog = new DExtendedKeyUsage(new JDialog());
-					dialog.addWindowListener(new WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							super.windowClosing(e);
-							System.exit(0);
-						}
-						@Override
-						public void windowDeactivated(WindowEvent e) {
-							super.windowDeactivated(e);
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DExtendedKeyUsage dialog = new DExtendedKeyUsage(new JDialog());
+		DialogViewer.run(dialog);
 	}
 }

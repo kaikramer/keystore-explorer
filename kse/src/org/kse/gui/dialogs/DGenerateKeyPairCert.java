@@ -35,7 +35,6 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -53,7 +52,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -72,6 +70,7 @@ import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -432,29 +431,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-					keyGen.initialize(1024);
-					KeyPair keyPair = keyGen.genKeyPair();
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+		keyGen.initialize(1024);
+		KeyPair keyPair = keyGen.genKeyPair();
 
-					DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), "test", keyPair, KeyPairType.RSA, null, null,
-							new BouncyCastleProvider());
-					dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-						@Override
-						public void windowClosing(java.awt.event.WindowEvent e) {
-							System.exit(0);
-						}
-					});
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), "test", keyPair,
+				KeyPairType.RSA, null, null, new BouncyCastleProvider());
+		DialogViewer.run(dialog);
 	}
 }
