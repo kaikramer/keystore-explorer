@@ -29,6 +29,7 @@ public class URLs {
 
 	// general project URLs
 	public static final String KSE_WEB_SITE = "https://keystore-explorer.org";
+	public static final String KSE_USER_MANUAL = "https://keystore-explorer.org/doc/";
 	public static final String GITHUB_PROJECT = "https://github.com/kaikramer/keystore-explorer";
 	public static final String GITHUB_ISSUE_TRACKER = "https://github.com/kaikramer/keystore-explorer/issues";
 

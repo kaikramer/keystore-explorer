@@ -89,7 +89,7 @@ public class KSE {
 				setAppleSystemProperties();
 			} else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8() || OperatingSystem.isWindows10()) {
 				String appId = props.getString("KSE.AppUserModelId");
-				Shell32 shell32 = (Shell32) Native.loadLibrary("shell32", Shell32.class);
+				Shell32 shell32 = Native.loadLibrary("shell32", Shell32.class);
 				shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
 			} else if (OperatingSystem.isLinux()) {
 				fixAppClassName();
@@ -216,6 +216,15 @@ public class KSE {
 	 */
 	public static Version getApplicationVersion() {
 		return new Version(props.getString("KSE.Version"));
+	}
+
+	/**
+	 * Get user manual version (for link to online help).
+	 *
+	 * @return Application version
+	 */
+	public static Version getUserManualVersion() {
+		return new Version(props.getString("KSE.UserManual.Version"));
 	}
 
 	/**

@@ -85,12 +85,6 @@ ext {
 	vendor = "Wayne Grant, Kai Kramer"
 	website = "https://keystore-explorer.org"
 
-	// Java Help properties
-	helpCfg = "$projectDir/help/help.cfg"
-	helpDir = sourceSets.main.resources.srcDirs.first().getAbsolutePath() + "/org/kse/gui/help"
-	helpSearchIndexDir = "$buildDir/searchindex"
-	helpSearchIndexDirDist = "org/kse/gui/help/searchindex"
-
 	// Main class (for manifest entry)
 	mainClass = "org.kse.KSE"
 }
@@ -102,7 +96,6 @@ dependencies {
 	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.64'
 	compile group: 'net.java.dev.jna', name: 'jna', version: '5.3.1'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
-	compile group: 'javax.help', name: 'javahelp', version: '2.0.05'
 	compile group: 'com.miglayout', name: 'miglayout-swing', version: '5.2'
 	compile group: 'com.formdev', name: 'flatlaf', version: '0.21'
 
@@ -120,20 +113,9 @@ dependencies {
 	testCompileOnly('org.apiguardian:apiguardian-api:1.1.0')
 }
 
-task javaHelpIndex(type: JavaExec, dependsOn: compileJava) {
-	main = 'com.sun.java.help.search.Indexer'
-	classpath = sourceSets.main.runtimeClasspath
-	ignoreExitValue = false
-	workingDir = helpDir
-	args '-c', helpCfg, '-db', helpSearchIndexDir
-}
 
 jar {
-	dependsOn javaHelpIndex
 	version = null
-	into(helpSearchIndexDirDist) {
-		from helpSearchIndexDir
-	}
 	manifest {
 		attributes('Built-JDK': System.getProperty('java.version'),
 					'Implementation-Title': project.appName,
