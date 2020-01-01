@@ -1,8 +1,16 @@
+<p align="center"><img src="https://github.com/kaikramer/keystore-explorer/raw/master/kse/res/icons/kse_256.png"></p>
+
 # KeyStore Explorer
+[![Build Status](http://img.shields.io/travis/kaikramer/keystore-explorer.svg?style=flat-square)]
+[![Release](https://img.shields.io/github/v/release/kaikramer/keystore-explorer)]
+[![Downloads](https://img.shields.io/github/downloads/kaikramer/keystore-explorer/total)]
+[![License](https://img.shields.io/github/license/kaikramer/keystore-explorer)]
 
 KeyStore Explorer is a free GUI replacement for the Java command-line utilities keytool and jarsigner.
 
 Official website: http://keystore-explorer.org/
+
+![Screenshot](https://github.com/kaikramer/kaikramer.github.io/raw/master/images/win10_mykeystore.png)
 
 ## Features:
 
