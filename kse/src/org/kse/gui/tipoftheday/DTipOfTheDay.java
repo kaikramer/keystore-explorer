@@ -251,7 +251,7 @@ public class DTipOfTheDay extends JEscDialog {
 
 		// Look for all properties "<tip prefix>x" where x is a sequential 0-index
 		try {
-			for (int i = 0; i < tipsText.length; i++) {
+			for (int i = 0; ; i++) {
 				String tip = tips.getString(tipPrefix + i);
 				tipList.add(tip);
 			}
