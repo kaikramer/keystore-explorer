@@ -1630,6 +1630,8 @@ public final class KseFrame implements StatusBar {
 		KeyStoreHistory history = getActiveKeyStoreHistory();
 		KeyStore keyStore = history.getCurrentState().getKeyStore();
 		String alias = getSelectedEntryAlias();
+		String nextAlias = getNextEntrysAlias();
+		int nrEntriesBeforeDeletion = getNumberOfEntries();
 
 		try {
 			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
@@ -1638,6 +1640,11 @@ public final class KseFrame implements StatusBar {
 				deleteTrustedCertificateAction.deleteSelectedEntry();
 			} else {
 				deleteKeyAction.deleteSelectedEntry();
+			}
+
+			// if one entry was deleted, select next entry
+			if ((getNumberOfEntries() < nrEntriesBeforeDeletion) && (nextAlias != null)) {
+				setSelectedEntryByAlias(nextAlias);
 			}
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
@@ -2501,12 +2508,42 @@ public final class KseFrame implements StatusBar {
 			return null;
 		}
 
-		String alias = (String) jtKeyStore.getValueAt(row, 3);
-		return alias;
+		return (String) jtKeyStore.getValueAt(row, 3);
+	}
+
+	private String getNextEntrysAlias() {
+		JTable jtKeyStore = getActiveKeyStoreTable();
+		int row = jtKeyStore.getSelectedRow();
+
+		// no row selected
+		if (row == -1) {
+			return null;
+		}
+
+
+		int rowCount = jtKeyStore.getModel().getRowCount();
+		if (rowCount < 2) {
+			// only one row
+			return null;
+		} else {
+			if (row < (rowCount - 1)) {
+				// selected row is not the last one, return alias of next row
+				return (String) jtKeyStore.getValueAt(row + 1, 3);
+			} else {
+				// selected row is the last one, return alias of previous row
+				return (String) jtKeyStore.getValueAt(row - 1, 3);
+			}
+		}
+	}
+
+	private int getNumberOfEntries() {
+		JTable jtKeyStore = getActiveKeyStoreTable();
+		return jtKeyStore.getModel().getRowCount();
 	}
 
 	private void setSelectedEntryByAlias(String alias) {
 		JTable jtKeyStore = getActiveKeyStoreTable();
+		jtKeyStore.requestFocusInWindow();
 
 		for (int i = 0; i < jtKeyStore.getRowCount(); i++) {
 			if (alias.equals(jtKeyStore.getValueAt(i, 3))) {
