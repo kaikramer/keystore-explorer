@@ -87,10 +87,7 @@ public final class KeyStoreUtil {
 
 		try {
 			keyStore.load(null, null);
-		} catch (CertificateException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
-					keyStoreType), ex);
-		} catch (NoSuchAlgorithmException ex) {
+		} catch (CertificateException | NoSuchAlgorithmException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
 					keyStoreType), ex);
 		}
@@ -167,7 +164,7 @@ public final class KeyStoreUtil {
 		KeyStore keyStore = getKeyStoreInstance(keyStoreType);
 
 		try (FileInputStream fis = new FileInputStream(keyStoreFile)) {
-			if (password.isEmpty() && keyStoreType == KeyStoreType.JKS || keyStoreType == KeyStoreType.JCEKS) {
+			if (password.isEmpty() && (keyStoreType == KeyStoreType.JKS || keyStoreType == KeyStoreType.JCEKS)) {
 				// allow JKS and JCEKS files to be opened without providing a password
 				password.nullPassword();
 				keyStore.load(fis, null);
@@ -213,23 +210,14 @@ public final class KeyStoreUtil {
 
 		try {
 			keyStore = KeyStore.getInstance(KEYCHAIN.jce(), APPLE.jce());
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
-					KEYCHAIN.jce()), ex);
-		} catch (NoSuchProviderException ex) {
+		} catch (KeyStoreException | NoSuchProviderException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
 					KEYCHAIN.jce()), ex);
 		}
 
 		try {
 			keyStore.load(null, null);
-		} catch (NoSuchAlgorithmException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
-					KEYCHAIN.jce()), ex);
-		} catch (CertificateException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
-					KEYCHAIN.jce()), ex);
-		} catch (IOException ex) {
+		} catch (NoSuchAlgorithmException | CertificateException | IOException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
 					KEYCHAIN.jce()), ex);
 		}
@@ -267,23 +255,14 @@ public final class KeyStoreUtil {
 
 		try {
 			keyStore = KeyStore.getInstance(msCapiStoreType.jce(), MS_CAPI.jce());
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
-					msCapiStoreType.jce()), ex);
-		} catch (NoSuchProviderException ex) {
+		} catch (KeyStoreException | NoSuchProviderException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"),
 					msCapiStoreType.jce()), ex);
 		}
 
 		try {
 			keyStore.load(null, null);
-		} catch (NoSuchAlgorithmException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
-					msCapiStoreType.jce()), ex);
-		} catch (CertificateException ex) {
-			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
-					msCapiStoreType.jce()), ex);
-		} catch (IOException ex) {
+		} catch (NoSuchAlgorithmException | CertificateException | IOException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"),
 					msCapiStoreType.jce()), ex);
 		}
@@ -320,13 +299,7 @@ public final class KeyStoreUtil {
 
 		try (FileOutputStream fos = new FileOutputStream(keyStoreFile)) {
 			keyStore.store(fos, password.toCharArray());
-		} catch (IOException ex) {
-			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
-		} catch (CertificateException ex) {
-			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
-		} catch (NoSuchAlgorithmException ex) {
+		} catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException ex) {
 			throw new CryptoException(res.getString("NoSaveKeyStore.exception.message"), ex);
 		}
 	}
@@ -427,13 +400,7 @@ public final class KeyStoreUtil {
 			theCopy.load(new ByteArrayInputStream(baos.toByteArray()), emptyPassword);
 
 			return theCopy;
-		} catch (CryptoException ex) {
-			throw new CryptoException(res.getString("NoCopyKeyStore.exception.message"), ex);
-		} catch (GeneralSecurityException ex) {
-			throw new CryptoException(res.getString("NoCopyKeyStore.exception.message"), ex);
-		} catch (IllegalStateException ex) {
-			throw new CryptoException(res.getString("NoCopyKeyStore.exception.message"), ex);
-		} catch (IOException ex) {
+		} catch (CryptoException | GeneralSecurityException | IllegalStateException | IOException ex) {
 			throw new CryptoException(res.getString("NoCopyKeyStore.exception.message"), ex);
 		}
 	}
