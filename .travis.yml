@@ -4,6 +4,7 @@ addons:
   homebrew:
     taps: AdoptOpenJDK/openjdk
     casks: adoptopenjdk8
+    update: true
 
 language: java
 
