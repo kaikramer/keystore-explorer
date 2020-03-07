@@ -271,7 +271,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 
 task signapp(type: Exec, dependsOn: appbundler) {
 	workingDir appBundleDir
-	commandLine 'codesign', '-s', 'Kai Kramer', "${appBundle}"
+	commandLine 'codesign', '--options=runtime', '-s', 'Kai Kramer', "${appBundle}"
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
