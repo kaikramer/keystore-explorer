@@ -406,7 +406,7 @@ public class DAddExtensions extends JEscDialog {
 			public void actionPerformed(ActionEvent evt) {
 				try {
 					CursorUtil.setCursorBusy(DAddExtensions.this);
-					saveTemplatePressed();
+					saveTemplatePressed(extensions, DAddExtensions.this);
 				} finally {
 					CursorUtil.setCursorFree(DAddExtensions.this);
 				}
@@ -841,14 +841,21 @@ public class DAddExtensions extends JEscDialog {
 		}
 	}
 
-	private void saveTemplatePressed() {
+	/**
+	 * Prompt the user to save the given set of extensions into a template file, via a save dialog which will be the
+	 * child of the given JDialog.
+	 *
+	 * @param extensionsToSave The extensions to save into the template file.
+	 * @param parentComponent The parent JDialog of the newly created save dialog window.
+	 */
+	public static void saveTemplatePressed(X509ExtensionSet extensionsToSave, JDialog parentComponent) {
 		JFileChooser chooser = FileChooserFactory.getCetFileChooser();
 
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("DAddExtensions.SaveCet.Title"));
 		chooser.setMultiSelectionEnabled(false);
 
-		int rtnValue = chooser.showSaveDialog(this);
+		int rtnValue = chooser.showSaveDialog(parentComponent);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File saveFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(saveFile);
@@ -856,7 +863,7 @@ public class DAddExtensions extends JEscDialog {
 			if (saveFile.isFile()) {
 				String message = MessageFormat.format(res.getString("DAddExtensions.OverWriteFile.message"), saveFile);
 
-				int selected = JOptionPane.showConfirmDialog(this, message,
+				int selected = JOptionPane.showConfirmDialog(parentComponent, message,
 						res.getString("DAddExtensions.SaveCet.Title"), JOptionPane.YES_NO_OPTION);
 				if (selected != JOptionPane.YES_OPTION) {
 					return;
@@ -864,13 +871,13 @@ public class DAddExtensions extends JEscDialog {
 			}
 
 			try {
-				extensions.save(new FileOutputStream(saveFile));
+				extensionsToSave.save(new FileOutputStream(saveFile));
 			} catch (FileNotFoundException ex) {
-				JOptionPane.showMessageDialog(this,
+				JOptionPane.showMessageDialog(parentComponent,
 						MessageFormat.format(res.getString("DAddExtensions.NoWriteFile.message"), saveFile),
 						res.getString("DAddExtensions.SaveCet.Title"), JOptionPane.WARNING_MESSAGE);
 			} catch (IOException ex) {
-				DError.displayError(this, ex);
+				DError.displayError(parentComponent, ex);
 			}
 		}
 	}

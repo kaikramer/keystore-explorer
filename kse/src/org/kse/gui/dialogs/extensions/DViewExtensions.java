@@ -65,6 +65,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509Ext;
+import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JKseTable;
@@ -96,7 +97,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 	private JPanel jpExtensionValueTextArea;
 	private JScrollPane jspExtensionValue;
 	private JEditorPane jepExtensionValue;
-	private JPanel jpExtensionValueAsn1;
+	private JPanel jpExtensionActionPanel;
 	private JButton jbAsn1;
 	private JPanel jpOK;
 	private JButton jbOK;
@@ -231,10 +232,27 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 			}
 		});
 
-		jpExtensionValueAsn1 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		jpExtensionValueAsn1.add(jbAsn1);
+		JButton jbSaveTemplate = new JButton(res.getString("DAddExtensions.jbSaveTemplate.text"));
+		jbSaveTemplate.setMnemonic(res.getString("DAddExtensions.jbSaveTemplate.mnemonic").charAt(0));
+		jbSaveTemplate.setToolTipText(res.getString("DAddExtensions.jbSaveTemplate.tooltip"));
 
-		jpExtensionValue.add(jpExtensionValueAsn1, BorderLayout.SOUTH);
+		jbSaveTemplate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					CursorUtil.setCursorBusy(DViewExtensions.this);
+					DAddExtensions.saveTemplatePressed(new X509ExtensionSet(extensions), DViewExtensions.this);
+				} finally {
+					CursorUtil.setCursorFree(DViewExtensions.this);
+				}
+			}
+		});
+
+		jpExtensionActionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		jpExtensionActionPanel.add(jbSaveTemplate);
+		jpExtensionActionPanel.add(jbAsn1);
+
+		jpExtensionValue.add(jpExtensionActionPanel, BorderLayout.SOUTH);
 
 		jpExtensions = new JPanel(new GridLayout(2, 1, 5, 5));
 		jpExtensions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
