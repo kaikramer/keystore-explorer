@@ -68,7 +68,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 	private String[] columnNames;
-	private Class[] columnTypes;
+	private Class<?>[] columnTypes;
 	private Object[][] data;
 	private KeyStoreHistory history;
 
@@ -81,26 +81,28 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	/** Type column value for a key entry */
 	public static final String KEY_ENTRY = res.getString("KeyStoreTableModel.KeyEntry");
 
+	private static final int ICON_SIZE = 28;
+
 	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
 	private int nofColumns = 5;
 	private int iColWidth[];
-	private static final int ICON_SIZE = 28;
+
 	/** Column for a property */
-	private static int expiryWarnDays = 0;
-	private static int iNameColumn = -1;
-	private static int iAlgorithmColumn = -1;
-	private static int iKeySizeColumn = -1;
-	private static int iCurveColumn = -1;
-	private static int iCertExpiryColumn = -1;
-	private static int iLastModifiedColumn = -1;
-	private static int iAKIColumn = -1;
-	private static int iSKIColumn = -1;
-	private static int iIssuerDNColumn = -1;
-	private static int iSubjectDNColumn = -1;
-	private static int iIssuerCNColumn = -1;
-	private static int iSubjectCNColumn = -1;
-	private static int iIssuerOColumn = -1;
-	private static int iSubjectOColumn = -1;
+	private int expiryWarnDays = 0;
+	private int iNameColumn = -1;
+	private int iAlgorithmColumn = -1;
+	private int iKeySizeColumn = -1;
+	private int iCurveColumn = -1;
+	private int iCertExpiryColumn = -1;
+	private int iLastModifiedColumn = -1;
+	private int iAKIColumn = -1;
+	private int iSKIColumn = -1;
+	private int iIssuerDNColumn = -1;
+	private int iSubjectDNColumn = -1;
+	private int iIssuerCNColumn = -1;
+	private int iSubjectCNColumn = -1;
+	private int iIssuerOColumn = -1;
+	private int iSubjectOColumn = -1;
 
 	/**
 	 * Construct a new KeyStoreTableModel with a variable layout.
@@ -262,7 +264,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iSubjectCNColumn > 0) {
-				if (!entryType.equals(KEY_ENTRY)) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iSubjectCNColumn] = getCertificateSubjectCN(alias, keyStore);
 					if (iColWidth[iSubjectCNColumn] < data[i][iSubjectCNColumn].toString().length()) {
 						iColWidth[iSubjectCNColumn] = data[i][iSubjectCNColumn].toString().length();
@@ -272,7 +274,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iIssuerCNColumn > 0) {
-				if (!entryType.equals(KEY_ENTRY)) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iIssuerCNColumn] = getCertificateIssuerCN(alias, keyStore);
 					if (iColWidth[iIssuerCNColumn] < data[i][iIssuerCNColumn].toString().length()) {
 						iColWidth[iIssuerCNColumn] = data[i][iIssuerCNColumn].toString().length();
@@ -282,7 +284,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iSubjectOColumn > 0) {
-				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iSubjectOColumn] = getCertificateSubjectO(alias, keyStore);
 					if (iColWidth[iSubjectOColumn] < data[i][iSubjectOColumn].toString().length()) {
 						iColWidth[iSubjectOColumn] = data[i][iSubjectOColumn].toString().length();
@@ -292,7 +294,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iIssuerOColumn > 0) {
-				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iIssuerOColumn] = getCertificateIssuerO(alias, keyStore);
 					if (iColWidth[iIssuerOColumn] < data[i][iIssuerOColumn].toString().length()) {
 						iColWidth[iIssuerOColumn] = data[i][iIssuerOColumn].toString().length();
@@ -303,7 +305,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iAKIColumn > 0) {
-				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iAKIColumn] = getCertificateAKI(alias, keyStore);
 					if (iColWidth[iAKIColumn] < data[i][iAKIColumn].toString().length()) {
 						iColWidth[iAKIColumn] = data[i][iAKIColumn].toString().length();
@@ -314,7 +316,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				}
 			}
 			if (iSKIColumn > 0) {
-				if (entryType.equals(KEY_ENTRY)) { // assume a certificate
+				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iSKIColumn] = getCertificateSKI(alias, keyStore);
 					if (iColWidth[iSKIColumn] < data[i][iSKIColumn].toString().length()) {
 						iColWidth[iSKIColumn] = data[i][iSKIColumn].toString().length();
@@ -485,8 +487,9 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		nofColumns = 3 + keyStoreTableColumns.getNofColumns();
 		expiryWarnDays = keyStoreTableColumns.getExpiryWarnDays();
 		iColWidth = new int[nofColumns];
-		int col = 2;
-		iNameColumn = -1; // remove all columns before possibly enabling them
+
+		// remove all columns before possibly enabling them
+		iNameColumn = -1;
 		iAlgorithmColumn = -1;
 		iKeySizeColumn = -1;
 		iCurveColumn = -1;
@@ -500,6 +503,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		iSubjectCNColumn = -1;
 		iIssuerOColumn = -1;
 		iSubjectOColumn = -1;
+
 		columnNames = new String[nofColumns];
 		columnTypes = new Class[nofColumns];
 		columnNames[0] = res.getString("KeyStoreTableModel.TypeColumn");
@@ -511,7 +515,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
 		columnTypes[2] = Integer.class;
 		iColWidth[2] = ICON_SIZE;
-		for (col = 3; col < nofColumns; col++) {
+
+		for (int col = 3; col < nofColumns; col++) {
 			if (col == keyStoreTableColumns.colEntryName()) {
 				columnNames[col] = res.getString("KeyStoreTableModel.NameColumn");
 				columnTypes[col] = String.class;
@@ -589,6 +594,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 			}
 		}
 	}
+
 	/**
 	 * Get the number of columns in the table.
 	 *
