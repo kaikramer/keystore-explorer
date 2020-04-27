@@ -841,6 +841,13 @@ public class DAddExtensions extends JEscDialog {
 		}
 	}
 
+	/**
+	 * Prompt the user to save the given set of extensions into a template file, via a save dialog which will be the
+	 * child of the given JDialog.
+	 *
+	 * @param extensionsToSave The extensions to save into the template file.
+	 * @param parentComponent The parent JDialog of the newly created save dialog window.
+	 */
 	public static void saveTemplatePressed(X509ExtensionSet extensionsToSave, JDialog parentComponent) {
 		JFileChooser chooser = FileChooserFactory.getCetFileChooser();
 

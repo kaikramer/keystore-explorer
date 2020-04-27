@@ -85,14 +85,11 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	 * @param extensions Sequence with extensions.
 	 */
 	public X509ExtensionSet(X509Extension extensions) {
-
-		for (String oid : extensions.getCriticalExtensionOIDs())
-		{
+		for (String oid : extensions.getCriticalExtensionOIDs()) {
 			criticalExtensions.put(oid, extensions.getExtensionValue(oid));
 		}
 
-		for (String oid : extensions.getNonCriticalExtensionOIDs())
-		{
+		for (String oid : extensions.getNonCriticalExtensionOIDs()) {
 			nonCriticalExtensions.put(oid, extensions.getExtensionValue(oid));
 		}
 	}
