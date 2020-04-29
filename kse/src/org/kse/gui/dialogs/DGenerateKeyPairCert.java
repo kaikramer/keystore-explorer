@@ -322,7 +322,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			String serialNumberStr = jtfSerialNumber.getText().trim();
 			if (serialNumberStr.length() != 0) {
 				try {
-					caSerialNumber = new BigInteger(serialNumberStr);
+					caSerialNumber = parseDecOrHex(serialNumberStr);
 				} catch (NumberFormatException ex) {
 					// Don't set serial number
 				}
@@ -339,6 +339,29 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		}
 	}
 
+	/**
+	 * Parses a string initially as a decimal value, or as a hexadecimal value if that failed but the string is a
+	 * valid hex value. To avoid ambiguity, hex parsing can be forced by prefixing the input with '0x'.
+	 *
+	 * @param input The String to parse
+	 * @return a BigInteger representation of the input.
+	 */
+	private BigInteger parseDecOrHex(String input) {
+		try {
+			return new BigInteger(input);
+		} catch (NumberFormatException nfe) {
+			if (input.startsWith("0x")) {
+				return new BigInteger(input.substring(2), 16);
+			}
+			else if (input.matches("^\\p{XDigit}+$")) {
+				return new BigInteger(input, 16);
+			}
+			else {
+				throw nfe;
+			}
+		}
+	}
+
 	private boolean generateCertificate() {
 		Date validityStart = jdtValidityStart.getDateTime();
 		Date validityEnd = jdtValidityEnd.getDateTime();
@@ -351,7 +374,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		}
 		BigInteger serialNumber;
 		try {
-			serialNumber = new BigInteger(serialNumberStr);
+			serialNumber = parseDecOrHex(serialNumberStr);
 			if (serialNumber.compareTo(BigInteger.ONE) < 0) {
 				JOptionPane.showMessageDialog(this, res.getString("DGenerateKeyPairCert.SerialNumberNonZero.message"),
 						getTitle(), JOptionPane.WARNING_MESSAGE);
