@@ -30,7 +30,8 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
-	id "nebula.ospackage" version "5.0.1"
+	id 'nebula.ospackage' version '8.3.0'
+	id 'org.beryx.jlink' version '2.16.2'
 }
 
 defaultTasks 'zip'
@@ -71,6 +72,7 @@ ext {
 	readmesDir = "$resDir/readmes"
 	launch4jOutDir = "$buildDir/launch4j"
 	appBundleDir = "$buildDir/appBundle"
+	distDir = "$buildDir/$distsDirName"
 	dmgDir = "$projectDir/dmg"
 	dependenciesDir = Paths.get(buildDir.toString(), "dependencies") // for NSIS we need Windows path separators
 
@@ -205,7 +207,7 @@ task copyDependencies(type: Copy) {
 task nsis(dependsOn: [launch4j, copyDependencies]) {
 	doLast {
 		def nsisScript = "kse.nsi"
-		mkdir distsDir
+		mkdir distDir
 		copy {
 			from("nsis/${nsisScript}.template")
 			rename("${nsisScript}.template", nsisScript)
@@ -219,7 +221,7 @@ task nsis(dependsOn: [launch4j, copyDependencies]) {
 				JAR_DIR: libsDir.toString(),
 				LIB_DIR: dependenciesDir.toString(),
 				LAUNCH4J_DIR: launch4jOutDir.toString(),
-				DIST_DIR: distsDir.toString()
+				DIST_DIR: distDir.toString()
 			])
 			into("nsis")
 		}
@@ -276,8 +278,8 @@ task signapp(type: Exec, dependsOn: appbundler) {
 
 task dmg(type: Exec, dependsOn: signapp) {
 	workingDir appBundleDir
-	mkdir distsDir
-	commandLine 'sh', "${dmgDir}/create-dmg.sh", "${appBundleDir}/${appBundle}", "${distsDir}/${appSimpleName}-${appSimpleVersion}.dmg"
+	mkdir distDir
+	commandLine 'sh', "${dmgDir}/create-dmg.sh", "${appBundleDir}/${appBundle}", "${distDir}/${appSimpleName}-${appSimpleVersion}.dmg"
 }
 
 // common part for RPM and DEB
@@ -350,13 +352,14 @@ buildDeb {
 	requires("default-jre").or("java8-runtime")
 }
 
-task jlink(type: Exec) {
-	def javaHome = System.properties.'java.home'
-	workingDir "$buildDir"
+//task jlink(type: Exec) {
+//	def javaHome = System.properties.'java.home'
+//	workingDir "$buildDir"
+//
+//	commandLine "${javaHome}/bin/jlink",
+//		'--module-path', "${javaHome}/jmods",
+//		'--strip-debug', '--no-header-files', '--no-man-pages', '--include-locales=en,de,fr',
+//		'--add-modules', 'java.datatransfer,java.desktop,java.logging,java.naming,java.prefs,java.scripting,jdk.localedata,jdk.charsets,jdk.crypto.ec,jdk.security.auth,jdk.crypto.cryptoki,jdk.crypto.mscapi',
+//		'--output', 'jre'
+//}
 
-	commandLine "${javaHome}/bin/jlink",
-		'--module-path', "${javaHome}/jmods",
-		'--strip-debug', '--no-header-files', '--no-man-pages', '--include-locales=en,de,fr',
-		'--add-modules', 'java.datatransfer,java.desktop,java.logging,java.naming,java.prefs,java.scripting,jdk.localedata,jdk.charsets,jdk.crypto.ec,jdk.security.auth,jdk.crypto.cryptoki,jdk.crypto.mscapi',
-		'--output', 'jre'
-}
