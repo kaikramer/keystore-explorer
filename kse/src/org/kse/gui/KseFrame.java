@@ -114,6 +114,7 @@ import org.kse.gui.actions.CutKeyPairAction;
 import org.kse.gui.actions.CutTrustedCertificateAction;
 import org.kse.gui.actions.DeleteKeyAction;
 import org.kse.gui.actions.DeleteKeyPairAction;
+import org.kse.gui.actions.DeleteMultipleEntriesAction;
 import org.kse.gui.actions.DeleteTrustedCertificateAction;
 import org.kse.gui.actions.DetectFileTypeAction;
 import org.kse.gui.actions.ExamineClipboardAction;
@@ -488,6 +489,9 @@ public final class KseFrame implements StatusBar {
 	private final SetKeyPairPasswordAction setKeyPairPasswordAction = new SetKeyPairPasswordAction(this);
 	private final DeleteKeyPairAction deleteKeyPairAction = new DeleteKeyPairAction(this);
 	private final RenameKeyPairAction renameKeyPairAction = new RenameKeyPairAction(this);
+
+	private final DeleteMultipleEntriesAction deleteMultipleEntriesAction = new DeleteMultipleEntriesAction(this);
+
 	private final TrustedCertificateDetailsAction trustedCertificateDetailsAction = new TrustedCertificateDetailsAction(
 			this);
 	private final TrustedCertificatePublicKeyDetailsAction trustedCertificatePublicKeyDetailsAction = new TrustedCertificatePublicKeyDetailsAction(
@@ -1635,12 +1639,18 @@ public final class KseFrame implements StatusBar {
 		int nrEntriesBeforeDeletion = getNumberOfEntries();
 
 		try {
-			if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-				deleteKeyPairAction.deleteSelectedEntry();
-			} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-				deleteTrustedCertificateAction.deleteSelectedEntry();
+			String[] aliases = getSelectedEntryAliases();
+			if (aliases.length == 1) {
+				// if only one entry is selected, use the specific action as it displays a nice warning dialog
+				if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+					deleteKeyPairAction.deleteSelectedEntry();
+				} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+					deleteTrustedCertificateAction.deleteSelectedEntry();
+				} else {
+					deleteKeyAction.deleteSelectedEntry();
+				}
 			} else {
-				deleteKeyAction.deleteSelectedEntry();
+				deleteMultipleEntriesAction.deleteSelectedEntries();
 			}
 
 			// if one entry was deleted, select next entry
