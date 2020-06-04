@@ -19,12 +19,14 @@
  */
 package org.kse.utilities.buffer;
 
+import java.util.List;
+
 /**
  * Singleton buffer for copy/paste. Holds at most one KeyStore entry.
  *
  */
 public class Buffer {
-	private static BufferEntry bufferEntry;
+	private static List<BufferEntry> bufferEntries;
 
 	private Buffer() {
 	}
@@ -32,11 +34,11 @@ public class Buffer {
 	/**
 	 * Populate buffer with supplied entry.
 	 *
-	 * @param bufferEntry
+	 * @param bufferEntries
 	 *            Buffer entry
 	 */
-	public static void populate(BufferEntry bufferEntry) {
-		Buffer.bufferEntry = bufferEntry;
+	public static void populate(List<BufferEntry> bufferEntries) {
+		Buffer.bufferEntries = bufferEntries;
 	}
 
 	/**
@@ -44,8 +46,8 @@ public class Buffer {
 	 *
 	 * @return Buffer entry or null if empty
 	 */
-	public static BufferEntry interrogate() {
-		return bufferEntry;
+	public static List<BufferEntry> interrogate() {
+		return bufferEntries;
 	}
 
 	/**
@@ -70,10 +72,12 @@ public class Buffer {
 	 * Clear buffer.
 	 */
 	public static void clear() {
-		if (bufferEntry != null) {
-			bufferEntry.clear();
+		if (bufferEntries != null) {
+			for (BufferEntry bufferEntry : bufferEntries) {
+				bufferEntry.clear();
+			}
 		}
 
-		bufferEntry = null;
+		bufferEntries = null;
 	}
 }

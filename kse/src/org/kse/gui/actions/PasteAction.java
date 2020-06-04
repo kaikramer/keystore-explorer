@@ -26,6 +26,7 @@ import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -82,18 +83,18 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 	 */
 	@Override
 	protected void doAction() {
-		BufferEntry bufferEntry = Buffer.interrogate();
+		List<BufferEntry> bufferEntries = Buffer.interrogate();
 
-		if (bufferEntry != null) {
-			boolean success = pasteEntry(bufferEntry);
+		if (bufferEntries != null) {
+			boolean changed = pasteEntries(bufferEntries);
 
-			if (success) {
+			if (changed) {
 				kseFrame.updateControls(true);
 			}
 		}
 	}
 
-	private boolean pasteEntry(BufferEntry bufferEntry) {
+	private boolean pasteEntries(List<BufferEntry> bufferEntries) {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
@@ -101,78 +102,84 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
 			KeyStoreState newState = currentState.createBasisForNextState(this);
 
 			KeyStore keyStore = newState.getKeyStore();
-
-			String alias = bufferEntry.getName();
-
-			if (keyStore.containsAlias(alias)) {
-				if (bufferEntry.isCut()) {
-					int selected = JOptionPane.showConfirmDialog(frame,
-							MessageFormat.format(res.getString("PasteAction.PasteExistsReplace.message"), alias),
-							res.getString("PasteAction.Paste.Title"), JOptionPane.YES_NO_OPTION);
-
-					if (selected != JOptionPane.YES_OPTION) {
-						return false;
-					}
-
-					keyStore.deleteEntry(alias);
-					newState.removeEntryPassword(alias);
-				} else {
-					alias = getUniqueEntryName(alias, keyStore);
-				}
-			}
-
-			if (bufferEntry instanceof KeyBufferEntry) {
-				KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
-
-				if (!keyStoreType.supportsKeyEntries()) {
-					JOptionPane.showMessageDialog(
-							frame,
-							MessageFormat.format(res.getString("PasteAction.NoPasteKeyEntry.message"),
-									keyStoreType.friendly()), res.getString("PasteAction.Paste.Title"),
-							JOptionPane.WARNING_MESSAGE);
-
-					return false;
-				}
-
-				KeyBufferEntry keyBufferEntry = (KeyBufferEntry) bufferEntry;
-
-				Key key = keyBufferEntry.getKey();
-
-				Password password = keyBufferEntry.getPassword();
-
-				keyStore.setKeyEntry(alias, key, password.toCharArray(), null);
-
-				newState.setEntryPassword(alias, password);
-			} else if (bufferEntry instanceof KeyPairBufferEntry) {
-				KeyPairBufferEntry keyPairBufferEntry = (KeyPairBufferEntry) bufferEntry;
-
-				PrivateKey privateKey = keyPairBufferEntry.getPrivateKey();
-				Password password = keyPairBufferEntry.getPassword();
-
-				Certificate[] certificateChain = keyPairBufferEntry.getCertificateChain();
-
-				keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
-
-				newState.setEntryPassword(alias, password);
-			} else {
-				TrustedCertificateBufferEntry certBufferEntry = (TrustedCertificateBufferEntry) bufferEntry;
-
-				keyStore.setCertificateEntry(alias, certBufferEntry.getTrustedCertificate());
-			}
-
-			if (bufferEntry.isCut()) {
-				Buffer.clear();
+			boolean changed = false;
+			for (BufferEntry bufferEntry : bufferEntries) {
+				changed |= pasteEntry(bufferEntry, keyStore, newState);
 			}
 
 			currentState.append(newState);
 
-			kseFrame.updateControls(true);
-
-			return true;
+			return changed;
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 			return false;
 		}
+	}
+
+	private boolean pasteEntry(BufferEntry bufferEntry, KeyStore keyStore, KeyStoreState newState) throws KeyStoreException {
+		String alias = bufferEntry.getName();
+
+		if (keyStore.containsAlias(alias)) {
+			if (bufferEntry.isCut()) {
+				int selected = JOptionPane.showConfirmDialog(frame,
+						MessageFormat.format(res.getString("PasteAction.PasteExistsReplace.message"), alias),
+						res.getString("PasteAction.Paste.Title"), JOptionPane.YES_NO_OPTION);
+
+				if (selected != JOptionPane.YES_OPTION) {
+					return false;
+				}
+
+				keyStore.deleteEntry(alias);
+				newState.removeEntryPassword(alias);
+			} else {
+				alias = getUniqueEntryName(alias, keyStore);
+			}
+		}
+
+		if (bufferEntry instanceof KeyBufferEntry) {
+			KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
+
+			if (!keyStoreType.supportsKeyEntries()) {
+				JOptionPane.showMessageDialog(
+						frame,
+						MessageFormat.format(res.getString("PasteAction.NoPasteKeyEntry.message"),
+								keyStoreType.friendly()), res.getString("PasteAction.Paste.Title"),
+						JOptionPane.WARNING_MESSAGE);
+
+				return false;
+			}
+
+			KeyBufferEntry keyBufferEntry = (KeyBufferEntry) bufferEntry;
+
+			Key key = keyBufferEntry.getKey();
+
+			Password password = keyBufferEntry.getPassword();
+
+			keyStore.setKeyEntry(alias, key, password.toCharArray(), null);
+
+			newState.setEntryPassword(alias, password);
+		} else if (bufferEntry instanceof KeyPairBufferEntry) {
+			KeyPairBufferEntry keyPairBufferEntry = (KeyPairBufferEntry) bufferEntry;
+
+			PrivateKey privateKey = keyPairBufferEntry.getPrivateKey();
+			Password password = keyPairBufferEntry.getPassword();
+
+			Certificate[] certificateChain = keyPairBufferEntry.getCertificateChain();
+
+			keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
+
+			newState.setEntryPassword(alias, password);
+		} else {
+			TrustedCertificateBufferEntry certBufferEntry = (TrustedCertificateBufferEntry) bufferEntry;
+
+			keyStore.setCertificateEntry(alias, certBufferEntry.getTrustedCertificate());
+		}
+
+		if (bufferEntry.isCut()) {
+			Buffer.clear();
+		}
+
+		return true;
 	}
 
 	private String getUniqueEntryName(String name, KeyStore keyStore) throws KeyStoreException {

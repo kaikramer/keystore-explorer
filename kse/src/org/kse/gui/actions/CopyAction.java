@@ -24,6 +24,8 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -73,65 +75,73 @@ public class CopyAction extends KeyStoreExplorerAction {
 	 */
 	@Override
 	protected void doAction() {
-		BufferEntry bufferEntry = bufferSelectedEntry();
+		List<BufferEntry> bufferEntries = bufferSelectedEntries();
 
-		if (bufferEntry != null) {
-			Buffer.populate(bufferEntry);
+		if (bufferEntries != null) {
+			Buffer.populate(bufferEntries);
 			kseFrame.updateControls(false);
 		}
 	}
 
-	private BufferEntry bufferSelectedEntry() {
+	private List<BufferEntry> bufferSelectedEntries() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+			String[] aliases = kseFrame.getSelectedEntryAliases();
 
-			if (alias == null) {
+			if (aliases.length == 0) {
 				return null;
 			}
 
-			BufferEntry bufferEntry = null;
+			List<BufferEntry> bufferEntries = new ArrayList<>();
+			for (String alias : aliases) {
 
-			KeyStore keyStore = currentState.getKeyStore();
+				BufferEntry bufferEntry = null;
 
-			if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
-				Password password = getEntryPassword(alias, currentState);
+				KeyStore keyStore = currentState.getKeyStore();
 
-				if (password == null) {
-					return null;
+				if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
+					Password password = getEntryPassword(alias, currentState);
+
+					if (password == null) {
+						continue;
+					}
+
+					Key key = keyStore.getKey(alias, password.toCharArray());
+
+					if (key instanceof PrivateKey) {
+						JOptionPane.showMessageDialog(frame,
+								res.getString("CopyAction.NoCopyKeyEntryWithPrivateKey.message"),
+								res.getString("CopyAction.Copy.Title"), JOptionPane.WARNING_MESSAGE);
+
+						continue;
+					}
+
+					bufferEntry = new KeyBufferEntry(alias, false, key, password);
+				} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+					Certificate certificate = keyStore.getCertificate(alias);
+
+					bufferEntry = new TrustedCertificateBufferEntry(alias, false, certificate);
+				} else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+					Password password = getEntryPassword(alias, currentState);
+
+					if (password == null) {
+						continue;
+					}
+
+					PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+					Certificate[] certificateChain = keyStore.getCertificateChain(alias);
+
+					bufferEntry = new KeyPairBufferEntry(alias, false, privateKey, password, certificateChain);
 				}
 
-				Key key = keyStore.getKey(alias, password.toCharArray());
-
-				if (key instanceof PrivateKey) {
-					JOptionPane.showMessageDialog(frame,
-							res.getString("CopyAction.NoCopyKeyEntryWithPrivateKey.message"),
-							res.getString("CopyAction.Copy.Title"), JOptionPane.WARNING_MESSAGE);
-
-					return null;
+				if (bufferEntry != null) {
+					bufferEntries.add(bufferEntry);
 				}
-
-				bufferEntry = new KeyBufferEntry(alias, false, key, password);
-			} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-				Certificate certificate = keyStore.getCertificate(alias);
-
-				bufferEntry = new TrustedCertificateBufferEntry(alias, false, certificate);
-			} else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-				Password password = getEntryPassword(alias, currentState);
-
-				if (password == null) {
-					return null;
-				}
-
-				PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-				Certificate[] certificateChain = keyStore.getCertificateChain(alias);
-
-				bufferEntry = new KeyPairBufferEntry(alias, false, privateKey, password, certificateChain);
 			}
 
-			return bufferEntry;
+			return bufferEntries;
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 			return null;
