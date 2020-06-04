@@ -53,6 +53,7 @@ import java.security.Provider;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -1525,7 +1526,7 @@ public final class KseFrame implements StatusBar {
 		jtKeyStore.setRowSorter(sorter);
 
 		jtKeyStore.setShowGrid(false);
-		jtKeyStore.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		jtKeyStore.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		jtKeyStore.getTableHeader().setReorderingAllowed(false);
 		jtKeyStore.setAutoResizeMode(autoResizeMode);
 		jtKeyStore.setRowHeight(Math.max(18, jtKeyStore.getRowHeight())); // min. height of 18 because of 16x16 icons
@@ -2511,27 +2512,63 @@ public final class KseFrame implements StatusBar {
 		return (String) jtKeyStore.getValueAt(row, 3);
 	}
 
+	/**
+	 * Get the aliases of all entries currently selected in the KeyStore
+	 *
+	 * @return Selected aliases (may be an empty array, but never null)
+	 */
+	public String[] getSelectedEntryAliases() {
+		JTable jtKeyStore = getActiveKeyStoreTable();
+		int[] rows = jtKeyStore.getSelectedRows();
+
+		String[] retval = new String[rows.length];
+
+		for (int i = 0; i < rows.length; i++) {
+			retval[i] = (String) jtKeyStore.getValueAt(rows[i], 3);
+		}
+
+		return retval;
+	}
+
 	private String getNextEntrysAlias() {
 		JTable jtKeyStore = getActiveKeyStoreTable();
-		int row = jtKeyStore.getSelectedRow();
+		int[] rows = jtKeyStore.getSelectedRows();
 
 		// no row selected
-		if (row == -1) {
+		if (rows.length == 0) {
 			return null;
 		}
 
-
 		int rowCount = jtKeyStore.getModel().getRowCount();
-		if (rowCount < 2) {
-			// only one row
+		if ( rows.length == rowCount) {
+			// all rows are selected
 			return null;
 		} else {
-			if (row < (rowCount - 1)) {
-				// selected row is not the last one, return alias of next row
-				return (String) jtKeyStore.getValueAt(row + 1, 3);
+			int idx;
+			int max = Arrays.stream(rows).max().getAsInt();
+			if (max < (rowCount - 1)) {
+				// last selected row is not the last one, return alias of next row
+				idx = max + 1;
 			} else {
-				// selected row is the last one, return alias of previous row
-				return (String) jtKeyStore.getValueAt(row - 1, 3);
+				// last selected row is the last one, return alias of previous row
+				int min = Arrays.stream(rows).min().getAsInt();
+				if (min >= 1) {
+					idx = min - 1;
+				} else {
+					idx = -1;
+					Arrays.sort(rows);
+					for (int i = rows.length - 1; i >= 1; i--) {
+						if (rows[i] - rows[i - 1] > 1) { // found a gap
+							idx = rows[i] - 1;
+							break;
+						}
+					}
+				}
+			}
+			if (idx >= 0) {
+				return (String) jtKeyStore.getValueAt(idx, 3);
+			} else {
+				return null;
 			}
 		}
 	}
