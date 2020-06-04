@@ -81,11 +81,15 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
 	 */
 	@Override
 	protected void doAction() {
+		String nextAlias = kseFrame.getNextEntrysAlias();
 		List<BufferEntry> bufferEntries = bufferSelectedEntries();
 
 		if (bufferEntries != null && !bufferEntries.isEmpty()) {
 			Buffer.populate(bufferEntries);
 			kseFrame.updateControls(true);
+			if (nextAlias != null) {
+				kseFrame.setSelectedEntryByAlias(nextAlias);
+			}
 		}
 	}
 

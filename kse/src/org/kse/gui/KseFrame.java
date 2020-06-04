@@ -2530,7 +2530,7 @@ public final class KseFrame implements StatusBar {
 		return retval;
 	}
 
-	private String getNextEntrysAlias() {
+	public String getNextEntrysAlias() {
 		JTable jtKeyStore = getActiveKeyStoreTable();
 		int[] rows = jtKeyStore.getSelectedRows();
 
@@ -2578,7 +2578,7 @@ public final class KseFrame implements StatusBar {
 		return jtKeyStore.getModel().getRowCount();
 	}
 
-	private void setSelectedEntryByAlias(String alias) {
+	public void setSelectedEntryByAlias(String alias) {
 		JTable jtKeyStore = getActiveKeyStoreTable();
 		jtKeyStore.requestFocusInWindow();
 
