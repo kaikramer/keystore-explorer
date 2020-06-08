@@ -24,6 +24,8 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -79,74 +81,83 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
 	 */
 	@Override
 	protected void doAction() {
-		BufferEntry bufferEntry = bufferSelectedEntry();
+		String nextAlias = kseFrame.getNextEntrysAlias();
+		List<BufferEntry> bufferEntries = bufferSelectedEntries();
 
-		if (bufferEntry != null) {
-			Buffer.populate(bufferEntry);
+		if (bufferEntries != null && !bufferEntries.isEmpty()) {
+			Buffer.populate(bufferEntries);
 			kseFrame.updateControls(true);
+			if (nextAlias != null) {
+				kseFrame.setSelectedEntriesByAliases(nextAlias);
+			}
 		}
 	}
 
-	private BufferEntry bufferSelectedEntry() {
+	private List<BufferEntry> bufferSelectedEntries() {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+			String[] aliases = kseFrame.getSelectedEntryAliases();
 
-			if (alias == null) {
+			if (aliases.length == 0) {
 				return null;
 			}
 
-			BufferEntry bufferEntry = null;
 
 			KeyStore keyStore = currentState.getKeyStore();
+			KeyStoreState newState = currentState.createBasisForNextState(this);
+			KeyStore newKeyStore = newState.getKeyStore();
+			List<BufferEntry> bufferEntries = new ArrayList<>();
+			for (String alias : aliases) {
+				BufferEntry bufferEntry = null;
+				if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
+					Password password = getEntryPassword(alias, currentState);
 
-			if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
-				Password password = getEntryPassword(alias, currentState);
+					if (password == null) {
+						continue;
+					}
 
-				if (password == null) {
-					return null;
+					Key key = keyStore.getKey(alias, password.toCharArray());
+
+					if (key instanceof PrivateKey) {
+						JOptionPane.showMessageDialog(frame,
+								res.getString("CutAction.NoCutKeyEntryWithPrivateKey.message"),
+								res.getString("CutAction.Cut.Title"), JOptionPane.WARNING_MESSAGE);
+
+						continue;
+					}
+
+					bufferEntry = new KeyBufferEntry(alias, true, key, password);
+				} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+					Certificate certificate = keyStore.getCertificate(alias);
+
+					bufferEntry = new TrustedCertificateBufferEntry(alias, true, certificate);
+				} else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+					Password password = getEntryPassword(alias, currentState);
+
+					if (password == null) {
+						continue;
+					}
+
+					PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+					Certificate[] certificateChain = keyStore.getCertificateChain(alias);
+
+					bufferEntry = new KeyPairBufferEntry(alias, true, privateKey, password, certificateChain);
 				}
-
-				Key key = keyStore.getKey(alias, password.toCharArray());
-
-				if (key instanceof PrivateKey) {
-					JOptionPane.showMessageDialog(frame,
-							res.getString("CutAction.NoCutKeyEntryWithPrivateKey.message"),
-							res.getString("CutAction.Cut.Title"), JOptionPane.WARNING_MESSAGE);
-
-					return null;
+				if (bufferEntry != null) {
+					bufferEntries.add(bufferEntry);
+					newKeyStore.deleteEntry(alias);
+					newState.removeEntryPassword(alias);
 				}
-
-				bufferEntry = new KeyBufferEntry(alias, true, key, password);
-			} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-				Certificate certificate = keyStore.getCertificate(alias);
-
-				bufferEntry = new TrustedCertificateBufferEntry(alias, true, certificate);
-			} else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-				Password password = getEntryPassword(alias, currentState);
-
-				if (password == null) {
-					return null;
-				}
-
-				PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-				Certificate[] certificateChain = keyStore.getCertificateChain(alias);
-
-				bufferEntry = new KeyPairBufferEntry(alias, true, privateKey, password, certificateChain);
 			}
 
-			KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			keyStore = newState.getKeyStore();
 
-			keyStore.deleteEntry(alias);
-			newState.removeEntryPassword(alias);
 
 			currentState.append(newState);
 
-			return bufferEntry;
+			return bufferEntries;
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 			return null;
