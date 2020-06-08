@@ -52,9 +52,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -1655,7 +1653,7 @@ public final class KseFrame implements StatusBar {
 
 			// if one entry was deleted, select next entry
 			if ((getNumberOfEntries() < nrEntriesBeforeDeletion) && (nextAlias != null)) {
-				setSelectedEntryByAlias(nextAlias);
+				setSelectedEntriesByAliases(nextAlias);
 			}
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
@@ -2588,14 +2586,16 @@ public final class KseFrame implements StatusBar {
 		return jtKeyStore.getModel().getRowCount();
 	}
 
-	public void setSelectedEntryByAlias(String alias) {
+	public void setSelectedEntriesByAliases(String... aliases) {
 		JTable jtKeyStore = getActiveKeyStoreTable();
 		jtKeyStore.requestFocusInWindow();
 
+		ListSelectionModel selectionModel = jtKeyStore.getSelectionModel();
+		selectionModel.clearSelection();
+		Set<String> aliasesToSelect = new HashSet<>(Arrays.asList(aliases));
 		for (int i = 0; i < jtKeyStore.getRowCount(); i++) {
-			if (alias.equals(jtKeyStore.getValueAt(i, 3))) {
-				jtKeyStore.setRowSelectionInterval(i, i);
-				break;
+			if (aliasesToSelect.contains(jtKeyStore.getValueAt(i, 3))) {
+				selectionModel.addSelectionInterval(i, i);
 			}
 		}
 	}
@@ -2620,13 +2620,13 @@ public final class KseFrame implements StatusBar {
 		// Reload KeyStore in table if it has changed
 		if (keyStoreContentsChanged) {
 			try {
-				String selectedAlias = getSelectedEntryAlias();
+				String[] selectedAliases = getSelectedEntryAliases();
 
 				((KeyStoreTableModel) getActiveKeyStoreTable().getModel()).load(history);
 
 				// Loading the model loses the selected entry - preserve it
-				if (selectedAlias != null) {
-					setSelectedEntryByAlias(selectedAlias);
+				if (selectedAliases.length > 0) {
+					setSelectedEntriesByAliases(selectedAliases);
 				}
 			} catch (GeneralSecurityException | CryptoException ex) {
 				DError.displayError(frame, ex);

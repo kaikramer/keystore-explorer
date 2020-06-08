@@ -88,7 +88,7 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
 			Buffer.populate(bufferEntries);
 			kseFrame.updateControls(true);
 			if (nextAlias != null) {
-				kseFrame.setSelectedEntryByAlias(nextAlias);
+				kseFrame.setSelectedEntriesByAliases(nextAlias);
 			}
 		}
 	}
