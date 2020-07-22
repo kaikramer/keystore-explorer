@@ -861,7 +861,7 @@ public class X509Ext {
 
 	private String getHoldInstructionCodeStringValue(byte[] value) throws IOException {
 		// @formatter:off
-		/* HoldInstructionCode ::= OBJECT IDENTIFER */
+		/* HoldInstructionCode ::= OBJECT IDENTIFIER */
 		// @formatter:on
 
 		StringBuilder sb = new StringBuilder();
