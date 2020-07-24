@@ -30,8 +30,8 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x500.DirectoryString;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -170,8 +170,8 @@ public class GeneralNameUtil {
 		ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) otherName.getObjectAt(0);
 
 		if (UPN_OID.equals(oid.getId())) {
-			DERTaggedObject derTaggedObject = (DERTaggedObject) otherName.getObjectAt(1);
-			DERUTF8String upn = DERUTF8String.getInstance(derTaggedObject.getObject());
+			ASN1TaggedObject asn1TaggedObject = (ASN1TaggedObject) otherName.getObjectAt(1);
+			DERUTF8String upn = DERUTF8String.getInstance(asn1TaggedObject.getObject());
 			return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"), "UPN", upn.getString());
 		}
 

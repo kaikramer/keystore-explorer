@@ -11,7 +11,7 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DLTaggedObject;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kse.crypto.CryptoTestsBase;
@@ -88,11 +88,11 @@ public class EccUtilTest extends CryptoTestsBase {
 
 		// check for existence of (optional) EC parameters
 		ASN1Encodable tagged0 = sequence.getObjectAt(2);
-		DLTaggedObject derTaggedObject = (DLTaggedObject) tagged0;
-		assertThat(derTaggedObject.getTagNo()).isEqualTo(0);
+		ASN1TaggedObject asn1TaggedObject = (ASN1TaggedObject) tagged0;
+		assertThat(asn1TaggedObject.getTagNo()).isEqualTo(0);
 
 		// check that EC parameters contain the right curve name
-		ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) derTaggedObject.getObject();
+		ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) asn1TaggedObject.getObject();
 		String resolvedCurveName = ObjectIdUtil.toString(oid);
 		assertThat(resolvedCurveName).containsIgnoringCase(curveName);
 	}
