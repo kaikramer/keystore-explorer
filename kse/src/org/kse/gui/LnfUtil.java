@@ -97,14 +97,8 @@ public class LnfUtil {
 	public static String useLnfForPlatform() {
 		String lnfClassName = null;
 
-		if (OperatingSystem.isWindows()) {
+		if (OperatingSystem.isMacOs() || OperatingSystem.isWindows()) {
 			lnfClassName = UIManager.getSystemLookAndFeelClassName();
-		} else if (OperatingSystem.isMacOs())  {
-			if (isVAquaAvailable()){
-				lnfClassName = VAQUA_LAF_CLASS;
-			} else {
-				lnfClassName = UIManager.getSystemLookAndFeelClassName();
-			}
 		} else {
 			String xdgCurrentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
 			if ("Unity".equalsIgnoreCase(xdgCurrentDesktop)
