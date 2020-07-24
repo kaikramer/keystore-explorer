@@ -51,6 +51,6 @@ public class URLs {
 			"http://tsa.starfieldtech.com",
 			"http://time.certum.pl",
 			"http://sha256timestamp.ws.symantec.com/sha256/timestamp",
-			"http://timestamp.comodoca.com/?td=sha256"
+			"http://timestamp.sectigo.com/?td=sha384"
 	};
 }

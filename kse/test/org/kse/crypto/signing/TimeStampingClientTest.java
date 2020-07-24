@@ -16,7 +16,7 @@ class TimeStampingClientTest {
 	@MethodSource("tsaUrls")
 	public void testTsaUrls(String tsaUrl) throws IOException {
 		Assertions.assertThatCode(
-				() -> TimeStampingClient.getTimeStampToken(tsaUrl, DATA, DigestType.SHA1))
+				() -> TimeStampingClient.getTimeStampToken(tsaUrl, DATA, DigestType.SHA256))
 				.doesNotThrowAnyException();
 	}
 

@@ -774,7 +774,7 @@ public class JarSigner {
 		byte[] signature = si.getSignature();
 
 		// send request to TSA
-		byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, DigestType.SHA1);
+		byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, DigestType.SHA256);
 
 		// create new SignerInformation with TS attribute
 		Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,
