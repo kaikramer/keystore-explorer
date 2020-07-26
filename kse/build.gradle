@@ -31,7 +31,7 @@ plugins {
 	id 'eclipse'
 	id 'idea'
 	id 'nebula.ospackage' version '8.3.0'
-	id 'org.beryx.jlink' version '2.16.2'
+	id 'org.beryx.runtime' version '1.8.4'
 }
 
 defaultTasks 'zip'
@@ -88,28 +88,28 @@ ext {
 	website = "https://keystore-explorer.org"
 
 	// Main class (for manifest entry)
-	mainClass = "org.kse.KSE"
+	mainClassName = "org.kse.KSE"
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.64'
-	compile group: 'net.java.dev.jna', name: 'jna', version: '5.3.1'
-	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.66'
+	compile group: 'net.java.dev.jna', name: 'jna', version: '5.6.0'
+	compile group: 'commons-io', name: 'commons-io', version: '2.7'
 	compile group: 'com.miglayout', name: 'miglayout-swing', version: '5.2'
-	compile group: 'com.formdev', name: 'flatlaf', version: '0.21'
+	compile group: 'com.formdev', name: 'flatlaf', version: '0.38'
 
 	// VAqua Look & Feel not in a public repository yet
 	if (file("lib/VAqua7.jar").exists()) {
 		compile files('lib/VAqua7.jar')
 	}
 
-	testCompile("org.assertj:assertj-core:3.11.1")
-	testCompile("org.junit.jupiter:junit-jupiter-api:5.5.1")
-	testCompile("org.junit.jupiter:junit-jupiter-params:5.5.1")
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.5.1")
+	testCompile("org.assertj:assertj-core:3.16.1")
+	testCompile("org.junit.jupiter:junit-jupiter-api:5.6.2")
+	testCompile("org.junit.jupiter:junit-jupiter-params:5.6.2")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.6.2")
 
 	// To avoid compiler warnings about @API annotations in JUnit code:
 	testCompileOnly('org.apiguardian:apiguardian-api:1.1.0')
@@ -126,7 +126,7 @@ jar {
 					'Specification-Title': project.appName,
 					'Specification-Version': project.version,
 					'Specification-Vendor': project.vendor,
-					'Main-Class': project.mainClass,
+					'Main-Class': project.mainClassName,
 					'Class-Path': configurations.compile.collect { 'lib/' + it.getName() }.join(' '),
 					'Built-Date': new Date().format("yyyy-MM-dd HH:mm:ss"),
 					'SplashScreen-Image': 'org/kse/gui/images/splash.png',
@@ -248,7 +248,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 					shortversion: appVersion,  // The release version number is a string composed of three period-separated integers.
 					version: appVersion, // The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zero�for example, 3.1.2.
 					icon: kseIcns,
-					mainclassname: mainClass,
+					mainclassname: mainClassName,
 					copyright: copyright,
 					applicationCategory: "public.app-category.developer-tools"
 					) {
@@ -363,3 +363,43 @@ buildDeb {
 //		'--output', 'jre'
 //}
 
+//jlink {
+//	moduleName = 'org.kse'
+//    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages', '--include-locales=en,de,fr',]
+//    launcher {
+//        name = 'kse'
+//        
+//    }
+//	customImage {
+//        jdkModules = ['java.datatransfer', 'java.desktop,java.logging', 'java.naming,java.prefs', 'java.scripting', 'jdk.localedata', 'jdk.charsets', 'jdk.crypto.ec', 'jdk.security.auth', 'jdk.crypto.cryptoki', 'jdk.crypto.mscapi']
+//    }
+//    jpackage {
+//        //jpackageHome = '/usr/lib/jvm/jdk14'
+//        outputDir = 'jre'
+//        // imageOutputDir = file("$buildDir/my-packaging-image")
+//        // installerOutputDir = file("$buildDir/my-packaging-installer")
+//        imageName = 'KeyStore-Explorer'
+//        skipInstaller = false
+//        installerName = 'kse'
+//        installerType = 'msi'
+//        installerOptions = ['--win-menu', '--win-shortcut', '--win-per-user-install']
+//    }
+//}
+
+runtime {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    modules = ['java.datatransfer', 'java.desktop,java.logging', 'java.naming,java.prefs', 'java.scripting', 'jdk.localedata', 'jdk.charsets', 'jdk.crypto.ec', 'jdk.security.auth', 'jdk.crypto.cryptoki', 'jdk.crypto.mscapi']
+    jpackage {
+        jpackageHome = 'c:/Development/Java-Development/jdk-14.0.1+7'
+//        outputDir = 'jre'
+//        // imageOutputDir = file("$buildDir/my-packaging-image")
+//        // installerOutputDir = file("$buildDir/my-packaging-installer")
+        imageName = 'KeyStore-Explorer'
+        skipInstaller = false
+       	installerName = 'kse'
+//        if (org.gradle.internal.os.OperatingSystem.current().windows) {
+            installerType = 'exe'
+            installerOptions = ['--win-per-user-install', '--win-menu', '--win-shortcut']
+//        }
+    }
+}
