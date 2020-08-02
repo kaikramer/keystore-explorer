@@ -25,6 +25,8 @@ import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import javax.security.auth.x500.X500Principal;
+
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -93,15 +95,25 @@ public class GeneralNameUtil {
 
 	// @formatter:on
 
+
+	/**
+	 * Extract GeneralName from X500Principal object
+	 *
+	 * @param x500Principal X500Principal object
+	 * @return GeneralName object
+	 */
+	public static GeneralName fromX500Principal(X500Principal x500Principal) {
+		X500Name x500Name = X500NameUtils.x500PrincipalToX500Name(x500Principal);
+		return new GeneralName(x500Name);
+	}
+
 	/**
 	 * Get string representation for General names that cannot cause a
 	 * IOException to be thrown. Unsupported are ediPartyName, otherName and
 	 * x400Address. Returns a blank string for these.
 	 *
-	 * @param generalName
-	 *            General name
-	 * @param addLinkForURI
-	 *            If true, convert URI to a clickable link
+	 * @param generalName General name
+	 * @param addLinkForURI If true, convert URI to a clickable link
 	 * @return String representation of general name
 	 */
 	public static String safeToString(GeneralName generalName, boolean addLinkForURI) {
@@ -191,11 +203,9 @@ public class GeneralNameUtil {
 	/**
 	 * Get string representation for all General Names.
 	 *
-	 * @param generalName
-	 *            General name
+	 * @param generalName General name
 	 * @return String representation of general name
-	 * @throws IOException
-	 *             If general name is invalid
+	 * @throws IOException If general name is invalid
 	 */
 	public static String toString(GeneralName generalName) throws IOException {
 

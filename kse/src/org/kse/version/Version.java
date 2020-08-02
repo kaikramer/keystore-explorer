@@ -60,7 +60,7 @@ public class Version implements Comparable<Object>, Serializable {
 	 * @throws VersionException
 	 *             If the version string cannot be parsed.
 	 */
-	public Version(String version, String delimiters) throws VersionException {
+	public Version(String version, String delimiters) {
 
 		StringTokenizer strTok = new StringTokenizer(version.trim(), delimiters);
 		List<Integer> versionSections = new ArrayList<>();

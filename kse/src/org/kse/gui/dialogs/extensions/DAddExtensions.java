@@ -77,6 +77,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetLoadException;
+import org.kse.crypto.x509.X509ExtensionSetUpdater;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -118,9 +119,9 @@ public class DAddExtensions extends JEscDialog {
 	private JButton jbCancel;
 
 	private X509ExtensionSet extensions = new X509ExtensionSet();
-	private PublicKey authorityPublicKey;
-	private X500Name authorityCertName;
-	private BigInteger authorityCertSerialNumber;
+	private PublicKey issuerPublicKey;
+	private X500Name issuerCertName;
+	private BigInteger issuerCertSerialNumber;
 	private PublicKey subjectPublicKey;
 
 	/**
@@ -132,23 +133,23 @@ public class DAddExtensions extends JEscDialog {
 	 *            The dialog title
 	 * @param extensions
 	 *            Extensions to add to
-	 * @param authorityPublicKey
+	 * @param issuerPublicKey
 	 *            Authority public key
-	 * @param authorityCertName
+	 * @param issuerCertName
 	 *            Authority certificate name
-	 * @param authorityCertSerialNumber
+	 * @param issuerCertSerialNumber
 	 *            Authority certificate serial number
 	 * @param subjectPublicKey
 	 *            Subject public key
 	 */
-	public DAddExtensions(JFrame parent, String title, X509ExtensionSet extensions, PublicKey authorityPublicKey,
-			X500Name authorityCertName, BigInteger authorityCertSerialNumber, PublicKey subjectPublicKey) {
+	public DAddExtensions(JFrame parent, String title, X509ExtensionSet extensions, PublicKey issuerPublicKey,
+			X500Name issuerCertName, BigInteger issuerCertSerialNumber, PublicKey subjectPublicKey) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DAddExtensions.Title"));
 		this.extensions = extensions;
-		this.authorityPublicKey = authorityPublicKey;
-		this.authorityCertName = authorityCertName;
-		this.authorityCertSerialNumber = authorityCertSerialNumber;
+		this.issuerPublicKey = issuerPublicKey;
+		this.issuerCertName = issuerCertName;
+		this.issuerCertSerialNumber = issuerCertSerialNumber;
 		this.subjectPublicKey = subjectPublicKey;
 		initComponents();
 	}
@@ -160,23 +161,23 @@ public class DAddExtensions extends JEscDialog {
 	 *            Parent dialog
 	 * @param extensions
 	 *            Extensions to add to
-	 * @param authorityPublicKey
+	 * @param issuerPublicKey
 	 *            Authority public key
-	 * @param authorityCertName
+	 * @param issuerCertName
 	 *            Authority certificate name
-	 * @param authorityCertSerialNumber
+	 * @param issuerCertSerialNumber
 	 *            Authority certificate serial number
 	 * @param subjectPublicKey
 	 *            Subject public key
 	 */
-	public DAddExtensions(JDialog parent, X509ExtensionSet extensions, PublicKey authorityPublicKey,
-			X500Name authorityCertName, BigInteger authorityCertSerialNumber, PublicKey subjectPublicKey) {
+	public DAddExtensions(JDialog parent, X509ExtensionSet extensions, PublicKey issuerPublicKey,
+			X500Name issuerCertName, BigInteger issuerCertSerialNumber, PublicKey subjectPublicKey) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DAddExtensions.Title"));
 		this.extensions = (X509ExtensionSet) extensions.clone();
-		this.authorityPublicKey = authorityPublicKey;
-		this.authorityCertName = authorityCertName;
-		this.authorityCertSerialNumber = authorityCertSerialNumber;
+		this.issuerPublicKey = issuerPublicKey;
+		this.issuerCertName = issuerCertName;
+		this.issuerCertSerialNumber = issuerCertSerialNumber;
 		this.subjectPublicKey = subjectPublicKey;
 		initComponents();
 	}
@@ -502,8 +503,8 @@ public class DAddExtensions extends JEscDialog {
 			dExtension = new DAuthorityInformationAccess(this);
 			break;
 		case AUTHORITY_KEY_IDENTIFIER:
-			dExtension = new DAuthorityKeyIdentifier(this, authorityPublicKey, authorityCertName,
-					authorityCertSerialNumber);
+			dExtension = new DAuthorityKeyIdentifier(this, issuerPublicKey, issuerCertName,
+					issuerCertSerialNumber);
 			break;
 		case BASIC_CONSTRAINTS:
 			dExtension = new DBasicConstraints(this);
@@ -636,7 +637,7 @@ public class DAddExtensions extends JEscDialog {
 					dExtension = new DAuthorityInformationAccess(this, extensionValue);
 					break;
 				case AUTHORITY_KEY_IDENTIFIER:
-					dExtension = new DAuthorityKeyIdentifier(this, extensionValue, authorityPublicKey);
+					dExtension = new DAuthorityKeyIdentifier(this, extensionValue, issuerPublicKey);
 					break;
 				case BASIC_CONSTRAINTS:
 					dExtension = new DBasicConstraints(this, extensionValue);
@@ -797,7 +798,7 @@ public class DAddExtensions extends JEscDialog {
 	}
 
 	private void selectStandardTemplatePressed() {
-		DSelectStandardExtensionTemplate dSelectStdCertTemplate = new DSelectStandardExtensionTemplate(this, authorityPublicKey,
+		DSelectStandardExtensionTemplate dSelectStdCertTemplate = new DSelectStandardExtensionTemplate(this, issuerPublicKey,
 				subjectPublicKey);
 		dSelectStdCertTemplate.setLocationRelativeTo(this);
 		dSelectStdCertTemplate.setVisible(true);
@@ -824,6 +825,13 @@ public class DAddExtensions extends JEscDialog {
 			try {
 				extensions = X509ExtensionSet.load(new FileInputStream(loadFile));
 
+				X509ExtensionSetUpdater.update(
+						extensions,
+						subjectPublicKey,
+						issuerPublicKey,
+						issuerCertName,
+						issuerCertSerialNumber);
+
 				reloadExtensionsTable();
 				selectFirstExtensionInTable();
 				updateButtonControls();
@@ -835,7 +843,7 @@ public class DAddExtensions extends JEscDialog {
 				JOptionPane.showMessageDialog(this,
 						MessageFormat.format(res.getString("DAddExtensions.NoReadFile.message"), loadFile),
 						res.getString("DAddExtensions.LoadCet.Title"), JOptionPane.WARNING_MESSAGE);
-			} catch (IOException ex) {
+			} catch (Exception ex) {
 				DError.displayError(this, ex);
 			}
 		}

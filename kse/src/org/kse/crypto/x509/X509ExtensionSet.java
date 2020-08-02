@@ -168,6 +168,18 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
 	}
 
 	/**
+	 * Returns true if extension with given OID was added with critical flag.
+	 * <br>
+	 * If extension is not in this set at all or was added as non-critical extension, then false is returned.
+	 *
+	 * @param oid OID of extension
+	 * @return true if extension with given OID was added with critical flag
+	 */
+	public boolean isCritical(String oid) {
+		return criticalExtensions.containsKey(oid);
+	}
+
+	/**
 	 * Toggle criticality of extension.
 	 *
 	 * @param oid

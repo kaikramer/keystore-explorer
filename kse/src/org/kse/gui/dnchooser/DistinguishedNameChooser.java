@@ -19,6 +19,9 @@
  */
 package org.kse.gui.dnchooser;
 
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,7 +59,7 @@ public class DistinguishedNameChooser extends JPanel {
 			if (defaultDN == null || defaultDN.isEmpty()) {
 				defaultDN = "CN=, OU=, O=, L=, ST=, C=";
 			}
-			currentName = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
+			this.currentName = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
 		} else {
 			this.currentName = dn;
 		}
@@ -70,8 +73,8 @@ public class DistinguishedNameChooser extends JPanel {
 		JScrollPane jScrollPane = new JScrollPane(listPanel);
 		jScrollPane.setViewportBorder(null);
 		jScrollPane.setBorder(BorderFactory.createEmptyBorder());
-		jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		jScrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
+		jScrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
 		setLayout(new BorderLayout());
 		add(jScrollPane, BorderLayout.CENTER);
@@ -95,7 +98,7 @@ public class DistinguishedNameChooser extends JPanel {
 	}
 
 	public void reset() {
-		currentName = new X500Name(defaultName);
+		this.currentName = new X500Name(defaultName);
 		removeAll();
 		init();
 		revalidate();

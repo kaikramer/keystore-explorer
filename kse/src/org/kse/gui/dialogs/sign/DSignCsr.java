@@ -80,6 +80,7 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.crypto.x509.X509ExtensionSet;
+import org.kse.crypto.x509.X509ExtensionSetUpdater;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
@@ -156,7 +157,7 @@ public class DSignCsr extends JEscDialog {
 
 	private PrivateKey signPrivateKey;
 	private KeyPairType signKeyPairType;
-	private X509Certificate verificationCertificate;
+	private X509Certificate issuerCertificate;
 	private PKCS10CertificationRequest pkcs10Csr;
 	private Spkac spkacCsr;
 	private File csrFile;
@@ -184,19 +185,19 @@ public class DSignCsr extends JEscDialog {
 	 *            Signing private key
 	 * @param signKeyPairType
 	 *            Signing key pair's type
-	 * @param verificationCertificate
-	 *            Verification certificate
+	 * @param issuerCertificate
+	 *            Issuer certificate
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
 	public DSignCsr(JFrame parent, PKCS10CertificationRequest pkcs10Csr, File csrFile, PrivateKey signPrivateKey,
-			KeyPairType signKeyPairType, X509Certificate verificationCertificate) throws CryptoException {
+			KeyPairType signKeyPairType, X509Certificate issuerCertificate) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.pkcs10Csr = pkcs10Csr;
 		this.csrFile = csrFile;
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
-		this.verificationCertificate = verificationCertificate;
+		this.issuerCertificate = issuerCertificate;
 		setTitle(res.getString("DSignCsr.Title"));
 		initComponents();
 	}
@@ -214,19 +215,19 @@ public class DSignCsr extends JEscDialog {
 	 *            Signing private key
 	 * @param signKeyPairType
 	 *            Signing key pair's type
-	 * @param verificationCertificate
-	 *            Verification certificate
+	 * @param issuerCertificate
+	 *            Issuer certificate
 	 * @throws CryptoException
 	 *             A crypto problem was encountered constructing the dialog
 	 */
 	public DSignCsr(JFrame parent, Spkac spkacCsr, File csrFile, PrivateKey signPrivateKey, KeyPairType signKeyPairType,
-			X509Certificate verificationCertificate) throws CryptoException {
+			X509Certificate issuerCertificate) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.spkacCsr = spkacCsr;
 		this.csrFile = csrFile;
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
-		this.verificationCertificate = verificationCertificate;
+		this.issuerCertificate = issuerCertificate;
 		setTitle(res.getString("DSignCsr.Title"));
 		initComponents();
 	}
@@ -752,12 +753,24 @@ public class DSignCsr extends JEscDialog {
 
 	protected void transferExtensionsPressed() {
 		extensions = Pkcs10Util.getExtensions(pkcs10Csr);
+
+		// the value of some extensions (e.g. AKI) might be out-dated
+		try {
+			X509ExtensionSetUpdater.update(
+					extensions,
+					csrPublicKey,
+					issuerCertificate.getPublicKey(),
+					X500NameUtils.x500PrincipalToX500Name(issuerCertificate.getSubjectX500Principal()),
+					issuerCertificate.getSerialNumber());
+		} catch (CryptoException | IOException e) {
+			DError.displayError(this, e);
+		}
 	}
 
 	private void addExtensionsPressed() {
-		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, verificationCertificate.getPublicKey(),
-				X500NameUtils.x500PrincipalToX500Name(verificationCertificate.getSubjectX500Principal()),
-				verificationCertificate.getSerialNumber(), csrPublicKey);
+		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, issuerCertificate.getPublicKey(),
+				X500NameUtils.x500PrincipalToX500Name(issuerCertificate.getSubjectX500Principal()),
+				issuerCertificate.getSerialNumber(), csrPublicKey);
 		dAddExtensions.setLocationRelativeTo(this);
 		dAddExtensions.setVisible(true);
 

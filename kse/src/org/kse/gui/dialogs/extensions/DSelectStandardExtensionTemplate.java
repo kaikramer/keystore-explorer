@@ -41,9 +41,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
@@ -56,6 +54,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.publickey.KeyIdentifierGenerator;
 import org.kse.crypto.x509.ExtendedKeyUsageType;
+import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.JEscDialog;
@@ -237,38 +236,34 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 	private void addAuthorityKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
 		KeyIdentifierGenerator akiGenerator = new KeyIdentifierGenerator(authorityPublicKey);
 		AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(akiGenerator.generate160BitHashId());
-		byte[] akiEncoded = wrapInOctetString(aki.getEncoded());
+		byte[] akiEncoded = X509Ext.wrapInOctetString(aki.getEncoded());
 		extensionSet.addExtension(X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid(), false, akiEncoded);
 	}
 
 	private void addSubjectKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
 		KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(subjectPublicKey);
 		SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
-		byte[] skiEncoded = wrapInOctetString(ski.getEncoded());
+		byte[] skiEncoded = X509Ext.wrapInOctetString(ski.getEncoded());
 		extensionSet.addExtension(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid(), false, skiEncoded);
 	}
 
 	private void addBasicConstraints(X509ExtensionSet extensionSet) throws IOException {
 		BasicConstraints bc = new BasicConstraints(true);
-		byte[] bcEncoded = wrapInOctetString(bc.getEncoded());
+		byte[] bcEncoded = X509Ext.wrapInOctetString(bc.getEncoded());
 		extensionSet.addExtension(X509ExtensionType.BASIC_CONSTRAINTS.oid(), true, bcEncoded);
 	}
 
 	private void addKeyUsage(X509ExtensionSet extensionSet, int usage) throws IOException {
 		KeyUsage ku = new KeyUsage(usage);
-		byte[] kuEncoded = wrapInOctetString(ku.getEncoded());
+		byte[] kuEncoded = X509Ext.wrapInOctetString(ku.getEncoded());
 		extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), false, kuEncoded);
 	}
 
 	private void addExtKeyUsage(X509ExtensionSet extensionSet, String ekuOid) throws IOException {
 		ExtendedKeyUsage eku = new ExtendedKeyUsage(
 				new KeyPurposeId[] { KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ekuOid)) });
-		byte[] ekuEncoded = wrapInOctetString(eku.getEncoded());
+		byte[] ekuEncoded = X509Ext.wrapInOctetString(eku.getEncoded());
 		extensionSet.addExtension(X509ExtensionType.EXTENDED_KEY_USAGE.oid(), false, ekuEncoded);
-	}
-
-	private byte[] wrapInOctetString(byte[] extensionValue) throws IOException {
-		return new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
 	}
 
 	private void cancelPressed() {

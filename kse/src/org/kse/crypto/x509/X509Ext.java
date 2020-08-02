@@ -33,6 +33,7 @@ import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.ASN1Boolean;
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -46,6 +47,7 @@ import org.bouncycastle.asn1.DERBMPString;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERGeneralString;
 import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DLSequence;
 import org.bouncycastle.asn1.isismtt.x509.AdmissionSyntax;
@@ -127,13 +129,11 @@ public class X509Ext {
 	 */
 	public X509Ext(ASN1ObjectIdentifier oid, byte[] value, boolean critical) {
 		this.oid = oid;
+		this.name = lookupFriendlyName(oid);
+		this.critical = critical;
 
 		this.value = new byte[value.length];
 		System.arraycopy(value, 0, this.value, 0, this.value.length);
-
-		this.critical = critical;
-
-		name = lookupFriendlyName(oid);
 	}
 
 	/**
@@ -162,9 +162,9 @@ public class X509Ext {
 	 * @return X509Extension value
 	 */
 	public byte[] getValue() {
-		byte[] value = new byte[this.value.length];
-		System.arraycopy(this.value, 0, value, 0, this.value.length);
-		return value;
+		byte[] val = new byte[this.value.length];
+		System.arraycopy(this.value, 0, val, 0, this.value.length);
+		return val;
 	}
 
 	/**
@@ -195,8 +195,7 @@ public class X509Ext {
 	public String getStringValue() throws IOException {
 
 		// Convert value from DER encoded octet string value to binary DER encoding
-		ASN1OctetString octetString = ASN1OctetString.getInstance(ASN1Primitive.fromByteArray(value));
-		byte[] octets = octetString.getOctets();
+		byte[] octets = unwrapExtension(this.value);
 
 		X509ExtensionType type = X509ExtensionType.resolveOid(oid.getId());
 
@@ -326,7 +325,29 @@ public class X509Ext {
 		}
 	}
 
-	private String lookupFriendlyName(ASN1ObjectIdentifier oid) {
+	/**
+	 * Remove octet string wrapper around extension value
+	 *
+	 * @param extensionValue Extension value wrapped in ASN.1 octet string
+	 * @return extension value without octet string wrapper
+	 */
+	public static byte[] unwrapExtension(byte[] extensionValue) {
+		ASN1OctetString octetString = ASN1OctetString.getInstance(extensionValue);
+		return octetString.getOctets();
+	}
+
+
+	/**
+	 * Add DER octet string wrapper around extension value
+	 *
+	 * @param extensionValue Extension value
+	 * @return extension value wrapped in octet string
+	 */
+	public static byte[] wrapInOctetString(byte[] extensionValue) throws IOException {
+		return new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+	}
+
+	private static String lookupFriendlyName(ASN1ObjectIdentifier oid) {
 		X509ExtensionType type = X509ExtensionType.resolveOid(oid.getId());
 
 		if (type != null) {
@@ -336,7 +357,7 @@ public class X509Ext {
 		return oid.getId();
 	}
 
-	private String getEntrustVersionInformationStringValue(byte[] value) throws IOException {
+	private static String getEntrustVersionInformationStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -369,7 +390,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getAuthorityInformationAccessStringValue(byte[] value) throws IOException {
+	private static String getAuthorityInformationAccessStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -425,7 +446,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getSubjectInformationAccessStringValue(byte[] value) throws IOException {
+	private static String getSubjectInformationAccessStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -482,7 +503,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getSubjectDirectoryAttributesStringValue(byte[] value) throws IOException {
+	private static String getSubjectDirectoryAttributesStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -528,7 +549,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getSubjectKeyIndentifierStringValue(byte[] value) throws IOException {
+	private static String getSubjectKeyIndentifierStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -553,7 +574,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getAuthorityKeyIdentifierStringValue(byte[] value) throws IOException {
+	private static String getAuthorityKeyIdentifierStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -608,7 +629,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getKeyUsageStringValue(byte[] value) throws IOException {
+	private static String getKeyUsageStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -665,11 +686,11 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private boolean hasKeyUsage(int keyUsages, int keyUsage) {
+	private static boolean hasKeyUsage(int keyUsages, int keyUsage) {
 		return (keyUsages & keyUsage) == keyUsage;
 	}
 
-	private String getPrivateKeyUsagePeriodStringValue(byte[] value) throws IOException {
+	private static String getPrivateKeyUsagePeriodStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -707,7 +728,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getSubjectAlternativeNameStringValue(byte[] value) throws IOException {
+	private static String getSubjectAlternativeNameStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -730,7 +751,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getIssuerAlternativeNameStringValue(byte[] value) throws IOException {
+	private static String getIssuerAlternativeNameStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -753,7 +774,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getBasicConstraintsStringValue(byte[] value) throws IOException {
+	private static String getBasicConstraintsStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -795,7 +816,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getCrlNumberStringValue(byte[] value) throws IOException {
+	private static String getCrlNumberStringValue(byte[] value) throws IOException {
 		// @formatter:off
 		/* CRLNumber ::= ASN1Integer (0..MAX) */
 		// @formatter:on
@@ -810,7 +831,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getReasonCodeStringValue(byte[] value) throws IOException {
+	private static String getReasonCodeStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -859,7 +880,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getHoldInstructionCodeStringValue(byte[] value) throws IOException {
+	private static String getHoldInstructionCodeStringValue(byte[] value) throws IOException {
 		// @formatter:off
 		/* HoldInstructionCode ::= OBJECT IDENTIFIER */
 		// @formatter:on
@@ -881,7 +902,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getInvalidityDateStringValue(byte[] value) throws IOException {
+	private static String getInvalidityDateStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* InvalidityDate ::= ASN1GeneralizedTime */
@@ -898,7 +919,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getDeltaCrlIndicatorStringValue(byte[] value) throws IOException {
+	private static String getDeltaCrlIndicatorStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -918,7 +939,7 @@ public class X509Ext {
 		return HexUtil.getHexString(crlNum) + NEWLINE;
 	}
 
-	private String getIssuingDistributionPointStringValue(byte[] value) throws IOException {
+	private static String getIssuingDistributionPointStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -981,7 +1002,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getCertificateIssuerStringValue(byte[] value) throws IOException {
+	private static String getCertificateIssuerStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1004,7 +1025,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNameConstraintsStringValue(byte[] value) throws IOException {
+	private static String getNameConstraintsStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1146,7 +1167,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getCrlDistributionPointsStringValue(byte[] value) throws IOException {
+	private static String getCrlDistributionPointsStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1174,7 +1195,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getCertificatePoliciesStringValue(byte[] value) throws IOException {
+	private static String getCertificatePoliciesStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1333,7 +1354,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getPolicyMappingsStringValue(byte[] value) throws IOException {
+	private static String getPolicyMappingsStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1379,7 +1400,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getPolicyConstraintsStringValue(byte[] value) throws IOException {
+	private static String getPolicyConstraintsStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1413,7 +1434,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getExtendedKeyUsageStringValue(byte[] value)  {
+	private static String getExtendedKeyUsageStringValue(byte[] value)  {
 		// @formatter:off
 
 		/*
@@ -1446,7 +1467,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getFreshestCrlStringValue(byte[] value) throws IOException {
+	private static String getFreshestCrlStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1476,7 +1497,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getInhibitAnyPolicyStringValue(byte[] value) throws IOException {
+	private static String getInhibitAnyPolicyStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1499,7 +1520,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNetscapeCertificateTypeStringValue(byte[] value) throws IOException {
+	private static String getNetscapeCertificateTypeStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1560,11 +1581,11 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private boolean isCertType(int netscapeCertTypes, int certType) {
+	private static boolean isCertType(int netscapeCertTypes, int certType) {
 		return (netscapeCertTypes & certType) == certType;
 	}
 
-	private String getNetscapeBaseUrlStringValue(byte[] value) throws IOException {
+	private static String getNetscapeBaseUrlStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* NetscapeBaseUrl ::= DERIA5String */
@@ -1581,7 +1602,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNetscapeRevocationUrlStringValue(byte[] value) throws IOException {
+	private static String getNetscapeRevocationUrlStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* NetscapeRevocationUrl ::= DERIA5String */
@@ -1598,7 +1619,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNetscapeCaRevocationUrlStringValue(byte[] value) throws IOException {
+	private static String getNetscapeCaRevocationUrlStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* NetscapeCARevocationUrl ::= DERIA5String */
@@ -1615,7 +1636,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNetscapeCertificateRenewalStringValue(byte[] value) throws IOException {
+	private static String getNetscapeCertificateRenewalStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* NetscapeCertRenewalUrl ::= DERIA5String */
@@ -1632,7 +1653,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNetscapeCaPolicyUrlStringValue(byte[] value) throws IOException {
+	private static String getNetscapeCaPolicyUrlStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* NetscapeCAPolicyUrl ::= DERIA5String */
@@ -1649,7 +1670,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNetscapeSslServerNameStringValue(byte[] value) throws IOException {
+	private static String getNetscapeSslServerNameStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* NetscapeSslServerName ::= DERIA5String */
@@ -1666,7 +1687,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNetscapeCommentStringValue(byte[] value) throws IOException {
+	private static String getNetscapeCommentStringValue(byte[] value) throws IOException {
 		// @formatter:off
 
 		/* NetscapeComment ::= DERIA5String */
@@ -1683,7 +1704,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getDistributionPointString(DistributionPoint distributionPoint, String baseIndent)
+	private static String getDistributionPointString(DistributionPoint distributionPoint, String baseIndent)
 			throws IOException {
 		// @formatter:off
 
@@ -1740,7 +1761,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getDistributionPointNameString(DistributionPointName distributionPointName, String baseIndent)
+	private static String getDistributionPointNameString(DistributionPointName distributionPointName, String baseIndent)
 			throws IOException {
 		// @formatter:off
 
@@ -1807,7 +1828,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String[] getReasonFlagsStrings(ReasonFlags reasonFlags) throws IOException {
+	private static String[] getReasonFlagsStrings(ReasonFlags reasonFlags) throws IOException {
 		// @formatter:off
 
 		/*
@@ -1857,11 +1878,11 @@ public class X509Ext {
 		return reasonFlagsList.toArray(new String[reasonFlagsList.size()]);
 	}
 
-	private boolean hasReasonFlag(int reasonFlags, int reasonFlag) {
+	private static boolean hasReasonFlag(int reasonFlags, int reasonFlag) {
 		return (reasonFlags & reasonFlag) == reasonFlag;
 	}
 
-	private String getAttributeTypeString(ASN1ObjectIdentifier oid) {
+	private static String getAttributeTypeString(ASN1ObjectIdentifier oid) {
 		// @formatter:off
 
 		/* AttributeType ::= OBJECT IDENTIFIER */
@@ -1879,7 +1900,7 @@ public class X509Ext {
 		}
 	}
 
-	private String getAttributeValueString(ASN1ObjectIdentifier attributeType, ASN1Encodable attributeValue)
+	private static String getAttributeValueString(ASN1ObjectIdentifier attributeType, ASN1Encodable attributeValue)
 			throws IOException {
 
 		/* AttributeValue ::= ANY  */
@@ -1918,7 +1939,7 @@ public class X509Ext {
 		}
 	}
 
-	private String getGeneralizedTimeString(ASN1GeneralizedTime notBefore) {
+	private static String getGeneralizedTimeString(ASN1GeneralizedTime notBefore) {
 		// Get generalized time as a date
 		Date date;
 		try {
@@ -1930,7 +1951,7 @@ public class X509Ext {
 		return StringUtils.formatDate(date);
 	}
 
-	private String getBiometricInfoStringValue(byte[] octets) {
+	private static String getBiometricInfoStringValue(byte[] octets) {
 
 		// @formatter:off
 
@@ -2002,7 +2023,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getQcStatementsStringValue(byte[] octets) throws IOException {
+	private static String getQcStatementsStringValue(byte[] octets) throws IOException {
 
 		// @formatter:off
 
@@ -2106,7 +2127,7 @@ public class X509Ext {
 	}
 
 
-	private String getSemanticInformationValueString(QcStatementType qcStatementType, SemanticsInformation
+	private static String getSemanticInformationValueString(QcStatementType qcStatementType, SemanticsInformation
 			semanticsInfo, int baseIndentLevel) throws IOException {
 
 		// @formatter:off
@@ -2157,7 +2178,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getMonetaryValueStringValue(ASN1Encodable asn1Encodable, int baseIndentLevel) {
+	private static String getMonetaryValueStringValue(ASN1Encodable asn1Encodable, int baseIndentLevel) {
 
 		// @formatter:off
 
@@ -2206,7 +2227,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getOcspNoCheckStringValue() {
+	private static String getOcspNoCheckStringValue() {
 
 		/*	OCSPNoCheck ::= NULL */
 
@@ -2214,7 +2235,7 @@ public class X509Ext {
 		return res.getString("OCSPNoCheck");
 	}
 
-	private String getAdmissionStringValue(byte[] octets) throws IOException {
+	private static String getAdmissionStringValue(byte[] octets) throws IOException {
 
 		// @formatter:off
 
@@ -2335,7 +2356,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getNamingAuthorityStringValue(NamingAuthority namingAuthority, int indentLevel)
+	private static String getNamingAuthorityStringValue(NamingAuthority namingAuthority, int indentLevel)
 			throws IOException {
 		// @formatter:off
 		/*
@@ -2376,7 +2397,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getLiabilityLimitationFlagStringValue(byte[] octets) {
+	private static String getLiabilityLimitationFlagStringValue(byte[] octets) {
 
 		/*	LiabilityLimitationFlagSyntax ::= BOOLEAN */
 
@@ -2384,7 +2405,7 @@ public class X509Ext {
 		return asn1Boolean.toString();
 	}
 
-	private String getDateOfCertGenStringValue(byte[] octets) {
+	private static String getDateOfCertGenStringValue(byte[] octets) {
 
 		/*	DateOfCertGenSyntax ::= GeneralizedTime */
 
@@ -2392,7 +2413,7 @@ public class X509Ext {
 		return getGeneralizedTimeString(dateOfCertGenSyntax);
 	}
 
-	private String getProcurationStringValue(byte[] octets) throws IOException {
+	private static String getProcurationStringValue(byte[] octets) throws IOException {
 
 		// @formatter:off
 
@@ -2461,7 +2482,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getMonetaryLimitStringValue(byte[] octets) {
+	private static String getMonetaryLimitStringValue(byte[] octets) {
 
 		// @formatter:off
 
@@ -2501,7 +2522,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getDeclarationOfMajorityStringValue(byte[] octets) {
+	private static String getDeclarationOfMajorityStringValue(byte[] octets) {
 
 		// @formatter:off
 
@@ -2548,14 +2569,14 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getICCSNStringValue(byte[] octets) {
+	private static String getICCSNStringValue(byte[] octets) {
 
 		/*	ICCSNSyntax ::= OCTET STRING (SIZE(8..20)) */
 
 		return HexUtil.getHexString(octets);
 	}
 
-	private String getRestrictionStringValue(byte[] octets) throws IOException {
+	private static String getRestrictionStringValue(byte[] octets) throws IOException {
 
 		/*	RestrictionSyntax ::= DirectoryString (SIZE(1..1024)) */
 
@@ -2563,7 +2584,7 @@ public class X509Ext {
 	}
 
 
-	private String getAdditionalInformationStringValue(byte[] octets) throws IOException {
+	private static String getAdditionalInformationStringValue(byte[] octets) throws IOException {
 
 		/*	AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048)) */
 
@@ -2571,7 +2592,7 @@ public class X509Ext {
 	}
 
 
-	private String getValidityModelStringValue(byte[] octets) {
+	private static String getValidityModelStringValue(byte[] octets) {
 
 		// @formatter:off
 
@@ -2593,7 +2614,7 @@ public class X509Ext {
 	}
 
 
-	private String getMsCertTypeStringValue(byte[] octets) {
+	private static String getMsCertTypeStringValue(byte[] octets) {
 
 		// @formatter:off
 
@@ -2615,7 +2636,7 @@ public class X509Ext {
 	}
 
 
-	private String getMsCaVersionStringValue(byte[] octets) {
+	private static String getMsCaVersionStringValue(byte[] octets) {
 
 		/*
             "The extension data is a DWORD value (encoded as X509_INTEGER in the extension);
@@ -2637,12 +2658,12 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getMsCrlNextPublishStringValue(byte[] octets) {
+	private static String getMsCrlNextPublishStringValue(byte[] octets) {
 		ASN1UTCTime time = ASN1UTCTime.getInstance(octets);
 		return time.getTime();
 	}
 
-	private String getMsCertificateTemplateStringValue(byte[] octets) {
+	private static String getMsCertificateTemplateStringValue(byte[] octets) {
 
 		// @formatter:off
 
@@ -2679,7 +2700,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getSMIMECapabilitiesStringValue(byte[] octets) throws IOException {
+	private static String getSMIMECapabilitiesStringValue(byte[] octets) throws IOException {
 
 		// @formatter:off
 
@@ -2723,7 +2744,7 @@ public class X509Ext {
 		return sb.toString();
 	}
 
-	private String getBitString(byte[] octets) throws IOException {
+	private static String getBitString(byte[] octets) throws IOException {
 
 		if (octets == null) {
 			return "";
@@ -2735,7 +2756,7 @@ public class X509Ext {
 		return new BigInteger(1, bitStringBytes).toString(2);
 	}
 
-	private String getVeriSignNonVerified(byte[] octets) throws IOException {
+	private static String getVeriSignNonVerified(byte[] octets) throws IOException {
 
 		/*
 		    NonVerified ::= SET OF ATTRIBUTE
