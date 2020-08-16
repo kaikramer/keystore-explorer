@@ -233,8 +233,9 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"));
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("ImportCaReplyFromFileAction.ImportCaReply.button"));
 
-		int rtnValue = chooser.showDialog(frame, res.getString("ImportCaReplyFromFileAction.ImportCaReply.button"));
+		int rtnValue = chooser.showOpenDialog(frame);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File openFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(openFile);

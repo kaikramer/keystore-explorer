@@ -247,8 +247,9 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("SignCsrAction.ChooseCsr.Title"));
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("SignCsrAction.ChooseCsr.button"));
 
-		int rtnValue = chooser.showDialog(frame, res.getString("SignCsrAction.ChooseCsr.button"));
+		int rtnValue = chooser.showOpenDialog(frame);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File importFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(importFile);

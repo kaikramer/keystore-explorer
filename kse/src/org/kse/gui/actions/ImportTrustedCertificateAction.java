@@ -255,9 +255,9 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("ImportTrustedCertificateAction.ImportTrustCert.Title"));
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("ImportTrustedCertificateAction.ImportTrustCert.button"));
 
-		int rtnValue = chooser
-				.showDialog(frame, res.getString("ImportTrustedCertificateAction.ImportTrustCert.button"));
+		int rtnValue = chooser.showOpenDialog(frame);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File importFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(importFile);
