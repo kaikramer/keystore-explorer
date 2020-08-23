@@ -542,8 +542,10 @@ public class DSignJar extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJar.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		
+		chooser.setApproveButtonText(res.getString("DSignJar.InputJarChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DSignJar.InputJarChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

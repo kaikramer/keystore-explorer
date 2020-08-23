@@ -301,8 +301,10 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DUpgradeCryptoStrength.Title.ChoosePolicyZip.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		
+		chooser.setApproveButtonText(res.getString("DUpgradeCryptoStrength.Title.PolicyZipChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DUpgradeCryptoStrength.Title.PolicyZipChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 

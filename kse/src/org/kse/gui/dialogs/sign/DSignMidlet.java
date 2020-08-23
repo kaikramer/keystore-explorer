@@ -450,8 +450,10 @@ public class DSignMidlet extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DSignMidlet.ChooseInputJad.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		
+		chooser.setApproveButtonText(res.getString("DSignMidlet.InputJadChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DSignMidlet.InputJadChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
@@ -510,8 +512,10 @@ public class DSignMidlet extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DSignMidlet.ChooseJar.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		
+		chooser.setApproveButtonText(res.getString("DSignMidlet.JarChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DSignMidlet.JarChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

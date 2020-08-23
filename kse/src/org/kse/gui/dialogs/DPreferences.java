@@ -1163,10 +1163,10 @@ public class DPreferences extends JEscDialog {
 		}
 
 		chooser.setDialogTitle(res.getString("DPreferences.ChooseCACertificatesKeyStore.Title"));
-
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DPreferences.CaCertificatesKeyStoreFileChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DPreferences.CaCertificatesKeyStoreFileChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

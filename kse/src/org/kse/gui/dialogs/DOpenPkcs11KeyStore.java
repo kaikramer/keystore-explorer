@@ -263,8 +263,9 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 		chooser.setDialogTitle(res.getString("DOpenPkcs11KeyStore.SelectLib.Title"));
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DOpenPkcs11KeyStore.SelectLib.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DOpenPkcs11KeyStore.SelectLib.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

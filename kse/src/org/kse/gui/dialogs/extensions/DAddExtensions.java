@@ -816,8 +816,10 @@ public class DAddExtensions extends JEscDialog {
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("DAddExtensions.LoadCet.Title"));
 		chooser.setMultiSelectionEnabled(false);
+		
+		chooser.setApproveButtonText(res.getString("DAddExtensions.CetLoad.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DAddExtensions.CetLoad.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File loadFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(loadFile);
