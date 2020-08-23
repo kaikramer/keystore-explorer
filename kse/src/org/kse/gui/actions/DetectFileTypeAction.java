@@ -75,8 +75,9 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 			chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
 			chooser.setMultiSelectionEnabled(false);
+			chooser.setApproveButtonText(res.getString("DetectFileTypeAction.DetectFileType.button"));
 
-			int rtnValue = chooser.showDialog(frame, res.getString("DetectFileTypeAction.DetectFileType.button"));
+			int rtnValue = chooser.showOpenDialog(frame);
 
 			if (rtnValue == JFileChooser.APPROVE_OPTION) {
 				detectTypeFile = chooser.getSelectedFile();

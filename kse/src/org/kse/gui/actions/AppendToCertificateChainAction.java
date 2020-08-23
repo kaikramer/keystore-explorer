@@ -162,9 +162,9 @@ public class AppendToCertificateChainAction extends KeyStoreExplorerAction imple
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"));
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("AppendToCertificateChainAction.AppendCertificate.button"));
 
-		int rtnValue = chooser.showDialog(frame,
-				res.getString("AppendToCertificateChainAction.AppendCertificate.button"));
+		int rtnValue = chooser.showOpenDialog(frame);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File openFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(openFile);

@@ -347,8 +347,9 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DImportKeyPairOpenSsl.ChoosePrivateKey.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DImportKeyPairOpenSsl.PrivateKeyFileChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DImportKeyPairOpenSsl.PrivateKeyFileChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
@@ -371,8 +372,9 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DImportKeyPairOpenSsl.ChooseCertificate.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DImportKeyPairOpenSsl.CertificateFileChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DImportKeyPairOpenSsl.CertificateFileChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

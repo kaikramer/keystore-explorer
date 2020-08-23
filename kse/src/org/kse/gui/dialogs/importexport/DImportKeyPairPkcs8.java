@@ -347,8 +347,9 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DImportKeyPairPkcs8.ChoosePrivateKey.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DImportKeyPairPkcs8.PrivateKeyFileChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DImportKeyPairPkcs8.PrivateKeyFileChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
@@ -371,8 +372,9 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DImportKeyPairPkcs8.ChooseCertificate.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DImportKeyPairPkcs8.CertificateFileChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DImportKeyPairPkcs8.CertificateFileChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);

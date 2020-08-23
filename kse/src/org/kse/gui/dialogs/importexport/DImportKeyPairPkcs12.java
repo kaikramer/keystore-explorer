@@ -258,8 +258,9 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DImportKeyPairPkcs12.ChooseKeyPair.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DImportKeyPairPkcs12.KeyPairFileChooser.button"));
 
-		int rtnValue = chooser.showDialog(this, res.getString("DImportKeyPairPkcs12.KeyPairFileChooser.button"));
+		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
