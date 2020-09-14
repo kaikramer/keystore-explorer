@@ -27,6 +27,7 @@ Notes:
 - Tasks 'signapp' and 'dmg' work only under macOS.
 */
 plugins {
+	id 'application'
 	id 'java'
 	id 'eclipse'
 	id 'idea'
@@ -89,6 +90,10 @@ ext {
 
 	// Main class (for manifest entry)
 	mainClassName = "org.kse.KSE"
+}
+
+application {
+	mainClass = project.mainClassName
 }
 
 sourceCompatibility = 1.8
