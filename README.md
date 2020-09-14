@@ -27,7 +27,7 @@ Official website: http://keystore-explorer.org/
  
 ## Building
 
-To do a clean build, issue the following command:
+To do a clean build, issue the following command from the `kse` directory:
 
     $ ./gradlew clean build
 
@@ -46,6 +46,12 @@ For the Windows installer:
 For the MacOS application:    
 
     $ ./gradlew appbundler
+
+## Running
+
+To run the application, issue the following command from the `kse` directory:
+
+    $ ./gradlew run
 
 ## Contributing
 
