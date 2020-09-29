@@ -276,12 +276,7 @@ public class Asn1Dump {
 		}
 		sb.append(":");
 		sb.append(NEWLINE);
-
-		if (o.isEmpty()) {
-			sb.append("EMPTY");
-		} else {
-			sb.append(dump(o.getObject()));
-		}
+		sb.append(dump(o.getObject()));
 
 		return sb.toString();
 	}

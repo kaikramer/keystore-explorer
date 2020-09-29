@@ -19,16 +19,17 @@
  */
 package org.kse.gui.actions;
 
+import java.awt.Toolkit;
+import java.security.KeyStore;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
-
-import javax.swing.*;
-import java.awt.*;
-import java.security.KeyStore;
-import java.text.MessageFormat;
 
 /**
  * Action to delete multiple selected entries.

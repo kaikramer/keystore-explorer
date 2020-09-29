@@ -21,7 +21,6 @@ package org.kse.gui.dnd;
 
 import java.awt.Toolkit;
 import java.security.cert.Certificate;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 
@@ -35,8 +34,6 @@ import org.kse.crypto.x509.X509CertUtil;
  *
  */
 public class DragTrustedCertificateEntry extends DragEntry {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dnd/resources");
-
 	private static final String EXTENSION = "cer";
 
 	private byte[] contentBytes;

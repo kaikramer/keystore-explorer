@@ -38,8 +38,9 @@ import java.util.ResourceBundle;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1OutputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x509.Extensions;
@@ -186,7 +187,7 @@ public class Pkcs10Util {
 		try {
 			// Base 64 encoding of CSR
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			DEROutputStream deros = new DEROutputStream(baos);
+			ASN1OutputStream deros = ASN1OutputStream.create(baos, ASN1Encoding.DER);
 			deros.writeObject(csr.toASN1Structure().toASN1Primitive());
 			String tmp = new String(Base64.encode(baos.toByteArray()));
 

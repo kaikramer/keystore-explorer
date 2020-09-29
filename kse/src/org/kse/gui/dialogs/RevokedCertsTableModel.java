@@ -70,7 +70,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 
 		int i = 0;
 		for (Iterator<?> itr = sortedRevokedCerts.entrySet().iterator(); itr.hasNext(); i++) {
-			X509CRLEntry x509CrlEntry = (X509CRLEntry) ((Map.Entry) itr.next()).getValue();
+			X509CRLEntry x509CrlEntry = (X509CRLEntry) ((Map.Entry<?, ?>) itr.next()).getValue();
 
 			data[i][0] = x509CrlEntry.getSerialNumber();
 			data[i][1] = x509CrlEntry.getRevocationDate();

@@ -57,7 +57,7 @@ public class OidDisplayNameMapping {
 		displayNameToOID.put(C, BCStyle.C);
 		displayNameToOID.put(E, BCStyle.E);
 
-		displayNameToOID.put(SN, BCStyle.SN);
+		displayNameToOID.put(SN, BCStyle.SERIALNUMBER);
 		displayNameToOID.put(GIVENNAME, BCStyle.GIVENNAME);
 		displayNameToOID.put(SURNAME, BCStyle.SURNAME);
 		displayNameToOID.put(DC, BCStyle.DC);
@@ -74,7 +74,7 @@ public class OidDisplayNameMapping {
 		oidToDisplayName.put(BCStyle.C.getId(), C);
 		oidToDisplayName.put(BCStyle.E.getId(), E);
 
-		oidToDisplayName.put(BCStyle.SN.getId(), SN);
+		oidToDisplayName.put(BCStyle.SERIALNUMBER.getId(), SN);
 		oidToDisplayName.put(BCStyle.GIVENNAME.getId(), GIVENNAME);
 		oidToDisplayName.put(BCStyle.SURNAME.getId(), SURNAME);
 		oidToDisplayName.put(BCStyle.DC.getId(), DC);

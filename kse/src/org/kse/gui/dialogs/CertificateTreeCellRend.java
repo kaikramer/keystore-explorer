@@ -21,7 +21,6 @@ package org.kse.gui.dialogs;
 
 import java.awt.Component;
 import java.security.cert.X509Certificate;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -38,7 +37,6 @@ import org.kse.crypto.x509.X509CertUtil;
  */
 public class CertificateTreeCellRend extends DefaultTreeCellRenderer {
 	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	/**
 	 * Returns the rendered cell for the supplied value.
