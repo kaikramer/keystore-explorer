@@ -260,6 +260,27 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 			classpath(dir: dependenciesDir)
 			classpath(file: jar.archivePath)
 			arch(name: "x86_64")
+
+			jlink(runtime: System.properties.'java.home') {
+				jmod(name: "java.datatransfer")
+				jmod(name: "java.desktop")
+				jmod(name: "java.logging")
+				jmod(name: "java.naming")
+				jmod(name: "java.prefs")
+				jmod(name: "java.scripting")
+				jmod(name: "jdk.localedata")
+				jmod(name: "jdk.charsets")
+				jmod(name: "jdk.crypto.ec")
+				jmod(name: "jdk.security.auth")
+				jmod(name: "jdk.crypto.cryptoki")
+				
+				argument(value: "--compress=2")
+				argument(value: "--no-header-files")
+				argument(value: "--no-man-pages")
+				argument(value: "--strip-debug")
+				argument(value: "--include-locales=en,de,fr")
+			}
+
 			bundledocument(extensions: "ks,jks,jceks,keystore,bks,uber,pfx,p12",
 							icon: keystoreIcns,
 							name: "KeyStore",
@@ -276,9 +297,18 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 	}
 }
 
-task signapp(type: Exec, dependsOn: appbundler) {
-	workingDir appBundleDir
-	commandLine 'codesign', '--options=runtime', '-s', 'Kai Kramer', "${appBundle}"
+task signapp(dependsOn: appbundler) {
+	def javaBaseDirName = new File(System.properties.'java.home').getParentFile().getParentFile().getName()
+	doLast {
+		exec {
+			workingDir appBundleDir
+			commandLine 'codesign', '-vvv', '--force', '--options=runtime', '--entitlements', "${dmgDir}/entitlements.xml", '-s', 'Kai Kramer', "${appBundle}/Contents/PlugIns/${javaBaseDirName}"
+		}
+		exec {
+			workingDir appBundleDir
+			commandLine 'codesign', '-vvv', '--force', '--options=runtime', '--entitlements', "${dmgDir}/entitlements.xml", '-s', 'Kai Kramer', "${appBundle}"
+		}
+	}
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
@@ -363,7 +393,10 @@ buildDeb {
 //
 //	commandLine "${javaHome}/bin/jlink",
 //		'--module-path', "${javaHome}/jmods",
-//		'--strip-debug', '--no-header-files', '--no-man-pages', '--include-locales=en,de,fr',
+//		'--strip-debug', 
+//		'--no-header-files', 
+//		'--no-man-pages', 
+//		'--include-locales=en,de,fr',
 //		'--add-modules', 'java.datatransfer,java.desktop,java.logging,java.naming,java.prefs,java.scripting,jdk.localedata,jdk.charsets,jdk.crypto.ec,jdk.security.auth,jdk.crypto.cryptoki,jdk.crypto.mscapi',
 //		'--output', 'jre'
 //}
@@ -393,7 +426,7 @@ buildDeb {
 
 runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    modules = ['java.datatransfer', 'java.desktop,java.logging', 'java.naming,java.prefs', 'java.scripting', 'jdk.localedata', 'jdk.charsets', 'jdk.crypto.ec', 'jdk.security.auth', 'jdk.crypto.cryptoki', 'jdk.crypto.mscapi']
+    modules = ['java.datatransfer', 'java.desktop', 'java.logging', 'java.naming', 'java.prefs', 'java.scripting', 'jdk.localedata', 'jdk.charsets', 'jdk.crypto.ec', 'jdk.security.auth', 'jdk.crypto.cryptoki', 'jdk.crypto.mscapi']
     jpackage {
         jpackageHome = 'c:/Development/Java-Development/jdk-14.0.1+7'
 //        outputDir = 'jre'
