@@ -312,10 +312,23 @@ task signapp(dependsOn: appbundler) {
 }
 
 task dmg(type: Exec, dependsOn: signapp) {
-	workingDir appBundleDir
 	mkdir distDir
-	commandLine 'sh', "${dmgDir}/create-dmg.sh", "${appBundleDir}/${appBundle}", "${distDir}/${appSimpleName}-${appSimpleVersion}.dmg"
+	new File("${distDir}/${appSimpleName}-${appSimpleVersion}.dmg").delete()
+	workingDir buildDir
+	commandLine 'create-dmg', 
+	  "--volname", "KeyStore Explorer", 
+	  "--volicon", "${projectDir}/dmg/kse.icns", 
+	  "--background", "${projectDir}/dmg/background.png", 
+	  "--window-pos", "400", "40", 
+	  "--window-size", "515", "271", 
+	  "--icon-size", "128", 
+	  "--icon", "${appBundle}", "150", "130", 
+	  "--hide-extension", "${appBundle}", 
+	  "--app-drop-link", "370", "130", 
+	  "${distDir}/${appSimpleName}-${appSimpleVersion}.dmg", 
+	  "${appBundleDir}"	
 }
+
 
 // common part for RPM and DEB
 ospackage {
@@ -387,57 +400,3 @@ buildDeb {
 	requires("default-jre").or("java8-runtime")
 }
 
-//task jlink(type: Exec) {
-//	def javaHome = System.properties.'java.home'
-//	workingDir "$buildDir"
-//
-//	commandLine "${javaHome}/bin/jlink",
-//		'--module-path', "${javaHome}/jmods",
-//		'--strip-debug', 
-//		'--no-header-files', 
-//		'--no-man-pages', 
-//		'--include-locales=en,de,fr',
-//		'--add-modules', 'java.datatransfer,java.desktop,java.logging,java.naming,java.prefs,java.scripting,jdk.localedata,jdk.charsets,jdk.crypto.ec,jdk.security.auth,jdk.crypto.cryptoki,jdk.crypto.mscapi',
-//		'--output', 'jre'
-//}
-
-//jlink {
-//	moduleName = 'org.kse'
-//    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages', '--include-locales=en,de,fr',]
-//    launcher {
-//        name = 'kse'
-//        
-//    }
-//	customImage {
-//        jdkModules = ['java.datatransfer', 'java.desktop,java.logging', 'java.naming,java.prefs', 'java.scripting', 'jdk.localedata', 'jdk.charsets', 'jdk.crypto.ec', 'jdk.security.auth', 'jdk.crypto.cryptoki', 'jdk.crypto.mscapi']
-//    }
-//    jpackage {
-//        //jpackageHome = '/usr/lib/jvm/jdk14'
-//        outputDir = 'jre'
-//        // imageOutputDir = file("$buildDir/my-packaging-image")
-//        // installerOutputDir = file("$buildDir/my-packaging-installer")
-//        imageName = 'KeyStore-Explorer'
-//        skipInstaller = false
-//        installerName = 'kse'
-//        installerType = 'msi'
-//        installerOptions = ['--win-menu', '--win-shortcut', '--win-per-user-install']
-//    }
-//}
-
-runtime {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    modules = ['java.datatransfer', 'java.desktop', 'java.logging', 'java.naming', 'java.prefs', 'java.scripting', 'jdk.localedata', 'jdk.charsets', 'jdk.crypto.ec', 'jdk.security.auth', 'jdk.crypto.cryptoki', 'jdk.crypto.mscapi']
-    jpackage {
-        jpackageHome = 'c:/Development/Java-Development/jdk-14.0.1+7'
-//        outputDir = 'jre'
-//        // imageOutputDir = file("$buildDir/my-packaging-image")
-//        // installerOutputDir = file("$buildDir/my-packaging-installer")
-        imageName = 'KeyStore-Explorer'
-        skipInstaller = false
-       	installerName = 'kse'
-//        if (org.gradle.internal.os.OperatingSystem.current().windows) {
-            installerType = 'exe'
-            installerOptions = ['--win-per-user-install', '--win-menu', '--win-shortcut']
-//        }
-    }
-}

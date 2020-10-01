@@ -1,9 +1,11 @@
 os: osx
-osx_image: xcode11.3
+osx_image: xcode12
 addons:
   homebrew:
     taps: AdoptOpenJDK/openjdk
-    casks: adoptopenjdk8
+    casks: adoptopenjdk15
+    packages: 
+    - create-dmg
     update: true
 
 language: java
@@ -21,7 +23,7 @@ before_script:
     security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k mysecretpassword $KEYCHAIN
 
 script:
-  - export JAVA_HOME=$(/usr/libexec/java_home -v1.8);
+  - export JAVA_HOME=$(/usr/libexec/java_home -v15);
   - cd kse
   - ./gradlew dmg
 
