@@ -52,7 +52,11 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -867,12 +871,13 @@ public final class KseFrame implements StatusBar {
 		jmChangeType.setEnabled(false);
 		jmTools.add(jmChangeType);
 
-		jrbmiChangeTypeJks = new JRadioButtonMenuItem(changeTypeJksAction);
-		PlatformUtil.setMnemonic(jrbmiChangeTypeJks, res.getString("KseFrame.jrbmiChangeTypeJks.mnemonic").charAt(0));
-		jrbmiChangeTypeJks.setToolTipText(null);
-		new StatusBarChangeHandler(jrbmiChangeTypeJks, (String) changeTypeJksAction.getValue(Action.LONG_DESCRIPTION),
-				this);
-		jmChangeType.add(jrbmiChangeTypeJks);
+		jrbmiChangeTypePkcs12 = new JRadioButtonMenuItem(changeTypePkcs12Action);
+		PlatformUtil.setMnemonic(jrbmiChangeTypePkcs12, res.getString("KseFrame.jrbmiChangeTypePkcs12.mnemonic")
+				.charAt(0));
+		jrbmiChangeTypePkcs12.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiChangeTypePkcs12,
+				(String) changeTypePkcs12Action.getValue(Action.LONG_DESCRIPTION), this);
+		jmChangeType.add(jrbmiChangeTypePkcs12);
 
 		jrbmiChangeTypeJceks = new JRadioButtonMenuItem(changeTypeJceksAction);
 		PlatformUtil.setMnemonic(jrbmiChangeTypeJceks, res.getString("KseFrame.jrbmiChangeTypeJceks.mnemonic")
@@ -882,13 +887,12 @@ public final class KseFrame implements StatusBar {
 				(String) changeTypeJceksAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmChangeType.add(jrbmiChangeTypeJceks);
 
-		jrbmiChangeTypePkcs12 = new JRadioButtonMenuItem(changeTypePkcs12Action);
-		PlatformUtil.setMnemonic(jrbmiChangeTypePkcs12, res.getString("KseFrame.jrbmiChangeTypePkcs12.mnemonic")
-				.charAt(0));
-		jrbmiChangeTypePkcs12.setToolTipText(null);
-		new StatusBarChangeHandler(jrbmiChangeTypePkcs12,
-				(String) changeTypePkcs12Action.getValue(Action.LONG_DESCRIPTION), this);
-		jmChangeType.add(jrbmiChangeTypePkcs12);
+		jrbmiChangeTypeJks = new JRadioButtonMenuItem(changeTypeJksAction);
+		PlatformUtil.setMnemonic(jrbmiChangeTypeJks, res.getString("KseFrame.jrbmiChangeTypeJks.mnemonic").charAt(0));
+		jrbmiChangeTypeJks.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiChangeTypeJks, (String) changeTypeJksAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		jmChangeType.add(jrbmiChangeTypeJks);
 
 		jrbmiChangeTypeBksV1 = new JRadioButtonMenuItem(changeTypeBksV1Action);
 		PlatformUtil.setMnemonic(jrbmiChangeTypeBksV1, res.getString("KseFrame.jrbmiChangeTypeBksV1.mnemonic").charAt(0));
@@ -904,19 +908,19 @@ public final class KseFrame implements StatusBar {
 				this);
 		jmChangeType.add(jrbmiChangeTypeBks);
 
-		jrbmiChangeTypeBcfks = new JRadioButtonMenuItem(changeTypeBcfksAction);
-		PlatformUtil.setMnemonic(jrbmiChangeTypeBcfks, res.getString("KseFrame.jrbmiChangeTypeBcfks.mnemonic").charAt(0));
-		jrbmiChangeTypeBcfks.setToolTipText(null);
-		new StatusBarChangeHandler(jrbmiChangeTypeBcfks, (String) changeTypeBcfksAction.getValue(Action.LONG_DESCRIPTION),
-				this);
-		jmChangeType.add(jrbmiChangeTypeBcfks);
-
 		jrbmiChangeTypeUber = new JRadioButtonMenuItem(changeTypeUberAction);
 		PlatformUtil.setMnemonic(jrbmiChangeTypeUber, res.getString("KseFrame.jrbmiChangeTypeUber.mnemonic").charAt(0));
 		jrbmiChangeTypeUber.setToolTipText(null);
 		new StatusBarChangeHandler(jrbmiChangeTypeUber,
 				(String) changeTypeUberAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmChangeType.add(jrbmiChangeTypeUber);
+
+		jrbmiChangeTypeBcfks = new JRadioButtonMenuItem(changeTypeBcfksAction);
+		PlatformUtil.setMnemonic(jrbmiChangeTypeBcfks, res.getString("KseFrame.jrbmiChangeTypeBcfks.mnemonic").charAt(0));
+		jrbmiChangeTypeBcfks.setToolTipText(null);
+		new StatusBarChangeHandler(jrbmiChangeTypeBcfks, (String) changeTypeBcfksAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		jmChangeType.add(jrbmiChangeTypeBcfks);
 
 		ButtonGroup changeTypeGroup = new ButtonGroup();
 		changeTypeGroup.add(jrbmiChangeTypeJks);
