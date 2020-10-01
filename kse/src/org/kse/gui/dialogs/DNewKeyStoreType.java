@@ -87,7 +87,7 @@ public class DNewKeyStoreType extends JEscDialog {
 	private void initComponents() {
 		jlKeyStoreType = new JLabel(res.getString("DNewKeyStoreType.jlKeyStoreType.text"));
 
-		jrbJceksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbJceksKeyStore.text"), true);
+		jrbJceksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbJceksKeyStore.text"));
 		PlatformUtil.setMnemonic(jrbJceksKeyStore, res.getString("DNewKeyStoreType.jrbJceksKeyStore.mnemonic")
 				.charAt(0));
 		jrbJceksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbJceksKeyStore.tooltip"));
@@ -96,7 +96,7 @@ public class DNewKeyStoreType extends JEscDialog {
 		PlatformUtil.setMnemonic(jrbJksKeyStore, res.getString("DNewKeyStoreType.jrbJksKeyStore.mnemonic").charAt(0));
 		jrbJksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbJksKeyStore.tooltip"));
 
-		jrbPkcs12KeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.text"));
+		jrbPkcs12KeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.text"), true);
 		PlatformUtil.setMnemonic(jrbPkcs12KeyStore, res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.mnemonic")
 				.charAt(0));
 		jrbPkcs12KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.tooltip"));
@@ -117,24 +117,23 @@ public class DNewKeyStoreType extends JEscDialog {
 		PlatformUtil.setMnemonic(jrbBcfksKeyStore, res.getString("DNewKeyStoreType.jrbBcfksKeyStore.mnemonic").charAt(0));
 		jrbBcfksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBcfksKeyStore.tooltip"));
 
-		ButtonGroup keyStoreTypes = new ButtonGroup();
-
-		keyStoreTypes.add(jrbJceksKeyStore);
-		keyStoreTypes.add(jrbJksKeyStore);
-		keyStoreTypes.add(jrbPkcs12KeyStore);
-		keyStoreTypes.add(jrbBksV1KeyStore);
-		keyStoreTypes.add(jrbBksKeyStore);
-		keyStoreTypes.add(jrbUberKeyStore);
-		keyStoreTypes.add(jrbBcfksKeyStore);
+		ButtonGroup keyStoreTypesGroup = new ButtonGroup();
+		keyStoreTypesGroup.add(jrbPkcs12KeyStore);
+		keyStoreTypesGroup.add(jrbJceksKeyStore);
+		keyStoreTypesGroup.add(jrbJksKeyStore);
+		keyStoreTypesGroup.add(jrbBksV1KeyStore);
+		keyStoreTypesGroup.add(jrbBksKeyStore);
+		keyStoreTypesGroup.add(jrbUberKeyStore);
+		keyStoreTypesGroup.add(jrbBcfksKeyStore);
 
 		jpKeyStoreType = new JPanel(new GridLayout(8, 1));
 		jpKeyStoreType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
 				new EmptyBorder(5, 5, 5, 5))));
 
 		jpKeyStoreType.add(jlKeyStoreType);
+		jpKeyStoreType.add(jrbPkcs12KeyStore);
 		jpKeyStoreType.add(jrbJceksKeyStore);
 		jpKeyStoreType.add(jrbJksKeyStore);
-		jpKeyStoreType.add(jrbPkcs12KeyStore);
 		jpKeyStoreType.add(jrbBksV1KeyStore);
 		jpKeyStoreType.add(jrbBksKeyStore);
 		jpKeyStoreType.add(jrbUberKeyStore);
