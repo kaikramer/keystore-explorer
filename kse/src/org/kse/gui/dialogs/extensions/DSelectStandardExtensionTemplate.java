@@ -256,7 +256,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 	private void addKeyUsage(X509ExtensionSet extensionSet, int usage) throws IOException {
 		KeyUsage ku = new KeyUsage(usage);
 		byte[] kuEncoded = X509Ext.wrapInOctetString(ku.getEncoded());
-		extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), false, kuEncoded);
+		extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), true, kuEncoded);
 	}
 
 	private void addExtKeyUsage(X509ExtensionSet extensionSet, String ekuOid) throws IOException {
