@@ -113,7 +113,9 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 			}
 			// The other headers contain text
 			else {
+				header.setText((String) value);
 				header.setHorizontalAlignment(LEFT);
+				header.setIcon(null);
 
 				if (col == keyStoreTableColumns.colEntryName()) {
 					header.setToolTipText(res.getString("KeyStoreTableHeadRend.NameColumn.tooltip"));
