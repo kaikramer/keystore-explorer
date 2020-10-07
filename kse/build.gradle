@@ -107,8 +107,8 @@ dependencies {
 	compile group: 'com.formdev', name: 'flatlaf', version: '0.38'
 
 	// VAqua Look & Feel not in a public repository yet
-	if (file("lib/VAqua7.jar").exists()) {
-		compile files('lib/VAqua7.jar')
+	if (file("lib/VAqua8.jar").exists()) {
+		compile files('lib/VAqua8.jar')
 	}
 
 	testCompile("org.assertj:assertj-core:3.16.1")
