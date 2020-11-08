@@ -1,0 +1,9 @@
+[build]
+target = "x86_64-pc-windows-gnu"
+
+[profile.release]
+opt-level = 'z'   # optimize for size
+lto = true        # optimize at the link stage
+panic = 'abort'   # abort immediately rather than unwind (no backtrace)
+codegen-units = 1 # trade longer compile time for reduced size
+
