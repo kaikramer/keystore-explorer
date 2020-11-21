@@ -71,7 +71,7 @@ ext {
 	iconsDir = "$resDir/icons"
 	licensesDir = "$resDir/licenses"
 	readmesDir = "$resDir/readmes"
-	launch4jOutDir = "$buildDir/launch4j"
+	launcherOutDir = "$buildDir/launcher"
 	appBundleDir = "$buildDir/appBundle"
 	distDir = "$buildDir/$distsDirName"
 	dmgDir = "$projectDir/dmg"
@@ -98,6 +98,9 @@ application {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+// always show stacktrace when build fails
+gradle.startParameter.showStacktrace = org.gradle.api.logging.configuration.ShowStacktrace.ALWAYS
 
 dependencies {
 	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.66'
@@ -140,44 +143,35 @@ jar {
 	}
 }
 
-task launch4j(dependsOn: jar) {
+task prepareExe() {
 	doLast {
-		ant.taskdef(name: 'launch4j', classname: 'net.sf.launch4j.ant.Launch4jTask') {
-			classpath {
-				fileset(dir: 'launch4j', includes: 'launch4j.jar,lib/xstream.jar' )
-			}
+		copy {
+			from("$resDir/kse-launcher.exe")
+			rename("kse-launcher.exe", "$appExe")
+			into("$launcherOutDir")
 		}
-		mkdir launch4jOutDir
-		ant.launch4j() {
-			config(headerType: "gui",
-					jarpath: appJarName,
-					outfile: "$launch4jOutDir/$appExe",
-					dontWrapJar: "true",
-					errTitle: appName,
-					stayAlive: "false",
-					icon: kseIco ) {
-				jre(minVersion: "1.8.0", path: "jre") {
-					opt = "-Dkse.exe=true"
-				}
-				versionInfo(fileVersion: "$appVersion.0",
-							fileDescription: appName,
-							copyright: copyright,
-							internalName: appSimpleName,
-							originalFilename: appExe,
-							productName: appName,
-							productVersion: "$appVersion.0",
-							txtFileVersion: appVersion,
-							txtProductVersion: appVersion )
-			}
+		exec {
+			workingDir projectDir
+			// rcedit-x64.exe from https://github.com/electron/rcedit has to be in the PATH
+			commandLine "rcedit-x64.exe", 
+						"$launcherOutDir\\$appExe",
+						'--set-version-string', 'FileDescription', "$appName",
+						'--set-version-string', 'ProductName', "$appName",
+						'--set-version-string', 'LegalCopyright', "$copyright",
+						'--set-version-string', 'OriginalFilename', "$appExe",
+						'--set-version-string', 'InternalName', "$appSimpleName",
+						'--set-file-version', "$appVersion.0",
+						'--set-product-version', "$appVersion",
+						'--set-icon', "$kseIco"
 		}
 	}
 }
 
-task zip(type: Zip, dependsOn: launch4j) {
+task zip(type: Zip, dependsOn: prepareExe) {
 	version = appSimpleVersion
 	into(distFileNamePrefix) {
 		from jar.archivePath
-		from "$launch4jOutDir/$appExe"
+		from "$launcherOutDir/$appExe"
 		from(resDir) {
 			include 'kse.sh'
 			fileMode 0755
@@ -209,7 +203,7 @@ task copyDependencies(type: Copy) {
    into dependenciesDir
 }
 
-task nsis(dependsOn: [launch4j, copyDependencies]) {
+task nsis(dependsOn: [prepareExe, copyDependencies]) {
 	doLast {
 		def nsisScript = "kse.nsi"
 		mkdir distDir
@@ -225,7 +219,7 @@ task nsis(dependsOn: [launch4j, copyDependencies]) {
 				LICENSES_DIR: licensesDir.toString(),
 				JAR_DIR: libsDir.toString(),
 				LIB_DIR: dependenciesDir.toString(),
-				LAUNCH4J_DIR: launch4jOutDir.toString(),
+				LAUNCH4J_DIR: launcherOutDir.toString(),
 				DIST_DIR: distDir.toString()
 			])
 			into("nsis")
@@ -302,11 +296,23 @@ task signapp(dependsOn: appbundler) {
 	doLast {
 		exec {
 			workingDir appBundleDir
-			commandLine 'codesign', '-vvv', '--force', '--options=runtime', '--entitlements', "${dmgDir}/entitlements.xml", '-s', 'Kai Kramer', "${appBundle}/Contents/PlugIns/${javaBaseDirName}"
+			commandLine 'codesign', 
+						'-vvv', 
+						'--force', 
+						'--options=runtime', 
+						'--entitlements', "${dmgDir}/entitlements.xml", 
+						'-s', 'Kai Kramer', 
+						"${appBundle}/Contents/PlugIns/${javaBaseDirName}"
 		}
 		exec {
 			workingDir appBundleDir
-			commandLine 'codesign', '-vvv', '--force', '--options=runtime', '--entitlements', "${dmgDir}/entitlements.xml", '-s', 'Kai Kramer', "${appBundle}"
+			commandLine 'codesign', 
+						'-vvv', 
+						'--force', 
+						'--options=runtime', 
+						'--entitlements', "${dmgDir}/entitlements.xml", 
+						'-s', 'Kai Kramer', 
+						"${appBundle}"
 		}
 	}
 }
