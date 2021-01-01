@@ -228,7 +228,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 			this.extensions = extensionSet;
 
 			this.cancelled = false;
-		} catch (CryptoException | IOException e) {
+		} catch (Exception e) {
 			DError.displayError(this, e);
 		}
 	}

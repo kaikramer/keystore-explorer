@@ -20,6 +20,7 @@
 package org.kse.gui.dialogs;
 
 import java.security.PrivateKey;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -33,6 +34,8 @@ import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.ecc.EccUtil;
+import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
@@ -53,22 +56,36 @@ public class DialogHelper {
 	 * @param jcbSignatureAlgorithm
 	 * @throws CryptoException
 	 */
-	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey, JComboBox<SignatureType> jcbSignatureAlgorithm)
-			throws CryptoException {
+	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey,
+			JComboBox<SignatureType> jcbSignatureAlgorithm)	throws CryptoException {
 
 		List<SignatureType> sigAlgs;
 
 		switch (keyPairType) {
-		case RSA:
-			KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
-			sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
-			break;
 		case DSA:
 			sigAlgs = SignatureType.dsaSignatureTypes();
 			break;
 		case EC:
-		default:
 			sigAlgs = SignatureType.ecdsaSignatureTypes();
+			break;
+		case EDDSA:
+			EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
+			if (edDSACurve == EdDSACurves.ED25519) {
+				sigAlgs = Arrays.asList(SignatureType.ED25519);
+			} else {
+				sigAlgs = Arrays.asList(SignatureType.ED448);
+			}
+			break;
+		case ED25519:
+			sigAlgs = Arrays.asList(SignatureType.ED25519);
+			break;
+		case ED448:
+			sigAlgs = Arrays.asList(SignatureType.ED448);
+			break;
+		case RSA:
+		default:
+			KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+			sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
 		}
 
 		jcbSignatureAlgorithm.removeAllItems();

@@ -29,12 +29,14 @@ import static org.kse.crypto.digest.DigestType.SHA224;
 import static org.kse.crypto.digest.DigestType.SHA256;
 import static org.kse.crypto.digest.DigestType.SHA384;
 import static org.kse.crypto.digest.DigestType.SHA512;
+import static org.kse.crypto.digest.DigestType.SHAKE256;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.ecc.EdDSACurves;
 
 /**
  * Enumeration of Signature Types supported by the X509CertUtil class.
@@ -64,7 +66,10 @@ public enum SignatureType {
 	SHA224_ECDSA("SHA224withECDSA", "1.2.840.10045.4.3.1", SHA224, "SignatureType.Sha224WithEcDsa"),
 	SHA256_ECDSA("SHA256withECDSA", "1.2.840.10045.4.3.2", SHA256, "SignatureType.Sha256WithEcDsa"),
 	SHA384_ECDSA("SHA384withECDSA", "1.2.840.10045.4.3.3", SHA384, "SignatureType.Sha384WithEcDsa"),
-	SHA512_ECDSA("SHA512withECDSA", "1.2.840.10045.4.3.4", SHA512, "SignatureType.Sha512WithEcDsa");
+	SHA512_ECDSA("SHA512withECDSA", "1.2.840.10045.4.3.4", SHA512, "SignatureType.Sha512WithEcDsa"),
+
+	ED25519("Ed25519", EdDSACurves.ED25519.oid().getId(), SHA512, "SignatureType.Ed25519"),
+	ED448("Ed448", EdDSACurves.ED448.oid().getId(), SHAKE256, "SignatureType.Ed448");
 	// @formatter:on
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
@@ -146,6 +151,9 @@ public enum SignatureType {
 		signatureTypes.add(SHA256_ECDSA);
 		signatureTypes.add(SHA384_ECDSA);
 		signatureTypes.add(SHA512_ECDSA);
+
+		signatureTypes.add(ED25519);
+		signatureTypes.add(ED448);
 
 		return signatureTypes;
 	}

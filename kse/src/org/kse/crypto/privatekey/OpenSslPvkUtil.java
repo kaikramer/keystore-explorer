@@ -68,7 +68,44 @@ import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
 /**
- * Provides utility methods relating to OpenSSL encoded private keys.
+ * Provides utility methods relating to OpenSSL (= PKCS#1 for RSA) encoded private keys.
+ *
+ * <pre>
+ * RSA PKCS#1 RSAPrivateKey
+ * ------------------------
+ *
+ * RSAPrivateKey ::= SEQUENCE {
+ *   version           INTEGER Version(0),
+ *   modulus           INTEGER,  -- n
+ *   publicExponent    INTEGER,  -- e
+ *   privateExponent   INTEGER,  -- d
+ *   ...}
+ *
+ * ------BEGIN RSA PRIVATE KEY------
+ * ------END RSA PRIVATE KEY------
+ *
+ *</pre>
+ *
+ *<pre>
+ * EC PrivateKey
+ * -------------
+ * (RFC 5915 or SEC 1 section C.4)
+ *
+ * ECPrivateKey ::= SEQUENCE {
+ *   version        INTEGER { ecPrivkeyVer1(1) },
+ *   privateKey     OCTET STRING,
+ *   parameters [0] ECParameters {{ NamedCurve }} OPTIONAL, // RFC5480
+ *   publicKey  [1] BIT STRING OPTIONAL}
+ *
+ * -----BEGIN EC PRIVATE KEY-----
+ * -----END EC PRIVATE KEY-----
+ *
+ * -----BEGIN EC PRIVATE KEY-----
+ * Proc-Type: 4,ENCRYPTED
+ * DEK-Info: DES-EDE3-CBC,258248872DB25390
+ * -----END EC PRIVATE KEY-----
+ *
+ * </pre>
  *
  */
 public class OpenSslPvkUtil {
@@ -114,52 +151,51 @@ public class OpenSslPvkUtil {
 	 *             Problem encountered while getting the encoded private key
 	 */
 	public static byte[] get(PrivateKey privateKey) throws CryptoException {
-		// DER encoding for each key type is a sequence
-		ASN1EncodableVector vec = new ASN1EncodableVector();
-
-		if (privateKey instanceof ECPrivateKey) {
-			try {
-				ECPrivateKey ecPrivKey = (ECPrivateKey) privateKey;
-				org.bouncycastle.asn1.sec.ECPrivateKey keyStructure = EccUtil.convertToECPrivateKeyStructure(ecPrivKey);
-				return keyStructure.toASN1Primitive().getEncoded();
-			} catch (IOException e) {
-				throw new CryptoException(res.getString("NoDerEncodeOpenSslPrivateKey.exception.message"), e);
-			}
-		} else if (privateKey instanceof RSAPrivateCrtKey) {
-			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
-
-			vec.add(new ASN1Integer(VERSION));
-			vec.add(new ASN1Integer(rsaPrivateKey.getModulus()));
-			vec.add(new ASN1Integer(rsaPrivateKey.getPublicExponent()));
-			vec.add(new ASN1Integer(rsaPrivateKey.getPrivateExponent()));
-			vec.add(new ASN1Integer(rsaPrivateKey.getPrimeP()));
-			vec.add(new ASN1Integer(rsaPrivateKey.getPrimeQ()));
-			vec.add(new ASN1Integer(rsaPrivateKey.getPrimeExponentP()));
-			vec.add(new ASN1Integer(rsaPrivateKey.getPrimeExponentQ()));
-			vec.add(new ASN1Integer(rsaPrivateKey.getCrtCoefficient()));
-		} else {
-			DSAPrivateKey dsaPrivateKey = (DSAPrivateKey) privateKey;
-			DSAParams dsaParams = dsaPrivateKey.getParams();
-
-			BigInteger primeModulusP = dsaParams.getP();
-			BigInteger primeQ = dsaParams.getQ();
-			BigInteger generatorG = dsaParams.getG();
-			BigInteger secretExponentX = dsaPrivateKey.getX();
-
-			// Derive public key from private key parts, ie Y = G^X mod P
-			BigInteger publicExponentY = generatorG.modPow(secretExponentX, primeModulusP);
-
-			vec.add(new ASN1Integer(VERSION));
-			vec.add(new ASN1Integer(primeModulusP));
-			vec.add(new ASN1Integer(primeQ));
-			vec.add(new ASN1Integer(generatorG));
-			vec.add(new ASN1Integer(publicExponentY));
-			vec.add(new ASN1Integer(secretExponentX));
-		}
-		DERSequence derSequence = new DERSequence(vec);
-
 		try {
-			return derSequence.getEncoded();
+			// DER encoding for each key type is a sequence
+			ASN1Sequence asn1Sequence = null;
+
+			if (privateKey instanceof RSAPrivateCrtKey) {
+				RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
+
+				ASN1EncodableVector vec = new ASN1EncodableVector();
+				vec.add(new ASN1Integer(VERSION));
+				vec.add(new ASN1Integer(rsaPrivateKey.getModulus()));
+				vec.add(new ASN1Integer(rsaPrivateKey.getPublicExponent()));
+				vec.add(new ASN1Integer(rsaPrivateKey.getPrivateExponent()));
+				vec.add(new ASN1Integer(rsaPrivateKey.getPrimeP()));
+				vec.add(new ASN1Integer(rsaPrivateKey.getPrimeQ()));
+				vec.add(new ASN1Integer(rsaPrivateKey.getPrimeExponentP()));
+				vec.add(new ASN1Integer(rsaPrivateKey.getPrimeExponentQ()));
+				vec.add(new ASN1Integer(rsaPrivateKey.getCrtCoefficient()));
+				asn1Sequence = new DERSequence(vec);
+			} else if (privateKey instanceof DSAPrivateKey) {
+				DSAPrivateKey dsaPrivateKey = (DSAPrivateKey) privateKey;
+				DSAParams dsaParams = dsaPrivateKey.getParams();
+
+				BigInteger primeModulusP = dsaParams.getP();
+				BigInteger primeQ = dsaParams.getQ();
+				BigInteger generatorG = dsaParams.getG();
+				BigInteger secretExponentX = dsaPrivateKey.getX();
+
+				// Derive public key from private key parts, ie Y = G^X mod P
+				BigInteger publicExponentY = generatorG.modPow(secretExponentX, primeModulusP);
+
+				ASN1EncodableVector vec = new ASN1EncodableVector();
+				vec.add(new ASN1Integer(VERSION));
+				vec.add(new ASN1Integer(primeModulusP));
+				vec.add(new ASN1Integer(primeQ));
+				vec.add(new ASN1Integer(generatorG));
+				vec.add(new ASN1Integer(publicExponentY));
+				vec.add(new ASN1Integer(secretExponentX));
+				asn1Sequence = new DERSequence(vec);
+			} else {
+				ECPrivateKey ecKey = (ECPrivateKey) privateKey;
+				org.bouncycastle.asn1.sec.ECPrivateKey ecPrivateKey = EccUtil.convertToECPrivateKeyStructure(ecKey);
+				asn1Sequence = (ASN1Sequence) ecPrivateKey.toASN1Primitive();
+			}
+
+			return asn1Sequence.getEncoded();
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoDerEncodeOpenSslPrivateKey.exception.message"), ex);
 		}

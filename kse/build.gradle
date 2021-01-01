@@ -103,11 +103,11 @@ targetCompatibility = 1.8
 gradle.startParameter.showStacktrace = org.gradle.api.logging.configuration.ShowStacktrace.ALWAYS
 
 dependencies {
-	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.66'
+	compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.68'
 	compile group: 'net.java.dev.jna', name: 'jna', version: '5.6.0'
-	compile group: 'commons-io', name: 'commons-io', version: '2.7'
+	compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
 	compile group: 'com.miglayout', name: 'miglayout-swing', version: '5.2'
-	compile group: 'com.formdev', name: 'flatlaf', version: '0.38'
+	compile group: 'com.formdev', name: 'flatlaf', version: '0.46'
 
 	// VAqua Look & Feel not in a public repository yet
 	if (file("lib/VAqua8.jar").exists()) {
@@ -115,9 +115,9 @@ dependencies {
 	}
 
 	testCompile("org.assertj:assertj-core:3.16.1")
-	testCompile("org.junit.jupiter:junit-jupiter-api:5.6.2")
-	testCompile("org.junit.jupiter:junit-jupiter-params:5.6.2")
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+	testCompile("org.junit.jupiter:junit-jupiter-api:5.7.0")
+	testCompile("org.junit.jupiter:junit-jupiter-params:5.7.0")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.7.0")
 
 	// To avoid compiler warnings about @API annotations in JUnit code:
 	testCompileOnly('org.apiguardian:apiguardian-api:1.1.0')

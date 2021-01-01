@@ -165,7 +165,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 		// populate signature algorithm selector
 		if (issuerPrivateKey != null) {
-			KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerPrivateKey.getAlgorithm());
+			String issuerKeyAlgorithm = issuerPrivateKey.getAlgorithm();
+			KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerKeyAlgorithm);
 			DialogHelper.populateSigAlgs(issuerKeyPairType, issuerPrivateKey, jcbSignatureAlgorithm);
 		} else {
 			// self-signed

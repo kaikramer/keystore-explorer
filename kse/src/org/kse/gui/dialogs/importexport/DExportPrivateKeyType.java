@@ -42,6 +42,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.kse.crypto.keypair.KeyPairType;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
@@ -68,14 +69,17 @@ public class DExportPrivateKeyType extends JEscDialog {
 
 	private boolean exportTypeSelected = false;
 
+	private KeyPairType keyPairType;
+
 	/**
 	 * Creates a new DExportPrivateKeyType dialog.
 	 *
 	 * @param parent
 	 *            The parent frame
 	 */
-	public DExportPrivateKeyType(JFrame parent) {
+	public DExportPrivateKeyType(JFrame parent, KeyPairType keyPairType) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		this.keyPairType = keyPairType;
 		setTitle(res.getString("DExportPrivateKeyType.Title"));
 		initComponents();
 	}
@@ -90,10 +94,17 @@ public class DExportPrivateKeyType extends JEscDialog {
 		jrbPvk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPvk.text"));
 		PlatformUtil.setMnemonic(jrbPvk, res.getString("DExportPrivateKeyType.jrbPvk.mnemonic").charAt(0));
 		jrbPvk.setToolTipText(res.getString("DExportPrivateKeyType.jrbPvk.tooltip"));
+		if (keyPairType == KeyPairType.EC || keyPairType == KeyPairType.ECDSA || keyPairType == KeyPairType.EDDSA
+				|| keyPairType == KeyPairType.ED25519 || keyPairType == KeyPairType.ED448) {
+			jrbPvk.setEnabled(false);
+		}
 
 		jrbOpenSsl = new JRadioButton(res.getString("DExportPrivateKeyType.jrbOpenSsl.text"));
 		PlatformUtil.setMnemonic(jrbOpenSsl, res.getString("DExportPrivateKeyType.jrbOpenSsl.mnemonic").charAt(0));
 		jrbOpenSsl.setToolTipText(res.getString("DExportPrivateKeyType.jrbOpenSsl.tooltip"));
+		if (keyPairType == KeyPairType.EDDSA || keyPairType == KeyPairType.ED25519 || keyPairType == KeyPairType.ED448) {
+			jrbOpenSsl.setEnabled(false);
+		}
 
 		ButtonGroup keyStoreTypes = new ButtonGroup();
 

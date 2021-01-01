@@ -206,11 +206,19 @@ public class DGeneratingKeyPair extends JEscDialog {
 		@Override
 		public void run() {
 			try {
-				// RSA, DSA or EC?
-				if (keyPairType != KeyPairType.EC) {
+				switch (keyPairType) {
+				case RSA:
+				case DSA:
 					keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, provider);
-				} else {
+					break;
+				case EC:
+				case ECDSA:
+				case EDDSA:
+				case ED25519:
+				case ED448:
+				default:
 					keyPair = KeyPairUtil.generateECKeyPair(curveName, provider);
+					break;
 				}
 
 				SwingUtilities.invokeLater(new Runnable() {

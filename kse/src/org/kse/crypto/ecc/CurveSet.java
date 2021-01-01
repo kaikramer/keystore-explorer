@@ -19,6 +19,8 @@
  */
 package org.kse.crypto.ecc;
 
+import static org.kse.version.JavaVersion.JRE_VERSION_15;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -30,6 +32,7 @@ import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.version.JavaVersion;
 
 /**
  * Enumeration for all currently available ECC named curve sets.
@@ -40,7 +43,8 @@ public enum CurveSet {
 	ANSI_X9_62("ANSI X9.62"),
 	NIST("NIST"),
 	SEC("SEC"),
-	TELETRUST("Brainpool");
+	TELETRUST("Brainpool"),
+	ED("Edwards");
 
 	private String visibleName;
 
@@ -54,13 +58,14 @@ public enum CurveSet {
 	 * @return All available sets of named curves
 	 */
 	public static String[] getAvailableSetNames(KeyStoreType keyStoreType) {
-		List<String> sets = new ArrayList<String>();
+		List<String> sets = new ArrayList<>();
 		sets.add(ANSI_X9_62.visibleName);
 		sets.add(NIST.visibleName);
 		sets.add(SEC.visibleName);
 		if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
 			sets.add(TELETRUST.visibleName);
 		}
+		sets.add(ED.visibleName);
 		return sets.toArray(new String[sets.size()]);
 	}
 
@@ -76,6 +81,9 @@ public enum CurveSet {
 		sets.add(SEC);
 		if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
 			sets.add(TELETRUST);
+		}
+		if (EccUtil.isBouncyCastleKeyStore(keyStoreType) || JavaVersion.getJreVersion().isAtLeast(JRE_VERSION_15)) {
+			sets.add(ED);
 		}
 		return sets;
 	}
@@ -123,6 +131,9 @@ public enum CurveSet {
 		case SEC:
 			en = SECNamedCurves.getNames();
 			break;
+		case ED:
+			en = EdDSACurves.getNames();
+			break;
 		}
 
 		if (en == null) {
@@ -151,6 +162,8 @@ public enum CurveSet {
 			return ANSI_X9_62;
 		} else if (curveSetName.equals(TELETRUST.visibleName)) {
 			return TELETRUST;
+		} else if (curveSetName.equals(ED.visibleName)) {
+			return ED;
 		}
 
 		return null;

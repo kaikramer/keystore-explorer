@@ -51,6 +51,7 @@ import javax.swing.event.ChangeListener;
 
 import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
+import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.JEscDialog;
@@ -158,7 +159,7 @@ public class DGenerateKeyPair extends JEscDialog {
 		jlECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jlECCurveSet.tooltip"));
 
 		jcbECCurveSet = new JComboBox<>();
-		jcbECCurveSet.setModel(new DefaultComboBoxModel<String>(CurveSet.getAvailableSetNames(keyStoreType)));
+		jcbECCurveSet.setModel(new DefaultComboBoxModel<>(CurveSet.getAvailableSetNames(keyStoreType)));
 		jcbECCurveSet.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurveSet.tooltip"));
 
 		jlECCurve = new JLabel(res.getString("DGenerateKeyPair.jlECCurve.text"));
@@ -181,7 +182,7 @@ public class DGenerateKeyPair extends JEscDialog {
 			jrbDSA.setSelected(true);
 		} else {
 			if (jrbEC.isEnabled()) {
-				jrbDSA.setSelected(true);
+				jrbEC.setSelected(true);
 			} else {
 				// EC not available => fall back to RSA
 				jrbRSA.setSelected(true);
@@ -298,7 +299,7 @@ public class DGenerateKeyPair extends JEscDialog {
 
 		Collections.sort(curveNames);
 
-		jcbECCurve.setModel(new DefaultComboBoxModel<String>(curveNames.toArray(new String[curveNames.size()])));
+		jcbECCurve.setModel(new DefaultComboBoxModel<>(curveNames.toArray(new String[curveNames.size()])));
 	}
 
 	protected void enableDisableElements() {
@@ -414,8 +415,16 @@ public class DGenerateKeyPair extends JEscDialog {
 			return KeyPairType.DSA;
 		}
 
-		return KeyPairType.EC;
+		// handle Ed25519 and Ed448
+		if (jrbEC.isSelected() && CurveSet.ED.getVisibleName().equals(jcbECCurveSet.getModel().getSelectedItem())) {
+			if (EdDSACurves.ED25519.jce().equals(jcbECCurve.getModel().getSelectedItem())) {
+				return KeyPairType.ED25519;
+			} else {
+				return KeyPairType.ED448;
+			}
+		}
 
+		return KeyPairType.EC;
 	}
 
 	/**

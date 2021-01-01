@@ -27,7 +27,10 @@ public enum KeyPairType {
 	RSA("RSA", "1.2.840.113549.1.1.1", 512, 16384, 8),
 	DSA("DSA", "1.2.840.10040.4.1", 512, 2048, 64),
 	EC("EC", "1.2.840.10045.2.1", 160, 571, 32),
-	ECDSA("ECDSA", "1.2.840.10045.2.1", 160, 571, 32);
+	ECDSA("ECDSA", "1.2.840.10045.2.1", 160, 571, 32),
+	EDDSA("EdDSA", "", 256, 456, 200), // for Java >= 15 (there is no specific OID for EdDSA)
+	ED25519("Ed25519", "1.3.101.112", 256, 256, 0), // BC has separate key pair types for the two EdDSA types
+	ED448("Ed448", "1.3.101.113", 456, 456, 0);
 
 	private String jce;
 	private String oid;

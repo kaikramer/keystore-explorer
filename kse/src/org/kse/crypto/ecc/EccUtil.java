@@ -22,7 +22,9 @@ package org.kse.crypto.ecc;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.security.Key;
+import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.ECPrivateKey;
@@ -30,7 +32,10 @@ import java.security.spec.ECParameterSpec;
 import java.util.List;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.version.JavaVersion;
@@ -76,8 +81,7 @@ public class EccUtil {
 		}
 
 		ECNamedCurveSpec ecPrivateKeySpec = (ECNamedCurveSpec) params;
-		String namedCurve = ecPrivateKeySpec.getName();
-		return namedCurve;
+		return ecPrivateKeySpec.getName();
 	}
 
 	/**
@@ -115,7 +119,9 @@ public class EccUtil {
 	public static boolean isCurveAvailable(String curveName, KeyStoreType keyStoreType) {
 
 		// BC provides all curves
-		if (isBouncyCastleKeyStore(keyStoreType)) {
+		if (isBouncyCastleKeyStore(keyStoreType)
+				|| EdDSACurves.ED25519.jce().equalsIgnoreCase(curveName)
+				|| EdDSACurves.ED448.jce().equalsIgnoreCase(curveName)) {
 			return true;
 		}
 
@@ -133,7 +139,6 @@ public class EccUtil {
 
 		return false;
 	}
-
 
 	/**
 	 * Finds the longest curve name in all curves that are provided by BC.
@@ -154,7 +159,7 @@ public class EccUtil {
 	}
 
 	/**
-	 * Converts PKCS#8 EC private key (RFC 5208 ASN.1 PrivateKeyInfo structure) to "traditional" OpenSSL
+	 * Converts PKCS#8 EC private key (RFC 5208/5958 ASN.1 PrivateKeyInfo structure) to "traditional" OpenSSL
 	 * ASN.1 structure ECPrivateKey from RFC 5915. As ECPrivateKey is already in the PrivateKey field of PrivateKeyInfo,
 	 * this must only be extracted:
 	 *
@@ -191,9 +196,39 @@ public class EccUtil {
 	 */
 	public static org.bouncycastle.asn1.sec.ECPrivateKey convertToECPrivateKeyStructure(ECPrivateKey ecPrivateKey)
 			throws IOException {
-		byte[] encoded = ecPrivateKey.getEncoded();
-		PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(encoded);
+		PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(ecPrivateKey.getEncoded());
 		ASN1Encodable privateKey = privateKeyInfo.parsePrivateKey();
+
 		return org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(privateKey);
+	}
+
+	/**
+	 * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given privateKey is.
+	 *
+	 * @param privateKey An EdDSA private key
+	 * @return Ed25519 or Ed448
+	 * @throws InvalidParameterException if privateKey is not a EdDSA key
+	 */
+	public static EdDSACurves detectEdDSACurve(PrivateKey privateKey) {
+		PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKey.getEncoded());
+		AlgorithmIdentifier algorithm = privateKeyInfo.getPrivateKeyAlgorithm();
+		ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
+
+		return EdDSACurves.resolve(algOid);
+	}
+
+	/**
+	 * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given publicKey is.
+	 *
+	 * @param privateKey An EdDSA public key
+	 * @return Ed25519 or Ed448
+	 * @throws InvalidParameterException if publicKey is not a EdDSA key
+	 */
+	public static EdDSACurves detectEdDSACurve(PublicKey publicKey) {
+		SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+		AlgorithmIdentifier algorithm = publicKeyInfo.getAlgorithm();
+		ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
+
+		return EdDSACurves.resolve(algOid);
 	}
 }

@@ -1633,6 +1633,10 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("1.3.36.8.7.1.45", "PtWPGrph");
 		oidToNameMapping.put("1.3.101.1.4", "Thawte-ce");
 		oidToNameMapping.put("1.3.101.1.4.1", "StrongExtranet");
+		oidToNameMapping.put("1.3.101.110", "X25519");
+		oidToNameMapping.put("1.3.101.111", "X448");
+		oidToNameMapping.put("1.3.101.112", "Ed25519");
+		oidToNameMapping.put("1.3.101.113", "Ed448");
 		oidToNameMapping.put("1.3.132.0.1", "Sect163k1");
 		oidToNameMapping.put("1.3.132.0.2", "Sect163r1");
 		oidToNameMapping.put("1.3.132.0.3", "Sect239k1");

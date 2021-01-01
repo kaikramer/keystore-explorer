@@ -22,7 +22,6 @@ package org.kse.crypto.publickey;
 import java.io.IOException;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
-import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -111,15 +110,15 @@ public class KeyIdentifierGenerator {
 
 		if (publicKey instanceof RSAPublicKey) {
 			encodedPublicKey = encodeRsaPublicKeyAsBitString((RSAPublicKey) publicKey);
-		} else if (publicKey instanceof ECPublicKey){
-			encodedPublicKey = encodeEcPublicKeyAsBitString((ECPublicKey) publicKey);
-		} else {
+		} else if (publicKey instanceof DSAPublicKey) {
 			encodedPublicKey = encodeDsaPublicKeyAsBitString((DSAPublicKey) publicKey);
+		} else {
+			SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+			encodedPublicKey = publicKeyInfo.getPublicKeyData().getBytes();
 		}
 
 		return new DERBitString(encodedPublicKey);
 	}
-
 
 	private byte[] encodeRsaPublicKeyAsBitString(RSAPublicKey rsaPublicKey) throws IOException {
 		ASN1EncodableVector vec = new ASN1EncodableVector();
@@ -130,15 +129,9 @@ public class KeyIdentifierGenerator {
 		return derSequence.getEncoded();
 	}
 
-	private byte[] encodeEcPublicKeyAsBitString(ECPublicKey ecPublicKey) {
-		SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(ecPublicKey.getEncoded());
-		byte[] bytes = publicKeyInfo.getPublicKeyData().getBytes();
-		return bytes;
-	}
-
 	private byte[] encodeDsaPublicKeyAsBitString(DSAPublicKey dsaPublicKey) throws IOException {
-		ASN1Integer publicKey = new ASN1Integer(dsaPublicKey.getY());
-
-		return publicKey.getEncoded(ASN1Encoding.DER);
+		ASN1Integer pubKey = new ASN1Integer(dsaPublicKey.getY());
+		return pubKey.getEncoded(ASN1Encoding.DER);
 	}
+
 }

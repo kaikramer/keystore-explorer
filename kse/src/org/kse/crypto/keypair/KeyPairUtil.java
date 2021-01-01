@@ -21,9 +21,12 @@ package org.kse.crypto.keypair;
 
 import static org.kse.crypto.KeyType.ASYMMETRIC;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
+import static org.kse.crypto.ecc.EdDSACurves.ED25519;
+import static org.kse.crypto.ecc.EdDSACurves.ED448;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
 import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.ECDSA;
+import static org.kse.crypto.keypair.KeyPairType.EDDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 
 import java.math.BigInteger;
@@ -52,6 +55,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.ecc.EccUtil;
+import org.kse.crypto.ecc.EdDSACurves;
 
 /**
  * Provides utility methods relating to asymmetric key pairs.
@@ -122,17 +127,20 @@ public final class KeyPairUtil {
 		try {
 			// Get a key pair generator
 			KeyPairGenerator keyPairGen;
-			if (provider != null) {
+
+			if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)) {
+				keyPairGen = KeyPairGenerator.getInstance(curveName, BOUNCY_CASTLE.jce());
+			} else if (provider != null) {
 				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
+				keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
 			} else {
 				keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
+				keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
 			}
 
-			keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
-
 			// Generate and return the key pair
-			KeyPair keyPair = keyPairGen.generateKeyPair();
-			return keyPair;
+			return keyPairGen.generateKeyPair();
+
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"),
 					KeyPairType.EC), ex);
@@ -224,7 +232,15 @@ public final class KeyPairUtil {
 				} else {
 					return new KeyInfo(ASYMMETRIC, algorithm, size);
 				}
+			} else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
+				return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
+			} else if (ED448.jce().equalsIgnoreCase(algorithm)) {
+				return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
+			} else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
+				EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
+				return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
 			}
+
 			return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("NoPublicKeysize.exception.message"), ex);
@@ -244,7 +260,7 @@ public final class KeyPairUtil {
 		try {
 			String algorithm = privateKey.getAlgorithm();
 
-			if (algorithm.equals(RSA.jce())) {
+			if (RSA.jce().equals(algorithm)) {
 				if (privateKey instanceof RSAPrivateKey) {
 					// Using default provider does not work for BKS and UBER resident private keys
 					KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
@@ -254,21 +270,28 @@ public final class KeyPairUtil {
 				} else {
 					return new KeyInfo(ASYMMETRIC, algorithm, 0);
 				}
-			} else if (algorithm.equals(DSA.jce())) {
+			} else if (DSA.jce().equals(algorithm)) {
 				// Use SUN (DSA key spec not implemented for BC)
 				KeyFactory keyFact = KeyFactory.getInstance(algorithm);
 				DSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey, DSAPrivateKeySpec.class);
 				BigInteger prime = keySpec.getP();
 				return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
-			} else if (algorithm.equals(EC.jce()) || algorithm.equals(ECDSA.jce())) {
-				ECPrivateKey pubk = (ECPrivateKey) privateKey;
-				ECParameterSpec spec = pubk.getParams();
+			} else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)) {
+				ECPrivateKey privk = (ECPrivateKey) privateKey;
+				ECParameterSpec spec = privk.getParams();
 				int size = spec.getOrder().bitLength();
 				if (spec instanceof ECNamedCurveSpec) {
 					return new KeyInfo(ASYMMETRIC, algorithm, size, ((ECNamedCurveSpec) spec).getName());
 				} else {
 					return new KeyInfo(ASYMMETRIC, algorithm, size);
 				}
+			} else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
+				return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
+			} else if (ED448.jce().equalsIgnoreCase(algorithm)) {
+				return new KeyInfo(ASYMMETRIC, algorithm, ED448.bitLength());
+			} else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
+				EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
+				return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
 			}
 
 			return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
@@ -304,35 +327,31 @@ public final class KeyPairUtil {
 	public static boolean validKeyPair(PrivateKey privateKey, PublicKey publicKey) throws CryptoException {
 		try {
 			String privateAlgorithm = privateKey.getAlgorithm();
-			String publicAlgorithm = publicKey.getAlgorithm();
 
-			if (!privateAlgorithm.equals(publicAlgorithm)) {
-				// private EC key could be algorithm name "EC" or "ECDSA", which would be fine if publicAlgorithm is "EC"
-				if (!(privateAlgorithm.equals(ECDSA.jce()) && publicAlgorithm.equals(EC.jce()))) {
-					return false;
-				}
-			}
-
-			// Match private and public keys by signing some data with the
-			// private key and verifying the signature with the public key
+			// Match private and public keys by signing some data and verifying the signature with the public key
+			byte[] toSign = "Some random text".getBytes();
 			if (privateAlgorithm.equals(RSA.jce())) {
-				byte[] toSign = "Rivest Shamir Adleman".getBytes();
 				String signatureAlgorithm = "SHA256withRSA";
 				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
-
 				return verify(toSign, signature, publicKey, signatureAlgorithm);
 			} else if (privateAlgorithm.equals(DSA.jce())) {
-				byte[] toSign = "Digital Signature Algorithm".getBytes();
 				String signatureAlgorithm = "SHA1withDSA";
 				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
-
 				return verify(toSign, signature, publicKey, signatureAlgorithm);
 			} else if (privateAlgorithm.equals(EC.jce()) || privateAlgorithm.equals(ECDSA.jce())) {
-				byte[] toSign = "EC Digital Signature Algorithm".getBytes();
 				String signatureAlgorithm = "SHA256withECDSA";
 				byte[] signature = sign(toSign, privateKey, signatureAlgorithm);
-
 				return verify(toSign, signature, publicKey, signatureAlgorithm);
+			} else if (privateAlgorithm.equals(ED25519.jce())) {
+				byte[] signature = sign(toSign, privateKey, ED25519.jce());
+				return verify(toSign, signature, publicKey, ED25519.jce());
+			} else if (privateAlgorithm.equals(ED448.jce())) {
+				byte[] signature = sign(toSign, privateKey, ED448.jce());
+				return verify(toSign, signature, publicKey, ED448.jce());
+			} else if (privateAlgorithm.equals(EDDSA.jce())) {
+				EdDSACurves detectedEdDSACurve = EccUtil.detectEdDSACurve(privateKey);
+				byte[] signature = sign(toSign, privateKey, detectedEdDSACurve.jce());
+				return verify(toSign, signature, publicKey, detectedEdDSACurve.jce());
 			} else {
 				throw new CryptoException(MessageFormat.format(
 						res.getString("NoCheckCompriseValidKeypairAlg.exception.message"), privateAlgorithm));

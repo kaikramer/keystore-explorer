@@ -412,32 +412,40 @@ public class JCustomExtendedKeyUsage extends JPanel {
 
 			Container container = getTopLevelAncestor();
 
-			DObjectIdChooser dObjectIdChooser = null;
-
 			try {
+				DObjectIdChooser dObjectIdChooser = null;
 				if (container instanceof JDialog) {
 					dObjectIdChooser = new DObjectIdChooser((JDialog) container, title, objectId);
 				} else {
 					dObjectIdChooser = new DObjectIdChooser((JFrame) container, title, objectId);
 				}
-			} catch (InvalidObjectIdException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+				dObjectIdChooser.setLocationRelativeTo(container);
+				dObjectIdChooser.setVisible(true);
+
+				ASN1ObjectIdentifier newObjectId = dObjectIdChooser.getObjectId();
+
+				if (newObjectId == null) {
+					return;
+				}
+
+				objectIds.remove(objectId);
+				objectIds.add(newObjectId);
+
+				populate();
+				selectCustomExtKeyUsageInTable(newObjectId);
+			} catch (InvalidObjectIdException ex) {
+				DError dError = null;
+
+				if (container instanceof JDialog) {
+					dError = new DError((JDialog) container, ex);
+				} else {
+					dError = new DError((JFrame) container, ex);
+				}
+
+				dError.setLocationRelativeTo(container);
+				dError.setVisible(true);
 			}
-			dObjectIdChooser.setLocationRelativeTo(container);
-			dObjectIdChooser.setVisible(true);
-
-			ASN1ObjectIdentifier newObjectId = dObjectIdChooser.getObjectId();
-
-			if (newObjectId == null) {
-				return;
-			}
-
-			objectIds.remove(objectId);
-			objectIds.add(newObjectId);
-
-			populate();
-			selectCustomExtKeyUsageInTable(newObjectId);
 		}
 	}
 
