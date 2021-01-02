@@ -63,6 +63,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -566,7 +567,8 @@ public class DSignCsr extends JEscDialog {
 		populatePublicKey();
 
 		String sigAlgId = pkcs10Csr.getSignatureAlgorithm().getAlgorithm().getId();
-		SignatureType sigAlg = SignatureType.resolveOid(sigAlgId);
+		byte[] sigAlgParams = extractSigAlgParams();
+		SignatureType sigAlg = SignatureType.resolveOid(sigAlgId, sigAlgParams);
 
 		if (sigAlg != null) {
 			jtfCsrSignatureAlgorithm.setText(sigAlg.friendly());
@@ -589,6 +591,14 @@ public class DSignCsr extends JEscDialog {
 
 	}
 
+	private byte[] extractSigAlgParams() {
+		ASN1Encodable sigAlgParamsAsn1 = pkcs10Csr.getSignatureAlgorithm().getParameters();
+		try {
+			return sigAlgParamsAsn1 == null ? null : sigAlgParamsAsn1.toASN1Primitive().getEncoded();
+		} catch (IOException e) {
+			return null;
+		}
+	}
 
 	private void populateSpkacCsrDetails() throws CryptoException {
 		jtfCsrFormat.setText(res.getString("DSignCsr.jtfCsrFormat.Spkac.text"));

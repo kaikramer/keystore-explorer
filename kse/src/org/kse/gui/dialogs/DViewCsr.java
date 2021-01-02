@@ -43,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -312,7 +313,8 @@ public class DViewCsr extends JEscDialog {
 		populatePublicKey(getPkcs10PublicKey());
 
 		String sigAlgId = pkcs10Csr.getSignatureAlgorithm().getAlgorithm().getId();
-		SignatureType sigAlg = SignatureType.resolveOid(sigAlgId);
+		byte[] sigAlgParamsEncoded = extractSigAlgParams();
+		SignatureType sigAlg = SignatureType.resolveOid(sigAlgId, sigAlgParamsEncoded);
 
 		if (sigAlg != null) {
 			jtfSignatureAlgorithm.setText(sigAlg.friendly());
@@ -321,6 +323,15 @@ public class DViewCsr extends JEscDialog {
 		}
 
 		jtfSignatureAlgorithm.setCaretPosition(0);
+	}
+
+	private byte[] extractSigAlgParams() {
+		ASN1Encodable sigAlgParamsAsn1 = pkcs10Csr.getSignatureAlgorithm().getParameters();
+		try {
+			return sigAlgParamsAsn1 == null ? null : sigAlgParamsAsn1.toASN1Primitive().getEncoded();
+		} catch (IOException e) {
+			return null;
+		}
 	}
 
 	private void populateSpkacCsrDetails() throws CryptoException {

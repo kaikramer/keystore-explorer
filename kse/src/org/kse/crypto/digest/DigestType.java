@@ -106,6 +106,23 @@ public enum DigestType {
 	}
 
 	/**
+	 * Resolve the supplied OID to a matching Digest type.
+	 *
+	 * @param oid
+	 *            OID of algorithm
+	 * @return Digest type or null if none
+	 */
+	public static DigestType resolveOid(String oid) {
+		for (DigestType digestType : values()) {
+			if (oid.equals(digestType.oid())) {
+				return digestType;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Returns friendly name.
 	 *
 	 * @return Friendly name

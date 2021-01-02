@@ -19,6 +19,7 @@
  */
 package org.kse.crypto.signing;
 
+import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_RSASSA_PSS;
 import static org.kse.crypto.digest.DigestType.MD2;
 import static org.kse.crypto.digest.DigestType.MD5;
 import static org.kse.crypto.digest.DigestType.RIPEMD128;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.ecc.EdDSACurves;
 
@@ -70,17 +72,17 @@ public enum SignatureType {
 	SHA512_RSA("SHA512withRSA", "1.2.840.113549.1.1.13", SHA512, "SignatureType.Sha512WithRsa"),
 
 	// RSASSA-PSS (there is only one OID for the PSS signature scheme, the parameters define the exact algorithm)
-	SHA1WITHRSAANDMGF1("SHA1WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA1, "SignatureType.Sha1WithRsaAndMGF1"),
-	SHA224WITHRSAANDMGF1("SHA224WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA224, "SignatureType.Sha224WithRsaAndMGF1"),
-	SHA256WITHRSAANDMGF1("SHA256WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA256, "SignatureType.Sha256WithRsaAndMGF1"),
-	SHA384WITHRSAANDMGF1("SHA384WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA384, "SignatureType.Sha384WithRsaAndMGF1"),
-	SHA512WITHRSAANDMGF1("SHA512WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA512, "SignatureType.Sha512WithRsaAndMGF1"),
+	SHA1WITHRSAANDMGF1("SHA1WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA1, "SignatureType.Sha1WithRsaAndMGF1"),
+	SHA224WITHRSAANDMGF1("SHA224WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA224, "SignatureType.Sha224WithRsaAndMGF1"),
+	SHA256WITHRSAANDMGF1("SHA256WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA256, "SignatureType.Sha256WithRsaAndMGF1"),
+	SHA384WITHRSAANDMGF1("SHA384WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA384, "SignatureType.Sha384WithRsaAndMGF1"),
+	SHA512WITHRSAANDMGF1("SHA512WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA512, "SignatureType.Sha512WithRsaAndMGF1"),
 
 	// RSA with SHA3 and MGF1
-	SHA3_224WITHRSAANDMGF1("SHA3-224WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_224, "SignatureType.Sha3_224WithRsaAndMGF1"),
-	SHA3_256WITHRSAANDMGF1("SHA3-256WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_256, "SignatureType.Sha3_256WithRsaAndMGF1"),
-	SHA3_384WITHRSAANDMGF1("SHA3-384WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_384, "SignatureType.Sha3_384WithRsaAndMGF1"),
-	SHA3_512WITHRSAANDMGF1("SHA3-512WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_512, "SignatureType.Sha3_512WithRsaAndMGF1"),
+	SHA3_224WITHRSAANDMGF1("SHA3-224WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_224, "SignatureType.Sha3_224WithRsaAndMGF1"),
+	SHA3_256WITHRSAANDMGF1("SHA3-256WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_256, "SignatureType.Sha3_256WithRsaAndMGF1"),
+	SHA3_384WITHRSAANDMGF1("SHA3-384WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_384, "SignatureType.Sha3_384WithRsaAndMGF1"),
+	SHA3_512WITHRSAANDMGF1("SHA3-512WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_512, "SignatureType.Sha3_512WithRsaAndMGF1"),
 
 	// ECDSA
 	SHA1_ECDSA("SHA1withECDSA", "1.2.840.10045.4.1", SHA1, "SignatureType.Sha1WithEcDsa"),
@@ -95,6 +97,7 @@ public enum SignatureType {
 	// @formatter:on
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
+	private static final String RSASSA_PSS_OID = id_RSASSA_PSS.getId();
 	private String jce;
 	private String oid;
 	private DigestType digestType;
@@ -255,18 +258,39 @@ public enum SignatureType {
 	/**
 	 * Resolve the supplied object identifier to a matching Signature type.
 	 *
-	 * @param oid
-	 *            Object identifier
+	 * @param oid Object identifier
+	 * @param sigAlgParams Optional signature algorithm parameters (can be null)
 	 * @return Signature type or null if none
 	 */
-	public static SignatureType resolveOid(String oid) {
+	public static SignatureType resolveOid(String oid, byte[] sigAlgParams) {
+
+		DigestType hashAlg = detectHashAlg(sigAlgParams);
+
 		for (SignatureType signatureType : values()) {
-			if (oid.equals(signatureType.oid())) {
+
+			// PSS has one OID for all variations, so we have to compare hash algorithm as well
+			if (RSASSA_PSS_OID.equals(oid)) {
+				if (signatureType.oid().equals(oid) && signatureType.digestType == hashAlg) {
+					return signatureType;
+				}
+			} else if (signatureType.oid().equals(oid)) {
 				return signatureType;
 			}
 		}
 
 		return null;
+	}
+
+	private static DigestType detectHashAlg(byte[] sigAlgParams) {
+		if (sigAlgParams == null) {
+			return null;
+		}
+		try {
+			RSASSAPSSparams pssParams = RSASSAPSSparams.getInstance(sigAlgParams);
+			return DigestType.resolveOid(pssParams.getHashAlgorithm().getAlgorithm().getId());
+		} catch (Exception e) {
+			return DigestType.SHA1; // default for PSS
+		}
 	}
 
 	/**

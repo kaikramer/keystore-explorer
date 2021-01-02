@@ -78,26 +78,21 @@ public class Spkac {
 	/*
 	 * SPKAC ASN.1 structure:
 	 *
-	 * SignedPublicKeyAndChallenge ::= ASN1Sequence { publicKeyAndChallenge
-	 * PublicKeyAndChallenge, signatureAlgorithm AlgorithmIdentifier, signature
-	 * BIT STRING }
+	 * SignedPublicKeyAndChallenge ::= ASN1Sequence {
+	 * 		publicKeyAndChallenge PublicKeyAndChallenge,
+	 * 		signatureAlgorithm AlgorithmIdentifier,
+	 * 		signature BIT STRING }
 	 *
-	 * PublicKeyAndChallenge ::= ASN1Sequence { spki SubjectPublicKeyInfo,
-	 * challenge IA5STRING }
+	 * PublicKeyAndChallenge ::= ASN1Sequence { spki SubjectPublicKeyInfo, challenge IA5STRING }
 	 *
-	 * SubjectPublicKeyInfo ::= ASN1Sequence { algorithm AlgorithmIdentifier,
-	 * publicKey BIT STRING }
+	 * SubjectPublicKeyInfo ::= ASN1Sequence { algorithm AlgorithmIdentifier, publicKey BIT STRING }
 	 *
-	 * AlgorithmIdentifier ::= ASN1Sequence { algorithm OBJECT IDENTIFIER,
-	 * parameters ANY DEFINED BY algorithm OPTIONAL }
+	 * AlgorithmIdentifier ::= ASN1Sequence { algorithm OBJECT IDENTIFIER, parameters ANY DEFINED BY algorithm OPTIONAL }
 	 *
 	 * AlgorithmIdentifier parameters for DSA:
-	 *
-	 * Dss-Parms ::= ASN1Sequence { p ASN1Integer, q ASN1Integer, g ASN1Integer
-	 * }
+	 * Dss-Parms ::= ASN1Sequence { p ASN1Integer, q ASN1Integer, g ASN1Integer }
 	 *
 	 * AlgorithmIdentifier parameters for RSA:
-	 *
 	 * Rsa-Params ::= ASN1Null
 	 */
 
@@ -111,6 +106,7 @@ public class Spkac {
 	private String challenge;
 	private SpkacSubject subject;
 	private SignatureType signatureAlgorithm;
+	private byte[] signatureAlgorithmParameters;
 	private byte[] signature;
 	private PublicKey publicKey;
 
@@ -223,6 +219,10 @@ public class Spkac {
 			DERBitString signature = (DERBitString) signedPublicKeyAndChallenge.getObjectAt(2);
 
 			ASN1ObjectIdentifier signatureAlgorithmOid = (ASN1ObjectIdentifier) signatureAlgorithm.getObjectAt(0);
+			if (signatureAlgorithm.size() > 1) {
+				byte[] sigAlgParameters = signatureAlgorithm.getObjectAt(1).toASN1Primitive().getEncoded();
+				this.signatureAlgorithmParameters = sigAlgParameters;
+			}
 
 			ASN1Sequence spki = (ASN1Sequence) publicKeyAndChallenge.getObjectAt(0);
 			DERIA5String challenge = (DERIA5String) publicKeyAndChallenge.getObjectAt(1);
@@ -243,14 +243,14 @@ public class Spkac {
 	}
 
 	private SignatureType getSignatureAlgorithm(ASN1ObjectIdentifier signatureAlgorithmOid) throws SpkacException {
-		SignatureType signatureAlgorithm = SignatureType.resolveOid(signatureAlgorithmOid.getId());
+		SignatureType sigAlg = SignatureType.resolveOid(signatureAlgorithmOid.getId(), signatureAlgorithmParameters);
 
-		if (signatureAlgorithm == null) {
+		if (sigAlg == null) {
 			throw new SpkacException(MessageFormat.format(
 					res.getString("NoSupportSignatureAlgorithm.exception.message"), signatureAlgorithmOid.getId()));
 		}
 
-		return signatureAlgorithm;
+		return sigAlg;
 	}
 
 	private PublicKey decodePublicKeyFromBitString(ASN1ObjectIdentifier publicKeyAlgorithmOid,
