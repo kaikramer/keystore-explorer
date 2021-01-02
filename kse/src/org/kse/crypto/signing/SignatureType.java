@@ -28,6 +28,10 @@ import static org.kse.crypto.digest.DigestType.SHA1;
 import static org.kse.crypto.digest.DigestType.SHA224;
 import static org.kse.crypto.digest.DigestType.SHA256;
 import static org.kse.crypto.digest.DigestType.SHA384;
+import static org.kse.crypto.digest.DigestType.SHA3_224;
+import static org.kse.crypto.digest.DigestType.SHA3_256;
+import static org.kse.crypto.digest.DigestType.SHA3_384;
+import static org.kse.crypto.digest.DigestType.SHA3_512;
 import static org.kse.crypto.digest.DigestType.SHA512;
 import static org.kse.crypto.digest.DigestType.SHAKE256;
 
@@ -45,12 +49,15 @@ import org.kse.crypto.ecc.EdDSACurves;
 public enum SignatureType {
 
 	// @formatter:off
+
+	// DSA
 	SHA1_DSA("SHA1withDSA", "1.2.840.10040.4.3", SHA1, "SignatureType.Sha1WithDsa"),
 	SHA224_DSA("SHA224withDSA", "2.16.840.1.101.3.4.3.1", SHA224, "SignatureType.Sha224WithDsa"),
 	SHA256_DSA("SHA256withDSA", "2.16.840.1.101.3.4.3.2", SHA256, "SignatureType.Sha256WithDsa"),
 	SHA384_DSA("SHA384withDSA", "2.16.840.1.101.3.4.3.3", SHA384, "SignatureType.Sha384WithDsa"),
 	SHA512_DSA("SHA512withDSA", "2.16.840.1.101.3.4.3.4", SHA512, "SignatureType.Sha512WithDsa"),
 
+	// RSA
 	MD2_RSA("MD2withRSA", "1.2.840.113549.1.1.2", MD2, "SignatureType.Md2WithRsa"),
 	MD5_RSA("MD5withRSA", "1.2.840.113549.1.1.4", MD5, "SignatureType.Md5WithRsa"),
 	RIPEMD128_RSA("RIPEMD128withRSA", "1.3.36.3.3.1.3", RIPEMD128, "SignatureType.Ripemd128WithRsa"),
@@ -62,12 +69,27 @@ public enum SignatureType {
 	SHA384_RSA("SHA384withRSA", "1.2.840.113549.1.1.12", SHA384, "SignatureType.Sha384WithRsa"),
 	SHA512_RSA("SHA512withRSA", "1.2.840.113549.1.1.13", SHA512, "SignatureType.Sha512WithRsa"),
 
+	// RSASSA-PSS (there is only one OID for the PSS signature scheme, the parameters define the exact algorithm)
+	SHA1WITHRSAANDMGF1("SHA1WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA1, "SignatureType.Sha1WithRsaAndMGF1"),
+	SHA224WITHRSAANDMGF1("SHA224WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA224, "SignatureType.Sha224WithRsaAndMGF1"),
+	SHA256WITHRSAANDMGF1("SHA256WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA256, "SignatureType.Sha256WithRsaAndMGF1"),
+	SHA384WITHRSAANDMGF1("SHA384WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA384, "SignatureType.Sha384WithRsaAndMGF1"),
+	SHA512WITHRSAANDMGF1("SHA512WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA512, "SignatureType.Sha512WithRsaAndMGF1"),
+
+	// RSA with SHA3 and MGF1
+	SHA3_224WITHRSAANDMGF1("SHA3-224WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_224, "SignatureType.Sha3_224WithRsaAndMGF1"),
+	SHA3_256WITHRSAANDMGF1("SHA3-256WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_256, "SignatureType.Sha3_256WithRsaAndMGF1"),
+	SHA3_384WITHRSAANDMGF1("SHA3-384WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_384, "SignatureType.Sha3_384WithRsaAndMGF1"),
+	SHA3_512WITHRSAANDMGF1("SHA3-512WITHRSAANDMGF1", "1.2.840.113549.1.1", SHA3_512, "SignatureType.Sha3_512WithRsaAndMGF1"),
+
+	// ECDSA
 	SHA1_ECDSA("SHA1withECDSA", "1.2.840.10045.4.1", SHA1, "SignatureType.Sha1WithEcDsa"),
 	SHA224_ECDSA("SHA224withECDSA", "1.2.840.10045.4.3.1", SHA224, "SignatureType.Sha224WithEcDsa"),
 	SHA256_ECDSA("SHA256withECDSA", "1.2.840.10045.4.3.2", SHA256, "SignatureType.Sha256WithEcDsa"),
 	SHA384_ECDSA("SHA384withECDSA", "1.2.840.10045.4.3.3", SHA384, "SignatureType.Sha384WithEcDsa"),
 	SHA512_ECDSA("SHA512withECDSA", "1.2.840.10045.4.3.4", SHA512, "SignatureType.Sha512WithEcDsa"),
 
+	// EdDSA
 	ED25519("Ed25519", EdDSACurves.ED25519.oid().getId(), SHA512, "SignatureType.Ed25519"),
 	ED448("Ed448", EdDSACurves.ED448.oid().getId(), SHAKE256, "SignatureType.Ed448");
 	// @formatter:on
@@ -166,8 +188,6 @@ public enum SignatureType {
 	public static List<SignatureType> rsaSignatureTypes() {
 		List<SignatureType> signatureTypes = new ArrayList<>();
 
-		signatureTypes.add(MD2_RSA);
-		signatureTypes.add(MD5_RSA);
 		signatureTypes.add(RIPEMD128_RSA);
 		signatureTypes.add(RIPEMD160_RSA);
 		signatureTypes.add(RIPEMD256_RSA);
@@ -176,6 +196,18 @@ public enum SignatureType {
 		signatureTypes.add(SHA256_RSA);
 		signatureTypes.add(SHA384_RSA);
 		signatureTypes.add(SHA512_RSA);
+		signatureTypes.add(SHA1WITHRSAANDMGF1);
+		signatureTypes.add(SHA224WITHRSAANDMGF1);
+		signatureTypes.add(SHA256WITHRSAANDMGF1);
+		signatureTypes.add(SHA384WITHRSAANDMGF1);
+		signatureTypes.add(SHA512WITHRSAANDMGF1);
+
+		// SHA3 signatures cause problems when reading certificates with standard providers (e.g. in P12 keystore)
+		// because at least up to Java 15 there is no support for SHA3 signatures (see http://openjdk.java.net/jeps/287)
+		//signatureTypes.add(SHA3_224WITHRSAANDMGF1);
+		//signatureTypes.add(SHA3_256WITHRSAANDMGF1);
+		//signatureTypes.add(SHA3_384WITHRSAANDMGF1);
+		//signatureTypes.add(SHA3_512WITHRSAANDMGF1);
 
 		return signatureTypes;
 	}
