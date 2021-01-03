@@ -209,7 +209,7 @@ public final class KseFrame implements StatusBar {
 	public static final int DEFAULT_HEIGHT = 450;
 
 	// Maximum number of recent files to maintain in file menu
-	public static final int RECENT_FILES_SIZE = 6;
+	public static final int RECENT_FILES_SIZE = 9;
 
 	private ArrayList<KeyStoreHistory> histories = new ArrayList<>();
 	private ArrayList<JTable> keyStoreTables = new ArrayList<>();
