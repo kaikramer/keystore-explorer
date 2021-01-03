@@ -33,7 +33,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -645,14 +644,11 @@ public class DViewCertificate extends JEscDialog {
 				jtfVersion.setText(Integer.toString(cert.getVersion()));
 				jtfVersion.setCaretPosition(0);
 
-				jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert
-						.getSubjectX500Principal()));
+				jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));
 
-				jdnIssuer
-				.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
+				jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
 
-				jtfSerialNumber.setText("0x"
-						+ new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase());
+				jtfSerialNumber.setText(X509CertUtil.getSerialNumberAsHex(cert));
 				jtfSerialNumber.setCaretPosition(0);
 
 				jtfValidFrom.setText(StringUtils.formatDate(startDate));

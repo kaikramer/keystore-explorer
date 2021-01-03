@@ -103,6 +103,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 	private int iSubjectCNColumn = -1;
 	private int iIssuerOColumn = -1;
 	private int iSubjectOColumn = -1;
+	private int iSerialNumberHexColumn = -1;
+	private int iSerialNumberDecColumn = -1;
 
 	/**
 	 * Construct a new KeyStoreTableModel with a variable layout.
@@ -263,6 +265,26 @@ public class KeyStoreTableModel extends AbstractTableModel {
 					data[i][iIssuerDNColumn] = null;
 				}
 			}
+			if (iSerialNumberHexColumn > 0) {
+				if (!entryType.equals(KEY_ENTRY)) {
+					data[i][iSerialNumberHexColumn] = getCertificateSerialNumberHex(alias, keyStore);
+					if (iColWidth[iSerialNumberHexColumn] < data[i][iSerialNumberHexColumn].toString().length()) {
+						iColWidth[iSerialNumberHexColumn] = data[i][iSerialNumberHexColumn].toString().length();
+					}
+				} else {
+					data[i][iSerialNumberHexColumn] = null;
+				}
+			}
+			if (iSerialNumberDecColumn > 0) {
+				if (!entryType.equals(KEY_ENTRY)) {
+					data[i][iSerialNumberDecColumn] = getCertificateSerialNumberDec(alias, keyStore);
+					if (iColWidth[iSerialNumberDecColumn] < data[i][iSerialNumberDecColumn].toString().length()) {
+						iColWidth[iSerialNumberDecColumn] = data[i][iSerialNumberDecColumn].toString().length();
+					}
+				} else {
+					data[i][iSerialNumberDecColumn] = null;
+				}
+			}
 			if (iSubjectCNColumn > 0) {
 				if (!entryType.equals(KEY_ENTRY)) {
 					data[i][iSubjectCNColumn] = getCertificateSubjectCN(alias, keyStore);
@@ -420,6 +442,16 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		return X500NameUtils.x500PrincipalToX500Name(x509Cert.getIssuerX500Principal()).toString();
 	}
 
+	private String getCertificateSerialNumberHex(String alias, KeyStore ks) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = getCertificate(alias, ks);
+		return X509CertUtil.getSerialNumberAsHex(x509Cert);
+	}
+
+	private String getCertificateSerialNumberDec(String alias, KeyStore ks) throws CryptoException, KeyStoreException {
+		X509Certificate x509Cert = getCertificate(alias, ks);
+		return X509CertUtil.getSerialNumberAsDec(x509Cert);
+	}
+
 	private String getCertificateSubjectCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
 		X509Certificate x509Cert = getCertificate(alias, keyStore);
 		return X500NameUtils.extractCN(x509Cert.getSubjectX500Principal());
@@ -503,6 +535,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
 		iSubjectCNColumn = -1;
 		iIssuerOColumn = -1;
 		iSubjectOColumn = -1;
+		iSerialNumberHexColumn = -1;
+		iSerialNumberDecColumn = -1;
 
 		columnNames = new String[nofColumns];
 		columnTypes = new Class[nofColumns];
@@ -588,6 +622,16 @@ public class KeyStoreTableModel extends AbstractTableModel {
 				columnNames[col] = res.getString("KeyStoreTableModel.SubjectOColumn");
 				columnTypes[col] = String.class;
 				iSubjectOColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSerialNumberHex()) {
+				columnNames[col] = res.getString("KeyStoreTableModel.SerialNumberHex");
+				columnTypes[col] = String.class;
+				iSerialNumberHexColumn = col;
+			}
+			if (col == keyStoreTableColumns.colSerialNumberDec()) {
+				columnNames[col] = res.getString("KeyStoreTableModel.SerialNumberDec");
+				columnTypes[col] = String.class;
+				iSerialNumberDecColumn = col;
 			}
 			if (iColWidth[col] < 1) {
 				iColWidth[col] = columnNames[col].length();

@@ -39,6 +39,8 @@ public class KeyStoreTableColumns {
 	private boolean bEnableIssuerO;
 	private boolean bEnableSubjectO;
 	private boolean bEnableCurve;
+	private boolean bEnableSerialNumberHex;
+	private boolean bEnableSerialNumberDec;
 	/** Column for a property */
 	private int iNameColumn = -1;
 	private int iAlgorithmColumn = -1;
@@ -50,10 +52,62 @@ public class KeyStoreTableColumns {
 	private int iSKIColumn = -1;
 	private int iIssuerDNColumn = -1;
 	private int iSubjectDNColumn = -1;
-	private static int iIssuerCNColumn = -1;
+	private int iIssuerCNColumn = -1;
 	private int iSubjectCNColumn = -1;
 	private int iIssuerOColumn = -1;
 	private int iSubjectOColumn = -1;
+	private int iSerialNumberHexColumn = -1;
+	private int iSerialNumberDecColumn = -1;
+
+	// As default set to previous layout from older KSE versions
+	public KeyStoreTableColumns() {
+		expiryWarnDays = 0;
+		bEnableEntryName = true;
+		bEnableAlgorithm = true;
+		bEnableKeySize = true;
+		bEnableCertificateExpiry = true;
+		bEnableLastModified = true;
+		bEnableSKI = false;
+		bEnableAKI = false;
+		bEnableIssuerDN = false;
+		bEnableSubjectDN = false;
+		bEnableCurve = false;
+		bEnableIssuerCN = false;
+		bEnableSubjectCN = false;
+		bEnableIssuerO = false;
+		bEnableSubjectO = false;
+		bEnableSerialNumberHex = false;
+		bEnableSerialNumberDec = false;
+	}
+
+
+
+	public KeyStoreTableColumns(boolean bEnableEntryName, boolean bEnableAlgorithm,
+			boolean bEnableKeySize, boolean bEnableCertificateExpiry, boolean bEnableLastModified, boolean bEnableSKI,
+			boolean bEnableAKI, boolean bEnableIssuerDN, boolean bEnableSubjectDN, boolean bEnableIssuerCN,
+			boolean bEnableSubjectCN, boolean bEnableIssuerO, boolean bEnableSubjectO, boolean bEnableCurve,
+			int expiryWarnDays, boolean bEnableSerialNumberHex, boolean bEnableSerialNumberDec) {
+		super();
+		this.bEnableEntryName = bEnableEntryName;
+		this.bEnableAlgorithm = bEnableAlgorithm;
+		this.bEnableKeySize = bEnableKeySize;
+		this.bEnableCertificateExpiry = bEnableCertificateExpiry;
+		this.bEnableLastModified = bEnableLastModified;
+		this.bEnableSKI = bEnableSKI;
+		this.bEnableAKI = bEnableAKI;
+		this.bEnableIssuerDN = bEnableIssuerDN;
+		this.bEnableSubjectDN = bEnableSubjectDN;
+		this.bEnableIssuerCN = bEnableIssuerCN;
+		this.bEnableSubjectCN = bEnableSubjectCN;
+		this.bEnableIssuerO = bEnableIssuerO;
+		this.bEnableSubjectO = bEnableSubjectO;
+		this.bEnableCurve = bEnableCurve;
+		this.expiryWarnDays = expiryWarnDays;
+		this.bEnableSerialNumberHex = bEnableSerialNumberHex;
+		this.bEnableSerialNumberDec = bEnableSerialNumberDec;
+		sortCol();
+	}
+
 
 	private void sortCol() {
 		int col = 2;
@@ -71,6 +125,9 @@ public class KeyStoreTableColumns {
 		iSubjectCNColumn = -1;
 		iIssuerOColumn = -1;
 		iSubjectOColumn = -1;
+		iSerialNumberHexColumn = -1;
+		iSerialNumberDecColumn = -1;
+
 		if (bEnableEntryName) {
 			iNameColumn = ++col;
 		}
@@ -113,65 +170,36 @@ public class KeyStoreTableColumns {
 		if (bEnableSubjectO) {
 			iSubjectOColumn = ++col;
 		}
+		if (bEnableSerialNumberHex) {
+			iSerialNumberHexColumn = ++col;
+		}
+		if (bEnableSerialNumberDec) {
+			iSerialNumberDecColumn = ++col;
+		}
 	}
 
-	// set to previous layout
-	public KeyStoreTableColumns() {
-		expiryWarnDays = 0;
-		bEnableEntryName = true;
-		bEnableAlgorithm = true;
-		bEnableKeySize = true;
-		bEnableCertificateExpiry = true;
-		bEnableLastModified = true;
-		bEnableSKI = false;
-		bEnableAKI = false;
-		bEnableIssuerDN = false;
-		bEnableSubjectDN = false;
-		bEnableCurve = false;
-		bEnableIssuerCN = false;
-		bEnableSubjectCN = false;
-		bEnableIssuerO = false;
-		bEnableSubjectO = false;
-
-	}
-
-	public KeyStoreTableColumns(boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7,
-			boolean p8, boolean p9, boolean p10, boolean p11, boolean p12, boolean p13, boolean p14, int p15) {
-		bEnableEntryName = p1;
-		bEnableAlgorithm = p2;
-		bEnableKeySize = p3;
-		bEnableCertificateExpiry = p4;
-		bEnableLastModified = p5;
-		bEnableSKI = p6;
-		bEnableAKI = p7;
-		bEnableIssuerDN = p8;
-		bEnableSubjectDN = p9;
-		bEnableIssuerCN = p10;
-		bEnableSubjectCN = p11;
-		bEnableIssuerO = p12;
-		bEnableSubjectO = p13;
-		bEnableCurve = p14;
-		expiryWarnDays = p15;
-		sortCol();
-	}
-
-	public void setColumns(boolean p1, boolean p2, boolean p3, boolean p4, boolean p5, boolean p6, boolean p7,
-			boolean p8, boolean p9, boolean p10, boolean p11, boolean p12, boolean p13, boolean p14, int p15) {
-		bEnableEntryName = p1;
-		bEnableAlgorithm = p2;
-		bEnableKeySize = p3;
-		bEnableCertificateExpiry = p4;
-		bEnableLastModified = p5;
-		bEnableSKI = p6;
-		bEnableAKI = p7;
-		bEnableIssuerDN = p8;
-		bEnableSubjectDN = p9;
-		bEnableIssuerCN = p10;
-		bEnableSubjectCN = p11;
-		bEnableIssuerO = p12;
-		bEnableSubjectO = p13;
-		bEnableCurve = p14;
-		expiryWarnDays = p15;
+	public void setColumns(boolean bEnableEntryName, boolean bEnableAlgorithm, boolean bEnableKeySize,
+			boolean bEnableCertificateExpiry, boolean bEnableLastModified, boolean bEnableSKI, boolean bEnableAKI,
+			boolean bEnableIssuerDN, boolean bEnableSubjectDN, boolean bEnableIssuerCN, boolean bEnableSubjectCN,
+			boolean bEnableIssuerO, boolean bEnableSubjectO, boolean bEnableCurve, boolean bEnableSerialNumberHex,
+			boolean bEnableSerialNumberDec, int expiryWarnDays) {
+		this.bEnableEntryName = bEnableEntryName;
+		this.bEnableAlgorithm = bEnableAlgorithm;
+		this.bEnableKeySize = bEnableKeySize;
+		this.bEnableCertificateExpiry = bEnableCertificateExpiry;
+		this.bEnableLastModified = bEnableLastModified;
+		this.bEnableSKI = bEnableSKI;
+		this.bEnableAKI = bEnableAKI;
+		this.bEnableIssuerDN = bEnableIssuerDN;
+		this.bEnableSubjectDN = bEnableSubjectDN;
+		this.bEnableIssuerCN = bEnableIssuerCN;
+		this.bEnableSubjectCN = bEnableSubjectCN;
+		this.bEnableIssuerO = bEnableIssuerO;
+		this.bEnableSubjectO = bEnableSubjectO;
+		this.bEnableCurve = bEnableCurve;
+		this.bEnableSerialNumberHex = bEnableSerialNumberHex;
+		this.bEnableSerialNumberDec = bEnableSerialNumberDec;
+		this.expiryWarnDays = expiryWarnDays;
 		sortCol();
 	}
 
@@ -196,6 +224,8 @@ public class KeyStoreTableColumns {
 		bEnableSubjectCN = ((col & 0x800) != 0);
 		bEnableIssuerO = ((col & 0x1000) != 0);
 		bEnableSubjectO = ((col & 0x2000) != 0);
+		bEnableSerialNumberHex = ((col & 0x4000) != 0);
+		bEnableSerialNumberDec = ((col & 0x8000) != 0);
 		sortCol();
 	}
 
@@ -248,6 +278,12 @@ public class KeyStoreTableColumns {
 		if (bEnableSubjectO) {
 			col += 0x2000;
 		}
+		if (bEnableSerialNumberHex) {
+			col += 0x4000;
+		}
+		if (bEnableSerialNumberDec) {
+			col += 0x8000;
+		}
 		return col;
 	}
 
@@ -298,6 +334,12 @@ public class KeyStoreTableColumns {
 			col++;
 		}
 		if (bEnableSubjectO) {
+			col++;
+		}
+		if (bEnableSerialNumberHex) {
+			col++;
+		}
+		if (bEnableSerialNumberDec) {
 			col++;
 		}
 		return col;
@@ -357,6 +399,14 @@ public class KeyStoreTableColumns {
 
 	public boolean getEnableSubjectO() {
 		return bEnableSubjectO;
+	}
+
+	public boolean getbEnableSerialNumberHex() {
+		return bEnableSerialNumberHex;
+	}
+
+	public boolean getbEnableSerialNumberDec() {
+		return bEnableSerialNumberDec;
 	}
 
 	public int getExpiryWarnDays() {
@@ -421,5 +471,13 @@ public class KeyStoreTableColumns {
 
 	public int colSubjectO() {
 		return iSubjectOColumn;
+	}
+
+	public int colSerialNumberHex() {
+		return iSerialNumberHexColumn;
+	}
+
+	public int colSerialNumberDec() {
+		return iSerialNumberDecColumn;
 	}
 }

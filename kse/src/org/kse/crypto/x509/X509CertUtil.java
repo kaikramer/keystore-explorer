@@ -23,6 +23,7 @@ import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -728,6 +729,26 @@ public final class X509CertUtil {
 	 */
 	public static boolean isCertificateSelfSigned(X509Certificate cert) {
 		return cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal());
+	}
+
+	/**
+	 * Return certificate serial number as hexadecimal string
+	 *
+	 * @param cert a certificate
+	 * @return Serial number as hex string
+	 */
+	public static String getSerialNumberAsHex(X509Certificate cert) {
+		return "0x" + new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase();
+	}
+
+	/**
+	 * Return certificate serial number as decimal string
+	 *
+	 * @param cert a certificate
+	 * @return Serial number as decimal string
+	 */
+	public static String getSerialNumberAsDec(X509Certificate cert) {
+		return new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(10);
 	}
 
 }

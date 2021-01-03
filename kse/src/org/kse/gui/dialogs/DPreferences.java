@@ -193,6 +193,10 @@ public class DPreferences extends JEscDialog {
 	private JCheckBox jcbEnableIssuerO;
 	private boolean bEnableIssuerO;
 	private JCheckBox jcbEnableSubjectO;
+	private boolean bEnableSerialNumberHex;
+	private JCheckBox jcbEnableSerialNumberHex;
+	private boolean bEnableSerialNumberDec;
+	private JCheckBox jcbEnableSerialNumberDec;
 	private boolean bEnableSubjectO;
 	private JLabel jlExpirationWarnDays;
 	private JTextField jtfExpirationWarnDays;
@@ -779,13 +783,22 @@ public class DPreferences extends JEscDialog {
 		jcbEnableSubjectO = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectO.text"), bEnableSubjectO);
 		jcbEnableSubjectO.setSelected(bEnableSubjectO);
 
+		bEnableSerialNumberHex = kstColumns.getbEnableSerialNumberHex();
+		jcbEnableSerialNumberHex = new JCheckBox(
+				res.getString("DPreferences.jcbEnableSerialNumberHex.text"), bEnableSerialNumberHex);
+		jcbEnableSerialNumberHex.setSelected(bEnableSerialNumberHex);
+
+		bEnableSerialNumberDec = kstColumns.getbEnableSerialNumberDec();
+		jcbEnableSerialNumberDec = new JCheckBox(
+				res.getString("DPreferences.jcbEnableSerialNumberDec.text"), bEnableSerialNumberDec);
+		jcbEnableSerialNumberDec.setSelected(bEnableSerialNumberDec);
+
 		jlExpirationWarnDays = new JLabel(res.getString("DPreferences.jlExpiryWarning.text"));
 		jtfExpirationWarnDays = new JTextField();
 		jtfExpirationWarnDays.setColumns(3);
 		jtfExpirationWarnDays.setText(Integer.toString(expiryWarnDays));
 
 		jpDisplayColumns.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
-		jpDisplayColumns.add(jlDisplayColumns, "left, wrap");
 		jpDisplayColumns.add(jcbEnableEntryName, "left");
 		jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
 		jpDisplayColumns.add(jcbEnableKeySize, "left");
@@ -800,6 +813,8 @@ public class DPreferences extends JEscDialog {
 		jpDisplayColumns.add(jcbEnableSubjectCN, "left, wrap");
 		jpDisplayColumns.add(jcbEnableIssuerO, "left");
 		jpDisplayColumns.add(jcbEnableSubjectO, "left, wrap");
+		jpDisplayColumns.add(jcbEnableSerialNumberHex, "left");
+		jpDisplayColumns.add(jcbEnableSerialNumberDec, "left, wrap");
 		jpDisplayColumns.add(jlExpirationWarnDays, "left, spanx, split");
 		jpDisplayColumns.add(jtfExpirationWarnDays, "wrap");
 	}
@@ -1133,6 +1148,8 @@ public class DPreferences extends JEscDialog {
 		bEnableSubjectCN = jcbEnableSubjectCN.isSelected();
 		bEnableIssuerO = jcbEnableIssuerO.isSelected();
 		bEnableSubjectO = jcbEnableSubjectO.isSelected();
+		bEnableSerialNumberHex = jcbEnableSerialNumberHex.isSelected();
+		bEnableSerialNumberDec = jcbEnableSerialNumberDec.isSelected();
 		try {
 			expiryWarnDays = Integer.parseInt(jtfExpirationWarnDays.getText());
 		} catch (Exception e) {
@@ -1140,7 +1157,8 @@ public class DPreferences extends JEscDialog {
 		}
 		kstColumns.setColumns(bEnableEntryName, bEnableAlgorithm, bEnableKeySize, bEnableCertificateExpiry,
 				bEnableLastModified, bEnableSKI, bEnableAKI, bEnableIssuerDN, bEnableSubjectDN, bEnableIssuerCN,
-				bEnableSubjectCN, bEnableIssuerO, bEnableSubjectO, bEnableCurve, expiryWarnDays);
+				bEnableSubjectCN, bEnableIssuerO, bEnableSubjectO, bEnableCurve, bEnableSerialNumberHex,
+				bEnableSerialNumberDec, expiryWarnDays);
 		bColumnsChanged = (kstColumns.getColumns() != ist);
 	}
 
