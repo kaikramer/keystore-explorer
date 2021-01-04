@@ -21,12 +21,22 @@ public class DialogViewer {
 	private DialogViewer() {
 	}
 
+	/**
+	 * Add BC provider and set l&f (only required when BC is needed before calling the run() method)
+	 */
+	public static void prepare() throws UnsupportedLookAndFeelException {
+		UIManager.setLookAndFeel(new FlatLightLaf());
+		Security.addProvider(new BouncyCastleProvider());
+	}
+
+	/**
+	 * Create environment for showing the given dialog
+	 */
 	public static void run(final JEscDialog dialog) throws UnsupportedLookAndFeelException {
 
-		UIManager.setLookAndFeel(new FlatLightLaf());
-		SwingUtilities.updateComponentTreeUI(dialog);
+		prepare();
 
-		Security.addProvider(new BouncyCastleProvider());
+		SwingUtilities.updateComponentTreeUI(dialog);
 
 		SwingUtilities.invokeLater(() -> {
 

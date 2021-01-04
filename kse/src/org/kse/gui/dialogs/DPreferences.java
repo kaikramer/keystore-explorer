@@ -165,7 +165,6 @@ public class DPreferences extends JEscDialog {
 	private KeyStoreTableColumns kstColumns;
 
 	private JPanel jpDisplayColumns;
-	private JLabel jlDisplayColumns;
 	private JCheckBox jcbEnableEntryName;
 	private boolean bEnableEntryName;
 	private JCheckBox jcbEnableAlgorithm;
@@ -722,7 +721,6 @@ public class DPreferences extends JEscDialog {
 	private void initDisplayColumnsTab() {
 		bColumnsChanged = false;
 		jpDisplayColumns = new JPanel();
-		jlDisplayColumns = new JLabel(res.getString("DPreferences.jlDisplayColumns.text"));
 
 		bEnableEntryName = kstColumns.getEnableEntryName();
 		jcbEnableEntryName = new JCheckBox(res.getString("DPreferences.jcbEnableEntryName.text"), bEnableEntryName);

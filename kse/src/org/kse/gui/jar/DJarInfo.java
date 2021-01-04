@@ -215,12 +215,7 @@ public class DJarInfo extends JEscDialog {
 			String name = file.getName();
 
 			if ((name.endsWith(".jar")) || (name.endsWith(".JAR")) || (name.endsWith(".zip"))
-					|| (name.endsWith(".ZIP"))) // Consider
-				// zips
-				// to
-				// be
-				// jars
-			{
+					|| (name.endsWith(".ZIP"))) { // Consider zips to be jars
 				return true;
 			}
 		}

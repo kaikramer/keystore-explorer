@@ -332,15 +332,13 @@ public class DSignJar extends JEscDialog {
 	private void populateDigestAlgs() {
 		jcbDigestAlgorithm.removeAllItems();
 
-		jcbDigestAlgorithm.addItem(DigestType.MD2);
-		jcbDigestAlgorithm.addItem(DigestType.MD5);
 		jcbDigestAlgorithm.addItem(DigestType.SHA1);
 		jcbDigestAlgorithm.addItem(DigestType.SHA224);
 		jcbDigestAlgorithm.addItem(DigestType.SHA256);
 		jcbDigestAlgorithm.addItem(DigestType.SHA384);
 		jcbDigestAlgorithm.addItem(DigestType.SHA512);
 
-		jcbDigestAlgorithm.setSelectedItem(DigestType.SHA1);
+		jcbDigestAlgorithm.setSelectedItem(DigestType.SHA256);
 	}
 
 	/**
@@ -444,8 +442,7 @@ public class DSignJar extends JEscDialog {
 
 			Problem problem = new Problem(problemStr, causes, ex);
 
-			DProblem dProblem = new DProblem(this, res.getString("DSignJar.ProblemOpeningJar.Title"),
-					problem);
+			DProblem dProblem = new DProblem(this, res.getString("DSignJar.ProblemOpeningJar.Title"), problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
@@ -542,7 +539,7 @@ public class DSignJar extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJar.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		chooser.setApproveButtonText(res.getString("DSignJar.InputJarChooser.button"));
 
 		int rtnValue = chooser.showOpenDialog(this);
@@ -601,6 +598,7 @@ public class DSignJar extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
 		kpg.initialize(1024, new SecureRandom());
 		KeyPair kp = kpg.generateKeyPair();
