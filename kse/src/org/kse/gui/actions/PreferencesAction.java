@@ -76,13 +76,19 @@ public class PreferencesAction extends ExitAction {
 
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
-		DPreferences dPreferences = new DPreferences(frame, applicationSettings.getUseCaCertificates(),
-				caCertificatesFile, applicationSettings.getUseWindowsTrustedRootCertificates(),
+		DPreferences dPreferences = new DPreferences(frame,
+				applicationSettings.getUseCaCertificates(),
+				caCertificatesFile,
+				applicationSettings.getUseWindowsTrustedRootCertificates(),
 				applicationSettings.getEnableImportTrustedCertTrustCheck(),
-				applicationSettings.getEnableImportCaReplyTrustCheck(), applicationSettings.getPasswordQualityConfig(),
-				applicationSettings.getDefaultDN(), applicationSettings.getLanguage(),
-				applicationSettings.isAutoUpdateCheckEnabled(), applicationSettings.getAutoUpdateCheckInterval(),
-				applicationSettings.getKeyStoreTableColumns());
+				applicationSettings.getEnableImportCaReplyTrustCheck(),
+				applicationSettings.getPasswordQualityConfig(),
+				applicationSettings.getDefaultDN(),
+				applicationSettings.getLanguage(),
+				applicationSettings.isAutoUpdateCheckEnabled(),
+				applicationSettings.getAutoUpdateCheckInterval(),
+				applicationSettings.getKeyStoreTableColumns(),
+				applicationSettings.isShowHiddenFilesEnabled());
 		dPreferences.setLocationRelativeTo(frame);
 		dPreferences.setVisible(true);
 
@@ -108,6 +114,7 @@ public class PreferencesAction extends ExitAction {
 		applicationSettings.setDefaultDN(dPreferences.getDefaultDN());
 		applicationSettings.setAutoUpdateCheckEnabled(dPreferences.isAutoUpdateChecksEnabled());
 		applicationSettings.setAutoUpdateCheckInterval(dPreferences.getAutoUpdateChecksInterval());
+		applicationSettings.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
 
 		UIManager.LookAndFeelInfo lookFeelInfo = dPreferences.getLookFeelInfo();
 		applicationSettings.setLookAndFeelClass(lookFeelInfo.getClassName());

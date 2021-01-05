@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
 
+import org.kse.ApplicationSettings;
 import org.kse.utilities.os.OperatingSystem;
 
 /**
@@ -386,7 +387,12 @@ public class FileChooserFactory {
 	}
 
 	private static JFileChooser getFileChooser() {
-		return JavaFXFileChooser.isFxAvailable() ? new JavaFXFileChooser() : new JFileChooser();
+		JFileChooser fileChooser = JavaFXFileChooser.isFxAvailable() ? new JavaFXFileChooser() : new JFileChooser();
+
+		// show/hide hidden files
+		fileChooser.setFileHidingEnabled(!ApplicationSettings.getInstance().isShowHiddenFilesEnabled());
+
+		return fileChooser;
 	}
 
 }

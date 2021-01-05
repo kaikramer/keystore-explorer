@@ -107,6 +107,8 @@ public class ApplicationSettings {
 	private static final String KSE3_LANGUAGE = "kse3.locale";
 	private static final String KSE3_EXPIRY_WARN_DAYS = "kse3.expirywarndays";
 	private static final String KSE3_COLUMNS = "kse3.columns";
+	private static final String KSE3_SHOW_HIDDEN_FILES = "kse3.showhiddenfiles";
+
 
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -143,6 +145,7 @@ public class ApplicationSettings {
 	private String language;
 	private KeyStoreTableColumns kstColumns = new KeyStoreTableColumns();
 	private int expiryWarnDays;
+	private boolean showHiddenFilesEnabled;
 
 	private ApplicationSettings() {
 
@@ -348,13 +351,16 @@ public class ApplicationSettings {
 
 		// language
 		language = preferences.get(KSE3_LANGUAGE, SYSTEM_LANGUAGE);
-		
+
 		// displayed columns
 		kstColumns.setColumns(preferences.getInt(KSE3_COLUMNS, 0x1F));
-		
+
 		// number of days before expiration warning is shown
 		expiryWarnDays = preferences.getInt(KSE3_EXPIRY_WARN_DAYS, 0);
 		kstColumns.setExpiryWarnDays(expiryWarnDays);
+
+		// show hidden files in file chooser dialogs?
+		showHiddenFilesEnabled = preferences.getBoolean(KSE3_SHOW_HIDDEN_FILES, true);
 	}
 
 	private File cleanFilePath(File filePath) {
@@ -455,12 +461,15 @@ public class ApplicationSettings {
 
 		// language
 		preferences.put(KSE3_LANGUAGE, language);
-		
+
 		// table columns
 		preferences.putInt(KSE3_COLUMNS, kstColumns.getColumns());
-		
+
 		// expiration warning
 		preferences.putInt(KSE3_EXPIRY_WARN_DAYS, kstColumns.getExpiryWarnDays());
+
+		// hide/show hidden files in file chooser
+		preferences.putBoolean(KSE3_SHOW_HIDDEN_FILES, isShowHiddenFilesEnabled());
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
@@ -806,20 +815,28 @@ public class ApplicationSettings {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
-	
+
 	public KeyStoreTableColumns getKeyStoreTableColumns() {
-		return this.kstColumns;	
+		return this.kstColumns;
 	}
-	
+
 	public  void setKeyStoreTableColumns(KeyStoreTableColumns kstColumns) {
-		this.kstColumns = kstColumns;	
+		this.kstColumns = kstColumns;
 	}
-	
+
 	public int getExpiryWarndays() {
 		return expiryWarnDays;
 	}
 
 	public void setExpiryWarndays(int expiryWarnDays) {
 		this.expiryWarnDays = expiryWarnDays;
+	}
+
+	public boolean isShowHiddenFilesEnabled() {
+		return showHiddenFilesEnabled;
+	}
+
+	public void setShowHiddenFilesEnabled(boolean showHiddenFilesEnabled) {
+		this.showHiddenFilesEnabled = showHiddenFilesEnabled;
 	}
 }

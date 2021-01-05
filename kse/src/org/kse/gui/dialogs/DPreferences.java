@@ -111,6 +111,8 @@ public class DPreferences extends JEscDialog {
 	private JComboBox<String> jcbLookFeel;
 	private JLabel jlLanguage;
 	private JComboBox<LanguageItem> jcbLanguage;
+	private JLabel jlFileChooser;
+	private JCheckBox jcbShowHiddenFiles;
 	private JCheckBox jcbLookFeelDecorated;
 	private JPanel jpInternetProxy;
 	private JRadioButton jrbNoProxy;
@@ -156,6 +158,8 @@ public class DPreferences extends JEscDialog {
 	private UIManager.LookAndFeelInfo lookFeelInfo;
 	private boolean lookFeelDecorated;
 	private String language;
+	private boolean showHiddenFilesEnabled;
+
 	private boolean autoUpdateChecksEnabled;
 	private int autoUpdateChecksInterval;
 
@@ -218,12 +222,14 @@ public class DPreferences extends JEscDialog {
 	 *            Enable trust checks when importing CA replies?
 	 * @param passwordQualityConfig
 	 *            Password quality configuration
+	 * @param showHiddenFilesEnabled
+	 * 			  Show hidden files in file chooser
 	 */
 	public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
 			boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
 			boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
 			String defaultDN, String language, boolean autoUpdateChecksEnabled, int autoUpdateChecksInterval,
-			KeyStoreTableColumns kstColumns) {
+			KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.useCaCertificates = useCaCertificates;
 		this.caCertificatesFile = caCertificatesFile;
@@ -235,6 +241,7 @@ public class DPreferences extends JEscDialog {
 		this.language = language;
 		this.autoUpdateChecksEnabled = autoUpdateChecksEnabled;
 		this.autoUpdateChecksInterval = autoUpdateChecksInterval;
+		this.showHiddenFilesEnabled = showHiddenFilesEnabled;
 		this.expiryWarnDays =  kstColumns.getExpiryWarnDays();
 		this.kstColumns = kstColumns;
 		initComponents();
@@ -469,6 +476,10 @@ public class DPreferences extends JEscDialog {
 		jlMinimumPasswordQuality.setEnabled(passwordQualityEnabled && passwordQualityEnforced);
 		jsMinimumPasswordQuality.setEnabled(passwordQualityEnabled && passwordQualityEnforced);
 
+		jlFileChooser = new JLabel(res.getString("DPreferences.jlFileChooser.text"));
+		jcbShowHiddenFiles = new JCheckBox(res.getString("DPreferences.jcbShowHiddenFiles.text"));
+		jcbShowHiddenFiles.setSelected(showHiddenFilesEnabled);
+
 		// layout
 		jpUI = new JPanel();
 		jpUI.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
@@ -487,6 +498,8 @@ public class DPreferences extends JEscDialog {
 		jpUI.add(jcbEnforceMinimumPasswordQuality, "spanx, gapx indent, wrap");
 		jpUI.add(jlMinimumPasswordQuality, "gapx 4*indent, top, spanx, split 3");
 		jpUI.add(jsMinimumPasswordQuality, "wrap");
+		jpUI.add(jlFileChooser, "spanx, wrap");
+		jpUI.add(jcbShowHiddenFiles, "spanx, wrap");
 
 		jcbEnableAutoUpdateChecks.addItemListener(new ItemListener() {
 			@Override
@@ -874,6 +887,8 @@ public class DPreferences extends JEscDialog {
 		autoUpdateChecksEnabled = jcbEnableAutoUpdateChecks.isSelected();
 		autoUpdateChecksInterval = ((Number) jspAutoUpdateCheckInterval.getValue()).intValue();
 
+		showHiddenFilesEnabled = jcbShowHiddenFiles.isSelected();
+
 		// These may fail:
 		boolean returnValue = storeDefaultDN();
 		returnValue &= storeProxyPreferences();
@@ -1106,6 +1121,10 @@ public class DPreferences extends JEscDialog {
 		return language;
 	}
 
+	public boolean isShowHiddenFilesEnabled() {
+		return showHiddenFilesEnabled;
+	}
+
 	public boolean isAutoUpdateChecksEnabled() {
 		return autoUpdateChecksEnabled;
 	}
@@ -1227,7 +1246,7 @@ public class DPreferences extends JEscDialog {
 
 	public static void main(String[] args) throws Exception {
 		DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
-				new PasswordQualityConfig(true, true, 100), "", "en", true, 14, new KeyStoreTableColumns());
+				new PasswordQualityConfig(true, true, 100), "", "en", true, 14, new KeyStoreTableColumns(), true);
 		DialogViewer.run(dialog);
 	}
 }
