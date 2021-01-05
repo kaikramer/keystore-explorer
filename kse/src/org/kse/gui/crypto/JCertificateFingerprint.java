@@ -98,8 +98,7 @@ public class JCertificateFingerprint extends JPanel {
 		gbc_jtfCertificateFingerprint.gridy = 0;
 		gbc_jtfCertificateFingerprint.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon viewIcon = new ImageIcon(getClass().getResource(
-				"images/view_cert_fingerprint.png"));
+		ImageIcon viewIcon = new ImageIcon(getClass().getResource("images/view_cert_fingerprint.png"));
 		jbViewCertificateFingerprint = new JButton(viewIcon);
 
 		jbViewCertificateFingerprint.setToolTipText(res

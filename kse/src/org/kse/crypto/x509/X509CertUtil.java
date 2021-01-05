@@ -709,8 +709,9 @@ public final class X509CertUtil {
 		if (type != null) {
 			algorithm = type.friendly();
 		} else {
+			String sigAlgOID = cert.getSigAlgOID();
 			byte[] sigAlgParams = cert.getSigAlgParams();
-			type = SignatureType.resolveOid(algorithm, sigAlgParams);
+			type = SignatureType.resolveOid(sigAlgOID, sigAlgParams);
 
 			if (type != null) {
 				algorithm = type.friendly();

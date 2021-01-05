@@ -445,6 +445,7 @@ public class DViewCsr extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
 		KeyPair keyPair = keyGen.genKeyPair();
 		JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(
