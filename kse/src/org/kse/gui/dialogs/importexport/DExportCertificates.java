@@ -69,8 +69,7 @@ import org.kse.utilities.io.FileNameUtil;
 public class DExportCertificates extends JEscDialog {
 	private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/importexport/resources");
+	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -92,7 +91,7 @@ public class DExportCertificates extends JEscDialog {
 	private JButton jbExport;
 	private JButton jbCancel;
 
-	private String entryAlias;
+	private String certificateAlias;
 	private boolean chain;
 	private boolean exportSelected = false;
 	private File exportFile;
@@ -108,14 +107,14 @@ public class DExportCertificates extends JEscDialog {
 	 *
 	 * @param parent
 	 *            The parent frame
-	 * @param entryAlias
-	 *            The KeyStore entry to export certificate(s) from
+	 * @param certificateAlias
+	 *            A possible file name for the certificate (chain) to export
 	 * @param chain
 	 *            Exporting a chain?
 	 */
-	public DExportCertificates(JFrame parent, String entryAlias, boolean chain) {
+	public DExportCertificates(JFrame parent, String certificateAlias, boolean chain) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.entryAlias = entryAlias;
+		this.certificateAlias = certificateAlias;
 		this.chain = chain;
 		initComponents();
 	}
@@ -383,9 +382,9 @@ public class DExportCertificates extends JEscDialog {
 		});
 
 		if (chain) {
-			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateChain.Title"), entryAlias));
+			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateChain.Title"), certificateAlias));
 		} else {
-			setTitle(MessageFormat.format(res.getString("DExportCertificates.Certificate.Title"), entryAlias));
+			setTitle(MessageFormat.format(res.getString("DExportCertificates.Certificate.Title"), certificateAlias));
 		}
 
 		setResizable(false);
@@ -405,7 +404,7 @@ public class DExportCertificates extends JEscDialog {
 
 	private void populateExportFileName() {
 		File currentDirectory = CurrentDirectory.get();
-		String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
+		String sanitizedAlias = FileNameUtil.cleanFileName(certificateAlias);
 		File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.X509_EXT_1);
 		jtfExportFile.setText(csrFile.getPath());
 	}

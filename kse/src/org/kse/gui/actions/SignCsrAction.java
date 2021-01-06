@@ -56,12 +56,14 @@ import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
+import org.kse.gui.dialogs.importexport.DExportCertificates;
 import org.kse.gui.dialogs.sign.DSignCsr;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.io.FileNameUtil;
 
 /**
  * Action to sign a CSR using the selected key pair entry.
@@ -82,10 +84,8 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 		putValue(LONG_DESCRIPTION, res.getString("SignCsrAction.statusbar"));
 		putValue(NAME, res.getString("SignCsrAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("SignCsrAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/signcsr.png"))));
+		putValue(SMALL_ICON,
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signcsr.png"))));
 	}
 
 	/**
@@ -129,19 +129,17 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			}
 			dSignCsr.setLocationRelativeTo(frame);
 			dSignCsr.setVisible(true);
+
+			// Dialog was cancelled...
+			if (dSignCsr.getVersion() == null) {
+				return;
+			}
+
+			generateCaReply(history, csrFile, dSignCsr, signingChain, signingCert, privateKey);
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
-			return;
 		}
-
-		// Dialog was cancelled...
-		if (dSignCsr.getVersion() == null) {
-			return;
-		}
-
-		generateCaReply(history, dSignCsr, signingChain, signingCert, privateKey);
 	}
-
 
 	private DSignCsr createSignDialogFromCsrFile(File csrFile, PrivateKey privateKey, KeyPairType keyPairType,
 			X509Certificate signingCert) {
@@ -157,7 +155,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 					return null;
 				}
 
-				return new DSignCsr(frame, pkcs10Csr, csrFile, privateKey, keyPairType, signingCert);
+				return new DSignCsr(frame, pkcs10Csr, privateKey, keyPairType, signingCert);
 			} else if (fileType == CryptoFileType.SPKAC_CSR) {
 				Spkac spkacCsr = new Spkac(FileUtils.readFileToByteArray(csrFile));
 
@@ -167,11 +165,11 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 					return null;
 				}
 
-				return new DSignCsr(frame, spkacCsr, csrFile, privateKey, keyPairType, signingCert);
+				return new DSignCsr(frame, spkacCsr, privateKey, keyPairType, signingCert);
 			} else {
-				JOptionPane.showMessageDialog(frame, MessageFormat.format(
-						res.getString("SignCsrAction.FileNotRecognisedType.message"), csrFile), res
-						.getString("SignCsrAction.SignCsr.Title"), JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(frame,
+						MessageFormat.format(res.getString("SignCsrAction.FileNotRecognisedType.message"), csrFile),
+						res.getString("SignCsrAction.SignCsr.Title"), JOptionPane.WARNING_MESSAGE);
 				return null;
 			}
 
@@ -196,9 +194,8 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 		}
 	}
 
-
-	private void generateCaReply(KeyStoreHistory history, DSignCsr dSignCsr, X509Certificate[] signingChain,
-			X509Certificate signingCert, PrivateKey privateKey) {
+	private void generateCaReply(KeyStoreHistory history, File csrFile, DSignCsr dSignCsr,
+			X509Certificate[] signingChain, X509Certificate signingCert, PrivateKey privateKey) {
 
 		Provider provider = history.getExplicitProvider();
 		X509CertificateVersion version = dSignCsr.getVersion();
@@ -209,10 +206,10 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 		X509ExtensionSet extensions = dSignCsr.getExtensions();
 		X500Name subjectDN = dSignCsr.getSubjectDN();
 		PublicKey publicKey = dSignCsr.getPublicKey();
-		File caReplyFile = dSignCsr.getCaReplyFile();
 
-		try (FileOutputStream fos = new FileOutputStream(caReplyFile)) {
-
+		// generate/sign certificate
+		X509Certificate[] caReplyChain = new X509Certificate[signingChain.length + 1];
+		try {
 			X500Name issuer = X500NameUtils.x500PrincipalToX500Name(signingCert.getSubjectX500Principal());
 
 			// CA Reply is a cert with subject from CSR and issuer from signing cert's subject
@@ -220,15 +217,75 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			X509Certificate caReplyCert = generator.generate(subjectDN, issuer, validityStart, validityEnd, publicKey,
 					privateKey, signatureType, serialNumber, extensions, provider);
 
-			X509Certificate[] caReplyChain = new X509Certificate[signingChain.length + 1];
 			caReplyChain[0] = caReplyCert;
 
 			// Add all of the signing chain to the reply
 			System.arraycopy(signingChain, 0, caReplyChain, 1, signingChain.length);
+		} catch (Exception ex) {
+			DError.displayError(frame, ex);
+			return;
+		}
 
-			byte[] caCertEncoded = X509CertUtil.getCertsEncodedPkcs7(caReplyChain);
+		// now let user select an output file and output format and save certificate file/chain
+		saveCertificate(csrFile, caReplyChain);
+	}
 
-			fos.write(caCertEncoded);
+	private void saveCertificate(File csrFile, X509Certificate[] caReplyChain) {
+		// String replyFileName = FileNameUtil.removeExtension(csrFile.getName()) + ".p7r";
+		// File replyFile = new File(csrFile.getParentFile(), replyFileName);
+
+		String csrFileName = FileNameUtil.removeExtension(csrFile.getName());
+		DExportCertificates dExportCertificates = new DExportCertificates(this.frame, csrFileName, true);
+		dExportCertificates.setLocationRelativeTo(frame);
+		dExportCertificates.setVisible(true);
+
+		if (!dExportCertificates.exportSelected()) {
+			return;
+		}
+
+		File caReplyFile = dExportCertificates.getExportFile();
+		boolean pemEncode = dExportCertificates.pemEncode();
+		boolean exportChain = dExportCertificates.exportChain();
+
+		byte[] encoded = null;
+
+		try (FileOutputStream fos = new FileOutputStream(caReplyFile)) {
+			if (exportChain) {
+				if (dExportCertificates.exportFormatX509()) {
+					encoded = X509CertUtil.getCertsEncodedX509Pem(caReplyChain).getBytes();
+				} else if (dExportCertificates.exportFormatPkcs7()) {
+					if (pemEncode) {
+						encoded = X509CertUtil.getCertsEncodedPkcs7Pem(caReplyChain).getBytes();
+					} else {
+						encoded = X509CertUtil.getCertsEncodedPkcs7(caReplyChain);
+					}
+				} else if (dExportCertificates.exportFormatPkiPath()) {
+					encoded = X509CertUtil.getCertsEncodedPkiPath(caReplyChain);
+				} else if (dExportCertificates.exportFormatSpc()) {
+					// SPC is just DER PKCS #7
+					encoded = X509CertUtil.getCertsEncodedPkcs7(caReplyChain);
+				}
+			} else {
+				if (dExportCertificates.exportFormatX509()) {
+					if (pemEncode) {
+						encoded = X509CertUtil.getCertEncodedX509Pem(caReplyChain[0]).getBytes();
+					} else {
+						encoded = X509CertUtil.getCertEncodedX509(caReplyChain[0]);
+					}
+				} else if (dExportCertificates.exportFormatPkcs7()) {
+					if (pemEncode) {
+						encoded = X509CertUtil.getCertEncodedPkcs7Pem(caReplyChain[0]).getBytes();
+					} else {
+						encoded = X509CertUtil.getCertEncodedPkcs7(caReplyChain[0]);
+					}
+				} else if (dExportCertificates.exportFormatPkiPath()) {
+					encoded = X509CertUtil.getCertEncodedPkiPath(caReplyChain[0]);
+				} else if (dExportCertificates.exportFormatSpc()) {
+					encoded = X509CertUtil.getCertEncodedPkcs7(caReplyChain[0]); // SPC is just DER PKCS #7
+				}
+			}
+
+			fos.write(encoded);
 
 			JOptionPane.showMessageDialog(frame, res.getString("SignCsrAction.SignCsrSuccessful.message"),
 					res.getString("SignCsrAction.SignCsr.Title"), JOptionPane.INFORMATION_MESSAGE);
@@ -240,7 +297,6 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 			DError.displayError(frame, ex);
 		}
 	}
-
 
 	private File chooseCsrFile() {
 		JFileChooser chooser = FileChooserFactory.getCsrFileChooser();
