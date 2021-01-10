@@ -407,7 +407,7 @@ public final class KeyStoreUtil {
 
 	private static KeyStore getKeyStoreInstance(KeyStoreType keyStoreType) throws CryptoException {
 		try {
-			if (keyStoreType == BKS || keyStoreType == BKS_V1 || keyStoreType == UBER || keyStoreType == BCFKS) {
+			if (keyStoreType == BKS || keyStoreType == BKS_V1 || keyStoreType == UBER || keyStoreType == BCFKS || keyStoreType == PKCS12) {
 				if (Security.getProvider(BOUNCY_CASTLE.jce()) == null) {
 					throw new CryptoException(MessageFormat.format(res.getString("NoProvider.exception.message"),
 							BOUNCY_CASTLE.jce()));
