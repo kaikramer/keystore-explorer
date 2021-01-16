@@ -1496,7 +1496,7 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("1.3.6.1.4.1.311.20.2", "EnrollCerttypeExtension");
 		oidToNameMapping.put("1.3.6.1.4.1.311.20.2.1", "EnrollmentAgent");
 		oidToNameMapping.put("1.3.6.1.4.1.311.20.2.2", "SmartcardLogon");
-		oidToNameMapping.put("1.3.6.1.4.1.311.20.2.3", "UniversalPrincipalName");
+		oidToNameMapping.put("1.3.6.1.4.1.311.20.2.3", "UserPrincipalName");
 		oidToNameMapping.put("1.3.6.1.4.1.311.20.3", "CertManifold");
 		oidToNameMapping.put("1.3.6.1.4.1.311.21.1", "CAKeyCertIndexPair");
 		oidToNameMapping.put("1.3.6.1.4.1.311.21.10", "ApplicationCertPolicies");
