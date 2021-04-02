@@ -1,6 +1,6 @@
 /*
   Copyright 2004 - 2013 Wayne Grant
-            2013 - 2020 Kai Kramer
+            2013 - 2021 Kai Kramer
 
   This file is part of KeyStore Explorer.
 
@@ -84,7 +84,7 @@ ext {
 	keystoreIcns = "$iconsDir/keystore.icns"
 
 	// Vendor details
-	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2020 Kai Kramer"
+	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2021 Kai Kramer"
 	vendor = "Wayne Grant, Kai Kramer"
 	website = "https://keystore-explorer.org"
 

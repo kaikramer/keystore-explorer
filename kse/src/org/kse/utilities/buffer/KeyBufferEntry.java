@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2020 Kai Kramer
+ *           2013 - 2021 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -42,8 +42,6 @@ public class KeyBufferEntry extends BufferEntry {
 	 *            Key
 	 * @param password
 	 *            Key password
-	 * @param certificateChain
-	 *            Certificate chain
 	 */
 	public KeyBufferEntry(String name, boolean cut, Key key, Password password) {
 		super(name, cut);

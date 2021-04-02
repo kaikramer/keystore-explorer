@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2020 Kai Kramer
+ *           2013 - 2021 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -74,12 +74,12 @@ import org.kse.utilities.pem.PemUtil;
  * RSA PKCS#1 RSAPrivateKey
  * ------------------------
  *
- * RSAPrivateKey ::= SEQUENCE {
- *   version           INTEGER Version(0),
- *   modulus           INTEGER,  -- n
- *   publicExponent    INTEGER,  -- e
- *   privateExponent   INTEGER,  -- d
- *   ...}
+ * RSAPrivateKeyï¿½::=ï¿½SEQUENCEï¿½{
+ * ï¿½ version ï¿½ ï¿½ ï¿½ ï¿½ ï¿½ INTEGER Version(0),
+ * ï¿½ modulusï¿½ ï¿½ ï¿½ ï¿½ ï¿½ ï¿½INTEGER,ï¿½ --ï¿½n
+ * ï¿½ publicExponentï¿½ ï¿½ INTEGER,ï¿½ --ï¿½e
+ * ï¿½ privateExponentï¿½ ï¿½INTEGER,ï¿½ --ï¿½d
+ * ï¿½ ...}
  *
  * ------BEGIN RSA PRIVATE KEY------
  * ------END RSA PRIVATE KEY------
@@ -91,19 +91,19 @@ import org.kse.utilities.pem.PemUtil;
  * -------------
  * (RFC 5915 or SEC 1 section C.4)
  *
- * ECPrivateKey ::= SEQUENCE {
- *   version        INTEGER { ecPrivkeyVer1(1) },
- *   privateKey     OCTET STRING,
- *   parameters [0] ECParameters {{ NamedCurve }} OPTIONAL, // RFC5480
- *   publicKey  [1] BIT STRING OPTIONAL}
+ * ECPrivateKeyï¿½::=ï¿½SEQUENCEï¿½{
+ * ï¿½ versionï¿½ ï¿½ ï¿½ ï¿½ INTEGERï¿½{ï¿½ecPrivkeyVer1(1)ï¿½},
+ * ï¿½ privateKeyï¿½ ï¿½ ï¿½OCTETï¿½STRING,
+ * ï¿½ parametersï¿½[0]ï¿½ECParametersï¿½{{ï¿½NamedCurveï¿½}}ï¿½OPTIONAL, // RFC5480
+ * ï¿½ publicKeyï¿½ [1]ï¿½BITï¿½STRINGï¿½OPTIONAL}
  *
- * -----BEGIN EC PRIVATE KEY-----
- * -----END EC PRIVATE KEY-----
+ * -----BEGINï¿½ECï¿½PRIVATEï¿½KEY-----
+ * -----ENDï¿½ECï¿½PRIVATEï¿½KEY-----
  *
- * -----BEGIN EC PRIVATE KEY-----
- * Proc-Type: 4,ENCRYPTED
- * DEK-Info: DES-EDE3-CBC,258248872DB25390
- * -----END EC PRIVATE KEY-----
+ * -----BEGINï¿½ECï¿½PRIVATEï¿½KEY-----
+ * Proc-Type:ï¿½4,ENCRYPTED
+ * DEK-Info:ï¿½DES-EDE3-CBC,258248872DB25390
+ * -----ENDï¿½ECï¿½PRIVATEï¿½KEY-----
  *
  * </pre>
  *
