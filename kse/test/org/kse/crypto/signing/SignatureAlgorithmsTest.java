@@ -110,7 +110,7 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
 
 	private void doTest(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType,
 			X509CertificateVersion version) throws Exception {
-		KeyPair keyPair = null;
+		KeyPair keyPair;
 
 		switch (keyPairType) {
 		case RSA:

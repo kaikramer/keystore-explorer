@@ -127,8 +127,7 @@ public class CloseAction extends SaveAction {
 
 		String message = MessageFormat.format(res.getString("CloseAction.WantSaveChanges.message"), keyStoreName);
 
-		int selected = JOptionPane.showConfirmDialog(frame, message,
+		return JOptionPane.showConfirmDialog(frame, message,
 				res.getString("CloseAction.WantSaveChanges.Title"), JOptionPane.YES_NO_CANCEL_OPTION);
-		return selected;
 	}
 }

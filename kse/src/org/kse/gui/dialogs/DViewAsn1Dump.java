@@ -196,14 +196,10 @@ public class DViewAsn1Dump extends JEscFrame {
 	/**
 	 * Creates a new DViewAsn1Dump dialog.
 	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param pkcs10Csr
-	 *            PKCS#10 request to display dump for
-	 * @throws Asn1Exception
-	 *             A problem was encountered getting the public key's ASN.1 dump
-	 * @throws IOException
-	 *             If an I/O problem occurred
+	 * @param parent Parent frame
+	 * @param spkac PKCS#10 request to display dump for
+	 * @throws Asn1Exception A problem was encountered getting the public key's ASN.1 dump
+	 * @throws IOException If an I/O problem occurred
 	 */
 	public DViewAsn1Dump(JDialog parent, Spkac spkac) throws Asn1Exception, IOException {
 		super(res.getString("DViewAsn1Dump.Csr.Title"));
@@ -216,26 +212,18 @@ public class DViewAsn1Dump extends JEscFrame {
 
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewAsn1Dump.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DViewAsn1Dump.jbCopy.tooltip"));
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewAsn1Dump.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewAsn1Dump.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewAsn1Dump.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewAsn1Dump.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DViewAsn1Dump.jbOK.text"));
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
@@ -287,12 +275,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void copyPressed() {

@@ -197,9 +197,7 @@ public class JcePolicyUtil {
 
 		String version = MessageFormat.format("{0}.{1}.{2}", major, middle, minor);
 
-		String url = MessageFormat.format(URLs.JCE_POLICY_DOWNLOAD_URL, version);
-
-		return url;
+		return MessageFormat.format(URLs.JCE_POLICY_DOWNLOAD_URL, version);
 	}
 
 

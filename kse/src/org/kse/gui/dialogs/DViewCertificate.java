@@ -765,7 +765,7 @@ public class DViewCertificate extends JEscDialog {
 
 		X509Certificate[] certs = new X509Certificate[] { eeCert, caCert };
 
-		DViewCertificate dialog = new DViewCertificate(new javax.swing.JFrame(), "Title", certs, new KseFrame(), IMPORT_EXPORT);;
+		DViewCertificate dialog = new DViewCertificate(new javax.swing.JFrame(), "Title", certs, new KseFrame(), IMPORT_EXPORT);
 		DialogViewer.run(dialog);
 	}
 }

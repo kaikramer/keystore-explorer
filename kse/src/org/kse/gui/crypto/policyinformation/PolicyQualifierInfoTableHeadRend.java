@@ -46,18 +46,12 @@ public class PolicyQualifierInfoTableHeadRend extends DefaultTableCellRenderer {
 	/**
 	 * Returns the rendered header cell for the supplied value and column.
 	 *
-	 * @param jtPolicyQualifierInfo
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
+	 * @param jTable The JTable
+	 * @param value The value to assign to the cell
+	 * @param isSelected True if cell is selected
+	 * @param hasFocus If true, render cell appropriately
+	 * @param row The row of the cell to render
+	 * @param col The column of the cell to render
 	 * @return The renderered cell
 	 */
 	@Override

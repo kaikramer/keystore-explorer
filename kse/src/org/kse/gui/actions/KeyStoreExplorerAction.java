@@ -241,9 +241,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 		dGetNewPassword.setLocationRelativeTo(frame);
 		dGetNewPassword.setVisible(true);
 
-		Password password = dGetNewPassword.getPassword();
-
-		return password;
+		return dGetNewPassword.getPassword();
 	}
 
 	/**

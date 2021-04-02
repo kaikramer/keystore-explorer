@@ -363,9 +363,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 				res.getString("DImportKeyPairPkcs12.NotPkcs12.Cause"),
 				res.getString("DImportKeyPairPkcs12.CorruptedPkcs12.Cause") };
 
-		Problem problem = new Problem(problemStr, causes, exception);
-
-		return problem;
+		return new Problem(problemStr, causes, exception);
 	}
 
 	/**

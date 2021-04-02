@@ -573,7 +573,7 @@ public class ApplicationSettings {
 	 *
 	 * Maximum number is 10. If host is already in list, it is brought to the first position.
 	 *
-	 * @param newSslHost New SSL host
+	 * @param p11Lib New SSL host
 	 */
 	public void addP11Lib(String p11Lib) {
 

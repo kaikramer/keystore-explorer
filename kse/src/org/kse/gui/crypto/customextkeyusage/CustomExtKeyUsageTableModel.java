@@ -52,8 +52,7 @@ public class CustomExtKeyUsageTableModel extends AbstractTableModel {
 	/**
 	 * Load the CustomExtKeyUsageTableModel with EKU oids.
 	 *
-	 * @param CustomExtKeyUsage
-	 *            The EKU oids
+	 * @param objectIds The EKU oids
 	 */
 	public void load(Set<ASN1ObjectIdentifier> objectIds) {
 		ASN1ObjectIdentifier[] objectIdsArray = objectIds

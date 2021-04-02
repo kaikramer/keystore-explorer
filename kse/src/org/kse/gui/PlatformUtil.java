@@ -57,10 +57,7 @@ public class PlatformUtil {
 	 * Create a dialog button panel with the order and alignment dependant on
 	 * the platform.
 	 *
-	 * @param jbPositives
-	 *            Positive buttons
-	 * @param resizable
-	 *            Is the dialog resizable?
+	 * @param jbPositives Positive buttons
 	 * @return Dialog button panel
 	 */
 	public static JPanel createDialogButtonPanel(JButton[] jbPositives) {

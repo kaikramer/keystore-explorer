@@ -185,20 +185,14 @@ public class JarInfoTableModel extends AbstractTableModel {
 	@Override
 	public Class<?> getColumnClass(int col) {
 		switch (col) {
-		case 0:
-			return String.class;
 		case 1:
 			return Long.class;
-		case 2:
-			return String.class;
-		case 3:
-			return String.class;
-		case 4:
-			return String.class;
-		case 5:
-			return String.class;
 		case 6:
-			return String.class;
+		case 5:
+		case 4:
+		case 3:
+		case 2:
+		case 0:
 		default:
 			return String.class;
 		}

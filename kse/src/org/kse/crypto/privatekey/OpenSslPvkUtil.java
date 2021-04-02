@@ -224,9 +224,8 @@ public class OpenSslPvkUtil {
 		}
 
 		PemInfo pemInfo = new PemInfo(pemType, null, openSsl);
-		String openSslPem = PemUtil.encode(pemInfo);
 
-		return openSslPem;
+		return PemUtil.encode(pemInfo);
 	}
 
 	/**

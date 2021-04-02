@@ -220,7 +220,7 @@ public class EccUtil {
 	/**
 	 * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given publicKey is.
 	 *
-	 * @param privateKey An EdDSA public key
+	 * @param publicKey An EdDSA public key
 	 * @return Ed25519 or Ed448
 	 * @throws InvalidParameterException if publicKey is not a EdDSA key
 	 */

@@ -478,9 +478,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
 		String[] causes = causeList.toArray(new String[causeList.size()]);
 
-		Problem problem = new Problem(problemStr, causes, exception);
-
-		return problem;
+		return new Problem(problemStr, causes, exception);
 	}
 
 	private void certificateDetailsPressed() {
@@ -547,9 +545,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		String[] causes = new String[] { res.getString("DImportKeyPairPkcs8.NotCerts.Cause"),
 				res.getString("DImportKeyPairPkcs8.CorruptedCerts.Cause") };
 
-		Problem problem = new Problem(problemStr, causes, exception);
-
-		return problem;
+		return new Problem(problemStr, causes, exception);
 	}
 
 	/**

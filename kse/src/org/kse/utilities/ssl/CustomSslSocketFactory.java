@@ -87,7 +87,7 @@ public class CustomSslSocketFactory extends SSLSocketFactory {
 	}
 
 	@Override
-	public Socket createSocket(String paramString, int paramInt) throws IOException, UnknownHostException {
+	public Socket createSocket(String paramString, int paramInt) throws IOException {
 
 		SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramString, paramInt);
 
@@ -100,7 +100,7 @@ public class CustomSslSocketFactory extends SSLSocketFactory {
 
 	@Override
 	public Socket createSocket(String paramString, int paramInt1, InetAddress paramInetAddress, int paramInt2)
-			throws IOException, UnknownHostException {
+			throws IOException {
 
 		SSLSocket socket = (SSLSocket) this.sslSocketFactory.createSocket(paramString, paramInt1, paramInetAddress,
 				paramInt2);

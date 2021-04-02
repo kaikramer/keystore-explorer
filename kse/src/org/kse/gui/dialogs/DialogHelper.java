@@ -21,6 +21,7 @@ package org.kse.gui.dialogs;
 
 import java.security.PrivateKey;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JComboBox;
@@ -71,16 +72,16 @@ public class DialogHelper {
 		case EDDSA:
 			EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
 			if (edDSACurve == EdDSACurves.ED25519) {
-				sigAlgs = Arrays.asList(SignatureType.ED25519);
+				sigAlgs = Collections.singletonList(SignatureType.ED25519);
 			} else {
-				sigAlgs = Arrays.asList(SignatureType.ED448);
+				sigAlgs = Collections.singletonList(SignatureType.ED448);
 			}
 			break;
 		case ED25519:
-			sigAlgs = Arrays.asList(SignatureType.ED25519);
+			sigAlgs = Collections.singletonList(SignatureType.ED25519);
 			break;
 		case ED448:
-			sigAlgs = Arrays.asList(SignatureType.ED448);
+			sigAlgs = Collections.singletonList(SignatureType.ED448);
 			break;
 		case RSA:
 		default:

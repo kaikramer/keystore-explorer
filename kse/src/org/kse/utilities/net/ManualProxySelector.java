@@ -226,10 +226,8 @@ public class ManualProxySelector extends ProxySelector {
 		ProxyAddress proxySocksAddress = this.getSocksProxyAddress();
 		ProxyAddress cmpSocksProxyAddress = cmpManualProxySelector.getSocksProxyAddress();
 
-		boolean socksEquals = (proxySocksAddress == null ? cmpSocksProxyAddress == null : proxySocksAddress
+		return (proxySocksAddress == null ? cmpSocksProxyAddress == null : proxySocksAddress
 				.equals(cmpSocksProxyAddress));
-
-		return socksEquals;
 
 	}
 }

@@ -68,7 +68,7 @@ import net.miginfocom.swing.MigLayout;
 public class DExportKeyPair extends JEscDialog {
 	private static final long serialVersionUID = 1L;
 
-	public enum ExportFormat { PKCS12, PEM };
+	public enum ExportFormat { PKCS12, PEM }
 
 	private static ResourceBundle res = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/importexport/resources");

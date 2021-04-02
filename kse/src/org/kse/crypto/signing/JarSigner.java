@@ -200,7 +200,7 @@ public class JarSigner {
 			DigestType digestType, String tsaUrl, Provider provider) throws IOException, CryptoException {
 
 		try (JarFile jar = new JarFile(jarFile);
-				JarOutputStream jos = new JarOutputStream(new FileOutputStream(signedJarFile));	) {
+				JarOutputStream jos = new JarOutputStream(new FileOutputStream(signedJarFile))) {
 
 			// Replace illegal characters in signature name
 			signatureName = convertSignatureName(signatureName);
@@ -619,7 +619,7 @@ public class JarSigner {
 		JarEntry mfJarEntry = new JarEntry(MANIFEST_LOCATION);
 		jos.putNextEntry(mfJarEntry);
 
-		try (ByteArrayInputStream bais = new ByteArrayInputStream(manifest);) {
+		try (ByteArrayInputStream bais = new ByteArrayInputStream(manifest)) {
 			// Write content
 			byte[] buffer = new byte[2048];
 			int read = -1;
@@ -788,8 +788,7 @@ public class JarSigner {
 		SignerInformationStore newSignerStore = new SignerInformationStore(signerInfos);
 
 		// create new signed data
-		CMSSignedData newSignedData = CMSSignedData.replaceSigners(signedData, newSignerStore);
-		return newSignedData;
+		return CMSSignedData.replaceSigners(signedData, newSignerStore);
 	}
 
 	/*

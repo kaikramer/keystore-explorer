@@ -321,7 +321,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 
 	private void processPolicyZipFile(File droppedFile) {
 		// Process the supplied drop file as a policy zip. If it is a valid policy zip store the policy jar contents
-		try (ZipFile zip = new ZipFile(droppedFile);) {
+		try (ZipFile zip = new ZipFile(droppedFile)) {
 
 			Enumeration<? extends ZipEntry> zipEntries = zip.entries();
 

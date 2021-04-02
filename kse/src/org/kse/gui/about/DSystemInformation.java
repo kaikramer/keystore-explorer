@@ -443,7 +443,7 @@ public class DSystemInformation extends JEscDialog {
 
 				try {
 					Thread.sleep(1000);
-				} catch (InterruptedException ex) {
+				} catch (InterruptedException ignored) {
 				}
 			}
 		}

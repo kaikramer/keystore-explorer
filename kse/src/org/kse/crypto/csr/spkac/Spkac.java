@@ -140,13 +140,10 @@ public class Spkac {
 	/**
 	 * Load a SPKAC.
 	 *
-	 * @param spac BA to load from
-	 * @throws IOException
-	 *             If an I/O problem occurs
-	 * @throws SpkacMissingPropertyException
-	 *             If no subject is present in SPKAC
-	 * @throws SpkacException
-	 *             If load fails
+	 * @param data BA to load from
+	 * @throws IOException If an I/O problem occurs
+	 * @throws SpkacMissingPropertyException If no subject is present in SPKAC
+	 * @throws SpkacException If load fails
 	 */
 	public Spkac(byte[] data) throws IOException, SpkacException {
 		Properties properties = readProperties(data);
@@ -220,8 +217,7 @@ public class Spkac {
 
 			ASN1ObjectIdentifier signatureAlgorithmOid = (ASN1ObjectIdentifier) signatureAlgorithm.getObjectAt(0);
 			if (signatureAlgorithm.size() > 1) {
-				byte[] sigAlgParameters = signatureAlgorithm.getObjectAt(1).toASN1Primitive().getEncoded();
-				this.signatureAlgorithmParameters = sigAlgParameters;
+				this.signatureAlgorithmParameters = signatureAlgorithm.getObjectAt(1).toASN1Primitive().getEncoded();
 			}
 
 			ASN1Sequence spki = (ASN1Sequence) publicKeyAndChallenge.getObjectAt(0);
@@ -282,8 +278,6 @@ public class Spkac {
 			KeyFactory keyFact = KeyFactory.getInstance("RSA");
 
 			return (RSAPublicKey) keyFact.generatePublic(new RSAPublicKeySpec(modulus, publicExponent));
-		} catch (GeneralSecurityException ex) {
-			throw new SpkacException(res.getString("NoGenerateRsaPublicKeyFromSpkac.exception.message"), ex);
 		} catch (Exception ex) {
 			throw new SpkacException(res.getString("NoGenerateRsaPublicKeyFromSpkac.exception.message"), ex);
 		}
@@ -321,8 +315,6 @@ public class Spkac {
 			KeyFactory keyFact = KeyFactory.getInstance("DSA");
 
 			return (DSAPublicKey) keyFact.generatePublic(new DSAPublicKeySpec(y, p, q, g));
-		} catch (GeneralSecurityException ex) {
-			throw new SpkacException(res.getString("NoGenerateDsaPublicKeyFromSpkac.exception.message"), ex);
 		} catch (Exception ex) {
 			throw new SpkacException(res.getString("NoGenerateDsaPublicKeyFromSpkac.exception.message"), ex);
 		}

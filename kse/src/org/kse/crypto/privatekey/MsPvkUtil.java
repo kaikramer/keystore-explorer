@@ -453,9 +453,7 @@ public class MsPvkUtil {
 			// Write private key blob
 			bb.put(privateKeyBlob);
 
-			byte[] pvk = getBufferBytes(bb);
-
-			return pvk;
+			return getBufferBytes(bb);
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoGetMsPvk.exception.message"), ex);
 		}
@@ -573,9 +571,7 @@ public class MsPvkUtil {
 			// Write blob
 			bb.put(encryptedPrivateKeyBlob);
 
-			byte[] encryptedPvk = getBufferBytes(bb);
-
-			return encryptedPvk;
+			return getBufferBytes(bb);
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoGetMsPvk.exception.message"), ex);
 		} catch (NoSuchAlgorithmException ex) {
@@ -971,9 +967,8 @@ public class MsPvkUtil {
 		reverseBytes(bigIntBytes);
 
 		// Construct and return the big integer
-		BigInteger bigInt = new BigInteger(1, bigIntBytes);
 
-		return bigInt;
+		return new BigInteger(1, bigIntBytes);
 	}
 
 	private static void writeBigInteger(ByteBuffer bb, BigInteger bigInteger, int length) throws IOException {

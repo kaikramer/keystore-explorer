@@ -96,8 +96,8 @@ public final class X509CertUtil {
 
 			ArrayList<X509Certificate> loadedCerts = new ArrayList<>();
 
-			for (Iterator<? extends Certificate> itr = certs.iterator(); itr.hasNext();) {
-				X509Certificate cert = (X509Certificate) itr.next();
+			for (Certificate certificate : certs) {
+				X509Certificate cert = (X509Certificate) certificate;
 
 				if (cert != null) {
 					loadedCerts.add(cert);
@@ -126,8 +126,8 @@ public final class X509CertUtil {
 
 			ArrayList<X509Certificate> loadedCerts = new ArrayList<>();
 
-			for (Iterator<? extends Certificate> itr = certs.iterator(); itr.hasNext();) {
-				X509Certificate cert = (X509Certificate) itr.next();
+			for (Certificate certificate : certs) {
+				X509Certificate cert = (X509Certificate) certificate;
 
 				if (cert != null) {
 					loadedCerts.add(cert);
@@ -296,10 +296,10 @@ public final class X509CertUtil {
 		ArrayList<ArrayList<X509Certificate>> paths = new ArrayList<>();
 
 		// For each possible path...
-		for (int i = 0; i < certs.length; i++) {
+		for (X509Certificate cert : certs) {
 			// Each possible path assumes a different certificate is the root issuer
 			ArrayList<X509Certificate> path = new ArrayList<>();
-			X509Certificate issuerCert = certs[i];
+			X509Certificate issuerCert = cert;
 			path.add(issuerCert);
 
 			X509Certificate newIssuer = null;
@@ -330,11 +330,9 @@ public final class X509CertUtil {
 
 	private static X509Certificate findIssuedCert(X509Certificate issuerCert, X509Certificate[] certs) {
 		// Find a certificate issued by the supplied certificate based on  distiguished name
-		for (int i = 0; i < certs.length; i++) {
-			X509Certificate cert = certs[i];
-
-			if (issuerCert.getSubjectX500Principal().equals(cert.getSubjectX500Principal())
-					&& issuerCert.getIssuerX500Principal().equals(cert.getIssuerX500Principal())) {
+		for (X509Certificate cert : certs) {
+			if (issuerCert.getSubjectX500Principal().equals(cert.getSubjectX500Principal()) && issuerCert
+					.getIssuerX500Principal().equals(cert.getIssuerX500Principal())) {
 				// Checked certificate is issuer - ignore it
 				continue;
 			}
@@ -381,9 +379,8 @@ public final class X509CertUtil {
 	/**
 	 * X.509 encode a number of certificates and PEM the encoding.
 	 *
+	 * @param certs The certificates
 	 * @return The PEM'd encoding
-	 * @param cert
-	 *            The certificates
 	 * @throws CryptoException
 	 *             If there was a problem encoding the certificates
 	 */
@@ -543,8 +540,8 @@ public final class X509CertUtil {
 	public static X509Certificate[] establishTrust(X509Certificate cert, KeyStore keyStores[]) throws CryptoException {
 		ArrayList<X509Certificate> ksCerts = new ArrayList<>();
 
-		for (int i = 0; i < keyStores.length; i++) {
-			ksCerts.addAll(extractCertificates(keyStores[i]));
+		for (KeyStore keyStore : keyStores) {
+			ksCerts.addAll(extractCertificates(keyStore));
 		}
 
 		return establishTrust(cert, ksCerts);

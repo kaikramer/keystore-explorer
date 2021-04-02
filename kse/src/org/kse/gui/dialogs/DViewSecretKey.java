@@ -259,8 +259,7 @@ public class DViewSecretKey extends JEscDialog {
 			String text = jtaEncoded.getText();
 			try {
 				byte[] newKeyRaw = Hex.decode(text.replace(':', ' '));
-				SecretKey newKey = new SecretKeySpec(newKeyRaw, 0, newKeyRaw.length, secretKey.getAlgorithm());
-				this.secretKey = newKey;
+				this.secretKey = new SecretKeySpec(newKeyRaw, 0, newKeyRaw.length, secretKey.getAlgorithm());
 				this.keyHasChanged = true;
 			} catch (DecoderException e) {
 				JOptionPane.showMessageDialog(this, res.getString("DViewSecretKey.NotAValidHexString.message"),

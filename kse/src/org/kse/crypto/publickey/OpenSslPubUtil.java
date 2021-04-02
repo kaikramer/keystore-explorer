@@ -107,9 +107,8 @@ public class OpenSslPubUtil {
 		byte[] openSsl = get(publicKey);
 
 		PemInfo pemInfo = new PemInfo(OPENSSL_PUB_PEM_TYPE, null, openSsl);
-		String openSslPem = PemUtil.encode(pemInfo);
 
-		return openSslPem;
+		return PemUtil.encode(pemInfo);
 	}
 
 	/**

@@ -93,10 +93,9 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 	/**
 	 * Creates a new DSelectStandardExtensionTemplate dialog.
 	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog title
+	 * @param parent Parent frame
+	 * @param authorityPublicKey Key of issuer certificate
+	 * @param subjectPublicKey Key of new certificate
 	 */
 	public DSelectStandardExtensionTemplate(JDialog parent, PublicKey authorityPublicKey, PublicKey subjectPublicKey) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -149,19 +148,9 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 

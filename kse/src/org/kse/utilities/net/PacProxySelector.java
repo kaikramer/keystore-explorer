@@ -141,7 +141,7 @@ public class PacProxySelector extends ProxySelector {
 			// Restore saved default proxy selector
 			ProxySelector.setDefault(defaultProxySelector);
 
-			if ((connection != null) && (connection instanceof HttpURLConnection)) {
+			if ((connection instanceof HttpURLConnection)) {
 				((HttpURLConnection) connection).disconnect();
 			}
 		}

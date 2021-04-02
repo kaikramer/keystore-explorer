@@ -605,9 +605,8 @@ public class DProperties extends JEscDialog {
 	}
 
 	private Password getEntryPassword(String alias) {
-		Password password = currentState.getEntryPassword(alias);
 
-		return password;
+		return currentState.getEntryPassword(alias);
 	}
 
 	private void createKeysNodes(DefaultMutableTreeNode parentNode) throws CryptoException {

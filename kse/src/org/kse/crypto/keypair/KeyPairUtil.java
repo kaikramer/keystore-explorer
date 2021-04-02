@@ -105,8 +105,7 @@ public final class KeyPairUtil {
 			keyPairGen.initialize(keySize, rand);
 
 			// Generate and return the key pair
-			KeyPair keyPair = keyPairGen.generateKeyPair();
-			return keyPair;
+			return keyPairGen.generateKeyPair();
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"),
 					keyPairType), ex);

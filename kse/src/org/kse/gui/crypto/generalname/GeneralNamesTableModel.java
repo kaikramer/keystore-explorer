@@ -144,7 +144,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	/**
 	 * Add a row
 	 *
-	 * @param row
+	 * @param generalName General name
 	 */
 	public void addRow(GeneralName generalName) {
 		data.add(generalName);
@@ -155,7 +155,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	/**
 	 * Remove a row
 	 *
-	 * @param row
+	 * @param row Row number
 	 */
 	public void removeRow(int row) {
 		data.remove(row);
@@ -165,7 +165,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
 	/**
 	 * Returns the table data
 	 *
-	 * @return
+	 * @return List of general names as table data
 	 */
 	public List<GeneralName> getData() {
 		return data;

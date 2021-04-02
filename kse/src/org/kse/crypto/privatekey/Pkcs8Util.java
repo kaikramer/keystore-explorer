@@ -222,9 +222,8 @@ public class Pkcs8Util {
 			// Convert bytes to private key
 			PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(pvkBytes);
 			KeyFactory keyFactory = KeyFactory.getInstance(privateKeyAlgorithm);
-			PrivateKey pvk = keyFactory.generatePrivate(privateKeySpec);
 
-			return pvk;
+			return keyFactory.generatePrivate(privateKeySpec);
 		} catch (NoSuchAlgorithmException ex) {
 			throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
 		} catch (InvalidKeySpecException ex) {

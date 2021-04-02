@@ -199,8 +199,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 		dProblem.setLocationRelativeTo(frame);
 		dProblem.setVisible(true);
 
-		int choice = JOptionPane.showConfirmDialog(frame, res.getString("OpenAction.TryAgain.message"),
+		return JOptionPane.showConfirmDialog(frame, res.getString("OpenAction.TryAgain.message"),
 				res.getString("OpenAction.TryAgain.Title"), JOptionPane.YES_NO_OPTION);
-		return choice;
 	}
 }

@@ -105,9 +105,8 @@ public class SpkacSubject {
 
 		if (rdns.length > 0) {
 			RDN rdn = rdns[0];
-			String value = rdn.getFirst().getValue().toString();
 
-			return value;
+			return rdn.getFirst().getValue().toString();
 		}
 
 		return null;

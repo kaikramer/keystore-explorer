@@ -62,9 +62,7 @@ public final class DigestUtil {
 				messageDigester.update(buffer, 0, read);
 			}
 
-			byte[] messageDigest = messageDigester.digest();
-
-			return messageDigest;
+			return messageDigester.digest();
 		} catch (IOException ex) {
 			throw new CryptoException(res.getString("NoCreateDigest.exception.message"), ex);
 		} finally {

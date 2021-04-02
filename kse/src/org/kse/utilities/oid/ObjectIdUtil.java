@@ -139,10 +139,7 @@ public class ObjectIdUtil {
 	private static Map<String, String> oidToNameMapping = new HashMap<>();
 	static {
 		oidToNameMapping.put("0.2.262.1.10", "Telesec");
-		oidToNameMapping.put("0.2.262.1.10", "Telesec");
 		oidToNameMapping.put("0.2.262.1.10.0", "Extension");
-		oidToNameMapping.put("0.2.262.1.10.0", "Extension");
-		oidToNameMapping.put("0.2.262.1.10.1", "Mechanism");
 		oidToNameMapping.put("0.2.262.1.10.1", "Mechanism");
 		oidToNameMapping.put("0.2.262.1.10.1.0", "Authentication");
 		oidToNameMapping.put("0.2.262.1.10.1.0.1", "PasswordAuthentication");
@@ -373,7 +370,6 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("0.4.0.127.0.7.3.1.3.1.2", "BsiTAv2ceDescriptionIA5String");
 		oidToNameMapping.put("0.4.0.127.0.7.3.1.3.1.3", "BsiTAv2ceDescriptionOctetString");
 		oidToNameMapping.put("0.4.0.127.0.7.3.1.3.2", "BsiTAv2ceTerminalSector");
-		oidToNameMapping.put("0.4.0.127.0.7.3.1.4", "BsiAuxData");
 		oidToNameMapping.put("0.4.0.127.0.7.3.1.4", "BsiAuxData");
 		oidToNameMapping.put("0.4.0.127.0.7.3.1.4.1", "BsiAuxDataBirthday");
 		oidToNameMapping.put("0.4.0.127.0.7.3.1.4.2", "BsiAuxDataExpireDate");

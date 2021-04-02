@@ -2403,8 +2403,7 @@ public final class KseFrame implements StatusBar {
 		}
 
 		KeyStoreState currentState = history.getCurrentState();
-		KeyStore keyStore = currentState.getKeyStore();
-		return keyStore;
+		return currentState.getKeyStore();
 	}
 
 	/**

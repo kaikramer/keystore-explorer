@@ -251,15 +251,13 @@ public class DExamineSsl extends JEscDialog {
 
 	private String[] getSslHosts() {
 		String sslHosts = applicationSettings.getSslHosts();
-		String[] hosts = sslHosts.split(";");
-		return hosts;
+		return sslHosts.split(";");
 	}
 
 
 	private String[] getSslPorts() {
 		String sslPorts = applicationSettings.getSslPorts();
-		String[] ports = sslPorts.split(";");
-		return ports;
+		return sslPorts.split(";");
 	}
 
 

@@ -153,9 +153,7 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStore keyStore = history.getCurrentState().getKeyStore();
 
-			X509Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-
-			return cert;
+			return X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
 		} catch (KeyStoreException ex) {
 			String message = MessageFormat.format(
 					res.getString("ExportTrustedCertificateAction.NoAccessEntry.message"), alias);

@@ -108,7 +108,7 @@ public class X500NameUtils {
 	/**
 	 * Return CN of a X.500 principal
 	 *
-	 * @param name X.500 principal object
+	 * @param principal X.500 principal object
 	 * @return CN from DN or an empty string if no CN found
 	 */
 	public static String extractCN(X500Principal principal) {
@@ -118,13 +118,13 @@ public class X500NameUtils {
 	/**
 	 * Creates an X500Name object from the given components.
 	 *
-	 * @param commonName
-	 * @param organisationUnit
-	 * @param organisationName
-	 * @param localityName
-	 * @param stateName
-	 * @param countryCode
-	 * @param emailAddress
+	 * @param commonName CN
+	 * @param organisationUnit OU
+	 * @param organisationName O
+	 * @param localityName L
+	 * @param stateName ST
+	 * @param countryCode C
+	 * @param emailAddress EMAILADDRESS
 	 * @return X500Name object from the given components
 	 */
 	public static X500Name buildX500Name(String commonName, String organisationUnit, String organisationName,

@@ -245,8 +245,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 	private String[] getLibraryList() {
 		String p11Libs = applicationSettings.getP11Libs();
-		String[] libs = p11Libs.split(";");
-		return libs;
+		return p11Libs.split(";");
 	}
 
 	private void browsePressed() {
