@@ -59,7 +59,7 @@ public class TimeStampingClient {
 	 * @param data The data to be time-stamped
 	 * @param hashAlg The algorithm used for generating a hash value of the data to be time-stamped
 	 * @return encoded, TSA signed data of the timeStampToken
-	 * @throws IOException
+	 * @throws IOException when request to TSA server fails
 	 */
 	public static byte[] getTimeStampToken(String tsaUrl, byte[] data, DigestType hashAlg) throws IOException {
 
@@ -107,7 +107,7 @@ public class TimeStampingClient {
 	 * Get timestamp token (HTTP communication)
 	 *
 	 * @return TSA response, raw bytes (RFC 3161 encoded)
-	 * @throws IOException
+	 * @throws IOException when request to TSA server fails
 	 */
 	private static byte[] queryServer(String tsaUrl, byte[] requestBytes) throws IOException {
 
