@@ -190,46 +190,32 @@ public class DViewPublicKey extends JEscDialog {
 
 		// actions
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
+		jbOK.addActionListener(evt -> okPressed());
+
+		jbPem.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPublicKey.this);
+				pemEncodingPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPublicKey.this);
 			}
 		});
 
-		jbPem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPublicKey.this);
-					pemEncodingPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPublicKey.this);
-				}
+		jbFields.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPublicKey.this);
+				fieldsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPublicKey.this);
 			}
 		});
 
-		jbFields.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPublicKey.this);
-					fieldsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPublicKey.this);
-				}
-			}
-		});
-
-		jbAsn1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPublicKey.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPublicKey.this);
-				}
+		jbAsn1.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPublicKey.this);
+				asn1DumpPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPublicKey.this);
 			}
 		});
 
@@ -248,12 +234,7 @@ public class DViewPublicKey extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void populateDialog() throws CryptoException {

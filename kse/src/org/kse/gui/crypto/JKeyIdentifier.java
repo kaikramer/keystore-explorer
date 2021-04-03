@@ -86,15 +86,12 @@ public class JKeyIdentifier extends JPanel {
 				"images/edit_key_id.png"));
 		jbEditKeyIdentifier = new JButton(editIcon);
 		jbEditKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbEditKeyIdentifier.tooltip"));
-		jbEditKeyIdentifier.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JKeyIdentifier.this);
-					editKeyIdentifier();
-				} finally {
-					CursorUtil.setCursorFree(JKeyIdentifier.this);
-				}
+		jbEditKeyIdentifier.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JKeyIdentifier.this);
+				editKeyIdentifier();
+			} finally {
+				CursorUtil.setCursorFree(JKeyIdentifier.this);
 			}
 		});
 
@@ -109,15 +106,12 @@ public class JKeyIdentifier extends JPanel {
 				"images/clear_key_id.png"));
 		jbClearKeyIdentifier = new JButton(clearIcon);
 		jbClearKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbClearKeyIdentifier.tooltip"));
-		jbClearKeyIdentifier.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JKeyIdentifier.this);
-					clearKeyIdentifier();
-				} finally {
-					CursorUtil.setCursorFree(JKeyIdentifier.this);
-				}
+		jbClearKeyIdentifier.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JKeyIdentifier.this);
+				clearKeyIdentifier();
+			} finally {
+				CursorUtil.setCursorFree(JKeyIdentifier.this);
 			}
 		});
 

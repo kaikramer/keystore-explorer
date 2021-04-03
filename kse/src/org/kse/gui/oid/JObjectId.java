@@ -81,15 +81,12 @@ public class JObjectId extends JPanel {
 		ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_object_id.png"));
 		jbEditObjectId = new JButton(editIcon);
 		jbEditObjectId.setToolTipText(res.getString("JObjectId.jbEditObjectId.tooltip"));
-		jbEditObjectId.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JObjectId.this);
-					editObjectId();
-				} finally {
-					CursorUtil.setCursorFree(JObjectId.this);
-				}
+		jbEditObjectId.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JObjectId.this);
+				editObjectId();
+			} finally {
+				CursorUtil.setCursorFree(JObjectId.this);
 			}
 		});
 
@@ -103,15 +100,12 @@ public class JObjectId extends JPanel {
 		ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_object_id.png"));
 		jbClearObjectId = new JButton(clearIcon);
 		jbClearObjectId.setToolTipText(res.getString("JObjectId.jbClearObjectId.tooltip"));
-		jbClearObjectId.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JObjectId.this);
-					clearObjectId();
-				} finally {
-					CursorUtil.setCursorFree(JObjectId.this);
-				}
+		jbClearObjectId.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JObjectId.this);
+				clearObjectId();
+			} finally {
+				CursorUtil.setCursorFree(JObjectId.this);
 			}
 		});
 

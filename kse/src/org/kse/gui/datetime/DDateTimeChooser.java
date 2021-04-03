@@ -168,21 +168,11 @@ public class DDateTimeChooser extends JEscDialog {
 		calendar.setTime(date);
 
 		jcbMonth = new JComboBox<>(MONTH_NAMES);
-		jcbMonth.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				update();
-			}
-		});
+		jcbMonth.addItemListener(evt -> update());
 
 		jsYear = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 1900, 2100, 1));
 		jsYear.setEditor(new JSpinner.NumberEditor(jsYear, "0000"));
-		jsYear.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				update();
-			}
-		});
+		jsYear.addChangeListener(evt -> update());
 
 		jlDaysOfMonth = new JLabel[7][7];
 		for (int i = 0; i < 7; i++) {
@@ -306,20 +296,10 @@ public class DDateTimeChooser extends JEscDialog {
 		jpDateTime.add(jpShortcuts);
 
 		jbOK = new JButton(res.getString("DDateTimeChooser.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel = new JButton(res.getString("DDateTimeChooser.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

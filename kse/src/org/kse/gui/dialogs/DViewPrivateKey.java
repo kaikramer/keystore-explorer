@@ -190,47 +190,33 @@ public class DViewPrivateKey extends JEscDialog {
 
 		// actions
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
+		jbOK.addActionListener(evt -> okPressed());
+
+		jbPem.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPrivateKey.this);
+				pemEncodingPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPrivateKey.this);
 			}
 		});
 
-		jbPem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPrivateKey.this);
-					pemEncodingPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPrivateKey.this);
-				}
-			}
-		});
-
-		jbFields.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPrivateKey.this);
-					fieldsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPrivateKey.this);
-				}
+		jbFields.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPrivateKey.this);
+				fieldsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPrivateKey.this);
 			}
 		});
 
 
-		jbAsn1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPrivateKey.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPrivateKey.this);
-				}
+		jbAsn1.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPrivateKey.this);
+				asn1DumpPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPrivateKey.this);
 			}
 		});
 
@@ -249,12 +235,7 @@ public class DViewPrivateKey extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void populateDialog() throws CryptoException {

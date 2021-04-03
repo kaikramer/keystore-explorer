@@ -110,20 +110,10 @@ public class DNetscapeCaPolicyUrl extends DExtension {
 		jpNetscapeCaPolicyUrl.add(jtfNetscapeCaPolicyUrl, BorderLayout.CENTER);
 
 		jbOK = new JButton(res.getString("DNetscapeCaPolicyUrl.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel = new JButton(res.getString("DNetscapeCaPolicyUrl.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

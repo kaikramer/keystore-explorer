@@ -103,14 +103,11 @@ public class JQuickStartButton extends JPanel {
 			}
 		});
 
-		jbWelcome.addActionListener(new ActionListener() {
-			// Button activate - remove roll-over color on text and image on
-			// button
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				jlWelcome.setForeground(foreground);
-				jbWelcome.setIcon(icon);
-			}
+		// Button activate - remove roll-over color on text and image on
+		// button
+		jbWelcome.addActionListener(evt -> {
+			jlWelcome.setForeground(foreground);
+			jbWelcome.setIcon(icon);
 		});
 
 		GridBagConstraints gbc_jlWelcome = new GridBagConstraints();

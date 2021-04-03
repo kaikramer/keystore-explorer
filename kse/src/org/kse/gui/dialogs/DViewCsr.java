@@ -214,60 +214,43 @@ public class DViewCsr extends JEscDialog {
 
 		populateCsrDetails();
 
-		jbViewPublicKeyDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					pubKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
+		jbViewPublicKeyDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCsr.this);
+				pubKeyDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCsr.this);
 			}
 		});
 
-		jbExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					extensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
+		jbExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCsr.this);
+				extensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCsr.this);
 			}
 		});
 
-		jbPem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					pemEncodingPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
+		jbPem.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCsr.this);
+				pemEncodingPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCsr.this);
 			}
 		});
 
-		jbAsn1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCsr.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCsr.this);
-				}
+		jbAsn1.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCsr.this);
+				asn1DumpPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCsr.this);
 			}
 		});
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		addWindowListener(new WindowAdapter() {
 			@Override

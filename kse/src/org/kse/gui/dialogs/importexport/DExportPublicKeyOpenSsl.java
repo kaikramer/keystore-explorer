@@ -140,15 +140,12 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 		gbc_jbBrowse.gridy = 5;
 		gbc_jbBrowse.gridx = 9;
 
-		jbBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportPublicKeyOpenSsl.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportPublicKeyOpenSsl.this);
-				}
+		jbBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportPublicKeyOpenSsl.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportPublicKeyOpenSsl.this);
 			}
 		});
 
@@ -166,25 +163,17 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
 		jbExport = new JButton(res.getString("DExportPublicKeyOpenSsl.jbExport.text"));
 		PlatformUtil.setMnemonic(jbExport, res.getString("DExportPublicKeyOpenSsl.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jbExport.tooltip"));
-		jbExport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportPublicKeyOpenSsl.this);
-					exportPressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportPublicKeyOpenSsl.this);
-				}
+		jbExport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportPublicKeyOpenSsl.this);
+				exportPressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportPublicKeyOpenSsl.this);
 			}
 		});
 
 		jbCancel = new JButton(res.getString("DExportPublicKeyOpenSsl.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

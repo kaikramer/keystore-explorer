@@ -148,15 +148,12 @@ public class DCryptoStrength extends JEscDialog {
 				res.getString("DCryptoStrength.jbLocalStrengthDetails.mnemonic").charAt(0));
 		jbLocalStrengthDetails.setToolTipText(res.getString("DCryptoStrength.jbLocalStrengthDetails.tooltip"));
 
-		jbLocalStrengthDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DCryptoStrength.this);
-					displayPolicyDetails(JcePolicy.LOCAL_POLICY);
-				} finally {
-					CursorUtil.setCursorFree(DCryptoStrength.this);
-				}
+		jbLocalStrengthDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DCryptoStrength.this);
+				displayPolicyDetails(JcePolicy.LOCAL_POLICY);
+			} finally {
+				CursorUtil.setCursorFree(DCryptoStrength.this);
 			}
 		});
 
@@ -185,15 +182,12 @@ public class DCryptoStrength extends JEscDialog {
 				res.getString("DCryptoStrength.jbUsExportStrengthDetails.mnemonic").charAt(0));
 		jbUsExportStrengthDetails.setToolTipText(res.getString("DCryptoStrength.jbUsExportStrengthDetails.tooltip"));
 
-		jbUsExportStrengthDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DCryptoStrength.this);
-					displayPolicyDetails(JcePolicy.US_EXPORT_POLICY);
-				} finally {
-					CursorUtil.setCursorFree(DCryptoStrength.this);
-				}
+		jbUsExportStrengthDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DCryptoStrength.this);
+				displayPolicyDetails(JcePolicy.US_EXPORT_POLICY);
+			} finally {
+				CursorUtil.setCursorFree(DCryptoStrength.this);
 			}
 		});
 
@@ -202,12 +196,7 @@ public class DCryptoStrength extends JEscDialog {
 		jpCryptoStrength.add(jbUsExportStrengthDetails, gbc_jbUsExportStrengthDetails);
 
 		jbOK = new JButton(res.getString("DCryptoStrength.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 

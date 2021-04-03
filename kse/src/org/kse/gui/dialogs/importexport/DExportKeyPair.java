@@ -182,54 +182,37 @@ public class DExportKeyPair extends JEscDialog {
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
 
-		jrbFormatPkcs12.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jrbFormatPkcs12.isSelected()) {
-					updateFileExtension(FileChooserFactory.PKCS12_KEYSTORE_EXT_2);
-				}
+		jrbFormatPkcs12.addItemListener(evt -> {
+			if (jrbFormatPkcs12.isSelected()) {
+				updateFileExtension(FileChooserFactory.PKCS12_KEYSTORE_EXT_2);
 			}
 		});
 
-		jrbFormatPEM.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jrbFormatPEM.isSelected()) {
-					updateFileExtension(FileChooserFactory.PEM_EXT);
-				}
+		jrbFormatPEM.addItemListener(evt -> {
+			if (jrbFormatPEM.isSelected()) {
+				updateFileExtension(FileChooserFactory.PEM_EXT);
 			}
 		});
 
-		jbBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportKeyPair.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportKeyPair.this);
-				}
+		jbBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportKeyPair.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportKeyPair.this);
 			}
 		});
 
-		jbExport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportKeyPair.this);
-					exportPressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportKeyPair.this);
-				}
+		jbExport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportKeyPair.this);
+				exportPressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportKeyPair.this);
 			}
 		});
 
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

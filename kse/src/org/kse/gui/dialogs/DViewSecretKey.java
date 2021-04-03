@@ -184,19 +184,9 @@ public class DViewSecretKey extends JEscDialog {
 			pane.add(jbOK, "spanx, tag ok");
 		}
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 
 		setResizable(false);
 
@@ -213,12 +203,7 @@ public class DViewSecretKey extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void populateDialog() {

@@ -215,61 +215,21 @@ public class DGenerateKeyPair extends JEscDialog {
 		jpContent.add(jcbECCurve, "growx");
 
 
-		jcbECCurveSet.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem());
-			}
-		});
+		jcbECCurveSet.addItemListener(e -> loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem()));
 
-		jrbRSA.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				enableDisableElements();
-			}
-		});
+		jrbRSA.addItemListener(evt -> enableDisableElements());
 
-		jrbDSA.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				enableDisableElements();
-			}
-		});
+		jrbDSA.addItemListener(evt -> enableDisableElements());
 
-		jrbEC.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				enableDisableElements();
-			}
-		});
+		jrbEC.addItemListener(evt -> enableDisableElements());
 
-		jspRSAKeySize.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				correctKeyPairSize();
-			}
-		});
+		jspRSAKeySize.addChangeListener(evt -> correctKeyPairSize());
 
-		jspDSAKeySize.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				correctKeyPairSize();
-			}
-		});
+		jspDSAKeySize.addChangeListener(evt -> correctKeyPairSize());
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 

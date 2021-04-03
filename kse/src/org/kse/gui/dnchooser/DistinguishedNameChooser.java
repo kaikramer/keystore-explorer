@@ -122,21 +122,11 @@ public class DistinguishedNameChooser extends JPanel {
 		frame.getContentPane().add(nameChooser, BorderLayout.CENTER);
 
 		JButton resetButton = new JButton("Reset to Default DN");
-		resetButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				nameChooser.reset();
-			}
-		});
+		resetButton.addActionListener(evt -> nameChooser.reset());
 		frame.getContentPane().add(resetButton, BorderLayout.NORTH);
 
 		JButton showNameButton = new JButton("Print Name");
-		showNameButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				System.out.println(nameChooser.getDN().toString());
-			}
-		});
+		showNameButton.addActionListener(evt -> System.out.println(nameChooser.getDN().toString()));
 		frame.getContentPane().add(showNameButton, BorderLayout.SOUTH);
 
 		frame.setVisible(true);

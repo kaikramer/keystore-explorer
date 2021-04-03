@@ -236,45 +236,29 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		pane.add(jbOK, "tag ok");
 
 
-		jvpValidityPeriod.addApplyActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Date startDate = jdtValidityStart.getDateTime();
-				if(startDate == null) {
-					startDate = new Date();
-					jdtValidityStart.setDateTime(startDate);
-				}
-				Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
-				jdtValidityEnd.setDateTime(validityEnd);
+		jvpValidityPeriod.addApplyActionListener(e -> {
+			Date startDate = jdtValidityStart.getDateTime();
+			if(startDate == null) {
+				startDate = new Date();
+				jdtValidityStart.setDateTime(startDate);
+			}
+			Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
+			jdtValidityEnd.setDateTime(validityEnd);
 
+		});
+
+		jbAddExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DGenerateKeyPairCert.this);
+				addExtensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DGenerateKeyPairCert.this);
 			}
 		});
 
-		jbAddExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DGenerateKeyPairCert.this);
-					addExtensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DGenerateKeyPairCert.this);
-				}
-			}
-		});
+		jrbVersion3.addChangeListener(evt -> jbAddExtensions.setEnabled(jrbVersion3.isSelected()));
 
-		jrbVersion3.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				jbAddExtensions.setEnabled(jrbVersion3.isSelected());
-			}
-		});
-
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
@@ -285,12 +269,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 			}
 		});
 
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 
 		addWindowListener(new WindowAdapter() {
 			@Override

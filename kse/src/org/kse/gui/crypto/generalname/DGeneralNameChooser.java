@@ -198,60 +198,15 @@ public class DGeneralNameChooser extends JEscDialog {
 		pane.add(jpButtons, "right, spanx");
 
 		// actions
-		jrbDirectoryName.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
-		jrbDnsName.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
-		jrbRegisteredId.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
-		jrbIpAddress.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
-		jrbRfc822Name.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
-		jrbUniformResourceIdentifier.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
-		jrbPrincipalName.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				generalNameTypeChanged();
-			}
-		});
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jrbDirectoryName.addItemListener(evt -> generalNameTypeChanged());
+		jrbDnsName.addItemListener(evt -> generalNameTypeChanged());
+		jrbRegisteredId.addItemListener(evt -> generalNameTypeChanged());
+		jrbIpAddress.addItemListener(evt -> generalNameTypeChanged());
+		jrbRfc822Name.addItemListener(evt -> generalNameTypeChanged());
+		jrbUniformResourceIdentifier.addItemListener(evt -> generalNameTypeChanged());
+		jrbPrincipalName.addItemListener(evt -> generalNameTypeChanged());
+		jbOK.addActionListener(evt -> okPressed());
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 

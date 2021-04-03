@@ -138,16 +138,13 @@ public class CreateApplicationGui implements Runnable {
 		// cacerts file is not where we expected it => detect location and inform user
 		final File newCaCertsFile = new File(AuthorityCertificates.getDefaultCaCertificatesLocation().toString());
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				int selected = JOptionPane.showConfirmDialog(kseFrame.getUnderlyingFrame(), MessageFormat.format(
-						res.getString("CreateApplicationGui.CaCertsFileNotFound.message"), newCaCertsFile), KSE
-						.getApplicationName(), JOptionPane.YES_NO_OPTION);
+		SwingUtilities.invokeLater(() -> {
+			int selected = JOptionPane.showConfirmDialog(kseFrame.getUnderlyingFrame(), MessageFormat.format(
+					res.getString("CreateApplicationGui.CaCertsFileNotFound.message"), newCaCertsFile), KSE
+					.getApplicationName(), JOptionPane.YES_NO_OPTION);
 
-				if (selected == JOptionPane.YES_OPTION) {
-					applicationSettings.setCaCertificatesFile(newCaCertsFile);
-				}
+			if (selected == JOptionPane.YES_OPTION) {
+				applicationSettings.setCaCertificatesFile(newCaCertsFile);
 			}
 		});
 	}
@@ -164,12 +161,9 @@ public class CreateApplicationGui implements Runnable {
 					final Version latestVersion = new Version(versionString);
 
 					// show update dialog to user
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
-							checkUpdateAction.compareVersions(latestVersion, true);
-						}
+					SwingUtilities.invokeLater(() -> {
+						CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
+						checkUpdateAction.compareVersions(latestVersion, true);
 					});
 				} catch (Exception e) {
 					// ignore any problems here

@@ -95,15 +95,12 @@ public class JAccessDescriptions extends JPanel {
 		jbAdd.setToolTipText(res.getString("JAccessDescriptions.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JAccessDescriptions.jbAdd.mnemonic").charAt(0));
 
-		jbAdd.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JAccessDescriptions.this);
-					addPressed();
-				} finally {
-					CursorUtil.setCursorFree(JAccessDescriptions.this);
-				}
+		jbAdd.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JAccessDescriptions.this);
+				addPressed();
+			} finally {
+				CursorUtil.setCursorFree(JAccessDescriptions.this);
 			}
 		});
 
@@ -115,15 +112,12 @@ public class JAccessDescriptions extends JPanel {
 
 		jbEdit.setEnabled(false);
 
-		jbEdit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JAccessDescriptions.this);
-					editPressed();
-				} finally {
-					CursorUtil.setCursorFree(JAccessDescriptions.this);
-				}
+		jbEdit.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JAccessDescriptions.this);
+				editPressed();
+			} finally {
+				CursorUtil.setCursorFree(JAccessDescriptions.this);
 			}
 		});
 
@@ -135,15 +129,12 @@ public class JAccessDescriptions extends JPanel {
 
 		jbRemove.setEnabled(false);
 
-		jbRemove.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JAccessDescriptions.this);
-					removePressed();
-				} finally {
-					CursorUtil.setCursorFree(JAccessDescriptions.this);
-				}
+		jbRemove.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JAccessDescriptions.this);
+				removePressed();
+			} finally {
+				CursorUtil.setCursorFree(JAccessDescriptions.this);
 			}
 		});
 
@@ -181,12 +172,9 @@ public class JAccessDescriptions extends JPanel {
 
 		ListSelectionModel selectionModel = jtAccessDescriptions.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) {
-					updateButtonControls();
-				}
+		selectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) {
+				updateButtonControls();
 			}
 		});
 

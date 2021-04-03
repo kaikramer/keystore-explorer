@@ -289,25 +289,17 @@ public class DPreferences extends JEscDialog {
 		}
 
 		jbOK = new JButton(res.getString("DPreferences.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DPreferences.this);
-					okPressed();
-				} finally {
-					CursorUtil.setCursorFree(DPreferences.this);
-				}
+		jbOK.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DPreferences.this);
+				okPressed();
+			} finally {
+				CursorUtil.setCursorFree(DPreferences.this);
 			}
 		});
 
 		jbCancel = new JButton(res.getString("DPreferences.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -400,15 +392,12 @@ public class DPreferences extends JEscDialog {
 		jpAuthorityCertificates.add(jcbEnableImportCaReplyTrustCheck, "wrap unrel");
 
 
-		jbBrowseCaCertificatesFile.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DPreferences.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DPreferences.this);
-				}
+		jbBrowseCaCertificatesFile.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DPreferences.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DPreferences.this);
 			}
 		});
 	}
@@ -501,32 +490,22 @@ public class DPreferences extends JEscDialog {
 		jpUI.add(jlFileChooser, "spanx, wrap");
 		jpUI.add(jcbShowHiddenFiles, "spanx, wrap");
 
-		jcbEnableAutoUpdateChecks.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected());
-			}
+		jcbEnableAutoUpdateChecks.addItemListener(
+				evt -> jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected()));
+
+		jcbEnablePasswordQuality.addItemListener(evt -> {
+			jcbEnforceMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected());
+			jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+					&& jcbEnforceMinimumPasswordQuality.isSelected());
+			jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+					&& jcbEnforceMinimumPasswordQuality.isSelected());
 		});
 
-		jcbEnablePasswordQuality.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jcbEnforceMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected());
-				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-				jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-			}
-		});
-
-		jcbEnforceMinimumPasswordQuality.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-				jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
-						&& jcbEnforceMinimumPasswordQuality.isSelected());
-			}
+		jcbEnforceMinimumPasswordQuality.addItemListener(evt -> {
+			jlMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+					&& jcbEnforceMinimumPasswordQuality.isSelected());
+			jsMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected()
+					&& jcbEnforceMinimumPasswordQuality.isSelected());
 		});
 	}
 
@@ -660,19 +639,9 @@ public class DPreferences extends JEscDialog {
 		jpInternetProxy.add(jlPacUrl, "gap unrel, skip, right");
 		jpInternetProxy.add(jtfPacUrl, "span, wrap push");
 
-		jrbAutomaticProxyConfig.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				updateProxyControls();
-			}
-		});
+		jrbAutomaticProxyConfig.addItemListener(evt -> updateProxyControls());
 
-		jrbManualProxyConfig.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				updateProxyControls();
-			}
-		});
+		jrbManualProxyConfig.addItemListener(evt -> updateProxyControls());
 
 		ProxySelector proxySelector = ProxySelector.getDefault();
 

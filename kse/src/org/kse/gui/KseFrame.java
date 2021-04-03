@@ -1467,12 +1467,9 @@ public final class KseFrame implements StatusBar {
 
 		jkstpKeyStores.setBorder(new EmptyBorder(3, 3, 3, 3));
 
-		jkstpKeyStores.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				// Update controls as selected KeyStore is changed
-				updateControls(false);
-			}
+		jkstpKeyStores.addChangeListener(evt -> {
+			// Update controls as selected KeyStore is changed
+			updateControls(false);
 		});
 
 		jkstpKeyStores.addMouseListener(new MouseAdapter() {

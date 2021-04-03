@@ -132,12 +132,7 @@ public class DGeneratingKeyPair extends JEscDialog {
 		jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jbCancel = new JButton(res.getString("DGeneratingKeyPair.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -221,24 +216,18 @@ public class DGeneratingKeyPair extends JEscDialog {
 					break;
 				}
 
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (DGeneratingKeyPair.this.isShowing()) {
-							closeDialog();
-						}
+				SwingUtilities.invokeLater(() -> {
+					if (DGeneratingKeyPair.this.isShowing()) {
+						closeDialog();
 					}
 				});
 			} catch (final Exception ex) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (DGeneratingKeyPair.this.isShowing()) {
-							DError dError = new DError(DGeneratingKeyPair.this, ex);
-							dError.setLocationRelativeTo(DGeneratingKeyPair.this);
-							dError.setVisible(true);
-							closeDialog();
-						}
+				SwingUtilities.invokeLater(() -> {
+					if (DGeneratingKeyPair.this.isShowing()) {
+						DError dError = new DError(DGeneratingKeyPair.this, ex);
+						dError.setLocationRelativeTo(DGeneratingKeyPair.this);
+						dError.setVisible(true);
+						closeDialog();
 					}
 				});
 			}

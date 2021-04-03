@@ -177,24 +177,16 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 		pane.add(new JSeparator(), "spanx, growx, wrap para");
 		pane.add(jpButtons, "right, spanx");
 
-		jbP11LibraryBrowse.addActionListener(new java.awt.event.ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DOpenPkcs11KeyStore.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DOpenPkcs11KeyStore.this);
-				}
+		jbP11LibraryBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DOpenPkcs11KeyStore.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DOpenPkcs11KeyStore.this);
 			}
 		});
 
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
@@ -205,12 +197,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 			}
 		});
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -323,25 +310,22 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 			closeDialog();
 		} catch (final Exception e) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					if (DOpenPkcs11KeyStore.this.isShowing()) {
-						String problemStr = MessageFormat.format(
-								res.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Problem"), selectedLib);
+			SwingUtilities.invokeLater(() -> {
+				if (DOpenPkcs11KeyStore.this.isShowing()) {
+					String problemStr = MessageFormat.format(
+							res.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Problem"), selectedLib);
 
-						String[] causes = new String[] { res.getString("DOpenPkcs11KeyStore.NotPkcs11Lib.Cause"),
-								res.getString("DOpenPkcs11KeyStore.32with64bit.Cause"),
-								res.getString("DOpenPkcs11KeyStore.64bitBeforeJRE8.Cause"),
-								res.getString("DOpenPkcs11KeyStore.WrongConfiguration.Cause")};
+					String[] causes = new String[] { res.getString("DOpenPkcs11KeyStore.NotPkcs11Lib.Cause"),
+							res.getString("DOpenPkcs11KeyStore.32with64bit.Cause"),
+							res.getString("DOpenPkcs11KeyStore.64bitBeforeJRE8.Cause"),
+							res.getString("DOpenPkcs11KeyStore.WrongConfiguration.Cause")};
 
-						Problem problem = new Problem(problemStr, causes, e);
+					Problem problem = new Problem(problemStr, causes, e);
 
-						DProblem dProblem = new DProblem(DOpenPkcs11KeyStore.this, res
-								.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Title"), problem);
-						dProblem.setLocationRelativeTo(DOpenPkcs11KeyStore.this);
-						dProblem.setVisible(true);
-					}
+					DProblem dProblem = new DProblem(DOpenPkcs11KeyStore.this, res
+							.getString("DOpenPkcs11KeyStore.ProblemLoadingProvider.Title"), problem);
+					dProblem.setLocationRelativeTo(DOpenPkcs11KeyStore.this);
+					dProblem.setVisible(true);
 				}
 			});
 		}

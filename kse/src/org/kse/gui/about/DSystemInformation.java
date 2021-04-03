@@ -305,15 +305,12 @@ public class DSystemInformation extends JEscDialog {
 		PlatformUtil.setMnemonic(jbEnvironmentVariables,
 				res.getString("DSystemInformation.jbEnvironmentVariables.mnemonic").charAt(0));
 		jbEnvironmentVariables.setToolTipText(res.getString("DSystemInformation.jbEnvironmentVariables.tooltip"));
-		jbEnvironmentVariables.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSystemInformation.this);
-					environmentVariablesPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSystemInformation.this);
-				}
+		jbEnvironmentVariables.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSystemInformation.this);
+				environmentVariablesPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSystemInformation.this);
 			}
 		});
 
@@ -321,15 +318,12 @@ public class DSystemInformation extends JEscDialog {
 		PlatformUtil.setMnemonic(jbSystemProperties, res.getString("DSystemInformation.jbSystemProperties.mnemonic")
 				.charAt(0));
 		jbSystemProperties.setToolTipText(res.getString("DSystemInformation.jbSystemProperties.tooltip"));
-		jbSystemProperties.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSystemInformation.this);
-					systemPropertiesPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSystemInformation.this);
-				}
+		jbSystemProperties.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSystemInformation.this);
+				systemPropertiesPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSystemInformation.this);
 			}
 		});
 
@@ -348,12 +342,7 @@ public class DSystemInformation extends JEscDialog {
 		jpSystemInformation.add(jpButtons, gbc_jpButtons);
 
 		jbOK = new JButton(res.getString("DSystemInformation.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
@@ -431,14 +420,11 @@ public class DSystemInformation extends JEscDialog {
 		@Override
 		public void run() {
 			for (;;) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
+				SwingUtilities.invokeLater(() -> {
 
-						Runtime runtime = Runtime.getRuntime();
+					Runtime runtime = Runtime.getRuntime();
 
-						updateMemoryFields(runtime);
-					}
+					updateMemoryFields(runtime);
 				});
 
 				try {

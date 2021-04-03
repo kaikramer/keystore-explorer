@@ -97,15 +97,12 @@ public class JPolicyInformation extends JPanel {
 		jbAdd.setToolTipText(res.getString("JPolicyInformation.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JPolicyInformation.jbAdd.mnemonic").charAt(0));
 
-		jbAdd.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JPolicyInformation.this);
-					addPressed();
-				} finally {
-					CursorUtil.setCursorFree(JPolicyInformation.this);
-				}
+		jbAdd.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JPolicyInformation.this);
+				addPressed();
+			} finally {
+				CursorUtil.setCursorFree(JPolicyInformation.this);
 			}
 		});
 
@@ -117,15 +114,12 @@ public class JPolicyInformation extends JPanel {
 
 		jbEdit.setEnabled(false);
 
-		jbEdit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JPolicyInformation.this);
-					editPressed();
-				} finally {
-					CursorUtil.setCursorFree(JPolicyInformation.this);
-				}
+		jbEdit.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JPolicyInformation.this);
+				editPressed();
+			} finally {
+				CursorUtil.setCursorFree(JPolicyInformation.this);
 			}
 		});
 
@@ -137,15 +131,12 @@ public class JPolicyInformation extends JPanel {
 
 		jbRemove.setEnabled(false);
 
-		jbRemove.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JPolicyInformation.this);
-					removePressed();
-				} finally {
-					CursorUtil.setCursorFree(JPolicyInformation.this);
-				}
+		jbRemove.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JPolicyInformation.this);
+				removePressed();
+			} finally {
+				CursorUtil.setCursorFree(JPolicyInformation.this);
 			}
 		});
 
@@ -182,12 +173,9 @@ public class JPolicyInformation extends JPanel {
 
 		ListSelectionModel selectionModel = jtPolicyInformation.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) {
-					updateButtonControls();
-				}
+		selectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) {
+				updateButtonControls();
 			}
 		});
 

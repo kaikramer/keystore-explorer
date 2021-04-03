@@ -148,15 +148,12 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		GridBagConstraints gbc_jcbEncrypt = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jcbEncrypt.gridy = 0;
 
-		jcbEncrypt.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				if (jcbEncrypt.isSelected()) {
-					jcbExportPem.setSelected(true);
-					jcbExportPem.setEnabled(false);
-				} else {
-					jcbExportPem.setEnabled(true);
-				}
+		jcbEncrypt.addChangeListener(evt -> {
+			if (jcbEncrypt.isSelected()) {
+				jcbExportPem.setSelected(true);
+				jcbExportPem.setEnabled(false);
+			} else {
+				jcbExportPem.setEnabled(true);
 			}
 		});
 
@@ -228,15 +225,12 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		gbc_jbBrowse.gridy = 5;
 		gbc_jbBrowse.gridx = 9;
 
-		jbBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportPrivateKeyOpenSsl.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportPrivateKeyOpenSsl.this);
-				}
+		jbBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportPrivateKeyOpenSsl.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportPrivateKeyOpenSsl.this);
 			}
 		});
 
@@ -263,49 +257,38 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 		jpOptions.add(jtfExportFile, gbc_jtfExportFile);
 		jpOptions.add(jbBrowse, gbc_jbBrowse);
 
-		jcbEncrypt.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jcbEncrypt.isSelected()) {
-					jcbPbeAlg.setEnabled(true);
-					jpfPassword.setEnabled(true);
-					jpfConfirmPassword.setEnabled(true);
+		jcbEncrypt.addItemListener(evt -> {
+			if (jcbEncrypt.isSelected()) {
+				jcbPbeAlg.setEnabled(true);
+				jpfPassword.setEnabled(true);
+				jpfConfirmPassword.setEnabled(true);
+			} else {
+				jcbPbeAlg.setEnabled(false);
+				jpfPassword.setEnabled(false);
+				if (jpfPassword instanceof JPasswordQualityField) {
+					((JPasswordQualityField) jpfPassword).setText("");
 				} else {
-					jcbPbeAlg.setEnabled(false);
-					jpfPassword.setEnabled(false);
-					if (jpfPassword instanceof JPasswordQualityField) {
-						((JPasswordQualityField) jpfPassword).setText("");
-					} else {
-						((JPasswordField) jpfPassword).setText("");
-					}
-					jpfConfirmPassword.setEnabled(false);
-					jpfConfirmPassword.setText("");
+					((JPasswordField) jpfPassword).setText("");
 				}
+				jpfConfirmPassword.setEnabled(false);
+				jpfConfirmPassword.setText("");
 			}
 		});
 
 		jbExport = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbExport.text"));
 		PlatformUtil.setMnemonic(jbExport, res.getString("DExportPrivateKeyOpenSsl.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jbExport.tooltip"));
-		jbExport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportPrivateKeyOpenSsl.this);
-					exportPressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportPrivateKeyOpenSsl.this);
-				}
+		jbExport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportPrivateKeyOpenSsl.this);
+				exportPressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportPrivateKeyOpenSsl.this);
 			}
 		});
 
 		jbCancel = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

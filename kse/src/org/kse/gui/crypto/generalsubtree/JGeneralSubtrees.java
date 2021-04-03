@@ -95,15 +95,12 @@ public class JGeneralSubtrees extends JPanel {
 		jbAdd.setToolTipText(res.getString("JGeneralSubtrees.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JGeneralSubtrees.jbAdd.mnemonic").charAt(0));
 
-		jbAdd.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralSubtrees.this);
-					addPressed();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralSubtrees.this);
-				}
+		jbAdd.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralSubtrees.this);
+				addPressed();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralSubtrees.this);
 			}
 		});
 
@@ -115,15 +112,12 @@ public class JGeneralSubtrees extends JPanel {
 
 		jbEdit.setEnabled(false);
 
-		jbEdit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralSubtrees.this);
-					editPressed();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralSubtrees.this);
-				}
+		jbEdit.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralSubtrees.this);
+				editPressed();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralSubtrees.this);
 			}
 		});
 
@@ -135,15 +129,12 @@ public class JGeneralSubtrees extends JPanel {
 
 		jbRemove.setEnabled(false);
 
-		jbRemove.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralSubtrees.this);
-					removePressed();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralSubtrees.this);
-				}
+		jbRemove.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralSubtrees.this);
+				removePressed();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralSubtrees.this);
 			}
 		});
 
@@ -182,12 +173,9 @@ public class JGeneralSubtrees extends JPanel {
 
 		ListSelectionModel selectionModel = jtGeneralSubtrees.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) {
-					updateButtonControls();
-				}
+		selectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) {
+				updateButtonControls();
 			}
 		});
 

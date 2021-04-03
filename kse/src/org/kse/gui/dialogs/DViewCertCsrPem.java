@@ -163,12 +163,7 @@ public class DViewCertCsrPem extends JEscDialog {
 	private void initComponents() throws CryptoException {
 		jbOK = new JButton(res.getString("DViewCertCsrPem.jbOK.text"));
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCopy = new JButton(res.getString("DViewCertCsrPem.jbCopy.text"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertCsrPem.jbCopy.mnemonic").charAt(0));
@@ -178,15 +173,12 @@ public class DViewCertCsrPem extends JEscDialog {
 			jbCopy.setToolTipText(res.getString("DViewCertCsrPem.jbCsrCopy.tooltip"));
 		}
 
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertCsrPem.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertCsrPem.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertCsrPem.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertCsrPem.this);
 			}
 		});
 
@@ -197,15 +189,12 @@ public class DViewCertCsrPem extends JEscDialog {
 		} else {
 			jbExport.setToolTipText(res.getString("DViewCertCsrPem.jbCsrExport.tooltip"));
 		}
-		jbExport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertCsrPem.this);
-					exportPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertCsrPem.this);
-				}
+		jbExport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertCsrPem.this);
+				exportPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertCsrPem.this);
 			}
 		});
 
@@ -246,12 +235,7 @@ public class DViewCertCsrPem extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void okPressed() {

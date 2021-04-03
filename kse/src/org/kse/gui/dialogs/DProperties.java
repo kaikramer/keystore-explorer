@@ -128,25 +128,17 @@ public class DProperties extends JEscDialog {
 		jbCopy = new JButton(res.getString("DProperties.jbCopy.text"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DProperties.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DProperties.jbCopy.tooltip"));
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DProperties.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DProperties.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DProperties.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DProperties.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DProperties.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
@@ -185,12 +177,7 @@ public class DProperties extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private DefaultMutableTreeNode createPropertiesNodes() throws CryptoException {

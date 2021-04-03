@@ -370,111 +370,75 @@ public class DSignCsr extends JEscDialog {
 
 		populateFields();
 
-		jbViewCsrPublicKeyDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignCsr.this);
-					pubKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignCsr.this);
-				}
+		jbViewCsrPublicKeyDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignCsr.this);
+				pubKeyDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignCsr.this);
 			}
 		});
 
-		jbCsrExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignCsr.this);
-					extensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignCsr.this);
-				}
+		jbCsrExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignCsr.this);
+				extensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignCsr.this);
 			}
 		});
 
-		jbCsrPem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignCsr.this);
-					pemEncodingPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignCsr.this);
-				}
+		jbCsrPem.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignCsr.this);
+				pemEncodingPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignCsr.this);
 			}
 		});
 
-		jbCsrAsn1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignCsr.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignCsr.this);
-				}
+		jbCsrAsn1.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignCsr.this);
+				asn1DumpPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignCsr.this);
 			}
 		});
 
-		jvpValidityPeriod.addApplyActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Date startDate = jdtValidityStart.getDateTime();
-				if(startDate == null) {
-					startDate = new Date();
-					jdtValidityStart.setDateTime(startDate);
-				}
-				jdtValidityEnd.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
+		jvpValidityPeriod.addApplyActionListener(e -> {
+			Date startDate = jdtValidityStart.getDateTime();
+			if(startDate == null) {
+				startDate = new Date();
+				jdtValidityStart.setDateTime(startDate);
+			}
+			jdtValidityEnd.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
 
+		});
+
+		jrbVersion3.addChangeListener(evt -> jbAddExtensions.setEnabled(jrbVersion3.isSelected()));
+
+		jbTransferExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignCsr.this);
+				transferExtensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignCsr.this);
 			}
 		});
 
-		jrbVersion3.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				jbAddExtensions.setEnabled(jrbVersion3.isSelected());
+		jbAddExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignCsr.this);
+				addExtensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignCsr.this);
 			}
 		});
 
-		jbTransferExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignCsr.this);
-					transferExtensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignCsr.this);
-				}
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
-		jbAddExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignCsr.this);
-					addExtensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignCsr.this);
-				}
-			}
-		});
-
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
-
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 

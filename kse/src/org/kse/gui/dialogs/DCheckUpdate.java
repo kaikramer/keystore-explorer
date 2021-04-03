@@ -104,12 +104,7 @@ public class DCheckUpdate extends JEscDialog {
 		jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jbCancel = new JButton(res.getString("DCheckUpdate.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -183,31 +178,23 @@ public class DCheckUpdate extends JEscDialog {
 				String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
 				latestVersion = new Version(versionString);
 
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						closeDialog();
-					}
-				});
+				SwingUtilities.invokeLater(() -> closeDialog());
 			} catch (final Exception ex) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (DCheckUpdate.this.isShowing()) {
-							String problemStr = res.getString("DCheckUpdate.NoCheckUpdate.Problem");
+				SwingUtilities.invokeLater(() -> {
+					if (DCheckUpdate.this.isShowing()) {
+						String problemStr = res.getString("DCheckUpdate.NoCheckUpdate.Problem");
 
-							String[] causes = new String[] { res.getString("DCheckUpdate.UpdateHostUnavailable.Cause"),
-									res.getString("DCheckUpdate.ProxySettingsIncorrect.Cause") };
+						String[] causes = new String[] { res.getString("DCheckUpdate.UpdateHostUnavailable.Cause"),
+								res.getString("DCheckUpdate.ProxySettingsIncorrect.Cause") };
 
-							Problem problem = new Problem(problemStr, causes, ex);
+						Problem problem = new Problem(problemStr, causes, ex);
 
-							DProblem dProblem = new DProblem(DCheckUpdate.this, res
-									.getString("DCheckUpdate.ProblemCheckingUpdate.Title"), problem);
-							dProblem.setLocationRelativeTo(DCheckUpdate.this);
-							dProblem.setVisible(true);
+						DProblem dProblem = new DProblem(DCheckUpdate.this, res
+								.getString("DCheckUpdate.ProblemCheckingUpdate.Title"), problem);
+						dProblem.setLocationRelativeTo(DCheckUpdate.this);
+						dProblem.setVisible(true);
 
-							closeDialog();
-						}
+						closeDialog();
 					}
 				});
 			}

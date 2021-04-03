@@ -99,15 +99,12 @@ public class JCustomExtendedKeyUsage extends JPanel {
 		jbAdd.setToolTipText(res.getString("JCustomExtKeyUsage.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JCustomExtKeyUsage.jbAdd.mnemonic").charAt(0));
 
-		jbAdd.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JCustomExtendedKeyUsage.this);
-					addPressed();
-				} finally {
-					CursorUtil.setCursorFree(JCustomExtendedKeyUsage.this);
-				}
+		jbAdd.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JCustomExtendedKeyUsage.this);
+				addPressed();
+			} finally {
+				CursorUtil.setCursorFree(JCustomExtendedKeyUsage.this);
 			}
 		});
 
@@ -119,15 +116,12 @@ public class JCustomExtendedKeyUsage extends JPanel {
 
 		jbEdit.setEnabled(false);
 
-		jbEdit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JCustomExtendedKeyUsage.this);
-					editPressed();
-				} finally {
-					CursorUtil.setCursorFree(JCustomExtendedKeyUsage.this);
-				}
+		jbEdit.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JCustomExtendedKeyUsage.this);
+				editPressed();
+			} finally {
+				CursorUtil.setCursorFree(JCustomExtendedKeyUsage.this);
 			}
 		});
 
@@ -139,15 +133,12 @@ public class JCustomExtendedKeyUsage extends JPanel {
 
 		jbRemove.setEnabled(false);
 
-		jbRemove.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JCustomExtendedKeyUsage.this);
-					removePressed();
-				} finally {
-					CursorUtil.setCursorFree(JCustomExtendedKeyUsage.this);
-				}
+		jbRemove.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JCustomExtendedKeyUsage.this);
+				removePressed();
+			} finally {
+				CursorUtil.setCursorFree(JCustomExtendedKeyUsage.this);
 			}
 		});
 
@@ -184,12 +175,9 @@ public class JCustomExtendedKeyUsage extends JPanel {
 
 		ListSelectionModel selectionModel = jtCustomExtKeyUsages.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) {
-					updateButtonControls();
-				}
+		selectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) {
+				updateButtonControls();
 			}
 		});
 

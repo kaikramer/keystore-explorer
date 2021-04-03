@@ -116,23 +116,13 @@ public class DGenerateSecretKey extends JEscDialog {
 		populateKeyAlgs();
 		loadKeySizes(secretKeySize);
 
-		jcbKeyAlg.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				loadKeySizes(getSecretKeySize());
-			}
-		});
+		jcbKeyAlg.addItemListener(evt -> loadKeySizes(getSecretKeySize()));
 
 		jpKeyAlg = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		jpKeyAlg.add(jlKeyAlg);
 		jpKeyAlg.add(jcbKeyAlg);
 
-		jsKeySize.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				correctSecretKeySize();
-			}
-		});
+		jsKeySize.addChangeListener(evt -> correctSecretKeySize());
 
 		jpOptions = new JPanel(new GridLayout(2, 1, 5, 5));
 		jpOptions.add(jpKeyAlg);
@@ -141,20 +131,10 @@ public class DGenerateSecretKey extends JEscDialog {
 		jpOptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
 		jbOK = new JButton(res.getString("DGenerateSecretKey.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel = new JButton(res.getString("DGenerateSecretKey.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

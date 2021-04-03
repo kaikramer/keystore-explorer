@@ -109,15 +109,12 @@ public class DViewKeyPair extends JEscDialog {
 				.charAt(0));
 		jbPrivateKeyDetails.setToolTipText(res.getString("DViewKeyPair.jbPrivateKeyDetails.tooltip"));
 		jbPrivateKeyDetails.setEnabled(true);
-		jbPrivateKeyDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewKeyPair.this);
-					privateKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewKeyPair.this);
-				}
+		jbPrivateKeyDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewKeyPair.this);
+				privateKeyDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewKeyPair.this);
 			}
 		});
 
@@ -126,15 +123,12 @@ public class DViewKeyPair extends JEscDialog {
 				.charAt(0));
 		jbCertificateDetails.setToolTipText(res.getString("DViewKeyPair.jbCertificateDetails.tooltip"));
 		jbCertificateDetails.setEnabled(true);
-		jbCertificateDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewKeyPair.this);
-					certificateDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewKeyPair.this);
-				}
+		jbCertificateDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewKeyPair.this);
+				certificateDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewKeyPair.this);
 			}
 		});
 
@@ -145,12 +139,7 @@ public class DViewKeyPair extends JEscDialog {
 		jpKeyPairDetails.add(jbCertificateDetails);
 
 		jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
@@ -171,12 +160,7 @@ public class DViewKeyPair extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void privateKeyDetailsPressed() {

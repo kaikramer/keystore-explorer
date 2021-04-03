@@ -127,12 +127,7 @@ public class DJarInfo extends JEscDialog {
 		jpJarInfoTable.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jbOK = new JButton(res.getString("DJarInfo.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
@@ -152,12 +147,7 @@ public class DJarInfo extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private JarFile[] getClassPathJars() throws IOException {

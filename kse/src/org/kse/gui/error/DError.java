@@ -162,25 +162,17 @@ public class DError extends JEscDialog {
 		jbDetails = new JButton(res.getString("DError.jbDetails.text"));
 		PlatformUtil.setMnemonic(jbDetails, res.getString("DError.jbDetails.mnemonic").charAt(0));
 
-		jbDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DError.this);
-					showErrorDetail();
-				} finally {
-					CursorUtil.setCursorFree(DError.this);
-				}
+		jbDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DError.this);
+				showErrorDetail();
+			} finally {
+				CursorUtil.setCursorFree(DError.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DError.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDetails);
 

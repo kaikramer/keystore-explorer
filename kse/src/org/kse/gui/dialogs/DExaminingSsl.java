@@ -130,12 +130,7 @@ public class DExaminingSsl extends JEscDialog {
 		jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		jbCancel = new JButton(res.getString("DExaminingSsl.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -206,35 +201,29 @@ public class DExaminingSsl extends JEscDialog {
 			try {
 				sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
 
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (DExaminingSsl.this.isShowing()) {
-							closeDialog();
-						}
+				SwingUtilities.invokeLater(() -> {
+					if (DExaminingSsl.this.isShowing()) {
+						closeDialog();
 					}
 				});
 			} catch (final Exception ex) {
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						if (DExaminingSsl.this.isShowing()) {
-							String problemStr = MessageFormat.format(
-									res.getString("DExaminingSsl.NoExamineSsl.Problem"), sslHost, "" + sslPort);
+				SwingUtilities.invokeLater(() -> {
+					if (DExaminingSsl.this.isShowing()) {
+						String problemStr = MessageFormat.format(
+								res.getString("DExaminingSsl.NoExamineSsl.Problem"), sslHost, "" + sslPort);
 
-							String[] causes = new String[] { res.getString("DExaminingSsl.SslHostPortIncorrect.Cause"),
-									res.getString("DExaminingSsl.SslHostUnavailable.Cause"),
-									res.getString("DExaminingSsl.ProxySettingsIncorrect.Cause") };
+						String[] causes = new String[] { res.getString("DExaminingSsl.SslHostPortIncorrect.Cause"),
+								res.getString("DExaminingSsl.SslHostUnavailable.Cause"),
+								res.getString("DExaminingSsl.ProxySettingsIncorrect.Cause") };
 
-							Problem problem = new Problem(problemStr, causes, ex);
+						Problem problem = new Problem(problemStr, causes, ex);
 
-							DProblem dProblem = new DProblem(DExaminingSsl.this, res
-									.getString("DExaminingSsl.ProblemExaminingSsl.Title"), problem);
-							dProblem.setLocationRelativeTo(DExaminingSsl.this);
-							dProblem.setVisible(true);
+						DProblem dProblem = new DProblem(DExaminingSsl.this, res
+								.getString("DExaminingSsl.ProblemExaminingSsl.Title"), problem);
+						dProblem.setLocationRelativeTo(DExaminingSsl.this);
+						dProblem.setVisible(true);
 
-							closeDialog();
-						}
+						closeDialog();
 					}
 				});
 			}

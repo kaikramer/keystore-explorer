@@ -107,13 +107,10 @@ public class KeyStoreTab extends JPanel {
 			}
 		});
 
-		jbClose.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				jbClose.setIcon(icon);
-				CloseAction closeAction = new CloseAction(kseFrame);
-				closeAction.closeKeyStore(history);
-			}
+		jbClose.addActionListener(evt -> {
+			jbClose.setIcon(icon);
+			CloseAction closeAction = new CloseAction(kseFrame);
+			closeAction.closeKeyStore(history);
 		});
 
 		setOpaque(false);

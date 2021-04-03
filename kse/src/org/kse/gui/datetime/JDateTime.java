@@ -93,15 +93,12 @@ public class JDateTime extends JPanel {
 		ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_date_time.png"));
 		jbEditDateTime = new JButton(editIcon);
 		jbEditDateTime.setToolTipText(res.getString("JDateTime.jbEditDateTime.tooltip"));
-		jbEditDateTime.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JDateTime.this);
-					editDateTime();
-				} finally {
-					CursorUtil.setCursorFree(JDateTime.this);
-				}
+		jbEditDateTime.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JDateTime.this);
+				editDateTime();
+			} finally {
+				CursorUtil.setCursorFree(JDateTime.this);
 			}
 		});
 
@@ -120,15 +117,12 @@ public class JDateTime extends JPanel {
 			ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_date_time.png"));
 			jbClearDateTime = new JButton(clearIcon);
 			jbClearDateTime.setToolTipText(res.getString("JDateTime.jbClearDateTime.tooltip"));
-			jbClearDateTime.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						CursorUtil.setCursorBusy(JDateTime.this);
-						clearDateTime();
-					} finally {
-						CursorUtil.setCursorFree(JDateTime.this);
-					}
+			jbClearDateTime.addActionListener(evt -> {
+				try {
+					CursorUtil.setCursorBusy(JDateTime.this);
+					clearDateTime();
+				} finally {
+					CursorUtil.setCursorFree(JDateTime.this);
 				}
 			});
 

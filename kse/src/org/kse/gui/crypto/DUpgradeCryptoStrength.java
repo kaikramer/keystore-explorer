@@ -158,38 +158,22 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		pane.add(jpButtons, "right, spanx");
 
 		// actions
-		jbDownloadPolicy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DUpgradeCryptoStrength.this);
-					downloadPolicyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DUpgradeCryptoStrength.this);
-				}
+		jbDownloadPolicy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DUpgradeCryptoStrength.this);
+				downloadPolicyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DUpgradeCryptoStrength.this);
 			}
 		});
-		jbUpgrade.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				upgradePressed();
-			}
-		});
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
-		jbBrowsePolicy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DUpgradeCryptoStrength.this);
-					browsePolicyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DUpgradeCryptoStrength.this);
-				}
+		jbUpgrade.addActionListener(evt -> upgradePressed());
+		jbCancel.addActionListener(evt -> cancelPressed());
+		jbBrowsePolicy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DUpgradeCryptoStrength.this);
+				browsePolicyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DUpgradeCryptoStrength.this);
 			}
 		});
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -301,7 +285,7 @@ public class DUpgradeCryptoStrength extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DUpgradeCryptoStrength.Title.ChoosePolicyZip.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		chooser.setApproveButtonText(res.getString("DUpgradeCryptoStrength.Title.PolicyZipChooser.button"));
 
 		int rtnValue = chooser.showOpenDialog(this);

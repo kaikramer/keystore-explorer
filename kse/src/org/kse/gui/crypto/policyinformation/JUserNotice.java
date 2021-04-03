@@ -80,15 +80,12 @@ public class JUserNotice extends JPanel {
 		ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_user_notice.png"));
 		jbEditUserNotice = new JButton(editIcon);
 		jbEditUserNotice.setToolTipText(res.getString("JUserNotice.jbEditUserNotice.tooltip"));
-		jbEditUserNotice.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JUserNotice.this);
-					editUserNotice();
-				} finally {
-					CursorUtil.setCursorFree(JUserNotice.this);
-				}
+		jbEditUserNotice.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JUserNotice.this);
+				editUserNotice();
+			} finally {
+				CursorUtil.setCursorFree(JUserNotice.this);
 			}
 		});
 
@@ -103,15 +100,12 @@ public class JUserNotice extends JPanel {
 				.getResource("images/clear_user_notice.png"));
 		jbClearUserNotice = new JButton(clearIcon);
 		jbClearUserNotice.setToolTipText(res.getString("JUserNotice.jbClearUserNotice.tooltip"));
-		jbClearUserNotice.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JUserNotice.this);
-					clearUserNotice();
-				} finally {
-					CursorUtil.setCursorFree(JUserNotice.this);
-				}
+		jbClearUserNotice.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JUserNotice.this);
+				clearUserNotice();
+			} finally {
+				CursorUtil.setCursorFree(JUserNotice.this);
 			}
 		});
 

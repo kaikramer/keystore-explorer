@@ -145,15 +145,12 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 		jbBrowse = new JButton(res.getString("DImportKeyPairPkcs12.jbBrowse.text"));
 		PlatformUtil.setMnemonic(jbBrowse, res.getString("DImportKeyPairPkcs12.jbBrowse.mnemonic").charAt(0));
-		jbBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs12.this);
-				}
+		jbBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs12.this);
 			}
 		});
 		jbBrowse.setToolTipText(res.getString("DImportKeyPairPkcs12.jbBrowse.tooltip"));
@@ -163,15 +160,12 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 
 		jbDetails = new JButton(res.getString("DImportKeyPairPkcs12.jbDetails.text"));
 		PlatformUtil.setMnemonic(jbDetails, res.getString("DImportKeyPairPkcs12.jbDetails.mnemonic").charAt(0));
-		jbDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
-					detailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs12.this);
-				}
+		jbDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
+				detailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs12.this);
 			}
 		});
 		jbDetails.setToolTipText(res.getString("DImportKeyPairPkcs12.jbDetails.tooltip"));
@@ -193,25 +187,17 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 		jbImport = new JButton(res.getString("DImportKeyPairPkcs12.jbImport.text"));
 		PlatformUtil.setMnemonic(jbImport, res.getString("DImportKeyPairPkcs12.jbImport.mnemonic").charAt(0));
 		jbImport.setToolTipText(res.getString("DImportKeyPairPkcs12.jbImport.tooltip"));
-		jbImport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
-					importPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs12.this);
-				}
+		jbImport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs12.this);
+				importPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs12.this);
 			}
 		});
 
 		jbCancel = new JButton(res.getString("DImportKeyPairPkcs12.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

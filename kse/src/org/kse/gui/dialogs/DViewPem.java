@@ -224,26 +224,18 @@ public class DViewPem extends JEscDialog {
 	private void initComponents() throws CryptoException {
 		jbOK = new JButton(res.getString("DViewPem.jbOK.text"));
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCopy = new JButton(res.getString("DViewPem.jbCopy.text"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewPem.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DViewPem.jbCopy.tooltip"));
 
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPem.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPem.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPem.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPem.this);
 			}
 		});
 
@@ -251,15 +243,12 @@ public class DViewPem extends JEscDialog {
 		PlatformUtil.setMnemonic(jbExport, res.getString("DViewPem.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DViewPem.jbExport.tooltip"));
 
-		jbExport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewPem.this);
-					exportPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewPem.this);
-				}
+		jbExport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewPem.this);
+				exportPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewPem.this);
 			}
 		});
 
@@ -296,12 +285,7 @@ public class DViewPem extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private String getPemString() throws CryptoException {

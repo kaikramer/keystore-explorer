@@ -211,15 +211,12 @@ public class DViewCrl extends JEscDialog {
 
 		PlatformUtil.setMnemonic(jbCrlExtensions, res.getString("DViewCrl.jbCrlExtensions.mnemonic").charAt(0));
 		jbCrlExtensions.setToolTipText(res.getString("DViewCrl.jbCrlExtensions.tooltip"));
-		jbCrlExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCrl.this);
-					crlExtensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCrl.this);
-				}
+		jbCrlExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCrl.this);
+				crlExtensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCrl.this);
 			}
 		});
 
@@ -227,15 +224,12 @@ public class DViewCrl extends JEscDialog {
 
 		PlatformUtil.setMnemonic(jbCrlAsn1, res.getString("DViewCrl.jbCrlAsn1.mnemonic").charAt(0));
 		jbCrlAsn1.setToolTipText(res.getString("DViewCrl.jbCrlAsn1.tooltip"));
-		jbCrlAsn1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCrl.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCrl.this);
-				}
+		jbCrlAsn1.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCrl.this);
+				asn1DumpPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCrl.this);
 			}
 		});
 
@@ -278,18 +272,15 @@ public class DViewCrl extends JEscDialog {
 		}
 
 		ListSelectionModel listSelectionModel = jtRevokedCerts.getSelectionModel();
-		listSelectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) // Ignore spurious
-					// events
-				{
-					try {
-						CursorUtil.setCursorBusy(DViewCrl.this);
-						crlEntrySelection();
-					} finally {
-						CursorUtil.setCursorFree(DViewCrl.this);
-					}
+		listSelectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) // Ignore spurious
+				// events
+			{
+				try {
+					CursorUtil.setCursorBusy(DViewCrl.this);
+					crlEntrySelection();
+				} finally {
+					CursorUtil.setCursorFree(DViewCrl.this);
 				}
 			}
 		});
@@ -317,15 +308,12 @@ public class DViewCrl extends JEscDialog {
 				.charAt(0));
 		jbCrlEntryExtensions.setToolTipText(res.getString("DViewCrl.jbCrlEntryExtensions.tooltip"));
 		jbCrlEntryExtensions.setEnabled(false);
-		jbCrlEntryExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCrl.this);
-					crlEntryExtensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCrl.this);
-				}
+		jbCrlEntryExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCrl.this);
+				crlEntryExtensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCrl.this);
 			}
 		});
 
@@ -362,12 +350,7 @@ public class DViewCrl extends JEscDialog {
 		populateDialog();
 
 		jbOK = new JButton(res.getString("DViewCrl.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
@@ -387,12 +370,7 @@ public class DViewCrl extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void populateDialog() {

@@ -92,15 +92,12 @@ public class JGeneralNames extends JPanel {
 		jbAdd.setToolTipText(res.getString("JGeneralNames.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JGeneralNames.jbAdd.mnemonic").charAt(0));
 
-		jbAdd.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralNames.this);
-					addPressed();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralNames.this);
-				}
+		jbAdd.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralNames.this);
+				addPressed();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralNames.this);
 			}
 		});
 
@@ -112,15 +109,12 @@ public class JGeneralNames extends JPanel {
 
 		jbEdit.setEnabled(false);
 
-		jbEdit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralNames.this);
-					editPressed();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralNames.this);
-				}
+		jbEdit.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralNames.this);
+				editPressed();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralNames.this);
 			}
 		});
 
@@ -132,15 +126,12 @@ public class JGeneralNames extends JPanel {
 
 		jbRemove.setEnabled(false);
 
-		jbRemove.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralNames.this);
-					removePressed();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralNames.this);
-				}
+		jbRemove.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralNames.this);
+				removePressed();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralNames.this);
 			}
 		});
 
@@ -176,12 +167,9 @@ public class JGeneralNames extends JPanel {
 
 		ListSelectionModel selectionModel = jtGeneralNames.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) {
-					updateButtonControls();
-				}
+		selectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) {
+				updateButtonControls();
 			}
 		});
 

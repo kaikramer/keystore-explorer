@@ -169,16 +169,13 @@ public class DTipOfTheDay extends JEscDialog {
 		jbPreviousTip = new JButton(res.getString("DTipOfTheDay.jbPreviousTip.text"));
 		PlatformUtil.setMnemonic(jbPreviousTip, res.getString("DTipOfTheDay.jbPreviousTip.mnemonic").charAt(0));
 
-		jbPreviousTip.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					CursorUtil.setCursorBusy(DTipOfTheDay.this);
-					jepTip.setText(getPreviousTip());
-					jepTip.setCaretPosition(0);
-				} finally {
-					CursorUtil.setCursorFree(DTipOfTheDay.this);
-				}
+		jbPreviousTip.addActionListener(e -> {
+			try {
+				CursorUtil.setCursorBusy(DTipOfTheDay.this);
+				jepTip.setText(getPreviousTip());
+				jepTip.setCaretPosition(0);
+			} finally {
+				CursorUtil.setCursorFree(DTipOfTheDay.this);
 			}
 		});
 
@@ -186,27 +183,19 @@ public class DTipOfTheDay extends JEscDialog {
 		PlatformUtil.setMnemonic(jbNextTip, res.getString("DTipOfTheDay.jbNextTip.mnemonic").charAt(0));
 		jbNextTip.setDefaultCapable(true);
 
-		jbNextTip.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					CursorUtil.setCursorBusy(DTipOfTheDay.this);
-					jepTip.setText(getNextTip());
-					jepTip.setCaretPosition(0);
-				} finally {
-					CursorUtil.setCursorFree(DTipOfTheDay.this);
-				}
+		jbNextTip.addActionListener(e -> {
+			try {
+				CursorUtil.setCursorBusy(DTipOfTheDay.this);
+				jepTip.setText(getNextTip());
+				jepTip.setCaretPosition(0);
+			} finally {
+				CursorUtil.setCursorFree(DTipOfTheDay.this);
 			}
 		});
 
 		jbClose = new JButton(res.getString("DTipOfTheDay.jbClose.text"));
 		PlatformUtil.setMnemonic(jbClose, res.getString("DTipOfTheDay.jbClose.mnemonic").charAt(0));
-		jbClose.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				closePressed();
-			}
-		});
+		jbClose.addActionListener(e -> closePressed());
 
 		jbClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CLOSE_KEY);
@@ -238,12 +227,7 @@ public class DTipOfTheDay extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbClose.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbClose.requestFocus());
 	}
 
 	private void readTips(ResourceBundle tips, String tipPrefix) {

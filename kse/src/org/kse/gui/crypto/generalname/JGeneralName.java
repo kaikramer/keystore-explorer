@@ -80,15 +80,12 @@ public class JGeneralName extends JPanel {
 				.getResource("images/edit_general_nm.png"));
 		jbEditGeneralName = new JButton(editIcon);
 		jbEditGeneralName.setToolTipText(res.getString("JGeneralName.jbEditGeneralName.tooltip"));
-		jbEditGeneralName.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralName.this);
-					editGeneralName();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralName.this);
-				}
+		jbEditGeneralName.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralName.this);
+				editGeneralName();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralName.this);
 			}
 		});
 
@@ -103,15 +100,12 @@ public class JGeneralName extends JPanel {
 				"images/clear_general_nm.png"));
 		jbClearGeneralName = new JButton(clearIcon);
 		jbClearGeneralName.setToolTipText(res.getString("JGeneralName.jbClearGeneralName.tooltip"));
-		jbClearGeneralName.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JGeneralName.this);
-					clearGeneralName();
-				} finally {
-					CursorUtil.setCursorFree(JGeneralName.this);
-				}
+		jbClearGeneralName.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JGeneralName.this);
+				clearGeneralName();
+			} finally {
+				CursorUtil.setCursorFree(JGeneralName.this);
 			}
 		});
 

@@ -129,25 +129,17 @@ public class DProblem extends JEscDialog {
 		jbDisplayError = new JButton(res.getString("DProblem.jbDisplayError.text"));
 		PlatformUtil.setMnemonic(jbDisplayError, res.getString("DProblem.jbDisplayError.mnemonic").charAt(0));
 		jbDisplayError.setToolTipText(res.getString("DProblem.jbDisplayError.tooltip"));
-		jbDisplayError.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DProblem.this);
-					showError();
-				} finally {
-					CursorUtil.setCursorFree(DProblem.this);
-				}
+		jbDisplayError.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DProblem.this);
+				showError();
+			} finally {
+				CursorUtil.setCursorFree(DProblem.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DProblem.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDisplayError);
 

@@ -233,52 +233,33 @@ public class DSignJar extends JEscDialog {
 		pane.add(jpButtons, "right, spanx");
 
 		// actions
-		jbInputJarBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignJar.this);
-					inputJarBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignJar.this);
-				}
+		jbInputJarBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignJar.this);
+				inputJarBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignJar.this);
 			}
 		});
 
-		jcbSignDirectly.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jtfOutputJar.setEnabled(!jcbSignDirectly.isSelected());
-				jbOutputJarBrowse.setEnabled(!jcbSignDirectly.isSelected());
+		jcbSignDirectly.addItemListener(evt -> {
+			jtfOutputJar.setEnabled(!jcbSignDirectly.isSelected());
+			jbOutputJarBrowse.setEnabled(!jcbSignDirectly.isSelected());
+		});
+
+		jbOutputJarBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignJar.this);
+				outputJarBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignJar.this);
 			}
 		});
 
-		jbOutputJarBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignJar.this);
-					outputJarBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignJar.this);
-				}
-			}
-		});
-
-		jcbAddTimestamp.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jcbTimestampServerUrl.setEnabled(jcbAddTimestamp.isSelected());
-			}
-		});
+		jcbAddTimestamp.addItemListener(evt -> jcbTimestampServerUrl.setEnabled(jcbAddTimestamp.isSelected()));
 
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
@@ -287,12 +268,7 @@ public class DSignJar extends JEscDialog {
 				cancelPressed();
 			}
 		});
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 
 		addWindowListener(new WindowAdapter() {
 			@Override

@@ -50,12 +50,7 @@ public class DroppedFileHandler {
 				final List<File> droppedFiles = (List<File>) trans.getTransferData(DataFlavor.javaFileListFlavor);
 
 				// open files in new thread, so we can return quickly
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						openFiles(kseFrame, droppedFiles);
-					}
-				});
+				SwingUtilities.invokeLater(() -> openFiles(kseFrame, droppedFiles));
 
 			}
 			/*			TODO

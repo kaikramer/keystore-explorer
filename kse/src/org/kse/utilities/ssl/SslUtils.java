@@ -99,12 +99,7 @@ public class SslUtils {
 			context.init(new KeyManager[] { km }, new TrustManager[] { tm }, null);
 
 			// 2) set a host name verifier that always verifies the host name
-			connection.setHostnameVerifier(new HostnameVerifier() {
-				@Override
-				public boolean verify(String hostname, SSLSession sslSession) {
-					return true;
-				}
-			});
+			connection.setHostnameVerifier((hostname, sslSession) -> true);
 
 			// register our handshake completed listener in order to retrieve SSL connection infos later
 			SSLSocketFactory factory = context.getSocketFactory();

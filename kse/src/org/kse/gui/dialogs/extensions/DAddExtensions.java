@@ -189,15 +189,12 @@ public class DAddExtensions extends JEscDialog {
 		jbAdd.setToolTipText(res.getString("DAddExtensions.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("DAddExtensions.jbAdd.mnemonic").charAt(0));
 
-		jbAdd.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAddExtensions.this);
-					addPressed();
-				} finally {
-					CursorUtil.setCursorFree(DAddExtensions.this);
-				}
+		jbAdd.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DAddExtensions.this);
+				addPressed();
+			} finally {
+				CursorUtil.setCursorFree(DAddExtensions.this);
 			}
 		});
 
@@ -209,15 +206,12 @@ public class DAddExtensions extends JEscDialog {
 
 		jbEdit.setEnabled(false);
 
-		jbEdit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAddExtensions.this);
-					editPressed();
-				} finally {
-					CursorUtil.setCursorFree(DAddExtensions.this);
-				}
+		jbEdit.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DAddExtensions.this);
+				editPressed();
+			} finally {
+				CursorUtil.setCursorFree(DAddExtensions.this);
 			}
 		});
 
@@ -229,15 +223,12 @@ public class DAddExtensions extends JEscDialog {
 
 		jbToggleCriticality.setEnabled(false);
 
-		jbToggleCriticality.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAddExtensions.this);
-					toggleCriticalityPressed();
-				} finally {
-					CursorUtil.setCursorFree(DAddExtensions.this);
-				}
+		jbToggleCriticality.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DAddExtensions.this);
+				toggleCriticalityPressed();
+			} finally {
+				CursorUtil.setCursorFree(DAddExtensions.this);
 			}
 		});
 
@@ -249,15 +240,12 @@ public class DAddExtensions extends JEscDialog {
 
 		jbRemove.setEnabled(false);
 
-		jbRemove.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAddExtensions.this);
-					removePressed();
-				} finally {
-					CursorUtil.setCursorFree(DAddExtensions.this);
-				}
+		jbRemove.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DAddExtensions.this);
+				removePressed();
+			} finally {
+				CursorUtil.setCursorFree(DAddExtensions.this);
 			}
 		});
 
@@ -301,18 +289,15 @@ public class DAddExtensions extends JEscDialog {
 
 		ListSelectionModel selectionModel = jtExtensions.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) {
-					try {
-						CursorUtil.setCursorBusy(DAddExtensions.this);
-						updateButtonControls();
-					} finally {
-						CursorUtil.setCursorFree(DAddExtensions.this);
-					}
-
+		selectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) {
+				try {
+					CursorUtil.setCursorBusy(DAddExtensions.this);
+					updateButtonControls();
+				} finally {
+					CursorUtil.setCursorFree(DAddExtensions.this);
 				}
+
 			}
 		});
 
@@ -370,15 +355,12 @@ public class DAddExtensions extends JEscDialog {
 		jbSelectStandardTemplate.setMnemonic(res.getString("DAddExtensions.jbSelectStandardTemplate.mnemonic").charAt(0));
 		jbSelectStandardTemplate.setToolTipText(res.getString("DAddExtensions.jbSelectStandardTemplate.tooltip"));
 
-		jbSelectStandardTemplate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAddExtensions.this);
-					selectStandardTemplatePressed();
-				} finally {
-					CursorUtil.setCursorFree(DAddExtensions.this);
-				}
+		jbSelectStandardTemplate.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DAddExtensions.this);
+				selectStandardTemplatePressed();
+			} finally {
+				CursorUtil.setCursorFree(DAddExtensions.this);
 			}
 		});
 
@@ -386,15 +368,12 @@ public class DAddExtensions extends JEscDialog {
 		jbLoadTemplate.setMnemonic(res.getString("DAddExtensions.jbLoadTemplate.mnemonic").charAt(0));
 		jbLoadTemplate.setToolTipText(res.getString("DAddExtensions.jbLoadTemplate.tooltip"));
 
-		jbLoadTemplate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAddExtensions.this);
-					loadTemplatePressed();
-				} finally {
-					CursorUtil.setCursorFree(DAddExtensions.this);
-				}
+		jbLoadTemplate.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DAddExtensions.this);
+				loadTemplatePressed();
+			} finally {
+				CursorUtil.setCursorFree(DAddExtensions.this);
 			}
 		});
 
@@ -402,15 +381,12 @@ public class DAddExtensions extends JEscDialog {
 		jbSaveTemplate.setMnemonic(res.getString("DAddExtensions.jbSaveTemplate.mnemonic").charAt(0));
 		jbSaveTemplate.setToolTipText(res.getString("DAddExtensions.jbSaveTemplate.tooltip"));
 
-		jbSaveTemplate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DAddExtensions.this);
-					saveTemplatePressed(extensions, DAddExtensions.this);
-				} finally {
-					CursorUtil.setCursorFree(DAddExtensions.this);
-				}
+		jbSaveTemplate.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DAddExtensions.this);
+				saveTemplatePressed(extensions, DAddExtensions.this);
+			} finally {
+				CursorUtil.setCursorFree(DAddExtensions.this);
 			}
 		});
 
@@ -433,20 +409,10 @@ public class DAddExtensions extends JEscDialog {
 				new EmptyBorder(5, 5, 5, 5))));
 
 		jbOK = new JButton(res.getString("DAddExtensions.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel = new JButton(res.getString("DAddExtensions.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -816,7 +782,7 @@ public class DAddExtensions extends JEscDialog {
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("DAddExtensions.LoadCet.Title"));
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		chooser.setApproveButtonText(res.getString("DAddExtensions.CetLoad.button"));
 
 		int rtnValue = chooser.showOpenDialog(this);

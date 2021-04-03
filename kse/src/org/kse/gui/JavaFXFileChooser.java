@@ -128,44 +128,40 @@ public class JavaFXFileChooser extends JFileChooser {
 		try {
 			final Object fileChooser = fileChooserClass.getConstructor().newInstance();
 
-			selectedFile = runLater(new Callable<File>() {
+			selectedFile = runLater(() -> {
 
-				@Override
-				public File call() throws Exception {
+				// set extension filters
+				Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
+				List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
+				observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
+						.newInstance(res.getString("JavaFXFileChooser.AllFiles"), new String[] { "*.*" }));
 
-					// set extension filters
-					Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
-					List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
-					observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
-							.newInstance(res.getString("JavaFXFileChooser.AllFiles"), new String[] { "*.*" }));
-
-					for (FileExtFilter fileFilter : filters) {
-						// convert format for extensions
-						String[] extensions = fileFilter.getExtensions();
-						for (int i = 0; i < extensions.length; i++) {
-							if (!extensions[i].startsWith("*.")) {
-								extensions[i] = "*." + extensions[i];
-							}
+				for (FileExtFilter fileFilter : filters) {
+					// convert format for extensions
+					String[] extensions = fileFilter.getExtensions();
+					for (int i = 0; i < extensions.length; i++) {
+						if (!extensions[i].startsWith("*.")) {
+							extensions[i] = "*." + extensions[i];
 						}
-
-						Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
-								.newInstance(fileFilter.getDescription(), extensions);
-						observableList.add(extFilter);
 					}
 
-					// set window title
-					Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
-					setTitleMethod.invoke(fileChooser, dialogTitle);
-
-					// set current directory
-					Method setInitialDirectory = fileChooserClass.getMethod("setInitialDirectory", File.class);
-					setInitialDirectory.invoke(fileChooser, currentDirectory);
-
-					Method showDialogMethod = fileChooserClass.getMethod(method, windowClass);
-					Object file = showDialogMethod.invoke(fileChooser, (Object) null);
-
-					return (File) file;
+					Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
+							.newInstance(fileFilter.getDescription(), extensions);
+					observableList.add(extFilter);
 				}
+
+				// set window title
+				Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
+				setTitleMethod.invoke(fileChooser, dialogTitle);
+
+				// set current directory
+				Method setInitialDirectory = fileChooserClass.getMethod("setInitialDirectory", File.class);
+				setInitialDirectory.invoke(fileChooser, currentDirectory);
+
+				Method showDialogMethod = fileChooserClass.getMethod(method, windowClass);
+				Object file = showDialogMethod.invoke(fileChooser, (Object) null);
+
+				return (File) file;
 			});
 		} catch (Exception e) {
 			return JFileChooser.ERROR_OPTION;

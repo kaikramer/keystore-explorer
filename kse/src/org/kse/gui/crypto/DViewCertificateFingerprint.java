@@ -110,25 +110,17 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		jbCopy = new JButton(res.getString("DViewCertificateFingerprint.jbCopy.text"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertificateFingerprint.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DViewCertificateFingerprint.jbCopy.tooltip"));
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificateFingerprint.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificateFingerprint.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificateFingerprint.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificateFingerprint.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DViewCertificateFingerprint.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
@@ -168,12 +160,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 
 		populateFingerprint();
 	}

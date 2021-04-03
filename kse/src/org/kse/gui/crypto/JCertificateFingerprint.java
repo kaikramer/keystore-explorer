@@ -72,12 +72,7 @@ public class JCertificateFingerprint extends JPanel {
 		jcbFingerprintAlg = new JComboBox<>();
 		jcbFingerprintAlg.setToolTipText(res.getString("JCertificateFingerprint.jcbFingerprintAlg.tooltip"));
 		jcbFingerprintAlg.setMaximumRowCount(10);
-		jcbFingerprintAlg.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				populateFingerprint();
-			}
-		});
+		jcbFingerprintAlg.addItemListener(evt -> populateFingerprint());
 
 		GridBagConstraints gbc_jcbFingerprintAlg = new GridBagConstraints();
 		gbc_jcbFingerprintAlg.gridwidth = 1;
@@ -103,15 +98,12 @@ public class JCertificateFingerprint extends JPanel {
 
 		jbViewCertificateFingerprint.setToolTipText(res
 				.getString("JCertificateFingerprint.jbViewCertificateFingerprint.tooltip"));
-		jbViewCertificateFingerprint.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JCertificateFingerprint.this);
-					displayFingerprint();
-				} finally {
-					CursorUtil.setCursorFree(JCertificateFingerprint.this);
-				}
+		jbViewCertificateFingerprint.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JCertificateFingerprint.this);
+				displayFingerprint();
+			} finally {
+				CursorUtil.setCursorFree(JCertificateFingerprint.this);
 			}
 		});
 

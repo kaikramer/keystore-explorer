@@ -112,21 +112,11 @@ public class DAbout extends JEscDialog {
 		jlLicense = new JLabel(licenseNotice);
 
 		jbOK = new JButton(res.getString("DAbout.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCredits = new JButton(res.getString("DAbout.jbCredits.text"));
 		PlatformUtil.setMnemonic(jbCredits, res.getString("DAbout.jbCredits.mnemonic").charAt(0));
-		jbCredits.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				openCreditsPageInBrowser();
-			}
-		});
+		jbCredits.addActionListener(evt -> openCreditsPageInBrowser());
 
 		// layout
 		jpAbout.setLayout(new MigLayout("insets dialog, fill"));

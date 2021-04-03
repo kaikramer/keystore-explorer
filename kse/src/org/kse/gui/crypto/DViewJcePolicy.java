@@ -106,25 +106,17 @@ public class DViewJcePolicy extends JEscDialog {
 		jbCopy = new JButton(res.getString("DViewJcePolicy.jbCopy.text"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewJcePolicy.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DViewJcePolicy.jbCopy.tooltip"));
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewJcePolicy.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewJcePolicy.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewJcePolicy.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewJcePolicy.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DViewJcePolicy.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
@@ -164,12 +156,7 @@ public class DViewJcePolicy extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void copyPressed() {

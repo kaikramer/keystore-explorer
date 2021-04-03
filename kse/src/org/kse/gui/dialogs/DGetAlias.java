@@ -120,20 +120,10 @@ public class DGetAlias extends JEscDialog {
 		}
 
 		jbOK = new JButton(res.getString("DGetAlias.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel = new JButton(res.getString("DGetAlias.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -169,14 +159,11 @@ public class DGetAlias extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jtfAlias.requestFocus();
-				if (alias != null) {
-					jtfAlias.setSelectionStart(0);
-					jtfAlias.setSelectionEnd(alias.length());
-				}
+		SwingUtilities.invokeLater(() -> {
+			jtfAlias.requestFocus();
+			if (alias != null) {
+				jtfAlias.setSelectionStart(0);
+				jtfAlias.setSelectionEnd(alias.length());
 			}
 		});
 	}

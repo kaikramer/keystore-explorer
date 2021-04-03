@@ -144,35 +144,17 @@ public class DExamineSsl extends JEscDialog {
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
 
-		jcbClientAuth.addActionListener(new java.awt.event.ActionListener() {
-			@Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				updateClientAuthComponents();
-			}
+		jcbClientAuth.addActionListener(evt -> updateClientAuthComponents());
+
+		jbLoadKeystore.addActionListener(evt -> {
+			OpenAction openAction = new OpenAction(kseFrame);
+			openAction.actionPerformed(evt);
+			updateClientAuthComponents();
 		});
 
-		jbLoadKeystore.addActionListener(new java.awt.event.ActionListener() {
-			@Override
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				OpenAction openAction = new OpenAction(kseFrame);
-				openAction.actionPerformed(evt);
-				updateClientAuthComponents();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
-
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;

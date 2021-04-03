@@ -137,12 +137,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 		jrbCps = new JRadioButton(res.getString("DPolicyQualifierInfoChooser.jrbCps.text"));
 		PlatformUtil.setMnemonic(jrbCps, res.getString("DPolicyQualifierInfoChooser.jrbCps.mnemonic").charAt(0));
 		jrbCps.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbCps.tooltip"));
-		jrbCps.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				policyQualifierInfoTypeChanged();
-			}
-		});
+		jrbCps.addItemListener(evt -> policyQualifierInfoTypeChanged());
 
 		GridBagConstraints gbc_jrbCps = new GridBagConstraints();
 		gbc_jrbCps.gridx = 1;
@@ -155,12 +150,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 		PlatformUtil.setMnemonic(jrbUserNotice, res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.mnemonic")
 				.charAt(0));
 		jrbUserNotice.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.tooltip"));
-		jrbUserNotice.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				policyQualifierInfoTypeChanged();
-			}
-		});
+		jrbUserNotice.addItemListener(evt -> policyQualifierInfoTypeChanged());
 
 		GridBagConstraints gbc_jrbUserNotice = new GridBagConstraints();
 		gbc_jrbUserNotice.gridx = 2;
@@ -210,20 +200,10 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
 		jpPolicyQualifierInfo.add(jpPolicyQualifierInfoValue, gbc_jpPolicyQualifierInfoValue);
 
 		jbOK = new JButton(res.getString("DPolicyQualifierInfoChooser.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel = new JButton(res.getString("DPolicyQualifierInfoChooser.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

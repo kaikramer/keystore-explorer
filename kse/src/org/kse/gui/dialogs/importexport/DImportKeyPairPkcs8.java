@@ -167,15 +167,12 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		jbPrivateKeyBrowse = new JButton(res.getString("DImportKeyPairPkcs8.jbPrivateKeyBrowse.text"));
 		PlatformUtil.setMnemonic(jbPrivateKeyBrowse, res.getString("DImportKeyPairPkcs8.jbPrivateKeyBrowse.mnemonic")
 				.charAt(0));
-		jbPrivateKeyBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
-					privateKeyBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
-				}
+		jbPrivateKeyBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
+				privateKeyBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
 			}
 		});
 		jbPrivateKeyBrowse.setToolTipText(res.getString("DImportKeyPairPkcs8.jbPrivateKeyBrowse.tooltip"));
@@ -184,15 +181,12 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		gbc_jbPrivateKeyBrowse.gridx = 9;
 
 		jbPrivateKeyDetails = new JButton(res.getString("DImportKeyPairPkcs8.jbPrivateKeyDetails.text"));
-		jbPrivateKeyDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
-					privateKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
-				}
+		jbPrivateKeyDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
+				privateKeyDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
 			}
 		});
 		PlatformUtil.setMnemonic(jbPrivateKeyDetails, res.getString("DImportKeyPairPkcs8.jbPrivateKeyDetails.mnemonic")
@@ -213,15 +207,12 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		gbc_jtfCertificatePath.gridwidth = 6;
 
 		jbCertificateBrowse = new JButton(res.getString("DImportKeyPairPkcs8.jbCertificateBrowse.text"));
-		jbCertificateBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
-					certificateBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
-				}
+		jbCertificateBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
+				certificateBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
 			}
 		});
 		PlatformUtil.setMnemonic(jbCertificateBrowse, res.getString("DImportKeyPairPkcs8.jbCertificateBrowse.mnemonic")
@@ -232,15 +223,12 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		gbc_jbCertificateBrowse.gridx = 9;
 
 		jbCertificateDetails = new JButton(res.getString("DImportKeyPairPkcs8.jbCertificateDetails.text"));
-		jbCertificateDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
-					certificateDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
-				}
+		jbCertificateDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
+				certificateDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
 			}
 		});
 		PlatformUtil.setMnemonic(jbCertificateDetails,
@@ -267,40 +255,29 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 		jpKeyPair.add(jbCertificateBrowse, gbc_jbCertificateBrowse);
 		jpKeyPair.add(jbCertificateDetails, gbc_jbCertificateDetails);
 
-		jcbEncrypted.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jcbEncrypted.isSelected()) {
-					jpfPassword.setEnabled(true);
-				} else {
-					jpfPassword.setEnabled(false);
-					jpfPassword.setText("");
-				}
+		jcbEncrypted.addItemListener(evt -> {
+			if (jcbEncrypted.isSelected()) {
+				jpfPassword.setEnabled(true);
+			} else {
+				jpfPassword.setEnabled(false);
+				jpfPassword.setText("");
 			}
 		});
 
 		jbImport = new JButton(res.getString("DImportKeyPairPkcs8.jbImport.text"));
 		PlatformUtil.setMnemonic(jbImport, res.getString("DImportKeyPairPkcs8.jbImport.mnemonic").charAt(0));
 		jbImport.setToolTipText(res.getString("DImportKeyPairPkcs8.jbImport.tooltip"));
-		jbImport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
-					importPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
-				}
+		jbImport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairPkcs8.this);
+				importPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairPkcs8.this);
 			}
 		});
 
 		jbCancel = new JButton(res.getString("DImportKeyPairPkcs8.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

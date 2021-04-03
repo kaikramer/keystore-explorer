@@ -90,29 +90,23 @@ public class JDistinguishedName extends JPanel {
 		if (editable) {
 			jbViewEditDistinguishedName.setToolTipText(res
 					.getString("JDistinguishedName.jbViewEditDistinguishedName.Edit.tooltip"));
-			jbViewEditDistinguishedName.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						CursorUtil.setCursorBusy(JDistinguishedName.this);
-						editDistinguishedName();
-					} finally {
-						CursorUtil.setCursorFree(JDistinguishedName.this);
-					}
+			jbViewEditDistinguishedName.addActionListener(evt -> {
+				try {
+					CursorUtil.setCursorBusy(JDistinguishedName.this);
+					editDistinguishedName();
+				} finally {
+					CursorUtil.setCursorFree(JDistinguishedName.this);
 				}
 			});
 		} else {
 			jbViewEditDistinguishedName.setToolTipText(res
 					.getString("JDistinguishedName.jbViewEditDistinguishedName.View.tooltip"));
-			jbViewEditDistinguishedName.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					try {
-						CursorUtil.setCursorBusy(JDistinguishedName.this);
-						displayDistinguishedName();
-					} finally {
-						CursorUtil.setCursorFree(JDistinguishedName.this);
-					}
+			jbViewEditDistinguishedName.addActionListener(evt -> {
+				try {
+					CursorUtil.setCursorBusy(JDistinguishedName.this);
+					displayDistinguishedName();
+				} finally {
+					CursorUtil.setCursorFree(JDistinguishedName.this);
 				}
 			});
 		}
@@ -133,15 +127,12 @@ public class JDistinguishedName extends JPanel {
 				"images/clear_dn.png"));
 		jbClearDistinguishedName = new JButton(clearIcon);
 		jbClearDistinguishedName.setToolTipText(res.getString("JDistinguishedName.jbClearDistinguishedName.tooltip"));
-		jbClearDistinguishedName.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(JDistinguishedName.this);
-					clearDistinguishedName();
-				} finally {
-					CursorUtil.setCursorFree(JDistinguishedName.this);
-				}
+		jbClearDistinguishedName.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(JDistinguishedName.this);
+				clearDistinguishedName();
+			} finally {
+				CursorUtil.setCursorFree(JDistinguishedName.this);
 			}
 		});
 

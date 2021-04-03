@@ -114,12 +114,7 @@ public class JValidityPeriod extends JPanel {
 			break;
 		}
 
-		jcbType.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				typeChanged(((JComboBox<?>) evt.getSource()).getSelectedIndex());
-			}
-		});
+		jcbType.addItemListener(evt -> typeChanged(((JComboBox<?>) evt.getSource()).getSelectedIndex()));
 
 		jbApply = new JButton(res.getString("JValidityPeriod.jbApply.text"));
 

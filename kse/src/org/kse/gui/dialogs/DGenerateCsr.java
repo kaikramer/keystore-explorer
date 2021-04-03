@@ -223,49 +223,33 @@ public class DGenerateCsr extends JEscDialog {
 		pane.add(jbOK, "tag ok");
 
 		// actions
-		jrbPkcs10.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				// unstructured name and extensions are Pkcs10-only
-				if (jrbPkcs10.isSelected()) {
-					jlUnstructuredName.setEnabled(true);
-					jtfUnstructuredName.setEnabled(true);
-					jlExtensions.setEnabled(true);
-					jcbExtensions.setEnabled(true);
-				} else {
-					jlUnstructuredName.setEnabled(false);
-					jtfUnstructuredName.setEnabled(false);
-					jlExtensions.setEnabled(false);
-					jcbExtensions.setEnabled(false);
-				}
+		jrbPkcs10.addChangeListener(e -> {
+			// unstructured name and extensions are Pkcs10-only
+			if (jrbPkcs10.isSelected()) {
+				jlUnstructuredName.setEnabled(true);
+				jtfUnstructuredName.setEnabled(true);
+				jlExtensions.setEnabled(true);
+				jcbExtensions.setEnabled(true);
+			} else {
+				jlUnstructuredName.setEnabled(false);
+				jtfUnstructuredName.setEnabled(false);
+				jlExtensions.setEnabled(false);
+				jcbExtensions.setEnabled(false);
 			}
 		});
 
-		jbBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DGenerateCsr.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DGenerateCsr.this);
-				}
+		jbBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DGenerateCsr.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DGenerateCsr.this);
 			}
 		});
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

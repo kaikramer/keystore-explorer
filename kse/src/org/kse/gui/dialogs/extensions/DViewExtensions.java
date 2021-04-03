@@ -165,16 +165,13 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 		ListSelectionModel selectionModel = jtExtensions.getSelectionModel();
 		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				if (!evt.getValueIsAdjusting()) {
-					try {
-						CursorUtil.setCursorBusy(DViewExtensions.this);
-						updateExtensionValue();
-					} finally {
-						CursorUtil.setCursorFree(DViewExtensions.this);
-					}
+		selectionModel.addListSelectionListener(evt -> {
+			if (!evt.getValueIsAdjusting()) {
+				try {
+					CursorUtil.setCursorBusy(DViewExtensions.this);
+					updateExtensionValue();
+				} finally {
+					CursorUtil.setCursorFree(DViewExtensions.this);
 				}
 			}
 		});
@@ -220,15 +217,12 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewExtensions.jbAsn1.mnemonic").charAt(0));
 		jbAsn1.setToolTipText(res.getString("DViewExtensions.jbAsn1.tooltip"));
-		jbAsn1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewExtensions.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewExtensions.this);
-				}
+		jbAsn1.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewExtensions.this);
+				asn1DumpPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewExtensions.this);
 			}
 		});
 
@@ -236,15 +230,12 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		jbSaveTemplate.setMnemonic(res.getString("DAddExtensions.jbSaveTemplate.mnemonic").charAt(0));
 		jbSaveTemplate.setToolTipText(res.getString("DAddExtensions.jbSaveTemplate.tooltip"));
 
-		jbSaveTemplate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewExtensions.this);
-					DAddExtensions.saveTemplatePressed(new X509ExtensionSet(extensions), DViewExtensions.this);
-				} finally {
-					CursorUtil.setCursorFree(DViewExtensions.this);
-				}
+		jbSaveTemplate.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewExtensions.this);
+				DAddExtensions.saveTemplatePressed(new X509ExtensionSet(extensions), DViewExtensions.this);
+			} finally {
+				CursorUtil.setCursorFree(DViewExtensions.this);
 			}
 		});
 
@@ -262,12 +253,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 		jpExtensions.add(jpExtensionValue);
 
 		jbOK = new JButton(res.getString("DViewExtensions.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
@@ -293,12 +279,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void updateExtensionValue() {

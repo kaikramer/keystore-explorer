@@ -225,15 +225,12 @@ public class DExportCertificates extends JEscDialog {
 		gbc_jbBrowse.gridy = 3;
 		gbc_jbBrowse.gridx = 15;
 
-		jbBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportCertificates.this);
-					browsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportCertificates.this);
-				}
+		jbBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportCertificates.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportCertificates.this);
 			}
 		});
 
@@ -271,10 +268,20 @@ public class DExportCertificates extends JEscDialog {
 		jpOptions.add(jtfExportFile, gbc_jtfExportFile);
 		jpOptions.add(jbBrowse, gbc_jbBrowse);
 
-		jrbExportChain.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
+		jrbExportChain.addItemListener(evt -> {
+			if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
+				jcbExportPem.setEnabled(false);
+				jcbExportPem.setSelected(true);
+			} else {
+				jcbExportPem.setEnabled(true);
+			}
+		});
+
+		jrbExportX509.addItemListener(evt -> {
+			if (jrbExportX509.isSelected()) {
+				updateFileExtension(FileChooserFactory.X509_EXT_1);
+
+				if (jrbExportChain.isSelected()) {
 					jcbExportPem.setEnabled(false);
 					jcbExportPem.setSelected(true);
 				} else {
@@ -283,80 +290,47 @@ public class DExportCertificates extends JEscDialog {
 			}
 		});
 
-		jrbExportX509.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jrbExportX509.isSelected()) {
-					updateFileExtension(FileChooserFactory.X509_EXT_1);
-
-					if (jrbExportChain.isSelected()) {
-						jcbExportPem.setEnabled(false);
-						jcbExportPem.setSelected(true);
-					} else {
-						jcbExportPem.setEnabled(true);
-					}
-				}
+		jrbExportPkcs7.addItemListener(evt -> {
+			if (jrbExportPkcs7.isSelected()) {
+				jcbExportPem.setEnabled(true);
+				updateFileExtension(FileChooserFactory.PKCS7_EXT_1);
 			}
 		});
 
-		jrbExportPkcs7.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jrbExportPkcs7.isSelected()) {
-					jcbExportPem.setEnabled(true);
-					updateFileExtension(FileChooserFactory.PKCS7_EXT_1);
-				}
+		jrbExportSpc.addItemListener(evt -> {
+			if (jrbExportSpc.isSelected()) {
+				jcbExportPem.setEnabled(false);
+				jcbExportPem.setSelected(false);
+				updateFileExtension(FileChooserFactory.SPC_EXT);
+			} else {
+				jcbExportPem.setEnabled(true);
 			}
 		});
 
-		jrbExportSpc.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jrbExportSpc.isSelected()) {
-					jcbExportPem.setEnabled(false);
-					jcbExportPem.setSelected(false);
-					updateFileExtension(FileChooserFactory.SPC_EXT);
-				} else {
-					jcbExportPem.setEnabled(true);
-				}
-			}
-		});
-
-		jrbExportPkiPath.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jrbExportPkiPath.isSelected()) {
-					jcbExportPem.setEnabled(false);
-					jcbExportPem.setSelected(false);
-					updateFileExtension(FileChooserFactory.PKI_PATH_EXT);
-				} else {
-					jcbExportPem.setEnabled(true);
-				}
+		jrbExportPkiPath.addItemListener(evt -> {
+			if (jrbExportPkiPath.isSelected()) {
+				jcbExportPem.setEnabled(false);
+				jcbExportPem.setSelected(false);
+				updateFileExtension(FileChooserFactory.PKI_PATH_EXT);
+			} else {
+				jcbExportPem.setEnabled(true);
 			}
 		});
 
 		jbExport = new JButton(res.getString("DExportCertificates.jbExport.text"));
 		PlatformUtil.setMnemonic(jbExport, res.getString("DExportCertificates.jbExport.mnemonic").charAt(0));
 		jbExport.setToolTipText(res.getString("DExportCertificates.jbExport.tooltip"));
-		jbExport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExportCertificates.this);
-					exportPressed();
-				} finally {
-					CursorUtil.setCursorFree(DExportCertificates.this);
-				}
+		jbExport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExportCertificates.this);
+				exportPressed();
+			} finally {
+				CursorUtil.setCursorFree(DExportCertificates.this);
 			}
 		});
 
 		jbCancel = new JButton(res.getString("DExportCertificates.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

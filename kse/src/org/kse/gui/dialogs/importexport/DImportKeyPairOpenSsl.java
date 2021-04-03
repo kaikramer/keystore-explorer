@@ -167,15 +167,12 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		jbPrivateKeyBrowse = new JButton(res.getString("DImportKeyPairOpenSsl.jbPrivateKeyBrowse.text"));
 		PlatformUtil.setMnemonic(jbPrivateKeyBrowse, res.getString("DImportKeyPairOpenSsl.jbPrivateKeyBrowse.mnemonic")
 				.charAt(0));
-		jbPrivateKeyBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
-					privateKeyBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
-				}
+		jbPrivateKeyBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
+				privateKeyBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
 			}
 		});
 		jbPrivateKeyBrowse.setToolTipText(res.getString("DImportKeyPairOpenSsl.jbPrivateKeyBrowse.tooltip"));
@@ -184,15 +181,12 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		gbc_jbPrivateKeyBrowse.gridx = 9;
 
 		jbPrivateKeyDetails = new JButton(res.getString("DImportKeyPairOpenSsl.jbPrivateKeyDetails.text"));
-		jbPrivateKeyDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
-					privateKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
-				}
+		jbPrivateKeyDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
+				privateKeyDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
 			}
 		});
 		PlatformUtil.setMnemonic(jbPrivateKeyDetails,
@@ -213,15 +207,12 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		gbc_jtfCertificatePath.gridwidth = 6;
 
 		jbCertificateBrowse = new JButton(res.getString("DImportKeyPairOpenSsl.jbCertificateBrowse.text"));
-		jbCertificateBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
-					certificateBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
-				}
+		jbCertificateBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
+				certificateBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
 			}
 		});
 		PlatformUtil.setMnemonic(jbCertificateBrowse,
@@ -232,15 +223,12 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		gbc_jbCertificateBrowse.gridx = 9;
 
 		jbCertificateDetails = new JButton(res.getString("DImportKeyPairOpenSsl.jbCertificateDetails.text"));
-		jbCertificateDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
-					certificateDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
-				}
+		jbCertificateDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
+				certificateDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
 			}
 		});
 		PlatformUtil.setMnemonic(jbCertificateDetails,
@@ -267,40 +255,29 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
 		jpKeyPair.add(jbCertificateBrowse, gbc_jbCertificateBrowse);
 		jpKeyPair.add(jbCertificateDetails, gbc_jbCertificateDetails);
 
-		jcbEncrypted.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				if (jcbEncrypted.isSelected()) {
-					jpfPassword.setEnabled(true);
-				} else {
-					jpfPassword.setEnabled(false);
-					jpfPassword.setText("");
-				}
+		jcbEncrypted.addItemListener(evt -> {
+			if (jcbEncrypted.isSelected()) {
+				jpfPassword.setEnabled(true);
+			} else {
+				jpfPassword.setEnabled(false);
+				jpfPassword.setText("");
 			}
 		});
 
 		jbImport = new JButton(res.getString("DImportKeyPairOpenSsl.jbImport.text"));
 		PlatformUtil.setMnemonic(jbImport, res.getString("DImportKeyPairOpenSsl.jbImport.mnemonic").charAt(0));
 		jbImport.setToolTipText(res.getString("DImportKeyPairOpenSsl.jbImport.tooltip"));
-		jbImport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
-					importPressed();
-				} finally {
-					CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
-				}
+		jbImport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DImportKeyPairOpenSsl.this);
+				importPressed();
+			} finally {
+				CursorUtil.setCursorFree(DImportKeyPairOpenSsl.this);
 			}
 		});
 
 		jbCancel = new JButton(res.getString("DImportKeyPairOpenSsl.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {

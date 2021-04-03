@@ -100,25 +100,17 @@ public class DProviderInfo extends JEscDialog {
 		jbCopy = new JButton(res.getString("DProviderInfo.jbCopy.text"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DProviderInfo.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DProviderInfo.jbCopy.tooltip"));
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DProviderInfo.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DProviderInfo.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DProviderInfo.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DProviderInfo.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DProviderInfo.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
@@ -153,12 +145,7 @@ public class DProviderInfo extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private DefaultMutableTreeNode createProviderNodes() {

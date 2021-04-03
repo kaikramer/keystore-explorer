@@ -303,95 +303,69 @@ public class DViewCertificate extends JEscDialog {
 		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
 		pane.add(jbOK, "spanx, tag ok");
 
-		jtrHierarchy.addTreeSelectionListener(new TreeSelectionListener() {
-			@Override
-			public void valueChanged(TreeSelectionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificate.this);
-					populateDetails();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificate.this);
-				}
+		jtrHierarchy.addTreeSelectionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				populateDetails();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
+		jbOK.addActionListener(evt -> okPressed());
+
+		jbExport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				exportPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
 
-		jbExport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificate.this);
-					exportPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificate.this);
-				}
+		jbExtensions.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				extensionsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
 
-		jbExtensions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificate.this);
-					extensionsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificate.this);
-				}
+		jbImport.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				importPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
 
-		jbImport.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificate.this);
-					importPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificate.this);
-				}
+		jbViewPublicKeyDetails.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				pubKeyDetailsPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
 
-		jbViewPublicKeyDetails.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificate.this);
-					pubKeyDetailsPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificate.this);
-				}
-			}
-		});
-
-		jbPem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificate.this);
-					pemEncodingPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificate.this);
-				}
+		jbPem.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				pemEncodingPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
 
 
-		jbAsn1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewCertificate.this);
-					asn1DumpPressed();
-				} finally {
-					CursorUtil.setCursorFree(DViewCertificate.this);
-				}
+		jbAsn1.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				asn1DumpPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
 
@@ -410,12 +384,7 @@ public class DViewCertificate extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {

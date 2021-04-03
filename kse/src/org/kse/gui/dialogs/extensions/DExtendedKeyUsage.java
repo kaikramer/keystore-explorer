@@ -188,42 +188,26 @@ public class DExtendedKeyUsage extends DExtension {
 		pane.add(jbOK, "tag ok");
 
 		// actions
-		jcbCustomExtKeyUsage.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExtendedKeyUsage.this);
-					if (customExtKeyUsagesOids.isEmpty()) {
-						addCustomExtKeyUsagePressed();
-					}
-				} finally {
-					CursorUtil.setCursorFree(DExtendedKeyUsage.this);
-				}
-			}
-		});
-		jbAddEku.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DExtendedKeyUsage.this);
+		jcbCustomExtKeyUsage.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExtendedKeyUsage.this);
+				if (customExtKeyUsagesOids.isEmpty()) {
 					addCustomExtKeyUsagePressed();
-				} finally {
-					CursorUtil.setCursorFree(DExtendedKeyUsage.this);
 				}
+			} finally {
+				CursorUtil.setCursorFree(DExtendedKeyUsage.this);
 			}
 		});
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
+		jbAddEku.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DExtendedKeyUsage.this);
+				addCustomExtKeyUsagePressed();
+			} finally {
+				CursorUtil.setCursorFree(DExtendedKeyUsage.this);
 			}
 		});
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1792160787358938936L;
 			@Override

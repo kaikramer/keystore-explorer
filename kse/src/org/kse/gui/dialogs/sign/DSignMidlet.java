@@ -148,15 +148,12 @@ public class DSignMidlet extends JEscDialog {
 		jbInputJadBrowse = new JButton(res.getString("DSignMidlet.jbInputJadBrowse.text"));
 		PlatformUtil.setMnemonic(jbInputJadBrowse, res.getString("DSignMidlet.jbInputJadBrowse.mnemonic").charAt(0));
 		jbInputJadBrowse.setToolTipText(res.getString("DSignMidlet.jbInputJadBrowse.tooltip"));
-		jbInputJadBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignMidlet.this);
-					inputJadBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignMidlet.this);
-				}
+		jbInputJadBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignMidlet.this);
+				inputJadBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignMidlet.this);
 			}
 		});
 		GridBagConstraints gbc_jbInputJadBrowse = (GridBagConstraints) gbcBrws.clone();
@@ -172,12 +169,9 @@ public class DSignMidlet extends JEscDialog {
 		GridBagConstraints gbc_jcbSignDirectly = (GridBagConstraints) gbcCtrl.clone();
 		gbc_jcbSignDirectly.gridy = 1;
 
-		jcbSignDirectly.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent evt) {
-				jtfOutputJad.setEnabled(!jcbSignDirectly.isSelected());
-				jbOutputJadBrowse.setEnabled(!jcbSignDirectly.isSelected());
-			}
+		jcbSignDirectly.addItemListener(evt -> {
+			jtfOutputJad.setEnabled(!jcbSignDirectly.isSelected());
+			jbOutputJadBrowse.setEnabled(!jcbSignDirectly.isSelected());
 		});
 
 		jlOutputJad = new JLabel(res.getString("DSignMidlet.jlOutputJad.text"));
@@ -195,15 +189,12 @@ public class DSignMidlet extends JEscDialog {
 		PlatformUtil.setMnemonic(jbOutputJadBrowse, res.getString("DSignMidlet.jbOutputJadBrowse.mnemonic").charAt(0));
 		jbOutputJadBrowse.setToolTipText(res.getString("DSignMidlet.jbOutputJadBrowse.tooltip"));
 		jbOutputJadBrowse.setEnabled(false);
-		jbOutputJadBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignMidlet.this);
-					outputJadBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignMidlet.this);
-				}
+		jbOutputJadBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignMidlet.this);
+				outputJadBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignMidlet.this);
 			}
 		});
 		GridBagConstraints gbc_jbOutputJadBrowse = (GridBagConstraints) gbcBrws.clone();
@@ -222,15 +213,12 @@ public class DSignMidlet extends JEscDialog {
 		jbJarBrowse = new JButton(res.getString("DSignMidlet.jbJarBrowse.text"));
 		PlatformUtil.setMnemonic(jbJarBrowse, res.getString("DSignMidlet.jbJarBrowse.mnemonic").charAt(0));
 		jbJarBrowse.setToolTipText(res.getString("DSignMidlet.jbJarBrowse.tooltip"));
-		jbJarBrowse.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DSignMidlet.this);
-					jarBrowsePressed();
-				} finally {
-					CursorUtil.setCursorFree(DSignMidlet.this);
-				}
+		jbJarBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DSignMidlet.this);
+				jarBrowsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DSignMidlet.this);
 			}
 		});
 		GridBagConstraints gbc_jbJarBrowse = (GridBagConstraints) gbcBrws.clone();
@@ -252,20 +240,10 @@ public class DSignMidlet extends JEscDialog {
 		jpOptions.add(jbJarBrowse, gbc_jbJarBrowse);
 
 		jbOK = new JButton(res.getString("DSignMidlet.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel = new JButton(res.getString("DSignMidlet.jbCancel.text"));
-		jbCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -450,7 +428,7 @@ public class DSignMidlet extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DSignMidlet.ChooseInputJad.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		chooser.setApproveButtonText(res.getString("DSignMidlet.InputJadChooser.button"));
 
 		int rtnValue = chooser.showOpenDialog(this);
@@ -512,7 +490,7 @@ public class DSignMidlet extends JEscDialog {
 		chooser.setDialogTitle(res.getString("DSignMidlet.ChooseJar.Title"));
 
 		chooser.setMultiSelectionEnabled(false);
-		
+
 		chooser.setApproveButtonText(res.getString("DSignMidlet.JarChooser.button"));
 
 		int rtnValue = chooser.showOpenDialog(this);

@@ -131,12 +131,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 			distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
 
 			jbCancel = new JButton(res.getString("DDistinguishedNameChooser.jbCancel.text"));
-			jbCancel.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					cancelPressed();
-				}
-			});
+			jbCancel.addActionListener(evt -> cancelPressed());
 			jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 					CANCEL_KEY);
 			jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -160,26 +155,11 @@ public class DDistinguishedNameChooser extends JEscDialog {
 		pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
 		layoutContentPane();
 
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
-		jbReset.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				resetPressed();
-			}
-		});
+		jbReset.addActionListener(evt -> resetPressed());
 
-		jbDefault.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				defaultPressed();
-			}
-		});
+		jbDefault.addActionListener(evt -> defaultPressed());
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -192,12 +172,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
 		getRootPane().setDefaultButton(jbOK);
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				distinguishedNameChooser.getFirstTextField().requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> distinguishedNameChooser.getFirstTextField().requestFocus());
 	}
 
 	private void layoutContentPane() {

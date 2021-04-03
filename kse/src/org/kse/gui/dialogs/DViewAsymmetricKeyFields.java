@@ -153,15 +153,12 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		jltFields.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jltFields.setBorder(new EtchedBorder());
 
-		jltFields.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DViewAsymmetricKeyFields.this);
-					updateFieldValue();
-				} finally {
-					CursorUtil.setCursorFree(DViewAsymmetricKeyFields.this);
-				}
+		jltFields.addListSelectionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewAsymmetricKeyFields.this);
+				updateFieldValue();
+			} finally {
+				CursorUtil.setCursorFree(DViewAsymmetricKeyFields.this);
 			}
 		});
 
@@ -199,12 +196,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 		jpFields.add(jpFieldValue, BorderLayout.CENTER);
 
 		jbOK = new JButton(res.getString("DViewAsymmetricKeyFields.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
@@ -226,12 +218,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private void populateFields() {

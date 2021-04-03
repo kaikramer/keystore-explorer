@@ -102,25 +102,17 @@ public class DErrorDetail extends JEscDialog {
 		jbCopy = new JButton(res.getString("DErrorDetail.jbCopy.text"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DErrorDetail.jbCopy.mnemonic").charAt(0));
 		jbCopy.setToolTipText(res.getString("DErrorDetail.jbCopy.tooltip"));
-		jbCopy.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				try {
-					CursorUtil.setCursorBusy(DErrorDetail.this);
-					copyPressed();
-				} finally {
-					CursorUtil.setCursorFree(DErrorDetail.this);
-				}
+		jbCopy.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DErrorDetail.this);
+				copyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DErrorDetail.this);
 			}
 		});
 
 		jbOK = new JButton(res.getString("DErrorDetail.jbOK.text"));
-		jbOK.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				okPressed();
-			}
-		});
+		jbOK.addActionListener(evt -> okPressed());
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
@@ -158,12 +150,7 @@ public class DErrorDetail extends JEscDialog {
 
 		pack();
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				jbOK.requestFocus();
-			}
-		});
+		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 	}
 
 	private DefaultMutableTreeNode createErrorNodes() {
