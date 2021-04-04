@@ -21,13 +21,11 @@ package org.kse.gui.dialogs;
 
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -46,8 +44,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
@@ -64,13 +60,12 @@ import net.miginfocom.swing.MigLayout;
  * Dialog used to choose the parameters required for key pair generation. The
  * user may select an asymmetric key generation algorithm of RSA or DSA and
  * enter a key size in bits.
- *
  */
 public class DGenerateKeyPair extends JEscDialog {
 
 	private static final long serialVersionUID = 7178673779995142190L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -91,29 +86,36 @@ public class DGenerateKeyPair extends JEscDialog {
 	private JButton jbOK;
 	private JButton jbCancel;
 
-	private KeyPairType keyPairType;
-	private KeyStoreType keyStoreType;
-	private int keyPairSize;
-	private boolean success = false;
+	private final KeyPairType keyPairType;
+	private final int keyPairSizeRSA;
+	private final int keyPairSizeDSA;
+	private final String keyPairCurveSet;
+	private final String keyPairCurveName;
+	private final KeyStoreType keyStoreType;
 
+	private boolean success = false;
 
 	/**
 	 * Creates a new DGenerateKeyPair dialog.
 	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param keyStoreType
-	 *            Type of the key store for the new ke pair
-	 * @param keyPairType
-	 *            Initial key pair type
-	 * @param keyPairSize
-	 *            Initial key pair size
+	 * @param parent           The parent frame
+	 * @param keyStoreType     Type of the key store for the new ke pair
+	 * @param keyPairType      Initial key pair type
+	 * @param keyPairSizeRSA   Initial key pair size
+	 * @param keyPairSizeDSA   Initial key pair size
+	 * @param keyPairCurveSet  Initially selected EC curve set
+	 * @param keyPairCurveName Initially selected named EC curve
 	 */
-	public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyPairType keyPairType, int keyPairSize) {
+	public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyPairType keyPairType, int keyPairSizeRSA,
+			int keyPairSizeDSA, String keyPairCurveSet, String keyPairCurveName) {
+
 		super(parent, res.getString("DGenerateKeyPair.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.keyPairType = keyPairType;
-		this.keyPairSize = keyPairSize;
+		this.keyPairSizeRSA = keyPairSizeRSA;
+		this.keyPairSizeDSA = keyPairSizeDSA;
+		this.keyPairCurveSet = keyPairCurveSet;
+		this.keyPairCurveName = keyPairCurveName;
 		this.keyStoreType = keyStoreType;
 
 		initComponents();
@@ -171,8 +173,8 @@ public class DGenerateKeyPair extends JEscDialog {
 		jcbECCurve.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurve.tooltip"));
 
 		jbCancel = new JButton(res.getString("DGenerateKeyPair.jbCancel.text"));
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
 
 		jbOK = new JButton(res.getString("DGenerateKeyPair.jbOK.text"));
 
@@ -189,8 +191,8 @@ public class DGenerateKeyPair extends JEscDialog {
 			}
 		}
 
-		loadKeySizes(keyPairSize);
-		loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem());
+		loadKeySizes(keyPairSizeRSA, keyPairSizeDSA);
+		loadECNamedCurves(keyPairCurveSet, keyPairCurveName);
 		enableDisableElements();
 
 		JPanel jpContent = new JPanel();
@@ -214,34 +216,25 @@ public class DGenerateKeyPair extends JEscDialog {
 		jpContent.add(jlECCurve, "skip");
 		jpContent.add(jcbECCurve, "growx");
 
-
-		jcbECCurveSet.addItemListener(e -> loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem()));
-
+		jcbECCurveSet.addItemListener(evt -> loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem(),
+				keyPairCurveName));
 		jrbRSA.addItemListener(evt -> enableDisableElements());
-
 		jrbDSA.addItemListener(evt -> enableDisableElements());
-
 		jrbEC.addItemListener(evt -> enableDisableElements());
-
 		jspRSAKeySize.addChangeListener(evt -> correctKeyPairSize());
-
 		jspDSAKeySize.addChangeListener(evt -> correctKeyPairSize());
-
 		jbOK.addActionListener(evt -> okPressed());
-
 		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
+			@Override public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
 
 		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
+			@Override public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
 		});
@@ -253,13 +246,21 @@ public class DGenerateKeyPair extends JEscDialog {
 		pack();
 	}
 
-	private void loadECNamedCurves(String curveSet) {
+	private void loadECNamedCurves(String curveSet, String keyPairCurveName) {
 		CurveSet set = CurveSet.resolveName(curveSet);
-		List<String> curveNames = set.getAvailableCurveNames(keyStoreType);
+		if (set == null) {
+			set = CurveSet.resolveName((String) jcbECCurveSet.getModel().getSelectedItem());
+		} else {
+			jcbECCurveSet.getModel().setSelectedItem(curveSet);
+		}
 
+		List<String> curveNames = set.getAvailableCurveNames(keyStoreType);
 		Collections.sort(curveNames);
 
-		jcbECCurve.setModel(new DefaultComboBoxModel<>(curveNames.toArray(new String[curveNames.size()])));
+		jcbECCurve.setModel(new DefaultComboBoxModel<>(curveNames.toArray(new String[0])));
+		if (curveNames.contains(keyPairCurveName)) {
+			jcbECCurve.getModel().setSelectedItem(keyPairCurveName);
+		}
 	}
 
 	protected void enableDisableElements() {
@@ -271,34 +272,35 @@ public class DGenerateKeyPair extends JEscDialog {
 		jlDSAKeySize.setEnabled(keyPairType == KeyPairType.DSA);
 		jspDSAKeySize.setEnabled(keyPairType == KeyPairType.DSA);
 
-		jlECCurve.setEnabled(keyPairType == KeyPairType.EC);
-		jcbECCurve.setEnabled(keyPairType == KeyPairType.EC);
-		jlECCurveSet.setEnabled(keyPairType == KeyPairType.EC);
-		jcbECCurveSet.setEnabled(keyPairType == KeyPairType.EC);
-	}
+		boolean isEcType = KeyPairType.EC_TYPES_SET.contains(keyPairType);
+		jlECCurve.setEnabled(isEcType);
+		jcbECCurve.setEnabled(isEcType);
+		jlECCurveSet.setEnabled(isEcType);
+		jcbECCurveSet.setEnabled(isEcType);
+}
 
-	private void loadKeySizes(int keyPairSize) {
-		KeyPairType keyPairType = KeyPairType.RSA;
-		keyPairSize = validateKeyPairSize(keyPairType, keyPairSize);
-		jspRSAKeySize.setModel(new SpinnerNumberModel(keyPairSize, keyPairType.minSize(), keyPairType.maxSize(),
-				keyPairType.stepSize()));
+	private void loadKeySizes(int keyPairSizeRSA, int keyPairSizeDSA) {
+		keyPairSizeRSA = validateKeyPairSize(KeyPairType.RSA, keyPairSizeRSA);
+		jspRSAKeySize.setModel(new SpinnerNumberModel(keyPairSizeRSA, KeyPairType.RSA.minSize(),
+				KeyPairType.RSA.maxSize(), KeyPairType.RSA.stepSize()));
 
-		keyPairType = KeyPairType.DSA;
-		keyPairSize = validateKeyPairSize(keyPairType, keyPairSize);
-		jspDSAKeySize.setModel(new SpinnerNumberModel(keyPairSize, keyPairType.minSize(), keyPairType.maxSize(),
-				keyPairType.stepSize()));
+		keyPairSizeDSA = validateKeyPairSize(KeyPairType.DSA, keyPairSizeDSA);
+		jspDSAKeySize.setModel(new SpinnerNumberModel(keyPairSizeDSA, KeyPairType.DSA.minSize(),
+				KeyPairType.DSA.maxSize(), KeyPairType.DSA.stepSize()));
 	}
 
 	private void correctKeyPairSize() {
 		KeyPairType keyPairType = getKeyPairType();
-		int keyPairSize = getKeyPairSize();
-
-		int validatedKeyPairSize = validateKeyPairSize(keyPairType, keyPairSize);
-
-		if (validatedKeyPairSize != keyPairSize) {
-			if (keyPairType == KeyPairType.RSA) {
+		if (keyPairType == KeyPairType.RSA) {
+			int keyPairSizeRSA = getKeyPairSizeRSA();
+			int validatedKeyPairSize = validateKeyPairSize(keyPairType, keyPairSizeRSA);
+			if (validatedKeyPairSize != keyPairSizeRSA) {
 				jspRSAKeySize.getModel().setValue(validatedKeyPairSize);
-			} else if (keyPairType == KeyPairType.DSA) {
+			}
+		} else if (keyPairType == KeyPairType.DSA) {
+			int keyPairSizeDSA = getKeyPairSizeDSA();
+			int validatedKeyPairSize = validateKeyPairSize(keyPairType, keyPairSizeDSA);
+			if (validatedKeyPairSize != keyPairSizeDSA) {
 				jspDSAKeySize.getModel().setValue(validatedKeyPairSize);
 			}
 		}
@@ -340,16 +342,26 @@ public class DGenerateKeyPair extends JEscDialog {
 	 *
 	 * @return The key pair size
 	 */
-	public int getKeyPairSize() {
+	public int getKeyPairSizeRSA() {
+		return ((Number) jspRSAKeySize.getValue()).intValue();
+	}
 
-		if  (getKeyPairType() == KeyPairType.RSA) {
-			return ((Number) jspRSAKeySize.getValue()).intValue();
-		}
-		if  (getKeyPairType() == KeyPairType.DSA) {
-			return ((Number) jspDSAKeySize.getValue()).intValue();
-		}
+	/**
+	 * Get the key pair size chosen.
+	 *
+	 * @return The key pair size
+	 */
+	public int getKeyPairSizeDSA() {
+		return ((Number) jspDSAKeySize.getValue()).intValue();
+	}
 
-		return this.keyPairSize;
+	/**
+	 * Get the name of the selected EC curve set.
+	 *
+	 * @return The curve set
+	 */
+	public String getCurveSet() {
+		return (String) jcbECCurveSet.getModel().getSelectedItem();
 	}
 
 	/**
@@ -412,7 +424,8 @@ public class DGenerateKeyPair extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.JKS, KeyPairType.RSA, 1024);
+		DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.JKS, KeyPairType.RSA, 2048,
+				1024, "", "");
 		DialogViewer.run(dialog);
 	}
 }

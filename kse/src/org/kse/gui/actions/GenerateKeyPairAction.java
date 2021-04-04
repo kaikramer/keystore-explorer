@@ -96,26 +96,29 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 	/**
 	 * Generate a key pair (with certificate) in the currently opened KeyStore.
 	 *
-	 * @param issuerCert
-	 *                 Issuer certificate for signing the new certificate
-	 * @param issuerCertChain
-	 *                 Chain of issuer certificate
-	 * @param issuerPrivateKey
-	 *                 Issuer's private key for signing
+	 * @param issuerCert Issuer certificate for signing the new certificate
+	 * @param issuerCertChain Chain of issuer certificate
+	 * @param issuerPrivateKey Issuer's private key for signing
 	 * @return Alias of new key pair
 	 */
 	public String generateKeyPair(X509Certificate issuerCert, X509Certificate[] issuerCertChain, PrivateKey issuerPrivateKey) {
 
 		String alias = "";
 		try {
-			int keyPairSize = applicationSettings.getGenerateKeyPairSize();
+			// Restore preferences regarding key type and length (or EC curve)
 			KeyPairType keyPairType = applicationSettings.getGenerateKeyPairType();
+			int keyPairSizeRSA = applicationSettings.getGenerateKeyPairSizeRSA();
+			int keyPairSizeDSA = applicationSettings.getGenerateKeyPairSizeDSA();
+			String keyPairCurveSet = applicationSettings.getGenerateKeyPairCurveSet();
+			String keyPairCurveName = applicationSettings.getGenerateKeyPairCurveName();
+
 			KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
 			KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			Provider provider = history.getExplicitProvider();
 
-			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, keyPairType, keyPairSize);
+			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, keyPairType,
+					keyPairSizeRSA, keyPairSizeDSA, keyPairCurveSet, keyPairCurveName);
 			dGenerateKeyPair.setLocationRelativeTo(frame);
 			dGenerateKeyPair.setVisible(true);
 
@@ -123,34 +126,19 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 				return "";
 			}
 
+			// update (saved) values from user selection
 			keyPairType = dGenerateKeyPair.getKeyPairType();
-			DGeneratingKeyPair dGeneratingKeyPair;
+			keyPairSizeRSA = dGenerateKeyPair.getKeyPairSizeRSA();
+			keyPairSizeDSA = dGenerateKeyPair.getKeyPairSizeDSA();
+			keyPairCurveSet = dGenerateKeyPair.getCurveSet();
+			keyPairCurveName = dGenerateKeyPair.getCurveName();
+			applicationSettings.setGenerateKeyPairType(keyPairType);
+			applicationSettings.setGenerateKeyPairSizeRSA(keyPairSizeRSA);
+			applicationSettings.setGenerateKeyPairSizeDSA(keyPairSizeDSA);
+			applicationSettings.setGenerateKeyPairCurveSet(keyPairCurveSet);
+			applicationSettings.setGenerateKeyPairCurveName(keyPairCurveName);
 
-			switch (keyPairType) {
-			case RSA:
-			case DSA:
-				keyPairSize = dGenerateKeyPair.getKeyPairSize();
-				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSize, provider);
-				applicationSettings.setGenerateKeyPairSize(keyPairSize);
-				applicationSettings.setGenerateKeyPairType(keyPairType);
-				break;
-			case EC:
-			case ECDSA:
-			case EDDSA:
-			case ED25519:
-			case ED448:
-			default:
-				String curveName = dGenerateKeyPair.getCurveName();
-				dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName, provider);
-				break;
-			}
-
-			dGeneratingKeyPair.setLocationRelativeTo(frame);
-			dGeneratingKeyPair.startKeyPairGeneration();
-			dGeneratingKeyPair.setVisible(true);
-
-			KeyPair keyPair = dGeneratingKeyPair.getKeyPair();
-
+			KeyPair keyPair = generateKeyPair(keyPairType, keyPairSizeRSA, keyPairSizeDSA, keyPairCurveName, provider);
 			if (keyPair == null) {
 				return "";
 			}
@@ -240,5 +228,33 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 		}
 
 		return alias;
+	}
+
+	private KeyPair generateKeyPair(KeyPairType keyPairType, int keyPairSizeRSA, int keyPairSizeDSA, String curveName,
+			Provider provider) {
+		DGeneratingKeyPair dGeneratingKeyPair;
+
+		switch (keyPairType) {
+		case RSA:
+			dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeRSA, provider);
+			break;
+		case DSA:
+			dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeDSA, provider);
+			break;
+		case EC:
+		case ECDSA:
+		case EDDSA:
+		case ED25519:
+		case ED448:
+		default:
+			dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName, provider);
+			break;
+		}
+
+		dGeneratingKeyPair.setLocationRelativeTo(frame);
+		dGeneratingKeyPair.startKeyPairGeneration();
+		dGeneratingKeyPair.setVisible(true);
+
+		return dGeneratingKeyPair.getKeyPair();
 	}
 }

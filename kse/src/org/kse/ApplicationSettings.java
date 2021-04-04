@@ -93,8 +93,11 @@ public class ApplicationSettings {
 	private static final String KSE3_CERTFINGERTYPE = "kse3.certfingertype";
 	private static final String KSE3_SECKEYSIZE = "kse3.seckeysize";
 	private static final String KSE3_SECKEYTYPE = "kse3.seckeytype";
-	private static final String KSE3_KEYPAIRSIZE = "kse3.keypairsize";
 	private static final String KSE3_KEYPAIRTYPE = "kse3.keypairtype";
+	private static final String KSE3_KEYPAIR_SIZE_RSA = "kse3.keypairsize";
+	private static final String KSE3_KEYPAIR_SIZE_DSA = "kse3.keypairdsasize";
+	private static final String KSE3_KEYPAIR_EC_SET = "kse3.keypairset";
+	private static final String KSE3_KEYPAIR_EC_CURVE = "kse3.keypaircurve";
 	private static final String KSE3_ENABLEIMPORTCAREPLYTRUSTCHECK = "kse3.enableimportcareplytrustcheck";
 	private static final String KSE3_ENABLEIMPORTTRUSTEDCERTTRUSTCHECK = "kse3.enableimporttrustedcerttrustcheck";
 	private static final String KSE3_USEWINTRUSTROOTCERTS = "kse3.usewintrustrootcerts";
@@ -109,8 +112,7 @@ public class ApplicationSettings {
 	private static final String KSE3_COLUMNS = "kse3.columns";
 	private static final String KSE3_SHOW_HIDDEN_FILES = "kse3.showhiddenfiles";
 
-
-	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private static ApplicationSettings applicationSettings;
 	private boolean useCaCertificates;
@@ -119,7 +121,10 @@ public class ApplicationSettings {
 	private boolean enableImportTrustedCertTrustCheck;
 	private boolean enableImportCaReplyTrustCheck;
 	private KeyPairType generateKeyPairType;
-	private int generateKeyPairSize;
+	private int generateKeyPairSizeRSA;
+	private int generateKeyPairSizeDSA;
+	private String generateKeyPairCurveSet;
+	private String generateKeyPairCurveName;
 	private SecretKeyType generateSecretKeyType;
 	private int generateSecretKeySize;
 	private DigestType certificateFingerprintType;
@@ -203,18 +208,21 @@ public class ApplicationSettings {
 		enableImportTrustedCertTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTTRUSTEDCERTTRUSTCHECK, false);
 		enableImportCaReplyTrustCheck = preferences.getBoolean(KSE3_ENABLEIMPORTCAREPLYTRUSTCHECK, false);
 
-		// Key pair generation
+		// Key pair generation - algorithm
 		generateKeyPairType = KeyPairType.resolveJce(preferences.get(KSE3_KEYPAIRTYPE, RSA.jce()));
 		if (generateKeyPairType == null) {
 			generateKeyPairType = RSA;
 		}
-		int defaultKeyPairSize;
-		if (generateKeyPairType == RSA) {
-			defaultKeyPairSize = 2048;
-		} else {
-			defaultKeyPairSize = 1024; // DSA
-		}
-		generateKeyPairSize = preferences.getInt(KSE3_KEYPAIRSIZE, defaultKeyPairSize);
+
+		// Key pair generation - key size
+		generateKeyPairSizeRSA = preferences.getInt(KSE3_KEYPAIR_SIZE_RSA, 2048);
+		generateKeyPairSizeDSA = preferences.getInt(KSE3_KEYPAIR_SIZE_DSA, 1024);
+
+		// Key pair generation - ECC curve set
+		generateKeyPairCurveSet = preferences.get(KSE3_KEYPAIR_EC_SET, "");
+
+		// Key pair generation - ECC curve
+		generateKeyPairCurveName = preferences.get(KSE3_KEYPAIR_EC_CURVE, "");
 
 		// Secret key generation
 		generateSecretKeyType = SecretKeyType.resolveJce(preferences.get(KSE3_SECKEYTYPE, AES.jce()));
@@ -315,7 +323,7 @@ public class ApplicationSettings {
 				recentFilesList.add(cleanFilePath(new File(recentFile)));
 			}
 		}
-		recentFiles = recentFilesList.toArray(new File[recentFilesList.size()]);
+		recentFiles = recentFilesList.toArray(new File[0]);
 
 		// Current directory
 		String currentDirectoryStr = preferences.get(KSE3_CURRENTDIR, null);
@@ -396,7 +404,10 @@ public class ApplicationSettings {
 
 		// Key pair generation
 		preferences.put(KSE3_KEYPAIRTYPE, generateKeyPairType.jce());
-		preferences.putInt(KSE3_KEYPAIRSIZE, generateKeyPairSize);
+		preferences.putInt(KSE3_KEYPAIR_SIZE_RSA, generateKeyPairSizeRSA);
+		preferences.putInt(KSE3_KEYPAIR_SIZE_DSA, generateKeyPairSizeDSA);
+		preferences.put(KSE3_KEYPAIR_EC_SET, generateKeyPairCurveSet);
+		preferences.put(KSE3_KEYPAIR_EC_CURVE, generateKeyPairCurveName);
 
 		// Secret key generation
 		preferences.put(KSE3_SECKEYTYPE, generateSecretKeyType.jce());
@@ -632,12 +643,36 @@ public class ApplicationSettings {
 		this.generateKeyPairType = generateKeyPairType;
 	}
 
-	public int getGenerateKeyPairSize() {
-		return generateKeyPairSize;
+	public int getGenerateKeyPairSizeRSA() {
+		return generateKeyPairSizeRSA;
 	}
 
-	public void setGenerateKeyPairSize(int generateKeyPairSize) {
-		this.generateKeyPairSize = generateKeyPairSize;
+	public void setGenerateKeyPairSizeRSA(int generateKeyPairSizeRSA) {
+		this.generateKeyPairSizeRSA = generateKeyPairSizeRSA;
+	}
+
+	public int getGenerateKeyPairSizeDSA() {
+		return generateKeyPairSizeDSA;
+	}
+
+	public void setGenerateKeyPairSizeDSA(int generateKeyPairSizeDSA) {
+		this.generateKeyPairSizeDSA = generateKeyPairSizeDSA;
+	}
+
+	public String getGenerateKeyPairCurveSet() {
+		return generateKeyPairCurveSet;
+	}
+
+	public void setGenerateKeyPairCurveSet(String generateKeyPairCurveSet) {
+		this.generateKeyPairCurveSet = generateKeyPairCurveSet;
+	}
+
+	public String getGenerateKeyPairCurveName() {
+		return generateKeyPairCurveName;
+	}
+
+	public void setGenerateKeyPairCurveName(String generateKeyPairCurveName) {
+		this.generateKeyPairCurveName = generateKeyPairCurveName;
 	}
 
 	public SecretKeyType getGenerateSecretKeyType() {

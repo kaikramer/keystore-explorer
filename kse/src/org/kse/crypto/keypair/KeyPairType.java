@@ -19,6 +19,8 @@
  */
 package org.kse.crypto.keypair;
 
+import java.util.EnumSet;
+
 /**
  * Enumeration of Key Pair Types supported by the KeyPairUtil class.
  *
@@ -32,11 +34,14 @@ public enum KeyPairType {
 	ED25519("Ed25519", "1.3.101.112", 256, 256, 0), // BC has separate key pair types for the two EdDSA types
 	ED448("Ed448", "1.3.101.113", 456, 456, 0);
 
-	private String jce;
-	private String oid;
-	private int minSize;
-	private int maxSize;
-	private int stepSize;
+	/** Set of all EC key pair types (EC, ECDSA, EDDSA, ED25519, ED448) */
+	public static final EnumSet<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, EDDSA, ED25519, ED448);
+
+	private final String jce;
+	private final String oid;
+	private final int minSize;
+	private final int maxSize;
+	private final int stepSize;
 
 	KeyPairType(String jce, String oid, int minSize, int maxSize, int stepSize) {
 		this.jce = jce;
