@@ -87,8 +87,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -388,12 +386,18 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiTrustedCertificateRename;
 
 	private JPopupMenu jpmKey;
-
 	private JMenuItem jmiKeyDetails;
+	private JMenuItem jmiKeyCut;
+	private JMenuItem jmiKeyCopy;
 	private JMenuItem jmiKeyUnlock;
 	private JMenuItem jmiKeySetPassword;
 	private JMenuItem jmiKeyDelete;
 	private JMenuItem jmiKeyRename;
+
+	private JPopupMenu jpmMultiEntrySel;
+	private JMenuItem jmiMultiEntrySelCut;
+	private JMenuItem jmiMultEntrySelCopy;
+	private JMenuItem jmiMultiEntrySelDelete;
 
 	//
 	// Main display controls
@@ -2097,6 +2101,14 @@ public final class KseFrame implements StatusBar {
 		jmiKeyDetails.setToolTipText(null);
 		new StatusBarChangeHandler(jmiKeyDetails, (String) keyDetailsAction.getValue(Action.LONG_DESCRIPTION), this);
 
+		jmiKeyCut = new JMenuItem(cutAction);
+		jmiKeyCut.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyCut, (String) cutAction.getValue(Action.LONG_DESCRIPTION), this);
+
+		jmiKeyCopy = new JMenuItem(copyAction);
+		jmiKeyCopy.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyCopy, (String) copyAction.getValue(Action.LONG_DESCRIPTION), this);
+
 		jmiKeyUnlock = new JMenuItem(unlockKeyAction);
 		jmiKeyUnlock.setToolTipText(null);
 		new StatusBarChangeHandler(jmiKeyUnlock, (String) unlockKeyAction.getValue(Action.LONG_DESCRIPTION), this);
@@ -2116,10 +2128,35 @@ public final class KseFrame implements StatusBar {
 
 		jpmKey.add(jmiKeyDetails);
 		jpmKey.addSeparator();
+		jpmKey.add(jmiKeyCut);
+		jpmKey.add(jmiKeyCopy);
+		jpmKey.addSeparator();
 		jpmKey.add(jmiKeyUnlock);
 		jpmKey.add(jmiKeySetPassword);
 		jpmKey.add(jmiKeyDelete);
 		jpmKey.add(jmiKeyRename);
+
+		//
+		// Popup menu for when multiple entries are selected
+		//
+
+		jmiMultiEntrySelCut = new JMenuItem(cutAction);
+		jmiMultiEntrySelCut.setToolTipText(null);
+		new StatusBarChangeHandler(jmiMultiEntrySelCut, (String) cutAction.getValue(Action.LONG_DESCRIPTION), this);
+
+		jmiMultEntrySelCopy = new JMenuItem(copyAction);
+		jmiMultEntrySelCopy.setToolTipText(null);
+		new StatusBarChangeHandler(jmiMultEntrySelCopy, (String) copyAction.getValue(Action.LONG_DESCRIPTION), this);
+
+		jmiMultiEntrySelDelete = new JMenuItem(deleteMultipleEntriesAction);
+		jmiMultiEntrySelDelete.setToolTipText(null);
+		new StatusBarChangeHandler(jmiMultiEntrySelDelete,
+				(String) deleteMultipleEntriesAction.getValue(Action.LONG_DESCRIPTION),this);
+
+		jpmMultiEntrySel = new JPopupMenu();
+		jpmMultiEntrySel.add(jmiMultiEntrySelCut);
+		jpmMultiEntrySel.add(jmiMultEntrySelCopy);
+		jpmMultiEntrySel.add(jmiMultiEntrySelDelete);
 	}
 
 	private void maybeShowSelectedEntryDetails(MouseEvent evt) {
@@ -2176,33 +2213,37 @@ public final class KseFrame implements StatusBar {
 
 			if (row != -1) {
 
-				jtKeyStore.setRowSelectionInterval(row, row);
+				if (jtKeyStore.getSelectedRows().length > 1) {
+					jpmMultiEntrySel.show(evt.getComponent(), evt.getX(), evt.getY());
+				} else {
+					jtKeyStore.setRowSelectionInterval(row, row);
 
-				if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
+					if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
 
-					// For KeyStore types that support password protected entries...
-					if (type.hasEntryPasswords()) {
-						// Only allow unlocking from menu if entry is currently locked
-						boolean locked = ((Boolean) jtKeyStore.getValueAt(row, 1)).booleanValue();
-						unlockKeyPairAction.setEnabled(locked);
+						// For KeyStore types that support password protected entries...
+						if (type.hasEntryPasswords()) {
+							// Only allow unlocking from menu if entry is currently locked
+							boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
+							unlockKeyPairAction.setEnabled(locked);
+						}
+
+						jpmKeyPair.show(evt.getComponent(), evt.getX(), evt.getY());
+
+					} else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
+
+						jpmTrustedCertificate.show(evt.getComponent(), evt.getX(), evt.getY());
+
+					} else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_ENTRY)) {
+
+						// For KeyStore types that support password protected entries...
+						if (type.hasEntryPasswords()) {
+							// Only allow unlocking from menu if entry is currently locked
+							boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
+							unlockKeyAction.setEnabled(locked);
+						}
+
+						jpmKey.show(evt.getComponent(), evt.getX(), evt.getY());
 					}
-
-					jpmKeyPair.show(evt.getComponent(), evt.getX(), evt.getY());
-
-				} else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
-
-					jpmTrustedCertificate.show(evt.getComponent(), evt.getX(), evt.getY());
-
-				} else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_ENTRY)) {
-
-					// For KeyStore types that support password protected entries...
-					if (type.hasEntryPasswords()) {
-						// Only allow unlocking from menu if entry is currently locked
-						boolean locked = ((Boolean) jtKeyStore.getValueAt(row, 1)).booleanValue();
-						unlockKeyAction.setEnabled(locked);
-					}
-
-					jpmKey.show(evt.getComponent(), evt.getX(), evt.getY());
 				}
 			} else {
 				jpmKeyStore.show(evt.getComponent(), evt.getX(), evt.getY());
@@ -2423,7 +2464,7 @@ public final class KseFrame implements StatusBar {
 	 * @return KeyStore histories
 	 */
 	public KeyStoreHistory[] getKeyStoreHistories() {
-		return histories.toArray(new KeyStoreHistory[histories.size()]);
+		return histories.toArray(new KeyStoreHistory[0]);
 	}
 
 	/**
@@ -2634,17 +2675,11 @@ public final class KseFrame implements StatusBar {
 		}
 
 		// Can save if active KeyStore has not been saved
-		if (!currentState.isSavedState()) {
-			saveAction.setEnabled(true);
-		} else {
-			saveAction.setEnabled(false);
-		}
+		saveAction.setEnabled(!currentState.isSavedState());
 
 		// Can save all if any KeyStore has been changed since saved
 		boolean saveAll = false;
-		for (int i = 0; i < histories.size(); i++) {
-			KeyStoreHistory h = histories.get(i);
-
+		for (KeyStoreHistory h : histories) {
 			if (!h.getCurrentState().isSavedState()) {
 				saveAll = true; // Yes - can Save All
 				break;
@@ -2658,11 +2693,7 @@ public final class KseFrame implements StatusBar {
 		closeAllAction.setEnabled(true);
 
 		// Can close others?
-		if (jkstpKeyStores.getTabCount() > 1) {
-			closeOthersAction.setEnabled(true);
-		} else {
-			closeOthersAction.setEnabled(false);
-		}
+		closeOthersAction.setEnabled(jkstpKeyStores.getTabCount() > 1);
 
 		KeyStore keyStore = currentState.getKeyStore();
 		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
@@ -3060,20 +3091,19 @@ public final class KseFrame implements StatusBar {
 		jtKeyStore.setAutoResizeMode(autoResizeMode);
 		// Add custom renderers for headers and cells
 		for (int i = 0; i < jtKeyStore.getColumnCount(); i++) {
-			int l = 1;
 			int width = 0;
 			TableColumn column = jtKeyStore.getColumnModel().getColumn(i);
+
 			// new, size columns based on title. Columns are resizable by default
-			TableCellRenderer renderer = column.getHeaderRenderer(); // from:
 			// http://www.java2s.com/Tutorial/Java/0240__Swing/Setcolumnwidthbasedoncellrenderer.htm
 			for (int row = 0; row < jtKeyStore.getRowCount(); row++) {
 				width = 0;
-				renderer = jtKeyStore.getCellRenderer(row, i);
+				TableCellRenderer renderer = jtKeyStore.getCellRenderer(row, i);
 				Component comp = renderer.getTableCellRendererComponent(jtKeyStore, jtKeyStore.getValueAt(row, i),
 						false, false, row, i);
 				width = Math.max(width, comp.getPreferredSize().width);
 			}
-			l = width;
+			int l = width;
 
 			if (i == keyStoreTableColumns.colEntryName()) {
 				column.setMinWidth((2 + res.getString("KeyStoreTableModel.NameColumn")).length() * iFontSize);
