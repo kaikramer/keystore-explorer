@@ -1,10 +1,10 @@
 os: osx
-osx_image: xcode10.1
+osx_image: xcode12.2
 addons:
   homebrew:
     taps: AdoptOpenJDK/openjdk
     casks: adoptopenjdk15
-    packages: 
+    packages:
     - create-dmg
     update: true
 
@@ -35,7 +35,7 @@ deploy:
   file: ${TRAVIS_BUILD_DIR}/kse/build/distributions/kse-*.dmg
   skip_cleanup: true
   tag_name: $TRAVIS_TAG
-  target_commitish: $TRAVIS_COMMIT  
+  target_commitish: $TRAVIS_COMMIT
   draft: true
   overwrite: true
   on:

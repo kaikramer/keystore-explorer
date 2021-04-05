@@ -330,6 +330,7 @@ task dmg(type: Exec, dependsOn: signapp) {
 	  "--icon", "${appBundle}", "150", "130",
 	  "--hide-extension", "${appBundle}",
 	  "--app-drop-link", "370", "130",
+	  "--skip-jenkins",
 	  "${distDir}/${appSimpleName}-${appSimpleVersion}.dmg",
 	  "${appBundleDir}"
 }
