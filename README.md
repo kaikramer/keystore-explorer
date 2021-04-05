@@ -1,5 +1,5 @@
 # KeyStore Explorer
-[![Build Status](http://img.shields.io/travis/kaikramer/keystore-explorer.svg)](https://travis-ci.org/kaikramer/keystore-explorer)
+[![Build Status](https://img.shields.io/github/workflow/status/kaikramer/keystore-explorer/Java%20CI%20with%20Gradle)](https://github.com/kaikramer/keystore-explorer/actions/workflows/gradle.yml)
 [![Release](https://img.shields.io/github/v/release/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/releases)
 [![Downloads](https://img.shields.io/github/downloads/kaikramer/keystore-explorer/total)](https://somsubhra.com/github-release-stats/?username=kaikramer&repository=keystore-explorer)
 [![License](https://img.shields.io/github/license/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
