@@ -276,7 +276,7 @@ public class DProviderInfo extends JEscDialog {
 		 */
 		String match = serviceType + ".";
 
-		ArrayList<String> algorithmList = new ArrayList<String>();
+		ArrayList<String> algorithmList = new ArrayList<>();
 
 		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
@@ -321,7 +321,7 @@ public class DProviderInfo extends JEscDialog {
 		 */
 		String matchAttr = serviceType + "." + algorithm + " ";
 
-		TreeMap<String, String> attributeMap = new TreeMap<String, String>();
+		TreeMap<String, String> attributeMap = new TreeMap<>();
 
 		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
@@ -334,7 +334,7 @@ public class DProviderInfo extends JEscDialog {
 			}
 		}
 
-		ArrayList<String> attributes = new ArrayList<String>();
+		ArrayList<String> attributes = new ArrayList<>();
 
 		for (String key : attributeMap.keySet()) {
 			attributes.add(attributeMap.get(key));
@@ -351,7 +351,7 @@ public class DProviderInfo extends JEscDialog {
 		 */
 		String matchAlias = "Alg.Alias." + serviceType + ".";
 
-		ArrayList<String> aliasList = new ArrayList<String>();
+		ArrayList<String> aliasList = new ArrayList<>();
 
 		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();

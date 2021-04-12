@@ -173,7 +173,7 @@ public class DSignJar extends JEscDialog {
 		jtfSignatureName.setToolTipText(res.getString("DSignJar.jtfSignatureName.tooltip"));
 
 		jlSignatureAlgorithm = new JLabel(res.getString("DSignJar.jlSignatureAlgorithm.text"));
-		jcbSignatureAlgorithm = new JComboBox<SignatureType>();
+		jcbSignatureAlgorithm = new JComboBox<>();
 		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJar.jcbSignatureAlgorithm.tooltip"));
 
@@ -192,7 +192,7 @@ public class DSignJar extends JEscDialog {
 		jcbTimestampServerUrl.setEditable(true);
 		jcbTimestampServerUrl.setEnabled(false);
 		jcbTimestampServerUrl.setToolTipText(res.getString("DSignJar.jcbTimestampServerUrl.tooltip"));
-		jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<String>(URLs.TSA_URLS));
+		jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<>(URLs.TSA_URLS));
 
 		jbOK = new JButton(res.getString("DSignJar.jbOK.text"));
 

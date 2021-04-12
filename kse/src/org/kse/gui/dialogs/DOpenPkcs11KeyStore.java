@@ -115,7 +115,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 		jlSelectProvider = new JLabel(res.getString("DOpenPkcs11KeyStore.jlSelectProvider.text"));
 
-		jcbPkcs11Provider = new JComboBox<String>(new DefaultComboBoxModel<String>(getPkcs11ProviderList()));
+		jcbPkcs11Provider = new JComboBox<>(new DefaultComboBoxModel<>(getPkcs11ProviderList()));
 		jcbPkcs11Provider.setToolTipText(res.getString("DOpenPkcs11KeyStore.jcbPkcs11Provider.tooltip"));
 
 		jrbCreateNew = new JRadioButton(res.getString("DOpenPkcs11KeyStore.jrbCreateNew.text"), false);
@@ -138,11 +138,11 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
 		jlP11Library = new JLabel(res.getString("DOpenPkcs11KeyStore.jlP11Library.text"));
 
-		jtfP11Library = new JComboBox<String>();
+		jtfP11Library = new JComboBox<>();
 		jtfP11Library.setToolTipText(res.getString("DOpenPkcs11KeyStore.jtfP11Library.tooltip"));
 		jtfP11Library.setEditable(true);
 		jtfP11Library.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-		jtfP11Library.setModel(new DefaultComboBoxModel<String>(getLibraryList()));
+		jtfP11Library.setModel(new DefaultComboBoxModel<>(getLibraryList()));
 
 		jbP11LibraryBrowse = new JButton();
 		jbP11LibraryBrowse.setIcon(new ImageIcon(getClass().getResource("images/open.png")));

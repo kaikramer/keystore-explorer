@@ -102,14 +102,14 @@ public class DExamineSsl extends JEscDialog {
 		jcbSslHost.setEditable(true);
 		jcbSslHost.setPrototypeDisplayValue("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 		jcbSslHost.setToolTipText(res.getString("DExamineSsl.jtfSslHost.tooltip"));
-		jcbSslHost.setModel(new DefaultComboBoxModel<String>(getSslHosts()));
+		jcbSslHost.setModel(new DefaultComboBoxModel<>(getSslHosts()));
 
 		jlSslPort = new JLabel(res.getString("DExamineSsl.jlSslPort.text"));
 
 		jcbSslPort = new JComboBox<>();
 		jcbSslPort.setEditable(true);
 		jcbSslPort.setToolTipText(res.getString("DExamineSsl.jtfSslPort.tooltip"));
-		jcbSslPort.setModel(new DefaultComboBoxModel<String>(getSslPorts()));
+		jcbSslPort.setModel(new DefaultComboBoxModel<>(getSslPorts()));
 
 		jcbClientAuth = new JCheckBox(res.getString("DExamineSsl.jlEnableClientAuth.text"));
 

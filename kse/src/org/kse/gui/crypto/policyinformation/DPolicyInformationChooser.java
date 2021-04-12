@@ -207,7 +207,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 			ASN1Sequence policyQualifierInfoSeq = policyInformation.getPolicyQualifiers();
 
 			if (policyQualifierInfoSeq != null) {
-				List<PolicyQualifierInfo> policyQualifierInfo = new ArrayList<PolicyQualifierInfo>();
+				List<PolicyQualifierInfo> policyQualifierInfo = new ArrayList<>();
 
 				for (int i = 0; i < policyQualifierInfoSeq.size(); i++) {
 					PolicyQualifierInfo policyQualInfo = PolicyQualifierInfo.getInstance(

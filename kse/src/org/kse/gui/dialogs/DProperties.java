@@ -212,7 +212,7 @@ public class DProperties extends JEscDialog {
 		try {
 			KeyStore keyStore = currentState.getKeyStore();
 
-			TreeSet<String> aliases = new TreeSet<String>();
+			TreeSet<String> aliases = new TreeSet<>();
 
 			Enumeration<String> enumAliases = keyStore.aliases();
 

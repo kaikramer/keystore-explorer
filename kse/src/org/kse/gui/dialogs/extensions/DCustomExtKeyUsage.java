@@ -150,7 +150,7 @@ public class DCustomExtKeyUsage extends JEscDialog {
 	}
 
 	private void prepopulateWithOidList(Set<ASN1ObjectIdentifier> customExtKeyUsageOids) {
-		Set<ASN1ObjectIdentifier> oids = new HashSet<ASN1ObjectIdentifier>(customExtKeyUsageOids);
+		Set<ASN1ObjectIdentifier> oids = new HashSet<>(customExtKeyUsageOids);
 		jCustomExtendedKeyUsage.setCustomExtKeyUsages(oids);
 	}
 
