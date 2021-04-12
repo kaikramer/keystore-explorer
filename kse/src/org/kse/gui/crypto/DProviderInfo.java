@@ -25,8 +25,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.Provider;
@@ -278,7 +276,7 @@ public class DProviderInfo extends JEscDialog {
 		 */
 		String match = serviceType + ".";
 
-		ArrayList<String> algorithmList = new ArrayList<String>();
+		ArrayList<String> algorithmList = new ArrayList<>();
 
 		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
@@ -323,7 +321,7 @@ public class DProviderInfo extends JEscDialog {
 		 */
 		String matchAttr = serviceType + "." + algorithm + " ";
 
-		TreeMap<String, String> attributeMap = new TreeMap<String, String>();
+		TreeMap<String, String> attributeMap = new TreeMap<>();
 
 		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
@@ -336,7 +334,7 @@ public class DProviderInfo extends JEscDialog {
 			}
 		}
 
-		ArrayList<String> attributes = new ArrayList<String>();
+		ArrayList<String> attributes = new ArrayList<>();
 
 		for (String key : attributeMap.keySet()) {
 			attributes.add(attributeMap.get(key));
@@ -353,7 +351,7 @@ public class DProviderInfo extends JEscDialog {
 		 */
 		String matchAlias = "Alg.Alias." + serviceType + ".";
 
-		ArrayList<String> aliasList = new ArrayList<String>();
+		ArrayList<String> aliasList = new ArrayList<>();
 
 		for (Enumeration<?> names = provider.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
@@ -381,7 +379,7 @@ public class DProviderInfo extends JEscDialog {
 	}
 
 	private String getNodeContents(TreeNode node, int level) {
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		for (int i = 0; i < level; i++) {
 			strBuff.append('\t');

@@ -82,7 +82,7 @@ public class KSE {
 	 * @param args
 	 *            the command line arguments
 	 */
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		try {
 			// To take affect these must be set before the splash screen is instantiated
 			if (OperatingSystem.isMacOs()) {

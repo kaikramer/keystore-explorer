@@ -25,7 +25,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.ResourceBundle;
 

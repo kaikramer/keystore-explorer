@@ -26,7 +26,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -208,7 +207,7 @@ public class DPolicyInformationChooser extends JEscDialog {
 			ASN1Sequence policyQualifierInfoSeq = policyInformation.getPolicyQualifiers();
 
 			if (policyQualifierInfoSeq != null) {
-				List<PolicyQualifierInfo> policyQualifierInfo = new ArrayList<PolicyQualifierInfo>();
+				List<PolicyQualifierInfo> policyQualifierInfo = new ArrayList<>();
 
 				for (int i = 0; i < policyQualifierInfoSeq.size(); i++) {
 					PolicyQualifierInfo policyQualInfo = PolicyQualifierInfo.getInstance(

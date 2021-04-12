@@ -85,7 +85,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
 	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
 	private int nofColumns = 5;
-	private int iColWidth[];
+	private int[] iColWidth;
 
 	/** Column for a property */
 	private int expiryWarnDays = 0;

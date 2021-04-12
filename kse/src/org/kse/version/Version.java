@@ -191,7 +191,7 @@ public class Version implements Comparable<Object>, Serializable {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		for (int i = 0; i < iSections.size(); i++) {
 			strBuff.append(iSections.get(i));

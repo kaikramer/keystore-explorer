@@ -93,7 +93,7 @@ public class PolicyInformationUtil {
 	 *             If policy information is invalid
 	 */
 	public static String toString(PolicyInformation policyInformation) throws IOException {
-		StringBuffer sbPolicyInformation = new StringBuffer();
+		StringBuilder sbPolicyInformation = new StringBuilder();
 
 		ASN1ObjectIdentifier policyIdentifier = policyInformation.getPolicyIdentifier();
 
@@ -105,7 +105,7 @@ public class PolicyInformationUtil {
 		if (policyQualifiers != null) {
 			sbPolicyInformation.append(", ");
 
-			StringBuffer sbPolicyQualifiers = new StringBuffer();
+			StringBuilder sbPolicyQualifiers = new StringBuilder();
 
 			for (int i = 0; i < policyQualifiers.size(); i++) {
 				PolicyQualifierInfo policyQualifierInfo =
@@ -135,7 +135,7 @@ public class PolicyInformationUtil {
 	 *             If policy qualifier info is invalid
 	 */
 	public static String toString(PolicyQualifierInfo policyQualifierInfo) throws IOException {
-		StringBuffer sbPolicyQualifier = new StringBuffer();
+		StringBuilder sbPolicyQualifier = new StringBuilder();
 
 		ASN1ObjectIdentifier policyQualifierId = policyQualifierInfo.getPolicyQualifierId();
 
@@ -167,7 +167,7 @@ public class PolicyInformationUtil {
 	 * @return String representation of user notice
 	 */
 	public static String toString(UserNotice userNotice) {
-		StringBuffer sbUserNotice = new StringBuffer();
+		StringBuilder sbUserNotice = new StringBuilder();
 
 		NoticeReference noticeReference = userNotice.getNoticeRef();
 
@@ -185,7 +185,7 @@ public class PolicyInformationUtil {
 
 			ASN1Integer[] noticeNumbers = noticeReference.getNoticeNumbers();
 
-			StringBuffer sbNoticeNumbers = new StringBuffer();
+			StringBuilder sbNoticeNumbers = new StringBuilder();
 
 			if (noticeNumbers != null) {
 				for (int i = 0; i < noticeNumbers.length; i++) {

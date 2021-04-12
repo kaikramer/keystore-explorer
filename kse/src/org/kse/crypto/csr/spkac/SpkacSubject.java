@@ -321,7 +321,7 @@ public class SpkacSubject {
 			properties.add(formatNameValue(C_PROPERTY, getC()));
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < properties.size(); i++) {
 			sb.append(properties.get(i));

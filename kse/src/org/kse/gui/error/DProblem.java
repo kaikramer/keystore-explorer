@@ -22,8 +22,6 @@ package org.kse.gui.error;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
@@ -167,7 +165,7 @@ public class DProblem extends JEscDialog {
 	}
 
 	private String formatCauses() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("<html>");
 		sb.append(res.getString("DProblem.PossibleReasons.text"));
@@ -184,7 +182,7 @@ public class DProblem extends JEscDialog {
 	}
 
 	private String breakLine(String line, int maxLineLength) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		StringTokenizer strTok = new StringTokenizer(line, " ");
 

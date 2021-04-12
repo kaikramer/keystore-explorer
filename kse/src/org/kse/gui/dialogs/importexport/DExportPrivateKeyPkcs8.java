@@ -25,9 +25,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -371,7 +368,7 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
 	}
 
 	private void populatePbeAlgs() {
-		Pkcs8PbeType pbeAlgs[] = Pkcs8PbeType.values();
+		Pkcs8PbeType[] pbeAlgs = Pkcs8PbeType.values();
 
 		for (int i = 0; i < pbeAlgs.length; i++) {
 			jcbPbeAlg.addItem(pbeAlgs[i]);

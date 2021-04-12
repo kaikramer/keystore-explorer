@@ -21,9 +21,7 @@ package org.kse.gui.error;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.FlowLayout; 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
@@ -204,7 +202,7 @@ public class DError extends JEscDialog {
 	}
 
 	private String breakLine(String line) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		StringTokenizer strTok = new StringTokenizer(line, " ");
 

@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -182,7 +181,7 @@ public final class X509CertUtil {
 
 		// Check all characters are base 64. Discard any zero bytes that be
 		// present if UTF-16 encoding is used but will mess up a base 64 decode
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		nextChar: for (int i = 0; i < toTest.length(); i++) {
 			char c = toTest.charAt(i);
@@ -282,7 +281,7 @@ public final class X509CertUtil {
 	 *            X.509 certificates
 	 * @return The ordered X.509 certificates
 	 */
-	public static X509Certificate[] orderX509CertChain(X509Certificate certs[]) {
+	public static X509Certificate[] orderX509CertChain(X509Certificate[] certs) {
 
 		if (certs == null) {
 			return new X509Certificate[0];
@@ -537,7 +536,7 @@ public final class X509CertUtil {
 	 * @throws CryptoException
 	 *             If there is a problem establishing trust
 	 */
-	public static X509Certificate[] establishTrust(X509Certificate cert, KeyStore keyStores[]) throws CryptoException {
+	public static X509Certificate[] establishTrust(X509Certificate cert, KeyStore[] keyStores) throws CryptoException {
 		ArrayList<X509Certificate> ksCerts = new ArrayList<>();
 
 		for (KeyStore keyStore : keyStores) {

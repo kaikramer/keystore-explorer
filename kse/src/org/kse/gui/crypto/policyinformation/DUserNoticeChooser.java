@@ -26,7 +26,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -239,7 +238,7 @@ public class DUserNoticeChooser extends JEscDialog {
 		ASN1Integer[] noticeNumbers = noticeReference.getNoticeNumbers();
 
 		if (noticeNumbers != null) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			for (int i = 0; i < noticeNumbers.length; i++) {
 				ASN1Integer noticeNumber = noticeNumbers[i];

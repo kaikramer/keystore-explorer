@@ -25,8 +25,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -58,8 +56,6 @@ import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -103,10 +99,10 @@ public class DViewCertificate extends JEscDialog {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	public static int NONE = 0;
-	public static int IMPORT = 1;
-	public static int EXPORT = 2;
-	public static int IMPORT_EXPORT = 3;
+	public static final int NONE = 0;
+	public static final int IMPORT = 1;
+	public static final int EXPORT = 2;
+	public static final int IMPORT_EXPORT = 3;
 	private int importExport = 0;
 
 	private KseFrame kseFrame;

@@ -25,8 +25,6 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
@@ -214,7 +212,7 @@ public class DProperties extends JEscDialog {
 		try {
 			KeyStore keyStore = currentState.getKeyStore();
 
-			TreeSet<String> aliases = new TreeSet<String>();
+			TreeSet<String> aliases = new TreeSet<>();
 
 			Enumeration<String> enumAliases = keyStore.aliases();
 
@@ -740,7 +738,7 @@ public class DProperties extends JEscDialog {
 	}
 
 	private String getNodeContents(TreeNode node, int level) {
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		strBuff.append(INDENT.toString(level));
 

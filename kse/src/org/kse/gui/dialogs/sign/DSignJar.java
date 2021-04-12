@@ -22,9 +22,6 @@ package org.kse.gui.dialogs.sign;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -176,7 +173,7 @@ public class DSignJar extends JEscDialog {
 		jtfSignatureName.setToolTipText(res.getString("DSignJar.jtfSignatureName.tooltip"));
 
 		jlSignatureAlgorithm = new JLabel(res.getString("DSignJar.jlSignatureAlgorithm.text"));
-		jcbSignatureAlgorithm = new JComboBox<SignatureType>();
+		jcbSignatureAlgorithm = new JComboBox<>();
 		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJar.jcbSignatureAlgorithm.tooltip"));
 
@@ -195,7 +192,7 @@ public class DSignJar extends JEscDialog {
 		jcbTimestampServerUrl.setEditable(true);
 		jcbTimestampServerUrl.setEnabled(false);
 		jcbTimestampServerUrl.setToolTipText(res.getString("DSignJar.jcbTimestampServerUrl.tooltip"));
-		jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<String>(URLs.TSA_URLS));
+		jcbTimestampServerUrl.setModel(new DefaultComboBoxModel<>(URLs.TSA_URLS));
 
 		jbOK = new JButton(res.getString("DSignJar.jbOK.text"));
 
@@ -291,7 +288,7 @@ public class DSignJar extends JEscDialog {
 		 * signing, i.e. any characters that are not 'a-z', 'A-Z', '0-9', '_' or
 		 * '-' are converted to '_'
 		 */
-		StringBuffer sb = new StringBuffer(signatureName.length());
+		StringBuilder sb = new StringBuilder(signatureName.length());
 
 		for (int i = 0; i < signatureName.length(); i++) {
 			char c = signatureName.charAt(i);

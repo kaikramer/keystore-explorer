@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
@@ -50,8 +48,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
@@ -339,7 +335,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 			 */
 			String value = "0x" + getValue().toString(16).toUpperCase();
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			for (int i = 0; i < value.length(); i++) {
 				sb.append(value.charAt(i));
