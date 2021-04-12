@@ -42,10 +42,10 @@ public class JavaFXFileChooser extends JFileChooser {
 
 	private static final long serialVersionUID = 706991877631924379L;
 
-	static private Class<?> platformClass;
-	static private Class<?> fileChooserClass;
-	static private Class<?> extensionFilterClass;
-	static private Class<?> windowClass;
+	private static Class<?> platformClass;
+	private static Class<?> fileChooserClass;
+	private static Class<?> extensionFilterClass;
+	private static Class<?> windowClass;
 
 	private static boolean fxAvailable = false;
 
