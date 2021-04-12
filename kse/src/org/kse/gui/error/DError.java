@@ -21,9 +21,7 @@ package org.kse.gui.error;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.FlowLayout; 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
