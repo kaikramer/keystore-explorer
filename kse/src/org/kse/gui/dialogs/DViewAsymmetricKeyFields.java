@@ -335,7 +335,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 			 */
 			String value = "0x" + getValue().toString(16).toUpperCase();
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 
 			for (int i = 0; i < value.length(); i++) {
 				sb.append(value.charAt(i));

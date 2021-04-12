@@ -165,7 +165,7 @@ public class DProblem extends JEscDialog {
 	}
 
 	private String formatCauses() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("<html>");
 		sb.append(res.getString("DProblem.PossibleReasons.text"));
@@ -182,7 +182,7 @@ public class DProblem extends JEscDialog {
 	}
 
 	private String breakLine(String line, int maxLineLength) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		StringTokenizer strTok = new StringTokenizer(line, " ");
 

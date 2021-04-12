@@ -202,7 +202,7 @@ public class DError extends JEscDialog {
 	}
 
 	private String breakLine(String line) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		StringTokenizer strTok = new StringTokenizer(line, " ");
 

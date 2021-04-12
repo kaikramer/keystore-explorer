@@ -288,7 +288,7 @@ public class DSignJar extends JEscDialog {
 		 * signing, i.e. any characters that are not 'a-z', 'A-Z', '0-9', '_' or
 		 * '-' are converted to '_'
 		 */
-		StringBuffer sb = new StringBuffer(signatureName.length());
+		StringBuilder sb = new StringBuilder(signatureName.length());
 
 		for (int i = 0; i < signatureName.length(); i++) {
 			char c = signatureName.charAt(i);

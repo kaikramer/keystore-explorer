@@ -184,7 +184,7 @@ public class DErrorDetail extends JEscDialog {
 	}
 
 	private void copyPressed() {
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		Throwable copyError = error;
 

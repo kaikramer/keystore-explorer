@@ -181,7 +181,7 @@ public final class X509CertUtil {
 
 		// Check all characters are base 64. Discard any zero bytes that be
 		// present if UTF-16 encoding is used but will mess up a base 64 decode
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		nextChar: for (int i = 0; i < toTest.length(); i++) {
 			char c = toTest.charAt(i);

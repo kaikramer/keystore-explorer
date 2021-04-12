@@ -76,7 +76,7 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 		// The string is divided by spaces into groups of four hex characters.
 		String hexSerialNumber = serialNumber.toString(16).toUpperCase();
 
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		strBuff.append("0x");
 

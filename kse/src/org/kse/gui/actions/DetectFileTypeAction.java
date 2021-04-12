@@ -96,7 +96,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
 				message = MessageFormat.format(res.getString("DetectFileTypeAction.DetectedFileType.message"),
 						detectTypeFile.getName(), fileType.friendly());
 			} else {
-				StringBuffer sbRecognisedTypes = new StringBuffer();
+				StringBuilder sbRecognisedTypes = new StringBuilder();
 
 				for (CryptoFileType type : CryptoFileType.values()) {
 					sbRecognisedTypes.append(MessageFormat.format("<li>{0}</li>", type.friendly()));

@@ -738,7 +738,7 @@ public class DProperties extends JEscDialog {
 	}
 
 	private String getNodeContents(TreeNode node, int level) {
-		StringBuffer strBuff = new StringBuffer();
+		StringBuilder strBuff = new StringBuilder();
 
 		strBuff.append(INDENT.toString(level));
 
