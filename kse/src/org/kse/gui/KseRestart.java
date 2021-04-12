@@ -63,7 +63,7 @@ public class KseRestart {
 
 		File kseExe = new File(kseInstallDir, KSE_EXE);
 
-		String toExec[] = new String[] { kseExe.getPath() };
+		String[] toExec = new String[] { kseExe.getPath() };
 
 		try {
 			Runtime.getRuntime().exec(toExec);
@@ -79,7 +79,7 @@ public class KseRestart {
 
 		File kseJar = new File(kseInstallDir, KSE_JAR);
 
-		String toExec[] = new String[] { javaBin.getPath(), "-jar", kseJar.getPath() };
+		String[] toExec = new String[] { javaBin.getPath(), "-jar", kseJar.getPath() };
 
 		try {
 			Runtime.getRuntime().exec(toExec);
@@ -96,7 +96,7 @@ public class KseRestart {
 		File javaAppStub = new File(new File(new File(new File(kseInstallDir, kseApp), "Contents"), "MacOS"),
 				"JavaApplicationStub");
 
-		String toExec[] = new String[] { javaAppStub.getPath() };
+		String[] toExec = new String[] { javaAppStub.getPath() };
 
 		try {
 			Runtime.getRuntime().exec(toExec);
@@ -110,7 +110,7 @@ public class KseRestart {
 
 		String kseClasspath = System.getProperty(JAVA_CLASS_PATH);
 
-		String toExec[] = new String[] { javaBin.getPath(), "-classpath", kseClasspath, KSE.class.getName() };
+		String[] toExec = new String[] { javaBin.getPath(), "-classpath", kseClasspath, KSE.class.getName() };
 
 		try {
 			Runtime.getRuntime().exec(toExec);

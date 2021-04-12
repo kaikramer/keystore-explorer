@@ -188,7 +188,7 @@ public class MidletSigner {
 			Signature signature = Signature.getInstance(SignatureType.SHA1_RSA.jce());
 			signature.initSign(privateKey);
 
-			byte buffer[] = new byte[1024];
+			byte[] buffer = new byte[1024];
 			int read = 0;
 
 			while ((read = fis.read(buffer)) != -1) {

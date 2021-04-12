@@ -368,7 +368,7 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
 	}
 
 	private void populatePbeAlgs() {
-		Pkcs8PbeType pbeAlgs[] = Pkcs8PbeType.values();
+		Pkcs8PbeType[] pbeAlgs = Pkcs8PbeType.values();
 
 		for (int i = 0; i < pbeAlgs.length; i++) {
 			jcbPbeAlg.addItem(pbeAlgs[i]);

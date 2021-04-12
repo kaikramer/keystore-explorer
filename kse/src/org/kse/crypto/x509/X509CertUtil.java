@@ -281,7 +281,7 @@ public final class X509CertUtil {
 	 *            X.509 certificates
 	 * @return The ordered X.509 certificates
 	 */
-	public static X509Certificate[] orderX509CertChain(X509Certificate certs[]) {
+	public static X509Certificate[] orderX509CertChain(X509Certificate[] certs) {
 
 		if (certs == null) {
 			return new X509Certificate[0];
@@ -536,7 +536,7 @@ public final class X509CertUtil {
 	 * @throws CryptoException
 	 *             If there is a problem establishing trust
 	 */
-	public static X509Certificate[] establishTrust(X509Certificate cert, KeyStore keyStores[]) throws CryptoException {
+	public static X509Certificate[] establishTrust(X509Certificate cert, KeyStore[] keyStores) throws CryptoException {
 		ArrayList<X509Certificate> ksCerts = new ArrayList<>();
 
 		for (KeyStore keyStore : keyStores) {

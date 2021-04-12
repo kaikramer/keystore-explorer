@@ -380,7 +380,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 	}
 
 	private void populatePbeAlgs() {
-		OpenSslPbeType pbeAlgs[] = OpenSslPbeType.values();
+		OpenSslPbeType[] pbeAlgs = OpenSslPbeType.values();
 
 		for (int i = 0; i < pbeAlgs.length; i++) {
 			jcbPbeAlg.addItem(pbeAlgs[i]);
