@@ -312,7 +312,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
 				}
 			}
 
-			if ((privKey == null) || (certsList.size() == 0)) {
+			if ((privKey == null) || (certsList.isEmpty())) {
 				JOptionPane.showMessageDialog(this, MessageFormat.format(
 						res.getString("DImportKeyPairPkcs12.NoKeyPairPkcs12File.message"), pkcs12File.getName()),
 						getTitle(), JOptionPane.INFORMATION_MESSAGE);

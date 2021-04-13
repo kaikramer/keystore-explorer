@@ -595,8 +595,7 @@ public class DViewCertificate extends JEscDialog {
 				Set<?> critExts = cert.getCriticalExtensionOIDs();
 				Set<?> nonCritExts = cert.getNonCriticalExtensionOIDs();
 
-				if (critExts != null && critExts.size() != 0
-						|| nonCritExts != null && nonCritExts.size() != 0) {
+				if ((critExts != null && !critExts.isEmpty()) || (nonCritExts != null && !nonCritExts.isEmpty())) {
 					jbExtensions.setEnabled(true);
 				} else {
 					jbExtensions.setEnabled(false);
