@@ -420,7 +420,7 @@ public class DViewCrl extends JEscDialog {
 		Set<?> critExts = crl.getCriticalExtensionOIDs();
 		Set<?> nonCritExts = crl.getNonCriticalExtensionOIDs();
 
-		if (critExts != null && critExts.size() != 0 || nonCritExts != null && nonCritExts.size() != 0) {
+		if ((critExts != null && !critExts.isEmpty()) || (nonCritExts != null && !nonCritExts.isEmpty())) {
 			jbCrlExtensions.setEnabled(true);
 		} else {
 			jbCrlExtensions.setEnabled(false);

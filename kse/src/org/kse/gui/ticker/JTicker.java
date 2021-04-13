@@ -276,8 +276,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 	 */
 	@Override
 	public void intervalAdded(ListDataEvent event) {
-		calculatePositionArray();
-		setPreferredSize(calculatePreferredSize());
+		contentsChanged(event);
 	}
 
 	/**
@@ -288,8 +287,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 	 */
 	@Override
 	public void intervalRemoved(ListDataEvent event) {
-		calculatePositionArray();
-		setPreferredSize(calculatePreferredSize());
+		contentsChanged(event);
 	}
 
 	/**
