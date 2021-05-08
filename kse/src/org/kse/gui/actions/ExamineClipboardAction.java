@@ -25,15 +25,21 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
@@ -63,6 +69,9 @@ import org.kse.gui.password.DGetPassword;
  */
 public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
+	private static ResourceBundle resExt = ResourceBundle
+			.getBundle("org/kse/gui/dialogs/extensions/resources");
+	
 	private static final long serialVersionUID = -4374420674229658652L;
 
 	/**
@@ -121,7 +130,22 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		if (data == null) {
 			return;
 		}
-
+		try 
+		{
+			URL url = new URL(data);
+			if (url != null) {
+				if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
+					downloadCert(url);
+					return;
+				} else if (url.getPath().endsWith(".crl")) {
+					downloadCrl(url);
+					return;
+				}
+			}
+		} 
+		catch (IOException | CryptoException e) {
+			//ignore
+		}
 		try {
 
 			CryptoFileType fileType = CryptoFileUtil.detectFileType(data.getBytes());
@@ -165,6 +189,34 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
+		}
+	}
+
+	private void downloadCrl(URL url) throws IOException, CryptoException {
+		URLConnection urlConn = url.openConnection();
+		try (InputStream is = urlConn.getInputStream()) {
+			X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+			if (crl != null) {
+				DViewCrl dViewCrl = new DViewCrl(frame,
+						MessageFormat.format(resExt.getString("DViewExtensions.ViewCrl.Title"), url.toString()),
+						crl);
+				dViewCrl.setLocationRelativeTo(frame);
+				dViewCrl.setVisible(true);
+			}
+		}
+	}
+
+	private void downloadCert(URL url) throws IOException, CryptoException {
+		URLConnection urlConn = url.openConnection();
+		try (InputStream is = urlConn.getInputStream()) {
+			X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
+			if (certs != null && certs.length > 0) {
+				DViewCertificate dViewCertificate = new DViewCertificate(frame,
+						MessageFormat.format(resExt.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
+						null, DViewCertificate.NONE);
+				dViewCertificate.setLocationRelativeTo(frame);
+				dViewCertificate.setVisible(true);
+			}
 		}
 	}
 
