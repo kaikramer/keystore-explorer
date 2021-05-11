@@ -24,6 +24,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -33,11 +34,13 @@ import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
@@ -58,6 +61,7 @@ import org.kse.gui.dialogs.DViewCrl;
 import org.kse.gui.dialogs.DViewCsr;
 import org.kse.gui.dialogs.DViewPrivateKey;
 import org.kse.gui.dialogs.DViewPublicKey;
+import org.kse.gui.dnd.DroppedFileHandler;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
@@ -71,7 +75,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 	private static ResourceBundle resExt = ResourceBundle
 			.getBundle("org/kse/gui/dialogs/extensions/resources");
-	
+
 	private static final long serialVersionUID = -4374420674229658652L;
 
 	/**
@@ -105,14 +109,19 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		// get clipboard contents, but only string types, not files
 		Transferable t = clipboard.getContents(null);
 		try {
+
 			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				String data;
-				data = (String) t.getTransferData(DataFlavor.stringFlavor);
-				show(data);
+				show((String) t.getTransferData(DataFlavor.stringFlavor));
 			}
 
-			// TODO handle other flavor types
+			if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 
+				@SuppressWarnings("unchecked")
+				final List<File> droppedFiles = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+
+				// open files in new thread, so we can return quickly
+				SwingUtilities.invokeLater(() -> DroppedFileHandler.openFiles(kseFrame, droppedFiles));
+			}
 		} catch (UnsupportedFlavorException e) {
 			// ignore
 		} catch (IOException e) {
@@ -120,34 +129,24 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	/**
-	 * Show clipboard content
-	 *
-	 * @param data
-	 */
-	public void show(String data) {
+	private void show(String data) {
 
 		if (data == null) {
 			return;
 		}
-		try 
-		{
+		try {
 			URL url = new URL(data);
-			if (url != null) {
-				if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
-					downloadCert(url);
-					return;
-				} else if (url.getPath().endsWith(".crl")) {
-					downloadCrl(url);
-					return;
-				}
+			if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
+				downloadCert(url);
+				return;
+			} else if (url.getPath().endsWith(".crl")) {
+				downloadCrl(url);
+				return;
 			}
-		} 
-		catch (IOException | CryptoException e) {
-			//ignore
+		} catch (IOException | CryptoException e) {
+			// ignore
 		}
 		try {
-
 			CryptoFileType fileType = CryptoFileUtil.detectFileType(data.getBytes());
 
 			switch (fileType) {
