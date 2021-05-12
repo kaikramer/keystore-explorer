@@ -25,6 +25,7 @@ import static org.kse.crypto.filetype.CryptoFileType.CRL;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
+import static org.kse.crypto.filetype.CryptoFileType.JAR;
 import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
@@ -72,9 +73,13 @@ public class CryptoFileUtil {
 	private static final int JKS_MAGIC_NUMBER = 0xFEEDFEED;
 	private static final int JCEKS_MAGIC_NUMBER = 0xCECECECE;
 
+	private static final int ZIP_MAGIC_NUMBER1 = 0x4C5A4950;
+	private static final int ZIP_MAGIC_NUMBER2 = 0x504B0304;
+	private static final int ZIP_MAGIC_NUMBER3 = 0x504B0506;
+	private static final int ZIP_MAGIC_NUMBER4 = 0x504B0708;
+
 	private CryptoFileUtil() {
 	}
-
 
 	/**
 	 * Detect the cryptographic file type of the supplied input stream.
@@ -92,10 +97,13 @@ public class CryptoFileUtil {
 	 *
 	 * @param data Cryptographic data
 	 * @return Type or null if file not of a recognised type
-	 * @throws IOException
-	 *             If an I/O problem occurred
+	 * @throws IOException If an I/O problem occurred
 	 */
 	public static CryptoFileType detectFileType(byte[] data) throws IOException {
+
+		if (isJarFile(data)) {
+			return JAR;
+		}
 
 		EncryptionType pkcs8EncType = Pkcs8Util.getEncryptionType(data);
 
@@ -167,6 +175,23 @@ public class CryptoFileUtil {
 		// Not a recognised type
 		return UNKNOWN;
 	}
+
+	private static boolean isJarFile(byte[] data) {
+		int magic = (data[0] << 24) & 0xff000000
+				| (data[1] << 16) & 0x00ff0000
+				| (data[2] << 8) & 0x0000ff00
+				| (data[3] << 0) & 0x000000ff;
+
+		if (magic == ZIP_MAGIC_NUMBER1
+				|| magic == ZIP_MAGIC_NUMBER2
+				|| magic == ZIP_MAGIC_NUMBER3
+				|| magic == ZIP_MAGIC_NUMBER4)  {
+			return true;
+		}
+
+		return false;
+	}
+
 
 	private static CsrType detectCsrType(byte[] csrData) throws IOException {
 		try {

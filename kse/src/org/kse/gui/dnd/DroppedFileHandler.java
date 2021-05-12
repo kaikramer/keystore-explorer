@@ -53,7 +53,7 @@ public class DroppedFileHandler {
 				SwingUtilities.invokeLater(() -> openFiles(kseFrame, droppedFiles));
 
 			}
-			/*			TODO
+			/*			TODO dropped PEM data
 				else if (trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				String str = trans.getTransferData(DataFlavor.stringFlavor).toString();
 				X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toInputStream(str, "UTF-8"));

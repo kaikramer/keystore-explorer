@@ -343,16 +343,15 @@ public class JarSigner {
 	public static boolean hasSignature(File jarFile, String signatureName) throws IOException {
 		try (JarFile jar = new JarFile(jarFile)) {
 
-			// Look for signature file (DSA or RSA)
+			// Look for signature file
 			for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements();) {
 				JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-				if (!jarEntry.isDirectory()) {
-					if ((jarEntry.getName().equalsIgnoreCase(MessageFormat.format(METAINF_FILE_LOCATION, signatureName,
-							DSA_SIG_BLOCK_EXT)))
-							|| (jarEntry.getName().equalsIgnoreCase(MessageFormat.format(METAINF_FILE_LOCATION,
-									signatureName, RSA_SIG_BLOCK_EXT)))) {
-						return true;
-					}
+				if (!jarEntry.isDirectory()
+						&& (jarEntry.getName().equalsIgnoreCase(
+								MessageFormat.format(METAINF_FILE_LOCATION, signatureName, DSA_SIG_BLOCK_EXT)))
+						|| (jarEntry.getName().equalsIgnoreCase(
+								MessageFormat.format(METAINF_FILE_LOCATION, signatureName, RSA_SIG_BLOCK_EXT)))) {
+					return true;
 				}
 			}
 

@@ -46,6 +46,7 @@ import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.publickey.OpenSslPubUtil;
+import org.kse.crypto.signing.JarParser;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
@@ -108,6 +109,11 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 			CryptoFileType fileType = CryptoFileUtil.detectFileType(file);
 
 			switch (fileType) {
+			case JAR:
+				JarParser jarParser = new JarParser(file);
+				X509Certificate[] signerCerificates = jarParser.getSignerCerificates();
+				showCerts(signerCerificates, file.getName());
+				break;
 			case JCEKS_KS:
 			case JKS_KS:
 			case PKCS12_KS:
@@ -119,7 +125,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 				openAction.openKeyStore(file);
 				break;
 			case CERT:
-				openCert(file);
+				showCerts(openCertificate(file), file.getName());
 				break;
 			case CRL:
 				openCrl(file);
@@ -155,12 +161,10 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private void openCert(File file) throws CryptoException {
-		X509Certificate[] certs = openCertificate(file);
-
+	private void showCerts(X509Certificate[] certs, String fileName) throws CryptoException {
 		if ((certs != null) && (certs.length > 0)) {
 			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-					res.getString("ExamineFileAction.CertDetailsFile.Title"), file.getName()),
+					res.getString("ExamineFileAction.CertDetailsFile.Title"), fileName),
 					certs, kseFrame, DViewCertificate.IMPORT_EXPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);

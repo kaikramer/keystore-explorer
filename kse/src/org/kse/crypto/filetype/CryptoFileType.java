@@ -80,6 +80,9 @@ public enum CryptoFileType {
 	/** OpenSSL Public Key */
 	OPENSSL_PUB("CryptoFileType.OpenSslPub"),
 
+	/** JAR file (possibly signed and containing certificates) */
+	JAR("CryptoFileType.Jar"),
+
 	/** Unknown file type */
 	UNKNOWN("CryptoFileType.Unknown");
 
