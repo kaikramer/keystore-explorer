@@ -136,7 +136,9 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		}
 		try {
 			URL url = new URL(data);
-			if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
+			if (url.getPath().endsWith(".cer")
+					|| url.getPath().endsWith(".crt")
+					|| url.getPath().endsWith(".pem")) {
 				downloadCert(url);
 				return;
 			} else if (url.getPath().endsWith(".crl")) {
