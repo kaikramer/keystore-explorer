@@ -117,9 +117,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 				// open files in new thread, so we can return quickly
 				SwingUtilities.invokeLater(() -> DroppedFileHandler.openFiles(kseFrame, droppedFiles));
-			}
-			else
-			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			} else if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				show((String) t.getTransferData(DataFlavor.stringFlavor));
 			}
 
