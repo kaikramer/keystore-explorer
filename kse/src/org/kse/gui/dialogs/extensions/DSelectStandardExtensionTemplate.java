@@ -41,18 +41,24 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.IPAddress;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.publickey.KeyIdentifierGenerator;
 import org.kse.crypto.x509.ExtendedKeyUsageType;
+import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionType;
@@ -86,8 +92,10 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 
 	private PublicKey authorityPublicKey;
 	private PublicKey subjectPublicKey;
+	private X500Name subjectCertName;
 
 	private boolean cancelled = true;
+
 
 	/**
 	 * Creates a new DSelectStandardExtensionTemplate dialog.
@@ -95,11 +103,14 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 	 * @param parent Parent frame
 	 * @param authorityPublicKey Key of issuer certificate
 	 * @param subjectPublicKey Key of new certificate
+	 * @param subjectCertName Subject DN
 	 */
-	public DSelectStandardExtensionTemplate(JDialog parent, PublicKey authorityPublicKey, PublicKey subjectPublicKey) {
+	public DSelectStandardExtensionTemplate(JDialog parent, PublicKey authorityPublicKey, PublicKey subjectPublicKey,
+			X500Name subjectCertName) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.authorityPublicKey = authorityPublicKey;
 		this.subjectPublicKey = subjectPublicKey;
+		this.subjectCertName = subjectCertName;
 		setTitle(res.getString("DSelectStandardExtensionTemplate.Title"));
 		initComponents();
 	}
@@ -206,6 +217,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 			if (jrbSslServer.isSelected()) {
 				addKeyUsage(extensionSet, KeyUsage.digitalSignature | KeyUsage.keyEncipherment);
 				addExtKeyUsage(extensionSet, ExtendedKeyUsageType.SERVER_AUTH.oid());
+				addSAN(extensionSet, subjectCertName);
 			}
 
 			if (jrbCodeSigning.isSelected()) {
@@ -219,6 +231,32 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 		} catch (Exception e) {
 			DError.displayError(this, e);
 		}
+	}
+
+	private void addSAN(X509ExtensionSet extensionSet, X500Name subjectDN) throws IOException {
+
+		GeneralName[] generalNames = new GeneralName[1];
+
+		if (subjectDN == null) {
+			// add extension but without value so we can remind the user later to add a value
+			generalNames[0] = new GeneralName(GeneralName.dNSName, new DERIA5String(""));
+		} else {
+			// if subject DN already exists, we use value of CN
+			String cn = X500NameUtils.extractCN(subjectDN);
+			if (cn == "") {
+				generalNames[0] = new GeneralName(GeneralName.dNSName, new DERIA5String(""));
+			} else {
+				if (IPAddress.isValid(cn)) {
+					generalNames[0] = new GeneralName(GeneralName.iPAddress, cn);
+				} else {
+					generalNames[0] = new GeneralName(GeneralName.dNSName, new DERIA5String(cn));
+				}
+			}
+		}
+
+		byte[] sanEncoded = X509Ext.wrapInOctetString(new GeneralNames(generalNames).getEncoded());
+
+		extensionSet.addExtension(X509ExtensionType.SUBJECT_ALTERNATIVE_NAME.oid(), false, sanEncoded);
 	}
 
 	private void addAuthorityKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
@@ -269,7 +307,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 		final KeyPair subjectKP = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
 
 		DSelectStandardExtensionTemplate dialog = new DSelectStandardExtensionTemplate(new JDialog(),
-				issuerKP.getPublic(), subjectKP.getPublic());
+				issuerKP.getPublic(), subjectKP.getPublic(), new X500Name("cn=www.example.com"));
 		DialogViewer.run(dialog);
 	}
 }

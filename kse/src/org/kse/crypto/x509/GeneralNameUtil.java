@@ -167,6 +167,39 @@ public class GeneralNameUtil {
 		}
 	}
 
+
+	public static boolean isGeneralNameEmpty(GeneralName generalName) {
+
+		if (generalName == null) {
+			return true;
+		}
+
+		switch (generalName.getTagNo()) {
+		case GeneralName.directoryName:
+			X500Name directoryName = (X500Name) generalName.getName();
+			return (directoryName == null) || (directoryName.getRDNs().length == 0);
+		case GeneralName.dNSName:
+			DERIA5String dnsName = (DERIA5String) generalName.getName();
+			return (dnsName == null) || dnsName.getString().isEmpty();
+		case GeneralName.iPAddress:
+			byte[] ipAddressBytes = ((ASN1OctetString) generalName.getName()).getOctets();
+			return (ipAddressBytes == null) || (ipAddressBytes.length == 0);
+		case GeneralName.registeredID:
+			ASN1ObjectIdentifier registeredId = (ASN1ObjectIdentifier) generalName.getName();
+			return (registeredId == null) || registeredId.toString().isEmpty();
+		case GeneralName.rfc822Name:
+			DERIA5String rfc822Name = (DERIA5String) generalName.getName();
+			return (rfc822Name == null) || rfc822Name.getString().isEmpty();
+		case GeneralName.uniformResourceIdentifier:
+			DERIA5String uri = (DERIA5String) generalName.getName();
+			return (uri == null) || uri.getString().isEmpty();
+		case GeneralName.otherName:
+			return false;
+		default:
+			return false;
+		}
+	}
+
 	/**
 	 * Parse UPN/otherName
 	 *

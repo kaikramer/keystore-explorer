@@ -106,7 +106,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-		// get clipboard contents, but only string types, not files
+		// get clipboard contents
 		Transferable t = clipboard.getContents(null);
 		try {
 
@@ -311,7 +311,8 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
 		if (certs != null && certs.length > 0) {
 			DViewCertificate dViewCertificate = new DViewCertificate(frame,
-					res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame, DViewCertificate.IMPORT_EXPORT);
+					res.getString("ExamineClipboardAction.CertDetails.Title"), certs, kseFrame,
+					DViewCertificate.IMPORT_EXPORT);
 			dViewCertificate.setLocationRelativeTo(frame);
 			dViewCertificate.setVisible(true);
 		}

@@ -69,9 +69,13 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.x509.GeneralNameUtil;
+import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetLoadException;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
@@ -120,27 +124,24 @@ public class DAddExtensions extends JEscDialog {
 	private X500Name issuerCertName;
 	private BigInteger issuerCertSerialNumber;
 	private PublicKey subjectPublicKey;
+	private X500Name subjectCertName;
 
 	/**
 	 * Creates a new DAddExtensions dialog.
 	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param extensions
-	 *            Extensions to add to
-	 * @param issuerPublicKey
-	 *            Authority public key
-	 * @param issuerCertName
-	 *            Authority certificate name
-	 * @param issuerCertSerialNumber
-	 *            Authority certificate serial number
-	 * @param subjectPublicKey
-	 *            Subject public key
+	 * @param parent Parent frame
+	 * @param title The dialog title
+	 * @param extensions Extensions to add to
+	 * @param issuerPublicKey Authority public key
+	 * @param issuerCertName Authority certificate name
+	 * @param issuerCertSerialNumber Authority certificate serial number
+	 * @param subjectPublicKey Subject public key
+	 * @param subjectCertName Subject DN
 	 */
 	public DAddExtensions(JFrame parent, String title, X509ExtensionSet extensions, PublicKey issuerPublicKey,
-			X500Name issuerCertName, BigInteger issuerCertSerialNumber, PublicKey subjectPublicKey) {
+			X500Name issuerCertName, BigInteger issuerCertSerialNumber, PublicKey subjectPublicKey,
+			X500Name subjectCertName) {
+
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DAddExtensions.Title"));
 		this.extensions = extensions;
@@ -148,27 +149,25 @@ public class DAddExtensions extends JEscDialog {
 		this.issuerCertName = issuerCertName;
 		this.issuerCertSerialNumber = issuerCertSerialNumber;
 		this.subjectPublicKey = subjectPublicKey;
+		this.subjectCertName = subjectCertName;
 		initComponents();
 	}
 
 	/**
 	 * Creates new DAddExtensions dialog.
 	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param extensions
-	 *            Extensions to add to
-	 * @param issuerPublicKey
-	 *            Authority public key
-	 * @param issuerCertName
-	 *            Authority certificate name
-	 * @param issuerCertSerialNumber
-	 *            Authority certificate serial number
-	 * @param subjectPublicKey
-	 *            Subject public key
+	 * @param parent Parent dialog
+	 * @param extensions Extensions to add to
+	 * @param issuerPublicKey Authority public key
+	 * @param issuerCertName Authority certificate name
+	 * @param issuerCertSerialNumber Authority certificate serial number
+	 * @param subjectPublicKey Subject public key
+	 * @param subjectCertName Subject DN
 	 */
 	public DAddExtensions(JDialog parent, X509ExtensionSet extensions, PublicKey issuerPublicKey,
-			X500Name issuerCertName, BigInteger issuerCertSerialNumber, PublicKey subjectPublicKey) {
+			X500Name issuerCertName, BigInteger issuerCertSerialNumber, PublicKey subjectPublicKey,
+			X500Name subjectCertName) {
+
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DAddExtensions.Title"));
 		this.extensions = (X509ExtensionSet) extensions.clone();
@@ -176,6 +175,7 @@ public class DAddExtensions extends JEscDialog {
 		this.issuerCertName = issuerCertName;
 		this.issuerCertSerialNumber = issuerCertSerialNumber;
 		this.subjectPublicKey = subjectPublicKey;
+		this.subjectCertName = subjectCertName;
 		initComponents();
 	}
 
@@ -686,7 +686,7 @@ public class DAddExtensions extends JEscDialog {
 				selectExtensionInTable(oid);
 				updateButtonControls();
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			DError.displayError(this, e);
 		}
 	}
@@ -761,8 +761,8 @@ public class DAddExtensions extends JEscDialog {
 	}
 
 	private void selectStandardTemplatePressed() {
-		DSelectStandardExtensionTemplate dSelectStdCertTemplate = new DSelectStandardExtensionTemplate(this, issuerPublicKey,
-				subjectPublicKey);
+		DSelectStandardExtensionTemplate dSelectStdCertTemplate = new DSelectStandardExtensionTemplate(this,
+				issuerPublicKey, subjectPublicKey, subjectCertName);
 		dSelectStdCertTemplate.setLocationRelativeTo(this);
 		dSelectStdCertTemplate.setVisible(true);
 
@@ -864,7 +864,29 @@ public class DAddExtensions extends JEscDialog {
 		return extensions;
 	}
 
+	private boolean isSanExtensionEmpty() {
+		byte[] extensionValue = extensions.getExtensionValue(X509ExtensionType.SUBJECT_ALTERNATIVE_NAME.oid());
+		byte[] unwrappedExtension = X509Ext.unwrapExtension(extensionValue);
+		GeneralNames generalNames = GeneralNames.getInstance(unwrappedExtension);
+		GeneralName[] names = generalNames.getNames();
+		if (names == null || names.length == 0) {
+			return true;
+		}
+		for (GeneralName generalName : names) {
+			if (GeneralNameUtil.isGeneralNameEmpty(generalName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void okPressed() {
+		if (isSanExtensionEmpty()) {
+			JOptionPane.showMessageDialog(this,
+					res.getString("DAddExtensions.EmptySAN.message"),
+					res.getString("DAddExtensions.EmptySAN.Title"), JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		closeDialog();
 	}
 
@@ -883,7 +905,8 @@ public class DAddExtensions extends JEscDialog {
 		final KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
 
 		DAddExtensions dialog = new DAddExtensions(new JFrame(), "Add Extensions", new X509ExtensionSet(),
-				keyPair.getPublic(), new X500Name("cn=test"), BigInteger.ONE, keyPair.getPublic());
+				keyPair.getPublic(), new X500Name("cn=test"), BigInteger.ONE, keyPair.getPublic(),
+				new X500Name("cn=www.example.com"));
 		DialogViewer.run(dialog);
 	}
 }
