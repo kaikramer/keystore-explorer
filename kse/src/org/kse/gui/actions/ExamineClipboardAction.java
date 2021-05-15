@@ -110,10 +110,6 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		Transferable t = clipboard.getContents(null);
 		try {
 
-			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				show((String) t.getTransferData(DataFlavor.stringFlavor));
-			}
-
 			if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 
 				@SuppressWarnings("unchecked")
@@ -122,6 +118,11 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 				// open files in new thread, so we can return quickly
 				SwingUtilities.invokeLater(() -> DroppedFileHandler.openFiles(kseFrame, droppedFiles));
 			}
+			else
+			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				show((String) t.getTransferData(DataFlavor.stringFlavor));
+			}
+
 		} catch (UnsupportedFlavorException e) {
 			// ignore
 		} catch (IOException e) {
