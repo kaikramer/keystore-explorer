@@ -866,6 +866,10 @@ public class DAddExtensions extends JEscDialog {
 
 	private boolean isSanExtensionEmpty() {
 		byte[] extensionValue = extensions.getExtensionValue(X509ExtensionType.SUBJECT_ALTERNATIVE_NAME.oid());
+		if (extensionValue == null) {
+			return false;
+		}
+
 		byte[] unwrappedExtension = X509Ext.unwrapExtension(extensionValue);
 		GeneralNames generalNames = GeneralNames.getInstance(unwrappedExtension);
 		GeneralName[] names = generalNames.getNames();
