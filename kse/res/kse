@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# KeyStore Explorer startup script
+
+if [ -f /etc/java/kse.conf ]; then
+	. /etc/java/kse.conf
+fi
+if [ -f ${XDG_CONFIG_HOME:-$HOME/.config}/kse ]; then
+	. ${XDG_CONFIG_HOME:-$HOME/.config}/kse
+fi
+
+BASE_OPTIONS="-Dkse.update.disabled=true"
+MAIN_JAR="/usr/share/java/kse.jar"
+
+java $BASE_OPTIONS -jar $MAIN_JAR "$@"

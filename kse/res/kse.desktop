@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=KeyStore Explorer
+GenericName=Multipurpose keystore and certificate tool
+GenericName[fr]=Outil de gestion de magasins de certificats cryptographiques
+Comment=User friendly GUI application for creating, managing and examining keystores, keys, certificates, certificate requests, certificate revocation lists and more.
+Comment[fr]=Outil graphique de cryptographie permettant la création, la gestion et l’examen de magasins de clefs, de certificats X.509, de demandes de certicats, de listes de revocation et bien plus encore.
+Exec=kse %f
+TryExec=kse
+Terminal=false
+Type=Application
+Icon=kse
+Categories=Utility;Security;System;Java;
+MimeType=application/x-pkcs12;application/x-java-keystore;application/x-java-jce-keystore;application/pkcs10;application/pkix-pkipath;application/pkix-cert;application/pkix-crl;application/x-x509-ca-cert;application/x-pkcs7-certificates;

@@ -1,0 +1,45 @@
+# https://ci.appveyor.com/tools/validate-yaml
+
+branches:
+  only:
+    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/ # version tags ("v5.2.3")
+
+environment:
+  JAVA_HOME: C:\Program Files\Java\jdk1.8.0
+  NSIS: C:\Program Files (x86)\NSIS
+
+install:
+  - SET PATH=%JAVA_HOME%\bin;%NSIS%;%PATH%
+
+before_build:
+  - cd kse
+
+build:
+  verbosity: detailed
+
+build_script:
+  - gradlew.bat test zip nsis buildDeb buildRpm
+
+artifacts:
+  - path: kse\build\distributions\kse-*.zip
+    name: zip
+  - path: kse\build\distributions\kse-*-setup.exe
+    name: nsis
+  - path: kse\build\distributions\*.deb
+    name: deb
+  - path: kse\build\distributions\*.rpm
+    name: rpm
+
+deploy:
+  - provider: GitHub
+    artifact: zip,nsis,deb,rpm
+    description: 'Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)'
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    release: KSE Release $(APPVEYOR_REPO_TAG_NAME)
+    auth_token:
+      secure: kqOvIw9phqJZInkIF6xiOFOM0TPvrdv0Ff7mbLBrPU0uL9v+Ij3S5u9j6oRRtexh    
+    draft: true
+    prerelease: false
+    force_update: true
+    on:
+      appveyor_repo_tag: true       # deploy on tag push only

@@ -1,7 +1,7 @@
 ;========================================================================
 ;
 ; Copyright 2004 - 2013 Wayne Grant
-;           2013 - 2016 Kai Kramer
+;           2013 - 2021 Kai Kramer
 ; 
 ; This file is part of KeyStore Explorer.
 ; 
@@ -20,34 +20,42 @@
 ;
 ;========================================================================
 
-;=================================;
-;                                 ;
-;  Install for Key Store Explorer ;
-;                                 ;
-;=================================;
+;--------------------------------
+; Plugins Directory
+;--------------------------------
+
+!addplugindir /x86-ansi "plugins-x86-ansi"
+!addplugindir /x86-unicode "plugins-x86-unicode"
 
 ;--------------------------------
 ; Includes
 ;--------------------------------
 
+; MultiUser
+!define MULTIUSER_EXECUTIONLEVEL Highest
+!define MULTIUSER_MUI
+!define MULTIUSER_INSTALLMODE_COMMANDLINE
+!define MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER 
+!include MultiUser.nsh
+
 ; Modern interface
-!include "MUI.nsh"
+!include "MUI2.nsh"
 
 ;--------------------------------
 ; Globals
 ;--------------------------------
 
- BrandingText "Copyright 2004 - 2013 Wayne Grant, 2013 - 2016 Kai Kramer"
+ BrandingText "Copyright 2004 - 2013 Wayne Grant, 2013 - 2021 Kai Kramer"
 
 ; Product name
-!define PRODUCT "KeyStore Explorer"
+!define PRODUCT "%KSE_NAME%"
 
 ; Product version
 !define VERSION "%KSE_VERSION%"
 !define SIMPLE_VERSION "%KSE_SIMPLE_VERSION%"
 
-; Product key (name and version)
-!define PRODUCT_KEY "${PRODUCT} ${VERSION}"
+; Product key (used to be name _and_ version before KSE 5.4.0)
+!define PRODUCT_KEY "${PRODUCT}"
 
 ; AppUserModelId (see http://stackoverflow.com/questions/5438651/launch4j-nsis-and-duplicate-pinned-windows-7-taskbar-icons)
 !define KSE_AppUserModelId "%KSE_APP_USER_MODEL_ID%"
@@ -87,10 +95,10 @@ ReserveFile ${FILE_ASSOCIATIONS_DIALOG}
 !define SHCNF_IDLIST 0
 
 ; Install icon
-!define MUI_ICON "..\res\icons\${INSTALL_ICO}"
+!define MUI_ICON "%ICONS_DIR%\${INSTALL_ICO}"
 
 ; Uninstall icon
-!define MUI_UNICON "..\res\icons\${UNINSTALL_ICO}"
+!define MUI_UNICON "%ICONS_DIR%\${UNINSTALL_ICO}"
 
 ; Required for menu shortcuts to be removed on uninstall
 RequestExecutionLevel admin
@@ -103,7 +111,7 @@ RequestExecutionLevel admin
 Name "${PRODUCT} ${VERSION}"
 
 ; Install file to create
-OutFile "..\dist\kse-${SIMPLE_VERSION}-setup.exe"
+OutFile "%DIST_DIR%\kse-${SIMPLE_VERSION}-setup.exe"
 
 ; Only one component therefore no customization is required
 InstType /NOCUSTOM
@@ -147,6 +155,7 @@ ShowUninstDetails Show
 ; Install
 
 !insertmacro MUI_PAGE_WELCOME
+!insertmacro MULTIUSER_PAGE_INSTALLMODE
 Page custom fileAssociationsPage "" ": File Associations"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -174,42 +183,46 @@ Section "${PRODUCT}"
     SetOutPath "$INSTDIR"
 
     ; Files to install
-    File "..\dist\${KSE_EXE}"
-    File "..\dist\${KSE_JAR}"
-    File /r "..\dist\lib"
-    File "..\res\icons\${KSE_ICO}"
-    File "..\res\icons\${KEYSTORE_ICO}"
-    File "..\res\icons\${WWW_ICO}"
-    File "..\res\icons\${LICENSES_ICO}"
+    File "%LAUNCH4J_DIR%\${KSE_EXE}"
+    File "%JAR_DIR%\${KSE_JAR}"
+    File "%ICONS_DIR%\${KSE_ICO}"
+    File "%ICONS_DIR%\${KEYSTORE_ICO}"
+    File "%ICONS_DIR%\${WWW_ICO}"
+    File "%ICONS_DIR%\${LICENSES_ICO}"
     CreateDirectory $INSTDIR\${LICENSE_DIR}
-    File /oname=${LICENSE_DIR}\bouncycastle.txt "..\res\licenses\license-bouncycastle.txt"
-    File /oname=${LICENSE_DIR}\javahelp.txt "..\res\licenses\license-javahelp.txt"
-    File /oname=${LICENSE_DIR}\jgoodies.txt "..\res\licenses\license-jgoodies.txt"
-    File /oname=${LICENSE_DIR}\kse.txt "..\res\licenses\license-kse.txt"
-    File /oname=${LICENSE_DIR}\miglayout.txt "..\res\licenses\license-miglayout.txt"
-    File /oname=${LICENSE_DIR}\jna.txt "..\res\licenses\license-jna.txt"
-    File /oname=${LICENSE_DIR}\apache-commons.txt "..\res\licenses\license-apache-commons.txt"
-    File /oname=${LICENSE_DIR}\darcula.txt "..\res\licenses\license-darcula.txt"
+    File /oname=${LICENSE_DIR}\bouncycastle.txt "%LICENSES_DIR%\license-bouncycastle.txt"
+    File /oname=${LICENSE_DIR}\javahelp.txt "%LICENSES_DIR%\license-javahelp.txt"
+    File /oname=${LICENSE_DIR}\jgoodies.txt "%LICENSES_DIR%\license-jgoodies.txt"
+    File /oname=${LICENSE_DIR}\kse.txt "%LICENSES_DIR%\license-kse.txt"
+    File /oname=${LICENSE_DIR}\miglayout.txt "%LICENSES_DIR%\license-miglayout.txt"
+    File /oname=${LICENSE_DIR}\jna.txt "%LICENSES_DIR%\license-jna.txt"
+    File /oname=${LICENSE_DIR}\apache-commons.txt "%LICENSES_DIR%\license-apache-commons.txt"
+    File /oname=${LICENSE_DIR}\darcula.txt "%LICENSES_DIR%\license-darcula.txt"
+
+	; Lib directory    
+    CreateDirectory "$INSTDIR\lib"
+    SetOutPath "$INSTDIR\lib"
+    File "%LIB_DIR%\*.jar"
 
     ; Write the installation path into the registry
     WriteRegStr HKLM "SOFTWARE\${PRODUCT_KEY}" "Install_Dir" "$INSTDIR"
 
     ; Write the uninstall keys for Windows
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayName" "${PRODUCT_KEY}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "UninstallString" "$INSTDIR\${UNINSTALL_EXE}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "UninstallString" "$INSTDIR\${UNINSTALL_EXE} /$MultiUser.InstallMode"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayIcon" "$INSTDIR\${KSE_ICO}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "Publisher" "Kai Kramer"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "DisplayVersion" "${VERSION}"
-	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "EstimatedSize" 9400 ;KB
+	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "EstimatedSize" 10700 ;KB
 	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "NoModify" 1
 	WriteRegDWord HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_KEY}" "NoRepair" 1
-
+	
     ; Create uninstall
     WriteUninstaller "${UNINSTALL_EXE}"
 
     ; Create program shortcuts to KeyStore Explorer, KeyStore Explorer home page and the uninstall
     CreateDirectory "$SMPROGRAMS\${PRODUCT_KEY}"
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Uninstall.lnk" "$INSTDIR\${UNINSTALL_EXE}" "" "$INSTDIR\${UNINSTALL_EXE}" 0
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Uninstall.lnk" "$INSTDIR\${UNINSTALL_EXE}" "/$MultiUser.InstallMode" "$INSTDIR\${UNINSTALL_EXE}" 0
     CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Visit Website.lnk" "${HOME_PAGE_ADDRESS}" "" "$INSTDIR\${WWW_ICO}" 0
     CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\Licenses.lnk" "$INSTDIR\licenses" "" "$INSTDIR\${LICENSES_ICO}" 0
     CreateShortCut "$SMPROGRAMS\${PRODUCT_KEY}\${PRODUCT_KEY}.lnk" "$INSTDIR\${KSE_EXE}" "" "$INSTDIR\${KSE_EXE}" 0
@@ -245,7 +258,7 @@ Section "${PRODUCT}"
     noksbcfileassoc:
 
     ; Ask if a shortcut is required on the desktop
-    MessageBox MB_YESNO "Do you want a shortcut to KeyStore Explorer to be placed on the desktop?" IDNO NoShortcut
+    MessageBox MB_YESNO "Do you want a shortcut to KeyStore Explorer to be placed on the desktop?" /SD IDNO IDNO NoShortcut
         CreateShortCut "$DESKTOP\${PRODUCT_KEY}.lnk" "$INSTDIR\${KSE_EXE}" "" "$INSTDIR\${KSE_EXE}" 0
     NoShortcut:
 
@@ -309,10 +322,15 @@ SectionEnd
 ;
 Function .onInit
 
+	!insertmacro MULTIUSER_INIT
+
     StrCpy ${KSJKS_FILE_ASSOC} 1
     StrCpy ${PKCS12_FILE_ASSOC} 1
     StrCpy ${KSBC_FILE_ASSOC} 1
-
+    
+    ; TODO Check for running instances before starting the installation
+	; http://nsis.sourceforge.net/Check_whether_your_application_is_running#Using_the_name_of_the_process
+	; http://nsis.sourceforge.net/NsProcess_plugin
 FunctionEnd
 
 ;
@@ -351,4 +369,8 @@ Function RefreshShellIcons
   System::Call 'shell32.dll::SHChangeNotify(l, l, i, i) v \
   (${SHCNE_ASSOCCHANGED}, ${SHCNF_IDLIST}, 0, 0)'
 
+FunctionEnd
+
+Function un.onInit
+  !insertmacro MULTIUSER_UNINIT
 FunctionEnd

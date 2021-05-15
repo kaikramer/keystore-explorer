@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2016 Kai Kramer
+ *           2013 - 2021 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-import net.sf.keystore_explorer.ApplicationSettings;
+import org.kse.ApplicationSettings;
 
 /**
  * Erase all KSE application preferences.
