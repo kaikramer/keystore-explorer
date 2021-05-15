@@ -60,6 +60,7 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509ExtensionSet;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
@@ -307,7 +308,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		}
 
 		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, caPublicKey, caIssuerName, caSerialNumber,
-				subjectPublicKey);
+				subjectPublicKey, jdnName.getDistinguishedName());
 		dAddExtensions.setLocationRelativeTo(this);
 		dAddExtensions.setVisible(true);
 
@@ -364,9 +365,18 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		}
 
 		X500Name x500Name = jdnName.getDistinguishedName();
+		boolean selfSigned = issuerPrivateKey == null;
 
-		if (x500Name == null || x500Name.toString().isEmpty()) {
+		// RFC 5280:
+		//    If the subject field contains an empty sequence, then the issuing CA MUST include a
+		//    subjectAltName extension that is marked as critical.
+		if (selfSigned && (x500Name == null || x500Name.toString().isEmpty())) {
 			JOptionPane.showMessageDialog(this, res.getString("DGenerateKeyPairCert.NameValueReq.message"), getTitle(),
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		if (!selfSigned && (x500Name == null || x500Name.toString().isEmpty()) && !hasCriticalSAN()) {
+			JOptionPane.showMessageDialog(this, res.getString("DGenerateKeyPairCert.CritSANReq.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
@@ -398,6 +408,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
 		}
 
 		return true;
+	}
+
+	private boolean hasCriticalSAN() {
+        return extensions.isCritical(X509ExtensionType.SUBJECT_ALTERNATIVE_NAME.oid());
 	}
 
 	private long generateSerialNumber() {

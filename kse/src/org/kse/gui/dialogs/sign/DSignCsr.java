@@ -77,6 +77,7 @@ import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.MiGUtil;
@@ -682,7 +683,7 @@ public class DSignCsr extends JEscDialog {
 	private void addExtensionsPressed() {
 		DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, issuerCertificate.getPublicKey(),
 				X500NameUtils.x500PrincipalToX500Name(issuerCertificate.getSubjectX500Principal()),
-				issuerCertificate.getSerialNumber(), csrPublicKey);
+				issuerCertificate.getSerialNumber(), csrPublicKey,jdnSubjectDN.getDistinguishedName());
 		dAddExtensions.setLocationRelativeTo(this);
 		dAddExtensions.setVisible(true);
 
@@ -705,9 +706,12 @@ public class DSignCsr extends JEscDialog {
 
 	private void okPressed() {
 
-		if (jdnSubjectDN.getDistinguishedName().toString().isEmpty()) {
-			JOptionPane.showMessageDialog(this, res.getString("DSignCsr.InvalidDN.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
+		// RFC 5280:
+		//    If the subject field contains an empty sequence, then the issuing CA MUST include a
+		//    subjectAltName extension that is marked as critical.
+		if (jdnSubjectDN.getDistinguishedName().toString().isEmpty() && !hasCriticalSAN()) {
+			JOptionPane.showMessageDialog(this, res.getString("DSignCsr.CritSANReq.message"), getTitle(),
+					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
@@ -744,6 +748,10 @@ public class DSignCsr extends JEscDialog {
 		subjectDN = jdnSubjectDN.getDistinguishedName();
 
 		closeDialog();
+	}
+
+	private boolean hasCriticalSAN() {
+        return extensions.isCritical(X509ExtensionType.SUBJECT_ALTERNATIVE_NAME.oid());
 	}
 
 	private void cancelPressed() {

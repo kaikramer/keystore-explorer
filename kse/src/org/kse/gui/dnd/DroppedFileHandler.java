@@ -53,18 +53,6 @@ public class DroppedFileHandler {
 				SwingUtilities.invokeLater(() -> openFiles(kseFrame, droppedFiles));
 
 			}
-			/*			TODO dropped PEM data
-				else if (trans.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				String str = trans.getTransferData(DataFlavor.stringFlavor).toString();
-				X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toInputStream(str, "UTF-8"));
-				if ((certs != null) && (certs.length > 0)) {
-					DViewCertificate dViewCertificate = new DViewCertificate(kseFrame.getUnderlyingFrame(),
-							MessageFormat.format("Title", ""), certs, kseFrame, DViewCertificate.IMPORT);
-					dViewCertificate.setLocationRelativeTo(kseFrame.getUnderlyingFrame());
-					dViewCertificate.setVisible(true);
-				}
-			}
-			 */
 		} catch (IOException | UnsupportedFlavorException e) {
 			DError.displayError(kseFrame.getUnderlyingFrame(), e);
 		}

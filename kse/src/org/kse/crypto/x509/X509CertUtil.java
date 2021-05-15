@@ -684,6 +684,11 @@ public final class X509CertUtil {
 			shortName = subject.toString();
 		}
 
+		// subject DN can be empty in some cases
+		if (StringUtils.isBlank(shortName)) {
+			shortName = cert.getSerialNumber().toString();
+		}
+
 		return shortName;
 	}
 
