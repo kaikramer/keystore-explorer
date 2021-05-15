@@ -9,7 +9,6 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DVerifyCertificate;
-import org.kse.gui.dialogs.importexport.DExportCertificates;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 
