@@ -139,6 +139,8 @@ public class DViewCertificate extends JEscDialog {
 	private JButton jbExport;
 	private JButton jbOK;
 	private JButton jbVerify;
+	
+	private X509Certificate[] chain;
 
 	/**
 	 * Creates a new DViewCertificate dialog.
@@ -161,6 +163,7 @@ public class DViewCertificate extends JEscDialog {
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.kseFrame = kseFrame;
 		this.importExport = importExport;
+		this.chain = certs;
 		initComponents(certs);
 	}
 
@@ -402,7 +405,7 @@ public class DViewCertificate extends JEscDialog {
 	private void verifyPressed() {
 		
 		X509Certificate cert = getSelectedCertificate();
-		new VerifyCertificateAction(kseFrame, cert).actionPerformed(null);		
+		new VerifyCertificateAction(kseFrame, cert, chain).actionPerformed(null);		
 	}
 
 	private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {
