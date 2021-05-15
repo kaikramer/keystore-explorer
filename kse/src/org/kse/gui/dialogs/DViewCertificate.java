@@ -78,6 +78,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.ExportTrustedCertificateAction;
 import org.kse.gui.actions.ImportTrustedCertificateAction;
+import org.kse.gui.actions.VerifyCertificateAction;
 import org.kse.gui.crypto.JCertificateFingerprint;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
@@ -137,6 +138,7 @@ public class DViewCertificate extends JEscDialog {
 	private JButton jbImport;
 	private JButton jbExport;
 	private JButton jbOK;
+	private JButton jbVerify;
 
 	/**
 	 * Creates a new DViewCertificate dialog.
@@ -266,6 +268,10 @@ public class DViewCertificate extends JEscDialog {
 
 		jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
 
+		jbVerify = new JButton(res.getString("DViewCertificate.jbVerify.text"));
+		jbVerify.setToolTipText(res.getString("DViewCertificate.jbVerify.tooltip"));
+		PlatformUtil.setMnemonic(jbVerify, res.getString("DViewCertificate.jbVerify.mnemonic").charAt(0));
+
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 		pane.add(jlHierarchy, "");
@@ -295,6 +301,7 @@ public class DViewCertificate extends JEscDialog {
 		pane.add(jbExport, "hidemode 1");
 		pane.add(jbExtensions, "");
 		pane.add(jbPem, "");
+		pane.add(jbVerify, "");
 		pane.add(jbAsn1, "wrap");
 		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
 		pane.add(jbOK, "spanx, tag ok");
@@ -364,6 +371,15 @@ public class DViewCertificate extends JEscDialog {
 				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
+		
+		jbVerify.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DViewCertificate.this);
+				verifyPressed();
+			} finally {
+				CursorUtil.setCursorFree(DViewCertificate.this);
+			}
+		});
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -381,6 +397,12 @@ public class DViewCertificate extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+	}
+
+	private void verifyPressed() {
+		
+		X509Certificate cert = getSelectedCertificate();
+		new VerifyCertificateAction(kseFrame, cert).actionPerformed(null);		
 	}
 
 	private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {
