@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -13,29 +14,34 @@ import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
+import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import net.miginfocom.swing.MigLayout;
 
-public class DVerifyCertificate extends JEscDialog{
+public class DVerifyCertificate extends JEscDialog {
 
 	private static final long serialVersionUID = 1L;
-	
-	public enum VerifyOptions { CRL, OCSP, CHAIN}
-	
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/resources");
-	
+
+	public enum VerifyOptions {
+		CRL, OCSP, CHAIN
+	}
+
+	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+
 	private static final String CANCEL_KEY = "CANCEL_KEY";
-	
+
 	private String certificateAlias;
 
 	private JLabel jlFormat;
@@ -45,53 +51,66 @@ public class DVerifyCertificate extends JEscDialog{
 	private JPanel jpButtons;
 	private JButton jbOk;
 	private JButton jbCancel;
-	
+	private JLabel jlCacertFile;
+	private JTextField jtfCaCertificatesFile;
+	private JButton jbBrowse;
+
 	private boolean verifySelected = false;
-
 	private VerifyOptions verifyOption = VerifyOptions.CRL;
+	private String caCertificateFile = "";
 
-	
 	public DVerifyCertificate(JFrame parent, String certificateAlias) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.certificateAlias = certificateAlias;
 		initComponents();
 	}
 
-	private void initComponents() 
-	{
+	private void initComponents() {
 		jlFormat = new JLabel(res.getString("DVerifyCertificate.jlFormat.text"));
-		
-		jrbCrlCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbCrlCheck.text"));		
+
+		jrbCrlCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbCrlCheck.text"));
 		jrbCrlCheck.setToolTipText(res.getString("DVerifyCertificate.jrbCrlCheck.tooltip"));
-		
+
 		jrbOcspCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbOcspCheck.text"));
 		jrbOcspCheck.setToolTipText(res.getString("DVerifyCertificate.jrbOcspCheck.tooltip"));
-		
+
 		jrbChainCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbChainCheck.text"));
 		jrbChainCheck.setToolTipText(res.getString("DVerifyCertificate.jrbChainCheck.tooltip"));
-		
+
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jrbCrlCheck);
 		buttonGroup.add(jrbOcspCheck);
 		buttonGroup.add(jrbChainCheck);
 		jrbCrlCheck.setSelected(true);
-		
+
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "unrel[]unrel[]"));
 		pane.add(jlFormat, "");
 		pane.add(jrbCrlCheck, "");
-		pane.add(jrbOcspCheck, "split 3");
+		pane.add(jrbOcspCheck, "split 2");
 		pane.add(jrbChainCheck, "wrap");
-		
+
+		jlCacertFile = new JLabel(res.getString("DVerifyCertificate.jlCacertFile.text"));
+		jtfCaCertificatesFile = new JTextField(30);
+		jtfCaCertificatesFile.setEditable(false);
+		jbBrowse = new JButton(res.getString("DVerifyCertificate.jbBrowse.text"));
+		jbBrowse.setEnabled(false);
+		pane.add(jlCacertFile, "");
+		pane.add(jtfCaCertificatesFile, "split 2");
+		pane.add(jbBrowse, "wrap");
+
+		jrbCrlCheck.addItemListener(evt -> updateVerifyControls());
+		jrbOcspCheck.addItemListener(evt -> updateVerifyControls());
+		jrbChainCheck.addItemListener(evt -> updateVerifyControls());
+
 		jbOk = new JButton(res.getString("DVerifyCertificate.jbOk.text"));
 		jbCancel = new JButton(res.getString("DVerifyCertificate.jbCancel.text"));
-		
+
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOk, jbCancel);
-		
+
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
-		
-		
+
 		jbOk.addActionListener(evt -> {
 			try {
 				CursorUtil.setCursorBusy(DVerifyCertificate.this);
@@ -100,7 +119,7 @@ public class DVerifyCertificate extends JEscDialog{
 				CursorUtil.setCursorFree(DVerifyCertificate.this);
 			}
 		});
-		
+
 		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
@@ -113,6 +132,15 @@ public class DVerifyCertificate extends JEscDialog{
 			}
 		});
 
+		jbBrowse.addActionListener(evt -> {
+			try {
+				CursorUtil.setCursorBusy(DVerifyCertificate.this);
+				browsePressed();
+			} finally {
+				CursorUtil.setCursorFree(DVerifyCertificate.this);
+			}
+		});
+
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent evt) {
@@ -120,12 +148,22 @@ public class DVerifyCertificate extends JEscDialog{
 			}
 		});
 		setTitle(MessageFormat.format(res.getString("DVerifyCertificate.Title"), certificateAlias));
-		
+
 		setResizable(false);
 
-		pack();		
+		pack();
 	}
-	
+
+	private void updateVerifyControls() {
+		if (jrbCrlCheck.isSelected() || jrbOcspCheck.isSelected()) {
+			jtfCaCertificatesFile.setEditable(false);
+			jbBrowse.setEnabled(false);
+		} else {
+			jtfCaCertificatesFile.setEditable(true);
+			jbBrowse.setEnabled(true);
+		}
+	}
+
 	public boolean isVerifySelected() {
 		return verifySelected;
 	}
@@ -133,15 +171,15 @@ public class DVerifyCertificate extends JEscDialog{
 	public VerifyOptions getVerifyOption() {
 		return verifyOption;
 	}
-	
+
 	private void okPressed() {
 		if (jrbCrlCheck.isSelected()) {
 			verifyOption = VerifyOptions.CRL;
-		} else 
-		if (jrbOcspCheck.isSelected()){
+		} else if (jrbOcspCheck.isSelected()) {
 			verifyOption = VerifyOptions.OCSP;
 		} else {
 			verifyOption = VerifyOptions.CHAIN;
+			caCertificateFile = jtfCaCertificatesFile.getText();
 		}
 		verifySelected = true;
 		closeDialog();
@@ -155,5 +193,23 @@ public class DVerifyCertificate extends JEscDialog{
 		setVisible(false);
 		dispose();
 	}
-	
+
+	private void browsePressed() {
+		JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
+		chooser.setDialogTitle(res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"));
+		chooser.setMultiSelectionEnabled(false);
+		chooser.setApproveButtonText(res.getString("DVerifyCertificate.CaCertificatesKeyStoreFileChooser.button"));
+
+		int rtnValue = chooser.showOpenDialog(this);
+		if (rtnValue == JFileChooser.APPROVE_OPTION) {
+			File chosenFile = chooser.getSelectedFile();
+			CurrentDirectory.updateForFile(chosenFile);
+			jtfCaCertificatesFile.setText(chosenFile.toString());
+			jtfCaCertificatesFile.setCaretPosition(0);			
+		}
+	}
+
+	public String getCaCertificateFile() {
+		return caCertificateFile;
+	}
 }
