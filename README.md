@@ -1,14 +1,14 @@
 # KeyStore Explorer
 [![Build Status](https://img.shields.io/github/workflow/status/kaikramer/keystore-explorer/Java%20CI%20with%20Gradle)](https://github.com/kaikramer/keystore-explorer/actions/workflows/gradle.yml)
 [![Release](https://img.shields.io/github/v/release/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/releases)
-[![Downloads](https://img.shields.io/github/downloads/kaikramer/keystore-explorer/total)](https://somsubhra.com/github-release-stats/?username=kaikramer&repository=keystore-explorer)
+[![Downloads](https://img.shields.io/github/downloads/kaikramer/keystore-explorer/total)](https://tooomm.github.io/github-release-stats/?username=kaikramer&repository=keystore-explorer)
 [![License](https://img.shields.io/github/license/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
 
 KeyStore Explorer is a free GUI replacement for the Java command-line utilities keytool and jarsigner.
 
 Official website: http://keystore-explorer.org/
 
-![Screenshot](https://github.com/kaikramer/kaikramer.github.io/raw/master/images/win10_mykeystore.png)
+![Screenshot](https://raw.githubusercontent.com/kaikramer/kaikramer.github.io/main/images/win10_mykeystore.png)
 
 ## Features:
 
