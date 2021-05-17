@@ -58,10 +58,12 @@ public class DVerifyCertificate extends JEscDialog {
 	private boolean verifySelected = false;
 	private VerifyOptions verifyOption = VerifyOptions.CRL;
 	private String caCertificateFile = "";
+	private String caCertificatesFile;
 
-	public DVerifyCertificate(JFrame parent, String certificateAlias) {
+	public DVerifyCertificate(JFrame parent, String certificateAlias, String caCertificatesFile) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.certificateAlias = certificateAlias;
+		this.caCertificatesFile = caCertificatesFile;
 		initComponents();
 	}
 
@@ -91,7 +93,7 @@ public class DVerifyCertificate extends JEscDialog {
 		pane.add(jrbChainCheck, "wrap");
 
 		jlCacertFile = new JLabel(res.getString("DVerifyCertificate.jlCacertFile.text"));
-		jtfCaCertificatesFile = new JTextField(30);
+		jtfCaCertificatesFile = new JTextField(caCertificatesFile, 30);
 		jtfCaCertificatesFile.setEditable(false);
 		jbBrowse = new JButton(res.getString("DVerifyCertificate.jbBrowse.text"));
 		jbBrowse.setEnabled(false);

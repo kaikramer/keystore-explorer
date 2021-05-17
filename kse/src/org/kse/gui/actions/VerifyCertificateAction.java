@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 
+import org.kse.ApplicationSettings;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.filetype.CryptoFileType;
@@ -53,16 +54,20 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 	@Override
 	protected void doAction() {
 
+		ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+
+		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
+		
 		try {
 			DVerifyCertificate dVerifyCertificate = null;
 			X509Certificate cert = null;
 			if (certFromConstructor == null) {
 				String alias = kseFrame.getSelectedEntryAlias();
-				dVerifyCertificate = new DVerifyCertificate(frame, alias);
+				dVerifyCertificate = new DVerifyCertificate(frame, alias, caCertificatesFile.toString());
 				cert = getCertificate(alias);
 			} else {
 				cert = certFromConstructor;
-				dVerifyCertificate = new DVerifyCertificate(frame, X509CertUtil.getCertificateAlias(cert));
+				dVerifyCertificate = new DVerifyCertificate(frame, X509CertUtil.getCertificateAlias(cert), caCertificatesFile.toString());
 			}
 
 			dVerifyCertificate.setLocationRelativeTo(frame);
