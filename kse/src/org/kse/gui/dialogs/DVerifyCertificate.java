@@ -86,8 +86,8 @@ public class DVerifyCertificate extends JEscDialog {
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "unrel[]unrel[]"));
 		pane.add(jlFormat, "");
-		pane.add(jrbCrlCheck, "");
-		pane.add(jrbOcspCheck, "split 2");
+		pane.add(jrbCrlCheck, "split 3");
+		pane.add(jrbOcspCheck, "");
 		pane.add(jrbChainCheck, "wrap");
 
 		jlCacertFile = new JLabel(res.getString("DVerifyCertificate.jlCacertFile.text"));
