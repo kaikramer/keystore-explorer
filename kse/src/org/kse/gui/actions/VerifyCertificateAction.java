@@ -92,18 +92,21 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private void verifyChain(String caCertificateFile) throws KeyStoreException, NoSuchAlgorithmException,
-			CertificateException, IOException, InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
+	private void verifyChain(String caCertificateFile)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
+			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
 		verify("false", "false", false, caCertificateFile);
 	}
 
-	private void verifyStatusOCSP() throws KeyStoreException, NoSuchAlgorithmException, CertificateException,
-			IOException, InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
+	private void verifyStatusOCSP()
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
+			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
 		verify("false", "true", true, "");
 	}
 
-	private void verifyStatusCrl() throws CertificateException, KeyStoreException, NoSuchAlgorithmException,
-			IOException, InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
+	private void verifyStatusCrl()
+			throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException,
+			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
 		verify("true", "false", true, "");
 	}
 
@@ -114,16 +117,19 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		KeyStore trustStore = KeyStore.getInstance("JCEKS");
 		if (!caCertificateFile.isEmpty()) {
 			File file = new File(caCertificateFile);
-			openKeyStore(file,trustStore);
+			openKeyStore(file, trustStore);
 		} else {
 			trustStore.load(null, null);
 			for (int i = 0; i < chain.length; i++) {
 				X509Certificate cert = chain[i];
-				boolean[] keyUsage = cert.getKeyUsage();
-				if (keyUsage[5]) {
-					// CA certificate
-					String entry = "entry" + i;
-					trustStore.setCertificateEntry(entry, cert);
+				int basicConstraints = cert.getBasicConstraints();
+				if (basicConstraints != -1) {
+					boolean[] keyUsage = cert.getKeyUsage();
+					if (keyUsage != null && keyUsage[5]) {
+						// CA certificate
+						String entry = "entry" + i;
+						trustStore.setCertificateEntry(entry, cert);
+					}
 				}
 			}
 		}
@@ -155,13 +161,12 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		validator.validate(certPath, params);
 	}
 
-	private void openKeyStore(File file, KeyStore trustStore) throws  CryptoException, FileNotFoundException {
+	private void openKeyStore(File file, KeyStore trustStore) throws CryptoException, FileNotFoundException {
 
 		if (!file.exists()) {
 			throw new FileNotFoundException(res.getString("VerifyCertificateAction.FileNotFoundException.message"));
 		}
-		try
-		{
+		try {
 			CryptoFileType fileType = CryptoFileUtil.detectFileType(file);
 			switch (fileType) {
 			case JCEKS_KS:
@@ -180,12 +185,10 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 				}
 				break;
 			default:
-				throw new CryptoException(res.getString("VerifyCertificateAction.NotTypeKeyStore.message")); 
+				throw new CryptoException(res.getString("VerifyCertificateAction.NotTypeKeyStore.message"));
 			}
-		}
-		catch(IOException | CertificateException | NoSuchAlgorithmException | IllegalStateException e)
-		{
-			throw new CryptoException(res.getString("VerifyCertificateAction.Exception.Title"),e); 
+		} catch (IOException | CertificateException | NoSuchAlgorithmException | IllegalStateException e) {
+			throw new CryptoException(res.getString("VerifyCertificateAction.Exception.Title"), e);
 		}
 	}
 
