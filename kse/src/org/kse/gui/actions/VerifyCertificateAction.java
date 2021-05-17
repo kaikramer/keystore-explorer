@@ -1,5 +1,6 @@
 package org.kse.gui.actions;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,6 +13,7 @@ import java.security.Security;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXParameters;
@@ -20,6 +22,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.ApplicationSettings;
@@ -43,6 +47,11 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
 	public VerifyCertificateAction(KseFrame kseFrame) {
 		super(kseFrame);
+		putValue(LONG_DESCRIPTION, res.getString("VerifyCertificateAction.statusbar"));
+		putValue(NAME, res.getString("VerifyCertificateAction.text"));
+		putValue(SHORT_DESCRIPTION, res.getString("VerifyCertificateAction.tooltip"));
+		putValue(SMALL_ICON,
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifycert.png"))));
 	}
 
 	public VerifyCertificateAction(KseFrame kseFrame, X509Certificate cert, X509Certificate[] chain) {
@@ -57,7 +66,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
-		
+
 		try {
 			DVerifyCertificate dVerifyCertificate = null;
 			X509Certificate cert = null;
@@ -65,9 +74,12 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 				String alias = kseFrame.getSelectedEntryAlias();
 				dVerifyCertificate = new DVerifyCertificate(frame, alias, caCertificatesFile.toString());
 				cert = getCertificate(alias);
+				chain = getCertificateChain(alias);
+
 			} else {
 				cert = certFromConstructor;
-				dVerifyCertificate = new DVerifyCertificate(frame, X509CertUtil.getCertificateAlias(cert), caCertificatesFile.toString());
+				dVerifyCertificate = new DVerifyCertificate(frame, X509CertUtil.getCertificateAlias(cert),
+						caCertificatesFile.toString());
 			}
 
 			dVerifyCertificate.setLocationRelativeTo(frame);
@@ -125,15 +137,17 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			openKeyStore(file, trustStore);
 		} else {
 			trustStore.load(null, null);
-			for (int i = 0; i < chain.length; i++) {
-				X509Certificate cert = chain[i];
-				int basicConstraints = cert.getBasicConstraints();
-				if (basicConstraints != -1) {
-					boolean[] keyUsage = cert.getKeyUsage();
-					if (keyUsage != null && keyUsage[5]) {
-						// CA certificate
-						String entry = "entry" + i;
-						trustStore.setCertificateEntry(entry, cert);
+			if (chain != null) {
+				for (int i = 0; i < chain.length; i++) {
+					X509Certificate cert = chain[i];
+					int basicConstraints = cert.getBasicConstraints();
+					if (basicConstraints != -1) {
+						boolean[] keyUsage = cert.getKeyUsage();
+						if (keyUsage != null && keyUsage[5]) {
+							// CA certificate
+							String entry = "entry" + i;
+							trustStore.setCertificateEntry(entry, cert);
+						}
 					}
 				}
 			}
@@ -147,11 +161,13 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		if (revocationEnabled) {
 			listCertificates.add(certFromConstructor);
 		} else {
-			for (int i = chain.length - 1; i >= 0; i--) {
-				X509Certificate cert = chain[i];
-				listCertificates.add(0, cert);
-				if (cert.equals(certFromConstructor)) {
-					break;
+			if (chain != null) {
+				for (int i = chain.length - 1; i >= 0; i--) {
+					X509Certificate cert = chain[i];
+					listCertificates.add(0, cert);
+					if (cert.equals(certFromConstructor)) {
+						break;
+					}
 				}
 			}
 		}
@@ -217,4 +233,25 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			throw new CryptoException(message, ex);
 		}
 	}
+
+	private X509Certificate[] getCertificateChain(String alias) throws CryptoException {
+		try {
+			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+			KeyStore keyStore = history.getCurrentState().getKeyStore();
+			Certificate[] certs = keyStore.getCertificateChain(alias);
+			if (certs != null && certs.length > 0) {
+				X509Certificate[] xCert = new X509Certificate[certs.length];
+				for (int i = 0; i < certs.length; i++) {
+					xCert[i] = (X509Certificate) certs[i];
+				}
+				return xCert;
+			}
+			return null;
+		} catch (KeyStoreException ex) {
+			String message = MessageFormat.format(res.getString("VerifyCertificateAction.NoAccessEntry.message"),
+					alias);
+			throw new CryptoException(message, ex);
+		}
+	}
+
 }

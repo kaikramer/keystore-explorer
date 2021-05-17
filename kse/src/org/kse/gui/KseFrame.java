@@ -176,6 +176,7 @@ import org.kse.gui.actions.TrustedCertificatePublicKeyDetailsAction;
 import org.kse.gui.actions.UndoAction;
 import org.kse.gui.actions.UnlockKeyAction;
 import org.kse.gui.actions.UnlockKeyPairAction;
+import org.kse.gui.actions.VerifyCertificateAction;
 import org.kse.gui.actions.WebsiteAction;
 import org.kse.gui.dnd.DragEntry;
 import org.kse.gui.dnd.DragKeyPairEntry;
@@ -357,6 +358,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiKeyPairExportPrivateKey;
 	private JMenuItem jmiKeyPairExportPublicKey;
 	private JMenuItem jmiKeyPairGenerateCsr;
+	private JMenuItem jmiKeyPairVerifyCertificate;
 	private JMenu jmKeyPairImportCaReply;
 	private JMenuItem jmiKeyPairImportCaReplyFile;
 	private JMenuItem jmiKeyPairImportCaReplyClipboard;
@@ -481,6 +483,7 @@ public final class KseFrame implements StatusBar {
 	private final ExportKeyPairPrivateKeyAction exportKeyPairPrivateKeyAction = new ExportKeyPairPrivateKeyAction(this);
 	private final ExportKeyPairPublicKeyAction exportKeyPairPublicKeyAction = new ExportKeyPairPublicKeyAction(this);
 	private final GenerateCsrAction generateCsrAction = new GenerateCsrAction(this);
+	private final VerifyCertificateAction verifyCertificateAction = new VerifyCertificateAction(this);
 	private final ImportCaReplyFromFileAction importCaReplyFromFileAction = new ImportCaReplyFromFileAction(this);
 	private final ImportCaReplyFromClipboardAction importCaReplyFromClipboardAction = new ImportCaReplyFromClipboardAction(this);
 	private final AppendToCertificateChainAction appendToCertificateChainAction = new AppendToCertificateChainAction(
@@ -1921,6 +1924,11 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiKeyPairGenerateCsr, (String) generateCsrAction.getValue(Action.LONG_DESCRIPTION),
 				this);
 
+		jmiKeyPairVerifyCertificate = new JMenuItem(verifyCertificateAction);
+		jmiKeyPairVerifyCertificate.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyPairVerifyCertificate, (String) verifyCertificateAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		 		
 		jmKeyPairImportCaReply = new JMenu(res.getString("KseFrame.jmKeyPairImportCaReply.text"));
 		jmKeyPairImportCaReply.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource("images/menu/keypairimportcareply.png"))));
@@ -2005,6 +2013,7 @@ public final class KseFrame implements StatusBar {
 		jmKeyPairExport.add(jmiKeyPairExportPrivateKey);
 		jmKeyPairExport.add(jmiKeyPairExportPublicKey);
 		jpmKeyPair.add(jmiKeyPairGenerateCsr);
+		jpmKeyPair.add(jmiKeyPairVerifyCertificate);
 		jpmKeyPair.add(jmKeyPairImportCaReply);
 		jmKeyPairImportCaReply.add(jmiKeyPairImportCaReplyFile);
 		jmKeyPairImportCaReply.add(jmiKeyPairImportCaReplyClipboard);
