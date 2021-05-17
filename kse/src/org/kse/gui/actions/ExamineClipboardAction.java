@@ -73,29 +73,25 @@ import org.kse.gui.password.DGetPassword;
  */
 public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
-	private static ResourceBundle resExt = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+	private static ResourceBundle resExt = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
 	private static final long serialVersionUID = -4374420674229658652L;
 
 	/**
 	 * Construct action.
 	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
+	 * @param kseFrame KeyStore Explorer frame
 	 */
 	public ExamineClipboardAction(KseFrame kseFrame) {
 		super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ExamineClipboardAction.accelerator")
-				.charAt(0), Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ExamineClipboardAction.accelerator").charAt(0),
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		putValue(LONG_DESCRIPTION, res.getString("ExamineClipboardAction.statusbar"));
 		putValue(NAME, res.getString("ExamineClipboardAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("ExamineClipboardAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/examineclipboard.png"))));
+		putValue(SMALL_ICON, new ImageIcon(
+				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/examineclipboard.png"))));
 	}
 
 	/**
@@ -119,9 +115,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 				SwingUtilities.invokeLater(() -> DroppedFileHandler.openFiles(kseFrame, droppedFiles));
 			} else if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				show((String) t.getTransferData(DataFlavor.stringFlavor));
-			}
-			else
-			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			} else if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				show((String) t.getTransferData(DataFlavor.stringFlavor));
 			}
 		} catch (UnsupportedFlavorException e) {
@@ -138,9 +132,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		}
 		try {
 			URL url = new URL(data);
-			if (url.getPath().endsWith(".cer")
-					|| url.getPath().endsWith(".crt")
-					|| url.getPath().endsWith(".pem")) {
+			if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt") || url.getPath().endsWith(".pem")) {
 				downloadCert(url);
 				return;
 			} else if (url.getPath().endsWith(".crl")) {
@@ -184,8 +176,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 			case BCFKS_KS:
 			case UNKNOWN:
 			default:
-				JOptionPane.showMessageDialog(frame,
-						res.getString("ExamineClipboardAction.UnknownType.message"),
+				JOptionPane.showMessageDialog(frame, res.getString("ExamineClipboardAction.UnknownType.message"),
 						res.getString("ExamineClipboardAction.ExamineClipboard.Title"), JOptionPane.WARNING_MESSAGE);
 				break;
 			}
@@ -201,8 +192,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 			X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
 			if (crl != null) {
 				DViewCrl dViewCrl = new DViewCrl(frame,
-						MessageFormat.format(resExt.getString("DViewExtensions.ViewCrl.Title"), url.toString()),
-						crl);
+						MessageFormat.format(resExt.getString("DViewExtensions.ViewCrl.Title"), url.toString()), crl);
 				dViewCrl.setLocationRelativeTo(frame);
 				dViewCrl.setVisible(true);
 			}
@@ -292,8 +282,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 			certs = X509CertUtil.loadCertificates(data);
 
 			if (certs.length == 0) {
-				JOptionPane.showMessageDialog(frame,
-						res.getString("ExamineClipboardAction.NoCertsFound.message"),
+				JOptionPane.showMessageDialog(frame, res.getString("ExamineClipboardAction.NoCertsFound.message"),
 						res.getString("ExamineClipboardAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
 			}
 		} catch (Exception ex) {
@@ -347,7 +336,6 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 			dViewCrl.setVisible(true);
 		}
 	}
-
 
 	private void showCsr(byte[] data, CryptoFileType fileType) {
 		if (data == null) {
