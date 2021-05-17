@@ -13,7 +13,6 @@ import java.security.Security;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXParameters;
@@ -238,15 +237,8 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		try {
 			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStore keyStore = history.getCurrentState().getKeyStore();
-			Certificate[] certs = keyStore.getCertificateChain(alias);
-			if (certs != null && certs.length > 0) {
-				X509Certificate[] xCert = new X509Certificate[certs.length];
-				for (int i = 0; i < certs.length; i++) {
-					xCert[i] = (X509Certificate) certs[i];
-				}
-				return xCert;
-			}
-			return null;
+			X509Certificate[] certs = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
+			return certs;
 		} catch (KeyStoreException ex) {
 			String message = MessageFormat.format(res.getString("VerifyCertificateAction.NoAccessEntry.message"),
 					alias);
