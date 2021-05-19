@@ -2,7 +2,6 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -28,20 +27,22 @@ import javax.swing.JOptionPane;
 import org.kse.ApplicationSettings;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
-import org.kse.crypto.filetype.CryptoFileType;
-import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.crypto.keystore.KeyStoreLoadException;
+import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DVerifyCertificate;
 import org.kse.gui.dialogs.DVerifyCertificate.VerifyOptions;
 import org.kse.gui.error.DError;
+import org.kse.gui.error.DProblem;
+import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
 import org.kse.utilities.history.KeyStoreHistory;
 
 public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
 	private static final long serialVersionUID = 1L;
-	private X509Certificate certFromConstructor;
+	private X509Certificate certificateEval;
 	private X509Certificate[] chain;
 
 	public VerifyCertificateAction(KseFrame kseFrame) {
@@ -49,13 +50,13 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		putValue(LONG_DESCRIPTION, res.getString("VerifyCertificateAction.statusbar"));
 		putValue(NAME, res.getString("VerifyCertificateAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("VerifyCertificateAction.tooltip"));
-		putValue(SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifycert.png"))));
+		putValue(SMALL_ICON, new ImageIcon(
+				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifycert.png"))));
 	}
 
 	public VerifyCertificateAction(KseFrame kseFrame, X509Certificate cert, X509Certificate[] chain) {
 		super(kseFrame);
-		this.certFromConstructor = cert;
+		this.certificateEval = cert;
 		this.chain = chain;
 	}
 
@@ -67,74 +68,124 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
 		try {
-			DVerifyCertificate dVerifyCertificate = null;
-			X509Certificate cert = null;
-			if (certFromConstructor == null) {
-				String alias = kseFrame.getSelectedEntryAlias();
-				dVerifyCertificate = new DVerifyCertificate(frame, alias, caCertificatesFile.toString());
-				cert = getCertificate(alias);
+			String alias = "";
+			if (certificateEval == null) {
+				alias = kseFrame.getSelectedEntryAlias();				
+				certificateEval = getCertificate(alias);
 				chain = getCertificateChain(alias);
-
 			} else {
-				cert = certFromConstructor;
-				dVerifyCertificate = new DVerifyCertificate(frame, X509CertUtil.getCertificateAlias(cert),
-						caCertificatesFile.toString());
+				alias = X509CertUtil.getCertificateAlias(certificateEval);
 			}
+			// if the certificate is expired it should not be evaluated
+			Date now = new Date(System.currentTimeMillis());
+			if (certificateEval.getNotAfter().before(now)) {
+				JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.certExpired.message"),
+						res.getString("VerifyCertificateAction.Verify.Title") + " " + alias, JOptionPane.WARNING_MESSAGE);
+			} else {
+				DVerifyCertificate dVerifyCertificate = new DVerifyCertificate(frame, alias, caCertificatesFile.toString());
+				dVerifyCertificate.setLocationRelativeTo(frame);
+				dVerifyCertificate.setVisible(true);
+				if (dVerifyCertificate.isVerifySelected()) {
 
-			dVerifyCertificate.setLocationRelativeTo(frame);
-			dVerifyCertificate.setVisible(true);
-			if (dVerifyCertificate.isVerifySelected()) {
-
-				VerifyOptions verifyOptions = dVerifyCertificate.getVerifyOption();
-
-				if (verifyOptions == VerifyOptions.CRL) {
-					verifyStatusCrl();
-					JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
-							res.getString("VerifyCertificateAction.Verify.Title"), JOptionPane.INFORMATION_MESSAGE);
-				} else if (verifyOptions == VerifyOptions.OCSP) {
-					verifyStatusOCSP();
-					JOptionPane.showMessageDialog(frame,
-							res.getString("VerifyCertificateAction.OcspSuccessful.message"),
-							res.getString("VerifyCertificateAction.Verify.Title"), JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					verifyChain(dVerifyCertificate.getCaCertificateFile());
-					JOptionPane.showMessageDialog(frame,
-							res.getString("VerifyCertificateAction.ChainSuccessful.message"),
-							res.getString("VerifyCertificateAction.Verify.Title"), JOptionPane.INFORMATION_MESSAGE);
+					VerifyOptions verifyOptions = dVerifyCertificate.getVerifyOption();
+					if (verifyOptions == VerifyOptions.CRL) {
+						verifyStatusCrl(alias);
+					} else if (verifyOptions == VerifyOptions.OCSP) {
+						verifyStatusOCSP(alias);
+					} else {
+						verifyChain(dVerifyCertificate.getCaCertificateFile(), alias);
+					}
 				}
 			}
+		} catch (CertPathValidatorException cex) {
+			JOptionPane.showMessageDialog(frame, cex.getMessage(),
+					res.getString("VerifyCertificateAction.Verify.Title"), JOptionPane.WARNING_MESSAGE);
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
+		} finally {
+			certificateEval = null;
 		}
 	}
 
-	private void verifyChain(String caCertificateFile)
+	private void verifyChain(String caCertificateFile, String alias)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		verify("false", "false", false, caCertificateFile);
+		if (verify("false", "false", false, caCertificateFile)) {
+			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.ChainSuccessful.message"),
+					res.getString("VerifyCertificateAction.Verify.Title") + " " +  alias, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
-	private void verifyStatusOCSP()
+	private void verifyStatusOCSP(String alias)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		verify("false", "true", true, "");
+		if (verify("false", "true", true, "")) {
+			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
+					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
-	private void verifyStatusCrl()
+	private void verifyStatusCrl(String alias)
 			throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		verify("true", "false", true, "");
+		if (verify("true", "false", true, "")) {
+			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
+					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias, JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 
-	private void verify(String crl, String ocsp, boolean revocationEnabled, String caCertificateFile)
+	private boolean verify(String crl, String ocsp, boolean revocationEnabled, String caCertificateFile)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
 
-		KeyStore trustStore = KeyStore.getInstance("JCEKS");
-		if (!caCertificateFile.isEmpty()) {
-			File file = new File(caCertificateFile);
-			openKeyStore(file, trustStore);
+		KeyStore trustStore = createOrOpenKeyStore(caCertificateFile);
+
+		if (trustStore == null) {
+			return false;
+		}
+		if (trustStore.size() == 0) {
+			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.trustStoreEmpty.message"),
+					res.getString("VerifyCertificateAction.Verify.Title"), JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		System.setProperty("com.sun.net.ssl.checkRevocation", crl);
+		System.setProperty("com.sun.security.enableCRLDP", crl);
+		Security.setProperty("ocsp.enable", ocsp);
+
+		List<X509Certificate> listCertificates = new ArrayList<>();
+		if (revocationEnabled) {
+			listCertificates.add(certificateEval);
 		} else {
+			if (chain != null) {
+				for (int i = chain.length - 1; i >= 0; i--) {
+					X509Certificate cert = chain[i];
+					listCertificates.add(0, cert);
+					if (cert.equals(certificateEval)) {
+						break;
+					}
+				}
+			}
+		}
+
+		CertPathValidator validator = CertPathValidator.getInstance("PKIX");
+		CertificateFactory factory = CertificateFactory.getInstance("X509");
+		CertPath certPath = factory.generateCertPath(listCertificates);
+		PKIXParameters params = new PKIXParameters(trustStore);
+		Date now = new Date(System.currentTimeMillis());
+		params.setDate(now);
+		params.setRevocationEnabled(revocationEnabled);
+		validator.validate(certPath, params);
+		return true;
+	}
+
+	private KeyStore createOrOpenKeyStore(String caCertificateFile)
+			throws CryptoException, KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		KeyStore trustStore = null;
+		if (!caCertificateFile.isEmpty()) {
+			File keyStoreFile = new File(caCertificateFile);
+			trustStore = openKeyStore(keyStoreFile, trustStore);
+		} else {
+			trustStore = KeyStore.getInstance("JCEKS");
 			trustStore.load(null, null);
 			if (chain != null) {
 				for (int i = 0; i < chain.length; i++) {
@@ -151,64 +202,29 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 				}
 			}
 		}
-
-		System.setProperty("com.sun.net.ssl.checkRevocation", crl);
-		System.setProperty("com.sun.security.enableCRLDP", crl);
-		Security.setProperty("ocsp.enable", ocsp);
-
-		List<X509Certificate> listCertificates = new ArrayList<>();
-		if (revocationEnabled) {
-			listCertificates.add(certFromConstructor);
-		} else {
-			if (chain != null) {
-				for (int i = chain.length - 1; i >= 0; i--) {
-					X509Certificate cert = chain[i];
-					listCertificates.add(0, cert);
-					if (cert.equals(certFromConstructor)) {
-						break;
-					}
-				}
-			}
-		}
-
-		CertPathValidator validator = CertPathValidator.getInstance("PKIX");
-		CertificateFactory factory = CertificateFactory.getInstance("X509");
-		CertPath certPath = factory.generateCertPath(listCertificates);
-		PKIXParameters params = new PKIXParameters(trustStore);
-		Date date = new Date(System.currentTimeMillis());
-		params.setDate(date);
-		params.setRevocationEnabled(revocationEnabled);
-		validator.validate(certPath, params);
+		return trustStore;
 	}
 
-	private void openKeyStore(File file, KeyStore trustStore) throws CryptoException, FileNotFoundException {
+	private KeyStore openKeyStore(File keyStoreFile, KeyStore trustStore)
+			throws CryptoException, FileNotFoundException {
 
-		if (!file.exists()) {
+		if (!keyStoreFile.exists()) {
 			throw new FileNotFoundException(res.getString("VerifyCertificateAction.FileNotFoundException.message"));
 		}
-		try {
-			CryptoFileType fileType = CryptoFileUtil.detectFileType(file);
-			switch (fileType) {
-			case JCEKS_KS:
-			case JKS_KS:
-			case PKCS12_KS:
-			case BKS_KS:
-			case BKS_V1_KS:
-			case BCFKS_KS:
-			case UBER_KS:
-				Password password = getPassword(file);
+
+		while (true) {
+			try {
+				Password password = getPassword(keyStoreFile);
 				if (password == null || password.isNulled()) {
-					return;
+					return null;
 				}
-				try (FileInputStream in = new FileInputStream(file)) {
-					trustStore.load(in, password.toCharArray());
+				return KeyStoreUtil.load(keyStoreFile, password);
+			} catch (KeyStoreLoadException klex) {
+				int tryAgainChoice = showErrorMessage(keyStoreFile, klex);
+				if (tryAgainChoice == JOptionPane.NO_OPTION) {
+					return null;
 				}
-				break;
-			default:
-				throw new CryptoException(res.getString("VerifyCertificateAction.NotTypeKeyStore.message"));
 			}
-		} catch (IOException | CertificateException | NoSuchAlgorithmException | IllegalStateException e) {
-			throw new CryptoException(res.getString("VerifyCertificateAction.Exception.Title"), e);
 		}
 	}
 
@@ -246,4 +262,20 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		}
 	}
 
+	private int showErrorMessage(File keyStoreFile, KeyStoreLoadException klex) {
+		String problemStr = MessageFormat.format(res.getString("OpenAction.NoOpenKeyStore.Problem"),
+				klex.getKeyStoreType().friendly(), keyStoreFile.getName());
+
+		String[] causes = new String[] { res.getString("OpenAction.PasswordIncorrectKeyStore.Cause"),
+				res.getString("OpenAction.CorruptedKeyStore.Cause") };
+
+		Problem problem = new Problem(problemStr, causes, klex);
+
+		DProblem dProblem = new DProblem(frame, res.getString("OpenAction.ProblemOpeningKeyStore.Title"), problem);
+		dProblem.setLocationRelativeTo(frame);
+		dProblem.setVisible(true);
+
+		return JOptionPane.showConfirmDialog(frame, res.getString("OpenAction.TryAgain.message"),
+				res.getString("OpenAction.TryAgain.Title"), JOptionPane.YES_NO_OPTION);
+	}
 }
