@@ -32,6 +32,7 @@ import org.bouncycastle.asn1.x509.ReasonFlags;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.generalname.JGeneralNames;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -236,7 +237,7 @@ public class DDistributionPointsChooser extends JEscDialog {
 					jcbUnused.setSelected(true);
 				}
 				if (hasReasonFlag(reasonFlagsInt, ReasonFlags.keyCompromise)) {
-					jcbKeyCompromise.setSelected(true);	
+					jcbKeyCompromise.setSelected(true);
 				}
 				if (hasReasonFlag(reasonFlagsInt, ReasonFlags.cACompromise)) {
 					jcbCACompromise.setSelected(true);
@@ -333,6 +334,10 @@ public class DDistributionPointsChooser extends JEscDialog {
 
 	private static boolean hasReasonFlag(int reasonFlags, int reasonFlag) {
 		return (reasonFlags & reasonFlag) == reasonFlag;
+	}
+
+	public static void main(String[] args) throws Exception {
+		DialogViewer.run(new DDistributionPointsChooser(new javax.swing.JFrame(), "DistributionPointsChooser", null));
 	}
 
 }

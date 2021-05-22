@@ -29,6 +29,7 @@ import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.distributionpoints.JDistributionPoints;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 
 public class DCrlDistributionPoints extends DExtension {
 
@@ -171,34 +172,8 @@ public class DCrlDistributionPoints extends DExtension {
 		dispose();
 	}
 
-	/*
-	 * 
-	 * private void okPressed() { String crlDistributionPointsStr =
-	 * jtCrlDistributionPoints.getText().trim();
-	 * 
-	 * if (crlDistributionPointsStr.length() == 0) {
-	 * JOptionPane.showMessageDialog(this,
-	 * res.getString("DCrlDistributionPoints.ValueReq.message"), getTitle(),
-	 * JOptionPane.WARNING_MESSAGE); return; }
-	 * 
-	 * final GeneralName generalName = new
-	 * GeneralName(GeneralName.uniformResourceIdentifier, crlDistributionPointsStr);
-	 * 
-	 * final DistributionPointName pointName = new DistributionPointName(new
-	 * GeneralNames(generalName)); final DistributionPoint[] points = new
-	 * DistributionPoint[]{new DistributionPoint(pointName, null, null)};
-	 * 
-	 * for (DistributionPoint point : points) {
-	 * System.out.println(point.toString()); }
-	 * 
-	 * CRLDistPoint cRLDistPoint = new CRLDistPoint(points);
-	 * 
-	 * 
-	 * try { value = cRLDistPoint.getEncoded(ASN1Encoding.DER); } catch (IOException
-	 * e) { DError.displayError(this, e); return; }
-	 * 
-	 * closeDialog(); }
-	 * 
-	 */
-
+	public static void main(String[] args) throws Exception {
+		DCrlDistributionPoints dialog = new DCrlDistributionPoints(new JDialog());
+		DialogViewer.run(dialog);
+	}
 }
