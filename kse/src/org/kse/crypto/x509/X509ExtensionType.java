@@ -114,6 +114,10 @@ public enum X509ExtensionType {
 	/** Inhibit Any Policy */
 	INHIBIT_ANY_POLICY("2.5.29.54", "InhibitAnyPolicyCertExt"),
 
+	// ////////////////////////////////
+	// Netscape Extensions
+	// ////////////////////////////////
+
 	/** Netscape Certificate Type */
 	NETSCAPE_CERTIFICATE_TYPE("2.16.840.1.113730.1.1", "NetscapeCertificateTypeCertExt"),
 
@@ -350,6 +354,9 @@ public enum X509ExtensionType {
 	// ////////////////////////////////
 
 	GO_CT_SCTS("1.3.6.1.4.1.11129.2.4.2", "SignedCertificateTimestampList"),
+
+	// for letting the user add an arbitrary extension
+	CUSTOM("0", "custom"),
 
 	UNKNOWN("0", "unknown");
 

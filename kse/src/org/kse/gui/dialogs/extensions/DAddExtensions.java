@@ -490,30 +490,6 @@ public class DAddExtensions extends JEscDialog {
 		case NAME_CONSTRAINTS:
 			dExtension = new DNameConstraints(this);
 			break;
-		case NETSCAPE_BASE_URL:
-			dExtension = new DNetscapeBaseUrl(this);
-			break;
-		case NETSCAPE_CA_POLICY_URL:
-			dExtension = new DNetscapeCaPolicyUrl(this);
-			break;
-		case NETSCAPE_CA_REVOCATION_URL:
-			dExtension = new DNetscapeCaRevocationUrl(this);
-			break;
-		case NETSCAPE_CERTIFICATE_RENEWAL_URL:
-			dExtension = new DNetscapeCertificateRenewalUrl(this);
-			break;
-		case NETSCAPE_CERTIFICATE_TYPE:
-			dExtension = new DNetscapeCertificateType(this);
-			break;
-		case NETSCAPE_COMMENT:
-			dExtension = new DNetscapeComment(this);
-			break;
-		case NETSCAPE_REVOCATION_URL:
-			dExtension = new DNetscapeRevocationUrl(this);
-			break;
-		case NETSCAPE_SSL_SERVER_NAME:
-			dExtension = new DNetscapeSslServerName(this);
-			break;
 		case POLICY_CONSTRAINTS:
 			dExtension = new DPolicyConstraints(this);
 			break;
@@ -625,30 +601,6 @@ public class DAddExtensions extends JEscDialog {
 					break;
 				case NAME_CONSTRAINTS:
 					dExtension = new DNameConstraints(this, extensionValue);
-					break;
-				case NETSCAPE_BASE_URL:
-					dExtension = new DNetscapeBaseUrl(this, extensionValue);
-					break;
-				case NETSCAPE_CERTIFICATE_RENEWAL_URL:
-					dExtension = new DNetscapeCertificateRenewalUrl(this, extensionValue);
-					break;
-				case NETSCAPE_CA_POLICY_URL:
-					dExtension = new DNetscapeCaPolicyUrl(this, extensionValue);
-					break;
-				case NETSCAPE_CA_REVOCATION_URL:
-					dExtension = new DNetscapeCaRevocationUrl(this, extensionValue);
-					break;
-				case NETSCAPE_CERTIFICATE_TYPE:
-					dExtension = new DNetscapeCertificateType(this, extensionValue);
-					break;
-				case NETSCAPE_COMMENT:
-					dExtension = new DNetscapeComment(this, extensionValue);
-					break;
-				case NETSCAPE_REVOCATION_URL:
-					dExtension = new DNetscapeRevocationUrl(this, extensionValue);
-					break;
-				case NETSCAPE_SSL_SERVER_NAME:
-					dExtension = new DNetscapeSslServerName(this, extensionValue);
 					break;
 				case POLICY_CONSTRAINTS:
 					dExtension = new DPolicyConstraints(this, extensionValue);

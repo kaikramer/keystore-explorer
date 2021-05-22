@@ -28,14 +28,7 @@ import static org.kse.crypto.x509.X509ExtensionType.INHIBIT_ANY_POLICY;
 import static org.kse.crypto.x509.X509ExtensionType.ISSUER_ALTERNATIVE_NAME;
 import static org.kse.crypto.x509.X509ExtensionType.KEY_USAGE;
 import static org.kse.crypto.x509.X509ExtensionType.NAME_CONSTRAINTS;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_BASE_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CA_POLICY_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CA_REVOCATION_URL;
 import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_RENEWAL_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_CERTIFICATE_TYPE;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_COMMENT;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_REVOCATION_URL;
-import static org.kse.crypto.x509.X509ExtensionType.NETSCAPE_SSL_SERVER_NAME;
 import static org.kse.crypto.x509.X509ExtensionType.POLICY_CONSTRAINTS;
 import static org.kse.crypto.x509.X509ExtensionType.POLICY_MAPPINGS;
 import static org.kse.crypto.x509.X509ExtensionType.PRIVATE_KEY_USAGE_PERIOD;
@@ -72,9 +65,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
 
 /**
  * Dialog used to retrieve the type to use in the addition of a new extension.
@@ -87,13 +82,10 @@ public class DAddExtensionType extends JEscDialog {
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 	private static final X509ExtensionType[] SUPPORTED_EXTENSIONS = { AUTHORITY_INFORMATION_ACCESS,
-			AUTHORITY_KEY_IDENTIFIER, BASIC_CONSTRAINTS, CERTIFICATE_POLICIES, EXTENDED_KEY_USAGE, INHIBIT_ANY_POLICY,
-			ISSUER_ALTERNATIVE_NAME, KEY_USAGE, NAME_CONSTRAINTS, NETSCAPE_BASE_URL, NETSCAPE_CA_POLICY_URL,
-			NETSCAPE_CA_REVOCATION_URL, NETSCAPE_CERTIFICATE_RENEWAL_URL, NETSCAPE_CERTIFICATE_TYPE, NETSCAPE_COMMENT,
-			NETSCAPE_REVOCATION_URL, NETSCAPE_SSL_SERVER_NAME, POLICY_CONSTRAINTS, POLICY_MAPPINGS,
-			PRIVATE_KEY_USAGE_PERIOD, SUBJECT_ALTERNATIVE_NAME, SUBJECT_INFORMATION_ACCESS, SUBJECT_KEY_IDENTIFIER, 
-			CRL_DISTRIBUTION_POINTS };
-
+		AUTHORITY_KEY_IDENTIFIER, BASIC_CONSTRAINTS, CERTIFICATE_POLICIES, EXTENDED_KEY_USAGE, INHIBIT_ANY_POLICY,
+		ISSUER_ALTERNATIVE_NAME, KEY_USAGE, NAME_CONSTRAINTS, POLICY_CONSTRAINTS, POLICY_MAPPINGS,
+		PRIVATE_KEY_USAGE_PERIOD, SUBJECT_ALTERNATIVE_NAME, SUBJECT_INFORMATION_ACCESS, SUBJECT_KEY_IDENTIFIER, CRL_DISTRIBUTION_POINTS };
+	
 	private JPanel jpExtensionTypes;
 	private JLabel jlExtensionTypes;
 	private JList<X509ExtensionType> jltExtensionTypes;
@@ -255,5 +247,11 @@ public class DAddExtensionType extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick UI testing
+	public static void main(String[] args) throws Exception {
+		DAddExtensionType dialog = new DAddExtensionType(new JDialog(), new X509ExtensionSet());
+		DialogViewer.run(dialog);
 	}
 }
