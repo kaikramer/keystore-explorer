@@ -17,6 +17,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -58,6 +59,7 @@ public class DVerifyCertificate extends JEscDialog {
 	private JRadioButton jrbCrlCheck;
 	private JRadioButton jrbOcspCheck;
 	private JRadioButton jrbChainCheck;
+	private JCheckBox jcbSelectKeyStore;
 	private JPanel jpButtons;
 	private JButton jbOk;
 	private JButton jbCancel;
@@ -102,23 +104,25 @@ public class DVerifyCertificate extends JEscDialog {
 		pane.add(jrbOcspCheck, "");
 		pane.add(jrbChainCheck, "wrap");
 
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		
+		jcbSelectKeyStore  = new JCheckBox(res.getString("DVerifyCertificate.jcbSelectKeyStore.text"));
+		pane.add(jcbSelectKeyStore, "left, spanx, wrap");
+		
+		jcbSelectKeyStore.addItemListener(evt -> updateVerifyControls());
 		jcbKeyStore = new JComboBox<>(getKeystoreNames());
-		jcbKeyStore.setToolTipText(res.getString("DExamineSsl.jcbKeyStore.tooltip"));
+		jcbKeyStore.setToolTipText(res.getString("DVerifyCertificate.jcbKeyStore.tooltip"));
 		jcbKeyStore.setPreferredSize(new Dimension(200,20));
 		jcbKeyStore.setEnabled(false);
 		
 		jbLoadKeystore = new JButton();
 		jbLoadKeystore.setIcon(new ImageIcon(getClass().getResource("images/open.png")));
-		jbLoadKeystore.setToolTipText(res.getString("DExamineSsl.jbLoadKeystore.tooltip"));		
+		jbLoadKeystore.setToolTipText(res.getString("DVerifyCertificate.jbLoadKeystore.tooltip"));		
 		jbLoadKeystore.setEnabled(false);
 
-		pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "");
+		pane.add(new JLabel(res.getString("DVerifyCertificate.jlKeyStore.text")), "");
 		pane.add(jcbKeyStore, "split 2");
 		pane.add(jbLoadKeystore, "wrap");
-
-		jrbCrlCheck.addItemListener(evt -> updateVerifyControls());
-		jrbOcspCheck.addItemListener(evt -> updateVerifyControls());
-		jrbChainCheck.addItemListener(evt -> updateVerifyControls());
 
 		jbOk = new JButton(res.getString("DVerifyCertificate.jbOk.text"));
 		jbCancel = new JButton(res.getString("DVerifyCertificate.jbCancel.text"));
@@ -171,13 +175,15 @@ public class DVerifyCertificate extends JEscDialog {
 
 	private void updateVerifyControls() {
 
-		jcbKeyStore.setModel(getKeystoreNames());		
-		if (jrbCrlCheck.isSelected() || jrbOcspCheck.isSelected()) {
-			jcbKeyStore.setEnabled(false);
-			jbLoadKeystore.setEnabled(false);
-		} else {
+		jcbKeyStore.setModel(getKeystoreNames());
+		if (jcbSelectKeyStore.isSelected()) {
 			jcbKeyStore.setEnabled(true);
-			jbLoadKeystore.setEnabled(true);
+			jbLoadKeystore.setEnabled(true);			
+		}
+		else
+		{
+			jcbKeyStore.setEnabled(false);
+			jbLoadKeystore.setEnabled(false);			
 		}
 	}
 
@@ -190,17 +196,19 @@ public class DVerifyCertificate extends JEscDialog {
 	}
 
 	private void okPressed() {
-		if (jrbCrlCheck.isSelected()) {
-			verifyOption = VerifyOptions.CRL;
-		} else if (jrbOcspCheck.isSelected()) {
-			verifyOption = VerifyOptions.OCSP;
-		} else {
-			if (getKeyStore() == null) {
+		if (jcbSelectKeyStore.isSelected()) {
+			if (jcbKeyStore.getSelectedItem() == null) {
 				JOptionPane.showMessageDialog(this, res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
 						res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
+		}
+		if (jrbCrlCheck.isSelected()) {
+			verifyOption = VerifyOptions.CRL;
+		} else if (jrbOcspCheck.isSelected()) {
+			verifyOption = VerifyOptions.OCSP;
+		} else {
 			verifyOption = VerifyOptions.CHAIN;
 		}
 		verifySelected = true;
@@ -230,7 +238,12 @@ public class DVerifyCertificate extends JEscDialog {
 	}
 
 	public KeyStoreHistory getKeyStore() {
-		return (KeyStoreHistory) jcbKeyStore.getSelectedItem();
+		if (jcbSelectKeyStore.isSelected()) {
+			return (KeyStoreHistory) jcbKeyStore.getSelectedItem();
+		}
+		else {
+			return null;
+		}
 	}
 
 	private ComboBoxModel<KeyStoreHistory> getKeystoreNames() {

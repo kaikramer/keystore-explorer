@@ -77,12 +77,12 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 				if (dVerifyCertificate.isVerifySelected()) {
 
 					VerifyOptions verifyOptions = dVerifyCertificate.getVerifyOption();
+					KeyStoreHistory keyStoreHistory = dVerifyCertificate.getKeyStore();
 					if (verifyOptions == VerifyOptions.CRL) {
-						verifyStatusCrl(alias);
+						verifyStatusCrl(keyStoreHistory, alias);
 					} else if (verifyOptions == VerifyOptions.OCSP) {
-						verifyStatusOCSP(alias);
-					} else {
-						KeyStoreHistory keyStoreHistory = dVerifyCertificate.getKeyStore();
+						verifyStatusOCSP(keyStoreHistory, alias);
+					} else {						
 						verifyChain(keyStoreHistory, alias);
 					}
 				}
@@ -107,20 +107,20 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private void verifyStatusOCSP(String alias)
+	private void verifyStatusOCSP(KeyStoreHistory keyStoreHistory, String alias)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		if (verify("false", "true", true, null)) {
+		if (verify("false", "true", true, keyStoreHistory)) {
 			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
 					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
-	private void verifyStatusCrl(String alias)
+	private void verifyStatusCrl(KeyStoreHistory keyStoreHistory, String alias)
 			throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		if (verify("true", "false", true, null)) {
+		if (verify("true", "false", true, keyStoreHistory)) {
 			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
 					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
 					JOptionPane.INFORMATION_MESSAGE);
