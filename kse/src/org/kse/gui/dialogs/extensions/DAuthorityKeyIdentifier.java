@@ -51,6 +51,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JKeyIdentifier;
 import org.kse.gui.crypto.generalname.JGeneralNames;
@@ -337,14 +338,14 @@ public class DAuthorityKeyIdentifier extends DExtension {
 		closeDialog();
 	}
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
 	@Override
 	public byte[] getValue() {
 		return value;
+	}
+
+	@Override
+	public String getOid() {
+		return X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid();
 	}
 
 	private void cancelPressed() {

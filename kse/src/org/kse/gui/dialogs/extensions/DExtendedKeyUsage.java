@@ -61,6 +61,7 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.kse.crypto.x509.ExtendedKeyUsageType;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
@@ -72,9 +73,6 @@ import net.miginfocom.swing.MigLayout;
  *
  */
 public class DExtendedKeyUsage extends DExtension {
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -972351635055954L;
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
@@ -373,14 +371,14 @@ public class DExtendedKeyUsage extends DExtension {
 		closeDialog();
 	}
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
 	@Override
 	public byte[] getValue() {
 		return value;
+	}
+
+	@Override
+	public String getOid() {
+		return X509ExtensionType.EXTENDED_KEY_USAGE.oid();
 	}
 
 	private void cancelPressed() {

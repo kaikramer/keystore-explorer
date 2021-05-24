@@ -311,6 +311,7 @@ public class DViewPrivateKey extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
 		KeyPair keyPair = keyGen.genKeyPair();
 

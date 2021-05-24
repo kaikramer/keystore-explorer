@@ -46,4 +46,12 @@ public abstract class DExtension extends JEscDialog {
 	 * @return Extension value
 	 */
 	public abstract byte[] getValue();
+
+
+	/**
+	 * Get OID of extension
+	 *
+	 * @return OID of extension
+	 */
+	public abstract String getOid();
 }

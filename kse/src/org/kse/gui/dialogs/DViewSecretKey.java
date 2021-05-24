@@ -273,6 +273,7 @@ public class DViewSecretKey extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
 		final SecretKey secretKey = SecretKeyUtil.generateSecretKey(SecretKeyType.AES, 256);
 		DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey, true);
 		DialogViewer.run(dialog);

@@ -46,6 +46,7 @@ import javax.swing.border.EtchedBorder;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.AccessDescription;
 import org.kse.crypto.x509.SubjectInfoAccess;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.accessdescription.JAccessDescriptions;
 import org.kse.gui.error.DError;
@@ -194,14 +195,14 @@ public class DSubjectInformationAccess extends DExtension {
 		closeDialog();
 	}
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
 	@Override
 	public byte[] getValue() {
 		return value;
+	}
+
+	@Override
+	public String getOid() {
+		return X509ExtensionType.SUBJECT_INFORMATION_ACCESS.oid();
 	}
 
 	private void cancelPressed() {

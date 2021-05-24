@@ -52,6 +52,7 @@ import org.bouncycastle.asn1.DERGeneralizedTime;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.PrivateKeyUsagePeriod;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.error.DError;
@@ -259,14 +260,15 @@ public class DPrivateKeyUsagePeriod extends DExtension {
 		closeDialog();
 	}
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
 	@Override
 	public byte[] getValue() {
 		return value;
+	}
+
+	@Override
+	public String getOid() {
+		return X509ExtensionType.PRIVATE_KEY_USAGE_PERIOD.oid();
+
 	}
 
 	private void cancelPressed() {

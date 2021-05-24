@@ -309,6 +309,7 @@ public class DViewPublicKey extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
 		KeyPair keyPair = keyGen.genKeyPair();
 

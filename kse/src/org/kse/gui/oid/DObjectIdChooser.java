@@ -22,6 +22,7 @@ package org.kse.gui.oid;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -37,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -44,6 +46,7 @@ import javax.swing.border.EtchedBorder;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.oid.InvalidObjectIdException;
 import org.kse.utilities.oid.ObjectIdUtil;
 
@@ -252,5 +255,12 @@ public class DObjectIdChooser extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+	public static void main(String[] args)
+			throws HeadlessException, InvalidObjectIdException, UnsupportedLookAndFeelException {
+		DialogViewer.prepare();
+		DObjectIdChooser dialog = new DObjectIdChooser(new JFrame(), "OID Chooser", new ASN1ObjectIdentifier("1.2.3"));
+		DialogViewer.run(dialog);
 	}
 }

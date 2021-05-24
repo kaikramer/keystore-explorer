@@ -24,7 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent; 
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
@@ -44,6 +44,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 
@@ -214,14 +215,14 @@ public class DBasicConstraints extends DExtension {
 		closeDialog();
 	}
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
 	@Override
 	public byte[] getValue() {
 		return value;
+	}
+
+	@Override
+	public String getOid() {
+		return X509ExtensionType.BASIC_CONSTRAINTS.oid();
 	}
 
 	private void cancelPressed() {

@@ -67,11 +67,13 @@ import javax.swing.table.TableRowSorter;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.Arrays;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.GeneralNameUtil;
@@ -508,6 +510,9 @@ public class DAddExtensions extends JEscDialog {
 		case SUBJECT_KEY_IDENTIFIER:
 			dExtension = new DSubjectKeyIdentifier(this, subjectPublicKey);
 			break;
+		case CUSTOM:
+			dExtension = new DCustomExtension(this);
+			break;
 		default:
 			return;
 		}
@@ -515,6 +520,7 @@ public class DAddExtensions extends JEscDialog {
 		dExtension.setLocationRelativeTo(this);
 		dExtension.setVisible(true);
 		extensionValue = dExtension.getValue();
+		String oid = dExtension.getOid();
 
 		if (extensionValue == null) {
 			return;
@@ -523,15 +529,20 @@ public class DAddExtensions extends JEscDialog {
 		// value has to be wrapped in a DER-encoded OCTET STRING
 		byte[] extensionValueOctet = null;
 		try {
-			extensionValueOctet = new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+			if (Arrays.isNullOrEmpty(extensionValue)) {
+				// empty extension value is possible, e.g. for id-pkix-ocsp-nocheck from RFC 6960
+				extensionValueOctet = DERNull.INSTANCE.getEncoded(ASN1Encoding.DER);
+			} else {
+				extensionValueOctet = new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+			}
 		} catch (IOException e) {
 			return;
 		}
 
-		extensions.addExtension(extensionTypeToAdd.oid(), isCritical, extensionValueOctet);
+		extensions.addExtension(oid, isCritical, extensionValueOctet);
 
 		reloadExtensionsTable();
-		selectExtensionInTable(extensionTypeToAdd.oid());
+		selectExtensionInTable(oid);
 		updateButtonControls();
 	}
 
@@ -617,6 +628,8 @@ public class DAddExtensions extends JEscDialog {
 				case SUBJECT_KEY_IDENTIFIER:
 					dExtension = new DSubjectKeyIdentifier(this, extensionValue, subjectPublicKey);
 					break;
+				case CUSTOM:
+					dExtension = new DCustomExtension(this);
 				default:
 					return;
 				}
@@ -630,7 +643,13 @@ public class DAddExtensions extends JEscDialog {
 				}
 
 				// value has to be wrapped in a DER-encoded OCTET STRING
-				byte[] newExtensionValueOctet = new DEROctetString(newExtensionValue).getEncoded(ASN1Encoding.DER);
+				byte[] newExtensionValueOctet;
+				if (newExtensionValue.length == 0) {
+					// empty extension value is possible, e.g. for id-pkix-ocsp-nocheck from RFC 6960
+					newExtensionValueOctet = DERNull.INSTANCE.getEncoded(ASN1Encoding.DER);
+				} else {
+					newExtensionValueOctet = new DEROctetString(newExtensionValue).getEncoded(ASN1Encoding.DER);
+				}
 
 				extensions.addExtension(oid, isCritical, newExtensionValueOctet);
 

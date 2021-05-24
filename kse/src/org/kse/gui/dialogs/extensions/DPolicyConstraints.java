@@ -46,6 +46,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.PolicyConstraints;
+import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 
@@ -271,14 +272,15 @@ public class DPolicyConstraints extends DExtension {
 		closeDialog();
 	}
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
 	@Override
 	public byte[] getValue() {
 		return value;
+	}
+
+	@Override
+	public String getOid() {
+		return X509ExtensionType.POLICY_CONSTRAINTS.oid();
+
 	}
 
 	private void cancelPressed() {
