@@ -54,7 +54,6 @@ public class DDistributionPointsChooser extends JEscDialog {
 	private JLabel jlDistributionPointCrlIssuer;
 	private JGeneralNames jgnDistributionPointCrlIssuer;
 	private JPanel jpDistributionPoint;
-	private JLabel jlReasonFlags;
 	private JCheckBox jcbUnused;
 	private JCheckBox jcbKeyCompromise;
 	private JCheckBox jcbCACompromise;
@@ -114,7 +113,7 @@ public class DDistributionPointsChooser extends JEscDialog {
 		gbc_jlDistributionPointReasonFlags.anchor = GridBagConstraints.NORTHEAST;
 
 		jpDistributionPointReasonFlags = new JPanel();
-		jpDistributionPointReasonFlags.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(2, 2, 2, 2)));
+		jpDistributionPointReasonFlags.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0), new EmptyBorder(0, 0, 0, 0)));
 		jpDistributionPointReasonFlags.setLayout(new MigLayout("insets dialog, fill", "", ""));
 		jpDistributionPointReasonFlags.setPreferredSize(new Dimension(550, 150));
 
@@ -126,7 +125,6 @@ public class DDistributionPointsChooser extends JEscDialog {
 		gbc_jpDistributionPointReasonFlags.insets = new Insets(0, 5, 0, 5);
 		gbc_jpDistributionPointReasonFlags.anchor = GridBagConstraints.WEST;
 
-		jlReasonFlags = new JLabel(res.getString("DDistributionPointsChooser.jlReasonFlags.text"));
 		jcbUnused = new JCheckBox(res.getString("DDistributionPointsChooser.jcbUnused.text"));
 		jcbKeyCompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbKeyCompromise.text"));
 		jcbCACompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbCACompromise.text"));
@@ -138,7 +136,6 @@ public class DDistributionPointsChooser extends JEscDialog {
 		jcbPrivilegeWithdrawn = new JCheckBox(res.getString("DDistributionPointsChooser.jcbPrivilegeWithdrawn.text"));
 		jcbAACompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbAACompromise.text"));
 
-		jpDistributionPointReasonFlags.add(jlReasonFlags, "spanx, wrap unrel");
 		jpDistributionPointReasonFlags.add(jcbUnused, "");
 		jpDistributionPointReasonFlags.add(jcbKeyCompromise, "");
 		jpDistributionPointReasonFlags.add(jcbCACompromise, "wrap");
