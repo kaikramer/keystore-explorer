@@ -113,7 +113,8 @@ public class DDistributionPointsChooser extends JEscDialog {
 		gbc_jlDistributionPointReasonFlags.anchor = GridBagConstraints.NORTHEAST;
 
 		jpDistributionPointReasonFlags = new JPanel();
-		jpDistributionPointReasonFlags.setBorder(new CompoundBorder(new EmptyBorder(0,0,0,0), new EmptyBorder(0, 0, 0, 0)));
+		jpDistributionPointReasonFlags
+				.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, 0), new EmptyBorder(0, 0, 0, 0)));
 		jpDistributionPointReasonFlags.setLayout(new MigLayout("insets dialog, fill", "", ""));
 		jpDistributionPointReasonFlags.setPreferredSize(new Dimension(550, 150));
 

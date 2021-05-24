@@ -46,15 +46,15 @@ public class JDistributionPoints extends JPanel {
 
 	private String title;
 	private boolean enabled = true;
-	
+
 	public JDistributionPoints(String title) {
 		this.title = title;
 		initComponents();
 	}
-	
+
 	private void initComponents() {
-		jbAdd = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource("images/add_distribution_nms.png"))));
+		jbAdd = new JButton(new ImageIcon(
+				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/add_distribution_nms.png"))));
 		jbAdd.setMargin(new Insets(2, 2, 0, 0));
 		jbAdd.setToolTipText(res.getString("JDistributionPoints.jbAdd.tooltip"));
 		jbAdd.setMnemonic(res.getString("JDistributionPoints.jbAdd.mnemonic").charAt(0));
@@ -68,8 +68,8 @@ public class JDistributionPoints extends JPanel {
 			}
 		});
 
-		jbEdit = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource("images/edit_distribution_nms.png"))));
+		jbEdit = new JButton(new ImageIcon(
+				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/edit_distribution_nms.png"))));
 		jbEdit.setMargin(new Insets(2, 2, 0, 0));
 		jbEdit.setToolTipText(res.getString("JDistributionPoints.jbEdit.tooltip"));
 		jbEdit.setMnemonic(res.getString("JDistributionPoints.jbEdit.mnemonic").charAt(0));
@@ -85,8 +85,8 @@ public class JDistributionPoints extends JPanel {
 			}
 		});
 
-		jbRemove = new JButton(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource("images/remove_distribution_nms.png"))));
+		jbRemove = new JButton(new ImageIcon(
+				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/remove_distribution_nms.png"))));
 		jbRemove.setMargin(new Insets(2, 2, 0, 0));
 		jbRemove.setToolTipText(res.getString("JDistributionPoints.jbRemove.tooltip"));
 		jbRemove.setMnemonic(res.getString("JDistributionPoints.jbRemove.mnemonic").charAt(0));
@@ -128,7 +128,8 @@ public class JDistributionPoints extends JPanel {
 
 		for (int i = 0; i < jtDistributionPoints.getColumnCount(); i++) {
 			TableColumn column = jtDistributionPoints.getColumnModel().getColumn(i);
-			column.setHeaderRenderer(new DistributionPointsTableHeadRend(jtDistributionPoints.getTableHeader().getDefaultRenderer()));
+			column.setHeaderRenderer(
+					new DistributionPointsTableHeadRend(jtDistributionPoints.getTableHeader().getDefaultRenderer()));
 			column.setCellRenderer(new DistributionPointsTableCellRend());
 		}
 
@@ -196,8 +197,9 @@ public class JDistributionPoints extends JPanel {
 		add(jpDistributionPointsButtons, BorderLayout.EAST);
 
 		selectFirstGeneralNameInTable();
-		updateButtonControls();		
+		updateButtonControls();
 	}
+
 	/**
 	 * Get general names.
 	 *
@@ -210,8 +212,7 @@ public class JDistributionPoints extends JPanel {
 	/**
 	 * Set general names.
 	 *
-	 * @param generalNames
-	 *            General names
+	 * @param generalNames General names
 	 */
 	public void setCRLDistPoint(CRLDistPoint cRLDistPoint) {
 		getDistributionPointsTableModel().load(cRLDistPoint);
@@ -220,8 +221,7 @@ public class JDistributionPoints extends JPanel {
 	/**
 	 * Sets whether or not the component is enabled.
 	 *
-	 * @param enabled
-	 *            True if this component should be enabled, false otherwise
+	 * @param enabled True if this component should be enabled, false otherwise
 	 */
 	@Override
 	public void setEnabled(boolean enabled) {
@@ -233,8 +233,7 @@ public class JDistributionPoints extends JPanel {
 	/**
 	 * Set component's tooltip text.
 	 *
-	 * @param toolTipText
-	 *            Tooltip text
+	 * @param toolTipText Tooltip text
 	 */
 	@Override
 	public void setToolTipText(String toolTipText) {
@@ -253,16 +252,16 @@ public class JDistributionPoints extends JPanel {
 		} else {
 			distributionPointsChooser = new DDistributionPointsChooser((JFrame) container, title, null);
 		}
-		
+
 		distributionPointsChooser.setLocationRelativeTo(container);
 		distributionPointsChooser.setVisible(true);
-		
+
 		DistributionPoint newDistributionPoint = distributionPointsChooser.getDistributionPoint();
-		
+
 		if (newDistributionPoint == null) {
 			return;
 		}
-		
+
 		getDistributionPointsTableModel().addRow(newDistributionPoint);
 
 		selectDistributionPointInTable(newDistributionPoint);
@@ -329,32 +328,33 @@ public class JDistributionPoints extends JPanel {
 		int selectedRow = jtDistributionPoints.getSelectedRow();
 
 		if (selectedRow != -1) {
-			
-			DistributionPoint distributionPoint =  (DistributionPoint) jtDistributionPoints.getValueAt(selectedRow, 0);
-			
+
+			DistributionPoint distributionPoint = (DistributionPoint) jtDistributionPoints.getValueAt(selectedRow, 0);
+
 			Container container = getTopLevelAncestor();
-			
-			
+
 			DDistributionPointsChooser distributionPointsChooser = null;
-			
+
 			if (container instanceof JDialog) {
-				distributionPointsChooser = new DDistributionPointsChooser((JDialog) container, title, distributionPoint);
+				distributionPointsChooser = new DDistributionPointsChooser((JDialog) container, title,
+						distributionPoint);
 			} else {
-				distributionPointsChooser = new DDistributionPointsChooser((JFrame) container, title, distributionPoint);
+				distributionPointsChooser = new DDistributionPointsChooser((JFrame) container, title,
+						distributionPoint);
 			}
-			
+
 			distributionPointsChooser.setLocationRelativeTo(container);
 			distributionPointsChooser.setVisible(true);
-			
+
 			DistributionPoint newDistributionPoint = distributionPointsChooser.getDistributionPoint();
-			
+
 			if (newDistributionPoint == null) {
 				return;
 			}
-			
+
 			getDistributionPointsTableModel().removeRow(selectedRow);
 			getDistributionPointsTableModel().addRow(newDistributionPoint);
-			
+
 			selectDistributionPointInTable(newDistributionPoint);
 			updateButtonControls();
 		}
