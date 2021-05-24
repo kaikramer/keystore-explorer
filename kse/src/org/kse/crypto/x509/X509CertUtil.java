@@ -223,9 +223,9 @@ public final class X509CertUtil {
 	 */
 	public static X509CRL loadCRL(byte[] crlData) throws CryptoException {
 		try {
-			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE);
+			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 			return (X509CRL) cf.generateCRL(new ByteArrayInputStream(crlData));
-		} catch (CertificateException | CRLException ex) {
+		} catch (CertificateException | CRLException | NoSuchProviderException ex) {
 			throw new CryptoException(res.getString("NoLoadCrl.exception.message"), ex);
 		}
 	}
