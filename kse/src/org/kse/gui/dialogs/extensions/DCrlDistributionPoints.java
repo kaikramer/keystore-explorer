@@ -1,10 +1,7 @@
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -20,9 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
@@ -31,6 +25,8 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.distributionpoints.JDistributionPoints;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 public class DCrlDistributionPoints extends DExtension {
 
@@ -65,32 +61,9 @@ public class DCrlDistributionPoints extends DExtension {
 	private void initComponents() {
 		jlCrlDistributionPoints = new JLabel(res.getString("DCrlDistributionPoints.jlCrlDistributionPoints.text"));
 
-		GridBagConstraints gbc_jlDistributionPoints = new GridBagConstraints();
-		gbc_jlDistributionPoints.gridx = 0;
-		gbc_jlDistributionPoints.gridy = 1;
-		gbc_jlDistributionPoints.gridwidth = 1;
-		gbc_jlDistributionPoints.gridheight = 1;
-		gbc_jlDistributionPoints.insets = new Insets(5, 5, 5, 5);
-		gbc_jlDistributionPoints.anchor = GridBagConstraints.NORTHEAST;
-
 		jdpDistributionPoints = new JDistributionPoints(
 				res.getString("DCrlDistributionPoints.DistributionPoints.Title"));
 		jdpDistributionPoints.setPreferredSize(new Dimension(400, 150));
-
-		GridBagConstraints gbc_jdpDistributionPoints = new GridBagConstraints();
-		gbc_jdpDistributionPoints.gridx = 1;
-		gbc_jdpDistributionPoints.gridy = 1;
-		gbc_jdpDistributionPoints.gridwidth = 1;
-		gbc_jdpDistributionPoints.gridheight = 1;
-		gbc_jdpDistributionPoints.insets = new Insets(5, 5, 5, 5);
-		gbc_jdpDistributionPoints.anchor = GridBagConstraints.WEST;
-
-		jpCrlDistributionPoints = new JPanel(new GridBagLayout());
-
-		jpCrlDistributionPoints.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-		jpCrlDistributionPoints.add(jlCrlDistributionPoints, gbc_jlDistributionPoints);
-		jpCrlDistributionPoints.add(jdpDistributionPoints, gbc_jdpDistributionPoints);
 
 		jbOK = new JButton(res.getString("DCrlDistributionPoints.jbOK.text"));
 		jbOK.addActionListener(evt -> okPressed());
@@ -99,6 +72,15 @@ public class DCrlDistributionPoints extends DExtension {
 		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
+
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[][]"));
+		pane.add(jlCrlDistributionPoints, "top");
+		pane.add(jdpDistributionPoints, "wrap unrel");
+		pane.add(jpButtons, "spanx, tag ok");
+
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
@@ -108,11 +90,6 @@ public class DCrlDistributionPoints extends DExtension {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpCrlDistributionPoints, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		addWindowListener(new WindowAdapter() {
 			@Override

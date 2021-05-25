@@ -139,7 +139,7 @@ public class DViewCertificate extends JEscDialog {
 	private JButton jbExport;
 	private JButton jbOK;
 	private JButton jbVerify;
-	
+
 	private X509Certificate[] chain;
 
 	/**
@@ -374,7 +374,7 @@ public class DViewCertificate extends JEscDialog {
 				CursorUtil.setCursorFree(DViewCertificate.this);
 			}
 		});
-		
+
 		jbVerify.addActionListener(evt -> {
 			try {
 				CursorUtil.setCursorBusy(DViewCertificate.this);
@@ -403,9 +403,9 @@ public class DViewCertificate extends JEscDialog {
 	}
 
 	private void verifyPressed() {
-		
+
 		X509Certificate cert = getSelectedCertificate();
-		new VerifyCertificateAction(kseFrame, cert, chain).actionPerformed(null);		
+		new VerifyCertificateAction(kseFrame, cert, chain).actionPerformed(null);
 	}
 
 	private DefaultMutableTreeNode createCertificateNodes(X509Certificate[] certs) {

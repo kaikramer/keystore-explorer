@@ -1,11 +1,8 @@
 package org.kse.gui.crypto.distributionpoints;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -20,9 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -50,10 +44,8 @@ public class DDistributionPointsChooser extends JEscDialog {
 	private JLabel jlDistributionPointFullName;
 	private JGeneralNames jgnDistributionPointFullName;
 	private JLabel jlDistributionPointReasonFlags;
-	private JPanel jpDistributionPointReasonFlags;
 	private JLabel jlDistributionPointCrlIssuer;
 	private JGeneralNames jgnDistributionPointCrlIssuer;
-	private JPanel jpDistributionPoint;
 	private JCheckBox jcbUnused;
 	private JCheckBox jcbKeyCompromise;
 	private JCheckBox jcbCACompromise;
@@ -81,50 +73,12 @@ public class DDistributionPointsChooser extends JEscDialog {
 		jlDistributionPointFullName = new JLabel(
 				res.getString("DDistributionPointsChooser.jlDistributionPointFullName.text"));
 
-		GridBagConstraints gbc_jlDistributionPointFullName = new GridBagConstraints();
-		gbc_jlDistributionPointFullName.gridx = 0;
-		gbc_jlDistributionPointFullName.gridy = 0;
-		gbc_jlDistributionPointFullName.gridwidth = 1;
-		gbc_jlDistributionPointFullName.gridheight = 1;
-		gbc_jlDistributionPointFullName.insets = new Insets(0, 5, 0, 5);
-		gbc_jlDistributionPointFullName.anchor = GridBagConstraints.NORTHEAST;
-
-		GridBagConstraints gbc_jgnDistributionPointFullName = new GridBagConstraints();
-		gbc_jgnDistributionPointFullName.gridx = 1;
-		gbc_jgnDistributionPointFullName.gridy = 0;
-		gbc_jgnDistributionPointFullName.gridwidth = 1;
-		gbc_jgnDistributionPointFullName.gridheight = 1;
-		gbc_jgnDistributionPointFullName.insets = new Insets(0, 5, 0, 5);
-		gbc_jgnDistributionPointFullName.anchor = GridBagConstraints.WEST;
-
 		jgnDistributionPointFullName = new JGeneralNames(
 				res.getString("DDistributionPointsChooser.DistributionPointFullName.Title"));
 		jgnDistributionPointFullName.setPreferredSize(new Dimension(550, 150));
 
 		jlDistributionPointReasonFlags = new JLabel(
 				res.getString("DDistributionPointsChooser.jlDistributionPointReasonFlags.text"));
-
-		GridBagConstraints gbc_jlDistributionPointReasonFlags = new GridBagConstraints();
-		gbc_jlDistributionPointReasonFlags.gridx = 0;
-		gbc_jlDistributionPointReasonFlags.gridy = 1;
-		gbc_jlDistributionPointReasonFlags.gridwidth = 1;
-		gbc_jlDistributionPointReasonFlags.gridheight = 1;
-		gbc_jlDistributionPointReasonFlags.insets = new Insets(0, 5, 0, 5);
-		gbc_jlDistributionPointReasonFlags.anchor = GridBagConstraints.NORTHEAST;
-
-		jpDistributionPointReasonFlags = new JPanel();
-		jpDistributionPointReasonFlags
-				.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, 0), new EmptyBorder(0, 0, 0, 0)));
-		jpDistributionPointReasonFlags.setLayout(new MigLayout("insets dialog, fill", "", ""));
-		jpDistributionPointReasonFlags.setPreferredSize(new Dimension(550, 150));
-
-		GridBagConstraints gbc_jpDistributionPointReasonFlags = new GridBagConstraints();
-		gbc_jpDistributionPointReasonFlags.gridx = 1;
-		gbc_jpDistributionPointReasonFlags.gridy = 1;
-		gbc_jpDistributionPointReasonFlags.gridwidth = 1;
-		gbc_jpDistributionPointReasonFlags.gridheight = 1;
-		gbc_jpDistributionPointReasonFlags.insets = new Insets(0, 5, 0, 5);
-		gbc_jpDistributionPointReasonFlags.anchor = GridBagConstraints.WEST;
 
 		jcbUnused = new JCheckBox(res.getString("DDistributionPointsChooser.jcbUnused.text"));
 		jcbKeyCompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbKeyCompromise.text"));
@@ -137,51 +91,12 @@ public class DDistributionPointsChooser extends JEscDialog {
 		jcbPrivilegeWithdrawn = new JCheckBox(res.getString("DDistributionPointsChooser.jcbPrivilegeWithdrawn.text"));
 		jcbAACompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbAACompromise.text"));
 
-		jpDistributionPointReasonFlags.add(jcbUnused, "");
-		jpDistributionPointReasonFlags.add(jcbKeyCompromise, "");
-		jpDistributionPointReasonFlags.add(jcbCACompromise, "wrap");
-		jpDistributionPointReasonFlags.add(jcbAffiliationChanged, "");
-		jpDistributionPointReasonFlags.add(jcbSuperseded, "");
-		jpDistributionPointReasonFlags.add(jcbCessationOfOperation, "wrap");
-		jpDistributionPointReasonFlags.add(jcbCertificateHold, "");
-		jpDistributionPointReasonFlags.add(jcbPrivilegeWithdrawn, "");
-		jpDistributionPointReasonFlags.add(jcbAACompromise, "wrap");
-
 		jlDistributionPointCrlIssuer = new JLabel(
 				res.getString("DDistributionPointsChooser.jlDistributionPointCrlIssuer.text"));
-
-		GridBagConstraints gbc_jlDistributionPointCrlIssuer = new GridBagConstraints();
-		gbc_jlDistributionPointCrlIssuer.gridx = 0;
-		gbc_jlDistributionPointCrlIssuer.gridy = 2;
-		gbc_jlDistributionPointCrlIssuer.gridwidth = 1;
-		gbc_jlDistributionPointCrlIssuer.gridheight = 1;
-		gbc_jlDistributionPointCrlIssuer.insets = new Insets(0, 5, 0, 5);
-		gbc_jlDistributionPointCrlIssuer.anchor = GridBagConstraints.NORTHEAST;
-
-		GridBagConstraints gbc_jgnDistributionPointCrlIssuer = new GridBagConstraints();
-		gbc_jgnDistributionPointCrlIssuer.gridx = 1;
-		gbc_jgnDistributionPointCrlIssuer.gridy = 2;
-		gbc_jgnDistributionPointCrlIssuer.gridwidth = 1;
-		gbc_jgnDistributionPointCrlIssuer.gridheight = 1;
-		gbc_jgnDistributionPointCrlIssuer.insets = new Insets(0, 5, 0, 5);
-		gbc_jgnDistributionPointCrlIssuer.anchor = GridBagConstraints.WEST;
 
 		jgnDistributionPointCrlIssuer = new JGeneralNames(
 				res.getString("DDistributionPointsChooser.DistributionPointCrlIssuer.Title"));
 		jgnDistributionPointCrlIssuer.setPreferredSize(new Dimension(550, 150));
-
-		jpDistributionPoint = new JPanel(new GridBagLayout());
-
-		jpDistributionPoint.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
-
-		jpDistributionPoint.add(jlDistributionPointFullName, gbc_jlDistributionPointFullName);
-		jpDistributionPoint.add(jgnDistributionPointFullName, gbc_jgnDistributionPointFullName);
-
-		jpDistributionPoint.add(jlDistributionPointReasonFlags, gbc_jlDistributionPointReasonFlags);
-		jpDistributionPoint.add(jpDistributionPointReasonFlags, gbc_jpDistributionPointReasonFlags);
-
-		jpDistributionPoint.add(jlDistributionPointCrlIssuer, gbc_jlDistributionPointCrlIssuer);
-		jpDistributionPoint.add(jgnDistributionPointCrlIssuer, gbc_jgnDistributionPointCrlIssuer);
 
 		jbOK = new JButton(res.getString("DGeneralNameChooser.jbOK.text"));
 		jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
@@ -189,9 +104,23 @@ public class DDistributionPointsChooser extends JEscDialog {
 				CANCEL_KEY);
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpDistributionPoint, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[][][]", "[][]"));
+		pane.add(jlDistributionPointFullName, "top");
+		pane.add(jgnDistributionPointFullName, "span 3, wrap unrel");
+		pane.add(jlDistributionPointReasonFlags, "");
+		pane.add(jcbUnused, "");
+		pane.add(jcbKeyCompromise, "");
+		pane.add(jcbCACompromise, "wrap");
+		pane.add(jcbAffiliationChanged, "skip");
+		pane.add(jcbSuperseded, "");
+		pane.add(jcbCessationOfOperation, "wrap");
+		pane.add(jcbCertificateHold, "skip");
+		pane.add(jcbPrivilegeWithdrawn, "");
+		pane.add(jcbAACompromise, "wrap unrel");
+		pane.add(jlDistributionPointCrlIssuer, "top");
+		pane.add(jgnDistributionPointCrlIssuer, "span 3, wrap");
+		pane.add(jpButtons, "spanx, tag ok");
 
 		jbOK.addActionListener(evt -> okPressed());
 		jbCancel.addActionListener(evt -> cancelPressed());
@@ -335,7 +264,7 @@ public class DDistributionPointsChooser extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws Exception {
-		DialogViewer.run(new DDistributionPointsChooser(new javax.swing.JFrame(), "DistributionPointsChooser", null));
+		DialogViewer.run(new DDistributionPointsChooser(new JFrame(), "DistributionPointsChooser", null));
 	}
 
 }
