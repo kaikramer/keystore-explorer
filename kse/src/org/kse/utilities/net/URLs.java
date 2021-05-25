@@ -48,7 +48,7 @@ public class URLs {
 	public static final String[] TSA_URLS = new String[] {
 			"http://timestamp.digicert.com",
 			"http://rfc3161timestamp.globalsign.com/advanced",
-			"http://tsa.starfieldtech.com",
+			//"http://tsa.starfieldtech.com",
 			"http://time.certum.pl",
 			"http://sha256timestamp.ws.symantec.com/sha256/timestamp",
 			"http://timestamp.sectigo.com/?td=sha384"
