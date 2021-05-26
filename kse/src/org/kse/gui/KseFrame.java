@@ -163,6 +163,7 @@ import org.kse.gui.actions.SetKeyPasswordAction;
 import org.kse.gui.actions.SetPasswordAction;
 import org.kse.gui.actions.ShowHideStatusBarAction;
 import org.kse.gui.actions.ShowHideToolBarAction;
+import org.kse.gui.actions.SignCrlAction;
 import org.kse.gui.actions.SignCsrAction;
 import org.kse.gui.actions.SignJarAction;
 import org.kse.gui.actions.SignMidletAction;
@@ -369,6 +370,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiKeyPairSignCsr;
 	private JMenuItem jmiKeyPairSignJar;
 	private JMenuItem jmiKeyPairSignMidlet;
+	private JMenuItem jmiKeyPairSignCrl;
 	private JMenuItem jmiKeyPairSignNewKeyPair;
 	private JMenuItem jmiKeyPairUnlock;
 	private JMenuItem jmiKeyPairSetPassword;
@@ -493,6 +495,7 @@ public final class KseFrame implements StatusBar {
 	private final SignCsrAction signCsrAction = new SignCsrAction(this);
 	private final SignJarAction signJarAction = new SignJarAction(this);
 	private final SignMidletAction signMidletAction = new SignMidletAction(this);
+	private final SignCrlAction signCrlAction = new SignCrlAction(this);
 	private final SignNewKeyPairAction signNewKeyPairAction = new SignNewKeyPairAction(this);
 	private final UnlockKeyPairAction unlockKeyPairAction = new UnlockKeyPairAction(this);
 	private final SetKeyPairPasswordAction setKeyPairPasswordAction = new SetKeyPairPasswordAction(this);
@@ -1974,6 +1977,11 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiKeyPairSignMidlet, (String) signMidletAction.getValue(Action.LONG_DESCRIPTION),
 				this);
 
+		jmiKeyPairSignCrl = new JMenuItem(signCrlAction);
+		jmiKeyPairSignCrl.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyPairSignCrl, (String) signCrlAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		
 		jmiKeyPairSignNewKeyPair = new JMenuItem(signNewKeyPairAction);
 		jmiKeyPairSignNewKeyPair.setToolTipText(null);
 		new StatusBarChangeHandler(jmiKeyPairSignNewKeyPair,
@@ -2026,6 +2034,7 @@ public final class KseFrame implements StatusBar {
 		jmKeyPairSign.add(jmiKeyPairSignCsr);
 		jmKeyPairSign.add(jmiKeyPairSignJar);
 		jmKeyPairSign.add(jmiKeyPairSignMidlet);
+		jmKeyPairSign.add(jmiKeyPairSignCrl);
 		jpmKeyPair.addSeparator();
 		jpmKeyPair.add(jmiKeyPairUnlock);
 		jpmKeyPair.add(jmiKeyPairSetPassword);
