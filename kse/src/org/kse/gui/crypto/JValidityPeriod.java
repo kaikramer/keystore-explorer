@@ -243,4 +243,9 @@ public class JValidityPeriod extends JPanel {
 	{
 		jbApply.addActionListener(listener);
 	}
+	
+	public void setValue(long value)
+	{
+		jsValue.setValue(value);
+	}
 }

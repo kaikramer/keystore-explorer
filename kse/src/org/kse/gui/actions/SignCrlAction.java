@@ -3,6 +3,8 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +20,9 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.asn1.x509.Extension;
@@ -29,11 +33,14 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509v2CRLBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
+import org.kse.gui.dialogs.importexport.DExportCrl;
+import org.kse.gui.dialogs.sign.DSignCrl;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -55,7 +62,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	@Override
 	protected void doAction() {
 		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();			
+			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 			KeyStoreState currentState = history.getCurrentState();
 
 			String alias = kseFrame.getSelectedEntryAlias();
@@ -74,20 +81,54 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
 			String pathFile = history.getPath();
-			File file = new File(pathFile);
-			String path = file.getParentFile().getAbsolutePath();
-			String newPath = path + File.separator + convertSignatureName(alias);  
-			signCrl(new BigInteger("1"), new Date(), new Date(System.currentTimeMillis() + THIRTY_DAYS), certs[0],
-					privateKey, newPath, "SHA256withRSA", null);
+			File fileParent = new File(pathFile);
+			String path = fileParent.getParentFile().getAbsolutePath();
+			String newPath = path + File.separator + convertSignatureName(alias) + ".db";
+			File filePrevious = new File(newPath);
+			
+			X509CRL x509CRL = loadPreviousCrl(filePrevious);
 
+			DSignCrl dSignCrl = new DSignCrl(frame, keyPairType, privateKey, certs[0], x509CRL);
+			dSignCrl.setLocationRelativeTo(frame);
+			dSignCrl.setVisible(true);
+			Date effectiveDate = dSignCrl.getEffectiveDate();
+			if (effectiveDate != null) {
+				Date nextUpdate = dSignCrl.getNextUpdate();
+				BigInteger crlNumber = dSignCrl.getCrlNumber();
+				String SignatureAlgorithm = dSignCrl.getSignatureType().jce();
+
+				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm, null);
+				//sobreescribimos el antiguo crl
+				exportFile(x509CRL, filePrevious, false);
+				
+				DExportCrl dExportCrl = new DExportCrl(frame, alias);
+				dExportCrl.setLocationRelativeTo(frame);
+				dExportCrl.setVisible(true);
+				if (dExportCrl.exportSelected()) {
+					exportFile(x509CRL, dExportCrl.getExportFile(), dExportCrl.pemEncode());
+					JOptionPane.showMessageDialog(frame, res.getString("SignCrlAction.SignCrlSuccessful.message"),
+							res.getString("SignCrlAction.SignCrl.Title"), JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
 	}
 
-	private void signCrl(BigInteger number, Date effectiveDate, Date nextUpdate, X509Certificate caCert,
-			PrivateKey caPrivateKey, String signatureName, String signatureAlgorithm,
-			List<X509Certificate> listRevokedCertificate)
+	private X509CRL loadPreviousCrl(File filePrevious) {
+		try {
+			try (FileInputStream is = new FileInputStream(filePrevious)) {
+				X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+				return crl;
+			}
+		} catch (CryptoException | IOException e) {
+			// ignore
+		}
+		return null;
+	}
+
+	private X509CRL signCrl(BigInteger number, Date effectiveDate, Date nextUpdate, X509Certificate caCert,
+			PrivateKey caPrivateKey, String signatureAlgorithm, List<X509Certificate> listRevokedCertificate)
 			throws NoSuchAlgorithmException, OperatorCreationException, CRLException, IOException {
 
 		X509v2CRLBuilder crlGen = new JcaX509v2CRLBuilder(caCert.getSubjectX500Principal(), effectiveDate);
@@ -107,16 +148,19 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
 		X509CRLHolder crl = crlGen
 				.build(new JcaContentSignerBuilder(signatureAlgorithm).setProvider("BC").build(caPrivateKey));
-		X509CRL x509CRL = new JcaX509CRLConverter().setProvider("BC").getCRL(crl);
+		return new JcaX509CRLConverter().setProvider("BC").getCRL(crl);
+	}
+
+	private void exportFile(X509CRL x509CRL, File fileExported, boolean pemEncode)
+			throws FileNotFoundException, IOException, CRLException {
+
 		byte[] data = x509CRL.getEncoded();
-		if (data != null) {
-			InputStream in = new ByteArrayInputStream(data);
-			int length;
-			byte[] buffer = new byte[1024];
-			try (FileOutputStream fileOutputStream = new FileOutputStream(signatureName + ".crl")) {
-				while ((length = in.read(buffer)) != -1) {
-					fileOutputStream.write(buffer, 0, length);
-				}
+		InputStream in = new ByteArrayInputStream(data);
+		int length;
+		byte[] buffer = new byte[1024];
+		try (FileOutputStream fileOutputStream = new FileOutputStream(fileExported)) {
+			while ((length = in.read(buffer)) != -1) {
+				fileOutputStream.write(buffer, 0, length);
 			}
 		}
 	}
