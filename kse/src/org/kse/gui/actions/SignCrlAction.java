@@ -155,12 +155,14 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			throws FileNotFoundException, IOException, CRLException {
 
 		byte[] data = x509CRL.getEncoded();
-		InputStream in = new ByteArrayInputStream(data);
-		int length;
-		byte[] buffer = new byte[1024];
-		try (FileOutputStream fileOutputStream = new FileOutputStream(fileExported)) {
-			while ((length = in.read(buffer)) != -1) {
-				fileOutputStream.write(buffer, 0, length);
+		try(InputStream in = new ByteArrayInputStream(data))
+		{
+			int length;
+			byte[] buffer = new byte[1024];
+			try (FileOutputStream fileOutputStream = new FileOutputStream(fileExported)) {
+				while ((length = in.read(buffer)) != -1) {
+					fileOutputStream.write(buffer, 0, length);
+				}
 			}
 		}
 	}
