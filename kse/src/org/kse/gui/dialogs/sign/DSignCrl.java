@@ -9,6 +9,7 @@ import java.security.PrivateKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -22,10 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
@@ -37,7 +38,6 @@ import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.DialogHelper;
-
 import net.miginfocom.swing.MigLayout;
 
 public class DSignCrl extends JEscDialog {
@@ -61,6 +61,8 @@ public class DSignCrl extends JEscDialog {
 	private JLabel jlCrlNumber;
 	private JTextField jtfCrlNumber;
 
+	private JRevokedCerts jpRevokedCertsTable;
+
 	private JButton jbOK;
 	private JButton jbCancel;
 
@@ -68,15 +70,19 @@ public class DSignCrl extends JEscDialog {
 	private PrivateKey signPrivateKey;
 	private X509Certificate cert;
 	private X509CRL crl;
+	private X509v2CRLBuilder crlBuilder;
 
 	private Date effectiveDate;
 	private Date nextUpdate;
 	private SignatureType signatureType;
 	private BigInteger crlNumber;
 
+	private JFrame parent;
+
 	public DSignCrl(JFrame parent, KeyPairType signKeyPairType, PrivateKey signPrivateKey, X509Certificate cert,
 			X509CRL crl) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+		this.parent = parent;
 		this.signKeyPairType = signKeyPairType;
 		this.signPrivateKey = signPrivateKey;
 		this.cert = cert;
@@ -122,6 +128,8 @@ public class DSignCrl extends JEscDialog {
 		jtfCrlNumber = new JTextField("1", 5);
 		jtfCrlNumber.setToolTipText(res.getString("DSignCrl.jtfCrlNumber.tooltip"));
 
+		jpRevokedCertsTable = new JRevokedCerts(parent, crl);
+
 		jbOK = new JButton(res.getString("DSignCrl.jbOK.text"));
 		jbCancel = new JButton(res.getString("DSignCrl.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -146,7 +154,11 @@ public class DSignCrl extends JEscDialog {
 		pane.add(jcbSignatureAlgorithm, "wrap");
 		pane.add(jlCrlNumber, "");
 		pane.add(jtfCrlNumber, "wrap");
+
+		pane.add(jpRevokedCertsTable, "spanx, growx, wrap");
+
 		pane.add(new JSeparator(), "spanx, growx, wrap");
+
 		pane.add(jpButtons, "right, spanx");
 
 		populateFields();
@@ -196,6 +208,7 @@ public class DSignCrl extends JEscDialog {
 				}
 			}
 		}
+
 	}
 
 	private void cancelPressed() {
@@ -255,4 +268,7 @@ public class DSignCrl extends JEscDialog {
 		return crlNumber;
 	}
 
+	public List<RevokedEntry> getListRevokedEntry() {
+		return jpRevokedCertsTable.getListRevokedEntry();
+	}
 }

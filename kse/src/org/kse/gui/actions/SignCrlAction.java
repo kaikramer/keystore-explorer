@@ -24,7 +24,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x509.CRLNumber;
-import org.bouncycastle.asn1.x509.CRLReason;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509v2CRLBuilder;
@@ -41,6 +40,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.importexport.DExportCrl;
 import org.kse.gui.dialogs.sign.DSignCrl;
+import org.kse.gui.dialogs.sign.RevokedEntry;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -80,10 +80,11 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 					.orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
+			String serial = certs[0].getSerialNumber().toString(16);
 			String pathFile = history.getPath();
 			File fileParent = new File(pathFile);
 			String path = fileParent.getParentFile().getAbsolutePath();
-			String newPath = path + File.separator + convertSignatureName(alias) + ".db";
+			String newPath = path + File.separator + serial + ".db";
 			File filePrevious = new File(newPath);
 			
 			X509CRL x509CRL = loadPreviousCrl(filePrevious);
@@ -96,12 +97,13 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				Date nextUpdate = dSignCrl.getNextUpdate();
 				BigInteger crlNumber = dSignCrl.getCrlNumber();
 				String SignatureAlgorithm = dSignCrl.getSignatureType().jce();
-
-				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm, null);
+				List<RevokedEntry> listRevoked = dSignCrl.getListRevokedEntry();
+				
+				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm, listRevoked);
 				//sobreescribimos el antiguo crl
 				exportFile(x509CRL, filePrevious, false);
-				
-				DExportCrl dExportCrl = new DExportCrl(frame, alias);
+				String newFileName = X509CertUtil.getShortName(certs[0]);
+				DExportCrl dExportCrl = new DExportCrl(frame, newFileName);
 				dExportCrl.setLocationRelativeTo(frame);
 				dExportCrl.setVisible(true);
 				if (dExportCrl.exportSelected()) {
@@ -128,15 +130,15 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	}
 
 	private X509CRL signCrl(BigInteger number, Date effectiveDate, Date nextUpdate, X509Certificate caCert,
-			PrivateKey caPrivateKey, String signatureAlgorithm, List<X509Certificate> listRevokedCertificate)
+			PrivateKey caPrivateKey, String signatureAlgorithm, List<RevokedEntry> listRevokedCertificate)
 			throws NoSuchAlgorithmException, OperatorCreationException, CRLException, IOException {
 
 		X509v2CRLBuilder crlGen = new JcaX509v2CRLBuilder(caCert.getSubjectX500Principal(), effectiveDate);
 		crlGen.setNextUpdate(nextUpdate);
 
 		if (listRevokedCertificate != null) {
-			for (X509Certificate cert : listRevokedCertificate) {
-				crlGen.addCRLEntry(cert.getSerialNumber(), new Date(), CRLReason.privilegeWithdrawn);
+			for (RevokedEntry entry : listRevokedCertificate) {
+				crlGen.addCRLEntry(entry.getUserCertificateSerial(), entry.getRevocationDate(), entry.getReason());
 			}
 		}
 		JcaX509ExtensionUtils extUtils = new JcaX509ExtensionUtils();
@@ -165,25 +167,5 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				}
 			}
 		}
-	}
-
-	private String convertSignatureName(String signatureName) {
-		/*
-		 * Convert the supplied signature name to make it valid for use with signing,
-		 * i.e. any characters that are not 'a-z', 'A-Z', '0-9', '_' or '-' are
-		 * converted to '_'
-		 */
-		StringBuilder sb = new StringBuilder(signatureName.length());
-
-		for (int i = 0; i < signatureName.length(); i++) {
-			char c = signatureName.charAt(i);
-
-			if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && (c < '0' || c > '9') && c != '-' && c != '_') {
-				c = '_';
-			}
-			sb.append(c);
-		}
-
-		return sb.toString();
 	}
 }
