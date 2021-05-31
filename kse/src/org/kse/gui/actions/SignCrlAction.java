@@ -9,15 +9,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.SignatureException;
 import java.security.cert.CRLException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -87,7 +91,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			String newPath = path + File.separator + serial + ".db";
 			File filePrevious = new File(newPath);
 			
-			X509CRL x509CRL = loadPreviousCrl(filePrevious);
+			X509CRL x509CRL = loadPreviousCrl(filePrevious, certs[0]);
 
 			DSignCrl dSignCrl = new DSignCrl(frame, keyPairType, privateKey, certs[0], x509CRL);
 			dSignCrl.setLocationRelativeTo(frame);
@@ -97,9 +101,9 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				Date nextUpdate = dSignCrl.getNextUpdate();
 				BigInteger crlNumber = dSignCrl.getCrlNumber();
 				String SignatureAlgorithm = dSignCrl.getSignatureType().jce();
-				List<RevokedEntry> listRevoked = dSignCrl.getListRevokedEntry();
+				Map<BigInteger, RevokedEntry> mapRevoked = dSignCrl.getMapRevokedEntry();
 				
-				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm, listRevoked);
+				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm, mapRevoked);
 				//sobreescribimos el antiguo crl
 				exportFile(x509CRL, filePrevious, false);
 				String newFileName = X509CertUtil.getShortName(certs[0]);
@@ -117,11 +121,15 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private X509CRL loadPreviousCrl(File filePrevious) {
+	private X509CRL loadPreviousCrl(File filePrevious, X509Certificate caCert) {
 		try {
 			try (FileInputStream is = new FileInputStream(filePrevious)) {
 				X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+				crl.verify(caCert.getPublicKey());
 				return crl;
+			} catch (InvalidKeyException | CRLException | NoSuchAlgorithmException | NoSuchProviderException
+					| SignatureException e) {
+				//ignore
 			}
 		} catch (CryptoException | IOException e) {
 			// ignore
@@ -130,14 +138,18 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	}
 
 	private X509CRL signCrl(BigInteger number, Date effectiveDate, Date nextUpdate, X509Certificate caCert,
-			PrivateKey caPrivateKey, String signatureAlgorithm, List<RevokedEntry> listRevokedCertificate)
+			PrivateKey caPrivateKey, String signatureAlgorithm, Map<BigInteger, RevokedEntry> mapRevokedCertificate)
 			throws NoSuchAlgorithmException, OperatorCreationException, CRLException, IOException {
 
 		X509v2CRLBuilder crlGen = new JcaX509v2CRLBuilder(caCert.getSubjectX500Principal(), effectiveDate);
 		crlGen.setNextUpdate(nextUpdate);
 
-		if (listRevokedCertificate != null) {
-			for (RevokedEntry entry : listRevokedCertificate) {
+		if (mapRevokedCertificate != null) {
+			
+			Iterator<Map.Entry<BigInteger, RevokedEntry>> it = mapRevokedCertificate.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry<BigInteger, RevokedEntry> pair = it.next();
+				RevokedEntry entry = pair.getValue();
 				crlGen.addCRLEntry(entry.getUserCertificateSerial(), entry.getRevocationDate(), entry.getReason());
 			}
 		}

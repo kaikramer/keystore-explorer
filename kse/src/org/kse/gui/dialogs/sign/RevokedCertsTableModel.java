@@ -21,7 +21,8 @@ package org.kse.gui.dialogs.sign;
 
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javax.swing.table.AbstractTableModel;
 
@@ -55,13 +56,15 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	 * @param revokedCerts
 	 *            The X.509 CRL entries
 	 */
-	public void load (List<RevokedEntry> listRevokedEntry )
+	public void load (Map<BigInteger, RevokedEntry> mapRevokedEntry )
 	{
-		data = new Object[listRevokedEntry.size()][2];
+		data = new Object[mapRevokedEntry.size()][2];
 		
 		int i = 0;
-		for (RevokedEntry entry : listRevokedEntry)
-		{
+		Iterator<Map.Entry<BigInteger, RevokedEntry>> it = mapRevokedEntry.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<BigInteger, RevokedEntry> pair = it.next();
+			RevokedEntry entry = pair.getValue();
 			data[i][0] = entry.getUserCertificateSerial();
 			data[i][1] = entry.getRevocationDate();
 			i++;

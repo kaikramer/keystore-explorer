@@ -9,7 +9,7 @@ import java.security.PrivateKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -128,7 +128,7 @@ public class DSignCrl extends JEscDialog {
 		jtfCrlNumber = new JTextField("1", 5);
 		jtfCrlNumber.setToolTipText(res.getString("DSignCrl.jtfCrlNumber.tooltip"));
 
-		jpRevokedCertsTable = new JRevokedCerts(parent, crl);
+		jpRevokedCertsTable = new JRevokedCerts(parent, cert, crl);
 
 		jbOK = new JButton(res.getString("DSignCrl.jbOK.text"));
 		jbCancel = new JButton(res.getString("DSignCrl.jbCancel.text"));
@@ -192,7 +192,7 @@ public class DSignCrl extends JEscDialog {
 			Date secondDate = crl.getNextUpdate();
 			long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
 			long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-			jvpValidityPeriod.setValue(diff);
+			jvpValidityPeriod.setValue(Long.valueOf(diff));
 			Date startDate = jdtEffectiveDate.getDateTime();
 			jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
 
@@ -268,7 +268,7 @@ public class DSignCrl extends JEscDialog {
 		return crlNumber;
 	}
 
-	public List<RevokedEntry> getListRevokedEntry() {
-		return jpRevokedCertsTable.getListRevokedEntry();
+	public Map<BigInteger, RevokedEntry> getMapRevokedEntry() {
+		return jpRevokedCertsTable.getMapRevokedEntry();
 	}
 }
