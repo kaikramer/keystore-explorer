@@ -82,15 +82,17 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			X509Certificate[] certs = X509CertUtil
 					.orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
+
+			boolean[] keyUsage = certs[0].getKeyUsage();
+			if (!keyUsage[6]) {
+				JOptionPane.showMessageDialog(frame, res.getString("SignCrlAction.notkeyUsage.message"),
+						res.getString("SignCrlAction.SignCrl.Title"), JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-			String serial = certs[0].getSerialNumber().toString(16);
-			String pathFile = history.getPath();
-			File fileParent = new File(pathFile);
-			String path = fileParent.getParentFile().getAbsolutePath();
-			String newPath = path + File.separator + serial + ".db";
-			File filePrevious = new File(newPath);
-			
+			File filePrevious = getFilePrevious(certs[0], history);
+
 			X509CRL x509CRL = loadPreviousCrl(filePrevious, certs[0]);
 
 			DSignCrl dSignCrl = new DSignCrl(frame, keyPairType, privateKey, certs[0], x509CRL);
@@ -102,9 +104,10 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				BigInteger crlNumber = dSignCrl.getCrlNumber();
 				String SignatureAlgorithm = dSignCrl.getSignatureType().jce();
 				Map<BigInteger, RevokedEntry> mapRevoked = dSignCrl.getMapRevokedEntry();
-				
-				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm, mapRevoked);
-				//sobreescribimos el antiguo crl
+
+				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm,
+						mapRevoked);
+				// sobreescribimos el antiguo crl
 				exportFile(x509CRL, filePrevious, false);
 				String newFileName = X509CertUtil.getShortName(certs[0]);
 				DExportCrl dExportCrl = new DExportCrl(frame, newFileName);
@@ -121,6 +124,16 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 		}
 	}
 
+	private File getFilePrevious(X509Certificate caCert, KeyStoreHistory history) {
+		String serial = caCert.getSerialNumber().toString(16);
+		String pathFile = history.getPath();
+		File fileParent = new File(pathFile);
+		String path = fileParent.getParentFile().getAbsolutePath();
+		String newPath = path + File.separator + serial + ".db";
+		File filePrevious = new File(newPath);
+		return filePrevious;
+	}
+
 	private X509CRL loadPreviousCrl(File filePrevious, X509Certificate caCert) {
 		try {
 			try (FileInputStream is = new FileInputStream(filePrevious)) {
@@ -129,7 +142,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				return crl;
 			} catch (InvalidKeyException | CRLException | NoSuchAlgorithmException | NoSuchProviderException
 					| SignatureException e) {
-				//ignore
+				// ignore
 			}
 		} catch (CryptoException | IOException e) {
 			// ignore
@@ -145,7 +158,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 		crlGen.setNextUpdate(nextUpdate);
 
 		if (mapRevokedCertificate != null) {
-			
+
 			Iterator<Map.Entry<BigInteger, RevokedEntry>> it = mapRevokedCertificate.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry<BigInteger, RevokedEntry> pair = it.next();
@@ -169,8 +182,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			throws FileNotFoundException, IOException, CRLException {
 
 		byte[] data = x509CRL.getEncoded();
-		try(InputStream in = new ByteArrayInputStream(data))
-		{
+		try (InputStream in = new ByteArrayInputStream(data)) {
 			int length;
 			byte[] buffer = new byte[1024];
 			try (FileOutputStream fileOutputStream = new FileOutputStream(fileExported)) {
