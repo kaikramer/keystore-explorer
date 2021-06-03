@@ -23,6 +23,7 @@ import static org.kse.crypto.x509.X509ExtensionType.AUTHORITY_INFORMATION_ACCESS
 import static org.kse.crypto.x509.X509ExtensionType.AUTHORITY_KEY_IDENTIFIER;
 import static org.kse.crypto.x509.X509ExtensionType.BASIC_CONSTRAINTS;
 import static org.kse.crypto.x509.X509ExtensionType.CERTIFICATE_POLICIES;
+import static org.kse.crypto.x509.X509ExtensionType.CRL_DISTRIBUTION_POINTS;
 import static org.kse.crypto.x509.X509ExtensionType.CUSTOM;
 import static org.kse.crypto.x509.X509ExtensionType.EXTENDED_KEY_USAGE;
 import static org.kse.crypto.x509.X509ExtensionType.INHIBIT_ANY_POLICY;
@@ -36,7 +37,6 @@ import static org.kse.crypto.x509.X509ExtensionType.PRIVATE_KEY_USAGE_PERIOD;
 import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_ALTERNATIVE_NAME;
 import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_INFORMATION_ACCESS;
 import static org.kse.crypto.x509.X509ExtensionType.SUBJECT_KEY_IDENTIFIER;
-import static org.kse.crypto.x509.X509ExtensionType.CRL_DISTRIBUTION_POINTS;
 
 import java.awt.BorderLayout;
 import java.awt.Dialog;
@@ -82,11 +82,12 @@ public class DAddExtensionType extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
-	private static final X509ExtensionType[] SUPPORTED_EXTENSIONS = { AUTHORITY_INFORMATION_ACCESS,
-		AUTHORITY_KEY_IDENTIFIER, BASIC_CONSTRAINTS, CERTIFICATE_POLICIES, EXTENDED_KEY_USAGE, INHIBIT_ANY_POLICY,
+	private static final X509ExtensionType[] SUPPORTED_EXTENSIONS = { CUSTOM, AUTHORITY_INFORMATION_ACCESS,
+		AUTHORITY_KEY_IDENTIFIER, BASIC_CONSTRAINTS, CERTIFICATE_POLICIES,
+		CRL_DISTRIBUTION_POINTS, EXTENDED_KEY_USAGE, INHIBIT_ANY_POLICY,
 		ISSUER_ALTERNATIVE_NAME, KEY_USAGE, NAME_CONSTRAINTS, POLICY_CONSTRAINTS, POLICY_MAPPINGS,
-		PRIVATE_KEY_USAGE_PERIOD, SUBJECT_ALTERNATIVE_NAME, SUBJECT_INFORMATION_ACCESS, SUBJECT_KEY_IDENTIFIER, CUSTOM, CRL_DISTRIBUTION_POINTS };
-	
+		PRIVATE_KEY_USAGE_PERIOD, SUBJECT_ALTERNATIVE_NAME, SUBJECT_INFORMATION_ACCESS, SUBJECT_KEY_IDENTIFIER };
+
 	private JPanel jpExtensionTypes;
 	private JLabel jlExtensionTypes;
 	private JList<X509ExtensionType> jltExtensionTypes;

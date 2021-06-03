@@ -23,6 +23,7 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -35,13 +36,18 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.oid.JObjectId;
+import org.kse.gui.error.DError;
+import org.kse.gui.oid.JObjectIdEditor;
 import org.kse.utilities.DialogViewer;
+import org.kse.utilities.oid.InvalidObjectIdException;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -55,7 +61,7 @@ public class DCustomExtension extends DExtension {
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
 	private JLabel jlCustomOID;
-	private JObjectId joidCustomOID;
+	private JObjectIdEditor joidCustomOID;
 
 //	private JLabel jlValueType;
 //	private JComboBox<String> jcbValueType;
@@ -66,7 +72,8 @@ public class DCustomExtension extends DExtension {
 	private JButton jbCancel;
 	private JButton jbOK;
 
-	byte[] value;
+	private ASN1ObjectIdentifier oid;
+	private byte[] value;
 
 	/**
 	 * Creates new DCustomExtension dialog where the parent is a dialog.
@@ -79,18 +86,33 @@ public class DCustomExtension extends DExtension {
 		initComponents();
 	}
 
-	private void initComponents() {
+	/**
+	 * Creates a new DCustomExtension dialog.
+	 *
+	 * @param parent The parent dialog
+	 * @param value Value of the custom extension DER-encoded
+	 * @throws IOException If value could not be decoded
+	 */
+	public DCustomExtension(JDialog parent, String oid, byte[] value) throws IOException {
+		super(parent);
+		setTitle(res.getString("DCustomExtension.Title"));
+		initComponents();
+		this.oid = new ASN1ObjectIdentifier(oid);
+		this.value = value;
+		prepopulate(this.oid, value);
+	}
 
+	private void initComponents() {
 		jlCustomOID = new JLabel(res.getString("DCustomExtension.jlCustomOID.text"));
 
-		joidCustomOID = new JObjectId("DCustomExtension.joidCustomOID.title");
+		joidCustomOID = new JObjectIdEditor();
 		joidCustomOID.setToolTipText(res.getString("DCustomExtension.joidCustomOID.tooltip"));
 
 //		jlValueType = new JLabel(res.getString("DCustomExtension.jlValueType.text"));
 //
 //		jcbValueType = new JComboBox<>();
 //		jcbValueType.setModel(new DefaultComboBoxModel<>(getValueTypeOptions()));
-//		jcbValueType.setToolTipText(res.getString("DGenerateKeyPair.jcbECCurveSet.tooltip"));
+//		jcbValueType.setToolTipText(res.getString("DCustomExtension.jcbValueType.tooltip"));
 
 		jlEncodedHexValue = new JLabel(res.getString("DCustomExtension.jlEncodedHexValue.text"));
 
@@ -115,7 +137,6 @@ public class DCustomExtension extends DExtension {
 		pane.add(joidCustomOID, "growx, pushx, wrap");
 		pane.add(jlEncodedHexValue, "");
 		pane.add(jspEncodedHexValue, "growx, pushx, height 80lp:80lp:80lp, wrap");
-		//pane.add(jspEncodedHexValue, "width 260lp:260lp:260lp, height 50lp:50lp:50lp, wrap"); // sp determines dialog size
 		pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
 		pane.add(jbCancel, "spanx, split 2, tag cancel");
 		pane.add(jbOK, "tag ok");
@@ -150,26 +171,40 @@ public class DCustomExtension extends DExtension {
 //		};
 //	}
 
+	private void prepopulate(ASN1ObjectIdentifier oid, byte[] value) {
+		try {
+			joidCustomOID.setObjectId(oid);
+			jtaEncodedHexValue.setText(Hex.toHexString(value));
+		} catch (Exception e) {
+			// this error should never happen because OID and hex value are checked when added
+			DError.displayError(this, e);
+		}
+	}
+
 	private void cancelPressed() {
 		closeDialog();
 	}
 
 	private void okPressed() {
-		String text = jtaEncodedHexValue.getText();
-
-		// TODO check for empty OID or maybe better: include OID editor
-
-		byte[] extValue;
 		try {
+			this.oid = joidCustomOID.getObjectId();
+		} catch (InvalidObjectIdException | IllegalArgumentException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		try {
+			this.value = Hex.decode(jtaEncodedHexValue.getText().replace(':', ' '));
+
 			// empty extension value is possible, e.g. for id-pkix-ocsp-nocheck from RFC 6960
-			extValue = Hex.decode(text.replace(':', ' '));
-		} catch (DecoderException e) {
+			if (Arrays.isNullOrEmpty(value)) {
+				this.value = DERNull.INSTANCE.getEncoded();
+			}
+		} catch (DecoderException | IOException e) {
 			JOptionPane.showMessageDialog(this, res.getString("DCustomExtension.NotAValidHexString.message"),
 					getTitle(), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-
-		value = extValue;
 
 		closeDialog();
 	}
@@ -181,12 +216,15 @@ public class DCustomExtension extends DExtension {
 
 	@Override
 	public byte[] getValue() {
-		return value;
+		return this.value;
 	}
 
 	@Override
 	public String getOid() {
-		return joidCustomOID.getObjectId().getId();
+		if (this.oid == null) {
+			return null;
+		}
+		return this.oid.getId();
 	}
 
 	// for quick UI testing

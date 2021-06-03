@@ -73,7 +73,6 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.Arrays;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.GeneralNameUtil;
@@ -459,11 +458,39 @@ public class DAddExtensions extends JEscDialog {
 		}
 
 		boolean isCritical = dAddExtensionType.isExtensionCritical();
-		byte[] extensionValue = null;
+		DExtension dExtension = determineExtensionDialog(extensionTypeToAdd);
+		if (dExtension == null) {
+			return;
+		}
+		dExtension.setLocationRelativeTo(this);
+		dExtension.setVisible(true);
 
+		byte[] extensionValue = dExtension.getValue();
+		String oid = dExtension.getOid();
+
+		if (extensionValue == null || oid == null) {
+			return;
+		}
+
+		// value has to be wrapped in a DER-encoded OCTET STRING
+		byte[] extensionValueOctet = null;
+		try {
+			extensionValueOctet = new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
+		} catch (IOException e) {
+			return;
+		}
+
+		extensions.addExtension(oid, isCritical, extensionValueOctet);
+
+		reloadExtensionsTable();
+		selectExtensionInTable(oid);
+		updateButtonControls();
+	}
+
+	private DExtension determineExtensionDialog(X509ExtensionType extensionType) {
 		DExtension dExtension = null;
 
-		switch (extensionTypeToAdd) {
+		switch (extensionType) {
 		case AUTHORITY_INFORMATION_ACCESS:
 			dExtension = new DAuthorityInformationAccess(this);
 			break;
@@ -517,36 +544,10 @@ public class DAddExtensions extends JEscDialog {
 			dExtension = new DCustomExtension(this);
 			break;
 		default:
-			return;
+			return null;
 		}
 
-		dExtension.setLocationRelativeTo(this);
-		dExtension.setVisible(true);
-		extensionValue = dExtension.getValue();
-		String oid = dExtension.getOid();
-
-		if (extensionValue == null) {
-			return;
-		}
-
-		// value has to be wrapped in a DER-encoded OCTET STRING
-		byte[] extensionValueOctet = null;
-		try {
-			if (Arrays.isNullOrEmpty(extensionValue)) {
-				// empty extension value is possible, e.g. for id-pkix-ocsp-nocheck from RFC 6960
-				extensionValueOctet = DERNull.INSTANCE.getEncoded(ASN1Encoding.DER);
-			} else {
-				extensionValueOctet = new DEROctetString(extensionValue).getEncoded(ASN1Encoding.DER);
-			}
-		} catch (IOException e) {
-			return;
-		}
-
-		extensions.addExtension(oid, isCritical, extensionValueOctet);
-
-		reloadExtensionsTable();
-		selectExtensionInTable(oid);
-		updateButtonControls();
+		return dExtension;
 	}
 
 	private void editPressed() {
@@ -580,8 +581,6 @@ public class DAddExtensions extends JEscDialog {
 
 				byte[] extensionValue = ASN1OctetString.getInstance(extensions.getExtensionValue(oid)).getOctets();
 				boolean isCritical = extensions.getCriticalExtensionOIDs().contains(oid);
-
-				byte[] newExtensionValue = null;
 
 				DExtension dExtension = null;
 
@@ -633,9 +632,9 @@ public class DAddExtensions extends JEscDialog {
 					break;
 				case CRL_DISTRIBUTION_POINTS:
 					dExtension = new DCrlDistributionPoints(this, extensionValue);
-					break;					
-				case CUSTOM:
-					dExtension = new DCustomExtension(this);
+					break;
+				case UNKNOWN:
+					dExtension = new DCustomExtension(this, oid, extensionValue);
 					break;
 				default:
 					return;
@@ -643,9 +642,10 @@ public class DAddExtensions extends JEscDialog {
 
 				dExtension.setLocationRelativeTo(this);
 				dExtension.setVisible(true);
-				newExtensionValue = dExtension.getValue();
+				byte[] newExtensionValue = dExtension.getValue();
+				String newOid = dExtension.getOid();
 
-				if (newExtensionValue == null) {
+				if (newExtensionValue == null || newOid == null) {
 					return;
 				}
 
@@ -658,10 +658,11 @@ public class DAddExtensions extends JEscDialog {
 					newExtensionValueOctet = new DEROctetString(newExtensionValue).getEncoded(ASN1Encoding.DER);
 				}
 
-				extensions.addExtension(oid, isCritical, newExtensionValueOctet);
+				extensions.removeExtension(oid);
+				extensions.addExtension(newOid, isCritical, newExtensionValueOctet);
 
 				reloadExtensionsTable();
-				selectExtensionInTable(oid);
+				selectExtensionInTable(newOid);
 				updateButtonControls();
 			}
 		} catch (Exception e) {

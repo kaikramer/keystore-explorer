@@ -28,6 +28,9 @@ import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog used to add or edit a CRL distribution points extension.
+ */
 public class DCrlDistributionPoints extends DExtension {
 
 	private static final long serialVersionUID = 1L;
@@ -44,12 +47,24 @@ public class DCrlDistributionPoints extends DExtension {
 
 	private byte[] value;
 
+	/**
+	 * Creates a new DCrlDistributionPoints dialog.
+	 *
+	 * @param parent The parent dialog
+	 */
 	public DCrlDistributionPoints(JDialog parent) {
 		super(parent);
 		setTitle(res.getString("DCrlDistributionPoints.Title"));
 		initComponents();
 	}
 
+	/**
+	 * Creates a new DCrlDistributionPoints dialog.
+	 *
+	 * @param parent The parent dialog
+	 * @param value CRL distribution points DER-encoded
+	 * @throws IOException If value could not be decoded
+	 */
 	public DCrlDistributionPoints(JDialog parent, byte[] value) throws IOException {
 		super(parent);
 		setTitle(res.getString("DCrlDistributionPoints.Title"));

@@ -19,9 +19,8 @@
  */
 package org.kse.gui.oid;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -29,26 +28,21 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.gui.JEscDialog;
-import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.oid.InvalidObjectIdException;
-import org.kse.utilities.oid.ObjectIdUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose an object identifier.
@@ -61,14 +55,8 @@ public class DObjectIdChooser extends JEscDialog {
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpObjectId;
 	private JLabel jlObjectId;
-	private JComboBox<?> jcbFirstArc;
-	private JLabel jlFirstPeriod;
-	private JComboBox<Integer> jcbSecondArc;
-	private JTextField jtfRemainingArcs;
-	private JLabel jlSecondPeriod;
-	private JPanel jpButtons;
+	private JObjectIdEditor jObjectIdEditor;
 	private JButton jbOK;
 	private JButton jbCancel;
 
@@ -112,34 +100,7 @@ public class DObjectIdChooser extends JEscDialog {
 	private void initComponents(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
 		jlObjectId = new JLabel(res.getString("DObjectIdChooser.jlObjectId.text"));
 
-		jcbFirstArc = new JComboBox<>(new Integer[] { 0, 1, 2 });
-		jcbFirstArc.setToolTipText(res.getString("DObjectIdChooser.jcbFirstArc.tooltip"));
-
-		jlFirstPeriod = new JLabel(".");
-
-		jcbSecondArc = new JComboBox<>();
-		jcbSecondArc.setToolTipText(res.getString("DObjectIdChooser.jcbSecondArc.tooltip"));
-
-		jlSecondPeriod = new JLabel(".");
-
-		jtfRemainingArcs = new JTextField(15);
-		jtfRemainingArcs.setToolTipText(res.getString("DObjectIdChooser.jtfRemainingArcs.tooltip"));
-
-		populateSecondArc();
-
-		jcbFirstArc.addItemListener(e -> populateSecondArc());
-
-		jpObjectId = new JPanel(new FlowLayout());
-
-		jpObjectId.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
-
-		jpObjectId.add(jlObjectId);
-		jpObjectId.add(jcbFirstArc);
-		jpObjectId.add(jlFirstPeriod);
-		jpObjectId.add(jcbSecondArc);
-		jpObjectId.add(jlSecondPeriod);
-		jpObjectId.add(jtfRemainingArcs);
+		jObjectIdEditor = new JObjectIdEditor(objectId);
 
 		jbOK = new JButton(res.getString("DObjectIdChooser.jbOK.text"));
 		jbOK.addActionListener(evt -> okPressed());
@@ -157,13 +118,14 @@ public class DObjectIdChooser extends JEscDialog {
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(BorderLayout.CENTER, jpObjectId);
-		getContentPane().add(BorderLayout.SOUTH, jpButtons);
-
-		populate(objectId);
+		// layout
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]"));
+		pane.add(jlObjectId, "");
+		pane.add(jObjectIdEditor, "wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+		pane.add(jbCancel, "spanx, split 2, tag cancel");
+		pane.add(jbOK, "tag ok");
 
 		setResizable(false);
 
@@ -172,74 +134,9 @@ public class DObjectIdChooser extends JEscDialog {
 		pack();
 	}
 
-	private void populate(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
-		if (objectId == null) {
-			populateSecondArc();
-		} else {
-			ObjectIdUtil.validate(objectId);
-			int[] arcs = ObjectIdUtil.extractArcs(objectId);
-
-			jcbFirstArc.setSelectedItem(arcs[0]);
-			jcbSecondArc.setSelectedItem(arcs[1]);
-
-			String remainingArcs = "";
-
-			for (int i = 2; i < arcs.length; i++) {
-				remainingArcs += arcs[i];
-
-				if ((i + 1) < arcs.length) {
-					remainingArcs += ".";
-				}
-			}
-
-			jtfRemainingArcs.setText(remainingArcs);
-		}
-	}
-
-	private void populateSecondArc() {
-		int firstArc = (Integer) jcbFirstArc.getSelectedItem();
-		int secondArc = jcbSecondArc.getSelectedIndex();
-		int maxSecondArc;
-
-		if ((firstArc == 0) || (firstArc == 1)) {
-			maxSecondArc = 39;
-		} else
-			// firstArc == 2
-		{
-			maxSecondArc = 47;
-		}
-
-		jcbSecondArc.removeAllItems();
-
-		for (int i = 0; i <= maxSecondArc; i++) {
-			jcbSecondArc.addItem(i);
-		}
-
-		if ((secondArc != -1) && (secondArc <= maxSecondArc)) {
-			jcbSecondArc.setSelectedIndex(secondArc);
-		} else {
-			jcbSecondArc.setSelectedIndex(0);
-		}
-	}
-
-	/**
-	 * Get selected object identifier name.
-	 *
-	 * @return Object identifier, or null if none
-	 */
-	public ASN1ObjectIdentifier getObjectId() {
-		return objectId;
-	}
-
 	private void okPressed() {
-		String firstArc = "" + jcbFirstArc.getSelectedItem();
-		String secondArc = "" + jcbSecondArc.getSelectedItem();
-		String remainingArcs = jtfRemainingArcs.getText().trim();
-
 		try {
-			ASN1ObjectIdentifier newObjectId = new ASN1ObjectIdentifier(firstArc + "." + secondArc + "." + remainingArcs);
-			ObjectIdUtil.validate(newObjectId);
-			objectId = newObjectId;
+			this.objectId = jObjectIdEditor.getObjectId();
 		} catch (InvalidObjectIdException | IllegalArgumentException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
 			return;
@@ -255,6 +152,16 @@ public class DObjectIdChooser extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+
+
+	/**
+	 * Get selected object identifier name.
+	 *
+	 * @return Object identifier, or null if none
+	 */
+	public ASN1ObjectIdentifier getObjectId() {
+		return objectId;
 	}
 
 	public static void main(String[] args)
