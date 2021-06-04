@@ -130,7 +130,6 @@ import org.kse.gui.actions.ExportTrustedCertificatePublicKeyAction;
 import org.kse.gui.actions.GenerateCsrAction;
 import org.kse.gui.actions.GenerateKeyPairAction;
 import org.kse.gui.actions.GenerateSecretKeyAction;
-import org.kse.gui.actions.GenerateDHParametersAction;
 import org.kse.gui.actions.HelpAction;
 import org.kse.gui.actions.ImportCaReplyFromClipboardAction;
 import org.kse.gui.actions.ImportCaReplyFromFileAction;
@@ -259,7 +258,6 @@ public final class KseFrame implements StatusBar {
 	private JMenu jmTools;
 	private JMenuItem jmiGenerateKeyPair;
 	private JMenuItem jmiGenerateSecretKey;
-	private JMenuItem jmiGenerateDHParameters;
 	private JMenuItem jmiImportTrustedCertificate;
 	private JMenuItem jmiImportKeyPair;
 	private JMenu jmChangeType;
@@ -309,7 +307,6 @@ public final class KseFrame implements StatusBar {
 	private JButton jbPaste;
 	private JButton jbGenerateKeyPair;
 	private JButton jbGenerateSecretKey;
-	private JButton jbGenerateDHParameters;
 	private JButton jbImportTrustedCertificate;
 	private JButton jbImportKeyPair;
 	private JButton jbSetPassword;
@@ -335,7 +332,6 @@ public final class KseFrame implements StatusBar {
 	private JPopupMenu jpmKeyStore;
 	private JMenuItem jmiKeyStoreGenerateKeyPair;
 	private JMenuItem jmiKeyStoreGenerateSecretKey;
-	private JMenuItem jmiKeyStoreGenerateDHParameters;
 	private JMenuItem jmiKeyStoreImportTrustedCertificate;
 	private JMenuItem jmiKeyStoreImportKeyPair;
 	private JMenu jmKeyStoreChangeType;
@@ -446,7 +442,6 @@ public final class KseFrame implements StatusBar {
 	private final TabStyleScrollAction tabStyleScrollAction = new TabStyleScrollAction(this);
 	private final GenerateKeyPairAction generateKeyPairAction = new GenerateKeyPairAction(this);
 	private final GenerateSecretKeyAction generateSecretKeyAction = new GenerateSecretKeyAction(this);
-	private final GenerateDHParametersAction generateDHParametersAction = new GenerateDHParametersAction(this);
 	private final ImportTrustedCertificateAction importTrustedCertificateAction = new ImportTrustedCertificateAction(
 			this);
 	private final ImportKeyPairAction importKeyPairAction = new ImportKeyPairAction(this);
@@ -853,14 +848,6 @@ public final class KseFrame implements StatusBar {
 				(String) generateSecretKeyAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmTools.add(jmiGenerateSecretKey);
 
-		jmiGenerateDHParameters = new JMenuItem(generateDHParametersAction);
-		PlatformUtil.setMnemonic(jmiGenerateDHParameters, res.getString("KseFrame.jmiGenerateDHParameters.mnemonic")
-				.charAt(0));
-		jmiGenerateDHParameters.setToolTipText(null);
-		new StatusBarChangeHandler(jmiGenerateDHParameters,
-				(String) generateDHParametersAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmTools.add(jmiGenerateDHParameters);
-		
 		jmiImportTrustedCertificate = new JMenuItem(importTrustedCertificateAction);
 		PlatformUtil.setMnemonic(jmiImportTrustedCertificate,
 				res.getString("KseFrame.jmiImportTrustedCertificate.mnemonic").charAt(0));
@@ -1286,23 +1273,6 @@ public final class KseFrame implements StatusBar {
 			}
 		});
 
-		jbGenerateDHParameters = new JButton();
-		jbGenerateDHParameters.setAction(generateDHParametersAction);
-		jbGenerateDHParameters.setText(null);
-		PlatformUtil.setMnemonic(jbGenerateDHParameters, 0);
-		jbGenerateDHParameters.setFocusable(false);
-		jbGenerateDHParameters.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent evt) {
-				setStatusBarText((String) generateDHParametersAction.getValue(Action.LONG_DESCRIPTION));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent evt) {
-				setDefaultStatusBarText();
-			}
-		});
-		
 		jbImportTrustedCertificate = new JButton();
 		jbImportTrustedCertificate.setAction(importTrustedCertificateAction);
 		jbImportTrustedCertificate.setText(null);
@@ -1470,7 +1440,6 @@ public final class KseFrame implements StatusBar {
 
 		jtbToolBar.add(jbGenerateKeyPair);
 		jtbToolBar.add(jbGenerateSecretKey);
-		jtbToolBar.add(jbGenerateDHParameters);
 		jtbToolBar.add(jbImportTrustedCertificate);
 		jtbToolBar.add(jbImportKeyPair);
 		jtbToolBar.add(jbSetPassword);
@@ -1785,14 +1754,6 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiKeyStoreGenerateSecretKey,
 				(String) generateSecretKeyAction.getValue(Action.LONG_DESCRIPTION), this);
 		jpmKeyStore.add(jmiKeyStoreGenerateSecretKey);
-		
-		jmiKeyStoreGenerateDHParameters = new JMenuItem(generateDHParametersAction);
-		PlatformUtil.setMnemonic(jmiKeyStoreGenerateDHParameters, res.getString("KseFrame.jmiGenerateDHParameters.mnemonic")
-				.charAt(0));
-		jmiKeyStoreGenerateDHParameters.setToolTipText(null);
-		new StatusBarChangeHandler(jmiKeyStoreGenerateDHParameters,
-				(String) generateDHParametersAction.getValue(Action.LONG_DESCRIPTION), this);
-		jpmKeyStore.add(jmiKeyStoreGenerateDHParameters);
 
 		jmiKeyStoreImportTrustedCertificate = new JMenuItem(importTrustedCertificateAction);
 		PlatformUtil.setMnemonic(jmiKeyStoreImportTrustedCertificate,
@@ -1968,6 +1929,11 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiKeyPairGenerateCsr, (String) generateCsrAction.getValue(Action.LONG_DESCRIPTION),
 				this);
 
+		jmiKeyPairVerifyCertificate = new JMenuItem(verifyCertificateAction);
+		jmiKeyPairVerifyCertificate.setToolTipText(null);
+		new StatusBarChangeHandler(jmiKeyPairVerifyCertificate, (String) verifyCertificateAction.getValue(Action.LONG_DESCRIPTION),
+				this);
+		 		
 		jmKeyPairImportCaReply = new JMenu(res.getString("KseFrame.jmKeyPairImportCaReply.text"));
 		jmKeyPairImportCaReply.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource("images/menu/keypairimportcareply.png"))));
