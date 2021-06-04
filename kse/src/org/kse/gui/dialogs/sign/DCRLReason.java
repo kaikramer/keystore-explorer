@@ -2,6 +2,7 @@ package org.kse.gui.dialogs.sign;
 
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
@@ -15,12 +16,14 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.bouncycastle.asn1.x509.CRLReason;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -157,7 +160,9 @@ public class DCRLReason extends JEscDialog {
 
 	private void populate()
 	{
-		jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));
+		if (cert != null) {
+			jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));	
+		}
 	}
 	
 	private void cancelPressed() {
@@ -211,5 +216,9 @@ public class DCRLReason extends JEscDialog {
 	public boolean isOk()
 	{
 		return ok;
+	}
+	
+	public static void main(String [] args) throws HeadlessException, UnsupportedLookAndFeelException {
+		DialogViewer.run(new DCRLReason(new JFrame(), null));
 	}
 }

@@ -56,6 +56,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
 	public SignCrlAction(KseFrame kseFrame) {
 		super(kseFrame);
+		
 		putValue(LONG_DESCRIPTION, res.getString("SignCrlAction.statusbar"));
 		putValue(NAME, res.getString("SignCrlAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("SignCrlAction.tooltip"));
@@ -95,7 +96,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
 			X509CRL x509CRL = loadPreviousCrl(filePrevious, certs[0]);
 
-			DSignCrl dSignCrl = new DSignCrl(frame, keyPairType, privateKey, certs[0], x509CRL);
+			DSignCrl dSignCrl = new DSignCrl(frame, kseFrame, keyPairType, privateKey, certs[0], x509CRL);
 			dSignCrl.setLocationRelativeTo(frame);
 			dSignCrl.setVisible(true);
 			Date effectiveDate = dSignCrl.getEffectiveDate();

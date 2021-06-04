@@ -53,13 +53,11 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	/**
 	 * Load the RevokedCertsTableModel with an array of X.509 CRL entries.
 	 *
-	 * @param revokedCerts
-	 *            The X.509 CRL entries
+	 * @param revokedCerts The X.509 CRL entries
 	 */
-	public void load (Map<BigInteger, RevokedEntry> mapRevokedEntry )
-	{
+	public void load(Map<BigInteger, RevokedEntry> mapRevokedEntry) {
 		data = new Object[mapRevokedEntry.size()][2];
-		
+
 		int i = 0;
 		Iterator<Map.Entry<BigInteger, RevokedEntry>> it = mapRevokedEntry.entrySet().iterator();
 		while (it.hasNext()) {
@@ -71,7 +69,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 		}
 		fireTableDataChanged();
 	}
-	
+
 	/**
 	 * Get the number of columns in the table.
 	 *
@@ -95,8 +93,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	/**
 	 * Get the name of the column at the given position.
 	 *
-	 * @param col
-	 *            The column position
+	 * @param col The column position
 	 * @return The column name
 	 */
 	@Override
@@ -107,10 +104,8 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	/**
 	 * Get the cell value at the given row and column position.
 	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
+	 * @param row The row position
+	 * @param col The column position
 	 * @return The cell value
 	 */
 	@Override
@@ -121,8 +116,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	/**
 	 * Get the class at of the cells at the given column position.
 	 *
-	 * @param col
-	 *            The column position
+	 * @param col The column position
 	 * @return The column cells' class
 	 */
 	@Override
@@ -137,10 +131,8 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	/**
 	 * Is the cell at the given row and column position editable?
 	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
+	 * @param row The row position
+	 * @param col The column position
 	 * @return True if the cell is editable, false otherwise
 	 */
 	@Override

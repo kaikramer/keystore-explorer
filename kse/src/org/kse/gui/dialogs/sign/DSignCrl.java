@@ -2,6 +2,7 @@ package org.kse.gui.dialogs.sign;
 
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -23,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UnsupportedLookAndFeelException;
+
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
@@ -33,11 +36,14 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.JEscDialog;
+import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.DialogHelper;
+import org.kse.utilities.DialogViewer;
+
 import net.miginfocom.swing.MigLayout;
 
 public class DSignCrl extends JEscDialog {
@@ -68,7 +74,7 @@ public class DSignCrl extends JEscDialog {
 
 	private KeyPairType signKeyPairType;
 	private PrivateKey signPrivateKey;
-	private X509Certificate cert;
+	private X509Certificate caCert;
 	private X509CRL crl;
 	private X509v2CRLBuilder crlBuilder;
 
@@ -78,14 +84,16 @@ public class DSignCrl extends JEscDialog {
 	private BigInteger crlNumber;
 
 	private JFrame parent;
+	private KseFrame kseFrame;
 
-	public DSignCrl(JFrame parent, KeyPairType signKeyPairType, PrivateKey signPrivateKey, X509Certificate cert,
-			X509CRL crl) throws CryptoException {
+	public DSignCrl(JFrame parent, KseFrame kseFrame, KeyPairType signKeyPairType, PrivateKey signPrivateKey,
+			X509Certificate caCert, X509CRL crl) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.parent = parent;
+		this.kseFrame = kseFrame;
 		this.signKeyPairType = signKeyPairType;
 		this.signPrivateKey = signPrivateKey;
-		this.cert = cert;
+		this.caCert = caCert;
 		this.crl = crl;
 		setTitle(res.getString("DSignCrl.Title"));
 		initComponents();
@@ -121,14 +129,16 @@ public class DSignCrl extends JEscDialog {
 
 		jcbSignatureAlgorithm = new JComboBox<>();
 		jcbSignatureAlgorithm.setMaximumRowCount(10);
-		DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
+		if (signPrivateKey != null) {
+			DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
+		}
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCrl.jcbSignatureAlgorithm.tooltip"));
 
 		jlCrlNumber = new JLabel(res.getString("DSignCrl.jlCrlNumber.text"));
 		jtfCrlNumber = new JTextField("1", 5);
 		jtfCrlNumber.setToolTipText(res.getString("DSignCrl.jtfCrlNumber.tooltip"));
 
-		jpRevokedCertsTable = new JRevokedCerts(parent, cert, crl);
+		jpRevokedCertsTable = new JRevokedCerts(parent, kseFrame, caCert, crl);
 
 		jbOK = new JButton(res.getString("DSignCrl.jbOK.text"));
 		jbCancel = new JButton(res.getString("DSignCrl.jbCancel.text"));
@@ -183,7 +193,10 @@ public class DSignCrl extends JEscDialog {
 	}
 
 	private void populateFields() {
-		jdnCrlIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));
+		if (caCert != null) {
+			jdnCrlIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(caCert.getSubjectX500Principal()));
+		}
+
 		if (crl == null) {
 			Date startDate = jdtEffectiveDate.getDateTime();
 			jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
@@ -208,7 +221,6 @@ public class DSignCrl extends JEscDialog {
 				}
 			}
 		}
-
 	}
 
 	private void cancelPressed() {
@@ -270,5 +282,9 @@ public class DSignCrl extends JEscDialog {
 
 	public Map<BigInteger, RevokedEntry> getMapRevokedEntry() {
 		return jpRevokedCertsTable.getMapRevokedEntry();
+	}
+
+	public static void main(String[] args) throws HeadlessException, UnsupportedLookAndFeelException, CryptoException {
+		DialogViewer.run(new DSignCrl(new JFrame(), null, KeyPairType.RSA, null, null, null));
 	}
 }

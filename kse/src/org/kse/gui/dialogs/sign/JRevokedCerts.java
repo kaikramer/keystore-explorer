@@ -53,6 +53,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JKseTable;
+import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
@@ -76,15 +77,17 @@ public class JRevokedCerts extends JPanel {
 	private JButton jbRemove;
 
 	private JFrame parent;
+	private KseFrame kseFrame;
 
 	private Map<BigInteger, RevokedEntry> mapRevokedEntry;
-	private X509Certificate cert;
+	private X509Certificate caCert;
 	private X509CRL crl;
 
-	public JRevokedCerts(JFrame parent, X509Certificate cert, X509CRL crl) {
+	public JRevokedCerts(JFrame parent, KseFrame kseFrame, X509Certificate caCert, X509CRL crl) {
 		super();
 		this.parent = parent;
-		this.cert = cert;
+		this.kseFrame = kseFrame;
+		this.caCert = caCert;
 		this.crl = crl;
 		this.mapRevokedEntry = new HashMap<>();
 		initComponents();
@@ -93,24 +96,24 @@ public class JRevokedCerts extends JPanel {
 	private void initComponents() {
 
 		jbRevCertFile = new JButton(
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked.png"))));
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked1.png"))));
 		jbRevCertFile.setMargin(new Insets(2, 2, 0, 0));
 		jbRevCertFile.setToolTipText(res.getString("JRevokedCerts.jbRevCertFile.tooltip"));
 		jbRevCertFile.setMnemonic(res.getString("JRevokedCerts.jbRevCertFile.mnemonic").charAt(0));
 
 		jbRevKeyStore = new JButton(
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked.png"))));
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked2.png"))));
 		jbRevKeyStore.setMargin(new Insets(2, 2, 0, 0));
 		jbRevKeyStore.setToolTipText(res.getString("JRevokedCerts.jbRevKeyStore.tooltip"));
 		jbRevKeyStore.setMnemonic(res.getString("JRevokedCerts.jbRevKeyStore.mnemonic").charAt(0));
 
 		jbRevLoadCrl = new JButton(
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked.png"))));
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked3.png"))));
 		jbRevLoadCrl.setMargin(new Insets(2, 2, 0, 0));
 		jbRevLoadCrl.setToolTipText(res.getString("JRevokedCerts.jbRevLoadCrl.tooltip"));
 		jbRevLoadCrl.setMnemonic(res.getString("JRevokedCerts.jbRevLoadCrl.mnemonic").charAt(0));
 
-		jlRevokedCerts = new JLabel(res.getString("DSignCrl.jlRevokedCerts.text"));
+		jlRevokedCerts = new JLabel(res.getString("JRevokedCerts.jlRevokedCerts.text"));
 		RevokedCertsTableModel rcModel = new RevokedCertsTableModel();
 
 		jtRevokedCerts = new JKseTable(rcModel);
@@ -150,6 +153,7 @@ public class JRevokedCerts extends JPanel {
 		jpRevokedButtons.add(Box.createVerticalGlue());
 
 		jbRevCertFile.addActionListener(evt -> revCertFilePressed());
+		jbRevKeyStore.addActionListener(evt -> revKeyStorePressed());
 		jbRevLoadCrl.addActionListener(evt -> revLoadCrlPressed());
 
 		populate();
@@ -187,34 +191,48 @@ public class JRevokedCerts extends JPanel {
 	}
 
 	private void revCertFilePressed() {
-		File file = chooseFile();
+		File file = chooseCertFile();
 		if (file != null) {
 			X509Certificate cerRev = openFileCertificate(file);
 			if (cerRev != null) {
-				try {
-					cerRev.verify(cert.getPublicKey());
-					if (mapRevokedEntry.containsKey(cerRev.getSerialNumber())) {
-						JOptionPane.showMessageDialog(this, res.getString("JRevokedCerts.certWasRevoked.message"),
-								res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
-					} else {
-						DCRLReason dCRLReason = new DCRLReason(parent, cerRev);
-						dCRLReason.setLocationRelativeTo(parent);
-						dCRLReason.setVisible(true);
-						if (dCRLReason.isOk()) {
-							int reason = dCRLReason.getReason();
-							mapRevokedEntry.put(cerRev.getSerialNumber(),
-									new RevokedEntry(cerRev.getSerialNumber(), new Date(), reason));
-							RevokedCertsTableModel revokedCertsTableModel = (RevokedCertsTableModel) jtRevokedCerts
-									.getModel();
-							revokedCertsTableModel.load(mapRevokedEntry);
-						}
-					}
-				} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
-						| SignatureException e) {
-					JOptionPane.showMessageDialog(this, res.getString("JRevokedCerts.certNotSignedCA.message"),
-							res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
+				insertCertificateTable(cerRev);
+			}
+		}
+	}
+
+	private void insertCertificateTable(X509Certificate cerRev) {
+
+		try {
+			cerRev.verify(caCert.getPublicKey());
+			if (mapRevokedEntry.containsKey(cerRev.getSerialNumber())) {
+				JOptionPane.showMessageDialog(parent, res.getString("JRevokedCerts.certWasRevoked.message"),
+						res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
+			} else {
+				DCRLReason dCRLReason = new DCRLReason(parent, cerRev);
+				dCRLReason.setLocationRelativeTo(parent);
+				dCRLReason.setVisible(true);
+				if (dCRLReason.isOk()) {
+					int reason = dCRLReason.getReason();
+					mapRevokedEntry.put(cerRev.getSerialNumber(),
+							new RevokedEntry(cerRev.getSerialNumber(), new Date(), reason));
+					RevokedCertsTableModel revokedCertsTableModel = (RevokedCertsTableModel) jtRevokedCerts.getModel();
+					revokedCertsTableModel.load(mapRevokedEntry);
 				}
 			}
+		} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
+				| SignatureException e) {
+			JOptionPane.showMessageDialog(parent, res.getString("JRevokedCerts.certNotSignedCA.message"),
+					res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	private void revKeyStorePressed() {
+		DListCertificatesKS dialog = new DListCertificatesKS(parent, kseFrame);
+		dialog.setLocationRelativeTo(parent);
+		dialog.setVisible(true);
+		X509Certificate cerRev = dialog.getCertificate();
+		if (cerRev != null) {
+			insertCertificateTable(cerRev);
 		}
 	}
 
@@ -224,12 +242,12 @@ public class JRevokedCerts extends JPanel {
 			X509CRL loadCrl = openFileCrl(file);
 			if (loadCrl != null) {
 				try {
-					loadCrl.verify(cert.getPublicKey());
+					loadCrl.verify(caCert.getPublicKey());
 					crl = loadCrl;
 					populate();
 				} catch (InvalidKeyException | CRLException | NoSuchAlgorithmException | NoSuchProviderException
 						| SignatureException e) {
-					JOptionPane.showMessageDialog(this, res.getString("JRevokedCerts.crlNotSignedCA.message"),
+					JOptionPane.showMessageDialog(parent, res.getString("JRevokedCerts.crlNotSignedCA.message"),
 							res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
 				}
 			}
@@ -240,28 +258,17 @@ public class JRevokedCerts extends JPanel {
 		try {
 			CryptoFileType fileType = CryptoFileUtil.detectFileType(file);
 			if (fileType == CryptoFileType.CRL) {
-				return openCrl(file);
+				try (FileInputStream is = new FileInputStream(file)) {
+					X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+					return crl;
+				}
 			} else {
-				JOptionPane.showMessageDialog(this,
+				JOptionPane.showMessageDialog(parent,
 						MessageFormat.format(res.getString("ExamineFileAction.NotCrlFile.message"), file),
 						res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
 			}
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this,
-					MessageFormat.format(res.getString("ExamineFileAction.UnknownFileType.message"), file),
-					res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
-		}
-		return null;
-	}
-
-	private X509CRL openCrl(File file) {
-		try {
-			try (FileInputStream is = new FileInputStream(file)) {
-				X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
-				return crl;
-			}
 		} catch (CryptoException | IOException e) {
-			JOptionPane.showMessageDialog(this,
+			JOptionPane.showMessageDialog(parent,
 					MessageFormat.format(res.getString("ExamineFileAction.UnknownFileType.message"), file),
 					res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
 		}
@@ -276,7 +283,7 @@ public class JRevokedCerts extends JPanel {
 				return certificates[0];
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this,
+			JOptionPane.showMessageDialog(parent,
 					MessageFormat.format(res.getString("ExamineFileAction.UnknownFileType.message"), file),
 					res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
 		}
@@ -287,7 +294,7 @@ public class JRevokedCerts extends JPanel {
 		try {
 			return openCertificate(FileUtils.readFileToByteArray(certificateFile), certificateFile.getName());
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(this,
+			JOptionPane.showMessageDialog(parent,
 					MessageFormat.format(res.getString("KeyStoreExplorerAction.NoReadFile.message"), certificateFile),
 					res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
 			return new X509Certificate[0];
@@ -300,7 +307,7 @@ public class JRevokedCerts extends JPanel {
 			X509Certificate[] certs = X509CertUtil.loadCertificates(data);
 
 			if (certs.length == 0) {
-				JOptionPane.showMessageDialog(this,
+				JOptionPane.showMessageDialog(parent,
 						MessageFormat.format(res.getString("KeyStoreExplorerAction.NoCertsFound.message"), name),
 						res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
 			}
@@ -323,7 +330,7 @@ public class JRevokedCerts extends JPanel {
 		}
 	}
 
-	private File chooseFile() {
+	private File chooseCertFile() {
 
 		JFileChooser chooser = FileChooserFactory.getCertFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
