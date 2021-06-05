@@ -137,7 +137,7 @@ public class DListCertificatesKS extends JEscDialog {
 	private void okPressed() {
 		X509Certificate selCert = jListCertificates.getCertSelected();
 		if (selCert == null) {
-			JOptionPane.showMessageDialog(this, "Debe seleccionar un certificado", getTitle(),
+			JOptionPane.showMessageDialog(this, res.getString("DListCertificatesKS.SelectCertificate.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}

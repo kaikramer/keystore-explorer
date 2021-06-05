@@ -1,5 +1,7 @@
 package org.kse.gui.actions;
 
+import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
+
 import java.awt.Toolkit;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -175,8 +177,8 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 		crlGen.addExtension(Extension.cRLNumber, false, new CRLNumber(number));
 
 		X509CRLHolder crl = crlGen
-				.build(new JcaContentSignerBuilder(signatureAlgorithm).setProvider("BC").build(caPrivateKey));
-		return new JcaX509CRLConverter().setProvider("BC").getCRL(crl);
+				.build(new JcaContentSignerBuilder(signatureAlgorithm).setProvider(BOUNCY_CASTLE.jce()).build(caPrivateKey));
+		return new JcaX509CRLConverter().setProvider(BOUNCY_CASTLE.jce()).getCRL(crl);
 	}
 
 	private void exportFile(X509CRL x509CRL, File fileExported, boolean pemEncode)

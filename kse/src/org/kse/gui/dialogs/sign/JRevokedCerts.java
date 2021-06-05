@@ -145,9 +145,9 @@ public class JRevokedCerts extends JPanel {
 		jpRevokedButtons = new JPanel();
 		jpRevokedButtons.setLayout(new BoxLayout(jpRevokedButtons, BoxLayout.Y_AXIS));
 		jpRevokedButtons.add(Box.createVerticalGlue());
-		jpRevokedButtons.add(jbRevCertFile);
-		jpRevokedButtons.add(Box.createVerticalStrut(3));
 		jpRevokedButtons.add(jbRevKeyStore);
+		jpRevokedButtons.add(Box.createVerticalStrut(3));
+		jpRevokedButtons.add(jbRevCertFile);
 		jpRevokedButtons.add(Box.createVerticalStrut(3));
 		jpRevokedButtons.add(jbRevLoadCrl);
 		jpRevokedButtons.add(Box.createVerticalGlue());
@@ -213,8 +213,9 @@ public class JRevokedCerts extends JPanel {
 				dCRLReason.setVisible(true);
 				if (dCRLReason.isOk()) {
 					int reason = dCRLReason.getReason();
+					Date revocationDate = dCRLReason.getRevocationDate();
 					mapRevokedEntry.put(cerRev.getSerialNumber(),
-							new RevokedEntry(cerRev.getSerialNumber(), new Date(), reason));
+							new RevokedEntry(cerRev.getSerialNumber(), revocationDate, reason));
 					RevokedCertsTableModel revokedCertsTableModel = (RevokedCertsTableModel) jtRevokedCerts.getModel();
 					revokedCertsTableModel.load(mapRevokedEntry);
 				}

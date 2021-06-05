@@ -5,6 +5,7 @@ import java.awt.Dialog;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
@@ -23,6 +24,7 @@ import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
+import org.kse.gui.datetime.JDateTime;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -35,6 +37,8 @@ public class DCRLReason extends JEscDialog {
 
 	private JLabel jlSubject;
 	private JDistinguishedName jdnSubject;
+	private JLabel jlRevocationDate;
+	private JDateTime jdtRevocationDate;	
 	private JLabel jlReason;
 	private JRadioButton jrbUnspecified;
 	private JRadioButton jrbKeyCompromise;
@@ -52,6 +56,7 @@ public class DCRLReason extends JEscDialog {
 	
 	private int reason;
 	private boolean ok = false;
+	private Date revocationDate;
 
 	private X509Certificate cert;
 	
@@ -64,9 +69,16 @@ public class DCRLReason extends JEscDialog {
 	
 	private void initComponents()
 	{
+		Date now = new Date();
+
 		jlSubject = new JLabel(res.getString("DCRLReason.jlSubject.text"));
 		jdnSubject = new JDistinguishedName(res.getString("DCRLReason.Subject.Title"), 40, false);
 		
+		jlRevocationDate = new JLabel(res.getString("DCRLReason.jlRevocationDate.text"));
+		jdtRevocationDate = new JDateTime(res.getString("DCRLReason.jdtRevocationDate.text"), false);
+		jdtRevocationDate.setDateTime(now);
+		jdtRevocationDate.setToolTipText(res.getString("DCRLReason.jdtRevocationDate.tooltip"));
+
 		jlReason = new JLabel(res.getString("DCRLReason.jlReason.text"));
 		
 		jrbUnspecified = new JRadioButton(res.getString("DCRLReason.jrbUnspecified.text"));
@@ -126,6 +138,9 @@ public class DCRLReason extends JEscDialog {
 		
 		pane.add(jlSubject,"right");
 		pane.add(jdnSubject,"wrap");
+
+		pane.add(jlRevocationDate,"right");
+		pane.add(jdtRevocationDate,"wrap");
 		
 		JPanel panelRB = new JPanel(); 
 		panelRB.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
@@ -205,6 +220,7 @@ public class DCRLReason extends JEscDialog {
 		else if (jrbAACompromise.isSelected()) {
 			reason = CRLReason.aACompromise;
 		}
+		revocationDate = jdtRevocationDate.getDateTime();
 		ok = true;
 		closeDialog();
 	}
@@ -213,6 +229,11 @@ public class DCRLReason extends JEscDialog {
 		return reason;
 	}
 
+	public Date getRevocationDate()
+	{
+		return revocationDate;
+	}
+	
 	public boolean isOk()
 	{
 		return ok;

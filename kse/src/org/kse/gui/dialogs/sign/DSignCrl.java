@@ -75,7 +75,7 @@ public class DSignCrl extends JEscDialog {
 	private KeyPairType signKeyPairType;
 	private PrivateKey signPrivateKey;
 	private X509Certificate caCert;
-	private X509CRL crl;
+	private X509CRL crlOld;
 	private X509v2CRLBuilder crlBuilder;
 
 	private Date effectiveDate;
@@ -87,14 +87,14 @@ public class DSignCrl extends JEscDialog {
 	private KseFrame kseFrame;
 
 	public DSignCrl(JFrame parent, KseFrame kseFrame, KeyPairType signKeyPairType, PrivateKey signPrivateKey,
-			X509Certificate caCert, X509CRL crl) throws CryptoException {
+			X509Certificate caCert, X509CRL crlOld) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.parent = parent;
 		this.kseFrame = kseFrame;
 		this.signKeyPairType = signKeyPairType;
 		this.signPrivateKey = signPrivateKey;
 		this.caCert = caCert;
-		this.crl = crl;
+		this.crlOld = crlOld;
 		setTitle(res.getString("DSignCrl.Title"));
 		initComponents();
 	}
@@ -138,7 +138,7 @@ public class DSignCrl extends JEscDialog {
 		jtfCrlNumber = new JTextField("1", 5);
 		jtfCrlNumber.setToolTipText(res.getString("DSignCrl.jtfCrlNumber.tooltip"));
 
-		jpRevokedCertsTable = new JRevokedCerts(parent, kseFrame, caCert, crl);
+		jpRevokedCertsTable = new JRevokedCerts(parent, kseFrame, caCert, crlOld);
 
 		jbOK = new JButton(res.getString("DSignCrl.jbOK.text"));
 		jbCancel = new JButton(res.getString("DSignCrl.jbCancel.text"));
@@ -197,19 +197,19 @@ public class DSignCrl extends JEscDialog {
 			jdnCrlIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(caCert.getSubjectX500Principal()));
 		}
 
-		if (crl == null) {
+		if (crlOld == null) {
 			Date startDate = jdtEffectiveDate.getDateTime();
 			jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
 		} else {
-			Date firstDate = crl.getThisUpdate();
-			Date secondDate = crl.getNextUpdate();
+			Date firstDate = crlOld.getThisUpdate();
+			Date secondDate = crlOld.getNextUpdate();
 			long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
 			long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 			jvpValidityPeriod.setValue(Long.valueOf(diff));
 			Date startDate = jdtEffectiveDate.getDateTime();
 			jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
 
-			byte[] crlNumEnc = crl.getExtensionValue(Extension.cRLNumber.getId());
+			byte[] crlNumEnc = crlOld.getExtensionValue(Extension.cRLNumber.getId());
 			if (crlNumEnc != null) {
 				try {
 					ASN1Primitive primitive = JcaX509ExtensionUtils.parseExtensionValue(crlNumEnc);

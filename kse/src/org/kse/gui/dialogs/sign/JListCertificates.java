@@ -37,7 +37,7 @@ public class JListCertificates extends JPanel {
 
 	private JFrame parent;
 	private KseFrame kseFrame;
-	
+
 	List<X509Certificate> listCertificados = new ArrayList<>();
 
 	public JListCertificates(JFrame parent, KseFrame kseFrame) {
@@ -82,25 +82,26 @@ public class JListCertificates extends JPanel {
 	}
 
 	public void load(KeyStoreHistory keyStoreHistory) throws KeyStoreException {
-		
-		listCertificados.clear();
-		KeyStore tempTrustStore = keyStoreHistory.getCurrentState().getKeyStore();
-		Enumeration<String> enumeration = tempTrustStore.aliases();
-		while (enumeration.hasMoreElements()) {
-			String alias = enumeration.nextElement();
-			X509Certificate cert = (X509Certificate) tempTrustStore.getCertificate(alias);
-			listCertificados.add(cert);
+
+		if (keyStoreHistory != null) {
+			listCertificados.clear();
+			KeyStore tempTrustStore = keyStoreHistory.getCurrentState().getKeyStore();
+			Enumeration<String> enumeration = tempTrustStore.aliases();
+			while (enumeration.hasMoreElements()) {
+				String alias = enumeration.nextElement();
+				X509Certificate cert = (X509Certificate) tempTrustStore.getCertificate(alias);
+				listCertificados.add(cert);
+			}
+			ListCertsTableModel rcModel = (ListCertsTableModel) jtListCerts.getModel();
+			rcModel.load(listCertificados);
 		}
-		ListCertsTableModel rcModel = (ListCertsTableModel) jtListCerts.getModel();
-		rcModel.load(listCertificados);
 	}
-	
+
 	public X509Certificate getCertSelected() {
 		int pos = jtListCerts.getSelectedRow();
 		if (pos >= 0) {
 			return listCertificados.get(pos);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
