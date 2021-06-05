@@ -50,6 +50,8 @@ import org.kse.gui.dialogs.sign.RevokedEntry;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.pem.PemInfo;
+import org.kse.utilities.pem.PemUtil;
 
 public class SignCrlAction extends KeyStoreExplorerAction {
 
@@ -58,7 +60,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
 	public SignCrlAction(KseFrame kseFrame) {
 		super(kseFrame);
-		
+
 		putValue(LONG_DESCRIPTION, res.getString("SignCrlAction.statusbar"));
 		putValue(NAME, res.getString("SignCrlAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("SignCrlAction.tooltip"));
@@ -176,15 +178,21 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
 		crlGen.addExtension(Extension.cRLNumber, false, new CRLNumber(number));
 
-		X509CRLHolder crl = crlGen
-				.build(new JcaContentSignerBuilder(signatureAlgorithm).setProvider(BOUNCY_CASTLE.jce()).build(caPrivateKey));
+		X509CRLHolder crl = crlGen.build(
+				new JcaContentSignerBuilder(signatureAlgorithm).setProvider(BOUNCY_CASTLE.jce()).build(caPrivateKey));
 		return new JcaX509CRLConverter().setProvider(BOUNCY_CASTLE.jce()).getCRL(crl);
 	}
 
 	private void exportFile(X509CRL x509CRL, File fileExported, boolean pemEncode)
 			throws FileNotFoundException, IOException, CRLException {
 
-		byte[] data = x509CRL.getEncoded();
+		byte[] data = null;
+		if (pemEncode) {
+			PemInfo pemInfo = new PemInfo("X509 CRL", null, x509CRL.getEncoded());
+			data = PemUtil.encode(pemInfo).getBytes();
+		} else {
+			data = x509CRL.getEncoded();
+		}
 		try (InputStream in = new ByteArrayInputStream(data)) {
 			int length;
 			byte[] buffer = new byte[1024];

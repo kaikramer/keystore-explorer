@@ -98,8 +98,8 @@ public class DExportCrl extends JEscDialog {
 		gbc_jlExportPem.gridy = 4;
 
 		jcbExportPem = new JCheckBox();
-		jcbExportPem.setEnabled(false);
-		jcbExportPem.setSelected(false);
+		jcbExportPem.setEnabled(true);
+		jcbExportPem.setSelected(true);
 		jcbExportPem.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jcbExportPem.tooltip"));
 		GridBagConstraints gbc_jcbExportPem = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jcbExportPem.gridy = 4;
