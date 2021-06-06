@@ -15,11 +15,17 @@ import org.kse.gui.dialogs.DViewDHParameters;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.HistoryAction;
 
-
+/**
+ * <h1> Dialogue control </h1>
+ * The GenerateDHParametersAction class controls the flow
+ * of the dialogue windows when generating the DH Parameters.
+ * <p> 
+ * The class also checks for successful completion before
+ * continuing with next window. This class does not save the 
+ * parameters generated and there is no history integration.
+ */
 public class GenerateDHParametersAction extends KeyStoreExplorerAction implements HistoryAction {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 7477452992392634450L;
 	protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/actions/resources");
 
@@ -36,10 +42,9 @@ public class GenerateDHParametersAction extends KeyStoreExplorerAction implement
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 						getClass().getResource("images/genkeypair.png"))));
 
-	}
+		}
 		@Override
 		public String getHistoryDescription() {
-			// TODO Auto-generated method stub
 			return (String) getValue(NAME);
 		}
 

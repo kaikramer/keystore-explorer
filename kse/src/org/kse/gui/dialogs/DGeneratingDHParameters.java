@@ -30,16 +30,19 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.params.DHParameters;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.CryptoException;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.error.DError;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * Generates DH Parameters which the user may cancel at any time by pressing the
+ * <h1>DH Parameters generation</h1>
+ * The class DGeneratingDHParameters initiates DH Parameters generation.
+ * Bouncy Castle is the provider used to generate the parameters.
+ * <p>
+ * The user may cancel at any time by pressing the
  * cancel button.
- *
  */
 public class DGeneratingDHParameters extends JEscDialog {
 	private static final long serialVersionUID = 1L;
@@ -60,17 +63,18 @@ public class DGeneratingDHParameters extends JEscDialog {
 	/**
 	 * Creates a new DGeneratingDHParameters dialog.
 	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param keySize
-	 *            The key size to generate
+	 * @param parent The parent frame
+	 * @param keySize The key size to generate
 	 */
 	public DGeneratingDHParameters(JFrame parent, int keySize) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.keySize = keySize;
 		initComponents();
 	}
-
+	
+    /**
+	 * Initializes the dialogue panel and associated elements 
+     */
 	private void initComponents() {
 		//TODO Generate DH Parameters icon
 		jlGenDHParameters = new JLabel(res.getString("DGeneratingDHParameters.jlGenDHParameters.text"));
@@ -94,10 +98,10 @@ public class DGeneratingDHParameters extends JEscDialog {
 		});
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets 10", "[]60","[]20[]20"));
+		pane.setLayout(new MigLayout("insets dialog", "[]","[]unrel"));
 		pane.add(jlGenDHParameters, "wrap");
 		pane.add(jpbGenDHParameters, "growx, wrap");
-		pane.add(jbCancel, "align right");
+		pane.add(jbCancel, "tag Cancel");
 
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -124,10 +128,19 @@ public class DGeneratingDHParameters extends JEscDialog {
 		generator.start();
 	}
 	
+	/**
+	 * Returns the current success status
+	 * 
+	 * @return successStatus The success status boolean
+	 */
 	public boolean isSuccessful() {
 		return successStatus;
 	}
-
+    
+	/**
+	 * Calls the close dialogue,
+	 * Sets the success value to false
+	 */
 	private void cancelPressed() {
 		if ((generator != null) && (generator.isAlive())) {
 			generator.interrupt();
@@ -135,7 +148,10 @@ public class DGeneratingDHParameters extends JEscDialog {
 		successStatus = false;
 		closeDialog();
 	}
-
+    
+	/**
+	 * Closes the dialogue
+	 */
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
@@ -144,25 +160,30 @@ public class DGeneratingDHParameters extends JEscDialog {
 	/**
 	 * Get the generated DH Parameters.
 	 *
-	 * @return The generated DH Parameters or null if the user cancelled the dialog
-	 *         or an error occurred
+	 * @return byte array of the generated DH Parameters or null
+	 * if the user cancelled the dialog or an error occurred
 	 */
 	public byte[] getDHParameters() {
 		return dhParameters;
 	}
 
+	/**
+	 * Generates the DH Parameters
+	 * 
+	 * Identifies a safe prime using the Bouncy Castle provider. 
+	 *
+	 */
 	private class GenerateDHParameters implements Runnable {
 		@Override
 		public void run() {
 			try {
-	    		// AlgorithmParameterGenerator algGen = AlgorithmParameterGenerator.getInstance("DH", new BouncyCastleProvider());
 				AlgorithmParameterGenerator	algGen = AlgorithmParameterGenerator.getInstance("DH",BOUNCY_CASTLE.jce());
 	    		algGen.init(keySize, new SecureRandom());
-	    		AlgorithmParameters dhParams = algGen.generateParameters();
-	    		DHParameterSpec dhSpec = (DHParameterSpec)dhParams.getParameterSpec(DHParameterSpec.class);
-	    		
+	    		AlgorithmParameters dhParams = algGen.generateParameters();	    		
+	    		DHParameterSpec dhSpec = (DHParameterSpec)dhParams.getParameterSpec(DHParameterSpec.class);   		
+
 	    		// Generator G is set as random in params, but it has to be 2 to conform to openssl
-	    	    DHParameters realParams = new DHParameters(dhSpec.getP(), BigInteger.valueOf(2));
+	    	    DHParameters realParams = new DHParameters(dhSpec.getP(), BigInteger.valueOf(2));	    	    
 	    	    // Add DH Params to ASN.1 Encoding vector
 	    	    ASN1EncodableVector vec = new ASN1EncodableVector();
 	    	    vec.add(new ASN1Integer(realParams.getP()));

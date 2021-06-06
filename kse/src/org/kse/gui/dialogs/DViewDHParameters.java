@@ -37,12 +37,16 @@ import org.kse.utilities.pem.PemUtil;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * <h1> DH Parameters view</h1>
+ * The DViewDHParametersn class displays the results of the generated
+ * DH Parameters.
+ * <p>
+ * The class provides the function to copy the content to the clip board and
+ * export the content to PEM format.
+ */
 public class DViewDHParameters extends JEscDialog {
-	
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1711814777923997727L;
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -56,7 +60,13 @@ public class DViewDHParameters extends JEscDialog {
 	private static final String FILE_SUFFIX = ".pem";
 	private static final String EB = "DH PARAMETERS"; //Encapsulation Boundary
 	
-	
+	/**
+	 * Creates a new DViewDHParameters dialog.
+	 *
+	 * @param parent The parent frame
+	 * @param title The title of the dialogue
+	 * @param dhParams The byte array of DER encoded DH Parameters
+	 */
 	public DViewDHParameters (JFrame parent, String title, byte[] dhParams)
 		throws CryptoException {
 
@@ -64,7 +74,12 @@ public class DViewDHParameters extends JEscDialog {
 		this.dhParameters = dhParams;
 		initComponents(dhParameters);
 	}
-	
+	/**
+	 * Initializes the dialogue panel and associated elements 
+	 * 
+	 * @param dhParams The byte array for the DH Parameters
+	 * @throws CryptoException
+	 */
 	private void initComponents(byte[] dhParams) throws CryptoException {
 		//TODO Generate DH Parameters icon
 	    PemInfo pemInfo = new PemInfo(EB, null, dhParams);
@@ -88,9 +103,9 @@ public class DViewDHParameters extends JEscDialog {
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets 10"));
 		pane.add(jtAreaPem, "span");
-		pane.add(jbCopy);
-		pane.add(jbExport);
-		pane.add(jbOK);
+		pane.add(jbCopy, "tag Copy");
+		pane.add(jbExport, "tag Export");
+		pane.add(jbOK, "tag Ok");
 	
 		jbOK.addActionListener(evt -> okPressed());
 
@@ -121,7 +136,15 @@ public class DViewDHParameters extends JEscDialog {
 		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 	
-   private void writeDHParams(String filePath, byte[] DEREncodedDHParams) {
+	/**
+	 * Writes Base64 encoded PEM format to a specified file
+	 * <p>
+	 * See RFC 1421 for further information on PEM formatting
+	 * <p>
+	 * @param filePath Accepts a string file path
+	 * @param DEREncodedDHParams Accepts a byte array
+	 */
+    private void writeDHParams(String filePath, byte[] DEREncodedDHParams) {
         PemWriter pemWrt;
 
         try {
@@ -133,17 +156,28 @@ public class DViewDHParameters extends JEscDialog {
             e.printStackTrace();
         }
     }
-   
+    /**
+     * Calls the close dialogue window
+     */
 	private void okPressed() {
 		ApplicationSettings.getInstance();
 		closeDialog();
 	}
 	
+	/**
+	 * Closes the dialogue window
+	 */
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
 	}
 	
+	/**
+	 * Sets the file path of the exported file.
+	 * <p>
+	 * Validates .pem file suffix. Sets .pem
+	 * file suffix if not typed.
+	 */
 	private void exportPressed() {
 		File chosenFile = null;
 
@@ -184,7 +218,10 @@ public class DViewDHParameters extends JEscDialog {
 		JOptionPane.showMessageDialog(this, res.getString("DViewDHParameters.ExportPemSuccessful.message"),
 				title, JOptionPane.INFORMATION_MESSAGE);		
 	}
-   
+    
+	/**
+	 * Copies the contents of the text area to the clip board.
+	 */
 	private void copyPressed() {
 		String policy = jtAreaPem.getText();
 

@@ -16,6 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
@@ -26,10 +27,24 @@ import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * <h1> DH Parameters selection</h1>
+ * The DGenerateDHParameters class provides the user
+ * with the key size selection of DH Parameters to be
+ * generated.
+ * <p>
+ * The parameter generation is through the provider Bouncy Castle which
+ * uses a Sophie Germain search to identify a safe prime. The search
+ * method takes an exceptionally lengthy time with a selection above a 2048 bit
+ * key size. There is no technical limitation and the key size can be expanded
+ * if there is a demand for additional settings.
+ * <p>
+ * An expansion of this class can allow specific key sizes and the inclusion
+ * of DH standard RFC groups.
+ */
+
 public class DGenerateDHParameters extends JEscDialog{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 5909033737483232104L;
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -47,17 +62,16 @@ public class DGenerateDHParameters extends JEscDialog{
 	/**
 	 * Creates a new DGeneratingKeyPair dialog.
 	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param keySize
-	 *            The key size to generate
-	 *  @param base
-	 *  
+	 * @param parent The parent frame
 	 */
 	public DGenerateDHParameters(JFrame parent) {
 		super(parent, res.getString("DGenerateDHParameters.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents();
 	}
+	
+	/**
+	 * Initializes the dialogue panel and associated elements 
+	 */
 	private void initComponents() {
 		
 		//TODO Generate DH Parameters icon
@@ -70,6 +84,7 @@ public class DGenerateDHParameters extends JEscDialog{
 
 		jcbDHKeySize = new JComboBox<>();
 		jcbDHKeySize.setModel(new DefaultComboBoxModel<>(keySizeSelection));
+		jcbDHKeySize.setSelectedIndex(1);
 		jcbDHKeySize.setToolTipText(res.getString("DGenerateDHParameters.jcbDHKeySize.tooltip"));
 
 		jbCancel = new JButton(res.getString("DGenerateDHParameters.jbCancel.text"));
@@ -87,15 +102,26 @@ public class DGenerateDHParameters extends JEscDialog{
 
 		jbOK = new JButton(res.getString("DGenerateDHParameters.jbOK.text"));
 
+		JTextArea jtAreaFooter = new JTextArea();
+		jtAreaFooter = new JTextArea();
+		jtAreaFooter.setText(res.getString("DGenerateDHParameters.jtAreaFooter.text"));
+		jtAreaFooter.setToolTipText(res.getString("DGenerateDHParameters.jtAreaFooter.tooltip"));
+		jtAreaFooter.setEditable(false);
+		jtAreaFooter.setLineWrap(true);
+		jtAreaFooter.setWrapStyleWord(true);
+		jtAreaFooter.setBackground(getBackground());
+		
 		JPanel jpContent = new JPanel();
 		jpContent.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DGenerateDHParameters.jpContent.text")));
 		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		// layout
-		getContentPane().setLayout(new MigLayout("fill", "", "para[]"));
-		getContentPane().add(jpContent, "wrap unrel");
-		getContentPane().add(buttons, "growx");
-		jpContent.setLayout(new MigLayout("insets dialog, ", "[][right][]", "[]unrel[]"));
+		getContentPane().setLayout(new MigLayout("fill", "", ""));
+		getContentPane().add(jpContent, "wrap unrel, growx");
+		getContentPane().add(jtAreaFooter, "wrap unrel, growx");
+		getContentPane().add(buttons, "tag Ok, growx");
+
+		jpContent.setLayout(new MigLayout("insets dialog, ", "", "[]unrel[]"));
 		jpContent.add(jlDHKeySize, "");
 		jpContent.add(jcbDHKeySize, "growx, wrap");
 
@@ -125,7 +151,6 @@ public class DGenerateDHParameters extends JEscDialog{
 	/**
 	 * Set the selected key size.
 	 */
-	
 	private void setKeySize() {
 			dhKeySize = Integer.parseInt((String) jcbDHKeySize.getSelectedItem());
 	}
@@ -147,17 +172,27 @@ public class DGenerateDHParameters extends JEscDialog{
 	public boolean isSuccessful() {
 		return success;
 	}
-
+    /**
+     * Calls the set key size
+     * <p>
+     * Sets the success value to true
+     * <p>
+     * Calls the close dialogue 
+     */
 	private void okPressed() {
 		setKeySize();
 		success = true;
 		closeDialog();
 	}
-
+    /**
+     * Calls the close the dialogue
+     */
 	private void cancelPressed() {
 		closeDialog();
 	}
-
+	/**
+	 * Closes the dialogue 
+     */
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
