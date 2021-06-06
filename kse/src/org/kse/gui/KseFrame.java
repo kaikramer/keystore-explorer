@@ -838,13 +838,7 @@ public final class KseFrame implements StatusBar {
 		jmTools = new JMenu(res.getString("KseFrame.jmTools.text"));
 		PlatformUtil.setMnemonic(jmTools, res.getString("KseFrame.jmTools.mnemonic").charAt(0));
 		
-		jmiGenerateDHParameters = new JMenuItem(generateDHParametersAction);
-		PlatformUtil.setMnemonic(jmiGenerateDHParameters, res.getString("KseFrame.jmiGenerateDHParameters.mnemonic")
-				.charAt(0));
-		jmiGenerateDHParameters.setToolTipText(null);
-		new StatusBarChangeHandler(jmiGenerateDHParameters,
-				(String) generateDHParametersAction.getValue(Action.LONG_DESCRIPTION), this);
-		jmTools.add(jmiGenerateDHParameters);
+
 
 		jmiGenerateKeyPair = new JMenuItem(generateKeyPairAction);
 		PlatformUtil.setMnemonic(jmiGenerateKeyPair, res.getString("KseFrame.jmiGenerateKeyPair.mnemonic").charAt(0));
@@ -860,6 +854,14 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiGenerateSecretKey,
 				(String) generateSecretKeyAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmTools.add(jmiGenerateSecretKey);
+		
+		jmiGenerateDHParameters = new JMenuItem(generateDHParametersAction);
+		PlatformUtil.setMnemonic(jmiGenerateDHParameters, res.getString("KseFrame.jmiGenerateDHParameters.mnemonic")
+				.charAt(0));
+		jmiGenerateDHParameters.setToolTipText(null);
+		new StatusBarChangeHandler(jmiGenerateDHParameters,
+				(String) generateDHParametersAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmTools.add(jmiGenerateDHParameters);
 
 		jmiImportTrustedCertificate = new JMenuItem(importTrustedCertificateAction);
 		PlatformUtil.setMnemonic(jmiImportTrustedCertificate,
@@ -1468,9 +1470,9 @@ public final class KseFrame implements StatusBar {
 
 		jtbToolBar.addSeparator();
 
-		jtbToolBar.add(jbGenerateDHParameters);
 		jtbToolBar.add(jbGenerateKeyPair);
 		jtbToolBar.add(jbGenerateSecretKey);
+		jtbToolBar.add(jbGenerateDHParameters);
 		jtbToolBar.add(jbImportTrustedCertificate);
 		jtbToolBar.add(jbImportKeyPair);
 		jtbToolBar.add(jbSetPassword);
@@ -1771,13 +1773,6 @@ public final class KseFrame implements StatusBar {
 	private void initKeyStorePopupMenu() {
 		jpmKeyStore = new JPopupMenu();
 		
-		jmiKeyStoreGenerateDHParameters = new JMenuItem(generateDHParametersAction);
-		PlatformUtil.setMnemonic(jmiKeyStoreGenerateDHParameters, res.getString("KseFrame.jmiGenerateDHParameters.mnemonic")
-				.charAt(0));
-		jmiKeyStoreGenerateDHParameters.setToolTipText(null);
-		new StatusBarChangeHandler(jmiKeyStoreGenerateDHParameters,
-				(String) generateDHParametersAction.getValue(Action.LONG_DESCRIPTION), this);
-		jpmKeyStore.add(jmiKeyStoreGenerateDHParameters);
 
 		jmiKeyStoreGenerateKeyPair = new JMenuItem(generateKeyPairAction);
 		PlatformUtil.setMnemonic(jmiGenerateKeyPair, res.getString("KseFrame.jmiGenerateKeyPair.mnemonic").charAt(0));
