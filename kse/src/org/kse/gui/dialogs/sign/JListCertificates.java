@@ -89,8 +89,14 @@ public class JListCertificates extends JPanel {
 			Enumeration<String> enumeration = tempTrustStore.aliases();
 			while (enumeration.hasMoreElements()) {
 				String alias = enumeration.nextElement();
-				X509Certificate cert = (X509Certificate) tempTrustStore.getCertificate(alias);
-				listCertificados.add(cert);
+				try {
+					if (tempTrustStore.entryInstanceOf(alias, KeyStore.PrivateKeyEntry.class)) {
+						X509Certificate cert = (X509Certificate) tempTrustStore.getCertificate(alias);
+						listCertificados.add(cert);												
+					}
+				} catch (KeyStoreException e) {
+					//ignore
+				}
 			}
 			ListCertsTableModel rcModel = (ListCertsTableModel) jtListCerts.getModel();
 			rcModel.load(listCertificados);

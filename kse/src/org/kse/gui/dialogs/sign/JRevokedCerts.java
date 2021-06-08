@@ -283,6 +283,11 @@ public class JRevokedCerts extends JPanel {
 				X509Certificate[] certificates = openCertificate(file);
 				return certificates[0];
 			}
+			else {
+				JOptionPane.showMessageDialog(parent,
+						MessageFormat.format(res.getString("ExamineFileAction.NotCerFile.message"), file),
+						res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
+			}
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(parent,
 					MessageFormat.format(res.getString("ExamineFileAction.UnknownFileType.message"), file),
@@ -296,8 +301,8 @@ public class JRevokedCerts extends JPanel {
 			return openCertificate(FileUtils.readFileToByteArray(certificateFile), certificateFile.getName());
 		} catch (IOException ex) {
 			JOptionPane.showMessageDialog(parent,
-					MessageFormat.format(res.getString("KeyStoreExplorerAction.NoReadFile.message"), certificateFile),
-					res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
+					MessageFormat.format(res.getString("ExamineFileAction.NoReadFile.message"), certificateFile),
+					res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
 			return new X509Certificate[0];
 		}
 	}
@@ -309,20 +314,20 @@ public class JRevokedCerts extends JPanel {
 
 			if (certs.length == 0) {
 				JOptionPane.showMessageDialog(parent,
-						MessageFormat.format(res.getString("KeyStoreExplorerAction.NoCertsFound.message"), name),
-						res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
+						MessageFormat.format(res.getString("ExamineFileAction.NoCertsFound.message"), name),
+						res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
 			}
 
 			return certs;
 		} catch (Exception ex) {
-			String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoOpenCert.Problem"), name);
+			String problemStr = MessageFormat.format(res.getString("ExamineFileAction.NoOpenCert.Problem"), name);
 
 			String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
-					res.getString("KeyStoreExplorerAction.CorruptedCert.Cause") };
+					res.getString("ExamineFileAction.ExamineFile.Title") };
 
 			Problem problem = new Problem(problemStr, causes, ex);
 
-			DProblem dProblem = new DProblem(parent, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
+			DProblem dProblem = new DProblem(parent, res.getString("ExamineFileAction.ExamineFile.Title"),
 					problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
