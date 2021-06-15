@@ -16,7 +16,6 @@ import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.SignatureException;
 import java.security.cert.CRLException;
 import java.security.cert.X509CRL;
@@ -53,11 +52,18 @@ import org.kse.utilities.history.KeyStoreState;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
+/**
+ *  Action to create a list of revoked certificates CRL.
+ *
+ */
 public class SignCrlAction extends KeyStoreExplorerAction {
-
 	private static final long serialVersionUID = 1L;
-	public static final long THIRTY_DAYS = 1000L * 60 * 60 * 24 * 30;
 
+	/**
+	 * Construct action.
+	 * 
+	 * @param kseFrame
+	 */
 	public SignCrlAction(KseFrame kseFrame) {
 		super(kseFrame);
 
@@ -82,14 +88,13 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				return;
 			}
 			KeyStore keyStore = currentState.getKeyStore();
-			Provider provider = history.getExplicitProvider();
 
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			X509Certificate[] certs = X509CertUtil
 					.orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
 			boolean[] keyUsage = certs[0].getKeyUsage();
-			if (!keyUsage[6]) {
+			if (keyUsage == null || !keyUsage[6]) {
 				JOptionPane.showMessageDialog(frame, res.getString("SignCrlAction.notkeyUsage.message"),
 						res.getString("SignCrlAction.SignCrl.Title"), JOptionPane.INFORMATION_MESSAGE);
 				return;
@@ -107,12 +112,11 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			if (effectiveDate != null) {
 				Date nextUpdate = dSignCrl.getNextUpdate();
 				BigInteger crlNumber = dSignCrl.getCrlNumber();
-				String SignatureAlgorithm = dSignCrl.getSignatureType().jce();
+				String signatureAlgorithm = dSignCrl.getSignatureType().jce();
 				Map<BigInteger, RevokedEntry> mapRevoked = dSignCrl.getMapRevokedEntry();
 
-				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, SignatureAlgorithm,
+				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, signatureAlgorithm,
 						mapRevoked);
-				// sobreescribimos el antiguo crl
 				exportFile(x509CRL, filePrevious, false);
 				String newFileName = X509CertUtil.getShortName(certs[0]);
 				DExportCrl dExportCrl = new DExportCrl(frame, newFileName);
@@ -140,16 +144,12 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	}
 
 	private X509CRL loadPreviousCrl(File filePrevious, X509Certificate caCert) {
-		try {
-			try (FileInputStream is = new FileInputStream(filePrevious)) {
-				X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
-				crl.verify(caCert.getPublicKey());
-				return crl;
-			} catch (InvalidKeyException | CRLException | NoSuchAlgorithmException | NoSuchProviderException
-					| SignatureException e) {
-				// ignore
-			}
-		} catch (CryptoException | IOException e) {
+		try (FileInputStream is = new FileInputStream(filePrevious)) {
+			X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+			crl.verify(caCert.getPublicKey());
+			return crl;
+		} catch (InvalidKeyException | CRLException | NoSuchAlgorithmException | NoSuchProviderException
+				| SignatureException | IOException | CryptoException e) {
 			// ignore
 		}
 		return null;

@@ -29,7 +29,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
@@ -46,6 +45,10 @@ import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog that display the data to create a list of revoked certificates
+ *
+ */
 public class DSignCrl extends JEscDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -76,8 +79,6 @@ public class DSignCrl extends JEscDialog {
 	private PrivateKey signPrivateKey;
 	private X509Certificate caCert;
 	private X509CRL crlOld;
-	private X509v2CRLBuilder crlBuilder;
-
 	private Date effectiveDate;
 	private Date nextUpdate;
 	private SignatureType signatureType;
@@ -86,6 +87,18 @@ public class DSignCrl extends JEscDialog {
 	private JFrame parent;
 	private KseFrame kseFrame;
 
+	/**
+	 * Creates a new DSignCrl
+	 * 
+	 * @param parent          The parent frame
+	 * @param kseFrame        KeyStore Explorer application frame
+	 * @param signKeyPairType Key pair type
+	 * @param signPrivateKey  Private key certificate
+	 * @param caCert          Public key certificate
+	 * @param crlOld          An old crl to copy the information of the revoked
+	 *                        certificates.
+	 * @throws CryptoException
+	 */
 	public DSignCrl(JFrame parent, KseFrame kseFrame, KeyPairType signKeyPairType, PrivateKey signPrivateKey,
 			X509Certificate caCert, X509CRL crlOld) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);

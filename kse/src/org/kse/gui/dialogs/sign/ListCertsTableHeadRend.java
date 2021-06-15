@@ -9,8 +9,6 @@ import javax.swing.table.TableCellRenderer;
 
 public class ListCertsTableHeadRend implements TableCellRenderer {
 
-	private static final long serialVersionUID = 1L;
-
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
 
 	private TableCellRenderer delegate;

@@ -32,24 +32,33 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog that display a list of certificate from keystore
+ *
+ */
 public class DListCertificatesKS extends JEscDialog {
 
 	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JFrame parent;
 	private KseFrame kseFrame;
-	
+
 	private JLabel jlKeyStore;
 	private JComboBox<KeyStoreHistory> jcbKeyStore;
 	private JButton jbLoadKeystore;
 	private JListCertificates jListCertificates;
 	private JButton jbOK;
 	private JButton jbCancel;
-	
+
 	private X509Certificate cert;
 
+	/**
+	 * Creates a new DListCertificatesKS
+	 * 
+	 * @param parent   The parent frame
+	 * @param kseFrame KeyStore Explorer application frame
+	 */
 	public DListCertificatesKS(JFrame parent, KseFrame kseFrame) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		setTitle(res.getString("DListCertificatesKS.Title"));
@@ -69,7 +78,7 @@ public class DListCertificatesKS extends JEscDialog {
 		jbLoadKeystore.setIcon(new ImageIcon(getClass().getResource("images/open.png")));
 		jbLoadKeystore.setToolTipText(res.getString("DListCertificatesKS.jbLoadKeystore.tooltip"));
 
-		jListCertificates = new JListCertificates(parent, kseFrame);
+		jListCertificates = new JListCertificates();
 
 		jbOK = new JButton(res.getString("DListCertificatesKS.jbOK.text"));
 		jbCancel = new JButton(res.getString("DListCertificatesKS.jbCancel.text"));
@@ -137,8 +146,8 @@ public class DListCertificatesKS extends JEscDialog {
 	private void okPressed() {
 		X509Certificate selCert = jListCertificates.getCertSelected();
 		if (selCert == null) {
-			JOptionPane.showMessageDialog(this, res.getString("DListCertificatesKS.SelectCertificate.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, res.getString("DListCertificatesKS.SelectCertificate.message"),
+					getTitle(), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		cert = selCert;
@@ -148,7 +157,7 @@ public class DListCertificatesKS extends JEscDialog {
 	public X509Certificate getCertificate() {
 		return cert;
 	}
-	
+
 	private ComboBoxModel<KeyStoreHistory> getKeystoreNames() {
 		KeyStoreHistory[] keyStoreHistories;
 		if (kseFrame == null) {

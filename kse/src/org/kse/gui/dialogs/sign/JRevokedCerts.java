@@ -58,6 +58,11 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 
+/**
+ * Component to show the list of certificates revoked
+ * 
+ *
+ */
 public class JRevokedCerts extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -72,23 +77,27 @@ public class JRevokedCerts extends JPanel {
 	private JButton jbRevKeyStore;
 	private JButton jbRevLoadCrl;
 
-	private JButton jbAdd;
-	private JButton jbEdit;
-	private JButton jbRemove;
-
 	private JFrame parent;
 	private KseFrame kseFrame;
 
 	private Map<BigInteger, RevokedEntry> mapRevokedEntry;
 	private X509Certificate caCert;
-	private X509CRL crl;
+	private X509CRL crlOld;
 
-	public JRevokedCerts(JFrame parent, KseFrame kseFrame, X509Certificate caCert, X509CRL crl) {
+	/**
+	 * Creates a new JRevokedCerts
+	 * 
+	 * @param parent   The parent frame
+	 * @param kseFrame KeyStore Explorer application frame
+	 * @param caCert   certificate signing the list of revoked certificates
+	 * @param crlOld   CRL old
+	 */
+	public JRevokedCerts(JFrame parent, KseFrame kseFrame, X509Certificate caCert, X509CRL crlOld) {
 		super();
 		this.parent = parent;
 		this.kseFrame = kseFrame;
 		this.caCert = caCert;
-		this.crl = crl;
+		this.crlOld = crlOld;
 		this.mapRevokedEntry = new HashMap<>();
 		initComponents();
 	}
@@ -167,8 +176,8 @@ public class JRevokedCerts extends JPanel {
 	}
 
 	private void populate() {
-		if (crl != null) {
-			Set<? extends X509CRLEntry> revokedCertsSet = crl.getRevokedCertificates();
+		if (crlOld != null) {
+			Set<? extends X509CRLEntry> revokedCertsSet = crlOld.getRevokedCertificates();
 			if (revokedCertsSet == null) {
 				revokedCertsSet = new HashSet<>();
 			}
@@ -244,7 +253,7 @@ public class JRevokedCerts extends JPanel {
 			if (loadCrl != null) {
 				try {
 					loadCrl.verify(caCert.getPublicKey());
-					crl = loadCrl;
+					crlOld = loadCrl;
 					populate();
 				} catch (InvalidKeyException | CRLException | NoSuchAlgorithmException | NoSuchProviderException
 						| SignatureException e) {
@@ -282,8 +291,7 @@ public class JRevokedCerts extends JPanel {
 			if (fileType == CryptoFileType.CERT || fileType == CryptoFileType.UNENC_PKCS8_PVK) {
 				X509Certificate[] certificates = openCertificate(file);
 				return certificates[0];
-			}
-			else {
+			} else {
 				JOptionPane.showMessageDialog(parent,
 						MessageFormat.format(res.getString("ExamineFileAction.NotCerFile.message"), file),
 						res.getString("ExamineFileAction.ExamineFile.Title"), JOptionPane.WARNING_MESSAGE);
@@ -327,8 +335,7 @@ public class JRevokedCerts extends JPanel {
 
 			Problem problem = new Problem(problemStr, causes, ex);
 
-			DProblem dProblem = new DProblem(parent, res.getString("ExamineFileAction.ExamineFile.Title"),
-					problem);
+			DProblem dProblem = new DProblem(parent, res.getString("ExamineFileAction.ExamineFile.Title"), problem);
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 

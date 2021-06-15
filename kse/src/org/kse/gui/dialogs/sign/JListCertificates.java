@@ -8,9 +8,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -23,27 +20,26 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.gui.JKseTable;
-import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.history.KeyStoreHistory;
 
+/**
+ * Component to show the list of certificates of a keystore
+ *
+ */
 public class JListCertificates extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
-
 	private JScrollPane jspListCertsTable;
 	private JKseTable jtListCerts;
+	private List<X509Certificate> listCertificados = new ArrayList<>();
 
-	private JFrame parent;
-	private KseFrame kseFrame;
-
-	List<X509Certificate> listCertificados = new ArrayList<>();
-
-	public JListCertificates(JFrame parent, KseFrame kseFrame) {
+	/**
+	 * Creates a new JListCertificates
+	 * 
+	 */
+	public JListCertificates() {
 		super();
-		this.parent = parent;
-		this.kseFrame = kseFrame;
 		initComponents();
 	}
 
@@ -76,7 +72,7 @@ public class JListCertificates extends JPanel {
 		jspListCertsTable.getViewport().setBackground(jtListCerts.getBackground());
 
 		this.setLayout(new BorderLayout(5, 5));
-		this.setPreferredSize(new Dimension(100, 200));
+		this.setPreferredSize(new Dimension(600, 200));
 		this.add(jspListCertsTable, BorderLayout.CENTER);
 		this.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5)));
 	}
@@ -92,10 +88,10 @@ public class JListCertificates extends JPanel {
 				try {
 					if (tempTrustStore.entryInstanceOf(alias, KeyStore.PrivateKeyEntry.class)) {
 						X509Certificate cert = (X509Certificate) tempTrustStore.getCertificate(alias);
-						listCertificados.add(cert);												
+						listCertificados.add(cert);
 					}
 				} catch (KeyStoreException e) {
-					//ignore
+					// ignore
 				}
 			}
 			ListCertsTableModel rcModel = (ListCertsTableModel) jtListCerts.getModel();
