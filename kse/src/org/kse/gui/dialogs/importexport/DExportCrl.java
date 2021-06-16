@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -24,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -34,11 +36,11 @@ import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
 /**
- * Dialog used to display options to export a public key from a KeyStore entry
- * as OpenSSL.
+ * Dialog used to display options to export a CRL file.
  *
  */
 public class DExportCrl extends JEscDialog {
@@ -65,12 +67,12 @@ public class DExportCrl extends JEscDialog {
 	private boolean pemEncode;
 
 	/**
-	 * Creates a new DExportPublicKey dialog.
+	 * Creates a new DExportCrl dialog.
 	 *
 	 * @param parent
 	 *            The parent frame
 	 * @param entryAlias
-	 *            The KeyStore entry to export private key from
+	 *            The entry alias
 	 */
 	public DExportCrl(JFrame parent, String entryAlias) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -93,30 +95,29 @@ public class DExportCrl extends JEscDialog {
 		gbcEdCtrl.insets = new Insets(5, 5, 5, 5);
 		gbcEdCtrl.anchor = GridBagConstraints.WEST;
 
-		jlExportPem = new JLabel(res.getString("DExportPublicKeyOpenSsl.jlExportPem.text"));
+		jlExportPem = new JLabel(res.getString("DExportCrl.jlExportPem.text"));
 		GridBagConstraints gbc_jlExportPem = (GridBagConstraints) gbcLbl.clone();
 		gbc_jlExportPem.gridy = 4;
 
 		jcbExportPem = new JCheckBox();
-		jcbExportPem.setEnabled(true);
-		jcbExportPem.setSelected(true);
-		jcbExportPem.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jcbExportPem.tooltip"));
+		jcbExportPem.setSelected(false);
+		jcbExportPem.setToolTipText(res.getString("DExportCrl.jcbExportPem.tooltip"));
 		GridBagConstraints gbc_jcbExportPem = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jcbExportPem.gridy = 4;
 
-		jlExportFile = new JLabel(res.getString("DExportPublicKeyOpenSsl.jlExportFile.text"));
+		jlExportFile = new JLabel(res.getString("DExportCrl.jlExportFile.text"));
 		GridBagConstraints gbc_jlExportFile = (GridBagConstraints) gbcLbl.clone();
 		gbc_jlExportFile.gridy = 5;
 
 		jtfExportFile = new JTextField(30);
-		jtfExportFile.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jtfExportFile.tooltip"));
+		jtfExportFile.setToolTipText(res.getString("DExportCrl.jtfExportFile.tooltip"));
 		GridBagConstraints gbc_jtfExportFile = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jtfExportFile.gridy = 5;
 		gbc_jtfExportFile.gridwidth = 6;
 
-		jbBrowse = new JButton(res.getString("DExportPublicKeyOpenSsl.jbBrowse.text"));
-		jbBrowse.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jbBrowse.tooltip"));
-		PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportPublicKeyOpenSsl.jbBrowse.mnemonic").charAt(0));
+		jbBrowse = new JButton(res.getString("DExportCrl.jbBrowse.text"));
+		jbBrowse.setToolTipText(res.getString("DExportCrl.jbBrowse.tooltip"));
+		PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportCrl.jbBrowse.mnemonic").charAt(0));
 		GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcEdCtrl.clone();
 		gbc_jbBrowse.gridy = 5;
 		gbc_jbBrowse.gridx = 9;
@@ -141,9 +142,9 @@ public class DExportCrl extends JEscDialog {
 		jpOptions.add(jtfExportFile, gbc_jtfExportFile);
 		jpOptions.add(jbBrowse, gbc_jbBrowse);
 
-		jbExport = new JButton(res.getString("DExportPublicKeyOpenSsl.jbExport.text"));
-		PlatformUtil.setMnemonic(jbExport, res.getString("DExportPublicKeyOpenSsl.jbExport.mnemonic").charAt(0));
-		jbExport.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jbExport.tooltip"));
+		jbExport = new JButton(res.getString("DExportCrl.jbExport.text"));
+		PlatformUtil.setMnemonic(jbExport, res.getString("DExportCrl.jbExport.mnemonic").charAt(0));
+		jbExport.setToolTipText(res.getString("DExportCrl.jbExport.tooltip"));
 		jbExport.addActionListener(evt -> {
 			try {
 				CursorUtil.setCursorBusy(DExportCrl.this);
@@ -153,7 +154,7 @@ public class DExportCrl extends JEscDialog {
 			}
 		});
 
-		jbCancel = new JButton(res.getString("DExportPublicKeyOpenSsl.jbCancel.text"));
+		jbCancel = new JButton(res.getString("DExportCrl.jbCancel.text"));
 		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
@@ -235,11 +236,11 @@ public class DExportCrl extends JEscDialog {
 			chooser.setCurrentDirectory(CurrentDirectory.get());
 		}
 
-		chooser.setDialogTitle(res.getString("DExportPublicKeyOpenSsl.ChooseExportFile.Title"));
+		chooser.setDialogTitle(res.getString("DExportCrl.ChooseExportFile.Title"));
 		chooser.setMultiSelectionEnabled(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-				: chooser.showDialog(this, res.getString("DExportPublicKeyOpenSsl.ChooseExportFile.button"));
+				: chooser.showDialog(this, res.getString("DExportCrl.ChooseExportFile.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
@@ -254,19 +255,19 @@ public class DExportCrl extends JEscDialog {
 		String exportFileStr = jtfExportFile.getText().trim();
 
 		if (exportFileStr.length() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DExportPublicKeyOpenSsl.ExportFileRequired.message"),
-					res.getString("DExportPublicKeyOpenSsl.Simple.Title"), JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, res.getString("DExportCrl.ExportFileRequired.message"),
+					res.getString("DExportCrl.Simple.Title"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
 		File exportFile = new File(exportFileStr);
 
 		if (exportFile.isFile()) {
-			String message = MessageFormat.format(res.getString("DExportPublicKeyOpenSsl.OverWriteExportFile.message"),
+			String message = MessageFormat.format(res.getString("DExportCrl.OverWriteExportFile.message"),
 					exportFile);
 
 			int selected = JOptionPane.showConfirmDialog(this, message,
-					res.getString("DExportPublicKeyOpenSsl.Simple.Title"), JOptionPane.YES_NO_OPTION);
+					res.getString("DExportCrl.Simple.Title"), JOptionPane.YES_NO_OPTION);
 			if (selected != JOptionPane.YES_OPTION) {
 				return;
 			}
@@ -286,5 +287,9 @@ public class DExportCrl extends JEscDialog {
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
+	}
+	
+	public static void main(String[] args) throws HeadlessException, UnsupportedLookAndFeelException {
+		DialogViewer.run(new DExportCrl(new JFrame(), "test alias"));
 	}
 }
