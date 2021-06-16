@@ -8,6 +8,11 @@ import java.util.ResourceBundle;
 
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * The table model used to display an list of X.509 certificates sorted by name
+ * column
+ *
+ */
 public class ListCertsTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 
@@ -16,6 +21,9 @@ public class ListCertsTableModel extends AbstractTableModel {
 	private String[] columnNames;
 	private Object[][] data;
 
+	/**
+	 *  Construct a new ListCertsTableModel
+	 */
 	public ListCertsTableModel() {
 		columnNames = new String[3];
 		columnNames[0] = res.getString("ListCertsTableModel.EntryNameColumn");
@@ -26,7 +34,7 @@ public class ListCertsTableModel extends AbstractTableModel {
 	}
 
 	public void load(List<X509Certificate> listCertificados) {
-		data = new Object[listCertificados.size()] [3];
+		data = new Object[listCertificados.size()][3];
 		int i = 0;
 		for (X509Certificate cert : listCertificados) {
 			data[i][0] = cert.getSubjectX500Principal().getName();
@@ -36,6 +44,7 @@ public class ListCertsTableModel extends AbstractTableModel {
 		}
 		fireTableDataChanged();
 	}
+
 	/**
 	 * Get the number of columns in the table.
 	 *
@@ -59,8 +68,7 @@ public class ListCertsTableModel extends AbstractTableModel {
 	/**
 	 * Get the name of the column at the given position.
 	 *
-	 * @param col
-	 *            The column position
+	 * @param col The column position
 	 * @return The column name
 	 */
 	@Override
@@ -71,10 +79,8 @@ public class ListCertsTableModel extends AbstractTableModel {
 	/**
 	 * Get the cell value at the given row and column position.
 	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
+	 * @param row The row position
+	 * @param col The column position
 	 * @return The cell value
 	 */
 	@Override
@@ -85,8 +91,7 @@ public class ListCertsTableModel extends AbstractTableModel {
 	/**
 	 * Get the class at of the cells at the given column position.
 	 *
-	 * @param col
-	 *            The column position
+	 * @param col The column position
 	 * @return The column cells' class
 	 */
 	@Override
@@ -101,10 +106,8 @@ public class ListCertsTableModel extends AbstractTableModel {
 	/**
 	 * Is the cell at the given row and column position editable?
 	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
+	 * @param row The row position
+	 * @param col The column position
 	 * @return True if the cell is editable, false otherwise
 	 */
 	@Override

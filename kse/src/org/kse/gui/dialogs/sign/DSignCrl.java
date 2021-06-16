@@ -97,7 +97,8 @@ public class DSignCrl extends JEscDialog {
 	 * @param caCert          Public key certificate
 	 * @param crlOld          An old crl to copy the information of the revoked
 	 *                        certificates.
-	 * @throws CryptoException
+	 * @throws CryptoException A problem was encountered with the supplied private
+	 *                         key
 	 */
 	public DSignCrl(JFrame parent, KseFrame kseFrame, KeyPairType signKeyPairType, PrivateKey signPrivateKey,
 			X509Certificate caCert, X509CRL crlOld) throws CryptoException {

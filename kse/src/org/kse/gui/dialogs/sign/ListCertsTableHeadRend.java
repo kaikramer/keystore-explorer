@@ -7,12 +7,21 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ * 
+ * Custom cell renderer for the headers of list certificates of a keystore table of JListCertificates.
+ */
 public class ListCertsTableHeadRend implements TableCellRenderer {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
 
 	private TableCellRenderer delegate;
 
+	/**
+	 * Creates a new ListCertsTableHeadRend
+	 * 
+	 * @param delegate
+	 */
 	public ListCertsTableHeadRend(TableCellRenderer delegate) {
 		this.delegate = delegate;
 	}

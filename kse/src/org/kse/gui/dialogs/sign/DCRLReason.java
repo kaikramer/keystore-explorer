@@ -67,7 +67,7 @@ public class DCRLReason extends JEscDialog {
 	 * Creates a new DCRLReason
 	 * 
 	 * @param parent The parent frame
-	 * @param cert   certificate to revoke
+	 * @param cert   Certificate to revoke
 	 */
 	public DCRLReason(JFrame parent, X509Certificate cert) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);

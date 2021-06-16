@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * The table model used to display an array of X.509 CRL entries sorted by
+ * The table model used to display an map of RevokedEntry sorted by
  * serial number.
  *
  */
@@ -51,7 +51,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 	}
 
 	/**
-	 * Load the RevokedCertsTableModel with an array of X.509 CRL entries.
+	 * Load the RevokedCertsTableModel with an map of RevokedEntry.
 	 *
 	 * @param revokedCerts The X.509 CRL entries
 	 */

@@ -38,6 +38,11 @@ public class RevokedCertsTableHeadRend extends DefaultTableCellRenderer {
 
 	private TableCellRenderer delegate;
 
+	/**
+	 * Construct a new RevokedCertsTableHeadRend.
+	 * 
+	 * @param delegate
+	 */
 	public RevokedCertsTableHeadRend(TableCellRenderer delegate) {
 		this.delegate = delegate;
 	}
@@ -45,17 +50,17 @@ public class RevokedCertsTableHeadRend extends DefaultTableCellRenderer {
 	/**
 	 * Returns the rendered header cell for the supplied value and column.
 	 *
-	 * @param jTable The JTable
-	 * @param value The value to assign to the cell
+	 * @param jTable     The JTable
+	 * @param value      The value to assign to the cell
 	 * @param isSelected True if cell is selected
-	 * @param hasFocus If true, render cell appropriately
-	 * @param row The row of the cell to render
-	 * @param col The column of the cell to render
+	 * @param hasFocus   If true, render cell appropriately
+	 * @param row        The row of the cell to render
+	 * @param col        The column of the cell to render
 	 * @return The renderered cell
 	 */
 	@Override
-	public Component getTableCellRendererComponent(JTable jTable, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
+	public Component getTableCellRendererComponent(JTable jTable, Object value, boolean isSelected, boolean hasFocus,
+			int row, int col) {
 
 		Component c = delegate.getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, col);
 

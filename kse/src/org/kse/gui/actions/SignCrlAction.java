@@ -62,7 +62,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
 	 * 
-	 * @param kseFrame
+	 * @param kseFrame KeyStore Explorer frame
 	 */
 	public SignCrlAction(KseFrame kseFrame) {
 		super(kseFrame);

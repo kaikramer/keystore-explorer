@@ -43,6 +43,10 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog that allows to verify the revocation status and the certificate chain.
+ *
+ */
 public class DVerifyCertificate extends JEscDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -77,6 +81,13 @@ public class DVerifyCertificate extends JEscDialog {
 
 	private KseFrame kseFrame;
 
+	/**
+	 * Creates a new DVerifyCertificate dialog.
+	 * 
+	 * @param parent           The parent frame
+	 * @param certificateAlias The certificate alias
+	 * @param kseFrame         KeyStore Explorer application frame
+	 */
 	public DVerifyCertificate(JFrame parent, String certificateAlias, KseFrame kseFrame) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.certificateAlias = certificateAlias;
@@ -138,7 +149,6 @@ public class DVerifyCertificate extends JEscDialog {
 		pane.add(jtfCrlFile, "split 2");
 		pane.add(jbLoadCrl, "wrap");
 		pane.add(jrbOcspCheck, "wrap, left");
-		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jrbChainCheck, "wrap, left");
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jcbSelectKeyStore, "left, spanx, wrap");

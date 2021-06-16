@@ -10,6 +10,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.kse.utilities.StringUtils;
 
+/**
+ * 
+ * Custom cell renderer for the cells of list certificates of a keystore table of JListCertificates.
+ */
 public class ListCertsTableCellRend extends DefaultTableCellRenderer {
 
 	private static final long serialVersionUID = 1L;
