@@ -38,9 +38,8 @@ import org.kse.utilities.pem.PemUtil;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * <h1> DH Parameters view</h1>
- * The DViewDHParametersn class displays the results of the generated
- * DH Parameters.
+ * <h1>DH Parameters view</h1> The DViewDHParametersn class displays the results
+ * of the generated DH Parameters.
  * <p>
  * The class provides the function to copy the content to the clip board and
  * export the content to PEM format.
@@ -50,63 +49,63 @@ public class DViewDHParameters extends JEscDialog {
 	private static final long serialVersionUID = -1711814777923997727L;
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-	
+
 	private JTextArea jtAreaPem;
 	private JButton jbExport;
 	private JButton jbOK;
 	private JButton jbCopy;
 	private static int keySize;
-	private byte [] dhParameters;
+	private byte[] dhParameters;
 	private static final String FILE_SUFFIX = ".pem";
-	private static final String EB = "DH PARAMETERS"; //Encapsulation Boundary
-	
+	private static final String EB = "DH PARAMETERS"; // Encapsulation Boundary
+
 	/**
 	 * Creates a new DViewDHParameters dialog.
 	 *
-	 * @param parent The parent frame
-	 * @param title The title of the dialogue
+	 * @param parent   The parent frame
+	 * @param title    The title of the dialogue
 	 * @param dhParams The byte array of DER encoded DH Parameters
 	 */
-	public DViewDHParameters (JFrame parent, String title, byte[] dhParams)
-		throws CryptoException {
+	public DViewDHParameters(JFrame parent, String title, byte[] dhParams) throws CryptoException {
 
 		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.dhParameters = dhParams;
 		initComponents(dhParameters);
 	}
+
 	/**
-	 * Initializes the dialogue panel and associated elements 
+	 * Initializes the dialogue panel and associated elements
 	 * 
 	 * @param dhParams The byte array for the DH Parameters
 	 * @throws CryptoException
 	 */
 	private void initComponents(byte[] dhParams) throws CryptoException {
-		//TODO Generate DH Parameters icon
-	    PemInfo pemInfo = new PemInfo(EB, null, dhParams);
+		// TODO Generate DH Parameters icon
+		PemInfo pemInfo = new PemInfo(EB, null, dhParams);
 		jtAreaPem = new JTextArea(PemUtil.encode(pemInfo));
 		jtAreaPem.setToolTipText(res.getString("DViewDHParameters.jtAreaPem.tooltip"));
 		jtAreaPem.setEditable(false);
 		jtAreaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
 		// keep uneditable color same as editable
-		jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);	
+		jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
 		jbExport = new JButton(res.getString("DViewDHParameters.jbExport.export.text"));
 		jbExport.setToolTipText(res.getString("DViewDHParameters.jbExport.export.tooltip"));
 		PlatformUtil.setMnemonic(jbExport, res.getString("DViewDHParameters.jbExport.mnemonic").charAt(0));
-		
+
 		jbCopy = new JButton(res.getString("DViewDHParameters.jbCopy.text"));
 		jbCopy.setToolTipText(res.getString("DViewDHParameters.jbCopy.tooltip"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewDHParameters.jbCopy.mnemonic").charAt(0));
 
 		jbOK = new JButton(res.getString("DViewDHParameters.jbOK.text"));
-		
+
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets 10"));
 		pane.add(jtAreaPem, "span");
 		pane.add(jbCopy, "tag Copy");
 		pane.add(jbExport, "tag Export");
 		pane.add(jbOK, "tag Ok");
-	
+
 		jbOK.addActionListener(evt -> okPressed());
 
 		jbExport.addActionListener(evt -> {
@@ -117,7 +116,7 @@ public class DViewDHParameters extends JEscDialog {
 				CursorUtil.setCursorFree(DViewDHParameters.this);
 			}
 		});
-		
+
 		jbCopy.addActionListener(evt -> {
 			try {
 				CursorUtil.setCursorBusy(DViewDHParameters.this);
@@ -126,7 +125,7 @@ public class DViewDHParameters extends JEscDialog {
 				CursorUtil.setCursorFree(DViewDHParameters.this);
 			}
 		});
-		
+
 		setResizable(false);
 
 		getRootPane().setDefaultButton(jbCopy);
@@ -134,36 +133,38 @@ public class DViewDHParameters extends JEscDialog {
 		pack();
 
 		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-    }
-	
+	}
+
 	/**
 	 * Writes Base64 encoded PEM format to a specified file
 	 * <p>
 	 * See RFC 1421 for further information on PEM formatting
 	 * <p>
+	 * 
 	 * @param filePath Accepts a string file path
 	 * @param DEREncodedDHParams Accepts a byte array
 	 */
-    private void writeDHParams(String filePath, byte[] DEREncodedDHParams) {
-        PemWriter pemWrt;
+	private void writeDHParams(String filePath, byte[] DEREncodedDHParams) {
+		PemWriter pemWrt;
 
-        try {
-            pemWrt = new PemWriter(new FileWriter(filePath));
-            pemWrt.writeObject(new PemObject(EB, DEREncodedDHParams));
-            pemWrt.flush();
-            pemWrt.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    /**
-     * Calls the close dialogue window
-     */
+		try {
+			pemWrt = new PemWriter(new FileWriter(filePath));
+			pemWrt.writeObject(new PemObject(EB, DEREncodedDHParams));
+			pemWrt.flush();
+			pemWrt.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Calls the close dialogue window
+	 */
 	private void okPressed() {
 		ApplicationSettings.getInstance();
 		closeDialog();
 	}
-	
+
 	/**
 	 * Closes the dialogue window
 	 */
@@ -171,12 +172,11 @@ public class DViewDHParameters extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
-	
+
 	/**
 	 * Sets the file path of the exported file.
 	 * <p>
-	 * Validates .pem file suffix. Sets .pem
-	 * file suffix if not typed.
+	 * Validates .pem file suffix. Sets .pem file suffix if not typed.
 	 */
 	private void exportPressed() {
 		File chosenFile = null;
@@ -187,7 +187,8 @@ public class DViewDHParameters extends JEscDialog {
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(title);
 		chooser.setMultiSelectionEnabled(false);
-		chooser.setFileFilter(new FileNameExtensionFilter("pem file", "pem"));
+		chooser.setFileFilter(new FileNameExtensionFilter("Pem files (*.pem)", "pem"));
+		chooser.setAcceptAllFileFilterUsed(false);
 
 		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
 				: chooser.showDialog(this, res.getString("DViewDHParameters.ChooseExportFile.button"));
@@ -207,18 +208,17 @@ public class DViewDHParameters extends JEscDialog {
 				return;
 			}
 		}
-		
-		if(!chosenFile.getAbsolutePath().toString() .endsWith(FILE_SUFFIX)) {
+
+		if (!chosenFile.getAbsolutePath().toString().endsWith(FILE_SUFFIX)) {
 			writeDHParams(chosenFile.getAbsolutePath().toString() + FILE_SUFFIX, dhParameters);
-		}
-		else {
+		} else {
 			writeDHParams(chosenFile.getAbsolutePath().toString(), dhParameters);
 		}
-		
-		JOptionPane.showMessageDialog(this, res.getString("DViewDHParameters.ExportPemSuccessful.message"),
-				title, JOptionPane.INFORMATION_MESSAGE);		
+
+		JOptionPane.showMessageDialog(this, res.getString("DViewDHParameters.ExportPemSuccessful.message"), title,
+				JOptionPane.INFORMATION_MESSAGE);
 	}
-    
+
 	/**
 	 * Copies the contents of the text area to the clip board.
 	 */
@@ -229,19 +229,18 @@ public class DViewDHParameters extends JEscDialog {
 		StringSelection copy = new StringSelection(policy);
 		clipboard.setContents(copy, copy);
 	}
-	
-	//Quick UI test
+
+	// Quick UI test
 	public static void main(String[] args) throws Exception, IOException, GeneralSecurityException {
 		DialogViewer.prepare();
 		keySize = 512;
-		
+
 		DGeneratingDHParameters testDH = new DGeneratingDHParameters(new javax.swing.JFrame(), keySize);
 		testDH.startDHParametersGeneration();
 		testDH.setVisible(true);
-		
-		DViewDHParameters dialog = new DViewDHParameters(new javax.swing.JFrame(), "Title", testDH.getDHParameters());
-		DialogViewer.run(dialog);		
-	}
-	
-}
 
+		DViewDHParameters dialog = new DViewDHParameters(new javax.swing.JFrame(), "Title", testDH.getDHParameters());
+		DialogViewer.run(dialog);
+	}
+
+}
