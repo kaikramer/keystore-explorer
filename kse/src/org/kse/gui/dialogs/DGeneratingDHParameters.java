@@ -30,19 +30,17 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.params.DHParameters;
-import org.kse.crypto.CryptoException;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.error.DError;
 
 import net.miginfocom.swing.MigLayout;
 
 /**
- * <h1>DH Parameters generation</h1>
- * The class DGeneratingDHParameters initiates DH Parameters generation.
- * Bouncy Castle is the provider used to generate the parameters.
+ * <h1>DH Parameters generation</h1> The class DGeneratingDHParameters initiates
+ * DH Parameters generation. Bouncy Castle is the provider used to generate the
+ * parameters.
  * <p>
- * The user may cancel at any time by pressing the
- * cancel button.
+ * The user may cancel at any time by pressing the cancel button.
  */
 public class DGeneratingDHParameters extends JEscDialog {
 	private static final long serialVersionUID = 1L;
@@ -63,7 +61,7 @@ public class DGeneratingDHParameters extends JEscDialog {
 	/**
 	 * Creates a new DGeneratingDHParameters dialog.
 	 *
-	 * @param parent The parent frame
+	 * @param parent  The parent frame
 	 * @param keySize The key size to generate
 	 */
 	public DGeneratingDHParameters(JFrame parent, int keySize) {
@@ -71,19 +69,19 @@ public class DGeneratingDHParameters extends JEscDialog {
 		this.keySize = keySize;
 		initComponents();
 	}
-	
-    /**
-	 * Initializes the dialogue panel and associated elements 
-     */
+
+	/**
+	 * Initializes the dialogue panel and associated elements
+	 */
 	private void initComponents() {
-		//TODO Generate DH Parameters icon
+		// TODO Generate DH Parameters icon
 		jlGenDHParameters = new JLabel(res.getString("DGeneratingDHParameters.jlGenDHParameters.text"));
 		ImageIcon icon = new ImageIcon(getClass().getResource("images/genkp.png"));
 		jlGenDHParameters.setIcon(icon);
 
 		jpbGenDHParameters = new JProgressBar();
 		jpbGenDHParameters.setIndeterminate(true);
-		
+
 		jbCancel = new JButton(res.getString("DGeneratingDHParameters.jbCancel.text"));
 		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -98,7 +96,7 @@ public class DGeneratingDHParameters extends JEscDialog {
 		});
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog", "[]","[]unrel"));
+		pane.setLayout(new MigLayout("insets dialog", "[]", "[]unrel"));
 		pane.add(jlGenDHParameters, "wrap");
 		pane.add(jpbGenDHParameters, "growx, wrap");
 		pane.add(jbCancel, "tag Cancel");
@@ -127,7 +125,7 @@ public class DGeneratingDHParameters extends JEscDialog {
 		generator.setPriority(Thread.MIN_PRIORITY);
 		generator.start();
 	}
-	
+
 	/**
 	 * Returns the current success status
 	 * 
@@ -136,10 +134,9 @@ public class DGeneratingDHParameters extends JEscDialog {
 	public boolean isSuccessful() {
 		return successStatus;
 	}
-    
+
 	/**
-	 * Calls the close dialogue,
-	 * Sets the success value to false
+	 * Calls the close dialogue, Sets the success value to false
 	 */
 	private void cancelPressed() {
 		if ((generator != null) && (generator.isAlive())) {
@@ -148,7 +145,7 @@ public class DGeneratingDHParameters extends JEscDialog {
 		successStatus = false;
 		closeDialog();
 	}
-    
+
 	/**
 	 * Closes the dialogue
 	 */
@@ -160,37 +157,38 @@ public class DGeneratingDHParameters extends JEscDialog {
 	/**
 	 * Get the generated DH Parameters.
 	 *
-	 * @return byte array of the generated DH Parameters or null
-	 * if the user cancelled the dialog or an error occurred
+	 * @return byte array of the generated DH Parameters or null if the user
+	 *         cancelled the dialog or an error occurred
 	 */
 	public byte[] getDHParameters() {
 		return dhParameters;
 	}
 
 	/**
-	 * Generates the DH Parameters
-	 * 
-	 * Identifies a safe prime using the Bouncy Castle provider. 
-	 *
+	 * Generates the DH Parameters.
+	 * <p>
+	 * Identifies a safe prime using the Bouncy Castle provider.
+	 * <p>
+	 * The parameters are then encoded in DER.
 	 */
 	private class GenerateDHParameters implements Runnable {
 		@Override
 		public void run() {
 			try {
-				AlgorithmParameterGenerator	algGen = AlgorithmParameterGenerator.getInstance("DH",BOUNCY_CASTLE.jce());
-	    		algGen.init(keySize, new SecureRandom());
-	    		AlgorithmParameters dhParams = algGen.generateParameters();	    		
-	    		DHParameterSpec dhSpec = (DHParameterSpec)dhParams.getParameterSpec(DHParameterSpec.class);   		
+				AlgorithmParameterGenerator algGen = AlgorithmParameterGenerator.getInstance("DH", BOUNCY_CASTLE.jce());
+				algGen.init(keySize, new SecureRandom());
+				AlgorithmParameters dhParams = algGen.generateParameters();
+				DHParameterSpec dhSpec = (DHParameterSpec) dhParams.getParameterSpec(DHParameterSpec.class);
 
-	    		// Generator G is set as random in params, but it has to be 2 to conform to openssl
-	    	    DHParameters realParams = new DHParameters(dhSpec.getP(), BigInteger.valueOf(2));	    	    
-	    	    // Add DH Params to ASN.1 Encoding vector
-	    	    ASN1EncodableVector vec = new ASN1EncodableVector();
-	    	    vec.add(new ASN1Integer(realParams.getP()));
-	    	    vec.add(new ASN1Integer(realParams.getG()));
-	    	    // Add DER Encoding to byte array
-	    	    byte [] derEncodedBytes = new DERSequence(vec).getEncoded(ASN1Encoding.DER);
-                dhParameters = derEncodedBytes;
+				// Generator G is set as random in params, but it has to be 2 to conform to
+				// openssl
+				DHParameters realParams = new DHParameters(dhSpec.getP(), BigInteger.valueOf(2));
+				// Add DH Params to ASN.1 Encoding vector
+				ASN1EncodableVector vec = new ASN1EncodableVector();
+				vec.add(new ASN1Integer(realParams.getP()));
+				vec.add(new ASN1Integer(realParams.getG()));
+				// Add DER Encoding to byte array
+				dhParameters = new DERSequence(vec).getEncoded(ASN1Encoding.DER);
 
 				SwingUtilities.invokeLater(() -> {
 					if (DGeneratingDHParameters.this.isShowing()) {
@@ -210,4 +208,3 @@ public class DGeneratingDHParameters extends JEscDialog {
 		}
 	}
 }
-
