@@ -53,7 +53,7 @@ import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
 /**
- *  Action to create a list of revoked certificates CRL.
+ * Action to create a list of revoked certificates CRL.
  *
  */
 public class SignCrlAction extends KeyStoreExplorerAction {
@@ -116,8 +116,8 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				dExportCrl.setLocationRelativeTo(frame);
 				dExportCrl.setVisible(true);
 				if (dExportCrl.exportSelected()) {
-					exportFile(x509CRL, filePrevious, false);//export CRL .db 
-					exportFile(x509CRL, dExportCrl.getExportFile(), dExportCrl.pemEncode());//export file .crl
+					exportFile(x509CRL, filePrevious, false);// export CRL .db
+					exportFile(x509CRL, dExportCrl.getExportFile(), dExportCrl.pemEncode());// export file .crl
 					JOptionPane.showMessageDialog(frame, res.getString("SignCrlAction.SignCrlSuccessful.message"),
 							res.getString("SignCrlAction.SignCrl.Title"), JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -131,6 +131,9 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 		String serial = caCert.getSerialNumber().toString(16);
 		String pathFile = history.getPath();
 		File fileParent = new File(pathFile);
+		if (fileParent.getParentFile() == null) {
+			return null;
+		}
 		String path = fileParent.getParentFile().getAbsolutePath();
 		String newPath = path + File.separator + serial + ".db";
 		File filePrevious = new File(newPath);
@@ -138,6 +141,9 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	}
 
 	private X509CRL loadPreviousCrl(File filePrevious, X509Certificate caCert) {
+		if (filePrevious == null) {
+			return null;
+		}
 		try (FileInputStream is = new FileInputStream(filePrevious)) {
 			X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
 			crl.verify(caCert.getPublicKey());
@@ -180,6 +186,9 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	private void exportFile(X509CRL x509CRL, File fileExported, boolean pemEncode)
 			throws FileNotFoundException, IOException, CRLException {
 
+		if (fileExported == null) {
+			return;
+		}
 		byte[] data = null;
 		if (pemEncode) {
 			PemInfo pemInfo = new PemInfo("X509 CRL", null, x509CRL.getEncoded());
