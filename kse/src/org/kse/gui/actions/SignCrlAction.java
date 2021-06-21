@@ -93,12 +93,6 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			X509Certificate[] certs = X509CertUtil
 					.orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
-			boolean[] keyUsage = certs[0].getKeyUsage();
-			if (keyUsage == null || !keyUsage[6]) {
-				JOptionPane.showMessageDialog(frame, res.getString("SignCrlAction.notkeyUsage.message"),
-						res.getString("SignCrlAction.SignCrl.Title"), JOptionPane.INFORMATION_MESSAGE);
-				return;
-			}
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
 			File filePrevious = getFilePrevious(certs[0], history);
@@ -117,13 +111,13 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
 				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, signatureAlgorithm,
 						mapRevoked);
-				exportFile(x509CRL, filePrevious, false);
 				String newFileName = X509CertUtil.getShortName(certs[0]);
 				DExportCrl dExportCrl = new DExportCrl(frame, newFileName);
 				dExportCrl.setLocationRelativeTo(frame);
 				dExportCrl.setVisible(true);
 				if (dExportCrl.exportSelected()) {
-					exportFile(x509CRL, dExportCrl.getExportFile(), dExportCrl.pemEncode());
+					exportFile(x509CRL, filePrevious, false);//export CRL .db 
+					exportFile(x509CRL, dExportCrl.getExportFile(), dExportCrl.pemEncode());//export file .crl
 					JOptionPane.showMessageDialog(frame, res.getString("SignCrlAction.SignCrlSuccessful.message"),
 							res.getString("SignCrlAction.SignCrl.Title"), JOptionPane.INFORMATION_MESSAGE);
 				}

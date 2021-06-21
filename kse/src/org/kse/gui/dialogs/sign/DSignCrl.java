@@ -218,8 +218,8 @@ public class DSignCrl extends JEscDialog {
 			Date firstDate = crlOld.getThisUpdate();
 			Date secondDate = crlOld.getNextUpdate();
 			long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
-			long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-			jvpValidityPeriod.setValue(Long.valueOf(diff));
+			int diff = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+			jvpValidityPeriod.setValue(diff);
 			Date startDate = jdtEffectiveDate.getDateTime();
 			jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
 
