@@ -149,7 +149,7 @@ public class DVerifyCertificate extends JEscDialog {
 		pane.add(jtfCrlFile, "split 2");
 		pane.add(jbLoadCrl, "wrap");
 		pane.add(jrbOcspCheck, "wrap, left");
-		pane.add(jrbChainCheck, "wrap, left");
+		pane.add(jrbChainCheck, "spanx, wrap, left");
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jcbSelectKeyStore, "left, spanx, wrap");
 		pane.add(new JLabel(res.getString("DVerifyCertificate.jlKeyStore.text")), "");
