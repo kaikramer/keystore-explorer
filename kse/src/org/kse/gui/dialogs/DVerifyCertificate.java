@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import org.kse.gui.CurrentDirectory;
@@ -34,6 +35,7 @@ import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.KseFrame;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.OpenAction;
 import org.kse.utilities.DialogViewer;
@@ -41,12 +43,16 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog that allows to verify the revocation status and the certificate chain.
+ *
+ */
 public class DVerifyCertificate extends JEscDialog {
 
 	private static final long serialVersionUID = 1L;
 
 	public enum VerifyOptions {
-		CRL, OCSP, CHAIN
+		CRL_D, CRL_F, OCSP, CHAIN
 	}
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -55,8 +61,10 @@ public class DVerifyCertificate extends JEscDialog {
 
 	private String certificateAlias;
 
-	private JLabel jlFormat;
-	private JRadioButton jrbCrlCheck;
+	private JRadioButton jrbCrlCheckDistPoint;
+	private JRadioButton jrbCrlCheckFile;
+	private JTextField jtfCrlFile;
+	private JButton jbLoadCrl;
 	private JRadioButton jrbOcspCheck;
 	private JRadioButton jrbChainCheck;
 	private JCheckBox jcbSelectKeyStore;
@@ -66,12 +74,20 @@ public class DVerifyCertificate extends JEscDialog {
 
 	private JComboBox<KeyStoreHistory> jcbKeyStore;
 	private JButton jbLoadKeystore;
-	
+
 	private boolean verifySelected = false;
-	private VerifyOptions verifyOption = VerifyOptions.CRL;
-	
+	private VerifyOptions verifyOption = VerifyOptions.CRL_D;
+	private String fileCrl;
+
 	private KseFrame kseFrame;
 
+	/**
+	 * Creates a new DVerifyCertificate dialog.
+	 * 
+	 * @param parent           The parent frame
+	 * @param certificateAlias The certificate alias
+	 * @param kseFrame         KeyStore Explorer application frame
+	 */
 	public DVerifyCertificate(JFrame parent, String certificateAlias, KseFrame kseFrame) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.certificateAlias = certificateAlias;
@@ -80,10 +96,21 @@ public class DVerifyCertificate extends JEscDialog {
 	}
 
 	private void initComponents() {
-		jlFormat = new JLabel(res.getString("DVerifyCertificate.jlFormat.text"));
 
-		jrbCrlCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbCrlCheck.text"));
-		jrbCrlCheck.setToolTipText(res.getString("DVerifyCertificate.jrbCrlCheck.tooltip"));
+		jrbCrlCheckDistPoint = new JRadioButton(res.getString("DVerifyCertificate.jrbCrlCheckDistPoint.text"));
+		jrbCrlCheckDistPoint.setToolTipText(res.getString("DVerifyCertificate.jrbCrlCheckDistPoint.tooltip"));
+
+		jrbCrlCheckFile = new JRadioButton(res.getString("DVerifyCertificate.jrbCrlCheckFile.text"));
+		jrbCrlCheckFile.setToolTipText(res.getString("DVerifyCertificate.jrbCrlCheckFile.tooltip"));
+
+		jtfCrlFile = new JTextField("", 20);
+		jtfCrlFile.setEditable(false);
+		jtfCrlFile.setToolTipText(res.getString("DVerifyCertificate.jtfCrlFile.tooltip"));
+
+		jbLoadCrl = new JButton();
+		jbLoadCrl.setIcon(new ImageIcon(getClass().getResource("images/open.png")));
+		jbLoadCrl.setToolTipText(res.getString("DVerifyCertificate.jbLoadCrl.tooltip"));
+		jbLoadCrl.setEnabled(false);
 
 		jrbOcspCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbOcspCheck.text"));
 		jrbOcspCheck.setToolTipText(res.getString("DVerifyCertificate.jrbOcspCheck.tooltip"));
@@ -92,45 +119,54 @@ public class DVerifyCertificate extends JEscDialog {
 		jrbChainCheck.setToolTipText(res.getString("DVerifyCertificate.jrbChainCheck.tooltip"));
 
 		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(jrbCrlCheck);
+		buttonGroup.add(jrbCrlCheckDistPoint);
+		buttonGroup.add(jrbCrlCheckFile);
 		buttonGroup.add(jrbOcspCheck);
 		buttonGroup.add(jrbChainCheck);
-		jrbCrlCheck.setSelected(true);
+		jrbCrlCheckDistPoint.setSelected(true);
 
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "unrel[]unrel[]"));
-		pane.add(jlFormat, "");
-		pane.add(jrbCrlCheck, "split 3");
-		pane.add(jrbOcspCheck, "");
-		pane.add(jrbChainCheck, "wrap");
+		jcbSelectKeyStore = new JCheckBox(res.getString("DVerifyCertificate.jcbSelectKeyStore.text"));
 
-		pane.add(new JSeparator(), "spanx, growx, wrap");
-		
-		jcbSelectKeyStore  = new JCheckBox(res.getString("DVerifyCertificate.jcbSelectKeyStore.text"));
-		pane.add(jcbSelectKeyStore, "left, spanx, wrap");
-		
-		jcbSelectKeyStore.addItemListener(evt -> updateVerifyControls());
 		jcbKeyStore = new JComboBox<>(getKeystoreNames());
 		jcbKeyStore.setToolTipText(res.getString("DVerifyCertificate.jcbKeyStore.tooltip"));
-		jcbKeyStore.setPreferredSize(new Dimension(200,20));
+		jcbKeyStore.setPreferredSize(new Dimension(200, 20));
 		jcbKeyStore.setEnabled(false);
-		
+
 		jbLoadKeystore = new JButton();
 		jbLoadKeystore.setIcon(new ImageIcon(getClass().getResource("images/open.png")));
-		jbLoadKeystore.setToolTipText(res.getString("DVerifyCertificate.jbLoadKeystore.tooltip"));		
+		jbLoadKeystore.setToolTipText(res.getString("DVerifyCertificate.jbLoadKeystore.tooltip"));
 		jbLoadKeystore.setEnabled(false);
-
-		pane.add(new JLabel(res.getString("DVerifyCertificate.jlKeyStore.text")), "");
-		pane.add(jcbKeyStore, "split 2");
-		pane.add(jbLoadKeystore, "wrap");
 
 		jbOk = new JButton(res.getString("DVerifyCertificate.jbOk.text"));
 		jbCancel = new JButton(res.getString("DVerifyCertificate.jbCancel.text"));
-
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOk, jbCancel);
 
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "unrel[]unrel[]"));
+		MiGUtil.addSeparator(pane, res.getString("DVerifyCertificate.jlCheckStatus.text"));
+		pane.add(jrbCrlCheckDistPoint, "wrap, left");
+		pane.add(jrbCrlCheckFile, "left");
+		pane.add(jtfCrlFile, "split 2");
+		pane.add(jbLoadCrl, "wrap");
+		pane.add(jrbOcspCheck, "wrap, left");
+		pane.add(jrbChainCheck, "spanx, wrap, left");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		pane.add(jcbSelectKeyStore, "left, spanx, wrap");
+		pane.add(new JLabel(res.getString("DVerifyCertificate.jlKeyStore.text")), "");
+		pane.add(jcbKeyStore, "split 2");
+		pane.add(jbLoadKeystore, "wrap");
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
+
+		jrbCrlCheckDistPoint.addActionListener(evt -> updateVerifyControls());
+		jrbCrlCheckFile.addActionListener(evt -> updateVerifyControls());
+		jrbOcspCheck.addActionListener(evt -> updateVerifyControls());
+		jrbChainCheck.addActionListener(evt -> updateVerifyControls());
+		jcbSelectKeyStore.addItemListener(evt -> updateVerifyControls());
+
+		jbLoadCrl.addActionListener(evt -> {
+			browsePressed();
+		});
 
 		jbOk.addActionListener(evt -> {
 			try {
@@ -175,15 +211,20 @@ public class DVerifyCertificate extends JEscDialog {
 
 	private void updateVerifyControls() {
 
+		if (jrbCrlCheckFile.isSelected()) {
+			jtfCrlFile.setEditable(true);
+			jbLoadCrl.setEnabled(true);
+		} else {
+			jtfCrlFile.setEditable(false);
+			jbLoadCrl.setEnabled(false);
+		}
 		jcbKeyStore.setModel(getKeystoreNames());
 		if (jcbSelectKeyStore.isSelected()) {
 			jcbKeyStore.setEnabled(true);
-			jbLoadKeystore.setEnabled(true);			
-		}
-		else
-		{
+			jbLoadKeystore.setEnabled(true);
+		} else {
 			jcbKeyStore.setEnabled(false);
-			jbLoadKeystore.setEnabled(false);			
+			jbLoadKeystore.setEnabled(false);
 		}
 	}
 
@@ -196,23 +237,36 @@ public class DVerifyCertificate extends JEscDialog {
 	}
 
 	private void okPressed() {
-		if (jcbSelectKeyStore.isSelected()) {
-			if (jcbKeyStore.getSelectedItem() == null) {
-				JOptionPane.showMessageDialog(this, res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
-						res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
-						JOptionPane.INFORMATION_MESSAGE);
+		if (jrbCrlCheckDistPoint.isSelected()) {
+			verifyOption = VerifyOptions.CRL_D;
+		} else if (jrbCrlCheckFile.isSelected()) {
+			if (jtfCrlFile.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(this, res.getString("DVerifyCertificate.ChooseCRLFile.Title"),
+						res.getString("DVerifyCertificate.ChooseCRLFile.Title"), JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-		}
-		if (jrbCrlCheck.isSelected()) {
-			verifyOption = VerifyOptions.CRL;
+			verifyOption = VerifyOptions.CRL_F;
+			fileCrl = jtfCrlFile.getText();
 		} else if (jrbOcspCheck.isSelected()) {
 			verifyOption = VerifyOptions.OCSP;
 		} else {
 			verifyOption = VerifyOptions.CHAIN;
 		}
+		if (jcbSelectKeyStore.isSelected()) {
+			if (jcbKeyStore.getSelectedItem() == null) {
+				JOptionPane.showMessageDialog(this,
+						res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
+						res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
+						JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+		}
 		verifySelected = true;
 		closeDialog();
+	}
+
+	public String getCrlFile() {
+		return fileCrl;
 	}
 
 	private void cancelPressed() {
@@ -225,7 +279,8 @@ public class DVerifyCertificate extends JEscDialog {
 	}
 
 	private void browsePressed() {
-		JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
+		JFileChooser chooser = FileChooserFactory.getCrlFileChooser();
+		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"));
 		chooser.setMultiSelectionEnabled(false);
 		chooser.setApproveButtonText(res.getString("DVerifyCertificate.CaCertificatesKeyStoreFileChooser.button"));
@@ -234,14 +289,14 @@ public class DVerifyCertificate extends JEscDialog {
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFile = chooser.getSelectedFile();
 			CurrentDirectory.updateForFile(chosenFile);
+			jtfCrlFile.setText(chosenFile.getAbsolutePath());
 		}
 	}
 
 	public KeyStoreHistory getKeyStore() {
 		if (jcbSelectKeyStore.isSelected()) {
 			return (KeyStoreHistory) jcbKeyStore.getSelectedItem();
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -249,16 +304,15 @@ public class DVerifyCertificate extends JEscDialog {
 	private ComboBoxModel<KeyStoreHistory> getKeystoreNames() {
 		KeyStoreHistory[] keyStoreHistories;
 		if (kseFrame == null) {
-			keyStoreHistories = new KeyStoreHistory[0]; 
+			keyStoreHistories = new KeyStoreHistory[0];
+		} else {
+			keyStoreHistories = kseFrame.getKeyStoreHistories();
 		}
-		else {
-			keyStoreHistories = kseFrame.getKeyStoreHistories();	
-		}
-		
+
 		return new DefaultComboBoxModel<>(keyStoreHistories);
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		DialogViewer.run(new DVerifyCertificate(new javax.swing.JFrame(), "Verify Certificate", null));
+		DialogViewer.run(new DVerifyCertificate(new javax.swing.JFrame(), "Test", null));
 	}
 }

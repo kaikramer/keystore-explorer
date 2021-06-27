@@ -163,9 +163,13 @@ public class JValidityPeriod extends JPanel {
 			break;
 		}
 
-		if (((Comparable<Object>) model.getMaximum()).compareTo(value) >= 0
-				&& ((Comparable<Object>) model.getMinimum()).compareTo(value) <= 0) {
-			model.setValue(value);
+		try {
+			if (((Comparable<Object>) model.getMaximum()).compareTo(value) >= 0
+					&& ((Comparable<Object>) model.getMinimum()).compareTo(value) <= 0) {
+				model.setValue(value);
+			}			
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 
 		jsValue.setModel(model);
@@ -242,5 +246,9 @@ public class JValidityPeriod extends JPanel {
 	public void addApplyActionListener(ActionListener listener)
 	{
 		jbApply.addActionListener(listener);
+	}
+	
+	public void setValue(int value){
+		jsValue.setValue(value);
 	}
 }

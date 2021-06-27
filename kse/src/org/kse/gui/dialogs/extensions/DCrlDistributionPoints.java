@@ -36,7 +36,6 @@ public class DCrlDistributionPoints extends DExtension {
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpCrlDistributionPoints;
 	private JLabel jlCrlDistributionPoints;
 	private JDistributionPoints jdpDistributionPoints;
 	private JPanel jpButtons;
