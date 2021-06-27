@@ -217,7 +217,7 @@ public class JRevokedCerts extends JPanel {
 				JOptionPane.showMessageDialog(parent, res.getString("JRevokedCerts.certWasRevoked.message"),
 						res.getString("DSignCrl.Title"), JOptionPane.WARNING_MESSAGE);
 			} else {
-				DCRLReason dCRLReason = new DCRLReason(parent, cerRev);
+				DCrlReason dCRLReason = new DCrlReason(parent, cerRev);
 				dCRLReason.setLocationRelativeTo(parent);
 				dCRLReason.setVisible(true);
 				if (dCRLReason.isOk()) {

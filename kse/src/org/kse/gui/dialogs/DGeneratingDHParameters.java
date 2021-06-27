@@ -96,7 +96,7 @@ public class DGeneratingDHParameters extends JEscDialog {
 		});
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog", "[]", "[]unrel"));
+		pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]unrel"));
 		pane.add(jlGenDHParameters, "wrap");
 		pane.add(jpbGenDHParameters, "growx, wrap");
 		pane.add(jbCancel, "tag Cancel");
@@ -128,7 +128,7 @@ public class DGeneratingDHParameters extends JEscDialog {
 
 	/**
 	 * Returns the current success status
-	 * 
+	 *
 	 * @return successStatus The success status boolean
 	 */
 	public boolean isSuccessful() {
@@ -178,7 +178,7 @@ public class DGeneratingDHParameters extends JEscDialog {
 				AlgorithmParameterGenerator algGen = AlgorithmParameterGenerator.getInstance("DH", BOUNCY_CASTLE.jce());
 				algGen.init(keySize, new SecureRandom());
 				AlgorithmParameters dhParams = algGen.generateParameters();
-				DHParameterSpec dhSpec = (DHParameterSpec) dhParams.getParameterSpec(DHParameterSpec.class);
+				DHParameterSpec dhSpec = dhParams.getParameterSpec(DHParameterSpec.class);
 
 				// Generator G is set as random in params, but it has to be 2 to conform to
 				// openssl

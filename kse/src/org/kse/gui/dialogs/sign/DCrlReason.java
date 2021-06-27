@@ -33,7 +33,7 @@ import net.miginfocom.swing.MigLayout;
  * Dialog that specifies the reason that a certificate is revoked
  *
  */
-public class DCRLReason extends JEscDialog {
+public class DCrlReason extends JEscDialog {
 
 	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
@@ -64,14 +64,14 @@ public class DCRLReason extends JEscDialog {
 	private X509Certificate cert;
 
 	/**
-	 * Creates a new DCRLReason
+	 * Creates a new DCrlReason
 	 * 
 	 * @param parent The parent frame
 	 * @param cert   Certificate to revoke
 	 */
-	public DCRLReason(JFrame parent, X509Certificate cert) {
+	public DCrlReason(JFrame parent, X509Certificate cert) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		setTitle(res.getString("DCRLReason.Title"));
+		setTitle(res.getString("DCrlReason.Title"));
 		this.cert = cert;
 		initComponents();
 	}
@@ -79,45 +79,45 @@ public class DCRLReason extends JEscDialog {
 	private void initComponents() {
 		Date now = new Date();
 
-		jlSubject = new JLabel(res.getString("DCRLReason.jlSubject.text"));
-		jdnSubject = new JDistinguishedName(res.getString("DCRLReason.Subject.Title"), 40, false);
+		jlSubject = new JLabel(res.getString("DCrlReason.jlSubject.text"));
+		jdnSubject = new JDistinguishedName(res.getString("DCrlReason.Subject.Title"), 40, false);
 
-		jlRevocationDate = new JLabel(res.getString("DCRLReason.jlRevocationDate.text"));
-		jdtRevocationDate = new JDateTime(res.getString("DCRLReason.jdtRevocationDate.text"), false);
+		jlRevocationDate = new JLabel(res.getString("DCrlReason.jlRevocationDate.text"));
+		jdtRevocationDate = new JDateTime(res.getString("DCrlReason.jdtRevocationDate.text"), false);
 		jdtRevocationDate.setDateTime(now);
-		jdtRevocationDate.setToolTipText(res.getString("DCRLReason.jdtRevocationDate.tooltip"));
+		jdtRevocationDate.setToolTipText(res.getString("DCrlReason.jdtRevocationDate.tooltip"));
 
-		jlReason = new JLabel(res.getString("DCRLReason.jlReason.text"));
+		jlReason = new JLabel(res.getString("DCrlReason.jlReason.text"));
 
-		jrbUnspecified = new JRadioButton(res.getString("DCRLReason.jrbUnspecified.text"));
-		jrbUnspecified.setToolTipText(res.getString("DCRLReason.jrbUnspecified.tooltip"));
+		jrbUnspecified = new JRadioButton(res.getString("DCrlReason.jrbUnspecified.text"));
+		jrbUnspecified.setToolTipText(res.getString("DCrlReason.jrbUnspecified.tooltip"));
 
-		jrbKeyCompromise = new JRadioButton(res.getString("DCRLReason.jrbKeyCompromise.text"));
-		jrbKeyCompromise.setToolTipText(res.getString("DCRLReason.jrbKeyCompromise.tooltip"));
+		jrbKeyCompromise = new JRadioButton(res.getString("DCrlReason.jrbKeyCompromise.text"));
+		jrbKeyCompromise.setToolTipText(res.getString("DCrlReason.jrbKeyCompromise.tooltip"));
 
-		jrbCACompromise = new JRadioButton(res.getString("DCRLReason.jrbCACompromise.text"));
-		jrbCACompromise.setToolTipText(res.getString("DCRLReason.jrbCACompromise.tooltip"));
+		jrbCACompromise = new JRadioButton(res.getString("DCrlReason.jrbCACompromise.text"));
+		jrbCACompromise.setToolTipText(res.getString("DCrlReason.jrbCACompromise.tooltip"));
 
-		jrbAffiliationChanged = new JRadioButton(res.getString("DCRLReason.jrbAffiliationChanged.text"));
-		jrbAffiliationChanged.setToolTipText(res.getString("DCRLReason.jrbAffiliationChanged.tooltip"));
+		jrbAffiliationChanged = new JRadioButton(res.getString("DCrlReason.jrbAffiliationChanged.text"));
+		jrbAffiliationChanged.setToolTipText(res.getString("DCrlReason.jrbAffiliationChanged.tooltip"));
 
-		jrbSuperseded = new JRadioButton(res.getString("DCRLReason.jrbSuperseded.text"));
-		jrbSuperseded.setToolTipText(res.getString("DCRLReason.jrbSuperseded.tooltip"));
+		jrbSuperseded = new JRadioButton(res.getString("DCrlReason.jrbSuperseded.text"));
+		jrbSuperseded.setToolTipText(res.getString("DCrlReason.jrbSuperseded.tooltip"));
 
-		jrbCessationOfOperation = new JRadioButton(res.getString("DCRLReason.jrbCessationOfOperation.text"));
-		jrbCessationOfOperation.setToolTipText(res.getString("DCRLReason.jrbCessationOfOperation.tooltip"));
+		jrbCessationOfOperation = new JRadioButton(res.getString("DCrlReason.jrbCessationOfOperation.text"));
+		jrbCessationOfOperation.setToolTipText(res.getString("DCrlReason.jrbCessationOfOperation.tooltip"));
 
-		jrbCertificateHold = new JRadioButton(res.getString("DCRLReason.jrbCertificateHold.text"));
-		jrbCertificateHold.setToolTipText(res.getString("DCRLReason.jrbCertificateHold.tooltip"));
+		jrbCertificateHold = new JRadioButton(res.getString("DCrlReason.jrbCertificateHold.text"));
+		jrbCertificateHold.setToolTipText(res.getString("DCrlReason.jrbCertificateHold.tooltip"));
 
-		jrbRemoveFromCR = new JRadioButton(res.getString("DCRLReason.jrbRemoveFromCR.text"));
-		jrbRemoveFromCR.setToolTipText(res.getString("DCRLReason.jrbRemoveFromCR.tooltip"));
+		jrbRemoveFromCR = new JRadioButton(res.getString("DCrlReason.jrbRemoveFromCR.text"));
+		jrbRemoveFromCR.setToolTipText(res.getString("DCrlReason.jrbRemoveFromCR.tooltip"));
 
-		jrbPrivilegeWithdrawn = new JRadioButton(res.getString("DCRLReason.jrbPrivilegeWithdrawn.text"));
-		jrbPrivilegeWithdrawn.setToolTipText(res.getString("DCRLReason.jrbPrivilegeWithdrawn.tooltip"));
+		jrbPrivilegeWithdrawn = new JRadioButton(res.getString("DCrlReason.jrbPrivilegeWithdrawn.text"));
+		jrbPrivilegeWithdrawn.setToolTipText(res.getString("DCrlReason.jrbPrivilegeWithdrawn.tooltip"));
 
-		jrbAACompromise = new JRadioButton(res.getString("DCRLReason.jrbAACompromise.text"));
-		jrbAACompromise.setToolTipText(res.getString("DCRLReason.jrbAACompromise.tooltip"));
+		jrbAACompromise = new JRadioButton(res.getString("DCrlReason.jrbAACompromise.text"));
+		jrbAACompromise.setToolTipText(res.getString("DCrlReason.jrbAACompromise.tooltip"));
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jrbUnspecified);
@@ -133,8 +133,8 @@ public class DCRLReason extends JEscDialog {
 
 		jrbUnspecified.setSelected(true);
 
-		jbOK = new JButton(res.getString("DCRLReason.jbOK.text"));
-		jbCancel = new JButton(res.getString("DCRLReason.jbCancel.text"));
+		jbOK = new JButton(res.getString("DCrlReason.jbOK.text"));
+		jbCancel = new JButton(res.getString("DCrlReason.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 
@@ -227,6 +227,6 @@ public class DCRLReason extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws HeadlessException, UnsupportedLookAndFeelException {
-		DialogViewer.run(new DCRLReason(new JFrame(), null));
+		DialogViewer.run(new DCrlReason(new JFrame(), null));
 	}
 }

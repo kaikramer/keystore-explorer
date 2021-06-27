@@ -89,7 +89,7 @@ public class DSignCrl extends JEscDialog {
 
 	/**
 	 * Creates a new DSignCrl
-	 * 
+	 *
 	 * @param parent          The parent frame
 	 * @param kseFrame        KeyStore Explorer application frame
 	 * @param signKeyPairType Key pair type
@@ -227,9 +227,8 @@ public class DSignCrl extends JEscDialog {
 			if (crlNumEnc != null) {
 				try {
 					ASN1Primitive primitive = JcaX509ExtensionUtils.parseExtensionValue(crlNumEnc);
-					BigInteger crlNum = CRLNumber.getInstance(primitive).getCRLNumber();
-					long number = crlNum.longValue() + 1;
-					jtfCrlNumber.setText(String.valueOf(number));
+					BigInteger nextCrlNum = CRLNumber.getInstance(primitive).getCRLNumber().add(BigInteger.ONE);
+					jtfCrlNumber.setText(nextCrlNum.toString());
 				} catch (IOException e) {
 					// ignore
 				}
