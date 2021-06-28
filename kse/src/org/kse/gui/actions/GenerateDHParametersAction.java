@@ -43,7 +43,7 @@ public class GenerateDHParametersAction extends KeyStoreExplorerAction implement
 		putValue(
 				SMALL_ICON,
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-					getClass().getResource("images/genkeypair.png"))));
+					getClass().getResource("images/gendh.png"))));
 
 	}
 	@Override
