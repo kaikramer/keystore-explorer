@@ -81,8 +81,7 @@ public class JDistinguishedName extends JPanel {
 		gbcJtfDistinguishedName.gridy = 0;
 		gbcJtfDistinguishedName.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon viewEditIcon = new ImageIcon(getClass().getResource(
-				"images/view_edit_dn.png"));
+		ImageIcon viewEditIcon = new ImageIcon(getClass().getResource("images/view_edit_dn.png"));
 		jbViewEditDistinguishedName = new JButton(viewEditIcon);
 
 		if (editable) {

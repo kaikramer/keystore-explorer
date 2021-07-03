@@ -2,7 +2,6 @@ package org.kse.gui.dialogs.sign;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +59,7 @@ import org.kse.gui.error.Problem;
 
 /**
  * Component to show the list of certificates revoked
- * 
+ *
  *
  */
 public class JRevokedCerts extends JPanel {
@@ -86,7 +85,7 @@ public class JRevokedCerts extends JPanel {
 
 	/**
 	 * Creates a new JRevokedCerts
-	 * 
+	 *
 	 * @param parent   The parent frame
 	 * @param kseFrame KeyStore Explorer application frame
 	 * @param caCert   certificate signing the list of revoked certificates
@@ -106,19 +105,16 @@ public class JRevokedCerts extends JPanel {
 
 		jbRevCertFile = new JButton(
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked1.png"))));
-		jbRevCertFile.setMargin(new Insets(2, 2, 0, 0));
 		jbRevCertFile.setToolTipText(res.getString("JRevokedCerts.jbRevCertFile.tooltip"));
 		jbRevCertFile.setMnemonic(res.getString("JRevokedCerts.jbRevCertFile.mnemonic").charAt(0));
 
 		jbRevKeyStore = new JButton(
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked2.png"))));
-		jbRevKeyStore.setMargin(new Insets(2, 2, 0, 0));
 		jbRevKeyStore.setToolTipText(res.getString("JRevokedCerts.jbRevKeyStore.tooltip"));
 		jbRevKeyStore.setMnemonic(res.getString("JRevokedCerts.jbRevKeyStore.mnemonic").charAt(0));
 
 		jbRevLoadCrl = new JButton(
 				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/revoked3.png"))));
-		jbRevLoadCrl.setMargin(new Insets(2, 2, 0, 0));
 		jbRevLoadCrl.setToolTipText(res.getString("JRevokedCerts.jbRevLoadCrl.tooltip"));
 		jbRevLoadCrl.setMnemonic(res.getString("JRevokedCerts.jbRevLoadCrl.mnemonic").charAt(0));
 
