@@ -355,6 +355,14 @@ public enum X509ExtensionType {
 
 	GO_CT_SCTS("1.3.6.1.4.1.11129.2.4.2", "SignedCertificateTimestampList"),
 
+	// ////////////////////////////////
+	// Apple, see CPS: http://images.apple.com/certificateauthority/pdf/Apple_Developer_ID_CPS_v3.2.pdf
+	// ////////////////////////////////
+
+	APPLE_CODE_SIGNING("1.2.840.113635.100.6.1.13", "AppleApplicationCodeSigning"),
+	APPLE_INSTALLER_SIGNING("1.2.840.113635.100.6.1.14", "AppleInstallerPackageSigning"),
+	APPLE_DEV_PROGRAM("1.2.840.113635.100.6.2.6", "AppleDevProgram"),
+
 	// for letting the user add an arbitrary extension
 	CUSTOM("0", "custom"),
 
