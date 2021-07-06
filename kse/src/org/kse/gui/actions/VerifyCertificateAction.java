@@ -1,5 +1,7 @@
 package org.kse.gui.actions;
 
+import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
+
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.File;
@@ -186,7 +188,8 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
 	public static OCSPReq makeOcspRequest(X509Certificate caCert, X509Certificate certToCheck)
 			throws OCSPException, OperatorCreationException, CertificateEncodingException {
-		DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
+		DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(BOUNCY_CASTLE.jce())
+				.build();
 
 		CertificateID certId = new JcaCertificateID(digCalcProv.get(CertificateID.HASH_SHA1), caCert,
 				certToCheck.getSerialNumber());
@@ -223,6 +226,9 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 	public boolean isGoodCertificate(OCSPResp ocspResp, X509Certificate caCert, X509Certificate eeCert)
 			throws OperatorCreationException, OCSPException, CertificateEncodingException, CertPathValidatorException {
 
+		if (ocspResp.getStatus() != OCSPResp.SUCCESSFUL) {
+			throw new CertPathValidatorException(getMessageStatus(ocspResp.getStatus()));
+		}
 		BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResp.getResponseObject();
 		SingleResp first = basicResponse.getResponses()[0];
 
@@ -232,7 +238,6 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			throw new CertPathValidatorException(
 					MessageFormat.format(res.getString("VerifyCertificateAction.certStatus.message"), status));
 		}
-
 		BigInteger certSerial = certificateEval.getSerialNumber();
 		BigInteger ocspSerial = first.getCertID().getSerialNumber();
 		if (!certSerial.equals(ocspSerial)) {
@@ -240,6 +245,25 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 					.format(res.getString("VerifyCertificateAction.badSerials.message"), certSerial, ocspSerial));
 		}
 		return true;
+	}
+
+	private String getMessageStatus(int status) {
+		if (status == OCSPResp.MALFORMED_REQUEST) {
+			return res.getString("VerifyCertificateAction.malformedRequest.message");
+		}
+		if (status == OCSPResp.INTERNAL_ERROR) {
+			return res.getString("VerifyCertificateAction.internalError.message");
+		}
+		if (status == OCSPResp.TRY_LATER) {
+			return res.getString("VerifyCertificateAction.tryLater.message");
+		}
+		if (status == OCSPResp.SIG_REQUIRED) {
+			return res.getString("VerifyCertificateAction.sigRequired.message");
+		}
+		if (status == OCSPResp.UNAUTHORIZED) {
+			return res.getString("VerifyCertificateAction.unauthorized.message");
+		}
+		return MessageFormat.format(res.getString("VerifyCertificateAction.unknownStatus.message"), status);
 	}
 
 	private void verifyStatusCrlFile(KeyStoreHistory keyStoreHistory, String alias, String crlFile)
