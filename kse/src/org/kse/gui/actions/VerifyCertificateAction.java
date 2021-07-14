@@ -13,18 +13,23 @@ import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
+import java.security.cert.PKIXCertPathChecker;
 import java.security.cert.PKIXParameters;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -207,9 +212,13 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		CertPath certPath = factory.generateCertPath(listCertificates);
 		PKIXParameters params = new PKIXParameters(trustStore);
 		if (xCrl != null) {
-			params.addCertStore(CertStore.getInstance("Collection",new CollectionCertStoreParameters(Collections.singletonList(xCrl))));	
+			params.addCertStore(CertStore.getInstance("Collection",new CollectionCertStoreParameters(Collections.singletonList(xCrl))));
 		}
-		
+
+		// remove some critical extensions that are private to companies and would otherwise cause a validation failure
+		PKIXCertPathChecker certPathChecker = new ExtensionRemovingCertPathChecker();
+		params.addCertPathChecker(certPathChecker);
+
 		Date now = new Date(System.currentTimeMillis());
 		params.setDate(now);
 		params.setRevocationEnabled(revocationEnabled);
@@ -286,4 +295,31 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		}
 	}
 
+	static class ExtensionRemovingCertPathChecker extends PKIXCertPathChecker {
+		@Override
+		public void init(boolean forward) throws CertPathValidatorException {
+			// nothing to do here
+		}
+
+		@Override
+		public boolean isForwardCheckingSupported() {
+			return false;
+		}
+
+		@Override
+		public Set<String> getSupportedExtensions() {
+			HashSet<String> hashSet = new HashSet<>();
+
+			// appleCertificateExtensionCodeSigning
+			hashSet.add("1.2.840.113635.100.6.1.13");
+
+			return hashSet;
+		}
+
+		@Override
+		public void check(Certificate cert, Collection<String> unresolvedCritExts) throws CertPathValidatorException {
+			// remove critical Apple private extension that causes certificate validation to fail
+			unresolvedCritExts.remove("1.2.840.113635.100.6.1.13");
+		}
+	}
 }
