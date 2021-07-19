@@ -150,26 +150,23 @@ public class CreateApplicationGui implements Runnable {
 	}
 
 	private void checkForUpdates(final KseFrame kseFrame) {
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					// Get the version number of the latest KeyStore Explorer from its web site
-					URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
+		new Thread (() -> {
+			try {
+				// Get the version number of the latest KeyStore Explorer from its web site
+				URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
 
-					String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
-					final Version latestVersion = new Version(versionString);
+				String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
+				final Version latestVersion = new Version(versionString);
 
-					// show update dialog to user
-					SwingUtilities.invokeLater(() -> {
-						CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
-						checkUpdateAction.compareVersions(latestVersion, true);
-					});
-				} catch (Exception e) {
-					// ignore any problems here
-				}
-			}
-		}.start();
+				// show update dialog to user
+				SwingUtilities.invokeLater(() -> {
+					CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
+					checkUpdateAction.compareVersions(latestVersion, true);
+				});
+			} catch (Exception e) {
+				// ignore any problems here
+			}			
+		}).start();
 	}
 
 	private static void initLookAndFeel(ApplicationSettings applicationSettings) {

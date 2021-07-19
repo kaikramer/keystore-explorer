@@ -52,7 +52,8 @@ public class DVerifyCertificate extends JEscDialog {
 	private static final long serialVersionUID = 1L;
 
 	public enum VerifyOptions {
-		CRL_D, CRL_F, OCSP, CHAIN
+		CRL_DIST, CRL_FILE, OCSP_AIA, // Authority Information Access
+		OCSP_URL, CHAIN
 	}
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
@@ -65,7 +66,9 @@ public class DVerifyCertificate extends JEscDialog {
 	private JRadioButton jrbCrlCheckFile;
 	private JTextField jtfCrlFile;
 	private JButton jbLoadCrl;
-	private JRadioButton jrbOcspCheck;
+	private JRadioButton jrbOcspAiaCheck;
+	private JRadioButton jrbOcspUrlCheck;
+	private JTextField jtfOcspUrl;
 	private JRadioButton jrbChainCheck;
 	private JCheckBox jcbSelectKeyStore;
 	private JPanel jpButtons;
@@ -76,8 +79,9 @@ public class DVerifyCertificate extends JEscDialog {
 	private JButton jbLoadKeystore;
 
 	private boolean verifySelected = false;
-	private VerifyOptions verifyOption = VerifyOptions.CRL_D;
+	private VerifyOptions verifyOption = VerifyOptions.CRL_DIST;
 	private String fileCrl;
+	private String ocspUrl;
 
 	private KseFrame kseFrame;
 
@@ -112,8 +116,15 @@ public class DVerifyCertificate extends JEscDialog {
 		jbLoadCrl.setToolTipText(res.getString("DVerifyCertificate.jbLoadCrl.tooltip"));
 		jbLoadCrl.setEnabled(false);
 
-		jrbOcspCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbOcspCheck.text"));
-		jrbOcspCheck.setToolTipText(res.getString("DVerifyCertificate.jrbOcspCheck.tooltip"));
+		jrbOcspAiaCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbOcspAiaCheck.text"));
+		jrbOcspAiaCheck.setToolTipText(res.getString("DVerifyCertificate.jrbOcspAiaCheck.tooltip"));
+
+		jrbOcspUrlCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbOcspUrlCheck.text"));
+		jrbOcspUrlCheck.setToolTipText(res.getString("DVerifyCertificate.jrbOcspUrlCheck.tooltip"));
+
+		jtfOcspUrl = new JTextField("", 20);
+		jtfOcspUrl.setEditable(false);
+		jtfOcspUrl.setToolTipText(res.getString("DVerifyCertificate.jtfOcspUrl.tooltip"));
 
 		jrbChainCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbChainCheck.text"));
 		jrbChainCheck.setToolTipText(res.getString("DVerifyCertificate.jrbChainCheck.tooltip"));
@@ -121,7 +132,8 @@ public class DVerifyCertificate extends JEscDialog {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(jrbCrlCheckDistPoint);
 		buttonGroup.add(jrbCrlCheckFile);
-		buttonGroup.add(jrbOcspCheck);
+		buttonGroup.add(jrbOcspAiaCheck);
+		buttonGroup.add(jrbOcspUrlCheck);
 		buttonGroup.add(jrbChainCheck);
 		jrbCrlCheckDistPoint.setSelected(true);
 
@@ -146,9 +158,11 @@ public class DVerifyCertificate extends JEscDialog {
 		MiGUtil.addSeparator(pane, res.getString("DVerifyCertificate.jlCheckStatus.text"));
 		pane.add(jrbCrlCheckDistPoint, "wrap, left");
 		pane.add(jrbCrlCheckFile, "left");
-		pane.add(jtfCrlFile, "split 2");
+		pane.add(jtfCrlFile, "split 2, growx");
 		pane.add(jbLoadCrl, "wrap");
-		pane.add(jrbOcspCheck, "wrap, left");
+		pane.add(jrbOcspAiaCheck, "wrap, left");
+		pane.add(jrbOcspUrlCheck, "left");
+		pane.add(jtfOcspUrl, "growx, wrap, left");
 		pane.add(jrbChainCheck, "spanx, wrap, left");
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jcbSelectKeyStore, "left, spanx, wrap");
@@ -160,7 +174,8 @@ public class DVerifyCertificate extends JEscDialog {
 
 		jrbCrlCheckDistPoint.addActionListener(evt -> updateVerifyControls());
 		jrbCrlCheckFile.addActionListener(evt -> updateVerifyControls());
-		jrbOcspCheck.addActionListener(evt -> updateVerifyControls());
+		jrbOcspAiaCheck.addActionListener(evt -> updateVerifyControls());
+		jrbOcspUrlCheck.addActionListener(evt -> updateVerifyControls());
 		jrbChainCheck.addActionListener(evt -> updateVerifyControls());
 		jcbSelectKeyStore.addItemListener(evt -> updateVerifyControls());
 
@@ -213,10 +228,18 @@ public class DVerifyCertificate extends JEscDialog {
 
 		if (jrbCrlCheckFile.isSelected()) {
 			jtfCrlFile.setEditable(true);
+			jtfCrlFile.requestFocus();
 			jbLoadCrl.setEnabled(true);
+			jtfOcspUrl.setEditable(false);
+		} else if (jrbOcspUrlCheck.isSelected()) {
+			jtfCrlFile.setEditable(false);
+			jbLoadCrl.setEnabled(false);
+			jtfOcspUrl.setEditable(true);
+			jtfOcspUrl.requestFocus();
 		} else {
 			jtfCrlFile.setEditable(false);
 			jbLoadCrl.setEnabled(false);
+			jtfOcspUrl.setEditable(false);
 		}
 		jcbKeyStore.setModel(getKeystoreNames());
 		if (jcbSelectKeyStore.isSelected()) {
@@ -238,25 +261,36 @@ public class DVerifyCertificate extends JEscDialog {
 
 	private void okPressed() {
 		if (jrbCrlCheckDistPoint.isSelected()) {
-			verifyOption = VerifyOptions.CRL_D;
+			verifyOption = VerifyOptions.CRL_DIST;
 		} else if (jrbCrlCheckFile.isSelected()) {
 			if (jtfCrlFile.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(this, res.getString("DVerifyCertificate.ChooseCRLFile.Title"),
-						res.getString("DVerifyCertificate.ChooseCRLFile.Title"), JOptionPane.INFORMATION_MESSAGE);
+						res.getString("DVerifyCertificate.Title"), JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			verifyOption = VerifyOptions.CRL_F;
+			verifyOption = VerifyOptions.CRL_FILE;
 			fileCrl = jtfCrlFile.getText();
-		} else if (jrbOcspCheck.isSelected()) {
-			verifyOption = VerifyOptions.OCSP;
-		} else {
+		} else if (jrbOcspAiaCheck.isSelected()) {
+			verifyOption = VerifyOptions.OCSP_AIA;
+		} 
+		else if (jrbOcspUrlCheck.isSelected())
+		{
+			if (jtfOcspUrl.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(this, res.getString("DVerifyCertificate.ReqOcspUrl.Title"),
+						res.getString("DVerifyCertificate.Title"), JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			verifyOption = VerifyOptions.OCSP_URL;
+			ocspUrl = jtfOcspUrl.getText();
+		}
+		else {
 			verifyOption = VerifyOptions.CHAIN;
 		}
 		if (jcbSelectKeyStore.isSelected()) {
 			if (jcbKeyStore.getSelectedItem() == null) {
 				JOptionPane.showMessageDialog(this,
 						res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
-						res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
+						res.getString("DVerifyCertificate.Title"),
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
@@ -267,6 +301,10 @@ public class DVerifyCertificate extends JEscDialog {
 
 	public String getCrlFile() {
 		return fileCrl;
+	}
+
+	public String getOcspUrl() {
+		return ocspUrl;
 	}
 
 	private void cancelPressed() {
