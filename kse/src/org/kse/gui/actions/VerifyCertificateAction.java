@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -160,38 +159,46 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 	}
 
 	private void verifyStatusOcspUrl(KeyStoreHistory keyStoreHistory, String alias, String ocspUrl)
-			throws OperatorCreationException, OCSPException, MalformedURLException, IOException, HeadlessException,
-			CertPathValidatorException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
+			throws OperatorCreationException, OCSPException, IOException, HeadlessException, CertPathValidatorException,
+			KeyStoreException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException,
+			IllegalStateException, CryptoException {
 
-		X509Certificate issuer = null;
-		KeyStore trustStore = getKeyStore(keyStoreHistory);
-		Enumeration<String> enumeration = trustStore.aliases();
-		while (enumeration.hasMoreElements()) {
-			String tempAlias = enumeration.nextElement();
-			X509Certificate cert = (X509Certificate) trustStore.getCertificate(tempAlias);
-			try {
-				certificateEval.verify(cert.getPublicKey());
-				issuer = cert;
-				break;
-			} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException
-					| SignatureException e) {
-				// ignore
+		if (verify("false", "false", false, keyStoreHistory, null)) {
+			// search issuer
+			X509Certificate issuer = null;
+
+			if (keyCertChain == null || keyCertChain.length == 1) {
+				KeyStore trustStore = getKeyStore(keyStoreHistory);
+				Enumeration<String> enumeration = trustStore.aliases();
+				while (enumeration.hasMoreElements()) {
+					String tempAlias = enumeration.nextElement();
+					X509Certificate cert = (X509Certificate) trustStore.getCertificate(tempAlias);
+					try {
+						certificateEval.verify(cert.getPublicKey());
+						issuer = cert;
+						break;
+					} catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException
+							| NoSuchProviderException | SignatureException e) {
+						// ignore
+					}
+				}
+			} else {
+				issuer = keyCertChain[1];
 			}
-		}
-
-		if (issuer == null) {
-			throw new CertPathValidatorException(res.getString("VerifyCertificateAction.trustStoreEmpty.message"));
-		}
-		OCSPReq request = makeOcspRequest(issuer, certificateEval);
-		OCSPResp response = requestOCSPResponse(ocspUrl, request);
-		if (isGoodCertificate(response, issuer, certificateEval)) {
-			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
-					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
-					JOptionPane.INFORMATION_MESSAGE);
+			if (issuer == null) {
+				throw new CertPathValidatorException(res.getString("VerifyCertificateAction.trustStoreEmpty.message"));
+			}
+			OCSPReq request = makeOcspRequest(issuer, certificateEval);
+			OCSPResp response = requestOCSPResponse(ocspUrl, request);
+			if (isGoodCertificate(response)) {
+				JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
+						res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
+						JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 	}
 
-	public static OCSPReq makeOcspRequest(X509Certificate caCert, X509Certificate certToCheck)
+	private static OCSPReq makeOcspRequest(X509Certificate caCert, X509Certificate certToCheck)
 			throws OCSPException, OperatorCreationException, CertificateEncodingException {
 		DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(BOUNCY_CASTLE.jce())
 				.build();
@@ -204,7 +211,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		return gen.build();
 	}
 
-	public OCSPResp requestOCSPResponse(String url, OCSPReq ocspReq) throws IOException, MalformedURLException {
+	private OCSPResp requestOCSPResponse(String url, OCSPReq ocspReq) throws IOException {
 		byte[] ocspReqData = ocspReq.getEncoded();
 
 		HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
@@ -228,8 +235,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	public boolean isGoodCertificate(OCSPResp ocspResp, X509Certificate caCert, X509Certificate eeCert)
-			throws OperatorCreationException, OCSPException, CertificateEncodingException, CertPathValidatorException {
+	private boolean isGoodCertificate(OCSPResp ocspResp) throws OCSPException, CertPathValidatorException {
 
 		if (ocspResp.getStatus() != OCSPResp.SUCCESSFUL) {
 			throw new CertPathValidatorException(getMessageStatus(ocspResp.getStatus()));
@@ -350,10 +356,12 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		CertPath certPath = factory.generateCertPath(listCertificates);
 		PKIXParameters params = new PKIXParameters(trustStore);
 		if (xCrl != null) {
-			params.addCertStore(CertStore.getInstance("Collection",new CollectionCertStoreParameters(Collections.singletonList(xCrl))));
+			params.addCertStore(CertStore.getInstance("Collection",
+					new CollectionCertStoreParameters(Collections.singletonList(xCrl))));
 		}
 
-		// remove some critical extensions that are private to companies and would otherwise cause a validation failure
+		// remove some critical extensions that are private to companies and would
+		// otherwise cause a validation failure
 		PKIXCertPathChecker certPathChecker = new ExtensionRemovingCertPathChecker();
 		params.addCertPathChecker(certPathChecker);
 
@@ -459,7 +467,8 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
 		@Override
 		public void check(Certificate cert, Collection<String> unresolvedCritExts) throws CertPathValidatorException {
-			// remove critical Apple private extension that causes certificate validation to fail
+			// remove critical Apple private extension that causes certificate validation to
+			// fail
 			unresolvedCritExts.remove("1.2.840.113635.100.6.1.13");
 		}
 	}
