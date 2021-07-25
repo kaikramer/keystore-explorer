@@ -44,6 +44,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
 	private static Class<?> platformClass;
 	private static Class<?> fileChooserClass;
+	private static Class<?> directoryChooserClass;
 	private static Class<?> extensionFilterClass;
 	private static Class<?> windowClass;
 
@@ -58,6 +59,7 @@ public class JavaFXFileChooser extends JFileChooser {
 				Class.forName("javafx.embed.swing.JFXPanel").getConstructor().newInstance();
 				platformClass = Class.forName("javafx.application.Platform");
 				fileChooserClass = Class.forName("javafx.stage.FileChooser");
+				directoryChooserClass = Class.forName("javafx.stage.DirectoryChooser");
 				extensionFilterClass = Class.forName("javafx.stage.FileChooser$ExtensionFilter");
 				windowClass = Class.forName("javafx.stage.Window");
 				fxAvailable = true;
@@ -73,6 +75,11 @@ public class JavaFXFileChooser extends JFileChooser {
 	private String dialogTitle;
 	private File currentDirectory;
 	private Boolean isMultiFile;
+	private int fileSelectionMode;
+	public static final int	FILES_ONLY = 0;
+	public static final int	DIRECTORIES_ONLY = 1;
+	public static final int	FILES_AND_DIRECTORIES = 2;
+	
 
 	public static boolean isFxAvailable() {
 		return fxAvailable;
@@ -86,6 +93,11 @@ public class JavaFXFileChooser extends JFileChooser {
 	}
 
 	@Override
+	public int getFileSelectionMode() {
+		return fileSelectionMode;
+	}
+	
+	@Override
 	public File getSelectedFile() {
 		return selectedFile;
 	}
@@ -93,6 +105,11 @@ public class JavaFXFileChooser extends JFileChooser {
 	@Override
 	public File[] getSelectedFiles() {
 		return selectedFiles;
+	}
+	
+	@Override
+	public void setFileSelectionMode(int mode) {
+		fileSelectionMode = mode;
 	}
 
 	@Override
@@ -126,6 +143,9 @@ public class JavaFXFileChooser extends JFileChooser {
 		if (isMultiFile) {
 			return showMultipleFxDialog("showOpenMultipleDialog");
 		}
+		if(fileSelectionMode == DIRECTORIES_ONLY) {
+			return showDirectoryFxDialog("showDialog");
+		}
 		return showFxDialog("showOpenDialog");
 	}
 
@@ -143,7 +163,7 @@ public class JavaFXFileChooser extends JFileChooser {
 	}
 	
 	/**
-	 * Creates a method with a callable a lambda 
+	 * Creates a method with a callable lambda 
 	 * 
 	 * @param method Accepts String
 	 * @return Int
@@ -202,7 +222,7 @@ public class JavaFXFileChooser extends JFileChooser {
 	}
 	
 	/**
-	 * Creates a method with a callable a lambda 
+	 * Creates a method with a callable lambda 
 	 * 
 	 * @param method Accepts String
 	 * @return Int
@@ -267,6 +287,46 @@ public class JavaFXFileChooser extends JFileChooser {
 
 		return JFileChooser.APPROVE_OPTION;
 	}
+	
+	/**
+	 * Creates a method with a callable lambda 
+	 * 
+	 * @param method Accepts String
+	 * @return Int
+	 */
+	public int showDirectoryFxDialog(final String method) {
+
+		try {
+			final Object directoryChooser = directoryChooserClass.getConstructor().newInstance();
+			
+			// create a callable lambda
+			selectedFile = runLater(() -> {
+
+				// set window title
+				Method setTitleMethod = directoryChooserClass.getMethod("setTitle", String.class);
+				setTitleMethod.invoke(directoryChooser, dialogTitle);
+
+				// set current directory
+				Method setInitialDirectory = directoryChooserClass.getMethod("setInitialDirectory", File.class);
+				setInitialDirectory.invoke(directoryChooser, currentDirectory);
+
+				Method showDialogMethod = directoryChooserClass.getMethod(method, windowClass);
+				Object file = showDialogMethod.invoke(directoryChooser, (Object) null);
+
+				return (File) file;
+			});
+
+		} catch (Exception e) {
+			System.out.println(e);
+			return JFileChooser.ERROR_OPTION;
+		}
+
+		if (selectedFile == null) {
+			return JFileChooser.CANCEL_OPTION;
+		}
+
+		return JFileChooser.APPROVE_OPTION;
+	}
 
 	/**
 	 * Invokes a Java FX threaded function
@@ -326,13 +386,14 @@ public class JavaFXFileChooser extends JFileChooser {
 		chooser.addChoosableFileFilter(new FileExtFilter(new String[] { ".p12" }, "Description2"));
 		chooser.setDialogTitle("Dialog Title");
 		chooser.setCurrentDirectory(new File("."));
+		chooser.setFileSelectionMode(JavaFXFileChooser.DIRECTORIES_ONLY);
 		// chooser.setSelectedFiles(new ArrayList<File>());
-		chooser.setMultiSelectionEnabled(true);
+		chooser.setMultiSelectionEnabled(false);
 		chooser.showDialog(null, "Button Text");
 
-		File[] files = chooser.getSelectedFiles();
+		File file = chooser.getSelectedFile();
 
-		System.out.println(files[0].getAbsolutePath());
+		System.out.println(file.getAbsolutePath());
 		// System.out.println(chooser.getSelectedFiles().length);
 
 		Method platformExitMethod = platformClass.getMethod("exit");
