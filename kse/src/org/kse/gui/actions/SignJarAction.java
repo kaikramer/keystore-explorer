@@ -25,6 +25,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -93,22 +94,32 @@ public class SignJarAction extends KeyStoreExplorerAction {
 					.getCertificateChain(alias)));
 
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+			String signer = KSE.getFullApplicationName();
 
-			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias);
+			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias, certs, provider, signer);
 			dSignJar.setLocationRelativeTo(frame);
 			dSignJar.setVisible(true);
 
 			SignatureType signatureType = dSignJar.getSignatureType();
 			String signatureName = dSignJar.getSignatureName();
-			File inputJarFile = dSignJar.getInputJar();
-			File outputJarFile = dSignJar.getOutputJar();
+			File[] inputJarFile = dSignJar.getInputJar();
+			List<File> outputJarFile = dSignJar.getOutputJar();
 			String tsaUrl = dSignJar.getTimestampingServerUrl();
-
+			DigestType digestType = dSignJar.getDigestType();
+/*			
+			System.out.println("Sig type: " + signatureType);
+			System.out.println("Sig name: " + signatureName);
+			System.out.println("Input length: " + inputJarFile.length);
+			System.out.println("Output size: " + outputJarFile.size());
+			System.out.println("TSA: " + tsaUrl);
+			System.out.println("Digest type: " + digestType);
+*/
+/*
 			if (signatureType == null) {
 				return;
 			}
 
-			String signer = KSE.getFullApplicationName();
+
 
 			DigestType digestType = dSignJar.getDigestType();
 
@@ -119,7 +130,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
 				JarSigner.sign(inputJarFile, outputJarFile, privateKey, certs, signatureType, signatureName, signer,
 						digestType, tsaUrl, provider);
 			}
-
+*/
 			JOptionPane.showMessageDialog(frame, res.getString("SignJarAction.SignJarSuccessful.message"),
 					res.getString("SignJarAction.SignJar.Title"), JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
