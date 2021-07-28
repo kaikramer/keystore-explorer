@@ -143,6 +143,7 @@ public class DSignJar extends JEscDialog {
 	private X509Certificate[] kseCerts;
 	private Provider kseProvider;
 	private String kseSigner;
+	private boolean successStatus = true;
 
 	/**
 	 * Creates a new DSignJar dialog.
@@ -528,14 +529,16 @@ public class DSignJar extends JEscDialog {
 		String outputJarSuffix = jtfSuffix.getText().trim();
 		final String FILE_SUFFIX = ".jar";
 		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
-		outputJarFiles = new ArrayList<File>(Arrays.asList(inputJarFiles));
+		
+		// set input files array to output files list
+		this.outputJarFiles = new ArrayList<File>(Arrays.asList(inputJarFiles));
 
 		if (jrbOutputJarFixes.isSelected()) {
 			// checks if a file prefix or suffix fields were filled
 			if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
 				JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
 						JOptionPane.WARNING_MESSAGE);
-				outputJarFiles.clear();
+				this.outputJarFiles.clear();
 				return false;
 			}
 
@@ -546,7 +549,7 @@ public class DSignJar extends JEscDialog {
 				String outFileName = outputJarFiles.get(i).getParent() + "\\" + outputJarPrefix + fileBaseName
 						+ outputJarSuffix + FILE_SUFFIX;
 				// replace file object in arraylist
-				outputJarFiles.set(i, new File(outFileName));
+				this.outputJarFiles.set(i, new File(outFileName));
 
 				if (!checkbox.isSelected()) {
 					// check if file exists
@@ -559,7 +562,7 @@ public class DSignJar extends JEscDialog {
 						int selected = JOptionPane.showConfirmDialog(this, params, getTitle(),
 								JOptionPane.YES_NO_OPTION);
 						if (selected != JOptionPane.YES_OPTION) {
-							outputJarFiles.clear();
+							this.outputJarFiles.clear();
 							return false;
 						}
 					}
@@ -621,6 +624,8 @@ public class DSignJar extends JEscDialog {
 				}
 			}
 			CurrentDirectory.updateForFile(chosenFiles[0]);
+			
+			// set input files from file selector
 			this.inputJarFiles = chooser.getSelectedFiles();
 		}
 	}
@@ -628,8 +633,8 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Check if a file is a valid JAR
 	 * 
-	 * @param File
-	 * @return Boolean
+	 * @param File accepts a jar file
+	 * @return <tt>Boolean</tt> true if the file is a valid jar and false if not
 	 */
 	private boolean validJAR(File file) {
 		JarFile jarFile = null;
@@ -698,19 +703,31 @@ public class DSignJar extends JEscDialog {
 			jtfInputJarFolder.setText(chosenFolder.toString());
 			jtfInputJarFolder.setCaretPosition(0);
 
-			// assign file array with a filtered file list
-			inputJarFiles = chosenFolder.listFiles(new FilenameFilter() {
+			// set input files from filtered file list of the folder selection
+			this.inputJarFiles = chosenFolder.listFiles(new FilenameFilter() {
 				public boolean accept(File chosenFolder, String filename) {
 					return filename.endsWith(FILE_SUFFIX);
 				}
 			});
 		}
 	}
+	
+	
+	/**
+	 * Returns the current success status
+	 *
+	 * @return successStatus The success status boolean
+	 */
+	public boolean isSuccessful() {
+		return successStatus;
+	}
+
 
 	/**
 	 * Call the close dialog method
 	 */
 	private void cancelPressed() {
+		successStatus = false;
 		closeDialog();
 	}
 
