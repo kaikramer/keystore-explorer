@@ -465,6 +465,8 @@ public class DSignJar extends JEscDialog {
 	 */
 	private void okPressed() {
 		String signatureName = jtfSignatureName.getText().trim();
+		String outputJarPrefix = jtfPrefix.getText().trim();
+		String outputJarSuffix = jtfSuffix.getText().trim();
 
 		// check if any files selected
 		if ((inputJarFiles == null) || (inputJarFiles.length == 0)) {
@@ -493,6 +495,13 @@ public class DSignJar extends JEscDialog {
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+		
+		// checks if a file prefix or suffix fields were filled
+		if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
+			JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 
 		this.signatureName = signatureName;
 		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
@@ -513,7 +522,7 @@ public class DSignJar extends JEscDialog {
 			return;
 		}
 
-		signJar();
+		//signJar();
 
 		closeDialog();
 	}
@@ -534,14 +543,6 @@ public class DSignJar extends JEscDialog {
 		this.outputJarFiles = new ArrayList<File>(Arrays.asList(inputJarFiles));
 
 		if (jrbOutputJarFixes.isSelected()) {
-			// checks if a file prefix or suffix fields were filled
-			if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
-				JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				this.outputJarFiles.clear();
-				return false;
-			}
-
 			// loop through output JAR files
 			for (int i = 0; i < outputJarFiles.size(); i++) {
 				// set prefix and suffix to the file name
@@ -606,8 +607,10 @@ public class DSignJar extends JEscDialog {
 	 * Get input JAR files
 	 */
 	private void inputJarBrowsePressed() {
-		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
+		// remove folder text field content to better indicate the input file was selected
+		jtfInputJarFolder.setText("");
 
+		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJar.Title"));
 		chooser.setMultiSelectionEnabled(true);
