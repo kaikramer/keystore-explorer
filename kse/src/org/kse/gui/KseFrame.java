@@ -62,6 +62,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -127,6 +128,7 @@ import org.kse.gui.actions.ExportKeyPairPrivateKeyAction;
 import org.kse.gui.actions.ExportKeyPairPublicKeyAction;
 import org.kse.gui.actions.ExportTrustedCertificateAction;
 import org.kse.gui.actions.ExportTrustedCertificatePublicKeyAction;
+import org.kse.gui.actions.FindAction;
 import org.kse.gui.actions.GenerateCsrAction;
 import org.kse.gui.actions.GenerateDHParametersAction;
 import org.kse.gui.actions.GenerateKeyPairAction;
@@ -249,6 +251,7 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiCut;
 	private JMenuItem jmiCopy;
 	private JMenuItem jmiPaste;
+	private JMenuItem jmiFind;
 
 	private JMenu jmView;
 	private JCheckBoxMenuItem jcbmiShowHideToolBar;
@@ -442,6 +445,7 @@ public final class KseFrame implements StatusBar {
 	private final CutAction cutAction = new CutAction(this);
 	private final CopyAction copyAction = new CopyAction(this);
 	private final PasteAction pasteAction = new PasteAction(this);
+	private final FindAction findAction = new FindAction(this);
 	private final ShowHideToolBarAction showHideToolBarAction = new ShowHideToolBarAction(this);
 	private final ShowHideStatusBarAction showHideStatusBarAction = new ShowHideStatusBarAction(this);
 	private final TabStyleWrapAction tabStyleWrapAction = new TabStyleWrapAction(this);
@@ -781,6 +785,12 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiPaste, (String) pasteAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmEdit.add(jmiPaste);
 
+		jmiFind = new JMenuItem(findAction);
+		PlatformUtil.setMnemonic(jmiFind, res.getString("KseFrame.jmiFind.mnemonic").charAt(0));
+		jmiFind.setToolTipText(null);
+		new StatusBarChangeHandler(jmiFind, (String) findAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmEdit.add(jmiFind);
+		
 		jmView = new JMenu(res.getString("KseFrame.jmView.text"));
 		PlatformUtil.setMnemonic(jmView, res.getString("KseFrame.jmView.mnemonic").charAt(0));
 
@@ -2763,6 +2773,9 @@ public final class KseFrame implements StatusBar {
 			updateCutCopyPasteControls();
 		}
 
+		// Can find 
+		findAction.setEnabled(true);
+
 		// Can use tools on
 		generateKeyPairAction.setEnabled(true);
 		generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
@@ -2886,6 +2899,7 @@ public final class KseFrame implements StatusBar {
 		cutKeyPairAction.setEnabled(false);
 		cutTrustedCertificateAction.setEnabled(false);
 		copyAction.setEnabled(false);
+		findAction.setEnabled(false);
 		copyKeyPairAction.setEnabled(false);
 		copyTrustedCertificateAction.setEnabled(false);
 		pasteAction.setEnabled(false);
