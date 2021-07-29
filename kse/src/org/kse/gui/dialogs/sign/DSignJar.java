@@ -497,10 +497,12 @@ public class DSignJar extends JEscDialog {
 		}
 		
 		// checks if a file prefix or suffix fields were filled
-		if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
-			JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
+		if(jrbOutputJarFixes.isSelected()) {
+			if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
+				JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 		}
 
 		this.signatureName = signatureName;
