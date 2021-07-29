@@ -34,7 +34,7 @@ public class FindAction extends KeyStoreExplorerAction {
 		putValue(NAME, res.getString("FindAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("FindAction.tooltip"));
 		putValue(SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/copy.png"))));
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/find.png"))));
 	}
 
 	@Override
