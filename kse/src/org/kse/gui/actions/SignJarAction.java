@@ -40,6 +40,7 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.sign.DSignJar;
+import org.kse.gui.dialogs.sign.DSignJarSigning;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -88,17 +89,28 @@ public class SignJarAction extends KeyStoreExplorerAction {
 
 			KeyStore keyStore = currentState.getKeyStore();
 			Provider provider = history.getExplicitProvider();
-
+			
+			// set the private key
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+			
+			// set the certificate
 			X509Certificate[] certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore
 					.getCertificateChain(alias)));
 
+			// set the key pair type
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+			
+			// set the signer
 			String signer = KSE.getFullApplicationName();
 
+			// get the jars, signatures, and time stamp
 			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias, certs, provider, signer);
 			dSignJar.setLocationRelativeTo(frame);
 			dSignJar.setVisible(true);
+			
+			if (!dSignJar.isSuccessful()) {
+				return;
+			}
 
 			SignatureType signatureType = dSignJar.getSignatureType();
 			String signatureName = dSignJar.getSignatureName();
@@ -106,31 +118,35 @@ public class SignJarAction extends KeyStoreExplorerAction {
 			List<File> outputJarFile = dSignJar.getOutputJar();
 			String tsaUrl = dSignJar.getTimestampingServerUrl();
 			DigestType digestType = dSignJar.getDigestType();
-/*			
+			
+			// start the jar signing process			
+			DSignJarSigning dSignJarSigning = new DSignJarSigning(frame, inputJarFile, outputJarFile,
+					privateKey, certs, signatureType, signatureName, signer, digestType, tsaUrl, provider);
+			dSignJarSigning.setLocationRelativeTo(frame);
+			dSignJarSigning.startDSignJarSigning();
+			dSignJarSigning.setVisible(true);
+			
+			if(!dSignJarSigning.isSuccessful()) {
+				return;
+			}
+			
+			// check map size for testing place holder until dialog for logging created
+			if(dSignJarSigning.getFileExceptions().size() > 0) {
+				for (String key : dSignJarSigning.getFileExceptions().keySet()) {
+					System.out.println(key + " - " + dSignJarSigning.getFileExceptions().get(key));
+					System.out.println();
+				}
+			}
+		/*
 			System.out.println("Sig type: " + signatureType);
 			System.out.println("Sig name: " + signatureName);
 			System.out.println("Input length: " + inputJarFile.length);
+			System.out.println("Input length: " + inputJarFile[0].getAbsolutePath());
 			System.out.println("Output size: " + outputJarFile.size());
 			System.out.println("TSA: " + tsaUrl);
 			System.out.println("Digest type: " + digestType);
 */
-/*
-			if (signatureType == null) {
-				return;
-			}
 
-
-
-			DigestType digestType = dSignJar.getDigestType();
-
-			if (inputJarFile.equals(outputJarFile)) {
-				JarSigner.sign(inputJarFile, privateKey, certs, signatureType, signatureName, signer, digestType,
-						tsaUrl, provider);
-			} else {
-				JarSigner.sign(inputJarFile, outputJarFile, privateKey, certs, signatureType, signatureName, signer,
-						digestType, tsaUrl, provider);
-			}
-*/
 			JOptionPane.showMessageDialog(frame, res.getString("SignJarAction.SignJarSuccessful.message"),
 					res.getString("SignJarAction.SignJar.Title"), JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
