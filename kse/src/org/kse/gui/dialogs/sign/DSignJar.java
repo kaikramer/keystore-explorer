@@ -609,9 +609,6 @@ public class DSignJar extends JEscDialog {
 	 * Get input JAR files
 	 */
 	private void inputJarBrowsePressed() {
-		// remove folder text field content to better indicate the input file was selected
-		jtfInputJarFolder.setText("");
-
 		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJar.Title"));
@@ -628,6 +625,10 @@ public class DSignJar extends JEscDialog {
 					return;
 				}
 			}
+			
+			// remove folder text field content to better indicate the input file was selected
+			jtfInputJarFolder.setText("");
+			
 			CurrentDirectory.updateForFile(chosenFiles[0]);
 			
 			// set input files from file selector
