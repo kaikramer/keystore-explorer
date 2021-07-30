@@ -78,7 +78,6 @@ import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dialogs.DialogHelper;
@@ -387,7 +386,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen input JAR file.
 	 *
-	 * @return Input JAR file
+	 * @return <b>File[]</b> input JAR file
 	 */
 	public File[] getInputJar() {
 		return inputJarFiles;
@@ -396,7 +395,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen output JAR file.
 	 *
-	 * @return Output JAR file
+	 * @return <b>List<File></b> output JAR file
 	 */
 	public List<File> getOutputJar() {
 		return outputJarFiles;
@@ -405,7 +404,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen signature name.
 	 *
-	 * @return String Signature name or null if dialog cancelled
+	 * @return <b>String</b> Signature name or null if dialog cancelled
 	 */
 	public String getSignatureName() {
 		return signatureName;
@@ -414,7 +413,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen signature type.
 	 *
-	 * @return SignatureType or null if dialog cancelled
+	 * @return <b>SignatureType</b> or null if dialog cancelled
 	 */
 	public SignatureType getSignatureType() {
 		return signatureType;
@@ -423,7 +422,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen digest type.
 	 *
-	 * @return DigestType or null if dialog cancelled
+	 * @return <b>DigestType</b> or null if dialog cancelled
 	 */
 	public DigestType getDigestType() {
 		return digestType;
@@ -432,7 +431,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen TSA URL.
 	 *
-	 * @return String TSA URL or null if dialog cancelled
+	 * @return <b>String</b> TSA URL or null if dialog cancelled
 	 */
 	public String getTimestampingServerUrl() {
 		return tsaUrl;
@@ -444,7 +443,7 @@ public class DSignJar extends JEscDialog {
 	 * '_'
 	 * 
 	 * @param signatureName String
-	 * @return Boolean
+	 * @return <b>Boolean</b>
 	 */
 	private boolean verifySignatureName(String signatureName) {
 		for (int i = 0; i < signatureName.length(); i++) {
@@ -459,9 +458,10 @@ public class DSignJar extends JEscDialog {
 	}
 
 	/**
-	 * The function checks the following - fields to ensure they are not empty -
-	 * check the output file paths for overwriting files - check the signature for
-	 * overwriting the same signature, - and initiate JAR signature.
+	 * The function checks the following
+	 * <p> - dialog fields to ensure they are not empty
+	 * <p> - output file paths for overwriting files
+	 * <p> - signature for overwriting signatures
 	 */
 	private void okPressed() {
 		String signatureName = jtfSignatureName.getText().trim();
@@ -496,7 +496,7 @@ public class DSignJar extends JEscDialog {
 			return;
 		}
 		
-		// checks if a file prefix or suffix fields were filled
+		// checks if file prefix or suffix fields were filled
 		if(jrbOutputJarFixes.isSelected()) {
 			if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
 				JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
@@ -509,17 +509,17 @@ public class DSignJar extends JEscDialog {
 		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
 		digestType = (DigestType) jcbDigestAlgorithm.getSelectedItem();
 
-		// check if add time stamp is selected and assign value
+		// check add time stamp is selected and assign value
 		if (jcbAddTimestamp.isSelected()) {
 			tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
 		}
 
-		// set output Jar files and check if the No Overwrite File option was selected
+		// set output Jar files and Overwrite File if selected
 		if (!setOutputJarFiles()) {
 			return;
 		}
 
-		// check signature and if the No Overwrite Signature option was selected
+		// check signature and Overwrite Signature if selected
 		if (!checkSignature()) {
 			return;
 		}
@@ -532,7 +532,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Set output JAR files and check files for overwrite
 	 * 
-	 * @return Boolean
+	 * @return <b>Boolean</b> true if successful false if no option chosen
 	 */
 	private boolean setOutputJarFiles() {
 		// loop input files array and set output files array
@@ -561,7 +561,7 @@ public class DSignJar extends JEscDialog {
 								outputJarFiles.get(i));
 						Object[] params = { message, checkbox };
 
-						// check if overwrite is allowed and if checkbox is checked
+						// check if overwrite is allowed and present checkbox to skip overwrite message
 						int selected = JOptionPane.showConfirmDialog(this, params, getTitle(),
 								JOptionPane.YES_NO_OPTION);
 						if (selected != JOptionPane.YES_OPTION) {
@@ -578,7 +578,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Checks to overwrite an existing signature
 	 * 
-	 * @return Boolean
+	 * @return <b>Boolean</b> continues jar signing if true cancels process if false
 	 */
 	private boolean checkSignature() {
 		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
@@ -640,7 +640,7 @@ public class DSignJar extends JEscDialog {
 	 * Check if a file is a valid JAR
 	 * 
 	 * @param File accepts a jar file
-	 * @return <tt>Boolean</tt> true if the file is a valid jar and false if not
+	 * @return <b>Boolean</b> true if the file is a valid jar and false if not
 	 */
 	private boolean validJAR(File file) {
 		JarFile jarFile = null;
@@ -690,19 +690,16 @@ public class DSignJar extends JEscDialog {
 	 * Get input JAR folder and JAR files
 	 */
 	private void inputJarFolderBrowsePressed() {
-		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
-		chooser.setFileSelectionMode(JavaFXFileChooser.DIRECTORIES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
 		final String FILE_SUFFIX = ".jar";
-
-		// File currentFile = new File(jtfOutputJar.getText());
+		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.setCurrentDirectory(CurrentDirectory.get());
 
 		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJarFolder.Title"));
 		chooser.setMultiSelectionEnabled(false);
 
-		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showDialog(this, "")
-				: chooser.showDialog(this, res.getString("DSignJar.InputJarChooser.button"));
+		int rtnValue = chooser.showDialog(this, res.getString("DSignJar.InputJarChooser.button"));
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
 			File chosenFolder = chooser.getSelectedFile();
 			CurrentDirectory.update(chosenFolder);
@@ -722,7 +719,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Returns the current success status
 	 *
-	 * @return successStatus The success status boolean
+	 * @return successStatus true if successful false if not
 	 */
 	public boolean isSuccessful() {
 		return successStatus;
