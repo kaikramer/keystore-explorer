@@ -105,8 +105,9 @@ public class DSignJarSigning extends JEscDialog {
 	private void initComponents() {
 		
 		// TODO Create Jar sign icon
+		
+		jlSignJar = new JLabel(res.getString("DSignJarSigning.jlSignJar.text"));
 		/*
-		jlSignJar = new JLabel(res.getString("DGeneratingDHParameters.jlGenDHParameters.text"));
 		ImageIcon icon = new ImageIcon(getClass().getResource("images/genkp.png"));
 		jlSignJar.setIcon(icon);
 		 */
@@ -129,7 +130,7 @@ public class DSignJarSigning extends JEscDialog {
 
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]unrel"));
-//		pane.add(jlSignJar, "wrap");
+		pane.add(jlSignJar, "wrap");
 		pane.add(jpbSignJar, "growx, wrap");
 		pane.add(jbCancel, "tag Cancel");
 
