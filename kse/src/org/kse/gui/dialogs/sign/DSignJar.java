@@ -173,7 +173,6 @@ public class DSignJar extends JEscDialog {
 	 * @throws CryptoException
 	 */
 	private void initComponents(String signatureName) throws CryptoException {
-
 		jlSignDirectly = new JLabel(res.getString("DSignJar.jlSignDirectly.text"));
 		jrbSignDirectly = new JRadioButton("", true);
 		jrbSignDirectly.setToolTipText(res.getString("DSignJar.jrbSignDirectly.tooltip"));
@@ -515,12 +514,12 @@ public class DSignJar extends JEscDialog {
 		}
 
 		// set output Jar files and Overwrite File if selected
-		if (!setOutputJarFiles()) {
+		if (!setOutputJarFiles(inputJarFiles)) {
 			return;
 		}
 
 		// check signature and Overwrite Signature if selected
-		if (!checkSignature()) {
+		if (!checkSignature(inputJarFiles)) {
 			return;
 		}
 
@@ -534,7 +533,7 @@ public class DSignJar extends JEscDialog {
 	 * 
 	 * @return <b>Boolean</b> true if successful false if no option chosen
 	 */
-	private boolean setOutputJarFiles() {
+	private boolean setOutputJarFiles(File[] files) {
 		// loop input files array and set output files array
 		String outputJarPrefix = jtfPrefix.getText().trim();
 		String outputJarSuffix = jtfSuffix.getText().trim();
@@ -542,7 +541,7 @@ public class DSignJar extends JEscDialog {
 		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
 		
 		// set input files array to output files list
-		this.outputJarFiles = new ArrayList<File>(Arrays.asList(inputJarFiles));
+		this.outputJarFiles = new ArrayList<File>(Arrays.asList(files));
 
 		if (jrbOutputJarFixes.isSelected()) {
 			// loop through output JAR files
@@ -580,14 +579,14 @@ public class DSignJar extends JEscDialog {
 	 * 
 	 * @return <b>Boolean</b> continues jar signing if true cancels process if false
 	 */
-	private boolean checkSignature() {
+	private boolean checkSignature(File[] files) {
 		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
 		String message = MessageFormat.format(res.getString("DSignJar.SignatureOverwrite.message"), this.signatureName);
 		Object[] params = { message, checkbox };
 
-		for (int i = 0; i < inputJarFiles.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			try {
-				if (JarSigner.hasSignature(inputJarFiles[i], this.signatureName)) {
+				if (JarSigner.hasSignature(files[i], this.signatureName)) {
 					int selected = JOptionPane.showConfirmDialog(this, params, getTitle(), JOptionPane.YES_NO_OPTION);
 					if (selected != JOptionPane.YES_OPTION) {
 						return false;
