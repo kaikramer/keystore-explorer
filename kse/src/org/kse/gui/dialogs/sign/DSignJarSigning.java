@@ -1,7 +1,5 @@
 package org.kse.gui.dialogs.sign;
 
-import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
-
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -9,21 +7,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.math.BigInteger;
-import java.security.AlgorithmParameterGenerator;
-import java.security.AlgorithmParameters;
 import java.security.PrivateKey;
 import java.security.Provider;
-import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.crypto.spec.DHParameterSpec;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -32,11 +24,6 @@ import javax.swing.JProgressBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.crypto.params.DHParameters;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
