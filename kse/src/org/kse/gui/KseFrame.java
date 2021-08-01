@@ -2703,6 +2703,25 @@ public final class KseFrame implements StatusBar {
 		}
 	}
 
+	public void keyStoreclearSelection()
+	{
+		JTable jtKeyStore = getActiveKeyStoreTable();
+		ListSelectionModel selectionModel = jtKeyStore.getSelectionModel();
+		selectionModel.clearSelection();
+	}
+	
+	public void setSelectedEntriesByAliases(Set<String> aliasesToSelect) {
+		JTable jtKeyStore = getActiveKeyStoreTable();
+		jtKeyStore.requestFocusInWindow();
+
+		ListSelectionModel selectionModel = jtKeyStore.getSelectionModel();
+		for (int i = 0; i < jtKeyStore.getRowCount(); i++) {
+			if (aliasesToSelect.contains(jtKeyStore.getValueAt(i, 3))) {
+				selectionModel.addSelectionInterval(i, i);
+			}
+		}
+		jtKeyStore.scrollRectToVisible(jtKeyStore.getCellRect (jtKeyStore.getSelectedRow (), 0, false));
+	}
 	/**
 	 * Update the frame's controls dependent on the state of its open and active
 	 * KeyStores.

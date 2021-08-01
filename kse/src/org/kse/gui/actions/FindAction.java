@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -46,18 +48,15 @@ public class FindAction extends KeyStoreExplorerAction {
 
 		if (dialog.isSuccess()) {
 			try {
-				String previousAlias = kseFrame.getSelectedEntryAlias();
-				String alias = findEntryAlias(previousAlias, dialog.getEntryName());
-				if (alias == null && previousAlias != null) {
-					alias = findEntryAlias(null, dialog.getEntryName());
-				}
-				if (alias == null) {
-					JOptionPane.showMessageDialog(frame, dialog.getEntryName() + " " + res.getString("FindAction.NotFound.message"),
-							res.getString("FindAction.Find.Title"),
-							JOptionPane.WARNING_MESSAGE);					
-				}
-				else {
-					kseFrame.setSelectedEntriesByAliases(alias);
+				String name = dialog.getEntryName();
+				kseFrame.keyStoreclearSelection();
+				Set<String> aliases = findEntryAlias(name); 
+				if (aliases.isEmpty()) {
+					JOptionPane.showMessageDialog(frame,
+							dialog.getEntryName() + " " + res.getString("FindAction.NotFound.message"),
+							res.getString("FindAction.Find.Title"), JOptionPane.WARNING_MESSAGE);
+				} else {
+					kseFrame.setSelectedEntriesByAliases(aliases);
 				}
 			} catch (KeyStoreException ex) {
 				DError.displayError(frame, ex);
@@ -65,25 +64,17 @@ public class FindAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private String findEntryAlias(String previousAlias, String name) throws KeyStoreException {
+	private Set<String> findEntryAlias(String name) throws KeyStoreException {
+		Set<String> aliases = new HashSet<>();
 		KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 		KeyStore keyStore = history.getCurrentState().getKeyStore();
-
-		boolean search = true;
-		if (previousAlias != null) {
-			search = false;
-		}
 		Enumeration<String> enumeration = keyStore.aliases();
 		while (enumeration.hasMoreElements()) {
 			String alias = enumeration.nextElement();
-			if (alias.equals(previousAlias)) {
-				search = true;
-			} else {
-				if (search && alias.contains(name)) {
-					return alias;
-				}
+			if (alias.contains(name)) {
+				aliases.add(alias);
 			}
 		}
-		return null;
+		return aliases;
 	}
 }
