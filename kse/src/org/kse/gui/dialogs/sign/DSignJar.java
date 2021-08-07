@@ -113,6 +113,7 @@ public class DSignJar extends JEscDialog {
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
+	private JLabel jlFileCount;
 
 	private PrivateKey signPrivateKey;
 	private KeyPairType signKeyPairType;
@@ -165,6 +166,10 @@ public class DSignJar extends JEscDialog {
 		jtfInputJar = new JTextField(30);
 		jtfInputJar.setCaretPosition(0);
 		jtfInputJar.setToolTipText(res.getString("DSignJar.jtfInputJar.tooltip"));
+		
+		jlFileCount = new JLabel();
+		String message = MessageFormat.format(res.getString("DSignJar.jlFileCount.text"), 0);
+		jlFileCount.setText(message);
 
 		jbInputJarBrowse = new JButton(res.getString("DSignJar.jbInputJarBrowse.text"));
 		PlatformUtil.setMnemonic(jbInputJarBrowse, res.getString("DSignJar.jbInputJarBrowse.mnemonic").charAt(0));
@@ -222,7 +227,8 @@ public class DSignJar extends JEscDialog {
 		pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
 		MiGUtil.addSeparator(pane, res.getString("DSignJar.jlFiles.text"));
 		pane.add(jlInputJar, "skip");
-		pane.add(jbInputJarBrowse, "wrap");
+		pane.add(jbInputJarBrowse, "flowx");
+		pane.add(jlFileCount, "cell 2 1, wrap");
 		pane.add(jlSignDirectly, "skip");
 		pane.add(jrbSignDirectly, "wrap");
 		pane.add(jlOutputJarFixes, "skip");
@@ -279,7 +285,7 @@ public class DSignJar extends JEscDialog {
 			}
 		});
 
-		setResizable(false);
+		setResizable(true);
 
 		getRootPane().setDefaultButton(jbOK);
 
@@ -579,12 +585,18 @@ public class DSignJar extends JEscDialog {
 					return;
 				}
 			}
-
 			CurrentDirectory.updateForFile(chosenFiles[0]);
-
 			// set input files from file selector
 			this.inputJarFiles = chooser.getSelectedFiles();
+			// update file count label
+			updateFileCount(chosenFiles.length);
 		}
+	}
+	
+	private void updateFileCount(int fileCount) {
+		// set message string
+		String message = MessageFormat.format(res.getString("DSignJar.jlFileCount.text"), fileCount);
+		jlFileCount.setText(message);
 	}
 
 	/**
