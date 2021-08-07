@@ -25,6 +25,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -35,13 +36,13 @@ import org.kse.crypto.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.sign.DSignJar;
 import org.kse.gui.dialogs.sign.DSignJarSigning;
 import org.kse.gui.error.DError;
+import org.kse.gui.error.DErrorCollection;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -55,8 +56,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
 	/**
 	 * Construct action.
 	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
+	 * @param kseFrame KeyStore Explorer frame
 	 */
 	public SignJarAction(KseFrame kseFrame) {
 		super(kseFrame);
@@ -64,10 +64,8 @@ public class SignJarAction extends KeyStoreExplorerAction {
 		putValue(LONG_DESCRIPTION, res.getString("SignJarAction.statusbar"));
 		putValue(NAME, res.getString("SignJarAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("SignJarAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/signjar.png"))));
+		putValue(SMALL_ICON,
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signjar.png"))));
 	}
 
 	/**
@@ -87,27 +85,31 @@ public class SignJarAction extends KeyStoreExplorerAction {
 				return;
 			}
 
+			// set the keystore state
 			KeyStore keyStore = currentState.getKeyStore();
+
+			// set the provider history
 			Provider provider = history.getExplicitProvider();
-			
+
 			// set the private key
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-			
+
 			// set the certificate
-			X509Certificate[] certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore
-					.getCertificateChain(alias)));
+			X509Certificate[] certs = X509CertUtil
+					.orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
 			// set the key pair type
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
-			
+
 			// set the signer
 			String signer = KSE.getFullApplicationName();
 
 			// get the jars, signatures, and time stamp
-			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias, certs, provider, signer);
+			DSignJar dSignJar = new DSignJar(frame, privateKey, keyPairType, alias);
 			dSignJar.setLocationRelativeTo(frame);
 			dSignJar.setVisible(true);
-			
+
+			// check if jar sign dialog was successful
 			if (!dSignJar.isSuccessful()) {
 				return;
 			}
@@ -118,37 +120,53 @@ public class SignJarAction extends KeyStoreExplorerAction {
 			List<File> outputJarFile = dSignJar.getOutputJar();
 			String tsaUrl = dSignJar.getTimestampingServerUrl();
 			DigestType digestType = dSignJar.getDigestType();
-			
-			// start the jar signing process			
-			DSignJarSigning dSignJarSigning = new DSignJarSigning(frame, inputJarFile, outputJarFile,
-					privateKey, certs, signatureType, signatureName, signer, digestType, tsaUrl, provider);
+
+			// start jar signing process
+			DSignJarSigning dSignJarSigning = new DSignJarSigning(frame, inputJarFile, outputJarFile, privateKey, certs,
+					signatureType, signatureName, signer, digestType, tsaUrl, provider);
 			dSignJarSigning.setLocationRelativeTo(frame);
 			dSignJarSigning.startDSignJarSigning();
 			dSignJarSigning.setVisible(true);
-			
-			if(!dSignJarSigning.isSuccessful()) {
+
+			// check if jar signing was successful
+			if (!dSignJarSigning.isSuccessful()) {
 				return;
 			}
-			
-			// check map size for testing place holder until dialog for logging created
-			if(dSignJarSigning.getFileExceptions().size() > 0) {
-				for (String key : dSignJarSigning.getFileExceptions().keySet()) {
-					System.out.println(key + " - " + dSignJarSigning.getFileExceptions().get(key));
-					System.out.println();
-				}
-			}
-		/*
-			System.out.println("Sig type: " + signatureType);
-			System.out.println("Sig name: " + signatureName);
-			System.out.println("Input length: " + inputJarFile.length);
-			System.out.println("Input length: " + inputJarFile[0].getAbsolutePath());
-			System.out.println("Output size: " + outputJarFile.size());
-			System.out.println("TSA: " + tsaUrl);
-			System.out.println("Digest type: " + digestType);
-*/
 
-			JOptionPane.showMessageDialog(frame, res.getString("SignJarAction.SignJarSuccessful.message"),
-					res.getString("SignJarAction.SignJar.Title"), JOptionPane.INFORMATION_MESSAGE);
+			// check if exceptions were caught during jar signing
+			if (dSignJarSigning.getFileExceptions().size() > 0) {
+				String strOK = res.getString("SignJarAction.ButtonOK.message");
+				String strView = res.getString("SignJarAction.ButtonView.message");
+				// set view and ok buttons
+				Object[] buttons = { strView, strOK };
+				// set file count
+				String fileCount = Integer.toString(inputJarFile.length);
+				// set exception count
+				String errorCount = Integer.toString(dSignJarSigning.getFileExceptions().size());
+				// set file and exception count to object array
+				Object[] objCount = { errorCount, fileCount };
+				// set message string
+				String message = MessageFormat.format(res.getString("SignJarAction.SignJarError.message"), objCount);
+				// set option dialog with message, view, and ok buttons
+				int selected = JOptionPane.showOptionDialog(frame, message,
+						res.getString("SignJarAction.SignJar.Title"), JOptionPane.DEFAULT_OPTION,
+						JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[1]);
+				// if view button pressed show error collection
+				if (selected == 0) {
+					DErrorCollection dError = new DErrorCollection(frame, dSignJarSigning.getFileExceptions());
+					dError.setVisible(true);
+				}
+			} else {
+				// set file count
+				String fileCount = Integer.toString(inputJarFile.length);
+				// set message string
+				String message = MessageFormat.format(res.getString("SignJarAction.SignJarSuccessful.message"),
+						fileCount);
+				// show message dialog
+				JOptionPane.showMessageDialog(frame, message, res.getString("SignJarAction.SignJar.Title"),
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		}
