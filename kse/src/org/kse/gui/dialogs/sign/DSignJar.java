@@ -26,21 +26,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.jar.JarFile;
@@ -62,18 +55,11 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Hex;
-import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.crypto.x509.X500NameUtils;
-import org.kse.crypto.x509.X509CertificateGenerator;
-import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
@@ -110,9 +96,6 @@ public class DSignJar extends JEscDialog {
 	private JLabel jlInputJar;
 	private JTextField jtfInputJar;
 	private JButton jbInputJarBrowse;
-	private JLabel jlInputJarFolder;
-	private JTextField jtfInputJarFolder;
-	private JButton jbInputJarFolderBrowse;
 	private JLabel jlPrefix;
 	private JTextField jtfPrefix;
 	private JLabel jlSuffix;
@@ -139,9 +122,6 @@ public class DSignJar extends JEscDialog {
 	private SignatureType signatureType;
 	private DigestType digestType;
 	private String tsaUrl;
-	private X509Certificate[] kseCerts;
-	private Provider kseProvider;
-	private String kseSigner;
 	private boolean successStatus = true;
 
 	/**
@@ -154,14 +134,11 @@ public class DSignJar extends JEscDialog {
 	 * @throws CryptoException A crypto problem was encountered constructing the
 	 *                         dialog
 	 */
-	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName,
-			X509Certificate[] certs, Provider provider, String signer) throws CryptoException {
+	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName)
+			throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.signPrivateKey = signPrivateKey;
 		this.signKeyPairType = signKeyPairType;
-		this.kseCerts = certs;
-		this.kseProvider = provider;
-		this.kseSigner = signer;
 		setTitle(res.getString("DSignJar.Title"));
 		initComponents(signatureName);
 	}
@@ -192,18 +169,6 @@ public class DSignJar extends JEscDialog {
 		jbInputJarBrowse = new JButton(res.getString("DSignJar.jbInputJarBrowse.text"));
 		PlatformUtil.setMnemonic(jbInputJarBrowse, res.getString("DSignJar.jbInputJarBrowse.mnemonic").charAt(0));
 		jbInputJarBrowse.setToolTipText(res.getString("DSignJar.jbInputJarBrowse.tooltip"));
-
-		jlInputJarFolder = new JLabel(res.getString("DSignJar.jlInputJarFolder.text"));
-		jtfInputJarFolder = new JTextField(30);
-		jtfInputJarFolder.setEnabled(false);
-		jtfInputJarFolder.setCaretPosition(0);
-		jtfInputJarFolder.setToolTipText(res.getString("DSignJar.jtfInputJarFolder.tooltip"));
-
-		jbInputJarFolderBrowse = new JButton(res.getString("DSignJar.jbInputJarFolderBrowse.text"));
-		PlatformUtil.setMnemonic(jbInputJarFolderBrowse,
-				res.getString("DSignJar.jbInputJarFolderBrowse.mnemonic").charAt(0));
-		jbInputJarFolderBrowse.setToolTipText(res.getString("DSignJar.jbInputJarFolderBrowse.tooltip"));
-		jbInputJarFolderBrowse.setEnabled(true);
 
 		jlPrefix = new JLabel(res.getString("DSignJar.jlPrefix.text"));
 		jtfPrefix = new JTextField("", 15);
@@ -256,9 +221,6 @@ public class DSignJar extends JEscDialog {
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
 		MiGUtil.addSeparator(pane, res.getString("DSignJar.jlFiles.text"));
-		pane.add(jlInputJarFolder, "skip");
-		pane.add(jtfInputJarFolder, "sgx");
-		pane.add(jbInputJarFolderBrowse, "wrap");
 		pane.add(jlInputJar, "skip");
 		pane.add(jbInputJarBrowse, "wrap");
 		pane.add(jlSignDirectly, "skip");
@@ -289,15 +251,6 @@ public class DSignJar extends JEscDialog {
 			try {
 				CursorUtil.setCursorBusy(DSignJar.this);
 				inputJarBrowsePressed();
-			} finally {
-				CursorUtil.setCursorFree(DSignJar.this);
-			}
-		});
-
-		jbInputJarFolderBrowse.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DSignJar.this);
-				inputJarFolderBrowsePressed();
 			} finally {
 				CursorUtil.setCursorFree(DSignJar.this);
 			}
@@ -458,9 +411,12 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * The function checks the following
-	 * <p> - dialog fields to ensure they are not empty
-	 * <p> - output file paths for overwriting files
-	 * <p> - signature for overwriting signatures
+	 * <p>
+	 * - dialog fields to ensure they are not empty
+	 * <p>
+	 * - output file paths for overwriting files
+	 * <p>
+	 * - signature for overwriting signatures
 	 */
 	private void okPressed() {
 		String signatureName = jtfSignatureName.getText().trim();
@@ -494,9 +450,9 @@ public class DSignJar extends JEscDialog {
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
+
 		// checks if file prefix or suffix fields were filled
-		if(jrbOutputJarFixes.isSelected()) {
+		if (jrbOutputJarFixes.isSelected()) {
 			if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
 				JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
 						JOptionPane.WARNING_MESSAGE);
@@ -523,8 +479,6 @@ public class DSignJar extends JEscDialog {
 			return;
 		}
 
-		//signJar();
-
 		closeDialog();
 	}
 
@@ -534,12 +488,11 @@ public class DSignJar extends JEscDialog {
 	 * @return <b>Boolean</b> true if successful false if no option chosen
 	 */
 	private boolean setOutputJarFiles(File[] files) {
-		// loop input files array and set output files array
 		String outputJarPrefix = jtfPrefix.getText().trim();
 		String outputJarSuffix = jtfSuffix.getText().trim();
 		final String FILE_SUFFIX = ".jar";
 		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
-		
+
 		// set input files array to output files list
 		this.outputJarFiles = new ArrayList<File>(Arrays.asList(files));
 
@@ -586,7 +539,9 @@ public class DSignJar extends JEscDialog {
 
 		for (int i = 0; i < files.length; i++) {
 			try {
+				// check if the existing signature matches the current signature
 				if (JarSigner.hasSignature(files[i], this.signatureName)) {
+					// check if overwrite is allowed and present checkbox to skip overwrite message
 					int selected = JOptionPane.showConfirmDialog(this, params, getTitle(), JOptionPane.YES_NO_OPTION);
 					if (selected != JOptionPane.YES_OPTION) {
 						return false;
@@ -624,12 +579,9 @@ public class DSignJar extends JEscDialog {
 					return;
 				}
 			}
-			
-			// remove folder text field content to better indicate the input file was selected
-			jtfInputJarFolder.setText("");
-			
+
 			CurrentDirectory.updateForFile(chosenFiles[0]);
-			
+
 			// set input files from file selector
 			this.inputJarFiles = chooser.getSelectedFiles();
 		}
@@ -667,55 +619,6 @@ public class DSignJar extends JEscDialog {
 	}
 
 	/**
-	 * Sign selected JARs
-	 */
-	private void signJar() {
-		for (int i = 0; i < inputJarFiles.length; i++) {
-			try {
-				if (inputJarFiles[i].equals(outputJarFiles.get(i))) {
-					JarSigner.sign(inputJarFiles[i], signPrivateKey, kseCerts, signatureType, signatureName, kseSigner,
-							digestType, tsaUrl, kseProvider);
-				} else {
-					JarSigner.sign(inputJarFiles[i], outputJarFiles.get(i), signPrivateKey, kseCerts, signatureType,
-							signatureName, kseSigner, digestType, tsaUrl, kseProvider);
-				}
-			} catch (Exception ex) {
-				DError.displayError(this, ex);
-			}
-		}
-	}
-
-	/**
-	 * Get input JAR folder and JAR files
-	 */
-	private void inputJarFolderBrowsePressed() {
-		final String FILE_SUFFIX = ".jar";
-		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
-		chooser.setCurrentDirectory(CurrentDirectory.get());
-
-		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJarFolder.Title"));
-		chooser.setMultiSelectionEnabled(false);
-
-		int rtnValue = chooser.showDialog(this, res.getString("DSignJar.InputJarChooser.button"));
-		if (rtnValue == JFileChooser.APPROVE_OPTION) {
-			File chosenFolder = chooser.getSelectedFile();
-			CurrentDirectory.update(chosenFolder);
-			jtfInputJarFolder.setText(chosenFolder.toString());
-			jtfInputJarFolder.setCaretPosition(0);
-
-			// set input files from filtered file list of the folder selection
-			this.inputJarFiles = chosenFolder.listFiles(new FilenameFilter() {
-				public boolean accept(File chosenFolder, String filename) {
-					return filename.endsWith(FILE_SUFFIX);
-				}
-			});
-		}
-	}
-	
-	
-	/**
 	 * Returns the current success status
 	 *
 	 * @return successStatus true if successful false if not
@@ -723,7 +626,6 @@ public class DSignJar extends JEscDialog {
 	public boolean isSuccessful() {
 		return successStatus;
 	}
-
 
 	/**
 	 * Call the close dialog method
@@ -747,28 +649,8 @@ public class DSignJar extends JEscDialog {
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
 		kpg.initialize(1024, new SecureRandom());
 		KeyPair kp = kpg.generateKeyPair();
-		Provider provider = new BouncyCastleProvider();
-		String signer = KSE.getFullApplicationName();
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
 
-		KeyPair caKeyPair = keyGen.genKeyPair();
-		X509CertificateGenerator certGen = new X509CertificateGenerator(X509CertificateVersion.VERSION3);
-		X509Certificate caCert = certGen.generateSelfSigned(new X500Name("cn=CA"), Date.from(Instant.now()),
-				Date.from(Instant.now().plus(3650, ChronoUnit.DAYS)), caKeyPair.getPublic(), caKeyPair.getPrivate(),
-				SignatureType.SHA224WITHRSAANDMGF1,
-				new BigInteger(Hex.decode("1122334455667788990011223344556677889900")));
-
-		KeyPair eeKeyPair = keyGen.genKeyPair();
-		X509Certificate eeCert = certGen.generate(new X500Name("cn=EE"),
-				X500NameUtils.x500PrincipalToX500Name(caCert.getSubjectX500Principal()), Date.from(Instant.now()),
-				Date.from(Instant.now().plus(365, ChronoUnit.DAYS)), eeKeyPair.getPublic(), eeKeyPair.getPrivate(),
-				SignatureType.SHA224WITHRSAANDMGF1,
-				new BigInteger(Hex.decode("0011223344556677889900112233445566778899")));
-
-		X509Certificate[] certs = new X509Certificate[] { eeCert, caCert };
-
-		DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name", certs,
-				provider, signer);
+		DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name");
 		DialogViewer.run(dialog);
 	}
 }
