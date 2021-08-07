@@ -48,7 +48,7 @@ public class DSignJarSigning extends JEscDialog {
 	private JProgressBar jpbSignJar;
 	private JButton jbCancel;
 
-	private Map<String, Exception> fileExceptions;
+	private Map<String, String> fileExceptions;
 	private File[] inputJarFiles;
 	private List<File> outputJarFiles;
 	private PrivateKey privateKey;
@@ -179,7 +179,7 @@ public class DSignJarSigning extends JEscDialog {
 	 *
 	 * @return Map of the generated signing errors.
 	 */
-	public Map<String, Exception> getFileExceptions() {
+	public Map<String, String> getFileExceptions() {
 		return fileExceptions;
 
 	}
@@ -195,8 +195,8 @@ public class DSignJarSigning extends JEscDialog {
 		@Override
 		public void run() {
 			try {
-				// set new hmap
-				fileExceptions = new HashMap<String, Exception>();
+				// set new hashmap
+				fileExceptions = new HashMap<String, String>();
 				for (int i = 0; i < inputJarFiles.length; i++) {
 					try {
 						if (inputJarFiles[i].equals(outputJarFiles.get(i))) {
@@ -209,13 +209,13 @@ public class DSignJarSigning extends JEscDialog {
 					} 
 					// Add any jar sign exceptions to the map
 					catch (NumberFormatException e) {
-						fileExceptions.put(inputJarFiles[i].getAbsolutePath(), e);
+						fileExceptions.put(inputJarFiles[i].getName(), e.toString());
 					} 
 					catch (NullPointerException e) {
-						fileExceptions.put(inputJarFiles[i].getAbsolutePath(), e);
+						fileExceptions.put(inputJarFiles[i].getName(), e.toString());
 					} 
 					catch (Exception e) {
-						fileExceptions.put(inputJarFiles[i].getAbsolutePath(), e);
+						fileExceptions.put(inputJarFiles[i].getName(), e.toString());
 					}
 					// update the progress bar
 					jpbSignJar.setValue(i);
