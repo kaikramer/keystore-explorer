@@ -30,8 +30,8 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
-	id 'nebula.ospackage' version '8.3.0'
-	id 'org.beryx.runtime' version '1.8.4'
+	id 'nebula.ospackage' version '8.5.6'
+	id 'org.beryx.runtime' version '1.12.5'
 }
 
 defaultTasks 'zip'
@@ -124,7 +124,7 @@ test {
 }
 
 jar {
-	archiveVersion.set(null)
+	archiveFileName = project.appJarName
 	manifest {
 		attributes('Built-JDK': System.getProperty('java.version'),
 					'Implementation-Title': project.appName,
@@ -180,7 +180,7 @@ task zip(type: Zip, dependsOn: prepareExe) {
 		}
 	}
 	into("$distFileNamePrefix/lib") {
-		from configurations.runtime
+		from configurations.runtimeClasspath.files
 	}
 	into("$distFileNamePrefix/licenses") {
 		from(licensesDir) {
@@ -198,7 +198,7 @@ task zip(type: Zip, dependsOn: prepareExe) {
 }
 
 task copyDependencies(type: Copy) {
-   from configurations.compile
+   from configurations.runtimeClasspath.files
    into dependenciesDir
 }
 
@@ -358,7 +358,7 @@ ospackage {
 
 	into "/opt/${packageName}"
 	from(jar.outputs.files)
-	from(configurations.runtime) {
+	from(configurations.runtimeClasspath.files) {
 		into 'lib'
 	}
 	from('lib') {
