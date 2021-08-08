@@ -32,10 +32,14 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.jar.JarFile;
 
 import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -46,6 +50,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -59,7 +64,6 @@ import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
-import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dialogs.DialogHelper;
@@ -80,19 +84,22 @@ import net.miginfocom.swing.MigLayout;
 public class DSignJar extends JEscDialog {
 	private static final long serialVersionUID = -5095469699284737624L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/sign/resources");
+	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
+
+	private JLabel jlOutputJarFixes;
+	private JRadioButton jrbOutputJarFixes;
+	private JLabel jlSignDirectly;
+	private JRadioButton jrbSignDirectly;
 
 	private JLabel jlInputJar;
 	private JTextField jtfInputJar;
 	private JButton jbInputJarBrowse;
-	private JLabel jlSignDirectly;
-	private JCheckBox jcbSignDirectly;
-	private JLabel jlOutputJar;
-	private JTextField jtfOutputJar;
-	private JButton jbOutputJarBrowse;
+	private JLabel jlPrefix;
+	private JTextField jtfPrefix;
+	private JLabel jlSuffix;
+	private JTextField jtfSuffix;
 	private JLabel jlSignatureName;
 	private JTextField jtfSignatureName;
 	private JLabel jlSignatureAlgorithm;
@@ -106,30 +113,27 @@ public class DSignJar extends JEscDialog {
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
+	private JLabel jlFileCount;
 
 	private PrivateKey signPrivateKey;
 	private KeyPairType signKeyPairType;
-	private File inputJarFile;
-	private File outputJarFile;
+	private File[] inputJarFiles;
+	private List<File> outputJarFiles;
 	private String signatureName;
 	private SignatureType signatureType;
 	private DigestType digestType;
 	private String tsaUrl;
-
+	private boolean successStatus = true;
 
 	/**
 	 * Creates a new DSignJar dialog.
 	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param signPrivateKey
-	 *            Signing key pair's private key
-	 * @param signKeyPairType
-	 *            Signing key pair's type
-	 * @param signatureName
-	 *            Default signature name
-	 * @throws CryptoException
-	 *             A crypto problem was encountered constructing the dialog
+	 * @param parent          The parent frame
+	 * @param signPrivateKey  Signing key pair's private key
+	 * @param signKeyPairType Signing key pair's type
+	 * @param signatureName   Default signature name
+	 * @throws CryptoException A crypto problem was encountered constructing the
+	 *                         dialog
 	 */
 	public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName)
 			throws CryptoException {
@@ -140,32 +144,48 @@ public class DSignJar extends JEscDialog {
 		initComponents(signatureName);
 	}
 
+	/**
+	 * Initializes the dialogue panel and associated elements
+	 * 
+	 * @param signatureName String
+	 * @throws CryptoException
+	 */
 	private void initComponents(String signatureName) throws CryptoException {
+		jlSignDirectly = new JLabel(res.getString("DSignJar.jlSignDirectly.text"));
+		jrbSignDirectly = new JRadioButton("", true);
+		jrbSignDirectly.setToolTipText(res.getString("DSignJar.jrbSignDirectly.tooltip"));
+
+		jlOutputJarFixes = new JLabel(res.getString("DSignJar.jlOutputJarFixes.text"));
+		jrbOutputJarFixes = new JRadioButton("", false);
+
+		ButtonGroup buttonGroup = new ButtonGroup();
+		buttonGroup.add(jrbSignDirectly);
+		buttonGroup.add(jrbOutputJarFixes);
 
 		jlInputJar = new JLabel(res.getString("DSignJar.jlInputJar.text"));
 		jtfInputJar = new JTextField(30);
 		jtfInputJar.setCaretPosition(0);
 		jtfInputJar.setToolTipText(res.getString("DSignJar.jtfInputJar.tooltip"));
+		
+		jlFileCount = new JLabel();
+		String message = MessageFormat.format(res.getString("DSignJar.jlFileCount.text"), 0);
+		jlFileCount.setText(message);
 
 		jbInputJarBrowse = new JButton(res.getString("DSignJar.jbInputJarBrowse.text"));
 		PlatformUtil.setMnemonic(jbInputJarBrowse, res.getString("DSignJar.jbInputJarBrowse.mnemonic").charAt(0));
 		jbInputJarBrowse.setToolTipText(res.getString("DSignJar.jbInputJarBrowse.tooltip"));
 
-		jlSignDirectly = new JLabel(res.getString("DSignJar.jlSignDirectly.text"));
-		jcbSignDirectly = new JCheckBox();
-		jcbSignDirectly.setSelected(true);
-		jcbSignDirectly.setToolTipText(res.getString("DSignJar.jcbSignDirectly.tooltip"));
+		jlPrefix = new JLabel(res.getString("DSignJar.jlPrefix.text"));
+		jtfPrefix = new JTextField("", 15);
+		jtfPrefix.setEnabled(false);
+		jtfPrefix.setCaretPosition(0);
+		jtfPrefix.setToolTipText(res.getString("DSignJar.jtfPrefix.tooltip"));
 
-		jlOutputJar = new JLabel(res.getString("DSignJar.jlOutputJar.text"));
-		jtfOutputJar = new JTextField(30);
-		jtfOutputJar.setEnabled(false);
-		jtfOutputJar.setCaretPosition(0);
-		jtfOutputJar.setToolTipText(res.getString("DSignJar.jtfOutputJar.tooltip"));
-
-		jbOutputJarBrowse = new JButton(res.getString("DSignJar.jbOutputJarBrowse.text"));
-		PlatformUtil.setMnemonic(jbOutputJarBrowse, res.getString("DSignJar.jbOutputJarBrowse.mnemonic").charAt(0));
-		jbOutputJarBrowse.setToolTipText(res.getString("DSignJar.jbOutputJarBrowse.tooltip"));
-		jbOutputJarBrowse.setEnabled(false);
+		jlSuffix = new JLabel(res.getString("DSignJar.jlSuffix.text"));
+		jtfSuffix = new JTextField("", 15);
+		jtfSuffix.setEnabled(false);
+		jtfSuffix.setCaretPosition(0);
+		jtfSuffix.setToolTipText(res.getString("DSignJar.jtfSuffix.tooltip"));
 
 		jlSignatureName = new JLabel(res.getString("DSignJar.jlSignatureName.text"));
 		jtfSignatureName = new JTextField(convertSignatureName(signatureName), 15);
@@ -207,13 +227,16 @@ public class DSignJar extends JEscDialog {
 		pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
 		MiGUtil.addSeparator(pane, res.getString("DSignJar.jlFiles.text"));
 		pane.add(jlInputJar, "skip");
-		pane.add(jtfInputJar, "sgx");
-		pane.add(jbInputJarBrowse, "wrap");
+		pane.add(jbInputJarBrowse, "flowx");
+		pane.add(jlFileCount, "cell 2 1, wrap");
 		pane.add(jlSignDirectly, "skip");
-		pane.add(jcbSignDirectly, "wrap");
-		pane.add(jlOutputJar, "skip");
-		pane.add(jtfOutputJar, "sgx");
-		pane.add(jbOutputJarBrowse, "wrap para");
+		pane.add(jrbSignDirectly, "wrap");
+		pane.add(jlOutputJarFixes, "skip");
+		pane.add(jrbOutputJarFixes, "wrap");
+		pane.add(jlPrefix, "skip");
+		pane.add(jtfPrefix, "wrap");
+		pane.add(jlSuffix, "skip");
+		pane.add(jtfSuffix, "wrap");
 		MiGUtil.addSeparator(pane, res.getString("DSignJar.jlSignature.text"));
 		pane.add(jlSignatureName, "skip");
 		pane.add(jtfSignatureName, "sgx, wrap");
@@ -239,27 +262,15 @@ public class DSignJar extends JEscDialog {
 			}
 		});
 
-		jcbSignDirectly.addItemListener(evt -> {
-			jtfOutputJar.setEnabled(!jcbSignDirectly.isSelected());
-			jbOutputJarBrowse.setEnabled(!jcbSignDirectly.isSelected());
-		});
-
-		jbOutputJarBrowse.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DSignJar.this);
-				outputJarBrowsePressed();
-			} finally {
-				CursorUtil.setCursorFree(DSignJar.this);
-			}
-		});
-
-		jcbAddTimestamp.addItemListener(evt -> jcbTimestampServerUrl.setEnabled(jcbAddTimestamp.isSelected()));
-
+		jcbAddTimestamp.addItemListener(evt -> enableDisableElements());
+		jrbSignDirectly.addItemListener(evt -> enableDisableElements());
+		jrbOutputJarFixes.addItemListener(evt -> enableDisableElements());
 
 		jbOK.addActionListener(evt -> okPressed());
 
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
@@ -274,7 +285,7 @@ public class DSignJar extends JEscDialog {
 			}
 		});
 
-		setResizable(false);
+		setResizable(true);
 
 		getRootPane().setDefaultButton(jbOK);
 
@@ -282,12 +293,25 @@ public class DSignJar extends JEscDialog {
 		setLocationRelativeTo(null);
 
 	}
+
+	/**
+	 * This function enables and disables elements in the dialog
+	 */
+	protected void enableDisableElements() {
+		jtfPrefix.setEnabled(jrbOutputJarFixes.isSelected());
+		jtfSuffix.setEnabled(jrbOutputJarFixes.isSelected());
+		jcbTimestampServerUrl.setEnabled(jcbAddTimestamp.isSelected());
+	}
+
+	/**
+	 * Convert the supplied signature name to make it valid for use with signing,
+	 * i.e. any characters that are not 'a-z', 'A-Z', '0-9', '_' or '-' are
+	 * converted to '_'
+	 * 
+	 * @param signatureName String
+	 * @return String
+	 */
 	private String convertSignatureName(String signatureName) {
-		/*
-		 * Convert the supplied signature name to make it valid for use with
-		 * signing, i.e. any characters that are not 'a-z', 'A-Z', '0-9', '_' or
-		 * '-' are converted to '_'
-		 */
 		StringBuilder sb = new StringBuilder(signatureName.length());
 
 		for (int i = 0; i < signatureName.length(); i++) {
@@ -302,6 +326,9 @@ public class DSignJar extends JEscDialog {
 		return sb.toString();
 	}
 
+	/**
+	 * Populate combination box with items
+	 */
 	private void populateDigestAlgs() {
 		jcbDigestAlgorithm.removeAllItems();
 
@@ -317,25 +344,25 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen input JAR file.
 	 *
-	 * @return Input JAR file
+	 * @return <b>File[]</b> input JAR file
 	 */
-	public File getInputJar() {
-		return inputJarFile;
+	public File[] getInputJar() {
+		return inputJarFiles;
 	}
 
 	/**
 	 * Get chosen output JAR file.
 	 *
-	 * @return Output JAR file
+	 * @return <b>List<File></b> output JAR file
 	 */
-	public File getOutputJar() {
-		return outputJarFile;
+	public List<File> getOutputJar() {
+		return outputJarFiles;
 	}
 
 	/**
 	 * Get chosen signature name.
 	 *
-	 * @return Signature name or null if dialog cancelled
+	 * @return <b>String</b> Signature name or null if dialog cancelled
 	 */
 	public String getSignatureName() {
 		return signatureName;
@@ -344,7 +371,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen signature type.
 	 *
-	 * @return Signature type or null if dialog cancelled
+	 * @return <b>SignatureType</b> or null if dialog cancelled
 	 */
 	public SignatureType getSignatureType() {
 		return signatureType;
@@ -353,7 +380,7 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen digest type.
 	 *
-	 * @return Digest type or null if dialog cancelled
+	 * @return <b>DigestType</b> or null if dialog cancelled
 	 */
 	public DigestType getDigestType() {
 		return digestType;
@@ -362,18 +389,21 @@ public class DSignJar extends JEscDialog {
 	/**
 	 * Get chosen TSA URL.
 	 *
-	 * @return TSA URL or null if dialog cancelled
+	 * @return <b>String</b> TSA URL or null if dialog cancelled
 	 */
 	public String getTimestampingServerUrl() {
 		return tsaUrl;
 	}
 
+	/**
+	 * Verify that the supplied signature name is valid for use in the signing of a
+	 * JAR file, ie: contains only alphanumeric characters and the characters '-' or
+	 * '_'
+	 * 
+	 * @param signatureName String
+	 * @return <b>Boolean</b>
+	 */
 	private boolean verifySignatureName(String signatureName) {
-		/*
-		 * Verify that the supplied signature name is valid for use in the
-		 * signing of a JAR file, ie contains only alphanumeric characters and
-		 * the characters '-' or '_'
-		 */
 		for (int i = 0; i < signatureName.length(); i++) {
 			char c = signatureName.charAt(i);
 
@@ -385,30 +415,203 @@ public class DSignJar extends JEscDialog {
 		return true;
 	}
 
+	/**
+	 * The function checks the following
+	 * <p>
+	 * - dialog fields to ensure they are not empty
+	 * <p>
+	 * - output file paths for overwriting files
+	 * <p>
+	 * - signature for overwriting signatures
+	 */
 	private void okPressed() {
-		String inputJar = jtfInputJar.getText().trim();
+		String signatureName = jtfSignatureName.getText().trim();
+		String outputJarPrefix = jtfPrefix.getText().trim();
+		String outputJarSuffix = jtfSuffix.getText().trim();
 
-		if (inputJar.length() == 0) {
+		// check if any files selected
+		if ((inputJarFiles == null) || (inputJarFiles.length == 0)) {
 			JOptionPane.showMessageDialog(this, res.getString("DSignJar.InputJarRequired.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
-		File inputJarFile = new File(inputJar);
-
-		if (!inputJarFile.isFile()) {
-			JOptionPane.showMessageDialog(this,
-					MessageFormat.format(res.getString("DSignJar.InputJarNotFile.message"), inputJarFile), getTitle(),
+		// check if signature field was filled
+		if (signatureName.length() == 0) {
+			JOptionPane.showMessageDialog(this, res.getString("DSignJar.ValReqSignatureName.message"), getTitle(),
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
+		// check if signature is verified
+		if (!verifySignatureName(signatureName)) {
+			JOptionPane.showMessageDialog(this, res.getString("DSignJar.ValJarSignatureName.message"), getTitle(),
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		// check if time stamp URL is empty
+		if (jcbAddTimestamp.isSelected() && jcbTimestampServerUrl.getSelectedItem().toString().isEmpty()) {
+			JOptionPane.showMessageDialog(this, res.getString("DSignJar.EmptyTimestampUrl.message"), getTitle(),
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		// checks if file prefix or suffix fields were filled
+		if (jrbOutputJarFixes.isSelected()) {
+			if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
+				JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+		}
+
+		this.signatureName = signatureName;
+		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
+		digestType = (DigestType) jcbDigestAlgorithm.getSelectedItem();
+
+		// check add time stamp is selected and assign value
+		if (jcbAddTimestamp.isSelected()) {
+			tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
+		}
+
+		// set output Jar files and Overwrite File if selected
+		if (!setOutputJarFiles(inputJarFiles)) {
+			return;
+		}
+
+		// check signature and Overwrite Signature if selected
+		if (!checkSignature(inputJarFiles)) {
+			return;
+		}
+
+		closeDialog();
+	}
+
+	/**
+	 * Set output JAR files and check files for overwrite
+	 * 
+	 * @return <b>Boolean</b> true if successful false if no option chosen
+	 */
+	private boolean setOutputJarFiles(File[] files) {
+		String outputJarPrefix = jtfPrefix.getText().trim();
+		String outputJarSuffix = jtfSuffix.getText().trim();
+		final String FILE_SUFFIX = ".jar";
+		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
+
+		// set input files array to output files list
+		this.outputJarFiles = new ArrayList<File>(Arrays.asList(files));
+
+		if (jrbOutputJarFixes.isSelected()) {
+			// loop through output JAR files
+			for (int i = 0; i < outputJarFiles.size(); i++) {
+				// set prefix and suffix to the file name
+				String fileBaseName = FileNameUtil.removeExtension(outputJarFiles.get(i).getName());
+				String outFileName = outputJarFiles.get(i).getParent() + "\\" + outputJarPrefix + fileBaseName
+						+ outputJarSuffix + FILE_SUFFIX;
+				// replace file object in arraylist
+				this.outputJarFiles.set(i, new File(outFileName));
+
+				if (!checkbox.isSelected()) {
+					// check if file exists
+					if (outputJarFiles.get(i).isFile()) {
+						String message = MessageFormat.format(res.getString("DSignJar.OverWriteOutputJarFile.message"),
+								outputJarFiles.get(i));
+						Object[] params = { message, checkbox };
+
+						// check if overwrite is allowed and present checkbox to skip overwrite message
+						int selected = JOptionPane.showConfirmDialog(this, params, getTitle(),
+								JOptionPane.YES_NO_OPTION);
+						if (selected != JOptionPane.YES_OPTION) {
+							this.outputJarFiles.clear();
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks to overwrite an existing signature
+	 * 
+	 * @return <b>Boolean</b> continues jar signing if true cancels process if false
+	 */
+	private boolean checkSignature(File[] files) {
+		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
+		String message = MessageFormat.format(res.getString("DSignJar.SignatureOverwrite.message"), this.signatureName);
+		Object[] params = { message, checkbox };
+
+		for (int i = 0; i < files.length; i++) {
+			try {
+				// check if the existing signature matches the current signature
+				if (JarSigner.hasSignature(files[i], this.signatureName)) {
+					// check if overwrite is allowed and present checkbox to skip overwrite message
+					int selected = JOptionPane.showConfirmDialog(this, params, getTitle(), JOptionPane.YES_NO_OPTION);
+					if (selected != JOptionPane.YES_OPTION) {
+						return false;
+					}
+				}
+			} catch (IOException ex) {
+				DError.displayError(this, ex);
+				return false;
+			}
+			// check to skip overwrite alert message
+			if (checkbox.isSelected()) {
+				return true;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Get input JAR files
+	 */
+	private void inputJarBrowsePressed() {
+		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
+		chooser.setCurrentDirectory(CurrentDirectory.get());
+		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJar.Title"));
+		chooser.setMultiSelectionEnabled(true);
+		chooser.setApproveButtonText(res.getString("DSignJar.InputJarChooser.button"));
+
+		int rtnValue = chooser.showOpenDialog(this);
+		if (rtnValue == JFileChooser.APPROVE_OPTION) {
+			File[] chosenFiles = chooser.getSelectedFiles();
+
+			// check if selected are JAR files
+			for (File file : chosenFiles) {
+				if (!validJAR(file)) {
+					return;
+				}
+			}
+			CurrentDirectory.updateForFile(chosenFiles[0]);
+			// set input files from file selector
+			this.inputJarFiles = chooser.getSelectedFiles();
+			// update file count label
+			updateFileCount(chosenFiles.length);
+		}
+	}
+	
+	private void updateFileCount(int fileCount) {
+		// set message string
+		String message = MessageFormat.format(res.getString("DSignJar.jlFileCount.text"), fileCount);
+		jlFileCount.setText(message);
+	}
+
+	/**
+	 * Check if a file is a valid JAR
+	 * 
+	 * @param File accepts a jar file
+	 * @return <b>Boolean</b> true if the file is a valid jar and false if not
+	 */
+	private boolean validJAR(File file) {
 		JarFile jarFile = null;
+
 		try {
-			jarFile = new JarFile(inputJarFile);
+			jarFile = new JarFile(file);
 		} catch (IOException ex) {
-			String problemStr = MessageFormat.format(res.getString("DSignJar.NoOpenJar.Problem"),
-					inputJarFile.getName());
+			String problemStr = MessageFormat.format(res.getString("DSignJar.NoOpenJar.Problem"), file.getName());
 
 			String[] causes = new String[] { res.getString("DSignJar.NotJar.Cause"),
 					res.getString("DSignJar.CorruptedJar.Cause") };
@@ -419,151 +622,34 @@ public class DSignJar extends JEscDialog {
 			dProblem.setLocationRelativeTo(this);
 			dProblem.setVisible(true);
 
-			return;
+			return false;
 		} finally {
 			IOUtils.closeQuietly(jarFile);
 		}
 
-		boolean signDirectly = jcbSignDirectly.isSelected();
-
-		File outputJarFile;
-		if (signDirectly) {
-			outputJarFile = inputJarFile;
-		} else {
-			String outputJar = jtfOutputJar.getText().trim();
-
-			if (outputJar.length() == 0) {
-				JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-
-			outputJarFile = new File(outputJar);
-		}
-
-		String signatureName = jtfSignatureName.getText().trim();
-
-		if (signatureName.length() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DSignJar.ValReqSignatureName.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (!verifySignatureName(signatureName)) {
-			JOptionPane.showMessageDialog(this, res.getString("DSignJar.ValJarSignatureName.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		if (!signDirectly && outputJarFile.isFile()) {
-			String message = MessageFormat.format(res.getString("DSignJar.OverWriteOutputJarFile.message"),
-					outputJarFile);
-
-			int selected = JOptionPane.showConfirmDialog(this, message, getTitle(), JOptionPane.YES_NO_OPTION);
-			if (selected != JOptionPane.YES_OPTION) {
-				return;
-			}
-		}
-
-		try {
-			if (JarSigner.hasSignature(new File(inputJar), signatureName)) {
-				String message = MessageFormat.format(res.getString("DSignJar.SignatureOverwrite.message"),
-						signatureName);
-				int selected = JOptionPane.showConfirmDialog(this, message, getTitle(), JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return;
-				}
-			}
-		} catch (IOException ex) {
-			DError.displayError(this, ex);
-			return;
-		}
-
-		if (jcbAddTimestamp.isSelected() && jcbTimestampServerUrl.getSelectedItem().toString().isEmpty()) {
-			JOptionPane.showMessageDialog(this, res.getString("DSignJar.EmptyTimestampUrl.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		this.inputJarFile = inputJarFile;
-		this.outputJarFile = outputJarFile;
-		this.signatureName = signatureName;
-		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
-		digestType = (DigestType) jcbDigestAlgorithm.getSelectedItem();
-		if (jcbAddTimestamp.isSelected()) {
-			tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
-		}
-
-		closeDialog();
+		return true;
 	}
 
-	private void inputJarBrowsePressed() {
-		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
-
-		File currentFile = new File(jtfInputJar.getText().trim());
-
-		if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
-			chooser.setCurrentDirectory(currentFile.getParentFile());
-			chooser.setSelectedFile(currentFile);
-		} else {
-			chooser.setCurrentDirectory(CurrentDirectory.get());
-		}
-
-		chooser.setDialogTitle(res.getString("DSignJar.ChooseInputJar.Title"));
-
-		chooser.setMultiSelectionEnabled(false);
-
-		chooser.setApproveButtonText(res.getString("DSignJar.InputJarChooser.button"));
-
-		int rtnValue = chooser.showOpenDialog(this);
-		if (rtnValue == JFileChooser.APPROVE_OPTION) {
-			File chosenFile = chooser.getSelectedFile();
-			CurrentDirectory.updateForFile(chosenFile);
-			jtfInputJar.setText(chosenFile.toString());
-			jtfInputJar.setCaretPosition(0);
-			populateOutputJarFileName(chosenFile);
-		}
+	/**
+	 * Returns the current success status
+	 *
+	 * @return successStatus true if successful false if not
+	 */
+	public boolean isSuccessful() {
+		return successStatus;
 	}
 
-	private void populateOutputJarFileName(File chosenFile) {
-		String fileBaseName = FileNameUtil.removeExtension(chosenFile.getName());
-		if (fileBaseName != null) {
-			String outFileName = fileBaseName + "_signed.jar";
-			File outFile = new File(chosenFile.getParentFile(), outFileName);
-			jtfOutputJar.setText(outFile.getPath());
-		}
-	}
-
-	private void outputJarBrowsePressed() {
-		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
-
-		File currentFile = new File(jtfOutputJar.getText());
-
-		if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
-			chooser.setCurrentDirectory(currentFile.getParentFile());
-			chooser.setSelectedFile(currentFile);
-		} else {
-			chooser.setCurrentDirectory(CurrentDirectory.get());
-		}
-
-		chooser.setDialogTitle(res.getString("DSignJar.ChooseOutputJar.Title"));
-
-		chooser.setMultiSelectionEnabled(false);
-
-		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-				: chooser.showDialog(this, res.getString("DSignJar.OutputJarChooser.button"));
-		if (rtnValue == JFileChooser.APPROVE_OPTION) {
-			File chosenFile = chooser.getSelectedFile();
-			CurrentDirectory.updateForFile(chosenFile);
-			jtfOutputJar.setText(chosenFile.toString());
-			jtfOutputJar.setCaretPosition(0);
-		}
-	}
-
+	/**
+	 * Call the close dialog method
+	 */
 	private void cancelPressed() {
+		successStatus = false;
 		closeDialog();
 	}
 
+	/**
+	 * Close the dialog method
+	 */
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
@@ -575,6 +661,7 @@ public class DSignJar extends JEscDialog {
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
 		kpg.initialize(1024, new SecureRandom());
 		KeyPair kp = kpg.generateKeyPair();
+
 		DSignJar dialog = new DSignJar(new JFrame(), kp.getPrivate(), KeyPairType.RSA, "signature name");
 		DialogViewer.run(dialog);
 	}
