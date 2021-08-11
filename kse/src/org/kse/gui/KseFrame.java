@@ -88,6 +88,8 @@ import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -2401,6 +2403,11 @@ public final class KseFrame implements StatusBar {
 		histories.add(history);
 
 		JTable jtKeyStore = createEmptyKeyStoreTable();
+		jtKeyStore.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+	        public void valueChanged(ListSelectionEvent event) {
+	        	setDefaultStatusBarText();
+	        }
+	    });
 		TableColumnAdjuster tca = new TableColumnAdjuster(jtKeyStore);
 		tca.adjustColumns();
 		keyStoreTables.add(jtKeyStore);
@@ -3065,9 +3072,10 @@ public final class KseFrame implements StatusBar {
 		}
 
 		KeyStoreType keyStoreType = currentState.getType();
-
+		String[] aliases = getSelectedEntryAliases();
+		
 		return MessageFormat.format(res.getString("KseFrame.entries.statusbar"),
-				keyStoreType.friendly(), size, history.getPath());
+				keyStoreType.friendly(), size, aliases.length, history.getPath());
 	}
 
 	/**
