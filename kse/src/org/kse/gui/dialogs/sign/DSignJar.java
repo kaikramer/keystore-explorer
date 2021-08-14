@@ -285,7 +285,7 @@ public class DSignJar extends JEscDialog {
 			}
 		});
 
-		setResizable(true);
+		setResizable(false);
 
 		getRootPane().setDefaultButton(jbOK);
 
@@ -540,13 +540,14 @@ public class DSignJar extends JEscDialog {
 	 */
 	private boolean checkSignature(File[] files) {
 		JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
-		String message = MessageFormat.format(res.getString("DSignJar.SignatureOverwrite.message"), this.signatureName);
-		Object[] params = { message, checkbox };
 
 		for (int i = 0; i < files.length; i++) {
 			try {
 				// check if the existing signature matches the current signature
 				if (JarSigner.hasSignature(files[i], this.signatureName)) {
+					String message = MessageFormat.format(res.getString("DSignJar.SignatureOverwrite.message"),
+							this.signatureName, files[i].getName());
+					Object[] params = { message, checkbox };
 					// check if overwrite is allowed and present checkbox to skip overwrite message
 					int selected = JOptionPane.showConfirmDialog(this, params, getTitle(), JOptionPane.YES_NO_OPTION);
 					if (selected != JOptionPane.YES_OPTION) {
@@ -593,6 +594,11 @@ public class DSignJar extends JEscDialog {
 		}
 	}
 	
+	/**
+	 * Update the dialog label for files selected
+	 * 
+	 * @param fileCount the array size of the files selected
+	 */
 	private void updateFileCount(int fileCount) {
 		// set message string
 		String message = MessageFormat.format(res.getString("DSignJar.jlFileCount.text"), fileCount);
