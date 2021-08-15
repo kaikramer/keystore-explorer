@@ -70,14 +70,11 @@ public class JavaFXFileChooser extends JFileChooser {
 		}
 	}
 
-	//private List<FileExtFilter> filters = new ArrayList<>();
 	private List<FileNameExtensionFilter> filters = new ArrayList<>();
 	private File selectedFile;
 	private File[] selectedFiles;
 	private String dialogTitle;
 	private File currentDirectory;
-	private Boolean isMultiFile;
-	private int fileSelectionMode;
 	public static final int	FILES_ONLY = 0;
 	public static final int	DIRECTORIES_ONLY = 1;
 	public static final int	FILES_AND_DIRECTORIES = 2;
@@ -98,32 +95,16 @@ public class JavaFXFileChooser extends JFileChooser {
 	public void setFileFilter(FileFilter filter) {
 		addChoosableFileFilter(filter);
 	}
-	
-	@Override
-	public int getFileSelectionMode() {
-		return fileSelectionMode;
-	}
-	
+
 	@Override
 	public File getSelectedFile() {
 		return selectedFile;
 	}
-
+	
 	@Override
 	public File[] getSelectedFiles() {
 		return selectedFiles;
 	}
-	
-	@Override
-	public void setFileSelectionMode(int mode) {
-		fileSelectionMode = mode;
-	}
-
-	@Override
-	public void setMultiSelectionEnabled(boolean b) {
-		isMultiFile = b;
-	}
-
 	@Override
 	public void setCurrentDirectory(File dir) {
 		currentDirectory = dir;
@@ -138,7 +119,7 @@ public class JavaFXFileChooser extends JFileChooser {
 	public void setSelectedFiles(File[] files) {
 		selectedFiles = files;
 	}
-
+	
 	@Override
 	public void setDialogTitle(String dialogTitle) {
 		this.dialogTitle = dialogTitle;
@@ -147,10 +128,10 @@ public class JavaFXFileChooser extends JFileChooser {
 	@Override
 	public int showDialog(Component parent, String approveButtonText) throws HeadlessException {
 		// text of approve button cannot be changed in JavaFX FileChooser
-		if (isMultiFile) {
+		if (isMultiSelectionEnabled()) {
 			return showMultipleFxDialog("showOpenMultipleDialog");
 		}
-		if(fileSelectionMode == DIRECTORIES_ONLY) {
+		if(getFileSelectionMode() == DIRECTORIES_ONLY) {
 			return showDirectoryFxDialog("showDialog");
 		}
 		return showFxDialog("showOpenDialog");
@@ -158,7 +139,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
 	@Override
 	public int showOpenDialog(Component parent) throws HeadlessException {
-		if (isMultiFile) {
+		if (isMultiSelectionEnabled()) {
 			return showMultipleFxDialog("showOpenMultipleDialog");
 		}
 		return showFxDialog("showOpenDialog");
@@ -399,22 +380,22 @@ public class JavaFXFileChooser extends JFileChooser {
 		}
 
 		//JavaFXFileChooser chooser = new JavaFXFileChooser();
-		JFileChooser chooser = FileChooserFactory.getLibFileChooser();
-		//chooser.addChoosableFileFilter(new FileNameExtensionFilter("Description1", new String[] { "jks" }));
+		JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
+		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Description1", new String[] { "jks" }));
 		//chooser.addChoosableFileFilter(new FileNameExtensionFilter("Description2", new String[] { "p12" }));
 		chooser.setDialogTitle("Dialog Title");
 		chooser.setCurrentDirectory(new File("."));
-		//chooser.setFileSelectionMode(JavaFXFileChooser.DIRECTORIES_ONLY);
+		//chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		// chooser.setSelectedFiles(new ArrayList<File>());
-		chooser.setMultiSelectionEnabled(false);
-		chooser.setAcceptAllFileFilterUsed(false);
-		//chooser.showDialog(null, "Button Text");
+		chooser.setMultiSelectionEnabled(true);
+		//chooser.setAcceptAllFileFilterUsed(false);
+		chooser.showDialog(null, "Button Text");
 
-		chooser.showSaveDialog(null);
-		File file = chooser.getSelectedFile();
+		//chooser.showSaveDialog(null);
+		//File file = chooser.getSelectedFile();
 
-		System.out.println(file.getAbsolutePath());
-		// System.out.println(chooser.getSelectedFiles().length);
+		//System.out.println(file.getAbsolutePath());
+		System.out.println(chooser.getSelectedFiles().length);
 
 		Method platformExitMethod = platformClass.getMethod("exit");
 		platformExitMethod.invoke(null);
