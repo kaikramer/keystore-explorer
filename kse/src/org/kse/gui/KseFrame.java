@@ -62,7 +62,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -792,7 +791,7 @@ public final class KseFrame implements StatusBar {
 		jmiFind.setToolTipText(null);
 		new StatusBarChangeHandler(jmiFind, (String) findAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmEdit.add(jmiFind);
-		
+
 		jmView = new JMenu(res.getString("KseFrame.jmView.text"));
 		PlatformUtil.setMnemonic(jmView, res.getString("KseFrame.jmView.mnemonic").charAt(0));
 
@@ -852,7 +851,7 @@ public final class KseFrame implements StatusBar {
 
 		jmTools = new JMenu(res.getString("KseFrame.jmTools.text"));
 		PlatformUtil.setMnemonic(jmTools, res.getString("KseFrame.jmTools.mnemonic").charAt(0));
-		
+
 
 
 		jmiGenerateKeyPair = new JMenuItem(generateKeyPairAction);
@@ -869,7 +868,7 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiGenerateSecretKey,
 				(String) generateSecretKeyAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmTools.add(jmiGenerateSecretKey);
-		
+
 		jmiGenerateDHParameters = new JMenuItem(generateDHParametersAction);
 		PlatformUtil.setMnemonic(jmiGenerateDHParameters, res.getString("KseFrame.jmiGenerateDHParameters.mnemonic")
 				.charAt(0));
@@ -1268,7 +1267,7 @@ public final class KseFrame implements StatusBar {
 				setDefaultStatusBarText();
 			}
 		});
-		
+
 		jbGenerateDHParameters = new JButton();
 		jbGenerateDHParameters.setAction(generateDHParametersAction);
 		jbGenerateDHParameters.setText(null);
@@ -1787,7 +1786,7 @@ public final class KseFrame implements StatusBar {
 
 	private void initKeyStorePopupMenu() {
 		jpmKeyStore = new JPopupMenu();
-		
+
 
 		jmiKeyStoreGenerateKeyPair = new JMenuItem(generateKeyPairAction);
 		PlatformUtil.setMnemonic(jmiGenerateKeyPair, res.getString("KseFrame.jmiGenerateKeyPair.mnemonic").charAt(0));
@@ -1977,7 +1976,7 @@ public final class KseFrame implements StatusBar {
 		jmiKeyPairVerifyCertificate.setToolTipText(null);
 		new StatusBarChangeHandler(jmiKeyPairVerifyCertificate, (String) verifyCertificateAction.getValue(Action.LONG_DESCRIPTION),
 				this);
-		 		
+
 		jmKeyPairImportCaReply = new JMenu(res.getString("KseFrame.jmKeyPairImportCaReply.text"));
 		jmKeyPairImportCaReply.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
 				getClass().getResource("images/menu/keypairimportcareply.png"))));
@@ -2027,7 +2026,7 @@ public final class KseFrame implements StatusBar {
 		jmiKeyPairSignCrl.setToolTipText(null);
 		new StatusBarChangeHandler(jmiKeyPairSignCrl, (String) signCrlAction.getValue(Action.LONG_DESCRIPTION),
 				this);
-		
+
 		jmiKeyPairSignNewKeyPair = new JMenuItem(signNewKeyPairAction);
 		jmiKeyPairSignNewKeyPair.setToolTipText(null);
 		new StatusBarChangeHandler(jmiKeyPairSignNewKeyPair,
@@ -2403,11 +2402,7 @@ public final class KseFrame implements StatusBar {
 		histories.add(history);
 
 		JTable jtKeyStore = createEmptyKeyStoreTable();
-		jtKeyStore.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-	        public void valueChanged(ListSelectionEvent event) {
-	        	setDefaultStatusBarText();
-	        }
-	    });
+		jtKeyStore.getSelectionModel().addListSelectionListener(event -> setDefaultStatusBarText());
 		TableColumnAdjuster tca = new TableColumnAdjuster(jtKeyStore);
 		tca.adjustColumns();
 		keyStoreTables.add(jtKeyStore);
@@ -2445,7 +2440,7 @@ public final class KseFrame implements StatusBar {
 
 	/**
 	 * Re-draw all keystore tables
-	 * @param applicationSettings
+	 * @param applicationSettings settings
 	 */
 	public void redrawKeyStores(ApplicationSettings applicationSettings) {
 		if (keyStoreTables != null) {
@@ -2716,7 +2711,7 @@ public final class KseFrame implements StatusBar {
 		ListSelectionModel selectionModel = jtKeyStore.getSelectionModel();
 		selectionModel.clearSelection();
 	}
-	
+
 	public void setSelectedEntriesByAliases(Set<String> aliasesToSelect) {
 		JTable jtKeyStore = getActiveKeyStoreTable();
 		jtKeyStore.requestFocusInWindow();
@@ -2799,7 +2794,7 @@ public final class KseFrame implements StatusBar {
 			updateCutCopyPasteControls();
 		}
 
-		// Can find 
+		// Can find
 		findAction.setEnabled(true);
 
 		// Can use tools on
@@ -3073,7 +3068,7 @@ public final class KseFrame implements StatusBar {
 
 		KeyStoreType keyStoreType = currentState.getType();
 		String[] aliases = getSelectedEntryAliases();
-		
+
 		return MessageFormat.format(res.getString("KseFrame.entries.statusbar"),
 				keyStoreType.friendly(), size, aliases.length, history.getPath());
 	}

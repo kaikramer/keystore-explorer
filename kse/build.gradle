@@ -22,8 +22,9 @@ import java.nio.file.Paths
 
 /*
 Notes:
-- Task 'nsis' requires an installation of NSIS 3 and its top-level directory added to the path.
+- Task 'innosetup' requires an installation of InnoSetup 6 and iscc.exe added to the path.
 - Tasks 'signapp' and 'dmg' work only under macOS.
+- For every task that creates the kse.exe (zip, nsis) rcedit-x64.exe from https://github.com/electron/rcedit has to be in the PATH
 */
 plugins {
 	id 'application'
@@ -67,8 +68,8 @@ ext {
 
 	// Directories
 	resDir = "$projectDir/res"
-	iconsDir = "$resDir/icons"
-	licensesDir = "$resDir/licenses"
+	iconsDir = "$projectDir/icons"
+	licensesDir = "$projectDir/licenses"
 	readmesDir = "$resDir/readmes"
 	launcherOutDir = "$buildDir/launcher"
 	appBundleDir = "$buildDir/appBundle"
@@ -151,7 +152,6 @@ task prepareExe() {
 		}
 		exec {
 			workingDir projectDir
-			// rcedit-x64.exe from https://github.com/electron/rcedit has to be in the PATH
 			commandLine "rcedit-x64.exe",
 						"$launcherOutDir\\$appExe",
 						'--set-version-string', 'FileDescription', "$appName",
@@ -186,7 +186,7 @@ task zip(type: Zip, dependsOn: prepareExe) {
 		from(licensesDir) {
 			include '**/*.txt'
 			if (!file("lib/darcula.jar").exists()) {
-				exclude 'license-darcula.txt'
+				exclude 'darcula.txt'
 			}
 		}
 	}
@@ -202,30 +202,27 @@ task copyDependencies(type: Copy) {
    into dependenciesDir
 }
 
-task nsis(dependsOn: [prepareExe, copyDependencies]) {
+task innosetup(dependsOn: [jar, prepareExe, copyDependencies]) {
 	doLast {
-		def nsisScript = "kse.nsi"
 		mkdir distDir
 		copy {
-			from("nsis/${nsisScript}.template")
-			rename("${nsisScript}.template", nsisScript)
+			from("innosetup/setup.iss.template")
+			rename("setup.iss.template", "setup.iss")
 			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
-				KSE_NAME: appName,
-				KSE_VERSION: appVersion,
-				KSE_SIMPLE_VERSION: appSimpleVersion,
-				KSE_APP_USER_MODEL_ID: appUserModelId,
-				ICONS_DIR: iconsDir.toString(),
-				LICENSES_DIR: licensesDir.toString(),
-				JAR_DIR: libsDir.toString(),
-				LIB_DIR: dependenciesDir.toString(),
-				LAUNCH4J_DIR: launcherOutDir.toString(),
-				DIST_DIR: distDir.toString()
+					KSE_VERSION: appVersion,
+					KSE_APP_USER_MODEL_ID: appUserModelId,
+					KSE_JAR: jar.archiveFile.get().asFile.getAbsolutePath(),
+					LIB_DIR: dependenciesDir.toString(),
+					LAUNCHER: "$launcherOutDir\\$appExe".toString(),
+					ICONS_DIR: iconsDir.toString(),
+					LICENSES_DIR: licensesDir.toString(),
+					DIST_DIR: distDir.toString()
 			])
-			into("nsis")
+			into("innosetup")
 		}
 		exec {
-			workingDir "$projectDir/nsis"
-			commandLine "makensis", "/V2", nsisScript
+			workingDir "$projectDir/innosetup"
+			commandLine "c:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe", "setup.iss"
 		}
 	}
 }
@@ -367,7 +364,7 @@ ospackage {
 	from(licensesDir) {
 		include '**/*.txt'
 		if (!file("lib/darcula.jar").exists()) {
-			exclude 'license-darcula.txt'
+			exclude 'darcula.txt'
 		}
 		into 'licenses'
 		fileType LICENSE

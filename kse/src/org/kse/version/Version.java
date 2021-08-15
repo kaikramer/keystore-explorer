@@ -67,9 +67,9 @@ public class Version implements Comparable<Object>, Serializable {
 
 		while (strTok.hasMoreTokens()) {
 			try {
-				Integer i = new Integer(strTok.nextToken());
+				int i = Integer.parseInt(strTok.nextToken());
 
-				if (i.intValue() < 0) {
+				if (i < 0) {
 					throw new VersionException(MessageFormat.format(res.getString("NoParseVersion.exception.message"),
 							version, delimiters));
 				}

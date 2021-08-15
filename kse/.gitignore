@@ -1,10 +1,11 @@
 /bin
 /build
 /build-test
+/out
 /dist
 /api
 /lib/AppleJavaExtensions.jar
-/nsis/kse.nsi
+/innosetup/setup.iss
 /dmg/appdmg.json
 /dmg/.DS_Store
 /create-dmg
