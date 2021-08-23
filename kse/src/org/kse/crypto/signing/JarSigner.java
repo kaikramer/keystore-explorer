@@ -19,35 +19,8 @@
  */
 package org.kse.crypto.signing;
 
-import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.LineNumberReader;
-import java.io.StringReader;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
-
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DERSet;
@@ -73,6 +46,34 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.utilities.io.CopyUtil;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.LineNumberReader;
+import java.io.StringReader;
+import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+
+import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -126,7 +127,7 @@ public class JarSigner {
 	private static final String SIGNATURE_EXT = "SF";
 
 	// Meta inf file location
-	private static final String METAINF_FILE_LOCATION = "META-INF/{0}.{1}";
+	private static final String METAINF_FILE_LOC = "META-INF/{0}.{1}";
 
 	private JarSigner() {
 	}
@@ -164,7 +165,7 @@ public class JarSigner {
 		sign(jsrFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType, tsaUrl,
 				provider);
 
-		CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jsrFile));
+		FileUtils.copyFile(tmpFile, jsrFile);
 
 		tmpFile.delete();
 	}
@@ -262,9 +263,9 @@ public class JarSigner {
 			String digestMfStr = new String(Base64.encode(digestMf));
 
 			// Get base 64 encoded digest of manifest's main attributes for inclusion in signature file
-			byte[] mainfestMainAttrs = manifestMainAttrs.getBytes();
+			byte[] manifestMainAttrsBytes = manifestMainAttrs.getBytes();
 
-			byte[] digestMfMainAttrs = DigestUtil.getMessageDigest(mainfestMainAttrs, digestType);
+			byte[] digestMfMainAttrs = DigestUtil.getMessageDigest(manifestMainAttrsBytes, digestType);
 			String digestMfMainAttrsStr = new String(Base64.encode(digestMfMainAttrs));
 
 			// Write out Manifest Digest, Created By and Signature Version to start of signature file
@@ -348,9 +349,9 @@ public class JarSigner {
 				JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
 				if (!jarEntry.isDirectory()
 						&& (jarEntry.getName().equalsIgnoreCase(
-								MessageFormat.format(METAINF_FILE_LOCATION, signatureName, DSA_SIG_BLOCK_EXT)))
+								MessageFormat.format(METAINF_FILE_LOC, signatureName, DSA_SIG_BLOCK_EXT)))
 						|| (jarEntry.getName().equalsIgnoreCase(
-								MessageFormat.format(METAINF_FILE_LOCATION, signatureName, RSA_SIG_BLOCK_EXT)))) {
+								MessageFormat.format(METAINF_FILE_LOC, signatureName, RSA_SIG_BLOCK_EXT)))) {
 					return true;
 				}
 			}
@@ -576,36 +577,41 @@ public class JarSigner {
 				String entryName = jarEntry.getName();
 
 				// Signature files not to write across
-				String sigFileLocation = MessageFormat.format(METAINF_FILE_LOCATION, signatureName, SIGNATURE_EXT)
+				String sigFileLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, SIGNATURE_EXT)
 						.toUpperCase();
-				String dsaSigBlockLocation = MessageFormat.format(METAINF_FILE_LOCATION, signatureName,
-						DSA_SIG_BLOCK_EXT);
-				String rsaSigBlockLocation = MessageFormat.format(METAINF_FILE_LOCATION, signatureName,
-						RSA_SIG_BLOCK_EXT);
+				String dsaSigBlockLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, DSA_SIG_BLOCK_EXT);
+				String rsaSigBlockLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, RSA_SIG_BLOCK_EXT);
 
 				// Do not write across existing manifest or matching signature files
-				if ((!entryName.equalsIgnoreCase(MANIFEST_LOCATION)) && (!entryName.equalsIgnoreCase(sigFileLocation))
+				if ((!entryName.equalsIgnoreCase(MANIFEST_LOCATION))
+						&& (!entryName.equalsIgnoreCase(sigFileLocation))
 						&& (!entryName.equalsIgnoreCase(dsaSigBlockLocation))
 						&& (!entryName.equalsIgnoreCase(rsaSigBlockLocation))) {
 					// New JAR entry based on original
-					JarEntry newJarEntry = new JarEntry(jarEntry.getName());
-					newJarEntry.setMethod(jarEntry.getMethod());
-					newJarEntry.setCompressedSize(jarEntry.getCompressedSize());
-					newJarEntry.setCrc(jarEntry.getCrc());
-					jos.putNextEntry(newJarEntry);
-
-					try (InputStream jis = jar.getInputStream(jarEntry)) {
-						byte[] buffer = new byte[2048];
-						int read = -1;
-
-						while ((read = jis.read(buffer)) != -1) {
-							jos.write(buffer, 0, read);
-						}
-
-						jos.closeEntry();
-					}
+					transferJarEntry(jar, jos, jarEntry);
 				}
+			} else {
+				// simply transfer directory
+				transferJarEntry(jar, jos, jarEntry);
 			}
+		}
+	}
+
+	private static void transferJarEntry(JarFile jar, JarOutputStream jos, JarEntry jarEntry) throws IOException {
+		JarEntry newJarEntry = new JarEntry(jarEntry.getName());
+		newJarEntry.setMethod(jarEntry.getMethod());
+		newJarEntry.setTime(jarEntry.getTime());
+		newJarEntry.setComment(jarEntry.getComment());
+		newJarEntry.setExtra(jarEntry.getExtra());
+		if (jarEntry.getMethod() == JarEntry.STORED) {
+			newJarEntry.setSize(jarEntry.getSize());
+			newJarEntry.setCrc(jarEntry.getCrc());
+		}
+		jos.putNextEntry(newJarEntry);
+
+		try (InputStream is = jar.getInputStream(jarEntry)) {
+			IOUtils.copy(is, jos);
+			jos.closeEntry();
 		}
 	}
 
@@ -637,7 +643,7 @@ public class JarSigner {
 	private static void writeSignatureFile(byte[] sf, String signatureName, JarOutputStream jos) throws IOException {
 
 		// Signature file entry
-		JarEntry sfJarEntry = new JarEntry(MessageFormat.format(METAINF_FILE_LOCATION, signatureName, SIGNATURE_EXT)
+		JarEntry sfJarEntry = new JarEntry(MessageFormat.format(METAINF_FILE_LOC, signatureName, SIGNATURE_EXT)
 				.toUpperCase());
 		jos.putNextEntry(sfJarEntry);
 
@@ -671,7 +677,7 @@ public class JarSigner {
 		}
 
 		// Signature block entry
-		JarEntry bkJarEntry = new JarEntry(MessageFormat.format(METAINF_FILE_LOCATION, signatureName, extension)
+		JarEntry bkJarEntry = new JarEntry(MessageFormat.format(METAINF_FILE_LOC, signatureName, extension)
 				.toUpperCase());
 		jos.putNextEntry(bkJarEntry);
 
