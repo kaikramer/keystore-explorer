@@ -97,6 +97,7 @@ Type: files; Name: "{app}\lib\*.jar"
 
 [Files]
 Source: "%LAUNCHER%"; DestDir: "{app}"
+Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"
 Source: "%KSE_JAR%"; DestDir: "{app}"
 Source: "%LIB_DIR%\*"; DestDir: "{app}\lib"
 Source: "%LICENSES_DIR%\*"; DestDir: "{app}\licenses"
