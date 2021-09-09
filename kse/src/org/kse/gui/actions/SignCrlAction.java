@@ -89,6 +89,11 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 			}
 			KeyStore keyStore = currentState.getKeyStore();
 
+			String provider = BOUNCY_CASTLE.jce();
+			if (history.getExplicitProvider() != null) {
+				provider = history.getExplicitProvider().getName();
+			}
+
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			X509Certificate[] certs = X509CertUtil
 					.orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
@@ -110,7 +115,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 				Map<BigInteger, RevokedEntry> mapRevoked = dSignCrl.getMapRevokedEntry();
 
 				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, signatureAlgorithm,
-						mapRevoked);
+						mapRevoked, provider);
 				String newFileName = X509CertUtil.getShortName(certs[0]);
 				DExportCrl dExportCrl = new DExportCrl(frame, newFileName);
 				dExportCrl.setLocationRelativeTo(frame);
@@ -156,7 +161,8 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 	}
 
 	private X509CRL signCrl(BigInteger number, Date effectiveDate, Date nextUpdate, X509Certificate caCert,
-			PrivateKey caPrivateKey, String signatureAlgorithm, Map<BigInteger, RevokedEntry> mapRevokedCertificate)
+			PrivateKey caPrivateKey, String signatureAlgorithm, Map<BigInteger, RevokedEntry> mapRevokedCertificate,
+			String provider)
 			throws NoSuchAlgorithmException, OperatorCreationException, CRLException, IOException {
 
 		X509v2CRLBuilder crlGen = new JcaX509v2CRLBuilder(caCert.getSubjectX500Principal(), effectiveDate);
@@ -179,7 +185,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 		crlGen.addExtension(Extension.cRLNumber, false, new CRLNumber(number));
 
 		X509CRLHolder crl = crlGen.build(
-				new JcaContentSignerBuilder(signatureAlgorithm).setProvider(BOUNCY_CASTLE.jce()).build(caPrivateKey));
+				new JcaContentSignerBuilder(signatureAlgorithm).setProvider(provider).build(caPrivateKey));
 		return new JcaX509CRLConverter().setProvider(BOUNCY_CASTLE.jce()).getCRL(crl);
 	}
 
