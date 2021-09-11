@@ -22,17 +22,19 @@ import java.nio.file.Paths
 
 /*
 Notes:
-- Task 'innosetup' requires an installation of InnoSetup 6 and iscc.exe added to the path.
+======
+- Task 'innosetup' requires an installation of InnoSetup 6 and ISCC.exe added to the PATH.
+- For every task that creates the kse.exe (zip, innosetup, prepareExe)
+  rcedit-x64.exe from https://github.com/electron/rcedit has to be in the PATH
 - Tasks 'signapp' and 'dmg' work only under macOS.
-- For every task that creates the kse.exe (zip, nsis) rcedit-x64.exe from https://github.com/electron/rcedit has to be in the PATH
 */
+
 plugins {
 	id 'application'
 	id 'java'
 	id 'eclipse'
 	id 'idea'
 	id 'nebula.ospackage' version '8.5.6'
-	id 'org.beryx.runtime' version '1.12.5'
 }
 
 defaultTasks 'zip'
@@ -72,6 +74,7 @@ ext {
 	licensesDir = "$projectDir/licenses"
 	readmesDir = "$resDir"
 	launcherOutDir = "$buildDir/launcher"
+	jlinkOutDir = "$buildDir/jlink"
 	appBundleDir = "$buildDir/appBundle"
 	distDir = "$buildDir/$distsDirName"
 	dmgDir = "$projectDir/dmg"
@@ -205,7 +208,41 @@ task copyDependencies(type: Copy) {
    into dependenciesDir
 }
 
-task innosetup(dependsOn: [jar, prepareExe, copyDependencies]) {
+task jlink(type: Exec) {
+	outputs.dir(jlinkOutDir)
+	delete "$jlinkOutDir/jre"
+
+	onlyIf {
+		JavaVersion.current() != JavaVersion.VERSION_1_8
+	}
+
+	workingDir "$buildDir"
+
+	def javaHome = System.properties.'java.home'
+	commandLine "${javaHome}/bin/jlink",
+		'--module-path', "${javaHome}/jmods",
+		'--compress', '2',
+		'--strip-debug',
+		'--no-header-files',
+		'--no-man-pages',
+		'--include-locales=en,de,fr',
+		'--add-modules',
+					'java.datatransfer,' +
+					'java.desktop,' +
+					'java.logging,' +
+					'java.naming,' +
+					'java.prefs,' +
+					'java.scripting,' +
+					'jdk.localedata,' +
+					'jdk.charsets,' +
+					'jdk.crypto.ec,' +
+					'jdk.security.auth,' +
+					'jdk.crypto.cryptoki,' +
+					'jdk.crypto.mscapi',
+		'--output', "$jlinkOutDir/jre"
+}
+
+task innosetup(dependsOn: [jar, prepareExe, jlink, copyDependencies]) {
 	doLast {
 		mkdir distDir
 		copy {
@@ -219,6 +256,7 @@ task innosetup(dependsOn: [jar, prepareExe, copyDependencies]) {
 					LAUNCHER: "$launcherOutDir\\$appExe".toString(),
 					JAVA_INFO_DLL: "$resDir\\JavaInfo.dll".toString(),
 					ICONS_DIR: iconsDir.toString(),
+					JRE_DIR: "$jlinkOutDir\\jre".toString(),
 					LICENSES_DIR: licensesDir.toString(),
 					DIST_DIR: distDir.toString()
 			])
@@ -226,7 +264,7 @@ task innosetup(dependsOn: [jar, prepareExe, copyDependencies]) {
 		}
 		exec {
 			workingDir "$projectDir/innosetup"
-			commandLine "c:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe", "setup.iss"
+			commandLine "ISCC.exe", "setup.iss"
 		}
 	}
 }
