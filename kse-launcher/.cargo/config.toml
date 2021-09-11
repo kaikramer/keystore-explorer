@@ -1,5 +1,6 @@
 [build]
-target = "i686-pc-windows-gnu"
+#target = "i686-pc-windows-gnu"
+target = "x86_64-pc-windows-gnu"
 
 [profile.release]
 opt-level = 'z'   # optimize for size
