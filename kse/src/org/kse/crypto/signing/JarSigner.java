@@ -19,33 +19,7 @@
  */
 package org.kse.crypto.signing;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.DERSet;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.CMSAttributes;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.CMSAttributeTableGenerator;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
-import org.bouncycastle.cms.SignerInfoGenerator;
-import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.DigestCalculatorProvider;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.encoders.Base64;
-import org.kse.crypto.CryptoException;
-import org.kse.crypto.digest.DigestType;
-import org.kse.crypto.digest.DigestUtil;
-import org.kse.utilities.io.CopyUtil;
+import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,6 +35,7 @@ import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -73,7 +48,37 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.DERSet;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSAttributeTableGenerator;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.DefaultCMSSignatureEncryptionAlgorithmFinder;
+import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
+import org.bouncycastle.cms.SignerInfoGenerator;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.util.encoders.Base64;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.digest.DigestUtil;
+import org.kse.utilities.io.CopyUtil;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -740,7 +745,24 @@ public class JarSigner {
 			if (provider != null) {
 				csb.setProvider(provider);
 			}
-			JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv);
+
+			// Workaround for display issue in verify function of jarsigner for Java <= 15
+			// see https://github.com/kaikramer/keystore-explorer/issues/293
+			JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv,
+					new DefaultCMSSignatureEncryptionAlgorithmFinder() {
+						@Override
+						public AlgorithmIdentifier findEncryptionAlgorithm(AlgorithmIdentifier signatureAlgorithm) {
+							List<ASN1ObjectIdentifier> shaRsaIdentifiers = Arrays.asList(
+									PKCSObjectIdentifiers.sha256WithRSAEncryption,
+									PKCSObjectIdentifiers.sha384WithRSAEncryption,
+									PKCSObjectIdentifiers.sha512WithRSAEncryption);
+
+							// map OIDs for RSAwithSHA256/384/512 to OID for RSAEncryption
+							return shaRsaIdentifiers.contains(signatureAlgorithm.getAlgorithm()) ?
+									new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE) :
+									super.findEncryptionAlgorithm(signatureAlgorithm);
+						}
+					});
 
 			// remove cmsAlgorithmProtect for compatibility reasons
 			SignerInfoGenerator sigGen = siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]);
