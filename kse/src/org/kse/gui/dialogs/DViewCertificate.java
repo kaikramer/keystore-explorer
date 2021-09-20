@@ -393,7 +393,9 @@ public class DViewCertificate extends JEscDialog {
 
 		setResizable(false);
 
-		jtrHierarchy.setSelectionRow(0);
+		// select (first) leaf in certificate tree
+		DefaultMutableTreeNode firstLeaf = ((DefaultMutableTreeNode) topNode).getFirstLeaf();
+		jtrHierarchy.setSelectionPath(new TreePath(firstLeaf.getPath()));
 
 		getRootPane().setDefaultButton(jbOK);
 

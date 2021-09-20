@@ -445,6 +445,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
 		keyGen.initialize(1024);
 		KeyPair keyPair = keyGen.genKeyPair();
