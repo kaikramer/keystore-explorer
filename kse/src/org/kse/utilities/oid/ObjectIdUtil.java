@@ -136,7 +136,7 @@ public class ObjectIdUtil {
 		}
 	}
 
-	private static Map<String, String> oidToNameMapping = new HashMap<>();
+	public static final Map<String, String> oidToNameMapping = new HashMap<>();
 	static {
 		oidToNameMapping.put("0.2.262.1.10", "Telesec");
 		oidToNameMapping.put("0.2.262.1.10.0", "Extension");

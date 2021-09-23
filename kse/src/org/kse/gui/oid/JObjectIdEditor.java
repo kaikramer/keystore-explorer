@@ -19,13 +19,14 @@
  */
 package org.kse.gui.oid;
 
+import java.awt.Dimension;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.utilities.oid.InvalidObjectIdException;
 import org.kse.utilities.oid.ObjectIdUtil;
@@ -44,7 +45,7 @@ public class JObjectIdEditor extends JPanel {
 	private JComboBox<?> jcbFirstArc;
 	private JLabel jlFirstPeriod;
 	private JComboBox<Integer> jcbSecondArc;
-	private JTextField jtfRemainingArcs;
+	private JComboBox<ObjectOid> jtfRemainingArcs;
 	private JLabel jlSecondPeriod;
 
 	private ASN1ObjectIdentifier objectId;
@@ -85,12 +86,15 @@ public class JObjectIdEditor extends JPanel {
 
 		jlSecondPeriod = new JLabel(".");
 
-		jtfRemainingArcs = new JTextField(15);
+		jtfRemainingArcs = new JComboBox<ObjectOid>();
+		jtfRemainingArcs.setMinimumSize(new Dimension(300,20));
+		jtfRemainingArcs.setEditable(true);
 		jtfRemainingArcs.setToolTipText(res.getString("DObjectIdChooser.jtfRemainingArcs.tooltip"));
 
 		populateSecondArc();
 
 		jcbFirstArc.addItemListener(e -> populateSecondArc());
+		jcbSecondArc.addItemListener(e -> updateRemainingArcs());
 
 		// layout
 		setLayout(new MigLayout("insets 0", "", ""));
@@ -101,6 +105,25 @@ public class JObjectIdEditor extends JPanel {
 		add(jtfRemainingArcs, "");
 
 		populate(objectId);
+	}
+
+	private void updateRemainingArcs() {
+		String firstArcS = "" + jcbFirstArc.getSelectedItem();
+		String secondArcS = "" + jcbSecondArc.getSelectedItem();
+		loadRemainingArcs(firstArcS + "." + secondArcS+ ".");		
+	}
+	
+	private void loadRemainingArcs(String prefix) {
+		
+		ObjectOid [] oids = ObjectIdUtil.oidToNameMapping.entrySet()
+		.stream()
+		.filter(e -> e.getKey().startsWith(prefix))
+		.map(e -> new ObjectOid(prefix, e.getKey(),e.getValue()))
+		.sorted()
+		.collect(Collectors.toList())
+		.toArray(new ObjectOid[0]);
+		
+		jtfRemainingArcs.setModel(new DefaultComboBoxModel<ObjectOid>(oids));
 	}
 
 	private void populate(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
@@ -122,8 +145,8 @@ public class JObjectIdEditor extends JPanel {
 					remainingArcs += ".";
 				}
 			}
-
-			jtfRemainingArcs.setText(remainingArcs);
+			loadRemainingArcs(arcs[0] + "." + arcs[1] + ".");
+			jtfRemainingArcs.setSelectedItem(new ObjectOid("",remainingArcs,""));
 		}
 	}
 
@@ -150,6 +173,7 @@ public class JObjectIdEditor extends JPanel {
 		} else {
 			jcbSecondArc.setSelectedIndex(0);
 		}
+		updateRemainingArcs();
 	}
 
 	/**
@@ -161,7 +185,16 @@ public class JObjectIdEditor extends JPanel {
 	public ASN1ObjectIdentifier getObjectId() throws InvalidObjectIdException {
 		String firstArc = "" + jcbFirstArc.getSelectedItem();
 		String secondArc = "" + jcbSecondArc.getSelectedItem();
-		String remainingArcs = jtfRemainingArcs.getText().trim();
+		String remainingArcs = "";
+		Object obj = jtfRemainingArcs.getSelectedItem();
+		if (obj instanceof String) {
+			remainingArcs = ((String) obj).trim();
+		}
+		else {
+			ObjectOid oid = (ObjectOid) jtfRemainingArcs.getSelectedItem();		
+			remainingArcs = oid.getIdentifier().trim();			
+		}
+
 
 		ASN1ObjectIdentifier newObjectId = new ASN1ObjectIdentifier(firstArc + "." + secondArc + "." + remainingArcs);
 		ObjectIdUtil.validate(newObjectId);
@@ -179,5 +212,57 @@ public class JObjectIdEditor extends JPanel {
 	public void setObjectId(ASN1ObjectIdentifier oid) throws InvalidObjectIdException {
 		this.objectId = oid;
 		populate(oid);
+	}
+	
+	public class ObjectOid implements Comparable<ObjectOid>
+	{
+		private String identifier;
+		private String representation;
+		
+		public ObjectOid(String prefix, String identifier, String representation) {
+			super();
+			this.identifier = identifier.replaceFirst(prefix, "");
+			this.representation = representation;
+		}
+
+		public String getIdentifier() {
+			return identifier;
+		}
+
+		public String getRepresentation() {
+			return representation;
+		}
+
+		@Override
+		public String toString() {
+			return identifier + " " + representation;
+		}
+
+		@Override
+		public int compareTo(ObjectOid arg0) {
+			
+			String id1 = getIdentifier();
+			String [] a1 = id1.split("\\.");
+			String id2 = arg0.getIdentifier();
+			String [] a2 = id2.split("\\.");
+			
+			for (int i = 0; i < a1.length; i++) 
+			{
+				Integer i1 = Integer.valueOf(a1[i].trim());
+				if (i >= a2.length) {
+					return 1;
+				}
+				Integer i2 = Integer.valueOf(a2[i].trim());
+				if (i1.intValue() != i2.intValue()) {
+					return i1.compareTo(i2);
+				}
+			}
+			if (a1.length == a2.length) {
+				return 0;
+			}
+			else {
+				return -1;
+			}
+		}
 	}
 }
