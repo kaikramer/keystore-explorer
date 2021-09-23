@@ -24,8 +24,6 @@ import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -44,7 +42,6 @@ import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.DERTaggedObject;
@@ -263,12 +260,7 @@ public class DGeneralNameChooser extends JEscDialog {
 			}
 			case GeneralName.iPAddress: {
 				jrbIpAddress.setSelected(true);
-				byte[] ipAddressBytes = ((ASN1OctetString) generalName.getName()).getOctets();
-				try {
-					jtfIpAddress.setText(InetAddress.getByAddress(ipAddressBytes).getHostAddress());
-				} catch (UnknownHostException e) {
-					// cannot happen here because user input was checked for validity
-				}
+				jtfIpAddress.setText(GeneralNameUtil.parseIpAddress(generalName));
 				break;
 			}
 			case GeneralName.registeredID: {
@@ -339,13 +331,22 @@ public class DGeneralNameChooser extends JEscDialog {
 							getTitle(), JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-
-				if (!IPAddress.isValid(ipAddress)) {
-					JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
-							getTitle(), JOptionPane.WARNING_MESSAGE);
-					return;
+				if (ipAddress.indexOf('/') == -1)
+				{
+					if (!IPAddress.isValid(ipAddress)) {
+						JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
+								getTitle(), JOptionPane.WARNING_MESSAGE);
+						return;
+					}					
 				}
-
+				else
+				{
+					if (!IPAddress.isValidWithNetMask(ipAddress)) {
+						JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
+								getTitle(), JOptionPane.WARNING_MESSAGE);
+						return;
+					}	
+				}
 				newGeneralName = new GeneralName(GeneralName.iPAddress,	ipAddress);
 			} else if (jrbRegisteredId.isSelected()) {
 				ASN1ObjectIdentifier registeredId = joiRegisteredId.getObjectId();
