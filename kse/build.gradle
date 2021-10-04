@@ -227,18 +227,22 @@ task jlink(type: Exec) {
 		'--no-man-pages',
 		'--include-locales=en,de,fr',
 		'--add-modules',
+					'java.base,' +
 					'java.datatransfer,' +
 					'java.desktop,' +
 					'java.logging,' +
 					'java.naming,' +
+					'java.net.http,' +
 					'java.prefs,' +
 					'java.scripting,' +
 					'jdk.localedata,' +
+					'jdk.net,' +
 					'jdk.charsets,' +
-					'jdk.crypto.ec,' +
 					'jdk.security.auth,' +
+					'jdk.crypto.ec,' +
 					'jdk.crypto.cryptoki,' +
-					'jdk.crypto.mscapi',
+					'jdk.crypto.mscapi,' +
+					'jdk.zipfs',
 		'--output', "$jlinkOutDir/jre"
 }
 
@@ -294,17 +298,21 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 			arch(name: "x86_64")
 
 			jlink(runtime: System.properties.'java.home') {
+				jmod(name: "java.base")
 				jmod(name: "java.datatransfer")
 				jmod(name: "java.desktop")
 				jmod(name: "java.logging")
 				jmod(name: "java.naming")
+				jmod(name: "java.net.http")
 				jmod(name: "java.prefs")
 				jmod(name: "java.scripting")
 				jmod(name: "jdk.localedata")
+				jmod(name: "jdk.net")
 				jmod(name: "jdk.charsets")
 				jmod(name: "jdk.crypto.ec")
 				jmod(name: "jdk.security.auth")
 				jmod(name: "jdk.crypto.cryptoki")
+				jmod(name: "jdk.zipfs")
 
 				argument(value: "--compress=2")
 				argument(value: "--no-header-files")

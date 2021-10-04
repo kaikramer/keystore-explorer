@@ -97,7 +97,7 @@ Type: files; Name: "{app}\lib\*.jar"
 
 [Files]
 Source: "%LAUNCHER%"; DestDir: "{app}"; Flags: replacesameversion
-Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"
+Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"; Flags: replacesameversion
 Source: "%KSE_JAR%"; DestDir: "{app}"; Flags: replacesameversion
 Source: "%LIB_DIR%\*"; DestDir: "{app}\lib"
 Source: "%JRE_DIR%\*"; DestDir: "{app}\jre"; Flags: skipifsourcedoesntexist recursesubdirs
