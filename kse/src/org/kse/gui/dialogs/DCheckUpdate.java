@@ -27,6 +27,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -174,7 +175,7 @@ public class DCheckUpdate extends JEscDialog {
 				// Get the version number of the latest KeyStore Explorer from its web site
 				URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
 
-				String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
+				String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
 				latestVersion = new Version(versionString);
 
 				SwingUtilities.invokeLater(() -> closeDialog());

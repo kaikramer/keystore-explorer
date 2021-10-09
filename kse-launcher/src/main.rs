@@ -82,8 +82,10 @@ fn main() {
 
     let java_process = Command::new(&java_path)
         .arg("-Dkse.exe=true")
+        .arg("-splash:splash.png")
         .arg("-jar")
         .arg(kse_jar_path)
+        // TODO allow multiple files!!
         .arg(args.get(1).get_or_insert(&"".to_string()))
         .spawn();
 

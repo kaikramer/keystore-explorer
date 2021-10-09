@@ -19,10 +19,8 @@
  */
 package org.kse.gui;
 
-import java.awt.SplashScreen;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -32,7 +30,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.ApplicationSettings;
 import org.kse.AuthorityCertificates;
 import org.kse.KSE;
@@ -41,10 +38,8 @@ import org.kse.gui.actions.CheckUpdateAction;
 import org.kse.gui.crypto.DUpgradeCryptoStrength;
 import org.kse.gui.dnd.DroppedFileHandler;
 import org.kse.gui.error.DError;
-import org.kse.utilities.net.URLs;
 import org.kse.utilities.os.OperatingSystem;
 import org.kse.version.JavaVersion;
-import org.kse.version.Version;
 import org.kse.version.VersionException;
 
 /**
@@ -53,9 +48,8 @@ import org.kse.version.VersionException;
 public class CreateApplicationGui implements Runnable {
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
-	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_170;
+	private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_180;
 	private ApplicationSettings applicationSettings;
-	private SplashScreen splash;
 	private List<File> parameterFiles;
 
 
@@ -63,13 +57,11 @@ public class CreateApplicationGui implements Runnable {
 	 * Construct CreateApplicationGui.
 	 *
 	 * @param applicationSettings Application settings
-	 * @param splash              Splash screen
 	 * @param parameterFiles      File list to open
 	 */
-	public CreateApplicationGui(ApplicationSettings applicationSettings, SplashScreen splash, List<File>
+	public CreateApplicationGui(ApplicationSettings applicationSettings, List<File>
 	parameterFiles) {
 		this.applicationSettings = applicationSettings;
-		this.splash = splash;
 		this.parameterFiles = parameterFiles;
 	}
 
@@ -112,7 +104,7 @@ public class CreateApplicationGui implements Runnable {
 			// open file list passed via command line params (basically same as if files were dropped on application)
 			DroppedFileHandler.openFiles(kseFrame, parameterFiles);
 
-			// start update check in background (disabled if KSE was packaged as rpm)
+			// start update check in background (can be disabled if KSE was installed with a package manager)
 			if (!Boolean.getBoolean(KseFrame.KSE_UPDATE_CHECK_DISABLED)) {
 				checkForUpdates(kseFrame);
 			}
@@ -121,8 +113,6 @@ public class CreateApplicationGui implements Runnable {
 			dError.setLocationRelativeTo(null);
 			dError.setVisible(true);
 			System.exit(1);
-		} finally {
-			closeSplash();
 		}
 
 	}
@@ -150,22 +140,16 @@ public class CreateApplicationGui implements Runnable {
 	}
 
 	private void checkForUpdates(final KseFrame kseFrame) {
-		new Thread (() -> {
-			try {
-				// Get the version number of the latest KeyStore Explorer from its web site
-				URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
-
-				String versionString = IOUtils.toString(latestVersionUrl, "ASCII");
-				final Version latestVersion = new Version(versionString);
-
-				// show update dialog to user
-				SwingUtilities.invokeLater(() -> {
-					CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
-					checkUpdateAction.compareVersions(latestVersion, true);
-				});
-			} catch (Exception e) {
-				// ignore any problems here
-			}			
+		new Thread(() -> {
+			// show update dialog to user
+			SwingUtilities.invokeLater(() -> {
+				CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
+				try {
+					checkUpdateAction.doAutoUpdateCheck();
+				} catch (Exception e) {
+					// ignore exceptions here
+				}
+			});
 		}).start();
 	}
 
@@ -212,8 +196,6 @@ public class CreateApplicationGui implements Runnable {
 	}
 
 	private void upgradeCryptoStrength() {
-		closeSplash();
-
 		JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.UpgradeRequired.message"),
 				KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
 
@@ -245,12 +227,5 @@ public class CreateApplicationGui implements Runnable {
 	InvocationTargetException {
 		MacOsIntegration macOsIntegration = new MacOsIntegration(kseFrame);
 		macOsIntegration.addEventHandlers();
-	}
-
-	private void closeSplash() {
-		// May not be available or visible
-		if (splash != null && splash.isVisible()) {
-			splash.close();
-		}
 	}
 }

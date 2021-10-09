@@ -140,7 +140,6 @@ jar {
 					'Main-Class': project.mainClassName,
 					'Class-Path': configurations.runtimeClasspath.files.collect { 'lib/' + it.getName() }.join(' '),
 					'Built-Date': new Date().format("yyyy-MM-dd HH:mm:ss"),
-					'SplashScreen-Image': 'org/kse/gui/images/splash.png',
 					'Sealed': 'true'
 					)
 	}
@@ -175,7 +174,7 @@ task zip(type: Zip, dependsOn: prepareExe) {
 		from jar.archiveFile
 		from "$launcherOutDir/$appExe"
 		from(resDir) {
-			include 'JavaInfo.dll'
+			include 'JavaInfo.dll', 'splash*.png'
 		}
 		from(resDir) {
 			include 'kse.sh'
@@ -191,9 +190,6 @@ task zip(type: Zip, dependsOn: prepareExe) {
 	into("$distFileNamePrefix/licenses") {
 		from(licensesDir) {
 			include '**/*.txt'
-			if (!file("lib/darcula.jar").exists()) {
-				exclude 'darcula.txt'
-			}
 		}
 	}
 	into("$distFileNamePrefix/icons") {
@@ -260,6 +256,7 @@ task innosetup(dependsOn: [jar, prepareExe, jlink, copyDependencies]) {
 					LAUNCHER: "$launcherOutDir\\$appExe".toString(),
 					JAVA_INFO_DLL: "$resDir\\JavaInfo.dll".toString(),
 					ICONS_DIR: iconsDir.toString(),
+					RES_DIR: resDir.toString(),
 					JRE_DIR: "$jlinkOutDir\\jre".toString(),
 					LICENSES_DIR: licensesDir.toString(),
 					DIST_DIR: distDir.toString()
@@ -413,9 +410,6 @@ ospackage {
 	}
 	from(licensesDir) {
 		include '**/*.txt'
-		if (!file("lib/darcula.jar").exists()) {
-			exclude 'darcula.txt'
-		}
 		into 'licenses'
 		fileType LICENSE
 	}
@@ -429,6 +423,9 @@ ospackage {
 	}
 	from(resDir) {
 		include 'kse.desktop'
+	}
+	from(resDir) {
+		include 'splash*.png'
 	}
 
 	requires('desktop-file-utils')

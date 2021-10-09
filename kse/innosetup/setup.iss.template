@@ -101,6 +101,7 @@ Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"; Flags: replacesameversion
 Source: "%KSE_JAR%"; DestDir: "{app}"; Flags: replacesameversion
 Source: "%LIB_DIR%\*"; DestDir: "{app}\lib"
 Source: "%JRE_DIR%\*"; DestDir: "{app}\jre"; Flags: skipifsourcedoesntexist recursesubdirs
+Source: "%RES_DIR%\splash*.png"; DestDir: "{app}"
 Source: "%LICENSES_DIR%\*"; DestDir: "{app}\licenses"
 Source: "%ICONS_DIR%\keystore.ico"; DestDir: "{app}"
 Source: "%ICONS_DIR%\kse.ico"; DestDir: "{app}"
