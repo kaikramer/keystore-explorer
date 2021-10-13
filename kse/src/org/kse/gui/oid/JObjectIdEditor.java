@@ -21,8 +21,6 @@ package org.kse.gui.oid;
 
 import java.awt.Dimension;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -30,6 +28,7 @@ import javax.swing.JPanel;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.utilities.oid.InvalidObjectIdException;
 import org.kse.utilities.oid.ObjectIdUtil;
+import org.kse.utilities.oid.ObjectOid;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -115,13 +114,7 @@ public class JObjectIdEditor extends JPanel {
 	
 	private void loadRemainingArcs(String prefix) {
 		
-		ObjectOid [] oids = ObjectIdUtil.oidToNameMapping.entrySet()
-		.stream()
-		.filter(e -> e.getKey().startsWith(prefix))
-		.map(e -> new ObjectOid(prefix, e.getKey(),e.getValue()))
-		.sorted()
-		.collect(Collectors.toList())
-		.toArray(new ObjectOid[0]);
+		ObjectOid [] oids = ObjectIdUtil.getAllOidsStartingWith(prefix);
 		
 		jtfRemainingArcs.setModel(new DefaultComboBoxModel<ObjectOid>(oids));
 	}
@@ -212,57 +205,5 @@ public class JObjectIdEditor extends JPanel {
 	public void setObjectId(ASN1ObjectIdentifier oid) throws InvalidObjectIdException {
 		this.objectId = oid;
 		populate(oid);
-	}
-	
-	public class ObjectOid implements Comparable<ObjectOid>
-	{
-		private String identifier;
-		private String representation;
-		
-		public ObjectOid(String prefix, String identifier, String representation) {
-			super();
-			this.identifier = identifier.replaceFirst(prefix, "");
-			this.representation = representation;
-		}
-
-		public String getIdentifier() {
-			return identifier;
-		}
-
-		public String getRepresentation() {
-			return representation;
-		}
-
-		@Override
-		public String toString() {
-			return identifier + " " + representation;
-		}
-
-		@Override
-		public int compareTo(ObjectOid arg0) {
-			
-			String id1 = getIdentifier();
-			String [] a1 = id1.split("\\.");
-			String id2 = arg0.getIdentifier();
-			String [] a2 = id2.split("\\.");
-			
-			for (int i = 0; i < a1.length; i++) 
-			{
-				Integer i1 = Integer.valueOf(a1[i].trim());
-				if (i >= a2.length) {
-					return 1;
-				}
-				Integer i2 = Integer.valueOf(a2[i].trim());
-				if (i1.intValue() != i2.intValue()) {
-					return i1.compareTo(i2);
-				}
-			}
-			if (a1.length == a2.length) {
-				return 0;
-			}
-			else {
-				return -1;
-			}
-		}
 	}
 }
