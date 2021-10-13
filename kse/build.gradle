@@ -140,7 +140,6 @@ jar {
 					'Main-Class': project.mainClassName,
 					'Class-Path': configurations.runtimeClasspath.files.collect { 'lib/' + it.getName() }.join(' '),
 					'Built-Date': new Date().format("yyyy-MM-dd HH:mm:ss"),
-					'SplashScreen-Image': 'org/kse/gui/images/splash.png',
 					'Sealed': 'true'
 					)
 	}
@@ -175,7 +174,7 @@ task zip(type: Zip, dependsOn: prepareExe) {
 		from jar.archiveFile
 		from "$launcherOutDir/$appExe"
 		from(resDir) {
-			include 'JavaInfo.dll'
+			include 'JavaInfo.dll', 'splash*.png'
 		}
 		from(resDir) {
 			include 'kse.sh'
@@ -191,9 +190,6 @@ task zip(type: Zip, dependsOn: prepareExe) {
 	into("$distFileNamePrefix/licenses") {
 		from(licensesDir) {
 			include '**/*.txt'
-			if (!file("lib/darcula.jar").exists()) {
-				exclude 'darcula.txt'
-			}
 		}
 	}
 	into("$distFileNamePrefix/icons") {
@@ -227,18 +223,22 @@ task jlink(type: Exec) {
 		'--no-man-pages',
 		'--include-locales=en,de,fr',
 		'--add-modules',
+					'java.base,' +
 					'java.datatransfer,' +
 					'java.desktop,' +
 					'java.logging,' +
 					'java.naming,' +
+					'java.net.http,' +
 					'java.prefs,' +
 					'java.scripting,' +
 					'jdk.localedata,' +
+					'jdk.net,' +
 					'jdk.charsets,' +
-					'jdk.crypto.ec,' +
 					'jdk.security.auth,' +
+					'jdk.crypto.ec,' +
 					'jdk.crypto.cryptoki,' +
-					'jdk.crypto.mscapi',
+					'jdk.crypto.mscapi,' +
+					'jdk.zipfs',
 		'--output', "$jlinkOutDir/jre"
 }
 
@@ -255,7 +255,9 @@ task innosetup(dependsOn: [jar, prepareExe, jlink, copyDependencies]) {
 					LIB_DIR: dependenciesDir.toString(),
 					LAUNCHER: "$launcherOutDir\\$appExe".toString(),
 					JAVA_INFO_DLL: "$resDir\\JavaInfo.dll".toString(),
+					NO_JRE: (JavaVersion.current() != JavaVersion.VERSION_1_8) ? "" : "-no-jre",
 					ICONS_DIR: iconsDir.toString(),
+					RES_DIR: resDir.toString(),
 					JRE_DIR: "$jlinkOutDir\\jre".toString(),
 					LICENSES_DIR: licensesDir.toString(),
 					DIST_DIR: distDir.toString()
@@ -294,17 +296,21 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 			arch(name: "x86_64")
 
 			jlink(runtime: System.properties.'java.home') {
+				jmod(name: "java.base")
 				jmod(name: "java.datatransfer")
 				jmod(name: "java.desktop")
 				jmod(name: "java.logging")
 				jmod(name: "java.naming")
+				jmod(name: "java.net.http")
 				jmod(name: "java.prefs")
 				jmod(name: "java.scripting")
 				jmod(name: "jdk.localedata")
+				jmod(name: "jdk.net")
 				jmod(name: "jdk.charsets")
 				jmod(name: "jdk.crypto.ec")
 				jmod(name: "jdk.security.auth")
 				jmod(name: "jdk.crypto.cryptoki")
+				jmod(name: "jdk.zipfs")
 
 				argument(value: "--compress=2")
 				argument(value: "--no-header-files")
@@ -318,6 +324,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 							name: "KeyStore",
 							role: "editor")
 			option(value: "-Dkse.app=true")
+			option(value: "-splash:splash.png")
 			option(value: "-Dapple.laf.useScreenMenuBar=true")
 			option(value: "-Dcom.apple.macos.use-file-dialog-packages=true")
 			option(value: "-Dcom.apple.macos.useScreenMenuBar=true")
@@ -405,9 +412,6 @@ ospackage {
 	}
 	from(licensesDir) {
 		include '**/*.txt'
-		if (!file("lib/darcula.jar").exists()) {
-			exclude 'darcula.txt'
-		}
 		into 'licenses'
 		fileType LICENSE
 	}
@@ -421,6 +425,9 @@ ospackage {
 	}
 	from(resDir) {
 		include 'kse.desktop'
+	}
+	from(resDir) {
+		include 'splash*.png'
 	}
 
 	requires('desktop-file-utils')

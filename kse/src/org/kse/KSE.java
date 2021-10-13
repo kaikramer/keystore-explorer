@@ -19,11 +19,6 @@
  */
 package org.kse;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.SplashScreen;
 import java.awt.Toolkit;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -57,8 +52,7 @@ import com.sun.jna.WString;
  *
  */
 public class KSE {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/resources");
-	private static ResourceBundle props = ResourceBundle.getBundle("org/kse/version");
+	private static final ResourceBundle props = ResourceBundle.getBundle("org/kse/version");
 
 	static {
 		// set default style for Bouncy Castle's X500Name class
@@ -97,9 +91,6 @@ public class KSE {
 
 			setInstallDirProperty();
 
-			SplashScreen splash = SplashScreen.getSplashScreen();
-
-			updateSplashMessage(splash, res.getString("KSE.LoadingApplicationSettings.splash.message"));
 			ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 			setCurrentDirectory(applicationSettings);
 
@@ -108,7 +99,6 @@ public class KSE {
 				Locale.setDefault(new Locale(languageCode));
 			}
 
-			updateSplashMessage(splash, res.getString("KSE.InitializingSecurity.splash.message"));
 			initialiseSecurity();
 
 			// list of files to open after start
@@ -120,9 +110,7 @@ public class KSE {
 				}
 			}
 
-			// Create application GUI on the event handler thread
-			updateSplashMessage(splash, res.getString("KSE.CreatingApplicationGui.splash.message"));
-			SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, splash, parameterFiles));
+			SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, parameterFiles));
 		} catch (Throwable t) {
 			DError dError = new DError(new JFrame(), t);
 			dError.setLocationRelativeTo(null);
@@ -143,28 +131,6 @@ public class KSE {
 			} catch (Exception x) {
 				// ignore
 			}
-		}
-	}
-
-	private static void updateSplashMessage(SplashScreen splash, String message) {
-		// Splash screen may not be present
-		if (splash != null) {
-			Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
-			Graphics2D g = splash.createGraphics();
-			g.setFont(font);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-			// Wipe out any previous text
-			g.setColor(new Color(238, 238, 238)); // #EEEEEE
-			g.setPaintMode();
-			g.fillRect(12, 70, 250, 30); // (x,y) is top left corner of area
-
-			// Draw next text
-			g.setColor(new Color(96, 96, 96)); // #606060
-			g.setPaintMode();
-			g.drawString(message, 17, 86); // (x,y) is baseline of text
-
-			splash.update();
 		}
 	}
 

@@ -12,7 +12,7 @@ use winapi::shared::minwindef::DWORD;
 use winapi::um::winnt::LPWSTR;
 use winapi::um::winuser::{MB_ICONERROR, MB_OK, MessageBoxA};
 
-type GetJavaHome = unsafe extern fn(LPWSTR, DWORD) -> DWORD;
+type GetJavaHome = unsafe extern "system" fn(LPWSTR, DWORD) -> DWORD;
 
 fn show_error_message(title: CString, message: CString) {
     unsafe {
@@ -27,7 +27,7 @@ fn show_error_message(title: CString, message: CString) {
 
 fn get_java_home() -> String {
     unsafe {
-        let java_info = match Library::new("JavaInfo.dll") {
+        let java_info_lib = match Library::new("JavaInfo.dll") {
             Ok(lib) => lib,
             Err(_e) => {
                 show_error_message(
@@ -37,13 +37,13 @@ fn get_java_home() -> String {
                 process::exit(1);
             }
         };
-        let get_java_home: Symbol<GetJavaHome> = java_info.get(b"GetJavaHome").unwrap();
+        let ji_get_java_home: Symbol<GetJavaHome> = java_info_lib.get(b"GetJavaHome").unwrap();
 
         // first call to getter in order to determine length of path for memory allocation
-        let java_home_length: DWORD = get_java_home(ptr::null_mut(), 0);
-        let mut java_home: Box<[u16]> = vec![0; java_home_length as usize].into_boxed_slice();
+        let java_home_length = ji_get_java_home(ptr::null_mut(), 0);
+        let mut java_home= vec![0u16; (java_home_length as usize) + 1]; // len + 0 byte
 
-        let result = get_java_home(java_home.as_mut_ptr(), java_home_length);
+        let result = ji_get_java_home(java_home.as_mut_ptr(), java_home_length);
         if result == 0 {
             show_error_message(
                 CString::new("Error Detecting Java Installation").unwrap(),
@@ -51,7 +51,8 @@ fn get_java_home() -> String {
             process::exit(1);
         }
 
-        String::from_utf16(&java_home).unwrap()
+        // convert zero-terminated utf-16 string to Rust's utf-8 string
+        String::from_utf16_lossy(&java_home[0..java_home.len() - 1])
     }
 }
 
@@ -81,8 +82,10 @@ fn main() {
 
     let java_process = Command::new(&java_path)
         .arg("-Dkse.exe=true")
+        .arg("-splash:splash.png")
         .arg("-jar")
         .arg(kse_jar_path)
+        // TODO allow multiple files!!
         .arg(args.get(1).get_or_insert(&"".to_string()))
         .spawn();
 

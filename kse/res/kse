@@ -12,4 +12,4 @@ fi
 BASE_OPTIONS="-Dkse.update.disabled=true"
 MAIN_JAR="/usr/share/java/kse.jar"
 
-java $BASE_OPTIONS -jar $MAIN_JAR "$@"
+java ${BASE_OPTIONS} -jar $MAIN_JAR "$@"

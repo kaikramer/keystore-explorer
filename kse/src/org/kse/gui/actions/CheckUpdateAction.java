@@ -23,6 +23,8 @@ import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.IOUtils;
 import org.kse.KSE;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DCheckUpdate;
@@ -82,23 +85,36 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
 		compareVersions(latestVersion, false);
 	}
 
-	public void compareVersions(Version latestVersion, boolean autoUpdateCheck) {
-
-		// abort auto update check if not time yet
-		if (autoUpdateCheck) {
-			if (!applicationSettings.isAutoUpdateCheckEnabled()) {
-				return;
-			}
-			Date lastCheck = applicationSettings.getAutoUpdateCheckLastCheck();
-			Date now = new Date();
-			int checkInterval = applicationSettings.getAutoUpdateCheckInterval();
-			if (TimeUnit.MILLISECONDS.toDays(now.getTime() - lastCheck.getTime()) < checkInterval) {
-				return;
-			} else {
-				// save when last check happened
-				applicationSettings.setAutoUpdateCheckLastCheck(new Date());
-			}
+	/**
+	 * Perform update check if enabled and if the last check was outside the configured time interval
+	 *
+	 * @throws IOException if fetching the version file from the website failed
+	 */
+	public void doAutoUpdateCheck() throws IOException {
+		// abort auto update check if not enabled
+		if (!applicationSettings.isAutoUpdateCheckEnabled()) {
+			return;
 		}
+
+		Date lastCheck = applicationSettings.getAutoUpdateCheckLastCheck();
+		Date now = new Date();
+		int checkInterval = applicationSettings.getAutoUpdateCheckInterval();
+		if (TimeUnit.MILLISECONDS.toDays(now.getTime() - lastCheck.getTime()) < checkInterval) {
+			return;
+		} else {
+			// save in settings when last check (this one) has happened
+			applicationSettings.setAutoUpdateCheckLastCheck(new Date());
+		}
+
+		// Get the version number of the latest KeyStore Explorer from its website
+		URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
+		String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
+		final Version latestVersion = new Version(versionString);
+
+		compareVersions(latestVersion, true);
+	}
+
+	private void compareVersions(Version latestVersion, boolean autoUpdateCheck) {
 
 		try {
 			Version currentVersion = KSE.getApplicationVersion();

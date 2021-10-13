@@ -14,7 +14,7 @@
 #define SetupAuthor AppPublisher
 #define SetupVersion AppFullVersion + ".0"
 #define AppUpdatesURL "https://keystore-explorer.org/downloads.html"
-#define SetupName "kse-" + StringChange(AppFullVersion, ".", "") + "-setup"
+#define SetupName "kse-" + StringChange(AppFullVersion, ".", "") + "-setup" + "%NO_JRE%"
 #define SetupCompany SetupAuthor
 #define WizardTopImageFilename "setup-55x55.bmp"
 #define WizardLeftImageFilename "setup-164x314.bmp"
@@ -94,13 +94,15 @@ Name: german; MessagesFile: "compiler:Languages\German.isl,Messages-de.isl"
 
 [InstallDelete]
 Type: files; Name: "{app}\lib\*.jar"
+Type: filesandordirs; Name: "{app}\jre"
 
 [Files]
 Source: "%LAUNCHER%"; DestDir: "{app}"; Flags: replacesameversion
-Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"
+Source: "%JAVA_INFO_DLL%"; DestDir: "{app}"; Flags: replacesameversion
 Source: "%KSE_JAR%"; DestDir: "{app}"; Flags: replacesameversion
 Source: "%LIB_DIR%\*"; DestDir: "{app}\lib"
 Source: "%JRE_DIR%\*"; DestDir: "{app}\jre"; Flags: skipifsourcedoesntexist recursesubdirs
+Source: "%RES_DIR%\splash*.png"; DestDir: "{app}"
 Source: "%LICENSES_DIR%\*"; DestDir: "{app}\licenses"
 Source: "%ICONS_DIR%\keystore.ico"; DestDir: "{app}"
 Source: "%ICONS_DIR%\kse.ico"; DestDir: "{app}"

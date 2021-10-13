@@ -17,4 +17,4 @@ then launches KeyStore Explorer with the newest JRE.
 
 `strip .\target\i686-pc-windows-gnu\release\kse-launcher.exe`
 
-`cp .\target\i686-pc-windows-gnu\release\kse-launcher.exe ..\kse\res\kse-launcher.exe`
+`copy .\target\i686-pc-windows-gnu\release\kse-launcher.exe ..\kse\res\kse-launcher.exe`
