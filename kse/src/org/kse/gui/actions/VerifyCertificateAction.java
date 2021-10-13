@@ -53,6 +53,7 @@ import org.bouncycastle.cert.ocsp.OCSPException;
 import org.bouncycastle.cert.ocsp.OCSPReq;
 import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
 import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
 import org.bouncycastle.cert.ocsp.SingleResp;
 import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
 import org.bouncycastle.operator.DigestCalculatorProvider;
@@ -66,6 +67,7 @@ import org.kse.gui.dialogs.DVerifyCertificate.VerifyOptions;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
+import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
 
 public class VerifyCertificateAction extends KeyStoreExplorerAction {
@@ -243,11 +245,25 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResp.getResponseObject();
 		SingleResp first = basicResponse.getResponses()[0];
 
-		CertificateStatus status = first.getCertStatus();
+		CertificateStatus certStatus = first.getCertStatus();
 
-		if (status != null) {
-			throw new CertPathValidatorException(
-					MessageFormat.format(res.getString("VerifyCertificateAction.certStatus.message"), status));
+		if (certStatus != CertificateStatus.GOOD) {
+			if (certStatus instanceof RevokedStatus) {
+				RevokedStatus status = (RevokedStatus) certStatus;
+				int reason;
+				try {
+					reason = status.getRevocationReason();
+				} catch (IllegalStateException ex) {
+					reason = -1;
+				}
+				Date revocationTime = status.getRevocationTime();
+				throw new CertPathValidatorException(
+						MessageFormat.format(res.getString("VerifyCertificateAction.revokedStatus.message"), reason,
+								StringUtils.formatDate(revocationTime)));
+			} else {
+				throw new CertPathValidatorException(
+						MessageFormat.format(res.getString("VerifyCertificateAction.certStatus.message"), certStatus));
+			}
 		}
 		BigInteger certSerial = certificateEval.getSerialNumber();
 		BigInteger ocspSerial = first.getCertID().getSerialNumber();
