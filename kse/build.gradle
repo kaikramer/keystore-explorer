@@ -255,6 +255,7 @@ task innosetup(dependsOn: [jar, prepareExe, jlink, copyDependencies]) {
 					LIB_DIR: dependenciesDir.toString(),
 					LAUNCHER: "$launcherOutDir\\$appExe".toString(),
 					JAVA_INFO_DLL: "$resDir\\JavaInfo.dll".toString(),
+					NO_JRE: (JavaVersion.current() != JavaVersion.VERSION_1_8) ? "" : "-no-jre",
 					ICONS_DIR: iconsDir.toString(),
 					RES_DIR: resDir.toString(),
 					JRE_DIR: "$jlinkOutDir\\jre".toString(),
@@ -323,6 +324,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 							name: "KeyStore",
 							role: "editor")
 			option(value: "-Dkse.app=true")
+			option(value: "-splash:splash.png")
 			option(value: "-Dapple.laf.useScreenMenuBar=true")
 			option(value: "-Dcom.apple.macos.use-file-dialog-packages=true")
 			option(value: "-Dcom.apple.macos.useScreenMenuBar=true")
