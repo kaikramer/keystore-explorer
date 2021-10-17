@@ -19,16 +19,16 @@
  */
 package org.kse.gui.oid;
 
+import java.awt.Dimension;
 import java.util.ResourceBundle;
-
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.utilities.oid.InvalidObjectIdException;
 import org.kse.utilities.oid.ObjectIdUtil;
+import org.kse.utilities.oid.ObjectOid;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -44,7 +44,7 @@ public class JObjectIdEditor extends JPanel {
 	private JComboBox<?> jcbFirstArc;
 	private JLabel jlFirstPeriod;
 	private JComboBox<Integer> jcbSecondArc;
-	private JTextField jtfRemainingArcs;
+	private JComboBox<ObjectOid> jtfRemainingArcs;
 	private JLabel jlSecondPeriod;
 
 	private ASN1ObjectIdentifier objectId;
@@ -85,12 +85,15 @@ public class JObjectIdEditor extends JPanel {
 
 		jlSecondPeriod = new JLabel(".");
 
-		jtfRemainingArcs = new JTextField(15);
+		jtfRemainingArcs = new JComboBox<ObjectOid>();
+		jtfRemainingArcs.setMinimumSize(new Dimension(300,20));
+		jtfRemainingArcs.setEditable(true);
 		jtfRemainingArcs.setToolTipText(res.getString("DObjectIdChooser.jtfRemainingArcs.tooltip"));
 
 		populateSecondArc();
 
 		jcbFirstArc.addItemListener(e -> populateSecondArc());
+		jcbSecondArc.addItemListener(e -> updateRemainingArcs());
 
 		// layout
 		setLayout(new MigLayout("insets 0", "", ""));
@@ -101,6 +104,19 @@ public class JObjectIdEditor extends JPanel {
 		add(jtfRemainingArcs, "");
 
 		populate(objectId);
+	}
+
+	private void updateRemainingArcs() {
+		String firstArcS = "" + jcbFirstArc.getSelectedItem();
+		String secondArcS = "" + jcbSecondArc.getSelectedItem();
+		loadRemainingArcs(firstArcS + "." + secondArcS+ ".");		
+	}
+	
+	private void loadRemainingArcs(String prefix) {
+		
+		ObjectOid [] oids = ObjectIdUtil.getAllOidsStartingWith(prefix);
+		
+		jtfRemainingArcs.setModel(new DefaultComboBoxModel<ObjectOid>(oids));
 	}
 
 	private void populate(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
@@ -122,8 +138,8 @@ public class JObjectIdEditor extends JPanel {
 					remainingArcs += ".";
 				}
 			}
-
-			jtfRemainingArcs.setText(remainingArcs);
+			loadRemainingArcs(arcs[0] + "." + arcs[1] + ".");
+			jtfRemainingArcs.setSelectedItem(new ObjectOid("",remainingArcs,""));
 		}
 	}
 
@@ -150,6 +166,7 @@ public class JObjectIdEditor extends JPanel {
 		} else {
 			jcbSecondArc.setSelectedIndex(0);
 		}
+		updateRemainingArcs();
 	}
 
 	/**
@@ -161,7 +178,16 @@ public class JObjectIdEditor extends JPanel {
 	public ASN1ObjectIdentifier getObjectId() throws InvalidObjectIdException {
 		String firstArc = "" + jcbFirstArc.getSelectedItem();
 		String secondArc = "" + jcbSecondArc.getSelectedItem();
-		String remainingArcs = jtfRemainingArcs.getText().trim();
+		String remainingArcs = "";
+		Object obj = jtfRemainingArcs.getSelectedItem();
+		if (obj instanceof String) {
+			remainingArcs = ((String) obj).trim();
+		}
+		else {
+			ObjectOid oid = (ObjectOid) jtfRemainingArcs.getSelectedItem();		
+			remainingArcs = oid.getIdentifier().trim();			
+		}
+
 
 		ASN1ObjectIdentifier newObjectId = new ASN1ObjectIdentifier(firstArc + "." + secondArc + "." + remainingArcs);
 		ObjectIdUtil.validate(newObjectId);

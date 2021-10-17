@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
@@ -38,15 +39,12 @@ public class ObjectIdUtil {
 	}
 
 	/**
-	 * Validate an object identifier. To be valid it must be well-formed and
-	 * must contain valid arcs ranges. The first arc must be 0-2, and the second
-	 * arc must be 0-39 where the first arc is 0-1 or 0-47 where the first arc
-	 * is 2.
+	 * Validate an object identifier. To be valid it must be well-formed and must
+	 * contain valid arcs ranges. The first arc must be 0-2, and the second arc must
+	 * be 0-39 where the first arc is 0-1 or 0-47 where the first arc is 2.
 	 *
-	 * @param oid
-	 *            Object identifier
-	 * @throws InvalidObjectIdException
-	 *             If object identifier is not valid.
+	 * @param oid Object identifier
+	 * @throws InvalidObjectIdException If object identifier is not valid.
 	 */
 	public static void validate(ASN1ObjectIdentifier oid) throws InvalidObjectIdException {
 		int[] arcs = extractArcs(oid);
@@ -57,12 +55,10 @@ public class ObjectIdUtil {
 	/**
 	 * Extract the arcs from an object identifier.
 	 *
-	 * @param oid
-	 *            Object identifier
+	 * @param oid Object identifier
 	 * @return Arcs
-	 * @throws InvalidObjectIdException
-	 *             If object identifier is not a '.' separated list of
-	 *             non-negative integers
+	 * @throws InvalidObjectIdException If object identifier is not a '.' separated
+	 *                                  list of non-negative integers
 	 */
 	public static int[] extractArcs(ASN1ObjectIdentifier oid) throws InvalidObjectIdException {
 		String oidStr = oid.getId();
@@ -2287,11 +2283,19 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("2.54.1775.99", "SetData");
 	}
 
+	public static ObjectOid[] getAllOidsStartingWith(String prefix) {
+		ObjectOid[] oids = oidToNameMapping.entrySet().stream()
+				.filter(e -> e.getKey().startsWith(prefix))
+				.map(e -> new ObjectOid(prefix, e.getKey(), e.getValue()))
+				.sorted().collect(Collectors.toList())
+				.toArray(new ObjectOid[0]);
+		return oids;
+	}
+
 	/**
 	 * Get string representation of Object Identifier.
 	 *
-	 * @param objectIdentifer
-	 *            Object Identifier
+	 * @param objectIdentifer Object Identifier
 	 * @return String representation of Object Identifier
 	 */
 	public static String toString(ASN1ObjectIdentifier objectIdentifer) {

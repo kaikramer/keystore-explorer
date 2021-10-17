@@ -133,15 +133,7 @@ public class GeneralNameUtil {
 
 			return MessageFormat.format(res.getString("GeneralNameUtil.DnsGeneralName"), dnsName.getString());
 		case GeneralName.iPAddress:
-			byte[] ipAddressBytes = ((ASN1OctetString) generalName.getName()).getOctets();
-
-			String ipAddressString = "";
-			try {
-				ipAddressString = InetAddress.getByAddress(ipAddressBytes).getHostAddress();
-			} catch (UnknownHostException e) {
-				// ignore -> results in empty IP address string
-			}
-
+			String ipAddressString = parseIpAddress(generalName);
 			return MessageFormat.format(res.getString("GeneralNameUtil.IpAddressGeneralName"), ipAddressString);
 		case GeneralName.registeredID:
 			ASN1ObjectIdentifier registeredId = (ASN1ObjectIdentifier) generalName.getName();
@@ -200,6 +192,40 @@ public class GeneralNameUtil {
 		}
 	}
 
+	public static String parseIpAddress(GeneralName generalName) {
+		byte[] ipAddressBytes = ((ASN1OctetString) generalName.getName()).getOctets();
+		String ipAddressString = "";
+
+		if (ipAddressBytes.length == 4 || ipAddressBytes.length == 16) {
+			try {
+				ipAddressString = InetAddress.getByAddress(ipAddressBytes).getHostAddress();
+			} catch (UnknownHostException e) {
+				//length of IP address has been checked before
+			}
+		} else {
+			if (ipAddressBytes.length == 8 || ipAddressBytes.length == 32) {
+				final int newSize = ipAddressBytes.length / 2;
+				byte[] ipAddress = new byte[newSize];
+				System.arraycopy(ipAddressBytes, 0, ipAddress, 0, newSize);
+
+				try {
+					ipAddressString = InetAddress.getByAddress(ipAddress).getHostAddress();
+				} catch (UnknownHostException e) {
+					//length of IP address has been checked before
+				}
+				byte[] netMask = new byte[newSize];
+				System.arraycopy(ipAddressBytes, newSize, netMask, 0, newSize);
+
+				try {
+					String netmaskString = InetAddress.getByAddress(netMask).getHostAddress();
+					ipAddressString = ipAddressString + "/" + netmaskString;
+				} catch (UnknownHostException e) {
+					//length of IP address has been checked before
+				}
+			}
+		}
+		return ipAddressString;
+	}
 	/**
 	 * Parse UPN/otherName
 	 *
