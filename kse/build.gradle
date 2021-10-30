@@ -24,8 +24,6 @@ import java.nio.file.Paths
 Notes:
 ======
 - Task 'innosetup' requires an installation of InnoSetup 6 and ISCC.exe added to the PATH.
-- For every task that creates the kse.exe (zip, innosetup, prepareExe)
-  rcedit-x64.exe from https://github.com/electron/rcedit has to be in the PATH
 - Tasks 'signapp' and 'dmg' work only under macOS.
 */
 
@@ -154,8 +152,8 @@ task prepareExe() {
 		}
 		exec {
 			workingDir projectDir
-			commandLine "rcedit-x64.exe",
-						"$launcherOutDir\\$appExe",
+			commandLine "${resDir}\\rcedit-x64.exe",
+						"${launcherOutDir}\\${appExe}",
 						'--set-version-string', 'FileDescription', "$appName",
 						'--set-version-string', 'ProductName', "$appName",
 						'--set-version-string', 'LegalCopyright', "$copyright",
