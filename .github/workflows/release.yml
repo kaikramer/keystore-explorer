@@ -22,6 +22,33 @@ jobs:
     - name: Build with Gradle
       run: .\gradlew.bat test zip innosetup buildDeb buildRpm
       working-directory: kse
+    - name: Store artifacts for release
+      uses: actions/upload-artifact@v2
+      with:
+        path: |
+          kse/build/distributions/kse-*.zip
+          kse/build/distributions/kse-*-setup-nojre.exe
+          kse/build/distributions/kse*.deb
+          kse/build/distributions/kse*.rpm
+
+  windows-with-jre:
+    name: Create artifacts on windows
+    runs-on: windows-2019
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '16'
+        distribution: 'temurin'
+    - name: Build with Gradle
+      run: .\gradlew.bat innosetup
+      working-directory: kse
+    - name: Store artifacts for release
+      uses: actions/upload-artifact@v2
+      with:
+        path: kse/build/distributions/kse-*-setup.exe
 
   macos:
     name: Create artifacts on macOS
@@ -32,7 +59,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: '17'
+        java-version: '16'
         distribution: 'temurin'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -40,9 +67,13 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew app
       working-directory: kse
+    - name: Store artifacts for release
+      uses: actions/upload-artifact@v2
+      with:
+        path: kse/build/distributions/kse*.dmg
 
   release:
-    needs: [windows, macos]
+    needs: [windows, windows-with-jre, macos]
     runs-on: ubuntu-latest
     steps:
       - name: Release
@@ -55,7 +86,8 @@ jobs:
           files: |
             kse-*.zip
             kse-*-setup.exe
+            kse-*-setup-nojre.exe
             kse*.deb
-            kse*.dmg
             kse*.rpm
-          token: ${{ secrets.GITHUB_TOKEN }}
+            kse*.dmg
+          token: ${{ secrets.github_token }}
