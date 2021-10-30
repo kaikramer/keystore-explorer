@@ -1,0 +1,60 @@
+name: Create a new KSE release
+
+on: workflow_dispatch
+#on:
+#  push:
+#    tags:
+#      - "v*.*.*"
+
+jobs:
+
+  windows:
+    name: Create artifacts on windows
+    runs-on: windows-2019
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'temurin'
+    - name: Build with Gradle
+      run: gradlew.bat test zip innosetup buildDeb buildRpm
+      working-directory: kse
+
+  # macos:
+  #   name: Create artifacts on macOS
+  #   runs-on: macos-10.15
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v2
+  #   - name: Set up JDK
+  #     uses: actions/setup-java@v2
+  #     with:
+  #       java-version: '17'
+  #       distribution: 'temurin'
+  #   - name: Grant execute permission for gradlew
+  #     run: chmod +x gradlew
+  #     working-directory: kse
+  #   - name: Build with Gradle
+  #     run: ./gradlew 
+  #     working-directory: kse
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          name: "KSE Release ${{ github.ref }}"
+          body: "Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)"
+          files: |
+            kse-*.zip
+            kse-*-setup.exe
+            kse*.deb
+            kse*.dmg
+            kse*.rpm
+          token: ${{ secrets.GITHUB_TOKEN }}
