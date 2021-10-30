@@ -28,7 +28,7 @@ jobs:
         name: windows-artifacts
         path: |
           kse/build/distributions/kse-*.zip
-          kse/build/distributions/kse-*-setup-nojre.exe
+          kse/build/distributions/kse-*-setup-no-jre.exe
           kse/build/distributions/kse*.deb
           kse/build/distributions/kse*.rpm
 
@@ -85,9 +85,9 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: windows-with-jre-artifact
-    - uses: actions/download-artifact@v2
-      with:
-        name: macos-artifact
+    # - uses: actions/download-artifact@v2
+    #   with:
+    #     name: macos-artifact
     - name: Create a release
       uses: softprops/action-gh-release@v1
       #if: startsWith(github.ref, 'refs/tags/')
@@ -98,7 +98,7 @@ jobs:
         files: |
           kse-*.zip
           kse-*-setup.exe
-          kse-*-setup-nojre.exe
+          kse-*-setup-no-jre.exe
           kse*.deb
           kse*.rpm
           kse*.dmg
