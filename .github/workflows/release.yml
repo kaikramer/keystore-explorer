@@ -9,7 +9,7 @@ on: workflow_dispatch
 jobs:
 
   windows:
-    name: Create artifacts on windows
+    name: Create artifacts on Windows
     runs-on: windows-2019
     steps:
     - name: Checkout
@@ -32,7 +32,7 @@ jobs:
           kse/build/distributions/kse*.rpm
 
   windows-with-jre:
-    name: Create artifacts on windows
+    name: Create a Windows installer with included JRE
     runs-on: windows-2019
     steps:
     - name: Checkout
@@ -76,18 +76,20 @@ jobs:
     needs: [windows, windows-with-jre, macos]
     runs-on: ubuntu-latest
     steps:
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          draft: true
-          name: "KSE Release ${{ github.ref }}"
-          body: "Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)"
-          files: |
-            kse-*.zip
-            kse-*-setup.exe
-            kse-*-setup-nojre.exe
-            kse*.deb
-            kse*.rpm
-            kse*.dmg
-          token: ${{ secrets.github_token }}
+    - name: Retrieve artifacts
+      uses: actions/download-artifact@v2
+    - name: Create a release
+      uses: softprops/action-gh-release@v1
+      #if: startsWith(github.ref, 'refs/tags/')
+      with:
+        draft: true
+        name: "KSE Release ${{ github.ref }}"
+        body: "Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)"
+        files: |
+          kse-*.zip
+          kse-*-setup.exe
+          kse-*-setup-nojre.exe
+          kse*.deb
+          kse*.rpm
+          kse*.dmg
+        token: ${{ secrets.github_token }}
