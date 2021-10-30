@@ -20,28 +20,29 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
     - name: Build with Gradle
-      run: gradlew.bat test zip innosetup buildDeb buildRpm
+      run: .\gradlew.bat test zip innosetup buildDeb buildRpm
       working-directory: kse
 
-  # macos:
-  #   name: Create artifacts on macOS
-  #   runs-on: macos-10.15
-  #   steps:
-  #   - name: Checkout
-  #     uses: actions/checkout@v2
-  #   - name: Set up JDK
-  #     uses: actions/setup-java@v2
-  #     with:
-  #       java-version: '17'
-  #       distribution: 'temurin'
-  #   - name: Grant execute permission for gradlew
-  #     run: chmod +x gradlew
-  #     working-directory: kse
-  #   - name: Build with Gradle
-  #     run: ./gradlew 
-  #     working-directory: kse
+  macos:
+    name: Create artifacts on macOS
+    runs-on: macos-10.15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      working-directory: kse
+    - name: Build with Gradle
+      run: ./gradlew app
+      working-directory: kse
 
   release:
+    needs: [windows, macos]
     runs-on: ubuntu-latest
     steps:
       - name: Release
