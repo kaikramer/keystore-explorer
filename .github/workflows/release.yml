@@ -25,6 +25,7 @@ jobs:
     - name: Store artifacts for release
       uses: actions/upload-artifact@v2
       with:
+        name: windows-artifacts
         path: |
           kse/build/distributions/kse-*.zip
           kse/build/distributions/kse-*-setup-nojre.exe
@@ -48,6 +49,7 @@ jobs:
     - name: Store artifacts for release
       uses: actions/upload-artifact@v2
       with:
+        name: windows-with-jre-artifact
         path: kse/build/distributions/kse-*-setup.exe
 
   macos:
@@ -70,14 +72,22 @@ jobs:
     - name: Store artifacts for release
       uses: actions/upload-artifact@v2
       with:
+        name: macos-artifact
         path: kse/build/distributions/kse*.dmg
 
   release:
     needs: [windows, windows-with-jre, macos]
     runs-on: ubuntu-latest
     steps:
-    - name: Retrieve artifacts
-      uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: windows-artifacts
+    - uses: actions/download-artifact@v2
+      with:
+        name: windows-with-jre-artifact
+    - uses: actions/download-artifact@v2
+      with:
+        name: macos-artifact
     - name: Create a release
       uses: softprops/action-gh-release@v1
       #if: startsWith(github.ref, 'refs/tags/')
