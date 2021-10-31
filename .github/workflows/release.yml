@@ -66,7 +66,7 @@ jobs:
         security default-keychain -s build.chain
         security unlock-keychain -p buildchain build.chain
         security set-keychain-settings build.chain
-        security import macos_cert.p12 -k build.chain -P $CODE_SIGN_PWD -T /usr/bin/codesign
+        security import macos_cert.p12 -k build.chain -P $MACOS_CERT_PWD -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k buildchain build.chain
         rm -f macos_cert.p12
     - name: Checkout
