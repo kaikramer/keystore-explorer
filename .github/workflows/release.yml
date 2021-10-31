@@ -57,18 +57,18 @@ jobs:
     runs-on: macos-10.15
     steps:
     - name: Preparations
-      env: 
+      env:
         MACOS_CERT: ${{ secrets.MACOS_CERT }}
         MACOS_CERT_PWD: ${{ secrets.MACOS_CERT_PWD }}
       run: |
-        echo $MACOS_CERT | base64 --decode > macos_cert
+        echo $MACOS_CERT | base64 --decode > macos_cert.p12
         security create-keychain -p buildchain build.chain
         security default-keychain -s build.chain
         security unlock-keychain -p buildchain build.chain
         security set-keychain-settings build.chain
-        security import macos_cert -k build.chain -P $CODE_SIGN_PWD -T /usr/bin/codesign
+        security import macos_cert.p12 -k build.chain -P $CODE_SIGN_PWD -T /usr/bin/codesign
         security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k buildchain build.chain
-        rm -f macos_cert
+        rm -f macos_cert.p12
     - name: Checkout
       uses: actions/checkout@v2
     - name: Set up JDK
