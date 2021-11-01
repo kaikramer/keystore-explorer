@@ -4,16 +4,14 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ master ]
+#  push:
+#    branches: [ master ]
   pull_request:
     branches: [ master ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK
@@ -27,4 +25,4 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build test
       working-directory: kse
-      
+
