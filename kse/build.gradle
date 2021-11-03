@@ -1,6 +1,6 @@
 /*
   Copyright 2004 - 2013 Wayne Grant
-            2013 - 2021 Kai Kramer
+			2013 - 2021 Kai Kramer
 
   This file is part of KeyStore Explorer.
 
@@ -290,7 +290,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 					applicationCategory: "public.app-category.developer-tools"
 					) {
 			classpath(dir: dependenciesDir)
-			classpath(file: jar.archiveFile)
+			classpath(file: jar.archiveFile.get().asFile.getAbsolutePath())
 			arch(name: "x86_64")
 
 			jlink(runtime: System.properties.'java.home') {
@@ -364,19 +364,14 @@ task dmg(type: Exec, dependsOn: signapp) {
 	mkdir distDir
 	new File("${distDir}/${appSimpleName}-${appSimpleVersion}.dmg").delete()
 	workingDir buildDir
-	commandLine 'create-dmg',
-	  "--volname", "KeyStore Explorer",
-	  "--volicon", "${projectDir}/dmg/kse.icns",
-	  "--background", "${projectDir}/dmg/background.png",
-	  "--window-pos", "400", "40",
-	  "--window-size", "515", "271",
-	  "--icon-size", "128",
-	  "--icon", "${appBundle}", "150", "130",
-	  "--hide-extension", "${appBundle}",
-	  "--app-drop-link", "370", "130",
-	  "--skip-jenkins",
-	  "${distDir}/${appSimpleName}-${appSimpleVersion}.dmg",
-	  "${appBundleDir}"
+
+	commandLine 'dropdmg',
+	  "--format", "zlib",
+	  "--layout-name", "KSE 5",
+	  "--signing-identity", "Kai Kramer",
+	  "--base-name", "${appSimpleName}-${appSimpleVersion}",
+	  "--destination", "${distDir}",
+	  "${appBundleDir}/${appBundle}"
 }
 
 
