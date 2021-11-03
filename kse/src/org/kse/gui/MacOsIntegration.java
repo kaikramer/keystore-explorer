@@ -19,6 +19,7 @@
  */
 package org.kse.gui;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +31,6 @@ import org.kse.gui.actions.AboutAction;
 import org.kse.gui.actions.ExitAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PreferencesAction;
-import org.kse.version.JavaVersion;
 
 /**
  * Integrate KSE with macOS. Handles call backs from macOS.
@@ -43,42 +43,31 @@ public class MacOsIntegration implements InvocationHandler {
 		this.kseFrame = kseFrame;
 	}
 
-	public void addEventHandlers() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
-	InvocationTargetException, InstantiationException {
+	public void addEventHandlers()
+			throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
 		// using reflection to avoid Mac specific classes being required for compiling KSE on other platforms
-		Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
-		Class<?> quitHandlerClass;
-		Class<?> aboutHandlerClass;
-		Class<?> openFilesHandlerClass;
-		Class<?> preferencesHandlerClass;
+		Class<?> quitHandlerClass = Class.forName("java.awt.desktop.QuitHandler");
+		Class<?> aboutHandlerClass = Class.forName("java.awt.desktop.AboutHandler");
+		Class<?> openFilesHandlerClass = Class.forName("java.awt.desktop.OpenFilesHandler");
+		Class<?> prefsHandlerClass = Class.forName("java.awt.desktop.PreferencesHandler");
 
-                if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_9)) {
-                    quitHandlerClass = Class.forName("java.awt.desktop.QuitHandler");
-                    aboutHandlerClass = Class.forName("java.awt.desktop.AboutHandler");
-                    openFilesHandlerClass = Class.forName("java.awt.desktop.OpenFilesHandler");
-                    preferencesHandlerClass = Class.forName("java.awt.desktop.PreferencesHandler");
-                } else {
-                    quitHandlerClass = Class.forName("com.apple.eawt.QuitHandler");
-                    aboutHandlerClass = Class.forName("com.apple.eawt.AboutHandler");
-                    openFilesHandlerClass = Class.forName("com.apple.eawt.OpenFilesHandler");
-                    preferencesHandlerClass = Class.forName("com.apple.eawt.PreferencesHandler");    
-                }
+		Desktop desktop = Desktop.getDesktop();
 
-		Object application = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
-		Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(), new Class<?>[]{
-			quitHandlerClass, aboutHandlerClass, openFilesHandlerClass, preferencesHandlerClass}, this);
+		Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(),
+				new Class<?>[] { quitHandlerClass, aboutHandlerClass, openFilesHandlerClass, prefsHandlerClass },
+				this);
 
-		applicationClass.getDeclaredMethod("setQuitHandler", quitHandlerClass).invoke(application, proxy);
-		applicationClass.getDeclaredMethod("setAboutHandler", aboutHandlerClass).invoke(application, proxy);
-		applicationClass.getDeclaredMethod("setOpenFileHandler", openFilesHandlerClass).invoke(application, proxy);
-		applicationClass.getDeclaredMethod("setPreferencesHandler", preferencesHandlerClass).invoke(application,
-				proxy);
+		desktop.getClass().getDeclaredMethod("setQuitHandler", quitHandlerClass).invoke(desktop, proxy);
+		desktop.getClass().getDeclaredMethod("setAboutHandler", aboutHandlerClass).invoke(desktop, proxy);
+		desktop.getClass().getDeclaredMethod("setOpenFileHandler", openFilesHandlerClass).invoke(desktop, proxy);
+		desktop.getClass().getDeclaredMethod("setPreferencesHandler", prefsHandlerClass).invoke(desktop, proxy);
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		if ("openFiles".equals(method.getName())) {
+		switch (method.getName()) {
+		case "openFiles":
 			if (args[0] != null) {
 				Object files = args[0].getClass().getMethod("getFiles").invoke(args[0]);
 				if (files instanceof List) {
@@ -88,19 +77,23 @@ public class MacOsIntegration implements InvocationHandler {
 					}
 				}
 			}
-		} else if ("handleQuitRequestWith".equals(method.getName())) {
+			break;
+		case "handleQuitRequestWith":
 			ExitAction exitAction = new ExitAction(kseFrame);
 			exitAction.exitApplication();
-			// If we have returned from the above call the user has decied not to quit
+			// If we have returned from the above call the user has decided not to quit
 			if (args[1] != null) {
 				args[1].getClass().getDeclaredMethod("cancelQuit").invoke(args[1]);
 			}
-		} else if ("handleAbout".equals(method.getName())) {
+			break;
+		case "handleAbout":
 			AboutAction aboutAction = new AboutAction(kseFrame);
 			aboutAction.showAbout();
-		} else if ("handlePreferences".equals(method.getName())) {
+			break;
+		case "handlePreferences":
 			PreferencesAction preferencesAction = new PreferencesAction(kseFrame);
 			preferencesAction.showPreferences();
+			break;
 		}
 		return null;
 	}
