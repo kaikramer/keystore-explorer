@@ -104,21 +104,21 @@ targetCompatibility = 1.8
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 dependencies {
-	implementation("org.bouncycastle:bcpkix-jdk15on:1.68")
+	implementation("org.bouncycastle:bcpkix-jdk15on:1.69")
 	implementation("net.java.dev.jna:jna:5.9.0")
 	implementation("commons-io:commons-io:2.11.0")
 	implementation("com.miglayout:miglayout-swing:5.2")
-	implementation("com.formdev:flatlaf:1.5")
+	implementation("com.formdev:flatlaf:1.6.1")
 
 	// VAqua Look & Feel not in a public repository yet
 	if (file("lib/VAqua8.jar").exists()) {
 		implementation files('lib/VAqua8.jar')
 	}
 
-	testImplementation("org.assertj:assertj-core:3.20.2")
-	testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-	testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.2")
-	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+	testImplementation("org.assertj:assertj-core:3.21.0")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+	testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.1")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 }
 
 test {
@@ -321,15 +321,15 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 							icon: keystoreIcns,
 							name: "KeyStore",
 							role: "editor")
-			option(value: "-Dkse.app=true")
-			option(value: '-splash:$APP_ROOT/Contents/Resources/splash.png')
 			option(value: "-Dapple.laf.useScreenMenuBar=true")
 			option(value: "-Dcom.apple.macos.use-file-dialog-packages=true")
 			option(value: "-Dcom.apple.macos.useScreenMenuBar=true")
 			option(value: "-Dcom.apple.mrj.application.apple.menu.about.name=${appName}")
 			option(value: "-Dcom.apple.smallTabs=true")
 			option(value: "-Dfile.encoding=UTF-8")
-			//environment(name: "APP_ROOT", value: '$APP_ROOT') // provide app location for restart
+			option(value: '-splash:$APP_ROOT/Contents/Resources/splash.png')
+			option(value: "-Dkse.app=true")
+			option(value: '-Dkse.app.stub=$APP_ROOT/Contents/MacOS/KeyStore Explorer') // provide app location for restart
 		}
 		copy {
 			from("${resDir}")
@@ -365,7 +365,7 @@ task signapp(dependsOn: appbundler) {
 	}
 }
 
-task dmg(type: Exec, dependsOn: signapp) {
+task dmg(type: Exec) {
 	mkdir distDir
 	new File("${distDir}/${appSimpleName}-${appSimpleVersion}.dmg").delete()
 	workingDir buildDir

@@ -21,9 +21,11 @@ package org.kse.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
+
+import javax.swing.JFrame;
 
 import org.kse.KSE;
+import org.kse.gui.error.DError;
 
 /**
  * Restart KeyStore Explorer.
@@ -35,6 +37,9 @@ public class KseRestart {
 	private static final String JAVA_CLASS_PATH = "java.class.path";
 
 	private static final String KSE_INSTALL_DIR = "kse.install.dir";
+
+	// macOS: location of native app stub (passed from appbundler)
+	private static final String KSE_APP_STUB = "kse.app.stub";
 
 	private static final String KSE_EXE = "kse.exe";
 	private static final String KSE_APP = "kse.app";
@@ -68,7 +73,7 @@ public class KseRestart {
 		try {
 			Runtime.getRuntime().exec(toExec);
 		} catch (IOException ex) {
-			ex.printStackTrace(); // Ignore
+			DError.displayError(new JFrame(), ex);
 		}
 	}
 
@@ -84,24 +89,19 @@ public class KseRestart {
 		try {
 			Runtime.getRuntime().exec(toExec);
 		} catch (IOException ex) {
-			ex.printStackTrace(); // Ignore
+			DError.displayError(new JFrame(), ex);
 		}
 	}
 
 	private static void restartAsKseApp() {
-		File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
-
-		String kseApp = MessageFormat.format("{0} {1}.app", KSE.getApplicationName(), KSE.getApplicationVersion());
-
-		File javaAppStub = new File(new File(new File(new File(kseInstallDir, kseApp), "Contents"), "MacOS"),
-				"JavaApplicationStub");
+		File javaAppStub = new File(System.getProperty(KSE_APP_STUB));
 
 		String[] toExec = new String[] { javaAppStub.getPath() };
 
 		try {
 			Runtime.getRuntime().exec(toExec);
 		} catch (IOException ex) {
-			ex.printStackTrace(); // Ignore
+			DError.displayError(new JFrame(), ex);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class KseRestart {
 		try {
 			Runtime.getRuntime().exec(toExec);
 		} catch (IOException ex) {
-			ex.printStackTrace(); // Ignore
+			DError.displayError(new JFrame(), ex);
 		}
 	}
 }
