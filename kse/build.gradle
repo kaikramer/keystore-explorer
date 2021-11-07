@@ -104,7 +104,7 @@ targetCompatibility = 1.8
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 dependencies {
-	implementation("org.bouncycastle:bcpkix-jdk15on:1.69")
+	implementation("org.bouncycastle:bcpkix-jdk15on:1.68")
 	implementation("net.java.dev.jna:jna:5.9.0")
 	implementation("commons-io:commons-io:2.11.0")
 	implementation("com.miglayout:miglayout-swing:5.2")
@@ -365,7 +365,7 @@ task signapp(dependsOn: appbundler) {
 	}
 }
 
-task dmg(type: Exec) {
+task dmg(type: Exec, dependsOn: signapp) {
 	mkdir distDir
 	new File("${distDir}/${appSimpleName}-${appSimpleVersion}.dmg").delete()
 	workingDir buildDir
