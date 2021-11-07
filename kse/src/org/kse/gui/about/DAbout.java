@@ -59,7 +59,9 @@ public class DAbout extends JEscDialog {
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
-	private static final Color KSE_COLOR = LnfUtil.isDarkLnf() ? new Color(116, 131, 141) : new Color(0, 134, 201);
+	private static final Color KSE_COLOR = LnfUtil.isDarkLnf()
+			? new Color(116, 131, 141)
+			: new Color(0, 134, 201);
 
 	private JPanel jpAbout = new JPanel();
 
@@ -81,8 +83,9 @@ public class DAbout extends JEscDialog {
 	 * @param aboutImg
 	 *            The image containing the about information
 	 * @param tickerItems
+	 * 			  Content for copyright ticker
 	 */
-	public DAbout(JFrame parent, String title, String licenseNotice, Image aboutImg, Object[] tickerItems) {
+	public DAbout(JFrame parent, String title, String licenseNotice, Image aboutImg, String[] tickerItems) {
 		super(parent, title, ModalityType.DOCUMENT_MODAL);
 		initComponents(aboutImg, licenseNotice, tickerItems);
 	}
@@ -95,8 +98,8 @@ public class DAbout extends JEscDialog {
 		jtkDetails.setGap(40);
 		jtkDetails.setInterval(20);
 
-		for (int i = 0; i < tickerItems.length; i++) {
-			jtkDetails.addItem(tickerItems[i]);
+		for (Object tickerItem : tickerItems) {
+			jtkDetails.addItem(tickerItem);
 		}
 
 		// prepare other elements
@@ -121,7 +124,7 @@ public class DAbout extends JEscDialog {
 		jpAbout.add(jlKSE, "top");
 		jpAbout.add(jlIcon, "top, right, spany 2, wrap unrel");
 		jpAbout.add(jlVersion, "top, wrap para");
-		jpAbout.add(jlLicense, "span, wrap unrel");
+//		jpAbout.add(jlLicense, "span, wrap unrel");
 		jpAbout.add(jtkDetails, "width 100%, span, wrap para:push");
 
 		jpAbout.add(jbCredits, "");
@@ -168,7 +171,7 @@ public class DAbout extends JEscDialog {
 
 
 	public static void main(String[] args) throws Exception {
-		Object[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2021 Kai Kramer ..." };
+		String[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2021 Kai Kramer ..." };
 		URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
 		DAbout dialog = new DAbout(new JFrame(), "About", "See help for details of the end user license agreement.",
 				Toolkit.getDefaultToolkit().getImage(kseIconUrl), tickerItems);

@@ -87,8 +87,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -312,7 +310,6 @@ public final class KseFrame implements StatusBar {
 	private JButton jbCut;
 	private JButton jbCopy;
 	private JButton jbPaste;
-	private JButton jbGenerateDHParameters;
 	private JButton jbGenerateKeyPair;
 	private JButton jbGenerateSecretKey;
 	private JButton jbImportTrustedCertificate;
@@ -1268,23 +1265,6 @@ public final class KseFrame implements StatusBar {
 			}
 		});
 
-		jbGenerateDHParameters = new JButton();
-		jbGenerateDHParameters.setAction(generateDHParametersAction);
-		jbGenerateDHParameters.setText(null);
-		PlatformUtil.setMnemonic(jbGenerateDHParameters, 0);
-		jbGenerateDHParameters.setFocusable(false);
-		jbGenerateDHParameters.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent evt) {
-				setStatusBarText((String) generateDHParametersAction.getValue(Action.LONG_DESCRIPTION));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent evt) {
-				setDefaultStatusBarText();
-			}
-		});
-
 		jbGenerateKeyPair = new JButton();
 		jbGenerateKeyPair.setAction(generateKeyPairAction);
 		jbGenerateKeyPair.setText(null);
@@ -1486,7 +1466,6 @@ public final class KseFrame implements StatusBar {
 
 		jtbToolBar.add(jbGenerateKeyPair);
 		jtbToolBar.add(jbGenerateSecretKey);
-		jtbToolBar.add(jbGenerateDHParameters);
 		jtbToolBar.add(jbImportTrustedCertificate);
 		jtbToolBar.add(jbImportKeyPair);
 		jtbToolBar.add(jbSetPassword);

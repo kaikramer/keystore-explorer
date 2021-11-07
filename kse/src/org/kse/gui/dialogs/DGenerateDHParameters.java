@@ -1,5 +1,6 @@
 package org.kse.gui.dialogs;
 
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -9,19 +10,18 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 
 import org.kse.gui.JEscDialog;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 
@@ -53,7 +53,7 @@ public class DGenerateDHParameters extends JEscDialog{
 	private String[] keySizeSelection = {"1024", "2048"};
 	private JLabel jlDHKeySize;
 	private JComboBox<String> jcbDHKeySize;
-	
+
 	private JButton jbOK;
 	private JButton jbCancel;
 	private int dhKeySize;
@@ -68,18 +68,18 @@ public class DGenerateDHParameters extends JEscDialog{
 		super(parent, res.getString("DGenerateDHParameters.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 		initComponents();
 	}
-	
+
 	/**
-	 * Initializes the dialogue panel and associated elements 
+	 * Initializes the dialogue panel and associated elements
 	 */
 	private void initComponents() {
-		
+
 		//TODO Generate DH Parameters icon
 		//ImageIcon icon = new ImageIcon(getClass().getResource("images/gendhp.png"));
 		//jlGenDHParam.setIcon(icon);
 		//jlGenDHParam.setHorizontalTextPosition(SwingConstants.LEADING);
 		//jlGenDHParam.setIconTextGap(15);
-		
+
 		jlDHKeySize = new JLabel(res.getString("DGenerateDHParameters.jlDHKeySize.text"));
 
 		jcbDHKeySize = new JComboBox<>();
@@ -87,60 +87,46 @@ public class DGenerateDHParameters extends JEscDialog{
 		jcbDHKeySize.setSelectedIndex(1);
 		jcbDHKeySize.setToolTipText(res.getString("DGenerateDHParameters.jcbDHKeySize.tooltip"));
 
-		jbCancel = new JButton(res.getString("DGenerateDHParameters.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
-
-		jbOK = new JButton(res.getString("DGenerateDHParameters.jbOK.text"));
-
 		JTextArea jtAreaFooter = new JTextArea();
-		jtAreaFooter = new JTextArea();
+		jtAreaFooter.setColumns(25);
 		jtAreaFooter.setText(res.getString("DGenerateDHParameters.jtAreaFooter.text"));
-		jtAreaFooter.setToolTipText(res.getString("DGenerateDHParameters.jtAreaFooter.tooltip"));
 		jtAreaFooter.setEditable(false);
 		jtAreaFooter.setLineWrap(true);
 		jtAreaFooter.setWrapStyleWord(true);
 		jtAreaFooter.setBackground(getBackground());
-		
-		JPanel jpContent = new JPanel();
-		jpContent.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DGenerateDHParameters.jpContent.text")));
-		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+
+		jbCancel = new JButton(res.getString("DGenerateDHParameters.jbCancel.text"));
+		jbOK = new JButton(res.getString("DGenerateDHParameters.jbOK.text"));
+
+		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		// layout
-		getContentPane().setLayout(new MigLayout("fill", "", ""));
-		getContentPane().add(jpContent, "wrap unrel, growx");
-		getContentPane().add(jtAreaFooter, "wrap unrel, growx");
-		getContentPane().add(buttons, "tag Ok, growx");
-
-		jpContent.setLayout(new MigLayout("insets dialog, ", "", "[]unrel[]"));
-		jpContent.add(jlDHKeySize, "");
-		jpContent.add(jcbDHKeySize, "growx, wrap");
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[indent][][]", ""));
+		MiGUtil.addSeparator(pane, res.getString("DGenerateDHParameters.jpContent.text"));
+		pane.add(jlDHKeySize, "skip, align right");
+		pane.add(jcbDHKeySize, "wrap");
+		pane.add(jtAreaFooter, "growx, spanx, wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		pane.add(buttons, "right, spanx");
 
 		jbOK.addActionListener(evt -> okPressed());
 		jbCancel.addActionListener(evt -> cancelPressed());
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
-
 			@Override public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
 			}
 		});
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
 
 		addWindowListener(new WindowAdapter() {
 			@Override public void windowClosing(WindowEvent evt) {
 				closeDialog();
 			}
 		});
-		
+
 		setResizable(false);
 
 		getRootPane().setDefaultButton(jbOK);
@@ -154,13 +140,13 @@ public class DGenerateDHParameters extends JEscDialog{
 	private void setKeySize() {
 			dhKeySize = Integer.parseInt((String) jcbDHKeySize.getSelectedItem());
 	}
-	
+
 	/**
 	 * Get the selected key size.
 	 *
 	 * @return The the key size value
 	 */
-	public int getKeySize() {	
+	public int getKeySize() {
 		return dhKeySize;
 	}
 
@@ -177,7 +163,7 @@ public class DGenerateDHParameters extends JEscDialog{
      * <p>
      * Sets the success value to true
      * <p>
-     * Calls the close dialogue 
+     * Calls the close dialogue
      */
 	private void okPressed() {
 		setKeySize();
@@ -191,7 +177,7 @@ public class DGenerateDHParameters extends JEscDialog{
 		closeDialog();
 	}
 	/**
-	 * Closes the dialogue 
+	 * Closes the dialogue
      */
 	private void closeDialog() {
 		setVisible(false);

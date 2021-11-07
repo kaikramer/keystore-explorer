@@ -68,16 +68,15 @@ public class AboutAction extends KeyStoreExplorerAction {
 	 */
 	public void showAbout() {
 
-		Object[] tickerItems = {
+		String[] tickerItems = {
 				"Copyright 2004 - 2013 Wayne Grant, 2013 - 2021 Kai Kramer",
-				"Bouncy Castle JCE Provider Copyright 2000 - 2019 The Legion Of The Bouncy Castle (www.bouncycastle.org)",
-				"Apache Commons Copyright 2002-2017 The Apache Software Foundation (commons.apache.org)",
-				"JavaHelp Copyright 2003 Sun Microsystems, Inc. (javahelp.java.net)",
+				"Bouncy Castle JCE Provider Copyright 2000 - 2021 The Legion Of The Bouncy Castle (www.bouncycastle.org)",
+				"Apache Commons Copyright 2002 - 2021 The Apache Software Foundation (commons.apache.org)",
 				"MigLayout Copyright 2004, Mikael Grev, MiG InfoCom AB (www.miglayout.com)",
 				"Fugue Icons Copyright 2013 Yusuke Kamiyamane (p.yusukekamiyamane.com)",
-				"JNA Copyright 2007 Timothy Wall (github.com/twall/jna)",
-				"FlatLaf Copyright 2019 FormDev Software GmbH (www.formdev.com/flatlaf/)",
-				LnfUtil.isVAquaAvailable() ? "VAqua Copyright 2015\u20132019 Alan Snyder (violetlib.org)" : "",
+				"JNA Copyright 2007 Timothy Wall (github.com/java-native-access/jna)",
+				"FlatLaf Copyright 2019 - 2021 FormDev Software GmbH (www.formdev.com/flatlaf/)",
+				LnfUtil.isVAquaAvailable() ? "VAqua Copyright 2015 - 2019 Alan Snyder (violetlib.org)" : "",
 		};
 
 		URL aboutDialogImageURL = AboutAction.class.getResource("images/aboutdlg.png");

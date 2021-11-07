@@ -33,8 +33,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Platform specific GUI building utility methods. Takes care of differences
- * between macOS (and lnfs thereof) and other platforms. They
- * "Think Different", you see.
+ * between macOS (and lnfs thereof) and other platforms.
  *
  */
 public class PlatformUtil {
@@ -42,7 +41,7 @@ public class PlatformUtil {
 	}
 
 	/**
-	 * Create a dialog button panel with the order and alignment dependant on
+	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
 	 *
 	 * @param jbPositive
@@ -54,7 +53,7 @@ public class PlatformUtil {
 	}
 
 	/**
-	 * Create a dialog button panel with the order and alignment dependant on
+	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
 	 *
 	 * @param jbPositives Positive buttons
@@ -65,7 +64,7 @@ public class PlatformUtil {
 	}
 
 	/**
-	 * Create a dialog button panel with the order and alignment dependant on
+	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
 	 *
 	 * @param jbPositive
@@ -79,7 +78,7 @@ public class PlatformUtil {
 	}
 
 	/**
-	 * Create a dialog button panel with the order and alignment dependant on
+	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
 	 *
 	 * @param jbPositives
@@ -93,7 +92,7 @@ public class PlatformUtil {
 	}
 
 	/**
-	 * Create a dialog button panel with the order and alignment dependant on
+	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
 	 *
 	 * @param jbPositive
@@ -109,7 +108,7 @@ public class PlatformUtil {
 	}
 
 	/**
-	 * Create a dialog button panel with the order and alignment dependant on
+	 * Create a dialog button panel with the order and alignment dependent on
 	 * the platform.
 	 *
 	 * @param jbPositive
@@ -123,6 +122,23 @@ public class PlatformUtil {
 	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther) {
 		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, jbOther,
 				null);
+	}
+
+	/**
+	 * Create a dialog button panel with the order and alignment dependent on
+	 * the platform.
+	 *
+	 * @param jbPositive
+	 *            Positive button
+	 * @param jbNegative
+	 *            Negative button
+	 * @param insets
+	 *            Insets for panel (MiGLayout constraint)
+	 * @return Dialog button panel
+	 */
+	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, String insets) {
+		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, null,
+				insets);
 	}
 
 	/**

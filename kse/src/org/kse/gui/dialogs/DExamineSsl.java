@@ -95,7 +95,6 @@ public class DExamineSsl extends JEscDialog {
 	}
 
 	private void initComponents() {
-
 		jlSslHost = new JLabel(res.getString("DExamineSsl.jlSslHost.text"));
 
 		jcbSslHost = new JComboBox<>();
@@ -126,38 +125,34 @@ public class DExamineSsl extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
+		pane.setLayout(new MigLayout("insets dialog, fill", "[indent]unrel[right]unrel[grow]", ""));
 		MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlConnSettings.text"));
 		pane.add(jlSslHost, "skip");
-		pane.add(jcbSslHost, "sgx, wrap");
+		pane.add(jcbSslHost, "sgx, growx, wrap");
 		pane.add(jlSslPort, "skip");
-		pane.add(jcbSslPort, "sgx, wrap para");
+		pane.add(jcbSslPort, "sgx, growx, wrap para");
 		MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlClientAuth.text"));
 		pane.add(jcbClientAuth, "left, spanx, wrap");
 		pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
-		pane.add(jcbKeyStore, "sgx");
-		pane.add(jbLoadKeystore, "wrap para");
+		pane.add(jcbKeyStore, "sgx, growx");
+		pane.add(jbLoadKeystore, "growx, wrap para");
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
 
 		jcbClientAuth.addActionListener(evt -> updateClientAuthComponents());
-
 		jbLoadKeystore.addActionListener(evt -> {
 			OpenAction openAction = new OpenAction(kseFrame);
 			openAction.actionPerformed(evt);
 			updateClientAuthComponents();
 		});
-
 		jbOK.addActionListener(evt -> okPressed());
-
 		jbCancel.addActionListener(evt -> cancelPressed());
 
 		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
-
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				cancelPressed();
@@ -173,9 +168,9 @@ public class DExamineSsl extends JEscDialog {
 
 		updateClientAuthComponents();
 
-		setResizable(false);
-
 		getRootPane().setDefaultButton(jbOK);
+
+		setResizable(false);
 
 		pack();
 	}
