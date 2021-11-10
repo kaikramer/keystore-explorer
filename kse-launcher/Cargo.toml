@@ -1,6 +1,6 @@
 [package]
 name = "kse-launcher"
-version = "0.9.9"
+version = "1.0.0"
 authors = ["Kai Kramer <kaikramer@users.noreply.github.com>"]
 edition = "2018"
 

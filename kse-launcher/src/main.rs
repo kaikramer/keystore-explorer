@@ -69,7 +69,7 @@ fn get_jar_path() -> String {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let args: Vec<String> = env::args().skip(1).collect();
 
     // use local JRE preferably
     let java_path: String = if Path::new("jre").is_dir() {
@@ -85,8 +85,7 @@ fn main() {
         .arg("-splash:splash.png")
         .arg("-jar")
         .arg(kse_jar_path)
-        // TODO allow multiple files!!
-        .arg(args.get(1).get_or_insert(&"".to_string()))
+        .args(&args)
         .spawn();
 
     if java_process.is_err() {
