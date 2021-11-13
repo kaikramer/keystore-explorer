@@ -165,7 +165,7 @@ public class DExportKeyPair extends JEscDialog {
 
 		// layout
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "unrel[]unrel[]"));
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "unrel[]unrel[]"));
 		pane.add(jlFormat, "");
 		pane.add(jrbFormatPkcs12, "split 2");
 		pane.add(jrbFormatPEM, "wrap");

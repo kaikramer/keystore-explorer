@@ -75,7 +75,7 @@ public class DViewDHParameters extends JEscDialog {
 
 	/**
 	 * Initializes the dialogue panel and associated elements
-	 * 
+	 *
 	 * @param dhParams The byte array for the DH Parameters
 	 * @throws CryptoException
 	 */
@@ -100,7 +100,7 @@ public class DViewDHParameters extends JEscDialog {
 		jbOK = new JButton(res.getString("DViewDHParameters.jbOK.text"));
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets 10"));
+		pane.setLayout(new MigLayout("insets dialog"));
 		pane.add(jtAreaPem, "span");
 		pane.add(jbCopy, "tag Copy");
 		pane.add(jbExport, "tag Export");
@@ -140,7 +140,7 @@ public class DViewDHParameters extends JEscDialog {
 	 * <p>
 	 * See RFC 1421 for further information on PEM formatting
 	 * <p>
-	 * 
+	 *
 	 * @param filePath Accepts a string file path
 	 * @param DEREncodedDHParams Accepts a byte array
 	 */

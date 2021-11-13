@@ -329,7 +329,7 @@ public class DSignCsr extends JEscDialog {
 
 		// layout
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 		MiGUtil.addSeparator(pane, res.getString("DSignCsr.jpCsrDetails.text"));
 		pane.add(jlCsrFormat, "");
 		pane.add(jtfCsrFormat, "wrap");

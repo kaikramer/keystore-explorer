@@ -88,7 +88,7 @@ public class DListCertificatesKS extends JEscDialog {
 		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "[]unrel[]"));
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 
 		pane.add(jlKeyStore);
 		pane.add(jcbKeyStore);
