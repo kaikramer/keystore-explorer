@@ -80,7 +80,7 @@ public class DErrorCollection extends JEscDialog {
 		jtaKeyValue.setEditable(false);
 		jtaKeyValue.setToolTipText(res.getString("DErrorCollection.jtaKeyValue.tooltip"));
 		jtaKeyValue.setLineWrap(true);
-		JScrollPane scrollPane = PlatformUtil.createScrollPane(jtaKeyValue, 
+		JScrollPane scrollPane = PlatformUtil.createScrollPane(jtaKeyValue,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
@@ -93,16 +93,16 @@ public class DErrorCollection extends JEscDialog {
 		jbCopy.setToolTipText(res.getString("DErrorCollection.jbCopy.tooltip"));
 		PlatformUtil.setMnemonic(jbCopy, res.getString("DErrorCollection.jbCopy.mnemonic").charAt(0));
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
+		jpButtons = PlatformUtil.createDialogButtonPanel(new JButton[]{ jbOK }, null, new JButton[]{ jbCopy }, "insets 0");
 
 		// layout
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[][]", "[][]"));
 		pane.add(jlblKeys, "");
-		pane.add(jlblKeyValue, "wrap para");
+		pane.add(jlblKeyValue, "wrap unrel");
 		pane.add(jltKeys, "");
 		pane.add(scrollPane, "wrap");
-		pane.add(new JSeparator(), "spanx, growx, wrap para");
+		pane.add(new JSeparator(), "spanx, growx, wrap unrel");
 		pane.add(jpButtons, "right, spanx");
 
 		// actions
@@ -142,14 +142,14 @@ public class DErrorCollection extends JEscDialog {
 
 
 	/**
-	 * Sets the JList keys from keys of the hashmap 
+	 * Sets the JList keys from keys of the hashmap
 	 * @param map
 	 * 			Hashmap
 	 */
 	private void populateKeys(Map<?, ?> map) {
 		// convert hash map keys to a string array
 		String[] listData = (String[]) map.keySet().toArray(new String[map.size()]);
-		
+
 		if (listData != null) {
 			jltKeys.setListData(listData);
 			jltKeys.setSelectedIndex(0);
@@ -170,7 +170,7 @@ public class DErrorCollection extends JEscDialog {
 			jtaKeyValue.setCaretPosition(0);
 		}
 	}
-	
+
 	/**
 	 * Copies the contents of the text area to the clip board.
 	 */
@@ -181,7 +181,7 @@ public class DErrorCollection extends JEscDialog {
 		StringSelection copy = new StringSelection(policy);
 		clipboard.setContents(copy, copy);
 	}
-	
+
 	/**
 	 * Calls the close dialogue window
 	 */

@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.DERBitString;
@@ -102,7 +103,7 @@ public class DDistributionPointsChooser extends JEscDialog {
 		jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[][][]", "[][]"));
@@ -119,7 +120,8 @@ public class DDistributionPointsChooser extends JEscDialog {
 		pane.add(jcbPrivilegeWithdrawn, "");
 		pane.add(jcbAACompromise, "wrap unrel");
 		pane.add(jlDistributionPointCrlIssuer, "top");
-		pane.add(jgnDistributionPointCrlIssuer, "span 3, wrap");
+		pane.add(jgnDistributionPointCrlIssuer, "span 3, wrap unrel");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "spanx, tag ok");
 
 		jbOK.addActionListener(evt -> okPressed());

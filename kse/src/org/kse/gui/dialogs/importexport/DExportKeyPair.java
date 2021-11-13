@@ -161,7 +161,7 @@ public class DExportKeyPair extends JEscDialog {
 
 		jbCancel = new JButton(res.getString("DExportKeyPair.jbCancel.text"));
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel, "insets 0");
 
 		// layout
 		Container pane = getContentPane();

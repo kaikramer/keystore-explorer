@@ -65,7 +65,7 @@ public class DCrlReason extends JEscDialog {
 
 	/**
 	 * Creates a new DCrlReason
-	 * 
+	 *
 	 * @param parent The parent frame
 	 * @param cert   Certificate to revoke
 	 */
@@ -138,10 +138,10 @@ public class DCrlReason extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 
-		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("fill", "[right]unrel[][][]", "[]"));
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[][][]", "[]"));
 		pane.add(jlSubject, "");
 		pane.add(jdnSubject, "spanx, wrap unrel");
 		pane.add(jlRevocationDate, "");

@@ -325,7 +325,7 @@ public class DSignCsr extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 
-		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		// layout
 		Container pane = getContentPane();

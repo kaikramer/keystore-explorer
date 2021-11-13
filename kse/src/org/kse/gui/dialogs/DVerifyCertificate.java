@@ -2,7 +2,6 @@ package org.kse.gui.dialogs;
 
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -87,7 +86,7 @@ public class DVerifyCertificate extends JEscDialog {
 
 	/**
 	 * Creates a new DVerifyCertificate dialog.
-	 * 
+	 *
 	 * @param parent           The parent frame
 	 * @param certificateAlias The certificate alias
 	 * @param kseFrame         KeyStore Explorer application frame
@@ -141,7 +140,6 @@ public class DVerifyCertificate extends JEscDialog {
 
 		jcbKeyStore = new JComboBox<>(getKeystoreNames());
 		jcbKeyStore.setToolTipText(res.getString("DVerifyCertificate.jcbKeyStore.tooltip"));
-		jcbKeyStore.setPreferredSize(new Dimension(200, 20));
 		jcbKeyStore.setEnabled(false);
 
 		jbLoadKeystore = new JButton();
@@ -151,10 +149,10 @@ public class DVerifyCertificate extends JEscDialog {
 
 		jbOk = new JButton(res.getString("DVerifyCertificate.jbOk.text"));
 		jbCancel = new JButton(res.getString("DVerifyCertificate.jbCancel.text"));
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOk, jbCancel);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOk, jbCancel, "insets 0");
 
 		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("fill", "[right]unrel[]", "unrel[]unrel[]"));
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "unrel[]unrel[]"));
 		MiGUtil.addSeparator(pane, res.getString("DVerifyCertificate.jlCheckStatus.text"));
 		pane.add(jrbCrlCheckDistPoint, "wrap, left");
 		pane.add(jrbCrlCheckFile, "left");
@@ -167,7 +165,7 @@ public class DVerifyCertificate extends JEscDialog {
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jcbSelectKeyStore, "left, spanx, wrap");
 		pane.add(new JLabel(res.getString("DVerifyCertificate.jlKeyStore.text")), "");
-		pane.add(jcbKeyStore, "split 2");
+		pane.add(jcbKeyStore, "growx, split 2");
 		pane.add(jbLoadKeystore, "wrap");
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "right, spanx");
@@ -272,7 +270,7 @@ public class DVerifyCertificate extends JEscDialog {
 			fileCrl = jtfCrlFile.getText();
 		} else if (jrbOcspAiaCheck.isSelected()) {
 			verifyOption = VerifyOptions.OCSP_AIA;
-		} 
+		}
 		else if (jrbOcspUrlCheck.isSelected())
 		{
 			if (jtfOcspUrl.getText().isEmpty()) {

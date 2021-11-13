@@ -146,7 +146,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Initializes the dialogue panel and associated elements
-	 * 
+	 *
 	 * @param signatureName String
 	 * @throws CryptoException
 	 */
@@ -166,7 +166,7 @@ public class DSignJar extends JEscDialog {
 		jtfInputJar = new JTextField(30);
 		jtfInputJar.setCaretPosition(0);
 		jtfInputJar.setToolTipText(res.getString("DSignJar.jtfInputJar.tooltip"));
-		
+
 		jlFileCount = new JLabel();
 		String message = MessageFormat.format(res.getString("DSignJar.jlFileCount.text"), 0);
 		jlFileCount.setText(message);
@@ -220,7 +220,7 @@ public class DSignJar extends JEscDialog {
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		// layout
 		Container pane = getContentPane();
@@ -307,7 +307,7 @@ public class DSignJar extends JEscDialog {
 	 * Convert the supplied signature name to make it valid for use with signing,
 	 * i.e. any characters that are not 'a-z', 'A-Z', '0-9', '_' or '-' are
 	 * converted to '_'
-	 * 
+	 *
 	 * @param signatureName String
 	 * @return String
 	 */
@@ -399,7 +399,7 @@ public class DSignJar extends JEscDialog {
 	 * Verify that the supplied signature name is valid for use in the signing of a
 	 * JAR file, ie: contains only alphanumeric characters and the characters '-' or
 	 * '_'
-	 * 
+	 *
 	 * @param signatureName String
 	 * @return <b>Boolean</b>
 	 */
@@ -490,7 +490,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Set output JAR files and check files for overwrite
-	 * 
+	 *
 	 * @return <b>Boolean</b> true if successful false if no option chosen
 	 */
 	private boolean setOutputJarFiles(File[] files) {
@@ -535,7 +535,7 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Checks to overwrite an existing signature
-	 * 
+	 *
 	 * @return <b>Boolean</b> continues jar signing if true cancels process if false
 	 */
 	private boolean checkSignature(File[] files) {
@@ -593,10 +593,10 @@ public class DSignJar extends JEscDialog {
 			updateFileCount(chosenFiles.length);
 		}
 	}
-	
+
 	/**
 	 * Update the dialog label for files selected
-	 * 
+	 *
 	 * @param fileCount the array size of the files selected
 	 */
 	private void updateFileCount(int fileCount) {
@@ -607,8 +607,8 @@ public class DSignJar extends JEscDialog {
 
 	/**
 	 * Check if a file is a valid JAR
-	 * 
-	 * @param File accepts a jar file
+	 *
+	 * @param file accepts a jar file
 	 * @return <b>Boolean</b> true if the file is a valid jar and false if not
 	 */
 	private boolean validJAR(File file) {

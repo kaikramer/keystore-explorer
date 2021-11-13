@@ -174,7 +174,7 @@ public class DGeneralNameChooser extends JEscDialog {
 		jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[]", ""));
@@ -337,7 +337,7 @@ public class DGeneralNameChooser extends JEscDialog {
 						JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
 								getTitle(), JOptionPane.WARNING_MESSAGE);
 						return;
-					}					
+					}
 				}
 				else
 				{
@@ -345,7 +345,7 @@ public class DGeneralNameChooser extends JEscDialog {
 						JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
 								getTitle(), JOptionPane.WARNING_MESSAGE);
 						return;
-					}	
+					}
 				}
 				newGeneralName = new GeneralName(GeneralName.iPAddress,	ipAddress);
 			} else if (jrbRegisteredId.isSelected()) {

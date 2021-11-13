@@ -19,6 +19,7 @@
  */
 package org.kse.gui.dialogs;
 
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -38,11 +39,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 
 import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
@@ -50,6 +50,7 @@ import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.JEscDialog;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 
@@ -194,26 +195,25 @@ public class DGenerateKeyPair extends JEscDialog {
 		loadECNamedCurves(keyPairCurveSet, keyPairCurveName);
 		enableDisableElements();
 
-		JPanel jpContent = new JPanel();
-		jpContent.setBorder(new TitledBorder(new EtchedBorder(), res.getString("DGenerateKeyPair.jpContent.text")));
-		JPanel buttons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		// layout
-		getContentPane().setLayout(new MigLayout("fill", "", "para[]"));
-		getContentPane().add(jpContent, "wrap unrel");
-		getContentPane().add(buttons, "growx");
-		jpContent.setLayout(new MigLayout("insets dialog, ", "[][right][]", "[]unrel[]"));
-		jpContent.add(jrbRSA, "");
-		jpContent.add(jlRSAKeySize, "");
-		jpContent.add(jspRSAKeySize, "growx, wrap");
-		jpContent.add(jrbDSA, "");
-		jpContent.add(jlDSAKeySize, "");
-		jpContent.add(jspDSAKeySize, "growx, wrap");
-		jpContent.add(jrbEC, "");
-		jpContent.add(jlECCurveSet, "");
-		jpContent.add(jcbECCurveSet, "growx, wrap");
-		jpContent.add(jlECCurve, "skip");
-		jpContent.add(jcbECCurve, "growx");
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[][right][]", "[]unrel[]"));
+		MiGUtil.addSeparator(pane, res.getString("DGenerateKeyPair.jpContent.text"));
+		pane.add(jrbRSA, "");
+		pane.add(jlRSAKeySize, "");
+		pane.add(jspRSAKeySize, "growx, wrap");
+		pane.add(jrbDSA, "");
+		pane.add(jlDSAKeySize, "");
+		pane.add(jspDSAKeySize, "growx, wrap");
+		pane.add(jrbEC, "");
+		pane.add(jlECCurveSet, "");
+		pane.add(jcbECCurveSet, "growx, wrap");
+		pane.add(jlECCurve, "skip");
+		pane.add(jcbECCurve, "growx, wrap para");
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		pane.add(jpButtons, "right, spanx");
 
 		jcbECCurveSet.addItemListener(evt -> loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem(),
 				keyPairCurveName));

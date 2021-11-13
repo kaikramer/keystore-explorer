@@ -142,7 +142,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 				}
 			});
 
-			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 		} else {
 
 			distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, false, defaultDN);
