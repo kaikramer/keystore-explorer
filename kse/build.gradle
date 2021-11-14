@@ -65,6 +65,7 @@ ext {
 	appJarName = "${appSimpleName}.jar"
 	appExe = "${appSimpleName}.exe"
 	appBundle = "${appName}.app"
+	dmgFile = "${appSimpleName}-${appSimpleVersion}.dmg"
 
 	// Directories
 	resDir = "$projectDir/res"
@@ -367,18 +368,28 @@ task signapp(dependsOn: appbundler) {
 
 task dmg(type: Exec, dependsOn: signapp) {
 	mkdir distDir
-	new File("${distDir}/${appSimpleName}-${appSimpleVersion}.dmg").delete()
+	new File("${distDir}/${dmgFile}").delete()
 	workingDir buildDir
 
 	commandLine 'dropdmg',
-		"--format", "zlib",
-		"--layout-name", "KSE 5",
-		"--signing-identity", "Kai Kramer",
-		"--base-name", "${appSimpleName}-${appSimpleVersion}",
-		"--destination", "${distDir}",
-		"${appBundleDir}/${appBundle}"
+			"--format", "zlib",
+			"--layout-name", "KSE 5",
+			"--signing-identity", "Kai Kramer",
+			"--base-name", "${appSimpleName}-${appSimpleVersion}",
+			"--destination", "${distDir}",
+			"${appBundleDir}/${appBundle}"
 }
 
+task notarization(type: Exec, dependsOn: dmg) {
+	workingDir buildDir
+
+	commandLine 'xcrun',
+			"notarytool",
+			"submit",
+			"--keychain-profile", "notarization-profile",
+			"--wait",
+			"${distDir}/${dmgFile}"
+}
 
 // common part for RPM and DEB
 ospackage {
