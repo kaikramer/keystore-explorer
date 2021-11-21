@@ -22,7 +22,9 @@ package org.kse.crypto.x509;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -39,6 +41,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -47,11 +50,14 @@ import java.util.ResourceBundle;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.X509TrustedCertificateBlock;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.utilities.ArrayUtils;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.pem.PemInfo;
@@ -86,24 +92,21 @@ public final class X509CertUtil {
 	 */
 	public static X509Certificate[] loadCertificates(byte[] certsBytes) throws CryptoException {
 		try {
-			// fix common input certificate problems by converting PEM/B64 to DER
-			certsBytes = fixCommonInputCertProblems(certsBytes);
-
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 
-			Collection<? extends Certificate> certs = cf.generateCertificates(new ByteArrayInputStream(certsBytes));
+			// try to parse data as PEM encoded
+			List<X509Certificate> loadedCerts = loadAsPEM(certsBytes, cf);
 
-			ArrayList<X509Certificate> loadedCerts = new ArrayList<>();
+			// try to parse as DER encoded
+			if (loadedCerts.isEmpty()) {
+				Collection<? extends Certificate> certs = cf.generateCertificates(new ByteArrayInputStream(certsBytes));
 
-			for (Certificate certificate : certs) {
-				X509Certificate cert = (X509Certificate) certificate;
-
-				if (cert != null) {
-					loadedCerts.add(cert);
+				if (!certs.isEmpty()) {
+					return convertCertificates(certs);
 				}
 			}
 
-			return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
+			return loadedCerts.toArray(new X509Certificate[0]);
 		} catch (NoSuchProviderException ex) {
 			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
 		} catch (CertificateException ex) {
@@ -141,76 +144,39 @@ public final class X509CertUtil {
 		}
 	}
 
-	private static byte[] fixCommonInputCertProblems(byte[] certs) {
+	private static List<X509Certificate> loadAsPEM(byte[] bytes, CertificateFactory cf) {
 
-		// remove PEM header/footer
-		String certsStr = new String(certs);
-		if (certsStr.startsWith(BEGIN_CERTIFICATE)) {
-			certsStr = certsStr.replaceAll(BEGIN_CERTIFICATE, "");
-			certsStr = certsStr.replaceAll(END_CERTIFICATE, "!");
-		}
+		PEMParser pemParser = new PEMParser(new StringReader(new String(bytes)));
+		JcaX509CertificateConverter jcaX509CertConverter = new JcaX509CertificateConverter();
 
-		// If one or more base 64 encoded certs then decode
-		String[] splitCertsStr = certsStr.split("!");
-		byte[] allDecoded = null;
-		for (String singleCertB64 : splitCertsStr) {
-			byte[] decoded = attemptBase64Decode(singleCertB64.trim());
-			if (decoded != null) {
-				allDecoded = ArrayUtils.add(allDecoded, decoded);
-			}
-		}
-		if (allDecoded != null) {
-			return allDecoded;
-		}
+		List<X509Certificate> certs = new ArrayList<>();
 
-		return certs;
-	}
-
-	private static byte[] attemptBase64Decode(String toTest) {
-
-		// Attempt to decode the supplied byte array as a base 64 encoded SPC.
-		// Character set may be UTF-16 big endian or ASCII.
-
-		char[] base64 = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-				'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
-				'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5',
-				'6', '7', '8', '9', '+', '/', '=' };
-
-		// remove all non visible characters (like newlines) and whitespace
-		toTest = toTest.replaceAll("\\s", "");
-
-		// Check all characters are base 64. Discard any zero bytes that be
-		// present if UTF-16 encoding is used but will mess up a base 64 decode
-		StringBuilder sb = new StringBuilder();
-
-		nextChar: for (int i = 0; i < toTest.length(); i++) {
-			char c = toTest.charAt(i);
-
-			for (int j = 0; j < base64.length; j++) {
-				// append base 64 byte
-				if (c == base64[j]) {
-					sb.append(c);
-					continue nextChar;
-				} else if (c == 0) {
-					// discard zero byte
-					continue nextChar;
-				}
-			}
-
-			// not base 64
-			return null;
-		}
-
-		// use BC for actual decoding
 		try {
-			return Base64.decode(sb.toString());
-		} catch (Exception e) {
-			// not base 64
+			Object pemObject = pemParser.readObject();
+			while (pemObject != null) {
+				// check for all possible certificate classes
+				if (pemObject instanceof X509CertificateHolder) {
+					certs.add(jcaX509CertConverter.getCertificate((X509CertificateHolder) pemObject));
+				} else if (pemObject instanceof X509TrustedCertificateBlock) {
+					X509TrustedCertificateBlock trustedCertBlock = (X509TrustedCertificateBlock) pemObject;
+					certs.add(jcaX509CertConverter.getCertificate(trustedCertBlock.getCertificateHolder()));
+				} else if (pemObject instanceof ContentInfo) {
+					ContentInfo contentInfo = (ContentInfo) pemObject;
+					Collection<? extends Certificate> certsFromPkcs7 =
+							cf.generateCertificates(new ByteArrayInputStream(contentInfo.getEncoded()));
+
+					if (!certsFromPkcs7.isEmpty()) {
+						X509Certificate[] x509Certificates = convertCertificates(certsFromPkcs7);
+						certs.addAll(Arrays.asList(x509Certificates));
+					}
+				}
+				pemObject = pemParser.readObject();
+			}
+			return certs;
+		} catch (IOException | CertificateException | CryptoException e) {
+			return certs;
 		}
-
-		return null;
 	}
-
 
 
 	/**
@@ -222,6 +188,12 @@ public final class X509CertUtil {
 	 *             Problem encountered while loading the CRL
 	 */
 	public static X509CRL loadCRL(byte[] crlData) throws CryptoException {
+
+		if (crlData == null || crlData.length == 0) {
+			throw new CryptoException(res.getString("NoLoadCrl.exception.message"),
+					new IllegalArgumentException("CRL data is empty"));
+		}
+
 		try {
 			CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, BOUNCY_CASTLE.jce());
 			return (X509CRL) cf.generateCRL(new ByteArrayInputStream(crlData));
@@ -250,6 +222,30 @@ public final class X509CertUtil {
 
 		for (int i = 0; i < certsIn.length; i++) {
 			certsOut[i] = convertCertificate(certsIn[i]);
+		}
+
+		return certsOut;
+	}
+	/**
+	 * Convert the supplied array of certificate objects into X509Certificate
+	 * objects.
+	 *
+	 * @param certs
+	 *            The Certificate objects
+	 * @return The converted X509Certificate objects
+	 * @throws CryptoException
+	 *             A problem occurred during the conversion
+	 */
+	public static X509Certificate[] convertCertificates(Collection<? extends Certificate> certs) throws CryptoException {
+
+		if (certs == null) {
+			return new X509Certificate[0];
+		}
+
+		X509Certificate[] certsOut = new X509Certificate[certs.size()];
+		int i = 0;
+		for (Certificate cert : certs) {
+			certsOut[i++] = convertCertificate(cert);
 		}
 
 		return certsOut;

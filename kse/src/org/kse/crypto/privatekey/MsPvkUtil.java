@@ -380,6 +380,10 @@ public class MsPvkUtil {
 	 */
 	public static EncryptionType getEncryptionType(byte[] pvk) throws IOException {
 
+		if (pvk == null || pvk.length == 0) {
+			return null;
+		}
+
 		// Wrap in a byte buffer set up to read little endian
 		ByteBuffer bb = ByteBuffer.wrap(pvk);
 		bb.order(ByteOrder.LITTLE_ENDIAN);

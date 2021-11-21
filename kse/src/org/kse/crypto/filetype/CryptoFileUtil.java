@@ -177,19 +177,19 @@ public class CryptoFileUtil {
 	}
 
 	private static boolean isJarFile(byte[] data) {
+		if (data.length == 0) {
+			return false;
+		}
+
 		int magic = (data[0] << 24) & 0xff000000
 				| (data[1] << 16) & 0x00ff0000
 				| (data[2] << 8) & 0x0000ff00
-				| (data[3] << 0) & 0x000000ff;
+				| (data[3]) & 0x000000ff;
 
-		if (magic == ZIP_MAGIC_NUMBER1
+		return magic == ZIP_MAGIC_NUMBER1
 				|| magic == ZIP_MAGIC_NUMBER2
 				|| magic == ZIP_MAGIC_NUMBER3
-				|| magic == ZIP_MAGIC_NUMBER4)  {
-			return true;
-		}
-
-		return false;
+				|| magic == ZIP_MAGIC_NUMBER4;
 	}
 
 
@@ -260,6 +260,7 @@ public class CryptoFileUtil {
 			// Test for BKS and UBER
 
 			// Both start with a version number of 0, 1 or 2
+			// TODO version 0/1 can be removed after update to BC v1.69 which removes support for BKS-1
 			if ((i1 == 0) || (i1 == 1) || (i1 == 2)) {
 				/*
 				 * For BKS and UBER the last 20 bytes of the file are the SHA-1
@@ -297,8 +298,11 @@ public class CryptoFileUtil {
 		/*
 		 * Test for PKCS #12. ASN.1 should look like this:
 		 *
-		 * PFX ::= ASN1Sequence { version ASN1Integer {v3(3)}(v3,...), authSafe
-		 * ContentInfo, macData MacData OPTIONAL
+		 * PFX ::= ASN1Sequence {
+		 * 		version ASN1Integer {v3(3)}(v3,...),
+		 * 		authSafe ContentInfo,
+		 * 		macData MacData OPTIONAL
+		 * }
 		 */
 		// @formatter:on
 
@@ -311,7 +315,7 @@ public class CryptoFileUtil {
 		}
 
 		// Is a sequence...
-		if ((pfx != null) && (pfx instanceof ASN1Sequence)) {
+		if ((pfx instanceof ASN1Sequence)) {
 			// Has two or three components...
 			ASN1Sequence sequence = (ASN1Sequence) pfx;
 

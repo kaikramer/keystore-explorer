@@ -76,7 +76,14 @@ class CryptoFileUtilTest {
 			"test.der.crl, CRL",
 
 			// text file without any cryptographic content
-			"unknown.txt, UNKNOWN"
+			"unknown.txt, UNKNOWN",
+
+			// an empty file might cause some trouble
+			"empty.txt, UNKNOWN",
+
+			// TODO A binary file like an extension template might look similar to some other file types...
+			// In this case the file has the same characteristics as a UBER v0 keystore.
+			// "CA.template, UNKNOWN",
 	})
 	void detectFileType(String fileName, CryptoFileType expectedResult) throws IOException {
 		byte[] data = FileUtils.readFileToByteArray(new File(TEST_FILES_PATH, fileName));
