@@ -177,7 +177,7 @@ public class CryptoFileUtil {
 	}
 
 	private static boolean isJarFile(byte[] data) {
-		if (data.length == 0) {
+		if (data.length < 4) {
 			return false;
 		}
 
