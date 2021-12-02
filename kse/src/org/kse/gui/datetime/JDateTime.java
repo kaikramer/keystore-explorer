@@ -166,7 +166,9 @@ public class JDateTime extends JPanel {
 	@Override
 	public void setEnabled(boolean enabled) {
 		jbEditDateTime.setEnabled(enabled);
-		jbClearDateTime.setEnabled(enabled);
+		if (jbClearDateTime != null) {
+			jbClearDateTime.setEnabled(enabled);	
+		}
 	}
 
 	/**
