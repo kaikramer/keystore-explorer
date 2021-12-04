@@ -1,10 +1,10 @@
 name: Create a new KSE release
 
-on: workflow_dispatch
-#on:
-#  push:
-#    tags:
-#      - "v*.*.*"
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
 
