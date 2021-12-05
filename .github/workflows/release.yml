@@ -46,7 +46,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
       - name: Build with Gradle
-        run: .\gradlew.bat test buildDeb buildRpm
+        run: ./gradlew test buildDeb buildRpm
         working-directory: kse
       - name: Store artifacts for release
         uses: actions/upload-artifact@v2
