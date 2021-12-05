@@ -119,7 +119,7 @@ jobs:
 #        path: kse/build/distributions/kse*.dmg
 
   release:
-    needs: [windows, windows-with-jre]
+    needs: [windows, linux, windows-with-jre]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v2
