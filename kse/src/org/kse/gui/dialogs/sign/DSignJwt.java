@@ -3,25 +3,31 @@ package org.kse.gui.dialogs.sign;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.KeyEvent;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.SecureRandom;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.JEscDialog;
-import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.datetime.JDateTime;
+import org.kse.gui.dialogs.DialogHelper;
+import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -32,37 +38,33 @@ public class DSignJwt extends JEscDialog {
 
 	private JLabel jlIssuer;
 	private JTextField jtfIssuer;
-	private JCheckBox jcbIssuer;
 	private JLabel jlIssuedAt;
 	private JDateTime jdtIssuedAt;
-	private JCheckBox jcbIssuedAt;
 	private JLabel jlSubject;
 	private JTextField jtfSubject;
-	private JCheckBox jcbSubject;
 	private JLabel jlNotBefore;
 	private JDateTime jdtNotBefore;
-	private JCheckBox jcbNotBefore;
 	private JLabel jlExpiration;
 	private JDateTime jdtExpiration;
-	private JCheckBox jcbExpiration;
 	private JLabel jlAudience;
 	private JTextField jtfAudience;
-	private JCheckBox jcbAudience;
+	private JLabel jlSignatureAlgorithm;
+	private JComboBox<SignatureType> jcbSignatureAlgorithm;
 
 	private JButton jbOK;
 	private JButton jbCancel;
 
 	private KeyPairType signKeyPairType;
 	private PrivateKey signPrivateKey;
+	private SignatureType signatureType;
 
 	private JFrame parent;
-	private KseFrame kseFrame;
 
-	public DSignJwt(JFrame parent, KseFrame kseFrame, KeyPairType signKeyPairType, PrivateKey signPrivateKey)
-			throws CryptoException {
+	private boolean isOk = false;
+
+	public DSignJwt(JFrame parent, KeyPairType signKeyPairType, PrivateKey signPrivateKey) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.parent = parent;
-		this.kseFrame = kseFrame;
 		this.signKeyPairType = signKeyPairType;
 		this.signPrivateKey = signPrivateKey;
 		setTitle(res.getString("DSignJwt.Title"));
@@ -71,168 +73,165 @@ public class DSignJwt extends JEscDialog {
 
 	private void initComponents() throws CryptoException {
 		Date now = new Date();
-		
+
 		jlIssuer = new JLabel(res.getString("DSignJwt.jlIssuer.text"));
-		jtfIssuer = new JTextField("", 22);
+		jtfIssuer = new JTextField("", 23);
 		jtfIssuer.setToolTipText(res.getString("DSignJwt.jtfIssuer.tooltip"));
-		jcbIssuer = new JCheckBox();
-		jcbIssuer.setSelected(true);
-		
+
 		jlIssuedAt = new JLabel(res.getString("DSignJwt.jlIssuedAt.text"));
-		jdtIssuedAt = new JDateTime(res.getString("DSignJwt.jdtIssuedAt.text"), false);
-		jdtIssuedAt.setDateTime(now);
+		jdtIssuedAt = new JDateTime(res.getString("DSignJwt.jdtIssuedAt.text"), true);
+		jdtIssuedAt.setDateTime(null);
 		jdtIssuedAt.setToolTipText(res.getString("DSignJwt.jdtIssuedAt.tooltip"));
-		jcbIssuedAt = new JCheckBox();
-		jcbIssuedAt.setSelected(true);	
-	
+
 		jlSubject = new JLabel(res.getString("DSignJwt.jlSubject.text"));
-		jtfSubject = new JTextField("", 22);
+		jtfSubject = new JTextField("", 23);
 		jtfSubject.setToolTipText(res.getString("DSignJwt.jtfSubject.tooltip"));
-		jcbSubject = new JCheckBox();
-		jcbSubject.setSelected(true);	
-		
+
 		jlNotBefore = new JLabel(res.getString("DSignJwt.jlNotBefore.text"));
-		jdtNotBefore = new JDateTime(res.getString("DSignJwt.jdtNotBefore.text"), false);
-		jdtNotBefore.setDateTime(now);
+		jdtNotBefore = new JDateTime(res.getString("DSignJwt.jdtNotBefore.text"), true);
+		jdtNotBefore.setDateTime(null);
 		jdtNotBefore.setToolTipText(res.getString("DSignJwt.jdtNotBefore.tooltip"));
-		jcbNotBefore = new JCheckBox();
-		jcbNotBefore.setSelected(true);	
-		
+
 		jlExpiration = new JLabel(res.getString("DSignJwt.jlExpiration.text"));
-		jdtExpiration = new JDateTime(res.getString("DSignJwt.jdtExpiration.text"), false);
-		jdtExpiration.setDateTime(now);
+		jdtExpiration = new JDateTime(res.getString("DSignJwt.jdtExpiration.text"), true);
+		jdtExpiration.setDateTime(addOneDayCalendar(now));
 		jdtExpiration.setToolTipText(res.getString("DSignJwt.jdtExpiration.tooltip"));
-		jcbExpiration = new JCheckBox();
-		jcbExpiration.setSelected(true);
 
 		jlAudience = new JLabel(res.getString("DSignJwt.jlAudience.text"));
-		jtfAudience = new JTextField("", 22);
+		jtfAudience = new JTextField("", 23);
 		jtfAudience.setToolTipText(res.getString("DSignJwt.jtfAudience.tooltip"));
-		jcbAudience = new JCheckBox();
-		jcbAudience.setSelected(true);
-	
+
+		jlSignatureAlgorithm = new JLabel(res.getString("DSignJwt.jlSignatureAlgorithm.text"));
+
+		jcbSignatureAlgorithm = new JComboBox<>();
+		jcbSignatureAlgorithm.setMaximumRowCount(10);
+		if (signPrivateKey != null) {
+			DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
+		}
+		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJwt.jcbSignatureAlgorithm.tooltip"));
+
 		jbOK = new JButton(res.getString("DSignJwt.jbOK.text"));
 		jbCancel = new JButton(res.getString("DSignJwt.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				CANCEL_KEY);
-		
+
 		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
-		
+
 		pane.add(jlIssuer, "");
-		pane.add(jtfIssuer, "");
-		pane.add(jcbIssuer, "wrap");
-		
+		pane.add(jtfIssuer, "wrap");
+
 		pane.add(jlIssuedAt, "");
-		pane.add(jdtIssuedAt, "");
-		pane.add(jcbIssuedAt, "wrap");
+		pane.add(jdtIssuedAt, "wrap");
 
 		pane.add(jlSubject, "");
-		pane.add(jtfSubject, "");
-		pane.add(jcbSubject, "wrap");
+		pane.add(jtfSubject, "wrap");
 
 		pane.add(jlNotBefore, "");
-		pane.add(jdtNotBefore, "");
-		pane.add(jcbNotBefore, "wrap");
-		
+		pane.add(jdtNotBefore, "wrap");
+
 		pane.add(jlExpiration, "");
-		pane.add(jdtExpiration, "");
-		pane.add(jcbExpiration, "wrap");
+		pane.add(jdtExpiration, "wrap");
 
 		pane.add(jlAudience, "");
-		pane.add(jtfAudience, "");
-		pane.add(jcbAudience, "wrap");
-		
+		pane.add(jtfAudience, "wrap");
+
+		pane.add(jlSignatureAlgorithm, "");
+		pane.add(jcbSignatureAlgorithm, "wrap");
+
 		pane.add(jpButtons, "right, spanx");
 
 		populateFields();
-		
-		jcbIssuer.addItemListener(evt -> {
-			jtfIssuer.setEnabled(jcbIssuer.isSelected());
-			jtfIssuer.requestFocus();
-		});
-		
-		jcbIssuedAt.addItemListener(evt -> {
-			jdtIssuedAt.setEnabled(jcbIssuedAt.isSelected());
-			jdtIssuedAt.requestFocus();
-		});
-
-		jcbSubject.addItemListener(evt -> {
-			jtfSubject.setEnabled(jcbSubject.isSelected());
-			jtfSubject.requestFocus();
-		});
-
-		jcbNotBefore.addItemListener(evt -> {
-			jdtNotBefore.setEnabled(jcbNotBefore.isSelected());
-			jdtNotBefore.requestFocus();
-		});
-
-		jcbExpiration.addItemListener(evt -> {
-			jdtExpiration.setEnabled(jcbExpiration.isSelected());
-			jdtExpiration.requestFocus();
-		});
-
-		jcbAudience.addItemListener(evt -> {
-			jtfAudience.setEnabled(jcbAudience.isSelected());
-			jtfAudience.requestFocus();
-		});
 
 		jbOK.addActionListener(evt -> okPressed());
 		jbCancel.addActionListener(evt -> cancelPressed());
-		
+
 		setResizable(false);
 
 		getRootPane().setDefaultButton(jbOK);
 
 		pack();
 	}
-	
+
 	private void populateFields() {
-		
+
 	}
-	
+
 	private void okPressed() {
+		isOk = true;
+		signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
 		closeDialog();
 	}
 
 	private void cancelPressed() {
 		closeDialog();
 	}
-	
+
 	private void closeDialog() {
 		setVisible(false);
 		dispose();
 	}
-	
-	public String getIssuer()
-	{
-		if (jcbIssuer.isSelected()) {
+
+	public String getIssuer() {
+		if (jtfIssuer.getText().length() > 0) {
 			return jtfIssuer.getText();
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
-	
-	public Date getExpiration()
-	{
-		if (jcbExpiration.isSelected()) {
-			return jdtExpiration.getDateTime();
-		}
-		else {
-			return null;
-		}
+
+	public Date getIssuedAt() {
+		return jdtIssuedAt.getDateTime();
 	}
-	
-	public String getSubject()
-	{
-		if (jcbSubject.isSelected()) {
+
+	public Date getNotBefore() {
+		return jdtNotBefore.getDateTime();
+	}
+
+	public Date getExpiration() {
+		return jdtExpiration.getDateTime();
+
+	}
+
+	public String getSubject() {
+		if (jtfSubject.getText().length() > 0) {
 			return jtfSubject.getText();
-		}
-		else {
+		} else {
 			return null;
 		}
+	}
+
+	public String getAudience() {
+		if (jtfAudience.getText().length() > 0) {
+			return jtfAudience.getText();
+		} else {
+			return null;
+		}
+	}
+
+	public boolean isOk() {
+		return isOk;
+	}
+
+	public SignatureType getSignatureType() {
+		return signatureType;
+	}
+
+	public static Date addOneDayCalendar(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.DATE, 1);
+		return c.getTime();
+	}
+
+	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
+		kpg.initialize(1024, new SecureRandom());
+		KeyPair kp = kpg.generateKeyPair();
+		DSignJwt dSignJwt = new DSignJwt(new javax.swing.JFrame(), KeyPairType.RSA, kp.getPrivate());
+		DialogViewer.run(dSignJwt);
 	}
 }
