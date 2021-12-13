@@ -1,15 +1,10 @@
 package org.kse.gui.actions;
 
-import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
-
 import java.awt.Toolkit;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
+import java.security.Provider;
 
 import javax.swing.ImageIcon;
 
@@ -17,19 +12,22 @@ import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewJwt;
+import org.kse.gui.dialogs.sign.CustomClaim;
 import org.kse.gui.dialogs.sign.DSignJwt;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
-
-import io.fusionauth.jwt.Signer;
-import io.fusionauth.jwt.domain.JWT;
-import io.fusionauth.jwt.ec.ECSigner;
-import io.fusionauth.jwt.rsa.RSAPSSSigner;
-import io.fusionauth.jwt.rsa.RSASigner;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.crypto.RSASSASigner;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTClaimsSet.Builder;
+import com.nimbusds.jwt.SignedJWT;
 
 public class SignJwtAction extends KeyStoreExplorerAction {
 
@@ -59,72 +57,18 @@ public class SignJwtAction extends KeyStoreExplorerAction {
 			}
 			KeyStore keyStore = currentState.getKeyStore();
 
-			String provider = BOUNCY_CASTLE.jce();
+			Provider provider = null;
 			if (history.getExplicitProvider() != null) {
-				provider = history.getExplicitProvider().getName();
+				provider = history.getExplicitProvider();
 			}
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-			X509Certificate[] certs = X509CertUtil
-					.orderX509CertChain(X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
-
-			X509Certificate cert = certs[0];
 			DSignJwt dSignJwt = new DSignJwt(frame, keyPairType, privateKey);
 			dSignJwt.setLocationRelativeTo(frame);
 			dSignJwt.setVisible(true);
-
 			if (dSignJwt.isOk()) {
-				Signer signer = null;
-				SignatureType signatureType = dSignJwt.getSignatureType();
-				switch (signatureType) {
-				case SHA256_RSA:
-					signer = RSASigner.newSHA256Signer(privateKey);
-					break;
-				case SHA384_RSA:
-					signer = RSASigner.newSHA384Signer(privateKey);
-					break;
-				case SHA512_RSA:
-					signer = RSASigner.newSHA512Signer(privateKey);
-					break;
-				case SHA256WITHRSAANDMGF1:
-					signer = RSAPSSSigner.newSHA256Signer(privateKey);
-					break;
-				case SHA384WITHRSAANDMGF1:
-					signer = RSAPSSSigner.newSHA384Signer(privateKey);
-					break;
-				case SHA512WITHRSAANDMGF1:
-					signer = RSAPSSSigner.newSHA512Signer(privateKey);
-					break;
-				case SHA256_ECDSA:
-					signer = ECSigner.newSHA256Signer(privateKey);
-					break;
-				case SHA384_ECDSA:
-					signer = ECSigner.newSHA384Signer(privateKey);
-					break;
-				case SHA512_ECDSA:
-					signer = ECSigner.newSHA512Signer(privateKey);
-					break;
-				default:
-					break;
-				}
-				if (signer == null) {
-					throw new NoSuchAlgorithmException(signatureType + ": " + res.getString("SignJwtAction.signNotAvailable.message"));
-				}
-				
-
-				JWT jwt = new JWT();
-				jwt.issuer = dSignJwt.getIssuer();
-				ZonedDateTime isuedAt = DateToZoneDateTime(dSignJwt.getIssuedAt());
-				jwt.issuedAt = isuedAt;
-				jwt.subject = dSignJwt.getSubject();
-				ZonedDateTime notBefore = DateToZoneDateTime(dSignJwt.getNotBefore());
-				jwt.notBefore = notBefore;
-				ZonedDateTime exp = DateToZoneDateTime(dSignJwt.getExpiration());
-				jwt.expiration = exp;
-				jwt.audience = dSignJwt.getAudience();
-
-				String encodedJWT = JWT.getEncoder().encode(jwt, signer);
+				String encodedJWT = signJwt(dSignJwt, privateKey, provider);
 				DViewJwt dialog = new DViewJwt(frame, encodedJWT);
 				dialog.setLocationRelativeTo(frame);
 				dialog.setVisible(true);
@@ -134,10 +78,84 @@ public class SignJwtAction extends KeyStoreExplorerAction {
 		}
 	}
 
-	private ZonedDateTime DateToZoneDateTime(Date date) {
-		if (date == null) {
-			return null;
+	private String signJwt(DSignJwt dSignJwt, PrivateKey privateKey, Provider provider)
+			throws Exception {
+
+		Curve curve = null;
+		JWSAlgorithm signatureAlgorithm = null;
+		SignatureType signatureType = dSignJwt.getSignatureType();
+		switch (signatureType) {
+		case SHA256_RSA:
+			signatureAlgorithm = JWSAlgorithm.RS256;
+			break;
+		case SHA384_RSA:
+			signatureAlgorithm = JWSAlgorithm.RS384;
+			break;
+		case SHA512_RSA:
+			signatureAlgorithm = JWSAlgorithm.RS512;
+			break;
+		case SHA256WITHRSAANDMGF1:
+			signatureAlgorithm = JWSAlgorithm.PS256;
+			break;
+		case SHA384WITHRSAANDMGF1:
+			signatureAlgorithm = JWSAlgorithm.PS384;
+			break;
+		case SHA512WITHRSAANDMGF1:
+			signatureAlgorithm = JWSAlgorithm.PS512;
+			break;
+		case SHA256_ECDSA:
+			signatureAlgorithm = JWSAlgorithm.ES256;
+			curve = Curve.P_256;
+			break;
+		case SHA384_ECDSA:
+			signatureAlgorithm = JWSAlgorithm.ES384;
+			curve = Curve.P_384;
+			break;
+		case SHA512_ECDSA:
+			signatureAlgorithm = JWSAlgorithm.ES512;
+			curve = Curve.P_521;
+			break;
+		default:
+			break;
 		}
-		return ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+		if (signatureAlgorithm == null) {
+			throw new NoSuchAlgorithmException(
+					signatureType + ": " + res.getString("SignJwtAction.signNotAvailable.message"));
+		}
+		JWSSigner signer = null;
+		switch (signatureType) {
+		case SHA256_RSA:
+		case SHA384_RSA:
+		case SHA512_RSA:
+		case SHA256WITHRSAANDMGF1:
+		case SHA384WITHRSAANDMGF1:
+		case SHA512WITHRSAANDMGF1:
+			signer = new RSASSASigner(privateKey);
+			break;
+		case SHA256_ECDSA:
+		case SHA384_ECDSA:
+		case SHA512_ECDSA:
+			signer = new ECDSASigner(privateKey, curve);
+			break;
+		default:
+			break;
+		}
+		if (provider != null) {
+			signer.getJCAContext().setProvider(provider);
+		}
+
+		Builder builder = new JWTClaimsSet.Builder().subject(dSignJwt.getSubject()).issuer(dSignJwt.getIssuer())
+				.issueTime(dSignJwt.getIssuedAt()).notBeforeTime(dSignJwt.getNotBefore())
+				.audience(dSignJwt.getAudience()).expirationTime(dSignJwt.getExpiration());
+
+		for (CustomClaim claim : dSignJwt.getCustomClaims()) {
+			builder.claim(claim.getName(), claim.getValue());
+		}
+		JWTClaimsSet claimsSet = builder.build();
+
+		SignedJWT signedJWT = new SignedJWT(new JWSHeader.Builder(signatureAlgorithm).keyID(null).build(), claimsSet);
+		signedJWT.sign(signer);
+
+		return signedJWT.serialize();
 	}
 }

@@ -3,16 +3,13 @@ package org.kse.gui.dialogs.sign;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.KeyEvent;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.SecureRandom;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -50,6 +47,7 @@ public class DSignJwt extends JEscDialog {
 	private JTextField jtfAudience;
 	private JLabel jlSignatureAlgorithm;
 	private JComboBox<SignatureType> jcbSignatureAlgorithm;
+	private JClaims jpClaims;
 
 	private JButton jbOK;
 	private JButton jbCancel;
@@ -110,6 +108,8 @@ public class DSignJwt extends JEscDialog {
 		}
 		jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJwt.jcbSignatureAlgorithm.tooltip"));
 
+		jpClaims = new JClaims(parent);
+
 		jbOK = new JButton(res.getString("DSignJwt.jbOK.text"));
 		jbCancel = new JButton(res.getString("DSignJwt.jbCancel.text"));
 		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -140,6 +140,7 @@ public class DSignJwt extends JEscDialog {
 
 		pane.add(jlSignatureAlgorithm, "");
 		pane.add(jcbSignatureAlgorithm, "wrap");
+		pane.add(jpClaims, "spanx, growx, wrap unrel");
 
 		pane.add(jpButtons, "right, spanx");
 
@@ -211,6 +212,10 @@ public class DSignJwt extends JEscDialog {
 		}
 	}
 
+	public List<CustomClaim> getCustomClaims() {
+		return jpClaims.getCustomClaims();
+	}
+
 	public boolean isOk() {
 		return isOk;
 	}
@@ -227,11 +232,6 @@ public class DSignJwt extends JEscDialog {
 	}
 
 	public static void main(String[] args) throws Exception {
-		DialogViewer.prepare();
-		KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
-		kpg.initialize(1024, new SecureRandom());
-		KeyPair kp = kpg.generateKeyPair();
-		DSignJwt dSignJwt = new DSignJwt(new javax.swing.JFrame(), KeyPairType.RSA, kp.getPrivate());
-		DialogViewer.run(dSignJwt);
+		DialogViewer.run(new DSignJwt(new javax.swing.JFrame(), KeyPairType.RSA, null));
 	}
 }
