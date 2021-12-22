@@ -77,12 +77,12 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 			int sslPort = dExamineSsl.getSslPort();
 			boolean useClientAuth = dExamineSsl.useClientAuth();
 			KeyStoreHistory ksh = dExamineSsl.getKeyStore();
-
+			String sslTypeServer = dExamineSsl.getSslTypeServer();
 			if (dExamineSsl.wasCancelled()) {
 				return;
 			}
 
-			DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, useClientAuth, ksh);
+			DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, useClientAuth, ksh, sslTypeServer);
 			dExaminingSsl.setLocationRelativeTo(frame);
 			dExaminingSsl.startExamination();
 			dExaminingSsl.setVisible(true);

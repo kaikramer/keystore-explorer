@@ -69,6 +69,8 @@ public class DExamineSsl extends JEscDialog {
 	private JComboBox<String> jcbSslHost;
 	private JLabel jlSslPort;
 	private JComboBox<String> jcbSslPort;
+	private JLabel jlSslTypeServer;
+	private JComboBox<String> jcbSslTypeServer;	
 	private JCheckBox jcbClientAuth;
 	private JComboBox<KeyStoreHistory> jcbKeyStore;
 	private JButton jbLoadKeystore;
@@ -78,6 +80,7 @@ public class DExamineSsl extends JEscDialog {
 
 	private String sslHost;
 	private int sslPort = -1;
+	private String sslTypeServer;
 
 	private KseFrame kseFrame;
 	private boolean cancelled = true;
@@ -110,6 +113,12 @@ public class DExamineSsl extends JEscDialog {
 		jcbSslPort.setToolTipText(res.getString("DExamineSsl.jtfSslPort.tooltip"));
 		jcbSslPort.setModel(new DefaultComboBoxModel<>(getSslPorts()));
 
+		jlSslTypeServer = new JLabel(res.getString("DExamineSsl.jlSslTypeServer.text"));
+		jcbSslTypeServer = new JComboBox<>();
+		jcbSslTypeServer.setEditable(false);
+		jcbSslTypeServer.setToolTipText(res.getString("DExamineSsl.jcbSslTypeServer.tooltip"));
+		jcbSslTypeServer.setModel(new DefaultComboBoxModel<>(getSslServer()));
+		
 		jcbClientAuth = new JCheckBox(res.getString("DExamineSsl.jlEnableClientAuth.text"));
 
 		jcbKeyStore = new JComboBox<>(getKeystoreNames());
@@ -133,7 +142,10 @@ public class DExamineSsl extends JEscDialog {
 		pane.add(jlSslHost, "skip");
 		pane.add(jcbSslHost, "sgx, growx, wrap");
 		pane.add(jlSslPort, "skip");
-		pane.add(jcbSslPort, "sgx, growx, wrap para");
+		pane.add(jcbSslPort, "sgx, growx, wrap");
+		pane.add(jlSslTypeServer, "skip");
+		pane.add(jcbSslTypeServer, "sgx, growx, wrap para");
+		
 		MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlClientAuth.text"));
 		pane.add(jcbClientAuth, "left, spanx, wrap");
 		pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
@@ -197,6 +209,11 @@ public class DExamineSsl extends JEscDialog {
 	public int getSslPort() {
 		return sslPort;
 	}
+	
+	public String getSslTypeServer()
+	{
+		return sslTypeServer;
+	}
 
 	/**
 	 * User wants to use SSL client authentication?
@@ -236,6 +253,10 @@ public class DExamineSsl extends JEscDialog {
 		return sslPorts.split(";");
 	}
 
+	private String[] getSslServer() {
+		String [] servers = {"Web","PostgreSQL"};
+		return servers;
+	}
 
 	private void updateClientAuthComponents() {
 		jcbKeyStore.setEnabled(jcbClientAuth.isSelected());
@@ -279,6 +300,8 @@ public class DExamineSsl extends JEscDialog {
 
 		this.sslHost = sslHost;
 		this.sslPort = sslPort;
+
+		this.sslTypeServer = (String)jcbSslTypeServer.getSelectedItem();
 
 		// check selected key store
 		if (useClientAuth()) {

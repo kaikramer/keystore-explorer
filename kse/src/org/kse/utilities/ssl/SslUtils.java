@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -39,6 +40,8 @@ import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.kse.crypto.CryptoException;
+import org.postgresql.ds.PGSimpleDataSource;
+import org.postgresql.ssl.WrappedFactory;
 
 public class SslUtils {
 
@@ -134,6 +137,44 @@ public class SslUtils {
 			if (connection != null) {
 				connection.disconnect();
 			}
+		}
+	}
+
+	public static SslConnectionInfos readSSLPostgreSQL(String host, int port, KeyStore keyStore, char[] password)
+			throws Exception {
+		PGSimpleDataSource ds = new PGSimpleDataSource();
+		String[] serverNames = new String[] { host };
+		ds.setServerNames(serverNames);
+		ds.setSsl(true);
+		int[] ports = new int[] { port };
+		ds.setPortNumbers(ports);
+		ds.setUser("");
+		ds.setDatabaseName("");
+		ds.setPassword("");
+		ds.setSslfactory(DumperFactory.class.getName());
+		DumperFactory.handshakeListener = null;
+
+		try (Connection c = ds.getConnection()) {
+		} catch (Exception e) {
+			if (e.getMessage().contains("SSL") || e.getMessage().contains("refused")) {
+				throw e;
+			}
+		}
+		if (DumperFactory.handshakeListener == null) {
+			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"));
+		}
+		SslConnectionInfos sslConnectionInfos = DumperFactory.handshakeListener.getSslConnectionInfos();
+		return sslConnectionInfos;
+	}
+
+	public static class DumperFactory extends WrappedFactory {
+		public static RetrieveSslInfosHandshakeListener handshakeListener;
+
+		public DumperFactory(String arg) throws GeneralSecurityException {
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			ctx.init(null, new TrustManager[] { new X509TrustingManager() }, null);
+			handshakeListener = new RetrieveSslInfosHandshakeListener();
+			factory = new CustomSslSocketFactory(ctx.getSocketFactory(), handshakeListener, false);
 		}
 	}
 

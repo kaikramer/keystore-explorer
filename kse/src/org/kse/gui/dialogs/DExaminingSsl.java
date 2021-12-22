@@ -77,6 +77,7 @@ public class DExaminingSsl extends JEscDialog {
 	private char[] password;
 	private SslConnectionInfos sslInfos;
 	private Thread examiner;
+	private String sslTypeServer;
 
 	/**
 	 * Creates a new DExaminingSsl dialog.
@@ -92,11 +93,12 @@ public class DExaminingSsl extends JEscDialog {
 	 * @param ksh
 	 *            KeyStore with client certificate
 	 */
-	public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
+	public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh, String sslTypeServer) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.sslHost = sslHost;
 		this.sslPort = sslPort;
+		this.sslTypeServer = sslTypeServer;
 
 		if (useClientAuth) {
 			this.keyStore = ksh.getCurrentState().getKeyStore();
@@ -198,7 +200,12 @@ public class DExaminingSsl extends JEscDialog {
 		@Override
 		public void run() {
 			try {
-				sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
+				if ("Web".equals(sslTypeServer)) {
+					sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
+				}
+				if ("PostgreSQL".equals(sslTypeServer)) {
+					sslInfos = SslUtils.readSSLPostgreSQL(sslHost, sslPort, keyStore, password);
+				}
 
 				SwingUtilities.invokeLater(() -> {
 					if (DExaminingSsl.this.isShowing()) {

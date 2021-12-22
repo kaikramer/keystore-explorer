@@ -110,6 +110,7 @@ dependencies {
 	implementation("commons-io:commons-io:2.11.0")
 	implementation("com.miglayout:miglayout-swing:5.3")
 	implementation("com.formdev:flatlaf:1.6.1")
+	implementation("org.postgresql:postgresql:42.3.1")
 
 	// VAqua Look & Feel not in a public repository yet
 	if (file("lib/VAqua8.jar").exists()) {
