@@ -153,7 +153,7 @@ public class SslUtils {
 		ds.setPassword("");
 		ds.setSslfactory(DumperFactory.class.getName());
 		DumperFactory.handshakeListener = null;
-
+		System.setProperty("javax.net.debug", "ssl");
 		try (Connection c = ds.getConnection()) {
 		} catch (Exception e) {
 			if (e.getMessage().contains("SSL") || e.getMessage().contains("refused")) {
