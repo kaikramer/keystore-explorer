@@ -31,7 +31,6 @@ import org.kse.utilities.os.OperatingSystem;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  * Look and Feel utility methods.
@@ -85,34 +84,6 @@ public class LnfUtil {
 				| IllegalAccessException e) {
 			// ignore
 		}
-	}
-
-	/**
-	 * Use the appropriate look and feel for the current platform.
-	 *
-	 * @return Look and feel class name used
-	 */
-	public static String useLnfForPlatform() {
-		String lnfClassName = null;
-
-		if (OperatingSystem.isMacOs() || OperatingSystem.isWindows()) {
-			lnfClassName = UIManager.getSystemLookAndFeelClassName();
-		} else {
-			String xdgCurrentDesktop = System.getenv("XDG_CURRENT_DESKTOP");
-			if ("Unity".equalsIgnoreCase(xdgCurrentDesktop) 
-					|| "XFCE".equalsIgnoreCase(xdgCurrentDesktop)
-					|| "GNOME".equalsIgnoreCase(xdgCurrentDesktop) 
-					|| "X-Cinnamon".equalsIgnoreCase(xdgCurrentDesktop)
-					|| "LXDE".equalsIgnoreCase(xdgCurrentDesktop)) {
-				lnfClassName = UIManager.getSystemLookAndFeelClassName();
-			} else {
-				lnfClassName = FlatLightLaf.class.getName();
-			}
-		}
-
-		useLnf(lnfClassName);
-
-		return lnfClassName;
 	}
 
 	/**

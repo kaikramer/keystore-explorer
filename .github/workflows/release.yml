@@ -1,10 +1,10 @@
 name: Create a new KSE release
 
-on: workflow_dispatch
-#on:
-#  push:
-#    tags:
-#      - "v*.*.*"
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
 
@@ -12,45 +12,71 @@ jobs:
     name: Create artifacts on Windows
     runs-on: windows-2019
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '8'
-        distribution: 'temurin'
-    - name: Build with Gradle
-      run: .\gradlew.bat test zip innosetup buildDeb buildRpm
-      working-directory: kse
-    - name: Store artifacts for release
-      uses: actions/upload-artifact@v2
-      with:
-        name: windows-artifacts
-        path: |
-          kse/build/distributions/kse-*.zip
-          kse/build/distributions/kse-*-setup-no-jre.exe
-          kse/build/distributions/kse*.deb
-          kse/build/distributions/kse*.rpm
+      - name: Disable automatic EOL conversions
+        run: git config --global core.autocrlf false
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Build with Gradle
+        run: .\gradlew.bat test zip innosetup
+        working-directory: kse
+      - name: Store artifacts for release
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-artifacts
+          path: |
+            kse/build/distributions/kse-*.zip
+            kse/build/distributions/kse-*-setup-no-jre.exe
+
+  linux:
+    name: Create artifacts on Linux
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Disable automatic EOL conversions
+        run: git config --global core.autocrlf false
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Build with Gradle
+        run: ./gradlew test buildDeb buildRpm
+        working-directory: kse
+      - name: Store artifacts for release
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-artifacts
+          path: |
+            kse/build/distributions/kse*.deb
+            kse/build/distributions/kse*.rpm
 
   windows-with-jre:
     name: Create a Windows installer with included JRE
     runs-on: windows-2019
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    - name: Build with Gradle
-      run: .\gradlew.bat innosetup
-      working-directory: kse
-    - name: Store artifacts for release
-      uses: actions/upload-artifact@v2
-      with:
-        name: windows-with-jre-artifact
-        path: kse/build/distributions/kse-*-setup.exe
+      - name: Disable automatic EOL conversions
+        run: git config --global core.autocrlf false
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build with Gradle
+        run: .\gradlew.bat innosetup
+        working-directory: kse
+      - name: Store artifacts for release
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-with-jre-artifact
+          path: kse/build/distributions/kse-*-setup.exe
 
 # DMG creation requires manual intervention, therefore not possible in GitHub action
 #
@@ -76,6 +102,8 @@ jobs:
 #        tar zxf OpenJDK16U-jdk_x64_mac_hotspot_16.0.2_7.tar.gz -C $RUNNER_TEMP
 #        echo "JAVA_HOME=$RUNNER_TEMP/jdk-16.0.2+7/Contents/Home" >> $GITHUB_ENV
 #        echo "$RUNNER_TEMP/jdk-16.0.2+7/Contents/Home/bin" >> $GITHUB_PATH
+#    - name: Disable automatic EOL conversions
+#      run: git config --global core.autocrlf false
 #    - name: Checkout
 #      uses: actions/checkout@v2
 #    - name: Grant execute permission for gradlew
@@ -91,30 +119,32 @@ jobs:
 #        path: kse/build/distributions/kse*.dmg
 
   release:
-    needs: [windows, windows-with-jre]
+    needs: [windows, linux, windows-with-jre]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/download-artifact@v2
-      with:
-        name: windows-artifacts
-    - uses: actions/download-artifact@v2
-      with:
-        name: windows-with-jre-artifact
-    # - uses: actions/download-artifact@v2
-    #   with:
-    #     name: macos-artifact
-    - name: Create a release
-      uses: softprops/action-gh-release@v1
-      #if: startsWith(github.ref, 'refs/tags/')
-      with:
-        draft: true
-        name: "KSE Release ${{ github.ref }}"
-        body: "Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)"
-        files: |
-          kse-*.zip
-          kse-*-setup.exe
-          kse-*-setup-no-jre.exe
-          kse*.deb
-          kse*.rpm
-          kse*.dmg
-        token: ${{ secrets.github_token }}
+      - uses: actions/download-artifact@v2
+        with:
+          name: windows-artifacts
+      - uses: actions/download-artifact@v2
+        with:
+          name: linux-artifacts
+      - uses: actions/download-artifact@v2
+        with:
+          name: windows-with-jre-artifact
+      # - uses: actions/download-artifact@v2
+      #   with:
+      #     name: macos-artifact
+      - name: Create a release
+        uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          name: "KSE Release ${{ github.ref_name }}"
+          body: "Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)"
+          files: |
+            kse-*.zip
+            kse-*-setup.exe
+            kse-*-setup-no-jre.exe
+            kse*.deb
+            kse*.rpm
+          token: ${{ secrets.github_token }}

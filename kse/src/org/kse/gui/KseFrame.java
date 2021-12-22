@@ -786,6 +786,8 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiPaste, (String) pasteAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmEdit.add(jmiPaste);
 
+		jmEdit.addSeparator();
+
 		jmiFind = new JMenuItem(findAction);
 		PlatformUtil.setMnemonic(jmiFind, res.getString("KseFrame.jmiFind.mnemonic").charAt(0));
 		jmiFind.setToolTipText(null);

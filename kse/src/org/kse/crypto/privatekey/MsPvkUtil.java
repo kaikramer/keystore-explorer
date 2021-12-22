@@ -380,7 +380,7 @@ public class MsPvkUtil {
 	 */
 	public static EncryptionType getEncryptionType(byte[] pvk) throws IOException {
 
-		if (pvk == null || pvk.length == 0) {
+		if (pvk == null || pvk.length < 24) {
 			return null;
 		}
 

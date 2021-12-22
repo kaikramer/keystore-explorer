@@ -41,7 +41,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -97,13 +97,15 @@ public final class X509CertUtil {
 			// try to parse data as PEM encoded
 			List<X509Certificate> loadedCerts = loadAsPEM(certsBytes, cf);
 
+			// might be Base64 encoded but without the PEM header
+			if (loadedCerts.isEmpty()) {
+				loadedCerts = loadAsBase64(certsBytes, cf);
+			}
+
 			// try to parse as DER encoded
 			if (loadedCerts.isEmpty()) {
 				Collection<? extends Certificate> certs = cf.generateCertificates(new ByteArrayInputStream(certsBytes));
-
-				if (!certs.isEmpty()) {
-					return convertCertificates(certs);
-				}
+				loadedCerts = convertCertificates(certs);
 			}
 
 			return loadedCerts.toArray(new X509Certificate[0]);
@@ -116,6 +118,18 @@ public final class X509CertUtil {
 			} catch (CryptoException ex2) {
 				throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
 			}
+		}
+	}
+
+	private static List<X509Certificate> loadAsBase64(byte[] certsBytes, CertificateFactory cf) {
+		try {
+			byte[] base64Decoded = Base64.getMimeDecoder().decode(certsBytes);
+
+			Collection<? extends Certificate> certs = cf.generateCertificates(new ByteArrayInputStream(base64Decoded));
+
+			return convertCertificates(certs);
+		} catch (Exception e) {
+			return new ArrayList<>();
 		}
 	}
 
@@ -166,8 +180,8 @@ public final class X509CertUtil {
 							cf.generateCertificates(new ByteArrayInputStream(contentInfo.getEncoded()));
 
 					if (!certsFromPkcs7.isEmpty()) {
-						X509Certificate[] x509Certificates = convertCertificates(certsFromPkcs7);
-						certs.addAll(Arrays.asList(x509Certificates));
+						List<X509Certificate> x509Certificates = convertCertificates(certsFromPkcs7);
+						certs.addAll(x509Certificates);
 					}
 				}
 				pemObject = pemParser.readObject();
@@ -226,6 +240,7 @@ public final class X509CertUtil {
 
 		return certsOut;
 	}
+
 	/**
 	 * Convert the supplied array of certificate objects into X509Certificate
 	 * objects.
@@ -236,19 +251,20 @@ public final class X509CertUtil {
 	 * @throws CryptoException
 	 *             A problem occurred during the conversion
 	 */
-	public static X509Certificate[] convertCertificates(Collection<? extends Certificate> certs) throws CryptoException {
+	public static List<X509Certificate> convertCertificates(Collection<? extends Certificate> certs)
+			throws CryptoException {
+
+		ArrayList<X509Certificate> convertedCerts = new ArrayList<>();
 
 		if (certs == null) {
-			return new X509Certificate[0];
+			return convertedCerts;
 		}
 
-		X509Certificate[] certsOut = new X509Certificate[certs.size()];
-		int i = 0;
 		for (Certificate cert : certs) {
-			certsOut[i++] = convertCertificate(cert);
+			convertedCerts.add(convertCertificate(cert));
 		}
 
-		return certsOut;
+		return convertedCerts;
 	}
 
 	/**

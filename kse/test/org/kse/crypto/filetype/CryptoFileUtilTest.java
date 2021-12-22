@@ -31,6 +31,9 @@ class CryptoFileUtilTest {
 			"cert.p7, CERT",
 			"cert.p7b, CERT",
 
+			// base64 encoded cert file, but no PEM header/footer
+			"cert.base64.txt, CERT",
+
 			// certificate signing request formats
 			"csr.p10, PKCS10_CSR",
 			"csr.spkac, SPKAC_CSR",

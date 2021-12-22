@@ -116,7 +116,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
 				x509CRL = signCrl(crlNumber, effectiveDate, nextUpdate, certs[0], privateKey, signatureAlgorithm,
 						mapRevoked, provider);
-				String newFileName = X509CertUtil.getShortName(certs[0]);
+				String newFileName = X509CertUtil.getShortName(certs[0]).toLowerCase();
 				DExportCrl dExportCrl = new DExportCrl(frame, newFileName);
 				dExportCrl.setLocationRelativeTo(frame);
 				dExportCrl.setVisible(true);
