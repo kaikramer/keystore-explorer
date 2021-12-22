@@ -6,6 +6,10 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
+/**
+ * 
+ * Custom cell renderer for the cells of list custom claims.
+ */
 public class ClaimsTableCellRend extends DefaultTableCellRenderer {
 
 	private static final long serialVersionUID = 1L;

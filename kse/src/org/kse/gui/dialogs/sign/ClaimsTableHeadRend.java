@@ -8,6 +8,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ * 
+ * Custom cell renderer for the headers of list custom claims.
+ */
+
 public class ClaimsTableHeadRend extends DefaultTableCellRenderer {
 	private static final long serialVersionUID = 1L;
 

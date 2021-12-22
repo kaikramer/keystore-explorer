@@ -31,6 +31,11 @@ import org.kse.gui.CursorUtil;
 import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
 
+/**
+ * 
+ * Component to show the list of custom claims
+ *
+ */
 public class JClaims extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -46,6 +51,11 @@ public class JClaims extends JPanel {
 	private JButton jbEdit;
 	private JButton jbRemove;
 
+	/**
+	 * Creates a new JClaims
+	 * 
+	 * @param parent The parent frame
+	 */
 	public JClaims(JFrame parent) {
 		super();
 		this.parent = parent;
@@ -171,7 +181,6 @@ public class JClaims extends JPanel {
 				try {
 					CursorUtil.setCursorBusy(JClaims.this);
 					jtClaims.setRowSelectionInterval(row, row);
-					// editSelectedGeneralName();
 				} finally {
 					CursorUtil.setCursorFree(JClaims.this);
 				}

@@ -29,10 +29,19 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
 
+/**
+ * Action to create a JWT (JSON Web Token)
+ *
+ */
 public class SignJwtAction extends KeyStoreExplorerAction {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Construct action.
+	 * 
+	 * @param kseFrame KeyStore Explorer frame
+	 */
 	public SignJwtAction(KseFrame kseFrame) {
 		super(kseFrame);
 		putValue(LONG_DESCRIPTION, res.getString("SignJwtAction.statusbar"));

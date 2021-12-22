@@ -28,6 +28,10 @@ import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog that display the data to create a JWT (JSON Web Token)
+ *
+ */
 public class DSignJwt extends JEscDialog {
 	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
@@ -60,6 +64,15 @@ public class DSignJwt extends JEscDialog {
 
 	private boolean isOk = false;
 
+	/**
+	 * Creates a new DSignJwt
+	 * 
+	 * @param parent           The parent frame
+	 * @param signKeyPairType  Key pair type
+	 * @param signPrivateKey   Private key certificate
+	 * @throws CryptoException A problem was encountered with the supplied private
+	 *                         key
+	 */
 	public DSignJwt(JFrame parent, KeyPairType signKeyPairType, PrivateKey signPrivateKey) throws CryptoException {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.parent = parent;
