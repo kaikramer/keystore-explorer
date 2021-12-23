@@ -97,6 +97,7 @@ public class DAbout extends JEscDialog {
 		jtkDetails.setIncrement(1);
 		jtkDetails.setGap(40);
 		jtkDetails.setInterval(20);
+		jtkDetails.setInitialDelay(500);
 
 		for (Object tickerItem : tickerItems) {
 			jtkDetails.addItem(tickerItem);

@@ -32,7 +32,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 /**
- * Ticker Swing control to display scolling (right to left) text items.
+ * Ticker Swing control to display scrolling (right to left) text items.
  *
  */
 public class JTicker extends JComponent implements ActionListener, ListDataListener {
@@ -64,6 +64,9 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 
 	/** Timer that drives the ticking */
 	protected Timer timer;
+
+	/** Delay before ticker starts moving */
+	protected int initialDelay;
 
 	/**
 	 * Construct a JTicker using the default model and renderer.
@@ -101,20 +104,18 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 	 * correctly.
 	 */
 	public void start() {
-		// Calculate poitions of items
+		// Calculate positions of items
 		calculatePositionArray();
 
 		// Set controls preferred size (gets height correct)
 		setPreferredSize(calculatePreferredSize());
 
-		/*
-		 * Set initial offset to width of ticker (hence ensuring first item
-		 * appears out of the far right with no wait)
-		 */
-		offset = getWidth();
+		// start with text already being on the left side
+		offset = 0;
 
 		// Create and start timer to get items moving
 		timer = new Timer(interval, this);
+		timer.setInitialDelay(initialDelay);
 		timer.start();
 	}
 
@@ -201,6 +202,15 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
 	 */
 	public int getInterval() {
 		return interval;
+	}
+
+	/**
+	 * Set delay before ticker starts moving.
+	 *
+	 * @param delay (msecs)
+	 */
+	public void setInitialDelay(int delay) {
+		initialDelay = delay;
 	}
 
 	/**
