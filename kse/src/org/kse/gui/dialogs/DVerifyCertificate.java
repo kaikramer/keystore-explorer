@@ -258,12 +258,13 @@ public class DVerifyCertificate extends JEscDialog {
 	}
 
 	private void okPressed() {
+		String title = MessageFormat.format(res.getString("DVerifyCertificate.Title"), certificateAlias);
 		if (jrbCrlCheckDistPoint.isSelected()) {
 			verifyOption = VerifyOptions.CRL_DIST;
 		} else if (jrbCrlCheckFile.isSelected()) {
 			if (jtfCrlFile.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(this, res.getString("DVerifyCertificate.ChooseCRLFile.Title"),
-						res.getString("DVerifyCertificate.Title"), JOptionPane.INFORMATION_MESSAGE);
+						title, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			verifyOption = VerifyOptions.CRL_FILE;
@@ -275,7 +276,7 @@ public class DVerifyCertificate extends JEscDialog {
 		{
 			if (jtfOcspUrl.getText().isEmpty()) {
 				JOptionPane.showMessageDialog(this, res.getString("DVerifyCertificate.ReqOcspUrl.Title"),
-						res.getString("DVerifyCertificate.Title"), JOptionPane.INFORMATION_MESSAGE);
+						title, JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			verifyOption = VerifyOptions.OCSP_URL;
@@ -288,7 +289,7 @@ public class DVerifyCertificate extends JEscDialog {
 			if (jcbKeyStore.getSelectedItem() == null) {
 				JOptionPane.showMessageDialog(this,
 						res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"),
-						res.getString("DVerifyCertificate.Title"),
+						title,
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
@@ -317,9 +318,9 @@ public class DVerifyCertificate extends JEscDialog {
 	private void browsePressed() {
 		JFileChooser chooser = FileChooserFactory.getCrlFileChooser();
 		chooser.setCurrentDirectory(CurrentDirectory.get());
-		chooser.setDialogTitle(res.getString("DVerifyCertificate.ChooseCACertificatesKeyStore.Title"));
+		chooser.setDialogTitle(res.getString("DVerifyCertificate.ChooseCRLFile.Title"));
 		chooser.setMultiSelectionEnabled(false);
-		chooser.setApproveButtonText(res.getString("DVerifyCertificate.CaCertificatesKeyStoreFileChooser.button"));
+		chooser.setApproveButtonText(res.getString("DVerifyCertificate.ChooseCRLFile.button"));
 
 		int rtnValue = chooser.showOpenDialog(this);
 		if (rtnValue == JFileChooser.APPROVE_OPTION) {
