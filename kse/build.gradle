@@ -25,6 +25,7 @@ Notes:
 ======
 - Task 'innosetup' requires an installation of InnoSetup 6 and ISCC.exe added to the PATH.
 - Tasks 'signapp' and 'dmg' work only under macOS.
+- Tasks 'prepareExe', 'zip' and 'innosetup' require an installation of Resource Hacker (http://www.angusj.com/resourcehacker/)
 */
 
 plugins {
@@ -66,6 +67,9 @@ ext {
 	appExe = "${appSimpleName}.exe"
 	appBundle = "${appName}.app"
 	dmgFile = "${appSimpleName}-${appSimpleVersion}.dmg"
+
+	// Resource Hacker for setting the version info and icon of kse.exe
+	rh = "c:\\Program Files (x86)\\Resource Hacker\\ResourceHacker.exe"
 
 	// Directories
 	resDir = "$projectDir/res"
@@ -151,18 +155,58 @@ task prepareExe() {
 			rename("kse-launcher.exe", "$appExe")
 			into("$launcherOutDir")
 		}
+		def verInfo = appVersion.toString().replaceAll("\\.", ",") + ",0"
+		delete "$launcherOutDir/kse.rc"
+		new File(launcherOutDir, 'kse.rc') << """
+			1 VERSIONINFO
+			FILEVERSION     $verInfo
+			PRODUCTVERSION  $verInfo
+			FILEOS 			VOS__WINDOWS32
+			FILETYPE 		VFT_APP
+			BEGIN
+			  BLOCK "StringFileInfo"
+			  BEGIN
+				BLOCK "040904B0"
+				BEGIN
+				  VALUE "FileDescription", 	"$appName"
+				  VALUE "FileVersion", 		"$appVersion.0"
+				  VALUE "InternalName", 	"$appSimpleName"
+				  VALUE "LegalCopyright", 	"$copyright"
+				  VALUE "OriginalFilename", "$appExe"
+				  VALUE "ProductName", 		"$appName"
+				  VALUE "ProductVersion", 	"$appVersion"
+				END
+			  END
+			  BLOCK "VarFileInfo"
+			  BEGIN
+				VALUE "Translation", 0x0409, 0x04B0
+			  END
+			END
+		"""
 		exec {
 			workingDir projectDir
-			commandLine "${resDir}\\rcedit-x64.exe",
-						"${launcherOutDir}\\${appExe}",
-						'--set-version-string', 'FileDescription', "$appName",
-						'--set-version-string', 'ProductName', "$appName",
-						'--set-version-string', 'LegalCopyright', "$copyright",
-						'--set-version-string', 'OriginalFilename', "$appExe",
-						'--set-version-string', 'InternalName', "$appSimpleName",
-						'--set-file-version', "$appVersion.0",
-						'--set-product-version', "$appVersion",
-						'--set-icon', "$kseIco"
+			commandLine "${rh}",
+						'-open', "${launcherOutDir}\\kse.rc",
+						'-save', "${launcherOutDir}\\kse.res",
+						'-action', 'compile'
+		}
+		exec {
+			workingDir projectDir
+			commandLine "${rh}",
+					'-open', "${launcherOutDir}\\${appExe}",
+					'-save', "${launcherOutDir}\\${appExe}",
+					'-action', 'addoverwrite',
+					'-mask', ' VersionInfo,,',
+					'-res', "${launcherOutDir}\\kse.res"
+		}
+		exec {
+			workingDir projectDir
+			commandLine "${rh}",
+					'-open', "${launcherOutDir}\\${appExe}",
+					'-save', "${launcherOutDir}\\${appExe}",
+					'-action', 'addoverwrite',
+					'-mask', 'ICONGROUP,MAINICON,0',
+					'-res', "$kseIco"
 		}
 	}
 }

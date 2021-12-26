@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
+      - name: Install required software packages
+        run: choco install reshack
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up JDK
@@ -62,6 +64,8 @@ jobs:
     steps:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
+      - name: Install required software packages
+        run: choco install reshack
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up JDK
@@ -70,7 +74,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build with Gradle
-        run: .\gradlew.bat innosetup
+        run: .\gradlew.bat test innosetup
         working-directory: kse
       - name: Store artifacts for release
         uses: actions/upload-artifact@v2
