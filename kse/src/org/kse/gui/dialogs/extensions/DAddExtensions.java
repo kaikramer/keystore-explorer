@@ -72,7 +72,7 @@ import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.BC;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.GeneralNameUtil;
@@ -885,7 +885,7 @@ public class DAddExtensions extends JEscDialog {
 
 	// for quick UI testing
 	public static void main(String[] args) throws Exception {
-		final KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
+		final KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, BC.getInstance());
 
 		DAddExtensions dialog = new DAddExtensions(new JFrame(), "Add Extensions", new X509ExtensionSet(),
 				keyPair.getPublic(), new X500Name("cn=test"), BigInteger.ONE, keyPair.getPublic(),

@@ -75,6 +75,7 @@ import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
@@ -739,7 +740,7 @@ public class JarSigner {
 
 			Collections.addAll(certList, certificateChain);
 
-			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
+			DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(BC.getInstance()).build();
 			JcaContentSignerBuilder csb = new JcaContentSignerBuilder(signatureType.jce())
 					.setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
 			if (provider != null) {

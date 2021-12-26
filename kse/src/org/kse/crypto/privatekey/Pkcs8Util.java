@@ -57,6 +57,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.InputDecryptorProvider;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.utilities.pem.PemInfo;
@@ -287,7 +288,7 @@ public class Pkcs8Util {
 		// decrypt and create PrivateKey object from ASN.1 structure
 		try {
 			InputDecryptorProvider decProv = new JceOpenSSLPKCS8DecryptorProviderBuilder()
-					.setProvider("BC")
+					.setProvider(BC.getInstance())
 					.build(password.toCharArray());
 			PrivateKeyInfo privateKeyInfo = encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decProv);
 

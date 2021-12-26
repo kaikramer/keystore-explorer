@@ -51,8 +51,8 @@ import java.security.spec.RSAPublicKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.ecc.EccUtil;
@@ -362,7 +362,7 @@ public final class KeyPairUtil {
 
 	private static byte[] sign(byte[] toSign, PrivateKey privateKey, String signatureAlgorithm)
 			throws GeneralSecurityException {
-		Signature signature = Signature.getInstance(signatureAlgorithm, new BouncyCastleProvider());
+		Signature signature = Signature.getInstance(signatureAlgorithm, BC.getInstance());
 		signature.initSign(privateKey);
 		signature.update(toSign);
 		return signature.sign();
@@ -370,7 +370,7 @@ public final class KeyPairUtil {
 
 	private static boolean verify(byte[] signed, byte[] signaureToVerify, PublicKey publicKey, String signatureAlgorithm)
 			throws GeneralSecurityException {
-		Signature signature = Signature.getInstance(signatureAlgorithm, new BouncyCastleProvider());
+		Signature signature = Signature.getInstance(signatureAlgorithm, BC.getInstance());
 		signature.initVerify(publicKey);
 		signature.update(signed);
 		return signature.verify(signaureToVerify);

@@ -149,6 +149,7 @@ import org.kse.gui.actions.OpenDefaultAction;
 import org.kse.gui.actions.OpenMsCapiAction;
 import org.kse.gui.actions.OpenPkcs11Action;
 import org.kse.gui.actions.PasteAction;
+import org.kse.gui.actions.Pkcs12InfoAction;
 import org.kse.gui.actions.PreferencesAction;
 import org.kse.gui.actions.PropertiesAction;
 import org.kse.gui.actions.RedoAction;
@@ -275,6 +276,7 @@ public final class KseFrame implements StatusBar {
 	private JRadioButtonMenuItem jrbmiChangeTypeUber;
 	private JMenuItem jmiSetPassword;
 	private JMenuItem jmiProperties;
+	private JMenuItem jmiPkcs12Info;
 	private JMenuItem jmiPreferences;
 
 	private JMenu jmExamine;
@@ -335,7 +337,6 @@ public final class KseFrame implements StatusBar {
 	private JMenuItem jmiKeyStoreTabProperties;
 
 	private JPopupMenu jpmKeyStore;
-	private JMenuItem jmiKeyStoreGenerateDHParameters;
 	private JMenuItem jmiKeyStoreGenerateKeyPair;
 	private JMenuItem jmiKeyStoreGenerateSecretKey;
 	private JMenuItem jmiKeyStoreImportTrustedCertificate;
@@ -463,6 +464,7 @@ public final class KseFrame implements StatusBar {
 	private final ChangeTypeAction changeTypeBcfksAction = new ChangeTypeAction(this, KeyStoreType.BCFKS);
 	private final ChangeTypeAction changeTypeUberAction = new ChangeTypeAction(this, KeyStoreType.UBER);
 	private final PropertiesAction propertiesAction = new PropertiesAction(this);
+	private final Pkcs12InfoAction pkcs12InfoAction = new Pkcs12InfoAction(this);
 	private final PreferencesAction preferencesAction = new PreferencesAction(this);
 	private final ExamineFileAction examineFileAction = new ExamineFileAction(this);
 	private final ExamineClipboardAction examineClipboardAction = new ExamineClipboardAction(this);
@@ -971,6 +973,12 @@ public final class KseFrame implements StatusBar {
 		jmiProperties.setToolTipText(null);
 		new StatusBarChangeHandler(jmiProperties, (String) propertiesAction.getValue(Action.LONG_DESCRIPTION), this);
 		jmTools.add(jmiProperties);
+
+		jmiPkcs12Info = new JMenuItem(pkcs12InfoAction);
+		PlatformUtil.setMnemonic(jmiPkcs12Info, res.getString("KseFrame.jmiProperties.mnemonic").charAt(0));
+		jmiPkcs12Info.setToolTipText(null);
+		new StatusBarChangeHandler(jmiPkcs12Info, (String) propertiesAction.getValue(Action.LONG_DESCRIPTION), this);
+		jmTools.add(jmiPkcs12Info);
 
 		if (!OperatingSystem.isMacOs()) {
 			jmTools.addSeparator();
@@ -2787,6 +2795,7 @@ public final class KseFrame implements StatusBar {
 		if (type.isFileBased()) {
 			setPasswordAction.setEnabled(true);
 		}
+		pkcs12InfoAction.setEnabled(type == PKCS12);
 
 		// Show default status bar display
 		setDefaultStatusBarText();
@@ -2914,6 +2923,7 @@ public final class KseFrame implements StatusBar {
 		setPasswordAction.setEnabled(false);
 		jmChangeType.setEnabled(false);
 		propertiesAction.setEnabled(false);
+		pkcs12InfoAction.setEnabled(false);
 
 		// No current KeyStore type
 		jrbmiChangeTypeJks.setSelected(false);

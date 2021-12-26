@@ -45,6 +45,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -312,7 +313,7 @@ public class DViewPrivateKey extends JEscDialog {
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		DialogViewer.prepare();
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", BC.getInstance());
 		KeyPair keyPair = keyGen.genKeyPair();
 
 		PrivateKey privKey = keyPair.getPrivate();

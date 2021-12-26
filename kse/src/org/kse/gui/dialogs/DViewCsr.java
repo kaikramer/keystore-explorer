@@ -48,6 +48,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -427,12 +428,12 @@ public class DViewCsr extends JEscDialog {
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		DialogViewer.prepare();
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", BC.getInstance());
 		KeyPair keyPair = keyGen.genKeyPair();
 		JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(
 				new X500Name("cn=test"), keyPair.getPublic());
 		PKCS10CertificationRequest csr = csrBuilder
-				.build(new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
+				.build(new JcaContentSignerBuilder("SHA256withRSA").setProvider(BC.getInstance()).build(keyPair.getPrivate()));
 
 		DViewCsr dialog = new DViewCsr(new javax.swing.JFrame(), "Title", csr);
 		DialogViewer.run(dialog);

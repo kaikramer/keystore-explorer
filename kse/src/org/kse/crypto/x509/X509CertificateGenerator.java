@@ -40,10 +40,10 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 
@@ -91,7 +91,7 @@ public class X509CertificateGenerator {
 	public X509Certificate generate(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd, PublicKey publicKey,
 			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
 		return generate(subject, issuer, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber, null,
-				new BouncyCastleProvider());
+				BC.getInstance());
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class X509CertificateGenerator {
 	public X509Certificate generateSelfSigned(X500Name name, Date validityStart, Date validityEnd, PublicKey publicKey, PrivateKey privateKey,
 			SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
 		return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber, null,
-				new BouncyCastleProvider());
+				BC.getInstance());
 	}
 
 	/**
@@ -227,9 +227,9 @@ public class X509CertificateGenerator {
 				notAfter, subject, publicKey);
 
 		try {
-			ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(
+			ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(BC.getInstance()).build(
 					privateKey);
-			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
+			return new JcaX509CertificateConverter().setProvider(BC.getInstance()).getCertificate(certBuilder.build(certSigner));
 		} catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
 		}
@@ -259,12 +259,12 @@ public class X509CertificateGenerator {
 			ContentSigner certSigner = null;
 
 			if (provider == null) {
-				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(privateKey);
+				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(BC.getInstance()).build(privateKey);
 			} else {
 				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
 			}
 
-			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
+			return new JcaX509CertificateConverter().setProvider(BC.getInstance()).getCertificate(certBuilder.build(certSigner));
 		} catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
 			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
 		}

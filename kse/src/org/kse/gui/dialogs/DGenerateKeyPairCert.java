@@ -53,7 +53,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.SignatureType;
@@ -446,12 +446,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
 	// for quick testing
 	public static void main(String[] args) throws Exception {
 		DialogViewer.prepare();
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", BC.getInstance());
 		keyGen.initialize(1024);
 		KeyPair keyPair = keyGen.genKeyPair();
 
 		DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), "test", keyPair,
-				KeyPairType.RSA, null, null, new BouncyCastleProvider());
+				KeyPairType.RSA, null, null, BC.getInstance());
 		DialogViewer.run(dialog);
 	}
 }

@@ -44,7 +44,6 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.ContentVerifierProvider;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -55,6 +54,7 @@ import org.bouncycastle.pkcs.PKCSException;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509ExtensionSet;
@@ -113,7 +113,7 @@ public class Pkcs10Util {
 
 			// fall back to bouncy castle provider if given provider does not support the requested algorithm
 			if (provider != null && provider.getService("Signature", signatureType.jce()) == null) {
-				provider = new BouncyCastleProvider();
+				provider = BC.getInstance();
 			}
 
 			ContentSigner contentSigner = null;
@@ -150,7 +150,7 @@ public class Pkcs10Util {
 			PublicKey pubKey = new JcaPKCS10CertificationRequest(csr).getPublicKey();
 
 			ContentVerifierProvider contentVerifierProvider =
-					new JcaContentVerifierProviderBuilder().setProvider("BC").build(pubKey);
+					new JcaContentVerifierProviderBuilder().setProvider(BC.getInstance()).build(pubKey);
 			return csr.isSignatureValid(contentVerifierProvider);
 		} catch (InvalidKeyException | OperatorCreationException | NoSuchAlgorithmException | PKCSException e) {
 			throw new CryptoException(res.getString("NoVerifyPkcs10Csr.exception.message"), e);

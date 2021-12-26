@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -52,7 +51,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.BC;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.keypair.KeyPairType;
@@ -460,8 +459,8 @@ public class DGenerateCsr extends JEscDialog {
 
 	// for quick testing
 	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+		DialogViewer.prepare();
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", BC.getInstance());
 		PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
 		X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
 

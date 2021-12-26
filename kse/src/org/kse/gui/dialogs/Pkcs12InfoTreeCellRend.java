@@ -33,7 +33,7 @@ import javax.swing.tree.TreeNode;
  * Custom cell renderer for the cells of the DProperties tree.
  *
  */
-public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
+public class Pkcs12InfoTreeCellRend extends DefaultTreeCellRenderer {
 	private static final long serialVersionUID = 1L;
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
@@ -52,6 +52,7 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 	@Override
 	public Component getTreeCellRendererComponent(JTree jtrProperties, Object value, boolean isSelected,
 			boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
+
 		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrProperties, value, isSelected, isExpanded, leaf,
 				row, hasFocus);
 		cell.setText(value.toString());
@@ -64,54 +65,30 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 			TreeNode parent = node.getParent();
 			int index = parent.getIndex(node);
 
-			// Second level - keystore main properties and "keys", "key pairs" and "trusted certificates"
 			if (index == 0) {
 				icon = new ImageIcon(getClass().getResource("images/file_node.png"));
 			} else if (index == 1) {
 				icon = new ImageIcon(getClass().getResource("images/type_node.png"));
-			} else if (index == 2) {
-				icon = new ImageIcon(getClass().getResource("images/provider_node.png"));
-			} else if (index == 3) {
-				icon = new ImageIcon(getClass().getResource("images/keys_node.png"));
-			} else if (index == 4) {
-				icon = new ImageIcon(getClass().getResource("images/keypairs_node.png"));
-			} else if (index == 5) {
-				icon = new ImageIcon(getClass().getResource("images/trustcerts_node.png"));
-			}
-		} else if (node.getLevel() == 2) {
-
-			// Third level - entries
-			icon = new ImageIcon(getClass().getResource("images/entry_node.png"));
-
-		} else if (node.getLevel() == 3) {
-
-			// Fourth level - includes private keys, certificates of key pairs, public keys of trusted certificates
-			// and keys within key entries of all types
-			if (value.toString().equals(res.getString("DProperties.properties.PrivateKey"))) {
-				icon = new ImageIcon(getClass().getResource("images/privatekey_node.png"));
-			} else if (value.toString().equals(res.getString("DProperties.properties.Certificates"))) {
-				icon = new ImageIcon(getClass().getResource("images/certificates_node.png"));
-			} else if (value.toString().equals(res.getString("DProperties.properties.PublicKey"))) {
-				icon = new ImageIcon(getClass().getResource("images/publickey_node.png"));
-			} else if (value.toString().equals(res.getString("DProperties.properties.SecretKey"))) {
-				icon = new ImageIcon(getClass().getResource("images/secretkey_node.png"));
+			} else if (value.toString().contains("MAC")) {
+				icon = new ImageIcon(getClass().getResource("images/mac.png"));
+			} else if (value.toString().contains("PKCS#7 Data")) {
+				icon = new ImageIcon(getClass().getResource("images/data.png"));
+			} else if (value.toString().contains("PKCS#7 Encrypted Data")) {
+				icon = new ImageIcon(getClass().getResource("images/encr_data.png"));
 			} else {
-				// Otherwise use default icon
-				icon = new ImageIcon(getClass().getResource("images/default_node.png"));
-			}
-		} else if (node.getLevel() == 5) {
-
-			// Sixth level - includes public keys of key pair certificates
-			if (value.toString().equals(res.getString("DProperties.properties.PublicKey"))) {
-				icon = new ImageIcon(getClass().getResource("images/publickey_node.png"));
-			} else {
-				// Otherwise use default icon
-				icon = new ImageIcon(getClass().getResource("images/default_node.png"));
+				icon = new ImageIcon(getClass().getResource("images/entry_node.png"));
 			}
 		} else {
 
-			// Otherwise use default icon
-			icon = new ImageIcon(getClass().getResource("images/default_node.png"));
+			if (value.toString().contains("Certificate Bag")) {
+				icon = new ImageIcon(getClass().getResource("images/certificates_node.png"));
+			} else if (value.toString().contains("Key Bag")) {
+				icon = new ImageIcon(getClass().getResource("images/privatekey_node.png"));
+			} else if (value.toString().contains("Bag Attributes")) {
+				icon = new ImageIcon(getClass().getResource("images/bag_attributes.png"));
+			} else {
+				icon = new ImageIcon(getClass().getResource("images/default_node.png"));
+			}
 		}
 
 		cell.setIcon(icon);
