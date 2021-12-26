@@ -91,7 +91,6 @@ import javax.swing.table.TableRowSorter;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.actions.AboutAction;
@@ -186,6 +185,7 @@ import org.kse.gui.dnd.DragKeyPairEntry;
 import org.kse.gui.dnd.DragTrustedCertificateEntry;
 import org.kse.gui.dnd.KeyStoreEntryDragGestureListener;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.quickstart.JQuickStartPane;
@@ -2252,7 +2252,7 @@ public final class KseFrame implements StatusBar {
         jmiMultiEntryExport.setToolTipText(null);
         new StatusBarChangeHandler(jmiMultiEntryExport,
                 (String) exportSelectedCertificatesAction.getValue(Action.LONG_DESCRIPTION), this);
-        
+
         jpmMultiEntrySel = new JPopupMenu();
         jpmMultiEntrySel.add(jmiMultiEntrySelCut);
         jpmMultiEntrySel.add(jmiMultEntrySelCopy);

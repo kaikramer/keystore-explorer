@@ -54,6 +54,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
+import org.kse.gui.dialogs.DPkcs12Info;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewCrl;
 import org.kse.gui.dialogs.DViewCsr;
@@ -64,6 +65,7 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.io.FileNameUtil;
 
 /**
@@ -113,9 +115,11 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                 X509Certificate[] signerCertificates = jarParser.getSignerCertificates();
                 showCerts(signerCertificates, file.getName());
                 break;
+            case PKCS12_KS:
+                showPkcs12Info(file);
+                break;
             case JCEKS_KS:
             case JKS_KS:
-            case PKCS12_KS:
             case BKS_KS:
             case BKS_V1_KS:
             case BCFKS_KS:
@@ -160,6 +164,31 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                                           JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
+        }
+    }
+
+    private void showPkcs12Info(File file) throws IOException, CryptoException {
+        Password password;
+        PasswordManager passwordManager = PasswordManager.getInstance();
+        if (passwordManager.isKeyStorePasswordKnown(file)) {
+            unlockPasswordManager();
+            password = passwordManager.getKeyStorePassword(file).map(Password::new).orElse(null);
+        } else {
+            password = getPassword(file);
+        }
+
+        if (password == null || password.isNulled()) {
+            return;
+        }
+
+        byte[] p12Data = FileUtils.readFileToByteArray(file);
+
+        DPkcs12Info dPkcs12Info = new DPkcs12Info(frame, p12Data, password, file);
+        dPkcs12Info.setLocationRelativeTo(frame);
+        dPkcs12Info.setVisible(true);
+
+        if (!dPkcs12Info.isCancelled()) {
+            new OpenAction(kseFrame).openKeyStore(file, new String(password.toCharArray()));
         }
     }
 
@@ -254,8 +283,8 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
         byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
         PrivateKey privKey = null;
-        Password password = null;
         PrivateKeyFormat format = null;
+        Password password;
 
         switch (fileType) {
         case ENC_PKCS8_PVK:

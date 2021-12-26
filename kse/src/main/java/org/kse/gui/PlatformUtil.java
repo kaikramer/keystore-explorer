@@ -127,6 +127,21 @@ public class PlatformUtil {
     }
 
     /**
+     * Create a dialog button panel with the order and alignment dependent on the platform.
+     *
+     * @param jbPositive Positive button
+     * @param jbNegative  Negative button
+     * @param jbOther    Other button
+     * @param insets      Insets for panel (MiGLayout constraint)
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton jbOther,
+                                                 String insets) {
+        return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative,
+                                       (jbOther == null ? null : new JButton[] { jbOther }), insets);
+    }
+
+    /**
      * Create a dialog button panel with the order and alignment dependent on
      * the platform.
      *
