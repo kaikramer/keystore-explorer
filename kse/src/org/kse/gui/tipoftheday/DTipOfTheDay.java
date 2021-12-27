@@ -29,6 +29,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -54,6 +56,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
 
 /**
  * Tip of the Day dialog.
@@ -124,7 +127,6 @@ public class DTipOfTheDay extends JEscDialog {
 		jpTipOfTheDay.add(jpTipBody, BorderLayout.CENTER);
 
 		jpTipHeader = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpTipHeader.setBackground(Color.WHITE);
 		jpTipHeader.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
 		jlTipHeader = new JLabel(res.getString("DTipOfTheDay.jlTipHeader.text"));
@@ -139,7 +141,6 @@ public class DTipOfTheDay extends JEscDialog {
 		jepTip.setContentType("text/html");
 		jepTip.setText(getCurrentTip());
 		jepTip.setEditable(false);
-		jepTip.setBackground(Color.WHITE);
 		jepTip.setCaretPosition(0);
 		jepTip.setBorder(new EmptyBorder(10, 10, 10, 10));
 
@@ -302,5 +303,23 @@ public class DTipOfTheDay extends JEscDialog {
 	private void closePressed() {
 		setVisible(false);
 		dispose();
+	}
+
+	// for quick testing
+	public static void main(String[] args) throws Exception {
+		ResourceBundle tips = new ResourceBundle() {
+			private final String tipOfTheDay4 = "<html>There are two standard Java KeyStores - <b>Default</b> and <b>CA Certificates</b>.  There are menu items available to open them directly without browsing:<p>To open the Default KeyStore:<br><b>File &gt; Open Special &gt; Open Default</b><p>To open the CA Certificates KeyStore:<br><b>File &gt; Open Special &gt; Open CA Certificates</b></html>";
+			@Override protected Object handleGetObject(String key) {
+				if ("TipOfTheDayAction.TipOfTheDay0".equals(key)) {
+					return tipOfTheDay4;
+				} else {
+					return null;
+				}
+			}
+			@Override public Enumeration<String> getKeys() {
+				return Collections.enumeration(Collections.singletonList(tipOfTheDay4));
+			}
+		};
+		DialogViewer.run(new DTipOfTheDay(new javax.swing.JFrame(), true, tips, 0));
 	}
 }
