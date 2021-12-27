@@ -66,10 +66,7 @@ public class SignJwtAction extends KeyStoreExplorerAction {
 			}
 			KeyStore keyStore = currentState.getKeyStore();
 
-			Provider provider = null;
-			if (history.getExplicitProvider() != null) {
-				provider = history.getExplicitProvider();
-			}
+			Provider provider = history.getExplicitProvider();
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
