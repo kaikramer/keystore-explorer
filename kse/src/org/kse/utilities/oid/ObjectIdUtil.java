@@ -2283,13 +2283,32 @@ public class ObjectIdUtil {
 		oidToNameMapping.put("2.54.1775.99", "SetData");
 	}
 
+	/**
+	 * Get subset of OIDs that start with the given prefix.
+	 *
+	 * @param prefix First n elements of the OID
+	 * @return All OIDs that match the given prefix
+	 */
 	public static ObjectOid[] getAllOidsStartingWith(String prefix) {
-		ObjectOid[] oids = oidToNameMapping.entrySet().stream()
+		ObjectOid[] oids = oidToNameMapping
+				.entrySet()
+				.stream()
 				.filter(e -> e.getKey().startsWith(prefix))
 				.map(e -> new ObjectOid(prefix, e.getKey(), e.getValue()))
-				.sorted().collect(Collectors.toList())
+				.sorted()
+				.collect(Collectors.toList())
 				.toArray(new ObjectOid[0]);
 		return oids;
+	}
+
+	/**
+	 * Resolve OID to human readable name.
+	 *
+	 * @param oid OID as string
+	 * @return Friendly name or null if unknown
+	 */
+	public static String getFriendlyName(String oid) {
+		return oidToNameMapping.get(oid);
 	}
 
 	/**

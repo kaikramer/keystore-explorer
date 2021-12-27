@@ -350,11 +350,17 @@ public class X509Ext {
 	private static String lookupFriendlyName(ASN1ObjectIdentifier oid) {
 		X509ExtensionType type = X509ExtensionType.resolveOid(oid.getId());
 
-		if (type != null) {
+		if (type != X509ExtensionType.UNKNOWN) {
 			return type.friendly();
 		}
 
-		return oid.getId();
+		// use full OID registry as fallback
+		String friendlyName = ObjectIdUtil.getFriendlyName(oid.getId());
+		if (friendlyName != null) {
+			return friendlyName;
+		}
+
+		return X509ExtensionType.UNKNOWN.friendly();
 	}
 
 	private static String getEntrustVersionInformationStringValue(byte[] value) throws IOException {

@@ -97,6 +97,7 @@ public class DTipOfTheDay extends JEscDialog {
 	 * @param tips
 	 *            Tips resource bundle
 	 * @param tipIndex
+	 *            Saved index of last shown tip
 	 */
 	public DTipOfTheDay(JFrame parent, boolean showTipsOnStartup, ResourceBundle tips, int tipIndex) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
@@ -243,7 +244,7 @@ public class DTipOfTheDay extends JEscDialog {
 			// no more tips
 		}
 
-		tipsText = tipList.toArray(new String[tipList.size()]);
+		tipsText = tipList.toArray(new String[0]);
 
 		if (tipsText.length == 0) {
 			throw new IllegalArgumentException(res.getString("NoTipsOfTheDaySupplied.exception.message"));
