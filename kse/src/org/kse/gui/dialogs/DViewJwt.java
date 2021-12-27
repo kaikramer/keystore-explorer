@@ -26,6 +26,10 @@ import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * Dialog that displays the JSON Web Token (JWT).
+ *
+ */
 public class DViewJwt extends JEscDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -37,6 +41,12 @@ public class DViewJwt extends JEscDialog {
 	private JButton jbOK;
 	private JButton jbCopy;
 
+	/**
+	 * Creates a new DViewJwt dialog.
+	 * 
+	 * @param parent The parent frame
+	 * @param jwt    The encoded JWT
+	 */
 	public DViewJwt(JFrame parent, String jwt) {
 
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
