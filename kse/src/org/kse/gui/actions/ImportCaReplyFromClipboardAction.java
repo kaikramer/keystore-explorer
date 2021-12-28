@@ -108,7 +108,7 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
 			X509Certificate[] exitingEntryCerts = X509CertUtil.orderX509CertChain(X509CertUtil
 					.convertCertificates(keyStore.getCertificateChain(alias)));
 
-			if (!exitingEntryCerts[0].getPublicKey().equals(certs[0].getPublicKey())) {
+			if (!certs[0].getPublicKey().equals(exitingEntryCerts[0].getPublicKey())) {
 				JOptionPane.showMessageDialog(frame, res.getString("ImportCaReplyFromClipboardAction.NoMatchPubKeyCaReply.message"),
 						res.getString("ImportCaReplyFromClipboardAction.ImportCaReply.Title"), JOptionPane.WARNING_MESSAGE);
 				return;

@@ -116,7 +116,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 			X509Certificate[] exitingEntryCerts = X509CertUtil.orderX509CertChain(X509CertUtil
 					.convertCertificates(keyStore.getCertificateChain(alias)));
 
-			if (!exitingEntryCerts[0].getPublicKey().equals(certs[0].getPublicKey())) {
+			if (!certs[0].getPublicKey().equals(exitingEntryCerts[0].getPublicKey())) {
 				JOptionPane.showMessageDialog(frame, res.getString("ImportCaReplyFromFileAction.NoMatchPubKeyCaReply.message"),
 						res.getString("ImportCaReplyFromFileAction.ImportCaReply.Title"), JOptionPane.WARNING_MESSAGE);
 				return;
