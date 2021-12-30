@@ -5,7 +5,6 @@ import java.net.Socket;
 
 import org.kse.utilities.ssl.ConnectionType;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public abstract class StartTls {
 
@@ -23,7 +22,7 @@ public abstract class StartTls {
 		case GENERIC_TLS:
 		case HTTPS:
 		default:
-			throw new NotImplementedException();
+			throw new UnsupportedOperationException();
 		}
 	}
 
