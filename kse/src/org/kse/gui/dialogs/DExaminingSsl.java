@@ -49,6 +49,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.history.KeyStoreHistory;
+import org.kse.utilities.ssl.ConnectionType;
 import org.kse.utilities.ssl.SslConnectionInfos;
 import org.kse.utilities.ssl.SslUtils;
 
@@ -73,6 +74,7 @@ public class DExaminingSsl extends JEscDialog {
 
 	private String sslHost;
 	private int sslPort;
+	private ConnectionType connectionType;
 	private KeyStore keyStore;
 	private char[] password;
 	private SslConnectionInfos sslInfos;
@@ -81,22 +83,21 @@ public class DExaminingSsl extends JEscDialog {
 	/**
 	 * Creates a new DExaminingSsl dialog.
 	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param sslHost
-	 *            SSL connection's host name
-	 * @param sslPort
-	 *            SSL connection's port number
-	 * @param useClientAuth
-	 *            Try to connect with client certificate
-	 * @param ksh
-	 *            KeyStore with client certificate
+	 * @param parent The parent frame
+	 * @param sslHost SSL connection's host name
+	 * @param sslPort SSL connection's port number
+	 * @param connectionType SSL connection type (needed for STARTTLS connections)
+	 * @param useClientAuth Try to connect with client certificate
+	 * @param ksh KeyStore with client certificate
 	 */
-	public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
+	public DExaminingSsl(JFrame parent, String sslHost, int sslPort, ConnectionType connectionType,
+			boolean useClientAuth, KeyStoreHistory ksh) {
+
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
 		this.sslHost = sslHost;
 		this.sslPort = sslPort;
+		this.connectionType = connectionType;
 
 		if (useClientAuth) {
 			this.keyStore = ksh.getCurrentState().getKeyStore();
@@ -198,7 +199,7 @@ public class DExaminingSsl extends JEscDialog {
 		@Override
 		public void run() {
 			try {
-				sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
+				sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, connectionType, keyStore, password);
 
 				SwingUtilities.invokeLater(() -> {
 					if (DExaminingSsl.this.isShowing()) {

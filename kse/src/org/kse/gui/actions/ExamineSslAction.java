@@ -32,6 +32,7 @@ import org.kse.gui.dialogs.DExaminingSsl;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
+import org.kse.utilities.ssl.ConnectionType;
 import org.kse.utilities.ssl.SslConnectionInfos;
 
 /**
@@ -75,6 +76,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 
 			String sslHost = dExamineSsl.getSslHost();
 			int sslPort = dExamineSsl.getSslPort();
+			ConnectionType connectionType = dExamineSsl.getConnectionType();
 			boolean useClientAuth = dExamineSsl.useClientAuth();
 			KeyStoreHistory ksh = dExamineSsl.getKeyStore();
 
@@ -82,7 +84,7 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 				return;
 			}
 
-			DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, useClientAuth, ksh);
+			DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, connectionType, useClientAuth, ksh);
 			dExaminingSsl.setLocationRelativeTo(frame);
 			dExaminingSsl.startExamination();
 			dExaminingSsl.setVisible(true);

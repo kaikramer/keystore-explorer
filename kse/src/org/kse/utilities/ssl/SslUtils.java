@@ -20,9 +20,14 @@
 package org.kse.utilities.ssl;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -33,12 +38,14 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLProtocolException;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.kse.crypto.CryptoException;
+import org.kse.utilities.ssl.starttls.StartTls;
 
 public class SslUtils {
 
@@ -50,77 +57,73 @@ public class SslUtils {
 	/**
 	 * Load certificates from an SSL connection.
 	 *
-	 * @param host
-	 *            Connection host
-	 * @param port
-	 *            Connection port
-	 * @param keyStore
-	 *            KeyStore with a key pair for SSL client authentication
-	 * @param password
-	 *            The password for the KeyStore
+	 * @param host Connection host
+	 * @param port Connection port
+	 * @param connectionType SSL connection type (needed for STARTTLS ports)
+	 * @param keyStore KeyStore with a key pair for SSL client authentication
+	 * @param password The password for the KeyStore
 	 * @return SSL infos
 	 * @throws CryptoException
 	 *             Problem encountered while loading the certificate(s)
 	 * @throws IOException
 	 *             An I/O error occurred
 	 */
-	public static SslConnectionInfos readSSLConnectionInfos(String host, int port, KeyStore keyStore, char[] password)
-			throws CryptoException, IOException {
+	public static SslConnectionInfos readSSLConnectionInfos(String host, int port, ConnectionType connectionType,
+			KeyStore keyStore, char[] password) throws CryptoException, IOException {
 
 		URL url = new URL(MessageFormat.format("https://{0}:{1}/", host, "" + port));
-		HttpsURLConnection connection = null;
 
 		System.setProperty("javax.net.debug", "ssl");
 
 		try {
-			connection = (HttpsURLConnection) url.openConnection();
 
 			// create a key manager for client authentication
-			X509KeyManager km = null;
-			if (keyStore != null) {
-				KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
-				keyManagerFactory.init(keyStore, password);
-				for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
-					if (keyManager instanceof X509KeyManager) {
-						km = (X509KeyManager) keyManager;
-						break;
-					}
-				}
-			}
+			X509KeyManager km = createX509KeyManager(keyStore, password);
 
 			// We are only interested in getting the SSL certificates even if they are invalid
 			// either in and of themselves or for the host name they are associated with
-
-			// 1) set connection's SSL Socket factory to have a very trusting trust manager
-			SSLContext context = SSLContext.getInstance("TLS");
+			// => set connection's SSL Socket factory to have a very trusting trust manager
+			SSLContext sslContext = SSLContext.getInstance("TLS");
 			X509TrustingManager tm = new X509TrustingManager();
-			context.init(new KeyManager[] { km }, new TrustManager[] { tm }, null);
-
-			// 2) set a host name verifier that always verifies the host name
-			connection.setHostnameVerifier((hostname, sslSession) -> true);
+			sslContext.init(new KeyManager[] { km }, new TrustManager[] { tm }, null);
 
 			// register our handshake completed listener in order to retrieve SSL connection infos later
-			SSLSocketFactory factory = context.getSocketFactory();
+			SSLSocketFactory factory = sslContext.getSocketFactory();
 			RetrieveSslInfosHandshakeListener handshakeListener = new RetrieveSslInfosHandshakeListener();
 			boolean sniEnabled = true;
-			connection.setSSLSocketFactory(new CustomSslSocketFactory(factory, handshakeListener, sniEnabled));
 
-			try {
-				connection.connect();
-			} catch (SSLProtocolException e) {
-				// handle server misconfiguration (works only in Java 8 or higher)
-				if (e.getMessage().contains("unrecognized_name")) {
-					sniEnabled = false;
-					connection.setSSLSocketFactory(new CustomSslSocketFactory(factory, handshakeListener, sniEnabled));
+			CustomSslSocketFactory customSslSocketFactory = new CustomSslSocketFactory(factory, handshakeListener,
+					sniEnabled);
+
+			if (connectionType == ConnectionType.HTTPS) {
+				HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+				connection.setSSLSocketFactory(customSslSocketFactory);
+				connection.setHostnameVerifier((hostname, sslSession) -> true);
+
+				try {
 					connection.connect();
-				} else {
-					throw e;
+				} catch (SSLProtocolException e) {
+					// handle server misconfiguration (works only in Java 8 or higher)
+					if (e.getMessage().contains("unrecognized_name")) {
+						sniEnabled = false;
+						connection.setSSLSocketFactory(new CustomSslSocketFactory(factory, handshakeListener, sniEnabled));
+						connection.connect();
+					} else {
+						throw e;
+					}
 				}
-			}
 
-			// this is necessary in order to cause a handshake exception when the client cert is not accepted
-			if (keyStore != null) {
-				connection.getResponseMessage();
+				// this is necessary in order to cause a handshake exception when the client cert is not accepted
+				if (keyStore != null) {
+					connection.getResponseMessage();
+				}
+			} else if (connectionType == ConnectionType.GENERIC_TLS) {
+				SSLSocket sslSocket = (SSLSocket) customSslSocketFactory.createSocket(host, port);
+				sslSocket.startHandshake();
+			} else {
+				Socket socket = StartTls.startTls(connectionType, host, port);
+				SSLSocket sslSocket = (SSLSocket) customSslSocketFactory.createSocket(socket, host, port, true);
+				sslSocket.startHandshake();
 			}
 
 			SslConnectionInfos sslConnectionInfos = handshakeListener.getSslConnectionInfos();
@@ -130,11 +133,29 @@ public class SslUtils {
 
 		} catch (GeneralSecurityException ex) {
 			throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
-		} finally {
-			if (connection != null) {
-				connection.disconnect();
+		}
+//		} finally {
+//			if (connection != null) {
+//				connection.disconnect();
+//			}
+//		}
+	}
+
+	private static X509KeyManager createX509KeyManager(KeyStore keyStore, char[] password)
+			throws NoSuchAlgorithmException, NoSuchProviderException, KeyStoreException, UnrecoverableKeyException {
+
+		X509KeyManager km = null;
+		if (keyStore != null) {
+			KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509", "SunJSSE");
+			keyManagerFactory.init(keyStore, password);
+			for (KeyManager keyManager : keyManagerFactory.getKeyManagers()) {
+				if (keyManager instanceof X509KeyManager) {
+					km = (X509KeyManager) keyManager;
+					break;
+				}
 			}
 		}
+		return km;
 	}
 
 	/**

@@ -51,6 +51,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.OpenAction;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.history.KeyStoreHistory;
+import org.kse.utilities.ssl.ConnectionType;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -69,6 +70,8 @@ public class DExamineSsl extends JEscDialog {
 	private JComboBox<String> jcbSslHost;
 	private JLabel jlSslPort;
 	private JComboBox<String> jcbSslPort;
+	private JLabel jlSslConnectionType;
+	private JComboBox<ConnectionType> jcbSslConnectionType;
 	private JCheckBox jcbClientAuth;
 	private JComboBox<KeyStoreHistory> jcbKeyStore;
 	private JButton jbLoadKeystore;
@@ -78,6 +81,7 @@ public class DExamineSsl extends JEscDialog {
 
 	private String sslHost;
 	private int sslPort = -1;
+	private ConnectionType connectionType;
 
 	private KseFrame kseFrame;
 	private boolean cancelled = true;
@@ -110,6 +114,12 @@ public class DExamineSsl extends JEscDialog {
 		jcbSslPort.setToolTipText(res.getString("DExamineSsl.jtfSslPort.tooltip"));
 		jcbSslPort.setModel(new DefaultComboBoxModel<>(getSslPorts()));
 
+		jlSslConnectionType = new JLabel(res.getString("DExamineSsl.jlSslConnectionType.text"));
+
+		jcbSslConnectionType = new JComboBox<>();
+		jcbSslConnectionType.setToolTipText(res.getString("DExamineSsl.jcbSslConnectionType.tooltip"));
+		jcbSslConnectionType.setModel(new DefaultComboBoxModel<>(ConnectionType.values()));
+
 		jcbClientAuth = new JCheckBox(res.getString("DExamineSsl.jlEnableClientAuth.text"));
 
 		jcbKeyStore = new JComboBox<>(getKeystoreNames());
@@ -133,7 +143,9 @@ public class DExamineSsl extends JEscDialog {
 		pane.add(jlSslHost, "skip");
 		pane.add(jcbSslHost, "sgx, growx, wrap");
 		pane.add(jlSslPort, "skip");
-		pane.add(jcbSslPort, "sgx, growx, wrap para");
+		pane.add(jcbSslPort, "sgx, growx, wrap");
+		pane.add(jlSslConnectionType, "skip");
+		pane.add(jcbSslConnectionType, "sgx, growx, wrap para");
 		MiGUtil.addSeparator(pane, res.getString("DExamineSsl.jlClientAuth.text"));
 		pane.add(jcbClientAuth, "left, spanx, wrap");
 		pane.add(new JLabel(res.getString("DExamineSsl.jlKeyStore.text")), "skip");
@@ -196,6 +208,14 @@ public class DExamineSsl extends JEscDialog {
 	 */
 	public int getSslPort() {
 		return sslPort;
+	}
+
+	/**
+	 * Get type of SSL connection (needed for STARTTLS connections)
+	 * @return SSL connection type
+	 */
+	public ConnectionType getConnectionType() {
+		return (ConnectionType) jcbSslConnectionType.getSelectedItem();
 	}
 
 	/**
@@ -313,8 +333,8 @@ public class DExamineSsl extends JEscDialog {
 		setVisible(false);
 		dispose();
 	}
-
 	// for quick testing
+
 	public static void main(String[] args) throws Exception {
 		DialogViewer.run(new DExamineSsl(new javax.swing.JFrame(), new KseFrame()));
 	}
