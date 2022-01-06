@@ -94,8 +94,8 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 	@Override
 	protected void doAction() {
 
+		String alias = "";
 		try {
-			String alias = "";
 			if (certificateEval == null) {
 				alias = kseFrame.getSelectedEntryAlias();
 				certificateEval = getCertificate(alias);
@@ -107,7 +107,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			Date now = new Date(System.currentTimeMillis());
 			if (certificateEval.getNotAfter().before(now)) {
 				JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.certExpired.message"),
-						res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
+						MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias),
 						JOptionPane.WARNING_MESSAGE);
 			} else {
 				DVerifyCertificate dVerifyCertificate = new DVerifyCertificate(frame, alias, kseFrame);
@@ -132,7 +132,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			}
 		} catch (CertPathValidatorException cex) {
 			JOptionPane.showMessageDialog(frame, cex.getMessage(),
-					res.getString("VerifyCertificateAction.Verify.Title"), JOptionPane.WARNING_MESSAGE);
+					MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias), JOptionPane.WARNING_MESSAGE);
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 		} finally {
@@ -143,9 +143,9 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 	private void verifyChain(KeyStoreHistory keyStoreHistory, String alias)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		if (verify("false", "false", false, keyStoreHistory, null)) {
+		if (verify("false", "false", false, keyStoreHistory, null, alias)) {
 			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.ChainSuccessful.message"),
-					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
+					MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -153,9 +153,9 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 	private void verifyStatusOCSP(KeyStoreHistory keyStoreHistory, String alias)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		if (verify("false", "true", true, keyStoreHistory, null)) {
+		if (verify("false", "true", true, keyStoreHistory, null, alias)) {
 			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
-					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
+					MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -165,7 +165,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			KeyStoreException, NoSuchAlgorithmException, CertificateException, InvalidAlgorithmParameterException,
 			IllegalStateException, CryptoException {
 
-		if (verify("false", "false", false, keyStoreHistory, null)) {
+		if (verify("false", "false", false, keyStoreHistory, null, alias)) {
 			// search issuer
 			X509Certificate issuer = null;
 
@@ -194,7 +194,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			OCSPResp response = requestOCSPResponse(ocspUrl, request);
 			if (isGoodCertificate(response)) {
 				JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
-						res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
+						MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
@@ -317,9 +317,9 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 			dProblem.setVisible(true);
 			return;
 		}
-		if (verify("true", "false", true, keyStoreHistory, crl)) {
+		if (verify("true", "false", true, keyStoreHistory, crl, alias)) {
 			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
-					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
+					MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -327,15 +327,15 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 	private void verifyStatusCrl(KeyStoreHistory keyStoreHistory, String alias)
 			throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
-		if (verify("true", "false", true, keyStoreHistory, null)) {
+		if (verify("true", "false", true, keyStoreHistory, null, alias)) {
 			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
-					res.getString("VerifyCertificateAction.Verify.Title") + " " + alias,
+					MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias),
 					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
 	private boolean verify(String crl, String ocsp, boolean revocationEnabled, KeyStoreHistory keyStoreHistory,
-			X509CRL xCrl) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
+			X509CRL xCrl, String alias) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
 			InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, CryptoException {
 
 		KeyStore trustStore = getKeyStore(keyStoreHistory);
@@ -345,7 +345,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 		}
 		if (trustStore.size() == 0) {
 			JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.trustStoreEmpty.message"),
-					res.getString("VerifyCertificateAction.Verify.Title"), JOptionPane.WARNING_MESSAGE);
+					MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"), alias), JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
 		System.setProperty("com.sun.net.ssl.checkRevocation", crl);
