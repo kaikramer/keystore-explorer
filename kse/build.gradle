@@ -114,7 +114,6 @@ dependencies {
 	implementation("commons-io:commons-io:2.11.0")
 	implementation("com.miglayout:miglayout-swing:5.3")
 	implementation("com.formdev:flatlaf:1.6.1")
-	implementation("io.fusionauth:fusionauth-jwt:5.0.0")
 	implementation("com.nimbusds:nimbus-jose-jwt:9.15.2")
 
 	// VAqua Look & Feel not in a public repository yet
