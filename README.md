@@ -32,7 +32,13 @@ To do a clean build, issue the following command from the `kse` directory:
 
     $ ./gradlew clean build
 
-This runs the unit tests and compiles a new `kse.jar` into `build/libs`. You can then update an existing KSE installation by replacing its kse.jar with this one.
+This runs the unit tests and builds the following artifacts:
+- `build/libs/kse.jar`
+- `build/distributions/kse-<version>.tar`
+- `build/distributions/kse-<version>.zip`
+
+You can then update an existing KSE installation by replacing its kse.jar (and if necessary the dependencies) with this one. 
+Or extract the content of the ZIP/TAR file and use the start scripts from the `bin` directory to run KSE. 
 
 The `build.gradle` file contains further instructions for building the platform specific distribution packages. 
 Especially what the requirements are for executing the build commands.
@@ -40,10 +46,6 @@ Especially what the requirements are for executing the build commands.
 For the release ZIP package execute the following command (command works only under Windows because it generates kse.exe):
 
     $ ./gradlew zip 
-
-For a generic ZIP package:
-
-    $ ./gradlew distZip
 
 For the Windows installer:
 
