@@ -8,7 +8,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -37,6 +39,9 @@ public class DSignJwt extends JEscDialog {
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
+	private JLabel jlId;
+	private JTextField jtfId;
+	private JButton jbGenId;
 	private JLabel jlIssuer;
 	private JTextField jtfIssuer;
 	private JLabel jlIssuedAt;
@@ -84,6 +89,14 @@ public class DSignJwt extends JEscDialog {
 
 	private void initComponents() throws CryptoException {
 		Date now = new Date();
+		
+		jlId = new JLabel(res.getString("DSignJwt.jlId.text"));
+		jtfId = new JTextField("", 23);
+		jtfId.setToolTipText(res.getString("DSignJwt.jtfId.tooltip"));
+		
+		jbGenId = new JButton();
+		jbGenId.setIcon(new ImageIcon(getClass().getResource("images/genid.png")));
+		jbGenId.setToolTipText(res.getString("DSignJwt.jbGenId.tooltip"));
 
 		jlIssuer = new JLabel(res.getString("DSignJwt.jlIssuer.text"));
 		jtfIssuer = new JTextField("", 23);
@@ -133,6 +146,10 @@ public class DSignJwt extends JEscDialog {
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 
+		pane.add(jlId, "");
+		pane.add(jtfId, "");
+		pane.add(jbGenId, "wrap");
+
 		pane.add(jlIssuer, "");
 		pane.add(jtfIssuer, "wrap");
 
@@ -158,7 +175,7 @@ public class DSignJwt extends JEscDialog {
 		pane.add(jpButtons, "right, spanx");
 
 		populateFields();
-
+		jbGenId.addActionListener(evt -> genIdPressed());
 		jbOK.addActionListener(evt -> okPressed());
 		jbCancel.addActionListener(evt -> cancelPressed());
 
@@ -171,6 +188,11 @@ public class DSignJwt extends JEscDialog {
 
 	private void populateFields() {
 
+	}
+
+	private void genIdPressed() {
+		jtfId.setText(UUID.randomUUID().toString());
+		jtfIssuer.requestFocus();
 	}
 
 	private void okPressed() {
@@ -192,6 +214,15 @@ public class DSignJwt extends JEscDialog {
 		if (jtfIssuer.getText().length() > 0) {
 			return jtfIssuer.getText();
 		} else {
+			return null;
+		}
+	}
+
+	public String getId() {
+		if (jtfId.getText().length() > 0) {
+			return jtfId.getText();
+		}
+		else {
 			return null;
 		}
 	}

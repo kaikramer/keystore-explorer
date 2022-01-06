@@ -150,7 +150,8 @@ public class SignJwtAction extends KeyStoreExplorerAction {
 			signer.getJCAContext().setProvider(provider);
 		}
 
-		Builder builder = new JWTClaimsSet.Builder().subject(dSignJwt.getSubject()).issuer(dSignJwt.getIssuer())
+		Builder builder = new JWTClaimsSet.Builder().jwtID(dSignJwt.getId())
+				.subject(dSignJwt.getSubject()).issuer(dSignJwt.getIssuer())
 				.issueTime(dSignJwt.getIssuedAt()).notBeforeTime(dSignJwt.getNotBefore())
 				.audience(dSignJwt.getAudience()).expirationTime(dSignJwt.getExpiration());
 
