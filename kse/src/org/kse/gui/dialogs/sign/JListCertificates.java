@@ -86,7 +86,8 @@ public class JListCertificates extends JPanel {
 			while (enumeration.hasMoreElements()) {
 				String alias = enumeration.nextElement();
 				try {
-					if (tempTrustStore.entryInstanceOf(alias, KeyStore.PrivateKeyEntry.class)) {
+					if (tempTrustStore.entryInstanceOf(alias, KeyStore.PrivateKeyEntry.class)
+						|| tempTrustStore.entryInstanceOf(alias, KeyStore.TrustedCertificateEntry.class)) {
 						X509Certificate cert = (X509Certificate) tempTrustStore.getCertificate(alias);
 						listCertificados.add(cert);
 					}
