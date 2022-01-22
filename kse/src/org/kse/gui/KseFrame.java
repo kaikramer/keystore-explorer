@@ -393,6 +393,7 @@ public final class KseFrame implements StatusBar {
 	private JMenu jmTrustedCertificateExport;
 	private JMenuItem jmiTrustedCertificateExport;
 	private JMenuItem jmiTrustedCertificateExportPublicKey;
+	private JMenuItem jmiTrustedCertificateVerifyCertificate;
 	private JMenuItem jmiTrustedCertificateDelete;
 	private JMenuItem jmiTrustedCertificateRename;
 
@@ -2120,6 +2121,11 @@ public final class KseFrame implements StatusBar {
 		new StatusBarChangeHandler(jmiTrustedCertificateExportPublicKey,
 				(String) exportTrustedCertificatePublicKeyAction.getValue(Action.LONG_DESCRIPTION), this);
 
+		jmiTrustedCertificateVerifyCertificate = new JMenuItem(verifyCertificateAction);
+		jmiTrustedCertificateVerifyCertificate.setToolTipText(null);
+		new StatusBarChangeHandler(jmiTrustedCertificateVerifyCertificate,
+				(String) verifyCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
+		
 		jmiTrustedCertificateDelete = new JMenuItem(deleteTrustedCertificateAction);
 		jmiTrustedCertificateDelete.setToolTipText(null);
 		new StatusBarChangeHandler(jmiTrustedCertificateDelete,
@@ -2140,6 +2146,7 @@ public final class KseFrame implements StatusBar {
 		jpmTrustedCertificate.add(jmTrustedCertificateExport);
 		jmTrustedCertificateExport.add(jmiTrustedCertificateExport);
 		jmTrustedCertificateExport.add(jmiTrustedCertificateExportPublicKey);
+		jpmTrustedCertificate.add(jmiTrustedCertificateVerifyCertificate);
 		jpmTrustedCertificate.addSeparator();
 		jpmTrustedCertificate.add(jmiTrustedCertificateDelete);
 		jpmTrustedCertificate.add(jmiTrustedCertificateRename);
