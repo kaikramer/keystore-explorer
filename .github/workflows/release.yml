@@ -32,9 +32,6 @@ jobs:
     needs: [launcher]
     runs-on: windows-2019
     steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: kse-launcher
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Install required software packages
@@ -46,6 +43,10 @@ jobs:
         with:
           java-version: '8'
           distribution: 'temurin'
+      - uses: actions/download-artifact@v2
+        with:
+          name: kse-launcher
+          path: kse/res
       - name: Build with Gradle
         run: .\gradlew.bat test zip innosetup
         working-directory: kse
@@ -86,9 +87,6 @@ jobs:
     needs: [launcher]
     runs-on: windows-2019
     steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: kse-launcher
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Install required software packages
@@ -100,6 +98,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - uses: actions/download-artifact@v2
+        with:
+          name: kse-launcher
+          path: kse/res
       - name: Build with Gradle
         run: .\gradlew.bat test innosetup
         working-directory: kse
