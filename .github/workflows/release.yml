@@ -8,10 +8,33 @@ on:
 
 jobs:
 
-  windows:
-    name: Create artifacts on Windows
+  launcher:
+    name: Build KSE launcher
     runs-on: windows-2019
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up the required rust toolchain
+        run: rustup default stable-i686-pc-windows-gnu
+      - name: Build
+        run: cargo build --release
+        working-directory: kse-launcher
+      - name: Shrink executable
+        run: strip kse-launcher\target\i686-pc-windows-gnu\release\kse-launcher.exe
+      - name: Store artifacts for release
+        uses: actions/upload-artifact@v2
+        with:
+          name: kse-launcher
+          path: kse-launcher\target\i686-pc-windows-gnu\release\kse-launcher.exe
+
+  windows:
+    name: Create artifacts on Windows
+    needs: [launcher]
+    runs-on: windows-2019
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: kse-launcher
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Install required software packages
@@ -60,8 +83,12 @@ jobs:
 
   windows-with-jre:
     name: Create a Windows installer with included JRE
+    needs: [launcher]
     runs-on: windows-2019
     steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: kse-launcher
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Install required software packages
