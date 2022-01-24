@@ -60,6 +60,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
@@ -414,7 +415,10 @@ public class DViewCrl extends JEscDialog {
 		}
 		jtfNextUpdate.setCaretPosition(0);
 
-		jtfSignatureAlgorithm.setText(crl.getSigAlgName());
+		SignatureType sigAlg = SignatureType.resolveOid(crl.getSigAlgOID(), crl.getSigAlgParams());
+		String sigAlgName = (sigAlg != null) ? sigAlg.friendly() : crl.getSigAlgName();
+
+		jtfSignatureAlgorithm.setText(sigAlgName);
 		jtfSignatureAlgorithm.setCaretPosition(0);
 
 		Set<?> critExts = crl.getCriticalExtensionOIDs();
