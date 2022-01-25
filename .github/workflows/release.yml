@@ -56,6 +56,12 @@ jobs:
           name: windows-artifacts
           path: |
             kse/build/launcher/kse.exe
+      - name: Store artifacts for release
+        uses: actions/upload-artifact@v2
+        with:
+          # use second step with same artifact name in order to avoid sub-folders
+          name: windows-artifacts
+          path: |
             kse/build/distributions/kse-*.zip
             kse/build/distributions/kse-*-setup-no-jre.exe
 
