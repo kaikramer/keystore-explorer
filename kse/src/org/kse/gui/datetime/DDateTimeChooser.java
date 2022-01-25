@@ -20,6 +20,8 @@
 package org.kse.gui.datetime;
 
 import static java.awt.Color.BLUE;
+import static java.awt.Color.DARK_GRAY;
+import static java.awt.Color.LIGHT_GRAY;
 import static java.awt.Color.WHITE;
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.HOUR_OF_DAY;
@@ -27,17 +29,12 @@ import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.SECOND;
 import static java.util.Calendar.YEAR;
-import java.awt.BorderLayout;
+
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent; 
+import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -47,7 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
-import javax.swing.AbstractAction;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -65,8 +62,13 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.MatteBorder;
+
 import org.kse.gui.JEscDialog;
+import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose a date/time value.
@@ -90,29 +92,34 @@ public class DDateTimeChooser extends JEscDialog {
 			res.getString("DDateTimeChooser.Day.Thu"), res.getString("DDateTimeChooser.Day.Fri"),
 			res.getString("DDateTimeChooser.Day.Sat"), res.getString("DDateTimeChooser.Day.Sun") };
 
+	// light scheme colors
 	private static final Color LIGHT_BLUE = new Color(51, 119, 204);
-	private static final Color WEEK_DAY_BACKGROUND = LIGHT_BLUE;
-	private static final Color WEEK_DAY_FOREGROUND = WHITE;
-	private static final Color DAY_FOREGROUND = LIGHT_BLUE;
-	private static final Color DAY_BACKGROUND = WHITE;
-	private static final Color SELECTED_DAY_FOREGROUND = WHITE;
-	private static final Color SELECTED_DAY_BACKGROUND = BLUE;
-	private static final String EMPTY_DAY = "";
+	private static final Color WEEK_DAY_FOREGROUND_LIGHT = WHITE;
+	private static final Color WEEK_DAY_BACKGROUND_LIGHT = LIGHT_BLUE;
+	private static final Color DAY_FOREGROUND_LIGHT = LIGHT_BLUE;
+	private static final Color DAY_BACKGROUND_LIGHT = WHITE;
+	private static final Color SELECTED_DAY_FOREGROUND_LIGHT = WHITE;
+	private static final Color SELECTED_DAY_BACKGROUND_LIGHT = BLUE;
+
+	// dark scheme colors
+	private static final Color WEEK_DAY_FOREGROUND_DARK = WHITE;
+	private static final Color WEEK_DAY_BACKGROUND_DARK = LIGHT_BLUE;
+	private static final Color DAY_FOREGROUND_DARK = LIGHT_GRAY;
+	private static final Color DAY_BACKGROUND_DARK = DARK_GRAY;
+	private static final Color SELECTED_DAY_FOREGROUND_DARK = WHITE;
+	private static final Color SELECTED_DAY_BACKGROUND_DARK = BLUE;
+
+	private static final String EMPTY_DAY = " ";
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpMonthYear;
 	private JComboBox<?> jcbMonth;
 	private JSpinner jsYear;
 	private JPanel jpDaysOfMonth;
 	private JLabel[][] jlDaysOfMonth;
 	private JLabel jlSelectedDayOfMonth;
-	private JPanel jpTime;
 	private JSpinner jsHour;
-	private JLabel jlTimeSeparator1;
 	private JSpinner jsMinute;
-	private JLabel jlTimeSeparator2;
 	private JSpinner jsSecond;
-	private JPanel jpShortcuts;
 	private JButton jbStartOfYear;
 	private JButton jbNow;
 	private JButton jbEndOfYear;
@@ -173,76 +180,45 @@ public class DDateTimeChooser extends JEscDialog {
 		for (int i = 0; i < 7; i++) {
 			jlDaysOfMonth[0][i] = new JLabel(DAY_NAMES[i], SwingConstants.CENTER);
 			jlDaysOfMonth[0][i].setOpaque(true);
-			jlDaysOfMonth[0][i].setForeground(WEEK_DAY_FOREGROUND);
-			jlDaysOfMonth[0][i].setBackground(WEEK_DAY_BACKGROUND);
+			jlDaysOfMonth[0][i].setForeground(LnfUtil.isDarkLnf() ? WEEK_DAY_FOREGROUND_DARK : WEEK_DAY_FOREGROUND_LIGHT);
+			jlDaysOfMonth[0][i].setBackground(LnfUtil.isDarkLnf() ? WEEK_DAY_BACKGROUND_DARK : WEEK_DAY_BACKGROUND_LIGHT);
 		}
-
 		for (int i = 1; i < 7; i++) {
 			for (int j = 0; j < 7; j++) {
 				jlDaysOfMonth[i][j] = new JLabel(EMPTY_DAY, SwingConstants.CENTER);
 				jlDaysOfMonth[i][j].setOpaque(true);
-				jlDaysOfMonth[i][j].setForeground(DAY_FOREGROUND);
-				jlDaysOfMonth[i][j].setBackground(DAY_BACKGROUND);
+				jlDaysOfMonth[i][j].setForeground(LnfUtil.isDarkLnf() ? DAY_FOREGROUND_DARK : DAY_FOREGROUND_LIGHT);
+				jlDaysOfMonth[i][j].setBackground(LnfUtil.isDarkLnf() ? DAY_BACKGROUND_DARK : DAY_BACKGROUND_LIGHT);
 				jlDaysOfMonth[i][j].addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent evt) {
 						selectDay((JLabel) evt.getSource());
 					}
 				});
-				jlDaysOfMonth[i][j].setBorder(new MatteBorder(2, 0, 0, 0, Color.WHITE));
+				jlDaysOfMonth[i][j].setBorder(new MatteBorder(0, 0, 0, 0, Color.WHITE));
 			}
 		}
 
-		jpMonthYear = new JPanel();
-		jpMonthYear.add(jcbMonth);
-		jpMonthYear.add(jsYear);
-
-		jpDaysOfMonth = new JPanel(new DayOfMonthGridLayout(7, 7));
-		jpDaysOfMonth.setBackground(DAY_BACKGROUND);
+		jpDaysOfMonth = new JPanel(new MigLayout("insets 0, fill", "[fill]0[fill]", ""));
+		jpDaysOfMonth.setBackground((LnfUtil.isDarkLnf() ? DAY_BACKGROUND_DARK : DAY_BACKGROUND_LIGHT));
+		jpDaysOfMonth.setFocusable(true);
 		jpDaysOfMonth.setBorder(new CompoundBorder(BorderFactory.createLoweredBevelBorder(),
 				new EmptyBorder(2, 2, 2, 2)));
-		jpDaysOfMonth.setFocusable(true);
-
-		jpDaysOfMonth.addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(FocusEvent evt) {
-				setSelectedDay(jlSelectedDayOfMonth);
-			}
-
-			@Override
-			public void focusLost(FocusEvent evt) {
-				setSelectedDay(jlSelectedDayOfMonth);
-			}
-		});
-
-		jpDaysOfMonth.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent evt) {
-				calendarKeyboardNavigation(evt);
-			}
-		});
 
 		for (int i = 0; i < 7; i++) {
 			for (int j = 0; j < 7; j++) {
-				jpDaysOfMonth.add(jlDaysOfMonth[i][j]);
+				jpDaysOfMonth.add(jlDaysOfMonth[i][j], j == 6 ? "wrap 2" : "");
 			}
 		}
 
 		jsHour = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.HOUR_OF_DAY), 0, 23, 1));
 		jsHour.setEditor(new JSpinner.NumberEditor(jsHour, "00"));
-		jlTimeSeparator1 = new JLabel(":");
+
 		jsMinute = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.MINUTE), 0, 59, 1));
 		jsMinute.setEditor(new JSpinner.NumberEditor(jsMinute, "00"));
-		jlTimeSeparator2 = new JLabel(":");
+
 		jsSecond = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.SECOND), 0, 59, 1));
 		jsSecond.setEditor(new JSpinner.NumberEditor(jsSecond, "00"));
-
-		jpTime = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpTime.add(jsHour);
-		jpTime.add(jlTimeSeparator1);
-		jpTime.add(jsMinute);
-		jpTime.add(jlTimeSeparator2);
-		jpTime.add(jsSecond);
 
 		jbNow = new JButton(res.getString("DDateTimeChooser.jbNow.text"));
 		jbNow.setMargin(new Insets(2, 2, 2, 2));
@@ -276,43 +252,63 @@ public class DDateTimeChooser extends JEscDialog {
 			populate(cal.getTime());
 		});
 
-		jpShortcuts = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpShortcuts.add(jbStartOfYear);
-		jpShortcuts.add(jbNow);
-		jpShortcuts.add(jbEndOfYear);
+		jbOK = new JButton(res.getString("DDateTimeChooser.jbOK.text"));
+
+		jbCancel = new JButton(res.getString("DDateTimeChooser.jbCancel.text"));
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
+
+		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
 		JPanel jpDateTime = new JPanel();
 		jpDateTime.setLayout(new BoxLayout(jpDateTime, BoxLayout.Y_AXIS));
-		jpDateTime.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-				new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-		jpDateTime.add(jpMonthYear);
-		jpDateTime.add(jpDaysOfMonth);
-		jpDateTime.add(jpTime);
-		jpDateTime.add(jpShortcuts);
+		jpDateTime.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, 0),
+				new CompoundBorder(new EtchedBorder(), new EmptyBorder(0, 0, 0, 0))));
 
-		jbOK = new JButton(res.getString("DDateTimeChooser.jbOK.text"));
+		// layout of inner panel
+		jpDateTime.setLayout(new MigLayout("insets panel, fill", "", ""));
+		jpDateTime.add(jcbMonth, "spanx, split, align 50%");
+		jpDateTime.add(jsYear, "wrap");
+		jpDateTime.add(jpDaysOfMonth, "spanx, growx, wrap");
+		jpDateTime.add(jsHour, "spanx, split, align 50%");
+		jpDateTime.add(new JLabel(":"), "");
+		jpDateTime.add(jsMinute, "");
+		jpDateTime.add(new JLabel(":"), "");
+		jpDateTime.add(jsSecond, "wrap unrel");
+		jpDateTime.add(jbStartOfYear, "spanx, split, align 50%");
+		jpDateTime.add(jbNow, "");
+		jpDateTime.add(jbEndOfYear, "");
+
+		// layout of dialog
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets panel, fill", "", ""));
+		pane.add(jpDateTime, "wrap unrel");
+		pane.add(jpButtons, "right, spanx");
+
 		jbOK.addActionListener(evt -> okPressed());
-
-		jbCancel = new JButton(res.getString("DDateTimeChooser.jbCancel.text"));
 		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+
+		jpDaysOfMonth.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent evt) {
+				setSelectedDay(jlSelectedDayOfMonth);
+			}
 
 			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
+			public void focusLost(FocusEvent evt) {
+				setSelectedDay(jlSelectedDayOfMonth);
 			}
 		});
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(BorderLayout.CENTER, jpDateTime);
-		getContentPane().add(BorderLayout.SOUTH, jpButtons);
+		jpDaysOfMonth.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				calendarKeyboardNavigation(evt);
+			}
+		});
 
 		populate(date);
+		update();
 
 		setResizable(false);
 
@@ -350,25 +346,26 @@ public class DDateTimeChooser extends JEscDialog {
 		try {
 			return Integer.parseInt(jlSelectedDayOfMonth.getText());
 		} catch (NumberFormatException ex) {
+			// always a number
 		}
 
 		return -1;
-
 	}
 
 	private void setSelectedDay(JLabel newDay) {
 		if (jlSelectedDayOfMonth != null) {
-			jlSelectedDayOfMonth.setForeground(DAY_FOREGROUND);
-			jlSelectedDayOfMonth.setBackground(DAY_BACKGROUND);
+			jlSelectedDayOfMonth.setForeground(LnfUtil.isDarkLnf() ? DAY_FOREGROUND_DARK : DAY_FOREGROUND_LIGHT);
+			jlSelectedDayOfMonth.setBackground(LnfUtil.isDarkLnf() ? DAY_BACKGROUND_DARK : DAY_BACKGROUND_LIGHT);
 		}
 
 		jlSelectedDayOfMonth = newDay;
-		jlSelectedDayOfMonth.setForeground(SELECTED_DAY_FOREGROUND);
-		jlSelectedDayOfMonth.setBackground(SELECTED_DAY_BACKGROUND);
+		jlSelectedDayOfMonth.setForeground(LnfUtil.isDarkLnf() ? SELECTED_DAY_FOREGROUND_DARK : SELECTED_DAY_FOREGROUND_LIGHT);
+		jlSelectedDayOfMonth.setBackground(LnfUtil.isDarkLnf() ? SELECTED_DAY_BACKGROUND_DARK : SELECTED_DAY_BACKGROUND_LIGHT);
 	}
 
 	private void setSelectedDay(int newDay) {
-		setSelectedDay(jlDaysOfMonth[((newDay + indexOfFirstDayOfMonth - 1) / 7) + 1][(newDay + indexOfFirstDayOfMonth - 1) % 7]);
+		setSelectedDay(jlDaysOfMonth[((newDay + indexOfFirstDayOfMonth - 1) / 7) + 1]
+									[(newDay + indexOfFirstDayOfMonth - 1) % 7]);
 	}
 
 	private void update() {
@@ -475,135 +472,10 @@ public class DDateTimeChooser extends JEscDialog {
 		dispose();
 	}
 
-	// GridLayout that distributes left over space between components
-	private class DayOfMonthGridLayout implements LayoutManager {
-		private int rows;
-		private int cols;
-
-		public DayOfMonthGridLayout(int rows, int cols) {
-			this.rows = rows;
-			this.cols = cols;
-		}
-
-		@Override
-		public void addLayoutComponent(String name, Component child) {
-		}
-
-		@Override
-		public void removeLayoutComponent(Component child) {
-		}
-
-		@Override
-		public Dimension preferredLayoutSize(Container parent) {
-			synchronized (parent.getTreeLock()) {
-				Insets insets = parent.getInsets();
-
-				Component[] children = parent.getComponents();
-
-				int length = children.length;
-				int prefWidth = 0;
-				int prefHeight = 0;
-
-				for (int i = 0; i < length; i++) {
-					Dimension prefSize = children[i].getPreferredSize();
-
-					if (prefSize.width > prefWidth) {
-						prefWidth = prefSize.width;
-					}
-
-					if (prefSize.height > prefHeight) {
-						prefHeight = prefSize.height;
-					}
-				}
-
-				return new Dimension((cols * prefWidth) + insets.left + insets.right, (rows * prefHeight) + insets.top
-						+ insets.bottom);
-			}
-		}
-
-		@Override
-		public Dimension minimumLayoutSize(Container parent) {
-			synchronized (parent.getTreeLock()) {
-				Insets insets = parent.getInsets();
-
-				Component[] children = parent.getComponents();
-
-				int length = children.length;
-				int minWidth = 0;
-				int minHeight = 0;
-
-				for (int i = 0; i < length; i++) {
-					Dimension minSize = children[i].getMinimumSize();
-
-					if (minSize.width > minWidth) {
-						minWidth = minSize.width;
-					}
-
-					if (minSize.height > minHeight) {
-						minHeight = minSize.height;
-					}
-				}
-
-				return new Dimension((cols * minWidth) + insets.left + insets.right, (rows * minHeight) + insets.top
-						+ insets.bottom);
-			}
-		}
-
-		@Override
-		public void layoutContainer(Container parent) {
-			synchronized (parent.getTreeLock()) {
-				Insets insets = parent.getInsets();
-
-				int width = (parent.getWidth() - (insets.left + insets.right)) / cols + 1;
-				int widthRemainder = (parent.getWidth() - (insets.left + insets.right)) % cols;
-				int height = (parent.getHeight() - (insets.top + insets.bottom)) / rows + 1;
-				int heightRemainder = (parent.getHeight() - (insets.top + insets.bottom)) % rows;
-
-				Component[] children = parent.getComponents();
-
-				int i = 0;
-				int y = 0;
-
-				for (int row = 0; row < heightRemainder; row++) {
-					int x = 0;
-
-					for (int col = 0; col < widthRemainder; col++) {
-						children[i++].setBounds((x + insets.left), (y + insets.top), width, height);
-						x += width;
-					}
-
-					width--;
-
-					for (int col = widthRemainder; col < cols; col++) {
-						children[i++].setBounds((x + insets.left), (y + insets.top), width, height);
-						x += width;
-					}
-
-					y += height;
-					width++;
-				}
-
-				height--;
-
-				for (int row = heightRemainder; row < rows; row++) {
-					int x = 0;
-
-					for (int col = 0; col < widthRemainder; col++) {
-						children[i++].setBounds((x + insets.left), (y + insets.top), width, height);
-						x += width;
-					}
-
-					width--;
-
-					for (int col = widthRemainder; col < cols; col++) {
-						children[i++].setBounds((x + insets.left), (y + insets.top), width, height);
-						x += width;
-					}
-
-					y += height;
-					width++;
-				}
-			}
-		}
+	// for quick UI testing
+	public static void main(String[] args) throws Exception {
+		DialogViewer.prepare();
+		DDateTimeChooser dialog = new DDateTimeChooser(new JFrame(), "Select Date", null);
+		DialogViewer.run(dialog);
 	}
 }
