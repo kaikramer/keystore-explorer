@@ -55,6 +55,7 @@ jobs:
         with:
           name: windows-artifacts
           path: |
+            kse/build/launcher/kse.exe
             kse/build/distributions/kse-*.zip
             kse/build/distributions/kse-*-setup-no-jre.exe
 
@@ -181,3 +182,13 @@ jobs:
             kse*.deb
             kse*.rpm
           token: ${{ secrets.github_token }}
+      - name: VirusTotal Scan
+        uses: crazy-max/ghaction-virustotal@v2
+        with:
+          vt_api_key: ${{ secrets.VT_API_KEY }}
+          update_release_body: true
+          files: |
+            kse.exe
+            kse-*.zip
+            kse-*-setup.exe
+            kse-*-setup-no-jre.exe
