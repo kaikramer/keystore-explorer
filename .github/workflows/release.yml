@@ -180,7 +180,7 @@ jobs:
         with:
           draft: true
           name: "KSE Release ${{ github.ref_name }}"
-          body: "Release Notes are available here: [Release Notes](http://www.keystore-explorer.org/releases.html)"
+          body: "Release Notes are available here: [Release Notes](https://keystore-explorer.org/releases.html)"
           files: |
             kse-*.zip
             kse-*-setup.exe
