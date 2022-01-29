@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -142,7 +142,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser with no filtered files
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getAllFileChooser() {
@@ -153,7 +153,7 @@ public class FileChooserFactory {
 
 	/**
 	 * Get a JFileChooser filtered for Pem files
-	 * 
+	 *
 	 * @return JFileChooser object
 	 */
 	public static JFileChooser getPemFileChooser() {

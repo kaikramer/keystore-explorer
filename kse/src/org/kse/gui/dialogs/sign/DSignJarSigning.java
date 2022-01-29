@@ -1,3 +1,23 @@
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 - 2022 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.kse.gui.dialogs.sign;
 
 import java.awt.Container;
@@ -90,15 +110,15 @@ public class DSignJarSigning extends JEscDialog {
 	 * Initializes the dialogue panel and associated elements
 	 */
 	private void initComponents() {
-		
+
 		// TODO Create Jar sign icon
-		
+
 		jlSignJar = new JLabel(res.getString("DSignJarSigning.jlSignJar.text"));
 		/*
 		ImageIcon icon = new ImageIcon(getClass().getResource("images/genkp.png"));
 		jlSignJar.setIcon(icon);
 		 */
-		
+
 		jpbSignJar = new JProgressBar(0, inputJarFiles.length);
 		jpbSignJar.setIndeterminate(false);
 
@@ -206,14 +226,14 @@ public class DSignJarSigning extends JEscDialog {
 							JarSigner.sign(inputJarFiles[i], outputJarFiles.get(i), privateKey, certs, signatureType,
 									signatureName, signer, digestType, tsaUrl, provider);
 						}
-					} 
+					}
 					// Add any jar sign exceptions to the map
 					catch (NumberFormatException e) {
 						fileExceptions.put(inputJarFiles[i].getName(), e.toString());
-					} 
+					}
 					catch (NullPointerException e) {
 						fileExceptions.put(inputJarFiles[i].getName(), e.toString());
-					} 
+					}
 					catch (Exception e) {
 						fileExceptions.put(inputJarFiles[i].getName(), e.toString());
 					}
@@ -226,7 +246,7 @@ public class DSignJarSigning extends JEscDialog {
 						closeDialog();
 					}
 				});
-			} 
+			}
 			catch (final Exception ex) {
 				SwingUtilities.invokeLater(() -> {
 					if (DSignJarSigning.this.isShowing()) {

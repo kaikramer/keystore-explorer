@@ -1,3 +1,23 @@
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 - 2022 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.kse.gui.dialogs;
 
 import java.util.ResourceBundle;
@@ -26,15 +46,15 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
 /**
- * Dialog used to find a keystore entry  
- * 
+ * Dialog used to find a keystore entry
+ *
  */
 public class DFindKeyStoreEntry extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";    
+	private static final String CANCEL_KEY = "CANCEL_KEY";
 
 	private JLabel jlEntryName;
 	private JTextField jtfEntryName;
@@ -47,7 +67,7 @@ public class DFindKeyStoreEntry extends JEscDialog {
 
     /**
      * Creates a new DFindKeyStoreEntry dialog.
-     * 
+     *
      * @param parent The parent frame
      */
     public DFindKeyStoreEntry(JFrame parent){
@@ -60,7 +80,7 @@ public class DFindKeyStoreEntry extends JEscDialog {
 		jlEntryName = new JLabel(res.getString("DFindKeyStoreEntry.jlEntryName.text"));
 
 		jtfEntryName = new JTextField(10);
-		
+
 		jbOK = new JButton(res.getString("DFindKeyStoreEntry.jbOK.text"));
 		jbOK.addActionListener(evt -> okPressed());
 
@@ -78,13 +98,13 @@ public class DFindKeyStoreEntry extends JEscDialog {
 		});
 
 		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-        
+
 		JPanel jpContent = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		jpContent.add(jlEntryName);
 		jpContent.add(jtfEntryName);
 		jpContent.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
 				new EmptyBorder(5, 5, 5, 5))));
-		
+
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(jpContent, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
@@ -105,7 +125,7 @@ public class DFindKeyStoreEntry extends JEscDialog {
 
     protected void closeDialog() {
 		setVisible(false);
-		dispose();		
+		dispose();
 	}
 
 	private void cancelPressed() {

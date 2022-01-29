@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -109,13 +109,13 @@ public class JObjectIdEditor extends JPanel {
 	private void updateRemainingArcs() {
 		String firstArcS = "" + jcbFirstArc.getSelectedItem();
 		String secondArcS = "" + jcbSecondArc.getSelectedItem();
-		loadRemainingArcs(firstArcS + "." + secondArcS+ ".");		
+		loadRemainingArcs(firstArcS + "." + secondArcS+ ".");
 	}
-	
+
 	private void loadRemainingArcs(String prefix) {
-		
+
 		ObjectOid [] oids = ObjectIdUtil.getAllOidsStartingWith(prefix);
-		
+
 		jtfRemainingArcs.setModel(new DefaultComboBoxModel<ObjectOid>(oids));
 	}
 
@@ -184,8 +184,8 @@ public class JObjectIdEditor extends JPanel {
 			remainingArcs = ((String) obj).trim();
 		}
 		else {
-			ObjectOid oid = (ObjectOid) jtfRemainingArcs.getSelectedItem();		
-			remainingArcs = oid.getIdentifier().trim();			
+			ObjectOid oid = (ObjectOid) jtfRemainingArcs.getSelectedItem();
+			remainingArcs = oid.getIdentifier().trim();
 		}
 
 

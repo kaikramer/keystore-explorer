@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -2125,7 +2125,7 @@ public final class KseFrame implements StatusBar {
 		jmiTrustedCertificateVerifyCertificate.setToolTipText(null);
 		new StatusBarChangeHandler(jmiTrustedCertificateVerifyCertificate,
 				(String) verifyCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
-		
+
 		jmiTrustedCertificateDelete = new JMenuItem(deleteTrustedCertificateAction);
 		jmiTrustedCertificateDelete.setToolTipText(null);
 		new StatusBarChangeHandler(jmiTrustedCertificateDelete,

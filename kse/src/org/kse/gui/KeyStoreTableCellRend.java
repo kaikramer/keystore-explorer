@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -149,7 +149,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 				cell.setHorizontalAlignment(CENTER);
 			}
 		}
-		// Generic columns 
+		// Generic columns
 		else {
 			return writeCell(cell, value);
 		}

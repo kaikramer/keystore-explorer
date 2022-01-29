@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -78,7 +78,7 @@ public class JavaFXFileChooser extends JFileChooser {
 	public static final int	FILES_ONLY = 0;
 	public static final int	DIRECTORIES_ONLY = 1;
 	public static final int	FILES_AND_DIRECTORIES = 2;
-	
+
 
 	public static boolean isFxAvailable() {
 		return fxAvailable;
@@ -100,7 +100,7 @@ public class JavaFXFileChooser extends JFileChooser {
 	public File getSelectedFile() {
 		return selectedFile;
 	}
-	
+
 	@Override
 	public File[] getSelectedFiles() {
 		return selectedFiles;
@@ -119,7 +119,7 @@ public class JavaFXFileChooser extends JFileChooser {
 	public void setSelectedFiles(File[] files) {
 		selectedFiles = files;
 	}
-	
+
 	@Override
 	public void setDialogTitle(String dialogTitle) {
 		this.dialogTitle = dialogTitle;
@@ -149,10 +149,10 @@ public class JavaFXFileChooser extends JFileChooser {
 	public int showSaveDialog(Component parent) throws HeadlessException {
 		return showFxDialog("showSaveDialog");
 	}
-	
+
 	/**
-	 * Creates a method with a callable lambda 
-	 * 
+	 * Creates a method with a callable lambda
+	 *
 	 * @param method Accepts String
 	 * @return Int
 	 */
@@ -160,20 +160,20 @@ public class JavaFXFileChooser extends JFileChooser {
 
 		try {
 			final Object fileChooser = fileChooserClass.getConstructor().newInstance();
-			
+
 			// create a callable lambda
 			selectedFile = runLater(() -> {
 
 				// set extension filters
 				Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
 				List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
-				
+
 				// checks whether the AcceptAll FileFilter is used.
 				if(isAcceptAllFileFilterUsed()) {
 				observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
 						.newInstance(res.getString("JavaFXFileChooser.AllFiles"), new String[] { "*.*" }));
 				}
-				
+
 				for (FileNameExtensionFilter fileFilter : filters) {
 					String[] extensions =  fileFilter.getExtensions();
 					for (int i = 0; i < extensions.length; i++) {
@@ -186,7 +186,7 @@ public class JavaFXFileChooser extends JFileChooser {
 					Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
 							.newInstance(fileFilter.getDescription(), extensions);
 					observableList.add(extFilter);
-					
+
 				}
 
 				// set window title
@@ -213,10 +213,10 @@ public class JavaFXFileChooser extends JFileChooser {
 
 		return JFileChooser.APPROVE_OPTION;
 	}
-	
+
 	/**
-	 * Creates a method with a callable lambda 
-	 * 
+	 * Creates a method with a callable lambda
+	 *
 	 * @param method Accepts String
 	 * @return Int
 	 */
@@ -224,20 +224,20 @@ public class JavaFXFileChooser extends JFileChooser {
 
 		try {
 			final Object fileChooser = fileChooserClass.getConstructor().newInstance();
-			
+
 			// create a callable lambda
 			selectedFiles = runLaterMultiple(() -> {
 
 				// set extension filters
 				Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
 				List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
-				
+
 				// checks whether the AcceptAll FileFilter is used.
 				if(isAcceptAllFileFilterUsed()) {
 				observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
 						.newInstance(res.getString("JavaFXFileChooser.AllFiles"), new String[] { "*.*" }));
 				}
-				
+
 				for (FileNameExtensionFilter fileFilter : filters) {
 					String[] extensions =  fileFilter.getExtensions();
 					for (int i = 0; i < extensions.length; i++) {
@@ -250,7 +250,7 @@ public class JavaFXFileChooser extends JFileChooser {
 					Object extFilter = extensionFilterClass.getConstructor(String.class, String[].class)
 							.newInstance(fileFilter.getDescription(), extensions);
 					observableList.add(extFilter);
-					
+
 				}
 
 				// set window title
@@ -285,10 +285,10 @@ public class JavaFXFileChooser extends JFileChooser {
 
 		return JFileChooser.APPROVE_OPTION;
 	}
-	
+
 	/**
-	 * Creates a method with a callable lambda 
-	 * 
+	 * Creates a method with a callable lambda
+	 *
 	 * @param method Accepts String
 	 * @return Int
 	 */
@@ -296,7 +296,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
 		try {
 			final Object directoryChooser = directoryChooserClass.getConstructor().newInstance();
-			
+
 			// create a callable lambda
 			selectedFile = runLater(() -> {
 
@@ -328,7 +328,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
 	/**
 	 * Invokes a Java FX threaded function
-	 * 
+	 *
 	 * @param callable Accepts a File
 	 * @return File
 	 * @throws Exception
@@ -350,7 +350,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
 	/**
 	 * Invokes a Java FX threaded function
-	 * 
+	 *
 	 * @param callable Accepts a File[]
 	 * @return File[]
 	 * @throws Exception

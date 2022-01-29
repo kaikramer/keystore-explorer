@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -81,7 +81,7 @@ public enum ExtendedKeyUsageType {
 
 	/** TSL signing specified by ETSI TS 102 231 V3.1.2 for the purpose of signing Trust-service Status Lists. */
 	TSL_SIGNING("0.4.0.2231.3.0",  "TSLSignExtKeyUsage");
-	
+
 
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 	private String oid;

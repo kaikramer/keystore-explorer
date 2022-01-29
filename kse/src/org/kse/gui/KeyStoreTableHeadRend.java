@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -39,13 +39,13 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
 	private TableCellRenderer delegate;
-	
+
 	private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
 
 	public KeyStoreTableHeadRend(TableCellRenderer delegate) {
 		this.delegate = delegate;
 	}
-	
+
 	public KeyStoreTableHeadRend(TableCellRenderer delegate, KeyStoreTableColumns keyStoreTableColumnsParm) {
 		this.delegate = delegate;
 		keyStoreTableColumns =  keyStoreTableColumnsParm;

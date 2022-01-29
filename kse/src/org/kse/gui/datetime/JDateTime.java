@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -167,7 +167,7 @@ public class JDateTime extends JPanel {
 	public void setEnabled(boolean enabled) {
 		jbEditDateTime.setEnabled(enabled);
 		if (jbClearDateTime != null) {
-			jbClearDateTime.setEnabled(enabled);	
+			jbClearDateTime.setEnabled(enabled);
 		}
 	}
 
