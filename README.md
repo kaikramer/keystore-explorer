@@ -6,7 +6,7 @@
 
 KeyStore Explorer is a free GUI replacement for the Java command-line utilities keytool and jarsigner.
 
-Official website: http://keystore-explorer.org/
+Official website: https://keystore-explorer.org/
 
 ![Screenshot](https://raw.githubusercontent.com/kaikramer/kaikramer.github.io/main/images/win10_mykeystore.png)
 
