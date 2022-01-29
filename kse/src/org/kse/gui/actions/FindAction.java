@@ -53,8 +53,7 @@ public class FindAction extends KeyStoreExplorerAction {
 				Set<String> aliases = findEntryAlias(name); 
 				if (aliases.isEmpty()) {
 					JOptionPane.showMessageDialog(frame,
-							MessageFormat.format(res.getString("FindAction.NotFound.message"),
-									dialog.getEntryName()),
+							MessageFormat.format(res.getString("FindAction.NotFound.message"), name),
 							res.getString("FindAction.Find.Title"), JOptionPane.WARNING_MESSAGE);
 				} else {
 					kseFrame.setSelectedEntriesByAliases(aliases);
