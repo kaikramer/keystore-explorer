@@ -23,6 +23,7 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -73,7 +74,7 @@ public class FindAction extends KeyStoreExplorerAction {
 				Set<String> aliases = findEntryAlias(name);
 				if (aliases.isEmpty()) {
 					JOptionPane.showMessageDialog(frame,
-							dialog.getEntryName() + " " + res.getString("FindAction.NotFound.message"),
+							MessageFormat.format(res.getString("FindAction.NotFound.message"), name),
 							res.getString("FindAction.Find.Title"), JOptionPane.WARNING_MESSAGE);
 				} else {
 					kseFrame.setSelectedEntriesByAliases(aliases);
