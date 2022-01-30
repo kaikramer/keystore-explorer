@@ -36,77 +36,78 @@ import org.kse.crypto.signing.SignatureType;
 
 /**
  * Unit tests for SPKAC.
- *
  */
 public class SpkacTest extends KeyPairTestsBase {
-	private static final String CHALLENGE = "hello";
-	private static final String FALSE_CHALLENGE = "goodbye";
-	private static final SpkacSubject SUBJECT = new SpkacSubject("Wayne Grant", "Development", "Lazgo Software",
-			"Maddiston", "Falkirk", "GB");
+    private static final String CHALLENGE = "hello";
+    private static final String FALSE_CHALLENGE = "goodbye";
+    private static final SpkacSubject SUBJECT = new SpkacSubject("Wayne Grant", "Development", "Lazgo Software",
+                                                                 "Maddiston", "Falkirk", "GB");
 
-	@ParameterizedTest
-	@CsvSource({
-		"SPKAC=blah,blah,blah",
-		"CN=blah,blah,blah",
-	})
-	public void invalidVersion(String spkac) {
-		assertThrows(SpkacMissingPropertyException.class, () -> new Spkac(spkac.getBytes()));
-	}
+    @ParameterizedTest
+    @CsvSource({
+            "SPKAC=blah,blah,blah",
+            "CN=blah,blah,blah",
+    })
+    public void invalidVersion(String spkac) {
+        assertThrows(SpkacMissingPropertyException.class, () -> new Spkac(spkac.getBytes()));
+    }
 
-	@ParameterizedTest
-	@CsvSource({
-		"MD2_RSA",
-		"MD5_RSA",
-		"RIPEMD128_RSA",
-		"RIPEMD160_RSA",
-		"RIPEMD256_RSA",
-		"SHA1_RSA",
-		"SHA224_RSA",
-		"SHA256_RSA",
-		"SHA384_RSA",
-		"SHA512_RSA",
-		"SHA1_DSA",
-		"SHA224_DSA",
-		"SHA256_DSA",
-	})
-	public void ripemd160RsaSpkac(SignatureType signatureAlgorithm) throws Exception {
+    @ParameterizedTest
+    // @formatter:off
+    @CsvSource({
+            "MD2_RSA",
+            "MD5_RSA",
+            "RIPEMD128_RSA",
+            "RIPEMD160_RSA",
+            "RIPEMD256_RSA",
+            "SHA1_RSA",
+            "SHA224_RSA",
+            "SHA256_RSA",
+            "SHA384_RSA",
+            "SHA512_RSA",
+            "SHA1_DSA",
+            "SHA224_DSA",
+            "SHA256_DSA",
+    })
+    // @formatter:on
+    public void ripemd160RsaSpkac(SignatureType signatureAlgorithm) throws Exception {
 
-		if (signatureAlgorithm.name().endsWith("_RSA")) {
-			doTestSpkac(rsaKeyPair, signatureAlgorithm);
-		} else {
-			doTestSpkac(dsaKeyPair, signatureAlgorithm);
-		}
-	}
+        if (signatureAlgorithm.name().endsWith("_RSA")) {
+            doTestSpkac(rsaKeyPair, signatureAlgorithm);
+        } else {
+            doTestSpkac(dsaKeyPair, signatureAlgorithm);
+        }
+    }
 
-	private void doTestSpkac(KeyPair keyPair, SignatureType signatureAlgorithm) throws Exception {
-		PrivateKey privateKey = keyPair.getPrivate();
-		PublicKey publicKey = keyPair.getPublic();
+    private void doTestSpkac(KeyPair keyPair, SignatureType signatureAlgorithm) throws Exception {
+        PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
 
-		Spkac spkac = new Spkac(CHALLENGE, signatureAlgorithm, SUBJECT, publicKey, privateKey);
+        Spkac spkac = new Spkac(CHALLENGE, signatureAlgorithm, SUBJECT, publicKey, privateKey);
 
-		assertEquals(CHALLENGE, spkac.getChallenge());
-		assertEquals(signatureAlgorithm, spkac.getSignatureAlgorithm());
-		assertEquals(SUBJECT, spkac.getSubject());
-		assertEquals(publicKey, spkac.getPublicKey());
-		assertEquals(publicKey.getAlgorithm(), spkac.getPublicKeyAlg().jce());
+        assertEquals(CHALLENGE, spkac.getChallenge());
+        assertEquals(signatureAlgorithm, spkac.getSignatureAlgorithm());
+        assertEquals(SUBJECT, spkac.getSubject());
+        assertEquals(publicKey, spkac.getPublicKey());
+        assertEquals(publicKey.getAlgorithm(), spkac.getPublicKeyAlg().jce());
 
-		assertTrue(spkac.verify());
-		assertTrue(spkac.verify(CHALLENGE));
-		assertFalse(spkac.verify(FALSE_CHALLENGE));
+        assertTrue(spkac.verify());
+        assertTrue(spkac.verify(CHALLENGE));
+        assertFalse(spkac.verify(FALSE_CHALLENGE));
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		spkac.output(baos);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        spkac.output(baos);
 
-		spkac = new Spkac(baos.toByteArray());
+        spkac = new Spkac(baos.toByteArray());
 
-		assertEquals(CHALLENGE, spkac.getChallenge());
-		assertEquals(signatureAlgorithm, spkac.getSignatureAlgorithm());
-		assertEquals(SUBJECT, spkac.getSubject());
-		assertEquals(publicKey, spkac.getPublicKey());
-		assertEquals(publicKey.getAlgorithm(), spkac.getPublicKeyAlg().jce());
+        assertEquals(CHALLENGE, spkac.getChallenge());
+        assertEquals(signatureAlgorithm, spkac.getSignatureAlgorithm());
+        assertEquals(SUBJECT, spkac.getSubject());
+        assertEquals(publicKey, spkac.getPublicKey());
+        assertEquals(publicKey.getAlgorithm(), spkac.getPublicKeyAlg().jce());
 
-		assertTrue(spkac.verify());
-		assertTrue(spkac.verify(CHALLENGE));
-		assertFalse(spkac.verify(FALSE_CHALLENGE));
-	}
+        assertTrue(spkac.verify());
+        assertTrue(spkac.verify(CHALLENGE));
+        assertFalse(spkac.verify(FALSE_CHALLENGE));
+    }
 }

@@ -28,25 +28,25 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.KeyInfo;
 
-
 public class SecretKeyUtilTest extends CryptoTestsBase {
-	@Test
-	public void testAllSecretKeyTypes() throws CryptoException {
-		for (SecretKeyType secretKeyType : SecretKeyType.values()) {
-			testSecretKeyType(secretKeyType);
-		}
-	}
-	@Test
-	private void testSecretKeyType(SecretKeyType secretKeyType) throws CryptoException {
-		for (int keySize = secretKeyType.minSize(); keySize <= secretKeyType.maxSize(); keySize += secretKeyType
-				.stepSize()) {
-			SecretKey secretKey = SecretKeyUtil.generateSecretKey(secretKeyType, keySize);
+    @Test
+    public void testAllSecretKeyTypes() throws CryptoException {
+        for (SecretKeyType secretKeyType : SecretKeyType.values()) {
+            testSecretKeyType(secretKeyType);
+        }
+    }
 
-			KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
+    @Test
+    private void testSecretKeyType(SecretKeyType secretKeyType) throws CryptoException {
+        for (int keySize = secretKeyType.minSize(); keySize <= secretKeyType.maxSize(); keySize += secretKeyType
+                .stepSize()) {
+            SecretKey secretKey = SecretKeyUtil.generateSecretKey(secretKeyType, keySize);
 
-			assertThat(secretKeyType.jce()).isEqualToIgnoringCase(keyInfo.getAlgorithm());
-			assertThat(secretKeyType).isEqualTo(SecretKeyType.resolveJce(keyInfo.getAlgorithm()));
-			assertThat(keySize).isEqualTo(keyInfo.getSize().intValue());
-		}
-	}
+            KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
+
+            assertThat(secretKeyType.jce()).isEqualToIgnoringCase(keyInfo.getAlgorithm());
+            assertThat(secretKeyType).isEqualTo(SecretKeyType.resolveJce(keyInfo.getAlgorithm()));
+            assertThat(keySize).isEqualTo(keyInfo.getSize().intValue());
+        }
+    }
 }

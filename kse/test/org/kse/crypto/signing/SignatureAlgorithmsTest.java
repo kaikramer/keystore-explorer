@@ -49,101 +49,103 @@ import org.kse.crypto.x509.X509CertificateVersion;
 
 /**
  * Unit tests for all signature algorithms for certificate and CSR generation.
- *
  */
 public class SignatureAlgorithmsTest extends CryptoTestsBase {
-	private static KeyPair rsaKeyPair;
-	private static KeyPair dsaKeyPair;
-	private static KeyPair ecKeyPair;
+    private static KeyPair rsaKeyPair;
+    private static KeyPair dsaKeyPair;
+    private static KeyPair ecKeyPair;
 
-	@BeforeAll
-	private static void setUp() throws Exception {
-		rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, BC);
-		dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, BC);
-		ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
-	}
+    @BeforeAll
+    private static void setUp() throws Exception {
+        rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, BC);
+        dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, BC);
+        ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
+    }
 
-	@ParameterizedTest
-	@CsvSource({
-		"RSA, MD2_RSA, SPKAC",
-		"RSA, MD5_RSA, SPKAC",
-		"RSA, SHA1_RSA, SPKAC",
-		"RSA, SHA224_RSA, SPKAC",
-		"RSA, SHA256_RSA, SPKAC",
-		"RSA, SHA384_RSA, SPKAC",
-		"RSA, SHA512_RSA, SPKAC",
-		"RSA, RIPEMD128_RSA, SPKAC",
-		"RSA, RIPEMD160_RSA, SPKAC",
-		"RSA, RIPEMD256_RSA, SPKAC",
-		"DSA, SHA1_DSA, SPKAC",
-		"DSA, SHA224_DSA, SPKAC",
-		"DSA, SHA256_DSA, SPKAC",
-		"DSA, SHA384_DSA, SPKAC",
-		"DSA, SHA512_DSA, SPKAC",
-		"RSA, MD2_RSA, PKCS10",
-		"RSA, MD5_RSA, PKCS10",
-		"RSA, SHA1_RSA, PKCS10",
-		"RSA, SHA224_RSA, PKCS10",
-		"RSA, SHA256_RSA, PKCS10",
-		"RSA, SHA384_RSA, PKCS10",
-		"RSA, SHA512_RSA, PKCS10",
-		"RSA, RIPEMD128_RSA, PKCS10",
-		"RSA, RIPEMD160_RSA, PKCS10",
-		"RSA, RIPEMD256_RSA, PKCS10",
-		"DSA, SHA1_DSA, PKCS10",
-		"DSA, SHA224_DSA, PKCS10",
-		"DSA, SHA256_DSA, PKCS10",
-		"DSA, SHA384_DSA, PKCS10",
-		"DSA, SHA512_DSA, PKCS10",
-		"EC, SHA1_ECDSA, PKCS10",
-		"EC, SHA224_ECDSA, PKCS10",
-		"EC, SHA256_ECDSA, PKCS10",
-		"EC, SHA384_ECDSA, PKCS10",
-		"EC, SHA512_ECDSA, PKCS10",
-		// combination EC/SPKAC not supported right now and probably never will be
-	})
-	public void testSignCertificateAndCSR(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType)
-			throws Exception {
-		doTest(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION1);
-		doTest(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION3);
-	}
+    @ParameterizedTest
+    // @formatter:off
+    @CsvSource({
+            "RSA, MD2_RSA, SPKAC",
+            "RSA, MD5_RSA, SPKAC",
+            "RSA, SHA1_RSA, SPKAC",
+            "RSA, SHA224_RSA, SPKAC",
+            "RSA, SHA256_RSA, SPKAC",
+            "RSA, SHA384_RSA, SPKAC",
+            "RSA, SHA512_RSA, SPKAC",
+            "RSA, RIPEMD128_RSA, SPKAC",
+            "RSA, RIPEMD160_RSA, SPKAC",
+            "RSA, RIPEMD256_RSA, SPKAC",
+            "DSA, SHA1_DSA, SPKAC",
+            "DSA, SHA224_DSA, SPKAC",
+            "DSA, SHA256_DSA, SPKAC",
+            "DSA, SHA384_DSA, SPKAC",
+            "DSA, SHA512_DSA, SPKAC",
+            "RSA, MD2_RSA, PKCS10",
+            "RSA, MD5_RSA, PKCS10",
+            "RSA, SHA1_RSA, PKCS10",
+            "RSA, SHA224_RSA, PKCS10",
+            "RSA, SHA256_RSA, PKCS10",
+            "RSA, SHA384_RSA, PKCS10",
+            "RSA, SHA512_RSA, PKCS10",
+            "RSA, RIPEMD128_RSA, PKCS10",
+            "RSA, RIPEMD160_RSA, PKCS10",
+            "RSA, RIPEMD256_RSA, PKCS10",
+            "DSA, SHA1_DSA, PKCS10",
+            "DSA, SHA224_DSA, PKCS10",
+            "DSA, SHA256_DSA, PKCS10",
+            "DSA, SHA384_DSA, PKCS10",
+            "DSA, SHA512_DSA, PKCS10",
+            "EC, SHA1_ECDSA, PKCS10",
+            "EC, SHA224_ECDSA, PKCS10",
+            "EC, SHA256_ECDSA, PKCS10",
+            "EC, SHA384_ECDSA, PKCS10",
+            "EC, SHA512_ECDSA, PKCS10",
+            // combination EC/SPKAC not supported right now and probably never will be
+    })
+    // @formatter:on
+    public void testSignCertificateAndCSR(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType)
+            throws Exception {
+        doTest(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION1);
+        doTest(keyPairType, signatureType, csrType, X509CertificateVersion.VERSION3);
+    }
 
-	private void doTest(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType,
-			X509CertificateVersion version) throws Exception {
-		KeyPair keyPair;
+    private void doTest(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType,
+                        X509CertificateVersion version) throws Exception {
+        KeyPair keyPair;
 
-		switch (keyPairType) {
-		case RSA:
-			keyPair = rsaKeyPair;
-			break;
-		case DSA:
-			keyPair = dsaKeyPair;
-			break;
-		case EC:
-			keyPair = ecKeyPair;
-			break;
-		default:
-			throw new InvalidParameterException();
-		}
+        switch (keyPairType) {
+        case RSA:
+            keyPair = rsaKeyPair;
+            break;
+        case DSA:
+            keyPair = dsaKeyPair;
+            break;
+        case EC:
+            keyPair = ecKeyPair;
+            break;
+        default:
+            throw new InvalidParameterException();
+        }
 
-		X500Principal x500Principal = new X500Principal("cn=this");
-		X500Name x500Name = X500NameUtils.x500PrincipalToX500Name(x500Principal);
+        X500Principal x500Principal = new X500Principal("cn=this");
+        X500Name x500Name = X500NameUtils.x500PrincipalToX500Name(x500Principal);
 
-		PublicKey publicKey = keyPair.getPublic();
-		PrivateKey privateKey = keyPair.getPrivate();
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
 
-		if (csrType == CsrType.SPKAC) {
-			Spkac spkac = new Spkac("whatever", signatureType, new SpkacSubject(x500Name), publicKey, privateKey);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			spkac.output(baos);
-			spkac = new Spkac(baos.toByteArray());
-			assertThat(spkac.verify()).isTrue();
-		} else {
-			PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(x500Principal, publicKey, privateKey,
-					signatureType, "w/e", "w/e", null, new BouncyCastleProvider());
-			byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
-			pkcs10 = Pkcs10Util.loadCsr(encoded);
-			assertThat(Pkcs10Util.verifyCsr(pkcs10)).isTrue();
-		}
-	}
+        if (csrType == CsrType.SPKAC) {
+            Spkac spkac = new Spkac("whatever", signatureType, new SpkacSubject(x500Name), publicKey, privateKey);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            spkac.output(baos);
+            spkac = new Spkac(baos.toByteArray());
+            assertThat(spkac.verify()).isTrue();
+        } else {
+            PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(x500Principal, publicKey, privateKey,
+                                                                       signatureType, "w/e", "w/e", null,
+                                                                       new BouncyCastleProvider());
+            byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
+            pkcs10 = Pkcs10Util.loadCsr(encoded);
+            assertThat(Pkcs10Util.verifyCsr(pkcs10)).isTrue();
+        }
+    }
 }

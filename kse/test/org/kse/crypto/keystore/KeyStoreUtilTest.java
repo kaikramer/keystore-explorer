@@ -33,41 +33,42 @@ import org.kse.crypto.filetype.CryptoFileUtil;
 /**
  * Unit tests for KeyStoreUtil. Runs tests to create, save and load a KeyStore
  * of each of the supported types.
- *
  */
 public class KeyStoreUtilTest extends CryptoTestsBase {
-	private static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });
+    private static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });
 
-	public KeyStoreUtilTest() {
-		super();
-	}
+    public KeyStoreUtilTest() {
+        super();
+    }
 
-	@ParameterizedTest
-	@CsvSource({
-		"JKS",
-		"JCEKS",
-		"PKCS12",
-		"BKS",
-		"BKS_V1",
-		"UBER",
-	})
-	public void doTests(KeyStoreType keyStoreType) throws Exception {
-		KeyStore keyStore = KeyStoreUtil.create(keyStoreType);
+    @ParameterizedTest
+    // @formatter:off
+    @CsvSource({
+            "JKS",
+            "JCEKS",
+            "PKCS12",
+            "BKS",
+            "BKS_V1",
+            "UBER",
+    })
+    // @formatter:on
+    public void doTests(KeyStoreType keyStoreType) throws Exception {
+        KeyStore keyStore = KeyStoreUtil.create(keyStoreType);
 
-		assertThat(keyStore).isNotNull();
-		assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
+        assertThat(keyStore).isNotNull();
+        assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
 
-		File keyStoreFile = File.createTempFile("keystore", keyStoreType.jce().toLowerCase());
-		keyStoreFile.deleteOnExit();
+        File keyStoreFile = File.createTempFile("keystore", keyStoreType.jce().toLowerCase());
+        keyStoreFile.deleteOnExit();
 
-		KeyStoreUtil.save(keyStore, keyStoreFile, PASSWORD);
+        KeyStoreUtil.save(keyStore, keyStoreFile, PASSWORD);
 
-		assertThat(keyStoreType).isEqualTo(CryptoFileUtil.detectKeyStoreType(keyStoreFile));
-		assertThat(keyStoreType.getCryptoFileType()).isEqualTo(CryptoFileUtil.detectFileType(keyStoreFile));
+        assertThat(keyStoreType).isEqualTo(CryptoFileUtil.detectKeyStoreType(keyStoreFile));
+        assertThat(keyStoreType.getCryptoFileType()).isEqualTo(CryptoFileUtil.detectFileType(keyStoreFile));
 
-		KeyStoreUtil.load(keyStoreFile, PASSWORD);
+        KeyStoreUtil.load(keyStoreFile, PASSWORD);
 
-		assertThat(keyStore).isNotNull();
-		assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
-	}
+        assertThat(keyStore).isNotNull();
+        assertThat(keyStore.getType()).isEqualTo(keyStoreType.jce());
+    }
 }
