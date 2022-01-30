@@ -25,33 +25,30 @@ import org.kse.gui.JEscDialog;
 
 /**
  * Abstract base for all extension dialogs.
- *
  */
 public abstract class DExtension extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a new AbstractDExtension dialog.
-	 *  @param parent
-	 *            The parent dialog
-	 *
-	 */
-	public DExtension(JDialog parent) {
-		super(parent, ModalityType.DOCUMENT_MODAL);
-	}
+    /**
+     * Creates a new AbstractDExtension dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DExtension(JDialog parent) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+    }
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
-	public abstract byte[] getValue();
+    /**
+     * Get extension value DER-encoded.
+     *
+     * @return Extension value
+     */
+    public abstract byte[] getValue();
 
-
-	/**
-	 * Get OID of extension
-	 *
-	 * @return OID of extension
-	 */
-	public abstract String getOid();
+    /**
+     * Get OID of extension
+     *
+     * @return OID of extension
+     */
+    public abstract String getOid();
 }

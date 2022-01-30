@@ -61,363 +61,352 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose a general name.
- *
  */
 public class DGeneralNameChooser extends JEscDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JLabel jlGeneralNameType;
-	private JRadioButton jrbDirectoryName;
-	private JRadioButton jrbDnsName;
-	private JRadioButton jrbIpAddress;
-	private JRadioButton jrbRegisteredId;
-	private JRadioButton jrbRfc822Name;
-	private JRadioButton jrbUniformResourceIdentifier;
-	private JRadioButton jrbPrincipalName;
-	private JPanel jpGeneralNameValue;
-	private JLabel jlGeneralNameValue;
-	private JDistinguishedName jdnDirectoryName;
-	private JTextField jtfDnsName;
-	private JTextField jtfIpAddress;
-	private JObjectId joiRegisteredId;
-	private JTextField jtfRfc822Name;
-	private JTextField jtfUniformResourceIdentifier;
-	private JTextField jtfPrincipalName;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JLabel jlGeneralNameType;
+    private JRadioButton jrbDirectoryName;
+    private JRadioButton jrbDnsName;
+    private JRadioButton jrbIpAddress;
+    private JRadioButton jrbRegisteredId;
+    private JRadioButton jrbRfc822Name;
+    private JRadioButton jrbUniformResourceIdentifier;
+    private JRadioButton jrbPrincipalName;
+    private JPanel jpGeneralNameValue;
+    private JLabel jlGeneralNameValue;
+    private JDistinguishedName jdnDirectoryName;
+    private JTextField jtfDnsName;
+    private JTextField jtfIpAddress;
+    private JObjectId joiRegisteredId;
+    private JTextField jtfRfc822Name;
+    private JTextField jtfUniformResourceIdentifier;
+    private JTextField jtfPrincipalName;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private GeneralName generalName;
+    private GeneralName generalName;
 
-	/**
-	 * Constructs a new DGeneralNameChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param generalName
-	 *            General name
-	 */
-	public DGeneralNameChooser(JFrame parent, String title, GeneralName generalName) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		initComponents(generalName);
-	}
+    /**
+     * Constructs a new DGeneralNameChooser dialog.
+     *
+     * @param parent      The parent frame
+     * @param title       The dialog title
+     * @param generalName General name
+     */
+    public DGeneralNameChooser(JFrame parent, String title, GeneralName generalName) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        initComponents(generalName);
+    }
 
-	/**
-	 * Constructs a new DGeneralNameChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param generalName
-	 *            General name
-	 */
-	public DGeneralNameChooser(JDialog parent, String title, GeneralName generalName) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		initComponents(generalName);
-	}
+    /**
+     * Constructs a new DGeneralNameChooser dialog.
+     *
+     * @param parent      The parent dialog
+     * @param title       The dialog title
+     * @param generalName General name
+     */
+    public DGeneralNameChooser(JDialog parent, String title, GeneralName generalName) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        initComponents(generalName);
+    }
 
-	private void initComponents(GeneralName generalName) {
+    private void initComponents(GeneralName generalName) {
 
-		jrbDirectoryName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDirectoryName.text"));
-		jrbDirectoryName.setToolTipText(res.getString("DGeneralNameChooser.jrbDirectoryName.tooltip"));
+        jrbDirectoryName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDirectoryName.text"));
+        jrbDirectoryName.setToolTipText(res.getString("DGeneralNameChooser.jrbDirectoryName.tooltip"));
 
-		jrbDnsName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDnsName.text"));
-		jrbDnsName.setToolTipText(res.getString("DGeneralNameChooser.jrbDnsName.tooltip"));
+        jrbDnsName = new JRadioButton(res.getString("DGeneralNameChooser.jrbDnsName.text"));
+        jrbDnsName.setToolTipText(res.getString("DGeneralNameChooser.jrbDnsName.tooltip"));
 
-		jrbIpAddress = new JRadioButton(res.getString("DGeneralNameChooser.jrbIpAddress.text"));
-		jrbIpAddress.setToolTipText(res.getString("DGeneralNameChooser.jrbIpAddress.tooltip"));
+        jrbIpAddress = new JRadioButton(res.getString("DGeneralNameChooser.jrbIpAddress.text"));
+        jrbIpAddress.setToolTipText(res.getString("DGeneralNameChooser.jrbIpAddress.tooltip"));
 
-		jrbRegisteredId = new JRadioButton(res.getString("DGeneralNameChooser.jrbRegisteredId.text"));
-		jrbRegisteredId.setToolTipText(res.getString("DGeneralNameChooser.jrbRegisteredId.tooltip"));
+        jrbRegisteredId = new JRadioButton(res.getString("DGeneralNameChooser.jrbRegisteredId.text"));
+        jrbRegisteredId.setToolTipText(res.getString("DGeneralNameChooser.jrbRegisteredId.tooltip"));
 
-		jrbRfc822Name = new JRadioButton(res.getString("DGeneralNameChooser.jrbRfc822Name.text"));
-		jrbRfc822Name.setToolTipText(res.getString("DGeneralNameChooser.jrbRfc822Name.tooltip"));
+        jrbRfc822Name = new JRadioButton(res.getString("DGeneralNameChooser.jrbRfc822Name.text"));
+        jrbRfc822Name.setToolTipText(res.getString("DGeneralNameChooser.jrbRfc822Name.tooltip"));
 
-		jrbUniformResourceIdentifier = new JRadioButton(
-				res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.text"));
-		jrbUniformResourceIdentifier
-		.setToolTipText(res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.tooltip"));
+        jrbUniformResourceIdentifier = new JRadioButton(
+                res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.text"));
+        jrbUniformResourceIdentifier.setToolTipText(
+                res.getString("DGeneralNameChooser.jrbUniformResourceIdentifier.tooltip"));
 
-		jrbPrincipalName = new JRadioButton(res.getString("DGeneralNameChooser.jrbPrincipalName.text"));
-		jrbPrincipalName.setToolTipText(res.getString("DGeneralNameChooser.jrbPrincipalName.tooltip"));
+        jrbPrincipalName = new JRadioButton(res.getString("DGeneralNameChooser.jrbPrincipalName.text"));
+        jrbPrincipalName.setToolTipText(res.getString("DGeneralNameChooser.jrbPrincipalName.tooltip"));
 
-		ButtonGroup bgGeneralName = new ButtonGroup();
-		bgGeneralName.add(jrbDirectoryName);
-		bgGeneralName.add(jrbDnsName);
-		bgGeneralName.add(jrbIpAddress);
-		bgGeneralName.add(jrbRegisteredId);
-		bgGeneralName.add(jrbRfc822Name);
-		bgGeneralName.add(jrbUniformResourceIdentifier);
-		bgGeneralName.add(jrbPrincipalName);
+        ButtonGroup bgGeneralName = new ButtonGroup();
+        bgGeneralName.add(jrbDirectoryName);
+        bgGeneralName.add(jrbDnsName);
+        bgGeneralName.add(jrbIpAddress);
+        bgGeneralName.add(jrbRegisteredId);
+        bgGeneralName.add(jrbRfc822Name);
+        bgGeneralName.add(jrbUniformResourceIdentifier);
+        bgGeneralName.add(jrbPrincipalName);
 
-		jlGeneralNameType = new JLabel(res.getString("DGeneralNameChooser.jlGeneralNameType.text"));
-		jlGeneralNameValue = new JLabel(res.getString("DGeneralNameChooser.jlGeneralNameValue.text"));
-		jpGeneralNameValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jlGeneralNameType = new JLabel(res.getString("DGeneralNameChooser.jlGeneralNameType.text"));
+        jlGeneralNameValue = new JLabel(res.getString("DGeneralNameChooser.jlGeneralNameValue.text"));
+        jpGeneralNameValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		jdnDirectoryName = new JDistinguishedName(res.getString("DGeneralNameChooser.DirectoryName.Title"), 20, true);
-		jtfDnsName = new JTextField(30);
-		jtfIpAddress = new JTextField(30);
-		joiRegisteredId = new JObjectId(res.getString("DGeneralNameChooser.RegisteredId.Title"));
-		jtfRfc822Name = new JTextField(30);
-		jtfUniformResourceIdentifier = new JTextField(30);
-		jtfPrincipalName = new JTextField(30);
+        jdnDirectoryName = new JDistinguishedName(res.getString("DGeneralNameChooser.DirectoryName.Title"), 20, true);
+        jtfDnsName = new JTextField(30);
+        jtfIpAddress = new JTextField(30);
+        joiRegisteredId = new JObjectId(res.getString("DGeneralNameChooser.RegisteredId.Title"));
+        jtfRfc822Name = new JTextField(30);
+        jtfUniformResourceIdentifier = new JTextField(30);
+        jtfPrincipalName = new JTextField(30);
 
-		jbOK = new JButton(res.getString("DGeneralNameChooser.jbOK.text"));
-		jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
+        jbOK = new JButton(res.getString("DGeneralNameChooser.jbOK.text"));
+        jbCancel = new JButton(res.getString("DGeneralNameChooser.jbCancel.text"));
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[]", ""));
-		pane.add(jlGeneralNameType, "spanx, wrap");
-		pane.add(jrbDirectoryName, "");
-		pane.add(jrbDnsName, "");
-		pane.add(jrbIpAddress, "");
-		pane.add(jrbRegisteredId, "wrap");
-		pane.add(jrbRfc822Name, "");
-		pane.add(jrbUniformResourceIdentifier, "");
-		pane.add(jrbPrincipalName, "wrap");
-		pane.add(jlGeneralNameValue, "spanx");
-		pane.add(jpGeneralNameValue, "spanx, wrap");
-		pane.add(new JSeparator(), "spanx, growx, wrap");
-		pane.add(jpButtons, "right, spanx");
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[]", ""));
+        pane.add(jlGeneralNameType, "spanx, wrap");
+        pane.add(jrbDirectoryName, "");
+        pane.add(jrbDnsName, "");
+        pane.add(jrbIpAddress, "");
+        pane.add(jrbRegisteredId, "wrap");
+        pane.add(jrbRfc822Name, "");
+        pane.add(jrbUniformResourceIdentifier, "");
+        pane.add(jrbPrincipalName, "wrap");
+        pane.add(jlGeneralNameValue, "spanx");
+        pane.add(jpGeneralNameValue, "spanx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jpButtons, "right, spanx");
 
-		// actions
-		jrbDirectoryName.addItemListener(evt -> generalNameTypeChanged());
-		jrbDnsName.addItemListener(evt -> generalNameTypeChanged());
-		jrbRegisteredId.addItemListener(evt -> generalNameTypeChanged());
-		jrbIpAddress.addItemListener(evt -> generalNameTypeChanged());
-		jrbRfc822Name.addItemListener(evt -> generalNameTypeChanged());
-		jrbUniformResourceIdentifier.addItemListener(evt -> generalNameTypeChanged());
-		jrbPrincipalName.addItemListener(evt -> generalNameTypeChanged());
-		jbOK.addActionListener(evt -> okPressed());
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        // actions
+        jrbDirectoryName.addItemListener(evt -> generalNameTypeChanged());
+        jrbDnsName.addItemListener(evt -> generalNameTypeChanged());
+        jrbRegisteredId.addItemListener(evt -> generalNameTypeChanged());
+        jrbIpAddress.addItemListener(evt -> generalNameTypeChanged());
+        jrbRfc822Name.addItemListener(evt -> generalNameTypeChanged());
+        jrbUniformResourceIdentifier.addItemListener(evt -> generalNameTypeChanged());
+        jrbPrincipalName.addItemListener(evt -> generalNameTypeChanged());
+        jbOK.addActionListener(evt -> okPressed());
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		populate(generalName);
+        populate(generalName);
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void generalNameTypeChanged() {
-		jpGeneralNameValue.removeAll();
+    private void generalNameTypeChanged() {
+        jpGeneralNameValue.removeAll();
 
-		jpGeneralNameValue.add(jlGeneralNameValue);
+        jpGeneralNameValue.add(jlGeneralNameValue);
 
-		if (jrbDirectoryName.isSelected()) {
-			jpGeneralNameValue.add(jdnDirectoryName);
-		} else if (jrbDnsName.isSelected()) {
-			jpGeneralNameValue.add(jtfDnsName);
-		} else if (jrbIpAddress.isSelected()) {
-			jpGeneralNameValue.add(jtfIpAddress);
-		} else if (jrbRegisteredId.isSelected()) {
-			jpGeneralNameValue.add(joiRegisteredId);
-		} else if (jrbRfc822Name.isSelected()) {
-			jpGeneralNameValue.add(jtfRfc822Name);
-		} else if (jrbUniformResourceIdentifier.isSelected()) {
-			jpGeneralNameValue.add(jtfUniformResourceIdentifier);
-		}  else if (jrbPrincipalName.isSelected()) {
-			jpGeneralNameValue.add(jtfPrincipalName);
-		}
+        if (jrbDirectoryName.isSelected()) {
+            jpGeneralNameValue.add(jdnDirectoryName);
+        } else if (jrbDnsName.isSelected()) {
+            jpGeneralNameValue.add(jtfDnsName);
+        } else if (jrbIpAddress.isSelected()) {
+            jpGeneralNameValue.add(jtfIpAddress);
+        } else if (jrbRegisteredId.isSelected()) {
+            jpGeneralNameValue.add(joiRegisteredId);
+        } else if (jrbRfc822Name.isSelected()) {
+            jpGeneralNameValue.add(jtfRfc822Name);
+        } else if (jrbUniformResourceIdentifier.isSelected()) {
+            jpGeneralNameValue.add(jtfUniformResourceIdentifier);
+        } else if (jrbPrincipalName.isSelected()) {
+            jpGeneralNameValue.add(jtfPrincipalName);
+        }
 
-		pack();
-	}
+        pack();
+    }
 
-	private void populate(GeneralName generalName) {
-		if (generalName == null) {
-			jrbDirectoryName.setSelected(true);
-		} else {
-			switch (generalName.getTagNo()) {
-			case GeneralName.directoryName: {
-				jrbDirectoryName.setSelected(true);
-				jdnDirectoryName.setDistinguishedName((X500Name) generalName.getName());
-				break;
-			}
-			case GeneralName.dNSName: {
-				jrbDnsName.setSelected(true);
-				jtfDnsName.setText(((DERIA5String) generalName.getName()).getString());
-				break;
-			}
-			case GeneralName.iPAddress: {
-				jrbIpAddress.setSelected(true);
-				jtfIpAddress.setText(GeneralNameUtil.parseIpAddress(generalName));
-				break;
-			}
-			case GeneralName.registeredID: {
-				jrbRegisteredId.setSelected(true);
-				joiRegisteredId.setObjectId((ASN1ObjectIdentifier) generalName.getName());
-				break;
-			}
-			case GeneralName.rfc822Name: {
-				jrbRfc822Name.setSelected(true);
-				jtfRfc822Name.setText(((DERIA5String) generalName.getName()).getString());
-				break;
-			}
-			case GeneralName.uniformResourceIdentifier: {
-				jrbUniformResourceIdentifier.setSelected(true);
-				jtfUniformResourceIdentifier.setText(((DERIA5String) generalName.getName()).getString());
-				break;
-			}
-			case GeneralName.otherName: {
-				jrbPrincipalName.setSelected(true);
-				// we currently only support UPN in otherName
-				jtfPrincipalName.setText(GeneralNameUtil.parseUPN(generalName));
-				break;
-			}
-			}
-		}
-	}
+    private void populate(GeneralName generalName) {
+        if (generalName == null) {
+            jrbDirectoryName.setSelected(true);
+        } else {
+            switch (generalName.getTagNo()) {
+            case GeneralName.directoryName: {
+                jrbDirectoryName.setSelected(true);
+                jdnDirectoryName.setDistinguishedName((X500Name) generalName.getName());
+                break;
+            }
+            case GeneralName.dNSName: {
+                jrbDnsName.setSelected(true);
+                jtfDnsName.setText(((DERIA5String) generalName.getName()).getString());
+                break;
+            }
+            case GeneralName.iPAddress: {
+                jrbIpAddress.setSelected(true);
+                jtfIpAddress.setText(GeneralNameUtil.parseIpAddress(generalName));
+                break;
+            }
+            case GeneralName.registeredID: {
+                jrbRegisteredId.setSelected(true);
+                joiRegisteredId.setObjectId((ASN1ObjectIdentifier) generalName.getName());
+                break;
+            }
+            case GeneralName.rfc822Name: {
+                jrbRfc822Name.setSelected(true);
+                jtfRfc822Name.setText(((DERIA5String) generalName.getName()).getString());
+                break;
+            }
+            case GeneralName.uniformResourceIdentifier: {
+                jrbUniformResourceIdentifier.setSelected(true);
+                jtfUniformResourceIdentifier.setText(((DERIA5String) generalName.getName()).getString());
+                break;
+            }
+            case GeneralName.otherName: {
+                jrbPrincipalName.setSelected(true);
+                // we currently only support UPN in otherName
+                jtfPrincipalName.setText(GeneralNameUtil.parseUPN(generalName));
+                break;
+            }
+            }
+        }
+    }
 
-	/**
-	 * Get selected general name.
-	 *
-	 * @return General name, or null if none
-	 */
-	public GeneralName getGeneralName() {
-		return generalName;
-	}
+    /**
+     * Get selected general name.
+     *
+     * @return General name, or null if none
+     */
+    public GeneralName getGeneralName() {
+        return generalName;
+    }
 
-	private void okPressed() {
-		try {
-			GeneralName newGeneralName = null;
+    private void okPressed() {
+        try {
+            GeneralName newGeneralName = null;
 
-			if (jrbDirectoryName.isSelected()) {
-				X500Name directoryName = jdnDirectoryName.getDistinguishedName();
+            if (jrbDirectoryName.isSelected()) {
+                X500Name directoryName = jdnDirectoryName.getDistinguishedName();
 
-				if (directoryName == null) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DGeneralNameChooser.DirectoryNameValueReq.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (directoryName == null) {
+                    JOptionPane.showMessageDialog(this,
+                                                  res.getString("DGeneralNameChooser.DirectoryNameValueReq.message"),
+                                                  getTitle(), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				newGeneralName = new GeneralName(GeneralName.directoryName, directoryName);
-			} else if (jrbDnsName.isSelected()) {
-				String dnsName = jtfDnsName.getText().trim();
+                newGeneralName = new GeneralName(GeneralName.directoryName, directoryName);
+            } else if (jrbDnsName.isSelected()) {
+                String dnsName = jtfDnsName.getText().trim();
 
-				if (dnsName.length() == 0) {
-					JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.DnsNameValueReq.message"),
-							getTitle(), JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (dnsName.length() == 0) {
+                    JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.DnsNameValueReq.message"),
+                                                  getTitle(), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				newGeneralName = new GeneralName(GeneralName.dNSName, new DERIA5String(dnsName));
-			} else if (jrbIpAddress.isSelected()) {
+                newGeneralName = new GeneralName(GeneralName.dNSName, new DERIA5String(dnsName));
+            } else if (jrbIpAddress.isSelected()) {
 
-				String ipAddress = jtfIpAddress.getText().trim();
+                String ipAddress = jtfIpAddress.getText().trim();
 
-				if (ipAddress.length() == 0) {
-					JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.IpAddressValueReq.message"),
-							getTitle(), JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				if (ipAddress.indexOf('/') == -1)
-				{
-					if (!IPAddress.isValid(ipAddress)) {
-						JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
-								getTitle(), JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-				}
-				else
-				{
-					if (!IPAddress.isValidWithNetMask(ipAddress)) {
-						JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
-								getTitle(), JOptionPane.WARNING_MESSAGE);
-						return;
-					}
-				}
-				newGeneralName = new GeneralName(GeneralName.iPAddress,	ipAddress);
-			} else if (jrbRegisteredId.isSelected()) {
-				ASN1ObjectIdentifier registeredId = joiRegisteredId.getObjectId();
+                if (ipAddress.length() == 0) {
+                    JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.IpAddressValueReq.message"),
+                                                  getTitle(), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                if (ipAddress.indexOf('/') == -1) {
+                    if (!IPAddress.isValid(ipAddress)) {
+                        JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
+                                                      getTitle(), JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                } else {
+                    if (!IPAddress.isValidWithNetMask(ipAddress)) {
+                        JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.NotAValidIP.message"),
+                                                      getTitle(), JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
+                newGeneralName = new GeneralName(GeneralName.iPAddress, ipAddress);
+            } else if (jrbRegisteredId.isSelected()) {
+                ASN1ObjectIdentifier registeredId = joiRegisteredId.getObjectId();
 
-				if (registeredId == null) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DGeneralNameChooser.RegisteredIdValueReq.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (registeredId == null) {
+                    JOptionPane.showMessageDialog(this,
+                                                  res.getString("DGeneralNameChooser.RegisteredIdValueReq.message"),
+                                                  getTitle(), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				newGeneralName = new GeneralName(GeneralName.registeredID, registeredId);
-			} else if (jrbRfc822Name.isSelected()) {
-				String rfc822Name = jtfRfc822Name.getText().trim();
+                newGeneralName = new GeneralName(GeneralName.registeredID, registeredId);
+            } else if (jrbRfc822Name.isSelected()) {
+                String rfc822Name = jtfRfc822Name.getText().trim();
 
-				if (rfc822Name.length() == 0) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DGeneralNameChooser.Rfc822NameValueReq.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (rfc822Name.length() == 0) {
+                    JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.Rfc822NameValueReq.message"),
+                                                  getTitle(), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				newGeneralName = new GeneralName(GeneralName.rfc822Name, new DERIA5String(rfc822Name));
-			} else if (jrbUniformResourceIdentifier.isSelected()) {
-				String uniformResourceIdentifier = jtfUniformResourceIdentifier.getText().trim();
+                newGeneralName = new GeneralName(GeneralName.rfc822Name, new DERIA5String(rfc822Name));
+            } else if (jrbUniformResourceIdentifier.isSelected()) {
+                String uniformResourceIdentifier = jtfUniformResourceIdentifier.getText().trim();
 
-				if (uniformResourceIdentifier.length() == 0) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DGeneralNameChooser.UniformResourceIdentifierValueReq.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (uniformResourceIdentifier.length() == 0) {
+                    JOptionPane.showMessageDialog(this, res.getString(
+                                                          "DGeneralNameChooser.UniformResourceIdentifierValueReq.message"), getTitle(),
+                                                  JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				newGeneralName = new GeneralName(GeneralName.uniformResourceIdentifier, new DERIA5String(
-						uniformResourceIdentifier));
-			} else if (jrbPrincipalName.isSelected()) {
-				String upnString = jtfPrincipalName.getText().trim();
+                newGeneralName = new GeneralName(GeneralName.uniformResourceIdentifier,
+                                                 new DERIA5String(uniformResourceIdentifier));
+            } else if (jrbPrincipalName.isSelected()) {
+                String upnString = jtfPrincipalName.getText().trim();
 
-				if (upnString.length() == 0) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DGeneralNameChooser.PrincipalNameValueReq.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (upnString.length() == 0) {
+                    JOptionPane.showMessageDialog(this,
+                                                  res.getString("DGeneralNameChooser.PrincipalNameValueReq.message"),
+                                                  getTitle(), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				ASN1EncodableVector asn1Vector = new ASN1EncodableVector();
-				asn1Vector.add(new ASN1ObjectIdentifier(GeneralNameUtil.UPN_OID));
-				asn1Vector.add(new DERTaggedObject(true, 0, new DERUTF8String(upnString)));
+                ASN1EncodableVector asn1Vector = new ASN1EncodableVector();
+                asn1Vector.add(new ASN1ObjectIdentifier(GeneralNameUtil.UPN_OID));
+                asn1Vector.add(new DERTaggedObject(true, 0, new DERUTF8String(upnString)));
 
-				newGeneralName = new GeneralName(GeneralName.otherName, new DERSequence(asn1Vector));
-			}
+                newGeneralName = new GeneralName(GeneralName.otherName, new DERSequence(asn1Vector));
+            }
 
-			generalName = newGeneralName;
-		} catch (Exception e) {
-			DError.displayError(this, e);
-			return;
-		}
+            generalName = newGeneralName;
+        } catch (Exception e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	public static void main(String[] args) throws Exception {
-		DialogViewer.run(new DGeneralNameChooser(new javax.swing.JFrame(), "GeneralNameChooser", null));
-	}
+    public static void main(String[] args) throws Exception {
+        DialogViewer.run(new DGeneralNameChooser(new javax.swing.JFrame(), "GeneralNameChooser", null));
+    }
 }

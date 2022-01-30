@@ -21,51 +21,48 @@ package org.kse.utilities.pem;
 
 /**
  * PEM header attribute.
- *
  */
 public class PemAttribute {
-	private String name;
-	private String value;
+    private String name;
+    private String value;
 
-	/**
-	 * Construct PEM header attribute.
-	 *
-	 * @param name
-	 *            Name
-	 * @param value
-	 *            Value
-	 */
-	public PemAttribute(String name, String value) {
-		this.name = name;
-		this.value = value;
-	}
+    /**
+     * Construct PEM header attribute.
+     *
+     * @param name  Name
+     * @param value Value
+     */
+    public PemAttribute(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
 
-	/**
-	 * Get attribute name.
-	 *
-	 * @return Name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Get attribute name.
+     *
+     * @return Name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Get attribute value.
-	 *
-	 * @return Value
-	 */
-	public String getValue() {
-		return value;
-	}
+    /**
+     * Get attribute value.
+     *
+     * @return Value
+     */
+    public String getValue() {
+        return value;
+    }
 
-	/**
-	 * Get string representation of attribute suitable for inclusion in encoded
-	 * PEM: "<name>: <value>".
-	 *
-	 * @return String representation
-	 */
-	@Override
-	public String toString() {
-		return name + ": " + value;
-	}
+    /**
+     * Get string representation of attribute suitable for inclusion in encoded
+     * PEM: "<name>: <value>".
+     *
+     * @return String representation
+     */
+    @Override
+    public String toString() {
+        return name + ": " + value;
+    }
 }

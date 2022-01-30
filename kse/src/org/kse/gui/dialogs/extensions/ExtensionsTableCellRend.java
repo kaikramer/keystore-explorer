@@ -32,70 +32,60 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 /**
  * Custom cell renderer for the cells of the Extensions table.
- *
  */
 public class ExtensionsTableCellRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static final long serialVersionUID = 1L;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	/**
-	 * Returns the rendered cell.
-	 *
-	 * @param jtExtensions
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtExtensions, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtExtensions, value, isSelected, hasFocus, row, col);
+    /**
+     * Returns the rendered cell.
+     *
+     * @param jtExtensions The JTable
+     * @param value        The value to assign to the cell
+     * @param isSelected   True if cell is selected
+     * @param row          The row of the cell to render
+     * @param col          The column of the cell to render
+     * @param hasFocus     If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtExtensions, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtExtensions, value, isSelected, hasFocus, row, col);
 
-		// Critical column - display an icon representing criticality and
-		// tool-tip text
-		if (col == 0) {
-			ImageIcon icon = null;
+        // Critical column - display an icon representing criticality and
+        // tool-tip text
+        if (col == 0) {
+            ImageIcon icon = null;
 
-			if (((Boolean) value).booleanValue()) {
-				icon = new ImageIcon(getClass().getResource(
-						"images/table/crit_ext.png"));
-				cell.setToolTipText(res.getString("ExtensionsTableCellRend.CriticalExtension.tooltip"));
-			} else {
-				icon = new ImageIcon(getClass().getResource(
-						"images/table/noncrit_ext.png"));
-				cell.setToolTipText(res.getString("ExtensionsTableCellRend.NonCriticalExtension.tooltip"));
-			}
+            if (((Boolean) value).booleanValue()) {
+                icon = new ImageIcon(getClass().getResource("images/table/crit_ext.png"));
+                cell.setToolTipText(res.getString("ExtensionsTableCellRend.CriticalExtension.tooltip"));
+            } else {
+                icon = new ImageIcon(getClass().getResource("images/table/noncrit_ext.png"));
+                cell.setToolTipText(res.getString("ExtensionsTableCellRend.NonCriticalExtension.tooltip"));
+            }
 
-			cell.setIcon(icon);
-			cell.setText("");
-			cell.setVerticalAlignment(CENTER);
-			cell.setHorizontalAlignment(CENTER);
-		}
-		// Name column - may be unknown
-		else if (col == 1) {
-			if (cell.getText().length() == 0) {
-				cell.setText("-");
-				cell.setHorizontalAlignment(CENTER);
-			} else {
-				cell.setHorizontalAlignment(LEFT);
-			}
-		} else {
-			ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) value;
-			cell.setText(oid.getId());
-		}
+            cell.setIcon(icon);
+            cell.setText("");
+            cell.setVerticalAlignment(CENTER);
+            cell.setHorizontalAlignment(CENTER);
+        }
+        // Name column - may be unknown
+        else if (col == 1) {
+            if (cell.getText().length() == 0) {
+                cell.setText("-");
+                cell.setHorizontalAlignment(CENTER);
+            } else {
+                cell.setHorizontalAlignment(LEFT);
+            }
+        } else {
+            ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) value;
+            cell.setText(oid.getId());
+        }
 
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 }

@@ -35,125 +35,122 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
  */
 public class X500NameUtils {
 
-	private X500NameUtils() {
-	}
+    private X500NameUtils() {
+    }
 
-	/**
-	 * Convert an X.500 Principal to an X.500 Name.
-	 *
-	 * @param principal
-	 *            X.500 Principal
-	 * @return X.500 Name
-	 */
-	public static X500Name x500PrincipalToX500Name(X500Principal principal) {
-		return X500Name.getInstance(KseX500NameStyle.INSTANCE, principal.getEncoded());
-	}
+    /**
+     * Convert an X.500 Principal to an X.500 Name.
+     *
+     * @param principal X.500 Principal
+     * @return X.500 Name
+     */
+    public static X500Name x500PrincipalToX500Name(X500Principal principal) {
+        return X500Name.getInstance(KseX500NameStyle.INSTANCE, principal.getEncoded());
+    }
 
+    /**
+     * Convert an X.500 Name to an X.500 Principal.
+     *
+     * @param name X.500 Name
+     * @return X.500 Principal
+     * @throws IOException if an encoding error occurs (incorrect form for DN)
+     */
+    public static X500Principal x500NameToX500Principal(X500Name name) throws IOException {
+        return new X500Principal(name.getEncoded());
+    }
 
-	/**
-	 * Convert an X.500 Name to an X.500 Principal.
-	 *
-	 * @param name
-	 *            X.500 Name
-	 * @return X.500 Principal
-	 * @throws IOException if an encoding error occurs (incorrect form for DN)
-	 */
-	public static X500Principal x500NameToX500Principal(X500Name name) throws IOException {
-		return new X500Principal(name.getEncoded());
-	}
+    /**
+     * Returns the (first) value of the (first) RDN of type rdnOid
+     *
+     * @param dn     The X500Name
+     * @param rdnOid OID of wanted RDN
+     * @return Value of requested RDN
+     */
+    public static String getRdn(X500Name dn, ASN1ObjectIdentifier rdnOid) {
 
+        if (dn == null || rdnOid == null) {
+            return "";
+        }
 
-	/**
-	 * Returns the (first) value of the (first) RDN of type rdnOid
-	 *
-	 * @param dn The X500Name
-	 * @param rdnOid OID of wanted RDN
-	 * @return Value of requested RDN
-	 */
-	public static String getRdn(X500Name dn, ASN1ObjectIdentifier rdnOid) {
+        RDN[] rdns = dn.getRDNs(rdnOid);
+        String value = "";
 
-		if (dn == null || rdnOid == null) {
-			return "";
-		}
+        if (rdns.length > 0) {
+            RDN rdn = rdns[0];
+            value = rdn.getFirst().getValue().toString();
+        }
 
-		RDN[] rdns = dn.getRDNs(rdnOid);
-		String value = "";
+        return value;
+    }
 
-		if (rdns.length > 0) {
-			RDN rdn = rdns[0];
-			value = rdn.getFirst().getValue().toString();
-		}
+    /**
+     * Return CN of a X.500 name
+     *
+     * @param name X.500 name object
+     * @return CN from Name or an empty string if no CN found
+     */
+    public static String extractCN(X500Name name) {
+        for (RDN rdn : name.getRDNs()) {
+            AttributeTypeAndValue atav = rdn.getFirst();
 
-		return value;
-	}
+            if (atav.getType().equals(BCStyle.CN)) {
+                return atav.getValue().toString();
+            }
+        }
 
-	/**
-	 * Return CN of a X.500 name
-	 *
-	 * @param name X.500 name object
-	 * @return CN from Name or an empty string if no CN found
-	 */
-	public static String extractCN(X500Name name) {
-		for (RDN rdn : name.getRDNs()) {
-			AttributeTypeAndValue atav = rdn.getFirst();
+        return "";
+    }
 
-			if (atav.getType().equals(BCStyle.CN)) {
-				return atav.getValue().toString();
-			}
-		}
+    /**
+     * Return CN of a X.500 principal
+     *
+     * @param principal X.500 principal object
+     * @return CN from DN or an empty string if no CN found
+     */
+    public static String extractCN(X500Principal principal) {
+        return extractCN(x500PrincipalToX500Name(principal));
+    }
 
-		return "";
-	}
+    /**
+     * Creates an X500Name object from the given components.
+     *
+     * @param commonName       CN
+     * @param organisationUnit OU
+     * @param organisationName O
+     * @param localityName     L
+     * @param stateName        ST
+     * @param countryCode      C
+     * @param emailAddress     EMAILADDRESS
+     * @return X500Name object from the given components
+     */
+    public static X500Name buildX500Name(String commonName, String organisationUnit, String organisationName,
+                                         String localityName, String stateName, String countryCode,
+                                         String emailAddress) {
 
-	/**
-	 * Return CN of a X.500 principal
-	 *
-	 * @param principal X.500 principal object
-	 * @return CN from DN or an empty string if no CN found
-	 */
-	public static String extractCN(X500Principal principal) {
-		return extractCN(x500PrincipalToX500Name(principal));
-	}
+        X500NameBuilder x500NameBuilder = new X500NameBuilder(KseX500NameStyle.INSTANCE);
 
-	/**
-	 * Creates an X500Name object from the given components.
-	 *
-	 * @param commonName CN
-	 * @param organisationUnit OU
-	 * @param organisationName O
-	 * @param localityName L
-	 * @param stateName ST
-	 * @param countryCode C
-	 * @param emailAddress EMAILADDRESS
-	 * @return X500Name object from the given components
-	 */
-	public static X500Name buildX500Name(String commonName, String organisationUnit, String organisationName,
-			String localityName, String stateName, String countryCode, String emailAddress) {
+        if (emailAddress != null) {
+            x500NameBuilder.addRDN(BCStyle.E, emailAddress);
+        }
+        if (countryCode != null) {
+            x500NameBuilder.addRDN(BCStyle.C, countryCode);
+        }
+        if (stateName != null) {
+            x500NameBuilder.addRDN(BCStyle.ST, stateName);
+        }
+        if (localityName != null) {
+            x500NameBuilder.addRDN(BCStyle.L, localityName);
+        }
+        if (organisationName != null) {
+            x500NameBuilder.addRDN(BCStyle.O, organisationName);
+        }
+        if (organisationUnit != null) {
+            x500NameBuilder.addRDN(BCStyle.OU, organisationUnit);
+        }
+        if (commonName != null) {
+            x500NameBuilder.addRDN(BCStyle.CN, commonName);
+        }
 
-		X500NameBuilder x500NameBuilder = new X500NameBuilder(KseX500NameStyle.INSTANCE);
-
-		if (emailAddress != null) {
-			x500NameBuilder.addRDN(BCStyle.E, emailAddress);
-		}
-		if (countryCode != null) {
-			x500NameBuilder.addRDN(BCStyle.C, countryCode);
-		}
-		if (stateName != null) {
-			x500NameBuilder.addRDN(BCStyle.ST, stateName);
-		}
-		if (localityName != null) {
-			x500NameBuilder.addRDN(BCStyle.L, localityName);
-		}
-		if (organisationName != null) {
-			x500NameBuilder.addRDN(BCStyle.O, organisationName);
-		}
-		if (organisationUnit != null) {
-			x500NameBuilder.addRDN(BCStyle.OU, organisationUnit);
-		}
-		if (commonName != null) {
-			x500NameBuilder.addRDN(BCStyle.CN, commonName);
-		}
-
-		return x500NameBuilder.build();
-	}
+        return x500NameBuilder.build();
+    }
 }

@@ -41,112 +41,112 @@ import org.kse.utilities.DialogViewer;
 import net.miginfocom.swing.MigLayout;
 
 public class DCustomClaim extends JEscDialog {
-	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final long serialVersionUID = 1L;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JLabel jlName;
-	private JTextField jtfName;
-	private JLabel jlValue;
-	private JTextField jtfValue;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JLabel jlName;
+    private JTextField jtfName;
+    private JLabel jlValue;
+    private JTextField jtfValue;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private boolean isOk = false;
-	private String name;
-	private String value;
+    private boolean isOk = false;
+    private String name;
+    private String value;
 
-	public DCustomClaim(JFrame parent, String name, String value) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.name = name;
-		this.value = value;
-		setTitle(res.getString("DCustomClaim.Title"));
-		initComponents();
-	}
+    public DCustomClaim(JFrame parent, String name, String value) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.name = name;
+        this.value = value;
+        setTitle(res.getString("DCustomClaim.Title"));
+        initComponents();
+    }
 
-	private void initComponents() {
-		jlName = new JLabel(res.getString("DCustomClaim.jlName.text"));
-		jtfName = new JTextField("", 23);
-		jtfName.setToolTipText(res.getString("DCustomClaim.jtfName.tooltip"));
+    private void initComponents() {
+        jlName = new JLabel(res.getString("DCustomClaim.jlName.text"));
+        jtfName = new JTextField("", 23);
+        jtfName.setToolTipText(res.getString("DCustomClaim.jtfName.tooltip"));
 
-		jlValue = new JLabel(res.getString("DCustomClaim.jlValue.text"));
-		jtfValue = new JTextField("", 23);
-		jtfValue.setToolTipText(res.getString("DCustomClaim.jtfValue.tooltip"));
+        jlValue = new JLabel(res.getString("DCustomClaim.jlValue.text"));
+        jtfValue = new JTextField("", 23);
+        jtfValue.setToolTipText(res.getString("DCustomClaim.jtfValue.tooltip"));
 
-		jbOK = new JButton(res.getString("DCustomClaim.jbOK.text"));
-		jbCancel = new JButton(res.getString("DCustomClaim.jbCancel.text"));
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
+        jbOK = new JButton(res.getString("DCustomClaim.jbOK.text"));
+        jbCancel = new JButton(res.getString("DCustomClaim.jbCancel.text"));
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
 
-		JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
+        JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 
-		pane.add(jlName, "");
-		pane.add(jtfName, "wrap");
+        pane.add(jlName, "");
+        pane.add(jtfName, "wrap");
 
-		pane.add(jlValue, "");
-		pane.add(jtfValue, "wrap");
-		pane.add(jpButtons, "right, spanx");
+        pane.add(jlValue, "");
+        pane.add(jtfValue, "wrap");
+        pane.add(jpButtons, "right, spanx");
 
-		jbOK.addActionListener(evt -> okPressed());
-		jbCancel.addActionListener(evt -> cancelPressed());
+        jbOK.addActionListener(evt -> okPressed());
+        jbCancel.addActionListener(evt -> cancelPressed());
 
-		populateFields();
+        populateFields();
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void populateFields() {
-		jtfName.setText(name);
-		jtfValue.setText(value);
-	}
+    private void populateFields() {
+        jtfName.setText(name);
+        jtfValue.setText(value);
+    }
 
-	public boolean isOk() {
-		return isOk;
-	}
+    public boolean isOk() {
+        return isOk;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	private void okPressed() {
-		name = jtfName.getText().trim();
-		if (name.length() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DCustomClaim.ValName.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		value = jtfValue.getText().trim();
-		if (value.length() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DCustomClaim.ValValue.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		isOk = true;
-		closeDialog();
-	}
+    private void okPressed() {
+        name = jtfName.getText().trim();
+        if (name.length() == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DCustomClaim.ValName.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        value = jtfValue.getText().trim();
+        if (value.length() == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DCustomClaim.ValValue.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        isOk = true;
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	public static void main(String[] args) throws Exception {
-		DialogViewer.run(new DCustomClaim(new javax.swing.JFrame(), "", ""));
-	}
+    public static void main(String[] args) throws Exception {
+        DialogViewer.run(new DCustomClaim(new javax.swing.JFrame(), "", ""));
+    }
 
 }

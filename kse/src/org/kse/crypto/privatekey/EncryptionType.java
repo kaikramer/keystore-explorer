@@ -21,8 +21,8 @@ package org.kse.crypto.privatekey;
 
 /**
  * Enumeration of whether or not private keys are 'Encrypted' and 'Unencrypted'.
- *
  */
 public enum EncryptionType {
-	ENCRYPTED(), UNENCRYPTED()
+    ENCRYPTED(),
+    UNENCRYPTED()
 }

@@ -41,81 +41,79 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to sign a MIDlet using the selected key pair entry.
- *
  */
 public class SignMidletAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public SignMidletAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public SignMidletAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("SignMidletAction.statusbar"));
-		putValue(NAME, res.getString("SignMidletAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SignMidletAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/signmidlet.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("SignMidletAction.statusbar"));
+        putValue(NAME, res.getString("SignMidletAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SignMidletAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signmidlet.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStore keyStore = currentState.getKeyStore();
+            KeyStore keyStore = currentState.getKeyStore();
 
-			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-			X509Certificate[] certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore
-					.getCertificateChain(alias)));
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+            X509Certificate[] certs = X509CertUtil.orderX509CertChain(
+                    X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
-			if (!privateKey.getAlgorithm().equals(KeyPairType.RSA.jce())) {
-				JOptionPane.showMessageDialog(frame,
-						res.getString("SignMidletAction.ReqRsaKeyPairMidletSigning.message"),
-						res.getString("SignMidletAction.SignMidlet.Title"), JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (!privateKey.getAlgorithm().equals(KeyPairType.RSA.jce())) {
+                JOptionPane.showMessageDialog(frame,
+                                              res.getString("SignMidletAction.ReqRsaKeyPairMidletSigning.message"),
+                                              res.getString("SignMidletAction.SignMidlet.Title"),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			DSignMidlet dSignMidlet = new DSignMidlet(frame);
-			dSignMidlet.setLocationRelativeTo(frame);
-			dSignMidlet.setVisible(true);
+            DSignMidlet dSignMidlet = new DSignMidlet(frame);
+            dSignMidlet.setLocationRelativeTo(frame);
+            dSignMidlet.setVisible(true);
 
-			File inputJadFile = dSignMidlet.getInputJad();
-			File outputJadFile = dSignMidlet.getOutputJad();
-			File jarFile = dSignMidlet.getJar();
+            File inputJadFile = dSignMidlet.getInputJad();
+            File outputJadFile = dSignMidlet.getOutputJad();
+            File jarFile = dSignMidlet.getJar();
 
-			if (inputJadFile == null) {
-				return;
-			}
+            if (inputJadFile == null) {
+                return;
+            }
 
-			if (inputJadFile.equals(outputJadFile)) {
-				MidletSigner.sign(inputJadFile, jarFile, (RSAPrivateKey) privateKey, certs, 1);
-			} else {
-				MidletSigner.sign(inputJadFile, outputJadFile, jarFile, (RSAPrivateKey) privateKey, certs, 1);
-			}
+            if (inputJadFile.equals(outputJadFile)) {
+                MidletSigner.sign(inputJadFile, jarFile, (RSAPrivateKey) privateKey, certs, 1);
+            } else {
+                MidletSigner.sign(inputJadFile, outputJadFile, jarFile, (RSAPrivateKey) privateKey, certs, 1);
+            }
 
-			JOptionPane.showMessageDialog(frame, res.getString("SignMidletAction.SignMidletSuccessful.message"),
-					res.getString("SignMidletAction.SignMidlet.Title"), JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, res.getString("SignMidletAction.SignMidletSuccessful.message"),
+                                          res.getString("SignMidletAction.SignMidlet.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

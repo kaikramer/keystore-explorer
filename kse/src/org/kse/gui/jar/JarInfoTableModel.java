@@ -30,185 +30,176 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * The table model used to display information about JAR files.
- *
  */
 public class JarInfoTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
 
-	private String[] columnNames;
-	private Object[][] data;
+    private String[] columnNames;
+    private Object[][] data;
 
-	/**
-	 * Construct a new JarInfoTableModel.
-	 */
-	public JarInfoTableModel() {
-		columnNames = new String[8];
-		columnNames[0] = res.getString("JarInfoTableModel.JarFileColumn");
-		columnNames[1] = res.getString("JarInfoTableModel.SizeColumn");
-		columnNames[2] = res.getString("JarInfoTableModel.SpecificationTitleColumn");
-		columnNames[3] = res.getString("JarInfoTableModel.SpecificationVersionColumn");
-		columnNames[4] = res.getString("JarInfoTableModel.SpecificationVendorColumn");
-		columnNames[5] = res.getString("JarInfoTableModel.ImplementationTitleColumn");
-		columnNames[6] = res.getString("JarInfoTableModel.ImplementationVersionColumn");
-		columnNames[7] = res.getString("JarInfoTableModel.ImplementationVendorColumn");
+    /**
+     * Construct a new JarInfoTableModel.
+     */
+    public JarInfoTableModel() {
+        columnNames = new String[8];
+        columnNames[0] = res.getString("JarInfoTableModel.JarFileColumn");
+        columnNames[1] = res.getString("JarInfoTableModel.SizeColumn");
+        columnNames[2] = res.getString("JarInfoTableModel.SpecificationTitleColumn");
+        columnNames[3] = res.getString("JarInfoTableModel.SpecificationVersionColumn");
+        columnNames[4] = res.getString("JarInfoTableModel.SpecificationVendorColumn");
+        columnNames[5] = res.getString("JarInfoTableModel.ImplementationTitleColumn");
+        columnNames[6] = res.getString("JarInfoTableModel.ImplementationVersionColumn");
+        columnNames[7] = res.getString("JarInfoTableModel.ImplementationVendorColumn");
 
-		data = new Object[0][0];
-	}
+        data = new Object[0][0];
+    }
 
-	/**
-	 * Load the JarInfoTableModel with an array of JAR files.
-	 *
-	 * @param jarFiles
-	 *            The JAR files
-	 * @throws IOException
-	 *             Problem occurred getting JAR information
-	 */
-	public void load(JarFile[] jarFiles) throws IOException {
-		data = new Object[jarFiles.length][8];
+    /**
+     * Load the JarInfoTableModel with an array of JAR files.
+     *
+     * @param jarFiles The JAR files
+     * @throws IOException Problem occurred getting JAR information
+     */
+    public void load(JarFile[] jarFiles) throws IOException {
+        data = new Object[jarFiles.length][8];
 
-		for (int i = 0; i < jarFiles.length; i++) {
-			JarFile jarFile = jarFiles[i];
-			String fileName = jarFile.getName();
-			File file = new File(fileName);
+        for (int i = 0; i < jarFiles.length; i++) {
+            JarFile jarFile = jarFiles[i];
+            String fileName = jarFile.getName();
+            File file = new File(fileName);
 
-			Manifest manifest = jarFile.getManifest();
+            Manifest manifest = jarFile.getManifest();
 
-			String implementationTitle = "";
-			String implementationVersion = "";
-			String implementationVendor = "";
-			String specificationTitle = "";
-			String specificationVersion = "";
-			String specificationVendor = "";
+            String implementationTitle = "";
+            String implementationVersion = "";
+            String implementationVendor = "";
+            String specificationTitle = "";
+            String specificationVersion = "";
+            String specificationVendor = "";
 
-			if (manifest != null) {
-				Attributes attributes = manifest.getMainAttributes();
+            if (manifest != null) {
+                Attributes attributes = manifest.getMainAttributes();
 
-				String value = attributes.getValue("Specification-Title");
-				if (value != null) {
-					specificationTitle = value;
-				}
+                String value = attributes.getValue("Specification-Title");
+                if (value != null) {
+                    specificationTitle = value;
+                }
 
-				value = attributes.getValue("Specification-Version");
-				if (value != null) {
-					specificationVersion = value;
-				}
+                value = attributes.getValue("Specification-Version");
+                if (value != null) {
+                    specificationVersion = value;
+                }
 
-				value = attributes.getValue("Specification-Vendor");
-				if (value != null) {
-					specificationVendor = value;
-				}
+                value = attributes.getValue("Specification-Vendor");
+                if (value != null) {
+                    specificationVendor = value;
+                }
 
-				value = attributes.getValue("Implementation-Title");
-				if (value != null) {
-					implementationTitle = value;
-				}
+                value = attributes.getValue("Implementation-Title");
+                if (value != null) {
+                    implementationTitle = value;
+                }
 
-				value = attributes.getValue("Implementation-Version");
-				if (value != null) {
-					implementationVersion = value;
-				}
+                value = attributes.getValue("Implementation-Version");
+                if (value != null) {
+                    implementationVersion = value;
+                }
 
-				value = attributes.getValue("Implementation-Vendor");
-				if (value != null) {
-					implementationVendor = value;
-				}
-			}
+                value = attributes.getValue("Implementation-Vendor");
+                if (value != null) {
+                    implementationVendor = value;
+                }
+            }
 
-			data[i][0] = file.getName();
-			data[i][1] = Math.round(file.length() / 1024);
-			data[i][2] = specificationTitle;
-			data[i][3] = specificationVersion;
-			data[i][4] = specificationVendor;
-			data[i][5] = implementationTitle;
-			data[i][6] = implementationVersion;
-			data[i][7] = implementationVendor;
-		}
+            data[i][0] = file.getName();
+            data[i][1] = Math.round(file.length() / 1024);
+            data[i][2] = specificationTitle;
+            data[i][3] = specificationVersion;
+            data[i][4] = specificationVendor;
+            data[i][5] = implementationTitle;
+            data[i][6] = implementationVersion;
+            data[i][7] = implementationVendor;
+        }
 
-		fireTableDataChanged();
-	}
+        fireTableDataChanged();
+    }
 
-	/**
-	 * Get the number of columns in the table.
-	 *
-	 * @return The number of columns
-	 */
-	@Override
-	public int getColumnCount() {
-		return columnNames.length;
-	}
+    /**
+     * Get the number of columns in the table.
+     *
+     * @return The number of columns
+     */
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
 
-	/**
-	 * Get the number of rows in the table.
-	 *
-	 * @return The number of rows
-	 */
-	@Override
-	public int getRowCount() {
-		return data.length;
-	}
+    /**
+     * Get the number of rows in the table.
+     *
+     * @return The number of rows
+     */
+    @Override
+    public int getRowCount() {
+        return data.length;
+    }
 
-	/**
-	 * Get the name of the column at the given position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column name
-	 */
-	@Override
-	public String getColumnName(int col) {
-		return columnNames[col];
-	}
+    /**
+     * Get the name of the column at the given position.
+     *
+     * @param col The column position
+     * @return The column name
+     */
+    @Override
+    public String getColumnName(int col) {
+        return columnNames[col];
+    }
 
-	/**
-	 * Get the cell value at the given row and column position.
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return The cell value
-	 */
-	@Override
-	public Object getValueAt(int row, int col) {
-		return data[row][col];
-	}
+    /**
+     * Get the cell value at the given row and column position.
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return The cell value
+     */
+    @Override
+    public Object getValueAt(int row, int col) {
+        return data[row][col];
+    }
 
-	/**
-	 * Get the class at of the cells at the given column position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column cells' class
-	 */
-	@Override
-	public Class<?> getColumnClass(int col) {
-		switch (col) {
-		case 1:
-			return Long.class;
-		case 6:
-		case 5:
-		case 4:
-		case 3:
-		case 2:
-		case 0:
-		default:
-			return String.class;
-		}
-	}
+    /**
+     * Get the class at of the cells at the given column position.
+     *
+     * @param col The column position
+     * @return The column cells' class
+     */
+    @Override
+    public Class<?> getColumnClass(int col) {
+        switch (col) {
+        case 1:
+            return Long.class;
+        case 6:
+        case 5:
+        case 4:
+        case 3:
+        case 2:
+        case 0:
+        default:
+            return String.class;
+        }
+    }
 
-	/**
-	 * Is the cell at the given row and column position editable?
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return True if the cell is editable, false otherwise
-	 */
-	@Override
-	public boolean isCellEditable(int row, int col) {
-		return false;
-	}
+    /**
+     * Is the cell at the given row and column position editable?
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return True if the cell is editable, false otherwise
+     */
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return false;
+    }
 }

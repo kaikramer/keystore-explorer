@@ -28,164 +28,159 @@ import javax.swing.JMenu;
  * Menu with Recent File List capability, ie a list of files where the most
  * recently accessed file is set as the first item shifting other files down and
  * the list contains no duplicates.
- *
  */
 public class JMenuRecentFiles extends JMenu {
-	private static final long serialVersionUID = 1L;
-	private JMenuItemRecentFile[] jmiRecentFiles;
-	private static final int MAX_LENGTH = 9;
+    private static final long serialVersionUID = 1L;
+    private JMenuItemRecentFile[] jmiRecentFiles;
+    private static final int MAX_LENGTH = 9;
 
-	/**
-	 * Construct a JMenuRecentFiles.
-	 *
-	 * @param title
-	 *            Title of menu
-	 * @param length
-	 *            Length of recent files list to maintain
-	 */
-	public JMenuRecentFiles(String title, int length) {
-		super(title);
+    /**
+     * Construct a JMenuRecentFiles.
+     *
+     * @param title  Title of menu
+     * @param length Length of recent files list to maintain
+     */
+    public JMenuRecentFiles(String title, int length) {
+        super(title);
 
-		if (length > MAX_LENGTH) {
-			length = MAX_LENGTH;
-		}
+        if (length > MAX_LENGTH) {
+            length = MAX_LENGTH;
+        }
 
-		jmiRecentFiles = new JMenuItemRecentFile[length];
-	}
+        jmiRecentFiles = new JMenuItemRecentFile[length];
+    }
 
-	private void removeAllRecentFiles() {
-		for (int i = 0; i < jmiRecentFiles.length; i++) {
-			if (jmiRecentFiles[i] == null) {
-				break;
-			}
+    private void removeAllRecentFiles() {
+        for (int i = 0; i < jmiRecentFiles.length; i++) {
+            if (jmiRecentFiles[i] == null) {
+                break;
+            }
 
-			remove(jmiRecentFiles[i]);
-		}
-	}
+            remove(jmiRecentFiles[i]);
+        }
+    }
 
-	private void addAllRecentFiles() {
-		for (int i = 0; i < jmiRecentFiles.length; i++) {
-			if (jmiRecentFiles[i] == null) {
-				break;
-			}
-			add(jmiRecentFiles[i], i);
-		}
-	}
+    private void addAllRecentFiles() {
+        for (int i = 0; i < jmiRecentFiles.length; i++) {
+            if (jmiRecentFiles[i] == null) {
+                break;
+            }
+            add(jmiRecentFiles[i], i);
+        }
+    }
 
-	private int findRecentFile(File recentFile) {
-		int index = -1;
+    private int findRecentFile(File recentFile) {
+        int index = -1;
 
-		for (int i = 0; i < jmiRecentFiles.length; i++) {
-			if (jmiRecentFiles[i] == null) {
-				break;
-			}
+        for (int i = 0; i < jmiRecentFiles.length; i++) {
+            if (jmiRecentFiles[i] == null) {
+                break;
+            }
 
-			if (recentFile.equals(jmiRecentFiles[i].getFile())) {
-				index = i;
-				break;
-			}
-		}
+            if (recentFile.equals(jmiRecentFiles[i].getFile())) {
+                index = i;
+                break;
+            }
+        }
 
-		return index;
-	}
+        return index;
+    }
 
-	/**
-	 * Add a recent file menu item to the menu. Only call when the menu is
-	 * completely populated with standard menu items and separators.
-	 *
-	 * @param jmirfNew
-	 *            The new recent file menu item
-	 */
-	public void add(JMenuItemRecentFile jmirfNew) {
-		int index = findRecentFile(jmirfNew.getFile());
+    /**
+     * Add a recent file menu item to the menu. Only call when the menu is
+     * completely populated with standard menu items and separators.
+     *
+     * @param jmirfNew The new recent file menu item
+     */
+    public void add(JMenuItemRecentFile jmirfNew) {
+        int index = findRecentFile(jmirfNew.getFile());
 
-		// Menu item already exists at first position
-		if (index == 0) {
-			return;
-		}
+        // Menu item already exists at first position
+        if (index == 0) {
+            return;
+        }
 
-		removeAllRecentFiles();
+        removeAllRecentFiles();
 
-		jmirfNew.setPosition(1);
+        jmirfNew.setPosition(1);
 
-		// Item already exists outside of first position
-		if (index != -1) {
-			// Introduce it to the first position and move the others up over
-			// its old position
-			for (int i = 0; i <= index; i++) {
-				JMenuItemRecentFile jmirfTmp = jmiRecentFiles[i];
-				jmiRecentFiles[i] = jmirfNew;
-				jmirfNew = jmirfTmp;
-				jmirfNew.setPosition(i + 2);
-			}
-		}
-		// Item does not exist in the menu
-		else {
-			// Introduce new item to the start of the list and shift the others
-			// up one
-			for (int i = 0; i < jmiRecentFiles.length; i++) {
-				JMenuItemRecentFile jmirfTmp = jmiRecentFiles[i];
-				jmiRecentFiles[i] = jmirfNew;
-				jmirfNew = jmirfTmp;
+        // Item already exists outside of first position
+        if (index != -1) {
+            // Introduce it to the first position and move the others up over
+            // its old position
+            for (int i = 0; i <= index; i++) {
+                JMenuItemRecentFile jmirfTmp = jmiRecentFiles[i];
+                jmiRecentFiles[i] = jmirfNew;
+                jmirfNew = jmirfTmp;
+                jmirfNew.setPosition(i + 2);
+            }
+        }
+        // Item does not exist in the menu
+        else {
+            // Introduce new item to the start of the list and shift the others
+            // up one
+            for (int i = 0; i < jmiRecentFiles.length; i++) {
+                JMenuItemRecentFile jmirfTmp = jmiRecentFiles[i];
+                jmiRecentFiles[i] = jmirfNew;
+                jmirfNew = jmirfTmp;
 
-				if (jmirfNew == null) {
-					break; // Done shifting
-				}
-				jmirfNew.setPosition(i + 2);
-			}
-		}
+                if (jmirfNew == null) {
+                    break; // Done shifting
+                }
+                jmirfNew.setPosition(i + 2);
+            }
+        }
 
-		addAllRecentFiles();
-	}
+        addAllRecentFiles();
+    }
 
-	/**
-	 * Invalidate a recent file menu item by removing it from the menu. Call
-	 * when a recent file no longer exists.
-	 *
-	 * @param jmirfOld
-	 *            The recent file menu item to remove
-	 */
-	public void invalidate(JMenuItemRecentFile jmirfOld) {
-		int index = findRecentFile(jmirfOld.getFile());
+    /**
+     * Invalidate a recent file menu item by removing it from the menu. Call
+     * when a recent file no longer exists.
+     *
+     * @param jmirfOld The recent file menu item to remove
+     */
+    public void invalidate(JMenuItemRecentFile jmirfOld) {
+        int index = findRecentFile(jmirfOld.getFile());
 
-		if (index == -1) {
-			return;
-		}
+        if (index == -1) {
+            return;
+        }
 
-		removeAllRecentFiles();
+        removeAllRecentFiles();
 
-		for (int i = index; i < jmiRecentFiles.length; i++) {
+        for (int i = index; i < jmiRecentFiles.length; i++) {
 
-			if (i < (jmiRecentFiles.length - 1)) {
-				jmiRecentFiles[i] = jmiRecentFiles[i + 1];
+            if (i < (jmiRecentFiles.length - 1)) {
+                jmiRecentFiles[i] = jmiRecentFiles[i + 1];
 
-				if (jmiRecentFiles[i + 1] != null) {
-					jmiRecentFiles[i].setPosition(i + 1);
-				}
-			} else {
-				jmiRecentFiles[i] = null;
-			}
-		}
+                if (jmiRecentFiles[i + 1] != null) {
+                    jmiRecentFiles[i].setPosition(i + 1);
+                }
+            } else {
+                jmiRecentFiles[i] = null;
+            }
+        }
 
-		addAllRecentFiles();
-	}
+        addAllRecentFiles();
+    }
 
-	/**
-	 * Get the set of recent files currently maintained by the menu in order.
-	 *
-	 * @return The recent files
-	 */
-	public File[] getRecentFiles() {
-		ArrayList<File> recentFiles = new ArrayList<>();
+    /**
+     * Get the set of recent files currently maintained by the menu in order.
+     *
+     * @return The recent files
+     */
+    public File[] getRecentFiles() {
+        ArrayList<File> recentFiles = new ArrayList<>();
 
-		for (int i = 0; i < jmiRecentFiles.length; i++) {
-			if (jmiRecentFiles[i] == null) {
-				break;
-			}
+        for (int i = 0; i < jmiRecentFiles.length; i++) {
+            if (jmiRecentFiles[i] == null) {
+                break;
+            }
 
-			recentFiles.add(jmiRecentFiles[i].getFile());
-		}
+            recentFiles.add(jmiRecentFiles[i].getFile());
+        }
 
-		return recentFiles.toArray(new File[recentFiles.size()]);
-	}
+        return recentFiles.toArray(new File[recentFiles.size()]);
+    }
 }

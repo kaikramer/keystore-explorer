@@ -21,48 +21,43 @@ package org.kse.crypto;
 
 /**
  * Represents a cryptographic exception.
- *
  */
 public class CryptoException extends Exception {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a new CryptoException.
-	 */
-	public CryptoException() {
-		super();
-	}
+    /**
+     * Creates a new CryptoException.
+     */
+    public CryptoException() {
+        super();
+    }
 
-	/**
-	 * Creates a new CryptoException with the specified message.
-	 *
-	 * @param message
-	 *            Exception message
-	 */
-	public CryptoException(String message) {
-		super(message);
-	}
+    /**
+     * Creates a new CryptoException with the specified message.
+     *
+     * @param message Exception message
+     */
+    public CryptoException(String message) {
+        super(message);
+    }
 
-	/**
-	 * Creates a new CryptoException with the specified message and cause
-	 * throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 * @param message
-	 *            Exception message
-	 */
-	public CryptoException(String message, Throwable causeThrowable) {
-		super(message, causeThrowable);
-	}
+    /**
+     * Creates a new CryptoException with the specified message and cause
+     * throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     * @param message        Exception message
+     */
+    public CryptoException(String message, Throwable causeThrowable) {
+        super(message, causeThrowable);
+    }
 
-	/**
-	 * Creates a new CryptoException with the specified cause throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public CryptoException(Throwable causeThrowable) {
-		super(causeThrowable);
-	}
+    /**
+     * Creates a new CryptoException with the specified cause throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public CryptoException(Throwable causeThrowable) {
+        super(causeThrowable);
+    }
 }

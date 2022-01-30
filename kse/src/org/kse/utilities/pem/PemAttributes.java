@@ -23,53 +23,50 @@ import java.util.ArrayList;
 
 /**
  * PEM header attributes.
- *
  */
 public class PemAttributes {
-	private ArrayList<PemAttribute> attributes = new ArrayList<>();
+    private ArrayList<PemAttribute> attributes = new ArrayList<>();
 
-	/**
-	 * Add an attribute.
-	 *
-	 * @param attribute
-	 *            Attribute
-	 */
-	public void add(PemAttribute attribute) {
-		attributes.add(attribute);
-	}
+    /**
+     * Add an attribute.
+     *
+     * @param attribute Attribute
+     */
+    public void add(PemAttribute attribute) {
+        attributes.add(attribute);
+    }
 
-	/**
-	 * Get attributes.
-	 *
-	 * @return Attributes in addition order
-	 */
-	public Iterable<PemAttribute> values() {
-		return attributes;
-	}
+    /**
+     * Get attributes.
+     *
+     * @return Attributes in addition order
+     */
+    public Iterable<PemAttribute> values() {
+        return attributes;
+    }
 
-	/**
-	 * Get the named attribute.
-	 *
-	 * @param name
-	 *            Attribute name
-	 * @return named attribute or null if none
-	 */
-	public PemAttribute get(String name) {
-		for (PemAttribute attribute : attributes) {
-			if (attribute.getName().equals(name)) {
-				return attribute;
-			}
-		}
+    /**
+     * Get the named attribute.
+     *
+     * @param name Attribute name
+     * @return named attribute or null if none
+     */
+    public PemAttribute get(String name) {
+        for (PemAttribute attribute : attributes) {
+            if (attribute.getName().equals(name)) {
+                return attribute;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * How many attributes or contained in object?
-	 *
-	 * @return Size
-	 */
-	public int size() {
-		return attributes.size();
-	}
+    /**
+     * How many attributes or contained in object?
+     *
+     * @return Size
+     */
+    public int size() {
+        return attributes.size();
+    }
 }

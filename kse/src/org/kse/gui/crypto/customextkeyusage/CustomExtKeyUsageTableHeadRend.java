@@ -29,47 +29,41 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Custom cell renderer for the headers of the custom Extended Key Usage table.
- *
  */
 public class CustomExtKeyUsageTableHeadRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/customextkeyusage/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/customextkeyusage/resources");
 
-	private TableCellRenderer delegate;
+    private TableCellRenderer delegate;
 
-	public CustomExtKeyUsageTableHeadRend(TableCellRenderer delegate) {
-		this.delegate = delegate;
-	}
+    public CustomExtKeyUsageTableHeadRend(TableCellRenderer delegate) {
+        this.delegate = delegate;
+    }
 
-	/**
-	 * Returns the rendered header cell for the supplied value and column.
-	 *
-	 * @param jtCustomExtKeyUsage
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The rendered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtCustomExtKeyUsage, Object value, boolean isSelected, boolean hasFocus,
-			int row, int col) {
+    /**
+     * Returns the rendered header cell for the supplied value and column.
+     *
+     * @param jtCustomExtKeyUsage The JTable
+     * @param value               The value to assign to the cell
+     * @param isSelected          True if cell is selected
+     * @param row                 The row of the cell to render
+     * @param col                 The column of the cell to render
+     * @param hasFocus            If true, render cell appropriately
+     * @return The rendered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtCustomExtKeyUsage, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
 
-		Component c = delegate.getTableCellRendererComponent(jtCustomExtKeyUsage, value, isSelected, hasFocus, row, col);
+        Component c = delegate.getTableCellRendererComponent(jtCustomExtKeyUsage, value, isSelected, hasFocus, row,
+                                                             col);
 
-		if (c instanceof JLabel) {
-			JLabel header = (JLabel) c;
-			header.setToolTipText(res.getString("CustomExtKeyUsageTableHeadRend.ObjectId.tooltip"));
-		}
+        if (c instanceof JLabel) {
+            JLabel header = (JLabel) c;
+            header.setToolTipText(res.getString("CustomExtKeyUsageTableHeadRend.ObjectId.tooltip"));
+        }
 
-		return c;
-	}
+        return c;
+    }
 }

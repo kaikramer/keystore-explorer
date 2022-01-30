@@ -38,100 +38,96 @@ import org.kse.crypto.digest.DigestUtil;
 
 /**
  * Generator for public key identifiers of various forms.
- *
  */
 public class KeyIdentifierGenerator {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/publickey/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/publickey/resources");
 
-	private PublicKey publicKey;
+    private PublicKey publicKey;
 
-	/**
-	 * Construct KeyIdentifierGenerator.
-	 *
-	 * @param publicKey
-	 *            Public key to generate identifiers for
-	 */
-	public KeyIdentifierGenerator(PublicKey publicKey) {
-		this.publicKey = publicKey;
-	}
+    /**
+     * Construct KeyIdentifierGenerator.
+     *
+     * @param publicKey Public key to generate identifiers for
+     */
+    public KeyIdentifierGenerator(PublicKey publicKey) {
+        this.publicKey = publicKey;
+    }
 
-	/**
-	 * Generate 160 bit hash key identifier.
-	 *
-	 * @return Key identifier
-	 * @throws CryptoException
-	 *             If generation fails
-	 */
-	public byte[] generate160BitHashId() throws CryptoException {
-		/*
-		 * RFC 3280: The keyIdentifier is composed of the 160-bit SHA-1 hash of
-		 * the value of the BIT STRING subjectPublicKey (excluding the tag,
-		 * length, and number of unused bits)
-		 */
+    /**
+     * Generate 160 bit hash key identifier.
+     *
+     * @return Key identifier
+     * @throws CryptoException If generation fails
+     */
+    public byte[] generate160BitHashId() throws CryptoException {
+        /*
+         * RFC 3280: The keyIdentifier is composed of the 160-bit SHA-1 hash of
+         * the value of the BIT STRING subjectPublicKey (excluding the tag,
+         * length, and number of unused bits)
+         */
 
-		try {
-			DERBitString publicKeyBitString = encodePublicKeyAsBitString(publicKey);
-			return DigestUtil.getMessageDigest(publicKeyBitString.getBytes(), DigestType.SHA1);
-		} catch (IOException ex) {
-			throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
-		}
-	}
+        try {
+            DERBitString publicKeyBitString = encodePublicKeyAsBitString(publicKey);
+            return DigestUtil.getMessageDigest(publicKeyBitString.getBytes(), DigestType.SHA1);
+        } catch (IOException ex) {
+            throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
+        }
+    }
 
-	/**
-	 * Generate 64 bit hash key identifier.
-	 *
-	 * @return Key identifier
-	 * @throws CryptoException
-	 *             If generation fails
-	 */
-	public byte[] generate64BitHashId() throws CryptoException {
-		/*
-		 * RFC 3280: The keyIdentifier is composed of a four bit type field with
-		 * the value 0100 followed by the least significant 60 bits of the SHA-1
-		 * hash of the value of the BIT STRING subjectPublicKey (excluding the
-		 * tag, length, and number of unused bit string bits)
-		 */
+    /**
+     * Generate 64 bit hash key identifier.
+     *
+     * @return Key identifier
+     * @throws CryptoException If generation fails
+     */
+    public byte[] generate64BitHashId() throws CryptoException {
+        /*
+         * RFC 3280: The keyIdentifier is composed of a four bit type field with
+         * the value 0100 followed by the least significant 60 bits of the SHA-1
+         * hash of the value of the BIT STRING subjectPublicKey (excluding the
+         * tag, length, and number of unused bit string bits)
+         */
 
-		try {
-			DERBitString publicKeyBitString = encodePublicKeyAsBitString(publicKey);
-			byte[] hash = DigestUtil.getMessageDigest(publicKeyBitString.getBytes(), DigestType.SHA1);
-			byte[] subHash = Arrays.copyOfRange(hash, 12, 20);
-			subHash[0] &= 0x0F;
-			subHash[0] |= 0x40;
+        try {
+            DERBitString publicKeyBitString = encodePublicKeyAsBitString(publicKey);
+            byte[] hash = DigestUtil.getMessageDigest(publicKeyBitString.getBytes(), DigestType.SHA1);
+            byte[] subHash = Arrays.copyOfRange(hash, 12, 20);
+            subHash[0] &= 0x0F;
+            subHash[0] |= 0x40;
 
-			return subHash;
-		} catch (IOException ex) {
-			throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
-		}
-	}
+            return subHash;
+        } catch (IOException ex) {
+            throw new CryptoException(res.getString("NoGenerateKeyIdentifier.exception.message"), ex);
+        }
+    }
 
-	private DERBitString encodePublicKeyAsBitString(PublicKey publicKey) throws IOException {
-		byte[] encodedPublicKey;
+    private DERBitString encodePublicKeyAsBitString(PublicKey publicKey) throws IOException {
+        byte[] encodedPublicKey;
 
-		if (publicKey instanceof RSAPublicKey) {
-			encodedPublicKey = encodeRsaPublicKeyAsBitString((RSAPublicKey) publicKey);
-		} else if (publicKey instanceof DSAPublicKey) {
-			encodedPublicKey = encodeDsaPublicKeyAsBitString((DSAPublicKey) publicKey);
-		} else {
-			SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-			encodedPublicKey = publicKeyInfo.getPublicKeyData().getBytes();
-		}
+        if (publicKey instanceof RSAPublicKey) {
+            encodedPublicKey = encodeRsaPublicKeyAsBitString((RSAPublicKey) publicKey);
+        } else if (publicKey instanceof DSAPublicKey) {
+            encodedPublicKey = encodeDsaPublicKeyAsBitString((DSAPublicKey) publicKey);
+        } else {
+            SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+            encodedPublicKey = publicKeyInfo.getPublicKeyData().getBytes();
+        }
 
-		return new DERBitString(encodedPublicKey);
-	}
+        return new DERBitString(encodedPublicKey);
+    }
 
-	private byte[] encodeRsaPublicKeyAsBitString(RSAPublicKey rsaPublicKey) throws IOException {
-		ASN1EncodableVector vec = new ASN1EncodableVector();
-		vec.add(new ASN1Integer(rsaPublicKey.getModulus()));
-		vec.add(new ASN1Integer(rsaPublicKey.getPublicExponent()));
+    private byte[] encodeRsaPublicKeyAsBitString(RSAPublicKey rsaPublicKey) throws IOException {
+        ASN1EncodableVector vec = new ASN1EncodableVector();
+        vec.add(new ASN1Integer(rsaPublicKey.getModulus()));
+        vec.add(new ASN1Integer(rsaPublicKey.getPublicExponent()));
 
-		DERSequence derSequence = new DERSequence(vec);
-		return derSequence.getEncoded();
-	}
+        DERSequence derSequence = new DERSequence(vec);
+        return derSequence.getEncoded();
+    }
 
-	private byte[] encodeDsaPublicKeyAsBitString(DSAPublicKey dsaPublicKey) throws IOException {
-		ASN1Integer pubKey = new ASN1Integer(dsaPublicKey.getY());
-		return pubKey.getEncoded(ASN1Encoding.DER);
-	}
+    private byte[] encodeDsaPublicKeyAsBitString(DSAPublicKey dsaPublicKey) throws IOException {
+        ASN1Integer pubKey = new ASN1Integer(dsaPublicKey.getY());
+        return pubKey.getEncoded(ASN1Encoding.DER);
+    }
 
 }

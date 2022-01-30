@@ -32,54 +32,49 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to save all KeyStores.
- *
  */
 public class SaveAllAction extends SaveAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public SaveAllAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public SaveAllAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("SaveAllAction.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("SaveAllAction.statusbar"));
-		putValue(NAME, res.getString("SaveAllAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SaveAllAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/saveall.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SaveAllAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.SHIFT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("SaveAllAction.statusbar"));
+        putValue(NAME, res.getString("SaveAllAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SaveAllAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/saveall.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
 
-			for (int i = 0; i < histories.length; i++) {
-				KeyStoreHistory history = histories[i];
-				KeyStoreState currentState = history.getCurrentState();
+            for (int i = 0; i < histories.length; i++) {
+                KeyStoreHistory history = histories[i];
+                KeyStoreState currentState = history.getCurrentState();
 
-				// Does KeyStore require saving and has file been saved before?
-				if (!currentState.isSavedState()) {
-					if (!saveKeyStore(history)) {
-						break;
-					}
-				}
-			}
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+                // Does KeyStore require saving and has file been saved before?
+                if (!currentState.isSavedState()) {
+                    if (!saveKeyStore(history)) {
+                        break;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

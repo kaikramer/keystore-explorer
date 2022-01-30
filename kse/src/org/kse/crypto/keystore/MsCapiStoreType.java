@@ -22,23 +22,23 @@ package org.kse.crypto.keystore;
 /**
  * Enumeration of MS CAPI Certificate Store Types supported by the KeyStoreUtil
  * class.
- *
  */
 public enum MsCapiStoreType {
-	PERSONAL("Windows-MY"), ROOT("Windows-ROOT");
+    PERSONAL("Windows-MY"),
+    ROOT("Windows-ROOT");
 
-	private String jce;
+    private String jce;
 
-	MsCapiStoreType(String jce) {
-		this.jce = jce;
-	}
+    MsCapiStoreType(String jce) {
+        this.jce = jce;
+    }
 
-	/**
-	 * Get MsCapiStoreType type JCE name.
-	 *
-	 * @return JCE name
-	 */
-	public String jce() {
-		return jce;
-	}
+    /**
+     * Get MsCapiStoreType type JCE name.
+     *
+     * @return JCE name
+     */
+    public String jce() {
+        return jce;
+    }
 }

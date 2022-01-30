@@ -35,50 +35,46 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to display the public key details for the selected key pair entry.
- *
  */
 public class KeyPairPublicKeyDetailsAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public KeyPairPublicKeyDetailsAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public KeyPairPublicKeyDetailsAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("KeyPairPublicKeyDetailsAction.statusbar"));
-		putValue(NAME, res.getString("KeyPairPublicKeyDetailsAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("KeyPairPublicKeyDetailsAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/keypairpubkeydetails.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("KeyPairPublicKeyDetailsAction.statusbar"));
+        putValue(NAME, res.getString("KeyPairPublicKeyDetailsAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("KeyPairPublicKeyDetailsAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/keypairpubkeydetails.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			KeyStore keyStore = currentState.getKeyStore();
-			String alias = kseFrame.getSelectedEntryAlias();
+            KeyStore keyStore = currentState.getKeyStore();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			PublicKey pubKey = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore
-					.getCertificateChain(alias)))[0].getPublicKey();
+            PublicKey pubKey = X509CertUtil.orderX509CertChain(
+                    X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)))[0].getPublicKey();
 
-			DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-					res.getString("KeyPairPublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), pubKey);
-			dViewPublicKey.setLocationRelativeTo(frame);
-			dViewPublicKey.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
+                    res.getString("KeyPairPublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), pubKey);
+            dViewPublicKey.setLocationRelativeTo(frame);
+            dViewPublicKey.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

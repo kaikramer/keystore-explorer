@@ -34,148 +34,140 @@ import org.kse.crypto.x509.GeneralNameUtil;
 
 /**
  * The table model used to display general names.
- *
  */
 public class GeneralNamesTableModel extends AbstractTableModel {
 
-	private static final long serialVersionUID = 4224864830348756671L;
+    private static final long serialVersionUID = 4224864830348756671L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
 
-	private String columnName;
-	private List<GeneralName> data;
+    private String columnName;
+    private List<GeneralName> data;
 
-	/**
-	 * Construct a new GeneralNamesTableModel.
-	 */
-	public GeneralNamesTableModel() {
-		columnName = res.getString("GeneralNamesTableModel.GeneralNameColumn");
+    /**
+     * Construct a new GeneralNamesTableModel.
+     */
+    public GeneralNamesTableModel() {
+        columnName = res.getString("GeneralNamesTableModel.GeneralNameColumn");
 
-		data = new ArrayList<>();
-	}
+        data = new ArrayList<>();
+    }
 
-	/**
-	 * Load the GeneralNamesTableModel with general names.
-	 *
-	 * @param generalNames
-	 *            The general names
-	 */
-	public void load(GeneralNames generalNames) {
-		GeneralName[] generalNamesArray = generalNames.getNames();
+    /**
+     * Load the GeneralNamesTableModel with general names.
+     *
+     * @param generalNames The general names
+     */
+    public void load(GeneralNames generalNames) {
+        GeneralName[] generalNamesArray = generalNames.getNames();
 
-		data = new ArrayList<>(Arrays.asList(generalNamesArray));
-		Collections.sort(data, new GeneralNameComparator());
+        data = new ArrayList<>(Arrays.asList(generalNamesArray));
+        Collections.sort(data, new GeneralNameComparator());
 
-		fireTableDataChanged();
-	}
+        fireTableDataChanged();
+    }
 
-	/**
-	 * Get the number of columns in the table.
-	 *
-	 * @return The number of columns
-	 */
-	@Override
-	public int getColumnCount() {
-		return 1;
-	}
+    /**
+     * Get the number of columns in the table.
+     *
+     * @return The number of columns
+     */
+    @Override
+    public int getColumnCount() {
+        return 1;
+    }
 
-	/**
-	 * Get the number of rows in the table.
-	 *
-	 * @return The number of rows
-	 */
-	@Override
-	public int getRowCount() {
-		return data.size();
-	}
+    /**
+     * Get the number of rows in the table.
+     *
+     * @return The number of rows
+     */
+    @Override
+    public int getRowCount() {
+        return data.size();
+    }
 
-	/**
-	 * Get the name of the column at the given position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column name
-	 */
-	@Override
-	public String getColumnName(int col) {
-		return columnName;
-	}
+    /**
+     * Get the name of the column at the given position.
+     *
+     * @param col The column position
+     * @return The column name
+     */
+    @Override
+    public String getColumnName(int col) {
+        return columnName;
+    }
 
-	/**
-	 * Get the cell value at the given row and column position.
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return The cell value
-	 */
-	@Override
-	public Object getValueAt(int row, int col) {
-		return data.get(row);
-	}
+    /**
+     * Get the cell value at the given row and column position.
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return The cell value
+     */
+    @Override
+    public Object getValueAt(int row, int col) {
+        return data.get(row);
+    }
 
-	/**
-	 * Get the class at of the cells at the given column position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column cells' class
-	 */
-	@Override
-	public Class<?> getColumnClass(int col) {
-		return GeneralName.class;
-	}
+    /**
+     * Get the class at of the cells at the given column position.
+     *
+     * @param col The column position
+     * @return The column cells' class
+     */
+    @Override
+    public Class<?> getColumnClass(int col) {
+        return GeneralName.class;
+    }
 
-	/**
-	 * Is the cell at the given row and column position editable?
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return True if the cell is editable, false otherwise
-	 */
-	@Override
-	public boolean isCellEditable(int row, int col) {
-		return false;
-	}
+    /**
+     * Is the cell at the given row and column position editable?
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return True if the cell is editable, false otherwise
+     */
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return false;
+    }
 
-	/**
-	 * Add a row
-	 *
-	 * @param generalName General name
-	 */
-	public void addRow(GeneralName generalName) {
-		data.add(generalName);
-		Collections.sort(data, new GeneralNameComparator());
-		fireTableDataChanged();
-	}
+    /**
+     * Add a row
+     *
+     * @param generalName General name
+     */
+    public void addRow(GeneralName generalName) {
+        data.add(generalName);
+        Collections.sort(data, new GeneralNameComparator());
+        fireTableDataChanged();
+    }
 
-	/**
-	 * Remove a row
-	 *
-	 * @param row Row number
-	 */
-	public void removeRow(int row) {
-		data.remove(row);
-		fireTableDataChanged();
-	}
+    /**
+     * Remove a row
+     *
+     * @param row Row number
+     */
+    public void removeRow(int row) {
+        data.remove(row);
+        fireTableDataChanged();
+    }
 
-	/**
-	 * Returns the table data
-	 *
-	 * @return List of general names as table data
-	 */
-	public List<GeneralName> getData() {
-		return data;
-	}
+    /**
+     * Returns the table data
+     *
+     * @return List of general names as table data
+     */
+    public List<GeneralName> getData() {
+        return data;
+    }
 
-	static class GeneralNameComparator implements Comparator<GeneralName> {
-		@Override
-		public int compare(GeneralName name1, GeneralName name2) {
-			return GeneralNameUtil.safeToString(name1, false)
-					.compareToIgnoreCase(GeneralNameUtil.safeToString(name2, false));
-		}
-	}
+    static class GeneralNameComparator implements Comparator<GeneralName> {
+        @Override
+        public int compare(GeneralName name1, GeneralName name2) {
+            return GeneralNameUtil.safeToString(name1, false)
+                                  .compareToIgnoreCase(GeneralNameUtil.safeToString(name2, false));
+        }
+    }
 }

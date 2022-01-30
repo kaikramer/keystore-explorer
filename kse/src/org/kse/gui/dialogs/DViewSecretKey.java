@@ -56,226 +56,214 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the details of a secret key.
- *
  */
 public class DViewSecretKey extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private JLabel jlAlgorithm;
-	private JTextField jtfAlgorithm;
-	private JLabel jlKeySize;
-	private JTextField jtfKeySize;
-	private JLabel jlFormat;
-	private JTextField jtfFormat;
-	private JLabel jlEncoded;
-	private JTextArea jtaEncoded;
-	private JScrollPane jspEncoded;
-	private JButton jbCancel;
-	private JButton jbOK;
+    private JLabel jlAlgorithm;
+    private JTextField jtfAlgorithm;
+    private JLabel jlKeySize;
+    private JTextField jtfKeySize;
+    private JLabel jlFormat;
+    private JTextField jtfFormat;
+    private JLabel jlEncoded;
+    private JTextArea jtaEncoded;
+    private JScrollPane jspEncoded;
+    private JButton jbCancel;
+    private JButton jbOK;
 
-	private SecretKey secretKey;
+    private SecretKey secretKey;
 
-	private boolean editable;
-	private boolean keyHasChanged = false;
+    private boolean editable;
+    private boolean keyHasChanged = false;
 
-	/**
-	 * Creates a new DViewSecretKey dialog.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param secretKey
-	 *            Secret key to display
-	 * @param editable
-	 *            Secret key can be edited/replaced
-	 */
-	public DViewSecretKey(JFrame parent, String title, SecretKey secretKey, boolean editable) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		this.secretKey = secretKey;
-		this.editable = editable;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewSecretKey dialog.
+     *
+     * @param parent    Parent frame
+     * @param title     The dialog title
+     * @param secretKey Secret key to display
+     * @param editable  Secret key can be edited/replaced
+     */
+    public DViewSecretKey(JFrame parent, String title, SecretKey secretKey, boolean editable) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.secretKey = secretKey;
+        this.editable = editable;
+        initComponents();
+    }
 
-	/**
-	 * Creates new DViewSecretKey dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param modality
-	 *            Dialog modality
-	 * @param secretKey
-	 *            Secret key to display
-	 * @param editable
-	 *            Secret key can be edited/replaced
-	 * @throws CryptoException
-	 *             A problem was encountered getting the secret key's details
-	 */
-	public DViewSecretKey(JDialog parent, String title, ModalityType modality, SecretKey secretKey, boolean editable)
-			throws CryptoException {
-		super(parent, title, modality);
-		this.secretKey = secretKey;
-		this.editable = editable;
-		initComponents();
-	}
+    /**
+     * Creates new DViewSecretKey dialog where the parent is a dialog.
+     *
+     * @param parent    Parent dialog
+     * @param title     The dialog title
+     * @param modality  Dialog modality
+     * @param secretKey Secret key to display
+     * @param editable  Secret key can be edited/replaced
+     * @throws CryptoException A problem was encountered getting the secret key's details
+     */
+    public DViewSecretKey(JDialog parent, String title, ModalityType modality, SecretKey secretKey, boolean editable)
+            throws CryptoException {
+        super(parent, title, modality);
+        this.secretKey = secretKey;
+        this.editable = editable;
+        initComponents();
+    }
 
-	private void initComponents() {
+    private void initComponents() {
 
-		jlAlgorithm = new JLabel(res.getString("DViewSecretKey.jlAlgorithm.text"));
+        jlAlgorithm = new JLabel(res.getString("DViewSecretKey.jlAlgorithm.text"));
 
-		jtfAlgorithm = new JTextField();
-		jtfAlgorithm.setEditable(false);
-		jtfAlgorithm.setToolTipText(res.getString("DViewSecretKey.jtfAlgorithm.tooltip"));
+        jtfAlgorithm = new JTextField();
+        jtfAlgorithm.setEditable(false);
+        jtfAlgorithm.setToolTipText(res.getString("DViewSecretKey.jtfAlgorithm.tooltip"));
 
-		jlKeySize = new JLabel(res.getString("DViewSecretKey.jlKeySize.text"));
+        jlKeySize = new JLabel(res.getString("DViewSecretKey.jlKeySize.text"));
 
-		jtfKeySize = new JTextField();
-		jtfKeySize.setEditable(false);
-		jtfKeySize.setToolTipText(res.getString("DViewSecretKey.jtfKeySize.tooltip"));
+        jtfKeySize = new JTextField();
+        jtfKeySize.setEditable(false);
+        jtfKeySize.setToolTipText(res.getString("DViewSecretKey.jtfKeySize.tooltip"));
 
-		jlFormat = new JLabel(res.getString("DViewSecretKey.jlFormat.text"));
+        jlFormat = new JLabel(res.getString("DViewSecretKey.jlFormat.text"));
 
-		jtfFormat = new JTextField();
-		jtfFormat.setEditable(false);
-		jtfFormat.setToolTipText(res.getString("DViewSecretKey.jtfFormat.tooltip"));
+        jtfFormat = new JTextField();
+        jtfFormat.setEditable(false);
+        jtfFormat.setToolTipText(res.getString("DViewSecretKey.jtfFormat.tooltip"));
 
-		jlEncoded = new JLabel(res.getString("DViewSecretKey.jlEncoded.text"));
+        jlEncoded = new JLabel(res.getString("DViewSecretKey.jlEncoded.text"));
 
-		jtaEncoded = new JTextArea();
-		jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		if (!editable) {
-			jtaEncoded.setBackground(jtfFormat.getBackground());
-		}
-		jtaEncoded.setEditable(editable);
-		jtaEncoded.setLineWrap(true);
-		jtaEncoded.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
-		jtaEncoded.setToolTipText(res.getString("DViewSecretKey.jtfEncoded.tooltip"));
+        jtaEncoded = new JTextArea();
+        jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        if (!editable) {
+            jtaEncoded.setBackground(jtfFormat.getBackground());
+        }
+        jtaEncoded.setEditable(editable);
+        jtaEncoded.setLineWrap(true);
+        jtaEncoded.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+        jtaEncoded.setToolTipText(res.getString("DViewSecretKey.jtfEncoded.tooltip"));
 
-		jspEncoded = PlatformUtil.createScrollPane(jtaEncoded,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		jspEncoded.setBorder(jtfFormat.getBorder());
+        jspEncoded = PlatformUtil.createScrollPane(jtaEncoded, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jspEncoded.setBorder(jtfFormat.getBorder());
 
-		jbCancel = new JButton(res.getString("DViewSecretKey.jbCancel.text"));
-		jbOK = new JButton(res.getString("DViewSecretKey.jbOK.text"));
+        jbCancel = new JButton(res.getString("DViewSecretKey.jbCancel.text"));
+        jbOK = new JButton(res.getString("DViewSecretKey.jbOK.text"));
 
-		// layout
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
-		pane.add(jlAlgorithm, "");
-		pane.add(jtfAlgorithm, "growx, pushx, wrap");
-		pane.add(jlKeySize, "");
-		pane.add(jtfKeySize, "growx, pushx, wrap");
-		pane.add(jlFormat, "");
-		pane.add(jtfFormat, "growx, pushx, wrap");
-		pane.add(jlEncoded, "");
-		pane.add(jspEncoded, "width 260lp:260lp:260lp, height 50lp:50lp:50lp, wrap"); // sp determines dialog size
-		pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
-		if (editable) {
-			pane.add(jbCancel, "spanx, split 2, tag cancel");
-			pane.add(jbOK, "tag ok");
-		} else {
-			pane.add(jbOK, "spanx, tag ok");
-		}
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+        pane.add(jlAlgorithm, "");
+        pane.add(jtfAlgorithm, "growx, pushx, wrap");
+        pane.add(jlKeySize, "");
+        pane.add(jtfKeySize, "growx, pushx, wrap");
+        pane.add(jlFormat, "");
+        pane.add(jtfFormat, "growx, pushx, wrap");
+        pane.add(jlEncoded, "");
+        pane.add(jspEncoded, "width 260lp:260lp:260lp, height 50lp:50lp:50lp, wrap"); // sp determines dialog size
+        pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+        if (editable) {
+            pane.add(jbCancel, "spanx, split 2, tag cancel");
+            pane.add(jbOK, "tag ok");
+        } else {
+            pane.add(jbOK, "spanx, tag ok");
+        }
 
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.addActionListener(evt -> cancelPressed());
 
-		setResizable(false);
+        setResizable(false);
 
-		populateDialog();
+        populateDialog();
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private void populateDialog() {
-		KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
+    private void populateDialog() {
+        KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
 
-		String algorithm = keyInfo.getAlgorithm();
+        String algorithm = keyInfo.getAlgorithm();
 
-		// Try and get friendly algorithm name
-		SecretKeyType secretKeyType = SecretKeyType.resolveJce(algorithm);
+        // Try and get friendly algorithm name
+        SecretKeyType secretKeyType = SecretKeyType.resolveJce(algorithm);
 
-		if (secretKeyType != null) {
-			algorithm = secretKeyType.friendly();
-		}
+        if (secretKeyType != null) {
+            algorithm = secretKeyType.friendly();
+        }
 
-		jtfAlgorithm.setText(algorithm);
+        jtfAlgorithm.setText(algorithm);
 
-		Integer keyLength = keyInfo.getSize();
+        Integer keyLength = keyInfo.getSize();
 
-		if (keyLength != null) {
-			jtfKeySize.setText(MessageFormat.format(res.getString("DViewSecretKey.jtfKeySize.text"), "" + keyLength));
-		} else {
-			jtfKeySize.setText(MessageFormat.format(res.getString("DViewSecretKey.jtfKeySize.text"), "?"));
-		}
+        if (keyLength != null) {
+            jtfKeySize.setText(MessageFormat.format(res.getString("DViewSecretKey.jtfKeySize.text"), "" + keyLength));
+        } else {
+            jtfKeySize.setText(MessageFormat.format(res.getString("DViewSecretKey.jtfKeySize.text"), "?"));
+        }
 
-		jtfFormat.setText(secretKey.getFormat());
+        jtfFormat.setText(secretKey.getFormat());
 
-		jtaEncoded.setText(new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase());
-		jtaEncoded.setCaretPosition(0);
-	}
+        jtaEncoded.setText(new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase());
+        jtaEncoded.setCaretPosition(0);
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void okPressed() {
+    private void okPressed() {
 
-		if (editable) {
-			String text = jtaEncoded.getText();
-			try {
-				byte[] newKeyRaw = Hex.decode(text.replace(':', ' '));
-				this.secretKey = new SecretKeySpec(newKeyRaw, 0, newKeyRaw.length, secretKey.getAlgorithm());
-				this.keyHasChanged = true;
-			} catch (DecoderException e) {
-				JOptionPane.showMessageDialog(this, res.getString("DViewSecretKey.NotAValidHexString.message"),
-						getTitle(), JOptionPane.ERROR_MESSAGE);
-				return;
-			} catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-				JOptionPane.showMessageDialog(this, res.getString("DViewSecretKey.NotAValidKey.message"),
-						getTitle(), JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-		}
+        if (editable) {
+            String text = jtaEncoded.getText();
+            try {
+                byte[] newKeyRaw = Hex.decode(text.replace(':', ' '));
+                this.secretKey = new SecretKeySpec(newKeyRaw, 0, newKeyRaw.length, secretKey.getAlgorithm());
+                this.keyHasChanged = true;
+            } catch (DecoderException e) {
+                JOptionPane.showMessageDialog(this, res.getString("DViewSecretKey.NotAValidHexString.message"),
+                                              getTitle(), JOptionPane.ERROR_MESSAGE);
+                return;
+            } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+                JOptionPane.showMessageDialog(this, res.getString("DViewSecretKey.NotAValidKey.message"), getTitle(),
+                                              JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	public boolean keyHasChanged() {
-		return keyHasChanged;
-	}
+    public boolean keyHasChanged() {
+        return keyHasChanged;
+    }
 
-	public SecretKey getSecretKey() {
-		return secretKey;
-	}
+    public SecretKey getSecretKey() {
+        return secretKey;
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	// for quick UI testing
-	public static void main(String[] args) throws Exception {
-		DialogViewer.prepare();
-		final SecretKey secretKey = SecretKeyUtil.generateSecretKey(SecretKeyType.AES, 256);
-		DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey, true);
-		DialogViewer.run(dialog);
-	}
+    // for quick UI testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+        final SecretKey secretKey = SecretKeyUtil.generateSecretKey(SecretKeyType.AES, 256);
+        DViewSecretKey dialog = new DViewSecretKey(new JFrame(), "Generate Secret Key", secretKey, true);
+        DialogViewer.run(dialog);
+    }
 }

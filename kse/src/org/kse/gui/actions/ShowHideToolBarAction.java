@@ -23,30 +23,28 @@ import org.kse.gui.KseFrame;
 
 /**
  * Action to show/hide the tool bar.
- *
  */
 public class ShowHideToolBarAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ShowHideToolBarAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public ShowHideToolBarAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("ShowHideToolBarAction.statusbar"));
-		putValue(NAME, res.getString("ShowHideToolBarAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ShowHideToolBarAction.tooltip"));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("ShowHideToolBarAction.statusbar"));
+        putValue(NAME, res.getString("ShowHideToolBarAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ShowHideToolBarAction.tooltip"));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		kseFrame.showHideToolBar();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        kseFrame.showHideToolBar();
+    }
 }

@@ -37,50 +37,49 @@ import org.kse.utilities.history.KeyStoreState;
 /**
  * Action to sign a newly generated key pair (i.e. generate a certificate) using the selected key pair entry as issuing
  * CA.
- *
  */
 public class SignNewKeyPairAction extends KeyStoreExplorerAction {
 
-	private static final long serialVersionUID = 6130302168441299361L;
+    private static final long serialVersionUID = 6130302168441299361L;
 
-	public SignNewKeyPairAction(KseFrame kseFrame) {
-		super(kseFrame);
+    public SignNewKeyPairAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("SignNewKeyPairAction.statusbar"));
-		putValue(NAME, res.getString("SignNewKeyPairAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SignNewKeyPairAction.tooltip"));
-		putValue(SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/signnewkeypair.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("SignNewKeyPairAction.statusbar"));
+        putValue(NAME, res.getString("SignNewKeyPairAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SignNewKeyPairAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signnewkeypair.png"))));
+    }
 
-	@Override
-	protected void doAction() {
+    @Override
+    protected void doAction() {
 
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			// get alias of selected (signing) key entry
-			String alias = kseFrame.getSelectedEntryAlias();
+            // get alias of selected (signing) key entry
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
-			if (password == null) {
-				return;
-			}
+            Password password = getEntryPassword(alias, currentState);
+            if (password == null) {
+                return;
+            }
 
-			KeyStore keyStore = currentState.getKeyStore();
-			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-			Certificate[] certs = keyStore.getCertificateChain(alias);
+            KeyStore keyStore = currentState.getKeyStore();
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+            Certificate[] certs = keyStore.getCertificateChain(alias);
 
-			X509Certificate[] signingCertChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
-			X509Certificate signingCert = signingCertChain[0];
+            X509Certificate[] signingCertChain = X509CertUtil.orderX509CertChain(
+                    X509CertUtil.convertCertificates(certs));
+            X509Certificate signingCert = signingCertChain[0];
 
-			GenerateKeyPairAction generateKeyPairAction = new GenerateKeyPairAction(kseFrame);
-			generateKeyPairAction.generateKeyPair(signingCert, signingCertChain, privateKey);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            GenerateKeyPairAction generateKeyPairAction = new GenerateKeyPairAction(kseFrame);
+            generateKeyPairAction.generateKeyPair(signingCert, signingCertChain, privateKey);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
 }

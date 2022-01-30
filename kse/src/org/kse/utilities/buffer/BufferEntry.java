@@ -21,42 +21,39 @@ package org.kse.utilities.buffer;
 
 /**
  * Abstract base class for buffer entries.
- *
  */
 public abstract class BufferEntry {
-	private String name;
-	private boolean cut;
+    private String name;
+    private boolean cut;
 
-	/**
-	 * Construct.
-	 *
-	 * @param name
-	 *            Entry name
-	 * @param cut
-	 *            Is entry to be cut?
-	 */
-	public BufferEntry(String name, boolean cut) {
-		this.name = name;
-		this.cut = cut;
-	}
+    /**
+     * Construct.
+     *
+     * @param name Entry name
+     * @param cut  Is entry to be cut?
+     */
+    public BufferEntry(String name, boolean cut) {
+        this.name = name;
+        this.cut = cut;
+    }
 
-	/**
-	 * Get entry's name.
-	 *
-	 * @return Name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Get entry's name.
+     *
+     * @return Name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Is entry to be cut?
-	 *
-	 * @return True if it is
-	 */
-	public boolean isCut() {
-		return cut;
-	}
+    /**
+     * Is entry to be cut?
+     *
+     * @return True if it is
+     */
+    public boolean isCut() {
+        return cut;
+    }
 
-	abstract void clear();
+    abstract void clear();
 }

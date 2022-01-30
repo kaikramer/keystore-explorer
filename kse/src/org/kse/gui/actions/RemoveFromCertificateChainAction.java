@@ -37,87 +37,84 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to remove from the selected key pair entry's certificate chain.
- *
  */
 public class RemoveFromCertificateChainAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public RemoveFromCertificateChainAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public RemoveFromCertificateChainAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("RemoveFromCertificateChainAction.statusbar"));
-		putValue(NAME, res.getString("RemoveFromCertificateChainAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("RemoveFromCertificateChainAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/removecert.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("RemoveFromCertificateChainAction.statusbar"));
+        putValue(NAME, res.getString("RemoveFromCertificateChainAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("RemoveFromCertificateChainAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/removecert.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
+            KeyStore keyStore = newState.getKeyStore();
 
-			Key privKey = keyStore.getKey(alias, password.toCharArray());
+            Key privKey = keyStore.getKey(alias, password.toCharArray());
 
-			X509Certificate[] certChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore
-					.getCertificateChain(alias)));
+            X509Certificate[] certChain = X509CertUtil.orderX509CertChain(
+                    X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
-			if (certChain.length == 1) {
-				JOptionPane.showMessageDialog(frame,
-						res.getString("RemoveFromCertificateChainAction.CannotRemoveOnlyCert.message"),
-						res.getString("RemoveFromCertificateChainAction.RemoveFromCertificateChain.Title"),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (certChain.length == 1) {
+                JOptionPane.showMessageDialog(frame, res.getString(
+                                                      "RemoveFromCertificateChainAction.CannotRemoveOnlyCert.message"), res.getString(
+                                                      "RemoveFromCertificateChainAction.RemoveFromCertificateChain" +
+                                                      ".Title"),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			// Certificate to remove is the end one in the chain
-			X509Certificate[] newCertChain = new X509Certificate[certChain.length - 1];
+            // Certificate to remove is the end one in the chain
+            X509Certificate[] newCertChain = new X509Certificate[certChain.length - 1];
 
-			System.arraycopy(certChain, 0, newCertChain, 0, newCertChain.length);
+            System.arraycopy(certChain, 0, newCertChain, 0, newCertChain.length);
 
-			keyStore.deleteEntry(alias);
+            keyStore.deleteEntry(alias);
 
-			keyStore.setKeyEntry(alias, privKey, password.toCharArray(), newCertChain);
+            keyStore.setKeyEntry(alias, privKey, password.toCharArray(), newCertChain);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
+            kseFrame.updateControls(true);
 
-			JOptionPane.showMessageDialog(frame,
-					res.getString("RemoveFromCertificateChainAction.RemoveFromCertificateChainSuccessful.message"),
-					res.getString("RemoveFromCertificateChainAction.RemoveFromCertificateChain.Title"),
-					JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, res.getString(
+                                                  "RemoveFromCertificateChainAction.RemoveFromCertificateChainSuccessful.message"), res.getString(
+                                                  "RemoveFromCertificateChainAction.RemoveFromCertificateChain.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

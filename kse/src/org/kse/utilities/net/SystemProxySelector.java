@@ -28,39 +28,38 @@ import java.util.List;
 
 /**
  * Proxy Selector for system proxy settings.
- *
  */
 public class SystemProxySelector extends ProxySelector {
-	private static ProxySelector systemProxySelector;
+    private static ProxySelector systemProxySelector;
 
-	@Override
-	public List<Proxy> select(URI uri) {
-		return getSystemProxySelector().select(uri);
-	}
+    @Override
+    public List<Proxy> select(URI uri) {
+        return getSystemProxySelector().select(uri);
+    }
 
-	@Override
-	public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {
-		getSystemProxySelector().connectFailed(uri, socketAddress, ioException);
-	}
+    @Override
+    public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {
+        getSystemProxySelector().connectFailed(uri, socketAddress, ioException);
+    }
 
-	@Override
-	public boolean equals(Object object) {
-		if (object == this) {
-			return true;
-		}
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
 
-		if (!(object instanceof SystemProxySelector)) {
-			return false;
-		}
+        if (!(object instanceof SystemProxySelector)) {
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	public static ProxySelector getSystemProxySelector() {
-		return systemProxySelector;
-	}
+    public static ProxySelector getSystemProxySelector() {
+        return systemProxySelector;
+    }
 
-	public static void setSystemProxySelector(ProxySelector systemProxySelector) {
-		SystemProxySelector.systemProxySelector = systemProxySelector;
-	}
+    public static void setSystemProxySelector(ProxySelector systemProxySelector) {
+        SystemProxySelector.systemProxySelector = systemProxySelector;
+    }
 }

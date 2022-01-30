@@ -48,159 +48,151 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Dialog to choose a key identifier value.
- *
  */
 public class DKeyIdentifierChooser extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpKeyIdentifier;
-	private JLabel jlGenerationMethod;
-	private JRadioButton jrb160BitHash;
-	private JRadioButton jrb64BitHash;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpKeyIdentifier;
+    private JLabel jlGenerationMethod;
+    private JRadioButton jrb160BitHash;
+    private JRadioButton jrb64BitHash;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private PublicKey publicKey;
-	private byte[] keyIdentifier160Bit;
-	private byte[] keyIdentifier64Bit;
-	private byte[] keyIdentifier;
+    private PublicKey publicKey;
+    private byte[] keyIdentifier160Bit;
+    private byte[] keyIdentifier64Bit;
+    private byte[] keyIdentifier;
 
-	/**
-	 * Constructs a new DKeyIdentifierChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param publicKey
-	 *            Public key
-	 * @param keyIdentifier
-	 *            Key identifier
-	 * @throws CryptoException
-	 *             If there was a problem generating identifiers
-	 */
-	public DKeyIdentifierChooser(JFrame parent, String title, PublicKey publicKey, byte[] keyIdentifier)
-			throws CryptoException {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		this.publicKey = publicKey;
-		initComponents(keyIdentifier);
-	}
+    /**
+     * Constructs a new DKeyIdentifierChooser dialog.
+     *
+     * @param parent        The parent frame
+     * @param title         The dialog title
+     * @param publicKey     Public key
+     * @param keyIdentifier Key identifier
+     * @throws CryptoException If there was a problem generating identifiers
+     */
+    public DKeyIdentifierChooser(JFrame parent, String title, PublicKey publicKey, byte[] keyIdentifier)
+            throws CryptoException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.publicKey = publicKey;
+        initComponents(keyIdentifier);
+    }
 
-	/**
-	 * Constructs a new DKeyIdentifierChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param publicKey
-	 *            Public key
-	 * @param keyIdentifier
-	 *            Key identifier
-	 * @throws CryptoException
-	 *             If there was a problem generating identifiers
-	 */
-	public DKeyIdentifierChooser(JDialog parent, String title, PublicKey publicKey, byte[] keyIdentifier)
-			throws CryptoException {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.publicKey = publicKey;
-		initComponents(keyIdentifier);
-	}
+    /**
+     * Constructs a new DKeyIdentifierChooser dialog.
+     *
+     * @param parent        The parent dialog
+     * @param title         The dialog title
+     * @param publicKey     Public key
+     * @param keyIdentifier Key identifier
+     * @throws CryptoException If there was a problem generating identifiers
+     */
+    public DKeyIdentifierChooser(JDialog parent, String title, PublicKey publicKey, byte[] keyIdentifier)
+            throws CryptoException {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.publicKey = publicKey;
+        initComponents(keyIdentifier);
+    }
 
-	private void initComponents(byte[] keyIdentifier) throws CryptoException {
-		jlGenerationMethod = new JLabel(res.getString("DKeyIdentifierChooser.jlGenerationMethod.text"));
+    private void initComponents(byte[] keyIdentifier) throws CryptoException {
+        jlGenerationMethod = new JLabel(res.getString("DKeyIdentifierChooser.jlGenerationMethod.text"));
 
-		jrb160BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb160BitHash.text"));
-		jrb160BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb160BitHash.tooltip"));
+        jrb160BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb160BitHash.text"));
+        jrb160BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb160BitHash.tooltip"));
 
-		jrb64BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb64BitHash.text"));
-		jrb64BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb64BitHash.tooltip"));
+        jrb64BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb64BitHash.text"));
+        jrb64BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb64BitHash.tooltip"));
 
-		ButtonGroup bgKeyIdentifier = new ButtonGroup();
-		bgKeyIdentifier.add(jrb160BitHash);
-		bgKeyIdentifier.add(jrb64BitHash);
+        ButtonGroup bgKeyIdentifier = new ButtonGroup();
+        bgKeyIdentifier.add(jrb160BitHash);
+        bgKeyIdentifier.add(jrb64BitHash);
 
-		jpKeyIdentifier = new JPanel(new GridLayout(3, 1));
-		jpKeyIdentifier.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-		jpKeyIdentifier.add(jlGenerationMethod);
-		jpKeyIdentifier.add(jrb160BitHash);
-		jpKeyIdentifier.add(jrb64BitHash);
+        jpKeyIdentifier = new JPanel(new GridLayout(3, 1));
+        jpKeyIdentifier.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
+                                                                                                     new EmptyBorder(5,
+                                                                                                                     5,
+                                                                                                                     5,
+                                                                                                                     5))));
+        jpKeyIdentifier.add(jlGenerationMethod);
+        jpKeyIdentifier.add(jrb160BitHash);
+        jpKeyIdentifier.add(jrb64BitHash);
 
-		jbOK = new JButton(res.getString("DKeyIdentifierChooser.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DKeyIdentifierChooser.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DKeyIdentifierChooser.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DKeyIdentifierChooser.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(BorderLayout.CENTER, jpKeyIdentifier);
-		getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(BorderLayout.CENTER, jpKeyIdentifier);
+        getContentPane().add(BorderLayout.SOUTH, jpButtons);
 
-		populate(keyIdentifier);
+        populate(keyIdentifier);
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void populate(byte[] keyIdentifier) throws CryptoException {
-		KeyIdentifierGenerator keyIdentifierGenerator = new KeyIdentifierGenerator(publicKey);
+    private void populate(byte[] keyIdentifier) throws CryptoException {
+        KeyIdentifierGenerator keyIdentifierGenerator = new KeyIdentifierGenerator(publicKey);
 
-		keyIdentifier160Bit = keyIdentifierGenerator.generate160BitHashId();
-		keyIdentifier64Bit = keyIdentifierGenerator.generate64BitHashId();
+        keyIdentifier160Bit = keyIdentifierGenerator.generate160BitHashId();
+        keyIdentifier64Bit = keyIdentifierGenerator.generate64BitHashId();
 
-		if (keyIdentifier == null || (keyIdentifier.length == keyIdentifier160Bit.length)) {
-			jrb160BitHash.setSelected(true);
-		} else {
-			jrb64BitHash.setSelected(true);
-		}
-	}
+        if (keyIdentifier == null || (keyIdentifier.length == keyIdentifier160Bit.length)) {
+            jrb160BitHash.setSelected(true);
+        } else {
+            jrb64BitHash.setSelected(true);
+        }
+    }
 
-	/**
-	 * Get selected key identifier.
-	 *
-	 * @return Key identifier, or null if none
-	 */
-	public byte[] getKeyIdentifier() {
-		return keyIdentifier;
-	}
+    /**
+     * Get selected key identifier.
+     *
+     * @return Key identifier, or null if none
+     */
+    public byte[] getKeyIdentifier() {
+        return keyIdentifier;
+    }
 
-	private void okPressed() {
-		if (jrb160BitHash.isSelected()) {
-			keyIdentifier = keyIdentifier160Bit;
-		} else {
-			keyIdentifier = keyIdentifier64Bit;
-		}
+    private void okPressed() {
+        if (jrb160BitHash.isSelected()) {
+            keyIdentifier = keyIdentifier160Bit;
+        } else {
+            keyIdentifier = keyIdentifier64Bit;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

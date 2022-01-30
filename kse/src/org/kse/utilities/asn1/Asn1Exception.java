@@ -21,48 +21,43 @@ package org.kse.utilities.asn1;
 
 /**
  * Represents an ASN.1 exception.
- *
  */
 public class Asn1Exception extends Exception {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a new Asn1Exception.
-	 */
-	public Asn1Exception() {
-		super();
-	}
+    /**
+     * Creates a new Asn1Exception.
+     */
+    public Asn1Exception() {
+        super();
+    }
 
-	/**
-	 * Creates a new Asn1Exception with the specified message.
-	 *
-	 * @param message
-	 *            Exception message
-	 */
-	public Asn1Exception(String message) {
-		super(message);
-	}
+    /**
+     * Creates a new Asn1Exception with the specified message.
+     *
+     * @param message Exception message
+     */
+    public Asn1Exception(String message) {
+        super(message);
+    }
 
-	/**
-	 * Creates a new Asn1Exception with the specified message and cause
-	 * throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 * @param message
-	 *            Exception message
-	 */
-	public Asn1Exception(String message, Throwable causeThrowable) {
-		super(message, causeThrowable);
-	}
+    /**
+     * Creates a new Asn1Exception with the specified message and cause
+     * throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     * @param message        Exception message
+     */
+    public Asn1Exception(String message, Throwable causeThrowable) {
+        super(message, causeThrowable);
+    }
 
-	/**
-	 * Creates a new Asn1Exception with the specified cause throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public Asn1Exception(Throwable causeThrowable) {
-		super(causeThrowable);
-	}
+    /**
+     * Creates a new Asn1Exception with the specified cause throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public Asn1Exception(Throwable causeThrowable) {
+        super(causeThrowable);
+    }
 }

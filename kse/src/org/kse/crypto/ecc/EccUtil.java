@@ -42,193 +42,190 @@ import org.kse.version.JavaVersion;
 
 /**
  * Static helper methods for ECC stuff, mainly detection of available ECC algorithms.
- *
  */
 public class EccUtil {
 
-	private static boolean sunECProviderAvailable = true;
-	private static String[] availableSunCurves = new String[0];
-	static {
-		// read available curves provided by SunEC
-		Provider sunECProvider = Security.getProvider("SunEC");
-		if (sunECProvider != null) {
-			availableSunCurves = sunECProvider.getProperty("AlgorithmParameters.EC SupportedCurves").split("\\|");
-		} else {
-			sunECProviderAvailable = false;
-		}
-	}
+    private static boolean sunECProviderAvailable = true;
+    private static String[] availableSunCurves = new String[0];
 
-	private EccUtil() {
-	}
+    static {
+        // read available curves provided by SunEC
+        Provider sunECProvider = Security.getProvider("SunEC");
+        if (sunECProvider != null) {
+            availableSunCurves = sunECProvider.getProperty("AlgorithmParameters.EC SupportedCurves").split("\\|");
+        } else {
+            sunECProviderAvailable = false;
+        }
+    }
 
-	/**
-	 * Determines the name of the domain parameters that were used for generating the key.
-	 *
-	 * @param key An EC key
-	 * @return The name of the domain parameters that were used for the EC key,
-	 *         or an empty string if curve is unknown.
-	 */
-	public static String getNamedCurve(Key key) {
+    private EccUtil() {
+    }
 
-		if (!(key instanceof ECKey)) {
-			throw new InvalidParameterException("Not a EC private key.");
-		}
+    /**
+     * Determines the name of the domain parameters that were used for generating the key.
+     *
+     * @param key An EC key
+     * @return The name of the domain parameters that were used for the EC key,
+     *         or an empty string if curve is unknown.
+     */
+    public static String getNamedCurve(Key key) {
 
-		ECKey ecKey = (ECKey) key;
-		ECParameterSpec params = ecKey.getParams();
-		if (!(params instanceof ECNamedCurveSpec)) {
-			return "";
-		}
+        if (!(key instanceof ECKey)) {
+            throw new InvalidParameterException("Not a EC private key.");
+        }
 
-		ECNamedCurveSpec ecPrivateKeySpec = (ECNamedCurveSpec) params;
-		return ecPrivateKeySpec.getName();
-	}
+        ECKey ecKey = (ECKey) key;
+        ECParameterSpec params = ecKey.getParams();
+        if (!(params instanceof ECNamedCurveSpec)) {
+            return "";
+        }
 
-	/**
-	 * Checks if EC curves are available for the given keyStoreType
-	 * (i.e. either BC key store type or at least Java 7)
-	 *
-	 * @param keyStoreType Availability depends on store type
-	 * @return True, if there are EC curves available
-	 */
-	public static boolean isECAvailable(KeyStoreType keyStoreType) {
-		return ((JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170) && sunECProviderAvailable)
-				|| isBouncyCastleKeyStore(keyStoreType));
-	}
+        ECNamedCurveSpec ecPrivateKeySpec = (ECNamedCurveSpec) params;
+        return ecPrivateKeySpec.getName();
+    }
 
-	/**
-	 * Is the given KeyStoreType backed by the BC provider?
-	 *
-	 * @param keyStoreType KeyStoreType to check
-	 * @return True, if KeyStoreType is backed by the BC provider
-	 */
-	public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
-		return (keyStoreType == KeyStoreType.BKS
-				|| keyStoreType == KeyStoreType.BKS_V1
-				|| keyStoreType == KeyStoreType.UBER
-				|| keyStoreType == KeyStoreType.BCFKS);
-	}
+    /**
+     * Checks if EC curves are available for the given keyStoreType
+     * (i.e. either BC key store type or at least Java 7)
+     *
+     * @param keyStoreType Availability depends on store type
+     * @return True, if there are EC curves available
+     */
+    public static boolean isECAvailable(KeyStoreType keyStoreType) {
+        return ((JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170) && sunECProviderAvailable) ||
+                isBouncyCastleKeyStore(keyStoreType));
+    }
 
-	/**
-	 * Checks if the given named curve is known by the provider backing the KeyStoreType.
-	 *
-	 * @param curveName Name of the curve
-	 * @param keyStoreType KeyStoreType
-	 * @return True, if named curve is supported by the keystore
-	 */
-	public static boolean isCurveAvailable(String curveName, KeyStoreType keyStoreType) {
+    /**
+     * Is the given KeyStoreType backed by the BC provider?
+     *
+     * @param keyStoreType KeyStoreType to check
+     * @return True, if KeyStoreType is backed by the BC provider
+     */
+    public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
+        return (keyStoreType == KeyStoreType.BKS || keyStoreType == KeyStoreType.BKS_V1 ||
+                keyStoreType == KeyStoreType.UBER || keyStoreType == KeyStoreType.BCFKS);
+    }
 
-		// BC provides all curves
-		if (isBouncyCastleKeyStore(keyStoreType)
-				|| EdDSACurves.ED25519.jce().equalsIgnoreCase(curveName)
-				|| EdDSACurves.ED448.jce().equalsIgnoreCase(curveName)) {
-			return true;
-		}
+    /**
+     * Checks if the given named curve is known by the provider backing the KeyStoreType.
+     *
+     * @param curveName    Name of the curve
+     * @param keyStoreType KeyStoreType
+     * @return True, if named curve is supported by the keystore
+     */
+    public static boolean isCurveAvailable(String curveName, KeyStoreType keyStoreType) {
 
-		// no SunEC provider found?
-		if (availableSunCurves.length == 0) {
-			return false;
-		}
+        // BC provides all curves
+        if (isBouncyCastleKeyStore(keyStoreType) || EdDSACurves.ED25519.jce().equalsIgnoreCase(curveName) ||
+            EdDSACurves.ED448.jce().equalsIgnoreCase(curveName)) {
+            return true;
+        }
 
-		// is curve among SunEC curves?
-		for (String curve : availableSunCurves) {
-			if (curve.contains(curveName)) {
-				return true;
-			}
-		}
+        // no SunEC provider found?
+        if (availableSunCurves.length == 0) {
+            return false;
+        }
 
-		return false;
-	}
+        // is curve among SunEC curves?
+        for (String curve : availableSunCurves) {
+            if (curve.contains(curveName)) {
+                return true;
+            }
+        }
 
-	/**
-	 * Finds the longest curve name in all curves that are provided by BC.
-	 *
-	 * @return String with longest curve name
-	 */
-	public static String findLongestCurveName() {
-		String longestCurveName = "";
-		for (CurveSet curveSet : CurveSet.values()) {
-			List<String> curveNames = curveSet.getAllCurveNames();
-			for (String curveName : curveNames) {
-				if (curveName.length() > longestCurveName.length()) {
-					longestCurveName = curveName;
-				}
-			}
-		}
-		return longestCurveName;
-	}
+        return false;
+    }
 
-	/**
-	 * Converts PKCS#8 EC private key (RFC 5208/5958 ASN.1 PrivateKeyInfo structure) to "traditional" OpenSSL
-	 * ASN.1 structure ECPrivateKey from RFC 5915. As ECPrivateKey is already in the PrivateKey field of PrivateKeyInfo,
-	 * this must only be extracted:
-	 *
-	 * SEQUENCE {
-	 *	  INTEGER 0
-	 *	  SEQUENCE {
-	 *	    OBJECT IDENTIFIER ecPublicKey (1 2 840 10045 2 1)
-	 *	    OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
-	 *	    }
-	 *	  OCTET STRING, encapsulates {
-	 *	    SEQUENCE {
-	 *	      INTEGER 1
-	 *	      OCTET STRING
-	 *	        17 12 CA 42 16 79 1B 45    ...B.y.E
-	 *	        ...
-	 *	        C8 B2 66 0A E5 60 50 0B
-	 *	      [0] {
-	 *	        OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
-	 *	        }
-	 *	      [1] {
-	 *	        BIT STRING
-	 *	          04 61 C0 08 B4 89 A0 50    .a.....P
-	 *            ...
-	 *	          AE D5 ED C3 4D 0E 47 91    ....M.G.
-	 *	          89                         .
-	 *	        }
-	 *	      }
-	 *	    }
-	 *	  }
-	 *
-	 * @param ecPrivateKey An EC key
-	 * @return Object holding ASN1 ECPrivateKey structure
-	 * @throws IOException When ECPrivateKey structure in PrivateKeyInfo's PrivateKey field cannot be parsed
-	 */
-	public static org.bouncycastle.asn1.sec.ECPrivateKey convertToECPrivateKeyStructure(ECPrivateKey ecPrivateKey)
-			throws IOException {
-		PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(ecPrivateKey.getEncoded());
-		ASN1Encodable privateKey = privateKeyInfo.parsePrivateKey();
+    /**
+     * Finds the longest curve name in all curves that are provided by BC.
+     *
+     * @return String with longest curve name
+     */
+    public static String findLongestCurveName() {
+        String longestCurveName = "";
+        for (CurveSet curveSet : CurveSet.values()) {
+            List<String> curveNames = curveSet.getAllCurveNames();
+            for (String curveName : curveNames) {
+                if (curveName.length() > longestCurveName.length()) {
+                    longestCurveName = curveName;
+                }
+            }
+        }
+        return longestCurveName;
+    }
 
-		return org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(privateKey);
-	}
+    /**
+     * Converts PKCS#8 EC private key (RFC 5208/5958 ASN.1 PrivateKeyInfo structure) to "traditional" OpenSSL
+     * ASN.1 structure ECPrivateKey from RFC 5915. As ECPrivateKey is already in the PrivateKey field of PrivateKeyInfo,
+     * this must only be extracted:
+     * <p>
+     * SEQUENCE {
+     * INTEGER 0
+     * SEQUENCE {
+     * OBJECT IDENTIFIER ecPublicKey (1 2 840 10045 2 1)
+     * OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
+     * }
+     * OCTET STRING, encapsulates {
+     * SEQUENCE {
+     * INTEGER 1
+     * OCTET STRING
+     * 17 12 CA 42 16 79 1B 45    ...B.y.E
+     * ...
+     * C8 B2 66 0A E5 60 50 0B
+     * [0] {
+     * OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
+     * }
+     * [1] {
+     * BIT STRING
+     * 04 61 C0 08 B4 89 A0 50    .a.....P
+     * ...
+     * AE D5 ED C3 4D 0E 47 91    ....M.G.
+     * 89                         .
+     * }
+     * }
+     * }
+     * }
+     *
+     * @param ecPrivateKey An EC key
+     * @return Object holding ASN1 ECPrivateKey structure
+     * @throws IOException When ECPrivateKey structure in PrivateKeyInfo's PrivateKey field cannot be parsed
+     */
+    public static org.bouncycastle.asn1.sec.ECPrivateKey convertToECPrivateKeyStructure(ECPrivateKey ecPrivateKey)
+            throws IOException {
+        PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(ecPrivateKey.getEncoded());
+        ASN1Encodable privateKey = privateKeyInfo.parsePrivateKey();
 
-	/**
-	 * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given privateKey is.
-	 *
-	 * @param privateKey An EdDSA private key
-	 * @return Ed25519 or Ed448
-	 * @throws InvalidParameterException if privateKey is not a EdDSA key
-	 */
-	public static EdDSACurves detectEdDSACurve(PrivateKey privateKey) {
-		PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKey.getEncoded());
-		AlgorithmIdentifier algorithm = privateKeyInfo.getPrivateKeyAlgorithm();
-		ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
+        return org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(privateKey);
+    }
 
-		return EdDSACurves.resolve(algOid);
-	}
+    /**
+     * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given privateKey is.
+     *
+     * @param privateKey An EdDSA private key
+     * @return Ed25519 or Ed448
+     * @throws InvalidParameterException if privateKey is not a EdDSA key
+     */
+    public static EdDSACurves detectEdDSACurve(PrivateKey privateKey) {
+        PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(privateKey.getEncoded());
+        AlgorithmIdentifier algorithm = privateKeyInfo.getPrivateKeyAlgorithm();
+        ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
 
-	/**
-	 * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given publicKey is.
-	 *
-	 * @param publicKey An EdDSA public key
-	 * @return Ed25519 or Ed448
-	 * @throws InvalidParameterException if publicKey is not a EdDSA key
-	 */
-	public static EdDSACurves detectEdDSACurve(PublicKey publicKey) {
-		SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-		AlgorithmIdentifier algorithm = publicKeyInfo.getAlgorithm();
-		ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
+        return EdDSACurves.resolve(algOid);
+    }
 
-		return EdDSACurves.resolve(algOid);
-	}
+    /**
+     * Detect which one of the two EdDSA curves (Ed25519 or Ed448) the given publicKey is.
+     *
+     * @param publicKey An EdDSA public key
+     * @return Ed25519 or Ed448
+     * @throws InvalidParameterException if publicKey is not a EdDSA key
+     */
+    public static EdDSACurves detectEdDSACurve(PublicKey publicKey) {
+        SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+        AlgorithmIdentifier algorithm = publicKeyInfo.getAlgorithm();
+        ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
+
+        return EdDSACurves.resolve(algOid);
+    }
 }

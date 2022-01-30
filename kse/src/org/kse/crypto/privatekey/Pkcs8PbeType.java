@@ -23,62 +23,73 @@ import java.util.ResourceBundle;
 
 /**
  * Enumeration of Password based Encryption (PBE) Types supported by Pkcs8Util.
- *
  */
 public enum Pkcs8PbeType implements PbeType {
-	/** SHA-1 with 2 key Triple DES */
-	SHA1_2KEY_DESEDE("1.2.840.113549.1.12.1.4", "Pkcs8PbeType.PbeWithSha1And2KeyDesede"),
+    /**
+     * SHA-1 with 2 key Triple DES
+     */
+    SHA1_2KEY_DESEDE("1.2.840.113549.1.12.1.4", "Pkcs8PbeType.PbeWithSha1And2KeyDesede"),
 
-	/** SHA-1 with 3 key Triple DES */
-	SHA1_3KEY_DESEDE("1.2.840.113549.1.12.1.3", "Pkcs8PbeType.PbeWithSha1And3KeyDesede"),
+    /**
+     * SHA-1 with 3 key Triple DES
+     */
+    SHA1_3KEY_DESEDE("1.2.840.113549.1.12.1.3", "Pkcs8PbeType.PbeWithSha1And3KeyDesede"),
 
-	/** SHA-1 with 40 bit RC2 */
-	SHA1_40BIT_RC2("1.2.840.113549.1.12.1.6", "Pkcs8PbeType.PbeWithSha1And40bitRc2"),
+    /**
+     * SHA-1 with 40 bit RC2
+     */
+    SHA1_40BIT_RC2("1.2.840.113549.1.12.1.6", "Pkcs8PbeType.PbeWithSha1And40bitRc2"),
 
-	/** SHA-1 with 128 bit RC2 */
-	SHA1_128BIT_RC2("1.2.840.113549.1.12.1.5", "Pkcs8PbeType.PbeWithSha1And128BitRc2"),
+    /**
+     * SHA-1 with 128 bit RC2
+     */
+    SHA1_128BIT_RC2("1.2.840.113549.1.12.1.5", "Pkcs8PbeType.PbeWithSha1And128BitRc2"),
 
-	/** SHA-1 with 40 bit RC4 */
-	SHA1_40BIT_RC4("1.2.840.113549.1.12.1.2", "Pkcs8PbeType.PbeWithSha1And40BitRc4"),
+    /**
+     * SHA-1 with 40 bit RC4
+     */
+    SHA1_40BIT_RC4("1.2.840.113549.1.12.1.2", "Pkcs8PbeType.PbeWithSha1And40BitRc4"),
 
-	/** SHA-1 with 128 bit RC4 */
-	SHA1_128BIT_RC4("1.2.840.113549.1.12.1.1", "Pkcs8PbeType.PbeWithSha1And128BitRc4");
+    /**
+     * SHA-1 with 128 bit RC4
+     */
+    SHA1_128BIT_RC4("1.2.840.113549.1.12.1.1", "Pkcs8PbeType.PbeWithSha1And128BitRc4");
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
-	private String jce;
-	private String friendlyKey;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
+    private String jce;
+    private String friendlyKey;
 
-	Pkcs8PbeType(String jce, String friendlyKey) {
-		this.jce = jce;
-		this.friendlyKey = friendlyKey;
-	}
+    Pkcs8PbeType(String jce, String friendlyKey) {
+        this.jce = jce;
+        this.friendlyKey = friendlyKey;
+    }
 
-	/**
-	 * PBE type JCE name.
-	 *
-	 * @return JCE name
-	 */
-	public String jce() {
-		return jce;
-	}
+    /**
+     * PBE type JCE name.
+     *
+     * @return JCE name
+     */
+    public String jce() {
+        return jce;
+    }
 
-	/**
-	 * Get type's friendly name.
-	 *
-	 * @return Friendly name resource key name
-	 */
-	@Override
-	public String friendly() {
-		return res.getString(friendlyKey);
-	}
+    /**
+     * Get type's friendly name.
+     *
+     * @return Friendly name resource key name
+     */
+    @Override
+    public String friendly() {
+        return res.getString(friendlyKey);
+    }
 
-	/**
-	 * Returns friendly name.
-	 *
-	 * @return Friendly name
-	 */
-	@Override
-	public String toString() {
-		return friendly();
-	}
+    /**
+     * Returns friendly name.
+     *
+     * @return Friendly name
+     */
+    @Override
+    public String toString() {
+        return friendly();
+    }
 }

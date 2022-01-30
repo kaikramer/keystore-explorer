@@ -29,78 +29,74 @@ import org.kse.crypto.x509.X509CertUtil;
 
 /**
  * Encapsulates a draggable trusted certificate entry.
- *
+ * <p>
  * Product of drag is a PEM'd X.509 encoding of the trusted certificate.
- *
  */
 public class DragTrustedCertificateEntry extends DragEntry {
-	private static final String EXTENSION = "cer";
+    private static final String EXTENSION = "cer";
 
-	private byte[] contentBytes;
-	private String contentStr;
-	private ImageIcon image;
+    private byte[] contentBytes;
+    private String contentStr;
+    private ImageIcon image;
 
-	/**
-	 * Construct DragTrustedCertificateEntry.
-	 *
-	 * @param name
-	 *            Entry name
-	 * @param trustedCertificate
-	 *            Trusted certificate
-	 * @throws CryptoException
-	 *             If there was a problem creating the content
-	 */
-	public DragTrustedCertificateEntry(String name, Certificate trustedCertificate) throws CryptoException {
-		super(name);
+    /**
+     * Construct DragTrustedCertificateEntry.
+     *
+     * @param name               Entry name
+     * @param trustedCertificate Trusted certificate
+     * @throws CryptoException If there was a problem creating the content
+     */
+    public DragTrustedCertificateEntry(String name, Certificate trustedCertificate) throws CryptoException {
+        super(name);
 
-		// String content is X.509 PEM
-		contentStr = X509CertUtil.getCertEncodedX509Pem(X509CertUtil.convertCertificate(trustedCertificate));
+        // String content is X.509 PEM
+        contentStr = X509CertUtil.getCertEncodedX509Pem(X509CertUtil.convertCertificate(trustedCertificate));
 
-		// Binary content is bytes of same
-		contentBytes = contentStr.getBytes();
+        // Binary content is bytes of same
+        contentBytes = contentStr.getBytes();
 
-		// Get drag image
-		image = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource("images/drag_trustcert.png")));
-	}
+        // Get drag image
+        image = new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/drag_trustcert.png")));
+    }
 
-	/**
-	 * Get entry image - to display while dragging.
-	 *
-	 * @return Entry image
-	 */
-	@Override
-	public ImageIcon getImage() {
-		return image;
-	}
+    /**
+     * Get entry image - to display while dragging.
+     *
+     * @return Entry image
+     */
+    @Override
+    public ImageIcon getImage() {
+        return image;
+    }
 
-	/**
-	 * Get entry file extension. Used to generate dragged file name.
-	 *
-	 * @return File extension
-	 */
-	@Override
-	public String getExtension() {
-		return EXTENSION;
-	}
+    /**
+     * Get entry file extension. Used to generate dragged file name.
+     *
+     * @return File extension
+     */
+    @Override
+    public String getExtension() {
+        return EXTENSION;
+    }
 
-	/**
-	 * Get entry content as binary.
-	 *
-	 * @return Content
-	 */
-	@Override
-	public byte[] getContent() {
-		return contentBytes;
-	}
+    /**
+     * Get entry content as binary.
+     *
+     * @return Content
+     */
+    @Override
+    public byte[] getContent() {
+        return contentBytes;
+    }
 
-	/**
-	 * Get entry content as a string.
-	 *
-	 * @return Content
-	 */
-	@Override
-	public String getContentString() {
-		return contentStr;
-	}
+    /**
+     * Get entry content as a string.
+     *
+     * @return Content
+     */
+    @Override
+    public String getContentString() {
+        return contentStr;
+    }
 }

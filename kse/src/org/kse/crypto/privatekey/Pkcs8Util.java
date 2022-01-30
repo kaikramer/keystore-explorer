@@ -64,276 +64,272 @@ import org.kse.utilities.pem.PemUtil;
 
 /**
  * Provides utility methods relating to PKCS #8 encoded private keys.
- *
  */
 public class Pkcs8Util {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
-	private static final String PKCS8_UNENC_PVK_PEM_TYPE = "PRIVATE KEY";
-	private static final String PKCS8_ENC_PVK_PEM_TYPE = "ENCRYPTED PRIVATE KEY";
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/privatekey/resources");
+    private static final String PKCS8_UNENC_PVK_PEM_TYPE = "PRIVATE KEY";
+    private static final String PKCS8_ENC_PVK_PEM_TYPE = "ENCRYPTED PRIVATE KEY";
 
-	private Pkcs8Util() {
-	}
+    private Pkcs8Util() {
+    }
 
-	/**
-	 * PKCS #8 encode a private key.
-	 *
-	 * @return The encoding
-	 * @param privateKey
-	 *            The private key
-	 */
-	public static byte[] get(PrivateKey privateKey) {
-		return privateKey.getEncoded();
-	}
+    /**
+     * PKCS #8 encode a private key.
+     *
+     * @return The encoding
+     * @param privateKey
+     *            The private key
+     */
+    public static byte[] get(PrivateKey privateKey) {
+        return privateKey.getEncoded();
+    }
 
-	/**
-	 * PKCS #8 encode a private key and PEM the encoding.
-	 *
-	 * @return The PEM'd encoding
-	 * @param privateKey
-	 *            The private key
-	 */
-	public static String getPem(PrivateKey privateKey) {
-		PemInfo pemInfo = new PemInfo(PKCS8_UNENC_PVK_PEM_TYPE, null, privateKey.getEncoded());
-		return PemUtil.encode(pemInfo);
-	}
+    /**
+     * PKCS #8 encode a private key and PEM the encoding.
+     *
+     * @return The PEM'd encoding
+     * @param privateKey
+     *            The private key
+     */
+    public static String getPem(PrivateKey privateKey) {
+        PemInfo pemInfo = new PemInfo(PKCS8_UNENC_PVK_PEM_TYPE, null, privateKey.getEncoded());
+        return PemUtil.encode(pemInfo);
+    }
 
-	/**
-	 * PKCS #8 encode and encrypt a private key.
-	 *
-	 * @return The encrypted encoding
-	 * @param privateKey
-	 *            The private key
-	 * @param pbeType
-	 *            PBE algorithm to use for encryption
-	 * @param password
-	 *            Encryption password
-	 * @throws CryptoException
-	 *             Problem encountered while getting the encoded private key
-	 * @throws IOException
-	 *             If an I/O error occurred
-	 */
-	public static byte[] getEncrypted(PrivateKey privateKey, Pkcs8PbeType pbeType, Password password)
-			throws CryptoException, IOException {
-		try {
-			byte[] pkcs8 = get(privateKey);
+    /**
+     * PKCS #8 encode and encrypt a private key.
+     *
+     * @return The encrypted encoding
+     * @param privateKey
+     *            The private key
+     * @param pbeType
+     *            PBE algorithm to use for encryption
+     * @param password
+     *            Encryption password
+     * @throws CryptoException
+     *             Problem encountered while getting the encoded private key
+     * @throws IOException
+     *             If an I/O error occurred
+     */
+    public static byte[] getEncrypted(PrivateKey privateKey, Pkcs8PbeType pbeType, Password password)
+            throws CryptoException, IOException {
+        try {
+            byte[] pkcs8 = get(privateKey);
 
-			// Generate PBE secret key from password
-			SecretKeyFactory keyFact = SecretKeyFactory.getInstance(pbeType.jce());
-			PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
-			SecretKey pbeKey = keyFact.generateSecret(pbeKeySpec);
+            // Generate PBE secret key from password
+            SecretKeyFactory keyFact = SecretKeyFactory.getInstance(pbeType.jce());
+            PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
+            SecretKey pbeKey = keyFact.generateSecret(pbeKeySpec);
 
-			// Generate random salt and iteration count
-			byte[] salt = generateSalt();
-			int iterationCount = generateIterationCount();
+            // Generate random salt and iteration count
+            byte[] salt = generateSalt();
+            int iterationCount = generateIterationCount();
 
-			// Store in algorithm parameters
-			PBEParameterSpec pbeParameterSpec = new PBEParameterSpec(salt, iterationCount);
-			AlgorithmParameters params = AlgorithmParameters.getInstance(pbeType.jce());
-			params.init(pbeParameterSpec);
+            // Store in algorithm parameters
+            PBEParameterSpec pbeParameterSpec = new PBEParameterSpec(salt, iterationCount);
+            AlgorithmParameters params = AlgorithmParameters.getInstance(pbeType.jce());
+            params.init(pbeParameterSpec);
 
-			// Create PBE cipher from key and params
-			Cipher cipher = Cipher.getInstance(pbeType.jce());
-			cipher.init(Cipher.ENCRYPT_MODE, pbeKey, params);
+            // Create PBE cipher from key and params
+            Cipher cipher = Cipher.getInstance(pbeType.jce());
+            cipher.init(Cipher.ENCRYPT_MODE, pbeKey, params);
 
-			// Encrypt key
-			byte[] encPkcs8 = cipher.doFinal(pkcs8);
+            // Encrypt key
+            byte[] encPkcs8 = cipher.doFinal(pkcs8);
 
-			// Create and return encrypted private key information
-			EncryptedPrivateKeyInfo encPrivateKeyInfo = new EncryptedPrivateKeyInfo(params, encPkcs8);
+            // Create and return encrypted private key information
+            EncryptedPrivateKeyInfo encPrivateKeyInfo = new EncryptedPrivateKeyInfo(params, encPkcs8);
 
-			return encPrivateKeyInfo.getEncoded();
-		} catch (GeneralSecurityException ex) {
-			throw new CryptoException("NoEncryptPkcs8PrivateKey.exception.message", ex);
-		}
-	}
+            return encPrivateKeyInfo.getEncoded();
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException("NoEncryptPkcs8PrivateKey.exception.message", ex);
+        }
+    }
 
-	/**
-	 * PKCS #8 encode and encrypt a private key and PEM the encoding.
-	 *
-	 * @return The encrypted, PEM'd encoding
-	 * @param privateKey
-	 *            The private key
-	 * @param pbeType
-	 *            PBE algorithm to use for encryption
-	 * @param password
-	 *            Encryption password
-	 * @throws CryptoException
-	 *             Problem encountered while getting the encoded private key
-	 * @throws IOException
-	 *             If an I/O error occurred
-	 */
-	public static String getEncryptedPem(PrivateKey privateKey, Pkcs8PbeType pbeType, Password password)
-			throws CryptoException, IOException {
-		PemInfo pemInfo = new PemInfo(PKCS8_ENC_PVK_PEM_TYPE, null, getEncrypted(privateKey, pbeType, password));
+    /**
+     * PKCS #8 encode and encrypt a private key and PEM the encoding.
+     *
+     * @return The encrypted, PEM'd encoding
+     * @param privateKey
+     *            The private key
+     * @param pbeType
+     *            PBE algorithm to use for encryption
+     * @param password
+     *            Encryption password
+     * @throws CryptoException
+     *             Problem encountered while getting the encoded private key
+     * @throws IOException
+     *             If an I/O error occurred
+     */
+    public static String getEncryptedPem(PrivateKey privateKey, Pkcs8PbeType pbeType, Password password)
+            throws CryptoException, IOException {
+        PemInfo pemInfo = new PemInfo(PKCS8_ENC_PVK_PEM_TYPE, null, getEncrypted(privateKey, pbeType, password));
 
-		return PemUtil.encode(pemInfo);
-	}
+        return PemUtil.encode(pemInfo);
+    }
 
-	/**
-	 * Load an unencrypted PKCS #8 private key from the stream. The encoding of
-	 * the private key may be PEM or DER.
-	 *
-	 * @param pvkData BA to load the unencrypted private key from
-	 * @return The private key
-	 * @throws PrivateKeyEncryptedException
-	 *             If private key is encrypted
-	 * @throws CryptoException
-	 *             Problem encountered while loading the private key
-	 * @throws IOException
-	 *             If an I/O error occurred
-	 */
-	public static PrivateKey load(byte[] pvkData) throws CryptoException, IOException {
+    /**
+     * Load an unencrypted PKCS #8 private key from the stream. The encoding of
+     * the private key may be PEM or DER.
+     *
+     * @param pvkData BA to load the unencrypted private key from
+     * @return The private key
+     * @throws PrivateKeyEncryptedException
+     *             If private key is encrypted
+     * @throws CryptoException
+     *             Problem encountered while loading the private key
+     * @throws IOException
+     *             If an I/O error occurred
+     */
+    public static PrivateKey load(byte[] pvkData) throws CryptoException, IOException {
 
-		// Check pkcs #8 is unencrypted
-		EncryptionType encType = getEncryptionType(pvkData);
+        // Check pkcs #8 is unencrypted
+        EncryptionType encType = getEncryptionType(pvkData);
 
-		if (encType == null) {
-			// Not a valid PKCS #8 private key
-			throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
-		}
+        if (encType == null) {
+            // Not a valid PKCS #8 private key
+            throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
+        }
 
-		if (encType == ENCRYPTED) {
-			throw new PrivateKeyEncryptedException(res.getString("Pkcs8IsEncrypted.exception.message"));
-		}
+        if (encType == ENCRYPTED) {
+            throw new PrivateKeyEncryptedException(res.getString("Pkcs8IsEncrypted.exception.message"));
+        }
 
-		byte[] pvkBytes = null;
-		// Check if stream is PEM encoded
-		PemInfo pemInfo = PemUtil.decode(pvkData);
+        byte[] pvkBytes = null;
+        // Check if stream is PEM encoded
+        PemInfo pemInfo = PemUtil.decode(pvkData);
 
-		if (pemInfo != null) {
-			// It is - get DER from PEM
-			pvkBytes = pemInfo.getContent();
-		}
+        if (pemInfo != null) {
+            // It is - get DER from PEM
+            pvkBytes = pemInfo.getContent();
+        }
 
-		/*
-		 * If we haven't got the key bytes via PEM then just use stream
-		 * contents directly (assume it is DER encoded)
-		 */
-		if (pvkBytes == null) {
-			// Read in private key bytes
-			pvkBytes = pvkData;
-		}
+        /*
+         * If we haven't got the key bytes via PEM then just use stream
+         * contents directly (assume it is DER encoded)
+         */
+        if (pvkBytes == null) {
+            // Read in private key bytes
+            pvkBytes = pvkData;
+        }
 
+        try {
+            // Determine private key algorithm from key bytes
+            String privateKeyAlgorithm = getPrivateKeyAlgorithm(pvkBytes);
 
-		try {
-			// Determine private key algorithm from key bytes
-			String privateKeyAlgorithm = getPrivateKeyAlgorithm(pvkBytes);
+            // Convert bytes to private key
+            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(pvkBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance(privateKeyAlgorithm);
 
-			// Convert bytes to private key
-			PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(pvkBytes);
-			KeyFactory keyFactory = KeyFactory.getInstance(privateKeyAlgorithm);
+            return keyFactory.generatePrivate(privateKeySpec);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
+        } catch (InvalidKeySpecException ex) {
+            throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
+        }
+    }
 
-			return keyFactory.generatePrivate(privateKeySpec);
-		} catch (NoSuchAlgorithmException ex) {
-			throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
-		} catch (InvalidKeySpecException ex) {
-			throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
-		}
-	}
+    /**
+     * Load an encrypted PKCS #8 private key from the specified stream. The
+     * encoding of the private key may be PEM or DER.
+     *
+     * @param pvkData Stream load the encrypted private key from
+     * @param password
+     *            Password to decrypt
+     * @return The private key
+     * @throws PrivateKeyUnencryptedException
+     *             If private key is unencrypted
+     * @throws PrivateKeyPbeNotSupportedException
+     *             If private key PBE algorithm is not supported
+     * @throws CryptoException
+     *             Problem encountered while loading the private key
+     * @throws IOException
+     *             If an I/O error occurred
+     */
+    public static PrivateKey loadEncrypted(byte[] pvkData, Password password) throws CryptoException, IOException {
 
-	/**
-	 * Load an encrypted PKCS #8 private key from the specified stream. The
-	 * encoding of the private key may be PEM or DER.
-	 *
-	 * @param pvkData Stream load the encrypted private key from
-	 * @param password
-	 *            Password to decrypt
-	 * @return The private key
-	 * @throws PrivateKeyUnencryptedException
-	 *             If private key is unencrypted
-	 * @throws PrivateKeyPbeNotSupportedException
-	 *             If private key PBE algorithm is not supported
-	 * @throws CryptoException
-	 *             Problem encountered while loading the private key
-	 * @throws IOException
-	 *             If an I/O error occurred
-	 */
-	public static PrivateKey loadEncrypted(byte[] pvkData, Password password) throws
-	CryptoException, IOException {
+        // Check PKCS#8 is encrypted
+        EncryptionType encType = getEncryptionType(pvkData);
+        if (encType == null) {
+            // Not a valid PKCS #8 private key
+            throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
+        }
+        if (encType == UNENCRYPTED) {
+            throw new PrivateKeyUnencryptedException(res.getString("Pkcs8IsEncrypted.exception.message"));
+        }
 
-		// Check PKCS#8 is encrypted
-		EncryptionType encType = getEncryptionType(pvkData);
-		if (encType == null) {
-			// Not a valid PKCS #8 private key
-			throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
-		}
-		if (encType == UNENCRYPTED) {
-			throw new PrivateKeyUnencryptedException(res.getString("Pkcs8IsEncrypted.exception.message"));
-		}
+        // Check if stream is PEM encoded
+        PemInfo pemInfo = PemUtil.decode(pvkData);
+        byte[] encPvk = null;
+        if (pemInfo != null) {
+            // It is - get DER from PEM
+            encPvk = pemInfo.getContent();
+        }
 
-		// Check if stream is PEM encoded
-		PemInfo pemInfo = PemUtil.decode(pvkData);
-		byte[] encPvk = null;
-		if (pemInfo != null) {
-			// It is - get DER from PEM
-			encPvk = pemInfo.getContent();
-		}
+        // If we haven't got the encrypted bytes via PEM then assume it is DER encoded
+        if (encPvk == null) {
+            encPvk = pvkData;
+        }
 
-		// If we haven't got the encrypted bytes via PEM then assume it is DER encoded
-		if (encPvk == null) {
-			encPvk = pvkData;
-		}
+        // try to read PKCS#8 info
+        PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = null;
+        try {
+            encryptedPrivateKeyInfo = new PKCS8EncryptedPrivateKeyInfo(
+                    org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(encPvk));
+        } catch (Exception e) {
+            // Not a valid PKCS #8 private key
+            throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
+        }
 
-		// try to read PKCS#8 info
-		PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = null;
-		try {
-			encryptedPrivateKeyInfo = new PKCS8EncryptedPrivateKeyInfo(
-					org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(encPvk));
-		} catch (Exception e) {
-			// Not a valid PKCS #8 private key
-			throw new CryptoException(res.getString("NotValidPkcs8.exception.message"));
-		}
+        // decrypt and create PrivateKey object from ASN.1 structure
+        try {
+            InputDecryptorProvider decProv = new JceOpenSSLPKCS8DecryptorProviderBuilder().setProvider("BC")
+                                                                                          .build(password.toCharArray());
+            PrivateKeyInfo privateKeyInfo = encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decProv);
 
-		// decrypt and create PrivateKey object from ASN.1 structure
-		try {
-			InputDecryptorProvider decProv = new JceOpenSSLPKCS8DecryptorProviderBuilder()
-					.setProvider("BC")
-					.build(password.toCharArray());
-			PrivateKeyInfo privateKeyInfo = encryptedPrivateKeyInfo.decryptPrivateKeyInfo(decProv);
+            return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+        } catch (Exception ex) {
+            throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
+        }
+    }
 
-			return new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
-		} catch (Exception ex) {
-			throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
-		}
-	}
+    /**
+     * Detect if a PKCS #8 private key is encrypted or not.
+     *
+     * @param pkcs8 BA containing PKCS #8 private key
+     * @return Encryption type or null if not a valid PKCS #8 private key
+     * @throws IOException
+     *             If an I/O problem occurred
+     */
+    public static EncryptionType getEncryptionType(byte[] pkcs8) throws IOException {
 
-	/**
-	 * Detect if a PKCS #8 private key is encrypted or not.
-	 *
-	 * @param pkcs8 BA containing PKCS #8 private key
-	 * @return Encryption type or null if not a valid PKCS #8 private key
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public static EncryptionType getEncryptionType(byte[] pkcs8) throws IOException {
+        PemInfo pemInfo = PemUtil.decode(pkcs8);
 
-		PemInfo pemInfo = PemUtil.decode(pkcs8);
+        // PEM encoded?
+        if (pemInfo != null) {
+            String pemType = pemInfo.getType();
 
-		// PEM encoded?
-		if (pemInfo != null) {
-			String pemType = pemInfo.getType();
+            // Encrypted in pem format?
+            if (pemType.equals(Pkcs8Util.PKCS8_ENC_PVK_PEM_TYPE)) {
+                return ENCRYPTED;
+            }
+            // Unencrypted in pem format?
+            else if (pemType.equals(Pkcs8Util.PKCS8_UNENC_PVK_PEM_TYPE)) {
+                return UNENCRYPTED;
+            }
+        }
 
-			// Encrypted in pem format?
-			if (pemType.equals(Pkcs8Util.PKCS8_ENC_PVK_PEM_TYPE)) {
-				return ENCRYPTED;
-			}
-			// Unencrypted in pem format?
-			else if (pemType.equals(Pkcs8Util.PKCS8_UNENC_PVK_PEM_TYPE)) {
-				return UNENCRYPTED;
-			}
-		}
+        // In ASN.1 format?
+        try {
+            // Read in an ASN.1 and check structure against the following
+            ASN1Primitive key = ASN1Primitive.fromByteArray(pkcs8);
 
-		// In ASN.1 format?
-		try {
-			// Read in an ASN.1 and check structure against the following
-			ASN1Primitive key = ASN1Primitive.fromByteArray(pkcs8);
+            if (key instanceof ASN1Sequence) {
+                ASN1Sequence sequence = (ASN1Sequence) key;
 
-			if (key instanceof ASN1Sequence) {
-				ASN1Sequence sequence = (ASN1Sequence) key;
-
-				// May be unencrypted
-				if ((sequence.size() == 3) || (sequence.size() == 4)) {
-					// @formatter:off
+                // May be unencrypted
+                if ((sequence.size() == 3) || (sequence.size() == 4)) {
+                    // @formatter:off
 
 					/*
 					 * Unencrypted PKCS #8 Private Key:
@@ -350,37 +346,37 @@ public class Pkcs8Util {
 
 					// @formatter:on
 
-					Object obj1 = sequence.getObjectAt(0);
-					Object obj2 = sequence.getObjectAt(1);
-					Object obj3 = sequence.getObjectAt(2);
+                    Object obj1 = sequence.getObjectAt(0);
+                    Object obj2 = sequence.getObjectAt(1);
+                    Object obj3 = sequence.getObjectAt(2);
 
-					if (!(obj1 instanceof ASN1Integer)) {
-						return null;
-					}
+                    if (!(obj1 instanceof ASN1Integer)) {
+                        return null;
+                    }
 
-					ASN1Integer version = (ASN1Integer) obj1;
+                    ASN1Integer version = (ASN1Integer) obj1;
 
-					if (!version.getValue().equals(BigInteger.ZERO)) {
-						return null;
-					}
+                    if (!version.getValue().equals(BigInteger.ZERO)) {
+                        return null;
+                    }
 
-					if (!(obj2 instanceof ASN1Sequence)) {
-						return null;
-					}
+                    if (!(obj2 instanceof ASN1Sequence)) {
+                        return null;
+                    }
 
-					if (!sequenceIsAlgorithmIdentifier((ASN1Sequence) obj2)) {
-						return null;
-					}
+                    if (!sequenceIsAlgorithmIdentifier((ASN1Sequence) obj2)) {
+                        return null;
+                    }
 
-					if (!(obj3 instanceof ASN1OctetString)) {
-						return null;
-					}
+                    if (!(obj3 instanceof ASN1OctetString)) {
+                        return null;
+                    }
 
-					return UNENCRYPTED;
-				}
-				// May be encrypted
-				else if (sequence.size() == 2) {
-					// @formatter:off
+                    return UNENCRYPTED;
+                }
+                // May be encrypted
+                else if (sequence.size() == 2) {
+                    // @formatter:off
 
 					/*
 					 * Encrypted PKCS #8 Private Key:
@@ -395,34 +391,34 @@ public class Pkcs8Util {
 
 					// @formatter:on
 
-					Object obj1 = sequence.getObjectAt(0);
-					Object obj2 = sequence.getObjectAt(1);
+                    Object obj1 = sequence.getObjectAt(0);
+                    Object obj2 = sequence.getObjectAt(1);
 
-					if (!(obj1 instanceof ASN1Sequence)) {
-						return null;
-					}
+                    if (!(obj1 instanceof ASN1Sequence)) {
+                        return null;
+                    }
 
-					if (!sequenceIsAlgorithmIdentifier((ASN1Sequence) obj1)) {
-						return null;
-					}
+                    if (!sequenceIsAlgorithmIdentifier((ASN1Sequence) obj1)) {
+                        return null;
+                    }
 
-					if (!(obj2 instanceof ASN1OctetString)) {
-						return null;
-					}
+                    if (!(obj2 instanceof ASN1OctetString)) {
+                        return null;
+                    }
 
-					return ENCRYPTED;
-				}
-			}
-		} catch (Exception ex) {
-			// Structure not as expected for PKCS #8
-			return null;
-		}
+                    return ENCRYPTED;
+                }
+            }
+        } catch (Exception ex) {
+            // Structure not as expected for PKCS #8
+            return null;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private static boolean sequenceIsAlgorithmIdentifier(ASN1Sequence sequence) {
-		// @formatter:off
+    private static boolean sequenceIsAlgorithmIdentifier(ASN1Sequence sequence) {
+        // @formatter:off
 		/*
 		 * AlgorithmIdentifier ::= ASN1Sequence {
 		 * 		algorithm OBJECT IDENTIFIER,
@@ -431,42 +427,42 @@ public class Pkcs8Util {
 		 */
 		// @formatter:on
 
-		if ((sequence.size() != 1) && (sequence.size() != 2)) {
-			return false;
-		}
+        if ((sequence.size() != 1) && (sequence.size() != 2)) {
+            return false;
+        }
 
-		Object obj1 = sequence.getObjectAt(0);
+        Object obj1 = sequence.getObjectAt(0);
 
-		return obj1 instanceof ASN1ObjectIdentifier;
+        return obj1 instanceof ASN1ObjectIdentifier;
 
-	}
+    }
 
-	private static int generateIterationCount() {
-		// Generate a random iteration count in range 1000-1999
-		Random rng = new Random();
-		rng.setSeed(Calendar.getInstance().getTimeInMillis());
+    private static int generateIterationCount() {
+        // Generate a random iteration count in range 1000-1999
+        Random rng = new Random();
+        rng.setSeed(Calendar.getInstance().getTimeInMillis());
 
-		int random = rng.nextInt();
+        int random = rng.nextInt();
 
-		int mod1000 = random % 1000;
+        int mod1000 = random % 1000;
 
-		return mod1000 + 1000;
-	}
+        return mod1000 + 1000;
+    }
 
-	private static byte[] generateSalt() {
-		// Generate random 8-bit salt
-		Random random = new Random();
-		random.setSeed(Calendar.getInstance().getTimeInMillis());
+    private static byte[] generateSalt() {
+        // Generate random 8-bit salt
+        Random random = new Random();
+        random.setSeed(Calendar.getInstance().getTimeInMillis());
 
-		byte[] salt = new byte[8];
+        byte[] salt = new byte[8];
 
-		random.nextBytes(salt);
+        random.nextBytes(salt);
 
-		return salt;
-	}
+        return salt;
+    }
 
-	private static String getPrivateKeyAlgorithm(byte[] unencPkcs8) throws IOException, CryptoException {
-		// @formatter:off
+    private static String getPrivateKeyAlgorithm(byte[] unencPkcs8) throws IOException, CryptoException {
+        // @formatter:off
 		/*
 		 * Get private key algorithm from unencrypted PKCS #8 bytes:
 		 *
@@ -485,46 +481,46 @@ public class Pkcs8Util {
 		 */
 		// @formatter:on
 
-		try (ASN1InputStream ais = new ASN1InputStream(new ByteArrayInputStream(unencPkcs8))) {
+        try (ASN1InputStream ais = new ASN1InputStream(new ByteArrayInputStream(unencPkcs8))) {
 
-			ASN1Encodable derEnc;
-			try {
-				derEnc = ais.readObject();
-			} catch (OutOfMemoryError err) { // Happens with some non ASN.1 files
-				throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
-			}
+            ASN1Encodable derEnc;
+            try {
+                derEnc = ais.readObject();
+            } catch (OutOfMemoryError err) { // Happens with some non ASN.1 files
+                throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
+            }
 
-			if (!(derEnc instanceof ASN1Sequence)) {
-				throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
-			}
+            if (!(derEnc instanceof ASN1Sequence)) {
+                throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
+            }
 
-			ASN1Sequence privateKeyInfoSequence = (ASN1Sequence) derEnc;
+            ASN1Sequence privateKeyInfoSequence = (ASN1Sequence) derEnc;
 
-			derEnc = privateKeyInfoSequence.getObjectAt(1);
+            derEnc = privateKeyInfoSequence.getObjectAt(1);
 
-			if (!(derEnc instanceof ASN1Sequence)) {
-				throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
-			}
+            if (!(derEnc instanceof ASN1Sequence)) {
+                throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
+            }
 
-			ASN1Sequence privateKeyAlgorithmSequence = (ASN1Sequence) derEnc;
+            ASN1Sequence privateKeyAlgorithmSequence = (ASN1Sequence) derEnc;
 
-			derEnc = privateKeyAlgorithmSequence.getObjectAt(0);
+            derEnc = privateKeyAlgorithmSequence.getObjectAt(0);
 
-			if (!(derEnc instanceof ASN1ObjectIdentifier)) {
-				throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
-			}
+            if (!(derEnc instanceof ASN1ObjectIdentifier)) {
+                throw new CryptoException(res.getString("NoUnencryptedPkcs8.exception.message"));
+            }
 
-			ASN1ObjectIdentifier algorithmOid = (ASN1ObjectIdentifier) derEnc;
+            ASN1ObjectIdentifier algorithmOid = (ASN1ObjectIdentifier) derEnc;
 
-			String oid = algorithmOid.getId();
+            String oid = algorithmOid.getId();
 
-			if (oid.equals(RSA.oid())) {
-				return RSA.jce();
-			} else if (oid.equals(DSA.oid())) {
-				return DSA.jce();
-			} else {
-				return oid; // Unknown algorithm
-			}
-		}
-	}
+            if (oid.equals(RSA.oid())) {
+                return RSA.jce();
+            } else if (oid.equals(DSA.oid())) {
+                return DSA.jce();
+            } else {
+                return oid; // Unknown algorithm
+            }
+        }
+    }
 }

@@ -25,59 +25,56 @@ import java.util.Properties;
 /**
  * Simple class intended to store the current directory for a file centric GUI
  * application. Wraps the "user.dir" System property.
- *
  */
 public class CurrentDirectory {
-	static {
-		initialiseWorkingDirToBeHomeDir();
-	}
+    static {
+        initialiseWorkingDirToBeHomeDir();
+    }
 
-	private CurrentDirectory() {
-	}
+    private CurrentDirectory() {
+    }
 
-	private static void initialiseWorkingDirToBeHomeDir() {
-		String homeDir = System.getProperty("user.home");
+    private static void initialiseWorkingDirToBeHomeDir() {
+        String homeDir = System.getProperty("user.home");
 
-		if (homeDir != null) {
-			System.setProperty("user.dir", homeDir);
-		}
-	}
+        if (homeDir != null) {
+            System.setProperty("user.dir", homeDir);
+        }
+    }
 
-	/**
-	 * Update CurrentSirectory to be the supplied directory.
-	 *
-	 * @param directory
-	 *            Used to set current directory
-	 */
-	public static void update(File directory) {
-		if (directory != null && directory.exists()) {
-			Properties sysProps = new Properties(System.getProperties());
-			sysProps.setProperty("user.dir", directory.getAbsolutePath());
-			System.setProperties(sysProps);
-		}
-	}
+    /**
+     * Update CurrentSirectory to be the supplied directory.
+     *
+     * @param directory Used to set current directory
+     */
+    public static void update(File directory) {
+        if (directory != null && directory.exists()) {
+            Properties sysProps = new Properties(System.getProperties());
+            sysProps.setProperty("user.dir", directory.getAbsolutePath());
+            System.setProperties(sysProps);
+        }
+    }
 
-	/**
-	 * Update CurrentDirectory based on the supplied file. If the file exists
-	 * then its parent is used.
-	 *
-	 * @param file
-	 *            Used to set current directory
-	 */
-	public static void updateForFile(File file) {
-		if (file != null) {
-			File directory = file.getParentFile();
+    /**
+     * Update CurrentDirectory based on the supplied file. If the file exists
+     * then its parent is used.
+     *
+     * @param file Used to set current directory
+     */
+    public static void updateForFile(File file) {
+        if (file != null) {
+            File directory = file.getParentFile();
 
-			update(directory);
-		}
-	}
+            update(directory);
+        }
+    }
 
-	/**
-	 * Get the current directory.
-	 *
-	 * @return Current directory
-	 */
-	public static File get() {
-		return new File(System.getProperty("user.dir"));
-	}
+    /**
+     * Get the current directory.
+     *
+     * @return Current directory
+     */
+    public static File get() {
+        return new File(System.getProperty("user.dir"));
+    }
 }

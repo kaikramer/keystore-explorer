@@ -28,52 +28,47 @@ import org.kse.utilities.os.OperatingSystem;
 /**
  * Handles change events on a menu item that causes the status bar text to show
  * or hide help text for the menu item.
- *
  */
 public class StatusBarChangeHandler implements ChangeListener {
-	private JMenuItem jmi;
-	private String helpText;
-	private StatusBar statusBar;
+    private JMenuItem jmi;
+    private String helpText;
+    private StatusBar statusBar;
 
-	/**
-	 * Construct a StatusBarChangeHandler.
-	 *
-	 * @param jmi
-	 *            The menu item
-	 * @param helpText
-	 *            Help text for the menu item
-	 * @param statusBar
-	 *            The status bar
-	 */
-	public StatusBarChangeHandler(JMenuItem jmi, String helpText, StatusBar statusBar) {
-		this.jmi = jmi;
-		this.helpText = helpText;
-		this.statusBar = statusBar;
-		jmi.addChangeListener(this);
-	}
+    /**
+     * Construct a StatusBarChangeHandler.
+     *
+     * @param jmi       The menu item
+     * @param helpText  Help text for the menu item
+     * @param statusBar The status bar
+     */
+    public StatusBarChangeHandler(JMenuItem jmi, String helpText, StatusBar statusBar) {
+        this.jmi = jmi;
+        this.helpText = helpText;
+        this.statusBar = statusBar;
+        jmi.addChangeListener(this);
+    }
 
-	/**
-	 * Menu item's state has changed - if armed show its help text, otherwise
-	 * hide any help text.
-	 *
-	 * @param evt
-	 *            The change event
-	 */
-	@Override
-	public void stateChanged(ChangeEvent evt) {
-		/*
-		 * Only bother if not using macOS - on there stateChagned is not fired
-		 * for the application manu bar's items so for consistency we will fire
-		 * it at all
-		 */
-		if (!OperatingSystem.isMacOs()) {
-			if (jmi.isArmed()) {
-				// Display help text
-				statusBar.setStatusBarText(helpText);
-			} else {
-				// Display default status
-				statusBar.setDefaultStatusBarText();
-			}
-		}
-	}
+    /**
+     * Menu item's state has changed - if armed show its help text, otherwise
+     * hide any help text.
+     *
+     * @param evt The change event
+     */
+    @Override
+    public void stateChanged(ChangeEvent evt) {
+        /*
+         * Only bother if not using macOS - on there stateChagned is not fired
+         * for the application manu bar's items so for consistency we will fire
+         * it at all
+         */
+        if (!OperatingSystem.isMacOs()) {
+            if (jmi.isArmed()) {
+                // Display help text
+                statusBar.setStatusBarText(helpText);
+            } else {
+                // Display default status
+                statusBar.setDefaultStatusBarText();
+            }
+        }
+    }
 }

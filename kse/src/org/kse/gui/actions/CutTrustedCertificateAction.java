@@ -23,20 +23,18 @@ import org.kse.gui.KseFrame;
 
 /**
  * Action to copy a Trusted Certificate entry.
- *
  */
 public class CutTrustedCertificateAction extends CutAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CutTrustedCertificateAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CutTrustedCertificateAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("CutTrustedCertificateAction.statusbar"));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("CutTrustedCertificateAction.statusbar"));
+    }
 }

@@ -74,186 +74,189 @@ import org.kse.utilities.DialogViewer;
 
 /**
  * Dialog used to retrieve the type to use in the addition of a new extension.
- *
  */
 public class DAddExtensionType extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
-	private static final X509ExtensionType[] SUPPORTED_EXTENSIONS = { CUSTOM, AUTHORITY_INFORMATION_ACCESS,
-		AUTHORITY_KEY_IDENTIFIER, BASIC_CONSTRAINTS, CERTIFICATE_POLICIES,
-		CRL_DISTRIBUTION_POINTS, EXTENDED_KEY_USAGE, INHIBIT_ANY_POLICY,
-		ISSUER_ALTERNATIVE_NAME, KEY_USAGE, NAME_CONSTRAINTS, POLICY_CONSTRAINTS, POLICY_MAPPINGS,
-		PRIVATE_KEY_USAGE_PERIOD, SUBJECT_ALTERNATIVE_NAME, SUBJECT_INFORMATION_ACCESS, SUBJECT_KEY_IDENTIFIER };
+    private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final X509ExtensionType[] SUPPORTED_EXTENSIONS = { CUSTOM, AUTHORITY_INFORMATION_ACCESS,
+                                                                      AUTHORITY_KEY_IDENTIFIER, BASIC_CONSTRAINTS,
+                                                                      CERTIFICATE_POLICIES, CRL_DISTRIBUTION_POINTS,
+                                                                      EXTENDED_KEY_USAGE, INHIBIT_ANY_POLICY,
+                                                                      ISSUER_ALTERNATIVE_NAME, KEY_USAGE,
+                                                                      NAME_CONSTRAINTS, POLICY_CONSTRAINTS,
+                                                                      POLICY_MAPPINGS, PRIVATE_KEY_USAGE_PERIOD,
+                                                                      SUBJECT_ALTERNATIVE_NAME,
+                                                                      SUBJECT_INFORMATION_ACCESS,
+                                                                      SUBJECT_KEY_IDENTIFIER };
 
-	private JPanel jpExtensionTypes;
-	private JLabel jlExtensionTypes;
-	private JList<X509ExtensionType> jltExtensionTypes;
-	private JScrollPane jspExtensionTypes;
-	private JCheckBox jcbCriticalExtension;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpExtensionTypes;
+    private JLabel jlExtensionTypes;
+    private JList<X509ExtensionType> jltExtensionTypes;
+    private JScrollPane jspExtensionTypes;
+    private JCheckBox jcbCriticalExtension;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private X509Extension extensions;
-	private X509ExtensionType extension;
-	private boolean isCritical;
+    private X509Extension extensions;
+    private X509ExtensionType extension;
+    private boolean isCritical;
 
-	/**
-	 * Creates new DAddExtensionType dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param extensions
-	 *            Current set of extensions
-	 */
-	public DAddExtensionType(JDialog parent, X509Extension extensions) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		setTitle(res.getString("DAddExtensionType.Title"));
-		this.extensions = extensions;
-		initComponents();
-	}
+    /**
+     * Creates new DAddExtensionType dialog.
+     *
+     * @param parent     Parent dialog
+     * @param extensions Current set of extensions
+     */
+    public DAddExtensionType(JDialog parent, X509Extension extensions) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        setTitle(res.getString("DAddExtensionType.Title"));
+        this.extensions = extensions;
+        initComponents();
+    }
 
-	private void initComponents() {
-		jpExtensionTypes = new JPanel(new BorderLayout(5, 5));
-		jpExtensionTypes.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+    private void initComponents() {
+        jpExtensionTypes = new JPanel(new BorderLayout(5, 5));
+        jpExtensionTypes.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                      new CompoundBorder(new EtchedBorder(),
+                                                                         new EmptyBorder(5, 5, 5, 5))));
 
-		jlExtensionTypes = new JLabel(res.getString("DAddExtensionType.jlExtensionTypes.text"));
+        jlExtensionTypes = new JLabel(res.getString("DAddExtensionType.jlExtensionTypes.text"));
 
-		jltExtensionTypes = new JList<>();
-		// Longest name to define constant width
-		jltExtensionTypes.setPrototypeCellValue(NETSCAPE_CERTIFICATE_RENEWAL_URL);
-		jltExtensionTypes.setToolTipText(res.getString("DAddExtensionType.jltExtensionTypes.tooltip"));
-		jltExtensionTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		jltExtensionTypes.setBorder(new EtchedBorder());
+        jltExtensionTypes = new JList<>();
+        // Longest name to define constant width
+        jltExtensionTypes.setPrototypeCellValue(NETSCAPE_CERTIFICATE_RENEWAL_URL);
+        jltExtensionTypes.setToolTipText(res.getString("DAddExtensionType.jltExtensionTypes.tooltip"));
+        jltExtensionTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jltExtensionTypes.setBorder(new EtchedBorder());
 
-		jltExtensionTypes.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				maybeAddExtension(evt);
-			}
-		});
+        jltExtensionTypes.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                maybeAddExtension(evt);
+            }
+        });
 
-		jspExtensionTypes = new JScrollPane(jltExtensionTypes);
+        jspExtensionTypes = new JScrollPane(jltExtensionTypes);
 
-		jcbCriticalExtension = new JCheckBox(res.getString("DAddExtensionType.jcbCriticalExtension.text"));
-		jcbCriticalExtension.setMnemonic(res.getString("DAddExtensionType.jcbCriticalExtension.mnemonic").charAt(0));
-		jcbCriticalExtension.setToolTipText(res.getString("DAddExtensionType.jcbCriticalExtension.tooltip"));
+        jcbCriticalExtension = new JCheckBox(res.getString("DAddExtensionType.jcbCriticalExtension.text"));
+        jcbCriticalExtension.setMnemonic(res.getString("DAddExtensionType.jcbCriticalExtension.mnemonic").charAt(0));
+        jcbCriticalExtension.setToolTipText(res.getString("DAddExtensionType.jcbCriticalExtension.tooltip"));
 
-		jpExtensionTypes.add(jlExtensionTypes, BorderLayout.NORTH);
-		jpExtensionTypes.add(jspExtensionTypes, BorderLayout.CENTER);
-		jpExtensionTypes.add(jcbCriticalExtension, BorderLayout.SOUTH);
+        jpExtensionTypes.add(jlExtensionTypes, BorderLayout.NORTH);
+        jpExtensionTypes.add(jspExtensionTypes, BorderLayout.CENTER);
+        jpExtensionTypes.add(jcbCriticalExtension, BorderLayout.SOUTH);
 
-		jbOK = new JButton(res.getString("DAddExtensionType.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DAddExtensionType.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DAddExtensionType.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DAddExtensionType.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		populateExtensionTypes();
+        populateExtensionTypes();
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpExtensionTypes, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpExtensionTypes, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void populateExtensionTypes() {
-		// Population is the supported set minus those already added
-		ArrayList<X509ExtensionType> availableExtensions = new ArrayList<>();
+    private void populateExtensionTypes() {
+        // Population is the supported set minus those already added
+        ArrayList<X509ExtensionType> availableExtensions = new ArrayList<>();
 
-		for (X509ExtensionType extentionType : SUPPORTED_EXTENSIONS) {
-			if (extensions.getExtensionValue(extentionType.oid()) == null) {
-				availableExtensions.add(extentionType);
-			}
-		}
+        for (X509ExtensionType extentionType : SUPPORTED_EXTENSIONS) {
+            if (extensions.getExtensionValue(extentionType.oid()) == null) {
+                availableExtensions.add(extentionType);
+            }
+        }
 
-		jltExtensionTypes.setListData(availableExtensions.toArray(new X509ExtensionType[availableExtensions.size()]));
+        jltExtensionTypes.setListData(availableExtensions.toArray(new X509ExtensionType[availableExtensions.size()]));
 
-		if (!availableExtensions.isEmpty()) {
-			jltExtensionTypes.setSelectedIndex(0);
-		}
-	}
+        if (!availableExtensions.isEmpty()) {
+            jltExtensionTypes.setSelectedIndex(0);
+        }
+    }
 
-	/**
-	 * Get chosen extension type.
-	 *
-	 * @return Extension type of null if dialog cancelled
-	 */
-	public X509ExtensionType getExtensionType() {
-		return extension;
-	}
+    /**
+     * Get chosen extension type.
+     *
+     * @return Extension type of null if dialog cancelled
+     */
+    public X509ExtensionType getExtensionType() {
+        return extension;
+    }
 
-	/**
-	 * Is extension critical?
-	 *
-	 * @return True if is, false otherwise
-	 */
-	public boolean isExtensionCritical() {
-		return isCritical;
-	}
+    /**
+     * Is extension critical?
+     *
+     * @return True if is, false otherwise
+     */
+    public boolean isExtensionCritical() {
+        return isCritical;
+    }
 
-	private void okPressed() {
-		if (jltExtensionTypes.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(this, res.getString("DAddExtensionType.ExtensionSelectionReq.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+    private void okPressed() {
+        if (jltExtensionTypes.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, res.getString("DAddExtensionType.ExtensionSelectionReq.message"),
+                                          getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		extension = jltExtensionTypes.getSelectedValue();
-		isCritical = jcbCriticalExtension.isSelected();
+        extension = jltExtensionTypes.getSelectedValue();
+        isCritical = jcbCriticalExtension.isSelected();
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void maybeAddExtension(MouseEvent evt) {
-		if (evt.getClickCount() > 1) {
-			int index = jltExtensionTypes.locationToIndex(evt.getPoint());
-			extension = jltExtensionTypes.getModel().getElementAt(index);
-			isCritical = jcbCriticalExtension.isSelected();
-			closeDialog();
-		}
-	}
+    private void maybeAddExtension(MouseEvent evt) {
+        if (evt.getClickCount() > 1) {
+            int index = jltExtensionTypes.locationToIndex(evt.getPoint());
+            extension = jltExtensionTypes.getModel().getElementAt(index);
+            isCritical = jcbCriticalExtension.isSelected();
+            closeDialog();
+        }
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	// for quick UI testing
-	public static void main(String[] args) throws Exception {
-		DAddExtensionType dialog = new DAddExtensionType(new JDialog(), new X509ExtensionSet());
-		DialogViewer.run(dialog);
-	}
+    // for quick UI testing
+    public static void main(String[] args) throws Exception {
+        DAddExtensionType dialog = new DAddExtensionType(new JDialog(), new X509ExtensionSet());
+        DialogViewer.run(dialog);
+    }
 }

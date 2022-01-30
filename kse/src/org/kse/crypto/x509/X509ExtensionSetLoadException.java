@@ -23,49 +23,44 @@ import org.kse.crypto.CryptoException;
 
 /**
  * Thrown when an X.509 X509Extension Set load fails.
- *
  */
 public class X509ExtensionSetLoadException extends CryptoException {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a new X509ExtensionSetLoadException.
-	 */
-	public X509ExtensionSetLoadException() {
-		super();
-	}
+    /**
+     * Creates a new X509ExtensionSetLoadException.
+     */
+    public X509ExtensionSetLoadException() {
+        super();
+    }
 
-	/**
-	 * Creates a new X509ExtensionSetLoadException with the specified message.
-	 *
-	 * @param message
-	 *            Exception message
-	 */
-	public X509ExtensionSetLoadException(String message) {
-		super(message);
-	}
+    /**
+     * Creates a new X509ExtensionSetLoadException with the specified message.
+     *
+     * @param message Exception message
+     */
+    public X509ExtensionSetLoadException(String message) {
+        super(message);
+    }
 
-	/**
-	 * Creates a new X509ExtensionSetLoadException with the specified message
-	 * and cause throwable.
-	 *
-	 * @param message
-	 *            Exception message
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public X509ExtensionSetLoadException(String message, Throwable causeThrowable) {
-		super(message, causeThrowable);
-	}
+    /**
+     * Creates a new X509ExtensionSetLoadException with the specified message
+     * and cause throwable.
+     *
+     * @param message        Exception message
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public X509ExtensionSetLoadException(String message, Throwable causeThrowable) {
+        super(message, causeThrowable);
+    }
 
-	/**
-	 * Creates a new X509ExtensionSetLoadException with the specified cause
-	 * throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public X509ExtensionSetLoadException(Throwable causeThrowable) {
-		super(causeThrowable);
-	}
+    /**
+     * Creates a new X509ExtensionSetLoadException with the specified cause
+     * throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public X509ExtensionSetLoadException(Throwable causeThrowable) {
+        super(causeThrowable);
+    }
 }

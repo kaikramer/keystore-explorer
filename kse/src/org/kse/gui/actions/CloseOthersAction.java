@@ -28,57 +28,53 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to close other KeyStores.
- *
  */
 public class CloseOthersAction extends CloseAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CloseOthersAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CloseOthersAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, null);
-		putValue(LONG_DESCRIPTION, res.getString("CloseOthersAction.statusbar"));
-		putValue(NAME, res.getString("CloseOthersAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("CloseOthersAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/closeothers.png"))));
-	}
+        putValue(ACCELERATOR_KEY, null);
+        putValue(LONG_DESCRIPTION, res.getString("CloseOthersAction.statusbar"));
+        putValue(NAME, res.getString("CloseOthersAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("CloseOthersAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/closeothers.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		// Get the currently active KeyStore - the one to keep open
-		KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        // Get the currently active KeyStore - the one to keep open
+        KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-		/*
-		 * Keep closing the KeyStores while there are more open KeyStores than
-		 * the active one and closing the last one was successful
-		 */
-		KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
+        /*
+         * Keep closing the KeyStores while there are more open KeyStores than
+         * the active one and closing the last one was successful
+         */
+        KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
 
-		while (histories.length > 1) {
-			// Active KeyStore's index may have changed since last loop
-			// iteration
-			int activeIndex = kseFrame.findKeyStoreIndex(history.getCurrentState().getKeyStore());
+        while (histories.length > 1) {
+            // Active KeyStore's index may have changed since last loop
+            // iteration
+            int activeIndex = kseFrame.findKeyStoreIndex(history.getCurrentState().getKeyStore());
 
-			// Get index of next keyStore to close
-			int nextCloseIndex = (activeIndex == 0) ? 1 : 0;
+            // Get index of next keyStore to close
+            int nextCloseIndex = (activeIndex == 0) ? 1 : 0;
 
-			if (!closeKeyStore(histories[nextCloseIndex])) {
-				break;
-			}
+            if (!closeKeyStore(histories[nextCloseIndex])) {
+                break;
+            }
 
-			histories = kseFrame.getKeyStoreHistories();
-		}
-	}
+            histories = kseFrame.getKeyStoreHistories();
+        }
+    }
 }

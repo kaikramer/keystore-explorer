@@ -39,226 +39,222 @@ import org.kse.gui.CursorUtil;
 
 /**
  * Component to view or edit a distinguished name.
- *
  */
 public class JDistinguishedName extends JPanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private JTextField jtfDistinguishedName;
-	private JButton jbViewEditDistinguishedName;
-	private JButton jbClearDistinguishedName;
+    private JTextField jtfDistinguishedName;
+    private JButton jbViewEditDistinguishedName;
+    private JButton jbClearDistinguishedName;
 
-	private String title;
-	private boolean editable;
-	private X500Name distinguishedName;
+    private String title;
+    private boolean editable;
+    private X500Name distinguishedName;
 
-	/**
-	 * Construct a JDistinguishedName.
-	 *
-	 * @param title
-	 *            Title of view or edit dialog
-	 * @param columns
-	 *            Size of text field
-	 * @param editable
-	 *            Is control editable?
-	 */
-	public JDistinguishedName(String title, int columns, boolean editable) {
-		this.title = title;
-		this.editable = editable;
-		initComponents(columns);
-	}
+    /**
+     * Construct a JDistinguishedName.
+     *
+     * @param title    Title of view or edit dialog
+     * @param columns  Size of text field
+     * @param editable Is control editable?
+     */
+    public JDistinguishedName(String title, int columns, boolean editable) {
+        this.title = title;
+        this.editable = editable;
+        initComponents(columns);
+    }
 
-	private void initComponents(int columns) {
-		jtfDistinguishedName = new JTextField(columns);
-		jtfDistinguishedName.setEditable(false);
+    private void initComponents(int columns) {
+        jtfDistinguishedName = new JTextField(columns);
+        jtfDistinguishedName.setEditable(false);
 
-		GridBagConstraints gbcJtfDistinguishedName = new GridBagConstraints();
-		gbcJtfDistinguishedName.gridwidth = 1;
-		gbcJtfDistinguishedName.gridheight = 1;
-		gbcJtfDistinguishedName.gridx = 0;
-		gbcJtfDistinguishedName.gridy = 0;
-		gbcJtfDistinguishedName.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbcJtfDistinguishedName = new GridBagConstraints();
+        gbcJtfDistinguishedName.gridwidth = 1;
+        gbcJtfDistinguishedName.gridheight = 1;
+        gbcJtfDistinguishedName.gridx = 0;
+        gbcJtfDistinguishedName.gridy = 0;
+        gbcJtfDistinguishedName.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon viewEditIcon = new ImageIcon(getClass().getResource("images/view_edit_dn.png"));
-		jbViewEditDistinguishedName = new JButton(viewEditIcon);
+        ImageIcon viewEditIcon = new ImageIcon(getClass().getResource("images/view_edit_dn.png"));
+        jbViewEditDistinguishedName = new JButton(viewEditIcon);
 
-		if (editable) {
-			jbViewEditDistinguishedName.setToolTipText(res
-					.getString("JDistinguishedName.jbViewEditDistinguishedName.Edit.tooltip"));
-			jbViewEditDistinguishedName.addActionListener(evt -> {
-				try {
-					CursorUtil.setCursorBusy(JDistinguishedName.this);
-					editDistinguishedName();
-				} finally {
-					CursorUtil.setCursorFree(JDistinguishedName.this);
-				}
-			});
-		} else {
-			jbViewEditDistinguishedName.setToolTipText(res
-					.getString("JDistinguishedName.jbViewEditDistinguishedName.View.tooltip"));
-			jbViewEditDistinguishedName.addActionListener(evt -> {
-				try {
-					CursorUtil.setCursorBusy(JDistinguishedName.this);
-					displayDistinguishedName();
-				} finally {
-					CursorUtil.setCursorFree(JDistinguishedName.this);
-				}
-			});
-		}
+        if (editable) {
+            jbViewEditDistinguishedName.setToolTipText(
+                    res.getString("JDistinguishedName.jbViewEditDistinguishedName.Edit.tooltip"));
+            jbViewEditDistinguishedName.addActionListener(evt -> {
+                try {
+                    CursorUtil.setCursorBusy(JDistinguishedName.this);
+                    editDistinguishedName();
+                } finally {
+                    CursorUtil.setCursorFree(JDistinguishedName.this);
+                }
+            });
+        } else {
+            jbViewEditDistinguishedName.setToolTipText(
+                    res.getString("JDistinguishedName.jbViewEditDistinguishedName.View.tooltip"));
+            jbViewEditDistinguishedName.addActionListener(evt -> {
+                try {
+                    CursorUtil.setCursorBusy(JDistinguishedName.this);
+                    displayDistinguishedName();
+                } finally {
+                    CursorUtil.setCursorFree(JDistinguishedName.this);
+                }
+            });
+        }
 
-		GridBagConstraints gbcJbViewEditDistinguishedName = new GridBagConstraints();
-		gbcJbViewEditDistinguishedName.gridwidth = 1;
-		gbcJbViewEditDistinguishedName.gridheight = 1;
-		gbcJbViewEditDistinguishedName.gridx = 1;
-		gbcJbViewEditDistinguishedName.gridy = 0;
+        GridBagConstraints gbcJbViewEditDistinguishedName = new GridBagConstraints();
+        gbcJbViewEditDistinguishedName.gridwidth = 1;
+        gbcJbViewEditDistinguishedName.gridheight = 1;
+        gbcJbViewEditDistinguishedName.gridx = 1;
+        gbcJbViewEditDistinguishedName.gridy = 0;
 
-		if (editable) {
-			gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 5);
-		} else {
-			gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 0);
-		}
+        if (editable) {
+            gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 5);
+        } else {
+            gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 0);
+        }
 
-		ImageIcon clearIcon = new ImageIcon(getClass().getResource(
-				"images/clear_dn.png"));
-		jbClearDistinguishedName = new JButton(clearIcon);
-		jbClearDistinguishedName.setToolTipText(res.getString("JDistinguishedName.jbClearDistinguishedName.tooltip"));
-		jbClearDistinguishedName.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JDistinguishedName.this);
-				clearDistinguishedName();
-			} finally {
-				CursorUtil.setCursorFree(JDistinguishedName.this);
-			}
-		});
+        ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_dn.png"));
+        jbClearDistinguishedName = new JButton(clearIcon);
+        jbClearDistinguishedName.setToolTipText(res.getString("JDistinguishedName.jbClearDistinguishedName.tooltip"));
+        jbClearDistinguishedName.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JDistinguishedName.this);
+                clearDistinguishedName();
+            } finally {
+                CursorUtil.setCursorFree(JDistinguishedName.this);
+            }
+        });
 
-		GridBagConstraints gbcJbClearDistinguishedName = new GridBagConstraints();
-		gbcJbClearDistinguishedName.gridwidth = 1;
-		gbcJbClearDistinguishedName.gridheight = 1;
-		gbcJbClearDistinguishedName.gridx = 2;
-		gbcJbClearDistinguishedName.gridy = 0;
-		gbcJbClearDistinguishedName.insets = new Insets(0, 0, 0, 0);
+        GridBagConstraints gbcJbClearDistinguishedName = new GridBagConstraints();
+        gbcJbClearDistinguishedName.gridwidth = 1;
+        gbcJbClearDistinguishedName.gridheight = 1;
+        gbcJbClearDistinguishedName.gridx = 2;
+        gbcJbClearDistinguishedName.gridy = 0;
+        gbcJbClearDistinguishedName.insets = new Insets(0, 0, 0, 0);
 
-		setLayout(new GridBagLayout());
-		add(jtfDistinguishedName, gbcJtfDistinguishedName);
-		add(jbViewEditDistinguishedName, gbcJbViewEditDistinguishedName);
+        setLayout(new GridBagLayout());
+        add(jtfDistinguishedName, gbcJtfDistinguishedName);
+        add(jbViewEditDistinguishedName, gbcJbViewEditDistinguishedName);
 
-		if (editable) {
-			add(jbClearDistinguishedName, gbcJbClearDistinguishedName);
-		}
+        if (editable) {
+            add(jbClearDistinguishedName, gbcJbClearDistinguishedName);
+        }
 
-		populate();
-	}
+        populate();
+    }
 
-	/**
-	 * Set distinguished name.
-	 *
-	 * @param distinguishedName
-	 *            Distinguished name
-	 */
-	public void setDistinguishedName(X500Name distinguishedName) {
+    /**
+     * Set distinguished name.
+     *
+     * @param distinguishedName Distinguished name
+     */
+    public void setDistinguishedName(X500Name distinguishedName) {
 
-		if (distinguishedName == null) {
-			this.distinguishedName = new X500Name(KseX500NameStyle.INSTANCE, new RDN[0]);
-		} else {
-			this.distinguishedName = new X500Name(KseX500NameStyle.INSTANCE, distinguishedName.getRDNs());
-		}
-		populate();
-	}
+        if (distinguishedName == null) {
+            this.distinguishedName = new X500Name(KseX500NameStyle.INSTANCE, new RDN[0]);
+        } else {
+            this.distinguishedName = new X500Name(KseX500NameStyle.INSTANCE, distinguishedName.getRDNs());
+        }
+        populate();
+    }
 
-	/**
-	 * Get distinguished name.
-	 *
-	 * @return Distinguished name
-	 */
-	public X500Name getDistinguishedName() {
-		return distinguishedName;
-	}
+    /**
+     * Get distinguished name.
+     *
+     * @return Distinguished name
+     */
+    public X500Name getDistinguishedName() {
+        return distinguishedName;
+    }
 
-	/**
-	 * Sets whether or not the component is enabled.
-	 *
-	 * @param enabled
-	 *            True if this component should be enabled, false otherwise
-	 */
-	@Override
-	public void setEnabled(boolean enabled) {
-		jbViewEditDistinguishedName.setEnabled(enabled);
-		jbClearDistinguishedName.setEnabled(enabled);
-	}
+    /**
+     * Sets whether or not the component is enabled.
+     *
+     * @param enabled True if this component should be enabled, false otherwise
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        jbViewEditDistinguishedName.setEnabled(enabled);
+        jbClearDistinguishedName.setEnabled(enabled);
+    }
 
-	/**
-	 * Set component's tooltip text.
-	 *
-	 * @param toolTipText
-	 *            Tooltip text
-	 */
-	@Override
-	public void setToolTipText(String toolTipText) {
-		super.setToolTipText(toolTipText);
-		jtfDistinguishedName.setToolTipText(toolTipText);
-	}
+    /**
+     * Set component's tooltip text.
+     *
+     * @param toolTipText Tooltip text
+     */
+    @Override
+    public void setToolTipText(String toolTipText) {
+        super.setToolTipText(toolTipText);
+        jtfDistinguishedName.setToolTipText(toolTipText);
+    }
 
-	private void populate() {
-		if (distinguishedName != null) {
-			jtfDistinguishedName.setText(distinguishedName.toString());
+    private void populate() {
+        if (distinguishedName != null) {
+            jtfDistinguishedName.setText(distinguishedName.toString());
 
-			if (editable) {
-				jbClearDistinguishedName.setEnabled(true);
-			}
-		} else {
-			jtfDistinguishedName.setText("");
+            if (editable) {
+                jbClearDistinguishedName.setEnabled(true);
+            }
+        } else {
+            jtfDistinguishedName.setText("");
 
-			if (editable) {
-				jbClearDistinguishedName.setEnabled(false);
-			}
-		}
+            if (editable) {
+                jbClearDistinguishedName.setEnabled(false);
+            }
+        }
 
-		jtfDistinguishedName.setCaretPosition(0);
-	}
+        jtfDistinguishedName.setCaretPosition(0);
+    }
 
-	private void displayDistinguishedName() {
-		Container container = getTopLevelAncestor();
+    private void displayDistinguishedName() {
+        Container container = getTopLevelAncestor();
 
-		if (container instanceof JDialog) {
-			DDistinguishedNameChooser dDistinguishedNameChooser = new DDistinguishedNameChooser((JDialog) container,
-					title, distinguishedName, false);
-			dDistinguishedNameChooser.setLocationRelativeTo(container);
-			dDistinguishedNameChooser.setVisible(true);
-		} else if (container instanceof JFrame) {
-			DDistinguishedNameChooser dDistinguishedNameChooser = new DDistinguishedNameChooser((JFrame) container,
-					title, distinguishedName, false);
-			dDistinguishedNameChooser.setLocationRelativeTo(container);
-			dDistinguishedNameChooser.setVisible(true);
-		}
-	}
+        if (container instanceof JDialog) {
+            DDistinguishedNameChooser dDistinguishedNameChooser = new DDistinguishedNameChooser((JDialog) container,
+                                                                                                title,
+                                                                                                distinguishedName,
+                                                                                                false);
+            dDistinguishedNameChooser.setLocationRelativeTo(container);
+            dDistinguishedNameChooser.setVisible(true);
+        } else if (container instanceof JFrame) {
+            DDistinguishedNameChooser dDistinguishedNameChooser = new DDistinguishedNameChooser((JFrame) container,
+                                                                                                title,
+                                                                                                distinguishedName,
+                                                                                                false);
+            dDistinguishedNameChooser.setLocationRelativeTo(container);
+            dDistinguishedNameChooser.setVisible(true);
+        }
+    }
 
-	private void editDistinguishedName() {
-		Container container = getTopLevelAncestor();
+    private void editDistinguishedName() {
+        Container container = getTopLevelAncestor();
 
-		DDistinguishedNameChooser dDistinguishedNameChooser = null;
+        DDistinguishedNameChooser dDistinguishedNameChooser = null;
 
-		if (container instanceof JDialog) {
-			dDistinguishedNameChooser = new DDistinguishedNameChooser((JDialog) container, title, distinguishedName,
-					true);
-		} else {
-			dDistinguishedNameChooser = new DDistinguishedNameChooser((JFrame) container, title, distinguishedName,
-					true);
-		}
-		dDistinguishedNameChooser.setLocationRelativeTo(container);
-		dDistinguishedNameChooser.setVisible(true);
+        if (container instanceof JDialog) {
+            dDistinguishedNameChooser = new DDistinguishedNameChooser((JDialog) container, title, distinguishedName,
+                                                                      true);
+        } else {
+            dDistinguishedNameChooser = new DDistinguishedNameChooser((JFrame) container, title, distinguishedName,
+                                                                      true);
+        }
+        dDistinguishedNameChooser.setLocationRelativeTo(container);
+        dDistinguishedNameChooser.setVisible(true);
 
-		X500Name newDistinguishedName = dDistinguishedNameChooser.getDistinguishedName();
+        X500Name newDistinguishedName = dDistinguishedNameChooser.getDistinguishedName();
 
-		if (newDistinguishedName == null) {
-			return;
-		}
+        if (newDistinguishedName == null) {
+            return;
+        }
 
-		setDistinguishedName(newDistinguishedName);
-	}
+        setDistinguishedName(newDistinguishedName);
+    }
 
-	private void clearDistinguishedName() {
-		setDistinguishedName(null);
-	}
+    private void clearDistinguishedName() {
+        setDistinguishedName(null);
+    }
 }

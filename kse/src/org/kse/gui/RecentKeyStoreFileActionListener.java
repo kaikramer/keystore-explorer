@@ -32,54 +32,50 @@ import org.kse.gui.actions.OpenAction;
 /**
  * ActionListener intended for use with the JMenuItemRecentFile class. The
  * ActionListener is used to open a KeyStore file from the menu item.
- *
  */
 public class RecentKeyStoreFileActionListener implements ActionListener {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
-	private File recentFile;
-	private KseFrame kseFrame;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
+    private File recentFile;
+    private KseFrame kseFrame;
 
-	/**
-	 * Create an RecentKeyStoreFileActionListener for the supplied KeyStore file
-	 * and KseFrame.
-	 *
-	 * @param recentFile
-	 *            Recent KeyStore file
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public RecentKeyStoreFileActionListener(File recentFile, KseFrame kseFrame) {
-		this.recentFile = recentFile;
-		this.kseFrame = kseFrame;
-	}
+    /**
+     * Create an RecentKeyStoreFileActionListener for the supplied KeyStore file
+     * and KseFrame.
+     *
+     * @param recentFile Recent KeyStore file
+     * @param kseFrame   KeyStore Explorer frame
+     */
+    public RecentKeyStoreFileActionListener(File recentFile, KseFrame kseFrame) {
+        this.recentFile = recentFile;
+        this.kseFrame = kseFrame;
+    }
 
-	/**
-	 * Action to perform to open the KeyStore file in response to an
-	 * ActionEvent.
-	 *
-	 * @param evt
-	 *            Action event
-	 */
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		kseFrame.setDefaultStatusBarText();
+    /**
+     * Action to perform to open the KeyStore file in response to an
+     * ActionEvent.
+     *
+     * @param evt Action event
+     */
+    @Override
+    public void actionPerformed(ActionEvent evt) {
+        kseFrame.setDefaultStatusBarText();
 
-		if (!recentFile.isFile()) {
-			// File does not exist - invalidate it to remove it from the recent
-			// files menu
-			JMenuItemRecentFile jmiRecentFile = (JMenuItemRecentFile) evt.getSource();
-			JMenuRecentFiles jmRecentFiles = jmiRecentFile.getRecentFilesMenu();
-			jmRecentFiles.invalidate(jmiRecentFile);
+        if (!recentFile.isFile()) {
+            // File does not exist - invalidate it to remove it from the recent
+            // files menu
+            JMenuItemRecentFile jmiRecentFile = (JMenuItemRecentFile) evt.getSource();
+            JMenuRecentFiles jmRecentFiles = jmiRecentFile.getRecentFilesMenu();
+            jmRecentFiles.invalidate(jmiRecentFile);
 
-			JOptionPane
-			.showMessageDialog(kseFrame.getUnderlyingFrame(), MessageFormat.format(
-					res.getString("RecentKeyStoreFileActionListener.NotFile.message"), recentFile), res
-					.getString("RecentKeyStoreFileActionListener.OpenKeyStore.Title"),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+            JOptionPane.showMessageDialog(kseFrame.getUnderlyingFrame(), MessageFormat.format(
+                                                  res.getString("RecentKeyStoreFileActionListener.NotFile.message"),
+                                                  recentFile),
+                                          res.getString("RecentKeyStoreFileActionListener.OpenKeyStore.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		OpenAction openAction = new OpenAction(kseFrame);
-		openAction.openKeyStore(recentFile);
-	}
+        OpenAction openAction = new OpenAction(kseFrame);
+        openAction.openKeyStore(recentFile);
+    }
 }

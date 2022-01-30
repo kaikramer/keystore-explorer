@@ -61,262 +61,249 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Displays the details of a private key with the option to display its fields
  * if it is of a supported type (RSA or DSA).
- *
  */
 public class DViewPrivateKey extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private JLabel jlAlgorithm;
-	private JTextField jtfAlgorithm;
-	private JLabel jlKeySize;
-	private JTextField jtfKeySize;
-	private JLabel jlFormat;
-	private JTextField jtfFormat;
-	private JLabel jlEncoded;
-	private JTextArea jtaEncoded;
-	private JScrollPane jspEncoded;
-	private JButton jbPem;
-	private JButton jbFields;
-	private JButton jbAsn1;
-	private JButton jbOK;
+    private JLabel jlAlgorithm;
+    private JTextField jtfAlgorithm;
+    private JLabel jlKeySize;
+    private JTextField jtfKeySize;
+    private JLabel jlFormat;
+    private JTextField jtfFormat;
+    private JLabel jlEncoded;
+    private JTextArea jtaEncoded;
+    private JScrollPane jspEncoded;
+    private JButton jbPem;
+    private JButton jbFields;
+    private JButton jbAsn1;
+    private JButton jbOK;
 
-	private PrivateKey privateKey;
+    private PrivateKey privateKey;
 
-	/**
-	 * Creates a new DViewPrivateKey dialog.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param privateKey
-	 *            Private key to display
-	 * @throws CryptoException
-	 *             A problem was encountered getting the private key's details
-	 */
-	public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey)
-			throws CryptoException {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.privateKey = privateKey;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewPrivateKey dialog.
+     *
+     * @param parent     Parent frame
+     * @param title      The dialog title
+     * @param privateKey Private key to display
+     * @throws CryptoException A problem was encountered getting the private key's details
+     */
+    public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey) throws CryptoException {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.privateKey = privateKey;
+        initComponents();
+    }
 
-	/**
-	 * Creates new DViewPrivateKey dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param privateKey
-	 *            Private key to display
-	 * @throws CryptoException
-	 *             A problem was encountered getting the private key's details
-	 */
-	public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey) throws CryptoException {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		this.privateKey = privateKey;
-		initComponents();
-	}
+    /**
+     * Creates new DViewPrivateKey dialog where the parent is a dialog.
+     *
+     * @param parent     Parent dialog
+     * @param title      The dialog title
+     * @param privateKey Private key to display
+     * @throws CryptoException A problem was encountered getting the private key's details
+     */
+    public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey) throws CryptoException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.privateKey = privateKey;
+        initComponents();
+    }
 
-	private void initComponents() throws CryptoException {
+    private void initComponents() throws CryptoException {
 
-		jlAlgorithm = new JLabel(res.getString("DViewPrivateKey.jlAlgorithm.text"));
+        jlAlgorithm = new JLabel(res.getString("DViewPrivateKey.jlAlgorithm.text"));
 
-		jtfAlgorithm = new JTextField();
-		jtfAlgorithm.setEditable(false);
-		jtfAlgorithm.setToolTipText(res.getString("DViewPrivateKey.jtfAlgorithm.tooltip"));
+        jtfAlgorithm = new JTextField();
+        jtfAlgorithm.setEditable(false);
+        jtfAlgorithm.setToolTipText(res.getString("DViewPrivateKey.jtfAlgorithm.tooltip"));
 
-		jlKeySize = new JLabel(res.getString("DViewPrivateKey.jlKeySize.text"));
+        jlKeySize = new JLabel(res.getString("DViewPrivateKey.jlKeySize.text"));
 
-		jtfKeySize = new JTextField();
-		jtfKeySize.setEditable(false);
-		jtfKeySize.setToolTipText(res.getString("DViewPrivateKey.jtfKeySize.tooltip"));
+        jtfKeySize = new JTextField();
+        jtfKeySize.setEditable(false);
+        jtfKeySize.setToolTipText(res.getString("DViewPrivateKey.jtfKeySize.tooltip"));
 
-		jlFormat = new JLabel(res.getString("DViewPrivateKey.jlFormat.text"));
+        jlFormat = new JLabel(res.getString("DViewPrivateKey.jlFormat.text"));
 
-		jtfFormat = new JTextField();
-		jtfFormat.setEditable(false);
-		jtfFormat.setToolTipText(res.getString("DViewPrivateKey.jtfFormat.tooltip"));
+        jtfFormat = new JTextField();
+        jtfFormat.setEditable(false);
+        jtfFormat.setToolTipText(res.getString("DViewPrivateKey.jtfFormat.tooltip"));
 
-		jlEncoded = new JLabel(res.getString("DViewPrivateKey.jlEncoded.text"));
+        jlEncoded = new JLabel(res.getString("DViewPrivateKey.jlEncoded.text"));
 
-		jtaEncoded = new JTextArea();
-		jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		jtaEncoded.setBackground(jtfFormat.getBackground());
-		jtaEncoded.setEditable(false);
-		jtaEncoded.setLineWrap(true);
-		jtaEncoded.setToolTipText(res.getString("DViewPrivateKey.jtfEncoded.tooltip"));
+        jtaEncoded = new JTextArea();
+        jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jtaEncoded.setBackground(jtfFormat.getBackground());
+        jtaEncoded.setEditable(false);
+        jtaEncoded.setLineWrap(true);
+        jtaEncoded.setToolTipText(res.getString("DViewPrivateKey.jtfEncoded.tooltip"));
 
-		jspEncoded = PlatformUtil.createScrollPane(jtaEncoded,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		jspEncoded.setBorder(jtfFormat.getBorder());
+        jspEncoded = PlatformUtil.createScrollPane(jtaEncoded, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jspEncoded.setBorder(jtfFormat.getBorder());
 
-		jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
-		PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
-		jbPem.setToolTipText(res.getString("DViewPrivateKey.jbPem.tooltip"));
+        jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
+        PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
+        jbPem.setToolTipText(res.getString("DViewPrivateKey.jbPem.tooltip"));
 
-		jbFields = new JButton(res.getString("DViewPrivateKey.jbFields.text"));
-		PlatformUtil.setMnemonic(jbFields, res.getString("DViewPrivateKey.jbFields.mnemonic").charAt(0));
-		jbFields.setToolTipText(res.getString("DViewPrivateKey.jbFields.tooltip"));
+        jbFields = new JButton(res.getString("DViewPrivateKey.jbFields.text"));
+        PlatformUtil.setMnemonic(jbFields, res.getString("DViewPrivateKey.jbFields.mnemonic").charAt(0));
+        jbFields.setToolTipText(res.getString("DViewPrivateKey.jbFields.tooltip"));
 
-		jbAsn1 = new JButton(res.getString("DViewPrivateKey.jbAsn1.text"));
-		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewPrivateKey.jbAsn1.mnemonic").charAt(0));
-		jbAsn1.setToolTipText(res.getString("DViewPrivateKey.jbAsn1.tooltip"));
+        jbAsn1 = new JButton(res.getString("DViewPrivateKey.jbAsn1.text"));
+        PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewPrivateKey.jbAsn1.mnemonic").charAt(0));
+        jbAsn1.setToolTipText(res.getString("DViewPrivateKey.jbAsn1.tooltip"));
 
-		jbOK = new JButton(res.getString("DViewPrivateKey.jbOK.text"));
+        jbOK = new JButton(res.getString("DViewPrivateKey.jbOK.text"));
 
-		// layout
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog", "[right]unrel[]", "[]unrel[]"));
-		pane.add(jlAlgorithm, "");
-		pane.add(jtfAlgorithm, "growx, pushx, wrap");
-		pane.add(jlKeySize, "");
-		pane.add(jtfKeySize, "growx, pushx, wrap");
-		pane.add(jlFormat, "");
-		pane.add(jtfFormat, "growx, pushx, wrap");
-		pane.add(jlEncoded, "");
-		pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
-		pane.add(jbPem, "spanx, split");
-		pane.add(jbFields, "");
-		pane.add(jbAsn1, "wrap");
-		pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
-		pane.add(jbOK, "spanx, tag ok");
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog", "[right]unrel[]", "[]unrel[]"));
+        pane.add(jlAlgorithm, "");
+        pane.add(jtfAlgorithm, "growx, pushx, wrap");
+        pane.add(jlKeySize, "");
+        pane.add(jtfKeySize, "growx, pushx, wrap");
+        pane.add(jlFormat, "");
+        pane.add(jtfFormat, "growx, pushx, wrap");
+        pane.add(jlEncoded, "");
+        pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
+        pane.add(jbPem, "spanx, split");
+        pane.add(jbFields, "");
+        pane.add(jbAsn1, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
+        pane.add(jbOK, "spanx, tag ok");
 
-		// actions
+        // actions
 
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbPem.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewPrivateKey.this);
-				pemEncodingPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewPrivateKey.this);
-			}
-		});
+        jbPem.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewPrivateKey.this);
+                pemEncodingPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewPrivateKey.this);
+            }
+        });
 
-		jbFields.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewPrivateKey.this);
-				fieldsPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewPrivateKey.this);
-			}
-		});
+        jbFields.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewPrivateKey.this);
+                fieldsPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewPrivateKey.this);
+            }
+        });
 
+        jbAsn1.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewPrivateKey.this);
+                asn1DumpPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewPrivateKey.this);
+            }
+        });
 
-		jbAsn1.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewPrivateKey.this);
-				asn1DumpPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewPrivateKey.this);
-			}
-		});
+        setResizable(false);
 
-		setResizable(false);
+        populateDialog();
 
-		populateDialog();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        getRootPane().setDefaultButton(jbOK);
 
-		getRootPane().setDefaultButton(jbOK);
+        pack();
 
-		pack();
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+    private void populateDialog() throws CryptoException {
+        KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
 
-	private void populateDialog() throws CryptoException {
-		KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+        jtfAlgorithm.setText(keyInfo.getAlgorithm());
 
-		jtfAlgorithm.setText(keyInfo.getAlgorithm());
+        Integer keyLength = keyInfo.getSize();
 
-		Integer keyLength = keyInfo.getSize();
+        if (keyLength != null) {
+            jtfKeySize.setText(MessageFormat.format(res.getString("DViewPrivateKey.jtfKeySize.text"), "" + keyLength));
+        } else {
+            jtfKeySize.setText(MessageFormat.format(res.getString("DViewPrivateKey.jtfKeySize.text"), "?"));
+        }
 
-		if (keyLength != null) {
-			jtfKeySize.setText(MessageFormat.format(res.getString("DViewPrivateKey.jtfKeySize.text"), "" + keyLength));
-		} else {
-			jtfKeySize.setText(MessageFormat.format(res.getString("DViewPrivateKey.jtfKeySize.text"), "?"));
-		}
+        jtfFormat.setText(privateKey.getFormat());
 
-		jtfFormat.setText(privateKey.getFormat());
+        jtaEncoded.setText(new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase());
+        jtaEncoded.setCaretPosition(0);
 
-		jtaEncoded.setText(new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase());
-		jtaEncoded.setCaretPosition(0);
+        if ((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)) {
+            jbFields.setEnabled(true);
+        } else {
+            jbFields.setEnabled(false);
+        }
+    }
 
-		if ((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)) {
-			jbFields.setEnabled(true);
-		} else {
-			jbFields.setEnabled(false);
-		}
-	}
+    private void pemEncodingPressed() {
+        try {
+            DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewPrivateKey.Pem.Title"), privateKey);
+            dViewCsrPem.setLocationRelativeTo(this);
+            dViewCsrPem.setVisible(true);
+        } catch (CryptoException e) {
+            DError.displayError(this, e);
+        }
+    }
 
-	private void pemEncodingPressed() {
-		try {
-			DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewPrivateKey.Pem.Title"),
-					privateKey);
-			dViewCsrPem.setLocationRelativeTo(this);
-			dViewCsrPem.setVisible(true);
-		} catch (CryptoException e) {
-			DError.displayError(this, e);
-		}
-	}
+    private void fieldsPressed() {
+        if (privateKey instanceof RSAPrivateKey) {
+            RSAPrivateKey rsaPvk = (RSAPrivateKey) privateKey;
 
-	private void fieldsPressed() {
-		if (privateKey instanceof RSAPrivateKey) {
-			RSAPrivateKey rsaPvk = (RSAPrivateKey) privateKey;
+            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
+                    "DViewPrivateKey.RsaFields.Title"), rsaPvk);
+            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
+            dViewAsymmetricKeyFields.setVisible(true);
+        } else if (privateKey instanceof DSAPrivateKey) {
+            DSAPrivateKey dsaPvk = (DSAPrivateKey) privateKey;
 
-			DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this,
-					res.getString("DViewPrivateKey.RsaFields.Title"), rsaPvk);
-			dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-			dViewAsymmetricKeyFields.setVisible(true);
-		} else if (privateKey instanceof DSAPrivateKey) {
-			DSAPrivateKey dsaPvk = (DSAPrivateKey) privateKey;
+            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
+                    "DViewPrivateKey.DsaFields.Title"), dsaPvk);
+            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
+            dViewAsymmetricKeyFields.setVisible(true);
+        }
+    }
 
-			DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this,
-					res.getString("DViewPrivateKey.DsaFields.Title"), dsaPvk);
-			dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-			dViewAsymmetricKeyFields.setVisible(true);
-		}
-	}
+    private void asn1DumpPressed() {
+        try {
+            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, privateKey);
+            dViewAsn1Dump.setLocationRelativeTo(this);
+            dViewAsn1Dump.setVisible(true);
+        } catch (Asn1Exception | IOException e) {
+            DError.displayError(this, e);
+        }
+    }
 
-	private void asn1DumpPressed() {
-		try {
-			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, privateKey);
-			dViewAsn1Dump.setLocationRelativeTo(this);
-			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception | IOException e) {
-			DError.displayError(this, e);
-		}
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+        KeyPair keyPair = keyGen.genKeyPair();
 
-	// for quick testing
-	public static void main(String[] args) throws Exception {
-		DialogViewer.prepare();
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
-		KeyPair keyPair = keyGen.genKeyPair();
-
-		PrivateKey privKey = keyPair.getPrivate();
-		DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey);
-		DialogViewer.run(dialog);
-	}
+        PrivateKey privKey = keyPair.getPrivate();
+        DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey);
+        DialogViewer.run(dialog);
+    }
 }

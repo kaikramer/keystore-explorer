@@ -51,234 +51,221 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Dialog used for entering and confirming a password.
- *
  */
 public class DGetNewPassword extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/password/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/password/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpPassword;
-	private JLabel jlFirst;
-	private JComponent jpfFirst;
-	private JLabel jlConfirm;
-	private JPasswordField jpfConfirm;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpPassword;
+    private JLabel jlFirst;
+    private JComponent jpfFirst;
+    private JLabel jlConfirm;
+    private JPasswordField jpfConfirm;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private PasswordQualityConfig passwordQualityConfig;
-	private Password password;
+    private PasswordQualityConfig passwordQualityConfig;
+    private Password password;
 
-	/**
-	 * Creates new DGetNewPassword dialog where the parent is a frame.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
-	 * @param passwordQualityConfig
-	 *            Password quality configuration
-	 */
-	public DGetNewPassword(JFrame parent, Dialog.ModalityType modality, PasswordQualityConfig passwordQualityConfig) {
-		super(parent, res.getString("DGetNewPassword.Title"), modality);
+    /**
+     * Creates new DGetNewPassword dialog where the parent is a frame.
+     *
+     * @param parent                Parent frame
+     * @param modality              Dialog modality
+     * @param passwordQualityConfig Password quality configuration
+     */
+    public DGetNewPassword(JFrame parent, Dialog.ModalityType modality, PasswordQualityConfig passwordQualityConfig) {
+        super(parent, res.getString("DGetNewPassword.Title"), modality);
 
-		this.passwordQualityConfig = passwordQualityConfig;
+        this.passwordQualityConfig = passwordQualityConfig;
 
-		initComponents();
-	}
+        initComponents();
+    }
 
-	/**
-	 * Creates new DGetNewPassword dialog where the parent is a frame.
-	 *  @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog's title
-	 * @param passwordQualityConfig
-	 */
-	public DGetNewPassword(JFrame parent, String title,
-			PasswordQualityConfig passwordQualityConfig) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
+    /**
+     * Creates new DGetNewPassword dialog where the parent is a frame.
+     *
+     * @param parent                Parent frame
+     * @param title                 The dialog's title
+     * @param passwordQualityConfig
+     */
+    public DGetNewPassword(JFrame parent, String title, PasswordQualityConfig passwordQualityConfig) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
 
-		this.passwordQualityConfig = passwordQualityConfig;
+        this.passwordQualityConfig = passwordQualityConfig;
 
-		initComponents();
-	}
+        initComponents();
+    }
 
-	/**
-	 * Creates new DGetNewPassword dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param modality
-	 *            Dialog modality
-	 * @param passwordQualityConfig
-	 *            Password quality configuration
-	 */
-	public DGetNewPassword(JDialog parent, Dialog.ModalityType modality, PasswordQualityConfig passwordQualityConfig) {
-		this(parent, res.getString("DGetNewPassword.Title"), modality, passwordQualityConfig);
-	}
+    /**
+     * Creates new DGetNewPassword dialog where the parent is a dialog.
+     *
+     * @param parent                Parent dialog
+     * @param modality              Dialog modality
+     * @param passwordQualityConfig Password quality configuration
+     */
+    public DGetNewPassword(JDialog parent, Dialog.ModalityType modality, PasswordQualityConfig passwordQualityConfig) {
+        this(parent, res.getString("DGetNewPassword.Title"), modality, passwordQualityConfig);
+    }
 
-	/**
-	 * Creates new DGetNewPassword dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog's title
-	 * @param modality
-	 *            Dialog modality
-	 * @param passwordQualityConfig
-	 *            Password quality configuration
-	 */
-	public DGetNewPassword(JDialog parent, String title, Dialog.ModalityType modality,
-			PasswordQualityConfig passwordQualityConfig) {
-		super(parent, title, modality);
+    /**
+     * Creates new DGetNewPassword dialog where the parent is a dialog.
+     *
+     * @param parent                Parent dialog
+     * @param title                 The dialog's title
+     * @param modality              Dialog modality
+     * @param passwordQualityConfig Password quality configuration
+     */
+    public DGetNewPassword(JDialog parent, String title, Dialog.ModalityType modality,
+                           PasswordQualityConfig passwordQualityConfig) {
+        super(parent, title, modality);
 
-		this.passwordQualityConfig = passwordQualityConfig;
+        this.passwordQualityConfig = passwordQualityConfig;
 
-		initComponents();
-	}
+        initComponents();
+    }
 
-	private void initComponents() {
-		getContentPane().setLayout(new BorderLayout());
+    private void initComponents() {
+        getContentPane().setLayout(new BorderLayout());
 
-		jlFirst = new JLabel(res.getString("DGetNewPassword.jlFirst.text"));
-		GridBagConstraints gbc_jlFirst = new GridBagConstraints();
-		gbc_jlFirst.gridx = 0;
-		gbc_jlFirst.gridy = 0;
-		gbc_jlFirst.anchor = GridBagConstraints.EAST;
-		gbc_jlFirst.insets = new Insets(5, 5, 5, 5);
+        jlFirst = new JLabel(res.getString("DGetNewPassword.jlFirst.text"));
+        GridBagConstraints gbc_jlFirst = new GridBagConstraints();
+        gbc_jlFirst.gridx = 0;
+        gbc_jlFirst.gridy = 0;
+        gbc_jlFirst.anchor = GridBagConstraints.EAST;
+        gbc_jlFirst.insets = new Insets(5, 5, 5, 5);
 
-		jlConfirm = new JLabel(res.getString("DGetNewPassword.jlConfirm.text"));
-		GridBagConstraints gbc_jpfFirst = new GridBagConstraints();
-		gbc_jpfFirst.gridx = 1;
-		gbc_jpfFirst.gridy = 0;
-		gbc_jpfFirst.anchor = GridBagConstraints.WEST;
-		gbc_jpfFirst.insets = new Insets(5, 5, 5, 5);
+        jlConfirm = new JLabel(res.getString("DGetNewPassword.jlConfirm.text"));
+        GridBagConstraints gbc_jpfFirst = new GridBagConstraints();
+        gbc_jpfFirst.gridx = 1;
+        gbc_jpfFirst.gridy = 0;
+        gbc_jpfFirst.anchor = GridBagConstraints.WEST;
+        gbc_jpfFirst.insets = new Insets(5, 5, 5, 5);
 
-		if (passwordQualityConfig.getEnabled()) {
-			if (passwordQualityConfig.getEnforced()) {
-				jpfFirst = new JPasswordQualityField(15, passwordQualityConfig.getMinimumQuality());
-			} else {
-				jpfFirst = new JPasswordQualityField(15);
-			}
-		} else {
-			jpfFirst = new JPasswordField(15);
-		}
+        if (passwordQualityConfig.getEnabled()) {
+            if (passwordQualityConfig.getEnforced()) {
+                jpfFirst = new JPasswordQualityField(15, passwordQualityConfig.getMinimumQuality());
+            } else {
+                jpfFirst = new JPasswordQualityField(15);
+            }
+        } else {
+            jpfFirst = new JPasswordField(15);
+        }
 
-		GridBagConstraints gbc_jlConfirm = new GridBagConstraints();
-		gbc_jlConfirm.gridx = 0;
-		gbc_jlConfirm.gridy = 1;
-		gbc_jlConfirm.anchor = GridBagConstraints.EAST;
-		gbc_jlConfirm.insets = new Insets(5, 5, 5, 5);
+        GridBagConstraints gbc_jlConfirm = new GridBagConstraints();
+        gbc_jlConfirm.gridx = 0;
+        gbc_jlConfirm.gridy = 1;
+        gbc_jlConfirm.anchor = GridBagConstraints.EAST;
+        gbc_jlConfirm.insets = new Insets(5, 5, 5, 5);
 
-		jpfConfirm = new JPasswordField(15);
-		GridBagConstraints gbc_jpfConfirm = new GridBagConstraints();
-		gbc_jpfConfirm.gridx = 1;
-		gbc_jpfConfirm.gridy = 1;
-		gbc_jpfConfirm.anchor = GridBagConstraints.WEST;
-		gbc_jpfConfirm.insets = new Insets(5, 5, 5, 5);
+        jpfConfirm = new JPasswordField(15);
+        GridBagConstraints gbc_jpfConfirm = new GridBagConstraints();
+        gbc_jpfConfirm.gridx = 1;
+        gbc_jpfConfirm.gridy = 1;
+        gbc_jpfConfirm.anchor = GridBagConstraints.WEST;
+        gbc_jpfConfirm.insets = new Insets(5, 5, 5, 5);
 
-		jpPassword = new JPanel(new GridBagLayout());
-		jpPassword.add(jlFirst, gbc_jlFirst);
-		jpPassword.add(jpfFirst, gbc_jpfFirst);
+        jpPassword = new JPanel(new GridBagLayout());
+        jpPassword.add(jlFirst, gbc_jlFirst);
+        jpPassword.add(jpfFirst, gbc_jpfFirst);
 
-		jpPassword.add(jlConfirm, gbc_jlConfirm);
-		jpPassword.add(jpfConfirm, gbc_jpfConfirm);
-		jpPassword.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
+        jpPassword.add(jlConfirm, gbc_jlConfirm);
+        jpPassword.add(jpfConfirm, gbc_jpfConfirm);
+        jpPassword.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
-		jbOK = new JButton(res.getString("DGetNewPassword.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DGetNewPassword.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DGetNewPassword.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DGetNewPassword.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().add(jpPassword, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpPassword, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jpfFirst.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jpfFirst.requestFocus());
+    }
 
-	/**
-	 * Get the password set in the dialog.
-	 *
-	 * @return The password or null if none was set
-	 */
-	public Password getPassword() {
-		return password;
-	}
+    /**
+     * Get the password set in the dialog.
+     *
+     * @return The password or null if none was set
+     */
+    public Password getPassword() {
+        return password;
+    }
 
-	private boolean checkPassword() {
-		Password firstPassword;
+    private boolean checkPassword() {
+        Password firstPassword;
 
-		if (jpfFirst instanceof JPasswordQualityField) {
-			char[] firstPasswordChars = ((JPasswordQualityField) jpfFirst).getPassword();
+        if (jpfFirst instanceof JPasswordQualityField) {
+            char[] firstPasswordChars = ((JPasswordQualityField) jpfFirst).getPassword();
 
-			if (firstPasswordChars == null) {
-				JOptionPane.showMessageDialog(this, res.getString("MinimumPasswordQualityNotMet.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				return false;
-			}
+            if (firstPasswordChars == null) {
+                JOptionPane.showMessageDialog(this, res.getString("MinimumPasswordQualityNotMet.message"), getTitle(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
 
-			firstPassword = new Password(firstPasswordChars);
-		} else {
-			firstPassword = new Password(((JPasswordField) jpfFirst).getPassword());
-		}
+            firstPassword = new Password(firstPasswordChars);
+        } else {
+            firstPassword = new Password(((JPasswordField) jpfFirst).getPassword());
+        }
 
-		Password confirmPassword = new Password(jpfConfirm.getPassword());
+        Password confirmPassword = new Password(jpfConfirm.getPassword());
 
-		if (firstPassword.equals(confirmPassword)) {
-			password = firstPassword;
-			return true;
-		}
+        if (firstPassword.equals(confirmPassword)) {
+            password = firstPassword;
+            return true;
+        }
 
-		JOptionPane.showMessageDialog(this, res.getString("PasswordsNoMatch.message"), getTitle(),
-				JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this, res.getString("PasswordsNoMatch.message"), getTitle(),
+                                      JOptionPane.WARNING_MESSAGE);
 
-		return false;
-	}
+        return false;
+    }
 
-	private void okPressed() {
-		if (checkPassword()) {
-			closeDialog();
-		}
-	}
+    private void okPressed() {
+        if (checkPassword()) {
+            closeDialog();
+        }
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

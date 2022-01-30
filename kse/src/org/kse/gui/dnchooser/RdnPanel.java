@@ -30,100 +30,100 @@ import javax.swing.JTextField;
 
 /**
  * GUI item for RDN.
- *
  */
 public class RdnPanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
-	private JComboBox<?> comboBox;
-	private JLabel label;
-	private JTextField textField;
-	private JButton plus;
-	private JButton minus;
-	private RdnPanelList parent;
+    private static final long serialVersionUID = 1L;
+    private JComboBox<?> comboBox;
+    private JLabel label;
+    private JTextField textField;
+    private JButton plus;
+    private JButton minus;
+    private RdnPanelList parent;
 
-	public RdnPanel(JComboBox<?> comboBox, String selectedItem, String textFieldText, RdnPanelList list, boolean editable) {
+    public RdnPanel(JComboBox<?> comboBox, String selectedItem, String textFieldText, RdnPanelList list,
+                    boolean editable) {
 
-		this.comboBox = comboBox;
-		if (editable) {
-			this.comboBox.setSelectedItem(selectedItem);
-			this.comboBox.setEditable(false);
-			add(this.comboBox);
-		} else {
-			this.label = new JLabel(selectedItem);
-			add(this.label);
-		}
+        this.comboBox = comboBox;
+        if (editable) {
+            this.comboBox.setSelectedItem(selectedItem);
+            this.comboBox.setEditable(false);
+            add(this.comboBox);
+        } else {
+            this.label = new JLabel(selectedItem);
+            add(this.label);
+        }
 
-		this.parent = list;
+        this.parent = list;
 
-		this.textField = new JTextField(30);
-		this.textField.setText(textFieldText);
-		this.textField.setEditable(editable);
-		add(this.textField);
+        this.textField = new JTextField(30);
+        this.textField.setText(textFieldText);
+        this.textField.setEditable(editable);
+        add(this.textField);
 
-		if (editable) {
-			this.plus = new JButton(new AddEntryAction());
-			add(this.plus);
+        if (editable) {
+            this.plus = new JButton(new AddEntryAction());
+            add(this.plus);
 
-			this.minus = new JButton(new RemoveEntryAction());
-			add(this.minus);
-		}
-	}
+            this.minus = new JButton(new RemoveEntryAction());
+            add(this.minus);
+        }
+    }
 
-	public JComboBox<?> getComboBox() {
-		return comboBox;
-	}
+    public JComboBox<?> getComboBox() {
+        return comboBox;
+    }
 
-	public class AddEntryAction extends AbstractAction {
+    public class AddEntryAction extends AbstractAction {
 
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-		public AddEntryAction() {
-			super("+");
-		}
+        public AddEntryAction() {
+            super("+");
+        }
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			parent.cloneEntry(RdnPanel.this);
-		}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            parent.cloneEntry(RdnPanel.this);
+        }
 
-	}
+    }
 
-	public class RemoveEntryAction extends AbstractAction {
+    public class RemoveEntryAction extends AbstractAction {
 
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-		public RemoveEntryAction() {
-			super("-");
-		}
+        public RemoveEntryAction() {
+            super("-");
+        }
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			parent.removeItem(RdnPanel.this);
-		}
-	}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            parent.removeItem(RdnPanel.this);
+        }
+    }
 
-	public void enableAdd(boolean enabled) {
-		if (this.plus != null) {
-			this.plus.setEnabled(enabled);
-		}
-	}
+    public void enableAdd(boolean enabled) {
+        if (this.plus != null) {
+            this.plus.setEnabled(enabled);
+        }
+    }
 
-	public void enableMinus(boolean enabled) {
-		if (this.minus != null) {
-			this.minus.setEnabled(enabled);
-		}
-	}
+    public void enableMinus(boolean enabled) {
+        if (this.minus != null) {
+            this.minus.setEnabled(enabled);
+        }
+    }
 
-	public String getAttributeName() {
-		return comboBox.getSelectedItem().toString();
-	}
+    public String getAttributeName() {
+        return comboBox.getSelectedItem().toString();
+    }
 
-	public String getAttributeValue() {
-		return textField.getText();
-	}
+    public String getAttributeValue() {
+        return textField.getText();
+    }
 
-	public JTextField getTextField() {
-		return textField;
-	}
+    public JTextField getTextField() {
+        return textField;
+    }
 }

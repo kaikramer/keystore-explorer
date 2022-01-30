@@ -35,110 +35,106 @@ import org.kse.gui.dialogs.DPreferences;
 
 /**
  * Action to show preferences.
- *
  */
 public class PreferencesAction extends ExitAction {
-	private static final long serialVersionUID = 1L;
-	private KseFrame kseFrame;
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public PreferencesAction(KseFrame kseFrame) {
-		super(kseFrame);
-		this.kseFrame = kseFrame;
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("PreferencesAction.accelerator").charAt(0),
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("PreferencesAction.statusbar"));
-		putValue(NAME, res.getString("PreferencesAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("PreferencesAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/preferences.png"))));
-	}
+    private static final long serialVersionUID = 1L;
+    private KseFrame kseFrame;
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		showPreferences();
-	}
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public PreferencesAction(KseFrame kseFrame) {
+        super(kseFrame);
+        this.kseFrame = kseFrame;
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("PreferencesAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("PreferencesAction.statusbar"));
+        putValue(NAME, res.getString("PreferencesAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("PreferencesAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/preferences.png"))));
+    }
 
-	/**
-	 * Display the preferences dialog and store the user's choices.
-	 */
-	public void showPreferences() {
-		ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        showPreferences();
+    }
 
-		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
+    /**
+     * Display the preferences dialog and store the user's choices.
+     */
+    public void showPreferences() {
+        ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
-		DPreferences dPreferences = new DPreferences(frame,
-				applicationSettings.getUseCaCertificates(),
-				caCertificatesFile,
-				applicationSettings.getUseWindowsTrustedRootCertificates(),
-				applicationSettings.getEnableImportTrustedCertTrustCheck(),
-				applicationSettings.getEnableImportCaReplyTrustCheck(),
-				applicationSettings.getPasswordQualityConfig(),
-				applicationSettings.getDefaultDN(),
-				applicationSettings.getLanguage(),
-				applicationSettings.isAutoUpdateCheckEnabled(),
-				applicationSettings.getAutoUpdateCheckInterval(),
-				applicationSettings.getKeyStoreTableColumns(),
-				applicationSettings.isShowHiddenFilesEnabled());
-		dPreferences.setLocationRelativeTo(frame);
-		dPreferences.setVisible(true);
+        File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
-		if (dPreferences.wasCancelled()) {
-			return;
-		}
+        DPreferences dPreferences = new DPreferences(frame, applicationSettings.getUseCaCertificates(),
+                                                     caCertificatesFile,
+                                                     applicationSettings.getUseWindowsTrustedRootCertificates(),
+                                                     applicationSettings.getEnableImportTrustedCertTrustCheck(),
+                                                     applicationSettings.getEnableImportCaReplyTrustCheck(),
+                                                     applicationSettings.getPasswordQualityConfig(),
+                                                     applicationSettings.getDefaultDN(),
+                                                     applicationSettings.getLanguage(),
+                                                     applicationSettings.isAutoUpdateCheckEnabled(),
+                                                     applicationSettings.getAutoUpdateCheckInterval(),
+                                                     applicationSettings.getKeyStoreTableColumns(),
+                                                     applicationSettings.isShowHiddenFilesEnabled());
+        dPreferences.setLocationRelativeTo(frame);
+        dPreferences.setVisible(true);
 
-		File tmpFile = dPreferences.getCaCertificatesFile();
+        if (dPreferences.wasCancelled()) {
+            return;
+        }
 
-		if (!tmpFile.equals(caCertificatesFile)) {
-			AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
-			authorityCertificates.setCaCertificates(null);
-		}
+        File tmpFile = dPreferences.getCaCertificatesFile();
 
-		caCertificatesFile = tmpFile;
+        if (!tmpFile.equals(caCertificatesFile)) {
+            AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
+            authorityCertificates.setCaCertificates(null);
+        }
 
-		applicationSettings.setCaCertificatesFile(caCertificatesFile);
-		applicationSettings.setUseCaCertificates(dPreferences.getUseCaCertificates());
-		applicationSettings.setUseWindowsTrustedRootCertificates(dPreferences.getUseWinTrustRootCertificates());
-		applicationSettings.setEnableImportTrustedCertTrustCheck(dPreferences.getEnableImportTrustedCertTrustCheck());
-		applicationSettings.setEnableImportCaReplyTrustCheck(dPreferences.getEnableImportCaReplyTrustCheck());
-		applicationSettings.setPasswordQualityConfig(dPreferences.getPasswordQualityConfig());
-		applicationSettings.setDefaultDN(dPreferences.getDefaultDN());
-		applicationSettings.setAutoUpdateCheckEnabled(dPreferences.isAutoUpdateChecksEnabled());
-		applicationSettings.setAutoUpdateCheckInterval(dPreferences.getAutoUpdateChecksInterval());
-		applicationSettings.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
+        caCertificatesFile = tmpFile;
 
-		UIManager.LookAndFeelInfo lookFeelInfo = dPreferences.getLookFeelInfo();
-		applicationSettings.setLookAndFeelClass(lookFeelInfo.getClassName());
+        applicationSettings.setCaCertificatesFile(caCertificatesFile);
+        applicationSettings.setUseCaCertificates(dPreferences.getUseCaCertificates());
+        applicationSettings.setUseWindowsTrustedRootCertificates(dPreferences.getUseWinTrustRootCertificates());
+        applicationSettings.setEnableImportTrustedCertTrustCheck(dPreferences.getEnableImportTrustedCertTrustCheck());
+        applicationSettings.setEnableImportCaReplyTrustCheck(dPreferences.getEnableImportCaReplyTrustCheck());
+        applicationSettings.setPasswordQualityConfig(dPreferences.getPasswordQualityConfig());
+        applicationSettings.setDefaultDN(dPreferences.getDefaultDN());
+        applicationSettings.setAutoUpdateCheckEnabled(dPreferences.isAutoUpdateChecksEnabled());
+        applicationSettings.setAutoUpdateCheckInterval(dPreferences.getAutoUpdateChecksInterval());
+        applicationSettings.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
 
-		boolean lookAndFeelDecorated = dPreferences.getLookFeelDecoration();
-		applicationSettings.setLookAndFeelDecorated(lookAndFeelDecorated);
+        UIManager.LookAndFeelInfo lookFeelInfo = dPreferences.getLookFeelInfo();
+        applicationSettings.setLookAndFeelClass(lookFeelInfo.getClassName());
 
-		String language = dPreferences.getLanguage();
-		boolean languageHasChanged = !language.equals(applicationSettings.getLanguage());
-		applicationSettings.setLanguage(language);
+        boolean lookAndFeelDecorated = dPreferences.getLookFeelDecoration();
+        applicationSettings.setLookAndFeelDecorated(lookAndFeelDecorated);
 
-		if (dPreferences.columnsChanged()) {
-			applicationSettings.setKeyStoreTableColumns(dPreferences.getColumns());
-			kseFrame.redrawKeyStores(applicationSettings);
-		}
+        String language = dPreferences.getLanguage();
+        boolean languageHasChanged = !language.equals(applicationSettings.getLanguage());
+        applicationSettings.setLanguage(language);
 
-		if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName()))
-				|| (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated())
-				|| languageHasChanged) {
-			// L&F or language changed - restart required for upgrade to take effect
-			JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
-					res.getString("PreferencesAction.LookFeelChanged.Title"), JOptionPane.INFORMATION_MESSAGE);
+        if (dPreferences.columnsChanged()) {
+            applicationSettings.setKeyStoreTableColumns(dPreferences.getColumns());
+            kseFrame.redrawKeyStores(applicationSettings);
+        }
 
-			exitApplication(true);
-		}
-	}
+        if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName())) ||
+            (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated()) || languageHasChanged) {
+            // L&F or language changed - restart required for upgrade to take effect
+            JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
+                                          res.getString("PreferencesAction.LookFeelChanged.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+
+            exitApplication(true);
+        }
+    }
 }

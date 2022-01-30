@@ -23,19 +23,17 @@ package org.kse.gui.statusbar;
  * Interface for a status bar. Used with the StatusBarChangeHandler to support
  * the placing and removal of help messages into the status bar as menu items
  * are selected/de-selected.
- *
  */
 public interface StatusBar {
-	/**
-	 * Display the supplied text in the status bar.
-	 *
-	 * @param status
-	 *            Text to display
-	 */
-	void setStatusBarText(String status);
+    /**
+     * Display the supplied text in the status bar.
+     *
+     * @param status Text to display
+     */
+    void setStatusBarText(String status);
 
-	/**
-	 * Set the status bar text to its default message.
-	 */
-	void setDefaultStatusBarText();
+    /**
+     * Set the status bar text to its default message.
+     */
+    void setDefaultStatusBarText();
 }

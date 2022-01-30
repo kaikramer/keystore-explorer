@@ -32,40 +32,34 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
  * Custom cell renderer for the cells of the custom Extended Key Usage table.
  */
 public class CustomExtKeyUsageTableCellRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Returns the rendered cell.
-	 *
-	 * @param jtCustomExtKeyUsage
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The rendered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtCustomExtKeyUsage, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtCustomExtKeyUsage, value, isSelected, hasFocus,
-				row, col);
+    /**
+     * Returns the rendered cell.
+     *
+     * @param jtCustomExtKeyUsage The JTable
+     * @param value               The value to assign to the cell
+     * @param isSelected          True if cell is selected
+     * @param row                 The row of the cell to render
+     * @param col                 The column of the cell to render
+     * @param hasFocus            If true, render cell appropriately
+     * @return The rendered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtCustomExtKeyUsage, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtCustomExtKeyUsage, value, isSelected, hasFocus,
+                                                                   row, col);
 
-		ASN1ObjectIdentifier objectId = (ASN1ObjectIdentifier) value;
+        ASN1ObjectIdentifier objectId = (ASN1ObjectIdentifier) value;
 
-		if (col == 0) {
-			cell.setText(objectId.getId());
-		}
+        if (col == 0) {
+            cell.setText(objectId.getId());
+        }
 
-		cell.setHorizontalAlignment(LEFT);
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setHorizontalAlignment(LEFT);
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 }

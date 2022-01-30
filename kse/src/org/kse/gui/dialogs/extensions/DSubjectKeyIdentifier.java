@@ -47,157 +47,149 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JKeyIdentifier;
 import org.kse.gui.error.DError;
 
-
 /**
  * Dialog used to add or edit a Subject Key Identifier extension.
- *
  */
 public class DSubjectKeyIdentifier extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpSubjectKeyIdentifier;
-	private JLabel jlKeyIdentifier;
-	private JKeyIdentifier jkiKeyIdentifier;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpSubjectKeyIdentifier;
+    private JLabel jlKeyIdentifier;
+    private JKeyIdentifier jkiKeyIdentifier;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
-	private PublicKey subjectPublicKey;
+    private byte[] value;
+    private PublicKey subjectPublicKey;
 
-	/**
-	 * Creates a new DSubjectKeyIdentifier dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param subjectPublicKey
-	 *            Subject public key
-	 */
-	public DSubjectKeyIdentifier(JDialog parent, PublicKey subjectPublicKey) {
-		super(parent);
-		setTitle(res.getString("DSubjectKeyIdentifier.Title"));
-		this.subjectPublicKey = subjectPublicKey;
-		initComponents();
-	}
+    /**
+     * Creates a new DSubjectKeyIdentifier dialog.
+     *
+     * @param parent           The parent dialog
+     * @param subjectPublicKey Subject public key
+     */
+    public DSubjectKeyIdentifier(JDialog parent, PublicKey subjectPublicKey) {
+        super(parent);
+        setTitle(res.getString("DSubjectKeyIdentifier.Title"));
+        this.subjectPublicKey = subjectPublicKey;
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DSubjectKeyIdentifier dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Subject Key Identifier DER-encoded
-	 * @param subjectPublicKey
-	 *            Subject public key
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DSubjectKeyIdentifier(JDialog parent, byte[] value, PublicKey subjectPublicKey) throws IOException {
-		super(parent);
-		setTitle(res.getString("DSubjectKeyIdentifier.Title"));
-		this.subjectPublicKey = subjectPublicKey;
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DSubjectKeyIdentifier dialog.
+     *
+     * @param parent           The parent dialog
+     * @param value            Subject Key Identifier DER-encoded
+     * @param subjectPublicKey Subject public key
+     * @throws IOException If value could not be decoded
+     */
+    public DSubjectKeyIdentifier(JDialog parent, byte[] value, PublicKey subjectPublicKey) throws IOException {
+        super(parent);
+        setTitle(res.getString("DSubjectKeyIdentifier.Title"));
+        this.subjectPublicKey = subjectPublicKey;
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlKeyIdentifier = new JLabel(res.getString("DSubjectKeyIdentifier.jlKeyIdentifer.text"));
+    private void initComponents() {
+        jlKeyIdentifier = new JLabel(res.getString("DSubjectKeyIdentifier.jlKeyIdentifer.text"));
 
-		jkiKeyIdentifier = new JKeyIdentifier(res.getString("DSubjectKeyIdentifier.KeyIdentifier.Title"),
-				subjectPublicKey);
+        jkiKeyIdentifier = new JKeyIdentifier(res.getString("DSubjectKeyIdentifier.KeyIdentifier.Title"),
+                                              subjectPublicKey);
 
-		jpSubjectKeyIdentifier = new JPanel(new BorderLayout(5, 5));
+        jpSubjectKeyIdentifier = new JPanel(new BorderLayout(5, 5));
 
-		jpSubjectKeyIdentifier.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpSubjectKeyIdentifier.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                            new CompoundBorder(new EtchedBorder(),
+                                                                               new EmptyBorder(5, 5, 5, 5))));
 
-		jpSubjectKeyIdentifier.add(jlKeyIdentifier, BorderLayout.WEST);
-		jpSubjectKeyIdentifier.add(jkiKeyIdentifier, BorderLayout.CENTER);
+        jpSubjectKeyIdentifier.add(jlKeyIdentifier, BorderLayout.WEST);
+        jpSubjectKeyIdentifier.add(jkiKeyIdentifier, BorderLayout.CENTER);
 
-		jbOK = new JButton(res.getString("DSubjectKeyIdentifier.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DSubjectKeyIdentifier.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DSubjectKeyIdentifier.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DSubjectKeyIdentifier.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpSubjectKeyIdentifier, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpSubjectKeyIdentifier, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		SubjectKeyIdentifier subjectKeyIdentifier = SubjectKeyIdentifier.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        SubjectKeyIdentifier subjectKeyIdentifier = SubjectKeyIdentifier.getInstance(value);
 
-		jkiKeyIdentifier.setKeyIdentifier(subjectKeyIdentifier.getKeyIdentifier());
-	}
+        jkiKeyIdentifier.setKeyIdentifier(subjectKeyIdentifier.getKeyIdentifier());
+    }
 
-	private void okPressed() {
-		byte[] keyIdentifier = jkiKeyIdentifier.getKeyIdentifier();
+    private void okPressed() {
+        byte[] keyIdentifier = jkiKeyIdentifier.getKeyIdentifier();
 
-		if (keyIdentifier == null) {
-			JOptionPane.showMessageDialog(this, res.getString("DSubjectKeyIdentifier.ValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (keyIdentifier == null) {
+            JOptionPane.showMessageDialog(this, res.getString("DSubjectKeyIdentifier.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		SubjectKeyIdentifier subjectKeyIdentifier = new SubjectKeyIdentifier(keyIdentifier);
+        SubjectKeyIdentifier subjectKeyIdentifier = new SubjectKeyIdentifier(keyIdentifier);
 
-		try {
-			value = subjectKeyIdentifier.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+        try {
+            value = subjectKeyIdentifier.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid();
-	}
+    @Override
+    public String getOid() {
+        return X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

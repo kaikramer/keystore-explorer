@@ -29,81 +29,78 @@ import org.kse.crypto.keystore.MsCapiStoreType;
 
 /**
  * Singleton that maintains authority certificates KeyStores.
- *
  */
 public class AuthorityCertificates {
 
-	public static final String CACERTS_DEFAULT_PWD = "changeit";
+    public static final String CACERTS_DEFAULT_PWD = "changeit";
 
-	private static AuthorityCertificates authorityCertificates;
-	private KeyStore caCertificates;
-	private KeyStore windowsTrustedRootCertificates;
+    private static AuthorityCertificates authorityCertificates;
+    private KeyStore caCertificates;
+    private KeyStore windowsTrustedRootCertificates;
 
-	private AuthorityCertificates() {
-	}
+    private AuthorityCertificates() {
+    }
 
-	/**
-	 * Get singleton instance of authority certificates.
-	 *
-	 * @return Authority certificates
-	 */
-	public static synchronized AuthorityCertificates getInstance() {
-		if (authorityCertificates == null) {
-			authorityCertificates = new AuthorityCertificates();
-		}
+    /**
+     * Get singleton instance of authority certificates.
+     *
+     * @return Authority certificates
+     */
+    public static synchronized AuthorityCertificates getInstance() {
+        if (authorityCertificates == null) {
+            authorityCertificates = new AuthorityCertificates();
+        }
 
-		return authorityCertificates;
-	}
+        return authorityCertificates;
+    }
 
-	/**
-	 * Get CA Certificates KeyStore. If not set this is not loaded. Instead load
-	 * seperately and set it for future reference.
-	 *
-	 * @return CA Certificates KeyStore
-	 */
-	public KeyStore getCaCertificates() {
-		return caCertificates;
-	}
+    /**
+     * Get CA Certificates KeyStore. If not set this is not loaded. Instead load
+     * seperately and set it for future reference.
+     *
+     * @return CA Certificates KeyStore
+     */
+    public KeyStore getCaCertificates() {
+        return caCertificates;
+    }
 
-	/**
-	 * Set CA Certificates KeyStore.
-	 *
-	 * @param caCertificates
-	 *            CA Certificates KeyStore
-	 */
-	public void setCaCertificates(KeyStore caCertificates) {
-		this.caCertificates = caCertificates;
-	}
+    /**
+     * Set CA Certificates KeyStore.
+     *
+     * @param caCertificates CA Certificates KeyStore
+     */
+    public void setCaCertificates(KeyStore caCertificates) {
+        this.caCertificates = caCertificates;
+    }
 
-	/**
-	 * Get the default location for the CA Certificates KeyStore.
-	 *
-	 * @return CA Certificates KeyStore default location
-	 */
-	public static File getDefaultCaCertificatesLocation() {
-		String javaInstallDir = System.getProperty("java.home");
-		String fileSep = System.getProperty("file.separator");
-		File cacertsFile = new File(javaInstallDir, "lib" + fileSep + "security" + fileSep + "cacerts");
-		try {
-			return cacertsFile.getCanonicalFile();
-		} catch (IOException e) {
-			return cacertsFile;
-		}
-	}
+    /**
+     * Get the default location for the CA Certificates KeyStore.
+     *
+     * @return CA Certificates KeyStore default location
+     */
+    public static File getDefaultCaCertificatesLocation() {
+        String javaInstallDir = System.getProperty("java.home");
+        String fileSep = System.getProperty("file.separator");
+        File cacertsFile = new File(javaInstallDir, "lib" + fileSep + "security" + fileSep + "cacerts");
+        try {
+            return cacertsFile.getCanonicalFile();
+        } catch (IOException e) {
+            return cacertsFile;
+        }
+    }
 
-	/**
-	 * Get Windows Trusted Root Certificates KeyStore. If not set this is
-	 * loaded.
-	 *
-	 * @return Windows Trusted Root Certificates KeyStore
-	 * @throws CryptoException
-	 *             If a problem occurred getting the KeyStore
-	 */
-	public KeyStore getWindowsTrustedRootCertificates() throws CryptoException {
-		if (windowsTrustedRootCertificates == null) {
-			windowsTrustedRootCertificates = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.ROOT);
-		}
+    /**
+     * Get Windows Trusted Root Certificates KeyStore. If not set this is
+     * loaded.
+     *
+     * @return Windows Trusted Root Certificates KeyStore
+     * @throws CryptoException If a problem occurred getting the KeyStore
+     */
+    public KeyStore getWindowsTrustedRootCertificates() throws CryptoException {
+        if (windowsTrustedRootCertificates == null) {
+            windowsTrustedRootCertificates = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.ROOT);
+        }
 
-		return windowsTrustedRootCertificates;
-	}
+        return windowsTrustedRootCertificates;
+    }
 }

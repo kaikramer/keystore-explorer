@@ -25,51 +25,46 @@ import org.kse.crypto.Password;
 
 /**
  * Key buffer entry.
- *
  */
 public class KeyBufferEntry extends BufferEntry {
-	private Key key;
-	private Password password;
+    private Key key;
+    private Password password;
 
-	/**
-	 * Construct.
-	 *
-	 * @param name
-	 *            Entry name
-	 * @param cut
-	 *            Is entry to be cut?
-	 * @param key
-	 *            Key
-	 * @param password
-	 *            Key password
-	 */
-	public KeyBufferEntry(String name, boolean cut, Key key, Password password) {
-		super(name, cut);
+    /**
+     * Construct.
+     *
+     * @param name     Entry name
+     * @param cut      Is entry to be cut?
+     * @param key      Key
+     * @param password Key password
+     */
+    public KeyBufferEntry(String name, boolean cut, Key key, Password password) {
+        super(name, cut);
 
-		this.key = key;
-		this.password = new Password(password); // Copy as may be cleared
-	}
+        this.key = key;
+        this.password = new Password(password); // Copy as may be cleared
+    }
 
-	/**
-	 * Get key.
-	 *
-	 * @return key
-	 */
-	public Key getKey() {
-		return key;
-	}
+    /**
+     * Get key.
+     *
+     * @return key
+     */
+    public Key getKey() {
+        return key;
+    }
 
-	/**
-	 * Get password.
-	 *
-	 * @return Password
-	 */
-	public Password getPassword() {
-		return new Password(password); // Copy as may be cleared
-	}
+    /**
+     * Get password.
+     *
+     * @return Password
+     */
+    public Password getPassword() {
+        return new Password(password); // Copy as may be cleared
+    }
 
-	@Override
-	void clear() {
-		password.nullPassword();
-	}
+    @Override
+    void clear() {
+        password.nullPassword();
+    }
 }

@@ -55,177 +55,172 @@ import org.kse.utilities.ssl.SslUtils;
 /**
  * Examines an SSL connection's certificates - a process which the user may
  * cancel at any time by pressing the cancel button.
- *
  */
 public class DExaminingSsl extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpExaminingSsl;
-	private JLabel jlExaminingSsl;
-	private JPanel jpProgress;
-	private JProgressBar jpbExaminingSsl;
-	private JPanel jpCancel;
-	private JButton jbCancel;
+    private JPanel jpExaminingSsl;
+    private JLabel jlExaminingSsl;
+    private JPanel jpProgress;
+    private JProgressBar jpbExaminingSsl;
+    private JPanel jpCancel;
+    private JButton jbCancel;
 
-	private String sslHost;
-	private int sslPort;
-	private KeyStore keyStore;
-	private char[] password;
-	private SslConnectionInfos sslInfos;
-	private Thread examiner;
+    private String sslHost;
+    private int sslPort;
+    private KeyStore keyStore;
+    private char[] password;
+    private SslConnectionInfos sslInfos;
+    private Thread examiner;
 
-	/**
-	 * Creates a new DExaminingSsl dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param sslHost
-	 *            SSL connection's host name
-	 * @param sslPort
-	 *            SSL connection's port number
-	 * @param useClientAuth
-	 *            Try to connect with client certificate
-	 * @param ksh
-	 *            KeyStore with client certificate
-	 */
-	public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+    /**
+     * Creates a new DExaminingSsl dialog.
+     *
+     * @param parent        The parent frame
+     * @param sslHost       SSL connection's host name
+     * @param sslPort       SSL connection's port number
+     * @param useClientAuth Try to connect with client certificate
+     * @param ksh           KeyStore with client certificate
+     */
+    public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
-		this.sslHost = sslHost;
-		this.sslPort = sslPort;
+        this.sslHost = sslHost;
+        this.sslPort = sslPort;
 
-		if (useClientAuth) {
-			this.keyStore = ksh.getCurrentState().getKeyStore();
+        if (useClientAuth) {
+            this.keyStore = ksh.getCurrentState().getKeyStore();
 
-			// some keystore types like MSCAPI and PKCS#11 have no password stored in their state
-			Password pwd = ksh.getCurrentState().getPassword();
-			if (pwd != null) {
-				this.password = pwd.toCharArray();
-			}
-		}
-		initComponents();
-	}
+            // some keystore types like MSCAPI and PKCS#11 have no password stored in their state
+            Password pwd = ksh.getCurrentState().getPassword();
+            if (pwd != null) {
+                this.password = pwd.toCharArray();
+            }
+        }
+        initComponents();
+    }
 
-	private void initComponents() {
-		jlExaminingSsl = new JLabel(res.getString("DExaminingSsl.jlExaminingSsl.text"));
-		ImageIcon icon = new ImageIcon(getClass().getResource("images/exssl.png"));
-		jlExaminingSsl.setIcon(icon);
-		jlExaminingSsl.setHorizontalTextPosition(SwingConstants.LEADING);
-		jlExaminingSsl.setIconTextGap(15);
+    private void initComponents() {
+        jlExaminingSsl = new JLabel(res.getString("DExaminingSsl.jlExaminingSsl.text"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("images/exssl.png"));
+        jlExaminingSsl.setIcon(icon);
+        jlExaminingSsl.setHorizontalTextPosition(SwingConstants.LEADING);
+        jlExaminingSsl.setIconTextGap(15);
 
-		jpExaminingSsl = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpExaminingSsl.add(jlExaminingSsl);
-		jpExaminingSsl.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpExaminingSsl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpExaminingSsl.add(jlExaminingSsl);
+        jpExaminingSsl.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jpbExaminingSsl = new JProgressBar();
-		jpbExaminingSsl.setIndeterminate(true);
+        jpbExaminingSsl = new JProgressBar();
+        jpbExaminingSsl.setIndeterminate(true);
 
-		jpProgress = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpProgress.add(jpbExaminingSsl);
-		jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpProgress = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpProgress.add(jpbExaminingSsl);
+        jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jbCancel = new JButton(res.getString("DExaminingSsl.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DExaminingSsl.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
+        jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
 
-		getContentPane().add(jpExaminingSsl, BorderLayout.NORTH);
-		getContentPane().add(jpProgress, BorderLayout.CENTER);
-		getContentPane().add(jpCancel, BorderLayout.SOUTH);
+        getContentPane().add(jpExaminingSsl, BorderLayout.NORTH);
+        getContentPane().add(jpProgress, BorderLayout.CENTER);
+        getContentPane().add(jpCancel, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				if ((examiner != null) && (examiner.isAlive())) {
-					examiner.interrupt();
-				}
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if ((examiner != null) && (examiner.isAlive())) {
+                    examiner.interrupt();
+                }
+                closeDialog();
+            }
+        });
 
-		setTitle(res.getString("DExaminingSsl.Title"));
-		setResizable(false);
+        setTitle(res.getString("DExaminingSsl.Title"));
+        setResizable(false);
 
-		pack();
-	}
+        pack();
+    }
 
-	/**
-	 * Start SSL connection examination in a separate thread.
-	 */
-	public void startExamination() {
-		examiner = new Thread(new ExamineSsl());
-		examiner.setPriority(Thread.MIN_PRIORITY);
-		examiner.start();
-	}
+    /**
+     * Start SSL connection examination in a separate thread.
+     */
+    public void startExamination() {
+        examiner = new Thread(new ExamineSsl());
+        examiner.setPriority(Thread.MIN_PRIORITY);
+        examiner.start();
+    }
 
-	/**
-	 * Get the SSL connection's certificates and some details like protocol version or cipher suite.
-	 *
-	 * @return The SSL connection's details or null if the user cancelled
-	 *         the dialog or an error occurred
-	 */
-	public SslConnectionInfos getSSLConnectionInfos() {
-		return sslInfos;
-	}
+    /**
+     * Get the SSL connection's certificates and some details like protocol version or cipher suite.
+     *
+     * @return The SSL connection's details or null if the user cancelled
+     *         the dialog or an error occurred
+     */
+    public SslConnectionInfos getSSLConnectionInfos() {
+        return sslInfos;
+    }
 
-	private void cancelPressed() {
-		if ((examiner != null) && (examiner.isAlive())) {
-			examiner.interrupt();
-		}
-		closeDialog();
-	}
+    private void cancelPressed() {
+        if ((examiner != null) && (examiner.isAlive())) {
+            examiner.interrupt();
+        }
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	private class ExamineSsl implements Runnable {
-		@Override
-		public void run() {
-			try {
-				sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
+    private class ExamineSsl implements Runnable {
+        @Override
+        public void run() {
+            try {
+                sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
 
-				SwingUtilities.invokeLater(() -> {
-					if (DExaminingSsl.this.isShowing()) {
-						closeDialog();
-					}
-				});
-			} catch (final Exception ex) {
-				SwingUtilities.invokeLater(() -> {
-					if (DExaminingSsl.this.isShowing()) {
-						String problemStr = MessageFormat.format(
-								res.getString("DExaminingSsl.NoExamineSsl.Problem"), sslHost, "" + sslPort);
+                SwingUtilities.invokeLater(() -> {
+                    if (DExaminingSsl.this.isShowing()) {
+                        closeDialog();
+                    }
+                });
+            } catch (final Exception ex) {
+                SwingUtilities.invokeLater(() -> {
+                    if (DExaminingSsl.this.isShowing()) {
+                        String problemStr = MessageFormat.format(res.getString("DExaminingSsl.NoExamineSsl.Problem"),
+                                                                 sslHost, "" + sslPort);
 
-						String[] causes = new String[] { res.getString("DExaminingSsl.SslHostPortIncorrect.Cause"),
-								res.getString("DExaminingSsl.SslHostUnavailable.Cause"),
-								res.getString("DExaminingSsl.ProxySettingsIncorrect.Cause") };
+                        String[] causes = new String[] { res.getString("DExaminingSsl.SslHostPortIncorrect.Cause"),
+                                                         res.getString("DExaminingSsl.SslHostUnavailable.Cause"),
+                                                         res.getString("DExaminingSsl.ProxySettingsIncorrect.Cause") };
 
-						Problem problem = new Problem(problemStr, causes, ex);
+                        Problem problem = new Problem(problemStr, causes, ex);
 
-						DProblem dProblem = new DProblem(DExaminingSsl.this, res
-								.getString("DExaminingSsl.ProblemExaminingSsl.Title"), problem);
-						dProblem.setLocationRelativeTo(DExaminingSsl.this);
-						dProblem.setVisible(true);
+                        DProblem dProblem = new DProblem(DExaminingSsl.this,
+                                                         res.getString("DExaminingSsl.ProblemExaminingSsl.Title"),
+                                                         problem);
+                        dProblem.setLocationRelativeTo(DExaminingSsl.this);
+                        dProblem.setVisible(true);
 
-						closeDialog();
-					}
-				});
-			}
-		}
-	}
+                        closeDialog();
+                    }
+                });
+            }
+        }
+    }
 }

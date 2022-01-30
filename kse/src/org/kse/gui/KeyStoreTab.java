@@ -38,93 +38,88 @@ import org.kse.utilities.history.KeyStoreHistory;
 /**
  * KeyStore tab. Displays a KeyStore's title and allows it to be closed using a
  * close icon.
- *
  */
 public class KeyStoreTab extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
-	private JLabel jlTitle;
-	private JButton jbClose;
-	private KseFrame kseFrame;
-	private KeyStoreHistory history;
+    private static final long serialVersionUID = 1L;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
+    private JLabel jlTitle;
+    private JButton jbClose;
+    private KseFrame kseFrame;
+    private KeyStoreHistory history;
 
-	/**
-	 * Construct KeyStore tab.
-	 *
-	 * @param title
-	 *            Tab title
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 * @param history
-	 *            KeyStore contained in tab
-	 */
-	public KeyStoreTab(String title, KseFrame kseFrame, KeyStoreHistory history) {
-		this.kseFrame = kseFrame;
-		this.history = history;
+    /**
+     * Construct KeyStore tab.
+     *
+     * @param title    Tab title
+     * @param kseFrame KeyStore Explorer frame
+     * @param history  KeyStore contained in tab
+     */
+    public KeyStoreTab(String title, KseFrame kseFrame, KeyStoreHistory history) {
+        this.kseFrame = kseFrame;
+        this.history = history;
 
-		initComponents(title);
-	}
+        initComponents(title);
+    }
 
-	private void initComponents(String title) {
-		jlTitle = new JLabel(title);
-		jlTitle.setBorder(new EmptyBorder(0, 0, 0, 5));
+    private void initComponents(String title) {
+        jlTitle = new JLabel(title);
+        jlTitle.setBorder(new EmptyBorder(0, 0, 0, 5));
 
-		jbClose = new JButton();
-		jbClose.setToolTipText(res.getString("KeyStoreTab.jbClose.tooltip"));
+        jbClose = new JButton();
+        jbClose.setToolTipText(res.getString("KeyStoreTab.jbClose.tooltip"));
 
-		final ImageIcon icon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource("images/tab/close_tab.png")));
+        final ImageIcon icon = new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/tab/close_tab.png")));
 
-		final ImageIcon rollOverIcon = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource("images/tab/close_tab_rollover.png")));
+        final ImageIcon rollOverIcon = new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/tab/close_tab_rollover.png")));
 
-		jbClose.setSize(icon.getImage().getWidth(null), icon.getImage().getHeight(null));
-		jbClose.setIcon(icon);
+        jbClose.setSize(icon.getImage().getWidth(null), icon.getImage().getHeight(null));
+        jbClose.setIcon(icon);
 
-		// Do our own roll-over using mouse and action event handlers
-		jbClose.setRolloverEnabled(false);
+        // Do our own roll-over using mouse and action event handlers
+        jbClose.setRolloverEnabled(false);
 
-		// Remove un-needed button functionality and decoration
-		jbClose.setMargin(new Insets(0, 0, 0, 0));
-		jbClose.setBorderPainted(false);
-		jbClose.setBorder(null);
-		jbClose.setText(null);
-		jbClose.setContentAreaFilled(false);
-		jbClose.setFocusPainted(false);
-		jbClose.setFocusable(false);
+        // Remove un-needed button functionality and decoration
+        jbClose.setMargin(new Insets(0, 0, 0, 0));
+        jbClose.setBorderPainted(false);
+        jbClose.setBorder(null);
+        jbClose.setText(null);
+        jbClose.setContentAreaFilled(false);
+        jbClose.setFocusPainted(false);
+        jbClose.setFocusable(false);
 
-		jbClose.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent evt) {
-				jbClose.setIcon(rollOverIcon);
-			}
+        jbClose.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                jbClose.setIcon(rollOverIcon);
+            }
 
-			@Override
-			public void mouseExited(MouseEvent evt) {
-				jbClose.setIcon(icon);
-			}
-		});
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                jbClose.setIcon(icon);
+            }
+        });
 
-		jbClose.addActionListener(evt -> {
-			jbClose.setIcon(icon);
-			CloseAction closeAction = new CloseAction(kseFrame);
-			closeAction.closeKeyStore(history);
-		});
+        jbClose.addActionListener(evt -> {
+            jbClose.setIcon(icon);
+            CloseAction closeAction = new CloseAction(kseFrame);
+            closeAction.closeKeyStore(history);
+        });
 
-		setOpaque(false);
-		setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        setOpaque(false);
+        setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
-		add(jlTitle);
-		add(jbClose);
-	}
+        add(jlTitle);
+        add(jbClose);
+    }
 
-	/**
-	 * Update the tab's title.
-	 *
-	 * @param title
-	 *            New tab title
-	 */
-	public void updateTitle(String title) {
-		jlTitle.setText(title);
-	}
+    /**
+     * Update the tab's title.
+     *
+     * @param title New tab title
+     */
+    public void updateTitle(String title) {
+        jlTitle.setText(title);
+    }
 }

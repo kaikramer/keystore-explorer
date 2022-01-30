@@ -30,58 +30,53 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to close all KeyStores.
- *
  */
 public class CloseAllAction extends CloseAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CloseAllAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CloseAllAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("CloseAllAction.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("CloseAllAction.statusbar"));
-		putValue(NAME, res.getString("CloseAllAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("CloseAllAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/closeall.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CloseAllAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.SHIFT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("CloseAllAction.statusbar"));
+        putValue(NAME, res.getString("CloseAllAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("CloseAllAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/closeall.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		closeAllKeyStores();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        closeAllKeyStores();
+    }
 
-	/**
-	 * Close all keyStores.
-	 *
-	 * @return True if all KeyStores closed, false otherwise
-	 */
-	protected boolean closeAllKeyStores() {
-		KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
+    /**
+     * Close all keyStores.
+     *
+     * @return True if all KeyStores closed, false otherwise
+     */
+    protected boolean closeAllKeyStores() {
+        KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
 
-		while (histories.length > 0) {
-			if (!closeKeyStore(histories[0])) {
-				break;
-			}
+        while (histories.length > 0) {
+            if (!closeKeyStore(histories[0])) {
+                break;
+            }
 
-			histories = kseFrame.getKeyStoreHistories();
-		}
+            histories = kseFrame.getKeyStoreHistories();
+        }
 
-		return histories.length == 0;
+        return histories.length == 0;
 
-	}
+    }
 }

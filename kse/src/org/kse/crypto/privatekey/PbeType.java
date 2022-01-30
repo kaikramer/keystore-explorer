@@ -22,13 +22,12 @@ package org.kse.crypto.privatekey;
 /**
  * Password based Encryption (PBE) Types used to encrypt private key formats
  * such as PKCS #8 and OpenSSL.
- *
  */
 public interface PbeType {
-	/**
-	 * Get type's friendly name.
-	 *
-	 * @return Friendly name
-	 */
-	String friendly();
+    /**
+     * Get type's friendly name.
+     *
+     * @return Friendly name
+     */
+    String friendly();
 }

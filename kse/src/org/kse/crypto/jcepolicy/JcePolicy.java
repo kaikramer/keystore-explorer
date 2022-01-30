@@ -23,37 +23,37 @@ import java.util.ResourceBundle;
 
 /**
  * Enumeration of JCE policies.
- *
  */
 public enum JcePolicy {
-	LOCAL_POLICY("local_policy.jar"), US_EXPORT_POLICY("US_export_policy.jar");
+    LOCAL_POLICY("local_policy.jar"),
+    US_EXPORT_POLICY("US_export_policy.jar");
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/jcepolicy/resources");
-	private final String jar;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/jcepolicy/resources");
+    private final String jar;
 
-	JcePolicy(String jar) {
-		this.jar = jar;
-	}
+    JcePolicy(String jar) {
+        this.jar = jar;
+    }
 
-	/**
-	 * Get friendly name
-	 *
-	 * @return Friendly name
-	 */
-	public String friendly() {
-		if (this == LOCAL_POLICY) {
-			return res.getString("JcePolicy.LocalPolicy");
-		} else {
-			return res.getString("JcePolicy.UsExportPolicy");
-		}
-	}
+    /**
+     * Get friendly name
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
+        if (this == LOCAL_POLICY) {
+            return res.getString("JcePolicy.LocalPolicy");
+        } else {
+            return res.getString("JcePolicy.UsExportPolicy");
+        }
+    }
 
-	/**
-	 * Get JCE policy JAR name.
-	 *
-	 * @return JAR name
-	 */
-	public String jar() {
-		return jar;
-	}
+    /**
+     * Get JCE policy JAR name.
+     *
+     * @return JAR name
+     */
+    public String jar() {
+        return jar;
+    }
 }

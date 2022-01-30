@@ -76,311 +76,306 @@ import org.kse.utilities.oid.ObjectIdComparator;
 
 /**
  * Displays the details of X.509 Extensions.
- *
  */
 public class DViewExtensions extends JEscDialog implements HyperlinkListener {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private JPanel jpExtensions;
-	private JPanel jpExtensionsTable;
-	private JScrollPane jspExtensionsTable;
-	private JKseTable jtExtensions;
-	private JPanel jpExtensionValue;
-	private JLabel jlExtensionValue;
-	private JPanel jpExtensionValueTextArea;
-	private JScrollPane jspExtensionValue;
-	private JEditorPane jepExtensionValue;
-	private JPanel jpExtensionActionPanel;
-	private JButton jbAsn1;
-	private JPanel jpOK;
-	private JButton jbOK;
+    private JPanel jpExtensions;
+    private JPanel jpExtensionsTable;
+    private JScrollPane jspExtensionsTable;
+    private JKseTable jtExtensions;
+    private JPanel jpExtensionValue;
+    private JLabel jlExtensionValue;
+    private JPanel jpExtensionValueTextArea;
+    private JScrollPane jspExtensionValue;
+    private JEditorPane jepExtensionValue;
+    private JPanel jpExtensionActionPanel;
+    private JButton jbAsn1;
+    private JPanel jpOK;
+    private JButton jbOK;
 
-	private X509Extension extensions;
+    private X509Extension extensions;
 
-	/**
-	 * Creates a new DViewExtensions dialog.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param extensions
-	 *            Extensions to display
-	 */
-	public DViewExtensions(JFrame parent, String title, X509Extension extensions) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.extensions = extensions;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewExtensions dialog.
+     *
+     * @param parent     Parent frame
+     * @param title      The dialog title
+     * @param extensions Extensions to display
+     */
+    public DViewExtensions(JFrame parent, String title, X509Extension extensions) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.extensions = extensions;
+        initComponents();
+    }
 
-	/**
-	 * Creates new DViewExtensions dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param extensions
-	 *            Extensions to display
-	 */
-	public DViewExtensions(JDialog parent, String title, X509Extension extensions) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.extensions = extensions;
-		initComponents();
-	}
+    /**
+     * Creates new DViewExtensions dialog.
+     *
+     * @param parent     Parent dialog
+     * @param title      The dialog title
+     * @param extensions Extensions to display
+     */
+    public DViewExtensions(JDialog parent, String title, X509Extension extensions) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.extensions = extensions;
+        initComponents();
+    }
 
-	private void initComponents() {
-		ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
-		jtExtensions = new JKseTable(extensionsTableModel);
+    private void initComponents() {
+        ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
+        jtExtensions = new JKseTable(extensionsTableModel);
 
-		TableRowSorter<ExtensionsTableModel> sorter = new TableRowSorter<>(extensionsTableModel);
-		sorter.setComparator(2, new ObjectIdComparator());
-		jtExtensions.setRowSorter(sorter);
+        TableRowSorter<ExtensionsTableModel> sorter = new TableRowSorter<>(extensionsTableModel);
+        sorter.setComparator(2, new ObjectIdComparator());
+        jtExtensions.setRowSorter(sorter);
 
-		jtExtensions.setShowGrid(false);
-		jtExtensions.setRowMargin(0);
-		jtExtensions.getColumnModel().setColumnMargin(0);
-		jtExtensions.getTableHeader().setReorderingAllowed(false);
-		jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
-		jtExtensions.setRowHeight(Math.max(18, jtExtensions.getRowHeight()));
+        jtExtensions.setShowGrid(false);
+        jtExtensions.setRowMargin(0);
+        jtExtensions.getColumnModel().setColumnMargin(0);
+        jtExtensions.getTableHeader().setReorderingAllowed(false);
+        jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtExtensions.setRowHeight(Math.max(18, jtExtensions.getRowHeight()));
 
-		for (int i = 0; i < jtExtensions.getColumnCount(); i++) {
-			TableColumn column = jtExtensions.getColumnModel().getColumn(i);
-			column.setHeaderRenderer(new ExtensionsTableHeadRend(jtExtensions.getTableHeader().getDefaultRenderer()));
-			column.setCellRenderer(new ExtensionsTableCellRend());
-		}
+        for (int i = 0; i < jtExtensions.getColumnCount(); i++) {
+            TableColumn column = jtExtensions.getColumnModel().getColumn(i);
+            column.setHeaderRenderer(new ExtensionsTableHeadRend(jtExtensions.getTableHeader().getDefaultRenderer()));
+            column.setCellRenderer(new ExtensionsTableCellRend());
+        }
 
-		TableColumn criticalCol = jtExtensions.getColumnModel().getColumn(0);
-		criticalCol.setResizable(false);
-		criticalCol.setMinWidth(28);
-		criticalCol.setMaxWidth(28);
-		criticalCol.setPreferredWidth(28);
+        TableColumn criticalCol = jtExtensions.getColumnModel().getColumn(0);
+        criticalCol.setResizable(false);
+        criticalCol.setMinWidth(28);
+        criticalCol.setMaxWidth(28);
+        criticalCol.setPreferredWidth(28);
 
-		ListSelectionModel selectionModel = jtExtensions.getSelectionModel();
-		selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		selectionModel.addListSelectionListener(evt -> {
-			if (!evt.getValueIsAdjusting()) {
-				try {
-					CursorUtil.setCursorBusy(DViewExtensions.this);
-					updateExtensionValue();
-				} finally {
-					CursorUtil.setCursorFree(DViewExtensions.this);
-				}
-			}
-		});
+        ListSelectionModel selectionModel = jtExtensions.getSelectionModel();
+        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        selectionModel.addListSelectionListener(evt -> {
+            if (!evt.getValueIsAdjusting()) {
+                try {
+                    CursorUtil.setCursorBusy(DViewExtensions.this);
+                    updateExtensionValue();
+                } finally {
+                    CursorUtil.setCursorFree(DViewExtensions.this);
+                }
+            }
+        });
 
-		jspExtensionsTable = PlatformUtil.createScrollPane(jtExtensions,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		jspExtensionsTable.getViewport().setBackground(jtExtensions.getBackground());
+        jspExtensionsTable = PlatformUtil.createScrollPane(jtExtensions,
+                                                           ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                           ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jspExtensionsTable.getViewport().setBackground(jtExtensions.getBackground());
 
-		jpExtensionsTable = new JPanel(new BorderLayout(5, 5));
-		jpExtensionsTable.setPreferredSize(new Dimension(500, 200));
-		jpExtensionsTable.add(jspExtensionsTable, BorderLayout.CENTER);
+        jpExtensionsTable = new JPanel(new BorderLayout(5, 5));
+        jpExtensionsTable.setPreferredSize(new Dimension(500, 200));
+        jpExtensionsTable.add(jspExtensionsTable, BorderLayout.CENTER);
 
-		jpExtensionValue = new JPanel(new BorderLayout(5, 5));
+        jpExtensionValue = new JPanel(new BorderLayout(5, 5));
 
-		jlExtensionValue = new JLabel(res.getString("DViewExtensions.jlExtensionValue.text"));
+        jlExtensionValue = new JLabel(res.getString("DViewExtensions.jlExtensionValue.text"));
 
-		jpExtensionValue.add(jlExtensionValue, BorderLayout.NORTH);
+        jpExtensionValue.add(jlExtensionValue, BorderLayout.NORTH);
 
-		jepExtensionValue = new JEditorPane();
-		jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		jepExtensionValue.setEditable(false);
-		jepExtensionValue.setToolTipText(res.getString("DViewExtensions.jtaExtensionValue.tooltip"));
-		// JGoodies - keep uneditable color same as editable
-		jepExtensionValue.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+        jepExtensionValue = new JEditorPane();
+        jepExtensionValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jepExtensionValue.setEditable(false);
+        jepExtensionValue.setToolTipText(res.getString("DViewExtensions.jtaExtensionValue.tooltip"));
+        // JGoodies - keep uneditable color same as editable
+        jepExtensionValue.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
-		// for displaying URLs in extensions as clickable links
-		jepExtensionValue.setContentType("text/html");
-		jepExtensionValue.addHyperlinkListener(this);
-		// use default font and foreground color from the component
-		jepExtensionValue.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+        // for displaying URLs in extensions as clickable links
+        jepExtensionValue.setContentType("text/html");
+        jepExtensionValue.addHyperlinkListener(this);
+        // use default font and foreground color from the component
+        jepExtensionValue.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
 
-		jspExtensionValue = PlatformUtil.createScrollPane(jepExtensionValue,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jspExtensionValue = PlatformUtil.createScrollPane(jepExtensionValue,
+                                                          ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                          ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		jpExtensionValueTextArea = new JPanel(new BorderLayout(5, 5));
-		jpExtensionValueTextArea.setPreferredSize(new Dimension(500, 200));
-		jpExtensionValueTextArea.add(jspExtensionValue, BorderLayout.CENTER);
+        jpExtensionValueTextArea = new JPanel(new BorderLayout(5, 5));
+        jpExtensionValueTextArea.setPreferredSize(new Dimension(500, 200));
+        jpExtensionValueTextArea.add(jspExtensionValue, BorderLayout.CENTER);
 
-		jpExtensionValue.add(jpExtensionValueTextArea, BorderLayout.CENTER);
+        jpExtensionValue.add(jpExtensionValueTextArea, BorderLayout.CENTER);
 
-		jbAsn1 = new JButton(res.getString("DViewExtensions.jbAsn1.text"));
+        jbAsn1 = new JButton(res.getString("DViewExtensions.jbAsn1.text"));
 
-		PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewExtensions.jbAsn1.mnemonic").charAt(0));
-		jbAsn1.setToolTipText(res.getString("DViewExtensions.jbAsn1.tooltip"));
-		jbAsn1.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewExtensions.this);
-				asn1DumpPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewExtensions.this);
-			}
-		});
+        PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewExtensions.jbAsn1.mnemonic").charAt(0));
+        jbAsn1.setToolTipText(res.getString("DViewExtensions.jbAsn1.tooltip"));
+        jbAsn1.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewExtensions.this);
+                asn1DumpPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewExtensions.this);
+            }
+        });
 
-		JButton jbSaveTemplate = new JButton(res.getString("DAddExtensions.jbSaveTemplate.text"));
-		jbSaveTemplate.setMnemonic(res.getString("DAddExtensions.jbSaveTemplate.mnemonic").charAt(0));
-		jbSaveTemplate.setToolTipText(res.getString("DAddExtensions.jbSaveTemplate.tooltip"));
+        JButton jbSaveTemplate = new JButton(res.getString("DAddExtensions.jbSaveTemplate.text"));
+        jbSaveTemplate.setMnemonic(res.getString("DAddExtensions.jbSaveTemplate.mnemonic").charAt(0));
+        jbSaveTemplate.setToolTipText(res.getString("DAddExtensions.jbSaveTemplate.tooltip"));
 
-		jbSaveTemplate.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewExtensions.this);
-				DAddExtensions.saveTemplatePressed(new X509ExtensionSet(extensions), DViewExtensions.this);
-			} finally {
-				CursorUtil.setCursorFree(DViewExtensions.this);
-			}
-		});
+        jbSaveTemplate.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewExtensions.this);
+                DAddExtensions.saveTemplatePressed(new X509ExtensionSet(extensions), DViewExtensions.this);
+            } finally {
+                CursorUtil.setCursorFree(DViewExtensions.this);
+            }
+        });
 
-		jpExtensionActionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		jpExtensionActionPanel.add(jbSaveTemplate);
-		jpExtensionActionPanel.add(jbAsn1);
+        jpExtensionActionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        jpExtensionActionPanel.add(jbSaveTemplate);
+        jpExtensionActionPanel.add(jbAsn1);
 
-		jpExtensionValue.add(jpExtensionActionPanel, BorderLayout.SOUTH);
+        jpExtensionValue.add(jpExtensionActionPanel, BorderLayout.SOUTH);
 
-		jpExtensions = new JPanel(new GridLayout(2, 1, 5, 5));
-		jpExtensions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
+        jpExtensions = new JPanel(new GridLayout(2, 1, 5, 5));
+        jpExtensions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                  new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
-		jpExtensions.add(jpExtensionsTable);
-		jpExtensions.add(jpExtensionValue);
+        jpExtensions.add(jpExtensionsTable);
+        jpExtensions.add(jpExtensionValue);
 
-		jbOK = new JButton(res.getString("DViewExtensions.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DViewExtensions.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
+        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
-		extensionsTableModel.load(extensions);
+        extensionsTableModel.load(extensions);
 
-		if (extensionsTableModel.getRowCount() > 0) {
-			jtExtensions.changeSelection(0, 0, false, false);
-		}
+        if (extensionsTableModel.getRowCount() > 0) {
+            jtExtensions.changeSelection(0, 0, false, false);
+        }
 
-		getContentPane().add(jpExtensions, BorderLayout.CENTER);
-		getContentPane().add(jpOK, BorderLayout.SOUTH);
+        getContentPane().add(jpExtensions, BorderLayout.CENTER);
+        getContentPane().add(jpOK, BorderLayout.SOUTH);
 
-		setResizable(false);
+        setResizable(false);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private void updateExtensionValue() {
-		int selectedRow = jtExtensions.getSelectedRow();
+    private void updateExtensionValue() {
+        int selectedRow = jtExtensions.getSelectedRow();
 
-		if (selectedRow == -1) {
-			jepExtensionValue.setText("");
-			jbAsn1.setEnabled(false);
-		} else {
-			String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
-			byte[] value = extensions.getExtensionValue(oid);
-			boolean criticality = (Boolean) jtExtensions.getValueAt(selectedRow, 0);
+        if (selectedRow == -1) {
+            jepExtensionValue.setText("");
+            jbAsn1.setEnabled(false);
+        } else {
+            String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
+            byte[] value = extensions.getExtensionValue(oid);
+            boolean criticality = (Boolean) jtExtensions.getValueAt(selectedRow, 0);
 
-			X509Ext ext = new X509Ext(oid, value, criticality);
+            X509Ext ext = new X509Ext(oid, value, criticality);
 
-			try {
-				jepExtensionValue.setText("<html><body>" + ext.getStringValue()
-				.replace(X509Ext.INDENT.getIndentChar().toString(), "&nbsp;")
-				.replace(X509Ext.NEWLINE, "<br/>") + "</body></html>");
-			} catch (Exception e) {
-				jepExtensionValue.setText("");
-				DError.displayError(this, e);
-			}
-			jepExtensionValue.setCaretPosition(0);
+            try {
+                jepExtensionValue.setText("<html><body>" + ext.getStringValue()
+                                                              .replace(X509Ext.INDENT.getIndentChar().toString(),
+                                                                       "&nbsp;").replace(X509Ext.NEWLINE, "<br/>") +
+                                          "</body></html>");
+            } catch (Exception e) {
+                jepExtensionValue.setText("");
+                DError.displayError(this, e);
+            }
+            jepExtensionValue.setCaretPosition(0);
 
-			jbAsn1.setEnabled(true);
-		}
-	}
+            jbAsn1.setEnabled(true);
+        }
+    }
 
-	private void asn1DumpPressed() {
-		int selectedRow = jtExtensions.getSelectedRow();
+    private void asn1DumpPressed() {
+        int selectedRow = jtExtensions.getSelectedRow();
 
-		if (selectedRow == -1) {
-			return;
-		}
+        if (selectedRow == -1) {
+            return;
+        }
 
-		String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
-		byte[] value = extensions.getExtensionValue(oid);
-		boolean criticality = (Boolean) jtExtensions.getValueAt(selectedRow, 0);
+        String oid = ((ASN1ObjectIdentifier) jtExtensions.getValueAt(selectedRow, 2)).getId();
+        byte[] value = extensions.getExtensionValue(oid);
+        boolean criticality = (Boolean) jtExtensions.getValueAt(selectedRow, 0);
 
-		X509Ext extension = new X509Ext(oid, value, criticality);
+        X509Ext extension = new X509Ext(oid, value, criticality);
 
-		try {
-			DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, extension);
-			dViewAsn1Dump.setLocationRelativeTo(this);
-			dViewAsn1Dump.setVisible(true);
-		} catch (Asn1Exception | IOException e) {
-			DError.displayError(this, e);
-		}
-	}
+        try {
+            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, extension);
+            dViewAsn1Dump.setLocationRelativeTo(this);
+            dViewAsn1Dump.setVisible(true);
+        } catch (Asn1Exception | IOException e) {
+            DError.displayError(this, e);
+        }
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	@Override
-	public void hyperlinkUpdate(HyperlinkEvent e) {
-		if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-			try {
-				URL url = e.getURL();
-				if (url != null) {
-					if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
-						downloadCert(url);
-					} else if (url.getPath().endsWith(".crl")) {
-						downloadCrl(url);
-					} else {
-						Desktop.getDesktop().browse(url.toURI());
-					}
-				}
-			} catch (Exception ex) {
-				DError.displayError(this, ex);
-			}
-		}
-	}
+    @Override
+    public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            try {
+                URL url = e.getURL();
+                if (url != null) {
+                    if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
+                        downloadCert(url);
+                    } else if (url.getPath().endsWith(".crl")) {
+                        downloadCrl(url);
+                    } else {
+                        Desktop.getDesktop().browse(url.toURI());
+                    }
+                }
+            } catch (Exception ex) {
+                DError.displayError(this, ex);
+            }
+        }
+    }
 
-	private void downloadCrl(URL url) throws IOException, CryptoException {
-		URLConnection urlConn = url.openConnection();
-		try (InputStream is = urlConn.getInputStream()) {
-			X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
-			if (crl != null) {
-				DViewCrl dViewCrl = new DViewCrl(this,
-						MessageFormat.format(res.getString("DViewExtensions.ViewCrl.Title"), url.toString()),
-						ModalityType.DOCUMENT_MODAL, crl);
-				dViewCrl.setLocationRelativeTo(this);
-				dViewCrl.setVisible(true);
-			}
-		}
-	}
+    private void downloadCrl(URL url) throws IOException, CryptoException {
+        URLConnection urlConn = url.openConnection();
+        try (InputStream is = urlConn.getInputStream()) {
+            X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+            if (crl != null) {
+                DViewCrl dViewCrl = new DViewCrl(this,
+                                                 MessageFormat.format(res.getString("DViewExtensions.ViewCrl.Title"),
+                                                                      url.toString()), ModalityType.DOCUMENT_MODAL,
+                                                 crl);
+                dViewCrl.setLocationRelativeTo(this);
+                dViewCrl.setVisible(true);
+            }
+        }
+    }
 
-	private void downloadCert(URL url) throws IOException, CryptoException {
-		URLConnection urlConn = url.openConnection();
-		try (InputStream is = urlConn.getInputStream()) {
-			X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
-			if (certs != null && certs.length > 0) {
-				DViewCertificate dViewCertificate = new DViewCertificate(this,
-						MessageFormat.format(res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
-						null, DViewCertificate.NONE);
-				dViewCertificate.setLocationRelativeTo(this);
-				dViewCertificate.setVisible(true);
-			}
-		}
-	}
+    private void downloadCert(URL url) throws IOException, CryptoException {
+        URLConnection urlConn = url.openConnection();
+        try (InputStream is = urlConn.getInputStream()) {
+            X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
+            if (certs != null && certs.length > 0) {
+                DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
+                        res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs, null,
+                                                                         DViewCertificate.NONE);
+                dViewCertificate.setLocationRelativeTo(this);
+                dViewCertificate.setVisible(true);
+            }
+        }
+    }
 }

@@ -24,24 +24,21 @@ import javax.swing.JLabel;
 
 /**
  * Default renderer to use with the JTicker Swing control.
- *
  */
 public class DefaultTickerRenderer extends JLabel implements TickerRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Get the rendering component for the specified JTicker and ticker item
-	 *
-	 * @return Rendering component
-	 * @param ticker
-	 *            The JTicker that is asking the renderer to draw
-	 * @param value
-	 *            The value of the ticker item to be rendered
-	 */
-	@Override
-	public JComponent getTickerRendererComponent(JTicker ticker, Object value) {
-		// Simply set the text of the parent label
-		setText(value.toString());
-		return this;
-	}
+    /**
+     * Get the rendering component for the specified JTicker and ticker item
+     *
+     * @param ticker The JTicker that is asking the renderer to draw
+     * @param value  The value of the ticker item to be rendered
+     * @return Rendering component
+     */
+    @Override
+    public JComponent getTickerRendererComponent(JTicker ticker, Object value) {
+        // Simply set the text of the parent label
+        setText(value.toString());
+        return this;
+    }
 }

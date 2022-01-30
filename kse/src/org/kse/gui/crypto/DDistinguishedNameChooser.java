@@ -51,213 +51,207 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to view or edit a distinguished name.
- *
  */
 public class DDistinguishedNameChooser extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private DistinguishedNameChooser distinguishedNameChooser;
-	private JButton jbReset;
-	private JButton jbDefault;
-	private JButton jbOK;
-	private JButton jbCancel;
-	private JPanel jpButtons;
+    private DistinguishedNameChooser distinguishedNameChooser;
+    private JButton jbReset;
+    private JButton jbDefault;
+    private JButton jbOK;
+    private JButton jbCancel;
+    private JPanel jpButtons;
 
-	private boolean editable;
-	private X500Name distinguishedName;
+    private boolean editable;
+    private X500Name distinguishedName;
 
-	String defaultDN;
+    String defaultDN;
 
-	private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+    private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
 
-	/**
-	 * Creates a new DDistinguishedNameChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param distinguishedName
-	 *            The distinguished name
-	 * @param editable
-	 *            Is dialog editable?
-	 */
-	public DDistinguishedNameChooser(JFrame parent, String title, X500Name distinguishedName, boolean editable) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.distinguishedName = distinguishedName;
-		this.editable = editable;
-		initComponents();
-	}
+    /**
+     * Creates a new DDistinguishedNameChooser dialog.
+     *
+     * @param parent            The parent frame
+     * @param title             The dialog title
+     * @param distinguishedName The distinguished name
+     * @param editable          Is dialog editable?
+     */
+    public DDistinguishedNameChooser(JFrame parent, String title, X500Name distinguishedName, boolean editable) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.distinguishedName = distinguishedName;
+        this.editable = editable;
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DDistinguishedNameChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param distinguishedName
-	 *            The distinguished name
-	 * @param editable
-	 *            Is dialog editable?
-	 */
-	public DDistinguishedNameChooser(JDialog parent, String title, X500Name distinguishedName, boolean editable) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.distinguishedName = distinguishedName;
-		this.editable = editable;
-		initComponents();
-	}
+    /**
+     * Creates a new DDistinguishedNameChooser dialog.
+     *
+     * @param parent            The parent dialog
+     * @param title             The dialog title
+     * @param distinguishedName The distinguished name
+     * @param editable          Is dialog editable?
+     */
+    public DDistinguishedNameChooser(JDialog parent, String title, X500Name distinguishedName, boolean editable) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.distinguishedName = distinguishedName;
+        this.editable = editable;
+        initComponents();
+    }
 
-	private void initComponents() {
+    private void initComponents() {
 
-		defaultDN = applicationSettings.getDefaultDN();
+        defaultDN = applicationSettings.getDefaultDN();
 
-		jbReset = new JButton(res.getString("DDistinguishedNameChooser.jbReset.text"));
-		PlatformUtil.setMnemonic(jbReset, res.getString("DDistinguishedNameChooser.jbReset.mnemonic").charAt(0));
-		jbReset.setToolTipText(res.getString("DDistinguishedNameChooser.jbReset.tooltip"));
+        jbReset = new JButton(res.getString("DDistinguishedNameChooser.jbReset.text"));
+        PlatformUtil.setMnemonic(jbReset, res.getString("DDistinguishedNameChooser.jbReset.mnemonic").charAt(0));
+        jbReset.setToolTipText(res.getString("DDistinguishedNameChooser.jbReset.tooltip"));
 
-		jbDefault = new JButton(res.getString("DDistinguishedNameChooser.jbDefault.text"));
-		PlatformUtil.setMnemonic(jbDefault, res.getString("DDistinguishedNameChooser.jbDefault.mnemonic").charAt(0));
-		jbDefault.setToolTipText(res.getString("DDistinguishedNameChooser.jbDefault.tooltip"));
+        jbDefault = new JButton(res.getString("DDistinguishedNameChooser.jbDefault.text"));
+        PlatformUtil.setMnemonic(jbDefault, res.getString("DDistinguishedNameChooser.jbDefault.mnemonic").charAt(0));
+        jbDefault.setToolTipText(res.getString("DDistinguishedNameChooser.jbDefault.tooltip"));
 
-		jbOK = new JButton(res.getString("DDistinguishedNameChooser.jbOK.text"));
+        jbOK = new JButton(res.getString("DDistinguishedNameChooser.jbOK.text"));
 
-		if (editable) {
-			distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
+        if (editable) {
+            distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
 
-			jbCancel = new JButton(res.getString("DDistinguishedNameChooser.jbCancel.text"));
-			jbCancel.addActionListener(evt -> cancelPressed());
-			jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-					CANCEL_KEY);
-			jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-				private static final long serialVersionUID = 1L;
+            jbCancel = new JButton(res.getString("DDistinguishedNameChooser.jbCancel.text"));
+            jbCancel.addActionListener(evt -> cancelPressed());
+            jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+            jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+                private static final long serialVersionUID = 1L;
 
-				@Override
-				public void actionPerformed(ActionEvent evt) {
-					cancelPressed();
-				}
-			});
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                    cancelPressed();
+                }
+            });
 
-			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
-		} else {
+            jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
+        } else {
 
-			distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, false, defaultDN);
-			jpButtons = PlatformUtil.createDialogButtonPanel(jbOK);
-		}
+            distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, false, defaultDN);
+            jpButtons = PlatformUtil.createDialogButtonPanel(jbOK);
+        }
 
-		// layout
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-		layoutContentPane();
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        layoutContentPane();
 
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbReset.addActionListener(evt -> resetPressed());
+        jbReset.addActionListener(evt -> resetPressed());
 
-		jbDefault.addActionListener(evt -> defaultPressed());
+        jbDefault.addActionListener(evt -> defaultPressed());
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				okPressed();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                okPressed();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		SwingUtilities.invokeLater(() -> distinguishedNameChooser.getFirstTextField().requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> distinguishedNameChooser.getFirstTextField().requestFocus());
+    }
 
-	private void layoutContentPane() {
-		Container pane = getContentPane();
-		pane.removeAll();
-		pane.add(distinguishedNameChooser, "left, spanx, wrap");
-		if (editable) {
-			// when no DN was given, the default and reset button do exactly the same thing
-			if (distinguishedName == null || distinguishedName.getRDNs().length == 0) {
-				pane.add(jbReset, "right, spanx, wrap");
-			} else {
-				pane.add(jbReset, "right, spanx, split 2");
-				pane.add(jbDefault, "wrap");
-			}
-		}
-		pane.add(new JSeparator(), "spanx, growx, wrap");
-		pane.add(jpButtons, "right, spanx");
+    private void layoutContentPane() {
+        Container pane = getContentPane();
+        pane.removeAll();
+        pane.add(distinguishedNameChooser, "left, spanx, wrap");
+        if (editable) {
+            // when no DN was given, the default and reset button do exactly the same thing
+            if (distinguishedName == null || distinguishedName.getRDNs().length == 0) {
+                pane.add(jbReset, "right, spanx, wrap");
+            } else {
+                pane.add(jbReset, "right, spanx, split 2");
+                pane.add(jbDefault, "wrap");
+            }
+        }
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jpButtons, "right, spanx");
 
-		pack();
-		validate();
-		repaint();
-	}
+        pack();
+        validate();
+        repaint();
+    }
 
-	/**
-	 * Get selected distinguished name.
-	 *
-	 * @return Distinguished name, or null if none
-	 */
-	public X500Name getDistinguishedName() {
-		return distinguishedName;
-	}
+    /**
+     * Get selected distinguished name.
+     *
+     * @return Distinguished name, or null if none
+     */
+    public X500Name getDistinguishedName() {
+        return distinguishedName;
+    }
 
-	protected void defaultPressed() {
-		distinguishedNameChooser = new DistinguishedNameChooser(new X500Name(defaultDN), true, defaultDN);
-		layoutContentPane();
-	}
+    protected void defaultPressed() {
+        distinguishedNameChooser = new DistinguishedNameChooser(new X500Name(defaultDN), true, defaultDN);
+        layoutContentPane();
+    }
 
-	protected void resetPressed() {
-		distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
-		layoutContentPane();
-	}
+    protected void resetPressed() {
+        distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
+        layoutContentPane();
+    }
 
-	private void okPressed() {
-		if (editable) {
+    private void okPressed() {
+        if (editable) {
 
-			X500Name dn = distinguishedNameChooser.getDN();
+            X500Name dn = distinguishedNameChooser.getDN();
 
-			if (dn == null) {
-				return;
-			}
+            if (dn == null) {
+                return;
+            }
 
-			if (dn.toString().isEmpty()) {
-				JOptionPane.showMessageDialog(this,
-						res.getString("DDistinguishedNameChooser.ValueReqAtLeastOneField.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (dn.toString().isEmpty()) {
+                JOptionPane.showMessageDialog(this, res.getString(
+                                                      "DDistinguishedNameChooser.ValueReqAtLeastOneField.message"),
+                                              getTitle(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			for (RDN rdn : dn.getRDNs(BCStyle.C)) {
-				String countryCode = rdn.getFirst().getValue().toString();
-				if ((countryCode != null) && (countryCode.length() != 2)) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DDistinguishedNameChooser.CountryCodeTwoChars.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-			}
+            for (RDN rdn : dn.getRDNs(BCStyle.C)) {
+                String countryCode = rdn.getFirst().getValue().toString();
+                if ((countryCode != null) && (countryCode.length() != 2)) {
+                    JOptionPane.showMessageDialog(this, res.getString(
+                                                          "DDistinguishedNameChooser.CountryCodeTwoChars.message"), getTitle(),
+                                                  JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
 
-			distinguishedName = dn;
-		}
+            distinguishedName = dn;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	public static void main(String[] args) throws Exception {
-		DDistinguishedNameChooser dialog = new DDistinguishedNameChooser(new javax.swing.JFrame(), "DN Chooser",
-				new X500Name("CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com"), true);
-		DialogViewer.run(dialog);
-	}
+    public static void main(String[] args) throws Exception {
+        DDistinguishedNameChooser dialog = new DDistinguishedNameChooser(new javax.swing.JFrame(), "DN Chooser",
+                                                                         new X500Name(
+                                                                                 "CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com"),
+                                                                         true);
+        DialogViewer.run(dialog);
+    }
 }

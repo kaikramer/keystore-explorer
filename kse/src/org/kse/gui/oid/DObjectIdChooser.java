@@ -46,128 +46,119 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to choose an object identifier.
- *
  */
 public class DObjectIdChooser extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/oid/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/oid/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JLabel jlObjectId;
-	private JObjectIdEditor jObjectIdEditor;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JLabel jlObjectId;
+    private JObjectIdEditor jObjectIdEditor;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private ASN1ObjectIdentifier objectId;
+    private ASN1ObjectIdentifier objectId;
 
-	/**
-	 * Constructs a new DObjectIdChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param objectId
-	 *            Object identifier
-	 * @throws InvalidObjectIdException
-	 *             If there was a problem with the object identifier
-	 */
-	public DObjectIdChooser(JFrame parent, String title, ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		initComponents(objectId);
-	}
+    /**
+     * Constructs a new DObjectIdChooser dialog.
+     *
+     * @param parent   The parent frame
+     * @param title    The dialog title
+     * @param objectId Object identifier
+     * @throws InvalidObjectIdException If there was a problem with the object identifier
+     */
+    public DObjectIdChooser(JFrame parent, String title, ASN1ObjectIdentifier objectId)
+            throws InvalidObjectIdException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        initComponents(objectId);
+    }
 
-	/**
-	 * Constructs a new DObjectIdChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param objectId
-	 *            Object identifier
-	 * @throws InvalidObjectIdException
-	 *             If there was a problem with the object identifier
-	 */
-	public DObjectIdChooser(JDialog parent, String title, ASN1ObjectIdentifier objectId)
-			throws InvalidObjectIdException {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		initComponents(objectId);
-	}
+    /**
+     * Constructs a new DObjectIdChooser dialog.
+     *
+     * @param parent   The parent dialog
+     * @param title    The dialog title
+     * @param objectId Object identifier
+     * @throws InvalidObjectIdException If there was a problem with the object identifier
+     */
+    public DObjectIdChooser(JDialog parent, String title, ASN1ObjectIdentifier objectId)
+            throws InvalidObjectIdException {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        initComponents(objectId);
+    }
 
-	private void initComponents(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
-		jlObjectId = new JLabel(res.getString("DObjectIdChooser.jlObjectId.text"));
+    private void initComponents(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {
+        jlObjectId = new JLabel(res.getString("DObjectIdChooser.jlObjectId.text"));
 
-		jObjectIdEditor = new JObjectIdEditor(objectId);
+        jObjectIdEditor = new JObjectIdEditor(objectId);
 
-		jbOK = new JButton(res.getString("DObjectIdChooser.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DObjectIdChooser.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DObjectIdChooser.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DObjectIdChooser.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		// layout
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]"));
-		pane.add(jlObjectId, "");
-		pane.add(jObjectIdEditor, "wrap");
-		pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
-		pane.add(jbCancel, "spanx, split 2, tag cancel");
-		pane.add(jbOK, "tag ok");
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]"));
+        pane.add(jlObjectId, "");
+        pane.add(jObjectIdEditor, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void okPressed() {
-		try {
-			this.objectId = jObjectIdEditor.getObjectId();
-		} catch (InvalidObjectIdException | IllegalArgumentException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+    private void okPressed() {
+        try {
+            this.objectId = jObjectIdEditor.getObjectId();
+        } catch (InvalidObjectIdException | IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
+    /**
+     * Get selected object identifier name.
+     *
+     * @return Object identifier, or null if none
+     */
+    public ASN1ObjectIdentifier getObjectId() {
+        return objectId;
+    }
 
-	/**
-	 * Get selected object identifier name.
-	 *
-	 * @return Object identifier, or null if none
-	 */
-	public ASN1ObjectIdentifier getObjectId() {
-		return objectId;
-	}
-
-	public static void main(String[] args)
-			throws HeadlessException, InvalidObjectIdException, UnsupportedLookAndFeelException {
-		DialogViewer.prepare();
-		DObjectIdChooser dialog = new DObjectIdChooser(new JFrame(), "OID Chooser", new ASN1ObjectIdentifier("1.2.3"));
-		DialogViewer.run(dialog);
-	}
+    public static void main(String[] args)
+            throws HeadlessException, InvalidObjectIdException, UnsupportedLookAndFeelException {
+        DialogViewer.prepare();
+        DObjectIdChooser dialog = new DObjectIdChooser(new JFrame(), "OID Chooser", new ASN1ObjectIdentifier("1.2.3"));
+        DialogViewer.run(dialog);
+    }
 }

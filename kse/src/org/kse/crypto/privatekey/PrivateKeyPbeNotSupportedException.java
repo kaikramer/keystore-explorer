@@ -24,73 +24,64 @@ import org.kse.crypto.CryptoException;
 /**
  * Thrown when a encrypted private key is encrypted with an unsupported PBE
  * algorithm.
- *
  */
 public class PrivateKeyPbeNotSupportedException extends CryptoException {
-	private static final long serialVersionUID = 1L;
-	private String unsupportedPbe;
+    private static final long serialVersionUID = 1L;
+    private String unsupportedPbe;
 
-	/**
-	 * Creates a new PrivateKeyPbeNotSupportedException.
-	 *
-	 * @param unsupportedPbe
-	 *            Unsupported PBE algorithm
-	 */
-	public PrivateKeyPbeNotSupportedException(String unsupportedPbe) {
-		super();
-		this.unsupportedPbe = unsupportedPbe;
-	}
+    /**
+     * Creates a new PrivateKeyPbeNotSupportedException.
+     *
+     * @param unsupportedPbe Unsupported PBE algorithm
+     */
+    public PrivateKeyPbeNotSupportedException(String unsupportedPbe) {
+        super();
+        this.unsupportedPbe = unsupportedPbe;
+    }
 
-	/**
-	 * Creates a new PrivateKeyPbeNotSupportedException with the specified
-	 * message.
-	 *
-	 * @param unsupportedPbe
-	 *            Unsupported PBE algorithm
-	 * @param message
-	 *            Exception message
-	 */
-	public PrivateKeyPbeNotSupportedException(String unsupportedPbe, String message) {
-		super(message);
-		this.unsupportedPbe = unsupportedPbe;
-	}
+    /**
+     * Creates a new PrivateKeyPbeNotSupportedException with the specified
+     * message.
+     *
+     * @param unsupportedPbe Unsupported PBE algorithm
+     * @param message        Exception message
+     */
+    public PrivateKeyPbeNotSupportedException(String unsupportedPbe, String message) {
+        super(message);
+        this.unsupportedPbe = unsupportedPbe;
+    }
 
-	/**
-	 * Creates a new PrivateKeyPbeNotSupportedException with the specified
-	 * message and cause throwable.
-	 *
-	 * @param unsupportedPbe
-	 *            Unsupported PBE algorithm
-	 * @param message
-	 *            Exception message
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public PrivateKeyPbeNotSupportedException(String unsupportedPbe, String message, Throwable causeThrowable) {
-		super(message, causeThrowable);
-		this.unsupportedPbe = unsupportedPbe;
-	}
+    /**
+     * Creates a new PrivateKeyPbeNotSupportedException with the specified
+     * message and cause throwable.
+     *
+     * @param unsupportedPbe Unsupported PBE algorithm
+     * @param message        Exception message
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public PrivateKeyPbeNotSupportedException(String unsupportedPbe, String message, Throwable causeThrowable) {
+        super(message, causeThrowable);
+        this.unsupportedPbe = unsupportedPbe;
+    }
 
-	/**
-	 * Creates a new PrivateKeyPbeNotSupportedException with the specified cause
-	 * throwable.
-	 *
-	 * @param unsupportedPbe
-	 *            Unsupported PBE algorithm
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public PrivateKeyPbeNotSupportedException(String unsupportedPbe, Throwable causeThrowable) {
-		super(causeThrowable);
-		this.unsupportedPbe = unsupportedPbe;
-	}
+    /**
+     * Creates a new PrivateKeyPbeNotSupportedException with the specified cause
+     * throwable.
+     *
+     * @param unsupportedPbe Unsupported PBE algorithm
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public PrivateKeyPbeNotSupportedException(String unsupportedPbe, Throwable causeThrowable) {
+        super(causeThrowable);
+        this.unsupportedPbe = unsupportedPbe;
+    }
 
-	/**
-	 * Get unsupported Pbe algorithm.
-	 *
-	 * @return Unsupported PBE algorithm
-	 */
-	public String getUnsupportedPbe() {
-		return unsupportedPbe;
-	}
+    /**
+     * Get unsupported Pbe algorithm.
+     *
+     * @return Unsupported PBE algorithm
+     */
+    public String getUnsupportedPbe() {
+        return unsupportedPbe;
+    }
 }

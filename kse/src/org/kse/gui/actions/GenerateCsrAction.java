@@ -57,125 +57,126 @@ import org.kse.utilities.io.IOUtils;
 
 /**
  * Action to generate a CSR using the selected key pair entry.
- *
  */
 public class GenerateCsrAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public GenerateCsrAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public GenerateCsrAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("GenerateCsrAction.statusbar"));
-		putValue(NAME, res.getString("GenerateCsrAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("GenerateCsrAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/gencsr.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("GenerateCsrAction.statusbar"));
+        putValue(NAME, res.getString("GenerateCsrAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("GenerateCsrAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/gencsr.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		File csrFile = null;
-		FileOutputStream fos = null;
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        File csrFile = null;
+        FileOutputStream fos = null;
 
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
-			Provider provider = history.getExplicitProvider();
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
+            Provider provider = history.getExplicitProvider();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStore keyStore = currentState.getKeyStore();
+            KeyStore keyStore = currentState.getKeyStore();
 
-			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
-			String keyPairAlg = privateKey.getAlgorithm();
-			KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+            String keyPairAlg = privateKey.getAlgorithm();
+            KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-			if (keyPairType == null) {
-				throw new CryptoException(MessageFormat.format(
-						res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"), keyPairAlg));
-			}
+            if (keyPairType == null) {
+                throw new CryptoException(
+                        MessageFormat.format(res.getString("GenerateCsrAction.NoCsrForKeyPairAlg.message"),
+                                             keyPairAlg));
+            }
 
-			// determine dir of current keystore as proposal for CSR file location
-			String path = CurrentDirectory.get().getAbsolutePath();
-			File keyStoreFile = history.getFile();
-			if (keyStoreFile != null) {
-				path = keyStoreFile.getAbsoluteFile().getParent();
-			}
+            // determine dir of current keystore as proposal for CSR file location
+            String path = CurrentDirectory.get().getAbsolutePath();
+            File keyStoreFile = history.getFile();
+            if (keyStoreFile != null) {
+                path = keyStoreFile.getAbsoluteFile().getParent();
+            }
 
-			X509Certificate firstCertInChain = X509CertUtil.orderX509CertChain(X509CertUtil
-					.convertCertificates(keyStore.getCertificateChain(alias)))[0];
-			X500Principal subjectDN = firstCertInChain.getSubjectX500Principal();
+            X509Certificate firstCertInChain = X509CertUtil.orderX509CertChain(
+                    X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)))[0];
+            X500Principal subjectDN = firstCertInChain.getSubjectX500Principal();
 
-			DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, subjectDN, privateKey, keyPairType, path);
-			dGenerateCsr.setLocationRelativeTo(frame);
-			dGenerateCsr.setVisible(true);
+            DGenerateCsr dGenerateCsr = new DGenerateCsr(frame, alias, subjectDN, privateKey, keyPairType, path);
+            dGenerateCsr.setLocationRelativeTo(frame);
+            dGenerateCsr.setVisible(true);
 
-			if (!dGenerateCsr.generateSelected()) {
-				return;
-			}
+            if (!dGenerateCsr.generateSelected()) {
+                return;
+            }
 
-			csrFile = dGenerateCsr.getCsrFile();
-			subjectDN = dGenerateCsr.getSubjectDN();
-			CsrType format = dGenerateCsr.getFormat();
-			SignatureType signatureType = dGenerateCsr.getSignatureType();
-			String challenge = dGenerateCsr.getChallenge();
-			String unstructuredName = dGenerateCsr.getUnstructuredName();
-			boolean useCertificateExtensions = dGenerateCsr.isAddExtensionsWanted();
+            csrFile = dGenerateCsr.getCsrFile();
+            subjectDN = dGenerateCsr.getSubjectDN();
+            CsrType format = dGenerateCsr.getFormat();
+            SignatureType signatureType = dGenerateCsr.getSignatureType();
+            String challenge = dGenerateCsr.getChallenge();
+            String unstructuredName = dGenerateCsr.getUnstructuredName();
+            boolean useCertificateExtensions = dGenerateCsr.isAddExtensionsWanted();
 
-			PublicKey publicKey = firstCertInChain.getPublicKey();
+            PublicKey publicKey = firstCertInChain.getPublicKey();
 
-			// add extensionRequest attribute with all extensions from the certificate
-			Extensions extensions = null;
-			if (useCertificateExtensions) {
-				Certificate certificate = Certificate.getInstance(firstCertInChain.getEncoded());
-				extensions = certificate.getTBSCertificate().getExtensions();
-			}
+            // add extensionRequest attribute with all extensions from the certificate
+            Extensions extensions = null;
+            if (useCertificateExtensions) {
+                Certificate certificate = Certificate.getInstance(firstCertInChain.getEncoded());
+                extensions = certificate.getTBSCertificate().getExtensions();
+            }
 
-			fos = new FileOutputStream(csrFile);
+            fos = new FileOutputStream(csrFile);
 
-			if (format == CsrType.PKCS10) {
-				String csr = Pkcs10Util.getCsrEncodedDerPem(Pkcs10Util.generateCsr(subjectDN, publicKey, privateKey,
-						signatureType, challenge, unstructuredName, extensions, provider));
+            if (format == CsrType.PKCS10) {
+                String csr = Pkcs10Util.getCsrEncodedDerPem(
+                        Pkcs10Util.generateCsr(subjectDN, publicKey, privateKey, signatureType, challenge,
+                                               unstructuredName, extensions, provider));
 
-				fos.write(csr.getBytes());
-			} else {
-				SpkacSubject subject = new SpkacSubject(X500NameUtils.x500PrincipalToX500Name(firstCertInChain
-						.getSubjectX500Principal()));
+                fos.write(csr.getBytes());
+            } else {
+                SpkacSubject subject = new SpkacSubject(
+                        X500NameUtils.x500PrincipalToX500Name(firstCertInChain.getSubjectX500Principal()));
 
-				// TODO handle other providers (PKCS11 etc)
-				Spkac spkac = new Spkac(challenge, signatureType, subject, publicKey, privateKey);
+                // TODO handle other providers (PKCS11 etc)
+                Spkac spkac = new Spkac(challenge, signatureType, subject, publicKey, privateKey);
 
-				spkac.output(fos);
-			}
+                spkac.output(fos);
+            }
 
-			JOptionPane.showMessageDialog(frame, res.getString("GenerateCsrAction.CsrGenerationSuccessful.message"),
-					res.getString("GenerateCsrAction.GenerateCsr.Title"), JOptionPane.INFORMATION_MESSAGE);
-		} catch (FileNotFoundException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("GenerateCsrAction.NoWriteFile.message"), csrFile),
-					res.getString("GenerateCsrAction.GenerateCsr.Title"), JOptionPane.WARNING_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		} finally {
-			IOUtils.closeQuietly(fos);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, res.getString("GenerateCsrAction.CsrGenerationSuccessful.message"),
+                                          res.getString("GenerateCsrAction.GenerateCsr.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(frame,
+                                          MessageFormat.format(res.getString("GenerateCsrAction.NoWriteFile.message"),
+                                                               csrFile),
+                                          res.getString("GenerateCsrAction.GenerateCsr.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        } finally {
+            IOUtils.closeQuietly(fos);
+        }
+    }
 }

@@ -38,83 +38,82 @@ import org.kse.gui.error.DError;
 
 /**
  * Action to detect crypto file type.
- *
  */
 public class DetectFileTypeAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public DetectFileTypeAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public DetectFileTypeAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("DetectFileTypeAction.accelerator").charAt(0),
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("DetectFileTypeAction.statusbar"));
-		putValue(NAME, res.getString("DetectFileTypeAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("DetectFileTypeAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/detectfiletype.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("DetectFileTypeAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("DetectFileTypeAction.statusbar"));
+        putValue(NAME, res.getString("DetectFileTypeAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("DetectFileTypeAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/detectfiletype.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		File detectTypeFile = null;
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        File detectTypeFile = null;
 
-		try {
-			JFileChooser chooser = FileChooserFactory.getCertFileChooser();
-			chooser.setCurrentDirectory(CurrentDirectory.get());
-			chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
-			chooser.setMultiSelectionEnabled(false);
-			chooser.setApproveButtonText(res.getString("DetectFileTypeAction.DetectFileType.button"));
+        try {
+            JFileChooser chooser = FileChooserFactory.getCertFileChooser();
+            chooser.setCurrentDirectory(CurrentDirectory.get());
+            chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
+            chooser.setMultiSelectionEnabled(false);
+            chooser.setApproveButtonText(res.getString("DetectFileTypeAction.DetectFileType.button"));
 
-			int rtnValue = chooser.showOpenDialog(frame);
+            int rtnValue = chooser.showOpenDialog(frame);
 
-			if (rtnValue == JFileChooser.APPROVE_OPTION) {
-				detectTypeFile = chooser.getSelectedFile();
-				CurrentDirectory.updateForFile(detectTypeFile);
-			}
+            if (rtnValue == JFileChooser.APPROVE_OPTION) {
+                detectTypeFile = chooser.getSelectedFile();
+                CurrentDirectory.updateForFile(detectTypeFile);
+            }
 
-			if (detectTypeFile == null) {
-				return;
-			}
+            if (detectTypeFile == null) {
+                return;
+            }
 
-			CryptoFileType fileType = CryptoFileUtil.detectFileType(detectTypeFile);
+            CryptoFileType fileType = CryptoFileUtil.detectFileType(detectTypeFile);
 
-			String message = null;
+            String message = null;
 
-			if (fileType != null) {
-				message = MessageFormat.format(res.getString("DetectFileTypeAction.DetectedFileType.message"),
-						detectTypeFile.getName(), fileType.friendly());
-			} else {
-				StringBuilder sbRecognisedTypes = new StringBuilder();
+            if (fileType != null) {
+                message = MessageFormat.format(res.getString("DetectFileTypeAction.DetectedFileType.message"),
+                                               detectTypeFile.getName(), fileType.friendly());
+            } else {
+                StringBuilder sbRecognisedTypes = new StringBuilder();
 
-				for (CryptoFileType type : CryptoFileType.values()) {
-					sbRecognisedTypes.append(MessageFormat.format("<li>{0}</li>", type.friendly()));
-				}
+                for (CryptoFileType type : CryptoFileType.values()) {
+                    sbRecognisedTypes.append(MessageFormat.format("<li>{0}</li>", type.friendly()));
+                }
 
-				message = MessageFormat.format(res.getString("DetectFileTypeAction.NoDetectFileType.message"),
-						detectTypeFile.getName(), sbRecognisedTypes.toString());
-			}
+                message = MessageFormat.format(res.getString("DetectFileTypeAction.NoDetectFileType.message"),
+                                               detectTypeFile.getName(), sbRecognisedTypes.toString());
+            }
 
-			JOptionPane.showMessageDialog(frame, message,
-					res.getString("DetectFileTypeAction.CryptographicFileType.Title"), JOptionPane.PLAIN_MESSAGE,
-					new ImageIcon(getClass().getResource(res.getString("DetectFileTypeAction.DetectFileType.icon"))));
-		} catch (FileNotFoundException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("DetectFileTypeAction.NoReadFile.message"), detectTypeFile),
-					res.getString("DetectFileTypeAction.DetectFileType.Title"), JOptionPane.WARNING_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, message,
+                                          res.getString("DetectFileTypeAction.CryptographicFileType.Title"),
+                                          JOptionPane.PLAIN_MESSAGE, new ImageIcon(
+                            getClass().getResource(res.getString("DetectFileTypeAction.DetectFileType.icon"))));
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(frame,
+                                          MessageFormat.format(res.getString("DetectFileTypeAction.NoReadFile.message"),
+                                                               detectTypeFile),
+                                          res.getString("DetectFileTypeAction.DetectFileType.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

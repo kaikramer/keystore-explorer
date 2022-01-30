@@ -29,43 +29,42 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Custom cell renderer for the headers of the general names table.
- *
  */
 public class GeneralNamesTableHeadRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
 
-	private TableCellRenderer delegate;
+    private TableCellRenderer delegate;
 
-	public GeneralNamesTableHeadRend(TableCellRenderer delegate) {
-		this.delegate = delegate;
-	}
+    public GeneralNamesTableHeadRend(TableCellRenderer delegate) {
+        this.delegate = delegate;
+    }
 
-	/**
-	 * Returns the rendered header cell for the supplied value and column.
-	 *
-	 * @param jTable The JTable
-	 * @param value The value to assign to the cell
-	 * @param isSelected True if cell is selected
-	 * @param hasFocus If true, render cell appropriately
-	 * @param row The row of the cell to render
-	 * @param col The column of the cell to render
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jTable, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
+    /**
+     * Returns the rendered header cell for the supplied value and column.
+     *
+     * @param jTable     The JTable
+     * @param value      The value to assign to the cell
+     * @param isSelected True if cell is selected
+     * @param hasFocus   If true, render cell appropriately
+     * @param row        The row of the cell to render
+     * @param col        The column of the cell to render
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jTable, Object value, boolean isSelected, boolean hasFocus,
+                                                   int row, int col) {
 
-		Component c = delegate.getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, col);
+        Component c = delegate.getTableCellRendererComponent(jTable, value, isSelected, hasFocus, row, col);
 
-		if (c instanceof JLabel) {
+        if (c instanceof JLabel) {
 
-			JLabel header = (JLabel) c;
+            JLabel header = (JLabel) c;
 
-			header.setToolTipText(res.getString("GeneralNamesTableHeadRend.GeneralNameColumn.tooltip"));
-		}
+            header.setToolTipText(res.getString("GeneralNamesTableHeadRend.GeneralNameColumn.tooltip"));
+        }
 
-		return c;
-	}
+        return c;
+    }
 }

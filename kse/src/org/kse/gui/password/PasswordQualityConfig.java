@@ -22,83 +22,76 @@ package org.kse.gui.password;
 /**
  * Encapsulates password quality configuration for dialogs that accept new
  * passwords.
- *
  */
 public class PasswordQualityConfig {
-	private boolean enabled;
-	private boolean enforced;
-	private int minimumQuality;
+    private boolean enabled;
+    private boolean enforced;
+    private int minimumQuality;
 
-	/**
-	 * Construct password quality configuration.
-	 *
-	 * @param enabled
-	 *            Is password quality enabled?
-	 * @param minimumQualityEnforced
-	 *            Is minimum password quality enforced?
-	 * @param minimumQuality
-	 *            Minimum password quality
-	 */
-	public PasswordQualityConfig(boolean enabled, boolean minimumQualityEnforced, int minimumQuality) {
-		this.enabled = enabled;
-		this.enforced = minimumQualityEnforced;
-		this.minimumQuality = minimumQuality;
-	}
+    /**
+     * Construct password quality configuration.
+     *
+     * @param enabled                Is password quality enabled?
+     * @param minimumQualityEnforced Is minimum password quality enforced?
+     * @param minimumQuality         Minimum password quality
+     */
+    public PasswordQualityConfig(boolean enabled, boolean minimumQualityEnforced, int minimumQuality) {
+        this.enabled = enabled;
+        this.enforced = minimumQualityEnforced;
+        this.minimumQuality = minimumQuality;
+    }
 
-	/**
-	 * Is password quality enabled?
-	 *
-	 * @return True if it is
-	 */
-	public boolean getEnabled() {
-		return enabled;
-	}
+    /**
+     * Is password quality enabled?
+     *
+     * @return True if it is
+     */
+    public boolean getEnabled() {
+        return enabled;
+    }
 
-	/**
-	 * Set if password quality is enabled.
-	 *
-	 * @param enabled
-	 *            Enabled?
-	 */
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    /**
+     * Set if password quality is enabled.
+     *
+     * @param enabled Enabled?
+     */
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	/**
-	 * Is minimum password quality enforced?
-	 *
-	 * @return True if it is
-	 */
-	public boolean getEnforced() {
-		return enforced;
-	}
+    /**
+     * Is minimum password quality enforced?
+     *
+     * @return True if it is
+     */
+    public boolean getEnforced() {
+        return enforced;
+    }
 
-	/**
-	 * Set if minimum password quality is enforced.
-	 *
-	 * @param enforced
-	 *            Enforced?
-	 */
-	public void setEnforced(boolean enforced) {
-		this.enforced = enforced;
-	}
+    /**
+     * Set if minimum password quality is enforced.
+     *
+     * @param enforced Enforced?
+     */
+    public void setEnforced(boolean enforced) {
+        this.enforced = enforced;
+    }
 
-	/**
-	 * Get minimum password quality
-	 *
-	 * @return Minimum password quality
-	 */
-	public int getMinimumQuality() {
-		return minimumQuality;
-	}
+    /**
+     * Get minimum password quality
+     *
+     * @return Minimum password quality
+     */
+    public int getMinimumQuality() {
+        return minimumQuality;
+    }
 
-	/**
-	 * Set minimum password quality
-	 *
-	 * @param minimumQuality
-	 *            Minimum password quality
-	 */
-	public void setMinimumQuality(int minimumQuality) {
-		this.minimumQuality = minimumQuality;
-	}
+    /**
+     * Set minimum password quality
+     *
+     * @param minimumQuality Minimum password quality
+     */
+    public void setMinimumQuality(int minimumQuality) {
+        this.minimumQuality = minimumQuality;
+    }
 }

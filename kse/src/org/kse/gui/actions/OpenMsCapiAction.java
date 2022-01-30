@@ -34,54 +34,49 @@ import org.kse.gui.error.DError;
 /**
  * Action to open the PKCS11 KeyStore. If it does not exist provide the
  * user with the option of creating it.
- *
  */
-public class OpenMsCapiAction  extends OpenAction {
+public class OpenMsCapiAction extends OpenAction {
 
-	private static final long serialVersionUID = -9068103518220241052L;
+    private static final long serialVersionUID = -9068103518220241052L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public OpenMsCapiAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public OpenMsCapiAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("OpenMsCapiAction.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("OpenMsCapiAction.statusbar"));
-		putValue(NAME, res.getString("OpenMsCapiAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("OpenMsCapiAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/openmscapi.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("OpenMsCapiAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.SHIFT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("OpenMsCapiAction.statusbar"));
+        putValue(NAME, res.getString("OpenMsCapiAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("OpenMsCapiAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/openmscapi.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
 
-		try {
+        try {
 
-			KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
+            KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
 
-			// https://bugs.openjdk.java.net/browse/JDK-6407454
-			// "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
-			// Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
-			// applications must not specify the SunMSCAPI provider."
+            // https://bugs.openjdk.java.net/browse/JDK-6407454
+            // "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
+            // Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
+            // applications must not specify the SunMSCAPI provider."
 
-			kseFrame.addKeyStore(openedKeyStore, res.getString("OpenMsCapiAction.TabTitle"), null, null);
+            kseFrame.addKeyStore(openedKeyStore, res.getString("OpenMsCapiAction.TabTitle"), null, null);
 
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
 }

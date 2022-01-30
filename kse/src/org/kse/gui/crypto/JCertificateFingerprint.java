@@ -41,168 +41,164 @@ import org.kse.gui.error.DError;
 
 /**
  * Component to view a fingerprint.
- *
  */
 public class JCertificateFingerprint extends JPanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private JComboBox<DigestType> jcbFingerprintAlg;
-	private JTextField jtfCertificateFingerprint;
-	private JButton jbViewCertificateFingerprint;
+    private JComboBox<DigestType> jcbFingerprintAlg;
+    private JTextField jtfCertificateFingerprint;
+    private JButton jbViewCertificateFingerprint;
 
-	private byte[] encodedCertificate;
+    private byte[] encodedCertificate;
 
-	/**
-	 * Construct a JCertificateFingerprint.
-	 *
-	 * @param columns
-	 *            Size of text field
-	 */
-	public JCertificateFingerprint(int columns) {
-		initComponents(columns);
-	}
+    /**
+     * Construct a JCertificateFingerprint.
+     *
+     * @param columns Size of text field
+     */
+    public JCertificateFingerprint(int columns) {
+        initComponents(columns);
+    }
 
-	private void initComponents(int columns) {
-		jcbFingerprintAlg = new JComboBox<>();
-		jcbFingerprintAlg.setToolTipText(res.getString("JCertificateFingerprint.jcbFingerprintAlg.tooltip"));
-		jcbFingerprintAlg.setMaximumRowCount(10);
-		jcbFingerprintAlg.addItemListener(evt -> populateFingerprint());
+    private void initComponents(int columns) {
+        jcbFingerprintAlg = new JComboBox<>();
+        jcbFingerprintAlg.setToolTipText(res.getString("JCertificateFingerprint.jcbFingerprintAlg.tooltip"));
+        jcbFingerprintAlg.setMaximumRowCount(10);
+        jcbFingerprintAlg.addItemListener(evt -> populateFingerprint());
 
-		GridBagConstraints gbc_jcbFingerprintAlg = new GridBagConstraints();
-		gbc_jcbFingerprintAlg.gridwidth = 1;
-		gbc_jcbFingerprintAlg.gridheight = 1;
-		gbc_jcbFingerprintAlg.gridx = 0;
-		gbc_jcbFingerprintAlg.gridy = 0;
-		gbc_jcbFingerprintAlg.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jcbFingerprintAlg = new GridBagConstraints();
+        gbc_jcbFingerprintAlg.gridwidth = 1;
+        gbc_jcbFingerprintAlg.gridheight = 1;
+        gbc_jcbFingerprintAlg.gridx = 0;
+        gbc_jcbFingerprintAlg.gridy = 0;
+        gbc_jcbFingerprintAlg.insets = new Insets(0, 0, 0, 5);
 
-		jtfCertificateFingerprint = new JTextField(columns);
-		jtfCertificateFingerprint.setEditable(false);
-		jtfCertificateFingerprint.setToolTipText(res
-				.getString("JCertificateFingerprint.jtfCertificateFingerprint.tooltip"));
+        jtfCertificateFingerprint = new JTextField(columns);
+        jtfCertificateFingerprint.setEditable(false);
+        jtfCertificateFingerprint.setToolTipText(
+                res.getString("JCertificateFingerprint.jtfCertificateFingerprint.tooltip"));
 
-		GridBagConstraints gbc_jtfCertificateFingerprint = new GridBagConstraints();
-		gbc_jtfCertificateFingerprint.gridwidth = 1;
-		gbc_jtfCertificateFingerprint.gridheight = 1;
-		gbc_jtfCertificateFingerprint.gridx = 1;
-		gbc_jtfCertificateFingerprint.gridy = 0;
-		gbc_jtfCertificateFingerprint.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jtfCertificateFingerprint = new GridBagConstraints();
+        gbc_jtfCertificateFingerprint.gridwidth = 1;
+        gbc_jtfCertificateFingerprint.gridheight = 1;
+        gbc_jtfCertificateFingerprint.gridx = 1;
+        gbc_jtfCertificateFingerprint.gridy = 0;
+        gbc_jtfCertificateFingerprint.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon viewIcon = new ImageIcon(getClass().getResource("images/view_cert_fingerprint.png"));
-		jbViewCertificateFingerprint = new JButton(viewIcon);
+        ImageIcon viewIcon = new ImageIcon(getClass().getResource("images/view_cert_fingerprint.png"));
+        jbViewCertificateFingerprint = new JButton(viewIcon);
 
-		jbViewCertificateFingerprint.setToolTipText(res
-				.getString("JCertificateFingerprint.jbViewCertificateFingerprint.tooltip"));
-		jbViewCertificateFingerprint.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JCertificateFingerprint.this);
-				displayFingerprint();
-			} finally {
-				CursorUtil.setCursorFree(JCertificateFingerprint.this);
-			}
-		});
+        jbViewCertificateFingerprint.setToolTipText(
+                res.getString("JCertificateFingerprint.jbViewCertificateFingerprint.tooltip"));
+        jbViewCertificateFingerprint.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JCertificateFingerprint.this);
+                displayFingerprint();
+            } finally {
+                CursorUtil.setCursorFree(JCertificateFingerprint.this);
+            }
+        });
 
-		GridBagConstraints gbc_jbViewCertificateFingerprint = new GridBagConstraints();
-		gbc_jbViewCertificateFingerprint.gridwidth = 1;
-		gbc_jbViewCertificateFingerprint.gridheight = 1;
-		gbc_jbViewCertificateFingerprint.gridx = 2;
-		gbc_jbViewCertificateFingerprint.gridy = 0;
-		gbc_jbViewCertificateFingerprint.insets = new Insets(0, 0, 0, 0);
+        GridBagConstraints gbc_jbViewCertificateFingerprint = new GridBagConstraints();
+        gbc_jbViewCertificateFingerprint.gridwidth = 1;
+        gbc_jbViewCertificateFingerprint.gridheight = 1;
+        gbc_jbViewCertificateFingerprint.gridx = 2;
+        gbc_jbViewCertificateFingerprint.gridy = 0;
+        gbc_jbViewCertificateFingerprint.insets = new Insets(0, 0, 0, 0);
 
-		setLayout(new GridBagLayout());
-		add(jcbFingerprintAlg, gbc_jcbFingerprintAlg);
-		add(jtfCertificateFingerprint, gbc_jtfCertificateFingerprint);
-		add(jbViewCertificateFingerprint, gbc_jbViewCertificateFingerprint);
+        setLayout(new GridBagLayout());
+        add(jcbFingerprintAlg, gbc_jcbFingerprintAlg);
+        add(jtfCertificateFingerprint, gbc_jtfCertificateFingerprint);
+        add(jbViewCertificateFingerprint, gbc_jbViewCertificateFingerprint);
 
-		populateFingerprintAlgs();
-		populateFingerprint();
-	}
+        populateFingerprintAlgs();
+        populateFingerprint();
+    }
 
-	private void populateFingerprintAlgs() {
-		DigestType[] digestAlgs = DigestType.values();
+    private void populateFingerprintAlgs() {
+        DigestType[] digestAlgs = DigestType.values();
 
-		for (DigestType digestAlg : digestAlgs) {
-			jcbFingerprintAlg.addItem(digestAlg);
-		}
+        for (DigestType digestAlg : digestAlgs) {
+            jcbFingerprintAlg.addItem(digestAlg);
+        }
 
-		jcbFingerprintAlg.setSelectedIndex(0);
-	}
+        jcbFingerprintAlg.setSelectedIndex(0);
+    }
 
-	/**
-	 * Set encoded certificate.
-	 *
-	 * @param encodedCertificate
-	 *            Encoded certificate
-	 */
-	public void setEncodedCertificate(byte[] encodedCertificate) {
-		this.encodedCertificate = encodedCertificate;
-		populateFingerprint();
-	}
+    /**
+     * Set encoded certificate.
+     *
+     * @param encodedCertificate Encoded certificate
+     */
+    public void setEncodedCertificate(byte[] encodedCertificate) {
+        this.encodedCertificate = encodedCertificate;
+        populateFingerprint();
+    }
 
-	public void setFingerprintAlg(DigestType fingerprintAlg) {
-		jcbFingerprintAlg.setSelectedItem(fingerprintAlg);
-	}
+    public void setFingerprintAlg(DigestType fingerprintAlg) {
+        jcbFingerprintAlg.setSelectedItem(fingerprintAlg);
+    }
 
-	public DigestType getSelectedFingerprintAlg() {
-		return (DigestType) jcbFingerprintAlg.getSelectedItem();
-	}
+    public DigestType getSelectedFingerprintAlg() {
+        return (DigestType) jcbFingerprintAlg.getSelectedItem();
+    }
 
-	/**
-	 * Sets whether or not the component is enabled.
-	 *
-	 * @param enabled
-	 *            True if this component should be enabled, false otherwise
-	 */
-	@Override
-	public void setEnabled(boolean enabled) {
-		jbViewCertificateFingerprint.setEnabled(enabled);
-	}
+    /**
+     * Sets whether or not the component is enabled.
+     *
+     * @param enabled True if this component should be enabled, false otherwise
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        jbViewCertificateFingerprint.setEnabled(enabled);
+    }
 
-	private void populateFingerprint() {
-		if (encodedCertificate != null) {
-			DigestType fingerprintAlg = (DigestType) jcbFingerprintAlg.getSelectedItem();
+    private void populateFingerprint() {
+        if (encodedCertificate != null) {
+            DigestType fingerprintAlg = (DigestType) jcbFingerprintAlg.getSelectedItem();
 
-			try {
-				jtfCertificateFingerprint.setText(DigestUtil.getFriendlyMessageDigest(encodedCertificate,
-						fingerprintAlg));
-			} catch (CryptoException ex) {
-				Container container = getTopLevelAncestor();
+            try {
+                jtfCertificateFingerprint.setText(
+                        DigestUtil.getFriendlyMessageDigest(encodedCertificate, fingerprintAlg));
+            } catch (CryptoException ex) {
+                Container container = getTopLevelAncestor();
 
-				DError dError = null;
+                DError dError = null;
 
-				if (container instanceof JDialog) {
-					dError = new DError((JDialog) container, ex);
-				} else {
-					dError = new DError((JFrame) container, ex);
-				}
+                if (container instanceof JDialog) {
+                    dError = new DError((JDialog) container, ex);
+                } else {
+                    dError = new DError((JFrame) container, ex);
+                }
 
-				dError.setLocationRelativeTo(container);
-				dError.setVisible(true);
-				return;
-			}
-		} else {
-			jtfCertificateFingerprint.setText("");
-		}
+                dError.setLocationRelativeTo(container);
+                dError.setVisible(true);
+                return;
+            }
+        } else {
+            jtfCertificateFingerprint.setText("");
+        }
 
-		jtfCertificateFingerprint.setCaretPosition(0);
-	}
+        jtfCertificateFingerprint.setCaretPosition(0);
+    }
 
-	private void displayFingerprint() {
-		Container container = getTopLevelAncestor();
+    private void displayFingerprint() {
+        Container container = getTopLevelAncestor();
 
-		DigestType fingerprintAlg = (DigestType) jcbFingerprintAlg.getSelectedItem();
+        DigestType fingerprintAlg = (DigestType) jcbFingerprintAlg.getSelectedItem();
 
-		if (container instanceof JDialog) {
-			DViewCertificateFingerprint dViewCertificateFingerprint = new DViewCertificateFingerprint(
-					(JDialog) container, encodedCertificate, fingerprintAlg);
-			dViewCertificateFingerprint.setLocationRelativeTo(container);
-			dViewCertificateFingerprint.setVisible(true);
-		} else if (container instanceof JFrame) {
-			DViewCertificateFingerprint dViewCertificateFingerprint = new DViewCertificateFingerprint(
-					(JFrame) container, encodedCertificate, fingerprintAlg);
-			dViewCertificateFingerprint.setLocationRelativeTo(container);
-			dViewCertificateFingerprint.setVisible(true);
-		}
-	}
+        if (container instanceof JDialog) {
+            DViewCertificateFingerprint dViewCertificateFingerprint = new DViewCertificateFingerprint(
+                    (JDialog) container, encodedCertificate, fingerprintAlg);
+            dViewCertificateFingerprint.setLocationRelativeTo(container);
+            dViewCertificateFingerprint.setVisible(true);
+        } else if (container instanceof JFrame) {
+            DViewCertificateFingerprint dViewCertificateFingerprint = new DViewCertificateFingerprint(
+                    (JFrame) container, encodedCertificate, fingerprintAlg);
+            dViewCertificateFingerprint.setLocationRelativeTo(container);
+            dViewCertificateFingerprint.setVisible(true);
+        }
+    }
 }

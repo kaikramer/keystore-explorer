@@ -35,56 +35,52 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to display the private key details for the selected key pair entry.
- *
  */
 public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public KeyPairPrivateKeyDetailsAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public KeyPairPrivateKeyDetailsAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.statusbar"));
-		putValue(NAME, res.getString("KeyPairPrivateKeyDetailsAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/privkeydetails.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.statusbar"));
+        putValue(NAME, res.getString("KeyPairPrivateKeyDetailsAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/privkeydetails.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStore keyStore = currentState.getKeyStore();
+            KeyStore keyStore = currentState.getKeyStore();
 
-			PrivateKey privKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+            PrivateKey privKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
-			DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
-					res.getString("KeyPairPrivateKeyDetailsAction.PrivKeyDetailsEntry.Title"), alias), privKey);
-			dViewPrivateKey.setLocationRelativeTo(frame);
-			dViewPrivateKey.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
+                    res.getString("KeyPairPrivateKeyDetailsAction.PrivKeyDetailsEntry.Title"), alias), privKey);
+            dViewPrivateKey.setLocationRelativeTo(frame);
+            dViewPrivateKey.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

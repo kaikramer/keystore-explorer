@@ -23,37 +23,37 @@ import java.util.ResourceBundle;
 
 /**
  * Enumeration of JCE cryptography strengths.
- *
  */
 public enum CryptoStrength {
-	LIMITED("limited"), UNLIMITED("unlimited");
+    LIMITED("limited"),
+    UNLIMITED("unlimited");
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/jcepolicy/resources");
-	private final String manifestValue;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/jcepolicy/resources");
+    private final String manifestValue;
 
-	CryptoStrength(String manifestValue) {
-		this.manifestValue = manifestValue;
-	}
+    CryptoStrength(String manifestValue) {
+        this.manifestValue = manifestValue;
+    }
 
-	/**
-	 * Get friendly name
-	 *
-	 * @return Friendly name
-	 */
-	public String friendly() {
-		if (this == LIMITED) {
-			return res.getString("CryptoStrength.Limited");
-		} else {
-			return res.getString("CryptoStrength.Unlimited");
-		}
-	}
+    /**
+     * Get friendly name
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
+        if (this == LIMITED) {
+            return res.getString("CryptoStrength.Limited");
+        } else {
+            return res.getString("CryptoStrength.Unlimited");
+        }
+    }
 
-	/**
-	 * Get manifest value.
-	 *
-	 * @return Manifest value
-	 */
-	public String manifestValue() {
-		return manifestValue;
-	}
+    /**
+     * Get manifest value.
+     *
+     * @return Manifest value
+     */
+    public String manifestValue() {
+        return manifestValue;
+    }
 }

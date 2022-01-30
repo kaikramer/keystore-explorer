@@ -22,15 +22,12 @@ package org.kse.crypto.x509;
 
 import java.util.ResourceBundle;
 
-
 /**
- *
  * Enumeration of X.509 certificate extensions.
- *
  */
 public enum X509ExtensionType {
 
-	// @formatter:off
+    // @formatter:off
 
 	// ////////////////////////////////
 	// Active X509Extension OIDs
@@ -371,63 +368,62 @@ public enum X509ExtensionType {
 
 	// @formatter:on
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
-	private String oid;
-	private String friendlyKey;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
+    private String oid;
+    private String friendlyKey;
 
-	X509ExtensionType(String oid, String friendlyKey) {
-		this.oid = oid;
-		this.friendlyKey = friendlyKey;
-	}
+    X509ExtensionType(String oid, String friendlyKey) {
+        this.oid = oid;
+        this.friendlyKey = friendlyKey;
+    }
 
-	/**
-	 * Get type's Object Identifier.
-	 *
-	 * @return Object Identifier
-	 */
-	public String oid() {
-		return oid;
-	}
+    /**
+     * Get type's Object Identifier.
+     *
+     * @return Object Identifier
+     */
+    public String oid() {
+        return oid;
+    }
 
-	/**
-	 * Get type's friendly name.
-	 *
-	 * @return Friendly name
-	 */
-	public String friendly() {
+    /**
+     * Get type's friendly name.
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
 
-		String friendlyName = friendlyKey;
-		if (res.containsKey(friendlyKey)) {
-			friendlyName = res.getString(friendlyKey);
-		}
+        String friendlyName = friendlyKey;
+        if (res.containsKey(friendlyKey)) {
+            friendlyName = res.getString(friendlyKey);
+        }
 
-		return friendlyName;
-	}
+        return friendlyName;
+    }
 
-	/**
-	 * Resolve the supplied object identifier to a matching type.
-	 *
-	 * @param oid
-	 *            Object identifier
-	 * @return Type or null if none
-	 */
-	public static X509ExtensionType resolveOid(String oid) {
-		for (X509ExtensionType type : values()) {
-			if (oid.equals(type.oid())) {
-				return type;
-			}
-		}
+    /**
+     * Resolve the supplied object identifier to a matching type.
+     *
+     * @param oid Object identifier
+     * @return Type or null if none
+     */
+    public static X509ExtensionType resolveOid(String oid) {
+        for (X509ExtensionType type : values()) {
+            if (oid.equals(type.oid())) {
+                return type;
+            }
+        }
 
-		return UNKNOWN;
-	}
+        return UNKNOWN;
+    }
 
-	/**
-	 * Returns friendly name.
-	 *
-	 * @return Friendly name
-	 */
-	@Override
-	public String toString() {
-		return friendly();
-	}
+    /**
+     * Returns friendly name.
+     *
+     * @return Friendly name
+     */
+    @Override
+    public String toString() {
+        return friendly();
+    }
 }

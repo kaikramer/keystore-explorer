@@ -39,77 +39,72 @@ import org.kse.gui.error.DError;
 /**
  * Action to open the CA Certificates KeyStore. If it does not exist provide the
  * user with the option of creating it.
- *
  */
 public class OpenCaCertificatesAction extends OpenAction {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public OpenCaCertificatesAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public OpenCaCertificatesAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("OpenCaCertificatesAction.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("OpenCaCertificatesAction.statusbar"));
-		putValue(NAME, res.getString("OpenCaCertificatesAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("OpenCaCertificatesAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/opencacerts.png"))));
-	}
+        putValue(ACCELERATOR_KEY,
+                 KeyStroke.getKeyStroke(res.getString("OpenCaCertificatesAction.accelerator").charAt(0),
+                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("OpenCaCertificatesAction.statusbar"));
+        putValue(NAME, res.getString("OpenCaCertificatesAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("OpenCaCertificatesAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/opencacerts.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		File caCertificatesFile = applicationSettings.getCaCertificatesFile();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        File caCertificatesFile = applicationSettings.getCaCertificatesFile();
 
-		if (caCertificatesFile.isFile()) {
-			openKeyStore(caCertificatesFile, AuthorityCertificates.CACERTS_DEFAULT_PWD);
-			return;
-		}
+        if (caCertificatesFile.isFile()) {
+            openKeyStore(caCertificatesFile, AuthorityCertificates.CACERTS_DEFAULT_PWD);
+            return;
+        }
 
-		int selected = JOptionPane.showConfirmDialog(frame,
-				res.getString("OpenCaCertificatesAction.NoCaCertificatesKeyStoreCreate.message"),
-				res.getString("OpenCaCertificatesAction.OpenCaCertificatesKeyStore.Title"), JOptionPane.YES_NO_OPTION);
+        int selected = JOptionPane.showConfirmDialog(frame, res.getString(
+                "OpenCaCertificatesAction.NoCaCertificatesKeyStoreCreate.message"), res.getString(
+                "OpenCaCertificatesAction.OpenCaCertificatesKeyStore.Title"), JOptionPane.YES_NO_OPTION);
 
-		if (selected != JOptionPane.YES_OPTION) {
-			return;
-		}
+        if (selected != JOptionPane.YES_OPTION) {
+            return;
+        }
 
-		try {
-			DNewKeyStoreType dNewKeyStoreType = new DNewKeyStoreType(frame);
-			dNewKeyStoreType.setLocationRelativeTo(frame);
-			dNewKeyStoreType.setVisible(true);
+        try {
+            DNewKeyStoreType dNewKeyStoreType = new DNewKeyStoreType(frame);
+            dNewKeyStoreType.setLocationRelativeTo(frame);
+            dNewKeyStoreType.setVisible(true);
 
-			KeyStoreType keyStoreType = dNewKeyStoreType.getKeyStoreType();
+            KeyStoreType keyStoreType = dNewKeyStoreType.getKeyStoreType();
 
-			if (keyStoreType == null) {
-				return;
-			}
+            if (keyStoreType == null) {
+                return;
+            }
 
-			Password password = getNewKeyStorePassword();
+            Password password = getNewKeyStorePassword();
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStore caCertificatesKeyStore = KeyStoreUtil.create(keyStoreType);
-			KeyStoreUtil.save(caCertificatesKeyStore, caCertificatesFile, password);
+            KeyStore caCertificatesKeyStore = KeyStoreUtil.create(keyStoreType);
+            KeyStoreUtil.save(caCertificatesKeyStore, caCertificatesFile, password);
 
-			kseFrame.addKeyStore(caCertificatesKeyStore, caCertificatesFile, password);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.addKeyStore(caCertificatesKeyStore, caCertificatesFile, password);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

@@ -48,213 +48,212 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to generate a key pair.
- *
  */
 public class GenerateKeyPairAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public GenerateKeyPairAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public GenerateKeyPairAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("GenerateKeyPairAction.accelerator").charAt(0),
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("GenerateKeyPairAction.statusbar"));
-		putValue(NAME, res.getString("GenerateKeyPairAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("GenerateKeyPairAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/genkeypair.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("GenerateKeyPairAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("GenerateKeyPairAction.statusbar"));
+        putValue(NAME, res.getString("GenerateKeyPairAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("GenerateKeyPairAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/genkeypair.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		generateKeyPair();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        generateKeyPair();
+    }
 
-	/**
-	 * Generate a key pair (with certificate) in the currently opened KeyStore.
-	 */
-	public void generateKeyPair() {
-		generateKeyPair(null, null, null);
-	}
+    /**
+     * Generate a key pair (with certificate) in the currently opened KeyStore.
+     */
+    public void generateKeyPair() {
+        generateKeyPair(null, null, null);
+    }
 
-	/**
-	 * Generate a key pair (with certificate) in the currently opened KeyStore.
-	 *
-	 * @param issuerCert Issuer certificate for signing the new certificate
-	 * @param issuerCertChain Chain of issuer certificate
-	 * @param issuerPrivateKey Issuer's private key for signing
-	 * @return Alias of new key pair
-	 */
-	public String generateKeyPair(X509Certificate issuerCert, X509Certificate[] issuerCertChain, PrivateKey issuerPrivateKey) {
+    /**
+     * Generate a key pair (with certificate) in the currently opened KeyStore.
+     *
+     * @param issuerCert       Issuer certificate for signing the new certificate
+     * @param issuerCertChain  Chain of issuer certificate
+     * @param issuerPrivateKey Issuer's private key for signing
+     * @return Alias of new key pair
+     */
+    public String generateKeyPair(X509Certificate issuerCert, X509Certificate[] issuerCertChain,
+                                  PrivateKey issuerPrivateKey) {
 
-		String alias = "";
-		try {
-			// Restore preferences regarding key type and length (or EC curve)
-			KeyPairType keyPairType = applicationSettings.getGenerateKeyPairType();
-			int keyPairSizeRSA = applicationSettings.getGenerateKeyPairSizeRSA();
-			int keyPairSizeDSA = applicationSettings.getGenerateKeyPairSizeDSA();
-			String keyPairCurveSet = applicationSettings.getGenerateKeyPairCurveSet();
-			String keyPairCurveName = applicationSettings.getGenerateKeyPairCurveName();
+        String alias = "";
+        try {
+            // Restore preferences regarding key type and length (or EC curve)
+            KeyPairType keyPairType = applicationSettings.getGenerateKeyPairType();
+            int keyPairSizeRSA = applicationSettings.getGenerateKeyPairSizeRSA();
+            int keyPairSizeDSA = applicationSettings.getGenerateKeyPairSizeDSA();
+            String keyPairCurveSet = applicationSettings.getGenerateKeyPairCurveSet();
+            String keyPairCurveName = applicationSettings.getGenerateKeyPairCurveName();
 
-			KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
-			KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			Provider provider = history.getExplicitProvider();
+            KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
+            KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            Provider provider = history.getExplicitProvider();
 
-			DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, keyPairType,
-					keyPairSizeRSA, keyPairSizeDSA, keyPairCurveSet, keyPairCurveName);
-			dGenerateKeyPair.setLocationRelativeTo(frame);
-			dGenerateKeyPair.setVisible(true);
+            DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, keyPairType,
+                                                                     keyPairSizeRSA, keyPairSizeDSA, keyPairCurveSet,
+                                                                     keyPairCurveName);
+            dGenerateKeyPair.setLocationRelativeTo(frame);
+            dGenerateKeyPair.setVisible(true);
 
-			if (!dGenerateKeyPair.isSuccessful()) {
-				return "";
-			}
+            if (!dGenerateKeyPair.isSuccessful()) {
+                return "";
+            }
 
-			// update (saved) values from user selection
-			keyPairType = dGenerateKeyPair.getKeyPairType();
-			keyPairSizeRSA = dGenerateKeyPair.getKeyPairSizeRSA();
-			keyPairSizeDSA = dGenerateKeyPair.getKeyPairSizeDSA();
-			keyPairCurveSet = dGenerateKeyPair.getCurveSet();
-			keyPairCurveName = dGenerateKeyPair.getCurveName();
-			applicationSettings.setGenerateKeyPairType(keyPairType);
-			applicationSettings.setGenerateKeyPairSizeRSA(keyPairSizeRSA);
-			applicationSettings.setGenerateKeyPairSizeDSA(keyPairSizeDSA);
-			applicationSettings.setGenerateKeyPairCurveSet(keyPairCurveSet);
-			applicationSettings.setGenerateKeyPairCurveName(keyPairCurveName);
+            // update (saved) values from user selection
+            keyPairType = dGenerateKeyPair.getKeyPairType();
+            keyPairSizeRSA = dGenerateKeyPair.getKeyPairSizeRSA();
+            keyPairSizeDSA = dGenerateKeyPair.getKeyPairSizeDSA();
+            keyPairCurveSet = dGenerateKeyPair.getCurveSet();
+            keyPairCurveName = dGenerateKeyPair.getCurveName();
+            applicationSettings.setGenerateKeyPairType(keyPairType);
+            applicationSettings.setGenerateKeyPairSizeRSA(keyPairSizeRSA);
+            applicationSettings.setGenerateKeyPairSizeDSA(keyPairSizeDSA);
+            applicationSettings.setGenerateKeyPairCurveSet(keyPairCurveSet);
+            applicationSettings.setGenerateKeyPairCurveName(keyPairCurveName);
 
-			KeyPair keyPair = generateKeyPair(keyPairType, keyPairSizeRSA, keyPairSizeDSA, keyPairCurveName, provider);
-			if (keyPair == null) {
-				return "";
-			}
+            KeyPair keyPair = generateKeyPair(keyPairType, keyPairSizeRSA, keyPairSizeDSA, keyPairCurveName, provider);
+            if (keyPair == null) {
+                return "";
+            }
 
-			DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame,
-					res.getString("GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType,
-					issuerCert, issuerPrivateKey, provider);
-			dGenerateKeyPairCert.setLocationRelativeTo(frame);
-			dGenerateKeyPairCert.setVisible(true);
+            DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame, res.getString(
+                    "GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType, issuerCert,
+                                                                                 issuerPrivateKey, provider);
+            dGenerateKeyPairCert.setLocationRelativeTo(frame);
+            dGenerateKeyPairCert.setVisible(true);
 
-			X509Certificate certificate = dGenerateKeyPairCert.getCertificate();
+            X509Certificate certificate = dGenerateKeyPairCert.getCertificate();
 
-			if (certificate == null) {
-				return "";
-			}
+            if (certificate == null) {
+                return "";
+            }
 
-			KeyStoreState currentState = history.getCurrentState();
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
+            KeyStore keyStore = newState.getKeyStore();
 
-			DGetAlias dGetAlias = new DGetAlias(frame,
-					res.getString("GenerateKeyPairAction.NewKeyPairEntryAlias.Title"),
-					X509CertUtil.getCertificateAlias(certificate));
-			dGetAlias.setLocationRelativeTo(frame);
-			dGetAlias.setVisible(true);
-			alias = dGetAlias.getAlias();
+            DGetAlias dGetAlias = new DGetAlias(frame,
+                                                res.getString("GenerateKeyPairAction.NewKeyPairEntryAlias.Title"),
+                                                X509CertUtil.getCertificateAlias(certificate));
+            dGetAlias.setLocationRelativeTo(frame);
+            dGetAlias.setVisible(true);
+            alias = dGetAlias.getAlias();
 
-			if (alias == null) {
-				return "";
-			}
+            if (alias == null) {
+                return "";
+            }
 
-			if (keyStore.containsAlias(alias)) {
-				String message = MessageFormat.format(res.getString("GenerateKeyPairAction.OverWriteEntry.message"),
-						alias);
+            if (keyStore.containsAlias(alias)) {
+                String message = MessageFormat.format(res.getString("GenerateKeyPairAction.OverWriteEntry.message"),
+                                                      alias);
 
-				int selected = JOptionPane.showConfirmDialog(frame, message,
-						res.getString("GenerateKeyPairAction.NewKeyPairEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return "";
-				}
-			}
+                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
+                        "GenerateKeyPairAction.NewKeyPairEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
+                if (selected != JOptionPane.YES_OPTION) {
+                    return "";
+                }
+            }
 
-			Password password = new Password((char[])null);
-			KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
+            Password password = new Password((char[]) null);
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
 
-			if (keyStoreType.hasEntryPasswords()) {
-				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
-						res.getString("GenerateKeyPairAction.NewKeyPairEntryPassword.Title"),
-						applicationSettings.getPasswordQualityConfig());
-				dGetNewPassword.setLocationRelativeTo(frame);
-				dGetNewPassword.setVisible(true);
-				password = dGetNewPassword.getPassword();
+            if (keyStoreType.hasEntryPasswords()) {
+                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
+                        "GenerateKeyPairAction.NewKeyPairEntryPassword.Title"),
+                                                                      applicationSettings.getPasswordQualityConfig());
+                dGetNewPassword.setLocationRelativeTo(frame);
+                dGetNewPassword.setVisible(true);
+                password = dGetNewPassword.getPassword();
 
-				if (password == null) {
-					return "";
-				}
-			}
+                if (password == null) {
+                    return "";
+                }
+            }
 
-			if (keyStore.containsAlias(alias)) {
-				keyStore.deleteEntry(alias);
-				newState.removeEntryPassword(alias);
-			}
+            if (keyStore.containsAlias(alias)) {
+                keyStore.deleteEntry(alias);
+                newState.removeEntryPassword(alias);
+            }
 
-			// create new chain with certificates from issuer chain
-			X509Certificate[] newCertChain = null;
-			if (issuerCertChain != null) {
-				newCertChain = new X509Certificate[issuerCertChain.length + 1];
-				System.arraycopy(issuerCertChain, 0, newCertChain, 1, issuerCertChain.length);
-				newCertChain[0] = certificate;
-			} else {
-				newCertChain = new X509Certificate[] { certificate };
-			}
+            // create new chain with certificates from issuer chain
+            X509Certificate[] newCertChain = null;
+            if (issuerCertChain != null) {
+                newCertChain = new X509Certificate[issuerCertChain.length + 1];
+                System.arraycopy(issuerCertChain, 0, newCertChain, 1, issuerCertChain.length);
+                newCertChain[0] = certificate;
+            } else {
+                newCertChain = new X509Certificate[] { certificate };
+            }
 
-			keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(), newCertChain);
-			newState.setEntryPassword(alias, password);
+            keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(), newCertChain);
+            newState.setEntryPassword(alias, password);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
+            kseFrame.updateControls(true);
 
-			JOptionPane.showMessageDialog(frame,
-					res.getString("GenerateKeyPairAction.KeyPairGenerationSuccessful.message"),
-					res.getString("GenerateKeyPairAction.GenerateKeyPair.Title"), JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
+            JOptionPane.showMessageDialog(frame,
+                                          res.getString("GenerateKeyPairAction.KeyPairGenerationSuccessful.message"),
+                                          res.getString("GenerateKeyPairAction.GenerateKeyPair.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
 
-		return alias;
-	}
+        return alias;
+    }
 
-	private KeyPair generateKeyPair(KeyPairType keyPairType, int keyPairSizeRSA, int keyPairSizeDSA, String curveName,
-			Provider provider) {
-		DGeneratingKeyPair dGeneratingKeyPair;
+    private KeyPair generateKeyPair(KeyPairType keyPairType, int keyPairSizeRSA, int keyPairSizeDSA, String curveName,
+                                    Provider provider) {
+        DGeneratingKeyPair dGeneratingKeyPair;
 
-		switch (keyPairType) {
-		case RSA:
-			dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeRSA, provider);
-			break;
-		case DSA:
-			dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeDSA, provider);
-			break;
-		case EC:
-		case ECDSA:
-		case EDDSA:
-		case ED25519:
-		case ED448:
-		default:
-			dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName, provider);
-			break;
-		}
+        switch (keyPairType) {
+        case RSA:
+            dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeRSA, provider);
+            break;
+        case DSA:
+            dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, keyPairSizeDSA, provider);
+            break;
+        case EC:
+        case ECDSA:
+        case EDDSA:
+        case ED25519:
+        case ED448:
+        default:
+            dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, curveName, provider);
+            break;
+        }
 
-		dGeneratingKeyPair.setLocationRelativeTo(frame);
-		dGeneratingKeyPair.startKeyPairGeneration();
-		dGeneratingKeyPair.setVisible(true);
+        dGeneratingKeyPair.setLocationRelativeTo(frame);
+        dGeneratingKeyPair.startKeyPairGeneration();
+        dGeneratingKeyPair.setVisible(true);
 
-		return dGeneratingKeyPair.getKeyPair();
-	}
+        return dGeneratingKeyPair.getKeyPair();
+    }
 }

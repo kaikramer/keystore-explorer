@@ -32,131 +32,122 @@ import org.kse.crypto.x509.PolicyInformationUtil;
 
 /**
  * The table model used to display policy qualifier info.
- *
  */
 public class PolicyQualifierInfoTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/crypto/policyinformation/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
 
-	private String[] columnNames;
-	private Object[][] data;
+    private String[] columnNames;
+    private Object[][] data;
 
-	/**
-	 * Construct a new PolicyQualifierInfoTableModel.
-	 */
-	public PolicyQualifierInfoTableModel() {
-		columnNames = new String[1];
-		columnNames[0] = res.getString("PolicyQualifierInfoTableModel.PolicyQualifierInfoColumn");
+    /**
+     * Construct a new PolicyQualifierInfoTableModel.
+     */
+    public PolicyQualifierInfoTableModel() {
+        columnNames = new String[1];
+        columnNames[0] = res.getString("PolicyQualifierInfoTableModel.PolicyQualifierInfoColumn");
 
-		data = new Object[0][0];
-	}
+        data = new Object[0][0];
+    }
 
-	/**
-	 * Load the PolicyQualifierInfoTableModel with policy qualifier info.
-	 *
-	 * @param policyQualifierInfo
-	 *            The policy qualifier info
-	 */
-	public void load(List<PolicyQualifierInfo> policyQualifierInfo) {
-		PolicyQualifierInfo[] policyQualifierInfoArray = policyQualifierInfo
-				.toArray(new PolicyQualifierInfo[policyQualifierInfo.size()]);
-		Arrays.sort(policyQualifierInfoArray, new PolicyQualifierInfoComparator());
+    /**
+     * Load the PolicyQualifierInfoTableModel with policy qualifier info.
+     *
+     * @param policyQualifierInfo The policy qualifier info
+     */
+    public void load(List<PolicyQualifierInfo> policyQualifierInfo) {
+        PolicyQualifierInfo[] policyQualifierInfoArray = policyQualifierInfo.toArray(
+                new PolicyQualifierInfo[policyQualifierInfo.size()]);
+        Arrays.sort(policyQualifierInfoArray, new PolicyQualifierInfoComparator());
 
-		data = new Object[policyQualifierInfoArray.length][1];
+        data = new Object[policyQualifierInfoArray.length][1];
 
-		int i = 0;
-		for (PolicyQualifierInfo policyQualInfo : policyQualifierInfoArray) {
-			data[i][0] = policyQualInfo;
-			i++;
-		}
+        int i = 0;
+        for (PolicyQualifierInfo policyQualInfo : policyQualifierInfoArray) {
+            data[i][0] = policyQualInfo;
+            i++;
+        }
 
-		fireTableDataChanged();
-	}
+        fireTableDataChanged();
+    }
 
-	/**
-	 * Get the number of columns in the table.
-	 *
-	 * @return The number of columns
-	 */
-	@Override
-	public int getColumnCount() {
-		return columnNames.length;
-	}
+    /**
+     * Get the number of columns in the table.
+     *
+     * @return The number of columns
+     */
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
 
-	/**
-	 * Get the number of rows in the table.
-	 *
-	 * @return The number of rows
-	 */
-	@Override
-	public int getRowCount() {
-		return data.length;
-	}
+    /**
+     * Get the number of rows in the table.
+     *
+     * @return The number of rows
+     */
+    @Override
+    public int getRowCount() {
+        return data.length;
+    }
 
-	/**
-	 * Get the name of the column at the given position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column name
-	 */
-	@Override
-	public String getColumnName(int col) {
-		return columnNames[col];
-	}
+    /**
+     * Get the name of the column at the given position.
+     *
+     * @param col The column position
+     * @return The column name
+     */
+    @Override
+    public String getColumnName(int col) {
+        return columnNames[col];
+    }
 
-	/**
-	 * Get the cell value at the given row and column position.
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return The cell value
-	 */
-	@Override
-	public Object getValueAt(int row, int col) {
-		return data[row][col];
-	}
+    /**
+     * Get the cell value at the given row and column position.
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return The cell value
+     */
+    @Override
+    public Object getValueAt(int row, int col) {
+        return data[row][col];
+    }
 
-	/**
-	 * Get the class at of the cells at the given column position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column cells' class
-	 */
-	@Override
-	public Class<?> getColumnClass(int col) {
-		return PolicyQualifierInfo.class;
-	}
+    /**
+     * Get the class at of the cells at the given column position.
+     *
+     * @param col The column position
+     * @return The column cells' class
+     */
+    @Override
+    public Class<?> getColumnClass(int col) {
+        return PolicyQualifierInfo.class;
+    }
 
-	/**
-	 * Is the cell at the given row and column position editable?
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return True if the cell is editable, false otherwise
-	 */
-	@Override
-	public boolean isCellEditable(int row, int col) {
-		return false;
-	}
+    /**
+     * Is the cell at the given row and column position editable?
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return True if the cell is editable, false otherwise
+     */
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return false;
+    }
 
-	static class PolicyQualifierInfoComparator implements Comparator<PolicyQualifierInfo> {
-		@Override
-		public int compare(PolicyQualifierInfo policyQualifierInfo1, PolicyQualifierInfo policyQualifierInfo2) {
-			try {
-				return PolicyInformationUtil.toString(policyQualifierInfo1).compareToIgnoreCase(
-						PolicyInformationUtil.toString(policyQualifierInfo2));
-			} catch (IOException ex) {
-				throw new RuntimeException(ex); // We build this data so should
-				// not happen
-			}
-		}
-	}
+    static class PolicyQualifierInfoComparator implements Comparator<PolicyQualifierInfo> {
+        @Override
+        public int compare(PolicyQualifierInfo policyQualifierInfo1, PolicyQualifierInfo policyQualifierInfo2) {
+            try {
+                return PolicyInformationUtil.toString(policyQualifierInfo1)
+                                            .compareToIgnoreCase(PolicyInformationUtil.toString(policyQualifierInfo2));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex); // We build this data so should
+                // not happen
+            }
+        }
+    }
 }

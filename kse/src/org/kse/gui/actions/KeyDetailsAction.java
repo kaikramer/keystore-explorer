@@ -42,98 +42,94 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to display details for the selected key entry.
- *
  */
 public class KeyDetailsAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public KeyDetailsAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public KeyDetailsAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("KeyDetailsAction.statusbar"));
-		putValue(NAME, res.getString("KeyDetailsAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("KeyDetailsAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/keydetails.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("KeyDetailsAction.statusbar"));
+        putValue(NAME, res.getString("KeyDetailsAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("KeyDetailsAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/keydetails.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		showKeySelectedEntry();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        showKeySelectedEntry();
+    }
 
-	/**
-	 * Show the key details of the selected KeyStore entry.
-	 */
-	public void showKeySelectedEntry() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
-			String alias = kseFrame.getSelectedEntryAlias();
+    /**
+     * Show the key details of the selected KeyStore entry.
+     */
+    public void showKeySelectedEntry() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStore keyStore = currentState.getKeyStore();
+            KeyStore keyStore = currentState.getKeyStore();
 
-			Key key = keyStore.getKey(alias, password.toCharArray());
+            Key key = keyStore.getKey(alias, password.toCharArray());
 
-			if (key instanceof SecretKey) {
-				SecretKey secretKey = (SecretKey) key;
+            if (key instanceof SecretKey) {
+                SecretKey secretKey = (SecretKey) key;
 
-				DViewSecretKey dViewSecretKey = new DViewSecretKey(frame, MessageFormat.format(
-						res.getString("KeyDetailsAction.SecretKeyDetailsEntry.Title"), alias), secretKey, true);
-				dViewSecretKey.setLocationRelativeTo(frame);
-				dViewSecretKey.setVisible(true);
+                DViewSecretKey dViewSecretKey = new DViewSecretKey(frame, MessageFormat.format(
+                        res.getString("KeyDetailsAction.SecretKeyDetailsEntry.Title"), alias), secretKey, true);
+                dViewSecretKey.setLocationRelativeTo(frame);
+                dViewSecretKey.setVisible(true);
 
-				if (dViewSecretKey.keyHasChanged()) {
-					updateSecretKey(currentState, alias, password, dViewSecretKey);
-				}
-			} else if (key instanceof PrivateKey) {
-				PrivateKey privateKey = (PrivateKey) key;
+                if (dViewSecretKey.keyHasChanged()) {
+                    updateSecretKey(currentState, alias, password, dViewSecretKey);
+                }
+            } else if (key instanceof PrivateKey) {
+                PrivateKey privateKey = (PrivateKey) key;
 
-				DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
-						res.getString("KeyDetailsAction.PrivateKeyDetailsEntry.Title"), alias), privateKey);
-				dViewPrivateKey.setLocationRelativeTo(frame);
-				dViewPrivateKey.setVisible(true);
-			} else if (key instanceof PublicKey) {
-				PublicKey publicKey = (PublicKey) key;
+                DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
+                        res.getString("KeyDetailsAction.PrivateKeyDetailsEntry.Title"), alias), privateKey);
+                dViewPrivateKey.setLocationRelativeTo(frame);
+                dViewPrivateKey.setVisible(true);
+            } else if (key instanceof PublicKey) {
+                PublicKey publicKey = (PublicKey) key;
 
-				DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-						res.getString("KeyDetailsAction.PublicKeyDetailsEntry.Title"), alias), publicKey);
-				dViewPublicKey.setLocationRelativeTo(frame);
-				dViewPublicKey.setVisible(true);
-			}
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+                DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
+                        res.getString("KeyDetailsAction.PublicKeyDetailsEntry.Title"), alias), publicKey);
+                dViewPublicKey.setLocationRelativeTo(frame);
+                dViewPublicKey.setVisible(true);
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
-	private void updateSecretKey(KeyStoreState currentState, String alias, Password password,
-			DViewSecretKey dViewSecretKey) throws CryptoException, KeyStoreException {
-		KeyStore keyStore;
-		KeyStoreState newState = currentState.createBasisForNextState(new GenerateSecretKeyAction(kseFrame));
-		keyStore = newState.getKeyStore();
-		SecretKey newSecretKey = dViewSecretKey.getSecretKey();
-		keyStore.deleteEntry(alias);
-		newState.removeEntryPassword(alias);
-		keyStore.setKeyEntry(alias, newSecretKey, password.toCharArray(), null);
-		newState.setEntryPassword(alias, password);
-		currentState.append(newState);
-		kseFrame.updateControls(true);
-	}
+    private void updateSecretKey(KeyStoreState currentState, String alias, Password password,
+                                 DViewSecretKey dViewSecretKey) throws CryptoException, KeyStoreException {
+        KeyStore keyStore;
+        KeyStoreState newState = currentState.createBasisForNextState(new GenerateSecretKeyAction(kseFrame));
+        keyStore = newState.getKeyStore();
+        SecretKey newSecretKey = dViewSecretKey.getSecretKey();
+        keyStore.deleteEntry(alias);
+        newState.removeEntryPassword(alias);
+        keyStore.setKeyEntry(alias, newSecretKey, password.toCharArray(), null);
+        newState.setEntryPassword(alias, password);
+        currentState.append(newState);
+        kseFrame.updateControls(true);
+    }
 }

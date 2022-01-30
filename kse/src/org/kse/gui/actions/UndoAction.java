@@ -32,66 +32,61 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to undo an action.
- *
  */
 public class UndoAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
-	private String defaultName;
+    private static final long serialVersionUID = 1L;
+    private String defaultName;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public UndoAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public UndoAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		defaultName = res.getString("UndoAction.text");
+        defaultName = res.getString("UndoAction.text");
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("UndoAction.accelerator").charAt(0), Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("UndoAction.statusbar"));
-		putValue(NAME, defaultName);
-		putValue(SHORT_DESCRIPTION, res.getString("UndoAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/undo.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("UndoAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("UndoAction.statusbar"));
+        putValue(NAME, defaultName);
+        putValue(SHORT_DESCRIPTION, res.getString("UndoAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/undo.png"))));
+    }
 
-	/**
-	 * Enable or disable the action.
-	 *
-	 * @param enabled
-	 *            True to enable, false to disable it
-	 */
-	@Override
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
+    /**
+     * Enable or disable the action.
+     *
+     * @param enabled True to enable, false to disable it
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
 
-		if (enabled) {
-			KeyStoreState currentState = kseFrame.getActiveKeyStoreHistory().getCurrentState();
-			putValue(NAME,
-					MessageFormat.format(res.getString("UndoAction.dynamic.text"), currentState.getActionDescription()));
-		} else {
-			putValue(NAME, defaultName);
-		}
-	}
+        if (enabled) {
+            KeyStoreState currentState = kseFrame.getActiveKeyStoreHistory().getCurrentState();
+            putValue(NAME, MessageFormat.format(res.getString("UndoAction.dynamic.text"),
+                                                currentState.getActionDescription()));
+        } else {
+            putValue(NAME, defaultName);
+        }
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			history.getCurrentState().setPreviousStateAsCurrentState();
+            history.getCurrentState().setPreviousStateAsCurrentState();
 
-			kseFrame.updateControls(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.updateControls(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

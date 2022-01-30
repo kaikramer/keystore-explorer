@@ -43,109 +43,105 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * A dialog that displays the Environment variables.
- *
  */
 public class DEnvironmentVariables extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
-	private JButton jbOK;
-	private JPanel jpOK;
-	private JPanel jpEnvironmentVariablesTable;
-	private JScrollPane jspEnvironmentVariablesTable;
-	private JKseTable jtEnvironmentVariables;
+    private JButton jbOK;
+    private JPanel jpOK;
+    private JPanel jpEnvironmentVariablesTable;
+    private JScrollPane jspEnvironmentVariablesTable;
+    private JKseTable jtEnvironmentVariables;
 
-	/**
-	 * Creates new DEnvironmentVariables dialog where the parent is a dialog.
-	 *  @param parent
-	 *            Parent dialog
-	 *
-	 */
-	public DEnvironmentVariables(JDialog parent) {
-		this(parent, res.getString("DEnvironmentVariables.Title"), ModalityType.DOCUMENT_MODAL);
-	}
+    /**
+     * Creates new DEnvironmentVariables dialog where the parent is a dialog.
+     *
+     * @param parent Parent dialog
+     */
+    public DEnvironmentVariables(JDialog parent) {
+        this(parent, res.getString("DEnvironmentVariables.Title"), ModalityType.DOCUMENT_MODAL);
+    }
 
-	/**
-	 * Creates new DEnvironmentVariables dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The title of the dialog
-	 * @param modality
-	 *            Dialog modality
-	 */
-	public DEnvironmentVariables(JDialog parent, String title, Dialog.ModalityType modality) {
-		super(parent, title, modality);
-		initComponents();
-	}
+    /**
+     * Creates new DEnvironmentVariables dialog where the parent is a dialog.
+     *
+     * @param parent   Parent dialog
+     * @param title    The title of the dialog
+     * @param modality Dialog modality
+     */
+    public DEnvironmentVariables(JDialog parent, String title, Dialog.ModalityType modality) {
+        super(parent, title, modality);
+        initComponents();
+    }
 
-	private void initComponents() {
-		EnvironmentVariablesTableModel evModel = new EnvironmentVariablesTableModel();
-		evModel.load();
+    private void initComponents() {
+        EnvironmentVariablesTableModel evModel = new EnvironmentVariablesTableModel();
+        evModel.load();
 
-		jtEnvironmentVariables = new JKseTable(evModel);
+        jtEnvironmentVariables = new JKseTable(evModel);
 
-		jtEnvironmentVariables.setRowMargin(0);
-		jtEnvironmentVariables.getColumnModel().setColumnMargin(0);
-		jtEnvironmentVariables.getTableHeader().setReorderingAllowed(false);
-		jtEnvironmentVariables.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
+        jtEnvironmentVariables.setRowMargin(0);
+        jtEnvironmentVariables.getColumnModel().setColumnMargin(0);
+        jtEnvironmentVariables.getTableHeader().setReorderingAllowed(false);
+        jtEnvironmentVariables.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
-		RowSorter<EnvironmentVariablesTableModel> sorter = new TableRowSorter<>(evModel);
-		jtEnvironmentVariables.setRowSorter(sorter);
+        RowSorter<EnvironmentVariablesTableModel> sorter = new TableRowSorter<>(evModel);
+        jtEnvironmentVariables.setRowSorter(sorter);
 
-		for (int i = 0; i < jtEnvironmentVariables.getColumnCount(); i++) {
-			TableColumn column = jtEnvironmentVariables.getColumnModel().getColumn(i);
+        for (int i = 0; i < jtEnvironmentVariables.getColumnCount(); i++) {
+            TableColumn column = jtEnvironmentVariables.getColumnModel().getColumn(i);
 
-			if (i == 0) {
-				column.setPreferredWidth(200);
-			} else {
-				column.setPreferredWidth(300);
-			}
+            if (i == 0) {
+                column.setPreferredWidth(200);
+            } else {
+                column.setPreferredWidth(300);
+            }
 
-			column.setCellRenderer(new EnvironmentVariablesTableCellRend());
-		}
+            column.setCellRenderer(new EnvironmentVariablesTableCellRend());
+        }
 
-		jspEnvironmentVariablesTable = PlatformUtil.createScrollPane(jtEnvironmentVariables,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jspEnvironmentVariablesTable.getViewport().setBackground(jtEnvironmentVariables.getBackground());
+        jspEnvironmentVariablesTable = PlatformUtil.createScrollPane(jtEnvironmentVariables,
+                                                                     ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jspEnvironmentVariablesTable.getViewport().setBackground(jtEnvironmentVariables.getBackground());
 
-		jpEnvironmentVariablesTable = new JPanel(new BorderLayout(10, 10));
-		jpEnvironmentVariablesTable.setPreferredSize(new Dimension(500, 300));
-		jpEnvironmentVariablesTable.add(jspEnvironmentVariablesTable, BorderLayout.CENTER);
-		jpEnvironmentVariablesTable.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpEnvironmentVariablesTable = new JPanel(new BorderLayout(10, 10));
+        jpEnvironmentVariablesTable.setPreferredSize(new Dimension(500, 300));
+        jpEnvironmentVariablesTable.add(jspEnvironmentVariablesTable, BorderLayout.CENTER);
+        jpEnvironmentVariablesTable.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jbOK = new JButton(res.getString("DEnvironmentVariables.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DEnvironmentVariables.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
+        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
-		getContentPane().add(jpEnvironmentVariablesTable, BorderLayout.CENTER);
-		getContentPane().add(jpOK, BorderLayout.SOUTH);
+        getContentPane().add(jpEnvironmentVariablesTable, BorderLayout.CENTER);
+        getContentPane().add(jpOK, BorderLayout.SOUTH);
 
-		setResizable(false);
+        setResizable(false);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

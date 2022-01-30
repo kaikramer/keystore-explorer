@@ -31,58 +31,51 @@ import org.kse.crypto.x509.GeneralNameUtil;
 
 /**
  * Custom cell renderer for the cells of the general subtrees table.
- *
  */
 public class GeneralSubtreesTableCellRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Returns the rendered cell.
-	 *
-	 * @param jtGeneralSubtrees
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtGeneralSubtrees, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtGeneralSubtrees, value, isSelected, hasFocus, row,
-				col);
+    /**
+     * Returns the rendered cell.
+     *
+     * @param jtGeneralSubtrees The JTable
+     * @param value             The value to assign to the cell
+     * @param isSelected        True if cell is selected
+     * @param row               The row of the cell to render
+     * @param col               The column of the cell to render
+     * @param hasFocus          If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtGeneralSubtrees, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtGeneralSubtrees, value, isSelected, hasFocus, row,
+                                                                   col);
 
-		GeneralSubtree generalSubtree = (GeneralSubtree) value;
+        GeneralSubtree generalSubtree = (GeneralSubtree) value;
 
-		if (col == 0) {
-			cell.setText(GeneralNameUtil.safeToString(generalSubtree.getBase(), false));
-		} else if (col == 1) {
-			if (generalSubtree.getMinimum() != null) {
-				String minimumStr = "" + generalSubtree.getMinimum().intValue();
-				cell.setText(minimumStr);
-				cell.setToolTipText(minimumStr);
-			} else {
-				cell.setText("-");
-			}
-		} else {
-			if (generalSubtree.getMaximum() != null) {
-				String maximumStr = "" + generalSubtree.getMaximum().intValue();
-				cell.setText(maximumStr);
-				cell.setToolTipText(maximumStr);
-			} else {
-				cell.setText("-");
-			}
-		}
+        if (col == 0) {
+            cell.setText(GeneralNameUtil.safeToString(generalSubtree.getBase(), false));
+        } else if (col == 1) {
+            if (generalSubtree.getMinimum() != null) {
+                String minimumStr = "" + generalSubtree.getMinimum().intValue();
+                cell.setText(minimumStr);
+                cell.setToolTipText(minimumStr);
+            } else {
+                cell.setText("-");
+            }
+        } else {
+            if (generalSubtree.getMaximum() != null) {
+                String maximumStr = "" + generalSubtree.getMaximum().intValue();
+                cell.setText(maximumStr);
+                cell.setToolTipText(maximumStr);
+            } else {
+                cell.setText("-");
+            }
+        }
 
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 }

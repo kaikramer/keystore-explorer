@@ -34,270 +34,235 @@ import net.miginfocom.swing.MigLayout;
 /**
  * Platform specific GUI building utility methods. Takes care of differences
  * between macOS (and lnfs thereof) and other platforms.
- *
  */
 public class PlatformUtil {
-	private PlatformUtil() {
-	}
+    private PlatformUtil() {
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositive
-	 *            Positive button
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive) {
-		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }));
-	}
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositive Positive button
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton jbPositive) {
+        return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }));
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositives Positive buttons
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton[] jbPositives) {
-		return createDialogButtonPanel(jbPositives, null, null, null);
-	}
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositives Positive buttons
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton[] jbPositives) {
+        return createDialogButtonPanel(jbPositives, null, null, null);
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositive
-	 *            Positive button
-	 * @param jbNegative
-	 *            Negative button
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative) {
-		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative);
-	}
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositive Positive button
+     * @param jbNegative Negative button
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative) {
+        return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative);
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositives
-	 *            Positive buttons
-	 * @param jbNegative
-	 *            Negative button
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative) {
-		return createDialogButtonPanel(jbPositives, jbNegative, null, null);
-	}
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositives Positive buttons
+     * @param jbNegative  Negative button
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative) {
+        return createDialogButtonPanel(jbPositives, jbNegative, null, null);
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositive
-	 *            Positive button
-	 * @param jbNegative
-	 *            Negative button
-	 * @param jbOther
-	 *            Other button
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton jbOther) {
-		return createDialogButtonPanel(jbPositive, jbNegative, (jbOther == null ? null : new JButton[] { jbOther }));
-	}
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositive Positive button
+     * @param jbNegative Negative button
+     * @param jbOther    Other button
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton jbOther) {
+        return createDialogButtonPanel(jbPositive, jbNegative, (jbOther == null ? null : new JButton[] { jbOther }));
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositive
-	 *            Positive button
-	 * @param jbNegative
-	 *            Negative button
-	 * @param jbOther
-	 *            Other button
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther) {
-		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, jbOther,
-				null);
-	}
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositive Positive button
+     * @param jbNegative Negative button
+     * @param jbOther    Other button
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, JButton[] jbOther) {
+        return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, jbOther,
+                                       null);
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositive
-	 *            Positive button
-	 * @param jbNegative
-	 *            Negative button
-	 * @param insets
-	 *            Insets for panel (MiGLayout constraint)
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, String insets) {
-		return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, null,
-				insets);
-	}
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositive Positive button
+     * @param jbNegative Negative button
+     * @param insets     Insets for panel (MiGLayout constraint)
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton jbPositive, JButton jbNegative, String insets) {
+        return createDialogButtonPanel((jbPositive == null ? null : new JButton[] { jbPositive }), jbNegative, null,
+                                       insets);
+    }
 
-	/**
-	 * Create a dialog button panel with the order and alignment dependent on
-	 * the platform.
-	 *
-	 * @param jbPositives
-	 *            Positive buttons
-	 * @param jbNegative
-	 *            Negative button
-	 * @param jbOthers
-	 *            Other buttons
-	 * @param insets
-	 *            Insets for panel (MiGLayout constraint)
-	 * @return Dialog button panel
-	 */
-	public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, JButton[] jbOthers,
-			String insets) {
+    /**
+     * Create a dialog button panel with the order and alignment dependent on
+     * the platform.
+     *
+     * @param jbPositives Positive buttons
+     * @param jbNegative  Negative button
+     * @param jbOthers    Other buttons
+     * @param insets      Insets for panel (MiGLayout constraint)
+     * @return Dialog button panel
+     */
+    public static JPanel createDialogButtonPanel(JButton[] jbPositives, JButton jbNegative, JButton[] jbOthers,
+                                                 String insets) {
 
-		if (insets == null) {
-			insets = "";
-		} else {
-			insets += ",";
-		}
+        if (insets == null) {
+            insets = "";
+        } else {
+            insets += ",";
+        }
 
-		JPanel panel = new JPanel(new MigLayout(insets + "nogrid, fillx, aligny 100%"));
+        JPanel panel = new JPanel(new MigLayout(insets + "nogrid, fillx, aligny 100%"));
 
-		if (jbPositives != null) {
-			for (JButton jButton : jbPositives) {
-				panel.add(jButton, "tag ok");
-			}
-		}
+        if (jbPositives != null) {
+            for (JButton jButton : jbPositives) {
+                panel.add(jButton, "tag ok");
+            }
+        }
 
-		if (jbOthers != null) {
-			for (JButton jButton : jbOthers) {
-				panel.add(jButton, "sgx");
-			}
-		}
+        if (jbOthers != null) {
+            for (JButton jButton : jbOthers) {
+                panel.add(jButton, "sgx");
+            }
+        }
 
-		if (jbNegative != null) {
-			panel.add(jbNegative, "tag cancel");
-		}
+        if (jbNegative != null) {
+            panel.add(jbNegative, "tag cancel");
+        }
 
-		return panel;
-	}
+        return panel;
+    }
 
+    /**
+     * Create a scroll pane whose scroll bar policy conforms with the current
+     * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
+     * be shown as needed it should instead always be shown. For all other
+     * platforms obey policy as provided.
+     *
+     * @param vsbPolicy Vertical scroll bar policy
+     * @param hsbPolicy Horizontal scroll bar policy
+     * @return Scroll pane
+     */
+    public static JScrollPane createScrollPane(int vsbPolicy, int hsbPolicy) {
+        return createScrollPane(null, vsbPolicy, hsbPolicy);
+    }
 
-	/**
-	 * Create a scroll pane whose scroll bar policy conforms with the current
-	 * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
-	 * be shown as needed it should instead always be shown. For all other
-	 * platforms obey policy as provided.
-	 *
-	 * @param vsbPolicy
-	 *            Vertical scroll bar policy
-	 * @param hsbPolicy
-	 *            Horizontal scroll bar policy
-	 * @return Scroll pane
-	 */
-	public static JScrollPane createScrollPane(int vsbPolicy, int hsbPolicy) {
-		return createScrollPane(null, vsbPolicy, hsbPolicy);
-	}
+    /**
+     * Create a scroll pane whose scroll bar policy conforms with the current
+     * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
+     * be shown as needed it should instead always be shown. For all other
+     * platforms obey policy as provided.
+     *
+     * @param view      Component to view
+     * @param vsbPolicy Vertical scroll bar policy
+     * @param hsbPolicy Horizontal scroll bar policy
+     * @return Scroll pane
+     */
+    public static JScrollPane createScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
+        // If Mac l&f convert supplied "scroll bars as needed" to "scroll bars always"
+        if (LnfUtil.usingMacLnf()) {
+            if (vsbPolicy == ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED) {
+                vsbPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
+            }
 
-	/**
-	 * Create a scroll pane whose scroll bar policy conforms with the current
-	 * platform. i.e. on macOS l&f if a scroll bar's policy states that it may
-	 * be shown as needed it should instead always be shown. For all other
-	 * platforms obey policy as provided.
-	 *
-	 * @param view
-	 *            Component to view
-	 * @param vsbPolicy
-	 *            Vertical scroll bar policy
-	 * @param hsbPolicy
-	 *            Horizontal scroll bar policy
-	 * @return Scroll pane
-	 */
-	public static JScrollPane createScrollPane(Component view, int vsbPolicy, int hsbPolicy) {
-		// If Mac l&f convert supplied "scroll bars as needed" to "scroll bars always"
-		if (LnfUtil.usingMacLnf()) {
-			if (vsbPolicy == ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED) {
-				vsbPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
-			}
+            if (hsbPolicy == ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED) {
+                hsbPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
+            }
+        }
 
-			if (hsbPolicy == ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED) {
-				hsbPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS;
-			}
-		}
+        JScrollPane scrollPane;
 
-		JScrollPane scrollPane;
+        if (view != null) {
+            scrollPane = new JScrollPane(view, vsbPolicy, hsbPolicy);
+        } else {
+            scrollPane = new JScrollPane(vsbPolicy, hsbPolicy);
+        }
 
-		if (view != null) {
-			scrollPane = new JScrollPane(view, vsbPolicy, hsbPolicy);
-		} else {
-			scrollPane = new JScrollPane(vsbPolicy, hsbPolicy);
-		}
+        return scrollPane;
+    }
 
-		return scrollPane;
-	}
+    /**
+     * Set mnemonic on button in a platform dependant manner.
+     *
+     * @param button   Button
+     * @param mnemonic Mnemonic
+     */
+    public static void setMnemonic(AbstractButton button, int mnemonic) {
+        setMnemonic(button, (char) mnemonic, -1);
+    }
 
-	/**
-	 * Set mnemonic on button in a platform dependant manner.
-	 *
-	 * @param button
-	 *            Button
-	 * @param mnemonic
-	 *            Mnemonic
-	 */
-	public static void setMnemonic(AbstractButton button, int mnemonic) {
-		setMnemonic(button, (char) mnemonic, -1);
-	}
+    /**
+     * Set mnemonic on button in a platform dependant manner.
+     *
+     * @param button   Button
+     * @param mnemonic Mnemonic
+     */
+    public static void setMnemonic(AbstractButton button, char mnemonic) {
+        setMnemonic(button, mnemonic, -1);
+    }
 
-	/**
-	 * Set mnemonic on button in a platform dependant manner.
-	 *
-	 * @param button
-	 *            Button
-	 * @param mnemonic
-	 *            Mnemonic
-	 */
-	public static void setMnemonic(AbstractButton button, char mnemonic) {
-		setMnemonic(button, mnemonic, -1);
-	}
+    /**
+     * Set mnemonic on button in a platform dependant manner.
+     *
+     * @param button   Button
+     * @param mnemonic Mnemonic
+     * @param index    Index of string to underline
+     */
+    public static void setMnemonic(AbstractButton button, int mnemonic, int index) {
+        setMnemonic(button, (char) mnemonic, index);
+    }
 
-	/**
-	 * Set mnemonic on button in a platform dependant manner.
-	 *
-	 * @param button
-	 *            Button
-	 * @param mnemonic
-	 *            Mnemonic
-	 * @param index
-	 *            Index of string to underline
-	 */
-	public static void setMnemonic(AbstractButton button, int mnemonic, int index) {
-		setMnemonic(button, (char) mnemonic, index);
-	}
+    /**
+     * Set mnemonic on button in a platform dependant manner.
+     *
+     * @param button   Button
+     * @param mnemonic Mnemonic
+     * @param index    Index of string to underline
+     */
+    public static void setMnemonic(AbstractButton button, char mnemonic, int index) {
+        /*
+         * Only set mnemonic if not using macOS - they are not recommended by
+         * the style guidelines there and clash with established commands
+         */
+        if (!OperatingSystem.isMacOs()) {
+            button.setMnemonic(mnemonic);
 
-	/**
-	 * Set mnemonic on button in a platform dependant manner.
-	 *
-	 * @param button
-	 *            Button
-	 * @param mnemonic
-	 *            Mnemonic
-	 * @param index
-	 *            Index of string to underline
-	 */
-	public static void setMnemonic(AbstractButton button, char mnemonic, int index) {
-		/*
-		 * Only set mnemonic if not using macOS - they are not recommended by
-		 * the style guidelines there and clash with established commands
-		 */
-		if (!OperatingSystem.isMacOs()) {
-			button.setMnemonic(mnemonic);
-
-			if (index >= 0) {
-				button.setDisplayedMnemonicIndex(index);
-			}
-		}
-	}
+            if (index >= 0) {
+                button.setDisplayedMnemonicIndex(index);
+            }
+        }
+    }
 }

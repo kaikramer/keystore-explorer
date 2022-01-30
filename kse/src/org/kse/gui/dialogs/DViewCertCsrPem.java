@@ -64,248 +64,231 @@ import org.kse.utilities.io.IOUtils;
 /**
  * Displays an X.509 certificate's PEM'd DER encoding and provides the
  * opportunity to export it to file.
- *
  */
 public class DViewCertCsrPem extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCopy;
-	private JButton jbExport;
-	private JPanel jpPem;
-	private JScrollPane jspPem;
-	private JTextArea jtaPem;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCopy;
+    private JButton jbExport;
+    private JPanel jpPem;
+    private JScrollPane jspPem;
+    private JTextArea jtaPem;
 
-	private X509Certificate cert;
-	private PKCS10CertificationRequest pkcs10Csr;
+    private X509Certificate cert;
+    private PKCS10CertificationRequest pkcs10Csr;
 
-	/**
-	 * Creates a new DViewCertCsrPem dialog.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param cert
-	 *            Certificate to display encoding for
-	 * @throws CryptoException
-	 *             A problem was encountered getting the certificate's PEM'd DER
-	 *             encoding
-	 */
-	public DViewCertCsrPem(JFrame parent, String title, X509Certificate cert) throws CryptoException {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.cert = cert;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewCertCsrPem dialog.
+     *
+     * @param parent Parent frame
+     * @param title  The dialog title
+     * @param cert   Certificate to display encoding for
+     * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER
+     *                         encoding
+     */
+    public DViewCertCsrPem(JFrame parent, String title, X509Certificate cert) throws CryptoException {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.cert = cert;
+        initComponents();
+    }
 
-	/**
-	 * Creates new DViewCertCsrPem dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param cert
-	 *            Certificate to display encoding for
-	 * @throws CryptoException
-	 *             A problem was encountered getting the certificate's PEM'd DER
-	 *             encoding
-	 */
-	public DViewCertCsrPem(JDialog parent, String title, X509Certificate cert)
-			throws CryptoException {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		this.cert = cert;
-		initComponents();
-	}
+    /**
+     * Creates new DViewCertCsrPem dialog where the parent is a dialog.
+     *
+     * @param parent Parent dialog
+     * @param title  The dialog title
+     * @param cert   Certificate to display encoding for
+     * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER
+     *                         encoding
+     */
+    public DViewCertCsrPem(JDialog parent, String title, X509Certificate cert) throws CryptoException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.cert = cert;
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DViewCertCsrPem dialog.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param pkcs10Csr
-	 *            PKCS10 CSR to display encoding for
-	 * @throws CryptoException
-	 *             A problem was encountered getting the certificate's PEM'd DER encoding
-	 */
-	public DViewCertCsrPem(JFrame parent, String title, PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.pkcs10Csr = pkcs10Csr;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewCertCsrPem dialog.
+     *
+     * @param parent    Parent frame
+     * @param title     The dialog title
+     * @param pkcs10Csr PKCS10 CSR to display encoding for
+     * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER encoding
+     */
+    public DViewCertCsrPem(JFrame parent, String title, PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.pkcs10Csr = pkcs10Csr;
+        initComponents();
+    }
 
-	/**
-	 * Creates new DViewCertCsrPem dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param pkcs10Csr
-	 *            PKCS10 CSR to display encoding for
-	 * @throws CryptoException
-	 *             A problem was encountered getting the certificate's PEM'd DER encoding
-	 */
-	public DViewCertCsrPem(JDialog parent, String title,
-			PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		this.pkcs10Csr = pkcs10Csr;
-		initComponents();
-	}
+    /**
+     * Creates new DViewCertCsrPem dialog where the parent is a dialog.
+     *
+     * @param parent    Parent dialog
+     * @param title     The dialog title
+     * @param pkcs10Csr PKCS10 CSR to display encoding for
+     * @throws CryptoException A problem was encountered getting the certificate's PEM'd DER encoding
+     */
+    public DViewCertCsrPem(JDialog parent, String title, PKCS10CertificationRequest pkcs10Csr) throws CryptoException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.pkcs10Csr = pkcs10Csr;
+        initComponents();
+    }
 
-	private void initComponents() throws CryptoException {
-		jbOK = new JButton(res.getString("DViewCertCsrPem.jbOK.text"));
+    private void initComponents() throws CryptoException {
+        jbOK = new JButton(res.getString("DViewCertCsrPem.jbOK.text"));
 
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCopy = new JButton(res.getString("DViewCertCsrPem.jbCopy.text"));
-		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertCsrPem.jbCopy.mnemonic").charAt(0));
-		if (cert != null) {
-			jbCopy.setToolTipText(res.getString("DViewCertCsrPem.jbCertCopy.tooltip"));
-		} else {
-			jbCopy.setToolTipText(res.getString("DViewCertCsrPem.jbCsrCopy.tooltip"));
-		}
+        jbCopy = new JButton(res.getString("DViewCertCsrPem.jbCopy.text"));
+        PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertCsrPem.jbCopy.mnemonic").charAt(0));
+        if (cert != null) {
+            jbCopy.setToolTipText(res.getString("DViewCertCsrPem.jbCertCopy.tooltip"));
+        } else {
+            jbCopy.setToolTipText(res.getString("DViewCertCsrPem.jbCsrCopy.tooltip"));
+        }
 
-		jbCopy.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewCertCsrPem.this);
-				copyPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewCertCsrPem.this);
-			}
-		});
+        jbCopy.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewCertCsrPem.this);
+                copyPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewCertCsrPem.this);
+            }
+        });
 
-		jbExport = new JButton(res.getString("DViewCertCsrPem.jbExport.text"));
-		PlatformUtil.setMnemonic(jbExport, res.getString("DViewCertCsrPem.jbExport.mnemonic").charAt(0));
-		if (cert != null) {
-			jbExport.setToolTipText(res.getString("DViewCertCsrPem.jbCertExport.tooltip"));
-		} else {
-			jbExport.setToolTipText(res.getString("DViewCertCsrPem.jbCsrExport.tooltip"));
-		}
-		jbExport.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewCertCsrPem.this);
-				exportPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewCertCsrPem.this);
-			}
-		});
+        jbExport = new JButton(res.getString("DViewCertCsrPem.jbExport.text"));
+        PlatformUtil.setMnemonic(jbExport, res.getString("DViewCertCsrPem.jbExport.mnemonic").charAt(0));
+        if (cert != null) {
+            jbExport.setToolTipText(res.getString("DViewCertCsrPem.jbCertExport.tooltip"));
+        } else {
+            jbExport.setToolTipText(res.getString("DViewCertCsrPem.jbCsrExport.tooltip"));
+        }
+        jbExport.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewCertCsrPem.this);
+                exportPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewCertCsrPem.this);
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, new JButton[] { jbCopy, jbExport });
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, new JButton[] { jbCopy, jbExport });
 
-		jpPem = new JPanel(new BorderLayout());
-		jpPem.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpPem = new JPanel(new BorderLayout());
+        jpPem.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		if (cert != null) {
-			jtaPem = new JTextArea(X509CertUtil.getCertEncodedX509Pem(cert));
-		} else {
-			jtaPem = new JTextArea(Pkcs10Util.getCsrEncodedDerPem(pkcs10Csr));
-		}
-		jtaPem.setCaretPosition(0);
-		jtaPem.setEditable(false);
-		jtaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		// JGoodies - keep uneditable color same as editable
-		jtaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+        if (cert != null) {
+            jtaPem = new JTextArea(X509CertUtil.getCertEncodedX509Pem(cert));
+        } else {
+            jtaPem = new JTextArea(Pkcs10Util.getCsrEncodedDerPem(pkcs10Csr));
+        }
+        jtaPem.setCaretPosition(0);
+        jtaPem.setEditable(false);
+        jtaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        // JGoodies - keep uneditable color same as editable
+        jtaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
-		jspPem = PlatformUtil.createScrollPane(jtaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		jspPem.setPreferredSize(new Dimension(500, 300));
-		jpPem.add(jspPem, BorderLayout.CENTER);
+        jspPem = PlatformUtil.createScrollPane(jtaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jspPem.setPreferredSize(new Dimension(500, 300));
+        jpPem.add(jspPem, BorderLayout.CENTER);
 
-		getContentPane().add(jpPem, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpPem, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		setResizable(true);
+        setResizable(true);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void copyPressed() {
-		String policy = jtaPem.getText();
+    private void copyPressed() {
+        String policy = jtaPem.getText();
 
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringSelection copy = new StringSelection(policy);
-		clipboard.setContents(copy, copy);
-	}
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection copy = new StringSelection(policy);
+        clipboard.setContents(copy, copy);
+    }
 
-	private void exportPressed() {
-		File chosenFile = null;
-		FileWriter fw = null;
+    private void exportPressed() {
+        File chosenFile = null;
+        FileWriter fw = null;
 
-		String title;
-		if (cert != null) {
-			title = res.getString("DViewCertCsrPem.ExportPemCertificate.Title");
-		} else {
-			title = res.getString("DViewCertCsrPem.ExportPemCsr.Title");
-		}
-		try {
-			String certPem = jtaPem.getText();
+        String title;
+        if (cert != null) {
+            title = res.getString("DViewCertCsrPem.ExportPemCertificate.Title");
+        } else {
+            title = res.getString("DViewCertCsrPem.ExportPemCsr.Title");
+        }
+        try {
+            String certPem = jtaPem.getText();
 
-			JFileChooser chooser = FileChooserFactory.getX509FileChooser();
-			chooser.setCurrentDirectory(CurrentDirectory.get());
-			chooser.setDialogTitle(title);
-			chooser.setMultiSelectionEnabled(false);
+            JFileChooser chooser = FileChooserFactory.getX509FileChooser();
+            chooser.setCurrentDirectory(CurrentDirectory.get());
+            chooser.setDialogTitle(title);
+            chooser.setMultiSelectionEnabled(false);
 
-			int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-					: chooser.showDialog(this, res.getString("DViewCertCsrPem.ChooseExportFile.button"));
+            int rtnValue = JavaFXFileChooser.isFxAvailable() ?
+                           chooser.showSaveDialog(this) :
+                           chooser.showDialog(this, res.getString("DViewCertCsrPem.ChooseExportFile.button"));
 
-			if (rtnValue != JFileChooser.APPROVE_OPTION) {
-				return;
-			}
+            if (rtnValue != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
 
-			chosenFile = chooser.getSelectedFile();
-			CurrentDirectory.updateForFile(chosenFile);
+            chosenFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(chosenFile);
 
-			if (chosenFile.isFile()) {
-				String message = MessageFormat.format(res.getString("DViewCertCsrPem.OverWriteFile.message"), chosenFile);
+            if (chosenFile.isFile()) {
+                String message = MessageFormat.format(res.getString("DViewCertCsrPem.OverWriteFile.message"),
+                                                      chosenFile);
 
-				int selected = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return;
-				}
-			}
+                int selected = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
+                if (selected != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
 
-			fw = new FileWriter(chosenFile);
-			fw.write(certPem);
-			fw.flush();
-		} catch (FileNotFoundException ex) {
-			JOptionPane.showMessageDialog(this,
-					MessageFormat.format(res.getString("DViewCertCsrPem.NoWriteFile.message"), chosenFile),
-					title, JOptionPane.WARNING_MESSAGE);
-			return;
-		} catch (Exception ex) {
-			DError.displayError(this, ex);
-			return;
-		} finally {
-			IOUtils.closeQuietly(fw);
-		}
+            fw = new FileWriter(chosenFile);
+            fw.write(certPem);
+            fw.flush();
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(this,
+                                          MessageFormat.format(res.getString("DViewCertCsrPem.NoWriteFile.message"),
+                                                               chosenFile), title, JOptionPane.WARNING_MESSAGE);
+            return;
+        } catch (Exception ex) {
+            DError.displayError(this, ex);
+            return;
+        } finally {
+            IOUtils.closeQuietly(fw);
+        }
 
-		JOptionPane.showMessageDialog(this, res.getString("DViewCertCsrPem.ExportPemCertificateSuccessful.message"),
-				title, JOptionPane.INFORMATION_MESSAGE);
-	}
+        JOptionPane.showMessageDialog(this, res.getString("DViewCertCsrPem.ExportPemCertificateSuccessful.message"),
+                                      title, JOptionPane.INFORMATION_MESSAGE);
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

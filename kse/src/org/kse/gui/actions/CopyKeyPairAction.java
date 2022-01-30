@@ -23,20 +23,18 @@ import org.kse.gui.KseFrame;
 
 /**
  * Action to copy a Key Pair entry.
- *
  */
 public class CopyKeyPairAction extends CopyAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CopyKeyPairAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CopyKeyPairAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("CopyKeyPairAction.statusbar"));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("CopyKeyPairAction.statusbar"));
+    }
 }

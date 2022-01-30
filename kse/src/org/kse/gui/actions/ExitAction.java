@@ -32,69 +32,64 @@ import org.kse.gui.KseRestart;
 
 /**
  * Action to exit.
- *
  */
 public class ExitAction extends CloseAllAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ExitAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public ExitAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("ExitAction.statusbar"));
-		putValue(NAME, res.getString("ExitAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ExitAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/exit.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("ExitAction.statusbar"));
+        putValue(NAME, res.getString("ExitAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ExitAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exit.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		exitApplication();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        exitApplication();
+    }
 
-	/**
-	 * Exit the application.
-	 */
-	public void exitApplication() {
-		exitApplication(false);
-	}
+    /**
+     * Exit the application.
+     */
+    public void exitApplication() {
+        exitApplication(false);
+    }
 
-	/**
-	 * Exit the application and optionally restart.
-	 *
-	 * @param restart
-	 *            Restart application if true
-	 */
-	public void exitApplication(boolean restart) {
-		// Will any KeyStores be closed by exit?
-		boolean keyStoresClosed = (kseFrame.getActiveKeyStoreHistory() != null);
+    /**
+     * Exit the application and optionally restart.
+     *
+     * @param restart Restart application if true
+     */
+    public void exitApplication(boolean restart) {
+        // Will any KeyStores be closed by exit?
+        boolean keyStoresClosed = (kseFrame.getActiveKeyStoreHistory() != null);
 
-		if (!closeAllKeyStores()) {
-			return;
-		}
+        if (!closeAllKeyStores()) {
+            return;
+        }
 
-		// Save dynamic application settings
-		applicationSettings.setSizeAndPosition(kseFrame.getSizeAndPosition(keyStoresClosed));
-		applicationSettings.setRecentFiles(kseFrame.getRecentFiles());
-		applicationSettings.setCurrentDirectory(CurrentDirectory.get());
-		applicationSettings.save();
+        // Save dynamic application settings
+        applicationSettings.setSizeAndPosition(kseFrame.getSizeAndPosition(keyStoresClosed));
+        applicationSettings.setRecentFiles(kseFrame.getRecentFiles());
+        applicationSettings.setCurrentDirectory(CurrentDirectory.get());
+        applicationSettings.save();
 
-		if (restart) {
-			KseRestart.restart();
-		}
+        if (restart) {
+            KseRestart.restart();
+        }
 
-		System.exit(0);
-	}
+        System.exit(0);
+    }
 }

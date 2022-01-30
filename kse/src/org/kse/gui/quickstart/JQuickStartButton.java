@@ -35,96 +35,89 @@ import javax.swing.JPanel;
 /**
  * Quick Start button. Undecorated image button with attached descriptive text
  * that each react to mouse roll-overs.
- *
  */
 public class JQuickStartButton extends JPanel {
-	private static final long serialVersionUID = 1L;
-	private JButton jbWelcome;
-	private JLabel jlWelcome;
+    private static final long serialVersionUID = 1L;
+    private JButton jbWelcome;
+    private JLabel jlWelcome;
 
-	/**
-	 * Initialise component and its subcomponents.
-	 *
-	 * @param action
-	 *            Button action
-	 * @param test
-	 *            Button text
-	 * @param icon
-	 *            Button icon
-	 * @param rollOverIcon
-	 *            Button rollover icon
-	 * @param foreground
-	 *            Foreground color for text
-	 * @param rollOverColor
-	 *            Rollover color for text
-	 */
-	public JQuickStartButton(Action action, String test, final ImageIcon icon, final ImageIcon rollOverIcon,
-			final Color foreground, final Color rollOverColor) {
-		jlWelcome = new JLabel(test);
-		jlWelcome.setForeground(foreground);
+    /**
+     * Initialise component and its subcomponents.
+     *
+     * @param action        Button action
+     * @param test          Button text
+     * @param icon          Button icon
+     * @param rollOverIcon  Button rollover icon
+     * @param foreground    Foreground color for text
+     * @param rollOverColor Rollover color for text
+     */
+    public JQuickStartButton(Action action, String test, final ImageIcon icon, final ImageIcon rollOverIcon,
+                             final Color foreground, final Color rollOverColor) {
+        jlWelcome = new JLabel(test);
+        jlWelcome.setForeground(foreground);
 
-		jbWelcome = new JButton();
-		jbWelcome.setAction(action);
+        jbWelcome = new JButton();
+        jbWelcome.setAction(action);
 
-		jbWelcome.setSize(icon.getImage().getWidth(null), icon.getImage().getHeight(null));
-		jbWelcome.setIcon(icon);
+        jbWelcome.setSize(icon.getImage().getWidth(null), icon.getImage().getHeight(null));
+        jbWelcome.setIcon(icon);
 
-		// We'll do our own roll-over using mouse and action event handlers
-		jbWelcome.setRolloverEnabled(false);
+        // We'll do our own roll-over using mouse and action event handlers
+        jbWelcome.setRolloverEnabled(false);
 
-		// Removed un-needed button functionality and decoration
-		jbWelcome.setMargin(new Insets(0, 0, 0, 0));
-		jbWelcome.setIconTextGap(0);
-		jbWelcome.setBorderPainted(false);
-		jbWelcome.setBorder(null);
-		jbWelcome.setText(null);
-		jbWelcome.setToolTipText(null);
-		jbWelcome.setContentAreaFilled(false);
-		jbWelcome.setFocusPainted(false);
-		jbWelcome.setFocusable(false);
+        // Removed un-needed button functionality and decoration
+        jbWelcome.setMargin(new Insets(0, 0, 0, 0));
+        jbWelcome.setIconTextGap(0);
+        jbWelcome.setBorderPainted(false);
+        jbWelcome.setBorder(null);
+        jbWelcome.setText(null);
+        jbWelcome.setToolTipText(null);
+        jbWelcome.setContentAreaFilled(false);
+        jbWelcome.setFocusPainted(false);
+        jbWelcome.setFocusable(false);
 
-		// Add roll-over supporting events
+        // Add roll-over supporting events
 
-		jbWelcome.addMouseListener(new MouseAdapter() {
-			// Mouse entered - use roll-over color on text and image on button
-			@Override
-			public void mouseEntered(MouseEvent evt) {
-				jlWelcome.setForeground(rollOverColor);
-				jbWelcome.setIcon(rollOverIcon);
-			}
+        jbWelcome.addMouseListener(new MouseAdapter() {
+            // Mouse entered - use roll-over color on text and image on button
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                jlWelcome.setForeground(rollOverColor);
+                jbWelcome.setIcon(rollOverIcon);
+            }
 
-			// Mouse exited - remove roll-over color on text and image on button
-			@Override
-			public void mouseExited(MouseEvent evt) {
-				jlWelcome.setForeground(foreground);
-				jbWelcome.setIcon(icon);
-			}
-		});
+            // Mouse exited - remove roll-over color on text and image on button
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                jlWelcome.setForeground(foreground);
+                jbWelcome.setIcon(icon);
+            }
+        });
 
-		// Button activate - remove roll-over color on text and image on
-		// button
-		jbWelcome.addActionListener(evt -> {
-			jlWelcome.setForeground(foreground);
-			jbWelcome.setIcon(icon);
-		});
+        // Button activate - remove roll-over color on text and image on
+        // button
+        jbWelcome.addActionListener(evt -> {
+            jlWelcome.setForeground(foreground);
+            jbWelcome.setIcon(icon);
+        });
 
-		GridBagConstraints gbc_jlWelcome = new GridBagConstraints();
-		gbc_jlWelcome.gridheight = 1;
-		gbc_jlWelcome.gridwidth = 1;
-		gbc_jlWelcome.gridx = 0;
-		gbc_jlWelcome.gridy = 1;
-		gbc_jlWelcome.insets = new Insets(3, 0, 0, 0);
+        GridBagConstraints gbc_jlWelcome = new GridBagConstraints();
+        gbc_jlWelcome.gridheight = 1;
+        gbc_jlWelcome.gridwidth = 1;
+        gbc_jlWelcome.gridx = 0;
+        gbc_jlWelcome.gridy = 1;
+        gbc_jlWelcome.insets = new Insets(3, 0, 0, 0);
 
-		GridBagConstraints gbc_jbWelcome = new GridBagConstraints();
-		gbc_jbWelcome.gridheight = 1;
-		gbc_jbWelcome.gridwidth = 1;
-		gbc_jbWelcome.gridx = 0;
-		gbc_jbWelcome.gridy = 0;
-		gbc_jbWelcome.insets = new Insets(0, 0, 3, 0);
+        GridBagConstraints gbc_jbWelcome = new GridBagConstraints();
+        gbc_jbWelcome.gridheight = 1;
+        gbc_jbWelcome.gridwidth = 1;
+        gbc_jbWelcome.gridx = 0;
+        gbc_jbWelcome.gridy = 0;
+        gbc_jbWelcome.insets = new Insets(0, 0, 3, 0);
 
-		setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
 
-		add(jbWelcome, gbc_jbWelcome);
-		add(jlWelcome, gbc_jlWelcome);
-	}
+        add(jbWelcome, gbc_jbWelcome);
+        add(jlWelcome, gbc_jlWelcome);
+    }
 }

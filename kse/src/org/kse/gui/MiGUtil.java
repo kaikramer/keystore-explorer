@@ -27,13 +27,13 @@ import javax.swing.SwingConstants;
 
 public class MiGUtil {
 
-	private MiGUtil() {
-	}
+    private MiGUtil() {
+    }
 
-	public static void addSeparator(Container container, String text) {
-		JLabel l = new JLabel(text, SwingConstants.LEADING);
+    public static void addSeparator(Container container, String text) {
+        JLabel l = new JLabel(text, SwingConstants.LEADING);
 
-		container.add(l, "gapbottom 1, span, split 2, aligny center");
-		container.add(new JSeparator(), "gapleft rel, growx");
-	}
+        container.add(l, "gapbottom 1, span, split 2, aligny center");
+        container.add(new JSeparator(), "gapleft rel, growx");
+    }
 }

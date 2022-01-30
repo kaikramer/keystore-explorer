@@ -21,53 +21,49 @@ package org.kse.utilities.pem;
 
 /**
  * Information contained in a PEM including type, header attributes and content.
- *
  */
 public class PemInfo {
-	private String type;
-	private PemAttributes attributes;
-	private byte[] content;
+    private String type;
+    private PemAttributes attributes;
+    private byte[] content;
 
-	/**
-	 * Construct PEM.
-	 *
-	 * @param type
-	 *            Type
-	 * @param attributes
-	 *            Header attributes
-	 * @param content
-	 *            Content
-	 */
-	public PemInfo(String type, PemAttributes attributes, byte[] content) {
-		this.type = type;
-		this.attributes = attributes;
-		this.content = content;
-	}
+    /**
+     * Construct PEM.
+     *
+     * @param type       Type
+     * @param attributes Header attributes
+     * @param content    Content
+     */
+    public PemInfo(String type, PemAttributes attributes, byte[] content) {
+        this.type = type;
+        this.attributes = attributes;
+        this.content = content;
+    }
 
-	/**
-	 * Get type.
-	 *
-	 * @return Type
-	 */
-	public String getType() {
-		return type;
-	}
+    /**
+     * Get type.
+     *
+     * @return Type
+     */
+    public String getType() {
+        return type;
+    }
 
-	/**
-	 * Get header attributes.
-	 *
-	 * @return Header attributes
-	 */
-	public PemAttributes getAttributes() {
-		return attributes;
-	}
+    /**
+     * Get header attributes.
+     *
+     * @return Header attributes
+     */
+    public PemAttributes getAttributes() {
+        return attributes;
+    }
 
-	/**
-	 * Get content.
-	 *
-	 * @return Content
-	 */
-	public byte[] getContent() {
-		return content;
-	}
+    /**
+     * Get content.
+     *
+     * @return Content
+     */
+    public byte[] getContent() {
+        return content;
+    }
 }

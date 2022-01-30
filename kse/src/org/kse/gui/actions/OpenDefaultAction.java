@@ -38,76 +38,72 @@ import org.kse.gui.error.DError;
 /**
  * Action to open the default KeyStore. If it does not exist provide the user
  * with the option of creating it.
- *
  */
 public class OpenDefaultAction extends OpenAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public OpenDefaultAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public OpenDefaultAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("OpenDefaultAction.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("OpenDefaultAction.statusbar"));
-		putValue(NAME, res.getString("OpenDefaultAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("OpenDefaultAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/opendefault.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("OpenDefaultAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.SHIFT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("OpenDefaultAction.statusbar"));
+        putValue(NAME, res.getString("OpenDefaultAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("OpenDefaultAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/opendefault.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		File defaultKeyStoreFile = new File(System.getProperty("user.home"), ".keystore");
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        File defaultKeyStoreFile = new File(System.getProperty("user.home"), ".keystore");
 
-		if (defaultKeyStoreFile.isFile()) {
-			openKeyStore(defaultKeyStoreFile);
-			return;
-		}
+        if (defaultKeyStoreFile.isFile()) {
+            openKeyStore(defaultKeyStoreFile);
+            return;
+        }
 
-		int selected = JOptionPane.showConfirmDialog(frame,
-				res.getString("OpenDefaultAction.NoDefaultKeyStoreCreate.message"),
-				res.getString("OpenDefaultAction.OpenDefaultKeyStore.Title"), JOptionPane.YES_NO_OPTION);
+        int selected = JOptionPane.showConfirmDialog(frame,
+                                                     res.getString("OpenDefaultAction.NoDefaultKeyStoreCreate.message"),
+                                                     res.getString("OpenDefaultAction.OpenDefaultKeyStore.Title"),
+                                                     JOptionPane.YES_NO_OPTION);
 
-		if (selected != JOptionPane.YES_OPTION) {
-			return;
-		}
+        if (selected != JOptionPane.YES_OPTION) {
+            return;
+        }
 
-		try {
-			DNewKeyStoreType dNewKeyStoreType = new DNewKeyStoreType(frame);
-			dNewKeyStoreType.setLocationRelativeTo(frame);
-			dNewKeyStoreType.setVisible(true);
+        try {
+            DNewKeyStoreType dNewKeyStoreType = new DNewKeyStoreType(frame);
+            dNewKeyStoreType.setLocationRelativeTo(frame);
+            dNewKeyStoreType.setVisible(true);
 
-			KeyStoreType keyStoreType = dNewKeyStoreType.getKeyStoreType();
+            KeyStoreType keyStoreType = dNewKeyStoreType.getKeyStoreType();
 
-			if (keyStoreType == null) {
-				return;
-			}
+            if (keyStoreType == null) {
+                return;
+            }
 
-			Password password = getNewKeyStorePassword();
+            Password password = getNewKeyStorePassword();
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStore defaultKeyStore = KeyStoreUtil.create(keyStoreType);
-			KeyStoreUtil.save(defaultKeyStore, defaultKeyStoreFile, password);
+            KeyStore defaultKeyStore = KeyStoreUtil.create(keyStoreType);
+            KeyStoreUtil.save(defaultKeyStore, defaultKeyStoreFile, password);
 
-			kseFrame.addKeyStore(defaultKeyStore, defaultKeyStoreFile, password);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.addKeyStore(defaultKeyStore, defaultKeyStoreFile, password);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

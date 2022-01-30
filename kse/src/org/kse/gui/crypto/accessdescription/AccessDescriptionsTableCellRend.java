@@ -31,45 +31,38 @@ import org.kse.crypto.x509.GeneralNameUtil;
 
 /**
  * Custom cell renderer for the cells of the access descriptions table.
- *
  */
 public class AccessDescriptionsTableCellRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Returns the rendered cell.
-	 *
-	 * @param jtAccessDescriptions
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtAccessDescriptions, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtAccessDescriptions, value, isSelected, hasFocus,
-				row, col);
+    /**
+     * Returns the rendered cell.
+     *
+     * @param jtAccessDescriptions The JTable
+     * @param value                The value to assign to the cell
+     * @param isSelected           True if cell is selected
+     * @param row                  The row of the cell to render
+     * @param col                  The column of the cell to render
+     * @param hasFocus             If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtAccessDescriptions, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtAccessDescriptions, value, isSelected, hasFocus,
+                                                                   row, col);
 
-		AccessDescription accessDescription = (AccessDescription) value;
+        AccessDescription accessDescription = (AccessDescription) value;
 
-		if (col == 0) {
-			cell.setText(accessDescription.getAccessMethod().getId());
-		} else {
-			cell.setText(GeneralNameUtil.safeToString(accessDescription.getAccessLocation(), false));
-		}
+        if (col == 0) {
+            cell.setText(accessDescription.getAccessMethod().getId());
+        } else {
+            cell.setText(GeneralNameUtil.safeToString(accessDescription.getAccessLocation(), false));
+        }
 
-		cell.setHorizontalAlignment(LEFT);
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setHorizontalAlignment(LEFT);
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 }

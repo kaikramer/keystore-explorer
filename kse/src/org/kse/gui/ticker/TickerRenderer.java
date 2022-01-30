@@ -23,17 +23,14 @@ import javax.swing.JComponent;
 
 /**
  * Interface for renderers to use with the JTicker Swing control.
- *
  */
 public interface TickerRenderer {
-	/**
-	 * Get the rendering component for the specified JTicker and ticker item
-	 *
-	 * @return Rendering component
-	 * @param ticker
-	 *            The JTicker that is asking the renderer to draw
-	 * @param value
-	 *            The value of the ticker item to be rendered
-	 */
-	JComponent getTickerRendererComponent(JTicker ticker, Object value);
+    /**
+     * Get the rendering component for the specified JTicker and ticker item
+     *
+     * @param ticker The JTicker that is asking the renderer to draw
+     * @param value  The value of the ticker item to be rendered
+     * @return Rendering component
+     */
+    JComponent getTickerRendererComponent(JTicker ticker, Object value);
 }

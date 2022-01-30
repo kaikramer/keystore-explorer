@@ -37,105 +37,104 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to rename the selected key entry.
- *
  */
 public class RenameKeyAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public RenameKeyAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public RenameKeyAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("RenameKeyAction.statusbar"));
-		putValue(NAME, res.getString("RenameKeyAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("RenameKeyAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/rename.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("RenameKeyAction.statusbar"));
+        putValue(NAME, res.getString("RenameKeyAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("RenameKeyAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/rename.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		renameSelectedEntry();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        renameSelectedEntry();
+    }
 
-	/**
-	 * Rename the currently selected entry
-	 */
-	public void renameSelectedEntry() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Rename the currently selected entry
+     */
+    public void renameSelectedEntry() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
+            KeyStore keyStore = newState.getKeyStore();
 
-			Key key = keyStore.getKey(alias, password.toCharArray());
+            Key key = keyStore.getKey(alias, password.toCharArray());
 
-			DGetAlias dGetAlias = new DGetAlias(frame, res.getString("RenameKeyAction.NewEntryAlias.Title"), alias);
-			dGetAlias.setLocationRelativeTo(frame);
-			dGetAlias.setVisible(true);
-			String newAlias = dGetAlias.getAlias();
+            DGetAlias dGetAlias = new DGetAlias(frame, res.getString("RenameKeyAction.NewEntryAlias.Title"), alias);
+            dGetAlias.setLocationRelativeTo(frame);
+            dGetAlias.setVisible(true);
+            String newAlias = dGetAlias.getAlias();
 
-			if (newAlias == null) {
-				return;
-			}
+            if (newAlias == null) {
+                return;
+            }
 
-			if (newAlias.equalsIgnoreCase(alias)) {
-				JOptionPane.showMessageDialog(frame,
-						MessageFormat.format(res.getString("RenameKeyAction.RenameAliasIdentical.message"), alias),
-						res.getString("RenameKeyAction.RenameEntry.Title"), JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (newAlias.equalsIgnoreCase(alias)) {
+                JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                      res.getString("RenameKeyAction.RenameAliasIdentical.message"),
+                                                      alias),
+                                              res.getString("RenameKeyAction.RenameEntry.Title"),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			if (keyStore.containsAlias(newAlias)) {
-				String message = MessageFormat
-						.format(res.getString("RenameKeyAction.OverWriteEntry.message"), newAlias);
+            if (keyStore.containsAlias(newAlias)) {
+                String message = MessageFormat.format(res.getString("RenameKeyAction.OverWriteEntry.message"),
+                                                      newAlias);
 
-				int selected = JOptionPane.showConfirmDialog(frame, message,
-						res.getString("RenameKeyAction.RenameEntry.Title"), JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return;
-				}
+                int selected = JOptionPane.showConfirmDialog(frame, message,
+                                                             res.getString("RenameKeyAction.RenameEntry.Title"),
+                                                             JOptionPane.YES_NO_OPTION);
+                if (selected != JOptionPane.YES_OPTION) {
+                    return;
+                }
 
-				keyStore.deleteEntry(newAlias);
-				newState.removeEntryPassword(newAlias);
-			}
+                keyStore.deleteEntry(newAlias);
+                newState.removeEntryPassword(newAlias);
+            }
 
-			keyStore.setKeyEntry(newAlias, key, password.toCharArray(), null);
-			newState.setEntryPassword(newAlias, new Password(password));
+            keyStore.setKeyEntry(newAlias, key, password.toCharArray(), null);
+            newState.setEntryPassword(newAlias, new Password(password));
 
-			keyStore.deleteEntry(alias);
-			newState.removeEntryPassword(alias);
+            keyStore.deleteEntry(alias);
+            newState.removeEntryPassword(alias);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.updateControls(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

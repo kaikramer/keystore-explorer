@@ -37,87 +37,86 @@ import org.kse.crypto.publickey.KeyIdentifierGenerator;
 /**
  * Helper class for updating a set of extensions (mainly for saving/loading extensions or for transferring extensions
  * from CSR or other certificate)
- *
  */
 public class X509ExtensionSetUpdater {
 
-	private X509ExtensionSetUpdater() {
-		// hide c-tor
-	}
+    private X509ExtensionSetUpdater() {
+        // hide c-tor
+    }
 
-	/**
-	 * Update extensions of this set with data from issuer certificate
-	 *
-	 * @param extensionSet Extensions
-	 * @param subjectPublicKey New subject public key
-	 * @param issuerPublicKey New issuer public key
-	 * @param issuerCertName New issuer DN
-	 * @param issuerCertSerialNumber New SN
-	 * @throws CryptoException For example when hash value cannot be calculated
-	 * @throws IOException If the content cannot be encoded
-	 */
-	public static void update(X509ExtensionSet extensionSet, PublicKey subjectPublicKey, PublicKey issuerPublicKey,
-			X500Name issuerCertName, BigInteger issuerCertSerialNumber) throws CryptoException, IOException {
+    /**
+     * Update extensions of this set with data from issuer certificate
+     *
+     * @param extensionSet           Extensions
+     * @param subjectPublicKey       New subject public key
+     * @param issuerPublicKey        New issuer public key
+     * @param issuerCertName         New issuer DN
+     * @param issuerCertSerialNumber New SN
+     * @throws CryptoException For example when hash value cannot be calculated
+     * @throws IOException     If the content cannot be encoded
+     */
+    public static void update(X509ExtensionSet extensionSet, PublicKey subjectPublicKey, PublicKey issuerPublicKey,
+                              X500Name issuerCertName, BigInteger issuerCertSerialNumber)
+            throws CryptoException, IOException {
 
-		Set<String> allExtensions = new HashSet<>(extensionSet.getCriticalExtensionOIDs());
-		allExtensions.addAll(extensionSet.getNonCriticalExtensionOIDs());
+        Set<String> allExtensions = new HashSet<>(extensionSet.getCriticalExtensionOIDs());
+        allExtensions.addAll(extensionSet.getNonCriticalExtensionOIDs());
 
-		for (String extensionOid : allExtensions) {
+        for (String extensionOid : allExtensions) {
 
-			switch (X509ExtensionType.resolveOid(extensionOid)) {
-			case AUTHORITY_KEY_IDENTIFIER:
-				updateAKI(extensionSet, extensionOid, issuerPublicKey, issuerCertName, issuerCertSerialNumber);
-				break;
-			case SUBJECT_KEY_IDENTIFIER:
-				updateSKI(extensionSet, extensionOid, subjectPublicKey);
-				break;
-			default:
-				break;
-			}
-		}
-	}
+            switch (X509ExtensionType.resolveOid(extensionOid)) {
+            case AUTHORITY_KEY_IDENTIFIER:
+                updateAKI(extensionSet, extensionOid, issuerPublicKey, issuerCertName, issuerCertSerialNumber);
+                break;
+            case SUBJECT_KEY_IDENTIFIER:
+                updateSKI(extensionSet, extensionOid, subjectPublicKey);
+                break;
+            default:
+                break;
+            }
+        }
+    }
 
+    private static void updateSKI(X509ExtensionSet extensionSet, String extensionOid, PublicKey subjectPublicKey)
+            throws CryptoException, IOException {
 
-	private static void updateSKI(X509ExtensionSet extensionSet, String extensionOid, PublicKey subjectPublicKey)
-			throws CryptoException, IOException {
+        // extracting old SKI data not necessary because there is only one possible component in SKI extension
 
-		// extracting old SKI data not necessary because there is only one possible component in SKI extension
+        KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(subjectPublicKey);
+        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
+        byte[] skiEncoded = X509Ext.wrapInOctetString(ski.getEncoded(ASN1Encoding.DER));
 
-		KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(subjectPublicKey);
-		SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
-		byte[] skiEncoded = X509Ext.wrapInOctetString(ski.getEncoded(ASN1Encoding.DER));
+        // update
+        extensionSet.addExtension(extensionOid, extensionSet.isCritical(extensionOid), skiEncoded);
+    }
 
-		// update
-		extensionSet.addExtension(extensionOid, extensionSet.isCritical(extensionOid), skiEncoded);
-	}
+    private static void updateAKI(X509ExtensionSet extensionSet, String extensionOid, PublicKey newIssuerPublicKey,
+                                  X500Name newIssuerCertName, BigInteger newIssuerSerialNumber)
+            throws CryptoException, IOException {
 
+        // extract old AKI data
+        byte[] extensionValue = X509Ext.unwrapExtension(extensionSet.getExtensionValue(extensionOid));
+        AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(extensionValue);
+        byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifier();
+        BigInteger authorityCertSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
 
-	private static void updateAKI(X509ExtensionSet extensionSet, String extensionOid, PublicKey newIssuerPublicKey,
-			X500Name newIssuerCertName, BigInteger newIssuerSerialNumber) throws CryptoException, IOException {
+        // generate new values
+        byte[] newKeyIdentifier = new KeyIdentifierGenerator(newIssuerPublicKey).generate160BitHashId();
+        GeneralNames newCertIssuer = new GeneralNames(new GeneralName[] { new GeneralName(newIssuerCertName) });
 
-		// extract old AKI data
-		byte[] extensionValue = X509Ext.unwrapExtension(extensionSet.getExtensionValue(extensionOid));
-		AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(extensionValue);
-		byte[] keyIdentifier = authorityKeyIdentifier.getKeyIdentifier();
-		BigInteger authorityCertSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
+        // create new AKI object with same components as before
+        if ((keyIdentifier != null) && (authorityCertSerialNumber == null)) {
+            authorityKeyIdentifier = new AuthorityKeyIdentifier(newKeyIdentifier);
+        } else if (keyIdentifier == null) {
+            authorityKeyIdentifier = new AuthorityKeyIdentifier(newCertIssuer, newIssuerSerialNumber);
+        } else {
+            authorityKeyIdentifier = new AuthorityKeyIdentifier(newKeyIdentifier, newCertIssuer, newIssuerSerialNumber);
+        }
 
-		// generate new values
-		byte[] newKeyIdentifier = new KeyIdentifierGenerator(newIssuerPublicKey).generate160BitHashId();
-		GeneralNames newCertIssuer = new GeneralNames(new GeneralName[] { new GeneralName(newIssuerCertName) });
+        // encode extension value
+        byte[] encodedValue = X509Ext.wrapInOctetString(authorityKeyIdentifier.getEncoded(ASN1Encoding.DER));
 
-		// create new AKI object with same components as before
-		if ((keyIdentifier != null) && (authorityCertSerialNumber == null)) {
-			authorityKeyIdentifier = new AuthorityKeyIdentifier(newKeyIdentifier);
-		} else if (keyIdentifier == null) {
-			authorityKeyIdentifier = new AuthorityKeyIdentifier(newCertIssuer, newIssuerSerialNumber);
-		} else {
-			authorityKeyIdentifier = new AuthorityKeyIdentifier(newKeyIdentifier, newCertIssuer, newIssuerSerialNumber);
-		}
-
-		// encode extension value
-		byte[] encodedValue = X509Ext.wrapInOctetString(authorityKeyIdentifier.getEncoded(ASN1Encoding.DER));
-
-		// update
-		extensionSet.addExtension(extensionOid, extensionSet.isCritical(extensionOid), encodedValue);
-	}
+        // update
+        extensionSet.addExtension(extensionOid, extensionSet.isCritical(extensionOid), encodedValue);
+    }
 }

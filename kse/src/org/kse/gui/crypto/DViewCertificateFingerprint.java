@@ -53,156 +53,150 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog to view a certificate fingerprint.
- *
  */
 public class DViewCertificateFingerprint extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private JPanel jpButtons;
-	private JButton jbCopy;
-	private JButton jbOK;
-	private JPanel jpFingerprint;
-	private JScrollPane jspPolicy;
-	private JTextArea jtaFingerprint;
+    private JPanel jpButtons;
+    private JButton jbCopy;
+    private JButton jbOK;
+    private JPanel jpFingerprint;
+    private JScrollPane jspPolicy;
+    private JTextArea jtaFingerprint;
 
-	private byte[] encodedCertificate;
-	private DigestType fingerprintAlg;
+    private byte[] encodedCertificate;
+    private DigestType fingerprintAlg;
 
-	/**
-	 * Creates a new DViewCertificateFingerprint dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param encodedCertificate
-	 *            Encoded certificate to fingerprint
-	 * @param fingerprintAlg
-	 *            Fingerprint algorithm
-	 */
-	public DViewCertificateFingerprint(JFrame parent, byte[] encodedCertificate, DigestType fingerprintAlg) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.encodedCertificate = encodedCertificate;
-		this.fingerprintAlg = fingerprintAlg;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewCertificateFingerprint dialog.
+     *
+     * @param parent             The parent frame
+     * @param encodedCertificate Encoded certificate to fingerprint
+     * @param fingerprintAlg     Fingerprint algorithm
+     */
+    public DViewCertificateFingerprint(JFrame parent, byte[] encodedCertificate, DigestType fingerprintAlg) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.encodedCertificate = encodedCertificate;
+        this.fingerprintAlg = fingerprintAlg;
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DViewCertificateFingerprint dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param encodedCertificate
-	 *            Encoded certificate to fingerprint
-	 * @param fingerprintAlg
-	 *            Fingerprint algorithm
-	 */
-	public DViewCertificateFingerprint(JDialog parent, byte[] encodedCertificate, DigestType fingerprintAlg) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.encodedCertificate = encodedCertificate;
-		this.fingerprintAlg = fingerprintAlg;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewCertificateFingerprint dialog.
+     *
+     * @param parent             The parent dialog
+     * @param encodedCertificate Encoded certificate to fingerprint
+     * @param fingerprintAlg     Fingerprint algorithm
+     */
+    public DViewCertificateFingerprint(JDialog parent, byte[] encodedCertificate, DigestType fingerprintAlg) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.encodedCertificate = encodedCertificate;
+        this.fingerprintAlg = fingerprintAlg;
+        initComponents();
+    }
 
-	private void initComponents() {
-		jbCopy = new JButton(res.getString("DViewCertificateFingerprint.jbCopy.text"));
-		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertificateFingerprint.jbCopy.mnemonic").charAt(0));
-		jbCopy.setToolTipText(res.getString("DViewCertificateFingerprint.jbCopy.tooltip"));
-		jbCopy.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewCertificateFingerprint.this);
-				copyPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewCertificateFingerprint.this);
-			}
-		});
+    private void initComponents() {
+        jbCopy = new JButton(res.getString("DViewCertificateFingerprint.jbCopy.text"));
+        PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertificateFingerprint.jbCopy.mnemonic").charAt(0));
+        jbCopy.setToolTipText(res.getString("DViewCertificateFingerprint.jbCopy.tooltip"));
+        jbCopy.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewCertificateFingerprint.this);
+                copyPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewCertificateFingerprint.this);
+            }
+        });
 
-		jbOK = new JButton(res.getString("DViewCertificateFingerprint.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DViewCertificateFingerprint.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
-		jpFingerprint = new JPanel(new BorderLayout());
-		jpFingerprint.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpFingerprint = new JPanel(new BorderLayout());
+        jpFingerprint.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jtaFingerprint = new JTextArea();
-		jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		jtaFingerprint.setEditable(false);
-		jtaFingerprint.setTabSize(4);
-		jtaFingerprint.setLineWrap(true);
-		// JGoodies - keep uneditable color same as editable
-		jtaFingerprint.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
-		jtaFingerprint.setToolTipText(MessageFormat.format(
-				res.getString("DViewCertificateFingerprint.jtaFingerprint.tooltip"), fingerprintAlg.friendly()));
+        jtaFingerprint = new JTextArea();
+        jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jtaFingerprint.setEditable(false);
+        jtaFingerprint.setTabSize(4);
+        jtaFingerprint.setLineWrap(true);
+        // JGoodies - keep uneditable color same as editable
+        jtaFingerprint.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+        jtaFingerprint.setToolTipText(
+                MessageFormat.format(res.getString("DViewCertificateFingerprint.jtaFingerprint.tooltip"),
+                                     fingerprintAlg.friendly()));
 
-		jspPolicy = PlatformUtil.createScrollPane(jtaFingerprint, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		jspPolicy.setPreferredSize(new Dimension(280, 125));
-		jpFingerprint.add(jspPolicy, BorderLayout.CENTER);
+        jspPolicy = PlatformUtil.createScrollPane(jtaFingerprint, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jspPolicy.setPreferredSize(new Dimension(280, 125));
+        jpFingerprint.add(jspPolicy, BorderLayout.CENTER);
 
-		getContentPane().add(jpFingerprint, BorderLayout.CENTER);
+        getContentPane().add(jpFingerprint, BorderLayout.CENTER);
 
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		setTitle(MessageFormat.format(res.getString("DViewCertificateFingerprint.Title"), fingerprintAlg.friendly()));
-		setResizable(true);
+        setTitle(MessageFormat.format(res.getString("DViewCertificateFingerprint.Title"), fingerprintAlg.friendly()));
+        setResizable(true);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
 
-		populateFingerprint();
-	}
+        populateFingerprint();
+    }
 
-	private void populateFingerprint() {
-		if (encodedCertificate != null) {
-			try {
-				jtaFingerprint.setText(DigestUtil.getFriendlyMessageDigest(encodedCertificate, fingerprintAlg));
-			} catch (CryptoException ex) {
-				Container container = this.getParent();
+    private void populateFingerprint() {
+        if (encodedCertificate != null) {
+            try {
+                jtaFingerprint.setText(DigestUtil.getFriendlyMessageDigest(encodedCertificate, fingerprintAlg));
+            } catch (CryptoException ex) {
+                Container container = this.getParent();
 
-				DError dError = null;
+                DError dError = null;
 
-				if (container instanceof JDialog) {
-					dError = new DError((JDialog) container, ex);
-				} else {
-					dError = new DError((JFrame) container, ex);
-				}
+                if (container instanceof JDialog) {
+                    dError = new DError((JDialog) container, ex);
+                } else {
+                    dError = new DError((JFrame) container, ex);
+                }
 
-				dError.setLocationRelativeTo(container);
-				dError.setVisible(true);
-				return;
-			}
-		} else {
-			jtaFingerprint.setText("");
-		}
+                dError.setLocationRelativeTo(container);
+                dError.setVisible(true);
+                return;
+            }
+        } else {
+            jtaFingerprint.setText("");
+        }
 
-		jtaFingerprint.setCaretPosition(0);
-	}
+        jtaFingerprint.setCaretPosition(0);
+    }
 
-	private void copyPressed() {
-		String fingerprint = jtaFingerprint.getText();
+    private void copyPressed() {
+        String fingerprint = jtaFingerprint.getText();
 
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringSelection copy = new StringSelection(fingerprint);
-		clipboard.setContents(copy, copy);
-	}
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection copy = new StringSelection(fingerprint);
+        clipboard.setContents(copy, copy);
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

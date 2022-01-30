@@ -45,154 +45,142 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog that displays the details of a key pair.
- *
  */
 public class DViewKeyPair extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private JPanel jpKeyPairDetails;
-	private JButton jbCertificateDetails;
-	private JButton jbPrivateKeyDetails;
-	private JPanel jpOK;
-	private JButton jbOK;
+    private JPanel jpKeyPairDetails;
+    private JButton jbCertificateDetails;
+    private JButton jbPrivateKeyDetails;
+    private JPanel jpOK;
+    private JButton jbOK;
 
-	private PrivateKey privateKey;
-	private X509Certificate[] certificateChain;
+    private PrivateKey privateKey;
+    private X509Certificate[] certificateChain;
 
-	/**
-	 * Creates a new DViewKeyPair dialog where the parent is a frame.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param modality
-	 *            Dialog modality
-	 * @param privateKey
-	 *            Private Private key part of keypair
-	 * @param certificateChain
-	 *            Certificates Certificates part of keypair
-	 */
-	public DViewKeyPair(JFrame parent, String title, Dialog.ModalityType modality, PrivateKey privateKey,
-			X509Certificate[] certificateChain) {
-		super(parent, title, modality);
-		this.privateKey = privateKey;
-		this.certificateChain = certificateChain;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewKeyPair dialog where the parent is a frame.
+     *
+     * @param parent           The parent frame
+     * @param title            The dialog title
+     * @param modality         Dialog modality
+     * @param privateKey       Private Private key part of keypair
+     * @param certificateChain Certificates Certificates part of keypair
+     */
+    public DViewKeyPair(JFrame parent, String title, Dialog.ModalityType modality, PrivateKey privateKey,
+                        X509Certificate[] certificateChain) {
+        super(parent, title, modality);
+        this.privateKey = privateKey;
+        this.certificateChain = certificateChain;
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DViewKeyPair dialog where the parent is a dialog.
-	 *  @param parent
-	 *            The parent dualog
-	 * @param title
-	 *            The dialog title
-	 * @param privateKey
-	 *            Private Private key part of keypair
-	 * @param certificateChain
-	 */
-	public DViewKeyPair(JDialog parent, String title, PrivateKey privateKey,
-			X509Certificate[] certificateChain) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		this.privateKey = privateKey;
-		this.certificateChain = certificateChain;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewKeyPair dialog where the parent is a dialog.
+     *
+     * @param parent           The parent dualog
+     * @param title            The dialog title
+     * @param privateKey       Private Private key part of keypair
+     * @param certificateChain
+     */
+    public DViewKeyPair(JDialog parent, String title, PrivateKey privateKey, X509Certificate[] certificateChain) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.privateKey = privateKey;
+        this.certificateChain = certificateChain;
+        initComponents();
+    }
 
-	private void initComponents() {
-		jbPrivateKeyDetails = new JButton(res.getString("DViewKeyPair.jbPrivateKeyDetails.text"));
-		PlatformUtil.setMnemonic(jbPrivateKeyDetails, res.getString("DViewKeyPair.jbPrivateKeyDetails.mnemonic")
-				.charAt(0));
-		jbPrivateKeyDetails.setToolTipText(res.getString("DViewKeyPair.jbPrivateKeyDetails.tooltip"));
-		jbPrivateKeyDetails.setEnabled(true);
-		jbPrivateKeyDetails.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewKeyPair.this);
-				privateKeyDetailsPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewKeyPair.this);
-			}
-		});
+    private void initComponents() {
+        jbPrivateKeyDetails = new JButton(res.getString("DViewKeyPair.jbPrivateKeyDetails.text"));
+        PlatformUtil.setMnemonic(jbPrivateKeyDetails,
+                                 res.getString("DViewKeyPair.jbPrivateKeyDetails.mnemonic").charAt(0));
+        jbPrivateKeyDetails.setToolTipText(res.getString("DViewKeyPair.jbPrivateKeyDetails.tooltip"));
+        jbPrivateKeyDetails.setEnabled(true);
+        jbPrivateKeyDetails.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewKeyPair.this);
+                privateKeyDetailsPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewKeyPair.this);
+            }
+        });
 
-		jbCertificateDetails = new JButton(res.getString("DViewKeyPair.jbCertificateDetails.text"));
-		PlatformUtil.setMnemonic(jbCertificateDetails, res.getString("DViewKeyPair.jbCertificateDetails.mnemonic")
-				.charAt(0));
-		jbCertificateDetails.setToolTipText(res.getString("DViewKeyPair.jbCertificateDetails.tooltip"));
-		jbCertificateDetails.setEnabled(true);
-		jbCertificateDetails.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewKeyPair.this);
-				certificateDetailsPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewKeyPair.this);
-			}
-		});
+        jbCertificateDetails = new JButton(res.getString("DViewKeyPair.jbCertificateDetails.text"));
+        PlatformUtil.setMnemonic(jbCertificateDetails,
+                                 res.getString("DViewKeyPair.jbCertificateDetails.mnemonic").charAt(0));
+        jbCertificateDetails.setToolTipText(res.getString("DViewKeyPair.jbCertificateDetails.tooltip"));
+        jbCertificateDetails.setEnabled(true);
+        jbCertificateDetails.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewKeyPair.this);
+                certificateDetailsPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewKeyPair.this);
+            }
+        });
 
-		jpKeyPairDetails = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpKeyPairDetails.setBorder(new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-				new EtchedBorder()), new EmptyBorder(5, 5, 5, 5)));
-		jpKeyPairDetails.add(jbPrivateKeyDetails);
-		jpKeyPairDetails.add(jbCertificateDetails);
+        jpKeyPairDetails = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jpKeyPairDetails.setBorder(
+                new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()),
+                                   new EmptyBorder(5, 5, 5, 5)));
+        jpKeyPairDetails.add(jbPrivateKeyDetails);
+        jpKeyPairDetails.add(jbCertificateDetails);
 
-		jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
+        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpKeyPairDetails, BorderLayout.CENTER);
-		getContentPane().add(jpOK, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpKeyPairDetails, BorderLayout.CENTER);
+        getContentPane().add(jpOK, BorderLayout.SOUTH);
 
-		setResizable(false);
+        setResizable(false);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private void privateKeyDetailsPressed() {
-		try {
-			DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this,
-					res.getString("DViewKeyPair.ViewPrivateKeyDetails.Title"),
-					privateKey);
-			dViewPrivateKey.setLocationRelativeTo(this);
-			dViewPrivateKey.setVisible(true);
-		} catch (CryptoException ex) {
-			DError.displayError(this, ex);
-		}
-	}
+    private void privateKeyDetailsPressed() {
+        try {
+            DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, res.getString(
+                    "DViewKeyPair.ViewPrivateKeyDetails.Title"), privateKey);
+            dViewPrivateKey.setLocationRelativeTo(this);
+            dViewPrivateKey.setVisible(true);
+        } catch (CryptoException ex) {
+            DError.displayError(this, ex);
+        }
+    }
 
-	private void certificateDetailsPressed() {
-		try {
-			DViewCertificate dViewCertificate = new DViewCertificate(this,
-					res.getString("DViewKeyPair.ViewCertificateDetails.Title"),
-					certificateChain,
-					null,
-					DViewCertificate.NONE);
-			dViewCertificate.setLocationRelativeTo(this);
-			dViewCertificate.setVisible(true);
-		} catch (CryptoException ex) {
-			DError.displayError(this, ex);
-		}
-	}
+    private void certificateDetailsPressed() {
+        try {
+            DViewCertificate dViewCertificate = new DViewCertificate(this, res.getString(
+                    "DViewKeyPair.ViewCertificateDetails.Title"), certificateChain, null, DViewCertificate.NONE);
+            dViewCertificate.setLocationRelativeTo(this);
+            dViewCertificate.setVisible(true);
+        } catch (CryptoException ex) {
+            DError.displayError(this, ex);
+        }
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

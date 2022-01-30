@@ -43,109 +43,105 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * A dialog that displays the Java System Properties.
- *
  */
 public class DSystemProperties extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
-	private JButton jbOK;
-	private JPanel jpOK;
-	private JPanel jpSystemPropertiesTable;
-	private JScrollPane jspSystemPropertiesTable;
-	private JKseTable jtSystemProperties;
+    private JButton jbOK;
+    private JPanel jpOK;
+    private JPanel jpSystemPropertiesTable;
+    private JScrollPane jspSystemPropertiesTable;
+    private JKseTable jtSystemProperties;
 
-	/**
-	 * Creates new DSystemProperties dialog where the parent is a dialog.
-	 *  @param parent
-	 *            Parent dialog
-	 *
-	 */
-	public DSystemProperties(JDialog parent) {
-		this(parent, res.getString("DSystemProperties.Title"), ModalityType.DOCUMENT_MODAL);
-	}
+    /**
+     * Creates new DSystemProperties dialog where the parent is a dialog.
+     *
+     * @param parent Parent dialog
+     */
+    public DSystemProperties(JDialog parent) {
+        this(parent, res.getString("DSystemProperties.Title"), ModalityType.DOCUMENT_MODAL);
+    }
 
-	/**
-	 * Creates new DSystemProperties dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The title of the dialog
-	 * @param modality
-	 *            Dialog modality
-	 */
-	public DSystemProperties(JDialog parent, String title, Dialog.ModalityType modality) {
-		super(parent, title, modality);
-		initComponents();
-	}
+    /**
+     * Creates new DSystemProperties dialog where the parent is a dialog.
+     *
+     * @param parent   Parent dialog
+     * @param title    The title of the dialog
+     * @param modality Dialog modality
+     */
+    public DSystemProperties(JDialog parent, String title, Dialog.ModalityType modality) {
+        super(parent, title, modality);
+        initComponents();
+    }
 
-	private void initComponents() {
-		SystemPropertiesTableModel spModel = new SystemPropertiesTableModel();
-		spModel.load();
+    private void initComponents() {
+        SystemPropertiesTableModel spModel = new SystemPropertiesTableModel();
+        spModel.load();
 
-		jtSystemProperties = new JKseTable(spModel);
+        jtSystemProperties = new JKseTable(spModel);
 
-		jtSystemProperties.setRowMargin(0);
-		jtSystemProperties.getColumnModel().setColumnMargin(0);
-		jtSystemProperties.getTableHeader().setReorderingAllowed(false);
-		jtSystemProperties.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
+        jtSystemProperties.setRowMargin(0);
+        jtSystemProperties.getColumnModel().setColumnMargin(0);
+        jtSystemProperties.getTableHeader().setReorderingAllowed(false);
+        jtSystemProperties.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
 
-		RowSorter<SystemPropertiesTableModel> sorter = new TableRowSorter<>(spModel);
-		jtSystemProperties.setRowSorter(sorter);
+        RowSorter<SystemPropertiesTableModel> sorter = new TableRowSorter<>(spModel);
+        jtSystemProperties.setRowSorter(sorter);
 
-		for (int i = 0; i < jtSystemProperties.getColumnCount(); i++) {
-			TableColumn column = jtSystemProperties.getColumnModel().getColumn(i);
+        for (int i = 0; i < jtSystemProperties.getColumnCount(); i++) {
+            TableColumn column = jtSystemProperties.getColumnModel().getColumn(i);
 
-			if (i == 0) {
-				column.setPreferredWidth(200);
-			} else {
-				column.setPreferredWidth(300);
-			}
+            if (i == 0) {
+                column.setPreferredWidth(200);
+            } else {
+                column.setPreferredWidth(300);
+            }
 
-			column.setCellRenderer(new SystemPropertiesTableCellRend());
-		}
+            column.setCellRenderer(new SystemPropertiesTableCellRend());
+        }
 
-		jspSystemPropertiesTable = PlatformUtil.createScrollPane(jtSystemProperties,
-				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		jspSystemPropertiesTable.getViewport().setBackground(jtSystemProperties.getBackground());
+        jspSystemPropertiesTable = PlatformUtil.createScrollPane(jtSystemProperties,
+                                                                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jspSystemPropertiesTable.getViewport().setBackground(jtSystemProperties.getBackground());
 
-		jpSystemPropertiesTable = new JPanel(new BorderLayout(10, 10));
-		jpSystemPropertiesTable.setPreferredSize(new Dimension(500, 300));
-		jpSystemPropertiesTable.add(jspSystemPropertiesTable, BorderLayout.CENTER);
-		jpSystemPropertiesTable.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpSystemPropertiesTable = new JPanel(new BorderLayout(10, 10));
+        jpSystemPropertiesTable.setPreferredSize(new Dimension(500, 300));
+        jpSystemPropertiesTable.add(jspSystemPropertiesTable, BorderLayout.CENTER);
+        jpSystemPropertiesTable.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jbOK = new JButton(res.getString("DSystemProperties.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DSystemProperties.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
+        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
 
-		getContentPane().add(jpSystemPropertiesTable, BorderLayout.CENTER);
-		getContentPane().add(jpOK, BorderLayout.SOUTH);
+        getContentPane().add(jpSystemPropertiesTable, BorderLayout.CENTER);
+        getContentPane().add(jpOK, BorderLayout.SOUTH);
 
-		setResizable(false);
+        setResizable(false);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

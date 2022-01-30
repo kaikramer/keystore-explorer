@@ -31,121 +31,113 @@ import javax.swing.tree.TreeNode;
 
 /**
  * Custom cell renderer for the cells of the DProviderInfo tree.
- *
  */
 public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
-	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static final long serialVersionUID = 1L;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	/**
-	 * Returns the rendered cell for the supplied value.
-	 *
-	 * @param jtrProvider
-	 *            The JTree
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param isExpanded
-	 *            True if cell is expanded
-	 * @param leaf
-	 *            True if cell is a leaf
-	 * @param row
-	 *            The row of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTreeCellRendererComponent(JTree jtrProvider, Object value, boolean isSelected,
-			boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
-		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrProvider, value, isSelected, isExpanded, leaf,
-				row, hasFocus);
-		cell.setText(value.toString());
+    /**
+     * Returns the rendered cell for the supplied value.
+     *
+     * @param jtrProvider The JTree
+     * @param value       The value to assign to the cell
+     * @param isSelected  True if cell is selected
+     * @param isExpanded  True if cell is expanded
+     * @param leaf        True if cell is a leaf
+     * @param row         The row of the cell to render
+     * @param hasFocus    If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTreeCellRendererComponent(JTree jtrProvider, Object value, boolean isSelected,
+                                                  boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
+        JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrProvider, value, isSelected, isExpanded, leaf, row,
+                                                                  hasFocus);
+        cell.setText(value.toString());
 
-		// Get the correct icon for the node
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+        // Get the correct icon for the node
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
-		ImageIcon icon = null;
+        ImageIcon icon = null;
 
-		if (node.getLevel() == 0) // First level - root
-		{
-			// Root node
-			icon = new ImageIcon(getClass().getResource("images/root_node.png"));
-			cell.setToolTipText(res.getString("ProviderTreeCellRend.Root.tooltip"));
-		} else if (node.getLevel() == 1) // Second level - providers
-		{
-			// Provider node - name and version
-			icon = new ImageIcon(getClass().getResource("images/provider_node.png"));
-			cell.setToolTipText(res.getString("ProviderTreeCellRend.Provider.tooltip"));
-		} else if (node.getLevel() == 2) // Third level - provider description,
-			// version, java class
-			// and services
-		{
-			TreeNode parent = node.getParent();
-			int index = parent.getIndex(node);
+        if (node.getLevel() == 0) // First level - root
+        {
+            // Root node
+            icon = new ImageIcon(getClass().getResource("images/root_node.png"));
+            cell.setToolTipText(res.getString("ProviderTreeCellRend.Root.tooltip"));
+        } else if (node.getLevel() == 1) // Second level - providers
+        {
+            // Provider node - name and version
+            icon = new ImageIcon(getClass().getResource("images/provider_node.png"));
+            cell.setToolTipText(res.getString("ProviderTreeCellRend.Provider.tooltip"));
+        } else if (node.getLevel() == 2) // Third level - provider description,
+        // version, java class
+        // and services
+        {
+            TreeNode parent = node.getParent();
+            int index = parent.getIndex(node);
 
-			if (index == 0) {
-				// Provider description node
-				icon = new ImageIcon(getClass().getResource("images/description_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.Description.tooltip"));
-			} else if (index == 1) {
-				// Provider class node
-				icon = new ImageIcon(getClass().getResource("images/provider_class_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.ProviderClass.tooltip"));
-			} else {
-				// Provider services node
-				icon = new ImageIcon(getClass().getResource("images/services_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.Services.tooltip"));
-			}
-		} else if (node.getLevel() == 3) // Fourth level - list if services
-		{
-			// Provider service node
-			icon = new ImageIcon(getClass().getResource("images/service_node.png"));
-			cell.setToolTipText(res.getString("ProviderTreeCellRend.Service.tooltip"));
-		} else if (node.getLevel() == 4) // Fifth level - list of service
-			// algorithms
-		{
-			// Service algorithm node
-			icon = new ImageIcon(getClass().getResource("images/algorithm_node.png"));
-			cell.setToolTipText(res.getString("ProviderTreeCellRend.Algorithm.tooltip"));
-		} else if (node.getLevel() == 5) // Sixth level - algorithm java class,
-			// attributes and aliases
-		{
-			TreeNode parent = node.getParent();
-			int index = parent.getIndex(node);
+            if (index == 0) {
+                // Provider description node
+                icon = new ImageIcon(getClass().getResource("images/description_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.Description.tooltip"));
+            } else if (index == 1) {
+                // Provider class node
+                icon = new ImageIcon(getClass().getResource("images/provider_class_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.ProviderClass.tooltip"));
+            } else {
+                // Provider services node
+                icon = new ImageIcon(getClass().getResource("images/services_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.Services.tooltip"));
+            }
+        } else if (node.getLevel() == 3) // Fourth level - list if services
+        {
+            // Provider service node
+            icon = new ImageIcon(getClass().getResource("images/service_node.png"));
+            cell.setToolTipText(res.getString("ProviderTreeCellRend.Service.tooltip"));
+        } else if (node.getLevel() == 4) // Fifth level - list of service
+        // algorithms
+        {
+            // Service algorithm node
+            icon = new ImageIcon(getClass().getResource("images/algorithm_node.png"));
+            cell.setToolTipText(res.getString("ProviderTreeCellRend.Algorithm.tooltip"));
+        } else if (node.getLevel() == 5) // Sixth level - algorithm java class,
+        // attributes and aliases
+        {
+            TreeNode parent = node.getParent();
+            int index = parent.getIndex(node);
 
-			if (index == 0) {
-				// Algorithm class node
-				icon = new ImageIcon(getClass().getResource("images/algorithm_class_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.AlgorithmClass.tooltip"));
-			} else if (node.toString().equals(res.getString("DProviderInfo.AttributesNode.text"))) {
-				// Algorithm attributes node
-				icon = new ImageIcon(getClass().getResource("images/attributes_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.Attributes.tooltip"));
-			} else {
-				// Algorithm aliases node
-				icon = new ImageIcon(getClass().getResource("images/aliases_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.Aliases.tooltip"));
-			}
-		} else
-			// Seventh level - list of attributes or aliases
-		{
-			TreeNode parent = node.getParent();
+            if (index == 0) {
+                // Algorithm class node
+                icon = new ImageIcon(getClass().getResource("images/algorithm_class_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.AlgorithmClass.tooltip"));
+            } else if (node.toString().equals(res.getString("DProviderInfo.AttributesNode.text"))) {
+                // Algorithm attributes node
+                icon = new ImageIcon(getClass().getResource("images/attributes_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.Attributes.tooltip"));
+            } else {
+                // Algorithm aliases node
+                icon = new ImageIcon(getClass().getResource("images/aliases_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.Aliases.tooltip"));
+            }
+        } else
+        // Seventh level - list of attributes or aliases
+        {
+            TreeNode parent = node.getParent();
 
-			if (parent.toString().equals(res.getString("DProviderInfo.AttributesNode.text"))) {
-				// Algorithm attribute node
-				icon = new ImageIcon(getClass().getResource("images/attribute_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.Attribute.tooltip"));
-			} else {
-				// Algorithm alias node
-				icon = new ImageIcon(getClass().getResource("images/alias_node.png"));
-				cell.setToolTipText(res.getString("ProviderTreeCellRend.Alias.tooltip"));
-			}
-		}
+            if (parent.toString().equals(res.getString("DProviderInfo.AttributesNode.text"))) {
+                // Algorithm attribute node
+                icon = new ImageIcon(getClass().getResource("images/attribute_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.Attribute.tooltip"));
+            } else {
+                // Algorithm alias node
+                icon = new ImageIcon(getClass().getResource("images/alias_node.png"));
+                cell.setToolTipText(res.getString("ProviderTreeCellRend.Alias.tooltip"));
+            }
+        }
 
-		cell.setIcon(icon);
+        cell.setIcon(icon);
 
-		return cell;
-	}
+        return cell;
+    }
 }
