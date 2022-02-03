@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,90 +30,87 @@ import javax.swing.JMenuItem;
  * mnemonic that reflects the menu items position in the list of recent files.
  * An action listener should be added to actually open the file. Other listeners
  * can be added as required to respond to other types of event.
- *
  */
 public class JMenuItemRecentFile extends JMenuItem {
-	private static final long serialVersionUID = 1L;
-	private JMenuRecentFiles jmRecentFiles;
-	private File recentFile;
-	private int position;
+    private static final long serialVersionUID = 1L;
+    private JMenuRecentFiles jmRecentFiles;
+    private File recentFile;
+    private int position;
 
-	/**
-	 * Construct a JMenuItemRecentFile.
-	 *
-	 * @param jmRecentFiles
-	 *            Recent files menu
-	 * @param recentFile
-	 *            The recent file
-	 */
-	public JMenuItemRecentFile(JMenuRecentFiles jmRecentFiles, File recentFile) {
-		super();
+    /**
+     * Construct a JMenuItemRecentFile.
+     *
+     * @param jmRecentFiles Recent files menu
+     * @param recentFile    The recent file
+     */
+    public JMenuItemRecentFile(JMenuRecentFiles jmRecentFiles, File recentFile) {
+        super();
 
-		this.jmRecentFiles = jmRecentFiles;
-		this.recentFile = recentFile;
-		setPosition(1);
-	}
+        this.jmRecentFiles = jmRecentFiles;
+        this.recentFile = recentFile;
+        setPosition(1);
+    }
 
-	/**
-	 * Get the recent files menu.
-	 *
-	 * @return The recent files manu
-	 */
-	public JMenuRecentFiles getRecentFilesMenu() {
-		return jmRecentFiles;
-	}
+    /**
+     * Get the recent files menu.
+     *
+     * @return The recent files manu
+     */
+    public JMenuRecentFiles getRecentFilesMenu() {
+        return jmRecentFiles;
+    }
 
-	/**
-	 * Get the recent file.
-	 *
-	 * @return The recent file
-	 */
-	public File getFile() {
-		return recentFile;
-	}
+    /**
+     * Get the recent file.
+     *
+     * @return The recent file
+     */
+    public File getFile() {
+        return recentFile;
+    }
 
-	/**
-	 * Get the menu item's position in its recent file list (maintained by
-	 * JMenuRecentFiles).
-	 *
-	 * @return Position
-	 */
-	public int getPosition() {
-		return position;
-	}
+    /**
+     * Get the menu item's position in its recent file list (maintained by
+     * JMenuRecentFiles).
+     *
+     * @return Position
+     */
+    public int getPosition() {
+        return position;
+    }
 
-	void setPosition(int position) {
-		this.position = position;
-		setText((position) + " " + recentFile.getName());
+    void setPosition(int position) {
+        this.position = position;
+        setText((position) + " " + recentFile.getName());
 
-		switch (position) {
-		case 1:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_1);
-			break;
-		case 2:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_2);
-			break;
-		case 3:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_3);
-			break;
-		case 4:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_4);
-			break;
-		case 5:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_5);
-			break;
-		case 6:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_6);
-			break;
-		case 7:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_7);
-			break;
-		case 8:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_8);
-			break;
-		case 9:
-			PlatformUtil.setMnemonic(this, KeyEvent.VK_9);
-			break;
-		}
-	}
+        switch (position) {
+        case 1:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_1);
+            break;
+        case 2:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_2);
+            break;
+        case 3:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_3);
+            break;
+        case 4:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_4);
+            break;
+        case 5:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_5);
+            break;
+        case 6:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_6);
+            break;
+        case 7:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_7);
+            break;
+        case 8:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_8);
+            break;
+        case 9:
+            PlatformUtil.setMnemonic(this, KeyEvent.VK_9);
+            break;
+        }
+    }
 }

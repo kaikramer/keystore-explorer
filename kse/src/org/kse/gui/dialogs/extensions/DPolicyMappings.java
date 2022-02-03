@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,161 +52,156 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Policy Mappings extension.
- *
  */
 public class DPolicyMappings extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpPolicyMappings;
-	private JLabel jlPolicyMappings;
-	private JPolicyMappings jpmPolicyMappings;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpPolicyMappings;
+    private JLabel jlPolicyMappings;
+    private JPolicyMappings jpmPolicyMappings;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
+    private byte[] value;
 
-	/**
-	 * Creates a new DPolicyMappings dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DPolicyMappings(JDialog parent) {
-		super(parent);
-		setTitle(res.getString("DPolicyMappings.Title"));
-		initComponents();
-	}
+    /**
+     * Creates a new DPolicyMappings dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DPolicyMappings(JDialog parent) {
+        super(parent);
+        setTitle(res.getString("DPolicyMappings.Title"));
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DPolicyMappings dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Policy Mappings DER-encoded
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DPolicyMappings(JDialog parent, byte[] value) throws IOException {
-		super(parent);
-		setTitle(res.getString("DPolicyMappings.Title"));
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DPolicyMappings dialog.
+     *
+     * @param parent The parent dialog
+     * @param value  Policy Mappings DER-encoded
+     * @throws IOException If value could not be decoded
+     */
+    public DPolicyMappings(JDialog parent, byte[] value) throws IOException {
+        super(parent);
+        setTitle(res.getString("DPolicyMappings.Title"));
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlPolicyMappings = new JLabel(res.getString("DPolicyMappings.jlPolicyMappings.text"));
+    private void initComponents() {
+        jlPolicyMappings = new JLabel(res.getString("DPolicyMappings.jlPolicyMappings.text"));
 
-		GridBagConstraints gbc_jlPolicyMappings = new GridBagConstraints();
-		gbc_jlPolicyMappings.gridx = 0;
-		gbc_jlPolicyMappings.gridy = 0;
-		gbc_jlPolicyMappings.gridwidth = 1;
-		gbc_jlPolicyMappings.gridheight = 1;
-		gbc_jlPolicyMappings.insets = new Insets(5, 5, 5, 5);
-		gbc_jlPolicyMappings.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints gbc_jlPolicyMappings = new GridBagConstraints();
+        gbc_jlPolicyMappings.gridx = 0;
+        gbc_jlPolicyMappings.gridy = 0;
+        gbc_jlPolicyMappings.gridwidth = 1;
+        gbc_jlPolicyMappings.gridheight = 1;
+        gbc_jlPolicyMappings.insets = new Insets(5, 5, 5, 5);
+        gbc_jlPolicyMappings.anchor = GridBagConstraints.NORTHEAST;
 
-		jpmPolicyMappings = new JPolicyMappings(res.getString("DPolicyMappings.PolicyMapping.Title"));
+        jpmPolicyMappings = new JPolicyMappings(res.getString("DPolicyMappings.PolicyMapping.Title"));
 
-		GridBagConstraints gbc_jadPolicyMappings = new GridBagConstraints();
-		gbc_jadPolicyMappings.gridx = 1;
-		gbc_jadPolicyMappings.gridy = 0;
-		gbc_jadPolicyMappings.gridwidth = 1;
-		gbc_jadPolicyMappings.gridheight = 1;
-		gbc_jadPolicyMappings.insets = new Insets(5, 5, 5, 5);
-		gbc_jadPolicyMappings.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jadPolicyMappings = new GridBagConstraints();
+        gbc_jadPolicyMappings.gridx = 1;
+        gbc_jadPolicyMappings.gridy = 0;
+        gbc_jadPolicyMappings.gridwidth = 1;
+        gbc_jadPolicyMappings.gridheight = 1;
+        gbc_jadPolicyMappings.insets = new Insets(5, 5, 5, 5);
+        gbc_jadPolicyMappings.anchor = GridBagConstraints.WEST;
 
-		jpPolicyMappings = new JPanel(new GridBagLayout());
+        jpPolicyMappings = new JPanel(new GridBagLayout());
 
-		jpPolicyMappings.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpPolicyMappings.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                      new CompoundBorder(new EtchedBorder(),
+                                                                         new EmptyBorder(5, 5, 5, 5))));
 
-		jpPolicyMappings.add(jlPolicyMappings, gbc_jlPolicyMappings);
-		jpPolicyMappings.add(jpmPolicyMappings, gbc_jadPolicyMappings);
+        jpPolicyMappings.add(jlPolicyMappings, gbc_jlPolicyMappings);
+        jpPolicyMappings.add(jpmPolicyMappings, gbc_jadPolicyMappings);
 
-		jbOK = new JButton(res.getString("DPolicyMappings.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DPolicyMappings.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DPolicyMappings.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DPolicyMappings.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpPolicyMappings, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpPolicyMappings, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		PolicyMappings policyMappings = PolicyMappings.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        PolicyMappings policyMappings = PolicyMappings.getInstance(value);
 
-		jpmPolicyMappings.setPolicyMappings(policyMappings);
-	}
+        jpmPolicyMappings.setPolicyMappings(policyMappings);
+    }
 
-	private void okPressed() {
-		PolicyMappings policyMappings = jpmPolicyMappings.getPolicyMappings();
-		ASN1Sequence policyMappingsSeq = (ASN1Sequence) policyMappings.toASN1Primitive();
+    private void okPressed() {
+        PolicyMappings policyMappings = jpmPolicyMappings.getPolicyMappings();
+        ASN1Sequence policyMappingsSeq = (ASN1Sequence) policyMappings.toASN1Primitive();
 
-		if (policyMappingsSeq.size() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DPolicyMappings.ValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (policyMappingsSeq.size() == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DPolicyMappings.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		try {
-			value = policyMappings.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+        try {
+            value = policyMappings.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.POLICY_MAPPINGS.oid();
-	}
+    @Override
+    public String getOid() {
+        return X509ExtensionType.POLICY_MAPPINGS.oid();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

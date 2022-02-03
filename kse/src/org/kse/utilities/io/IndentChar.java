@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,28 +21,28 @@ package org.kse.utilities.io;
 
 /**
  * Indentation characters.
- *
  */
 public enum IndentChar {
-	SPACE(' '), TAB('\t');
+    SPACE(' '),
+    TAB('\t');
 
-	private char indentChar;
+    private char indentChar;
 
-	IndentChar(char indentChar) {
-		this.indentChar = indentChar;
-	}
+    IndentChar(char indentChar) {
+        this.indentChar = indentChar;
+    }
 
-	/**
-	 * Get indentation character.
-	 *
-	 * @return Indentation character
-	 */
-	public char getIndentChar() {
-		return indentChar;
-	}
+    /**
+     * Get indentation character.
+     *
+     * @return Indentation character
+     */
+    public char getIndentChar() {
+        return indentChar;
+    }
 
-	@Override
-	public String toString() {
-		return String.valueOf(indentChar);
-	}
+    @Override
+    public String toString() {
+        return String.valueOf(indentChar);
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -38,169 +38,162 @@ import org.kse.gui.CursorUtil;
 
 /**
  * Component to edit a general name.
- *
  */
 public class JGeneralName extends JPanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
 
-	private JTextField jtfGeneralName;
-	private JButton jbEditGeneralName;
-	private JButton jbClearGeneralName;
+    private JTextField jtfGeneralName;
+    private JButton jbEditGeneralName;
+    private JButton jbClearGeneralName;
 
-	private String title;
-	private GeneralName generalName;
+    private String title;
+    private GeneralName generalName;
 
-	/**
-	 * Construct a JGeneralName.
-	 *
-	 * @param title
-	 *            Title of edit dialog
-	 */
-	public JGeneralName(String title) {
-		this.title = title;
-		initComponents();
-	}
+    /**
+     * Construct a JGeneralName.
+     *
+     * @param title Title of edit dialog
+     */
+    public JGeneralName(String title) {
+        this.title = title;
+        initComponents();
+    }
 
-	private void initComponents() {
-		jtfGeneralName = new JTextField(40);
-		jtfGeneralName.setEditable(false);
+    private void initComponents() {
+        jtfGeneralName = new JTextField(40);
+        jtfGeneralName.setEditable(false);
 
-		GridBagConstraints gbc_jtfGeneralName = new GridBagConstraints();
-		gbc_jtfGeneralName.gridwidth = 1;
-		gbc_jtfGeneralName.gridheight = 1;
-		gbc_jtfGeneralName.gridx = 0;
-		gbc_jtfGeneralName.gridy = 0;
-		gbc_jtfGeneralName.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jtfGeneralName = new GridBagConstraints();
+        gbc_jtfGeneralName.gridwidth = 1;
+        gbc_jtfGeneralName.gridheight = 1;
+        gbc_jtfGeneralName.gridx = 0;
+        gbc_jtfGeneralName.gridy = 0;
+        gbc_jtfGeneralName.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon editIcon = new ImageIcon(getClass()
-				.getResource("images/edit_general_nm.png"));
-		jbEditGeneralName = new JButton(editIcon);
-		jbEditGeneralName.setToolTipText(res.getString("JGeneralName.jbEditGeneralName.tooltip"));
-		jbEditGeneralName.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JGeneralName.this);
-				editGeneralName();
-			} finally {
-				CursorUtil.setCursorFree(JGeneralName.this);
-			}
-		});
+        ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_general_nm.png"));
+        jbEditGeneralName = new JButton(editIcon);
+        jbEditGeneralName.setToolTipText(res.getString("JGeneralName.jbEditGeneralName.tooltip"));
+        jbEditGeneralName.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JGeneralName.this);
+                editGeneralName();
+            } finally {
+                CursorUtil.setCursorFree(JGeneralName.this);
+            }
+        });
 
-		GridBagConstraints gbc_jbEditGeneralName = new GridBagConstraints();
-		gbc_jbEditGeneralName.gridwidth = 1;
-		gbc_jbEditGeneralName.gridheight = 1;
-		gbc_jbEditGeneralName.gridx = 1;
-		gbc_jbEditGeneralName.gridy = 0;
-		gbc_jbEditGeneralName.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jbEditGeneralName = new GridBagConstraints();
+        gbc_jbEditGeneralName.gridwidth = 1;
+        gbc_jbEditGeneralName.gridheight = 1;
+        gbc_jbEditGeneralName.gridx = 1;
+        gbc_jbEditGeneralName.gridy = 0;
+        gbc_jbEditGeneralName.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon clearIcon = new ImageIcon(getClass().getResource(
-				"images/clear_general_nm.png"));
-		jbClearGeneralName = new JButton(clearIcon);
-		jbClearGeneralName.setToolTipText(res.getString("JGeneralName.jbClearGeneralName.tooltip"));
-		jbClearGeneralName.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JGeneralName.this);
-				clearGeneralName();
-			} finally {
-				CursorUtil.setCursorFree(JGeneralName.this);
-			}
-		});
+        ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_general_nm.png"));
+        jbClearGeneralName = new JButton(clearIcon);
+        jbClearGeneralName.setToolTipText(res.getString("JGeneralName.jbClearGeneralName.tooltip"));
+        jbClearGeneralName.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JGeneralName.this);
+                clearGeneralName();
+            } finally {
+                CursorUtil.setCursorFree(JGeneralName.this);
+            }
+        });
 
-		GridBagConstraints gbc_jbClearGeneralName = new GridBagConstraints();
-		gbc_jbClearGeneralName.gridwidth = 1;
-		gbc_jbClearGeneralName.gridheight = 1;
-		gbc_jbClearGeneralName.gridx = 2;
-		gbc_jbClearGeneralName.gridy = 0;
-		gbc_jbClearGeneralName.insets = new Insets(0, 0, 0, 0);
+        GridBagConstraints gbc_jbClearGeneralName = new GridBagConstraints();
+        gbc_jbClearGeneralName.gridwidth = 1;
+        gbc_jbClearGeneralName.gridheight = 1;
+        gbc_jbClearGeneralName.gridx = 2;
+        gbc_jbClearGeneralName.gridy = 0;
+        gbc_jbClearGeneralName.insets = new Insets(0, 0, 0, 0);
 
-		setLayout(new GridBagLayout());
-		add(jtfGeneralName, gbc_jtfGeneralName);
-		add(jbEditGeneralName, gbc_jbEditGeneralName);
-		add(jbClearGeneralName, gbc_jbClearGeneralName);
+        setLayout(new GridBagLayout());
+        add(jtfGeneralName, gbc_jtfGeneralName);
+        add(jbEditGeneralName, gbc_jbEditGeneralName);
+        add(jbClearGeneralName, gbc_jbClearGeneralName);
 
-		populate();
-	}
+        populate();
+    }
 
-	/**
-	 * Get general name.
-	 *
-	 * @return General name, or null if none chosen
-	 */
-	public GeneralName getGeneralName() {
-		return generalName;
-	}
+    /**
+     * Get general name.
+     *
+     * @return General name, or null if none chosen
+     */
+    public GeneralName getGeneralName() {
+        return generalName;
+    }
 
-	/**
-	 * Set general name.
-	 *
-	 * @param generalName
-	 *            General name
-	 */
-	public void setGeneralName(GeneralName generalName) {
-		this.generalName = generalName;
-		populate();
-	}
+    /**
+     * Set general name.
+     *
+     * @param generalName General name
+     */
+    public void setGeneralName(GeneralName generalName) {
+        this.generalName = generalName;
+        populate();
+    }
 
-	/**
-	 * Sets whether or not the component is enabled.
-	 *
-	 * @param enabled
-	 *            True if this component should be enabled, false otherwise
-	 */
-	@Override
-	public void setEnabled(boolean enabled) {
-		jbEditGeneralName.setEnabled(enabled);
-		jbClearGeneralName.setEnabled(enabled);
-	}
+    /**
+     * Sets whether or not the component is enabled.
+     *
+     * @param enabled True if this component should be enabled, false otherwise
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        jbEditGeneralName.setEnabled(enabled);
+        jbClearGeneralName.setEnabled(enabled);
+    }
 
-	/**
-	 * Set component's tooltip text.
-	 *
-	 * @param toolTipText
-	 *            Tooltip text
-	 */
-	@Override
-	public void setToolTipText(String toolTipText) {
-		super.setToolTipText(toolTipText);
-		jtfGeneralName.setToolTipText(toolTipText);
-	}
+    /**
+     * Set component's tooltip text.
+     *
+     * @param toolTipText Tooltip text
+     */
+    @Override
+    public void setToolTipText(String toolTipText) {
+        super.setToolTipText(toolTipText);
+        jtfGeneralName.setToolTipText(toolTipText);
+    }
 
-	private void populate() {
-		if (generalName != null) {
-			jtfGeneralName.setText(GeneralNameUtil.safeToString(generalName, false));
-			jbClearGeneralName.setEnabled(true);
-		} else {
-			jtfGeneralName.setText("");
-			jbClearGeneralName.setEnabled(false);
-		}
+    private void populate() {
+        if (generalName != null) {
+            jtfGeneralName.setText(GeneralNameUtil.safeToString(generalName, false));
+            jbClearGeneralName.setEnabled(true);
+        } else {
+            jtfGeneralName.setText("");
+            jbClearGeneralName.setEnabled(false);
+        }
 
-		jtfGeneralName.setCaretPosition(0);
-	}
+        jtfGeneralName.setCaretPosition(0);
+    }
 
-	private void editGeneralName() {
-		Container container = getTopLevelAncestor();
+    private void editGeneralName() {
+        Container container = getTopLevelAncestor();
 
-		DGeneralNameChooser dGeneralNameChooser = null;
+        DGeneralNameChooser dGeneralNameChooser = null;
 
-		if (container instanceof JDialog) {
-			dGeneralNameChooser = new DGeneralNameChooser((JDialog) container, title, generalName);
-		} else {
-			dGeneralNameChooser = new DGeneralNameChooser((JFrame) container, title, generalName);
-		}
-		dGeneralNameChooser.setLocationRelativeTo(container);
-		dGeneralNameChooser.setVisible(true);
+        if (container instanceof JDialog) {
+            dGeneralNameChooser = new DGeneralNameChooser((JDialog) container, title, generalName);
+        } else {
+            dGeneralNameChooser = new DGeneralNameChooser((JFrame) container, title, generalName);
+        }
+        dGeneralNameChooser.setLocationRelativeTo(container);
+        dGeneralNameChooser.setVisible(true);
 
-		GeneralName newGeneralName = dGeneralNameChooser.getGeneralName();
+        GeneralName newGeneralName = dGeneralNameChooser.getGeneralName();
 
-		if (newGeneralName == null) {
-			return;
-		}
+        if (newGeneralName == null) {
+            return;
+        }
 
-		setGeneralName(newGeneralName);
-	}
+        setGeneralName(newGeneralName);
+    }
 
-	private void clearGeneralName() {
-		setGeneralName(null);
-	}
+    private void clearGeneralName() {
+        setGeneralName(null);
+    }
 }

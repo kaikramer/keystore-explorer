@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -47,117 +47,112 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Dialog used for entering a masked password.
- *
  */
 public class DGetPassword extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/password/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/password/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
-	private JLabel jlPassword;
-	private JPasswordField jpfPassword;
-	private JPanel jpPassword;
-	private JButton jbOK;
-	private JButton jbCancel;
-	private JPanel jpButtons;
+    private static final String CANCEL_KEY = "CANCEL_KEY";
+    private JLabel jlPassword;
+    private JPasswordField jpfPassword;
+    private JPanel jpPassword;
+    private JButton jbOK;
+    private JButton jbCancel;
+    private JPanel jpButtons;
 
-	private Password password;
+    private Password password;
 
-	/**
-	 * Creates new DGetPassword dialog where the parent is a frame.
-	 *  @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The dialog's title
-	 */
-	public DGetPassword(JFrame parent, String title) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		initComponents();
-	}
+    /**
+     * Creates new DGetPassword dialog where the parent is a frame.
+     *
+     * @param parent Parent frame
+     * @param title  The dialog's title
+     */
+    public DGetPassword(JFrame parent, String title) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        initComponents();
+    }
 
-	/**
-	 * Creates new DGetPassword dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            The dialog's title
-	 * @param modality
-	 *            Dialog modality
-	 */
-	public DGetPassword(JDialog parent, String title, Dialog.ModalityType modality) {
-		super(parent, title, modality);
-		initComponents();
-	}
+    /**
+     * Creates new DGetPassword dialog where the parent is a dialog.
+     *
+     * @param parent   Parent dialog
+     * @param title    The dialog's title
+     * @param modality Dialog modality
+     */
+    public DGetPassword(JDialog parent, String title, Dialog.ModalityType modality) {
+        super(parent, title, modality);
+        initComponents();
+    }
 
-	private void initComponents() {
-		getContentPane().setLayout(new BorderLayout());
+    private void initComponents() {
+        getContentPane().setLayout(new BorderLayout());
 
-		jlPassword = new JLabel(res.getString("DGetPassword.jlPassword.text"));
-		jpfPassword = new JPasswordField(15);
+        jlPassword = new JLabel(res.getString("DGetPassword.jlPassword.text"));
+        jpfPassword = new JPasswordField(15);
 
-		jbOK = new JButton(res.getString("DGetPassword.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DGetPassword.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DGetNewPassword.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DGetNewPassword.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpPassword = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpPassword.add(jlPassword);
-		jpPassword.add(jpfPassword);
-		jpPassword.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
+        jpPassword = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpPassword.add(jlPassword);
+        jpPassword.add(jpfPassword);
+        jpPassword.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().add(jpPassword, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpPassword, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	/**
-	 * Get the password set in the dialog.
-	 *
-	 * @return The password or null if none was set
-	 */
-	public Password getPassword() {
-		return password;
-	}
+    /**
+     * Get the password set in the dialog.
+     *
+     * @return The password or null if none was set
+     */
+    public Password getPassword() {
+        return password;
+    }
 
-	private void okPressed() {
-		password = new Password(jpfPassword.getPassword());
-		closeDialog();
-	}
+    private void okPressed() {
+        password = new Password(jpfPassword.getPassword());
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

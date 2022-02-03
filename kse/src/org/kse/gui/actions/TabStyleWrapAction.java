@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,30 +25,28 @@ import org.kse.gui.KseFrame;
 
 /**
  * Action to change KeyStore tab style to wrap.
- *
  */
 public class TabStyleWrapAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public TabStyleWrapAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public TabStyleWrapAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("TabStyleWrapAction.statusbar"));
-		putValue(NAME, res.getString("TabStyleWrapAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("TabStyleWrapAction.tooltip"));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("TabStyleWrapAction.statusbar"));
+        putValue(NAME, res.getString("TabStyleWrapAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("TabStyleWrapAction.tooltip"));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		kseFrame.setKeyStoreTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        kseFrame.setKeyStoreTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+    }
 }

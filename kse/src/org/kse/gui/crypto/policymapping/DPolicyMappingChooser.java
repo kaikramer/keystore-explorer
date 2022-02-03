@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -49,190 +49,185 @@ import org.kse.gui.oid.JObjectId;
 
 /**
  * Dialog to choose an policy mapping.
- *
  */
 public class DPolicyMappingChooser extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/crypto/policymapping/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policymapping/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpPolicyMapping;
-	private JLabel jlIssuerDomainPolicy;
-	private JObjectId joiIssuerDomainPolicy;
-	private JLabel jlSubjectDomainPolicy;
-	private JObjectId joiSubjectDomainPolicy;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpPolicyMapping;
+    private JLabel jlIssuerDomainPolicy;
+    private JObjectId joiIssuerDomainPolicy;
+    private JLabel jlSubjectDomainPolicy;
+    private JObjectId joiSubjectDomainPolicy;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private PolicyMapping policyMapping;
+    private PolicyMapping policyMapping;
 
-	/**
-	 * Constructs a new DPolicyMappingChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param policyMapping
-	 *            Policy mapping
-	 */
-	public DPolicyMappingChooser(JFrame parent, String title, PolicyMapping policyMapping) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		initComponents(policyMapping);
-	}
+    /**
+     * Constructs a new DPolicyMappingChooser dialog.
+     *
+     * @param parent        The parent frame
+     * @param title         The dialog title
+     * @param policyMapping Policy mapping
+     */
+    public DPolicyMappingChooser(JFrame parent, String title, PolicyMapping policyMapping) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        initComponents(policyMapping);
+    }
 
-	/**
-	 * Constructs a new DPolicyMappingChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param policyMapping
-	 *            Policy mapping
-	 */
-	public DPolicyMappingChooser(JDialog parent, String title, PolicyMapping policyMapping) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		initComponents(policyMapping);
-	}
+    /**
+     * Constructs a new DPolicyMappingChooser dialog.
+     *
+     * @param parent        The parent dialog
+     * @param title         The dialog title
+     * @param policyMapping Policy mapping
+     */
+    public DPolicyMappingChooser(JDialog parent, String title, PolicyMapping policyMapping) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        initComponents(policyMapping);
+    }
 
-	private void initComponents(PolicyMapping policyMapping) {
-		jlIssuerDomainPolicy = new JLabel(res.getString("DPolicyMappingChooser.jlIssuerDomainPolicy.text"));
+    private void initComponents(PolicyMapping policyMapping) {
+        jlIssuerDomainPolicy = new JLabel(res.getString("DPolicyMappingChooser.jlIssuerDomainPolicy.text"));
 
-		GridBagConstraints gbc_jlIssuerDomainPolicy = new GridBagConstraints();
-		gbc_jlIssuerDomainPolicy.gridx = 0;
-		gbc_jlIssuerDomainPolicy.gridy = 0;
-		gbc_jlIssuerDomainPolicy.gridwidth = 1;
-		gbc_jlIssuerDomainPolicy.gridheight = 1;
-		gbc_jlIssuerDomainPolicy.insets = new Insets(5, 5, 5, 5);
-		gbc_jlIssuerDomainPolicy.anchor = GridBagConstraints.EAST;
+        GridBagConstraints gbc_jlIssuerDomainPolicy = new GridBagConstraints();
+        gbc_jlIssuerDomainPolicy.gridx = 0;
+        gbc_jlIssuerDomainPolicy.gridy = 0;
+        gbc_jlIssuerDomainPolicy.gridwidth = 1;
+        gbc_jlIssuerDomainPolicy.gridheight = 1;
+        gbc_jlIssuerDomainPolicy.insets = new Insets(5, 5, 5, 5);
+        gbc_jlIssuerDomainPolicy.anchor = GridBagConstraints.EAST;
 
-		joiIssuerDomainPolicy = new JObjectId(res.getString("DPolicyMappingChooser.IssuerDomainPolicy.Title"));
-		joiIssuerDomainPolicy.setToolTipText(res.getString("DPolicyMappingChooser.joiIssuerDomainPolicy.tooltip"));
+        joiIssuerDomainPolicy = new JObjectId(res.getString("DPolicyMappingChooser.IssuerDomainPolicy.Title"));
+        joiIssuerDomainPolicy.setToolTipText(res.getString("DPolicyMappingChooser.joiIssuerDomainPolicy.tooltip"));
 
-		GridBagConstraints gbc_joiIssuerDomainPolicy = new GridBagConstraints();
-		gbc_joiIssuerDomainPolicy.gridx = 1;
-		gbc_joiIssuerDomainPolicy.gridy = 0;
-		gbc_joiIssuerDomainPolicy.gridwidth = 1;
-		gbc_joiIssuerDomainPolicy.gridheight = 1;
-		gbc_joiIssuerDomainPolicy.insets = new Insets(5, 5, 5, 5);
-		gbc_joiIssuerDomainPolicy.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_joiIssuerDomainPolicy = new GridBagConstraints();
+        gbc_joiIssuerDomainPolicy.gridx = 1;
+        gbc_joiIssuerDomainPolicy.gridy = 0;
+        gbc_joiIssuerDomainPolicy.gridwidth = 1;
+        gbc_joiIssuerDomainPolicy.gridheight = 1;
+        gbc_joiIssuerDomainPolicy.insets = new Insets(5, 5, 5, 5);
+        gbc_joiIssuerDomainPolicy.anchor = GridBagConstraints.WEST;
 
-		jlSubjectDomainPolicy = new JLabel(res.getString("DPolicyMappingChooser.jlSubjectDomainPolicy.text"));
+        jlSubjectDomainPolicy = new JLabel(res.getString("DPolicyMappingChooser.jlSubjectDomainPolicy.text"));
 
-		GridBagConstraints gbc_jlSubjectDomainPolicy = new GridBagConstraints();
-		gbc_jlSubjectDomainPolicy.gridx = 0;
-		gbc_jlSubjectDomainPolicy.gridy = 1;
-		gbc_jlSubjectDomainPolicy.gridwidth = 1;
-		gbc_jlSubjectDomainPolicy.gridheight = 1;
-		gbc_jlSubjectDomainPolicy.insets = new Insets(5, 5, 5, 5);
-		gbc_jlSubjectDomainPolicy.anchor = GridBagConstraints.EAST;
+        GridBagConstraints gbc_jlSubjectDomainPolicy = new GridBagConstraints();
+        gbc_jlSubjectDomainPolicy.gridx = 0;
+        gbc_jlSubjectDomainPolicy.gridy = 1;
+        gbc_jlSubjectDomainPolicy.gridwidth = 1;
+        gbc_jlSubjectDomainPolicy.gridheight = 1;
+        gbc_jlSubjectDomainPolicy.insets = new Insets(5, 5, 5, 5);
+        gbc_jlSubjectDomainPolicy.anchor = GridBagConstraints.EAST;
 
-		joiSubjectDomainPolicy = new JObjectId(res.getString("DPolicyMappingChooser.SubjectDomainPolicy.Title"));
-		joiSubjectDomainPolicy.setToolTipText(res.getString("DPolicyMappingChooser.joiSubjectDomainPolicy.tooltip"));
+        joiSubjectDomainPolicy = new JObjectId(res.getString("DPolicyMappingChooser.SubjectDomainPolicy.Title"));
+        joiSubjectDomainPolicy.setToolTipText(res.getString("DPolicyMappingChooser.joiSubjectDomainPolicy.tooltip"));
 
-		GridBagConstraints gbc_joiSubjectDomainPolicy = new GridBagConstraints();
-		gbc_joiSubjectDomainPolicy.gridx = 1;
-		gbc_joiSubjectDomainPolicy.gridy = 1;
-		gbc_joiSubjectDomainPolicy.gridwidth = 1;
-		gbc_joiSubjectDomainPolicy.gridheight = 1;
-		gbc_joiSubjectDomainPolicy.insets = new Insets(5, 5, 5, 5);
-		gbc_joiSubjectDomainPolicy.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_joiSubjectDomainPolicy = new GridBagConstraints();
+        gbc_joiSubjectDomainPolicy.gridx = 1;
+        gbc_joiSubjectDomainPolicy.gridy = 1;
+        gbc_joiSubjectDomainPolicy.gridwidth = 1;
+        gbc_joiSubjectDomainPolicy.gridheight = 1;
+        gbc_joiSubjectDomainPolicy.insets = new Insets(5, 5, 5, 5);
+        gbc_joiSubjectDomainPolicy.anchor = GridBagConstraints.WEST;
 
-		jpPolicyMapping = new JPanel(new GridBagLayout());
+        jpPolicyMapping = new JPanel(new GridBagLayout());
 
-		jpPolicyMapping.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpPolicyMapping.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
+                                                                                                     new EmptyBorder(5,
+                                                                                                                     5,
+                                                                                                                     5,
+                                                                                                                     5))));
 
-		jpPolicyMapping.add(jlIssuerDomainPolicy, gbc_jlIssuerDomainPolicy);
-		jpPolicyMapping.add(joiIssuerDomainPolicy, gbc_joiIssuerDomainPolicy);
-		jpPolicyMapping.add(jlSubjectDomainPolicy, gbc_jlSubjectDomainPolicy);
-		jpPolicyMapping.add(joiSubjectDomainPolicy, gbc_joiSubjectDomainPolicy);
+        jpPolicyMapping.add(jlIssuerDomainPolicy, gbc_jlIssuerDomainPolicy);
+        jpPolicyMapping.add(joiIssuerDomainPolicy, gbc_joiIssuerDomainPolicy);
+        jpPolicyMapping.add(jlSubjectDomainPolicy, gbc_jlSubjectDomainPolicy);
+        jpPolicyMapping.add(joiSubjectDomainPolicy, gbc_joiSubjectDomainPolicy);
 
-		jbOK = new JButton(res.getString("DPolicyMappingChooser.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DPolicyMappingChooser.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DPolicyMappingChooser.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DPolicyMappingChooser.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(BorderLayout.CENTER, jpPolicyMapping);
-		getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(BorderLayout.CENTER, jpPolicyMapping);
+        getContentPane().add(BorderLayout.SOUTH, jpButtons);
 
-		populate(policyMapping);
+        populate(policyMapping);
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void populate(PolicyMapping policyMapping) {
-		if (policyMapping != null) {
+    private void populate(PolicyMapping policyMapping) {
+        if (policyMapping != null) {
 
-			ASN1ObjectIdentifier issuerDomainPolicy = policyMapping.getIssuerDomainPolicy();
-			ASN1ObjectIdentifier subjectDomainPolicy = policyMapping.getSubjectDomainPolicy();
-			joiIssuerDomainPolicy.setObjectId(issuerDomainPolicy);
-			joiSubjectDomainPolicy.setObjectId(subjectDomainPolicy);
-		}
-	}
+            ASN1ObjectIdentifier issuerDomainPolicy = policyMapping.getIssuerDomainPolicy();
+            ASN1ObjectIdentifier subjectDomainPolicy = policyMapping.getSubjectDomainPolicy();
+            joiIssuerDomainPolicy.setObjectId(issuerDomainPolicy);
+            joiSubjectDomainPolicy.setObjectId(subjectDomainPolicy);
+        }
+    }
 
-	/**
-	 * Get selected policy mapping.
-	 *
-	 * @return Policy mapping, or null if none
-	 */
-	public PolicyMapping getPolicyMapping() {
-		return policyMapping;
-	}
+    /**
+     * Get selected policy mapping.
+     *
+     * @return Policy mapping, or null if none
+     */
+    public PolicyMapping getPolicyMapping() {
+        return policyMapping;
+    }
 
-	private void okPressed() {
-		ASN1ObjectIdentifier issuerDomainPolicy = joiIssuerDomainPolicy.getObjectId();
+    private void okPressed() {
+        ASN1ObjectIdentifier issuerDomainPolicy = joiIssuerDomainPolicy.getObjectId();
 
-		if (issuerDomainPolicy == null) {
-			JOptionPane.showMessageDialog(this,
-					res.getString("DPolicyMappingChooser.IssuerDomainPolicyValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (issuerDomainPolicy == null) {
+            JOptionPane.showMessageDialog(this,
+                                          res.getString("DPolicyMappingChooser.IssuerDomainPolicyValueReq.message"),
+                                          getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		ASN1ObjectIdentifier subjectDomainPolicy = joiSubjectDomainPolicy.getObjectId();
+        ASN1ObjectIdentifier subjectDomainPolicy = joiSubjectDomainPolicy.getObjectId();
 
-		if (subjectDomainPolicy == null) {
-			JOptionPane.showMessageDialog(this,
-					res.getString("DPolicyMappingChooser.SubjectDomainPolicyValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (subjectDomainPolicy == null) {
+            JOptionPane.showMessageDialog(this,
+                                          res.getString("DPolicyMappingChooser.SubjectDomainPolicyValueReq.message"),
+                                          getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		policyMapping = new PolicyMapping(issuerDomainPolicy, subjectDomainPolicy);
+        policyMapping = new PolicyMapping(issuerDomainPolicy, subjectDomainPolicy);
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

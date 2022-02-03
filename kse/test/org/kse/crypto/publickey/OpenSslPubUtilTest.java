@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,23 +32,22 @@ import org.kse.crypto.filetype.CryptoFileUtil;
 /**
  * Unit tests for OpenSslPubUtil. Encodes a RSA and DSA private keys using
  * OpenSSL format and reads them back using a variety of options.
- *
  */
 public class OpenSslPubUtilTest extends KeyTestsBase {
 
-	@ParameterizedTest
-	@MethodSource("publicKeys")
-	public void openSslPub(PublicKey publicKey) throws Exception {
-		byte[] key = OpenSslPubUtil.get(publicKey);
-		assertEquals(publicKey, OpenSslPubUtil.load(key));
-		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(key));
-	}
+    @ParameterizedTest
+    @MethodSource("publicKeys")
+    public void openSslPub(PublicKey publicKey) throws Exception {
+        byte[] key = OpenSslPubUtil.get(publicKey);
+        assertEquals(publicKey, OpenSslPubUtil.load(key));
+        assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(key));
+    }
 
-	@ParameterizedTest
-	@MethodSource("publicKeys")
-	public void openSslPubPem(PublicKey publicKey) throws Exception {
-		String pemKey = OpenSslPubUtil.getPem(publicKey);
-		assertEquals(publicKey, OpenSslPubUtil.load(pemKey.getBytes()));
-		assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(pemKey.getBytes()));
-	}
+    @ParameterizedTest
+    @MethodSource("publicKeys")
+    public void openSslPubPem(PublicKey publicKey) throws Exception {
+        String pemKey = OpenSslPubUtil.getPem(publicKey);
+        assertEquals(publicKey, OpenSslPubUtil.load(pemKey.getBytes()));
+        assertEquals(OPENSSL_PUB, CryptoFileUtil.detectFileType(pemKey.getBytes()));
+    }
 }

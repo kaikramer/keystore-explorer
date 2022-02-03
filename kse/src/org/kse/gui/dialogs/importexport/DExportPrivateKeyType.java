@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -47,163 +47,161 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Dialog used to request the type of private key export.
- *
  */
 public class DExportPrivateKeyType extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/importexport/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpExportType;
-	private JLabel jlExportType;
-	private JRadioButton jrbPkcs8;
-	private JRadioButton jrbPvk;
-	private JRadioButton jrbOpenSsl;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpExportType;
+    private JLabel jlExportType;
+    private JRadioButton jrbPkcs8;
+    private JRadioButton jrbPvk;
+    private JRadioButton jrbOpenSsl;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private boolean exportTypeSelected = false;
+    private boolean exportTypeSelected = false;
 
-	private KeyPairType keyPairType;
+    private KeyPairType keyPairType;
 
-	/**
-	 * Creates a new DExportPrivateKeyType dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 */
-	public DExportPrivateKeyType(JFrame parent, KeyPairType keyPairType) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.keyPairType = keyPairType;
-		setTitle(res.getString("DExportPrivateKeyType.Title"));
-		initComponents();
-	}
+    /**
+     * Creates a new DExportPrivateKeyType dialog.
+     *
+     * @param parent The parent frame
+     */
+    public DExportPrivateKeyType(JFrame parent, KeyPairType keyPairType) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.keyPairType = keyPairType;
+        setTitle(res.getString("DExportPrivateKeyType.Title"));
+        initComponents();
+    }
 
-	private void initComponents() {
-		jlExportType = new JLabel(res.getString("DExportPrivateKeyType.jlExportType.text"));
+    private void initComponents() {
+        jlExportType = new JLabel(res.getString("DExportPrivateKeyType.jlExportType.text"));
 
-		jrbPkcs8 = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPkcs8.text"), true);
-		PlatformUtil.setMnemonic(jrbPkcs8, res.getString("DExportPrivateKeyType.jrbPkcs8.mnemonic").charAt(0));
-		jrbPkcs8.setToolTipText(res.getString("DExportPrivateKeyType.jrbPkcs8.tooltip"));
+        jrbPkcs8 = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPkcs8.text"), true);
+        PlatformUtil.setMnemonic(jrbPkcs8, res.getString("DExportPrivateKeyType.jrbPkcs8.mnemonic").charAt(0));
+        jrbPkcs8.setToolTipText(res.getString("DExportPrivateKeyType.jrbPkcs8.tooltip"));
 
-		jrbPvk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPvk.text"));
-		PlatformUtil.setMnemonic(jrbPvk, res.getString("DExportPrivateKeyType.jrbPvk.mnemonic").charAt(0));
-		jrbPvk.setToolTipText(res.getString("DExportPrivateKeyType.jrbPvk.tooltip"));
-		if (keyPairType == KeyPairType.EC || keyPairType == KeyPairType.ECDSA || keyPairType == KeyPairType.EDDSA
-				|| keyPairType == KeyPairType.ED25519 || keyPairType == KeyPairType.ED448) {
-			jrbPvk.setEnabled(false);
-		}
+        jrbPvk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPvk.text"));
+        PlatformUtil.setMnemonic(jrbPvk, res.getString("DExportPrivateKeyType.jrbPvk.mnemonic").charAt(0));
+        jrbPvk.setToolTipText(res.getString("DExportPrivateKeyType.jrbPvk.tooltip"));
+        if (keyPairType == KeyPairType.EC || keyPairType == KeyPairType.ECDSA || keyPairType == KeyPairType.EDDSA ||
+            keyPairType == KeyPairType.ED25519 || keyPairType == KeyPairType.ED448) {
+            jrbPvk.setEnabled(false);
+        }
 
-		jrbOpenSsl = new JRadioButton(res.getString("DExportPrivateKeyType.jrbOpenSsl.text"));
-		PlatformUtil.setMnemonic(jrbOpenSsl, res.getString("DExportPrivateKeyType.jrbOpenSsl.mnemonic").charAt(0));
-		jrbOpenSsl.setToolTipText(res.getString("DExportPrivateKeyType.jrbOpenSsl.tooltip"));
-		if (keyPairType == KeyPairType.EDDSA || keyPairType == KeyPairType.ED25519 || keyPairType == KeyPairType.ED448) {
-			jrbOpenSsl.setEnabled(false);
-		}
+        jrbOpenSsl = new JRadioButton(res.getString("DExportPrivateKeyType.jrbOpenSsl.text"));
+        PlatformUtil.setMnemonic(jrbOpenSsl, res.getString("DExportPrivateKeyType.jrbOpenSsl.mnemonic").charAt(0));
+        jrbOpenSsl.setToolTipText(res.getString("DExportPrivateKeyType.jrbOpenSsl.tooltip"));
+        if (keyPairType == KeyPairType.EDDSA || keyPairType == KeyPairType.ED25519 ||
+            keyPairType == KeyPairType.ED448) {
+            jrbOpenSsl.setEnabled(false);
+        }
 
-		ButtonGroup keyStoreTypes = new ButtonGroup();
+        ButtonGroup keyStoreTypes = new ButtonGroup();
 
-		keyStoreTypes.add(jrbPkcs8);
-		keyStoreTypes.add(jrbPvk);
-		keyStoreTypes.add(jrbOpenSsl);
+        keyStoreTypes.add(jrbPkcs8);
+        keyStoreTypes.add(jrbPvk);
+        keyStoreTypes.add(jrbOpenSsl);
 
-		jpExportType = new JPanel(new GridLayout(4, 1));
-		jpExportType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
+        jpExportType = new JPanel(new GridLayout(4, 1));
+        jpExportType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                  new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
-		jpExportType.add(jlExportType);
-		jpExportType.add(jrbPkcs8);
-		jpExportType.add(jrbPvk);
-		jpExportType.add(jrbOpenSsl);
+        jpExportType.add(jlExportType);
+        jpExportType.add(jrbPkcs8);
+        jpExportType.add(jrbPvk);
+        jpExportType.add(jrbOpenSsl);
 
-		jbOK = new JButton(res.getString("DExportPrivateKeyType.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DExportPrivateKeyType.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DExportPrivateKeyType.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DExportPrivateKeyType.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpExportType, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpExportType, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	/**
-	 * Has an export type been selected?
-	 *
-	 * @return True if it has, false otherwise
-	 */
-	public boolean exportTypeSelected() {
-		return exportTypeSelected;
-	}
+    /**
+     * Has an export type been selected?
+     *
+     * @return True if it has, false otherwise
+     */
+    public boolean exportTypeSelected() {
+        return exportTypeSelected;
+    }
 
-	/**
-	 * Has the user chosen to export to PKCS #8?
-	 *
-	 * @return True if they have, false otherwise
-	 */
-	public boolean exportPkcs8() {
-		return jrbPkcs8.isSelected();
-	}
+    /**
+     * Has the user chosen to export to PKCS #8?
+     *
+     * @return True if they have, false otherwise
+     */
+    public boolean exportPkcs8() {
+        return jrbPkcs8.isSelected();
+    }
 
-	/**
-	 * Has the user chosen to export to PVK?
-	 *
-	 * @return True if they have, false otherwise
-	 */
-	public boolean exportPvk() {
-		return jrbPvk.isSelected();
-	}
+    /**
+     * Has the user chosen to export to PVK?
+     *
+     * @return True if they have, false otherwise
+     */
+    public boolean exportPvk() {
+        return jrbPvk.isSelected();
+    }
 
-	/**
-	 * Has the user chosen to export to OpenSSL?
-	 *
-	 * @return True if they have, false otherwise
-	 */
-	public boolean exportOpenSsl() {
-		return jrbOpenSsl.isSelected();
-	}
+    /**
+     * Has the user chosen to export to OpenSSL?
+     *
+     * @return True if they have, false otherwise
+     */
+    public boolean exportOpenSsl() {
+        return jrbOpenSsl.isSelected();
+    }
 
-	private void okPressed() {
-		exportTypeSelected = true;
+    private void okPressed() {
+        exportTypeSelected = true;
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

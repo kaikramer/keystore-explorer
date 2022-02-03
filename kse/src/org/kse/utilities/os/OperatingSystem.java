@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,13 +21,12 @@ package org.kse.utilities.os;
 
 /**
  * Local operating system detection.
- *
  */
 public class OperatingSystem {
-	private static final String OS_NAME = System.getProperty("os.name");
-	private static final String OS_VERSION = System.getProperty("os.version");
+    private static final String OS_NAME = System.getProperty("os.name");
+    private static final String OS_VERSION = System.getProperty("os.version");
 
-	// @formatter:off
+    // @formatter:off
 
 	/*
 	 * OS detection is relatively simple for most platforms. Simply check that
@@ -45,204 +44,204 @@ public class OperatingSystem {
 
 	// @formatter:on
 
-	private OperatingSystem() {
-	}
+    private OperatingSystem() {
+    }
 
-	/**
-	 * Is operating system Windows NT 4?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindowsNt4() {
-		return OS_NAME.indexOf("Windows NT") > -1 && OS_VERSION.equals("4.0");
-	}
+    /**
+     * Is operating system Windows NT 4?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindowsNt4() {
+        return OS_NAME.indexOf("Windows NT") > -1 && OS_VERSION.equals("4.0");
+    }
 
-	/**
-	 * Is operating system Windows 95?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindows95() {
-		return OS_NAME.indexOf("Windows 95") > -1 && OS_VERSION.equals("4.0");
-	}
+    /**
+     * Is operating system Windows 95?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindows95() {
+        return OS_NAME.indexOf("Windows 95") > -1 && OS_VERSION.equals("4.0");
+    }
 
-	/**
-	 * Is operating system Windows 98?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindows98() {
-		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("4.1");
-	}
+    /**
+     * Is operating system Windows 98?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindows98() {
+        return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("4.1");
+    }
 
-	/**
-	 * Is operating system Windows ME?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindowsMe() {
-		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("4.9");
-	}
+    /**
+     * Is operating system Windows ME?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindowsMe() {
+        return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("4.9");
+    }
 
-	/**
-	 * Is operating system Windows 2000?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindows2000() {
-		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("5.0");
-	}
+    /**
+     * Is operating system Windows 2000?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindows2000() {
+        return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("5.0");
+    }
 
-	/**
-	 * Is operating system Windows XP?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindowsXp() {
-		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("5.1");
-	}
+    /**
+     * Is operating system Windows XP?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindowsXp() {
+        return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("5.1");
+    }
 
-	/**
-	 * Is operating system Windows Vista?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindowsVista() {
-		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("6.0");
-	}
+    /**
+     * Is operating system Windows Vista?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindowsVista() {
+        return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("6.0");
+    }
 
-	/**
-	 * Is operating system Windows 7?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindows7() {
-		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("6.1");
-	}
+    /**
+     * Is operating system Windows 7?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindows7() {
+        return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("6.1");
+    }
 
-	/**
-	 * Is operating system Windows 8 or 8.1?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindows8() {
-		return OS_NAME.indexOf("Windows") > -1 && (OS_VERSION.equals("6.2") || OS_VERSION.equals("6.3"));
-	}
+    /**
+     * Is operating system Windows 8 or 8.1?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindows8() {
+        return OS_NAME.indexOf("Windows") > -1 && (OS_VERSION.equals("6.2") || OS_VERSION.equals("6.3"));
+    }
 
-	/**
-	 * Is operating system Windows 10?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindows10() {
-		return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("10.0");
-	}
+    /**
+     * Is operating system Windows 10?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindows10() {
+        return OS_NAME.indexOf("Windows") > -1 && OS_VERSION.equals("10.0");
+    }
 
-	/**
-	 * Is operating system one of the various Windows flavors?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isWindows() {
-		return OS_NAME.indexOf("Windows") > -1;
-	}
+    /**
+     * Is operating system one of the various Windows flavors?
+     *
+     * @return True if it is
+     */
+    public static boolean isWindows() {
+        return OS_NAME.indexOf("Windows") > -1;
+    }
 
-	/**
-	 * Is operating system Linux?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isLinux() {
-		return OS_NAME.indexOf("Linux") > -1;
-	}
+    /**
+     * Is operating system Linux?
+     *
+     * @return True if it is
+     */
+    public static boolean isLinux() {
+        return OS_NAME.indexOf("Linux") > -1;
+    }
 
-	/**
-	 * Is operating system macOS?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isMacOs() {
-		return OS_NAME.indexOf("Mac OS") > -1;
-	}
+    /**
+     * Is operating system macOS?
+     *
+     * @return True if it is
+     */
+    public static boolean isMacOs() {
+        return OS_NAME.indexOf("Mac OS") > -1;
+    }
 
-	/**
-	 * Is operating system Solaris?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isSolaris() {
-		return OS_NAME.indexOf("Solaris") > -1 || OS_NAME.indexOf("SunOS") > -1;
-	}
+    /**
+     * Is operating system Solaris?
+     *
+     * @return True if it is
+     */
+    public static boolean isSolaris() {
+        return OS_NAME.indexOf("Solaris") > -1 || OS_NAME.indexOf("SunOS") > -1;
+    }
 
-	/**
-	 * Is operating system AIX?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isAix() {
-		return OS_NAME.indexOf("AIX") > -1;
-	}
+    /**
+     * Is operating system AIX?
+     *
+     * @return True if it is
+     */
+    public static boolean isAix() {
+        return OS_NAME.indexOf("AIX") > -1;
+    }
 
-	/**
-	 * Is operating system FreeBSD?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isFreeBsd() {
-		return OS_NAME.indexOf("FreeBSD") > -1;
-	}
+    /**
+     * Is operating system FreeBSD?
+     *
+     * @return True if it is
+     */
+    public static boolean isFreeBsd() {
+        return OS_NAME.indexOf("FreeBSD") > -1;
+    }
 
-	/**
-	 * Is operating system HP-UX?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isHpUx() {
-		return OS_NAME.indexOf("HP-UX") > -1;
-	}
+    /**
+     * Is operating system HP-UX?
+     *
+     * @return True if it is
+     */
+    public static boolean isHpUx() {
+        return OS_NAME.indexOf("HP-UX") > -1;
+    }
 
-	/**
-	 * Is operating system Irix?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isIrix() {
-		return OS_NAME.indexOf("Irix") > -1;
-	}
+    /**
+     * Is operating system Irix?
+     *
+     * @return True if it is
+     */
+    public static boolean isIrix() {
+        return OS_NAME.indexOf("Irix") > -1;
+    }
 
-	/**
-	 * Is operating system Digital UNIX?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isDigitalUnix() {
-		return OS_NAME.indexOf("Digital Unix") > -1;
-	}
+    /**
+     * Is operating system Digital UNIX?
+     *
+     * @return True if it is
+     */
+    public static boolean isDigitalUnix() {
+        return OS_NAME.indexOf("Digital Unix") > -1;
+    }
 
-	/**
-	 * Is operating system one of the various Unix flavors?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isUnix() {
-		return isSolaris() || isAix() || isFreeBsd() || isHpUx() || isIrix() || isDigitalUnix();
-	}
+    /**
+     * Is operating system one of the various Unix flavors?
+     *
+     * @return True if it is
+     */
+    public static boolean isUnix() {
+        return isSolaris() || isAix() || isFreeBsd() || isHpUx() || isIrix() || isDigitalUnix();
+    }
 
-	/**
-	 * Is operating system OS/2?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isOs2() {
-		return OS_NAME.indexOf("OS/2") > -1;
-	}
+    /**
+     * Is operating system OS/2?
+     *
+     * @return True if it is
+     */
+    public static boolean isOs2() {
+        return OS_NAME.indexOf("OS/2") > -1;
+    }
 
-	/**
-	 * Is operating system unknown?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean isUnknown() {
-		return !isWindows() && !isLinux() && !isMacOs() && !isUnix() && !isOs2();
-	}
+    /**
+     * Is operating system unknown?
+     *
+     * @return True if it is
+     */
+    public static boolean isUnknown() {
+        return !isWindows() && !isLinux() && !isMacOs() && !isUnix() && !isOs2();
+    }
 }

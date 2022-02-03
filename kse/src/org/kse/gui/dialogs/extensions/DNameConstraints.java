@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,192 +53,188 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog used to add or edit a Name Constraints extension.
- *
  */
 public class DNameConstraints extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpNameConstraints;
-	private JLabel jlPermittedSubtrees;
-	private JGeneralSubtrees jgsPermittedSubtrees;
-	private JLabel jlExcludedSubtrees;
-	private JGeneralSubtrees jgsExcludedSubtrees;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpNameConstraints;
+    private JLabel jlPermittedSubtrees;
+    private JGeneralSubtrees jgsPermittedSubtrees;
+    private JLabel jlExcludedSubtrees;
+    private JGeneralSubtrees jgsExcludedSubtrees;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
+    private byte[] value;
 
-	/**
-	 * Creates a new DNameConstraints dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DNameConstraints(JDialog parent) {
-		super(parent);
-		setTitle(res.getString("DNameConstraints.Title"));
-		initComponents();
-	}
+    /**
+     * Creates a new DNameConstraints dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DNameConstraints(JDialog parent) {
+        super(parent);
+        setTitle(res.getString("DNameConstraints.Title"));
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DNameConstraints dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Name Constraints DER-encoded
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DNameConstraints(JDialog parent, byte[] value) throws IOException {
-		super(parent);
-		setTitle(res.getString("DNameConstraints.Title"));
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DNameConstraints dialog.
+     *
+     * @param parent The parent dialog
+     * @param value  Name Constraints DER-encoded
+     * @throws IOException If value could not be decoded
+     */
+    public DNameConstraints(JDialog parent, byte[] value) throws IOException {
+        super(parent);
+        setTitle(res.getString("DNameConstraints.Title"));
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlPermittedSubtrees = new JLabel(res.getString("DNameConstraints.jlPermittedSubtrees.text"));
+    private void initComponents() {
+        jlPermittedSubtrees = new JLabel(res.getString("DNameConstraints.jlPermittedSubtrees.text"));
 
-		GridBagConstraints gbc_jlPermittedSubtrees = new GridBagConstraints();
-		gbc_jlPermittedSubtrees.gridx = 0;
-		gbc_jlPermittedSubtrees.gridy = 0;
-		gbc_jlPermittedSubtrees.gridwidth = 1;
-		gbc_jlPermittedSubtrees.gridheight = 1;
-		gbc_jlPermittedSubtrees.insets = new Insets(5, 5, 5, 5);
-		gbc_jlPermittedSubtrees.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints gbc_jlPermittedSubtrees = new GridBagConstraints();
+        gbc_jlPermittedSubtrees.gridx = 0;
+        gbc_jlPermittedSubtrees.gridy = 0;
+        gbc_jlPermittedSubtrees.gridwidth = 1;
+        gbc_jlPermittedSubtrees.gridheight = 1;
+        gbc_jlPermittedSubtrees.insets = new Insets(5, 5, 5, 5);
+        gbc_jlPermittedSubtrees.anchor = GridBagConstraints.NORTHEAST;
 
-		jgsPermittedSubtrees = new JGeneralSubtrees(res.getString("DNameConstraints.PermittedSubtrees.Title"));
-		jgsPermittedSubtrees.setToolTipText(res.getString("DNameConstraints.jgsPermittedSubtrees.tooltip"));
+        jgsPermittedSubtrees = new JGeneralSubtrees(res.getString("DNameConstraints.PermittedSubtrees.Title"));
+        jgsPermittedSubtrees.setToolTipText(res.getString("DNameConstraints.jgsPermittedSubtrees.tooltip"));
 
-		GridBagConstraints gbc_jgsPermittedSubtrees = new GridBagConstraints();
-		gbc_jgsPermittedSubtrees.gridx = 1;
-		gbc_jgsPermittedSubtrees.gridy = 0;
-		gbc_jgsPermittedSubtrees.gridwidth = 1;
-		gbc_jgsPermittedSubtrees.gridheight = 1;
-		gbc_jgsPermittedSubtrees.insets = new Insets(5, 5, 5, 5);
-		gbc_jgsPermittedSubtrees.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jgsPermittedSubtrees = new GridBagConstraints();
+        gbc_jgsPermittedSubtrees.gridx = 1;
+        gbc_jgsPermittedSubtrees.gridy = 0;
+        gbc_jgsPermittedSubtrees.gridwidth = 1;
+        gbc_jgsPermittedSubtrees.gridheight = 1;
+        gbc_jgsPermittedSubtrees.insets = new Insets(5, 5, 5, 5);
+        gbc_jgsPermittedSubtrees.anchor = GridBagConstraints.WEST;
 
-		jlExcludedSubtrees = new JLabel(res.getString("DNameConstraints.jlExcludedSubtrees.text"));
+        jlExcludedSubtrees = new JLabel(res.getString("DNameConstraints.jlExcludedSubtrees.text"));
 
-		GridBagConstraints gbc_jlExcludedSubtrees = new GridBagConstraints();
-		gbc_jlExcludedSubtrees.gridx = 0;
-		gbc_jlExcludedSubtrees.gridy = 1;
-		gbc_jlExcludedSubtrees.gridwidth = 1;
-		gbc_jlExcludedSubtrees.gridheight = 1;
-		gbc_jlExcludedSubtrees.insets = new Insets(5, 5, 5, 5);
-		gbc_jlExcludedSubtrees.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints gbc_jlExcludedSubtrees = new GridBagConstraints();
+        gbc_jlExcludedSubtrees.gridx = 0;
+        gbc_jlExcludedSubtrees.gridy = 1;
+        gbc_jlExcludedSubtrees.gridwidth = 1;
+        gbc_jlExcludedSubtrees.gridheight = 1;
+        gbc_jlExcludedSubtrees.insets = new Insets(5, 5, 5, 5);
+        gbc_jlExcludedSubtrees.anchor = GridBagConstraints.NORTHEAST;
 
-		jgsExcludedSubtrees = new JGeneralSubtrees(res.getString("DNameConstraints.ExcludedSubtrees.Title"));
-		jgsExcludedSubtrees.setToolTipText(res.getString("DNameConstraints.jgsExcludedSubtrees.tooltip"));
+        jgsExcludedSubtrees = new JGeneralSubtrees(res.getString("DNameConstraints.ExcludedSubtrees.Title"));
+        jgsExcludedSubtrees.setToolTipText(res.getString("DNameConstraints.jgsExcludedSubtrees.tooltip"));
 
-		GridBagConstraints gbc_jgsExcludedSubtrees = new GridBagConstraints();
-		gbc_jgsExcludedSubtrees.gridx = 1;
-		gbc_jgsExcludedSubtrees.gridy = 1;
-		gbc_jgsExcludedSubtrees.gridwidth = 1;
-		gbc_jgsExcludedSubtrees.gridheight = 1;
-		gbc_jgsExcludedSubtrees.insets = new Insets(5, 5, 5, 5);
-		gbc_jgsExcludedSubtrees.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jgsExcludedSubtrees = new GridBagConstraints();
+        gbc_jgsExcludedSubtrees.gridx = 1;
+        gbc_jgsExcludedSubtrees.gridy = 1;
+        gbc_jgsExcludedSubtrees.gridwidth = 1;
+        gbc_jgsExcludedSubtrees.gridheight = 1;
+        gbc_jgsExcludedSubtrees.insets = new Insets(5, 5, 5, 5);
+        gbc_jgsExcludedSubtrees.anchor = GridBagConstraints.WEST;
 
-		jpNameConstraints = new JPanel(new GridBagLayout());
+        jpNameConstraints = new JPanel(new GridBagLayout());
 
-		jpNameConstraints.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpNameConstraints.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                       new CompoundBorder(new EtchedBorder(),
+                                                                          new EmptyBorder(5, 5, 5, 5))));
 
-		jpNameConstraints.add(jlPermittedSubtrees, gbc_jlPermittedSubtrees);
-		jpNameConstraints.add(jgsPermittedSubtrees, gbc_jgsPermittedSubtrees);
-		jpNameConstraints.add(jlExcludedSubtrees, gbc_jlExcludedSubtrees);
-		jpNameConstraints.add(jgsExcludedSubtrees, gbc_jgsExcludedSubtrees);
+        jpNameConstraints.add(jlPermittedSubtrees, gbc_jlPermittedSubtrees);
+        jpNameConstraints.add(jgsPermittedSubtrees, gbc_jgsPermittedSubtrees);
+        jpNameConstraints.add(jlExcludedSubtrees, gbc_jlExcludedSubtrees);
+        jpNameConstraints.add(jgsExcludedSubtrees, gbc_jgsExcludedSubtrees);
 
-		jbOK = new JButton(res.getString("DNameConstraints.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DNameConstraints.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DNameConstraints.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DNameConstraints.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpNameConstraints, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpNameConstraints, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		NameConstraints nameConstraints = NameConstraints.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        NameConstraints nameConstraints = NameConstraints.getInstance(value);
 
-		if (nameConstraints.getPermittedSubtrees() != null) {
-			jgsPermittedSubtrees.setGeneralSubtrees(new GeneralSubtrees(nameConstraints.getPermittedSubtrees()));
-		}
+        if (nameConstraints.getPermittedSubtrees() != null) {
+            jgsPermittedSubtrees.setGeneralSubtrees(new GeneralSubtrees(nameConstraints.getPermittedSubtrees()));
+        }
 
-		if (nameConstraints.getExcludedSubtrees() != null) {
-			jgsExcludedSubtrees.setGeneralSubtrees(new GeneralSubtrees(nameConstraints.getExcludedSubtrees()));
-		}
-	}
+        if (nameConstraints.getExcludedSubtrees() != null) {
+            jgsExcludedSubtrees.setGeneralSubtrees(new GeneralSubtrees(nameConstraints.getExcludedSubtrees()));
+        }
+    }
 
-	private void okPressed() {
-		List<GeneralSubtree> permittedSubtrees = jgsPermittedSubtrees.getGeneralSubtrees().getGeneralSubtrees();
-		List<GeneralSubtree> excludedSubtrees = jgsExcludedSubtrees.getGeneralSubtrees().getGeneralSubtrees();
+    private void okPressed() {
+        List<GeneralSubtree> permittedSubtrees = jgsPermittedSubtrees.getGeneralSubtrees().getGeneralSubtrees();
+        List<GeneralSubtree> excludedSubtrees = jgsExcludedSubtrees.getGeneralSubtrees().getGeneralSubtrees();
 
-		GeneralSubtree[] permittedSubtreesArray = permittedSubtrees.toArray(new GeneralSubtree[permittedSubtrees.size()]);
-		GeneralSubtree[] excludedSubtreesArray = excludedSubtrees.toArray(new GeneralSubtree[excludedSubtrees.size()]);
+        GeneralSubtree[] permittedSubtreesArray = permittedSubtrees.toArray(
+                new GeneralSubtree[permittedSubtrees.size()]);
+        GeneralSubtree[] excludedSubtreesArray = excludedSubtrees.toArray(new GeneralSubtree[excludedSubtrees.size()]);
 
-		NameConstraints nameConstraints = new NameConstraints(permittedSubtreesArray, excludedSubtreesArray);
+        NameConstraints nameConstraints = new NameConstraints(permittedSubtreesArray, excludedSubtreesArray);
 
-		try {
-			value = nameConstraints.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+        try {
+            value = nameConstraints.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.NAME_CONSTRAINTS.oid();
-	}
+    @Override
+    public String getOid() {
+        return X509ExtensionType.NAME_CONSTRAINTS.oid();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

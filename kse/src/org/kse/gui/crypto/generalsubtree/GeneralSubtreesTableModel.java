@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,155 +33,146 @@ import org.kse.crypto.x509.GeneralSubtrees;
 
 /**
  * The table model used to display general subtrees.
- *
  */
 public class GeneralSubtreesTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/crypto/generalsubtree/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalsubtree/resources");
 
-	private String[] columnNames;
-	private Object[][] data;
+    private String[] columnNames;
+    private Object[][] data;
 
-	/**
-	 * Construct a new GeneralSubtreesTableModel.
-	 */
-	public GeneralSubtreesTableModel() {
-		columnNames = new String[3];
-		columnNames[0] = res.getString("GeneralSubtreesTableModel.BaseColumn");
-		columnNames[1] = res.getString("GeneralSubtreesTableModel.MinimumColumn");
-		columnNames[2] = res.getString("GeneralSubtreesTableModel.MaximumColumn");
+    /**
+     * Construct a new GeneralSubtreesTableModel.
+     */
+    public GeneralSubtreesTableModel() {
+        columnNames = new String[3];
+        columnNames[0] = res.getString("GeneralSubtreesTableModel.BaseColumn");
+        columnNames[1] = res.getString("GeneralSubtreesTableModel.MinimumColumn");
+        columnNames[2] = res.getString("GeneralSubtreesTableModel.MaximumColumn");
 
-		data = new Object[0][0];
-	}
+        data = new Object[0][0];
+    }
 
-	/**
-	 * Load the GeneralSubtreesTableModel with general subtrees.
-	 *
-	 * @param generalSubtrees
-	 *            The general subtrees
-	 */
-	public void load(GeneralSubtrees generalSubtrees) {
-		List<GeneralSubtree> generalSubtreesList = generalSubtrees.getGeneralSubtrees();
-		Collections.sort(generalSubtreesList, new GeneralSubtreeBaseComparator());
+    /**
+     * Load the GeneralSubtreesTableModel with general subtrees.
+     *
+     * @param generalSubtrees The general subtrees
+     */
+    public void load(GeneralSubtrees generalSubtrees) {
+        List<GeneralSubtree> generalSubtreesList = generalSubtrees.getGeneralSubtrees();
+        Collections.sort(generalSubtreesList, new GeneralSubtreeBaseComparator());
 
-		data = new Object[generalSubtreesList.size()][3];
+        data = new Object[generalSubtreesList.size()][3];
 
-		int i = 0;
-		for (GeneralSubtree generalSubtree : generalSubtreesList) {
-			data[i][0] = generalSubtree;
-			data[i][1] = generalSubtree;
-			data[i][2] = generalSubtree;
-			i++;
-		}
+        int i = 0;
+        for (GeneralSubtree generalSubtree : generalSubtreesList) {
+            data[i][0] = generalSubtree;
+            data[i][1] = generalSubtree;
+            data[i][2] = generalSubtree;
+            i++;
+        }
 
-		fireTableDataChanged();
-	}
+        fireTableDataChanged();
+    }
 
-	/**
-	 * Get the number of columns in the table.
-	 *
-	 * @return The number of columns
-	 */
-	@Override
-	public int getColumnCount() {
-		return columnNames.length;
-	}
+    /**
+     * Get the number of columns in the table.
+     *
+     * @return The number of columns
+     */
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
 
-	/**
-	 * Get the number of rows in the table.
-	 *
-	 * @return The number of rows
-	 */
-	@Override
-	public int getRowCount() {
-		return data.length;
-	}
+    /**
+     * Get the number of rows in the table.
+     *
+     * @return The number of rows
+     */
+    @Override
+    public int getRowCount() {
+        return data.length;
+    }
 
-	/**
-	 * Get the name of the column at the given position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column name
-	 */
-	@Override
-	public String getColumnName(int col) {
-		return columnNames[col];
-	}
+    /**
+     * Get the name of the column at the given position.
+     *
+     * @param col The column position
+     * @return The column name
+     */
+    @Override
+    public String getColumnName(int col) {
+        return columnNames[col];
+    }
 
-	/**
-	 * Get the cell value at the given row and column position.
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return The cell value
-	 */
-	@Override
-	public Object getValueAt(int row, int col) {
-		return data[row][col];
-	}
+    /**
+     * Get the cell value at the given row and column position.
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return The cell value
+     */
+    @Override
+    public Object getValueAt(int row, int col) {
+        return data[row][col];
+    }
 
-	/**
-	 * Get the class at of the cells at the given column position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column cells' class
-	 */
-	@Override
-	public Class<?> getColumnClass(int col) {
-		return GeneralSubtree.class;
-	}
+    /**
+     * Get the class at of the cells at the given column position.
+     *
+     * @param col The column position
+     * @return The column cells' class
+     */
+    @Override
+    public Class<?> getColumnClass(int col) {
+        return GeneralSubtree.class;
+    }
 
-	/**
-	 * Is the cell at the given row and column position editable?
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return True if the cell is editable, false otherwise
-	 */
-	@Override
-	public boolean isCellEditable(int row, int col) {
-		return false;
-	}
+    /**
+     * Is the cell at the given row and column position editable?
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return True if the cell is editable, false otherwise
+     */
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return false;
+    }
 
-	static class GeneralSubtreeBaseComparator implements Comparator<GeneralSubtree> {
-		@Override
-		public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
-			return GeneralNameUtil.safeToString(subtree1.getBase(), false).compareToIgnoreCase(
-					GeneralNameUtil.safeToString(subtree2.getBase(), false));
-		}
-	}
+    static class GeneralSubtreeBaseComparator implements Comparator<GeneralSubtree> {
+        @Override
+        public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
+            return GeneralNameUtil.safeToString(subtree1.getBase(), false)
+                                  .compareToIgnoreCase(GeneralNameUtil.safeToString(subtree2.getBase(), false));
+        }
+    }
 
-	static class GeneralSubtreeMinimumComparator implements Comparator<GeneralSubtree> {
-		@Override
-		public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
-			return subtree1.getMinimum().compareTo(subtree2.getMinimum());
-		}
-	}
+    static class GeneralSubtreeMinimumComparator implements Comparator<GeneralSubtree> {
+        @Override
+        public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
+            return subtree1.getMinimum().compareTo(subtree2.getMinimum());
+        }
+    }
 
-	static class GeneralSubtreeMaximumComparator implements Comparator<GeneralSubtree> {
-		@Override
-		public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
-			// Maximum may be null;
-			BigInteger maximum1 = BigInteger.valueOf(-1);
-			BigInteger maximum2 = BigInteger.valueOf(-1);
+    static class GeneralSubtreeMaximumComparator implements Comparator<GeneralSubtree> {
+        @Override
+        public int compare(GeneralSubtree subtree1, GeneralSubtree subtree2) {
+            // Maximum may be null;
+            BigInteger maximum1 = BigInteger.valueOf(-1);
+            BigInteger maximum2 = BigInteger.valueOf(-1);
 
-			if (subtree1.getMaximum() != null) {
-				maximum1 = subtree1.getMaximum();
-			}
+            if (subtree1.getMaximum() != null) {
+                maximum1 = subtree1.getMaximum();
+            }
 
-			if (subtree2.getMaximum() != null) {
-				maximum2 = subtree2.getMaximum();
-			}
+            if (subtree2.getMaximum() != null) {
+                maximum2 = subtree2.getMaximum();
+            }
 
-			return maximum1.compareTo(maximum2);
-		}
-	}
+            return maximum1.compareTo(maximum2);
+        }
+    }
 }

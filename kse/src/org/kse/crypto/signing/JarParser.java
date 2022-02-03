@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,58 +34,58 @@ import java.util.jar.JarFile;
 
 /**
  * Helper class for parsing and extracting meta data from jar files
- *
  */
 public class JarParser {
 
-	private File jarFile;
+    private File jarFile;
 
-	public JarParser(File jarFile) {
-		this.jarFile = jarFile;
-	}
+    public JarParser(File jarFile) {
+        this.jarFile = jarFile;
+    }
 
-	/**
-	 * Extract all signer certificates from this jar file.
-	 *
-	 * @return Unordered array with signer certificates
-	 * @throws IOException if an I/O error has occurred
-	 */
-	public X509Certificate[] getSignerCerificates() throws IOException {
-		try (JarFile jf = new JarFile(jarFile, true)) {
+    /**
+     * Extract all signer certificates from this jar file.
+     *
+     * @return Unordered array with signer certificates
+     * @throws IOException if an I/O error has occurred
+     */
+    public X509Certificate[] getSignerCerificates() throws IOException {
+        try (JarFile jf = new JarFile(jarFile, true)) {
 
-			Set<Certificate> allSignerCerts = new HashSet<>();
-			Enumeration<JarEntry> entries = jf.entries();
+            Set<Certificate> allSignerCerts = new HashSet<>();
+            Enumeration<JarEntry> entries = jf.entries();
 
-			while (entries.hasMoreElements()) {
+            while (entries.hasMoreElements()) {
 
-				JarEntry entry = entries.nextElement();
+                JarEntry entry = entries.nextElement();
 
-				// reading entry completely is required for calling getCodeSigners()/getCertificates()
-				readEntry(jf, entry);
+                // reading entry completely is required for calling getCodeSigners()/getCertificates()
+                readEntry(jf, entry);
 
-				if (!entry.isDirectory()) {
-					CodeSigner[] codeSigners = entry.getCodeSigners();
-					if (codeSigners != null) {
-						for (CodeSigner cs : entry.getCodeSigners()) {
-							allSignerCerts.addAll(cs.getSignerCertPath().getCertificates());
-						}
-					}
+                if (!entry.isDirectory()) {
+                    CodeSigner[] codeSigners = entry.getCodeSigners();
+                    if (codeSigners != null) {
+                        for (CodeSigner cs : entry.getCodeSigners()) {
+                            allSignerCerts.addAll(cs.getSignerCertPath().getCertificates());
+                        }
+                    }
 
-					Certificate[] certificates = entry.getCertificates();
-					if (certificates != null) {
-						allSignerCerts.addAll(Arrays.asList(certificates));
-					}
-				}
-			}
+                    Certificate[] certificates = entry.getCertificates();
+                    if (certificates != null) {
+                        allSignerCerts.addAll(Arrays.asList(certificates));
+                    }
+                }
+            }
 
-			return allSignerCerts.stream().map(X509Certificate.class::cast).toArray(X509Certificate[]::new);
-		}
-	}
+            return allSignerCerts.stream().map(X509Certificate.class::cast).toArray(X509Certificate[]::new);
+        }
+    }
 
-	private static void readEntry(JarFile jf, JarEntry je) throws IOException {
-		try (InputStream is = jf.getInputStream(je)) {
-			byte[] buffer = new byte[8192];
-			while ((is.read(buffer, 0, buffer.length)) != -1) {	}
-		}
-	}
+    private static void readEntry(JarFile jf, JarEntry je) throws IOException {
+        try (InputStream is = jf.getInputStream(je)) {
+            byte[] buffer = new byte[8192];
+            while ((is.read(buffer, 0, buffer.length)) != -1) {
+            }
+        }
+    }
 }

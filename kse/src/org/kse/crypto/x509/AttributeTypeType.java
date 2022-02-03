@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,13 +22,11 @@ package org.kse.crypto.x509;
 import java.util.ResourceBundle;
 
 /**
- *
  * Enumeration of Attribute Types.
- *
  */
 public enum AttributeTypeType {
 
-	// @formatter:off
+    // @formatter:off
 
 	COMMON_NAME("2.5.4.3", "CommonNameAttributeType"),
 	SERIAL_NUMBER("2.5.4.5", "SerialNumberAttributeType"),
@@ -56,47 +54,46 @@ public enum AttributeTypeType {
 
 	// @formatter:on
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
-	private String oid;
-	private String friendlyKey;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
+    private String oid;
+    private String friendlyKey;
 
-	AttributeTypeType(String oid, String friendlyKey) {
-		this.oid = oid;
-		this.friendlyKey = friendlyKey;
-	}
+    AttributeTypeType(String oid, String friendlyKey) {
+        this.oid = oid;
+        this.friendlyKey = friendlyKey;
+    }
 
-	/**
-	 * Get type's friendly name.
-	 *
-	 * @return Friendly name
-	 */
-	public String friendly() {
-		return res.getString(friendlyKey);
-	}
+    /**
+     * Get type's friendly name.
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
+        return res.getString(friendlyKey);
+    }
 
-	/**
-	 * Resolve the supplied object identifier to a matching type.
-	 *
-	 * @param oid
-	 *            Object identifier
-	 * @return Type or null if none
-	 */
-	public static AttributeTypeType resolveOid(String oid) {
-		for (AttributeTypeType extType : values()) {
-			if (oid.equals(extType.oid())) {
-				return extType;
-			}
-		}
+    /**
+     * Resolve the supplied object identifier to a matching type.
+     *
+     * @param oid Object identifier
+     * @return Type or null if none
+     */
+    public static AttributeTypeType resolveOid(String oid) {
+        for (AttributeTypeType extType : values()) {
+            if (oid.equals(extType.oid())) {
+                return extType;
+            }
+        }
 
-		return UNKNOWN;
-	}
+        return UNKNOWN;
+    }
 
-	/**
-	 * Get Attribute Type's Object Identifier.
-	 *
-	 * @return Object Identifier
-	 */
-	public String oid() {
-		return oid;
-	}
+    /**
+     * Get Attribute Type's Object Identifier.
+     *
+     * @return Object Identifier
+     */
+    public String oid() {
+        return oid;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,40 +29,36 @@ import org.kse.gui.jar.DJarInfo;
 
 /**
  * Action to display the JARs information dialog.
- *
  */
 public class JarsAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public JarsAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public JarsAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("JarsAction.statusbar"));
-		putValue(NAME, res.getString("JarsAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("JarsAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/jars.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("JarsAction.statusbar"));
+        putValue(NAME, res.getString("JarsAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("JarsAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/jars.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			DJarInfo dJarInfo = new DJarInfo(frame);
-			dJarInfo.setLocationRelativeTo(frame);
-			dJarInfo.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            DJarInfo dJarInfo = new DJarInfo(frame);
+            dJarInfo.setLocationRelativeTo(frame);
+            dJarInfo.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

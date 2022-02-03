@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,56 +34,52 @@ import org.kse.gui.error.DError;
 
 /**
  * Action to create a new KeyStore.
- *
  */
 public class NewAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
-	private static int untitledCount = 0;
+    private static final long serialVersionUID = 1L;
+    private static int untitledCount = 0;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public NewAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public NewAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("NewAction.accelerator").charAt(0), Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("NewAction.statusbar"));
-		putValue(NAME, res.getString("NewAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("NewAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/new.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("NewAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("NewAction.statusbar"));
+        putValue(NAME, res.getString("NewAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("NewAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/new.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			DNewKeyStoreType dNewKeyStoreType = new DNewKeyStoreType(frame);
-			dNewKeyStoreType.setLocationRelativeTo(frame);
-			dNewKeyStoreType.setVisible(true);
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            DNewKeyStoreType dNewKeyStoreType = new DNewKeyStoreType(frame);
+            dNewKeyStoreType.setLocationRelativeTo(frame);
+            dNewKeyStoreType.setVisible(true);
 
-			KeyStoreType keyStoreType = dNewKeyStoreType.getKeyStoreType();
+            KeyStoreType keyStoreType = dNewKeyStoreType.getKeyStoreType();
 
-			if (keyStoreType == null) {
-				return;
-			}
+            if (keyStoreType == null) {
+                return;
+            }
 
-			KeyStore newKeyStore = KeyStoreUtil.create(keyStoreType);
+            KeyStore newKeyStore = KeyStoreUtil.create(keyStoreType);
 
-			untitledCount++;
-			String untitled = MessageFormat.format(res.getString("NewAction.Untitled"), untitledCount);
+            untitledCount++;
+            String untitled = MessageFormat.format(res.getString("NewAction.Untitled"), untitledCount);
 
-			kseFrame.addKeyStore(newKeyStore, untitled, null, null);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.addKeyStore(newKeyStore, untitled, null, null);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

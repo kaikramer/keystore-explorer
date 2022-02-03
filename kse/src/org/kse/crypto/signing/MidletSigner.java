@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,193 +45,177 @@ import org.kse.utilities.io.CopyUtil;
 
 /**
  * Class provides functionality to sign MIDlets.
- *
  */
 public class MidletSigner {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
 
-	private static final String CRLF = "\r\n";
+    private static final String CRLF = "\r\n";
 
-	// Message format template for JAD file attributes
-	private static final String JAD_ATTR_TEMPLATE = "{0}: {1}";
+    // Message format template for JAD file attributes
+    private static final String JAD_ATTR_TEMPLATE = "{0}: {1}";
 
-	// MIDlet Certificate JAD attribute
-	private static final String MIDLET_CERTIFICATE_ATTR = "MIDlet-Certificate-{0}-{1}";
+    // MIDlet Certificate JAD attribute
+    private static final String MIDLET_CERTIFICATE_ATTR = "MIDlet-Certificate-{0}-{1}";
 
-	// MIDlet Certificate JAD attribute minus certificate chain number
-	private static final String SUB_MIDLET_CERTIFICATE_ATTR = "MIDlet-Certificate-{0}-";
+    // MIDlet Certificate JAD attribute minus certificate chain number
+    private static final String SUB_MIDLET_CERTIFICATE_ATTR = "MIDlet-Certificate-{0}-";
 
-	// MIDlet JAR Manifest attribute
-	private static final String MIDLET_JAR_RSA_SHA1_ATTR = "MIDlet-Jar-RSA-SHA1";
+    // MIDlet JAR Manifest attribute
+    private static final String MIDLET_JAR_RSA_SHA1_ATTR = "MIDlet-Jar-RSA-SHA1";
 
-	private MidletSigner() {
-	}
+    private MidletSigner() {
+    }
 
-	/**
-	 * Sign a MIDlet overwriting the supplied JAD file.
-	 *
-	 * @param jadFile
-	 *            JAD file
-	 * @param jarFile
-	 *            JAR file
-	 * @param privateKey
-	 *            Private RSA key to sign with
-	 * @param certificateChain
-	 *            Certificate chain for private key
-	 * @param certificateNumber
-	 *            Certificate number
-	 * @throws IOException
-	 *             If an I/O problem occurs while signing the MIDlet
-	 * @throws CryptoException
-	 *             If a crypto problem occurs while signing the MIDlet
-	 */
-	public static void sign(File jadFile, File jarFile, RSAPrivateKey privateKey, X509Certificate[] certificateChain,
-			int certificateNumber) throws IOException, CryptoException {
-		File tmpFile = File.createTempFile("kse", "tmp");
-		tmpFile.deleteOnExit();
+    /**
+     * Sign a MIDlet overwriting the supplied JAD file.
+     *
+     * @param jadFile           JAD file
+     * @param jarFile           JAR file
+     * @param privateKey        Private RSA key to sign with
+     * @param certificateChain  Certificate chain for private key
+     * @param certificateNumber Certificate number
+     * @throws IOException     If an I/O problem occurs while signing the MIDlet
+     * @throws CryptoException If a crypto problem occurs while signing the MIDlet
+     */
+    public static void sign(File jadFile, File jarFile, RSAPrivateKey privateKey, X509Certificate[] certificateChain,
+                            int certificateNumber) throws IOException, CryptoException {
+        File tmpFile = File.createTempFile("kse", "tmp");
+        tmpFile.deleteOnExit();
 
-		sign(jadFile, tmpFile, jarFile, privateKey, certificateChain, certificateNumber);
+        sign(jadFile, tmpFile, jarFile, privateKey, certificateChain, certificateNumber);
 
-		CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jadFile));
+        CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jadFile));
 
-		tmpFile.delete();
-	}
+        tmpFile.delete();
+    }
 
-	/**
-	 * Sign a JAD file outputting the modified JAD to a different file.
-	 *
-	 * @param jadFile
-	 *            JAD file
-	 * @param outputJadFile
-	 *            Output JAD file
-	 * @param jarFile
-	 *            JAR file
-	 * @param privateKey
-	 *            Private RSA key to sign with
-	 * @param certificateChain
-	 *            Certificate chain for private key
-	 * @param certificateNumber
-	 *            Certificate number
-	 * @throws IOException
-	 *             If an I/O problem occurs while signing the MIDlet
-	 * @throws CryptoException
-	 *             If a crypto problem occurs while signing the MIDlet
-	 */
-	public static void sign(File jadFile, File outputJadFile, File jarFile, RSAPrivateKey privateKey,
-			X509Certificate[] certificateChain, int certificateNumber) throws IOException, CryptoException {
-		Properties jadProperties = readJadFile(jadFile);
+    /**
+     * Sign a JAD file outputting the modified JAD to a different file.
+     *
+     * @param jadFile           JAD file
+     * @param outputJadFile     Output JAD file
+     * @param jarFile           JAR file
+     * @param privateKey        Private RSA key to sign with
+     * @param certificateChain  Certificate chain for private key
+     * @param certificateNumber Certificate number
+     * @throws IOException     If an I/O problem occurs while signing the MIDlet
+     * @throws CryptoException If a crypto problem occurs while signing the MIDlet
+     */
+    public static void sign(File jadFile, File outputJadFile, File jarFile, RSAPrivateKey privateKey,
+                            X509Certificate[] certificateChain, int certificateNumber)
+            throws IOException, CryptoException {
+        Properties jadProperties = readJadFile(jadFile);
 
-		Properties newJadProperties = new Properties();
+        Properties newJadProperties = new Properties();
 
-		// Copy over existing attrs (excepting digest and any certificates at
-		// provided number)
-		for (Enumeration<?> enumPropNames = jadProperties.propertyNames(); enumPropNames.hasMoreElements();) {
-			String propName = (String) enumPropNames.nextElement();
+        // Copy over existing attrs (excepting digest and any certificates at
+        // provided number)
+        for (Enumeration<?> enumPropNames = jadProperties.propertyNames(); enumPropNames.hasMoreElements(); ) {
+            String propName = (String) enumPropNames.nextElement();
 
-			// Ignore digest attr
-			if (propName.equals(MIDLET_JAR_RSA_SHA1_ATTR)) {
-				continue;
-			}
+            // Ignore digest attr
+            if (propName.equals(MIDLET_JAR_RSA_SHA1_ATTR)) {
+                continue;
+            }
 
-			// Ignore certificates at provided number
-			if (propName.startsWith(MessageFormat.format(SUB_MIDLET_CERTIFICATE_ATTR, certificateNumber))) {
-				continue;
-			}
+            // Ignore certificates at provided number
+            if (propName.startsWith(MessageFormat.format(SUB_MIDLET_CERTIFICATE_ATTR, certificateNumber))) {
+                continue;
+            }
 
-			newJadProperties.put(propName, jadProperties.getProperty(propName));
-		}
+            newJadProperties.put(propName, jadProperties.getProperty(propName));
+        }
 
-		// Get certificate attrs
-		for (int i = 0; i < certificateChain.length; i++) {
-			X509Certificate certificate = certificateChain[i];
-			String base64Cert = null;
-			try {
-				base64Cert = new String(Base64.encode(certificate.getEncoded()));
-			} catch (CertificateEncodingException ex) {
-				throw new CryptoException(res.getString("Base64CertificateFailed.exception.message"), ex);
-			}
+        // Get certificate attrs
+        for (int i = 0; i < certificateChain.length; i++) {
+            X509Certificate certificate = certificateChain[i];
+            String base64Cert = null;
+            try {
+                base64Cert = new String(Base64.encode(certificate.getEncoded()));
+            } catch (CertificateEncodingException ex) {
+                throw new CryptoException(res.getString("Base64CertificateFailed.exception.message"), ex);
+            }
 
-			String midletCertificateAttr = MessageFormat.format(MIDLET_CERTIFICATE_ATTR, certificateNumber, (i + 1));
-			newJadProperties.put(midletCertificateAttr, base64Cert);
-		}
+            String midletCertificateAttr = MessageFormat.format(MIDLET_CERTIFICATE_ATTR, certificateNumber, (i + 1));
+            newJadProperties.put(midletCertificateAttr, base64Cert);
+        }
 
-		// Get signed Base 64 SHA-1 digest of JAR file as attr
-		byte[] signedJarDigest = signJarDigest(jarFile, privateKey);
-		String base64SignedJarDigest = new String(Base64.encode(signedJarDigest));
-		newJadProperties.put(MIDLET_JAR_RSA_SHA1_ATTR, base64SignedJarDigest);
+        // Get signed Base 64 SHA-1 digest of JAR file as attr
+        byte[] signedJarDigest = signJarDigest(jarFile, privateKey);
+        String base64SignedJarDigest = new String(Base64.encode(signedJarDigest));
+        newJadProperties.put(MIDLET_JAR_RSA_SHA1_ATTR, base64SignedJarDigest);
 
-		// Sort properties alphabetically
-		TreeMap<String, String> sortedJadProperties = new TreeMap<>();
+        // Sort properties alphabetically
+        TreeMap<String, String> sortedJadProperties = new TreeMap<>();
 
-		for (Enumeration<?> names = newJadProperties.propertyNames(); names.hasMoreElements();) {
-			String name = (String) names.nextElement();
-			String value = newJadProperties.getProperty(name);
+        for (Enumeration<?> names = newJadProperties.propertyNames(); names.hasMoreElements(); ) {
+            String name = (String) names.nextElement();
+            String value = newJadProperties.getProperty(name);
 
-			sortedJadProperties.put(name, value);
-		}
+            sortedJadProperties.put(name, value);
+        }
 
-		// Write out new JAD properties to JAD file
-		try (FileWriter fw = new FileWriter(outputJadFile)) {
-			for (Iterator<Entry<String, String>> itrSorted = sortedJadProperties.entrySet().iterator(); itrSorted.hasNext();) {
-				Entry<String, String> property = itrSorted.next();
+        // Write out new JAD properties to JAD file
+        try (FileWriter fw = new FileWriter(outputJadFile)) {
+            for (Iterator<Entry<String, String>> itrSorted = sortedJadProperties.entrySet().iterator();
+                 itrSorted.hasNext(); ) {
+                Entry<String, String> property = itrSorted.next();
 
-				fw.write(MessageFormat.format(JAD_ATTR_TEMPLATE, property.getKey(), property.getValue()));
-				fw.write(CRLF);
-			}
-		}
-	}
+                fw.write(MessageFormat.format(JAD_ATTR_TEMPLATE, property.getKey(), property.getValue()));
+                fw.write(CRLF);
+            }
+        }
+    }
 
-	private static byte[] signJarDigest(File jarFile, RSAPrivateKey privateKey) throws CryptoException {
+    private static byte[] signJarDigest(File jarFile, RSAPrivateKey privateKey) throws CryptoException {
 
-		// Create a SHA-1 signature for the supplied JAR file
-		try (FileInputStream fis = new FileInputStream(jarFile)) {
-			Signature signature = Signature.getInstance(SignatureType.SHA1_RSA.jce());
-			signature.initSign(privateKey);
+        // Create a SHA-1 signature for the supplied JAR file
+        try (FileInputStream fis = new FileInputStream(jarFile)) {
+            Signature signature = Signature.getInstance(SignatureType.SHA1_RSA.jce());
+            signature.initSign(privateKey);
 
-			byte[] buffer = new byte[1024];
-			int read = 0;
+            byte[] buffer = new byte[1024];
+            int read = 0;
 
-			while ((read = fis.read(buffer)) != -1) {
-				signature.update(buffer, 0, read);
-			}
+            while ((read = fis.read(buffer)) != -1) {
+                signature.update(buffer, 0, read);
+            }
 
-			return signature.sign();
-		} catch (IOException | GeneralSecurityException ex) {
-			throw new CryptoException(res.getString("JarDigestSignatureFailed.exception.message"), ex);
-		}
-	}
+            return signature.sign();
+        } catch (IOException | GeneralSecurityException ex) {
+            throw new CryptoException(res.getString("JarDigestSignatureFailed.exception.message"), ex);
+        }
+    }
 
-	/**
-	 * Read the attributes of the supplied JAD file as properties.
-	 *
-	 * @param jadFile
-	 *            JAD file
-	 * @return JAD file's attributes as properties
-	 * @throws IOException
-	 *             If an I/O problem occurred or supplied file is not a JAD file
-	 */
-	public static Properties readJadFile(File jadFile) throws IOException {
+    /**
+     * Read the attributes of the supplied JAD file as properties.
+     *
+     * @param jadFile JAD file
+     * @return JAD file's attributes as properties
+     * @throws IOException If an I/O problem occurred or supplied file is not a JAD file
+     */
+    public static Properties readJadFile(File jadFile) throws IOException {
 
-		try (FileInputStream fileInputStream = new FileInputStream(jadFile);
-				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-				LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
+        try (FileInputStream fileInputStream = new FileInputStream(jadFile);
+             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+             LineNumberReader lnr = new LineNumberReader(inputStreamReader)) {
 
-			Properties jadProperties = new Properties();
+            Properties jadProperties = new Properties();
 
-			String line = null;
-			while ((line = lnr.readLine()) != null) {
-				int index = line.indexOf(": ");
+            String line = null;
+            while ((line = lnr.readLine()) != null) {
+                int index = line.indexOf(": ");
 
-				if (index == -1) {
-					throw new IOException(res.getString("NoReadJadCorrupt.exception.message"));
-				}
+                if (index == -1) {
+                    throw new IOException(res.getString("NoReadJadCorrupt.exception.message"));
+                }
 
-				String name = line.substring(0, index);
-				String value = line.substring(index + 2);
-				jadProperties.setProperty(name, value);
-			}
+                String name = line.substring(0, index);
+                String value = line.substring(index + 2);
+                jadProperties.setProperty(name, value);
+            }
 
-			return jadProperties;
-		}
-	}
+            return jadProperties;
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,131 +32,122 @@ import org.kse.crypto.x509.PolicyInformationUtil;
 
 /**
  * The table model used to display policy information.
- *
  */
 public class PolicyInformationTableModel extends AbstractTableModel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/crypto/policyinformation/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
 
-	private String[] columnNames;
-	private Object[][] data;
+    private String[] columnNames;
+    private Object[][] data;
 
-	/**
-	 * Construct a new PolicyInformationTableModel.
-	 */
-	public PolicyInformationTableModel() {
-		columnNames = new String[1];
-		columnNames[0] = res.getString("PolicyInformationTableModel.PolicyInformationColumn");
+    /**
+     * Construct a new PolicyInformationTableModel.
+     */
+    public PolicyInformationTableModel() {
+        columnNames = new String[1];
+        columnNames[0] = res.getString("PolicyInformationTableModel.PolicyInformationColumn");
 
-		data = new Object[0][0];
-	}
+        data = new Object[0][0];
+    }
 
-	/**
-	 * Load the PolicyInformationTableModel with policy information.
-	 *
-	 * @param policyInformation
-	 *            The policy information
-	 */
-	public void load(List<PolicyInformation> policyInformation) {
-		PolicyInformation[] policyInformationArray = policyInformation.toArray(new PolicyInformation[policyInformation
-		                                                                                             .size()]);
-		Arrays.sort(policyInformationArray, new PolicyInformationComparator());
+    /**
+     * Load the PolicyInformationTableModel with policy information.
+     *
+     * @param policyInformation The policy information
+     */
+    public void load(List<PolicyInformation> policyInformation) {
+        PolicyInformation[] policyInformationArray = policyInformation.toArray(
+                new PolicyInformation[policyInformation.size()]);
+        Arrays.sort(policyInformationArray, new PolicyInformationComparator());
 
-		data = new Object[policyInformation.size()][1];
+        data = new Object[policyInformation.size()][1];
 
-		int i = 0;
-		for (PolicyInformation policyInfo : policyInformationArray) {
-			data[i][0] = policyInfo;
-			i++;
-		}
+        int i = 0;
+        for (PolicyInformation policyInfo : policyInformationArray) {
+            data[i][0] = policyInfo;
+            i++;
+        }
 
-		fireTableDataChanged();
-	}
+        fireTableDataChanged();
+    }
 
-	/**
-	 * Get the number of columns in the table.
-	 *
-	 * @return The number of columns
-	 */
-	@Override
-	public int getColumnCount() {
-		return columnNames.length;
-	}
+    /**
+     * Get the number of columns in the table.
+     *
+     * @return The number of columns
+     */
+    @Override
+    public int getColumnCount() {
+        return columnNames.length;
+    }
 
-	/**
-	 * Get the number of rows in the table.
-	 *
-	 * @return The number of rows
-	 */
-	@Override
-	public int getRowCount() {
-		return data.length;
-	}
+    /**
+     * Get the number of rows in the table.
+     *
+     * @return The number of rows
+     */
+    @Override
+    public int getRowCount() {
+        return data.length;
+    }
 
-	/**
-	 * Get the name of the column at the given position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column name
-	 */
-	@Override
-	public String getColumnName(int col) {
-		return columnNames[col];
-	}
+    /**
+     * Get the name of the column at the given position.
+     *
+     * @param col The column position
+     * @return The column name
+     */
+    @Override
+    public String getColumnName(int col) {
+        return columnNames[col];
+    }
 
-	/**
-	 * Get the cell value at the given row and column position.
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return The cell value
-	 */
-	@Override
-	public Object getValueAt(int row, int col) {
-		return data[row][col];
-	}
+    /**
+     * Get the cell value at the given row and column position.
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return The cell value
+     */
+    @Override
+    public Object getValueAt(int row, int col) {
+        return data[row][col];
+    }
 
-	/**
-	 * Get the class at of the cells at the given column position.
-	 *
-	 * @param col
-	 *            The column position
-	 * @return The column cells' class
-	 */
-	@Override
-	public Class<?> getColumnClass(int col) {
-		return PolicyInformation.class;
-	}
+    /**
+     * Get the class at of the cells at the given column position.
+     *
+     * @param col The column position
+     * @return The column cells' class
+     */
+    @Override
+    public Class<?> getColumnClass(int col) {
+        return PolicyInformation.class;
+    }
 
-	/**
-	 * Is the cell at the given row and column position editable?
-	 *
-	 * @param row
-	 *            The row position
-	 * @param col
-	 *            The column position
-	 * @return True if the cell is editable, false otherwise
-	 */
-	@Override
-	public boolean isCellEditable(int row, int col) {
-		return false;
-	}
+    /**
+     * Is the cell at the given row and column position editable?
+     *
+     * @param row The row position
+     * @param col The column position
+     * @return True if the cell is editable, false otherwise
+     */
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return false;
+    }
 
-	static class PolicyInformationComparator implements Comparator<PolicyInformation> {
-		@Override
-		public int compare(PolicyInformation policyInformation1, PolicyInformation policyInformation2) {
-			try {
-				return PolicyInformationUtil.toString(policyInformation1).compareToIgnoreCase(
-						PolicyInformationUtil.toString(policyInformation2));
-			} catch (IOException ex) {
-				throw new RuntimeException(ex); // We build this data so should
-				// not happen
-			}
-		}
-	}
+    static class PolicyInformationComparator implements Comparator<PolicyInformation> {
+        @Override
+        public int compare(PolicyInformation policyInformation1, PolicyInformation policyInformation2) {
+            try {
+                return PolicyInformationUtil.toString(policyInformation1)
+                                            .compareToIgnoreCase(PolicyInformationUtil.toString(policyInformation2));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex); // We build this data so should
+                // not happen
+            }
+        }
+    }
 }

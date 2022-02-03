@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,30 +23,28 @@ import org.kse.gui.KseFrame;
 
 /**
  * Action to show/hide the status bar.
- *
  */
 public class ShowHideStatusBarAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ShowHideStatusBarAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public ShowHideStatusBarAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("ShowHideStatusBarAction.statusbar"));
-		putValue(NAME, res.getString("ShowHideStatusBarAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ShowHideStatusBarAction.tooltip"));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("ShowHideStatusBarAction.statusbar"));
+        putValue(NAME, res.getString("ShowHideStatusBarAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ShowHideStatusBarAction.tooltip"));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		kseFrame.showHideStatusBar();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        kseFrame.showHideStatusBar();
+    }
 }

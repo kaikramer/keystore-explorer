@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,62 +32,55 @@ import org.kse.utilities.StringUtils;
 
 /**
  * Custom cell renderer for the cells of the RevokedCerts table of DViewCrl.
- *
  */
 public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Returns the rendered cell.
-	 *
-	 * @param jtRevokedCerts
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtRevokedCerts, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,
-				col);
+    /**
+     * Returns the rendered cell.
+     *
+     * @param jtRevokedCerts The JTable
+     * @param value          The value to assign to the cell
+     * @param isSelected     True if cell is selected
+     * @param row            The row of the cell to render
+     * @param col            The column of the cell to render
+     * @param hasFocus       If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtRevokedCerts, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,
+                                                                   col);
 
-		if (col == 0) {
-			cell.setText(formatSerialNumberAsHexString((BigInteger) value));
-		} else {
-			cell.setText(StringUtils.formatDate((Date) value));
-		}
+        if (col == 0) {
+            cell.setText(formatSerialNumberAsHexString((BigInteger) value));
+        } else {
+            cell.setText(StringUtils.formatDate((Date) value));
+        }
 
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 
-	private String formatSerialNumberAsHexString(BigInteger serialNumber) {
-		// The string is divided by spaces into groups of four hex characters.
-		String hexSerialNumber = serialNumber.toString(16).toUpperCase();
+    private String formatSerialNumberAsHexString(BigInteger serialNumber) {
+        // The string is divided by spaces into groups of four hex characters.
+        String hexSerialNumber = serialNumber.toString(16).toUpperCase();
 
-		StringBuilder strBuff = new StringBuilder();
+        StringBuilder strBuff = new StringBuilder();
 
-		strBuff.append("0x");
+        strBuff.append("0x");
 
-		for (int i = 0; i < hexSerialNumber.length(); i++) {
-			strBuff.append(hexSerialNumber.charAt(i));
+        for (int i = 0; i < hexSerialNumber.length(); i++) {
+            strBuff.append(hexSerialNumber.charAt(i));
 
-			if ((i + 1) % 4 == 0 && i + 1 != hexSerialNumber.length()) {
-				strBuff.append(' ');
-			}
-		}
+            if ((i + 1) % 4 == 0 && i + 1 != hexSerialNumber.length()) {
+                strBuff.append(' ');
+            }
+        }
 
-		return strBuff.toString();
-	}
+        return strBuff.toString();
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,93 +29,92 @@ import org.kse.gui.error.DError;
 
 /**
  * Restart KeyStore Explorer.
- *
  */
 public class KseRestart {
 
-	private static final String JAVA_HOME = "java.home";
-	private static final String JAVA_CLASS_PATH = "java.class.path";
+    private static final String JAVA_HOME = "java.home";
+    private static final String JAVA_CLASS_PATH = "java.class.path";
 
-	private static final String KSE_INSTALL_DIR = "kse.install.dir";
+    private static final String KSE_INSTALL_DIR = "kse.install.dir";
 
-	// macOS: location of native app stub (passed from appbundler)
-	private static final String KSE_APP_STUB = "kse.app.stub";
+    // macOS: location of native app stub (passed from appbundler)
+    private static final String KSE_APP_STUB = "kse.app.stub";
 
-	private static final String KSE_EXE = "kse.exe";
-	private static final String KSE_APP = "kse.app";
-	private static final String KSE_JAR = "kse.jar";
+    private static final String KSE_EXE = "kse.exe";
+    private static final String KSE_APP = "kse.app";
+    private static final String KSE_JAR = "kse.jar";
 
-	private KseRestart() {
-	}
+    private KseRestart() {
+    }
 
-	/**
-	 * Restart KeyStore Explorer in the same manner in which it was started.
-	 */
-	public static void restart() {
-		if (System.getProperty(KSE_EXE) != null) {
-			restartAsKseExe();
-		} else if (System.getProperty(KSE_APP) != null) {
-			restartAsKseApp();
-		} else if (System.getProperty(JAVA_CLASS_PATH).equals(KSE_JAR)) {
-			restartAsKseJar();
-		} else {
-			restartAsKseClass();
-		}
-	}
+    /**
+     * Restart KeyStore Explorer in the same manner in which it was started.
+     */
+    public static void restart() {
+        if (System.getProperty(KSE_EXE) != null) {
+            restartAsKseExe();
+        } else if (System.getProperty(KSE_APP) != null) {
+            restartAsKseApp();
+        } else if (System.getProperty(JAVA_CLASS_PATH).equals(KSE_JAR)) {
+            restartAsKseJar();
+        } else {
+            restartAsKseClass();
+        }
+    }
 
-	private static void restartAsKseExe() {
-		File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
+    private static void restartAsKseExe() {
+        File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
 
-		File kseExe = new File(kseInstallDir, KSE_EXE);
+        File kseExe = new File(kseInstallDir, KSE_EXE);
 
-		String[] toExec = new String[] { kseExe.getPath() };
+        String[] toExec = new String[] { kseExe.getPath() };
 
-		try {
-			Runtime.getRuntime().exec(toExec);
-		} catch (IOException ex) {
-			DError.displayError(new JFrame(), ex);
-		}
-	}
+        try {
+            Runtime.getRuntime().exec(toExec);
+        } catch (IOException ex) {
+            DError.displayError(new JFrame(), ex);
+        }
+    }
 
-	private static void restartAsKseJar() {
-		File javaBin = new File(new File(System.getProperty(JAVA_HOME), "bin"), "java");
+    private static void restartAsKseJar() {
+        File javaBin = new File(new File(System.getProperty(JAVA_HOME), "bin"), "java");
 
-		File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
+        File kseInstallDir = new File(System.getProperty(KSE_INSTALL_DIR));
 
-		File kseJar = new File(kseInstallDir, KSE_JAR);
+        File kseJar = new File(kseInstallDir, KSE_JAR);
 
-		String[] toExec = new String[] { javaBin.getPath(), "-jar", kseJar.getPath() };
+        String[] toExec = new String[] { javaBin.getPath(), "-jar", kseJar.getPath() };
 
-		try {
-			Runtime.getRuntime().exec(toExec);
-		} catch (IOException ex) {
-			DError.displayError(new JFrame(), ex);
-		}
-	}
+        try {
+            Runtime.getRuntime().exec(toExec);
+        } catch (IOException ex) {
+            DError.displayError(new JFrame(), ex);
+        }
+    }
 
-	private static void restartAsKseApp() {
-		File javaAppStub = new File(System.getProperty(KSE_APP_STUB));
+    private static void restartAsKseApp() {
+        File javaAppStub = new File(System.getProperty(KSE_APP_STUB));
 
-		String[] toExec = new String[] { javaAppStub.getPath() };
+        String[] toExec = new String[] { javaAppStub.getPath() };
 
-		try {
-			Runtime.getRuntime().exec(toExec);
-		} catch (IOException ex) {
-			DError.displayError(new JFrame(), ex);
-		}
-	}
+        try {
+            Runtime.getRuntime().exec(toExec);
+        } catch (IOException ex) {
+            DError.displayError(new JFrame(), ex);
+        }
+    }
 
-	private static void restartAsKseClass() {
-		File javaBin = new File(new File(System.getProperty(JAVA_HOME), "bin"), "java");
+    private static void restartAsKseClass() {
+        File javaBin = new File(new File(System.getProperty(JAVA_HOME), "bin"), "java");
 
-		String kseClasspath = System.getProperty(JAVA_CLASS_PATH);
+        String kseClasspath = System.getProperty(JAVA_CLASS_PATH);
 
-		String[] toExec = new String[] { javaBin.getPath(), "-classpath", kseClasspath, KSE.class.getName() };
+        String[] toExec = new String[] { javaBin.getPath(), "-classpath", kseClasspath, KSE.class.getName() };
 
-		try {
-			Runtime.getRuntime().exec(toExec);
-		} catch (IOException ex) {
-			DError.displayError(new JFrame(), ex);
-		}
-	}
+        try {
+            Runtime.getRuntime().exec(toExec);
+        } catch (IOException ex) {
+            DError.displayError(new JFrame(), ex);
+        }
+    }
 }

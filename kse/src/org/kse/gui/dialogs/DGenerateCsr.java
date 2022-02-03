@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -72,399 +72,397 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to choose parameters for CSR generation.
- *
  */
 public class DGenerateCsr extends JEscDialog {
-	private static final long serialVersionUID = 1L;
-
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-
-	private static final String CANCEL_KEY = "CANCEL_KEY";
-
-	private JLabel jlFormat;
-	private JRadioButton jrbPkcs10;
-	private JRadioButton jrbSpkac;
-	private JLabel jlSignatureAlgorithm;
-	private JComboBox<SignatureType> jcbSignatureAlgorithm;
-	private JLabel jlName;
-	private JDistinguishedName jdnName;
-	private JLabel jlChallenge;
-	private JTextField jtfChallenge;
-	private JLabel jlUnstructuredName;
-	private JTextField jtfUnstructuredName;
-	private JLabel jlExtensions;
-	private JCheckBox jcbExtensions;
-	private JLabel jlCsrFile;
-	private JTextField jtfCsrFile;
-	private JButton jbBrowse;
-	private JButton jbOK;
-	private JButton jbCancel;
-
-	private boolean generateSelected = false;
-	private String alias;
-	private X500Principal subjectDN;
-	private PrivateKey privateKey;
-	private KeyPairType keyPairType;
-	private CsrType format;
-	private SignatureType signatureAlgorithm;
-	private String challenge;
-	private String unstructuredName;
-	private boolean addExtensionsWanted;
-	private File csrFile;
-
-	private String path;
-
-
-	/**
-	 * Creates a new DGenerateCsr dialog.
-	 *
-	 * @param parent The parent frame
-	 * @param subjectDN Subject DN of certificate
-	 * @param privateKey Private key
-	 * @param keyPairType Key pair algorithm
-	 * @param path Path to keystore file
-	 * @throws CryptoException A problem was encountered with the supplied private key
-	 */
-	public DGenerateCsr(JFrame parent, String alias, X500Principal subjectDN, PrivateKey privateKey,
-			KeyPairType keyPairType, String path) throws CryptoException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.alias = alias;
-		this.subjectDN = subjectDN;
-		this.privateKey = privateKey;
-		this.keyPairType = keyPairType;
-		this.path = path;
-		setTitle(res.getString("DGenerateCsr.Title"));
-		initComponents();
-	}
-
-	private void initComponents() throws CryptoException {
-		jlFormat = new JLabel(res.getString("DGenerateCsr.jlFormat.text"));
-
-		jrbPkcs10 = new JRadioButton(res.getString("DGenerateCsr.jrbPkcs10.text"), false);
-		PlatformUtil.setMnemonic(jrbPkcs10, res.getString("DGenerateCsr.jrbPkcs10.mnemonic").charAt(0));
-		jrbPkcs10.setToolTipText(res.getString("DGenerateCsr.jrbPkcs10.tooltip"));
-
-		jrbSpkac = new JRadioButton(res.getString("DGenerateCsr.jrbSpkac.text"), true);
-		PlatformUtil.setMnemonic(jrbSpkac, res.getString("DGenerateCsr.jrbSpkac.mnemonic").charAt(0));
-		jrbSpkac.setToolTipText(res.getString("DGenerateCsr.jrbSpkac.tooltip"));
-
-		ButtonGroup buttonGroup = new ButtonGroup();
-		buttonGroup.add(jrbPkcs10);
-		buttonGroup.add(jrbSpkac);
-
-		jrbPkcs10.setSelected(true);
-
-		jlSignatureAlgorithm = new JLabel(res.getString("DGenerateCsr.jlSignatureAlgorithm.text"));
-
-		jcbSignatureAlgorithm = new JComboBox<>();
-		jcbSignatureAlgorithm.setMaximumRowCount(10);
-		jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateCsr.jcbSignatureAlgorithm.tooltip"));
-		DialogHelper.populateSigAlgs(keyPairType, privateKey, jcbSignatureAlgorithm);
-
-		jlName = new JLabel(res.getString("DGenerateCsr.jlName.text"));
-
-		jdnName = new JDistinguishedName(res.getString("DGenerateCsr.jdnName.title"), 40, true);
-		jdnName.setToolTipText(res.getString("DGenerateCsr.jdnName.tooltip"));
-		jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(subjectDN));
-
-		jlChallenge = new JLabel(res.getString("DGenerateCsr.jlChallenge.text"));
-
-		jtfChallenge = new JTextField(15);
-		jtfChallenge.setToolTipText(res.getString("DGenerateCsr.jtfChallenge.tooltip"));
-
-		jlUnstructuredName = new JLabel(res.getString("DGenerateCsr.jlUnstructuredName.text"));
-
-		jtfUnstructuredName = new JTextField(40);
-		jtfUnstructuredName.setToolTipText(res.getString("DGenerateCsr.jtfUnstructuredName.tooltip"));
-
-		jlExtensions = new JLabel(res.getString("DGenerateCsr.jlExtensions.text"));
-
-		jcbExtensions = new JCheckBox(res.getString("DGenerateCsr.jcbExtensions.text"));
-		jcbExtensions.setToolTipText(res.getString("DGenerateCsr.jcbExtensions.tooltip"));
-		jcbExtensions.setSelected(true);
-
-		jlCsrFile = new JLabel(res.getString("DGenerateCsr.jlCsrFile.text"));
-
-		jtfCsrFile = new JTextField(40);
-		jtfCsrFile.setToolTipText(res.getString("DGenerateCsr.jtfCsrFile.tooltip"));
-		populateCsrFileName();
-
-		jbBrowse = new JButton(res.getString("DGenerateCsr.jbBrowse.text"));
-		jbBrowse.setToolTipText(res.getString("DGenerateCsr.jbBrowse.tooltip"));
-		PlatformUtil.setMnemonic(jbBrowse, res.getString("DGenerateCsr.jbBrowse.mnemonic").charAt(0));
-
-		jbOK = new JButton(res.getString("DGenerateCsr.jbOK.text"));
-		jbCancel = new JButton(res.getString("DGenerateCsr.jbCancel.text"));
-
-		// layout
-		Container pane = getContentPane();
-		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
-		pane.add(jlFormat, "");
-		pane.add(jrbPkcs10, "split 2");
-		pane.add(jrbSpkac, "wrap");
-		pane.add(jlSignatureAlgorithm, "");
-		pane.add(jcbSignatureAlgorithm, "wrap");
-		pane.add(jlName, "");
-		pane.add(jdnName, "spanx, wrap");
-		pane.add(jlChallenge, "");
-		pane.add(jtfChallenge, "wrap");
-		pane.add(jlUnstructuredName, "");
-		pane.add(jtfUnstructuredName, "wrap");
-		pane.add(jlExtensions, "");
-		pane.add(jcbExtensions, "wrap");
-		pane.add(jlCsrFile, "");
-		pane.add(jtfCsrFile, "");
-		pane.add(jbBrowse, "wrap");
-		pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
-		pane.add(jbCancel, "spanx, split 2, tag cancel");
-		pane.add(jbOK, "tag ok");
-
-		// actions
-		jrbPkcs10.addChangeListener(e -> {
-			// unstructured name and extensions are Pkcs10-only
-			if (jrbPkcs10.isSelected()) {
-				jlUnstructuredName.setEnabled(true);
-				jtfUnstructuredName.setEnabled(true);
-				jlExtensions.setEnabled(true);
-				jcbExtensions.setEnabled(true);
-			} else {
-				jlUnstructuredName.setEnabled(false);
-				jtfUnstructuredName.setEnabled(false);
-				jlExtensions.setEnabled(false);
-				jcbExtensions.setEnabled(false);
-			}
-		});
-
-		jbBrowse.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DGenerateCsr.this);
-				browsePressed();
-			} finally {
-				CursorUtil.setCursorFree(DGenerateCsr.this);
-			}
-		});
-
-		jbOK.addActionListener(evt -> okPressed());
-
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
-
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
-
-		setResizable(false);
-
-		getRootPane().setDefaultButton(jbOK);
-
-		pack();
-	}
-
-	private void populateCsrFileName() {
-		String sanitizedAlias = FileNameUtil.cleanFileName(alias);
-		File csrFile = new File(path, sanitizedAlias + ".csr");
-		jtfCsrFile.setText(csrFile.getPath());
-	}
-
-	private void browsePressed() {
-		JFileChooser chooser = null;
-
-		if (jrbPkcs10.isSelected()) {
-			chooser = FileChooserFactory.getPkcs10FileChooser();
-		} else {
-			chooser = FileChooserFactory.getSpkacFileChooser();
-		}
-
-		File currentExportFile = new File(jtfCsrFile.getText().trim());
-
-		if (currentExportFile.getParentFile() != null && currentExportFile.getParentFile().exists()) {
-			chooser.setCurrentDirectory(currentExportFile.getParentFile());
-			chooser.setSelectedFile(currentExportFile);
-		} else {
-			chooser.setCurrentDirectory(CurrentDirectory.get());
-		}
-
-		chooser.setDialogTitle(res.getString("DGenerateCsr.ChooseCsrFile.Title"));
-		chooser.setMultiSelectionEnabled(false);
-
-		int rtnValue = JavaFXFileChooser.isFxAvailable() ? chooser.showSaveDialog(this)
-				: chooser.showDialog(this, res.getString("DGenerateCsr.ChooseCsrFile.button"));
-		if (rtnValue == JFileChooser.APPROVE_OPTION) {
-			File chosenFile = chooser.getSelectedFile();
-			CurrentDirectory.updateForFile(chosenFile);
-			jtfCsrFile.setText(chosenFile.toString());
-			jtfCsrFile.setCaretPosition(0);
-		}
-	}
-
-	/**
-	 * Has the user chosen to generate CSR?
-	 *
-	 * @return True if they have
-	 */
-	public boolean generateSelected() {
-		return generateSelected;
-	}
-
-	/**
-	 * Get the selected format.
-	 *
-	 * @return CSR format or null if dialog cancelled
-	 */
-	public CsrType getFormat() {
-		return format;
-	}
-
-	/**
-	 * Get the selected signature type.
-	 *
-	 * @return Signature algorithm or null if dialog cancelled
-	 */
-	public SignatureType getSignatureType() {
-		return signatureAlgorithm;
-	}
-
-	/**
-	 * Get chosen challenge.
-	 *
-	 * @return Challenge or null if dialog cancelled
-	 */
-	public String getChallenge() {
-		return challenge;
-	}
-
-	/**
-	 * Get unstructured name.
-	 *
-	 * @return unstructuredName or null if dialog cancelled
-	 */
-	public String getUnstructuredName() {
-		return unstructuredName;
-	}
-
-	/**
-	 * Add extensions to request?
-	 *
-	 * @return true if user wants to add extensions
-	 */
-	public boolean isAddExtensionsWanted() {
-		return addExtensionsWanted;
-	}
-
-
-	/**
-	 * Get chosen CSR file.
-	 *
-	 * @return CSR file or null if dialog cancelled
-	 */
-	public File getCsrFile() {
-		return csrFile;
-	}
-
-	/**
-	 * Get chosen DN (might be the same that was taken from certificate or a completely different one).
-	 *
-	 * @return DN for CSR
-	 */
-	public X500Principal getSubjectDN() {
-		return subjectDN;
-	}
-
-	private void okPressed() {
-		if (jrbPkcs10.isSelected()) {
-			format = PKCS10;
-		} else {
-			format = SPKAC;
-		}
-
-		signatureAlgorithm = jcbSignatureAlgorithm.getItemAt(jcbSignatureAlgorithm.getSelectedIndex());
-
-		if (jdnName.getDistinguishedName().toString().isEmpty()) {
-			JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		try {
-			subjectDN = X500NameUtils.x500NameToX500Principal(jdnName.getDistinguishedName());
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		challenge = jtfChallenge.getText();
-		if (challenge.length() == 0) {
-			if (format == SPKAC) {
-				// Challenge is mandatory for SPKAC
-				JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.ChallengeRequiredForSpkac.message"),
-						getTitle(), JOptionPane.WARNING_MESSAGE);
-				return;
-			} else {
-				// Challenge is optional for PKCS #10
-				challenge = null;
-			}
-		}
-
-		unstructuredName = jtfUnstructuredName.getText();
-		if (unstructuredName.length() == 0) {
-			unstructuredName = null;
-		}
-
-		addExtensionsWanted = jcbExtensions.isSelected();
-
-		String csrFileStr = jtfCsrFile.getText().trim();
-		if (csrFileStr.length() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.CsrFileRequired.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-
-		File csrFile = new File(csrFileStr);
-
-		if (csrFile.isFile()) {
-			String message = MessageFormat.format(res.getString("DGenerateCsr.OverWriteCsrFile.message"), csrFile);
-
-			int selected = JOptionPane.showConfirmDialog(this, message, getTitle(), JOptionPane.YES_NO_OPTION);
-			if (selected != JOptionPane.YES_OPTION) {
-				return;
-			}
-		}
-
-		this.csrFile = csrFile;
-
-		generateSelected = true;
-
-		closeDialog();
-	}
-
-	private void cancelPressed() {
-		closeDialog();
-	}
-
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
-
-	// for quick testing
-	public static void main(String[] args) throws Exception {
-		Security.addProvider(new BouncyCastleProvider());
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
-		PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
-		X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
-
-		DialogViewer.run(new DGenerateCsr(new JFrame(), "alias (test)", dn, privateKey, KeyPairType.RSA, ""));
-	}
+    private static final long serialVersionUID = 1L;
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+
+    private static final String CANCEL_KEY = "CANCEL_KEY";
+
+    private JLabel jlFormat;
+    private JRadioButton jrbPkcs10;
+    private JRadioButton jrbSpkac;
+    private JLabel jlSignatureAlgorithm;
+    private JComboBox<SignatureType> jcbSignatureAlgorithm;
+    private JLabel jlName;
+    private JDistinguishedName jdnName;
+    private JLabel jlChallenge;
+    private JTextField jtfChallenge;
+    private JLabel jlUnstructuredName;
+    private JTextField jtfUnstructuredName;
+    private JLabel jlExtensions;
+    private JCheckBox jcbExtensions;
+    private JLabel jlCsrFile;
+    private JTextField jtfCsrFile;
+    private JButton jbBrowse;
+    private JButton jbOK;
+    private JButton jbCancel;
+
+    private boolean generateSelected = false;
+    private String alias;
+    private X500Principal subjectDN;
+    private PrivateKey privateKey;
+    private KeyPairType keyPairType;
+    private CsrType format;
+    private SignatureType signatureAlgorithm;
+    private String challenge;
+    private String unstructuredName;
+    private boolean addExtensionsWanted;
+    private File csrFile;
+
+    private String path;
+
+    /**
+     * Creates a new DGenerateCsr dialog.
+     *
+     * @param parent      The parent frame
+     * @param subjectDN   Subject DN of certificate
+     * @param privateKey  Private key
+     * @param keyPairType Key pair algorithm
+     * @param path        Path to keystore file
+     * @throws CryptoException A problem was encountered with the supplied private key
+     */
+    public DGenerateCsr(JFrame parent, String alias, X500Principal subjectDN, PrivateKey privateKey,
+                        KeyPairType keyPairType, String path) throws CryptoException {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.alias = alias;
+        this.subjectDN = subjectDN;
+        this.privateKey = privateKey;
+        this.keyPairType = keyPairType;
+        this.path = path;
+        setTitle(res.getString("DGenerateCsr.Title"));
+        initComponents();
+    }
+
+    private void initComponents() throws CryptoException {
+        jlFormat = new JLabel(res.getString("DGenerateCsr.jlFormat.text"));
+
+        jrbPkcs10 = new JRadioButton(res.getString("DGenerateCsr.jrbPkcs10.text"), false);
+        PlatformUtil.setMnemonic(jrbPkcs10, res.getString("DGenerateCsr.jrbPkcs10.mnemonic").charAt(0));
+        jrbPkcs10.setToolTipText(res.getString("DGenerateCsr.jrbPkcs10.tooltip"));
+
+        jrbSpkac = new JRadioButton(res.getString("DGenerateCsr.jrbSpkac.text"), true);
+        PlatformUtil.setMnemonic(jrbSpkac, res.getString("DGenerateCsr.jrbSpkac.mnemonic").charAt(0));
+        jrbSpkac.setToolTipText(res.getString("DGenerateCsr.jrbSpkac.tooltip"));
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(jrbPkcs10);
+        buttonGroup.add(jrbSpkac);
+
+        jrbPkcs10.setSelected(true);
+
+        jlSignatureAlgorithm = new JLabel(res.getString("DGenerateCsr.jlSignatureAlgorithm.text"));
+
+        jcbSignatureAlgorithm = new JComboBox<>();
+        jcbSignatureAlgorithm.setMaximumRowCount(10);
+        jcbSignatureAlgorithm.setToolTipText(res.getString("DGenerateCsr.jcbSignatureAlgorithm.tooltip"));
+        DialogHelper.populateSigAlgs(keyPairType, privateKey, jcbSignatureAlgorithm);
+
+        jlName = new JLabel(res.getString("DGenerateCsr.jlName.text"));
+
+        jdnName = new JDistinguishedName(res.getString("DGenerateCsr.jdnName.title"), 40, true);
+        jdnName.setToolTipText(res.getString("DGenerateCsr.jdnName.tooltip"));
+        jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(subjectDN));
+
+        jlChallenge = new JLabel(res.getString("DGenerateCsr.jlChallenge.text"));
+
+        jtfChallenge = new JTextField(15);
+        jtfChallenge.setToolTipText(res.getString("DGenerateCsr.jtfChallenge.tooltip"));
+
+        jlUnstructuredName = new JLabel(res.getString("DGenerateCsr.jlUnstructuredName.text"));
+
+        jtfUnstructuredName = new JTextField(40);
+        jtfUnstructuredName.setToolTipText(res.getString("DGenerateCsr.jtfUnstructuredName.tooltip"));
+
+        jlExtensions = new JLabel(res.getString("DGenerateCsr.jlExtensions.text"));
+
+        jcbExtensions = new JCheckBox(res.getString("DGenerateCsr.jcbExtensions.text"));
+        jcbExtensions.setToolTipText(res.getString("DGenerateCsr.jcbExtensions.tooltip"));
+        jcbExtensions.setSelected(true);
+
+        jlCsrFile = new JLabel(res.getString("DGenerateCsr.jlCsrFile.text"));
+
+        jtfCsrFile = new JTextField(40);
+        jtfCsrFile.setToolTipText(res.getString("DGenerateCsr.jtfCsrFile.tooltip"));
+        populateCsrFileName();
+
+        jbBrowse = new JButton(res.getString("DGenerateCsr.jbBrowse.text"));
+        jbBrowse.setToolTipText(res.getString("DGenerateCsr.jbBrowse.tooltip"));
+        PlatformUtil.setMnemonic(jbBrowse, res.getString("DGenerateCsr.jbBrowse.mnemonic").charAt(0));
+
+        jbOK = new JButton(res.getString("DGenerateCsr.jbOK.text"));
+        jbCancel = new JButton(res.getString("DGenerateCsr.jbCancel.text"));
+
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+        pane.add(jlFormat, "");
+        pane.add(jrbPkcs10, "split 2");
+        pane.add(jrbSpkac, "wrap");
+        pane.add(jlSignatureAlgorithm, "");
+        pane.add(jcbSignatureAlgorithm, "wrap");
+        pane.add(jlName, "");
+        pane.add(jdnName, "spanx, wrap");
+        pane.add(jlChallenge, "");
+        pane.add(jtfChallenge, "wrap");
+        pane.add(jlUnstructuredName, "");
+        pane.add(jtfUnstructuredName, "wrap");
+        pane.add(jlExtensions, "");
+        pane.add(jcbExtensions, "wrap");
+        pane.add(jlCsrFile, "");
+        pane.add(jtfCsrFile, "");
+        pane.add(jbBrowse, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
+
+        // actions
+        jrbPkcs10.addChangeListener(e -> {
+            // unstructured name and extensions are Pkcs10-only
+            if (jrbPkcs10.isSelected()) {
+                jlUnstructuredName.setEnabled(true);
+                jtfUnstructuredName.setEnabled(true);
+                jlExtensions.setEnabled(true);
+                jcbExtensions.setEnabled(true);
+            } else {
+                jlUnstructuredName.setEnabled(false);
+                jtfUnstructuredName.setEnabled(false);
+                jlExtensions.setEnabled(false);
+                jcbExtensions.setEnabled(false);
+            }
+        });
+
+        jbBrowse.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DGenerateCsr.this);
+                browsePressed();
+            } finally {
+                CursorUtil.setCursorFree(DGenerateCsr.this);
+            }
+        });
+
+        jbOK.addActionListener(evt -> okPressed());
+
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
+
+        setResizable(false);
+
+        getRootPane().setDefaultButton(jbOK);
+
+        pack();
+    }
+
+    private void populateCsrFileName() {
+        String sanitizedAlias = FileNameUtil.cleanFileName(alias);
+        File csrFile = new File(path, sanitizedAlias + ".csr");
+        jtfCsrFile.setText(csrFile.getPath());
+    }
+
+    private void browsePressed() {
+        JFileChooser chooser = null;
+
+        if (jrbPkcs10.isSelected()) {
+            chooser = FileChooserFactory.getPkcs10FileChooser();
+        } else {
+            chooser = FileChooserFactory.getSpkacFileChooser();
+        }
+
+        File currentExportFile = new File(jtfCsrFile.getText().trim());
+
+        if (currentExportFile.getParentFile() != null && currentExportFile.getParentFile().exists()) {
+            chooser.setCurrentDirectory(currentExportFile.getParentFile());
+            chooser.setSelectedFile(currentExportFile);
+        } else {
+            chooser.setCurrentDirectory(CurrentDirectory.get());
+        }
+
+        chooser.setDialogTitle(res.getString("DGenerateCsr.ChooseCsrFile.Title"));
+        chooser.setMultiSelectionEnabled(false);
+
+        int rtnValue = JavaFXFileChooser.isFxAvailable() ?
+                       chooser.showSaveDialog(this) :
+                       chooser.showDialog(this, res.getString("DGenerateCsr.ChooseCsrFile.button"));
+        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            File chosenFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(chosenFile);
+            jtfCsrFile.setText(chosenFile.toString());
+            jtfCsrFile.setCaretPosition(0);
+        }
+    }
+
+    /**
+     * Has the user chosen to generate CSR?
+     *
+     * @return True if they have
+     */
+    public boolean generateSelected() {
+        return generateSelected;
+    }
+
+    /**
+     * Get the selected format.
+     *
+     * @return CSR format or null if dialog cancelled
+     */
+    public CsrType getFormat() {
+        return format;
+    }
+
+    /**
+     * Get the selected signature type.
+     *
+     * @return Signature algorithm or null if dialog cancelled
+     */
+    public SignatureType getSignatureType() {
+        return signatureAlgorithm;
+    }
+
+    /**
+     * Get chosen challenge.
+     *
+     * @return Challenge or null if dialog cancelled
+     */
+    public String getChallenge() {
+        return challenge;
+    }
+
+    /**
+     * Get unstructured name.
+     *
+     * @return unstructuredName or null if dialog cancelled
+     */
+    public String getUnstructuredName() {
+        return unstructuredName;
+    }
+
+    /**
+     * Add extensions to request?
+     *
+     * @return true if user wants to add extensions
+     */
+    public boolean isAddExtensionsWanted() {
+        return addExtensionsWanted;
+    }
+
+    /**
+     * Get chosen CSR file.
+     *
+     * @return CSR file or null if dialog cancelled
+     */
+    public File getCsrFile() {
+        return csrFile;
+    }
+
+    /**
+     * Get chosen DN (might be the same that was taken from certificate or a completely different one).
+     *
+     * @return DN for CSR
+     */
+    public X500Principal getSubjectDN() {
+        return subjectDN;
+    }
+
+    private void okPressed() {
+        if (jrbPkcs10.isSelected()) {
+            format = PKCS10;
+        } else {
+            format = SPKAC;
+        }
+
+        signatureAlgorithm = jcbSignatureAlgorithm.getItemAt(jcbSignatureAlgorithm.getSelectedIndex());
+
+        if (jdnName.getDistinguishedName().toString().isEmpty()) {
+            JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        try {
+            subjectDN = X500NameUtils.x500NameToX500Principal(jdnName.getDistinguishedName());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        challenge = jtfChallenge.getText();
+        if (challenge.length() == 0) {
+            if (format == SPKAC) {
+                // Challenge is mandatory for SPKAC
+                JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.ChallengeRequiredForSpkac.message"),
+                                              getTitle(), JOptionPane.WARNING_MESSAGE);
+                return;
+            } else {
+                // Challenge is optional for PKCS #10
+                challenge = null;
+            }
+        }
+
+        unstructuredName = jtfUnstructuredName.getText();
+        if (unstructuredName.length() == 0) {
+            unstructuredName = null;
+        }
+
+        addExtensionsWanted = jcbExtensions.isSelected();
+
+        String csrFileStr = jtfCsrFile.getText().trim();
+        if (csrFileStr.length() == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.CsrFileRequired.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        File csrFile = new File(csrFileStr);
+
+        if (csrFile.isFile()) {
+            String message = MessageFormat.format(res.getString("DGenerateCsr.OverWriteCsrFile.message"), csrFile);
+
+            int selected = JOptionPane.showConfirmDialog(this, message, getTitle(), JOptionPane.YES_NO_OPTION);
+            if (selected != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
+        this.csrFile = csrFile;
+
+        generateSelected = true;
+
+        closeDialog();
+    }
+
+    private void cancelPressed() {
+        closeDialog();
+    }
+
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
+        X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
+
+        DialogViewer.run(new DGenerateCsr(new JFrame(), "alias (test)", dn, privateKey, KeyPairType.RSA, ""));
+    }
 }

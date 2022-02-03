@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,186 +40,178 @@ import org.kse.utilities.io.HexUtil;
 
 /**
  * Component to edit a key identifier.
- *
  */
 public class JKeyIdentifier extends JPanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private JTextField jtfKeyIdentifier;
-	private JButton jbEditKeyIdentifier;
-	private JButton jbClearKeyIdentifier;
+    private JTextField jtfKeyIdentifier;
+    private JButton jbEditKeyIdentifier;
+    private JButton jbClearKeyIdentifier;
 
-	private String title;
-	private PublicKey publicKey;
-	private byte[] keyIdentifier;
+    private String title;
+    private PublicKey publicKey;
+    private byte[] keyIdentifier;
 
-	/**
-	 * Construct a JKeyIdentifier.
-	 *
-	 * @param title
-	 *            Title of edit dialog
-	 * @param publicKey
-	 *            Public key
-	 */
-	public JKeyIdentifier(String title, PublicKey publicKey) {
-		this.title = title;
-		this.publicKey = publicKey;
-		initComponents();
-	}
+    /**
+     * Construct a JKeyIdentifier.
+     *
+     * @param title     Title of edit dialog
+     * @param publicKey Public key
+     */
+    public JKeyIdentifier(String title, PublicKey publicKey) {
+        this.title = title;
+        this.publicKey = publicKey;
+        initComponents();
+    }
 
-	private void initComponents() {
-		jtfKeyIdentifier = new JTextField(40);
-		jtfKeyIdentifier.setEditable(false);
+    private void initComponents() {
+        jtfKeyIdentifier = new JTextField(40);
+        jtfKeyIdentifier.setEditable(false);
 
-		GridBagConstraints gbc_jtfKeyIdentifier = new GridBagConstraints();
-		gbc_jtfKeyIdentifier.gridwidth = 1;
-		gbc_jtfKeyIdentifier.gridheight = 1;
-		gbc_jtfKeyIdentifier.gridx = 0;
-		gbc_jtfKeyIdentifier.gridy = 0;
-		gbc_jtfKeyIdentifier.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jtfKeyIdentifier = new GridBagConstraints();
+        gbc_jtfKeyIdentifier.gridwidth = 1;
+        gbc_jtfKeyIdentifier.gridheight = 1;
+        gbc_jtfKeyIdentifier.gridx = 0;
+        gbc_jtfKeyIdentifier.gridy = 0;
+        gbc_jtfKeyIdentifier.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon editIcon = new ImageIcon(getClass().getResource(
-				"images/edit_key_id.png"));
-		jbEditKeyIdentifier = new JButton(editIcon);
-		jbEditKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbEditKeyIdentifier.tooltip"));
-		jbEditKeyIdentifier.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JKeyIdentifier.this);
-				editKeyIdentifier();
-			} finally {
-				CursorUtil.setCursorFree(JKeyIdentifier.this);
-			}
-		});
+        ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_key_id.png"));
+        jbEditKeyIdentifier = new JButton(editIcon);
+        jbEditKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbEditKeyIdentifier.tooltip"));
+        jbEditKeyIdentifier.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JKeyIdentifier.this);
+                editKeyIdentifier();
+            } finally {
+                CursorUtil.setCursorFree(JKeyIdentifier.this);
+            }
+        });
 
-		GridBagConstraints gbc_jbEditKeyIdentifier = new GridBagConstraints();
-		gbc_jbEditKeyIdentifier.gridwidth = 1;
-		gbc_jbEditKeyIdentifier.gridheight = 1;
-		gbc_jbEditKeyIdentifier.gridx = 1;
-		gbc_jbEditKeyIdentifier.gridy = 0;
-		gbc_jbEditKeyIdentifier.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jbEditKeyIdentifier = new GridBagConstraints();
+        gbc_jbEditKeyIdentifier.gridwidth = 1;
+        gbc_jbEditKeyIdentifier.gridheight = 1;
+        gbc_jbEditKeyIdentifier.gridx = 1;
+        gbc_jbEditKeyIdentifier.gridy = 0;
+        gbc_jbEditKeyIdentifier.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon clearIcon = new ImageIcon(getClass().getResource(
-				"images/clear_key_id.png"));
-		jbClearKeyIdentifier = new JButton(clearIcon);
-		jbClearKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbClearKeyIdentifier.tooltip"));
-		jbClearKeyIdentifier.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JKeyIdentifier.this);
-				clearKeyIdentifier();
-			} finally {
-				CursorUtil.setCursorFree(JKeyIdentifier.this);
-			}
-		});
+        ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_key_id.png"));
+        jbClearKeyIdentifier = new JButton(clearIcon);
+        jbClearKeyIdentifier.setToolTipText(res.getString("JKeyIdentifier.jbClearKeyIdentifier.tooltip"));
+        jbClearKeyIdentifier.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JKeyIdentifier.this);
+                clearKeyIdentifier();
+            } finally {
+                CursorUtil.setCursorFree(JKeyIdentifier.this);
+            }
+        });
 
-		GridBagConstraints gbc_jbClearKeyIdentifier = new GridBagConstraints();
-		gbc_jbClearKeyIdentifier.gridwidth = 1;
-		gbc_jbClearKeyIdentifier.gridheight = 1;
-		gbc_jbClearKeyIdentifier.gridx = 2;
-		gbc_jbClearKeyIdentifier.gridy = 0;
-		gbc_jbClearKeyIdentifier.insets = new Insets(0, 0, 0, 0);
+        GridBagConstraints gbc_jbClearKeyIdentifier = new GridBagConstraints();
+        gbc_jbClearKeyIdentifier.gridwidth = 1;
+        gbc_jbClearKeyIdentifier.gridheight = 1;
+        gbc_jbClearKeyIdentifier.gridx = 2;
+        gbc_jbClearKeyIdentifier.gridy = 0;
+        gbc_jbClearKeyIdentifier.insets = new Insets(0, 0, 0, 0);
 
-		setLayout(new GridBagLayout());
-		add(jtfKeyIdentifier, gbc_jtfKeyIdentifier);
-		add(jbEditKeyIdentifier, gbc_jbEditKeyIdentifier);
-		add(jbClearKeyIdentifier, gbc_jbClearKeyIdentifier);
+        setLayout(new GridBagLayout());
+        add(jtfKeyIdentifier, gbc_jtfKeyIdentifier);
+        add(jbEditKeyIdentifier, gbc_jbEditKeyIdentifier);
+        add(jbClearKeyIdentifier, gbc_jbClearKeyIdentifier);
 
-		populate();
-	}
+        populate();
+    }
 
-	/**
-	 * Get key identifier.
-	 *
-	 * @return Key identifier, or null if none chosen
-	 */
-	public byte[] getKeyIdentifier() {
-		return keyIdentifier;
-	}
+    /**
+     * Get key identifier.
+     *
+     * @return Key identifier, or null if none chosen
+     */
+    public byte[] getKeyIdentifier() {
+        return keyIdentifier;
+    }
 
-	/**
-	 * Set key identifer.
-	 *
-	 * @param keyIdentifier
-	 *            Key identifier
-	 */
-	public void setKeyIdentifier(byte[] keyIdentifier) {
-		this.keyIdentifier = keyIdentifier;
-		populate();
-	}
+    /**
+     * Set key identifer.
+     *
+     * @param keyIdentifier Key identifier
+     */
+    public void setKeyIdentifier(byte[] keyIdentifier) {
+        this.keyIdentifier = keyIdentifier;
+        populate();
+    }
 
-	/**
-	 * Sets whether or not the component is enabled.
-	 *
-	 * @param enabled
-	 *            True if this component should be enabled, false otherwise
-	 */
-	@Override
-	public void setEnabled(boolean enabled) {
-		jbEditKeyIdentifier.setEnabled(enabled);
-		jbClearKeyIdentifier.setEnabled(enabled);
-	}
+    /**
+     * Sets whether or not the component is enabled.
+     *
+     * @param enabled True if this component should be enabled, false otherwise
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        jbEditKeyIdentifier.setEnabled(enabled);
+        jbClearKeyIdentifier.setEnabled(enabled);
+    }
 
-	/**
-	 * Set component's tooltip text.
-	 *
-	 * @param toolTipText
-	 *            Tooltip text
-	 */
-	@Override
-	public void setToolTipText(String toolTipText) {
-		super.setToolTipText(toolTipText);
-		jtfKeyIdentifier.setToolTipText(toolTipText);
-	}
+    /**
+     * Set component's tooltip text.
+     *
+     * @param toolTipText Tooltip text
+     */
+    @Override
+    public void setToolTipText(String toolTipText) {
+        super.setToolTipText(toolTipText);
+        jtfKeyIdentifier.setToolTipText(toolTipText);
+    }
 
-	private void populate() {
-		if (keyIdentifier != null) {
-			jtfKeyIdentifier.setText(HexUtil.getHexString(keyIdentifier));
-			jbClearKeyIdentifier.setEnabled(true);
-		} else {
-			jtfKeyIdentifier.setText("");
-			jbClearKeyIdentifier.setEnabled(false);
-		}
+    private void populate() {
+        if (keyIdentifier != null) {
+            jtfKeyIdentifier.setText(HexUtil.getHexString(keyIdentifier));
+            jbClearKeyIdentifier.setEnabled(true);
+        } else {
+            jtfKeyIdentifier.setText("");
+            jbClearKeyIdentifier.setEnabled(false);
+        }
 
-		jtfKeyIdentifier.setCaretPosition(0);
-	}
+        jtfKeyIdentifier.setCaretPosition(0);
+    }
 
-	private void editKeyIdentifier() {
-		Container container = getTopLevelAncestor();
+    private void editKeyIdentifier() {
+        Container container = getTopLevelAncestor();
 
-		try {
-			DKeyIdentifierChooser dKeyIdentifierChooser = null;
+        try {
+            DKeyIdentifierChooser dKeyIdentifierChooser = null;
 
-			if (container instanceof JDialog) {
-				dKeyIdentifierChooser = new DKeyIdentifierChooser((JDialog) container, title, publicKey, keyIdentifier);
-			} else {
-				dKeyIdentifierChooser = new DKeyIdentifierChooser((JFrame) container, title, publicKey, keyIdentifier);
-			}
-			dKeyIdentifierChooser.setLocationRelativeTo(container);
-			dKeyIdentifierChooser.setVisible(true);
+            if (container instanceof JDialog) {
+                dKeyIdentifierChooser = new DKeyIdentifierChooser((JDialog) container, title, publicKey, keyIdentifier);
+            } else {
+                dKeyIdentifierChooser = new DKeyIdentifierChooser((JFrame) container, title, publicKey, keyIdentifier);
+            }
+            dKeyIdentifierChooser.setLocationRelativeTo(container);
+            dKeyIdentifierChooser.setVisible(true);
 
-			byte[] newKeyIdentifier = dKeyIdentifierChooser.getKeyIdentifier();
+            byte[] newKeyIdentifier = dKeyIdentifierChooser.getKeyIdentifier();
 
-			if (newKeyIdentifier == null) {
-				return;
-			}
+            if (newKeyIdentifier == null) {
+                return;
+            }
 
-			setKeyIdentifier(newKeyIdentifier);
-		} catch (CryptoException ex) {
-			DError dError = null;
+            setKeyIdentifier(newKeyIdentifier);
+        } catch (CryptoException ex) {
+            DError dError = null;
 
-			if (container instanceof JDialog) {
-				dError = new DError((JDialog) container, ex);
-			} else {
-				dError = new DError((JFrame) container, ex);
-			}
+            if (container instanceof JDialog) {
+                dError = new DError((JDialog) container, ex);
+            } else {
+                dError = new DError((JFrame) container, ex);
+            }
 
-			dError.setLocationRelativeTo(container);
-			dError.setVisible(true);
-		}
-	}
+            dError.setLocationRelativeTo(container);
+            dError.setVisible(true);
+        }
+    }
 
-	private void clearKeyIdentifier() {
-		setKeyIdentifier(null);
-	}
+    private void clearKeyIdentifier() {
+        setKeyIdentifier(null);
+    }
 }

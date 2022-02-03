@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -48,150 +48,142 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Dialog used for entering a KeyStore alias.
- *
  */
 public class DGetAlias extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpAlias;
-	private JLabel jlAlias;
-	private JTextField jtfAlias;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpAlias;
+    private JLabel jlAlias;
+    private JTextField jtfAlias;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private String alias;
+    private String alias;
 
-	/**
-	 * Creates a new DGetAlias dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog's title
-	 * @param alias
-	 *            The alias to display initially
-	 */
-	public DGetAlias(JFrame parent, String title, String alias) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		initComponents(alias);
-	}
+    /**
+     * Creates a new DGetAlias dialog.
+     *
+     * @param parent The parent frame
+     * @param title  The dialog's title
+     * @param alias  The alias to display initially
+     */
+    public DGetAlias(JFrame parent, String title, String alias) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        initComponents(alias);
+    }
 
-	/**
-	 * Creates new DGetAlias dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog's title
-	 * @param modality
-	 *            Is the dialog modal?
-	 * @param alias
-	 *            The alias to display initially
-	 */
-	public DGetAlias(JDialog parent, String title, Dialog.ModalityType modality, String alias) {
-		super(parent, title, modality);
-		initComponents(alias);
-	}
+    /**
+     * Creates new DGetAlias dialog where the parent is a dialog.
+     *
+     * @param parent   The parent dialog
+     * @param title    The dialog's title
+     * @param modality Is the dialog modal?
+     * @param alias    The alias to display initially
+     */
+    public DGetAlias(JDialog parent, String title, Dialog.ModalityType modality, String alias) {
+        super(parent, title, modality);
+        initComponents(alias);
+    }
 
-	/**
-	 * Get the alias entered by the user.
-	 *
-	 * @return The alias, or null if none was entered
-	 */
-	public String getAlias() {
-		return alias;
-	}
+    /**
+     * Get the alias entered by the user.
+     *
+     * @return The alias, or null if none was entered
+     */
+    public String getAlias() {
+        return alias;
+    }
 
-	private void initComponents(final String alias) {
-		getContentPane().setLayout(new BorderLayout());
+    private void initComponents(final String alias) {
+        getContentPane().setLayout(new BorderLayout());
 
-		jlAlias = new JLabel(res.getString("DGetAlias.jlAlias.text"));
-		jtfAlias = new JTextField(15);
+        jlAlias = new JLabel(res.getString("DGetAlias.jlAlias.text"));
+        jtfAlias = new JTextField(15);
 
-		if (alias != null) {
-			jtfAlias.setText(alias);
-			jtfAlias.setCaretPosition(0);
-		}
+        if (alias != null) {
+            jtfAlias.setText(alias);
+            jtfAlias.setCaretPosition(0);
+        }
 
-		jbOK = new JButton(res.getString("DGetAlias.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DGetAlias.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DGetAlias.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DGetAlias.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpAlias = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpAlias.add(jlAlias);
-		jpAlias.add(jtfAlias);
-		jpAlias.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
+        jpAlias = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpAlias.add(jlAlias);
+        jpAlias.add(jtfAlias);
+        jpAlias.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                             new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().add(jpAlias, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpAlias, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> {
-			jtfAlias.requestFocus();
-			if (alias != null) {
-				jtfAlias.setSelectionStart(0);
-				jtfAlias.setSelectionEnd(alias.length());
-			}
-		});
-	}
+        SwingUtilities.invokeLater(() -> {
+            jtfAlias.requestFocus();
+            if (alias != null) {
+                jtfAlias.setSelectionStart(0);
+                jtfAlias.setSelectionEnd(alias.length());
+            }
+        });
+    }
 
-	private boolean checkAlias() {
-		String alias = jtfAlias.getText().trim().toLowerCase();
+    private boolean checkAlias() {
+        String alias = jtfAlias.getText().trim().toLowerCase();
 
-		if (alias.length() > 0) {
-			this.alias = alias;
-			return true;
-		}
+        if (alias.length() > 0) {
+            this.alias = alias;
+            return true;
+        }
 
-		JOptionPane.showMessageDialog(this, res.getString("DGetAlias.AliasReq.message"), getTitle(),
-				JOptionPane.WARNING_MESSAGE);
-		return false;
-	}
+        JOptionPane.showMessageDialog(this, res.getString("DGetAlias.AliasReq.message"), getTitle(),
+                                      JOptionPane.WARNING_MESSAGE);
+        return false;
+    }
 
-	private void okPressed() {
-		if (checkAlias()) {
-			closeDialog();
-		}
-	}
+    private void okPressed() {
+        if (checkAlias()) {
+            closeDialog();
+        }
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

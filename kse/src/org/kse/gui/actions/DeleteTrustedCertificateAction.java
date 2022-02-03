@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,71 +34,67 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to delete the selected trusted certificate.
- *
  */
 public class DeleteTrustedCertificateAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public DeleteTrustedCertificateAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public DeleteTrustedCertificateAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("DeleteTrustedCertificateAction.statusbar"));
-		putValue(NAME, res.getString("DeleteTrustedCertificateAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("DeleteTrustedCertificateAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/delete.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("DeleteTrustedCertificateAction.statusbar"));
+        putValue(NAME, res.getString("DeleteTrustedCertificateAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("DeleteTrustedCertificateAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/delete.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		deleteSelectedEntry();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        deleteSelectedEntry();
+    }
 
-	/**
-	 * Let the user delete the selected KeyStore entry.
-	 */
-	public void deleteSelectedEntry() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    /**
+     * Let the user delete the selected KeyStore entry.
+     */
+    public void deleteSelectedEntry() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			KeyStoreState currentState = history.getCurrentState();
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
-			String alias = kseFrame.getSelectedEntryAlias();
+            KeyStore keyStore = newState.getKeyStore();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			String message = MessageFormat.format(
-					res.getString("DeleteTrustedCertificateAction.ConfirmDelete.message"), alias);
-			int selected = JOptionPane.showConfirmDialog(frame, message,
-					res.getString("DeleteTrustedCertificateAction.DeleteEntry.Title"), JOptionPane.YES_NO_OPTION);
+            String message = MessageFormat.format(res.getString("DeleteTrustedCertificateAction.ConfirmDelete.message"),
+                                                  alias);
+            int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
+                    "DeleteTrustedCertificateAction.DeleteEntry.Title"), JOptionPane.YES_NO_OPTION);
 
-			if (selected != JOptionPane.YES_OPTION) {
-				return;
-			}
+            if (selected != JOptionPane.YES_OPTION) {
+                return;
+            }
 
-			keyStore.deleteEntry(alias);
+            keyStore.deleteEntry(alias);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.updateControls(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

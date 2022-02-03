@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,64 +25,62 @@ import javax.swing.ImageIcon;
 
 /**
  * Abstract base class for all draggable KeyStore entries.
- *
  */
 public abstract class DragEntry {
-	private String name;
+    private String name;
 
-	/**
-	 * Construct drag entry.
-	 *
-	 * @param name
-	 *            Entry name
-	 */
-	public DragEntry(String name) {
-		this.name = name;
-	}
+    /**
+     * Construct drag entry.
+     *
+     * @param name Entry name
+     */
+    public DragEntry(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Get entry name.
-	 *
-	 * @return Entry name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Get entry name.
+     *
+     * @return Entry name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Get file name for entry. File created on drag's drop.
-	 *
-	 * @return File name - "entry_name.extension".
-	 */
-	public String getFileName() {
-		return MessageFormat.format("{0}.{1}", getName(), getExtension());
-	}
+    /**
+     * Get file name for entry. File created on drag's drop.
+     *
+     * @return File name - "entry_name.extension".
+     */
+    public String getFileName() {
+        return MessageFormat.format("{0}.{1}", getName(), getExtension());
+    }
 
-	/**
-	 * Get entry image - to display while dragging.
-	 *
-	 * @return Entry image
-	 */
-	public abstract ImageIcon getImage();
+    /**
+     * Get entry image - to display while dragging.
+     *
+     * @return Entry image
+     */
+    public abstract ImageIcon getImage();
 
-	/**
-	 * Get entry file extension. Used to generate file name.
-	 *
-	 * @return File extension
-	 */
-	public abstract String getExtension();
+    /**
+     * Get entry file extension. Used to generate file name.
+     *
+     * @return File extension
+     */
+    public abstract String getExtension();
 
-	/**
-	 * Get entry content as binary. Product of dragging in file.
-	 *
-	 * @return Content
-	 */
-	public abstract byte[] getContent();
+    /**
+     * Get entry content as binary. Product of dragging in file.
+     *
+     * @return Content
+     */
+    public abstract byte[] getContent();
 
-	/**
-	 * Get entry content as a string.
-	 *
-	 * @return Content
-	 */
-	public abstract String getContentString();
+    /**
+     * Get entry content as a string.
+     *
+     * @return Content
+     */
+    public abstract String getContentString();
 }

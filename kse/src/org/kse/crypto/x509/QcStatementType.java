@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -20,13 +20,11 @@
 package org.kse.crypto.x509;
 
 /**
- *
  * Qualified Certificate Statements (1.3.6.1.5.5.7.1.3).
- *
  */
 public enum QcStatementType {
 
-	// @formatter:off
+    // @formatter:off
 
 	QC_SYNTAX_V1("1.3.6.1.5.5.7.11.1", "QCSyntaxV1"),
 	QC_SYNTAX_V2("1.3.6.1.5.5.7.11.2", "QCSyntaxV2"),
@@ -40,46 +38,45 @@ public enum QcStatementType {
 
 	// @formatter:on
 
-	private String oid;
-	private String friendlyKey;
+    private String oid;
+    private String friendlyKey;
 
-	QcStatementType(String oid, String friendlyKey) {
-		this.oid = oid;
-		this.friendlyKey = friendlyKey;
-	}
+    QcStatementType(String oid, String friendlyKey) {
+        this.oid = oid;
+        this.friendlyKey = friendlyKey;
+    }
 
-	/**
-	 * Resolve the supplied object identifier to a matching type.
-	 *
-	 * @param oid
-	 *            Object identifier
-	 * @return Type or null if none
-	 */
-	public static QcStatementType resolveOid(String oid) {
-		for (QcStatementType type : values()) {
-			if (oid.equals(type.oid())) {
-				return type;
-			}
-		}
+    /**
+     * Resolve the supplied object identifier to a matching type.
+     *
+     * @param oid Object identifier
+     * @return Type or null if none
+     */
+    public static QcStatementType resolveOid(String oid) {
+        for (QcStatementType type : values()) {
+            if (oid.equals(type.oid())) {
+                return type;
+            }
+        }
 
-		return UNKNOWN;
-	}
+        return UNKNOWN;
+    }
 
-	/**
-	 * Get Access Method's Object Identifier.
-	 *
-	 * @return Object Identifier
-	 */
-	public String oid() {
-		return oid;
-	}
+    /**
+     * Get Access Method's Object Identifier.
+     *
+     * @return Object Identifier
+     */
+    public String oid() {
+        return oid;
+    }
 
-	/**
-	 * Get friendly key for resource string
-	 *
-	 * @return Key for resource string
-	 */
-	public String getResKey() {
-		return friendlyKey;
-	}
+    /**
+     * Get friendly key for resource string
+     *
+     * @return Key for resource string
+     */
+    public String getResKey() {
+        return friendlyKey;
+    }
 }

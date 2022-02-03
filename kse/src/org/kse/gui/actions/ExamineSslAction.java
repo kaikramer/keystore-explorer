@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,70 +36,66 @@ import org.kse.utilities.ssl.SslConnectionInfos;
 
 /**
  * Action to examine an SSL connection's certificates.
- *
  */
 public class ExamineSslAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ExamineSslAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public ExamineSslAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("ExamineSslAction.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.ALT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("ExamineSslAction.statusbar"));
-		putValue(NAME, res.getString("ExamineSslAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ExamineSslAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/examinessl.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ExamineSslAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.ALT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("ExamineSslAction.statusbar"));
+        putValue(NAME, res.getString("ExamineSslAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ExamineSslAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/examinessl.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			DExamineSsl dExamineSsl = new DExamineSsl(frame, kseFrame);
-			dExamineSsl.setLocationRelativeTo(frame);
-			dExamineSsl.setVisible(true);
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            DExamineSsl dExamineSsl = new DExamineSsl(frame, kseFrame);
+            dExamineSsl.setLocationRelativeTo(frame);
+            dExamineSsl.setVisible(true);
 
-			String sslHost = dExamineSsl.getSslHost();
-			int sslPort = dExamineSsl.getSslPort();
-			boolean useClientAuth = dExamineSsl.useClientAuth();
-			KeyStoreHistory ksh = dExamineSsl.getKeyStore();
+            String sslHost = dExamineSsl.getSslHost();
+            int sslPort = dExamineSsl.getSslPort();
+            boolean useClientAuth = dExamineSsl.useClientAuth();
+            KeyStoreHistory ksh = dExamineSsl.getKeyStore();
 
-			if (dExamineSsl.wasCancelled()) {
-				return;
-			}
+            if (dExamineSsl.wasCancelled()) {
+                return;
+            }
 
-			DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, useClientAuth, ksh);
-			dExaminingSsl.setLocationRelativeTo(frame);
-			dExaminingSsl.startExamination();
-			dExaminingSsl.setVisible(true);
+            DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, useClientAuth, ksh);
+            dExaminingSsl.setLocationRelativeTo(frame);
+            dExaminingSsl.startExamination();
+            dExaminingSsl.setVisible(true);
 
-			SslConnectionInfos sslInfos = dExaminingSsl.getSSLConnectionInfos();
+            SslConnectionInfos sslInfos = dExaminingSsl.getSSLConnectionInfos();
 
-			if (sslInfos == null || sslInfos.getServerCertificates() == null) {
-				return;
-			}
+            if (sslInfos == null || sslInfos.getServerCertificates() == null) {
+                return;
+            }
 
-			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-					res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)),
-					sslInfos.getServerCertificates(), kseFrame, DViewCertificate.IMPORT_EXPORT);
-			dViewCertificate.setLocationRelativeTo(frame);
-			dViewCertificate.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
+                    res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)),
+                                                                     sslInfos.getServerCertificates(), kseFrame,
+                                                                     DViewCertificate.IMPORT_EXPORT);
+            dViewCertificate.setLocationRelativeTo(frame);
+            dViewCertificate.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

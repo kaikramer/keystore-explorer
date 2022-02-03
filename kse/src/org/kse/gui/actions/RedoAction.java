@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,67 +32,62 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to redo an action.
- *
  */
 public class RedoAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
-	private String defaultName;
+    private static final long serialVersionUID = 1L;
+    private String defaultName;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public RedoAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public RedoAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		defaultName = res.getString("RedoAction.text");
+        defaultName = res.getString("RedoAction.text");
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("RedoAction.accelerator").charAt(0), Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("RedoAction.statusbar"));
-		putValue(NAME, defaultName);
-		putValue(SHORT_DESCRIPTION, res.getString("RedoAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/redo.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("RedoAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("RedoAction.statusbar"));
+        putValue(NAME, defaultName);
+        putValue(SHORT_DESCRIPTION, res.getString("RedoAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/redo.png"))));
+    }
 
-	/**
-	 * Enable or disable the action.
-	 *
-	 * @param enabled
-	 *            True to enable, false to disable it
-	 */
-	@Override
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
+    /**
+     * Enable or disable the action.
+     *
+     * @param enabled True to enable, false to disable it
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
 
-		if (enabled) {
-			KeyStoreState currentState = kseFrame.getActiveKeyStoreHistory().getCurrentState();
-			KeyStoreState nextState = currentState.nextState();
-			putValue(NAME,
-					MessageFormat.format(res.getString("RedoAction.dynamic.text"), nextState.getActionDescription()));
-		} else {
-			putValue(NAME, defaultName);
-		}
-	}
+        if (enabled) {
+            KeyStoreState currentState = kseFrame.getActiveKeyStoreHistory().getCurrentState();
+            KeyStoreState nextState = currentState.nextState();
+            putValue(NAME,
+                     MessageFormat.format(res.getString("RedoAction.dynamic.text"), nextState.getActionDescription()));
+        } else {
+            putValue(NAME, defaultName);
+        }
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			history.getCurrentState().setNextStateAsCurrentState();
+            history.getCurrentState().setNextStateAsCurrentState();
 
-			kseFrame.updateControls(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.updateControls(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

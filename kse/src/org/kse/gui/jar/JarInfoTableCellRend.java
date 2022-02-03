@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,46 +30,39 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Custom cell renderer for the cells of the Jar Information table of DJarInfo.
- *
  */
 public class JarInfoTableCellRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
+    private static final long serialVersionUID = 1L;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
 
-	/**
-	 * Returns the rendered cell for the supplied value and column.
-	 *
-	 * @param jtJarInfo
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtJarInfo, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtJarInfo, value, isSelected, hasFocus, row, col);
-		if (cell.getText().length() == 0) {
-			cell.setText("-");
-			cell.setHorizontalAlignment(CENTER);
-		} else {
-			cell.setHorizontalAlignment(LEFT);
-		}
+    /**
+     * Returns the rendered cell for the supplied value and column.
+     *
+     * @param jtJarInfo  The JTable
+     * @param value      The value to assign to the cell
+     * @param isSelected True if cell is selected
+     * @param row        The row of the cell to render
+     * @param col        The column of the cell to render
+     * @param hasFocus   If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtJarInfo, Object value, boolean isSelected, boolean hasFocus,
+                                                   int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtJarInfo, value, isSelected, hasFocus, row, col);
+        if (cell.getText().length() == 0) {
+            cell.setText("-");
+            cell.setHorizontalAlignment(CENTER);
+        } else {
+            cell.setHorizontalAlignment(LEFT);
+        }
 
-		if (col == 1) {
-			cell.setText(MessageFormat.format(res.getString("JarInfoTableCellRend.Size.text"), value));
-		}
+        if (col == 1) {
+            cell.setText(MessageFormat.format(res.getString("JarInfoTableCellRend.Size.text"), value));
+        }
 
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 }

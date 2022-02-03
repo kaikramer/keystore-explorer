@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,48 +28,44 @@ import org.kse.gui.tipoftheday.DTipOfTheDay;
 
 /**
  * Action to display a tip of the day.
- *
  */
 public class TipOfTheDayAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public TipOfTheDayAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public TipOfTheDayAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("TipOfTheDayAction.statusbar"));
-		putValue(NAME, res.getString("TipOfTheDayAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("TipOfTheDayAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/tipoftheday.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("TipOfTheDayAction.statusbar"));
+        putValue(NAME, res.getString("TipOfTheDayAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("TipOfTheDayAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/tipoftheday.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		showTipOfTheDay();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        showTipOfTheDay();
+    }
 
-	/**
-	 * Display the tip of the day dialog.
-	 */
-	public void showTipOfTheDay() {
-		DTipOfTheDay dTipOfTheDay = new DTipOfTheDay(frame, applicationSettings.getShowTipsOnStartUp(), res,
-				applicationSettings.getNextTipIndex());
+    /**
+     * Display the tip of the day dialog.
+     */
+    public void showTipOfTheDay() {
+        DTipOfTheDay dTipOfTheDay = new DTipOfTheDay(frame, applicationSettings.getShowTipsOnStartUp(), res,
+                                                     applicationSettings.getNextTipIndex());
 
-		dTipOfTheDay.setLocationRelativeTo(frame);
-		dTipOfTheDay.setVisible(true);
+        dTipOfTheDay.setLocationRelativeTo(frame);
+        dTipOfTheDay.setVisible(true);
 
-		applicationSettings.setShowTipsOnStartUp(dTipOfTheDay.showTipsOnStartup());
-		applicationSettings.setNextTipIndex(dTipOfTheDay.nextTipIndex());
-	}
+        applicationSettings.setShowTipsOnStartUp(dTipOfTheDay.showTipsOnStartup());
+        applicationSettings.setNextTipIndex(dTipOfTheDay.nextTipIndex());
+    }
 }

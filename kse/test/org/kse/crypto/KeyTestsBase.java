@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,45 +37,44 @@ import org.kse.crypto.keypair.KeyPairUtil;
 
 /**
  * Abstract base class for all private or public key test cases.
- *
  */
 public abstract class KeyTestsBase extends CryptoTestsBase {
-	protected static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });
-	protected static RSAPrivateCrtKey rsaPrivateKey;
-	protected static RSAPublicKey rsaPublicKey;
-	protected static DSAPrivateKey dsaPrivateKey;
-	protected static DSAPublicKey dsaPublicKey;
-	protected static ECPrivateKey ecPrivateKey;
-	protected static ECPublicKey ecPublicKey;
+    protected static final Password PASSWORD = new Password(new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' });
+    protected static RSAPrivateCrtKey rsaPrivateKey;
+    protected static RSAPublicKey rsaPublicKey;
+    protected static DSAPrivateKey dsaPrivateKey;
+    protected static DSAPublicKey dsaPublicKey;
+    protected static ECPrivateKey ecPrivateKey;
+    protected static ECPublicKey ecPublicKey;
 
-	public static List<PrivateKey> privateKeys() {
-		return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey);
-	}
+    public static List<PrivateKey> privateKeys() {
+        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey);
+    }
 
-	public static List<PublicKey> publicKeys() {
-		return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey);
-	}
+    public static List<PublicKey> publicKeys() {
+        return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey);
+    }
 
-	@BeforeAll
-	public static void initKeys() throws CryptoException {
+    @BeforeAll
+    public static void initKeys() throws CryptoException {
 
-		if (rsaPrivateKey == null) {
-			KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, BC);
-			rsaPrivateKey = (RSAPrivateCrtKey) rsaKeyPair.getPrivate();
-			rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
-		}
+        if (rsaPrivateKey == null) {
+            KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, BC);
+            rsaPrivateKey = (RSAPrivateCrtKey) rsaKeyPair.getPrivate();
+            rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
+        }
 
-		if (dsaPrivateKey == null) {
-			KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
-			dsaPrivateKey = (DSAPrivateKey) dsaKeyPair.getPrivate();
-			dsaPublicKey = (DSAPublicKey) dsaKeyPair.getPublic();
-		}
+        if (dsaPrivateKey == null) {
+            KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
+            dsaPrivateKey = (DSAPrivateKey) dsaKeyPair.getPrivate();
+            dsaPublicKey = (DSAPublicKey) dsaKeyPair.getPublic();
+        }
 
-		if (ecPrivateKey == null) {
-			KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
-			ecPrivateKey = (ECPrivateKey) ecKeyPair.getPrivate();
-			ecPublicKey = (ECPublicKey) ecKeyPair.getPublic();
-		}
-	}
+        if (ecPrivateKey == null) {
+            KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
+            ecPrivateKey = (ECPrivateKey) ecKeyPair.getPrivate();
+            ecPublicKey = (ECPublicKey) ecKeyPair.getPublic();
+        }
+    }
 
 }

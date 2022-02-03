@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -49,157 +49,155 @@ import com.sun.jna.WString;
 
 /**
  * Main class to start the KeyStore Explorer (KSE) application.
- *
  */
 public class KSE {
-	private static final ResourceBundle props = ResourceBundle.getBundle("org/kse/version");
+    private static final ResourceBundle props = ResourceBundle.getBundle("org/kse/version");
 
-	static {
-		// set default style for Bouncy Castle's X500Name class
-		X500Name.setDefaultStyle(KseX500NameStyle.INSTANCE);
+    static {
+        // set default style for Bouncy Castle's X500Name class
+        X500Name.setDefaultStyle(KseX500NameStyle.INSTANCE);
 
-		// we start with system proxy settings and switch later depending on preferences
-		System.setProperty("java.net.useSystemProxies", "true");
+        // we start with system proxy settings and switch later depending on preferences
+        System.setProperty("java.net.useSystemProxies", "true");
 
-		// allow lax parsing of malformed ASN.1 integers
-		System.setProperty("org.bouncycastle.asn1.allow_unsafe_integer", "true");
-	}
+        // allow lax parsing of malformed ASN.1 integers
+        System.setProperty("org.bouncycastle.asn1.allow_unsafe_integer", "true");
+    }
 
-	public interface Shell32 extends Library {
-		NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
-	}
+    public interface Shell32 extends Library {
+        NativeLong SetCurrentProcessExplicitAppUserModelID(WString appID);
+    }
 
-	/**
-	 * Start the KeyStore Explorer application. Takes one optional argument -
-	 * the location of a KeyStore file to open upon startup.
-	 *
-	 * @param args
-	 *            the command line arguments
-	 */
-	public static void main(String[] args) {
-		try {
-			// To take affect these must be set before the splash screen is instantiated
-			if (OperatingSystem.isMacOs()) {
-				setAppleSystemProperties();
-			} else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8() || OperatingSystem.isWindows10()) {
-				String appId = props.getString("KSE.AppUserModelId");
-				Shell32 shell32 = Native.load("shell32", Shell32.class);
-				shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
-			} else if (OperatingSystem.isLinux()) {
-				fixAppClassName();
-			}
+    /**
+     * Start the KeyStore Explorer application. Takes one optional argument -
+     * the location of a KeyStore file to open upon startup.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        try {
+            // To take affect these must be set before the splash screen is instantiated
+            if (OperatingSystem.isMacOs()) {
+                setAppleSystemProperties();
+            } else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8() || OperatingSystem.isWindows10()) {
+                String appId = props.getString("KSE.AppUserModelId");
+                Shell32 shell32 = Native.load("shell32", Shell32.class);
+                shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
+            } else if (OperatingSystem.isLinux()) {
+                fixAppClassName();
+            }
 
-			setInstallDirProperty();
+            setInstallDirProperty();
 
-			ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
-			setCurrentDirectory(applicationSettings);
+            ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+            setCurrentDirectory(applicationSettings);
 
-			String languageCode = applicationSettings.getLanguage();
-			if (!ApplicationSettings.SYSTEM_LANGUAGE.equals(languageCode)) {
-				Locale.setDefault(new Locale(languageCode));
-			}
+            String languageCode = applicationSettings.getLanguage();
+            if (!ApplicationSettings.SYSTEM_LANGUAGE.equals(languageCode)) {
+                Locale.setDefault(new Locale(languageCode));
+            }
 
-			initialiseSecurity();
+            initialiseSecurity();
 
-			// list of files to open after start
-			List<File> parameterFiles = new ArrayList<>();
-			for (String arg : args) {
-				File parameterFile = new File(arg);
-				if (parameterFile.exists()) {
-					parameterFiles.add(parameterFile);
-				}
-			}
+            // list of files to open after start
+            List<File> parameterFiles = new ArrayList<>();
+            for (String arg : args) {
+                File parameterFile = new File(arg);
+                if (parameterFile.exists()) {
+                    parameterFiles.add(parameterFile);
+                }
+            }
 
-			SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, parameterFiles));
-		} catch (Throwable t) {
-			DError dError = new DError(new JFrame(), t);
-			dError.setLocationRelativeTo(null);
-			dError.setVisible(true);
-			System.exit(1);
-		}
-	}
+            SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, parameterFiles));
+        } catch (Throwable t) {
+            DError dError = new DError(new JFrame(), t);
+            dError.setLocationRelativeTo(null);
+            dError.setVisible(true);
+            System.exit(1);
+        }
+    }
 
-	private static void fixAppClassName() {
-		// Fix application name in Gnome top bar, see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6528430
-		// TODO Bug is not fixed yet, but the workaround causes an "Illegal reflective access" warning since Java 9...
-		if (JavaVersion.getJreVersion().isBelow(JavaVersion.JRE_VERSION_12)) {
-			Toolkit xToolkit = Toolkit.getDefaultToolkit();
-			try {
-				Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
-				awtAppClassNameField.setAccessible(true);
-				awtAppClassNameField.set(xToolkit, getApplicationName());
-			} catch (Exception x) {
-				// ignore
-			}
-		}
-	}
+    private static void fixAppClassName() {
+        // Fix application name in Gnome top bar, see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6528430
+        // TODO Bug is not fixed yet, but the workaround causes an "Illegal reflective access" warning since Java 9...
+        if (JavaVersion.getJreVersion().isBelow(JavaVersion.JRE_VERSION_12)) {
+            Toolkit xToolkit = Toolkit.getDefaultToolkit();
+            try {
+                Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
+                awtAppClassNameField.setAccessible(true);
+                awtAppClassNameField.set(xToolkit, getApplicationName());
+            } catch (Exception x) {
+                // ignore
+            }
+        }
+    }
 
-	private static void setAppleSystemProperties() {
-		try {
-			// On Apple use screen bar for menus
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
+    private static void setAppleSystemProperties() {
+        try {
+            // On Apple use screen bar for menus
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-			// On Apple set the menu about name to the application name
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", getApplicationName());
-		} catch (SecurityException ex) {
-			ex.printStackTrace(); // Ignore - not essential that this works
-		}
-	}
+            // On Apple set the menu about name to the application name
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", getApplicationName());
+        } catch (SecurityException ex) {
+            ex.printStackTrace(); // Ignore - not essential that this works
+        }
+    }
 
-	private static void setInstallDirProperty() {
-		// Use this for restarts
-		// Install directory is always user.dir, but we change user.dir in CurrentDirectory class
-		System.setProperty("kse.install.dir", System.getProperty("user.dir"));
-	}
+    private static void setInstallDirProperty() {
+        // Use this for restarts
+        // Install directory is always user.dir, but we change user.dir in CurrentDirectory class
+        System.setProperty("kse.install.dir", System.getProperty("user.dir"));
+    }
 
-	private static void setCurrentDirectory(ApplicationSettings applicationSettings) {
-		File currentDirectory = applicationSettings.getCurrentDirectory();
+    private static void setCurrentDirectory(ApplicationSettings applicationSettings) {
+        File currentDirectory = applicationSettings.getCurrentDirectory();
 
-		if (currentDirectory != null) {
-			CurrentDirectory.update(currentDirectory);
-		}
-	}
+        if (currentDirectory != null) {
+            CurrentDirectory.update(currentDirectory);
+        }
+    }
 
-	private static void initialiseSecurity()  {
+    private static void initialiseSecurity() {
 
-		// Add BouncyCastle provider
-		Security.addProvider(new BouncyCastleProvider());
-	}
+        // Add BouncyCastle provider
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
-	/**
-	 * Get application name.
-	 *
-	 * @return Application name
-	 */
-	public static String getApplicationName() {
-		return props.getString("KSE.Name");
-	}
+    /**
+     * Get application name.
+     *
+     * @return Application name
+     */
+    public static String getApplicationName() {
+        return props.getString("KSE.Name");
+    }
 
-	/**
-	 * Get application version.
-	 *
-	 * @return Application version
-	 */
-	public static Version getApplicationVersion() {
-		return new Version(props.getString("KSE.Version"));
-	}
+    /**
+     * Get application version.
+     *
+     * @return Application version
+     */
+    public static Version getApplicationVersion() {
+        return new Version(props.getString("KSE.Version"));
+    }
 
-	/**
-	 * Get user manual version (for link to online help).
-	 *
-	 * @return Application version
-	 */
-	public static Version getUserManualVersion() {
-		return new Version(props.getString("KSE.UserManual.Version"));
-	}
+    /**
+     * Get user manual version (for link to online help).
+     *
+     * @return Application version
+     */
+    public static Version getUserManualVersion() {
+        return new Version(props.getString("KSE.UserManual.Version"));
+    }
 
-	/**
-	 * Get full application name, ie Name and Version.
-	 *
-	 * @return Full application name
-	 */
-	public static String getFullApplicationName() {
-		return MessageFormat.format(props.getString("KSE.FullName"), KSE.getApplicationName(),
-				KSE.getApplicationVersion());
-	}
+    /**
+     * Get full application name, ie Name and Version.
+     *
+     * @return Full application name
+     */
+    public static String getFullApplicationName() {
+        return MessageFormat.format(props.getString("KSE.FullName"), KSE.getApplicationName(),
+                                    KSE.getApplicationVersion());
+    }
 }

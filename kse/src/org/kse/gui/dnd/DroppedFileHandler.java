@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,38 +36,38 @@ import org.kse.gui.error.DError;
 
 public class DroppedFileHandler {
 
-	private DroppedFileHandler() {
-	}
+    private DroppedFileHandler() {
+    }
 
-	public static void drop(DropTargetDropEvent evt, final KseFrame kseFrame) {
-		evt.acceptDrop(DnDConstants.ACTION_MOVE);
-		Transferable trans = evt.getTransferable();
+    public static void drop(DropTargetDropEvent evt, final KseFrame kseFrame) {
+        evt.acceptDrop(DnDConstants.ACTION_MOVE);
+        Transferable trans = evt.getTransferable();
 
-		try {
-			if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+        try {
+            if (trans.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 
-				@SuppressWarnings("unchecked")
-				final List<File> droppedFiles = (List<File>) trans.getTransferData(DataFlavor.javaFileListFlavor);
+                @SuppressWarnings("unchecked") final List<File> droppedFiles = (List<File>) trans.getTransferData(
+                        DataFlavor.javaFileListFlavor);
 
-				// open files in new thread, so we can return quickly
-				SwingUtilities.invokeLater(() -> openFiles(kseFrame, droppedFiles));
+                // open files in new thread, so we can return quickly
+                SwingUtilities.invokeLater(() -> openFiles(kseFrame, droppedFiles));
 
-			}
-		} catch (IOException | UnsupportedFlavorException e) {
-			DError.displayError(kseFrame.getUnderlyingFrame(), e);
-		}
-	}
+            }
+        } catch (IOException | UnsupportedFlavorException e) {
+            DError.displayError(kseFrame.getUnderlyingFrame(), e);
+        }
+    }
 
-	public static void openFiles(KseFrame kseFrame, List<File> droppedFiles) {
+    public static void openFiles(KseFrame kseFrame, List<File> droppedFiles) {
 
-		ExamineFileAction examineFileAction = new ExamineFileAction(kseFrame);
+        ExamineFileAction examineFileAction = new ExamineFileAction(kseFrame);
 
-		for (File droppedFile : droppedFiles) {
-			try {
-				examineFileAction.openFile(droppedFile);
-			} catch (Exception e) {
-				DError.displayError(kseFrame.getUnderlyingFrame(), e);
-			}
-		}
-	}
+        for (File droppedFile : droppedFiles) {
+            try {
+                examineFileAction.openFile(droppedFile);
+            } catch (Exception e) {
+                DError.displayError(kseFrame.getUnderlyingFrame(), e);
+            }
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,13 +22,12 @@ package org.kse.utilities.history;
 /**
  * Interface implemented by all actions that can create new states in the
  * undo/redo history.
- *
  */
 public interface HistoryAction {
-	/**
-	 * Get description of action for undo/redo history.
-	 *
-	 * @return Description
-	 */
-	String getHistoryDescription();
+    /**
+     * Get description of action for undo/redo history.
+     *
+     * @return Description
+     */
+    String getHistoryDescription();
 }

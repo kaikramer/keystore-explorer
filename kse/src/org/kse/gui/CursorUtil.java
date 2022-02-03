@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,137 +30,129 @@ import javax.swing.JFrame;
 
 /**
  * Cursor utility methods.
- *
  */
 public class CursorUtil {
-	private CursorUtil() {
-	}
+    private CursorUtil() {
+    }
 
-	/**
-	 * Set cursor to busy and disable application input. This can be reversed by
-	 * a subsequent call to setCursorFree.
-	 *
-	 * @param frame
-	 *            Frame to apply to
-	 */
-	public static void setCursorBusy(JFrame frame) {
-		setCursorBusy(frame.getRootPane().getGlassPane());
-	}
+    /**
+     * Set cursor to busy and disable application input. This can be reversed by
+     * a subsequent call to setCursorFree.
+     *
+     * @param frame Frame to apply to
+     */
+    public static void setCursorBusy(JFrame frame) {
+        setCursorBusy(frame.getRootPane().getGlassPane());
+    }
 
-	/**
-	 * Set cursor to free and enable application input. Called after a call to
-	 * setCursorBusy.
-	 *
-	 * @param frame
-	 *            Frame to apply to
-	 */
-	public static void setCursorFree(JFrame frame) {
-		setCursorFree(frame.getRootPane().getGlassPane());
-	}
+    /**
+     * Set cursor to free and enable application input. Called after a call to
+     * setCursorBusy.
+     *
+     * @param frame Frame to apply to
+     */
+    public static void setCursorFree(JFrame frame) {
+        setCursorFree(frame.getRootPane().getGlassPane());
+    }
 
-	/**
-	 * Set cursor to busy and disable application input. This can be reversed by
-	 * a subsequent call to setCursorFree.
-	 *
-	 * @param component
-	 *            Component within container to apply to
-	 */
-	public static void setCursorBusy(JComponent component) {
-		JDialog dialog = findContainingDialog(component);
+    /**
+     * Set cursor to busy and disable application input. This can be reversed by
+     * a subsequent call to setCursorFree.
+     *
+     * @param component Component within container to apply to
+     */
+    public static void setCursorBusy(JComponent component) {
+        JDialog dialog = findContainingDialog(component);
 
-		if (dialog != null) {
-			setCursorBusy(dialog);
-		} else {
-			JFrame frame = findContainingFrame(component);
+        if (dialog != null) {
+            setCursorBusy(dialog);
+        } else {
+            JFrame frame = findContainingFrame(component);
 
-			if (frame != null) {
-				setCursorBusy(frame);
-			}
-		}
-	}
+            if (frame != null) {
+                setCursorBusy(frame);
+            }
+        }
+    }
 
-	/**
-	 * Set cursor to free and enable application input. Called after a call to
-	 * setCursorBusy.
-	 *
-	 * @param component
-	 *            Component within container to apply to
-	 */
-	public static void setCursorFree(JComponent component) {
-		JDialog dialog = findContainingDialog(component);
+    /**
+     * Set cursor to free and enable application input. Called after a call to
+     * setCursorBusy.
+     *
+     * @param component Component within container to apply to
+     */
+    public static void setCursorFree(JComponent component) {
+        JDialog dialog = findContainingDialog(component);
 
-		if (dialog != null) {
-			setCursorFree(dialog);
-		} else {
-			JFrame frame = findContainingFrame(component);
+        if (dialog != null) {
+            setCursorFree(dialog);
+        } else {
+            JFrame frame = findContainingFrame(component);
 
-			if (frame != null) {
-				setCursorFree(frame);
-			}
-		}
-	}
+            if (frame != null) {
+                setCursorFree(frame);
+            }
+        }
+    }
 
-	private static JDialog findContainingDialog(JComponent component) {
-		Container container = component.getParent();
+    private static JDialog findContainingDialog(JComponent component) {
+        Container container = component.getParent();
 
-		while (container != null) {
-			if (container instanceof JDialog) {
-				return (JDialog) container;
-			}
+        while (container != null) {
+            if (container instanceof JDialog) {
+                return (JDialog) container;
+            }
 
-			container = container.getParent();
-		}
+            container = container.getParent();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private static JFrame findContainingFrame(JComponent component) {
-		Container container = component.getParent();
+    private static JFrame findContainingFrame(JComponent component) {
+        Container container = component.getParent();
 
-		while (container != null) {
-			if (container instanceof JFrame) {
-				return (JFrame) container;
-			}
+        while (container != null) {
+            if (container instanceof JFrame) {
+                return (JFrame) container;
+            }
 
-			container = container.getParent();
-		}
+            container = container.getParent();
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Set cursor to busy and disable application input. This can be reversed by
-	 * a subsequent call to setCursorFree.
-	 *
-	 * @param dialog
-	 *            Dialog to apply to
-	 */
-	public static void setCursorBusy(JDialog dialog) {
-		setCursorBusy(dialog.getRootPane().getGlassPane());
-	}
+    /**
+     * Set cursor to busy and disable application input. This can be reversed by
+     * a subsequent call to setCursorFree.
+     *
+     * @param dialog Dialog to apply to
+     */
+    public static void setCursorBusy(JDialog dialog) {
+        setCursorBusy(dialog.getRootPane().getGlassPane());
+    }
 
-	/**
-	 * Set cursor to free and enable application input. Called after a call to
-	 * setCursorBusy.
-	 *
-	 * @param dialog
-	 *            Dialog to apply to
-	 */
-	public static void setCursorFree(JDialog dialog) {
-		setCursorFree(dialog.getRootPane().getGlassPane());
-	}
+    /**
+     * Set cursor to free and enable application input. Called after a call to
+     * setCursorBusy.
+     *
+     * @param dialog Dialog to apply to
+     */
+    public static void setCursorFree(JDialog dialog) {
+        setCursorFree(dialog.getRootPane().getGlassPane());
+    }
 
-	private static void setCursorBusy(Component glassPane) {
-		glassPane.addMouseListener(new MouseAdapter() {
-		});
-		glassPane.setVisible(true);
+    private static void setCursorBusy(Component glassPane) {
+        glassPane.addMouseListener(new MouseAdapter() {});
+        glassPane.setVisible(true);
 
-		glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-	}
+        glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    }
 
-	private static void setCursorFree(Component glassPane) {
-		glassPane.setVisible(false);
+    private static void setCursorFree(Component glassPane) {
+        glassPane.setVisible(false);
 
-		glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-	}
+        glassPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
 }

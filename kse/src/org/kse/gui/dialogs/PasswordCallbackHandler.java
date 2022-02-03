@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,7 +19,6 @@
  */
 package org.kse.gui.dialogs;
 
-
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.concurrent.CancellationException;
@@ -35,41 +34,39 @@ import org.kse.gui.password.DGetPassword;
 
 public class PasswordCallbackHandler implements CallbackHandler {
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private JFrame frame;
+    private JFrame frame;
 
-	public PasswordCallbackHandler(JFrame frame) {
-		this.frame = frame;
-	}
+    public PasswordCallbackHandler(JFrame frame) {
+        this.frame = frame;
+    }
 
-	@Override
-	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+    @Override
+    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
-		for (int i = 0; i < callbacks.length; i++) {
-			if (callbacks[i] instanceof PasswordCallback) {
-				handlePasswordCallback((PasswordCallback) callbacks[i]);
-			} else {
-				throw new UnsupportedCallbackException(callbacks[i],
-						"Callback not supported " + callbacks[i].getClass().getName());
-			}
-		}
-	}
+        for (int i = 0; i < callbacks.length; i++) {
+            if (callbacks[i] instanceof PasswordCallback) {
+                handlePasswordCallback((PasswordCallback) callbacks[i]);
+            } else {
+                throw new UnsupportedCallbackException(callbacks[i],
+                                                       "Callback not supported " + callbacks[i].getClass().getName());
+            }
+        }
+    }
 
-	private void handlePasswordCallback(PasswordCallback passCb) throws UnsupportedCallbackException {
+    private void handlePasswordCallback(PasswordCallback passCb) throws UnsupportedCallbackException {
 
+        DGetPassword dGetPassword = new DGetPassword(frame, res.getString("PasswordCallbackHandler.Title"));
+        dGetPassword.setLocationRelativeTo(frame);
+        dGetPassword.setVisible(true);
+        Password password = dGetPassword.getPassword();
 
-		DGetPassword dGetPassword = new DGetPassword(frame, res.getString("PasswordCallbackHandler.Title")
-				);
-		dGetPassword.setLocationRelativeTo(frame);
-		dGetPassword.setVisible(true);
-		Password password = dGetPassword.getPassword();
+        if (password == null) {
+            throw new CancellationException("Password Callback canceled by user");
+        }
 
-		if (password == null) {
-			throw new CancellationException("Password Callback canceled by user");
-		}
-
-		passCb.setPassword(password.toCharArray());
-	}
+        passCb.setPassword(password.toCharArray());
+    }
 
 }

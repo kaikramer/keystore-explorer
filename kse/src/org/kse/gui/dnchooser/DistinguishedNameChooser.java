@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,94 +40,94 @@ import org.kse.crypto.x509.KseX500NameStyle;
 
 /**
  * Flexible DN chooser/viewer component.
- *
  */
 public class DistinguishedNameChooser extends JPanel {
 
-	private static final long serialVersionUID = 2886549944489669970L;
+    private static final long serialVersionUID = 2886549944489669970L;
 
-	private boolean editable;
-	private X500Name currentName;
-	private String defaultName;
-	private RdnPanelList listPanel;
+    private boolean editable;
+    private X500Name currentName;
+    private String defaultName;
+    private RdnPanelList listPanel;
 
-	public DistinguishedNameChooser(X500Name dn, boolean editable, String defaultDN) {
-		this.editable = editable;
-		if (dn == null || dn.getRDNs().length == 0) {
-			if (defaultDN == null || defaultDN.isEmpty()) {
-				defaultDN = "CN=, OU=, O=, L=, ST=, C=";
-			}
-			this.currentName = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
-		} else {
-			this.currentName = dn;
-		}
-		this.defaultName = defaultDN;
-		init();
-	}
+    public DistinguishedNameChooser(X500Name dn, boolean editable, String defaultDN) {
+        this.editable = editable;
+        if (dn == null || dn.getRDNs().length == 0) {
+            if (defaultDN == null || defaultDN.isEmpty()) {
+                defaultDN = "CN=, OU=, O=, L=, ST=, C=";
+            }
+            this.currentName = new X500Name(KseX500NameStyle.INSTANCE, defaultDN);
+        } else {
+            this.currentName = dn;
+        }
+        this.defaultName = defaultDN;
+        init();
+    }
 
-	private void init() {
-		listPanel = new RdnPanelList(currentName, editable);
+    private void init() {
+        listPanel = new RdnPanelList(currentName, editable);
 
-		JScrollPane jScrollPane = new JScrollPane(listPanel);
-		jScrollPane.setViewportBorder(null);
-		jScrollPane.setBorder(BorderFactory.createEmptyBorder());
-		jScrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
-		jScrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane jScrollPane = new JScrollPane(listPanel);
+        jScrollPane.setViewportBorder(null);
+        jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        jScrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_NEVER);
 
-		setLayout(new BorderLayout());
-		add(jScrollPane, BorderLayout.CENTER);
-	}
+        setLayout(new BorderLayout());
+        add(jScrollPane, BorderLayout.CENTER);
+    }
 
-	public X500Name getDN() {
-		boolean noEmptyRdns = true;
-		List<RDN> rdns = listPanel.getRdns(noEmptyRdns);
-		Collections.reverse(rdns);
-		return new X500Name(rdns.toArray(new RDN[rdns.size()]));
-	}
+    public X500Name getDN() {
+        boolean noEmptyRdns = true;
+        List<RDN> rdns = listPanel.getRdns(noEmptyRdns);
+        Collections.reverse(rdns);
+        return new X500Name(rdns.toArray(new RDN[rdns.size()]));
+    }
 
-	public X500Name getDNWithEmptyRdns() {
-		List<RDN> rdns = listPanel.getRdns(false);
-		Collections.reverse(rdns);
-		return new X500Name(rdns.toArray(new RDN[rdns.size()]));
-	}
+    public X500Name getDNWithEmptyRdns() {
+        List<RDN> rdns = listPanel.getRdns(false);
+        Collections.reverse(rdns);
+        return new X500Name(rdns.toArray(new RDN[rdns.size()]));
+    }
 
-	public JTextField getFirstTextField() {
-		return listPanel.getFirstTextField();
-	}
+    public JTextField getFirstTextField() {
+        return listPanel.getFirstTextField();
+    }
 
-	public void reset() {
-		this.currentName = new X500Name(defaultName);
-		removeAll();
-		init();
-		revalidate();
-		repaint(50L);
-	}
+    public void reset() {
+        this.currentName = new X500Name(defaultName);
+        removeAll();
+        init();
+        revalidate();
+        repaint(50L);
+    }
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-		JFrame frame = new JFrame();
-		frame.setSize(800, 400);
+        JFrame frame = new JFrame();
+        frame.setSize(800, 400);
 
-		X500Name dn = new X500Name(KseX500NameStyle.INSTANCE,
-				"CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com, UID=123456");
-		String defaultDN = "CN=, OU=, O=, C=";
+        X500Name dn = new X500Name(KseX500NameStyle.INSTANCE,
+                                   "CN=test, OU=Development, OU=Software, O=ACME Ltd., C=UK, E=test@example.com, " +
+                                   "UID=123456");
+        String defaultDN = "CN=, OU=, O=, C=";
 
-		final DistinguishedNameChooser nameChooser = new DistinguishedNameChooser(dn, true, defaultDN);
+        final DistinguishedNameChooser nameChooser = new DistinguishedNameChooser(dn, true, defaultDN);
 
-		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(nameChooser, BorderLayout.CENTER);
+        frame.getContentPane().setLayout(new BorderLayout());
+        frame.getContentPane().add(nameChooser, BorderLayout.CENTER);
 
-		JButton resetButton = new JButton("Reset to Default DN");
-		resetButton.addActionListener(evt -> nameChooser.reset());
-		frame.getContentPane().add(resetButton, BorderLayout.NORTH);
+        JButton resetButton = new JButton("Reset to Default DN");
+        resetButton.addActionListener(evt -> nameChooser.reset());
+        frame.getContentPane().add(resetButton, BorderLayout.NORTH);
 
-		JButton showNameButton = new JButton("Print Name");
-		showNameButton.addActionListener(evt -> System.out.println(nameChooser.getDN().toString()));
-		frame.getContentPane().add(showNameButton, BorderLayout.SOUTH);
+        JButton showNameButton = new JButton("Print Name");
+        showNameButton.addActionListener(evt -> System.out.println(nameChooser.getDN().toString()));
+        frame.getContentPane().add(showNameButton, BorderLayout.SOUTH);
 
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
 }

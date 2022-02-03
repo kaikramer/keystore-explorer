@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,180 +40,175 @@ import org.kse.utilities.oid.ObjectIdUtil;
 
 /**
  * Component to edit an object identifier.
- *
  */
 public class JObjectId extends JPanel {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/oid/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/oid/resources");
 
-	private JTextField jtfObjectId;
-	private JButton jbEditObjectId;
-	private JButton jbClearObjectId;
+    private JTextField jtfObjectId;
+    private JButton jbEditObjectId;
+    private JButton jbClearObjectId;
 
-	private String title;
-	private ASN1ObjectIdentifier objectId;
+    private String title;
+    private ASN1ObjectIdentifier objectId;
 
-	/**
-	 * Construct a JObjectId.
-	 *
-	 * @param title
-	 *            Title of edit dialog
-	 */
-	public JObjectId(String title) {
-		this.title = title;
-		initComponents();
-	}
+    /**
+     * Construct a JObjectId.
+     *
+     * @param title Title of edit dialog
+     */
+    public JObjectId(String title) {
+        this.title = title;
+        initComponents();
+    }
 
-	private void initComponents() {
-		jtfObjectId = new JTextField(25);
-		jtfObjectId.setEditable(false);
+    private void initComponents() {
+        jtfObjectId = new JTextField(25);
+        jtfObjectId.setEditable(false);
 
-		GridBagConstraints gbc_jtfObjectId = new GridBagConstraints();
-		gbc_jtfObjectId.gridwidth = 1;
-		gbc_jtfObjectId.gridheight = 1;
-		gbc_jtfObjectId.gridx = 0;
-		gbc_jtfObjectId.gridy = 0;
-		gbc_jtfObjectId.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jtfObjectId = new GridBagConstraints();
+        gbc_jtfObjectId.gridwidth = 1;
+        gbc_jtfObjectId.gridheight = 1;
+        gbc_jtfObjectId.gridx = 0;
+        gbc_jtfObjectId.gridy = 0;
+        gbc_jtfObjectId.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_object_id.png"));
-		jbEditObjectId = new JButton(editIcon);
-		jbEditObjectId.setToolTipText(res.getString("JObjectId.jbEditObjectId.tooltip"));
-		jbEditObjectId.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JObjectId.this);
-				editObjectId();
-			} finally {
-				CursorUtil.setCursorFree(JObjectId.this);
-			}
-		});
+        ImageIcon editIcon = new ImageIcon(getClass().getResource("images/edit_object_id.png"));
+        jbEditObjectId = new JButton(editIcon);
+        jbEditObjectId.setToolTipText(res.getString("JObjectId.jbEditObjectId.tooltip"));
+        jbEditObjectId.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JObjectId.this);
+                editObjectId();
+            } finally {
+                CursorUtil.setCursorFree(JObjectId.this);
+            }
+        });
 
-		GridBagConstraints gbc_jbEditObjectId = new GridBagConstraints();
-		gbc_jbEditObjectId.gridwidth = 1;
-		gbc_jbEditObjectId.gridheight = 1;
-		gbc_jbEditObjectId.gridx = 1;
-		gbc_jbEditObjectId.gridy = 0;
-		gbc_jbEditObjectId.insets = new Insets(0, 0, 0, 5);
+        GridBagConstraints gbc_jbEditObjectId = new GridBagConstraints();
+        gbc_jbEditObjectId.gridwidth = 1;
+        gbc_jbEditObjectId.gridheight = 1;
+        gbc_jbEditObjectId.gridx = 1;
+        gbc_jbEditObjectId.gridy = 0;
+        gbc_jbEditObjectId.insets = new Insets(0, 0, 0, 5);
 
-		ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_object_id.png"));
-		jbClearObjectId = new JButton(clearIcon);
-		jbClearObjectId.setToolTipText(res.getString("JObjectId.jbClearObjectId.tooltip"));
-		jbClearObjectId.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(JObjectId.this);
-				clearObjectId();
-			} finally {
-				CursorUtil.setCursorFree(JObjectId.this);
-			}
-		});
+        ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_object_id.png"));
+        jbClearObjectId = new JButton(clearIcon);
+        jbClearObjectId.setToolTipText(res.getString("JObjectId.jbClearObjectId.tooltip"));
+        jbClearObjectId.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(JObjectId.this);
+                clearObjectId();
+            } finally {
+                CursorUtil.setCursorFree(JObjectId.this);
+            }
+        });
 
-		GridBagConstraints gbc_jbClearObjectId = new GridBagConstraints();
-		gbc_jbClearObjectId.gridwidth = 1;
-		gbc_jbClearObjectId.gridheight = 1;
-		gbc_jbClearObjectId.gridx = 2;
-		gbc_jbClearObjectId.gridy = 0;
-		gbc_jbClearObjectId.insets = new Insets(0, 0, 0, 0);
+        GridBagConstraints gbc_jbClearObjectId = new GridBagConstraints();
+        gbc_jbClearObjectId.gridwidth = 1;
+        gbc_jbClearObjectId.gridheight = 1;
+        gbc_jbClearObjectId.gridx = 2;
+        gbc_jbClearObjectId.gridy = 0;
+        gbc_jbClearObjectId.insets = new Insets(0, 0, 0, 0);
 
-		setLayout(new GridBagLayout());
-		add(jtfObjectId, gbc_jtfObjectId);
-		add(jbEditObjectId, gbc_jbEditObjectId);
-		add(jbClearObjectId, gbc_jbClearObjectId);
+        setLayout(new GridBagLayout());
+        add(jtfObjectId, gbc_jtfObjectId);
+        add(jbEditObjectId, gbc_jbEditObjectId);
+        add(jbClearObjectId, gbc_jbClearObjectId);
 
-		populate();
-	}
+        populate();
+    }
 
-	/**
-	 * Get object identifier.
-	 *
-	 * @return Object identifer, or null if none chosen
-	 */
-	public ASN1ObjectIdentifier getObjectId() {
-		return objectId;
-	}
+    /**
+     * Get object identifier.
+     *
+     * @return Object identifer, or null if none chosen
+     */
+    public ASN1ObjectIdentifier getObjectId() {
+        return objectId;
+    }
 
-	/**
-	 * Set object identifier.
-	 *
-	 * @param objectId
-	 *            Object identifier
-	 */
-	public void setObjectId(ASN1ObjectIdentifier objectId) {
-		this.objectId = objectId;
-		populate();
-	}
+    /**
+     * Set object identifier.
+     *
+     * @param objectId Object identifier
+     */
+    public void setObjectId(ASN1ObjectIdentifier objectId) {
+        this.objectId = objectId;
+        populate();
+    }
 
-	/**
-	 * Sets whether or not the component is enabled.
-	 *
-	 * @param enabled
-	 *            True if this component should be enabled, false otherwise
-	 */
-	@Override
-	public void setEnabled(boolean enabled) {
-		jbEditObjectId.setEnabled(enabled);
-		jbClearObjectId.setEnabled(enabled);
-	}
+    /**
+     * Sets whether or not the component is enabled.
+     *
+     * @param enabled True if this component should be enabled, false otherwise
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        jbEditObjectId.setEnabled(enabled);
+        jbClearObjectId.setEnabled(enabled);
+    }
 
-	/**
-	 * Set component's tooltip text.
-	 *
-	 * @param toolTipText
-	 *            Tooltip text
-	 */
-	@Override
-	public void setToolTipText(String toolTipText) {
-		super.setToolTipText(toolTipText);
-		jtfObjectId.setToolTipText(toolTipText);
-	}
+    /**
+     * Set component's tooltip text.
+     *
+     * @param toolTipText Tooltip text
+     */
+    @Override
+    public void setToolTipText(String toolTipText) {
+        super.setToolTipText(toolTipText);
+        jtfObjectId.setToolTipText(toolTipText);
+    }
 
-	private void populate() {
-		if (objectId != null) {
-			jtfObjectId.setText(ObjectIdUtil.toString(objectId));
-			jbClearObjectId.setEnabled(true);
-		} else {
-			jtfObjectId.setText("");
-			jbClearObjectId.setEnabled(false);
-		}
+    private void populate() {
+        if (objectId != null) {
+            jtfObjectId.setText(ObjectIdUtil.toString(objectId));
+            jbClearObjectId.setEnabled(true);
+        } else {
+            jtfObjectId.setText("");
+            jbClearObjectId.setEnabled(false);
+        }
 
-		jtfObjectId.setCaretPosition(0);
-	}
+        jtfObjectId.setCaretPosition(0);
+    }
 
-	private void editObjectId() {
-		Container container = getTopLevelAncestor();
+    private void editObjectId() {
+        Container container = getTopLevelAncestor();
 
-		try {
-			DObjectIdChooser dObjectIdChooser = null;
+        try {
+            DObjectIdChooser dObjectIdChooser = null;
 
-			if (container instanceof JDialog) {
-				dObjectIdChooser = new DObjectIdChooser((JDialog) container, title, objectId);
-			} else {
-				dObjectIdChooser = new DObjectIdChooser((JFrame) container, title, objectId);
-			}
-			dObjectIdChooser.setLocationRelativeTo(container);
-			dObjectIdChooser.setVisible(true);
+            if (container instanceof JDialog) {
+                dObjectIdChooser = new DObjectIdChooser((JDialog) container, title, objectId);
+            } else {
+                dObjectIdChooser = new DObjectIdChooser((JFrame) container, title, objectId);
+            }
+            dObjectIdChooser.setLocationRelativeTo(container);
+            dObjectIdChooser.setVisible(true);
 
-			ASN1ObjectIdentifier newObjectId = dObjectIdChooser.getObjectId();
+            ASN1ObjectIdentifier newObjectId = dObjectIdChooser.getObjectId();
 
-			if (newObjectId == null) {
-				return;
-			}
+            if (newObjectId == null) {
+                return;
+            }
 
-			setObjectId(newObjectId);
-		} catch (InvalidObjectIdException ex) {
-			DError dError = null;
+            setObjectId(newObjectId);
+        } catch (InvalidObjectIdException ex) {
+            DError dError = null;
 
-			if (container instanceof JDialog) {
-				dError = new DError((JDialog) container, ex);
-			} else {
-				dError = new DError((JFrame) container, ex);
-			}
+            if (container instanceof JDialog) {
+                dError = new DError((JDialog) container, ex);
+            } else {
+                dError = new DError((JFrame) container, ex);
+            }
 
-			dError.setLocationRelativeTo(container);
-			dError.setVisible(true);
-		}
-	}
+            dError.setLocationRelativeTo(container);
+            dError.setVisible(true);
+        }
+    }
 
-	private void clearObjectId() {
-		setObjectId(null);
-	}
+    private void clearObjectId() {
+        setObjectId(null);
+    }
 }

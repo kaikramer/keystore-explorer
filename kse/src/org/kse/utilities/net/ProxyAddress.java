@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,79 +23,75 @@ import java.net.InetSocketAddress;
 
 /**
  * Proxy address: host name and port.
- *
  */
 public class ProxyAddress {
-	private String host;
-	private int port;
+    private String host;
+    private int port;
 
-	/**
-	 * Construct proxy.
-	 *
-	 * @param host
-	 *            Proxy host name
-	 * @param port
-	 *            Proxy port number
-	 */
-	public ProxyAddress(String host, int port) {
-		if (host == null) {
-			throw new NullPointerException();
-		}
+    /**
+     * Construct proxy.
+     *
+     * @param host Proxy host name
+     * @param port Proxy port number
+     */
+    public ProxyAddress(String host, int port) {
+        if (host == null) {
+            throw new NullPointerException();
+        }
 
-		this.host = host;
-		this.port = port;
-	}
+        this.host = host;
+        this.port = port;
+    }
 
-	/**
-	 * Get proxy address as an InetSocketAddress.
-	 *
-	 * @return InetSocketAddress
-	 */
-	public InetSocketAddress getInetSocketAddress() {
-		return new InetSocketAddress(host, port);
-	}
+    /**
+     * Get proxy address as an InetSocketAddress.
+     *
+     * @return InetSocketAddress
+     */
+    public InetSocketAddress getInetSocketAddress() {
+        return new InetSocketAddress(host, port);
+    }
 
-	/**
-	 * Get proxy host name.
-	 *
-	 * @return Proxy host name
-	 */
-	public String getHost() {
-		return host;
-	}
+    /**
+     * Get proxy host name.
+     *
+     * @return Proxy host name
+     */
+    public String getHost() {
+        return host;
+    }
 
-	/**
-	 * Get proxy port number.
-	 *
-	 * @return Proxy port number
-	 */
-	public int getPort() {
-		return port;
-	}
+    /**
+     * Get proxy port number.
+     *
+     * @return Proxy port number
+     */
+    public int getPort() {
+        return port;
+    }
 
-	/**
-	 * Is this ProxyAddress object equal to another object?
-	 *
-	 * @param object
-	 *            Object to compare ProxyAddress with.
-	 * @return true if the equal, false otherwise.
-	 */
-	@Override
-	public boolean equals(Object object) {
-		if (object == this) {
-			return true;
-		}
+    /**
+     * Is this ProxyAddress object equal to another object?
+     *
+     * @param object Object to compare ProxyAddress with.
+     * @return true if the equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
 
-		if (!(object instanceof ProxyAddress)) {
-			return false;
-		}
+        if (!(object instanceof ProxyAddress)) {
+            return false;
+        }
 
-		ProxyAddress cmpProxyAddress = (ProxyAddress) object;
+        ProxyAddress cmpProxyAddress = (ProxyAddress) object;
 
-		if (!this.getHost().equals(cmpProxyAddress.getHost())) {
-			return false;
-		}
+        if (!this.getHost().equals(cmpProxyAddress.getHost())) {
+            return false;
+        }
 
-		return (this.getPort() == cmpProxyAddress.getPort());
-	}
+        return (this.getPort() == cmpProxyAddress.getPort());
+    }
 }

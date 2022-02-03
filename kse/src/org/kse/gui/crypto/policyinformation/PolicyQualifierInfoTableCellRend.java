@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,48 +32,41 @@ import org.kse.crypto.x509.PolicyInformationUtil;
 
 /**
  * Custom cell renderer for the cells of the policy qualifier info table.
- *
  */
 public class PolicyQualifierInfoTableCellRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Returns the rendered cell.
-	 *
-	 * @param jtPolicyQualifierInfo
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtPolicyQualifierInfo, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtPolicyQualifierInfo, value, isSelected, hasFocus,
-				row, col);
+    /**
+     * Returns the rendered cell.
+     *
+     * @param jtPolicyQualifierInfo The JTable
+     * @param value                 The value to assign to the cell
+     * @param isSelected            True if cell is selected
+     * @param row                   The row of the cell to render
+     * @param col                   The column of the cell to render
+     * @param hasFocus              If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtPolicyQualifierInfo, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtPolicyQualifierInfo, value, isSelected, hasFocus,
+                                                                   row, col);
 
-		PolicyQualifierInfo policyQualifierInfo = (PolicyQualifierInfo) value;
+        PolicyQualifierInfo policyQualifierInfo = (PolicyQualifierInfo) value;
 
-		try {
-			String policyQualifierInfoStr = PolicyInformationUtil.toString(policyQualifierInfo);
-			cell.setText(policyQualifierInfoStr);
-			cell.setToolTipText(policyQualifierInfoStr);
-		} catch (IOException ex) {
-			throw new RuntimeException(ex); // We build this data so should not
-			// happen
-		}
+        try {
+            String policyQualifierInfoStr = PolicyInformationUtil.toString(policyQualifierInfo);
+            cell.setText(policyQualifierInfoStr);
+            cell.setToolTipText(policyQualifierInfoStr);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex); // We build this data so should not
+            // happen
+        }
 
-		cell.setHorizontalAlignment(LEFT);
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setHorizontalAlignment(LEFT);
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 }

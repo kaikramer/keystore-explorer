@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,90 +37,85 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to save the active KeyStore.
- *
  */
 public class SaveAction extends SaveAsAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public SaveAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public SaveAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SaveAction.accelerator").charAt(0), Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("SaveAction.statusbar"));
-		putValue(NAME, res.getString("SaveAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SaveAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/save.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SaveAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("SaveAction.statusbar"));
+        putValue(NAME, res.getString("SaveAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SaveAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/save.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		saveKeyStore(kseFrame.getActiveKeyStoreHistory());
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        saveKeyStore(kseFrame.getActiveKeyStoreHistory());
+    }
 
-	/**
-	 * Save the supplied KeyStore back to the file it was originally opened
-	 * from.
-	 *
-	 * @param history
-	 *            KeyStore history
-	 * @return True if the KeyStore is saved to disk, false otherwise
-	 */
-	public boolean saveKeyStore(KeyStoreHistory history) {
-		File saveFile = null;
+    /**
+     * Save the supplied KeyStore back to the file it was originally opened
+     * from.
+     *
+     * @param history KeyStore history
+     * @return True if the KeyStore is saved to disk, false otherwise
+     */
+    public boolean saveKeyStore(KeyStoreHistory history) {
+        File saveFile = null;
 
-		try {
-			KeyStoreState currentState = history.getCurrentState();
+        try {
+            KeyStoreState currentState = history.getCurrentState();
 
-			kseFrame.focusOnKeyStore(currentState.getKeyStore());
+            kseFrame.focusOnKeyStore(currentState.getKeyStore());
 
-			saveFile = history.getFile();
+            saveFile = history.getFile();
 
-			if (saveFile == null) {
-				return saveKeyStoreAs(history);
-			}
+            if (saveFile == null) {
+                return saveKeyStoreAs(history);
+            }
 
-			Password password = currentState.getPassword();
+            Password password = currentState.getPassword();
 
-			if (password == null || password.isNulled()) {
-				SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
+            if (password == null || password.isNulled()) {
+                SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
 
-				if (setPasswordAction.setKeyStorePassword()) {
-					currentState = history.getCurrentState();
-					password = currentState.getPassword();
-				} else {
-					return false;
-				}
-			}
+                if (setPasswordAction.setKeyStorePassword()) {
+                    currentState = history.getCurrentState();
+                    password = currentState.getPassword();
+                } else {
+                    return false;
+                }
+            }
 
-			KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
+            KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 
-			currentState.setPassword(password);
-			currentState.setAsSavedState();
+            currentState.setPassword(password);
+            currentState.setAsSavedState();
 
-			kseFrame.updateControls(false);
+            kseFrame.updateControls(false);
 
-			return true;
-		} catch (FileNotFoundException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("SaveAction.NoWriteFile.message"), saveFile),
-					res.getString("SaveAction.SaveKeyStore.Title"), JOptionPane.WARNING_MESSAGE);
-			return false;
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-			return false;
-		}
-	}
+            return true;
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("SaveAction.NoWriteFile.message"),
+                                                                      saveFile),
+                                          res.getString("SaveAction.SaveKeyStore.Title"), JOptionPane.WARNING_MESSAGE);
+            return false;
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+            return false;
+        }
+    }
 }

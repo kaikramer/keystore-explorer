@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -49,233 +49,195 @@ import org.kse.crypto.signing.SignatureType;
 
 /**
  * X.509 certificate generator.
- *
  */
 public class X509CertificateGenerator {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
-	private X509CertificateVersion version;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
+    private X509CertificateVersion version;
 
-	/**
-	 * Construct the generator.
-	 *
-	 * @param version
-	 *            Version of generated certificates
-	 */
-	public X509CertificateGenerator(X509CertificateVersion version) {
-		this.version = version;
-	}
+    /**
+     * Construct the generator.
+     *
+     * @param version Version of generated certificates
+     */
+    public X509CertificateGenerator(X509CertificateVersion version) {
+        this.version = version;
+    }
 
-	/**
-	 * Generate a certificate.
-	 *
-	 * @param subject
-	 *            Certificate subject
-	 * @param issuer
-	 *            Certificate issuer
-	 * @param validityStart
-	 *            Validity start date of certificate in msecs
-	 * @param validityEnd
-	 *            Validity end date of certificate in msecs
-	 * @param publicKey
-	 *            Public part of key pair
-	 * @param privateKey
-	 *            Private part of key pair
-	 * @param signatureType
-	 *            Signature Type
-	 * @param serialNumber
-	 *            Serial number
-	 * @return The generated certificate
-	 * @throws CryptoException
-	 *             If there was a problem generating the certificate
-	 */
-	public X509Certificate generate(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd, PublicKey publicKey,
-			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
-		return generate(subject, issuer, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber, null,
-				new BouncyCastleProvider());
-	}
+    /**
+     * Generate a certificate.
+     *
+     * @param subject       Certificate subject
+     * @param issuer        Certificate issuer
+     * @param validityStart Validity start date of certificate in msecs
+     * @param validityEnd   Validity end date of certificate in msecs
+     * @param publicKey     Public part of key pair
+     * @param privateKey    Private part of key pair
+     * @param signatureType Signature Type
+     * @param serialNumber  Serial number
+     * @return The generated certificate
+     * @throws CryptoException If there was a problem generating the certificate
+     */
+    public X509Certificate generate(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd,
+                                    PublicKey publicKey, PrivateKey privateKey, SignatureType signatureType,
+                                    BigInteger serialNumber) throws CryptoException {
+        return generate(subject, issuer, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber,
+                        null, new BouncyCastleProvider());
+    }
 
-	/**
-	 * Generate a certificate.
-	 *
-	 * @param subject
-	 *            Certificate subject
-	 * @param issuer
-	 *            Certificate issuer
-	 * @param validityStart
-	 *            Validity start date of certificate in msecs
-	 * @param validityEnd
-	 *            Validity end date of certificate in msecs
-	 * @param publicKey
-	 *            Public part of key pair
-	 * @param privateKey
-	 *            Private part of key pair
-	 * @param signatureType
-	 *            Signature Type
-	 * @param serialNumber
-	 *            Serial number
-	 * @param extensions
-	 *            Extensions, ignored by version 1 generators
-	 * @return The generated certificate
-	 * @throws CryptoException
-	 *             If there was a problem generating the certificate
-	 */
-	public X509Certificate generate(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd, PublicKey publicKey,
-			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber, X509Extension extensions,
-			Provider provider)
-					throws CryptoException {
-		if (version == X509CertificateVersion.VERSION1) {
-			// TODO
-			return generateVersion1(subject, issuer, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber);
-		} else {
-			try {
-				return generateVersion3(subject, issuer, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber,
-						extensions, provider);
-			} catch (CertIOException e) {
-				throw new CryptoException(e);
-			}
-		}
-	}
+    /**
+     * Generate a certificate.
+     *
+     * @param subject       Certificate subject
+     * @param issuer        Certificate issuer
+     * @param validityStart Validity start date of certificate in msecs
+     * @param validityEnd   Validity end date of certificate in msecs
+     * @param publicKey     Public part of key pair
+     * @param privateKey    Private part of key pair
+     * @param signatureType Signature Type
+     * @param serialNumber  Serial number
+     * @param extensions    Extensions, ignored by version 1 generators
+     * @return The generated certificate
+     * @throws CryptoException If there was a problem generating the certificate
+     */
+    public X509Certificate generate(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd,
+                                    PublicKey publicKey, PrivateKey privateKey, SignatureType signatureType,
+                                    BigInteger serialNumber, X509Extension extensions, Provider provider)
+            throws CryptoException {
+        if (version == X509CertificateVersion.VERSION1) {
+            // TODO
+            return generateVersion1(subject, issuer, validityStart, validityEnd, publicKey, privateKey, signatureType,
+                                    serialNumber);
+        } else {
+            try {
+                return generateVersion3(subject, issuer, validityStart, validityEnd, publicKey, privateKey,
+                                        signatureType, serialNumber, extensions, provider);
+            } catch (CertIOException e) {
+                throw new CryptoException(e);
+            }
+        }
+    }
 
-	/**
-	 * Generate a self-signed certificate.
-	 *
-	 * @param name
-	 *            Certificate subject and issuer
-	 * @param validity
-	 *            Validity period of certificate in msecs
-	 * @param publicKey
-	 *            Public part of key pair
-	 * @param privateKey
-	 *            Private part of key pair
-	 * @param signatureType
-	 *            Signature Type
-	 * @param serialNumber
-	 *            Serial number
-	 * @return The generated certificate
-	 * @throws CryptoException
-	 *             If there was a problem generating the certificate
-	 */
-	public X509Certificate generateSelfSigned(X500Name name, long validity, PublicKey publicKey, PrivateKey privateKey,
-			SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
-		Date validityStart = new Date();
-		Date validityEnd = new Date(validityStart.getTime() + validity);
-		return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber);
-	}
+    /**
+     * Generate a self-signed certificate.
+     *
+     * @param name          Certificate subject and issuer
+     * @param validity      Validity period of certificate in msecs
+     * @param publicKey     Public part of key pair
+     * @param privateKey    Private part of key pair
+     * @param signatureType Signature Type
+     * @param serialNumber  Serial number
+     * @return The generated certificate
+     * @throws CryptoException If there was a problem generating the certificate
+     */
+    public X509Certificate generateSelfSigned(X500Name name, long validity, PublicKey publicKey, PrivateKey privateKey,
+                                              SignatureType signatureType, BigInteger serialNumber)
+            throws CryptoException {
+        Date validityStart = new Date();
+        Date validityEnd = new Date(validityStart.getTime() + validity);
+        return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber);
+    }
 
-	/**
-	 * Generate a self-signed certificate.
-	 *
-	 * @param name
-	 *            Certificate subject and issuer
-	 * @param validityStart
-	 *            Validity start date of certificate in msecs
-	 * @param validityEnd
-	 *            Validity end date of certificate in msecs
-	 * @param publicKey
-	 *            Public part of key pair
-	 * @param privateKey
-	 *            Private part of key pair
-	 * @param signatureType
-	 *            Signature Type
-	 * @param serialNumber
-	 *            Serial number
-	 * @return The generated certificate
-	 * @throws CryptoException
-	 *             If there was a problem generating the certificate
-	 */
-	public X509Certificate generateSelfSigned(X500Name name, Date validityStart, Date validityEnd, PublicKey publicKey, PrivateKey privateKey,
-			SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
-		return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber, null,
-				new BouncyCastleProvider());
-	}
+    /**
+     * Generate a self-signed certificate.
+     *
+     * @param name          Certificate subject and issuer
+     * @param validityStart Validity start date of certificate in msecs
+     * @param validityEnd   Validity end date of certificate in msecs
+     * @param publicKey     Public part of key pair
+     * @param privateKey    Private part of key pair
+     * @param signatureType Signature Type
+     * @param serialNumber  Serial number
+     * @return The generated certificate
+     * @throws CryptoException If there was a problem generating the certificate
+     */
+    public X509Certificate generateSelfSigned(X500Name name, Date validityStart, Date validityEnd, PublicKey publicKey,
+                                              PrivateKey privateKey, SignatureType signatureType,
+                                              BigInteger serialNumber) throws CryptoException {
+        return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber,
+                                  null, new BouncyCastleProvider());
+    }
 
-	/**
-	 * Generate a self-signed certificate.
-	 *
-	 * @param name
-	 *            Certificate subject and issuer
-	 * @param validityStart
-	 *            Validity start date of certificate in msecs
-	 * @param validityEnd
-	 *            Validity end date of certificate in msecs
-	 * @param publicKey
-	 *            Public part of key pair
-	 * @param privateKey
-	 *            Private part of key pair
-	 * @param signatureType
-	 *            Signature Type
-	 * @param serialNumber
-	 *            Serial number
-	 * @param extensions
-	 *            Extensions, ignored by version 1 generators
-	 * @return The generated certificate
-	 * @throws CryptoException
-	 *             If there was a problem generating the certificate
-	 */
-	public X509Certificate generateSelfSigned(X500Name name, Date validityStart, Date validityEnd, PublicKey publicKey, PrivateKey privateKey,
-			SignatureType signatureType, BigInteger serialNumber, X509Extension extensions, Provider provider)
-					throws CryptoException {
-		return generate(name, name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber, extensions, provider);
-	}
+    /**
+     * Generate a self-signed certificate.
+     *
+     * @param name          Certificate subject and issuer
+     * @param validityStart Validity start date of certificate in msecs
+     * @param validityEnd   Validity end date of certificate in msecs
+     * @param publicKey     Public part of key pair
+     * @param privateKey    Private part of key pair
+     * @param signatureType Signature Type
+     * @param serialNumber  Serial number
+     * @param extensions    Extensions, ignored by version 1 generators
+     * @return The generated certificate
+     * @throws CryptoException If there was a problem generating the certificate
+     */
+    public X509Certificate generateSelfSigned(X500Name name, Date validityStart, Date validityEnd, PublicKey publicKey,
+                                              PrivateKey privateKey, SignatureType signatureType,
+                                              BigInteger serialNumber, X509Extension extensions, Provider provider)
+            throws CryptoException {
+        return generate(name, name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber,
+                        extensions, provider);
+    }
 
-	private X509Certificate generateVersion1(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd, PublicKey publicKey,
-			PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber) throws CryptoException {
-		Date notBefore = validityStart == null ? new Date() : validityStart;
-		Date notAfter = validityEnd == null ? new Date(notBefore.getTime() + TimeUnit.DAYS.toMillis(365)) : validityEnd;
+    private X509Certificate generateVersion1(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd,
+                                             PublicKey publicKey, PrivateKey privateKey, SignatureType signatureType,
+                                             BigInteger serialNumber) throws CryptoException {
+        Date notBefore = validityStart == null ? new Date() : validityStart;
+        Date notAfter = validityEnd == null ? new Date(notBefore.getTime() + TimeUnit.DAYS.toMillis(365)) : validityEnd;
 
-		JcaX509v1CertificateBuilder certBuilder = new JcaX509v1CertificateBuilder(issuer, serialNumber, notBefore,
-				notAfter, subject, publicKey);
+        JcaX509v1CertificateBuilder certBuilder = new JcaX509v1CertificateBuilder(issuer, serialNumber, notBefore,
+                                                                                  notAfter, subject, publicKey);
 
-		try {
-			ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(
-					privateKey);
-			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
-		} catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
-			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		}
-	}
+        try {
+            ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC")
+                                                                                       .build(privateKey);
+            return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
+        } catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
+            throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
+        }
+    }
 
-	private X509Certificate generateVersion3(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd,
-			PublicKey publicKey, PrivateKey privateKey, SignatureType signatureType, BigInteger serialNumber,
-			X509Extension extensions, Provider provider)
-					throws CryptoException, CertIOException {
-		Date notBefore = validityStart == null ? new Date() : validityStart;
-		Date notAfter = validityEnd == null ? new Date(notBefore.getTime() + TimeUnit.DAYS.toMillis(365)) : validityEnd;
+    private X509Certificate generateVersion3(X500Name subject, X500Name issuer, Date validityStart, Date validityEnd,
+                                             PublicKey publicKey, PrivateKey privateKey, SignatureType signatureType,
+                                             BigInteger serialNumber, X509Extension extensions, Provider provider)
+            throws CryptoException, CertIOException {
+        Date notBefore = validityStart == null ? new Date() : validityStart;
+        Date notAfter = validityEnd == null ? new Date(notBefore.getTime() + TimeUnit.DAYS.toMillis(365)) : validityEnd;
 
-		JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(issuer, serialNumber, notBefore,
-				notAfter, subject, publicKey);
+        JcaX509v3CertificateBuilder certBuilder = new JcaX509v3CertificateBuilder(issuer, serialNumber, notBefore,
+                                                                                  notAfter, subject, publicKey);
 
-		if (extensions != null) {
-			for (String oid : extensions.getCriticalExtensionOIDs()) {
-				certBuilder.addExtension(new ASN1ObjectIdentifier(oid), true, getExtensionValue(extensions, oid));
-			}
+        if (extensions != null) {
+            for (String oid : extensions.getCriticalExtensionOIDs()) {
+                certBuilder.addExtension(new ASN1ObjectIdentifier(oid), true, getExtensionValue(extensions, oid));
+            }
 
-			for (String oid : extensions.getNonCriticalExtensionOIDs()) {
-				certBuilder.addExtension(new ASN1ObjectIdentifier(oid), false, getExtensionValue(extensions, oid));
-			}
-		}
+            for (String oid : extensions.getNonCriticalExtensionOIDs()) {
+                certBuilder.addExtension(new ASN1ObjectIdentifier(oid), false, getExtensionValue(extensions, oid));
+            }
+        }
 
-		try {
-			ContentSigner certSigner = null;
+        try {
+            ContentSigner certSigner = null;
 
-			if (provider == null) {
-				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(privateKey);
-			} else {
-				certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
-			}
+            if (provider == null) {
+                certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(privateKey);
+            } else {
+                certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
+            }
 
-			return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
-		} catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
-			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		}
-	}
+            return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
+        } catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
+            throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
+        }
+    }
 
-	private ASN1Encodable getExtensionValue(X509Extension extensions, String oid) throws CryptoException {
-		byte[] octets = ASN1OctetString.getInstance(extensions.getExtensionValue(oid)).getOctets();
-		try (ASN1InputStream ais = new ASN1InputStream(octets)) {
-			return ais.readObject();
-		} catch (IOException ex) {
-			throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
-		}
-	}
+    private ASN1Encodable getExtensionValue(X509Extension extensions, String oid) throws CryptoException {
+        byte[] octets = ASN1OctetString.getInstance(extensions.getExtensionValue(oid)).getOctets();
+        try (ASN1InputStream ais = new ASN1InputStream(octets)) {
+            return ais.readObject();
+        } catch (IOException ex) {
+            throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
+        }
+    }
 }

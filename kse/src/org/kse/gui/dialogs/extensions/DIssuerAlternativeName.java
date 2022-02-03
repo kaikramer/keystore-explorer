@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,163 +52,157 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Issuer Alternative Name extension.
- *
  */
 public class DIssuerAlternativeName extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpIssuerAlternativeName;
-	private JLabel jlAlternativeName;
-	private JGeneralNames jgnAlternativeName;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpIssuerAlternativeName;
+    private JLabel jlAlternativeName;
+    private JGeneralNames jgnAlternativeName;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
+    private byte[] value;
 
-	/**
-	 * Creates a new DIssuerAlternativeName dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DIssuerAlternativeName(JDialog parent) {
-		super(parent);
+    /**
+     * Creates a new DIssuerAlternativeName dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DIssuerAlternativeName(JDialog parent) {
+        super(parent);
 
-		setTitle(res.getString("DIssuerAlternativeName.Title"));
-		initComponents();
-	}
+        setTitle(res.getString("DIssuerAlternativeName.Title"));
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DIssuerAlternativeName dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Issuer Alternative Name DER-encoded
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DIssuerAlternativeName(JDialog parent, byte[] value) throws IOException {
-		super(parent);
-		setTitle(res.getString("DIssuerAlternativeName.Title"));
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DIssuerAlternativeName dialog.
+     *
+     * @param parent The parent dialog
+     * @param value  Issuer Alternative Name DER-encoded
+     * @throws IOException If value could not be decoded
+     */
+    public DIssuerAlternativeName(JDialog parent, byte[] value) throws IOException {
+        super(parent);
+        setTitle(res.getString("DIssuerAlternativeName.Title"));
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlAlternativeName = new JLabel(res.getString("DIssuerAlternativeName.jlAlternativeName.text"));
+    private void initComponents() {
+        jlAlternativeName = new JLabel(res.getString("DIssuerAlternativeName.jlAlternativeName.text"));
 
-		GridBagConstraints gbc_jlAlternativeName = new GridBagConstraints();
-		gbc_jlAlternativeName.gridx = 0;
-		gbc_jlAlternativeName.gridy = 1;
-		gbc_jlAlternativeName.gridwidth = 1;
-		gbc_jlAlternativeName.gridheight = 1;
-		gbc_jlAlternativeName.insets = new Insets(5, 5, 5, 5);
-		gbc_jlAlternativeName.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints gbc_jlAlternativeName = new GridBagConstraints();
+        gbc_jlAlternativeName.gridx = 0;
+        gbc_jlAlternativeName.gridy = 1;
+        gbc_jlAlternativeName.gridwidth = 1;
+        gbc_jlAlternativeName.gridheight = 1;
+        gbc_jlAlternativeName.insets = new Insets(5, 5, 5, 5);
+        gbc_jlAlternativeName.anchor = GridBagConstraints.NORTHEAST;
 
-		jgnAlternativeName = new JGeneralNames(res.getString("DIssuerAlternativeName.AlternativeName.Title"));
-		jgnAlternativeName.setPreferredSize(new Dimension(400, 150));
+        jgnAlternativeName = new JGeneralNames(res.getString("DIssuerAlternativeName.AlternativeName.Title"));
+        jgnAlternativeName.setPreferredSize(new Dimension(400, 150));
 
-		GridBagConstraints gbc_jgnAlternativeName = new GridBagConstraints();
-		gbc_jgnAlternativeName.gridx = 1;
-		gbc_jgnAlternativeName.gridy = 1;
-		gbc_jgnAlternativeName.gridwidth = 1;
-		gbc_jgnAlternativeName.gridheight = 1;
-		gbc_jgnAlternativeName.insets = new Insets(5, 5, 5, 5);
-		gbc_jgnAlternativeName.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jgnAlternativeName = new GridBagConstraints();
+        gbc_jgnAlternativeName.gridx = 1;
+        gbc_jgnAlternativeName.gridy = 1;
+        gbc_jgnAlternativeName.gridwidth = 1;
+        gbc_jgnAlternativeName.gridheight = 1;
+        gbc_jgnAlternativeName.insets = new Insets(5, 5, 5, 5);
+        gbc_jgnAlternativeName.anchor = GridBagConstraints.WEST;
 
-		jpIssuerAlternativeName = new JPanel(new GridBagLayout());
+        jpIssuerAlternativeName = new JPanel(new GridBagLayout());
 
-		jpIssuerAlternativeName.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
+        jpIssuerAlternativeName.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
-		jpIssuerAlternativeName.add(jlAlternativeName, gbc_jlAlternativeName);
-		jpIssuerAlternativeName.add(jgnAlternativeName, gbc_jgnAlternativeName);
+        jpIssuerAlternativeName.add(jlAlternativeName, gbc_jlAlternativeName);
+        jpIssuerAlternativeName.add(jgnAlternativeName, gbc_jgnAlternativeName);
 
-		jbOK = new JButton(res.getString("DIssuerAlternativeName.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DIssuerAlternativeName.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DIssuerAlternativeName.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DIssuerAlternativeName.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpIssuerAlternativeName, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpIssuerAlternativeName, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		GeneralNames issuerAlternativeName = GeneralNames.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        GeneralNames issuerAlternativeName = GeneralNames.getInstance(value);
 
-		if (issuerAlternativeName != null) {
-			jgnAlternativeName.setGeneralNames(issuerAlternativeName);
-		}
-	}
+        if (issuerAlternativeName != null) {
+            jgnAlternativeName.setGeneralNames(issuerAlternativeName);
+        }
+    }
 
-	private void okPressed() {
-		GeneralNames issuerAlternativeName = jgnAlternativeName.getGeneralNames();
+    private void okPressed() {
+        GeneralNames issuerAlternativeName = jgnAlternativeName.getGeneralNames();
 
-		if (issuerAlternativeName.getNames().length == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DIssuerAlternativeName.ValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (issuerAlternativeName.getNames().length == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DIssuerAlternativeName.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		try {
-			value = issuerAlternativeName.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+        try {
+            value = issuerAlternativeName.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.ISSUER_ALTERNATIVE_NAME.oid();
-	}
+    @Override
+    public String getOid() {
+        return X509ExtensionType.ISSUER_ALTERNATIVE_NAME.oid();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

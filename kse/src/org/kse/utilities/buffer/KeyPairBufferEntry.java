@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,65 +26,59 @@ import org.kse.crypto.Password;
 
 /**
  * Key pair buffer entry.
- *
  */
 public class KeyPairBufferEntry extends BufferEntry {
-	private PrivateKey privateKey;
-	private Certificate[] certificateChain;
-	private Password password;
+    private PrivateKey privateKey;
+    private Certificate[] certificateChain;
+    private Password password;
 
-	/**
-	 * Construct.
-	 *
-	 * @param name
-	 *            Entry name
-	 * @param cut
-	 *            Is entry to be cut?
-	 * @param privateKey
-	 *            Private key
-	 * @param password
-	 *            Key pair password
-	 * @param certificateChain
-	 *            Certificate chain
-	 */
-	public KeyPairBufferEntry(String name, boolean cut, PrivateKey privateKey, Password password,
-			Certificate[] certificateChain) {
-		super(name, cut);
+    /**
+     * Construct.
+     *
+     * @param name             Entry name
+     * @param cut              Is entry to be cut?
+     * @param privateKey       Private key
+     * @param password         Key pair password
+     * @param certificateChain Certificate chain
+     */
+    public KeyPairBufferEntry(String name, boolean cut, PrivateKey privateKey, Password password,
+                              Certificate[] certificateChain) {
+        super(name, cut);
 
-		this.privateKey = privateKey;
-		this.certificateChain = certificateChain;
-		this.password = new Password(password); // Copy as may be cleared
-	}
+        this.privateKey = privateKey;
+        this.certificateChain = certificateChain;
+        this.password = new Password(password); // Copy as may be cleared
+    }
 
-	/**
-	 * Get private key.
-	 *
-	 * @return Private key
-	 */
-	public PrivateKey getPrivateKey() {
-		return privateKey;
-	}
+    /**
+     * Get private key.
+     *
+     * @return Private key
+     */
+    public PrivateKey getPrivateKey() {
+        return privateKey;
+    }
 
-	/**
-	 * Get password.
-	 *
-	 * @return Password
-	 */
-	public Password getPassword() {
-		return new Password(password); // Copy as may be cleared
-	}
+    /**
+     * Get password.
+     *
+     * @return Password
+     */
+    public Password getPassword() {
+        return new Password(password); // Copy as may be cleared
+    }
 
-	/**
-	 * Get certificate chain.
-	 *
-	 * @return Certificate chain
-	 */
-	public Certificate[] getCertificateChain() {
-		return certificateChain;
-	}
+    /**
+     * Get certificate chain.
+     *
+     * @return Certificate chain
+     */
+    public Certificate[] getCertificateChain() {
+        return certificateChain;
+    }
 
-	@Override
-	void clear() {
-		password.nullPassword();
-	}
+    @Override
+    void clear() {
+        password.nullPassword();
+    }
 }

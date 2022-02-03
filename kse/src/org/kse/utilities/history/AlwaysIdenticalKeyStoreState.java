@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,83 +28,80 @@ import org.kse.crypto.Password;
 
 /**
  * Special version of KeyStoreState for KeyStores that cannot be copied (like PKCS#11).
- *
  */
 public class AlwaysIdenticalKeyStoreState extends KeyStoreState {
 
-	/** Resource bundle */
-	protected static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/utilities/history/resources");
+    /**
+     * Resource bundle
+     */
+    protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/history/resources");
 
-	/**
-	 * Create an empty state.
-	 */
-	AlwaysIdenticalKeyStoreState() {
-		super();
-	}
+    /**
+     * Create an empty state.
+     */
+    AlwaysIdenticalKeyStoreState() {
+        super();
+    }
 
-	/**
-	 * Create a new state.
-	 *
-	 * @param history
-	 *            History
-	 * @param keyStore
-	 *            KeyStore
-	 * @param password
-	 *            KeyStore password
-	 */
-	AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KeyStore keyStore, Password password) {
-		super(history, keyStore, password);
-	}
+    /**
+     * Create a new state.
+     *
+     * @param history  History
+     * @param keyStore KeyStore
+     * @param password KeyStore password
+     */
+    AlwaysIdenticalKeyStoreState(KeyStoreHistory history, KeyStore keyStore, Password password) {
+        super(history, keyStore, password);
+    }
 
-	@Override
-	public boolean isSavedState() {
-		return true;
-	}
+    @Override
+    public boolean isSavedState() {
+        return true;
+    }
 
-	@Override
-	public void setAsSavedState() {
-		// do nothing
-	}
+    @Override
+    public void setAsSavedState() {
+        // do nothing
+    }
 
-	@Override
-	public void append(KeyStoreState keyStoreState) {
-		// do nothing
-	}
+    @Override
+    public void append(KeyStoreState keyStoreState) {
+        // do nothing
+    }
 
-	@Override
-	public void setPreviousStateAsCurrentState() throws CryptoException {
-		// do nothing
-	}
+    @Override
+    public void setPreviousStateAsCurrentState() throws CryptoException {
+        // do nothing
+    }
 
-	@Override
-	public void setNextStateAsCurrentState() throws CryptoException {
-		// do nothing
-	}
+    @Override
+    public void setNextStateAsCurrentState() throws CryptoException {
+        // do nothing
+    }
 
-	@Override
-	public KeyStoreState previousState() {
-		return this;
-	}
+    @Override
+    public KeyStoreState previousState() {
+        return this;
+    }
 
-	@Override
-	public KeyStoreState nextState() {
-		return null;
-	}
+    @Override
+    public KeyStoreState nextState() {
+        return null;
+    }
 
-	@Override
-	public KeyStoreState createBasisForNextState(HistoryAction action) throws CryptoException {
-		return this;
-	}
+    @Override
+    public KeyStoreState createBasisForNextState(HistoryAction action) throws CryptoException {
+        return this;
+    }
 
-	@Override
-	protected void propagateNewPasswords(KeyStoreState targetState) throws CryptoException {
-		// do nothing
-	}
+    @Override
+    protected void propagateNewPasswords(KeyStoreState targetState) throws CryptoException {
+        // do nothing
+    }
 
-	@Override
-	protected boolean isEntryPrivateKeyEqual(KeyStoreState targetState, String alias, Password password)
-			throws GeneralSecurityException {
-		return true;
-	}
+    @Override
+    protected boolean isEntryPrivateKeyEqual(KeyStoreState targetState, String alias, Password password)
+            throws GeneralSecurityException {
+        return true;
+    }
 }

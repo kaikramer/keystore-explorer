@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,48 +21,43 @@ package org.kse.utilities.net;
 
 /**
  * Represents a PAC proxy exception.
- *
  */
 public class PacProxyException extends Exception {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a new PacProxyException.
-	 */
-	public PacProxyException() {
-		super();
-	}
+    /**
+     * Creates a new PacProxyException.
+     */
+    public PacProxyException() {
+        super();
+    }
 
-	/**
-	 * Creates a new PacProxyException with the specified message.
-	 *
-	 * @param message
-	 *            Exception message
-	 */
-	public PacProxyException(String message) {
-		super(message);
-	}
+    /**
+     * Creates a new PacProxyException with the specified message.
+     *
+     * @param message Exception message
+     */
+    public PacProxyException(String message) {
+        super(message);
+    }
 
-	/**
-	 * Creates a new PacProxyException with the specified message and cause
-	 * throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 * @param message
-	 *            Exception message
-	 */
-	public PacProxyException(String message, Throwable causeThrowable) {
-		super(message, causeThrowable);
-	}
+    /**
+     * Creates a new PacProxyException with the specified message and cause
+     * throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     * @param message        Exception message
+     */
+    public PacProxyException(String message, Throwable causeThrowable) {
+        super(message, causeThrowable);
+    }
 
-	/**
-	 * Creates a new PacProxyException with the specified cause throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public PacProxyException(Throwable causeThrowable) {
-		super(causeThrowable);
-	}
+    /**
+     * Creates a new PacProxyException with the specified cause throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public PacProxyException(Throwable causeThrowable) {
+        super(causeThrowable);
+    }
 }

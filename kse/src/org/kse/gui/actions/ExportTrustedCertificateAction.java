@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,130 +41,124 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to export the selected trusted certificate entry.
- *
  */
 public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
 
-	private static final long serialVersionUID = 1L;
-	private X509Certificate certFromConstructor;
+    private static final long serialVersionUID = 1L;
+    private X509Certificate certFromConstructor;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ExportTrustedCertificateAction(KseFrame kseFrame) {
-		this(kseFrame, null);
-	}
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public ExportTrustedCertificateAction(KseFrame kseFrame) {
+        this(kseFrame, null);
+    }
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 * @param cert
-	 *            Certificate to be exported. If null, the currently selected keystore entry is used.
-	 */
-	public ExportTrustedCertificateAction(KseFrame kseFrame, X509Certificate cert) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     * @param cert     Certificate to be exported. If null, the currently selected keystore entry is used.
+     */
+    public ExportTrustedCertificateAction(KseFrame kseFrame, X509Certificate cert) {
+        super(kseFrame);
 
-		this.certFromConstructor = cert;
+        this.certFromConstructor = cert;
 
-		putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificateAction.statusbar"));
-		putValue(NAME, res.getString("ExportTrustedCertificateAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificateAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/exporttrustcert.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificateAction.statusbar"));
+        putValue(NAME, res.getString("ExportTrustedCertificateAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificateAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exporttrustcert.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		File exportFile = null;
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        File exportFile = null;
 
-		try {
-			DExportCertificates dExportCertificates = null;
-			X509Certificate cert = null;
-			if (certFromConstructor == null) {
-				String alias = kseFrame.getSelectedEntryAlias();
-				dExportCertificates = new DExportCertificates(frame, alias, false);
-				cert = getCertificate(alias);
-			} else {
-				cert = certFromConstructor;
-				dExportCertificates = new DExportCertificates(frame, X509CertUtil.getCertificateAlias(cert), false);
-			}
+        try {
+            DExportCertificates dExportCertificates = null;
+            X509Certificate cert = null;
+            if (certFromConstructor == null) {
+                String alias = kseFrame.getSelectedEntryAlias();
+                dExportCertificates = new DExportCertificates(frame, alias, false);
+                cert = getCertificate(alias);
+            } else {
+                cert = certFromConstructor;
+                dExportCertificates = new DExportCertificates(frame, X509CertUtil.getCertificateAlias(cert), false);
+            }
 
-			dExportCertificates.setLocationRelativeTo(frame);
-			dExportCertificates.setVisible(true);
+            dExportCertificates.setLocationRelativeTo(frame);
+            dExportCertificates.setVisible(true);
 
-			if (!dExportCertificates.exportSelected()) {
-				return;
-			}
+            if (!dExportCertificates.exportSelected()) {
+                return;
+            }
 
-			exportFile = dExportCertificates.getExportFile();
+            exportFile = dExportCertificates.getExportFile();
 
-			boolean pemEncode = dExportCertificates.pemEncode();
+            boolean pemEncode = dExportCertificates.pemEncode();
 
-			byte[] encoded = null;
+            byte[] encoded = null;
 
-			if (dExportCertificates.exportFormatX509()) {
-				if (pemEncode) {
-					encoded = X509CertUtil.getCertEncodedX509Pem(cert).getBytes();
-				} else {
-					encoded = X509CertUtil.getCertEncodedX509(cert);
-				}
-			} else if (dExportCertificates.exportFormatPkcs7()) {
-				if (pemEncode) {
-					encoded = X509CertUtil.getCertEncodedPkcs7Pem(cert).getBytes();
-				} else {
-					encoded = X509CertUtil.getCertEncodedPkcs7(cert);
-				}
-			} else if (dExportCertificates.exportFormatPkiPath()) {
-				encoded = X509CertUtil.getCertEncodedPkiPath(cert);
-			} else if (dExportCertificates.exportFormatSpc()) {
-				encoded = X509CertUtil.getCertEncodedPkcs7(cert); // SPC is just DER PKCS #7
-			}
+            if (dExportCertificates.exportFormatX509()) {
+                if (pemEncode) {
+                    encoded = X509CertUtil.getCertEncodedX509Pem(cert).getBytes();
+                } else {
+                    encoded = X509CertUtil.getCertEncodedX509(cert);
+                }
+            } else if (dExportCertificates.exportFormatPkcs7()) {
+                if (pemEncode) {
+                    encoded = X509CertUtil.getCertEncodedPkcs7Pem(cert).getBytes();
+                } else {
+                    encoded = X509CertUtil.getCertEncodedPkcs7(cert);
+                }
+            } else if (dExportCertificates.exportFormatPkiPath()) {
+                encoded = X509CertUtil.getCertEncodedPkiPath(cert);
+            } else if (dExportCertificates.exportFormatSpc()) {
+                encoded = X509CertUtil.getCertEncodedPkcs7(cert); // SPC is just DER PKCS #7
+            }
 
-			exportEncodedCertificate(encoded, exportFile);
+            exportEncodedCertificate(encoded, exportFile);
 
-			JOptionPane.showMessageDialog(frame,
-					res.getString("ExportTrustedCertificateAction.ExportCertificateSuccessful.message"),
-					res.getString("ExportTrustedCertificateAction.ExportCertificate.Title"),
-					JOptionPane.INFORMATION_MESSAGE);
-		} catch (FileNotFoundException ex) {
-			String message = MessageFormat.format(res.getString("ExportTrustedCertificateAction.NoWriteFile.message"),
-					exportFile);
+            JOptionPane.showMessageDialog(frame, res.getString(
+                                                  "ExportTrustedCertificateAction.ExportCertificateSuccessful.message"),
+                                          res.getString("ExportTrustedCertificateAction.ExportCertificate.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            String message = MessageFormat.format(res.getString("ExportTrustedCertificateAction.NoWriteFile.message"),
+                                                  exportFile);
 
-			JOptionPane.showMessageDialog(frame, message,
-					res.getString("ExportTrustedCertificateAction.ExportCertificate.Title"),
-					JOptionPane.WARNING_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, message,
+                                          res.getString("ExportTrustedCertificateAction.ExportCertificate.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
-	private X509Certificate getCertificate(String alias) throws CryptoException {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStore keyStore = history.getCurrentState().getKeyStore();
+    private X509Certificate getCertificate(String alias) throws CryptoException {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStore keyStore = history.getCurrentState().getKeyStore();
 
-			return X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-		} catch (KeyStoreException ex) {
-			String message = MessageFormat.format(
-					res.getString("ExportTrustedCertificateAction.NoAccessEntry.message"), alias);
-			throw new CryptoException(message, ex);
-		}
-	}
+            return X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+        } catch (KeyStoreException ex) {
+            String message = MessageFormat.format(res.getString("ExportTrustedCertificateAction.NoAccessEntry.message"),
+                                                  alias);
+            throw new CryptoException(message, ex);
+        }
+    }
 
-	private void exportEncodedCertificate(byte[] encoded, File exportFile) throws IOException {
-		try (FileOutputStream fos = new FileOutputStream(exportFile)) {
-			fos.write(encoded);
-			fos.flush();
-		}
-	}
+    private void exportEncodedCertificate(byte[] encoded, File exportFile) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(exportFile)) {
+            fos.write(encoded);
+            fos.flush();
+        }
+    }
 }

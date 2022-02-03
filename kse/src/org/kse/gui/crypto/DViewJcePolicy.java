@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -50,127 +50,120 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Displays a JCE Policy.
- *
  */
 public class DViewJcePolicy extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
-	private JPanel jpButtons;
-	private JButton jbCopy;
-	private JButton jbOK;
-	private JPanel jpPolicy;
-	private JScrollPane jspPolicy;
-	private JTextArea jtaPolicy;
+    private JPanel jpButtons;
+    private JButton jbCopy;
+    private JButton jbOK;
+    private JPanel jpPolicy;
+    private JScrollPane jspPolicy;
+    private JTextArea jtaPolicy;
 
-	private JcePolicy jcePolicy;
+    private JcePolicy jcePolicy;
 
-	/**
-	 * Creates a new DViewJcePolicy dialog where the parent is a frame.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param jcePolicy
-	 *            JCE Policy
-	 * @throws CryptoException
-	 *             CryptoException If a crypto problem occurs while viewing the
-	 *             JCE Policy
-	 */
-	public DViewJcePolicy(JFrame parent, JcePolicy jcePolicy) throws CryptoException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.jcePolicy = jcePolicy;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewJcePolicy dialog where the parent is a frame.
+     *
+     * @param parent    Parent frame
+     * @param jcePolicy JCE Policy
+     * @throws CryptoException CryptoException If a crypto problem occurs while viewing the
+     *                         JCE Policy
+     */
+    public DViewJcePolicy(JFrame parent, JcePolicy jcePolicy) throws CryptoException {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.jcePolicy = jcePolicy;
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DViewJcePolicy dialog where the parent is a dialog.
-	 *
-	 * @param parent
-	 *            Parent dialog
-	 * @param jcePolicy
-	 *            JCE Policy
-	 * @throws CryptoException
-	 *             CryptoException If a crypto problem occurs while viewing the
-	 *             JCE Policy
-	 */
-	public DViewJcePolicy(JDialog parent, JcePolicy jcePolicy) throws CryptoException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.jcePolicy = jcePolicy;
-		initComponents();
-	}
+    /**
+     * Creates a new DViewJcePolicy dialog where the parent is a dialog.
+     *
+     * @param parent    Parent dialog
+     * @param jcePolicy JCE Policy
+     * @throws CryptoException CryptoException If a crypto problem occurs while viewing the
+     *                         JCE Policy
+     */
+    public DViewJcePolicy(JDialog parent, JcePolicy jcePolicy) throws CryptoException {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.jcePolicy = jcePolicy;
+        initComponents();
+    }
 
-	private void initComponents() throws CryptoException {
-		jbCopy = new JButton(res.getString("DViewJcePolicy.jbCopy.text"));
-		PlatformUtil.setMnemonic(jbCopy, res.getString("DViewJcePolicy.jbCopy.mnemonic").charAt(0));
-		jbCopy.setToolTipText(res.getString("DViewJcePolicy.jbCopy.tooltip"));
-		jbCopy.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DViewJcePolicy.this);
-				copyPressed();
-			} finally {
-				CursorUtil.setCursorFree(DViewJcePolicy.this);
-			}
-		});
+    private void initComponents() throws CryptoException {
+        jbCopy = new JButton(res.getString("DViewJcePolicy.jbCopy.text"));
+        PlatformUtil.setMnemonic(jbCopy, res.getString("DViewJcePolicy.jbCopy.mnemonic").charAt(0));
+        jbCopy.setToolTipText(res.getString("DViewJcePolicy.jbCopy.tooltip"));
+        jbCopy.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewJcePolicy.this);
+                copyPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewJcePolicy.this);
+            }
+        });
 
-		jbOK = new JButton(res.getString("DViewJcePolicy.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DViewJcePolicy.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
-		jpPolicy = new JPanel(new BorderLayout());
-		jpPolicy.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpPolicy = new JPanel(new BorderLayout());
+        jpPolicy.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jtaPolicy = new JTextArea();
-		jtaPolicy.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		jtaPolicy.setEditable(false);
-		jtaPolicy.setTabSize(4);
-		// JGoodies - keep uneditable color same as editable
-		jtaPolicy.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
-		jtaPolicy.setToolTipText(res.getString("DViewJcePolicy.jtaPolicy.tooltip"));
+        jtaPolicy = new JTextArea();
+        jtaPolicy.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jtaPolicy.setEditable(false);
+        jtaPolicy.setTabSize(4);
+        // JGoodies - keep uneditable color same as editable
+        jtaPolicy.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+        jtaPolicy.setToolTipText(res.getString("DViewJcePolicy.jtaPolicy.tooltip"));
 
-		jtaPolicy.setText(JcePolicyUtil.getPolicyDetails(jcePolicy));
-		jtaPolicy.setCaretPosition(0);
+        jtaPolicy.setText(JcePolicyUtil.getPolicyDetails(jcePolicy));
+        jtaPolicy.setCaretPosition(0);
 
-		jspPolicy = PlatformUtil.createScrollPane(jtaPolicy, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		jspPolicy.setPreferredSize(new Dimension(500, 200));
-		jpPolicy.add(jspPolicy, BorderLayout.CENTER);
+        jspPolicy = PlatformUtil.createScrollPane(jtaPolicy, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jspPolicy.setPreferredSize(new Dimension(500, 200));
+        jpPolicy.add(jspPolicy, BorderLayout.CENTER);
 
-		getContentPane().add(jpPolicy, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpPolicy, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		setTitle(jcePolicy.friendly());
-		setResizable(true);
+        setTitle(jcePolicy.friendly());
+        setResizable(true);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private void copyPressed() {
-		String policy = jtaPolicy.getText();
+    private void copyPressed() {
+        String policy = jtaPolicy.getText();
 
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringSelection copy = new StringSelection(policy);
-		clipboard.setContents(copy, copy);
-	}
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection copy = new StringSelection(policy);
+        clipboard.setContents(copy, copy);
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

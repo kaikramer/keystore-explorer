@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,36 +28,32 @@ import org.kse.gui.about.DSystemInformation;
 
 /**
  * Action to display the system information dialog.
- *
  */
 public class SystemInformationAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public SystemInformationAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public SystemInformationAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("SystemInformationAction.statusbar"));
-		putValue(NAME, res.getString("SystemInformationAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SystemInformationAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/systeminfo.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("SystemInformationAction.statusbar"));
+        putValue(NAME, res.getString("SystemInformationAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SystemInformationAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/systeminfo.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		DSystemInformation dSystemInformation = new DSystemInformation(frame);
-		dSystemInformation.setLocationRelativeTo(frame);
-		dSystemInformation.setVisible(true);
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        DSystemInformation dSystemInformation = new DSystemInformation(frame);
+        dSystemInformation.setLocationRelativeTo(frame);
+        dSystemInformation.setVisible(true);
+    }
 }

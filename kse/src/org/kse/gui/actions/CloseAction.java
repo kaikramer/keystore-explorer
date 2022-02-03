@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,102 +32,97 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to close the active KeyStore.
- *
  */
 public class CloseAction extends SaveAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CloseAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CloseAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CloseAction.accelerator").charAt(0), Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("CloseAction.statusbar"));
-		putValue(NAME, res.getString("CloseAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("CloseAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/close.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CloseAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("CloseAction.statusbar"));
+        putValue(NAME, res.getString("CloseAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("CloseAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/close.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		closeActiveKeyStore();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        closeActiveKeyStore();
+    }
 
-	/**
-	 * Close the active KeyStore. Allow the user to save it if there are unsaved
-	 * changes.
-	 *
-	 * @return True if the KeyStore is closed, false otherwise
-	 */
-	public boolean closeActiveKeyStore() {
-		return closeKeyStore(kseFrame.getActiveKeyStoreHistory());
-	}
+    /**
+     * Close the active KeyStore. Allow the user to save it if there are unsaved
+     * changes.
+     *
+     * @return True if the KeyStore is closed, false otherwise
+     */
+    public boolean closeActiveKeyStore() {
+        return closeKeyStore(kseFrame.getActiveKeyStoreHistory());
+    }
 
-	/**
-	 * Close the supplied KeyStore. Allow the user to save it if there are
-	 * unsaved changes.
-	 *
-	 * @param history
-	 *            KeyStore history
-	 * @return True if the KeyStore is closed, false otherwise
-	 */
-	public boolean closeKeyStore(KeyStoreHistory history) {
-		KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Close the supplied KeyStore. Allow the user to save it if there are
+     * unsaved changes.
+     *
+     * @param history KeyStore history
+     * @return True if the KeyStore is closed, false otherwise
+     */
+    public boolean closeKeyStore(KeyStoreHistory history) {
+        KeyStoreState currentState = history.getCurrentState();
 
-		if (needSave(currentState)) {
-			kseFrame.focusOnKeyStore(currentState.getKeyStore());
+        if (needSave(currentState)) {
+            kseFrame.focusOnKeyStore(currentState.getKeyStore());
 
-			int wantSave = wantSave(history);
+            int wantSave = wantSave(history);
 
-			if (wantSave == JOptionPane.YES_OPTION) {
-				boolean saved = saveKeyStore(history);
+            if (wantSave == JOptionPane.YES_OPTION) {
+                boolean saved = saveKeyStore(history);
 
-				if (!saved) {
-					return false;
-				}
+                if (!saved) {
+                    return false;
+                }
 
-				// Current state may have changed with the addition of a
-				// KeyStore password during
-				// save
-				currentState = history.getCurrentState();
-			} else if ((wantSave == JOptionPane.CANCEL_OPTION) || (wantSave == JOptionPane.CLOSED_OPTION)) {
-				return false;
-			}
-		}
+                // Current state may have changed with the addition of a
+                // KeyStore password during
+                // save
+                currentState = history.getCurrentState();
+            } else if ((wantSave == JOptionPane.CANCEL_OPTION) || (wantSave == JOptionPane.CLOSED_OPTION)) {
+                return false;
+            }
+        }
 
-		kseFrame.removeKeyStore(currentState.getKeyStore());
-		kseFrame.updateControls(true);
+        kseFrame.removeKeyStore(currentState.getKeyStore());
+        kseFrame.updateControls(true);
 
-		return true;
-	}
+        return true;
+    }
 
-	private boolean needSave(KeyStoreState state) {
-		if (state != null) {
-			if (!state.isSavedState() && !state.isInitialState()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean needSave(KeyStoreState state) {
+        if (state != null) {
+            if (!state.isSavedState() && !state.isInitialState()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private int wantSave(KeyStoreHistory history) {
-		String keyStoreName = history.getName();
+    private int wantSave(KeyStoreHistory history) {
+        String keyStoreName = history.getName();
 
-		String message = MessageFormat.format(res.getString("CloseAction.WantSaveChanges.message"), keyStoreName);
+        String message = MessageFormat.format(res.getString("CloseAction.WantSaveChanges.message"), keyStoreName);
 
-		return JOptionPane.showConfirmDialog(frame, message,
-				res.getString("CloseAction.WantSaveChanges.Title"), JOptionPane.YES_NO_CANCEL_OPTION);
-	}
+        return JOptionPane.showConfirmDialog(frame, message, res.getString("CloseAction.WantSaveChanges.Title"),
+                                             JOptionPane.YES_NO_CANCEL_OPTION);
+    }
 }

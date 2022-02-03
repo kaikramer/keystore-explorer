@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -35,77 +35,73 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to set the active KeyStore's password.
- *
  */
 public class SetPasswordAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public SetPasswordAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public SetPasswordAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SetPasswordAction.accelerator").charAt(0),
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("SetPasswordAction.statusbar"));
-		putValue(NAME, res.getString("SetPasswordAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SetPasswordAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/setpass.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SetPasswordAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("SetPasswordAction.statusbar"));
+        putValue(NAME, res.getString("SetPasswordAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SetPasswordAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/setpass.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return res.getString("SetPasswordAction.History.text");
-	}
+    @Override
+    public String getHistoryDescription() {
+        return res.getString("SetPasswordAction.History.text");
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			if (setKeyStorePassword()) {
-				JOptionPane.showMessageDialog(frame,
-						res.getString("SetPasswordAction.SetKeyStorePasswordSuccessful.message"),
-						res.getString("SetPasswordAction.SetKeyStorePassword.Title"), JOptionPane.INFORMATION_MESSAGE);
-			}
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            if (setKeyStorePassword()) {
+                JOptionPane.showMessageDialog(frame,
+                                              res.getString("SetPasswordAction.SetKeyStorePasswordSuccessful.message"),
+                                              res.getString("SetPasswordAction.SetKeyStorePassword.Title"),
+                                              JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
-	/**
-	 * Set the active KeyStore's password.
-	 *
-	 * @return True if successful
-	 * @throws CryptoException
-	 *             If problem occurred
-	 */
-	protected boolean setKeyStorePassword() throws CryptoException {
-		KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    /**
+     * Set the active KeyStore's password.
+     *
+     * @return True if successful
+     * @throws CryptoException If problem occurred
+     */
+    protected boolean setKeyStorePassword() throws CryptoException {
+        KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-		KeyStoreState currentState = history.getCurrentState();
-		KeyStoreState newState = currentState.createBasisForNextState(this);
+        KeyStoreState currentState = history.getCurrentState();
+        KeyStoreState newState = currentState.createBasisForNextState(this);
 
-		Password password = getNewKeyStorePassword();
+        Password password = getNewKeyStorePassword();
 
-		if (password == null) {
-			return false;
-		}
+        if (password == null) {
+            return false;
+        }
 
-		newState.setPassword(password);
+        newState.setPassword(password);
 
-		currentState.append(newState);
+        currentState.append(newState);
 
-		kseFrame.updateControls(true);
+        kseFrame.updateControls(true);
 
-		return true;
-	}
+        return true;
+    }
 }

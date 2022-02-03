@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,61 +23,59 @@ import java.util.List;
 
 /**
  * Singleton buffer for copy/paste. Holds at most one KeyStore entry.
- *
  */
 public class Buffer {
-	private static List<BufferEntry> bufferEntries;
+    private static List<BufferEntry> bufferEntries;
 
-	private Buffer() {
-	}
+    private Buffer() {
+    }
 
-	/**
-	 * Populate buffer with supplied entry.
-	 *
-	 * @param bufferEntries
-	 *            Buffer entry
-	 */
-	public static void populate(List<BufferEntry> bufferEntries) {
-		Buffer.bufferEntries = bufferEntries;
-	}
+    /**
+     * Populate buffer with supplied entry.
+     *
+     * @param bufferEntries Buffer entry
+     */
+    public static void populate(List<BufferEntry> bufferEntries) {
+        Buffer.bufferEntries = bufferEntries;
+    }
 
-	/**
-	 * Interrogate buffer.
-	 *
-	 * @return Buffer entry or null if empty
-	 */
-	public static List<BufferEntry> interrogate() {
-		return bufferEntries;
-	}
+    /**
+     * Interrogate buffer.
+     *
+     * @return Buffer entry or null if empty
+     */
+    public static List<BufferEntry> interrogate() {
+        return bufferEntries;
+    }
 
-	/**
-	 * Is buffer clear?
-	 *
-	 * @return True if its is
-	 */
-	public static boolean isClear() {
-		return (interrogate() == null);
-	}
+    /**
+     * Is buffer clear?
+     *
+     * @return True if its is
+     */
+    public static boolean isClear() {
+        return (interrogate() == null);
+    }
 
-	/**
-	 * Is buffer populated?
-	 *
-	 * @return True if its is
-	 */
-	public static boolean isPopulated() {
-		return (interrogate() != null);
-	}
+    /**
+     * Is buffer populated?
+     *
+     * @return True if its is
+     */
+    public static boolean isPopulated() {
+        return (interrogate() != null);
+    }
 
-	/**
-	 * Clear buffer.
-	 */
-	public static void clear() {
-		if (bufferEntries != null) {
-			for (BufferEntry bufferEntry : bufferEntries) {
-				bufferEntry.clear();
-			}
-		}
+    /**
+     * Clear buffer.
+     */
+    public static void clear() {
+        if (bufferEntries != null) {
+            for (BufferEntry bufferEntry : bufferEntries) {
+                bufferEntry.clear();
+            }
+        }
 
-		bufferEntries = null;
-	}
+        bufferEntries = null;
+    }
 }

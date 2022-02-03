@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -60,266 +60,256 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog to choose an policy qualifier info.
- *
  */
 public class DPolicyQualifierInfoChooser extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/crypto/policyinformation/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpPolicyQualifierInfo;
-	private JLabel jlPolicyQualifierInfoType;
-	private JRadioButton jrbCps;
-	private JRadioButton jrbUserNotice;
-	private JLabel jlPolicyQualifierInfoValue;
-	private JPanel jpPolicyQualifierInfoValue;
-	private JTextField jtfCps;
-	private JUserNotice junUserNotice;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpPolicyQualifierInfo;
+    private JLabel jlPolicyQualifierInfoType;
+    private JRadioButton jrbCps;
+    private JRadioButton jrbUserNotice;
+    private JLabel jlPolicyQualifierInfoValue;
+    private JPanel jpPolicyQualifierInfoValue;
+    private JTextField jtfCps;
+    private JUserNotice junUserNotice;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private PolicyQualifierInfo policyQualifierInfo;
+    private PolicyQualifierInfo policyQualifierInfo;
 
-	/**
-	 * Constructs a new DPolicyQualifierInfoChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param policyQualifierInfo
-	 *            Policy qualifier info
-	 * @throws IOException
-	 *             If policy qualifier info could not be decoded
-	 */
-	public DPolicyQualifierInfoChooser(JFrame parent, String title, PolicyQualifierInfo policyQualifierInfo)
-			throws IOException {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		initComponents(policyQualifierInfo);
-	}
+    /**
+     * Constructs a new DPolicyQualifierInfoChooser dialog.
+     *
+     * @param parent              The parent frame
+     * @param title               The dialog title
+     * @param policyQualifierInfo Policy qualifier info
+     * @throws IOException If policy qualifier info could not be decoded
+     */
+    public DPolicyQualifierInfoChooser(JFrame parent, String title, PolicyQualifierInfo policyQualifierInfo)
+            throws IOException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        initComponents(policyQualifierInfo);
+    }
 
-	/**
-	 * Constructs a new DPolicyQualifierInfoChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param policyQualifierInfo
-	 *            Policy qualifier info
-	 * @throws IOException
-	 *             If policy qualifier info could not be decoded
-	 */
-	public DPolicyQualifierInfoChooser(JDialog parent, String title, PolicyQualifierInfo policyQualifierInfo)
-			throws IOException {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		initComponents(policyQualifierInfo);
-	}
+    /**
+     * Constructs a new DPolicyQualifierInfoChooser dialog.
+     *
+     * @param parent              The parent dialog
+     * @param title               The dialog title
+     * @param policyQualifierInfo Policy qualifier info
+     * @throws IOException If policy qualifier info could not be decoded
+     */
+    public DPolicyQualifierInfoChooser(JDialog parent, String title, PolicyQualifierInfo policyQualifierInfo)
+            throws IOException {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        initComponents(policyQualifierInfo);
+    }
 
-	private void initComponents(PolicyQualifierInfo policyQualifierInfo) throws IOException {
-		jlPolicyQualifierInfoType = new JLabel(
-				res.getString("DPolicyQualifierInfoChooser.jlPolicyQualifierInfoType.text"));
+    private void initComponents(PolicyQualifierInfo policyQualifierInfo) throws IOException {
+        jlPolicyQualifierInfoType = new JLabel(
+                res.getString("DPolicyQualifierInfoChooser.jlPolicyQualifierInfoType.text"));
 
-		GridBagConstraints gbc_jlPolicyQualifierInfoType = new GridBagConstraints();
-		gbc_jlPolicyQualifierInfoType.gridx = 0;
-		gbc_jlPolicyQualifierInfoType.gridy = 0;
-		gbc_jlPolicyQualifierInfoType.gridwidth = 1;
-		gbc_jlPolicyQualifierInfoType.gridheight = 1;
-		gbc_jlPolicyQualifierInfoType.anchor = GridBagConstraints.EAST;
+        GridBagConstraints gbc_jlPolicyQualifierInfoType = new GridBagConstraints();
+        gbc_jlPolicyQualifierInfoType.gridx = 0;
+        gbc_jlPolicyQualifierInfoType.gridy = 0;
+        gbc_jlPolicyQualifierInfoType.gridwidth = 1;
+        gbc_jlPolicyQualifierInfoType.gridheight = 1;
+        gbc_jlPolicyQualifierInfoType.anchor = GridBagConstraints.EAST;
 
-		jrbCps = new JRadioButton(res.getString("DPolicyQualifierInfoChooser.jrbCps.text"));
-		PlatformUtil.setMnemonic(jrbCps, res.getString("DPolicyQualifierInfoChooser.jrbCps.mnemonic").charAt(0));
-		jrbCps.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbCps.tooltip"));
-		jrbCps.addItemListener(evt -> policyQualifierInfoTypeChanged());
+        jrbCps = new JRadioButton(res.getString("DPolicyQualifierInfoChooser.jrbCps.text"));
+        PlatformUtil.setMnemonic(jrbCps, res.getString("DPolicyQualifierInfoChooser.jrbCps.mnemonic").charAt(0));
+        jrbCps.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbCps.tooltip"));
+        jrbCps.addItemListener(evt -> policyQualifierInfoTypeChanged());
 
-		GridBagConstraints gbc_jrbCps = new GridBagConstraints();
-		gbc_jrbCps.gridx = 1;
-		gbc_jrbCps.gridy = 0;
-		gbc_jrbCps.gridwidth = 1;
-		gbc_jrbCps.gridheight = 1;
-		gbc_jrbCps.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jrbCps = new GridBagConstraints();
+        gbc_jrbCps.gridx = 1;
+        gbc_jrbCps.gridy = 0;
+        gbc_jrbCps.gridwidth = 1;
+        gbc_jrbCps.gridheight = 1;
+        gbc_jrbCps.anchor = GridBagConstraints.WEST;
 
-		jrbUserNotice = new JRadioButton(res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.text"));
-		PlatformUtil.setMnemonic(jrbUserNotice, res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.mnemonic")
-				.charAt(0));
-		jrbUserNotice.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.tooltip"));
-		jrbUserNotice.addItemListener(evt -> policyQualifierInfoTypeChanged());
+        jrbUserNotice = new JRadioButton(res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.text"));
+        PlatformUtil.setMnemonic(jrbUserNotice,
+                                 res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.mnemonic").charAt(0));
+        jrbUserNotice.setToolTipText(res.getString("DPolicyQualifierInfoChooser.jrbUserNotice.tooltip"));
+        jrbUserNotice.addItemListener(evt -> policyQualifierInfoTypeChanged());
 
-		GridBagConstraints gbc_jrbUserNotice = new GridBagConstraints();
-		gbc_jrbUserNotice.gridx = 2;
-		gbc_jrbUserNotice.gridy = 0;
-		gbc_jrbUserNotice.gridwidth = 1;
-		gbc_jrbUserNotice.gridheight = 1;
-		gbc_jrbUserNotice.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jrbUserNotice = new GridBagConstraints();
+        gbc_jrbUserNotice.gridx = 2;
+        gbc_jrbUserNotice.gridy = 0;
+        gbc_jrbUserNotice.gridwidth = 1;
+        gbc_jrbUserNotice.gridheight = 1;
+        gbc_jrbUserNotice.anchor = GridBagConstraints.WEST;
 
-		ButtonGroup bgPolicyQualifierInfoType = new ButtonGroup();
-		bgPolicyQualifierInfoType.add(jrbCps);
-		bgPolicyQualifierInfoType.add(jrbUserNotice);
+        ButtonGroup bgPolicyQualifierInfoType = new ButtonGroup();
+        bgPolicyQualifierInfoType.add(jrbCps);
+        bgPolicyQualifierInfoType.add(jrbUserNotice);
 
-		jlPolicyQualifierInfoValue = new JLabel(
-				res.getString("DPolicyQualifierInfoChooser.jlPolicyQualifierInfoValue.text"));
+        jlPolicyQualifierInfoValue = new JLabel(
+                res.getString("DPolicyQualifierInfoChooser.jlPolicyQualifierInfoValue.text"));
 
-		GridBagConstraints gbc_jlPolicyQualifierInfoValue = new GridBagConstraints();
-		gbc_jlPolicyQualifierInfoValue.gridx = 0;
-		gbc_jlPolicyQualifierInfoValue.gridy = 1;
-		gbc_jlPolicyQualifierInfoValue.gridwidth = 1;
-		gbc_jlPolicyQualifierInfoValue.gridheight = 1;
-		gbc_jlPolicyQualifierInfoValue.anchor = GridBagConstraints.EAST;
+        GridBagConstraints gbc_jlPolicyQualifierInfoValue = new GridBagConstraints();
+        gbc_jlPolicyQualifierInfoValue.gridx = 0;
+        gbc_jlPolicyQualifierInfoValue.gridy = 1;
+        gbc_jlPolicyQualifierInfoValue.gridwidth = 1;
+        gbc_jlPolicyQualifierInfoValue.gridheight = 1;
+        gbc_jlPolicyQualifierInfoValue.anchor = GridBagConstraints.EAST;
 
-		jtfCps = new JTextField(30);
-		junUserNotice = new JUserNotice(res.getString("DPolicyQualifierInfoChooser.UserNotice.Title"));
+        jtfCps = new JTextField(30);
+        junUserNotice = new JUserNotice(res.getString("DPolicyQualifierInfoChooser.UserNotice.Title"));
 
-		jpPolicyQualifierInfoValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jpPolicyQualifierInfoValue = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		GridBagConstraints gbc_jpPolicyQualifierInfoValue = new GridBagConstraints();
-		gbc_jpPolicyQualifierInfoValue.gridx = 1;
-		gbc_jpPolicyQualifierInfoValue.gridy = 1;
-		gbc_jpPolicyQualifierInfoValue.gridwidth = 2;
-		gbc_jpPolicyQualifierInfoValue.gridheight = 1;
-		gbc_jpPolicyQualifierInfoValue.insets = new Insets(0, 0, 0, 0);
-		gbc_jpPolicyQualifierInfoValue.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jpPolicyQualifierInfoValue = new GridBagConstraints();
+        gbc_jpPolicyQualifierInfoValue.gridx = 1;
+        gbc_jpPolicyQualifierInfoValue.gridy = 1;
+        gbc_jpPolicyQualifierInfoValue.gridwidth = 2;
+        gbc_jpPolicyQualifierInfoValue.gridheight = 1;
+        gbc_jpPolicyQualifierInfoValue.insets = new Insets(0, 0, 0, 0);
+        gbc_jpPolicyQualifierInfoValue.anchor = GridBagConstraints.WEST;
 
-		jpPolicyQualifierInfoValue.add(jtfCps);
+        jpPolicyQualifierInfoValue.add(jtfCps);
 
-		jpPolicyQualifierInfo = new JPanel(new GridBagLayout());
+        jpPolicyQualifierInfo = new JPanel(new GridBagLayout());
 
-		jpPolicyQualifierInfo.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpPolicyQualifierInfo.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                           new CompoundBorder(new EtchedBorder(),
+                                                                              new EmptyBorder(5, 5, 5, 5))));
 
-		jpPolicyQualifierInfo.add(jlPolicyQualifierInfoType, gbc_jlPolicyQualifierInfoType);
-		jpPolicyQualifierInfo.add(jrbCps, gbc_jrbCps);
-		jpPolicyQualifierInfo.add(jrbUserNotice, gbc_jrbUserNotice);
-		jpPolicyQualifierInfo.add(jlPolicyQualifierInfoValue, gbc_jlPolicyQualifierInfoValue);
-		jpPolicyQualifierInfo.add(jpPolicyQualifierInfoValue, gbc_jpPolicyQualifierInfoValue);
+        jpPolicyQualifierInfo.add(jlPolicyQualifierInfoType, gbc_jlPolicyQualifierInfoType);
+        jpPolicyQualifierInfo.add(jrbCps, gbc_jrbCps);
+        jpPolicyQualifierInfo.add(jrbUserNotice, gbc_jrbUserNotice);
+        jpPolicyQualifierInfo.add(jlPolicyQualifierInfoValue, gbc_jlPolicyQualifierInfoValue);
+        jpPolicyQualifierInfo.add(jpPolicyQualifierInfoValue, gbc_jpPolicyQualifierInfoValue);
 
-		jbOK = new JButton(res.getString("DPolicyQualifierInfoChooser.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DPolicyQualifierInfoChooser.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DPolicyQualifierInfoChooser.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DPolicyQualifierInfoChooser.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(BorderLayout.CENTER, jpPolicyQualifierInfo);
-		getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(BorderLayout.CENTER, jpPolicyQualifierInfo);
+        getContentPane().add(BorderLayout.SOUTH, jpButtons);
 
-		populate(policyQualifierInfo);
+        populate(policyQualifierInfo);
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void policyQualifierInfoTypeChanged() {
-		jpPolicyQualifierInfoValue.removeAll();
+    private void policyQualifierInfoTypeChanged() {
+        jpPolicyQualifierInfoValue.removeAll();
 
-		if (jrbCps.isSelected()) {
-			jpPolicyQualifierInfoValue.add(jtfCps);
-		} else if (jrbUserNotice.isSelected()) {
-			jpPolicyQualifierInfoValue.add(junUserNotice);
-		}
+        if (jrbCps.isSelected()) {
+            jpPolicyQualifierInfoValue.add(jtfCps);
+        } else if (jrbUserNotice.isSelected()) {
+            jpPolicyQualifierInfoValue.add(junUserNotice);
+        }
 
-		pack();
-	}
+        pack();
+    }
 
-	private void populate(PolicyQualifierInfo policyQualifierInfo) throws IOException {
-		if (policyQualifierInfo == null) {
-			jrbCps.setSelected(true);
-		} else {
-			ASN1ObjectIdentifier policyQualifierId = policyQualifierInfo.getPolicyQualifierId();
+    private void populate(PolicyQualifierInfo policyQualifierInfo) throws IOException {
+        if (policyQualifierInfo == null) {
+            jrbCps.setSelected(true);
+        } else {
+            ASN1ObjectIdentifier policyQualifierId = policyQualifierInfo.getPolicyQualifierId();
 
-			if (policyQualifierId.equals(new ASN1ObjectIdentifier(PKIX_CPS_POINTER_QUALIFIER.oid()))) {
-				jrbCps.setSelected(true);
-				jtfCps.setText(((DERIA5String) policyQualifierInfo.getQualifier()).getString());
-				jtfCps.setCaretPosition(0);
-			} else if (policyQualifierId.equals(new ASN1ObjectIdentifier(PKIX_USER_NOTICE_QUALIFIER.oid()))) {
-				jrbUserNotice.setSelected(true);
+            if (policyQualifierId.equals(new ASN1ObjectIdentifier(PKIX_CPS_POINTER_QUALIFIER.oid()))) {
+                jrbCps.setSelected(true);
+                jtfCps.setText(((DERIA5String) policyQualifierInfo.getQualifier()).getString());
+                jtfCps.setCaretPosition(0);
+            } else if (policyQualifierId.equals(new ASN1ObjectIdentifier(PKIX_USER_NOTICE_QUALIFIER.oid()))) {
+                jrbUserNotice.setSelected(true);
 
-				ASN1Encodable userNoticeObj = policyQualifierInfo.getQualifier();
+                ASN1Encodable userNoticeObj = policyQualifierInfo.getQualifier();
 
-				UserNotice userNotice = UserNotice.getInstance(userNoticeObj);
+                UserNotice userNotice = UserNotice.getInstance(userNoticeObj);
 
-				junUserNotice.setUserNotice(userNotice);
-			} else {
-				jrbCps.setSelected(true);
-			}
-		}
-	}
+                junUserNotice.setUserNotice(userNotice);
+            } else {
+                jrbCps.setSelected(true);
+            }
+        }
+    }
 
-	/**
-	 * Get selected policy qualifier info.
-	 *
-	 * @return General subtree, or null if none
-	 */
-	public PolicyQualifierInfo getPolicyQualifierInfo() {
-		return policyQualifierInfo;
-	}
+    /**
+     * Get selected policy qualifier info.
+     *
+     * @return General subtree, or null if none
+     */
+    public PolicyQualifierInfo getPolicyQualifierInfo() {
+        return policyQualifierInfo;
+    }
 
-	private void okPressed() {
+    private void okPressed() {
 
-		PolicyQualifierInfo newPolicyQualifierInfo = null;
-		try {
+        PolicyQualifierInfo newPolicyQualifierInfo = null;
+        try {
 
-			if (jrbCps.isSelected()) {
-				String cps = jtfCps.getText().trim();
+            if (jrbCps.isSelected()) {
+                String cps = jtfCps.getText().trim();
 
-				if (cps.length() == 0) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DPolicyQualifierInfoChooser.CpsValueReq.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (cps.length() == 0) {
+                    JOptionPane.showMessageDialog(this,
+                                                  res.getString("DPolicyQualifierInfoChooser.CpsValueReq.message"),
+                                                  getTitle(), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				newPolicyQualifierInfo = new PolicyQualifierInfo(
-						new ASN1ObjectIdentifier(PKIX_CPS_POINTER_QUALIFIER.oid()),
-						(new DERIA5String(cps)).toASN1Primitive());
-			} else {
-				UserNotice userNotice = junUserNotice.getUserNotice();
+                newPolicyQualifierInfo = new PolicyQualifierInfo(
+                        new ASN1ObjectIdentifier(PKIX_CPS_POINTER_QUALIFIER.oid()),
+                        (new DERIA5String(cps)).toASN1Primitive());
+            } else {
+                UserNotice userNotice = junUserNotice.getUserNotice();
 
-				if (userNotice == null) {
-					JOptionPane.showMessageDialog(this,
-							res.getString("DPolicyQualifierInfoChooser.UserNoticeValueReq.message"), getTitle(),
-							JOptionPane.WARNING_MESSAGE);
-					return;
-				}
+                if (userNotice == null) {
+                    JOptionPane.showMessageDialog(this, res.getString(
+                                                          "DPolicyQualifierInfoChooser.UserNoticeValueReq.message"), getTitle(),
+                                                  JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
 
-				newPolicyQualifierInfo = new PolicyQualifierInfo(
-						new ASN1ObjectIdentifier(PKIX_USER_NOTICE_QUALIFIER.oid()),
-						userNotice);
-			}
-		} catch (Exception e) {
-			DError.displayError(this, e);
-			return;
-		}
+                newPolicyQualifierInfo = new PolicyQualifierInfo(
+                        new ASN1ObjectIdentifier(PKIX_USER_NOTICE_QUALIFIER.oid()), userNotice);
+            }
+        } catch (Exception e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		policyQualifierInfo = newPolicyQualifierInfo;
+        policyQualifierInfo = newPolicyQualifierInfo;
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

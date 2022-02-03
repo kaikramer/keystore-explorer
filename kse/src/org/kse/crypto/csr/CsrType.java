@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,23 +23,23 @@ import org.kse.crypto.filetype.CryptoFileType;
 
 /**
  * Enumeration of CSR Types.
- *
  */
 public enum CsrType {
-	PKCS10(CryptoFileType.PKCS10_CSR), SPKAC(CryptoFileType.SPKAC_CSR);
+    PKCS10(CryptoFileType.PKCS10_CSR),
+    SPKAC(CryptoFileType.SPKAC_CSR);
 
-	private CryptoFileType cryptoFileType;
+    private CryptoFileType cryptoFileType;
 
-	CsrType(CryptoFileType cryptoFileType) {
-		this.cryptoFileType = cryptoFileType;
-	}
+    CsrType(CryptoFileType cryptoFileType) {
+        this.cryptoFileType = cryptoFileType;
+    }
 
-	/**
-	 * Get crypto file type.
-	 *
-	 * @return Crypto file type
-	 */
-	public CryptoFileType getCryptoFileType() {
-		return cryptoFileType;
-	}
+    /**
+     * Get crypto file type.
+     *
+     * @return Crypto file type
+     */
+    public CryptoFileType getCryptoFileType() {
+        return cryptoFileType;
+    }
 }

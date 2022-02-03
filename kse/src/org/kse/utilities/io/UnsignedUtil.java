@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,78 +26,68 @@ import java.nio.ByteBuffer;
  * object. As Java has no concept of unsigned values the next biggest type is
  * used when getting or putting values to the ByteBuffer, e.g. when putting a
  * byte we supply a short, when we get an integer we actually get a long.
- *
  */
 public class UnsignedUtil {
-	private UnsignedUtil() {
-	}
+    private UnsignedUtil() {
+    }
 
-	/**
-	 * Get an unsigned byte from the byte buffer.
-	 *
-	 * @param bb
-	 *            Byte buffer
-	 * @return Unsigned byte stored in a short to retain sign
-	 */
-	public static short getByte(ByteBuffer bb) {
-		return ((short) (bb.get() & 0xff));
-	}
+    /**
+     * Get an unsigned byte from the byte buffer.
+     *
+     * @param bb Byte buffer
+     * @return Unsigned byte stored in a short to retain sign
+     */
+    public static short getByte(ByteBuffer bb) {
+        return ((short) (bb.get() & 0xff));
+    }
 
-	/**
-	 * Put a byte into the byte buffer unsigned.
-	 *
-	 * @param bb
-	 *            Byte buffer
-	 * @param value
-	 *            Byte to store, supplied as a short to retain sign
-	 */
-	public static void putByte(ByteBuffer bb, short value) {
-		bb.put((byte) (value & 0xff));
-	}
+    /**
+     * Put a byte into the byte buffer unsigned.
+     *
+     * @param bb    Byte buffer
+     * @param value Byte to store, supplied as a short to retain sign
+     */
+    public static void putByte(ByteBuffer bb, short value) {
+        bb.put((byte) (value & 0xff));
+    }
 
-	/**
-	 * Get an unsigned short from the byte buffer.
-	 *
-	 * @param bb
-	 *            Byte buffer
-	 * @return Unsigned short stored in an int to retain sign
-	 */
-	public static int getShort(ByteBuffer bb) {
-		return (bb.getShort() & 0xffff);
-	}
+    /**
+     * Get an unsigned short from the byte buffer.
+     *
+     * @param bb Byte buffer
+     * @return Unsigned short stored in an int to retain sign
+     */
+    public static int getShort(ByteBuffer bb) {
+        return (bb.getShort() & 0xffff);
+    }
 
-	/**
-	 * Put a short into the byte buffer unsigned.
-	 *
-	 * @param bb
-	 *            Byte buffer
-	 * @param value
-	 *            Short to store, supplied as an int to retain sign
-	 */
-	public static void putShort(ByteBuffer bb, int value) {
-		bb.putShort((short) (value & 0xffff));
-	}
+    /**
+     * Put a short into the byte buffer unsigned.
+     *
+     * @param bb    Byte buffer
+     * @param value Short to store, supplied as an int to retain sign
+     */
+    public static void putShort(ByteBuffer bb, int value) {
+        bb.putShort((short) (value & 0xffff));
+    }
 
-	/**
-	 * Get an unsigned int from the byte buffer.
-	 *
-	 * @param bb
-	 *            Byte buffer
-	 * @return Unsigned int stored in a long to retain sign
-	 */
-	public static long getInt(ByteBuffer bb) {
-		return (bb.getInt() & 0xffffffffL);
-	}
+    /**
+     * Get an unsigned int from the byte buffer.
+     *
+     * @param bb Byte buffer
+     * @return Unsigned int stored in a long to retain sign
+     */
+    public static long getInt(ByteBuffer bb) {
+        return (bb.getInt() & 0xffffffffL);
+    }
 
-	/**
-	 * Put an int into the byte buffer unsigned.
-	 *
-	 * @param bb
-	 *            Byte buffer
-	 * @param value
-	 *            Int to store, supplied as a long to retain sign
-	 */
-	public static void putInt(ByteBuffer bb, long value) {
-		bb.putInt((int) (value & 0xffffffffL));
-	}
+    /**
+     * Put an int into the byte buffer unsigned.
+     *
+     * @param bb    Byte buffer
+     * @param value Int to store, supplied as a long to retain sign
+     */
+    public static void putInt(ByteBuffer bb, long value) {
+        bb.putInt((int) (value & 0xffffffffL));
+    }
 }

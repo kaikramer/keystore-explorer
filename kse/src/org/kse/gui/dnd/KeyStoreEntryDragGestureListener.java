@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -37,70 +37,65 @@ import org.kse.gui.KseFrame;
 
 /**
  * Listens for KeyStore entry drag gestures and starts the drag off if valid.
- *
  */
 public class KeyStoreEntryDragGestureListener extends DragSourceAdapter implements DragGestureListener {
-	private KseFrame kseFrame;
-	private Cursor cursor;
+    private KseFrame kseFrame;
+    private Cursor cursor;
 
-	/**
-	 * Construct KeyStoreEntryDragGestureListener.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public KeyStoreEntryDragGestureListener(KseFrame kseFrame) {
-		this.kseFrame = kseFrame;
-	}
+    /**
+     * Construct KeyStoreEntryDragGestureListener.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public KeyStoreEntryDragGestureListener(KseFrame kseFrame) {
+        this.kseFrame = kseFrame;
+    }
 
-	/**
-	 * Drag gesture recognized. Start the drag off if valid.
-	 *
-	 * @param evt
-	 *            Drag gesture event
-	 */
-	@Override
-	public void dragGestureRecognized(DragGestureEvent evt) {
-		DragEntry dragEntry = kseFrame.dragSelectedEntry();
+    /**
+     * Drag gesture recognized. Start the drag off if valid.
+     *
+     * @param evt Drag gesture event
+     */
+    @Override
+    public void dragGestureRecognized(DragGestureEvent evt) {
+        DragEntry dragEntry = kseFrame.dragSelectedEntry();
 
-		if (dragEntry == null) {
-			return;
-		}
+        if (dragEntry == null) {
+            return;
+        }
 
-		ImageIcon icon = dragEntry.getImage();
+        ImageIcon icon = dragEntry.getImage();
 
-		// Draw image as drag cursor
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Dimension dim = toolkit.getBestCursorSize(icon.getIconWidth(), icon.getIconHeight());
-		BufferedImage buffImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB_PRE);
-		icon.paintIcon(evt.getComponent(), buffImage.getGraphics(), 0, 0);
-		cursor = toolkit.createCustomCursor(buffImage, new Point(0, 0), "keystore-entry");
+        // Draw image as drag cursor
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension dim = toolkit.getBestCursorSize(icon.getIconWidth(), icon.getIconHeight());
+        BufferedImage buffImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB_PRE);
+        icon.paintIcon(evt.getComponent(), buffImage.getGraphics(), 0, 0);
+        cursor = toolkit.createCustomCursor(buffImage, new Point(0, 0), "keystore-entry");
 
-		evt.startDrag(cursor, new KeyStoreEntryTransferable(dragEntry), this);
-	}
+        evt.startDrag(cursor, new KeyStoreEntryTransferable(dragEntry), this);
+    }
 
-	/**
-	 * Drag target entered.
-	 *
-	 * @param evt
-	 *            Drag event
-	 */
-	@Override
-	public void dragEnter(DragSourceDragEvent evt) {
-		// Show drag cursor
-		DragSourceContext ctx = evt.getDragSourceContext();
-		ctx.setCursor(cursor);
-	}
+    /**
+     * Drag target entered.
+     *
+     * @param evt Drag event
+     */
+    @Override
+    public void dragEnter(DragSourceDragEvent evt) {
+        // Show drag cursor
+        DragSourceContext ctx = evt.getDragSourceContext();
+        ctx.setCursor(cursor);
+    }
 
-	/**
-	 * Drag target exited.
-	 *
-	 * @param evt
-	 *            Drag event
-	 */
-	public void dragExit(DragSourceDragEvent evt) {
-		// Show no drop cursor
-		DragSourceContext ctx = evt.getDragSourceContext();
-		ctx.setCursor(DragSource.DefaultCopyNoDrop);
-	}
+    /**
+     * Drag target exited.
+     *
+     * @param evt Drag event
+     */
+    public void dragExit(DragSourceDragEvent evt) {
+        // Show no drop cursor
+        DragSourceContext ctx = evt.getDragSourceContext();
+        ctx.setCursor(DragSource.DefaultCopyNoDrop);
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -60,267 +60,268 @@ import org.kse.utilities.DialogViewer;
 
 /**
  * Tip of the Day dialog.
- *
  */
 public class DTipOfTheDay extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/tipoftheday/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/tipoftheday/resources");
 
-	private static final String CLOSE_KEY = "CLOSE_KEY";
+    private static final String CLOSE_KEY = "CLOSE_KEY";
 
-	private JPanel jpTipOfTheDay;
-	private JPanel jpTipMargin;
-	private JLabel jlTipMarginBulb;
-	private JPanel jpTipBody;
-	private JPanel jpTipHeader;
-	private JLabel jlTipHeader;
-	private JEditorPane jepTip;
-	private JScrollPane jspTip;
-	private JPanel jpControls;
-	private JPanel jpShowTipsOnStartup;
-	private JCheckBox jcbShowTipsOnStartup;
-	private JPanel jpNavigation;
-	private JButton jbPreviousTip;
-	private JButton jbNextTip;
-	private JButton jbClose;
+    private JPanel jpTipOfTheDay;
+    private JPanel jpTipMargin;
+    private JLabel jlTipMarginBulb;
+    private JPanel jpTipBody;
+    private JPanel jpTipHeader;
+    private JLabel jlTipHeader;
+    private JEditorPane jepTip;
+    private JScrollPane jspTip;
+    private JPanel jpControls;
+    private JPanel jpShowTipsOnStartup;
+    private JCheckBox jcbShowTipsOnStartup;
+    private JPanel jpNavigation;
+    private JButton jbPreviousTip;
+    private JButton jbNextTip;
+    private JButton jbClose;
 
-	private String[] tipsText;
-	private int tipIndex;
+    private String[] tipsText;
+    private int tipIndex;
 
-	/**
-	 * Construct tip of the Day dialog
-	 *  @param parent
-	 *            Parent frame
-	 * @param showTipsOnStartup
-	 *            Enable show tips on startup checkbox?
-	 * @param tips
-	 *            Tips resource bundle
-	 * @param tipIndex
-	 *            Saved index of last shown tip
-	 */
-	public DTipOfTheDay(JFrame parent, boolean showTipsOnStartup, ResourceBundle tips, int tipIndex) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+    /**
+     * Construct tip of the Day dialog
+     *
+     * @param parent            Parent frame
+     * @param showTipsOnStartup Enable show tips on startup checkbox?
+     * @param tips              Tips resource bundle
+     * @param tipIndex          Saved index of last shown tip
+     */
+    public DTipOfTheDay(JFrame parent, boolean showTipsOnStartup, ResourceBundle tips, int tipIndex) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
-		this.tipIndex = tipIndex;
+        this.tipIndex = tipIndex;
 
-		readTips(tips, "TipOfTheDayAction.TipOfTheDay");
+        readTips(tips, "TipOfTheDayAction.TipOfTheDay");
 
-		initComponents(showTipsOnStartup);
-	}
+        initComponents(showTipsOnStartup);
+    }
 
-	private void initComponents(boolean showTipsOnStartup) {
-		jpTipOfTheDay = new JPanel(new BorderLayout());
-		jpTipOfTheDay
-		.setBorder(new CompoundBorder(new EmptyBorder(10, 10, 5, 10), new LineBorder(Color.LIGHT_GRAY, 1)));
+    private void initComponents(boolean showTipsOnStartup) {
+        jpTipOfTheDay = new JPanel(new BorderLayout());
+        jpTipOfTheDay.setBorder(
+                new CompoundBorder(new EmptyBorder(10, 10, 5, 10), new LineBorder(Color.LIGHT_GRAY, 1)));
 
-		jpTipMargin = new JPanel(new FlowLayout());
-		jpTipMargin.setBackground(Color.LIGHT_GRAY);
+        jpTipMargin = new JPanel(new FlowLayout());
+        jpTipMargin.setBackground(Color.LIGHT_GRAY);
 
-		jlTipMarginBulb = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-				getClass().getResource("images/tip.png"))));
+        jlTipMarginBulb = new JLabel(
+                new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/tip.png"))));
 
-		jpTipMargin.add(jlTipMarginBulb);
+        jpTipMargin.add(jlTipMarginBulb);
 
-		jpTipBody = new JPanel(new BorderLayout());
+        jpTipBody = new JPanel(new BorderLayout());
 
-		jpTipOfTheDay.add(jpTipMargin, BorderLayout.WEST);
-		jpTipOfTheDay.add(jpTipBody, BorderLayout.CENTER);
+        jpTipOfTheDay.add(jpTipMargin, BorderLayout.WEST);
+        jpTipOfTheDay.add(jpTipBody, BorderLayout.CENTER);
 
-		jpTipHeader = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpTipHeader.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        jpTipHeader = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jpTipHeader.setBorder(new MatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-		jlTipHeader = new JLabel(res.getString("DTipOfTheDay.jlTipHeader.text"));
-		jlTipHeader.setFont(jlTipHeader.getFont().deriveFont(Font.BOLD, 18f));
-		jlTipHeader.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jlTipHeader = new JLabel(res.getString("DTipOfTheDay.jlTipHeader.text"));
+        jlTipHeader.setFont(jlTipHeader.getFont().deriveFont(Font.BOLD, 18f));
+        jlTipHeader.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jpTipHeader.add(jlTipHeader);
+        jpTipHeader.add(jlTipHeader);
 
-		jepTip = new JEditorPane();
-		// workaround for rare NPE, see https://community.oracle.com/thread/1478325?start=0&tstart=0
-		jepTip.setEditorKit(new HTMLEditorKit());
-		jepTip.setContentType("text/html");
-		jepTip.setText(getCurrentTip());
-		jepTip.setEditable(false);
-		jepTip.setCaretPosition(0);
-		jepTip.setBorder(new EmptyBorder(10, 10, 10, 10));
+        jepTip = new JEditorPane();
+        // workaround for rare NPE, see https://community.oracle.com/thread/1478325?start=0&tstart=0
+        jepTip.setEditorKit(new HTMLEditorKit());
+        jepTip.setContentType("text/html");
+        jepTip.setText(getCurrentTip());
+        jepTip.setEditable(false);
+        jepTip.setCaretPosition(0);
+        jepTip.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		jspTip = PlatformUtil.createScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		jspTip.setPreferredSize(new Dimension(300, 150));
-		jspTip.setBorder(new EmptyBorder(0, 0, 0, 0));
+        jspTip = PlatformUtil.createScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jspTip.setPreferredSize(new Dimension(300, 150));
+        jspTip.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-		jspTip.getViewport().add(jepTip);
+        jspTip.getViewport().add(jepTip);
 
-		jpTipBody.add(jpTipHeader, BorderLayout.NORTH);
-		jpTipBody.add(jspTip, BorderLayout.CENTER);
+        jpTipBody.add(jpTipHeader, BorderLayout.NORTH);
+        jpTipBody.add(jspTip, BorderLayout.CENTER);
 
-		jpShowTipsOnStartup = new JPanel(new FlowLayout());
-		jpShowTipsOnStartup.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpShowTipsOnStartup = new JPanel(new FlowLayout());
+        jpShowTipsOnStartup.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jcbShowTipsOnStartup = new JCheckBox(res.getString("DTipOfTheDay.jcbShowTipsOnStartup.text"), showTipsOnStartup);
-		PlatformUtil.setMnemonic(jcbShowTipsOnStartup, res.getString("DTipOfTheDay.jcbShowTipsOnStartup.mnemonic")
-				.charAt(0));
+        jcbShowTipsOnStartup = new JCheckBox(res.getString("DTipOfTheDay.jcbShowTipsOnStartup.text"),
+                                             showTipsOnStartup);
+        PlatformUtil.setMnemonic(jcbShowTipsOnStartup,
+                                 res.getString("DTipOfTheDay.jcbShowTipsOnStartup.mnemonic").charAt(0));
 
-		jpShowTipsOnStartup.add(jcbShowTipsOnStartup);
+        jpShowTipsOnStartup.add(jcbShowTipsOnStartup);
 
-		jpNavigation = new JPanel(new FlowLayout());
-		jpNavigation.setBorder(new EmptyBorder(5, 10, 10, 10));
+        jpNavigation = new JPanel(new FlowLayout());
+        jpNavigation.setBorder(new EmptyBorder(5, 10, 10, 10));
 
-		jbPreviousTip = new JButton(res.getString("DTipOfTheDay.jbPreviousTip.text"));
-		PlatformUtil.setMnemonic(jbPreviousTip, res.getString("DTipOfTheDay.jbPreviousTip.mnemonic").charAt(0));
+        jbPreviousTip = new JButton(res.getString("DTipOfTheDay.jbPreviousTip.text"));
+        PlatformUtil.setMnemonic(jbPreviousTip, res.getString("DTipOfTheDay.jbPreviousTip.mnemonic").charAt(0));
 
-		jbPreviousTip.addActionListener(e -> {
-			try {
-				CursorUtil.setCursorBusy(DTipOfTheDay.this);
-				jepTip.setText(getPreviousTip());
-				jepTip.setCaretPosition(0);
-			} finally {
-				CursorUtil.setCursorFree(DTipOfTheDay.this);
-			}
-		});
+        jbPreviousTip.addActionListener(e -> {
+            try {
+                CursorUtil.setCursorBusy(DTipOfTheDay.this);
+                jepTip.setText(getPreviousTip());
+                jepTip.setCaretPosition(0);
+            } finally {
+                CursorUtil.setCursorFree(DTipOfTheDay.this);
+            }
+        });
 
-		jbNextTip = new JButton(res.getString("DTipOfTheDay.jbNextTip.text"));
-		PlatformUtil.setMnemonic(jbNextTip, res.getString("DTipOfTheDay.jbNextTip.mnemonic").charAt(0));
-		jbNextTip.setDefaultCapable(true);
+        jbNextTip = new JButton(res.getString("DTipOfTheDay.jbNextTip.text"));
+        PlatformUtil.setMnemonic(jbNextTip, res.getString("DTipOfTheDay.jbNextTip.mnemonic").charAt(0));
+        jbNextTip.setDefaultCapable(true);
 
-		jbNextTip.addActionListener(e -> {
-			try {
-				CursorUtil.setCursorBusy(DTipOfTheDay.this);
-				jepTip.setText(getNextTip());
-				jepTip.setCaretPosition(0);
-			} finally {
-				CursorUtil.setCursorFree(DTipOfTheDay.this);
-			}
-		});
+        jbNextTip.addActionListener(e -> {
+            try {
+                CursorUtil.setCursorBusy(DTipOfTheDay.this);
+                jepTip.setText(getNextTip());
+                jepTip.setCaretPosition(0);
+            } finally {
+                CursorUtil.setCursorFree(DTipOfTheDay.this);
+            }
+        });
 
-		jbClose = new JButton(res.getString("DTipOfTheDay.jbClose.text"));
-		PlatformUtil.setMnemonic(jbClose, res.getString("DTipOfTheDay.jbClose.mnemonic").charAt(0));
-		jbClose.addActionListener(e -> closePressed());
+        jbClose = new JButton(res.getString("DTipOfTheDay.jbClose.text"));
+        PlatformUtil.setMnemonic(jbClose, res.getString("DTipOfTheDay.jbClose.mnemonic").charAt(0));
+        jbClose.addActionListener(e -> closePressed());
 
-		jbClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CLOSE_KEY);
-		jbClose.getActionMap().put(CLOSE_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbClose.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+               .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CLOSE_KEY);
+        jbClose.getActionMap().put(CLOSE_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				closePressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                closePressed();
+            }
+        });
 
-		jpNavigation = PlatformUtil.createDialogButtonPanel(jbClose, null, new JButton[] { jbPreviousTip, jbNextTip });
-		jpNavigation.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpNavigation = PlatformUtil.createDialogButtonPanel(jbClose, null, new JButton[] { jbPreviousTip, jbNextTip });
+        jpNavigation.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jpControls = new JPanel(new BorderLayout());
-		jpControls.add(jpShowTipsOnStartup, BorderLayout.WEST);
-		jpControls.add(jpNavigation, BorderLayout.EAST);
+        jpControls = new JPanel(new BorderLayout());
+        jpControls.add(jpShowTipsOnStartup, BorderLayout.WEST);
+        jpControls.add(jpNavigation, BorderLayout.EAST);
 
-		setLayout(new BorderLayout());
-		add(jpTipOfTheDay, BorderLayout.CENTER);
-		add(jpControls, BorderLayout.SOUTH);
+        setLayout(new BorderLayout());
+        add(jpTipOfTheDay, BorderLayout.CENTER);
+        add(jpControls, BorderLayout.SOUTH);
 
-		getRootPane().setDefaultButton(jbClose);
+        getRootPane().setDefaultButton(jbClose);
 
-		setTitle(res.getString("DTipOfTheDay.Title"));
+        setTitle(res.getString("DTipOfTheDay.Title"));
 
-		setResizable(false);
+        setResizable(false);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbClose.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbClose.requestFocus());
+    }
 
-	private void readTips(ResourceBundle tips, String tipPrefix) {
-		ArrayList<String> tipList = new ArrayList<>();
+    private void readTips(ResourceBundle tips, String tipPrefix) {
+        ArrayList<String> tipList = new ArrayList<>();
 
-		// Look for all properties "<tip prefix>x" where x is a sequential 0-index
-		try {
-			for (int i = 0; ; i++) {
-				String tip = tips.getString(tipPrefix + i);
-				tipList.add(tip);
-			}
-		} catch (MissingResourceException ex) {
-			// no more tips
-		}
+        // Look for all properties "<tip prefix>x" where x is a sequential 0-index
+        try {
+            for (int i = 0; ; i++) {
+                String tip = tips.getString(tipPrefix + i);
+                tipList.add(tip);
+            }
+        } catch (MissingResourceException ex) {
+            // no more tips
+        }
 
-		tipsText = tipList.toArray(new String[0]);
+        tipsText = tipList.toArray(new String[0]);
 
-		if (tipsText.length == 0) {
-			throw new IllegalArgumentException(res.getString("NoTipsOfTheDaySupplied.exception.message"));
-		}
-	}
+        if (tipsText.length == 0) {
+            throw new IllegalArgumentException(res.getString("NoTipsOfTheDaySupplied.exception.message"));
+        }
+    }
 
-	private String getNextTip() {
-		if (tipIndex + 1 >= tipsText.length) {
-			tipIndex = 0;
-		} else {
-			tipIndex++;
-		}
+    private String getNextTip() {
+        if (tipIndex + 1 >= tipsText.length) {
+            tipIndex = 0;
+        } else {
+            tipIndex++;
+        }
 
-		return tipsText[tipIndex];
-	}
+        return tipsText[tipIndex];
+    }
 
-	private String getPreviousTip() {
-		if (tipIndex - 1 < 0) {
-			tipIndex = tipsText.length - 1;
-		} else {
-			tipIndex--;
-		}
+    private String getPreviousTip() {
+        if (tipIndex - 1 < 0) {
+            tipIndex = tipsText.length - 1;
+        } else {
+            tipIndex--;
+        }
 
-		return tipsText[tipIndex];
-	}
+        return tipsText[tipIndex];
+    }
 
-	private String getCurrentTip() {
-		if (tipIndex < 0 || tipIndex >= tipsText.length) {
-			tipIndex = 0;
-		}
+    private String getCurrentTip() {
+        if (tipIndex < 0 || tipIndex >= tipsText.length) {
+            tipIndex = 0;
+        }
 
-		return tipsText[tipIndex];
-	}
+        return tipsText[tipIndex];
+    }
 
-	/**
-	 * Show tips on startup?
-	 *
-	 * @return True if so
-	 */
-	public boolean showTipsOnStartup() {
-		return jcbShowTipsOnStartup.isSelected();
-	}
+    /**
+     * Show tips on startup?
+     *
+     * @return True if so
+     */
+    public boolean showTipsOnStartup() {
+        return jcbShowTipsOnStartup.isSelected();
+    }
 
-	/**
-	 * Get the index of the next tip in the sequence.
-	 *
-	 * @return Tip index
-	 */
-	public int nextTipIndex() {
-		if (tipIndex + 1 >= tipsText.length) {
-			return 0;
-		}
+    /**
+     * Get the index of the next tip in the sequence.
+     *
+     * @return Tip index
+     */
+    public int nextTipIndex() {
+        if (tipIndex + 1 >= tipsText.length) {
+            return 0;
+        }
 
-		return tipIndex + 1;
-	}
+        return tipIndex + 1;
+    }
 
-	private void closePressed() {
-		setVisible(false);
-		dispose();
-	}
+    private void closePressed() {
+        setVisible(false);
+        dispose();
+    }
 
-	// for quick testing
-	public static void main(String[] args) throws Exception {
-		ResourceBundle tips = new ResourceBundle() {
-			private final String tipOfTheDay4 = "<html>There are two standard Java KeyStores - <b>Default</b> and <b>CA Certificates</b>.  There are menu items available to open them directly without browsing:<p>To open the Default KeyStore:<br><b>File &gt; Open Special &gt; Open Default</b><p>To open the CA Certificates KeyStore:<br><b>File &gt; Open Special &gt; Open CA Certificates</b></html>";
-			@Override protected Object handleGetObject(String key) {
-				if ("TipOfTheDayAction.TipOfTheDay0".equals(key)) {
-					return tipOfTheDay4;
-				} else {
-					return null;
-				}
-			}
-			@Override public Enumeration<String> getKeys() {
-				return Collections.enumeration(Collections.singletonList(tipOfTheDay4));
-			}
-		};
-		DialogViewer.run(new DTipOfTheDay(new javax.swing.JFrame(), true, tips, 0));
-	}
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        ResourceBundle tips = new ResourceBundle() {
+            private final String tipOfTheDay4 = "<html>There are two standard Java KeyStores - <b>Default</b> and <b>CA Certificates</b>.  There are menu items available to open them directly without browsing:<p>To open the Default KeyStore:<br><b>File &gt; Open Special &gt; Open Default</b><p>To open the CA Certificates KeyStore:<br><b>File &gt; Open Special &gt; Open CA Certificates</b></html>";
+
+            @Override
+            protected Object handleGetObject(String key) {
+                if ("TipOfTheDayAction.TipOfTheDay0".equals(key)) {
+                    return tipOfTheDay4;
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public Enumeration<String> getKeys() {
+                return Collections.enumeration(Collections.singletonList(tipOfTheDay4));
+            }
+        };
+        DialogViewer.run(new DTipOfTheDay(new javax.swing.JFrame(), true, tips, 0));
+    }
 }

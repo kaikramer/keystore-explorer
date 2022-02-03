@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -43,110 +43,108 @@ import org.kse.version.VersionException;
 
 /**
  * Action to check for updates to KeyStore Explorer.
- *
  */
 public class CheckUpdateAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CheckUpdateAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CheckUpdateAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("CheckUpdateAction.statusbar"));
-		putValue(NAME, res.getString("CheckUpdateAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("CheckUpdateAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/update.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("CheckUpdateAction.statusbar"));
+        putValue(NAME, res.getString("CheckUpdateAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("CheckUpdateAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/update.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		DCheckUpdate dCheckUpdate = new DCheckUpdate(frame);
-		dCheckUpdate.setLocationRelativeTo(frame);
-		dCheckUpdate.startCheck();
-		dCheckUpdate.setVisible(true);
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        DCheckUpdate dCheckUpdate = new DCheckUpdate(frame);
+        dCheckUpdate.setLocationRelativeTo(frame);
+        dCheckUpdate.startCheck();
+        dCheckUpdate.setVisible(true);
 
-		Version latestVersion = dCheckUpdate.getLatestVersion();
+        Version latestVersion = dCheckUpdate.getLatestVersion();
 
-		if (latestVersion == null) {
-			return;
-		}
+        if (latestVersion == null) {
+            return;
+        }
 
-		compareVersions(latestVersion, false);
-	}
+        compareVersions(latestVersion, false);
+    }
 
-	/**
-	 * Perform update check if enabled and if the last check was outside the configured time interval
-	 *
-	 * @throws IOException if fetching the version file from the website failed
-	 */
-	public void doAutoUpdateCheck() throws IOException {
-		// abort auto update check if not enabled
-		if (!applicationSettings.isAutoUpdateCheckEnabled()) {
-			return;
-		}
+    /**
+     * Perform update check if enabled and if the last check was outside the configured time interval
+     *
+     * @throws IOException if fetching the version file from the website failed
+     */
+    public void doAutoUpdateCheck() throws IOException {
+        // abort auto update check if not enabled
+        if (!applicationSettings.isAutoUpdateCheckEnabled()) {
+            return;
+        }
 
-		Date lastCheck = applicationSettings.getAutoUpdateCheckLastCheck();
-		Date now = new Date();
-		int checkInterval = applicationSettings.getAutoUpdateCheckInterval();
-		if (TimeUnit.MILLISECONDS.toDays(now.getTime() - lastCheck.getTime()) < checkInterval) {
-			return;
-		} else {
-			// save in settings when last check (this one) has happened
-			applicationSettings.setAutoUpdateCheckLastCheck(new Date());
-		}
+        Date lastCheck = applicationSettings.getAutoUpdateCheckLastCheck();
+        Date now = new Date();
+        int checkInterval = applicationSettings.getAutoUpdateCheckInterval();
+        if (TimeUnit.MILLISECONDS.toDays(now.getTime() - lastCheck.getTime()) < checkInterval) {
+            return;
+        } else {
+            // save in settings when last check (this one) has happened
+            applicationSettings.setAutoUpdateCheckLastCheck(new Date());
+        }
 
-		// Get the version number of the latest KeyStore Explorer from its website
-		URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
-		String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
-		final Version latestVersion = new Version(versionString);
+        // Get the version number of the latest KeyStore Explorer from its website
+        URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
+        String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
+        final Version latestVersion = new Version(versionString);
 
-		compareVersions(latestVersion, true);
-	}
+        compareVersions(latestVersion, true);
+    }
 
-	private void compareVersions(Version latestVersion, boolean autoUpdateCheck) {
+    private void compareVersions(Version latestVersion, boolean autoUpdateCheck) {
 
-		try {
-			Version currentVersion = KSE.getApplicationVersion();
+        try {
+            Version currentVersion = KSE.getApplicationVersion();
 
-			if (currentVersion.compareTo(latestVersion) >= 0) {
-				if (!autoUpdateCheck) {
-					JOptionPane.showMessageDialog(frame, MessageFormat.format(
-							res.getString("CheckUpdateAction.HaveLatestVersion.message"), currentVersion), KSE
-							.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-				}
-			} else {
+            if (currentVersion.compareTo(latestVersion) >= 0) {
+                if (!autoUpdateCheck) {
+                    JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                          res.getString("CheckUpdateAction.HaveLatestVersion.message"), currentVersion),
+                                                  KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
 
-				int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
-						res.getString("CheckUpdateAction.NewerVersionAvailable.message"), latestVersion), KSE
-						.getApplicationName(), JOptionPane.YES_NO_OPTION);
+                int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
+                                                                     res.getString("CheckUpdateAction" +
+                                                                                   ".NewerVersionAvailable.message"),
+                                                                     latestVersion),
+                                                             KSE.getApplicationName(), JOptionPane.YES_NO_OPTION);
 
-				if (selected == JOptionPane.YES_OPTION) {
-					openDownloadWebSite();
-				}
-			}
-		} catch (VersionException ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+                if (selected == JOptionPane.YES_OPTION) {
+                    openDownloadWebSite();
+                }
+            }
+        } catch (VersionException ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
-	private void openDownloadWebSite() {
-		try {
-			Desktop.getDesktop().browse(URI.create(URLs.DOWNLOADS_WEB_ADDRESS));
-		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(frame, MessageFormat.format(
-					res.getString("CheckUpdateAction.NoLaunchBrowser.message"),
-					URLs.DOWNLOADS_WEB_ADDRESS), KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
+    private void openDownloadWebSite() {
+        try {
+            Desktop.getDesktop().browse(URI.create(URLs.DOWNLOADS_WEB_ADDRESS));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                  res.getString("CheckUpdateAction.NoLaunchBrowser.message"), URLs.DOWNLOADS_WEB_ADDRESS),
+                                          KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 }

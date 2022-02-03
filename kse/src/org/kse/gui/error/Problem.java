@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,53 +21,49 @@ package org.kse.gui.error;
 
 /**
  * Encapsutes a problem and possible causes.
- *
  */
 public class Problem {
-	private String problem;
-	private String[] causes;
-	private Throwable error;
+    private String problem;
+    private String[] causes;
+    private Throwable error;
 
-	/**
-	 * Construct ProblemAndCauses.
-	 *
-	 * @param problem
-	 *            Problem description
-	 * @param causes
-	 *            Possible causes
-	 * @param error
-	 *            Cause error
-	 */
-	public Problem(String problem, String[] causes, Throwable error) {
-		this.problem = problem;
-		this.causes = causes;
-		this.error = error;
-	}
+    /**
+     * Construct ProblemAndCauses.
+     *
+     * @param problem Problem description
+     * @param causes  Possible causes
+     * @param error   Cause error
+     */
+    public Problem(String problem, String[] causes, Throwable error) {
+        this.problem = problem;
+        this.causes = causes;
+        this.error = error;
+    }
 
-	/**
-	 * Get problem description.
-	 *
-	 * @return problem description
-	 */
-	public String getProblem() {
-		return problem;
-	}
+    /**
+     * Get problem description.
+     *
+     * @return problem description
+     */
+    public String getProblem() {
+        return problem;
+    }
 
-	/**
-	 * Get possible causes.
-	 *
-	 * @return Possible causes
-	 */
-	public String[] getCauses() {
-		return causes;
-	}
+    /**
+     * Get possible causes.
+     *
+     * @return Possible causes
+     */
+    public String[] getCauses() {
+        return causes;
+    }
 
-	/**
-	 * Get cause error.
-	 *
-	 * @return Cause error
-	 */
-	public Throwable getError() {
-		return error;
-	}
+    /**
+     * Get cause error.
+     *
+     * @return Cause error
+     */
+    public Throwable getError() {
+        return error;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -86,678 +86,679 @@ import org.kse.utilities.io.IndentSequence;
 
 /**
  * Displays the properties of a supplied KeyStore.
- *
  */
 public class DProperties extends JEscDialog {
-	private static final long serialVersionUID = 1L;
-
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-
-	private static final String NEWLINE = "\n";
-
-	private JPanel jpButtons;
-	private JButton jbCopy;
-	private JButton jbOK;
-	private JPanel jpProperties;
-	private JTree jtrProperties;
-	private JScrollPane jspProperties;
-	private KeyStoreHistory history;
-	private KeyStoreState currentState;
-	private IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
-
-	/**
-	 * Creates a new DProperties dialog.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param history
-	 *            KeyStore history
-	 * @throws CryptoException
-	 *             If a problem occurred while getting the properties
-	 */
-	public DProperties(JFrame parent, KeyStoreHistory history) throws CryptoException {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		this.history = history;
-		this.currentState = history.getCurrentState();
-		initComponents();
-	}
-
-	private void initComponents() throws CryptoException {
-		jbCopy = new JButton(res.getString("DProperties.jbCopy.text"));
-		PlatformUtil.setMnemonic(jbCopy, res.getString("DProperties.jbCopy.mnemonic").charAt(0));
-		jbCopy.setToolTipText(res.getString("DProperties.jbCopy.tooltip"));
-		jbCopy.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DProperties.this);
-				copyPressed();
-			} finally {
-				CursorUtil.setCursorFree(DProperties.this);
-			}
-		});
-
-		jbOK = new JButton(res.getString("DProperties.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
-
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
-
-		jpProperties = new JPanel(new BorderLayout());
-		jpProperties.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		jtrProperties = new JTree(createPropertiesNodes());
-		jtrProperties.setRowHeight(Math.max(18, jtrProperties.getRowHeight()));
-		jtrProperties.setShowsRootHandles(true);
-		jtrProperties.setRootVisible(false);
-		jtrProperties.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		jtrProperties.setCellRenderer(new PropertiesTreeCellRend());
-
-		TreeNode topNode = (TreeNode) jtrProperties.getModel().getRoot();
-		expandTwoLevels(new TreePath(topNode));
-
-		jspProperties = PlatformUtil.createScrollPane(jtrProperties, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		jspProperties.setPreferredSize(new Dimension(400, 250));
-		jpProperties.add(jspProperties, BorderLayout.CENTER);
-
-		getContentPane().add(jpProperties, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
-
-		setTitle(MessageFormat.format(res.getString("DProperties.Title"), history.getName()));
-		setResizable(true);
-
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
-
-		getRootPane().setDefaultButton(jbOK);
-
-		pack();
-
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
-
-	private DefaultMutableTreeNode createPropertiesNodes() throws CryptoException {
-		KeyStore keyStore = currentState.getKeyStore();
-
-		String root = MessageFormat.format(res.getString("DProperties.properties.Root"), history.getName());
-		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(root);
-
-		String file = history.getPath();
-		DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.File"), file));
-		rootNode.add(fileNode);
-
-		String type = keyStore.getType();
-		DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Type"), type));
-		rootNode.add(typeNode);
+    private static final long serialVersionUID = 1L;
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+
+    private static final String NEWLINE = "\n";
+
+    private JPanel jpButtons;
+    private JButton jbCopy;
+    private JButton jbOK;
+    private JPanel jpProperties;
+    private JTree jtrProperties;
+    private JScrollPane jspProperties;
+    private KeyStoreHistory history;
+    private KeyStoreState currentState;
+    private IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+
+    /**
+     * Creates a new DProperties dialog.
+     *
+     * @param parent  Parent frame
+     * @param history KeyStore history
+     * @throws CryptoException If a problem occurred while getting the properties
+     */
+    public DProperties(JFrame parent, KeyStoreHistory history) throws CryptoException {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.history = history;
+        this.currentState = history.getCurrentState();
+        initComponents();
+    }
+
+    private void initComponents() throws CryptoException {
+        jbCopy = new JButton(res.getString("DProperties.jbCopy.text"));
+        PlatformUtil.setMnemonic(jbCopy, res.getString("DProperties.jbCopy.mnemonic").charAt(0));
+        jbCopy.setToolTipText(res.getString("DProperties.jbCopy.tooltip"));
+        jbCopy.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DProperties.this);
+                copyPressed();
+            } finally {
+                CursorUtil.setCursorFree(DProperties.this);
+            }
+        });
+
+        jbOK = new JButton(res.getString("DProperties.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
+
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
+
+        jpProperties = new JPanel(new BorderLayout());
+        jpProperties.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+        jtrProperties = new JTree(createPropertiesNodes());
+        jtrProperties.setRowHeight(Math.max(18, jtrProperties.getRowHeight()));
+        jtrProperties.setShowsRootHandles(true);
+        jtrProperties.setRootVisible(false);
+        jtrProperties.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        jtrProperties.setCellRenderer(new PropertiesTreeCellRend());
+
+        TreeNode topNode = (TreeNode) jtrProperties.getModel().getRoot();
+        expandTwoLevels(new TreePath(topNode));
+
+        jspProperties = PlatformUtil.createScrollPane(jtrProperties, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jspProperties.setPreferredSize(new Dimension(400, 250));
+        jpProperties.add(jspProperties, BorderLayout.CENTER);
+
+        getContentPane().add(jpProperties, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+
+        setTitle(MessageFormat.format(res.getString("DProperties.Title"), history.getName()));
+        setResizable(true);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
+
+        getRootPane().setDefaultButton(jbOK);
+
+        pack();
+
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
+
+    private DefaultMutableTreeNode createPropertiesNodes() throws CryptoException {
+        KeyStore keyStore = currentState.getKeyStore();
+
+        String root = MessageFormat.format(res.getString("DProperties.properties.Root"), history.getName());
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(root);
+
+        String file = history.getPath();
+        DefaultMutableTreeNode fileNode = new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.File"), file));
+        rootNode.add(fileNode);
+
+        String type = keyStore.getType();
+        DefaultMutableTreeNode typeNode = new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Type"), type));
+        rootNode.add(typeNode);
 
-		String provider = keyStore.getProvider().getName();
-		DefaultMutableTreeNode providerNode = new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Provider"), provider));
-		rootNode.add(providerNode);
-
-		createKeysNodes(rootNode);
+        String provider = keyStore.getProvider().getName();
+        DefaultMutableTreeNode providerNode = new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Provider"), provider));
+        rootNode.add(providerNode);
+
+        createKeysNodes(rootNode);
 
-		createKeyPairsNodes(rootNode);
-
-		createTrustedCertificatesNodes(rootNode);
-
-		return rootNode;
-	}
+        createKeyPairsNodes(rootNode);
+
+        createTrustedCertificatesNodes(rootNode);
 
-	private TreeSet<String> getAliasesInAlphaOrder() throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
-
-			TreeSet<String> aliases = new TreeSet<>();
+        return rootNode;
+    }
+
+    private TreeSet<String> getAliasesInAlphaOrder() throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
 
-			Enumeration<String> enumAliases = keyStore.aliases();
+            TreeSet<String> aliases = new TreeSet<>();
+
+            Enumeration<String> enumAliases = keyStore.aliases();
+
+            while (enumAliases.hasMoreElements()) {
+                String alias = enumAliases.nextElement();
 
-			while (enumAliases.hasMoreElements()) {
-				String alias = enumAliases.nextElement();
+                if (KeyStoreUtil.isSupportedEntryType(alias, keyStore)) {
+                    aliases.add(alias);
+                }
+            }
+            return aliases;
+        } catch (KeyStoreException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
+
+    private void createTrustedCertificatesNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
+
+            TreeSet<String> aliases = getAliasesInAlphaOrder();
+
+            DefaultMutableTreeNode trustCertsNode = new DefaultMutableTreeNode(
+                    res.getString("DProperties.properties.TrustedCertificates"));
+            parentNode.add(trustCertsNode);
+
+            boolean trustCertsPresent = false;
+
+            for (String alias : aliases) {
+                if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+                    createTrustedCertificateNodes(trustCertsNode, alias);
+
+                    trustCertsPresent = true;
+                }
+            }
 
-				if (KeyStoreUtil.isSupportedEntryType(alias, keyStore)) {
-					aliases.add(alias);
-				}
-			}
-			return aliases;
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
-
-	private void createTrustedCertificatesNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
-
-			TreeSet<String> aliases = getAliasesInAlphaOrder();
-
-			DefaultMutableTreeNode trustCertsNode = new DefaultMutableTreeNode(
-					res.getString("DProperties.properties.TrustedCertificates"));
-			parentNode.add(trustCertsNode);
-
-			boolean trustCertsPresent = false;
-
-			for (String alias : aliases) {
-				if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-					createTrustedCertificateNodes(trustCertsNode, alias);
+            if (!trustCertsPresent) {
+                DefaultMutableTreeNode emptyTrustCertsNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.None"));
+                trustCertsNode.add(emptyTrustCertsNode);
+            }
+        } catch (KeyStoreException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
+
+    private void createTrustedCertificateNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
+
+            DefaultMutableTreeNode trustedCertificateNode = new DefaultMutableTreeNode(alias);
+            parentNode.add(trustedCertificateNode);
+
+            createLastModifiedNode(trustedCertificateNode, alias);
 
-					trustCertsPresent = true;
-				}
-			}
-
-			if (!trustCertsPresent) {
-				DefaultMutableTreeNode emptyTrustCertsNode = new DefaultMutableTreeNode(
-						res.getString("DProperties.properties.None"));
-				trustCertsNode.add(emptyTrustCertsNode);
-			}
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
-
-	private void createTrustedCertificateNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
+            X509Certificate trustedCertificate = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
 
-			DefaultMutableTreeNode trustedCertificateNode = new DefaultMutableTreeNode(alias);
-			parentNode.add(trustedCertificateNode);
+            populateCertificateNode(trustedCertificateNode, trustedCertificate);
+        } catch (KeyStoreException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
 
-			createLastModifiedNode(trustedCertificateNode, alias);
+    private void populateCertificateNode(DefaultMutableTreeNode certificateNode, X509Certificate certificate)
+            throws CryptoException {
+        try {
+            String version = MessageFormat.format(res.getString("DProperties.properties.Version"),
+                                                  "" + certificate.getVersion());
+            certificateNode.add(new DefaultMutableTreeNode(version));
 
-			X509Certificate trustedCertificate = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+            String subject = MessageFormat.format(res.getString("DProperties.properties.Subject"),
+                                                  X500NameUtils.x500PrincipalToX500Name(
+                                                          certificate.getSubjectX500Principal()));
+            certificateNode.add(new DefaultMutableTreeNode(subject));
 
-			populateCertificateNode(trustedCertificateNode, trustedCertificate);
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
+            String issuer = MessageFormat.format(res.getString("DProperties.properties.Issuer"),
+                                                 X500NameUtils.x500PrincipalToX500Name(
+                                                         certificate.getIssuerX500Principal()));
+            certificateNode.add(new DefaultMutableTreeNode(issuer));
 
-	private void populateCertificateNode(DefaultMutableTreeNode certificateNode, X509Certificate certificate)
-			throws CryptoException {
-		try {
-			String version = MessageFormat.format(res.getString("DProperties.properties.Version"),
-					"" + certificate.getVersion());
-			certificateNode.add(new DefaultMutableTreeNode(version));
+            String serialNumber = MessageFormat.format(res.getString("DProperties.properties.SerialNumber"),
+                                                       new BigInteger(
+                                                               certificate.getSerialNumber().toByteArray()).toString(16)
+                                                                                                           .toUpperCase());
+            certificateNode.add(new DefaultMutableTreeNode(serialNumber));
 
-			String subject = MessageFormat.format(res.getString("DProperties.properties.Subject"),
-					X500NameUtils.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
-			certificateNode.add(new DefaultMutableTreeNode(subject));
+            Date validFromDate = certificate.getNotBefore();
+            String validFrom = MessageFormat.format(res.getString("DProperties.properties.ValidFrom"),
+                                                    StringUtils.formatDate(validFromDate));
+            certificateNode.add(new DefaultMutableTreeNode(validFrom));
 
-			String issuer = MessageFormat.format(res.getString("DProperties.properties.Issuer"),
-					X500NameUtils.x500PrincipalToX500Name(certificate.getIssuerX500Principal()));
-			certificateNode.add(new DefaultMutableTreeNode(issuer));
+            Date validUntilDate = certificate.getNotAfter();
+            String validUntil = MessageFormat.format(res.getString("DProperties.properties.ValidUntil"),
+                                                     StringUtils.formatDate(validUntilDate));
+            certificateNode.add(new DefaultMutableTreeNode(validUntil));
 
-			String serialNumber = MessageFormat.format(res.getString("DProperties.properties.SerialNumber"),
-					new BigInteger(certificate.getSerialNumber().toByteArray()).toString(16).toUpperCase());
-			certificateNode.add(new DefaultMutableTreeNode(serialNumber));
+            createPublicKeyNodes(certificateNode, certificate);
 
-			Date validFromDate = certificate.getNotBefore();
-			String validFrom = MessageFormat.format(res.getString("DProperties.properties.ValidFrom"),
-					StringUtils.formatDate(validFromDate));
-			certificateNode.add(new DefaultMutableTreeNode(validFrom));
+            String signatureAlgorithm = MessageFormat.format(res.getString("DProperties.properties.SignatureAlgorithm"),
+                                                             X509CertUtil.getCertificateSignatureAlgorithm(
+                                                                     certificate));
+            certificateNode.add(new DefaultMutableTreeNode(signatureAlgorithm));
 
-			Date validUntilDate = certificate.getNotAfter();
-			String validUntil = MessageFormat.format(res.getString("DProperties.properties.ValidUntil"),
-					StringUtils.formatDate(validUntilDate));
-			certificateNode.add(new DefaultMutableTreeNode(validUntil));
+            byte[] cert = certificate.getEncoded();
 
-			createPublicKeyNodes(certificateNode, certificate);
+            String md5 = MessageFormat.format(res.getString("DProperties.properties.Md5Fingerprint"),
+                                              DigestUtil.getFriendlyMessageDigest(cert, DigestType.MD5));
+            certificateNode.add(new DefaultMutableTreeNode(md5));
 
-			String signatureAlgorithm = MessageFormat.format(
-					res.getString("DProperties.properties.SignatureAlgorithm"),
-					X509CertUtil.getCertificateSignatureAlgorithm(certificate));
-			certificateNode.add(new DefaultMutableTreeNode(signatureAlgorithm));
+            String sha1 = MessageFormat.format(res.getString("DProperties.properties.Sha1Fingerprint"),
+                                               DigestUtil.getFriendlyMessageDigest(cert, DigestType.SHA1));
+            certificateNode.add(new DefaultMutableTreeNode(sha1));
+        } catch (CertificateEncodingException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
+
+    private void createPublicKeyNodes(DefaultMutableTreeNode parentNode, X509Certificate certificate)
+            throws CryptoException {
+        createPublicKeyNodes(parentNode, certificate.getPublicKey());
+    }
+
+    private void createPublicKeyNodes(DefaultMutableTreeNode parentNode, PublicKey publicKey) throws CryptoException {
+        DefaultMutableTreeNode publicKeyNode = new DefaultMutableTreeNode(
+                res.getString("DProperties.properties.PublicKey"));
+        parentNode.add(publicKeyNode);
 
-			byte[] cert = certificate.getEncoded();
+        KeyInfo keyInfo = KeyPairUtil.getKeyInfo(publicKey);
+        String keyAlg = keyInfo.getAlgorithm();
 
-			String md5 = MessageFormat.format(res.getString("DProperties.properties.Md5Fingerprint"),
-					DigestUtil.getFriendlyMessageDigest(cert, DigestType.MD5));
-			certificateNode.add(new DefaultMutableTreeNode(md5));
+        publicKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Algorithm"), keyAlg)));
 
-			String sha1 = MessageFormat.format(res.getString("DProperties.properties.Sha1Fingerprint"),
-					DigestUtil.getFriendlyMessageDigest(cert, DigestType.SHA1));
-			certificateNode.add(new DefaultMutableTreeNode(sha1));
-		} catch (CertificateEncodingException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
+        Integer keySize = keyInfo.getSize();
 
-	private void createPublicKeyNodes(DefaultMutableTreeNode parentNode, X509Certificate certificate)
-			throws CryptoException {
-		createPublicKeyNodes(parentNode, certificate.getPublicKey());
-	}
-
-	private void createPublicKeyNodes(DefaultMutableTreeNode parentNode, PublicKey publicKey) throws CryptoException {
-		DefaultMutableTreeNode publicKeyNode = new DefaultMutableTreeNode(
-				res.getString("DProperties.properties.PublicKey"));
-		parentNode.add(publicKeyNode);
+        if (keySize != null) {
+            publicKeyNode.add(new DefaultMutableTreeNode(
+                    MessageFormat.format(res.getString("DProperties.properties.KeySize"), "" + keyInfo.getSize())));
+        } else {
+            publicKeyNode.add(new DefaultMutableTreeNode(
+                    MessageFormat.format(res.getString("DProperties.properties.KeySize"), "?")));
+        }
 
-		KeyInfo keyInfo = KeyPairUtil.getKeyInfo(publicKey);
-		String keyAlg = keyInfo.getAlgorithm();
+        String keyFormat = publicKey.getFormat();
 
-		publicKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Algorithm"), keyAlg)));
+        publicKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Format"), keyFormat)));
 
-		Integer keySize = keyInfo.getSize();
+        String keyEncoded = "0x" + new BigInteger(1, publicKey.getEncoded()).toString(16).toUpperCase();
 
-		if (keySize != null) {
-			publicKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-					res.getString("DProperties.properties.KeySize"), "" + keyInfo.getSize())));
-		} else {
-			publicKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-					res.getString("DProperties.properties.KeySize"), "?")));
-		}
+        publicKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Encoded"), keyEncoded)));
 
-		String keyFormat = publicKey.getFormat();
+        if (publicKey instanceof RSAPublicKey) {
+            RSAPublicKey rsaPublicKey = (RSAPublicKey) publicKey;
 
-		publicKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Format"), keyFormat)));
+            String publicExponent = MessageFormat.format(
+                    res.getString("DProperties.properties.public.rsa.PublicExponent"),
+                    "0x" + rsaPublicKey.getPublicExponent().toString(16).toUpperCase());
+            publicKeyNode.add(new DefaultMutableTreeNode(publicExponent));
 
-		String keyEncoded = "0x" + new BigInteger(1, publicKey.getEncoded()).toString(16).toUpperCase();
+            String modulus = MessageFormat.format(res.getString("DProperties.properties.public.rsa.Modulus"),
+                                                  "0x" + rsaPublicKey.getModulus().toString(16).toUpperCase());
+            publicKeyNode.add(new DefaultMutableTreeNode(modulus));
 
-		publicKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Encoded"), keyEncoded)));
+        } else if (publicKey instanceof DSAPublicKey) {
+            DSAPublicKey dsaPublicKey = (DSAPublicKey) publicKey;
 
-		if (publicKey instanceof RSAPublicKey) {
-			RSAPublicKey rsaPublicKey = (RSAPublicKey) publicKey;
+            DSAParams dsaParams = dsaPublicKey.getParams();
 
-			String publicExponent = MessageFormat.format(
-					res.getString("DProperties.properties.public.rsa.PublicExponent"), "0x"
-							+ rsaPublicKey.getPublicExponent().toString(16).toUpperCase());
-			publicKeyNode.add(new DefaultMutableTreeNode(publicExponent));
+            String primeModulusP = MessageFormat.format(
+                    res.getString("DProperties.properties.public.dsa.PrimeModulusP"),
+                    "0x" + dsaParams.getP().toString(16).toUpperCase());
+            publicKeyNode.add(new DefaultMutableTreeNode(primeModulusP));
 
-			String modulus = MessageFormat.format(res.getString("DProperties.properties.public.rsa.Modulus"), "0x"
-					+ rsaPublicKey.getModulus().toString(16).toUpperCase());
-			publicKeyNode.add(new DefaultMutableTreeNode(modulus));
+            String primeQ = MessageFormat.format(res.getString("DProperties.properties.public.dsa.PrimeQ"),
+                                                 "0x" + dsaParams.getQ().toString(16).toUpperCase());
+            publicKeyNode.add(new DefaultMutableTreeNode(primeQ));
 
-		} else if (publicKey instanceof DSAPublicKey) {
-			DSAPublicKey dsaPublicKey = (DSAPublicKey) publicKey;
+            String generatorG = MessageFormat.format(res.getString("DProperties.properties.public.dsa.GeneratorG"),
+                                                     "0x" + dsaParams.getG().toString(16).toUpperCase());
+            publicKeyNode.add(new DefaultMutableTreeNode(generatorG));
 
-			DSAParams dsaParams = dsaPublicKey.getParams();
+            String publicKeyY = MessageFormat.format(res.getString("DProperties.properties.public.dsa.PublicKeyY"),
+                                                     "0x" + dsaPublicKey.getY().toString(16).toUpperCase());
+            publicKeyNode.add(new DefaultMutableTreeNode(publicKeyY));
+        }
+    }
 
-			String primeModulusP = MessageFormat.format(
-					res.getString("DProperties.properties.public.dsa.PrimeModulusP"),
-					"0x" + dsaParams.getP().toString(16).toUpperCase());
-			publicKeyNode.add(new DefaultMutableTreeNode(primeModulusP));
+    private void createKeyPairsNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
 
-			String primeQ = MessageFormat.format(res.getString("DProperties.properties.public.dsa.PrimeQ"), "0x"
-					+ dsaParams.getQ().toString(16).toUpperCase());
-			publicKeyNode.add(new DefaultMutableTreeNode(primeQ));
+            TreeSet<String> aliases = getAliasesInAlphaOrder();
 
-			String generatorG = MessageFormat.format(res.getString("DProperties.properties.public.dsa.GeneratorG"),
-					"0x" + dsaParams.getG().toString(16).toUpperCase());
-			publicKeyNode.add(new DefaultMutableTreeNode(generatorG));
+            DefaultMutableTreeNode keyPairsNode = new DefaultMutableTreeNode(
+                    res.getString("DProperties.properties.KeyPairs"));
+            parentNode.add(keyPairsNode);
 
-			String publicKeyY = MessageFormat.format(res.getString("DProperties.properties.public.dsa.PublicKeyY"),
-					"0x" + dsaPublicKey.getY().toString(16).toUpperCase());
-			publicKeyNode.add(new DefaultMutableTreeNode(publicKeyY));
-		}
-	}
+            boolean keyPairsPresent = false;
 
-	private void createKeyPairsNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
+            for (String alias : aliases) {
+                if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+                    createKeyPairNodes(keyPairsNode, alias);
 
-			TreeSet<String> aliases = getAliasesInAlphaOrder();
+                    keyPairsPresent = true;
+                }
+            }
 
-			DefaultMutableTreeNode keyPairsNode = new DefaultMutableTreeNode(
-					res.getString("DProperties.properties.KeyPairs"));
-			parentNode.add(keyPairsNode);
+            if (!keyPairsPresent) {
+                DefaultMutableTreeNode emptyKeyPairNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.None"));
+                keyPairsNode.add(emptyKeyPairNode);
+            }
+        } catch (KeyStoreException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
 
-			boolean keyPairsPresent = false;
+    private void createKeyPairNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
 
-			for (String alias : aliases) {
-				if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-					createKeyPairNodes(keyPairsNode, alias);
+            DefaultMutableTreeNode keyPairNode = new DefaultMutableTreeNode(alias);
+            parentNode.add(keyPairNode);
 
-					keyPairsPresent = true;
-				}
-			}
+            createLastModifiedNode(keyPairNode, alias);
 
-			if (!keyPairsPresent) {
-				DefaultMutableTreeNode emptyKeyPairNode = new DefaultMutableTreeNode(
-						res.getString("DProperties.properties.None"));
-				keyPairsNode.add(emptyKeyPairNode);
-			}
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
+            createPrivateKeyNodes(keyPairNode, alias);
 
-	private void createKeyPairNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
+            X509Certificate[] certificates = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
 
-			DefaultMutableTreeNode keyPairNode = new DefaultMutableTreeNode(alias);
-			parentNode.add(keyPairNode);
+            DefaultMutableTreeNode certificatesNode = new DefaultMutableTreeNode(
+                    res.getString("DProperties.properties.Certificates"));
+            keyPairNode.add(certificatesNode);
 
-			createLastModifiedNode(keyPairNode, alias);
+            for (int i = 0; i < certificates.length; i++) {
+                X509Certificate certificate = certificates[i];
 
-			createPrivateKeyNodes(keyPairNode, alias);
+                DefaultMutableTreeNode certificateNode = new DefaultMutableTreeNode(
+                        X509CertUtil.getShortName(certificate));
+                certificatesNode.add(certificateNode);
 
-			X509Certificate[] certificates = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
+                populateCertificateNode(certificateNode, certificate);
+            }
+        } catch (KeyStoreException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
+
+    private void createPrivateKeyNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
+
+            Password password = getEntryPassword(alias);
 
-			DefaultMutableTreeNode certificatesNode = new DefaultMutableTreeNode(
-					res.getString("DProperties.properties.Certificates"));
-			keyPairNode.add(certificatesNode);
+            if (password == null) {
+                DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.PrivateKey"));
+                parentNode.add(privateKeyNode);
 
-			for (int i = 0; i < certificates.length; i++) {
-				X509Certificate certificate = certificates[i];
+                DefaultMutableTreeNode lockedNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.Locked"));
+                privateKeyNode.add(lockedNode);
+
+                return;
+            }
 
-				DefaultMutableTreeNode certificateNode = new DefaultMutableTreeNode(
-						X509CertUtil.getShortName(certificate));
-				certificatesNode.add(certificateNode);
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
-				populateCertificateNode(certificateNode, certificate);
-			}
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
+            createPrivateKeyNodes(parentNode, privateKey);
+        } catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
 
-	private void createPrivateKeyNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
-
-			Password password = getEntryPassword(alias);
+    private void createPrivateKeyNodes(DefaultMutableTreeNode parentNode, PrivateKey privateKey)
+            throws CryptoException {
+        DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
+                res.getString("DProperties.properties.PrivateKey"));
+        parentNode.add(privateKeyNode);
+        currentState.getKeyStore();
 
-			if (password == null) {
-				DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
-						res.getString("DProperties.properties.PrivateKey"));
-				parentNode.add(privateKeyNode);
+        KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+        String keyAlg = keyInfo.getAlgorithm();
 
-				DefaultMutableTreeNode lockedNode = new DefaultMutableTreeNode(
-						res.getString("DProperties.properties.Locked"));
-				privateKeyNode.add(lockedNode);
+        privateKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Algorithm"), keyAlg)));
 
-				return;
-			}
+        Integer keySize = keyInfo.getSize();
 
-			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+        if (keySize != null) {
+            privateKeyNode.add(new DefaultMutableTreeNode(
+                    MessageFormat.format(res.getString("DProperties.properties.KeySize"), "" + keyInfo.getSize())));
+        } else {
+            privateKeyNode.add(new DefaultMutableTreeNode(
+                    MessageFormat.format(res.getString("DProperties.properties.KeySize"), "?")));
+        }
 
-			createPrivateKeyNodes(parentNode, privateKey);
-		} catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
+        String keyFormat = privateKey.getFormat();
 
-	private void createPrivateKeyNodes(DefaultMutableTreeNode parentNode, PrivateKey privateKey) throws CryptoException {
-		DefaultMutableTreeNode privateKeyNode = new DefaultMutableTreeNode(
-				res.getString("DProperties.properties.PrivateKey"));
-		parentNode.add(privateKeyNode);
-		currentState.getKeyStore();
+        privateKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Format"), keyFormat)));
 
-		KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
-		String keyAlg = keyInfo.getAlgorithm();
+        String keyEncoded;
+        byte[] encodedKey = privateKey.getEncoded();
+        if (encodedKey != null) {
+            keyEncoded = "0x" + new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase();
+        } else {
+            keyEncoded = "*****";
+        }
 
-		privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Algorithm"), keyAlg)));
+        privateKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Encoded"), keyEncoded)));
 
-		Integer keySize = keyInfo.getSize();
+        if (privateKey instanceof RSAPrivateCrtKey) {
+            RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
 
-		if (keySize != null) {
-			privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-					res.getString("DProperties.properties.KeySize"), "" + keyInfo.getSize())));
-		} else {
-			privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-					res.getString("DProperties.properties.KeySize"), "?")));
-		}
+            String publicExponent = MessageFormat.format(
+                    res.getString("DProperties.properties.private.rsa.PublicExponent"),
+                    "0x" + rsaPrivateKey.getPublicExponent().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(publicExponent));
 
-		String keyFormat = privateKey.getFormat();
+            String modulus = MessageFormat.format(res.getString("DProperties.properties.private.rsa.Modulus"),
+                                                  "0x" + rsaPrivateKey.getModulus().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(modulus));
 
-		privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Format"), keyFormat)));
+            String primeP = MessageFormat.format(res.getString("DProperties.properties.private.rsa.PrimeP"),
+                                                 "0x" + rsaPrivateKey.getPrimeP().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(primeP));
 
-		String keyEncoded;
-		byte[] encodedKey = privateKey.getEncoded();
-		if (encodedKey != null) {
-			keyEncoded = "0x" + new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase();
-		} else {
-			keyEncoded = "*****";
-		}
+            String primeQ = MessageFormat.format(res.getString("DProperties.properties.private.rsa.PrimeQ"),
+                                                 "0x" + rsaPrivateKey.getPrimeQ().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(primeQ));
 
-		privateKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Encoded"), keyEncoded)));
+            String primeExponentP = MessageFormat.format(
+                    res.getString("DProperties.properties.private.rsa.PrimeExponentP"),
+                    "0x" + rsaPrivateKey.getPrimeExponentP().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(primeExponentP));
 
-		if (privateKey instanceof RSAPrivateCrtKey) {
-			RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
+            String primeExponentQ = MessageFormat.format(
+                    res.getString("DProperties.properties.private.rsa.PrimeExponentQ"),
+                    "0x" + rsaPrivateKey.getPrimeExponentQ().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(primeExponentQ));
 
-			String publicExponent = MessageFormat.format(
-					res.getString("DProperties.properties.private.rsa.PublicExponent"), "0x"
-							+ rsaPrivateKey.getPublicExponent().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(publicExponent));
+            String crtCoefficient = MessageFormat.format(
+                    res.getString("DProperties.properties.private.rsa.CrtCoefficient"),
+                    "0x" + rsaPrivateKey.getCrtCoefficient().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(crtCoefficient));
 
-			String modulus = MessageFormat.format(res.getString("DProperties.properties.private.rsa.Modulus"), "0x"
-					+ rsaPrivateKey.getModulus().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(modulus));
+            String privateExponent = MessageFormat.format(
+                    res.getString("DProperties.properties.private.rsa.PrivateExponent"),
+                    "0x" + rsaPrivateKey.getPrivateExponent().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(privateExponent));
 
-			String primeP = MessageFormat.format(res.getString("DProperties.properties.private.rsa.PrimeP"), "0x"
-					+ rsaPrivateKey.getPrimeP().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(primeP));
+        } else if (privateKey instanceof DSAPrivateKey) {
+            DSAPrivateKey dsaPrivateKey = (DSAPrivateKey) privateKey;
 
-			String primeQ = MessageFormat.format(res.getString("DProperties.properties.private.rsa.PrimeQ"), "0x"
-					+ rsaPrivateKey.getPrimeQ().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(primeQ));
+            DSAParams dsaParams = dsaPrivateKey.getParams();
 
-			String primeExponentP = MessageFormat.format(
-					res.getString("DProperties.properties.private.rsa.PrimeExponentP"), "0x"
-							+ rsaPrivateKey.getPrimeExponentP().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(primeExponentP));
+            String primeModulusP = MessageFormat.format(
+                    res.getString("DProperties.properties.private.dsa.PrimeModulusP"),
+                    "0x" + dsaParams.getP().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(primeModulusP));
 
-			String primeExponentQ = MessageFormat.format(
-					res.getString("DProperties.properties.private.rsa.PrimeExponentQ"), "0x"
-							+ rsaPrivateKey.getPrimeExponentQ().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(primeExponentQ));
+            String primeQ = MessageFormat.format(res.getString("DProperties.properties.private.dsa.PrimeQ"),
+                                                 "0x" + dsaParams.getQ().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(primeQ));
 
-			String crtCoefficient = MessageFormat.format(
-					res.getString("DProperties.properties.private.rsa.CrtCoefficient"), "0x"
-							+ rsaPrivateKey.getCrtCoefficient().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(crtCoefficient));
+            String generatorG = MessageFormat.format(res.getString("DProperties.properties.private.dsa.GeneratorG"),
+                                                     "0x" + dsaParams.getG().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(generatorG));
 
-			String privateExponent = MessageFormat.format(
-					res.getString("DProperties.properties.private.rsa.PrivateExponent"), "0x"
-							+ rsaPrivateKey.getPrivateExponent().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(privateExponent));
+            String secretExponentX = MessageFormat.format(
+                    res.getString("DProperties.properties.private.dsa.SecretExponentX"),
+                    "0x" + dsaPrivateKey.getX().toString(16).toUpperCase());
+            privateKeyNode.add(new DefaultMutableTreeNode(secretExponentX));
+        }
 
-		} else if (privateKey instanceof DSAPrivateKey) {
-			DSAPrivateKey dsaPrivateKey = (DSAPrivateKey) privateKey;
+    }
 
-			DSAParams dsaParams = dsaPrivateKey.getParams();
+    private Password getEntryPassword(String alias) {
 
-			String primeModulusP = MessageFormat.format(
-					res.getString("DProperties.properties.private.dsa.PrimeModulusP"), "0x"
-							+ dsaParams.getP().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(primeModulusP));
+        return currentState.getEntryPassword(alias);
+    }
 
-			String primeQ = MessageFormat.format(res.getString("DProperties.properties.private.dsa.PrimeQ"), "0x"
-					+ dsaParams.getQ().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(primeQ));
+    private void createKeysNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
 
-			String generatorG = MessageFormat.format(res.getString("DProperties.properties.private.dsa.GeneratorG"),
-					"0x" + dsaParams.getG().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(generatorG));
+            TreeSet<String> aliases = getAliasesInAlphaOrder();
 
-			String secretExponentX = MessageFormat.format(
-					res.getString("DProperties.properties.private.dsa.SecretExponentX"), "0x"
-							+ dsaPrivateKey.getX().toString(16).toUpperCase());
-			privateKeyNode.add(new DefaultMutableTreeNode(secretExponentX));
-		}
+            DefaultMutableTreeNode keysNode = new DefaultMutableTreeNode(res.getString("DProperties.properties.Keys"));
+            parentNode.add(keysNode);
 
-	}
+            boolean keysPresent = false;
 
-	private Password getEntryPassword(String alias) {
+            for (String alias : aliases) {
+                if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
+                    createKeyNodes(keysNode, alias);
+
+                    keysPresent = true;
+                }
+            }
+
+            if (!keysPresent) {
+                DefaultMutableTreeNode emptyKeyNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.None"));
+                keysNode.add(emptyKeyNode);
+            }
+        } catch (KeyStoreException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
+
+    private void createKeyNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
 
-		return currentState.getEntryPassword(alias);
-	}
+            DefaultMutableTreeNode keyNode = new DefaultMutableTreeNode(alias);
+            parentNode.add(keyNode);
+
+            createLastModifiedNode(keyNode, alias);
+
+            Password password = getEntryPassword(alias);
+
+            if (password == null) {
+                DefaultMutableTreeNode lockedNode = new DefaultMutableTreeNode(
+                        res.getString("DProperties.properties.Locked"));
+                keyNode.add(lockedNode);
+
+                return;
+            }
+
+            Key key = keyStore.getKey(alias, password.toCharArray());
 
-	private void createKeysNodes(DefaultMutableTreeNode parentNode) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
+            if (key instanceof PublicKey) {
+                createPublicKeyNodes(keyNode, (PublicKey) key);
+            } else if (key instanceof PrivateKey) {
+                createPrivateKeyNodes(keyNode, (PrivateKey) key);
+            } else if (key instanceof SecretKey) {
+                createSecretKeyNodes(keyNode, (SecretKey) key);
+            }
+        } catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
+        }
+    }
 
-			TreeSet<String> aliases = getAliasesInAlphaOrder();
-
-			DefaultMutableTreeNode keysNode = new DefaultMutableTreeNode(res.getString("DProperties.properties.Keys"));
-			parentNode.add(keysNode);
-
-			boolean keysPresent = false;
-
-			for (String alias : aliases) {
-				if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
-					createKeyNodes(keysNode, alias);
-
-					keysPresent = true;
-				}
-			}
-
-			if (!keysPresent) {
-				DefaultMutableTreeNode emptyKeyNode = new DefaultMutableTreeNode(
-						res.getString("DProperties.properties.None"));
-				keysNode.add(emptyKeyNode);
-			}
-		} catch (KeyStoreException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
-
-	private void createKeyNodes(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
-
-			DefaultMutableTreeNode keyNode = new DefaultMutableTreeNode(alias);
-			parentNode.add(keyNode);
-
-			createLastModifiedNode(keyNode, alias);
-
-			Password password = getEntryPassword(alias);
-
-			if (password == null) {
-				DefaultMutableTreeNode lockedNode = new DefaultMutableTreeNode(
-						res.getString("DProperties.properties.Locked"));
-				keyNode.add(lockedNode);
-
-				return;
-			}
-
-			Key key = keyStore.getKey(alias, password.toCharArray());
-
-			if (key instanceof PublicKey) {
-				createPublicKeyNodes(keyNode, (PublicKey) key);
-			} else if (key instanceof PrivateKey) {
-				createPrivateKeyNodes(keyNode, (PrivateKey) key);
-			} else if (key instanceof SecretKey) {
-				createSecretKeyNodes(keyNode, (SecretKey) key);
-			}
-		} catch (NoSuchAlgorithmException | KeyStoreException | UnrecoverableKeyException ex) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), ex);
-		}
-	}
-
-	private void createSecretKeyNodes(DefaultMutableTreeNode parentNode, SecretKey secretKey) {
-		DefaultMutableTreeNode secretKeyNode = new DefaultMutableTreeNode(
-				res.getString("DProperties.properties.SecretKey"));
-		parentNode.add(secretKeyNode);
-
-		KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
-		String keyAlg = keyInfo.getAlgorithm();
-
-		// Try and get friendly algorithm name for secret key
-		SecretKeyType secretKeyType = SecretKeyType.resolveJce(keyAlg);
-
-		if (secretKeyType != null) {
-			keyAlg = secretKeyType.friendly();
-		}
-
-		secretKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Algorithm"), keyAlg)));
-
-		Integer keySize = keyInfo.getSize();
-
-		if (keySize != null) {
-			secretKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-					res.getString("DProperties.properties.KeySize"), "" + keyInfo.getSize())));
-		} else {
-			secretKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-					res.getString("DProperties.properties.KeySize"), "?")));
-		}
-
-		String keyFormat = secretKey.getFormat();
-
-		secretKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Format"), keyFormat)));
-
-		String keyEncoded = "0x" + new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase();
-
-		secretKeyNode.add(new DefaultMutableTreeNode(MessageFormat.format(
-				res.getString("DProperties.properties.Encoded"), keyEncoded)));
-	}
-
-	private void createLastModifiedNode(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
-		try {
-			KeyStore keyStore = currentState.getKeyStore();
-
-			if (KeyStoreType.resolveJce(keyStore.getType()) != KeyStoreType.PKCS12) {
-				String lastModified = MessageFormat.format(res.getString("DProperties.properties.LastModified"),
-						StringUtils.formatDate(keyStore.getCreationDate(alias)));
-				parentNode.add(new DefaultMutableTreeNode(lastModified));
-			}
-		} catch (ProviderException e) {
-			// some keystore types do not provide creation dates for their entries => simply create no node
-		} catch (KeyStoreException e) {
-			throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), e);
-		}
-	}
-
-	private void copyPressed() {
-		String properties = getNodeContents((TreeNode) jtrProperties.getModel().getRoot(), 0);
-
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringSelection copy = new StringSelection(properties);
-		clipboard.setContents(copy, copy);
-	}
-
-	private void expandTwoLevels(TreePath treePath) {
-		if (treePath.getPathCount() > 2) {
-			return;
-		}
-
-		TreeNode node = (TreeNode) treePath.getLastPathComponent();
-
-		if (node.getChildCount() >= 0) {
-			for (Enumeration<?> enumChildren = node.children(); enumChildren.hasMoreElements();) {
-				TreeNode subNode = (TreeNode) enumChildren.nextElement();
-				TreePath path = treePath.pathByAddingChild(subNode);
-				expandTwoLevels(path);
-			}
-		}
-
-		jtrProperties.expandPath(treePath);
-	}
-
-	private String getNodeContents(TreeNode node, int level) {
-		StringBuilder strBuff = new StringBuilder();
-
-		strBuff.append(INDENT.toString(level));
-
-		strBuff.append(node.toString().trim());
-		strBuff.append(NEWLINE);
-
-		for (int i = 0; i < node.getChildCount(); i++) {
-			strBuff.append(getNodeContents(node.getChildAt(i), level + 1));
-		}
-
-		return strBuff.toString();
-	}
-
-	private void okPressed() {
-		closeDialog();
-	}
-
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void createSecretKeyNodes(DefaultMutableTreeNode parentNode, SecretKey secretKey) {
+        DefaultMutableTreeNode secretKeyNode = new DefaultMutableTreeNode(
+                res.getString("DProperties.properties.SecretKey"));
+        parentNode.add(secretKeyNode);
+
+        KeyInfo keyInfo = SecretKeyUtil.getKeyInfo(secretKey);
+        String keyAlg = keyInfo.getAlgorithm();
+
+        // Try and get friendly algorithm name for secret key
+        SecretKeyType secretKeyType = SecretKeyType.resolveJce(keyAlg);
+
+        if (secretKeyType != null) {
+            keyAlg = secretKeyType.friendly();
+        }
+
+        secretKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Algorithm"), keyAlg)));
+
+        Integer keySize = keyInfo.getSize();
+
+        if (keySize != null) {
+            secretKeyNode.add(new DefaultMutableTreeNode(
+                    MessageFormat.format(res.getString("DProperties.properties.KeySize"), "" + keyInfo.getSize())));
+        } else {
+            secretKeyNode.add(new DefaultMutableTreeNode(
+                    MessageFormat.format(res.getString("DProperties.properties.KeySize"), "?")));
+        }
+
+        String keyFormat = secretKey.getFormat();
+
+        secretKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Format"), keyFormat)));
+
+        String keyEncoded = "0x" + new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase();
+
+        secretKeyNode.add(new DefaultMutableTreeNode(
+                MessageFormat.format(res.getString("DProperties.properties.Encoded"), keyEncoded)));
+    }
+
+    private void createLastModifiedNode(DefaultMutableTreeNode parentNode, String alias) throws CryptoException {
+        try {
+            KeyStore keyStore = currentState.getKeyStore();
+
+            if (KeyStoreType.resolveJce(keyStore.getType()) != KeyStoreType.PKCS12) {
+                String lastModified = MessageFormat.format(res.getString("DProperties.properties.LastModified"),
+                                                           StringUtils.formatDate(keyStore.getCreationDate(alias)));
+                parentNode.add(new DefaultMutableTreeNode(lastModified));
+            }
+        } catch (ProviderException e) {
+            // some keystore types do not provide creation dates for their entries => simply create no node
+        } catch (KeyStoreException e) {
+            throw new CryptoException(res.getString("DProperties.NoGetProperties.exception.message"), e);
+        }
+    }
+
+    private void copyPressed() {
+        String properties = getNodeContents((TreeNode) jtrProperties.getModel().getRoot(), 0);
+
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection copy = new StringSelection(properties);
+        clipboard.setContents(copy, copy);
+    }
+
+    private void expandTwoLevels(TreePath treePath) {
+        if (treePath.getPathCount() > 2) {
+            return;
+        }
+
+        TreeNode node = (TreeNode) treePath.getLastPathComponent();
+
+        if (node.getChildCount() >= 0) {
+            for (Enumeration<?> enumChildren = node.children(); enumChildren.hasMoreElements(); ) {
+                TreeNode subNode = (TreeNode) enumChildren.nextElement();
+                TreePath path = treePath.pathByAddingChild(subNode);
+                expandTwoLevels(path);
+            }
+        }
+
+        jtrProperties.expandPath(treePath);
+    }
+
+    private String getNodeContents(TreeNode node, int level) {
+        StringBuilder strBuff = new StringBuilder();
+
+        strBuff.append(INDENT.toString(level));
+
+        strBuff.append(node.toString().trim());
+        strBuff.append(NEWLINE);
+
+        for (int i = 0; i < node.getChildCount(); i++) {
+            strBuff.append(getNodeContents(node.getChildAt(i), level + 1));
+        }
+
+        return strBuff.toString();
+    }
+
+    private void okPressed() {
+        closeDialog();
+    }
+
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

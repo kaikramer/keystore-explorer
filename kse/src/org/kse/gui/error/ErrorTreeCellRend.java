@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,55 +30,47 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 /**
  * Custom cell renderer for the cells of the DErrorDetail tree.
- *
  */
 public class ErrorTreeCellRend extends DefaultTreeCellRenderer {
-	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
+    private static final long serialVersionUID = 1L;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
-	/**
-	 * Returns the rendered cell for the supplied value.
-	 *
-	 * @param jtrError
-	 *            The JTree
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param isExpanded
-	 *            True if cell is expanded
-	 * @param leaf
-	 *            True if cell is a leaf
-	 * @param row
-	 *            The row of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTreeCellRendererComponent(JTree jtrError, Object value, boolean isSelected, boolean isExpanded,
-			boolean leaf, int row, boolean hasFocus) {
-		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrError, value, isSelected, isExpanded, leaf, row,
-				hasFocus);
-		cell.setText(value.toString());
+    /**
+     * Returns the rendered cell for the supplied value.
+     *
+     * @param jtrError   The JTree
+     * @param value      The value to assign to the cell
+     * @param isSelected True if cell is selected
+     * @param isExpanded True if cell is expanded
+     * @param leaf       True if cell is a leaf
+     * @param row        The row of the cell to render
+     * @param hasFocus   If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTreeCellRendererComponent(JTree jtrError, Object value, boolean isSelected, boolean isExpanded,
+                                                  boolean leaf, int row, boolean hasFocus) {
+        JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrError, value, isSelected, isExpanded, leaf, row,
+                                                                  hasFocus);
+        cell.setText(value.toString());
 
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-		Object userValue = node.getUserObject();
-		ImageIcon icon = null;
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+        Object userValue = node.getUserObject();
+        ImageIcon icon = null;
 
-		if (userValue instanceof Throwable) {
-			icon = new ImageIcon(getClass().getResource("images/error_node.png"));
-			cell.setToolTipText(res.getString("ErrorTreeCellRend.Error.tooltip"));
-		} else if (userValue instanceof StackTraceElement) {
-			icon = new ImageIcon(getClass().getResource("images/stacktrace_node.png"));
-			cell.setToolTipText(res.getString("ErrorTreeCellRend.StackTrace.tooltip"));
-		} else {
-			icon = new ImageIcon(getClass().getResource("images/root_node.png"));
-			cell.setToolTipText(res.getString("ErrorTreeCellRend.Root.tooltip"));
-		}
+        if (userValue instanceof Throwable) {
+            icon = new ImageIcon(getClass().getResource("images/error_node.png"));
+            cell.setToolTipText(res.getString("ErrorTreeCellRend.Error.tooltip"));
+        } else if (userValue instanceof StackTraceElement) {
+            icon = new ImageIcon(getClass().getResource("images/stacktrace_node.png"));
+            cell.setToolTipText(res.getString("ErrorTreeCellRend.StackTrace.tooltip"));
+        } else {
+            icon = new ImageIcon(getClass().getResource("images/root_node.png"));
+            cell.setToolTipText(res.getString("ErrorTreeCellRend.Root.tooltip"));
+        }
 
-		cell.setIcon(icon);
+        cell.setIcon(icon);
 
-		return cell;
-	}
+        return cell;
+    }
 }

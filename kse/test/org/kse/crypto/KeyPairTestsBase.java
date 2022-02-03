@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,21 +27,20 @@ import org.kse.crypto.keypair.KeyPairUtil;
 
 /**
  * Abstract base class for all key pair test cases. Sets up test key pairs.
- *
  */
 public abstract class KeyPairTestsBase extends CryptoTestsBase {
-	protected static KeyPair rsaKeyPair;
-	protected static KeyPair dsaKeyPair;
+    protected static KeyPair rsaKeyPair;
+    protected static KeyPair dsaKeyPair;
 
-	@BeforeAll
-	public static void initKeyPairs() throws CryptoException {
+    @BeforeAll
+    public static void initKeyPairs() throws CryptoException {
 
-		if (rsaKeyPair == null) {
-			rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, BC);
-		}
+        if (rsaKeyPair == null) {
+            rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, BC);
+        }
 
-		if (dsaKeyPair == null) {
-			dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
-		}
-	}
+        if (dsaKeyPair == null) {
+            dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
+        }
+    }
 }

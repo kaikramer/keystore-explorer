@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,192 +45,190 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Displays a problem and its possible causes.
- *
  */
 public class DProblem extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
-	private JPanel jpProblem;
-	private JPanel jpProblemHeader;
-	private JLabel jlProblemHeader;
-	private JPanel jpCauses;
-	private JLabel jlCauses;
-	private JPanel jpButtons;
-	private JButton jbDisplayError;
-	private JButton jbOK;
+    private JPanel jpProblem;
+    private JPanel jpProblemHeader;
+    private JLabel jlProblemHeader;
+    private JPanel jpCauses;
+    private JLabel jlCauses;
+    private JPanel jpButtons;
+    private JButton jbDisplayError;
+    private JButton jbOK;
 
-	private Problem problem;
+    private Problem problem;
 
-	/**
-	 * Creates new DProblem dialog where the parent is a frame.
-	 *  @param parent
-	 *            Parent frame
-	 * @param title
-	 *            Dialog title
-	 * @param problem
-	 */
-	public DProblem(JFrame parent, String title, Problem problem) {
-		super(parent, ModalityType.DOCUMENT_MODAL);
-		setTitle(title);
-		this.problem = problem;
+    /**
+     * Creates new DProblem dialog where the parent is a frame.
+     *
+     * @param parent  Parent frame
+     * @param title   Dialog title
+     * @param problem
+     */
+    public DProblem(JFrame parent, String title, Problem problem) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+        setTitle(title);
+        this.problem = problem;
 
-		initComponents();
-	}
+        initComponents();
+    }
 
-	/**
-	 * Creates new DProblem dialog where the parent is a dialog.
-	 *  @param parent
-	 *            Parent dialog
-	 * @param title
-	 *            Dialog title
-	 * @param problem
-	 */
-	public DProblem(JDialog parent, String title, Problem problem) {
-		super(parent, ModalityType.DOCUMENT_MODAL);
-		setTitle(title);
-		this.problem = problem;
+    /**
+     * Creates new DProblem dialog where the parent is a dialog.
+     *
+     * @param parent  Parent dialog
+     * @param title   Dialog title
+     * @param problem
+     */
+    public DProblem(JDialog parent, String title, Problem problem) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+        setTitle(title);
+        this.problem = problem;
 
-		initComponents();
-	}
+        initComponents();
+    }
 
-	private void initComponents() {
-		jpProblemHeader = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		jpProblemHeader.setBorder(new EmptyBorder(5, 5, 5, 5));
-		if (!LnfUtil.isDarkLnf()) {
-			jpProblemHeader.setBackground(Color.WHITE);
-		}
-		jpProblemHeader.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.WHITE), new CompoundBorder(
-				new MatteBorder(0, 0, 1, 0, Color.GRAY), new EmptyBorder(10, 10, 10, 10))));
+    private void initComponents() {
+        jpProblemHeader = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jpProblemHeader.setBorder(new EmptyBorder(5, 5, 5, 5));
+        if (!LnfUtil.isDarkLnf()) {
+            jpProblemHeader.setBackground(Color.WHITE);
+        }
+        jpProblemHeader.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.WHITE),
+                                                     new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY),
+                                                                        new EmptyBorder(10, 10, 10, 10))));
 
-		ImageIcon icon = new ImageIcon(getClass().getResource("images/problem.png"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("images/problem.png"));
 
-		jlProblemHeader = new JLabel(formatProblem());
-		jlProblemHeader.setIconTextGap(15);
-		jlProblemHeader.setIcon(icon);
+        jlProblemHeader = new JLabel(formatProblem());
+        jlProblemHeader.setIconTextGap(15);
+        jlProblemHeader.setIcon(icon);
 
-		jpProblemHeader.add(jlProblemHeader);
+        jpProblemHeader.add(jlProblemHeader);
 
-		jpCauses = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jpCauses = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		jlCauses = new JLabel(formatCauses());
+        jlCauses = new JLabel(formatCauses());
 
-		jpCauses.add(jlCauses);
-		jpCauses.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.WHITE), new CompoundBorder(
-				new MatteBorder(0, 0, 1, 0, Color.GRAY), new EmptyBorder(0, 5, 5, 10))));
+        jpCauses.add(jlCauses);
+        jpCauses.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.WHITE),
+                                              new CompoundBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY),
+                                                                 new EmptyBorder(0, 5, 5, 10))));
 
-		jpProblem = new JPanel(new BorderLayout(0, 0));
-		jpProblem.add(jpProblemHeader, BorderLayout.NORTH);
-		jpProblem.add(jpCauses, BorderLayout.CENTER);
+        jpProblem = new JPanel(new BorderLayout(0, 0));
+        jpProblem.add(jpProblemHeader, BorderLayout.NORTH);
+        jpProblem.add(jpCauses, BorderLayout.CENTER);
 
-		jbDisplayError = new JButton(res.getString("DProblem.jbDisplayError.text"));
-		PlatformUtil.setMnemonic(jbDisplayError, res.getString("DProblem.jbDisplayError.mnemonic").charAt(0));
-		jbDisplayError.setToolTipText(res.getString("DProblem.jbDisplayError.tooltip"));
-		jbDisplayError.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DProblem.this);
-				showError();
-			} finally {
-				CursorUtil.setCursorFree(DProblem.this);
-			}
-		});
+        jbDisplayError = new JButton(res.getString("DProblem.jbDisplayError.text"));
+        PlatformUtil.setMnemonic(jbDisplayError, res.getString("DProblem.jbDisplayError.mnemonic").charAt(0));
+        jbDisplayError.setToolTipText(res.getString("DProblem.jbDisplayError.tooltip"));
+        jbDisplayError.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DProblem.this);
+                showError();
+            } finally {
+                CursorUtil.setCursorFree(DProblem.this);
+            }
+        });
 
-		jbOK = new JButton(res.getString("DProblem.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DProblem.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDisplayError);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbDisplayError);
 
-		getContentPane().add(jpProblem, BorderLayout.NORTH);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpProblem, BorderLayout.NORTH);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		setResizable(false);
+        setResizable(false);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		pack();
+        pack();
 
-		// "requestFocusInWindow() has to be called after component has been realized, but before frame is displayed"
-		getRootPane().setDefaultButton(jbOK);
-		jbOK.requestFocusInWindow();
-	}
+        // "requestFocusInWindow() has to be called after component has been realized, but before frame is displayed"
+        getRootPane().setDefaultButton(jbOK);
+        jbOK.requestFocusInWindow();
+    }
 
-	private String formatProblem() {
-		return MessageFormat.format("<html>{0}</html>", breakLine(problem.getProblem(), 50));
-	}
+    private String formatProblem() {
+        return MessageFormat.format("<html>{0}</html>", breakLine(problem.getProblem(), 50));
+    }
 
-	private String formatCauses() {
-		StringBuilder sb = new StringBuilder();
+    private String formatCauses() {
+        StringBuilder sb = new StringBuilder();
 
-		sb.append("<html>");
-		sb.append(res.getString("DProblem.PossibleReasons.text"));
-		sb.append("<ul style='margin-left:20'>");
-		for (String solution : problem.getCauses()) {
-			sb.append("<li style='padding-top:5; padding-botton:5'>");
-			sb.append(breakLine(solution, 55));
-			sb.append("</li>");
-		}
-		sb.append("</ul>");
-		sb.append("</html>");
+        sb.append("<html>");
+        sb.append(res.getString("DProblem.PossibleReasons.text"));
+        sb.append("<ul style='margin-left:20'>");
+        for (String solution : problem.getCauses()) {
+            sb.append("<li style='padding-top:5; padding-botton:5'>");
+            sb.append(breakLine(solution, 55));
+            sb.append("</li>");
+        }
+        sb.append("</ul>");
+        sb.append("</html>");
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	private String breakLine(String line, int maxLineLength) {
-		StringBuilder sb = new StringBuilder();
+    private String breakLine(String line, int maxLineLength) {
+        StringBuilder sb = new StringBuilder();
 
-		StringTokenizer strTok = new StringTokenizer(line, " ");
+        StringTokenizer strTok = new StringTokenizer(line, " ");
 
-		String currentLine = "";
+        String currentLine = "";
 
-		while (strTok.hasMoreTokens()) {
-			String word = strTok.nextToken();
+        while (strTok.hasMoreTokens()) {
+            String word = strTok.nextToken();
 
-			if (currentLine.length() == 0) {
-				currentLine += word;
-				continue;
-			}
+            if (currentLine.length() == 0) {
+                currentLine += word;
+                continue;
+            }
 
-			if (currentLine.length() + word.length() + 1 <= maxLineLength) {
-				currentLine += " ";
-				currentLine += word;
-			} else {
-				if (sb.length() > 0) {
-					sb.append("<br>");
-				}
+            if (currentLine.length() + word.length() + 1 <= maxLineLength) {
+                currentLine += " ";
+                currentLine += word;
+            } else {
+                if (sb.length() > 0) {
+                    sb.append("<br>");
+                }
 
-				sb.append(currentLine);
-				currentLine = word;
-			}
-		}
+                sb.append(currentLine);
+                currentLine = word;
+            }
+        }
 
-		if (sb.length() > 0) {
-			sb.append("<br>");
-		}
+        if (sb.length() > 0) {
+            sb.append("<br>");
+        }
 
-		sb.append(currentLine);
+        sb.append(currentLine);
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	private void showError() {
-		DError dError = new DError(this, res.getString("DProblem.CauseError.Title"),
-				problem.getError());
-		dError.setLocationRelativeTo(this);
-		dError.setVisible(true);
-	}
+    private void showError() {
+        DError dError = new DError(this, res.getString("DProblem.CauseError.Title"), problem.getError());
+        dError.setLocationRelativeTo(this);
+        dError.setVisible(true);
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

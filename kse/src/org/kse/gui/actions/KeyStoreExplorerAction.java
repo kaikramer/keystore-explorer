@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -49,219 +49,221 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Abstract base class for all KeyStore Explorer actions.
- *
  */
 public abstract class KeyStoreExplorerAction extends AbstractAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Resource bundle */
-	protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/actions/resources");
+    /**
+     * Resource bundle
+     */
+    protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/actions/resources");
 
-	/** KeyStore Explorer frame */
-	protected KseFrame kseFrame;
+    /**
+     * KeyStore Explorer frame
+     */
+    protected KseFrame kseFrame;
 
-	/** Underlying JFrame */
-	protected JFrame frame;
+    /**
+     * Underlying JFrame
+     */
+    protected JFrame frame;
 
-	/** Application settings */
-	protected ApplicationSettings applicationSettings;
+    /**
+     * Application settings
+     */
+    protected ApplicationSettings applicationSettings;
 
-	/**
-	 * Construct a KeyStoreExplorerAction.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public KeyStoreExplorerAction(KseFrame kseFrame) {
-		this.kseFrame = kseFrame;
-		frame = kseFrame.getUnderlyingFrame();
-		applicationSettings = kseFrame.getApplicationSettings();
-	}
+    /**
+     * Construct a KeyStoreExplorerAction.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public KeyStoreExplorerAction(KseFrame kseFrame) {
+        this.kseFrame = kseFrame;
+        frame = kseFrame.getUnderlyingFrame();
+        applicationSettings = kseFrame.getApplicationSettings();
+    }
 
-	/**
-	 * Perform action. Calls doAction.
-	 *
-	 * @param evt
-	 *            Action event
-	 */
-	@Override
-	public void actionPerformed(ActionEvent evt) {
-		try {
-			kseFrame.setDefaultStatusBarText();
-			CursorUtil.setCursorBusy(frame);
-			kseFrame.getUnderlyingFrame().repaint();
-			doAction();
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		} finally {
-			CursorUtil.setCursorFree(frame);
-		}
-	}
+    /**
+     * Perform action. Calls doAction.
+     *
+     * @param evt Action event
+     */
+    @Override
+    public void actionPerformed(ActionEvent evt) {
+        try {
+            kseFrame.setDefaultStatusBarText();
+            CursorUtil.setCursorBusy(frame);
+            kseFrame.getUnderlyingFrame().repaint();
+            doAction();
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        } finally {
+            CursorUtil.setCursorFree(frame);
+        }
+    }
 
-	/**
-	 * Do the action.
-	 */
-	protected abstract void doAction();
+    /**
+     * Do the action.
+     */
+    protected abstract void doAction();
 
-	/**
-	 * Get an entry's password. Queries the KeyStore history first and, if the
-	 * password is not found there, asks the user for it.
-	 *
-	 * @param alias
-	 *            Entry alias
-	 * @param state
-	 *            KeyStore state
-	 * @return Password or null if it could not be retrieved
-	 */
-	protected Password getEntryPassword(String alias, KeyStoreState state) {
-		Password password = state.getEntryPassword(alias);
+    /**
+     * Get an entry's password. Queries the KeyStore history first and, if the
+     * password is not found there, asks the user for it.
+     *
+     * @param alias Entry alias
+     * @param state KeyStore state
+     * @return Password or null if it could not be retrieved
+     */
+    protected Password getEntryPassword(String alias, KeyStoreState state) {
+        Password password = state.getEntryPassword(alias);
 
-		if (password == null) {
-			if (!KeyStoreType.resolveJce(state.getKeyStore().getType()).hasEntryPasswords()) {
-				password = new Password((char[])null);
-			} else {
-				password = unlockEntry(alias, state);
-			}
-		}
+        if (password == null) {
+            if (!KeyStoreType.resolveJce(state.getKeyStore().getType()).hasEntryPasswords()) {
+                password = new Password((char[]) null);
+            } else {
+                password = unlockEntry(alias, state);
+            }
+        }
 
-		return password;
-	}
+        return password;
+    }
 
-	/**
-	 * Unlock a key or key pair entry. Updates the KeyStore history with the
-	 * password.
-	 *
-	 * @param alias
-	 *            Entry's alias
-	 * @param state
-	 *            KeyStore state
-	 * @return Key pair password if successful, null otherwise
-	 */
-	protected Password unlockEntry(String alias, KeyStoreState state) {
-		try {
-			KeyStore keyStore = state.getKeyStore();
+    /**
+     * Unlock a key or key pair entry. Updates the KeyStore history with the
+     * password.
+     *
+     * @param alias Entry's alias
+     * @param state KeyStore state
+     * @return Key pair password if successful, null otherwise
+     */
+    protected Password unlockEntry(String alias, KeyStoreState state) {
+        try {
+            KeyStore keyStore = state.getKeyStore();
 
-			DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-					res.getString("KeyStoreExplorerAction.UnlockEntry.Title"), alias));
-			dGetPassword.setLocationRelativeTo(frame);
-			dGetPassword.setVisible(true);
-			Password password = dGetPassword.getPassword();
+            DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
+                    res.getString("KeyStoreExplorerAction.UnlockEntry.Title"), alias));
+            dGetPassword.setLocationRelativeTo(frame);
+            dGetPassword.setVisible(true);
+            Password password = dGetPassword.getPassword();
 
-			if (password == null) {
-				return null;
-			}
+            if (password == null) {
+                return null;
+            }
 
-			keyStore.getKey(alias, password.toCharArray()); // Test password is correct
+            keyStore.getKey(alias, password.toCharArray()); // Test password is correct
 
-			state.setEntryPassword(alias, password);
-			kseFrame.updateControls(true);
+            state.setEntryPassword(alias, password);
+            kseFrame.updateControls(true);
 
-			return password;
-		} catch (GeneralSecurityException ex) {
-			String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoUnlockEntry.Problem"),
-					alias);
+            return password;
+        } catch (GeneralSecurityException ex) {
+            String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoUnlockEntry.Problem"),
+                                                     alias);
 
-			String[] causes = new String[] { res.getString("KeyStoreExplorerAction.PasswordIncorrectEntry.Cause") };
+            String[] causes = new String[] { res.getString("KeyStoreExplorerAction.PasswordIncorrectEntry.Cause") };
 
-			Problem problem = new Problem(problemStr, causes, ex);
+            Problem problem = new Problem(problemStr, causes, ex);
 
-			DProblem dProblem = new DProblem(frame,
-					res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"),
-					problem);
-			dProblem.setLocationRelativeTo(frame);
-			dProblem.setVisible(true);
+            DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"),
+                                             problem);
+            dProblem.setLocationRelativeTo(frame);
+            dProblem.setVisible(true);
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 
-	/**
-	 * Open a certificate file.
-	 *
-	 * @param certificateFile
-	 *            The certificate file
-	 * @return The certificates found in the file or null if open failed
-	 */
-	protected X509Certificate[] openCertificate(File certificateFile) {
-		try {
-			return openCertificate(FileUtils.readFileToByteArray(certificateFile), certificateFile.getName());
-		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("KeyStoreExplorerAction.NoReadFile.message"), certificateFile),
-					res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
-			return new X509Certificate[0];
-		}
-	}
+    /**
+     * Open a certificate file.
+     *
+     * @param certificateFile The certificate file
+     * @return The certificates found in the file or null if open failed
+     */
+    protected X509Certificate[] openCertificate(File certificateFile) {
+        try {
+            return openCertificate(FileUtils.readFileToByteArray(certificateFile), certificateFile.getName());
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                  res.getString("KeyStoreExplorerAction.NoReadFile.message"),
+                                                  certificateFile),
+                                          res.getString("KeyStoreExplorerAction.OpenCertificate.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+            return new X509Certificate[0];
+        }
+    }
 
-	/**
-	 * Open a certificate input stream.
-	 *
-	 * @param data Certificate data
-	 * @param name The name of the certificate (could be a file name for example)
-	 * @return The certificates found in the file or null if open failed
-	 */
-	protected X509Certificate[] openCertificate(byte[] data, String name) {
+    /**
+     * Open a certificate input stream.
+     *
+     * @param data Certificate data
+     * @param name The name of the certificate (could be a file name for example)
+     * @return The certificates found in the file or null if open failed
+     */
+    protected X509Certificate[] openCertificate(byte[] data, String name) {
 
-		try {
-			X509Certificate[] certs = X509CertUtil.loadCertificates(data);
+        try {
+            X509Certificate[] certs = X509CertUtil.loadCertificates(data);
 
-			if (certs.length == 0) {
-				JOptionPane.showMessageDialog(frame,
-						MessageFormat.format(res.getString("KeyStoreExplorerAction.NoCertsFound.message"), name),
-						res.getString("KeyStoreExplorerAction.OpenCertificate.Title"), JOptionPane.WARNING_MESSAGE);
-			}
+            if (certs.length == 0) {
+                JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                      res.getString("KeyStoreExplorerAction.NoCertsFound.message"),
+                                                      name),
+                                              res.getString("KeyStoreExplorerAction.OpenCertificate.Title"),
+                                              JOptionPane.WARNING_MESSAGE);
+            }
 
-			return certs;
-		} catch (Exception ex) {
-			String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoOpenCert.Problem"), name);
+            return certs;
+        } catch (Exception ex) {
+            String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoOpenCert.Problem"), name);
 
-			String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
-					res.getString("KeyStoreExplorerAction.CorruptedCert.Cause") };
+            String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
+                                             res.getString("KeyStoreExplorerAction.CorruptedCert.Cause") };
 
-			Problem problem = new Problem(problemStr, causes, ex);
+            Problem problem = new Problem(problemStr, causes, ex);
 
-			DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
-					problem);
-			dProblem.setLocationRelativeTo(frame);
-			dProblem.setVisible(true);
+            DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
+                                             problem);
+            dProblem.setLocationRelativeTo(frame);
+            dProblem.setVisible(true);
 
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 
-	/**
-	 * Get a new KeyStore password.
-	 *
-	 * @return The new KeyStore password, or null if none entered by the user
-	 */
-	protected Password getNewKeyStorePassword() {
-		DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
-				res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"),
-				ApplicationSettings.getInstance().getPasswordQualityConfig());
-		dGetNewPassword.setLocationRelativeTo(frame);
-		dGetNewPassword.setVisible(true);
+    /**
+     * Get a new KeyStore password.
+     *
+     * @return The new KeyStore password, or null if none entered by the user
+     */
+    protected Password getNewKeyStorePassword() {
+        DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
+                "KeyStoreExplorerAction.SetKeyStorePassword.Title"), ApplicationSettings.getInstance()
+                                                                                        .getPasswordQualityConfig());
+        dGetNewPassword.setLocationRelativeTo(frame);
+        dGetNewPassword.setVisible(true);
 
-		return dGetNewPassword.getPassword();
-	}
+        return dGetNewPassword.getPassword();
+    }
 
-	/**
-	 * Is the supplied KeyStore file open?
-	 *
-	 * @param keyStoreFile
-	 *            KeyStore file
-	 * @return True if it is
-	 */
-	protected boolean isKeyStoreFileOpen(File keyStoreFile) {
-		KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
+    /**
+     * Is the supplied KeyStore file open?
+     *
+     * @param keyStoreFile KeyStore file
+     * @return True if it is
+     */
+    protected boolean isKeyStoreFileOpen(File keyStoreFile) {
+        KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
 
-		for (int i = 0; i < histories.length; i++) {
-			File f = histories[i].getFile();
+        for (int i = 0; i < histories.length; i++) {
+            File f = histories[i].getFile();
 
-			if (f != null && f.equals(keyStoreFile)) {
-				return true;
-			}
-		}
+            if (f != null && f.equals(keyStoreFile)) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

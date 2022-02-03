@@ -1,3 +1,23 @@
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 - 2022 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
@@ -24,77 +44,76 @@ import org.kse.utilities.history.HistoryAction;
  */
 public class GenerateDHParametersAction extends KeyStoreExplorerAction implements HistoryAction {
 
-	private static final long serialVersionUID = 7477452992392634450L;
-	protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/actions/resources");
+    private static final long serialVersionUID = 7477452992392634450L;
+    protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/actions/resources");
 
-	/**
-	 * Construct Action
-	 *
-	 * @param kseFrame The KeyStore Explorer frame
-	 */
-	public GenerateDHParametersAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct Action
+     *
+     * @param kseFrame The KeyStore Explorer frame
+     */
+    public GenerateDHParametersAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("GenerateDHParametersAction.accelerator").charAt(0),
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("GenerateDHParametersAction.statusbar"));
-		putValue(NAME, res.getString("GenerateDHParametersAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("GenerateDHParametersAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-					getClass().getResource("images/gendh.png"))));
+        putValue(ACCELERATOR_KEY,
+                 KeyStroke.getKeyStroke(res.getString("GenerateDHParametersAction.accelerator").charAt(0),
+                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("GenerateDHParametersAction.statusbar"));
+        putValue(NAME, res.getString("GenerateDHParametersAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("GenerateDHParametersAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/gendh.png"))));
 
-	}
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    }
 
-	@Override
-	protected void doAction() {
-		generateDHParameters();
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	}
+    @Override
+    protected void doAction() {
+        generateDHParameters();
 
-	/**
-	 * Generate DH Parameters in the currently opened KeyStore.
-	 *
-	 * @return Does not return any value
-	 */
-	public void generateDHParameters() {
+    }
 
-		try {
-			//Get KeySize selection
-			DGenerateDHParameters dGenerateDHParameters = new DGenerateDHParameters(frame);
-			dGenerateDHParameters.setLocationRelativeTo(frame);
-			dGenerateDHParameters.setVisible(true);
+    /**
+     * Generate DH Parameters in the currently opened KeyStore.
+     *
+     * @return Does not return any value
+     */
+    public void generateDHParameters() {
 
-			if (!dGenerateDHParameters.isSuccessful()) {
-				return;
-			}
+        try {
+            //Get KeySize selection
+            DGenerateDHParameters dGenerateDHParameters = new DGenerateDHParameters(frame);
+            dGenerateDHParameters.setLocationRelativeTo(frame);
+            dGenerateDHParameters.setVisible(true);
 
-			//Generate DER Encoded DH Parameters
-			DGeneratingDHParameters dGeneratingDH = new DGeneratingDHParameters(frame,
-					dGenerateDHParameters.getKeySize());
-			dGeneratingDH.setLocationRelativeTo(frame);
-			dGeneratingDH.startDHParametersGeneration();
-			dGeneratingDH.setVisible(true);
+            if (!dGenerateDHParameters.isSuccessful()) {
+                return;
+            }
 
-			if (!dGeneratingDH.isSuccessful()) {
-				return;
-			}
+            //Generate DER Encoded DH Parameters
+            DGeneratingDHParameters dGeneratingDH = new DGeneratingDHParameters(frame,
+                                                                                dGenerateDHParameters.getKeySize());
+            dGeneratingDH.setLocationRelativeTo(frame);
+            dGeneratingDH.startDHParametersGeneration();
+            dGeneratingDH.setVisible(true);
 
-			//View Base64 DH Parameters with copy and export
-			DViewDHParameters dViewDH = new DViewDHParameters(frame,
-					res.getString("GenerateDHParametersAction.ViewDHParameters.Title"),
-					dGeneratingDH.getDHParameters());
-			dViewDH.setLocationRelativeTo(frame);
-			dViewDH.setVisible(true);
+            if (!dGeneratingDH.isSuccessful()) {
+                return;
+            }
 
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            //View Base64 DH Parameters with copy and export
+            DViewDHParameters dViewDH = new DViewDHParameters(frame, res.getString(
+                    "GenerateDHParametersAction.ViewDHParameters.Title"), dGeneratingDH.getDHParameters());
+            dViewDH.setLocationRelativeTo(frame);
+            dViewDH.setVisible(true);
+
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
 }

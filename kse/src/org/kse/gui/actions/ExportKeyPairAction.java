@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -51,107 +51,104 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to export the selected key pair entry as PKCS #12.
- *
  */
 public class ExportKeyPairAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ExportKeyPairAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public ExportKeyPairAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("ExportKeyPairAction.statusbar"));
-		putValue(NAME, res.getString("ExportKeyPairAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ExportKeyPairAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/exportkeypair.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("ExportKeyPairAction.statusbar"));
+        putValue(NAME, res.getString("ExportKeyPairAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ExportKeyPairAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exportkeypair.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		File exportFile = null;
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        File exportFile = null;
 
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStore keyStore = currentState.getKeyStore();
+            KeyStore keyStore = currentState.getKeyStore();
 
-			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-			Certificate[] certificates = keyStore.getCertificateChain(alias);
+            PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+            Certificate[] certificates = keyStore.getCertificateChain(alias);
 
-			DExportKeyPair dExportKeyPair = new DExportKeyPair(frame, alias,
-					applicationSettings.getPasswordQualityConfig());
-			dExportKeyPair.setLocationRelativeTo(frame);
-			dExportKeyPair.setVisible(true);
+            DExportKeyPair dExportKeyPair = new DExportKeyPair(frame, alias,
+                                                               applicationSettings.getPasswordQualityConfig());
+            dExportKeyPair.setLocationRelativeTo(frame);
+            dExportKeyPair.setVisible(true);
 
-			if (!dExportKeyPair.isExportSelected()) {
-				return;
-			}
+            if (!dExportKeyPair.isExportSelected()) {
+                return;
+            }
 
-			exportFile = dExportKeyPair.getExportFile();
-			Password exportPassword = dExportKeyPair.getExportPassword();
-			ExportFormat exportFormat = dExportKeyPair.getExportFormat();
+            exportFile = dExportKeyPair.getExportFile();
+            Password exportPassword = dExportKeyPair.getExportPassword();
+            ExportFormat exportFormat = dExportKeyPair.getExportFormat();
 
-			if (exportFormat == ExportFormat.PKCS12) {
-				exportAsPkcs12(exportFile, alias, privateKey, certificates, exportPassword);
-			} else {
-				exportAsPem(exportFile, privateKey, certificates, exportPassword);
-			}
+            if (exportFormat == ExportFormat.PKCS12) {
+                exportAsPkcs12(exportFile, alias, privateKey, certificates, exportPassword);
+            } else {
+                exportAsPem(exportFile, privateKey, certificates, exportPassword);
+            }
 
-			JOptionPane.showMessageDialog(frame, res.getString("ExportKeyPairAction.ExportKeyPairSuccessful.message"),
-					res.getString("ExportKeyPairAction.ExportKeyPair.Title"), JOptionPane.INFORMATION_MESSAGE);
-		} catch (FileNotFoundException ex) {
-			String message = MessageFormat.format(res.getString("ExportKeyPairAction.NoWriteFile.message"), exportFile);
-			JOptionPane.showMessageDialog(frame, message, res.getString("ExportKeyPairAction.ExportKeyPair.Title"),
-					JOptionPane.WARNING_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, res.getString("ExportKeyPairAction.ExportKeyPairSuccessful.message"),
+                                          res.getString("ExportKeyPairAction.ExportKeyPair.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            String message = MessageFormat.format(res.getString("ExportKeyPairAction.NoWriteFile.message"), exportFile);
+            JOptionPane.showMessageDialog(frame, message, res.getString("ExportKeyPairAction.ExportKeyPair.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
-	private void exportAsPkcs12(File exportFile, String alias, PrivateKey privateKey, Certificate[] certificates,
-			Password exportPassword) throws CryptoException, IOException, KeyStoreException {
+    private void exportAsPkcs12(File exportFile, String alias, PrivateKey privateKey, Certificate[] certificates,
+                                Password exportPassword) throws CryptoException, IOException, KeyStoreException {
 
-		KeyStore pkcs12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
+        KeyStore pkcs12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
 
-		certificates = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificates));
-		pkcs12.setKeyEntry(alias, privateKey, exportPassword.toCharArray(), certificates);
+        certificates = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certificates));
+        pkcs12.setKeyEntry(alias, privateKey, exportPassword.toCharArray(), certificates);
 
-		KeyStoreUtil.save(pkcs12, exportFile, exportPassword);
-	}
+        KeyStoreUtil.save(pkcs12, exportFile, exportPassword);
+    }
 
-	private void exportAsPem(File exportFile, PrivateKey privateKey, Certificate[] certs, Password password)
-			throws CryptoException, IOException {
+    private void exportAsPem(File exportFile, PrivateKey privateKey, Certificate[] certs, Password password)
+            throws CryptoException, IOException {
 
-		String pemEncodedPrivKey = null;
-		if (password.isEmpty()) {
-			pemEncodedPrivKey = Pkcs8Util.getPem(privateKey);
-		} else {
-			pemEncodedPrivKey = Pkcs8Util.getEncryptedPem(privateKey, Pkcs8PbeType.SHA1_3KEY_DESEDE, password);
-		}
+        String pemEncodedPrivKey = null;
+        if (password.isEmpty()) {
+            pemEncodedPrivKey = Pkcs8Util.getPem(privateKey);
+        } else {
+            pemEncodedPrivKey = Pkcs8Util.getEncryptedPem(privateKey, Pkcs8PbeType.SHA1_3KEY_DESEDE, password);
+        }
 
-		X509Certificate[] orderedCerts = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
-		String pemEncodedCerts = X509CertUtil.getCertsEncodedX509Pem(orderedCerts);
+        X509Certificate[] orderedCerts = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
+        String pemEncodedCerts = X509CertUtil.getCertsEncodedX509Pem(orderedCerts);
 
-		FileUtils.write(exportFile, pemEncodedPrivKey + pemEncodedCerts, StandardCharsets.US_ASCII);
-	}
+        FileUtils.write(exportFile, pemEncodedPrivKey + pemEncodedCerts, StandardCharsets.US_ASCII);
+    }
 }

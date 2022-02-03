@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,115 +41,112 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to save KeyStore as.
- *
  */
 public class SaveAsAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public SaveAsAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public SaveAsAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("SaveAsAction.accelerator").charAt(0), Toolkit.getDefaultToolkit()
-						.getMenuShortcutKeyMask() + InputEvent.ALT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("SaveAsAction.statusbar"));
-		putValue(NAME, res.getString("SaveAsAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SaveAsAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/saveas.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SaveAsAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.ALT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("SaveAsAction.statusbar"));
+        putValue(NAME, res.getString("SaveAsAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SaveAsAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/saveas.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		saveKeyStoreAs(kseFrame.getActiveKeyStoreHistory());
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        saveKeyStoreAs(kseFrame.getActiveKeyStoreHistory());
+    }
 
-	/**
-	 * Save the supplied opened KeyStore to disk to what may be a different file
-	 * from the one it was opened from (if any).
-	 *
-	 * @param history
-	 *            KeyStore history
-	 * @return True if the KeyStore is saved to disk, false otherwise
-	 */
-	protected boolean saveKeyStoreAs(KeyStoreHistory history) {
-		File saveFile = null;
+    /**
+     * Save the supplied opened KeyStore to disk to what may be a different file
+     * from the one it was opened from (if any).
+     *
+     * @param history KeyStore history
+     * @return True if the KeyStore is saved to disk, false otherwise
+     */
+    protected boolean saveKeyStoreAs(KeyStoreHistory history) {
+        File saveFile = null;
 
-		try {
-			KeyStoreState currentState = history.getCurrentState();
+        try {
+            KeyStoreState currentState = history.getCurrentState();
 
-			Password password = currentState.getPassword();
+            Password password = currentState.getPassword();
 
-			if (password == null || password.isNulled()) {
-				SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
+            if (password == null || password.isNulled()) {
+                SetPasswordAction setPasswordAction = new SetPasswordAction(kseFrame);
 
-				if (setPasswordAction.setKeyStorePassword()) {
-					currentState = history.getCurrentState();
-					password = currentState.getPassword();
-				} else {
-					return false;
-				}
-			}
+                if (setPasswordAction.setKeyStorePassword()) {
+                    currentState = history.getCurrentState();
+                    password = currentState.getPassword();
+                } else {
+                    return false;
+                }
+            }
 
-			JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
-			chooser.setCurrentDirectory(CurrentDirectory.get());
-			chooser.setDialogTitle(res.getString("SaveAsAction.SaveKeyStoreAs.Title"));
-			chooser.setMultiSelectionEnabled(false);
+            JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
+            chooser.setCurrentDirectory(CurrentDirectory.get());
+            chooser.setDialogTitle(res.getString("SaveAsAction.SaveKeyStoreAs.Title"));
+            chooser.setMultiSelectionEnabled(false);
 
-			int rtnValue = chooser.showSaveDialog(frame);
-			if (rtnValue != JFileChooser.APPROVE_OPTION) {
-				return false;
-			}
-			saveFile = chooser.getSelectedFile();
-			CurrentDirectory.updateForFile(saveFile);
+            int rtnValue = chooser.showSaveDialog(frame);
+            if (rtnValue != JFileChooser.APPROVE_OPTION) {
+                return false;
+            }
+            saveFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(saveFile);
 
-			if (saveFile.isFile()) {
-				String message = MessageFormat.format(res.getString("SaveAsAction.OverWriteFile.message"), saveFile);
+            if (saveFile.isFile()) {
+                String message = MessageFormat.format(res.getString("SaveAsAction.OverWriteFile.message"), saveFile);
 
-				int selected = JOptionPane.showConfirmDialog(frame, message,
-						res.getString("SaveAsAction.SaveKeyStoreAs.Title"), JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return false;
-				}
-			}
+                int selected = JOptionPane.showConfirmDialog(frame, message,
+                                                             res.getString("SaveAsAction.SaveKeyStoreAs.Title"),
+                                                             JOptionPane.YES_NO_OPTION);
+                if (selected != JOptionPane.YES_OPTION) {
+                    return false;
+                }
+            }
 
-			if (isKeyStoreFileOpen(saveFile)) {
-				JOptionPane.showMessageDialog(frame, res.getString("SaveAsAction.NoSaveKeyStoreAlreadyOpen.message"),
-						res.getString("SaveAsAction.SaveKeyStoreAs.Title"), JOptionPane.WARNING_MESSAGE);
-				return false;
-			}
+            if (isKeyStoreFileOpen(saveFile)) {
+                JOptionPane.showMessageDialog(frame, res.getString("SaveAsAction.NoSaveKeyStoreAlreadyOpen.message"),
+                                              res.getString("SaveAsAction.SaveKeyStoreAs.Title"),
+                                              JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
 
-			KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
+            KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 
-			currentState.setPassword(password);
-			history.setFile(saveFile);
-			currentState.setAsSavedState();
+            currentState.setPassword(password);
+            history.setFile(saveFile);
+            currentState.setAsSavedState();
 
-			kseFrame.updateControls(false);
+            kseFrame.updateControls(false);
 
-			kseFrame.addRecentFile(saveFile);
+            kseFrame.addRecentFile(saveFile);
 
-			return true;
-		} catch (FileNotFoundException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("SaveAsAction.NoWriteFile.message"), saveFile),
-					res.getString("SaveAsAction.SaveKeyStoreAs.Title"), JOptionPane.WARNING_MESSAGE);
-			return false;
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-			return false;
-		}
-	}
+            return true;
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("SaveAsAction.NoWriteFile.message"),
+                                                                      saveFile),
+                                          res.getString("SaveAsAction.SaveKeyStoreAs.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+            return false;
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+            return false;
+        }
+    }
 }

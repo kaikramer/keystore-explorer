@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -54,150 +54,149 @@ import org.kse.version.Version;
 /**
  * Check for an updated version of KeyStore Explorer. This check works over the
  * net so the user may cancel at any time by pressing the cancel button.
- *
  */
 public class DCheckUpdate extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpCheckUpdate;
-	private JLabel jlCheckUpdate;
-	private JPanel jpProgress;
-	private JProgressBar jpbCheckUpdate;
-	private JPanel jpCancel;
-	private JButton jbCancel;
+    private JPanel jpCheckUpdate;
+    private JLabel jlCheckUpdate;
+    private JPanel jpProgress;
+    private JProgressBar jpbCheckUpdate;
+    private JPanel jpCancel;
+    private JButton jbCancel;
 
-	private Thread checker;
-	private Version latestVersion;
+    private Thread checker;
+    private Version latestVersion;
 
-	/**
-	 * Creates a new DCheckUpdate dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 */
-	public DCheckUpdate(JFrame parent) {
-		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-		initComponents();
-	}
+    /**
+     * Creates a new DCheckUpdate dialog.
+     *
+     * @param parent The parent frame
+     */
+    public DCheckUpdate(JFrame parent) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        initComponents();
+    }
 
-	private void initComponents() {
-		jlCheckUpdate = new JLabel(res.getString("DCheckUpdate.jlCheckUpdate.text"));
-		ImageIcon icon = new ImageIcon(getClass().getResource("images/chkup.png"));
-		jlCheckUpdate.setIcon(icon);
-		jlCheckUpdate.setHorizontalTextPosition(SwingConstants.LEADING);
-		jlCheckUpdate.setIconTextGap(15);
+    private void initComponents() {
+        jlCheckUpdate = new JLabel(res.getString("DCheckUpdate.jlCheckUpdate.text"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("images/chkup.png"));
+        jlCheckUpdate.setIcon(icon);
+        jlCheckUpdate.setHorizontalTextPosition(SwingConstants.LEADING);
+        jlCheckUpdate.setIconTextGap(15);
 
-		jpCheckUpdate = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpCheckUpdate.add(jlCheckUpdate);
-		jpCheckUpdate.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpCheckUpdate = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpCheckUpdate.add(jlCheckUpdate);
+        jpCheckUpdate.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jpbCheckUpdate = new JProgressBar();
-		jpbCheckUpdate.setIndeterminate(true);
-		jpbCheckUpdate.setString("DCheckUpdate.jlCheckUpdate.text");
+        jpbCheckUpdate = new JProgressBar();
+        jpbCheckUpdate.setIndeterminate(true);
+        jpbCheckUpdate.setString("DCheckUpdate.jlCheckUpdate.text");
 
-		jpProgress = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		jpProgress.add(jpbCheckUpdate);
-		jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
+        jpProgress = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        jpProgress.add(jpbCheckUpdate);
+        jpProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-		jbCancel = new JButton(res.getString("DCheckUpdate.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DCheckUpdate.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
+        jpCancel = PlatformUtil.createDialogButtonPanel(jbCancel);
 
-		getContentPane().add(jpCheckUpdate, BorderLayout.NORTH);
-		getContentPane().add(jpProgress, BorderLayout.CENTER);
-		getContentPane().add(jpCancel, BorderLayout.SOUTH);
+        getContentPane().add(jpCheckUpdate, BorderLayout.NORTH);
+        getContentPane().add(jpProgress, BorderLayout.CENTER);
+        getContentPane().add(jpCancel, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				if ((checker != null) && (checker.isAlive())) {
-					checker.interrupt();
-				}
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                if ((checker != null) && (checker.isAlive())) {
+                    checker.interrupt();
+                }
+                closeDialog();
+            }
+        });
 
-		setTitle(res.getString("DCheckUpdate.Title"));
-		setResizable(false);
+        setTitle(res.getString("DCheckUpdate.Title"));
+        setResizable(false);
 
-		pack();
-	}
+        pack();
+    }
 
-	/**
-	 * Start key pair generation in a separate thread.
-	 */
-	public void startCheck() {
-		checker = new Thread(new CheckForUpdate());
-		checker.setPriority(Thread.MIN_PRIORITY);
-		checker.start();
-	}
+    /**
+     * Start key pair generation in a separate thread.
+     */
+    public void startCheck() {
+        checker = new Thread(new CheckForUpdate());
+        checker.setPriority(Thread.MIN_PRIORITY);
+        checker.start();
+    }
 
-	private void cancelPressed() {
-		if ((checker != null) && (checker.isAlive())) {
-			checker.interrupt();
-		}
-		closeDialog();
-	}
+    private void cancelPressed() {
+        if ((checker != null) && (checker.isAlive())) {
+            checker.interrupt();
+        }
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 
-	/**
-	 * Get latest version found by check.
-	 *
-	 * @return latest version or null if none found.
-	 */
-	public Version getLatestVersion() {
-		return latestVersion;
-	}
+    /**
+     * Get latest version found by check.
+     *
+     * @return latest version or null if none found.
+     */
+    public Version getLatestVersion() {
+        return latestVersion;
+    }
 
-	private class CheckForUpdate implements Runnable {
-		@Override
-		public void run() {
-			try {
-				// Get the version number of the latest KeyStore Explorer from its web site
-				URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
+    private class CheckForUpdate implements Runnable {
+        @Override
+        public void run() {
+            try {
+                // Get the version number of the latest KeyStore Explorer from its web site
+                URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
 
-				String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
-				latestVersion = new Version(versionString);
+                String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
+                latestVersion = new Version(versionString);
 
-				SwingUtilities.invokeLater(() -> closeDialog());
-			} catch (final Exception ex) {
-				SwingUtilities.invokeLater(() -> {
-					if (DCheckUpdate.this.isShowing()) {
-						String problemStr = res.getString("DCheckUpdate.NoCheckUpdate.Problem");
+                SwingUtilities.invokeLater(() -> closeDialog());
+            } catch (final Exception ex) {
+                SwingUtilities.invokeLater(() -> {
+                    if (DCheckUpdate.this.isShowing()) {
+                        String problemStr = res.getString("DCheckUpdate.NoCheckUpdate.Problem");
 
-						String[] causes = new String[] { res.getString("DCheckUpdate.UpdateHostUnavailable.Cause"),
-								res.getString("DCheckUpdate.ProxySettingsIncorrect.Cause") };
+                        String[] causes = new String[] { res.getString("DCheckUpdate.UpdateHostUnavailable.Cause"),
+                                                         res.getString("DCheckUpdate.ProxySettingsIncorrect.Cause") };
 
-						Problem problem = new Problem(problemStr, causes, ex);
+                        Problem problem = new Problem(problemStr, causes, ex);
 
-						DProblem dProblem = new DProblem(DCheckUpdate.this, res
-								.getString("DCheckUpdate.ProblemCheckingUpdate.Title"), problem);
-						dProblem.setLocationRelativeTo(DCheckUpdate.this);
-						dProblem.setVisible(true);
+                        DProblem dProblem = new DProblem(DCheckUpdate.this,
+                                                         res.getString("DCheckUpdate.ProblemCheckingUpdate.Title"),
+                                                         problem);
+                        dProblem.setLocationRelativeTo(DCheckUpdate.this);
+                        dProblem.setVisible(true);
 
-						closeDialog();
-					}
-				});
-			}
-		}
-	}
+                        closeDialog();
+                    }
+                });
+            }
+        }
+    }
 }

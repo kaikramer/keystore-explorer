@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -35,49 +35,45 @@ import org.kse.utilities.history.KeyStoreState;
 /**
  * Action to display the public key details for the selected trusted certificate
  * entry.
- *
  */
 public class TrustedCertificatePublicKeyDetailsAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public TrustedCertificatePublicKeyDetailsAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public TrustedCertificatePublicKeyDetailsAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.statusbar"));
-		putValue(NAME, res.getString("TrustedCertificatePublicKeyDetailsAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/trustcertpubkeydetails.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.statusbar"));
+        putValue(NAME, res.getString("TrustedCertificatePublicKeyDetailsAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/trustcertpubkeydetails.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			KeyStore keyStore = currentState.getKeyStore();
-			String alias = kseFrame.getSelectedEntryAlias();
+            KeyStore keyStore = currentState.getKeyStore();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			PublicKey pubKey = keyStore.getCertificate(alias).getPublicKey();
+            PublicKey pubKey = keyStore.getCertificate(alias).getPublicKey();
 
-			DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-					res.getString("TrustedCertificatePublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), pubKey);
-			dViewPublicKey.setLocationRelativeTo(frame);
-			dViewPublicKey.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
+                    res.getString("TrustedCertificatePublicKeyDetailsAction.PubKeyDetailsEntry.Title"), alias), pubKey);
+            dViewPublicKey.setLocationRelativeTo(frame);
+            dViewPublicKey.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

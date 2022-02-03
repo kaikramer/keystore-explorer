@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,76 +33,74 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to delete multiple selected entries.
- *
  */
 public class DeleteMultipleEntriesAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public DeleteMultipleEntriesAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public DeleteMultipleEntriesAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("DeleteMultipleEntriesAction.statusbar"));
-		putValue(NAME, res.getString("DeleteMultipleEntriesAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("DeleteMultipleEntriesAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/delete.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("DeleteMultipleEntriesAction.statusbar"));
+        putValue(NAME, res.getString("DeleteMultipleEntriesAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("DeleteMultipleEntriesAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/delete.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		deleteSelectedEntries();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        deleteSelectedEntries();
+    }
 
-	/**
-	 * Let the user delete the selected KeyStore entry.
-	 */
-	public void deleteSelectedEntries() {
-		String[] aliases = kseFrame.getSelectedEntryAliases();
-		if (aliases.length == 0) {
-			return;
-		}
+    /**
+     * Let the user delete the selected KeyStore entry.
+     */
+    public void deleteSelectedEntries() {
+        String[] aliases = kseFrame.getSelectedEntryAliases();
+        if (aliases.length == 0) {
+            return;
+        }
 
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			KeyStoreState currentState = history.getCurrentState();
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
+            KeyStore keyStore = newState.getKeyStore();
 
-			int selected = JOptionPane.showConfirmDialog(frame, res.getString("DeleteMultipleEntriesAction.ConfirmDelete.message"),
-					res.getString("DeleteMultipleEntriesAction.DeleteEntry.Title"), JOptionPane.YES_NO_OPTION);
+            int selected = JOptionPane.showConfirmDialog(frame, res.getString(
+                                                                 "DeleteMultipleEntriesAction.ConfirmDelete.message"),
+                                                         res.getString("DeleteMultipleEntriesAction.DeleteEntry.Title"),
+                                                         JOptionPane.YES_NO_OPTION);
 
-			if (selected != JOptionPane.YES_OPTION) {
-				return;
-			}
+            if (selected != JOptionPane.YES_OPTION) {
+                return;
+            }
 
-			for (String alias : aliases) {
-				keyStore.deleteEntry(alias);
-				newState.removeEntryPassword(alias);
-			}
+            for (String alias : aliases) {
+                keyStore.deleteEntry(alias);
+                newState.removeEntryPassword(alias);
+            }
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.updateControls(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -49,172 +49,167 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Inhibit Any Policy extension.
- *
  */
 public class DInhibitAnyPolicy extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpInhibitAnyPolicy;
-	private JLabel jlInhibitAnyPolicy;
-	private JPanel jpSkipCertificates;
-	private JLabel jlSkipCertificates;
-	private JTextField jtfSkipCertificates;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpInhibitAnyPolicy;
+    private JLabel jlInhibitAnyPolicy;
+    private JPanel jpSkipCertificates;
+    private JLabel jlSkipCertificates;
+    private JTextField jtfSkipCertificates;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
+    private byte[] value;
 
-	/**
-	 * Creates a new DInhibitAnyPolicy dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DInhibitAnyPolicy(JDialog parent) {
-		super(parent);
-		setTitle(res.getString("DInhibitAnyPolicy.Title"));
-		initComponents();
-	}
+    /**
+     * Creates a new DInhibitAnyPolicy dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DInhibitAnyPolicy(JDialog parent) {
+        super(parent);
+        setTitle(res.getString("DInhibitAnyPolicy.Title"));
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DInhibitAnyPolicy dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Inhibit Any Policy DER-encoded
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DInhibitAnyPolicy(JDialog parent, byte[] value) throws IOException {
-		super(parent);
-		setTitle(res.getString("DInhibitAnyPolicy.Title"));
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DInhibitAnyPolicy dialog.
+     *
+     * @param parent The parent dialog
+     * @param value  Inhibit Any Policy DER-encoded
+     * @throws IOException If value could not be decoded
+     */
+    public DInhibitAnyPolicy(JDialog parent, byte[] value) throws IOException {
+        super(parent);
+        setTitle(res.getString("DInhibitAnyPolicy.Title"));
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlInhibitAnyPolicy = new JLabel(res.getString("DInhibitAnyPolicy.jlInhibitAnyPolicy.text"));
-		jlInhibitAnyPolicy.setBorder(new EmptyBorder(5, 5, 0, 5));
+    private void initComponents() {
+        jlInhibitAnyPolicy = new JLabel(res.getString("DInhibitAnyPolicy.jlInhibitAnyPolicy.text"));
+        jlInhibitAnyPolicy.setBorder(new EmptyBorder(5, 5, 0, 5));
 
-		jlSkipCertificates = new JLabel(res.getString("DInhibitAnyPolicy.jlSkipCertificates.text"));
+        jlSkipCertificates = new JLabel(res.getString("DInhibitAnyPolicy.jlSkipCertificates.text"));
 
-		jtfSkipCertificates = new JTextField(3);
+        jtfSkipCertificates = new JTextField(3);
 
-		jpSkipCertificates = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		jpSkipCertificates.add(jlSkipCertificates);
-		jpSkipCertificates.add(jtfSkipCertificates);
+        jpSkipCertificates = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        jpSkipCertificates.add(jlSkipCertificates);
+        jpSkipCertificates.add(jtfSkipCertificates);
 
-		jpInhibitAnyPolicy = new JPanel(new BorderLayout(5, 5));
+        jpInhibitAnyPolicy = new JPanel(new BorderLayout(5, 5));
 
-		jpInhibitAnyPolicy.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpInhibitAnyPolicy.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                        new CompoundBorder(new EtchedBorder(),
+                                                                           new EmptyBorder(5, 5, 5, 5))));
 
-		jpInhibitAnyPolicy.add(jlInhibitAnyPolicy, BorderLayout.NORTH);
-		jpInhibitAnyPolicy.add(jpSkipCertificates, BorderLayout.CENTER);
+        jpInhibitAnyPolicy.add(jlInhibitAnyPolicy, BorderLayout.NORTH);
+        jpInhibitAnyPolicy.add(jpSkipCertificates, BorderLayout.CENTER);
 
-		jbOK = new JButton(res.getString("DInhibitAnyPolicy.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DInhibitAnyPolicy.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DInhibitAnyPolicy.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DInhibitAnyPolicy.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpInhibitAnyPolicy, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpInhibitAnyPolicy, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		InhibitAnyPolicy inhibitAnyPolicy =  InhibitAnyPolicy.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        InhibitAnyPolicy inhibitAnyPolicy = InhibitAnyPolicy.getInstance(value);
 
-		jtfSkipCertificates.setText("" + inhibitAnyPolicy.getSkipCerts());
-		jtfSkipCertificates.setCaretPosition(0);
-	}
+        jtfSkipCertificates.setText("" + inhibitAnyPolicy.getSkipCerts());
+        jtfSkipCertificates.setCaretPosition(0);
+    }
 
-	private void okPressed() {
-		int skipCertificates = -1;
+    private void okPressed() {
+        int skipCertificates = -1;
 
-		String skipCertificatesStr = jtfSkipCertificates.getText().trim();
+        String skipCertificatesStr = jtfSkipCertificates.getText().trim();
 
-		if (skipCertificatesStr.length() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DInhibitAnyPolicy.ValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (skipCertificatesStr.length() == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DInhibitAnyPolicy.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		try {
-			skipCertificates = Integer.parseInt(skipCertificatesStr);
-		} catch (NumberFormatException ex) {
-			JOptionPane.showMessageDialog(this, res.getString("DInhibitAnyPolicy.InvalidLengthValue.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        try {
+            skipCertificates = Integer.parseInt(skipCertificatesStr);
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, res.getString("DInhibitAnyPolicy.InvalidLengthValue.message"),
+                                          getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		if (skipCertificates < 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DInhibitAnyPolicy.InvalidLengthValue.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (skipCertificates < 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DInhibitAnyPolicy.InvalidLengthValue.message"),
+                                          getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		InhibitAnyPolicy inhibitAnyPolicy = new InhibitAnyPolicy(skipCertificates);
+        InhibitAnyPolicy inhibitAnyPolicy = new InhibitAnyPolicy(skipCertificates);
 
-		try {
-			value = inhibitAnyPolicy.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+        try {
+            value = inhibitAnyPolicy.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.INHIBIT_ANY_POLICY.oid();
-	}
+    @Override
+    public String getOid() {
+        return X509ExtensionType.INHIBIT_ANY_POLICY.oid();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

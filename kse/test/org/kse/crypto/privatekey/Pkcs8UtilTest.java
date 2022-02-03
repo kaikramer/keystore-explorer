@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,67 +41,66 @@ import org.kse.crypto.filetype.CryptoFileUtil;
 /**
  * Unit tests for Pkcs8Util. Encodes RSA And DSA private keys using PKCS #8 and
  * reads it back using a variety of options.
- *
  */
 public class Pkcs8UtilTest extends KeyTestsBase {
 
-	@ParameterizedTest
-	@MethodSource("privateKeys")
-	public void unencryptedPkcs8(PrivateKey privateKey) throws Exception {
-		byte[] key = Pkcs8Util.get(privateKey);
-		assertEquals(privateKey, Pkcs8Util.load(key));
-		assertEquals(UNENC_PKCS8_PVK, CryptoFileUtil.detectFileType(key));
-	}
+    @ParameterizedTest
+    @MethodSource("privateKeys")
+    public void unencryptedPkcs8(PrivateKey privateKey) throws Exception {
+        byte[] key = Pkcs8Util.get(privateKey);
+        assertEquals(privateKey, Pkcs8Util.load(key));
+        assertEquals(UNENC_PKCS8_PVK, CryptoFileUtil.detectFileType(key));
+    }
 
-	@ParameterizedTest
-	@MethodSource("privateKeys")
-	public void unencryptedPkcs8Pem(PrivateKey privateKey) throws Exception {
-		String pemKey = Pkcs8Util.getPem(privateKey);
-		assertEquals(privateKey, Pkcs8Util.load(pemKey.getBytes()));
-		assertEquals(UNENC_PKCS8_PVK, CryptoFileUtil.detectFileType(pemKey.getBytes()));
-	}
+    @ParameterizedTest
+    @MethodSource("privateKeys")
+    public void unencryptedPkcs8Pem(PrivateKey privateKey) throws Exception {
+        String pemKey = Pkcs8Util.getPem(privateKey);
+        assertEquals(privateKey, Pkcs8Util.load(pemKey.getBytes()));
+        assertEquals(UNENC_PKCS8_PVK, CryptoFileUtil.detectFileType(pemKey.getBytes()));
+    }
 
-	@TestFactory
-	Iterable<DynamicTest> testAllPbeTypes() throws Exception {
-		List<DynamicTest> tests = new ArrayList<>();
+    @TestFactory
+    Iterable<DynamicTest> testAllPbeTypes() throws Exception {
+        List<DynamicTest> tests = new ArrayList<>();
 
-		for (PrivateKey privateKey : privateKeys()) {
-			for (Pkcs8PbeType pbeType : Pkcs8PbeType.values()) {
-				tests.add(dynamicTest("test " + pbeType.name() + "/" + privateKey.getClass().getSimpleName(), () -> {
-					byte[] encKey = Pkcs8Util.getEncrypted(privateKey, pbeType, PASSWORD);
-					assertEquals(privateKey, Pkcs8Util.loadEncrypted(encKey, PASSWORD));
-					assertEquals(ENC_PKCS8_PVK, CryptoFileUtil.detectFileType(encKey));
-				}));
-			}
-		}
-		return tests;
-	}
+        for (PrivateKey privateKey : privateKeys()) {
+            for (Pkcs8PbeType pbeType : Pkcs8PbeType.values()) {
+                tests.add(dynamicTest("test " + pbeType.name() + "/" + privateKey.getClass().getSimpleName(), () -> {
+                    byte[] encKey = Pkcs8Util.getEncrypted(privateKey, pbeType, PASSWORD);
+                    assertEquals(privateKey, Pkcs8Util.loadEncrypted(encKey, PASSWORD));
+                    assertEquals(ENC_PKCS8_PVK, CryptoFileUtil.detectFileType(encKey));
+                }));
+            }
+        }
+        return tests;
+    }
 
-	@TestFactory
-	Iterable<DynamicTest> testAllPbeTypesPem() throws Exception {
-		List<DynamicTest> tests = new ArrayList<>();
+    @TestFactory
+    Iterable<DynamicTest> testAllPbeTypesPem() throws Exception {
+        List<DynamicTest> tests = new ArrayList<>();
 
-		for (PrivateKey privateKey : privateKeys()) {
-			for (Pkcs8PbeType pbeType : Pkcs8PbeType.values()) {
-				tests.add(dynamicTest("test " + pbeType.name() + "/" + privateKey.getClass().getSimpleName(), () -> {
-					byte[] encKey = Pkcs8Util.getEncryptedPem(privateKey, pbeType, PASSWORD).getBytes();
-					assertEquals(privateKey, Pkcs8Util.loadEncrypted(encKey, PASSWORD));
-					assertEquals(ENC_PKCS8_PVK, CryptoFileUtil.detectFileType(encKey));
-				}));
-			}
-		}
-		return tests;
-	}
+        for (PrivateKey privateKey : privateKeys()) {
+            for (Pkcs8PbeType pbeType : Pkcs8PbeType.values()) {
+                tests.add(dynamicTest("test " + pbeType.name() + "/" + privateKey.getClass().getSimpleName(), () -> {
+                    byte[] encKey = Pkcs8Util.getEncryptedPem(privateKey, pbeType, PASSWORD).getBytes();
+                    assertEquals(privateKey, Pkcs8Util.loadEncrypted(encKey, PASSWORD));
+                    assertEquals(ENC_PKCS8_PVK, CryptoFileUtil.detectFileType(encKey));
+                }));
+            }
+        }
+        return tests;
+    }
 
-	@Test
-	public void incorrectLoadTypeDetected() throws Exception {
-		byte[] key = Pkcs8Util.get(rsaPrivateKey);
-		assertEquals(UNENC_PKCS8_PVK, CryptoFileUtil.detectFileType(key));
-		assertThrows(PrivateKeyUnencryptedException.class,
-				() -> Pkcs8Util.loadEncrypted(key, PASSWORD));
+    @Test
+    public void incorrectLoadTypeDetected() throws Exception {
+        byte[] key = Pkcs8Util.get(rsaPrivateKey);
+        assertEquals(UNENC_PKCS8_PVK, CryptoFileUtil.detectFileType(key));
+        assertThrows(PrivateKeyUnencryptedException.class,
+                     () -> Pkcs8Util.loadEncrypted(key, PASSWORD));
 
-		byte[] encKey = Pkcs8Util.getEncrypted(rsaPrivateKey, SHA1_128BIT_RC4, PASSWORD);
-		assertEquals(ENC_PKCS8_PVK, CryptoFileUtil.detectFileType(encKey));
-		assertThrows(PrivateKeyEncryptedException.class, () -> Pkcs8Util.load(encKey));
-	}
+        byte[] encKey = Pkcs8Util.getEncrypted(rsaPrivateKey, SHA1_128BIT_RC4, PASSWORD);
+        assertEquals(ENC_PKCS8_PVK, CryptoFileUtil.detectFileType(encKey));
+        assertThrows(PrivateKeyEncryptedException.class, () -> Pkcs8Util.load(encKey));
+    }
 }

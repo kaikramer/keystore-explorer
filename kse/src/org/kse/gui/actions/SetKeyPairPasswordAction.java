@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -44,110 +44,104 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to set the selected key pair entry's password.
- *
  */
 public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public SetKeyPairPasswordAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public SetKeyPairPasswordAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("SetKeyPairPasswordAction.statusbar"));
-		putValue(NAME, res.getString("SetKeyPairPasswordAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("SetKeyPairPasswordAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/setpass.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("SetKeyPairPasswordAction.statusbar"));
+        putValue(NAME, res.getString("SetKeyPairPasswordAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("SetKeyPairPasswordAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/setpass.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return res.getString("SetKeyPairPasswordAction.History.text");
-	}
+    @Override
+    public String getHistoryDescription() {
+        return res.getString("SetKeyPairPasswordAction.History.text");
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		String alias = null;
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        String alias = null;
 
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			KeyStoreState currentState = history.getCurrentState();
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
-			alias = kseFrame.getSelectedEntryAlias();
+            KeyStore keyStore = newState.getKeyStore();
+            alias = kseFrame.getSelectedEntryAlias();
 
-			Password oldPassword = newState.getEntryPassword(alias);
+            Password oldPassword = newState.getEntryPassword(alias);
 
-			DChangePassword dChangePassword = new DChangePassword(frame, DOCUMENT_MODAL,
-					res.getString("SetKeyPairPasswordAction.SetKeyPairPassword.Title"), oldPassword,
-					applicationSettings.getPasswordQualityConfig());
-			dChangePassword.setLocationRelativeTo(frame);
-			dChangePassword.setVisible(true);
+            DChangePassword dChangePassword = new DChangePassword(frame, DOCUMENT_MODAL, res.getString(
+                    "SetKeyPairPasswordAction.SetKeyPairPassword.Title"), oldPassword,
+                                                                  applicationSettings.getPasswordQualityConfig());
+            dChangePassword.setLocationRelativeTo(frame);
+            dChangePassword.setVisible(true);
 
-			if (oldPassword == null) {
-				oldPassword = dChangePassword.getOldPassword();
-			}
-			Password newPassword = dChangePassword.getNewPassword();
+            if (oldPassword == null) {
+                oldPassword = dChangePassword.getOldPassword();
+            }
+            Password newPassword = dChangePassword.getNewPassword();
 
-			if ((oldPassword == null) || (newPassword == null)) {
-				return;
-			}
+            if ((oldPassword == null) || (newPassword == null)) {
+                return;
+            }
 
-			// Change the password by recreating the entry
-			Certificate[] certs = keyStore.getCertificateChain(alias);
-			certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
+            // Change the password by recreating the entry
+            Certificate[] certs = keyStore.getCertificateChain(alias);
+            certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
 
-			Key privateKey = keyStore.getKey(alias, oldPassword.toCharArray());
+            Key privateKey = keyStore.getKey(alias, oldPassword.toCharArray());
 
-			keyStore.deleteEntry(alias);
-			newState.removeEntryPassword(alias);
+            keyStore.deleteEntry(alias);
+            newState.removeEntryPassword(alias);
 
-			keyStore.setKeyEntry(alias, privateKey, newPassword.toCharArray(), certs);
+            keyStore.setKeyEntry(alias, privateKey, newPassword.toCharArray(), certs);
 
-			if (currentState.getEntryPassword(alias) == null) {
-				currentState.setEntryPassword(alias, oldPassword);
-			}
+            if (currentState.getEntryPassword(alias) == null) {
+                currentState.setEntryPassword(alias, oldPassword);
+            }
 
-			newState.setEntryPassword(alias, newPassword);
+            newState.setEntryPassword(alias, newPassword);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
+            kseFrame.updateControls(true);
 
-			JOptionPane
-			.showMessageDialog(frame,
-					res.getString("SetKeyPairPasswordAction.SetKeyPairPasswordSuccessful.message"),
-					res.getString("SetKeyPairPasswordAction.SetKeyPairPassword.Title"),
-					JOptionPane.INFORMATION_MESSAGE);
-		} catch (GeneralSecurityException ex) {
-			String problemStr = MessageFormat.format(
-					res.getString("SetKeyPairPasswordAction.NoSetPasswordKeyPairEntry.Problem"), alias);
+            JOptionPane.showMessageDialog(frame, res.getString(
+                                                  "SetKeyPairPasswordAction.SetKeyPairPasswordSuccessful.message"),
+                                          res.getString("SetKeyPairPasswordAction.SetKeyPairPassword.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (GeneralSecurityException ex) {
+            String problemStr = MessageFormat.format(
+                    res.getString("SetKeyPairPasswordAction.NoSetPasswordKeyPairEntry.Problem"), alias);
 
-			String[] causes = new String[] {
-					res.getString("SetKeyPairPasswordAction.PasswordIncorrectKeyPairEntry.Cause"),
-					res.getString("SetKeyPairPasswordAction.NotSupportedAlgorithmKeyPairEntry.Cause") };
+            String[] causes = new String[] {
+                    res.getString("SetKeyPairPasswordAction.PasswordIncorrectKeyPairEntry.Cause"),
+                    res.getString("SetKeyPairPasswordAction.NotSupportedAlgorithmKeyPairEntry.Cause") };
 
-			Problem problem = new Problem(problemStr, causes, ex);
+            Problem problem = new Problem(problemStr, causes, ex);
 
-			DProblem dProblem = new DProblem(frame,
-					res.getString("SetKeyPairPasswordAction.ProblemSettingPasswordKeyPairEntry.Title"),
-					problem);
-			dProblem.setLocationRelativeTo(frame);
-			dProblem.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            DProblem dProblem = new DProblem(frame, res.getString(
+                    "SetKeyPairPasswordAction.ProblemSettingPasswordKeyPairEntry.Title"), problem);
+            dProblem.setLocationRelativeTo(frame);
+            dProblem.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

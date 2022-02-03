@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,43 +33,39 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to show a properties of the active KeyStore.
- *
  */
 public class PropertiesAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public PropertiesAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public PropertiesAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("PropertiesAction.statusbar"));
-		putValue(NAME, res.getString("PropertiesAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("PropertiesAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/properties.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("PropertiesAction.statusbar"));
+        putValue(NAME, res.getString("PropertiesAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("PropertiesAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/properties.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			DProperties dProperties = new DProperties(frame, history);
-			dProperties.setLocationRelativeTo(frame);
-			dProperties.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            DProperties dProperties = new DProperties(frame, history);
+            dProperties.setLocationRelativeTo(frame);
+            dProperties.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

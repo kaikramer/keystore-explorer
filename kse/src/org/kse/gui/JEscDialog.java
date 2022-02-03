@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,84 +34,84 @@ import javax.swing.KeyStroke;
 
 /**
  * Extended dialog class that closes itself when escape key was pressed.
- *
+ * <p>
  * This is the usual behavior under Windows and macOS.
- *
  */
 public class JEscDialog extends JDialog {
-	private static final long serialVersionUID = -3773740513817678414L;
+    private static final long serialVersionUID = -3773740513817678414L;
 
-	public JEscDialog() {
-		this((Frame) null, false);
-	}
+    public JEscDialog() {
+        this((Frame) null, false);
+    }
 
-	public JEscDialog(Frame owner) {
-		this(owner, false);
-	}
+    public JEscDialog(Frame owner) {
+        this(owner, false);
+    }
 
-	public JEscDialog(Frame owner, boolean modal) {
-		this(owner, null, modal);
-	}
+    public JEscDialog(Frame owner, boolean modal) {
+        this(owner, null, modal);
+    }
 
-	public JEscDialog(Frame owner, String title) {
-		this(owner, title, false);
-	}
+    public JEscDialog(Frame owner, String title) {
+        this(owner, title, false);
+    }
 
-	public JEscDialog(Frame owner, String title, boolean modal) {
-		super(owner, title, modal);
-	}
+    public JEscDialog(Frame owner, String title, boolean modal) {
+        super(owner, title, modal);
+    }
 
-	public JEscDialog(Frame owner, String title, boolean modal, GraphicsConfiguration gc) {
-		super(owner, title, modal, gc);
-	}
+    public JEscDialog(Frame owner, String title, boolean modal, GraphicsConfiguration gc) {
+        super(owner, title, modal, gc);
+    }
 
-	public JEscDialog(Dialog owner) {
-		this(owner, false);
-	}
+    public JEscDialog(Dialog owner) {
+        this(owner, false);
+    }
 
-	public JEscDialog(Dialog owner, boolean modal) {
-		this(owner, null, modal);
-	}
+    public JEscDialog(Dialog owner, boolean modal) {
+        this(owner, null, modal);
+    }
 
-	public JEscDialog(Dialog owner, String title) {
-		this(owner, title, false);
-	}
+    public JEscDialog(Dialog owner, String title) {
+        this(owner, title, false);
+    }
 
-	public JEscDialog(Dialog owner, String title, boolean modal) {
-		super(owner, title, modal);
-	}
+    public JEscDialog(Dialog owner, String title, boolean modal) {
+        super(owner, title, modal);
+    }
 
-	public JEscDialog(Dialog owner, String title, boolean modal, GraphicsConfiguration gc) {
-		super(owner, title, modal, gc);
-	}
+    public JEscDialog(Dialog owner, String title, boolean modal, GraphicsConfiguration gc) {
+        super(owner, title, modal, gc);
+    }
 
-	public JEscDialog(Window owner, ModalityType modalityType) {
-		this(owner, "", modalityType);
-	}
+    public JEscDialog(Window owner, ModalityType modalityType) {
+        this(owner, "", modalityType);
+    }
 
-	public JEscDialog(Window owner, String title, Dialog.ModalityType modalityType) {
-		super(owner, title, modalityType);
-	}
+    public JEscDialog(Window owner, String title, Dialog.ModalityType modalityType) {
+        super(owner, title, modalityType);
+    }
 
-	public JEscDialog(Window owner, String title, Dialog.ModalityType modalityType, GraphicsConfiguration gc) {
-		super(owner, title, modalityType, gc);
-	}
+    public JEscDialog(Window owner, String title, Dialog.ModalityType modalityType, GraphicsConfiguration gc) {
+        super(owner, title, modalityType, gc);
+    }
 
-	@Override
-	protected JRootPane createRootPane() {
-		JRootPane rootPane = new JRootPane();
+    @Override
+    protected JRootPane createRootPane() {
+        JRootPane rootPane = new JRootPane();
 
-		// Escape key closes dialogs
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "escapeKey");
-		rootPane.getActionMap().put("escapeKey", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				dispose();
-			}
-		});
-		return rootPane;
-	}
+        // Escape key closes dialogs
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "escapeKey");
+        rootPane.getActionMap().put("escapeKey", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                dispose();
+            }
+        });
+        return rootPane;
+    }
 }

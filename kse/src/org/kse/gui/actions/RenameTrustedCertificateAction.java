@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,98 +36,95 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to rename the selected trusted certificate entry.
- *
  */
 public class RenameTrustedCertificateAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public RenameTrustedCertificateAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public RenameTrustedCertificateAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("RenameTrustedCertificateAction.statusbar"));
-		putValue(NAME, res.getString("RenameTrustedCertificateAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("RenameTrustedCertificateAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/rename.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("RenameTrustedCertificateAction.statusbar"));
+        putValue(NAME, res.getString("RenameTrustedCertificateAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("RenameTrustedCertificateAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/rename.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		renameSelectedEntry();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        renameSelectedEntry();
+    }
 
-	/**
-	 * Rename the currently selected entry
-	 */
-	public void renameSelectedEntry() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    /**
+     * Rename the currently selected entry
+     */
+    public void renameSelectedEntry() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			KeyStoreState currentState = history.getCurrentState();
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
-			String alias = kseFrame.getSelectedEntryAlias();
+            KeyStore keyStore = newState.getKeyStore();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			DGetAlias dGetAlias = new DGetAlias(frame,
-					res.getString("RenameTrustedCertificateAction.NewEntryAlias.Title"), alias);
-			dGetAlias.setLocationRelativeTo(frame);
-			dGetAlias.setVisible(true);
-			String newAlias = dGetAlias.getAlias();
+            DGetAlias dGetAlias = new DGetAlias(frame,
+                                                res.getString("RenameTrustedCertificateAction.NewEntryAlias.Title"),
+                                                alias);
+            dGetAlias.setLocationRelativeTo(frame);
+            dGetAlias.setVisible(true);
+            String newAlias = dGetAlias.getAlias();
 
-			if (newAlias == null) {
-				return;
-			}
+            if (newAlias == null) {
+                return;
+            }
 
-			if (newAlias.equalsIgnoreCase(alias)) {
-				JOptionPane.showMessageDialog(
-						frame,
-						MessageFormat.format(
-								res.getString("RenameTrustedCertificateAction.RenameAliasIdentical.message"), alias),
-						res.getString("RenameTrustedCertificateAction.RenameEntry.Title"), JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (newAlias.equalsIgnoreCase(alias)) {
+                JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                      res.getString("RenameTrustedCertificateAction" +
+                                                                    ".RenameAliasIdentical.message"), alias),
+                                              res.getString("RenameTrustedCertificateAction.RenameEntry.Title"),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			if (keyStore.containsAlias(newAlias)) {
-				String message = MessageFormat.format(
-						res.getString("RenameTrustedCertificateAction.OverWriteEntry.message"), newAlias);
+            if (keyStore.containsAlias(newAlias)) {
+                String message = MessageFormat.format(
+                        res.getString("RenameTrustedCertificateAction.OverWriteEntry.message"), newAlias);
 
-				int selected = JOptionPane.showConfirmDialog(frame, message,
-						res.getString("RenameTrustedCertificateAction.RenameEntry.Title"), JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return;
-				}
+                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
+                        "RenameTrustedCertificateAction.RenameEntry.Title"), JOptionPane.YES_NO_OPTION);
+                if (selected != JOptionPane.YES_OPTION) {
+                    return;
+                }
 
-				keyStore.deleteEntry(newAlias);
-				newState.removeEntryPassword(newAlias);
-			}
+                keyStore.deleteEntry(newAlias);
+                newState.removeEntryPassword(newAlias);
+            }
 
-			Certificate cert = keyStore.getCertificate(alias);
-			keyStore.setCertificateEntry(newAlias, cert);
+            Certificate cert = keyStore.getCertificate(alias);
+            keyStore.setCertificateEntry(newAlias, cert);
 
-			keyStore.deleteEntry(alias);
+            keyStore.deleteEntry(alias);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            kseFrame.updateControls(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

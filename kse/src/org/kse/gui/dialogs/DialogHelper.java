@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,115 +45,109 @@ import org.kse.crypto.signing.SignatureType;
  */
 public class DialogHelper {
 
-	private DialogHelper() {
-	}
+    private DialogHelper() {
+    }
 
-	/**
-	 * Populate a JComboBox with signature algorithms depending on the key pair type.
-	 *
-	 * @param keyPairType
-	 * @param privateKey
-	 * @param jcbSignatureAlgorithm
-	 * @throws CryptoException
-	 */
-	public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey,
-			JComboBox<SignatureType> jcbSignatureAlgorithm)	throws CryptoException {
+    /**
+     * Populate a JComboBox with signature algorithms depending on the key pair type.
+     *
+     * @param keyPairType
+     * @param privateKey
+     * @param jcbSignatureAlgorithm
+     * @throws CryptoException
+     */
+    public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey,
+                                       JComboBox<SignatureType> jcbSignatureAlgorithm) throws CryptoException {
 
-		List<SignatureType> sigAlgs;
+        List<SignatureType> sigAlgs;
 
-		switch (keyPairType) {
-		case DSA:
-			sigAlgs = SignatureType.dsaSignatureTypes();
-			break;
-		case EC:
-			sigAlgs = SignatureType.ecdsaSignatureTypes();
-			break;
-		case EDDSA:
-			EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
-			if (edDSACurve == EdDSACurves.ED25519) {
-				sigAlgs = Collections.singletonList(SignatureType.ED25519);
-			} else {
-				sigAlgs = Collections.singletonList(SignatureType.ED448);
-			}
-			break;
-		case ED25519:
-			sigAlgs = Collections.singletonList(SignatureType.ED25519);
-			break;
-		case ED448:
-			sigAlgs = Collections.singletonList(SignatureType.ED448);
-			break;
-		case RSA:
-		default:
-			KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
-			sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
-		}
+        switch (keyPairType) {
+        case DSA:
+            sigAlgs = SignatureType.dsaSignatureTypes();
+            break;
+        case EC:
+            sigAlgs = SignatureType.ecdsaSignatureTypes();
+            break;
+        case EDDSA:
+            EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
+            if (edDSACurve == EdDSACurves.ED25519) {
+                sigAlgs = Collections.singletonList(SignatureType.ED25519);
+            } else {
+                sigAlgs = Collections.singletonList(SignatureType.ED448);
+            }
+            break;
+        case ED25519:
+            sigAlgs = Collections.singletonList(SignatureType.ED25519);
+            break;
+        case ED448:
+            sigAlgs = Collections.singletonList(SignatureType.ED448);
+            break;
+        case RSA:
+        default:
+            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+            sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
+        }
 
-		jcbSignatureAlgorithm.removeAllItems();
+        jcbSignatureAlgorithm.removeAllItems();
 
-		for (SignatureType sigAlg : sigAlgs) {
-			jcbSignatureAlgorithm.addItem(sigAlg);
-		}
+        for (SignatureType sigAlg : sigAlgs) {
+            jcbSignatureAlgorithm.addItem(sigAlg);
+        }
 
-		// pre-select modern hash algs
-		if (sigAlgs.contains(SignatureType.SHA256_RSA)) {
-			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_RSA);
-		} else if (sigAlgs.contains(SignatureType.SHA256_ECDSA)) {
-			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_ECDSA);
-		} else if (sigAlgs.contains(SignatureType.SHA256_DSA)) {
-			jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_DSA);
-		} else {
-			jcbSignatureAlgorithm.setSelectedIndex(0);
-		}
-	}
+        // pre-select modern hash algs
+        if (sigAlgs.contains(SignatureType.SHA256_RSA)) {
+            jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_RSA);
+        } else if (sigAlgs.contains(SignatureType.SHA256_ECDSA)) {
+            jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_ECDSA);
+        } else if (sigAlgs.contains(SignatureType.SHA256_DSA)) {
+            jcbSignatureAlgorithm.setSelectedItem(SignatureType.SHA256_DSA);
+        } else {
+            jcbSignatureAlgorithm.setSelectedIndex(0);
+        }
+    }
 
-	/**
-	 * Populates a JTextField with PKCS#10 challenge
-	 *
-	 * @param attributes
-	 * 				Attributes from CSR
-	 * @param textField
-	 * 				Text field to be populated with the challenge
-	 */
-	public static void populatePkcs10Challenge(Attribute[] attributes, JTextField textField) {
+    /**
+     * Populates a JTextField with PKCS#10 challenge
+     *
+     * @param attributes Attributes from CSR
+     * @param textField  Text field to be populated with the challenge
+     */
+    public static void populatePkcs10Challenge(Attribute[] attributes, JTextField textField) {
 
-		ASN1ObjectIdentifier pkcs9AtChallengepassword = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-		populateTextField(attributes, textField, pkcs9AtChallengepassword);
-	}
+        ASN1ObjectIdentifier pkcs9AtChallengepassword = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+        populateTextField(attributes, textField, pkcs9AtChallengepassword);
+    }
 
+    /**
+     * Populates a JTextField with PKCS#10/#9 unstructuredName
+     *
+     * @param attributes Attributes from CSR
+     * @param textField  Text field to be populated with the unstructuredName
+     */
+    public static void populatePkcs10UnstructuredName(Attribute[] attributes, JTextField textField) {
 
-	/**
-	 * Populates a JTextField with PKCS#10/#9 unstructuredName
-	 *
-	 * @param attributes
-	 *              Attributes from CSR
-	 * @param textField
-	 *              Text field to be populated with the unstructuredName
-	 */
-	public static void populatePkcs10UnstructuredName(Attribute[] attributes, JTextField textField) {
+        ASN1ObjectIdentifier pkcs9UnstructureName = PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
+        populateTextField(attributes, textField, pkcs9UnstructureName);
+    }
 
-		ASN1ObjectIdentifier pkcs9UnstructureName = PKCSObjectIdentifiers.pkcs_9_at_unstructuredName;
-		populateTextField(attributes, textField, pkcs9UnstructureName);
-	}
+    private static void populateTextField(Attribute[] attrs, JTextField textField, ASN1ObjectIdentifier pkcs9Attr) {
+        if (attrs != null) {
+            for (Attribute attribute : attrs) {
 
+                ASN1ObjectIdentifier attributeOid = attribute.getAttrType();
 
-	private static void populateTextField(Attribute[] attrs, JTextField textField, ASN1ObjectIdentifier pkcs9Attr) {
-		if (attrs != null) {
-			for (Attribute attribute : attrs) {
+                if (attributeOid.equals(pkcs9Attr)) {
+                    ASN1Encodable challenge = attribute.getAttributeValues()[0];
 
-				ASN1ObjectIdentifier attributeOid = attribute.getAttrType();
-
-				if (attributeOid.equals(pkcs9Attr)) {
-					ASN1Encodable challenge = attribute.getAttributeValues()[0];
-
-					// data type can be one of IA5String or UTF8String
-					if (challenge instanceof DERPrintableString) {
-						textField.setText(((DERPrintableString) challenge).getString());
-					} else if (challenge instanceof DERUTF8String) {
-						textField.setText(((DERUTF8String) challenge).getString());
-					}
-					textField.setCaretPosition(0);
-				}
-			}
-		}
-	}
+                    // data type can be one of IA5String or UTF8String
+                    if (challenge instanceof DERPrintableString) {
+                        textField.setText(((DERPrintableString) challenge).getString());
+                    } else if (challenge instanceof DERUTF8String) {
+                        textField.setText(((DERUTF8String) challenge).getString());
+                    }
+                    textField.setCaretPosition(0);
+                }
+            }
+        }
+    }
 }

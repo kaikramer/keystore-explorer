@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -55,301 +55,295 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Dialog to choose a user notice.
- *
  */
 public class DUserNoticeChooser extends JEscDialog {
-	private static final long serialVersionUID = 1L;
-
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/crypto/policyinformation/resources");
-
-	private static final String CANCEL_KEY = "CANCEL_KEY";
-
-	private JPanel jpUserNotice;
-	private JPanel jpNoticeReference;
-	private JLabel jlOrganization;
-	private JTextField jtfOrganization;
-	private JLabel jlNoticeNumbers;
-	private JTextField jtfNoticeNumbers;
-	private JPanel jpExplicitText;
-	private JLabel jlExplicitText;
-	private JTextField jtfExplicitText;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
-
-	private UserNotice userNotice;
-
-	/**
-	 * Constructs a new DUserNoticeChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent frame
-	 * @param title
-	 *            The dialog title
-	 * @param userNotice
-	 *            User notice
-	 */
-	public DUserNoticeChooser(JFrame parent, String title, UserNotice userNotice) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		initComponents(userNotice);
-	}
-
-	/**
-	 * Constructs a new DUserNoticeChooser dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param title
-	 *            The dialog title
-	 * @param userNotice
-	 *            User notice
-	 */
-	public DUserNoticeChooser(JDialog parent, String title, UserNotice userNotice) {
-		super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-		initComponents(userNotice);
-	}
-
-	private void initComponents(UserNotice userNotice) {
-		jlOrganization = new JLabel(res.getString("DUserNoticeChooser.jlOrganization.text"));
-
-		GridBagConstraints gbc_jlOrganization = new GridBagConstraints();
-		gbc_jlOrganization.gridx = 0;
-		gbc_jlOrganization.gridy = 0;
-		gbc_jlOrganization.gridwidth = 1;
-		gbc_jlOrganization.gridheight = 1;
-		gbc_jlOrganization.insets = new Insets(5, 5, 5, 5);
-		gbc_jlOrganization.anchor = GridBagConstraints.EAST;
-
-		jtfOrganization = new JTextField(40);
-		jtfOrganization.setToolTipText(res.getString("DUserNoticeChooser.jtfOrganization.tooltip"));
-
-		GridBagConstraints gbc_jtfOrganization = new GridBagConstraints();
-		gbc_jtfOrganization.gridx = 1;
-		gbc_jtfOrganization.gridy = 0;
-		gbc_jtfOrganization.gridwidth = 1;
-		gbc_jtfOrganization.gridheight = 1;
-		gbc_jtfOrganization.insets = new Insets(5, 5, 5, 5);
-		gbc_jtfOrganization.anchor = GridBagConstraints.WEST;
-
-		jlNoticeNumbers = new JLabel(res.getString("DUserNoticeChooser.jlNoticeNumbers.text"));
-
-		GridBagConstraints gbc_jlNoticeNumbers = new GridBagConstraints();
-		gbc_jlNoticeNumbers.gridx = 0;
-		gbc_jlNoticeNumbers.gridy = 1;
-		gbc_jlNoticeNumbers.gridwidth = 1;
-		gbc_jlNoticeNumbers.gridheight = 1;
-		gbc_jlNoticeNumbers.insets = new Insets(5, 5, 5, 5);
-		gbc_jlNoticeNumbers.anchor = GridBagConstraints.EAST;
-
-		jtfNoticeNumbers = new JTextField(20);
-		jtfNoticeNumbers.setToolTipText(res.getString("DUserNoticeChooser.jtfNoticeNumbers.tooltip"));
-
-		GridBagConstraints gbc_jtfNoticeNumbers = new GridBagConstraints();
-		gbc_jtfNoticeNumbers.gridx = 1;
-		gbc_jtfNoticeNumbers.gridy = 1;
-		gbc_jtfNoticeNumbers.gridwidth = 1;
-		gbc_jtfNoticeNumbers.gridheight = 1;
-		gbc_jtfNoticeNumbers.insets = new Insets(5, 5, 5, 5);
-		gbc_jtfNoticeNumbers.anchor = GridBagConstraints.WEST;
-
-		jpNoticeReference = new JPanel(new GridBagLayout());
-		jpNoticeReference.setBorder(new TitledBorder(res.getString("DUserNoticeChooser.jpNoticeReference.text")));
-
-		jpNoticeReference.add(jlOrganization, gbc_jlOrganization);
-		jpNoticeReference.add(jtfOrganization, gbc_jtfOrganization);
-		jpNoticeReference.add(jlNoticeNumbers, gbc_jlNoticeNumbers);
-		jpNoticeReference.add(jtfNoticeNumbers, gbc_jtfNoticeNumbers);
+    private static final long serialVersionUID = 1L;
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
+
+    private static final String CANCEL_KEY = "CANCEL_KEY";
+
+    private JPanel jpUserNotice;
+    private JPanel jpNoticeReference;
+    private JLabel jlOrganization;
+    private JTextField jtfOrganization;
+    private JLabel jlNoticeNumbers;
+    private JTextField jtfNoticeNumbers;
+    private JPanel jpExplicitText;
+    private JLabel jlExplicitText;
+    private JTextField jtfExplicitText;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
+
+    private UserNotice userNotice;
+
+    /**
+     * Constructs a new DUserNoticeChooser dialog.
+     *
+     * @param parent     The parent frame
+     * @param title      The dialog title
+     * @param userNotice User notice
+     */
+    public DUserNoticeChooser(JFrame parent, String title, UserNotice userNotice) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        initComponents(userNotice);
+    }
+
+    /**
+     * Constructs a new DUserNoticeChooser dialog.
+     *
+     * @param parent     The parent dialog
+     * @param title      The dialog title
+     * @param userNotice User notice
+     */
+    public DUserNoticeChooser(JDialog parent, String title, UserNotice userNotice) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        initComponents(userNotice);
+    }
+
+    private void initComponents(UserNotice userNotice) {
+        jlOrganization = new JLabel(res.getString("DUserNoticeChooser.jlOrganization.text"));
+
+        GridBagConstraints gbc_jlOrganization = new GridBagConstraints();
+        gbc_jlOrganization.gridx = 0;
+        gbc_jlOrganization.gridy = 0;
+        gbc_jlOrganization.gridwidth = 1;
+        gbc_jlOrganization.gridheight = 1;
+        gbc_jlOrganization.insets = new Insets(5, 5, 5, 5);
+        gbc_jlOrganization.anchor = GridBagConstraints.EAST;
+
+        jtfOrganization = new JTextField(40);
+        jtfOrganization.setToolTipText(res.getString("DUserNoticeChooser.jtfOrganization.tooltip"));
+
+        GridBagConstraints gbc_jtfOrganization = new GridBagConstraints();
+        gbc_jtfOrganization.gridx = 1;
+        gbc_jtfOrganization.gridy = 0;
+        gbc_jtfOrganization.gridwidth = 1;
+        gbc_jtfOrganization.gridheight = 1;
+        gbc_jtfOrganization.insets = new Insets(5, 5, 5, 5);
+        gbc_jtfOrganization.anchor = GridBagConstraints.WEST;
+
+        jlNoticeNumbers = new JLabel(res.getString("DUserNoticeChooser.jlNoticeNumbers.text"));
+
+        GridBagConstraints gbc_jlNoticeNumbers = new GridBagConstraints();
+        gbc_jlNoticeNumbers.gridx = 0;
+        gbc_jlNoticeNumbers.gridy = 1;
+        gbc_jlNoticeNumbers.gridwidth = 1;
+        gbc_jlNoticeNumbers.gridheight = 1;
+        gbc_jlNoticeNumbers.insets = new Insets(5, 5, 5, 5);
+        gbc_jlNoticeNumbers.anchor = GridBagConstraints.EAST;
+
+        jtfNoticeNumbers = new JTextField(20);
+        jtfNoticeNumbers.setToolTipText(res.getString("DUserNoticeChooser.jtfNoticeNumbers.tooltip"));
+
+        GridBagConstraints gbc_jtfNoticeNumbers = new GridBagConstraints();
+        gbc_jtfNoticeNumbers.gridx = 1;
+        gbc_jtfNoticeNumbers.gridy = 1;
+        gbc_jtfNoticeNumbers.gridwidth = 1;
+        gbc_jtfNoticeNumbers.gridheight = 1;
+        gbc_jtfNoticeNumbers.insets = new Insets(5, 5, 5, 5);
+        gbc_jtfNoticeNumbers.anchor = GridBagConstraints.WEST;
+
+        jpNoticeReference = new JPanel(new GridBagLayout());
+        jpNoticeReference.setBorder(new TitledBorder(res.getString("DUserNoticeChooser.jpNoticeReference.text")));
+
+        jpNoticeReference.add(jlOrganization, gbc_jlOrganization);
+        jpNoticeReference.add(jtfOrganization, gbc_jtfOrganization);
+        jpNoticeReference.add(jlNoticeNumbers, gbc_jlNoticeNumbers);
+        jpNoticeReference.add(jtfNoticeNumbers, gbc_jtfNoticeNumbers);
+
+        jlExplicitText = new JLabel(res.getString("DUserNoticeChooser.jlExplicitText.text"));
+
+        jtfExplicitText = new JTextField(40);
+        jtfExplicitText.setToolTipText(res.getString("DUserNoticeChooser.jtfExplicitText.tooltip"));
+
+        jpExplicitText = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		jlExplicitText = new JLabel(res.getString("DUserNoticeChooser.jlExplicitText.text"));
+        jpExplicitText.add(jlExplicitText);
+        jpExplicitText.add(jtfExplicitText);
 
-		jtfExplicitText = new JTextField(40);
-		jtfExplicitText.setToolTipText(res.getString("DUserNoticeChooser.jtfExplicitText.tooltip"));
+        jpUserNotice = new JPanel(new BorderLayout());
 
-		jpExplicitText = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jpUserNotice.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                  new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
-		jpExplicitText.add(jlExplicitText);
-		jpExplicitText.add(jtfExplicitText);
+        jpUserNotice.add(jpNoticeReference, BorderLayout.CENTER);
+        jpUserNotice.add(jpExplicitText, BorderLayout.SOUTH);
 
-		jpUserNotice = new JPanel(new BorderLayout());
+        jbOK = new JButton(res.getString("DUserNoticeChooser.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpUserNotice.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-				new EmptyBorder(5, 5, 5, 5))));
+        jbCancel = new JButton(res.getString("DUserNoticeChooser.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-		jpUserNotice.add(jpNoticeReference, BorderLayout.CENTER);
-		jpUserNotice.add(jpExplicitText, BorderLayout.SOUTH);
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jbOK = new JButton(res.getString("DUserNoticeChooser.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		jbCancel = new JButton(res.getString("DUserNoticeChooser.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(BorderLayout.CENTER, jpUserNotice);
+        getContentPane().add(BorderLayout.SOUTH, jpButtons);
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+        populate(userNotice);
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        setResizable(false);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(BorderLayout.CENTER, jpUserNotice);
-		getContentPane().add(BorderLayout.SOUTH, jpButtons);
+        getRootPane().setDefaultButton(jbOK);
 
-		populate(userNotice);
+        pack();
+    }
 
-		setResizable(false);
+    private void populate(UserNotice userNotice) {
+        if (userNotice != null) {
+            NoticeReference noticeReference = userNotice.getNoticeRef();
 
-		getRootPane().setDefaultButton(jbOK);
+            if (noticeReference != null) {
+                DisplayText organization = noticeReference.getOrganization();
 
-		pack();
-	}
+                if (organization != null) {
+                    jtfOrganization.setText(organization.getString());
+                    jtfOrganization.setCaretPosition(0);
+                }
 
-	private void populate(UserNotice userNotice) {
-		if (userNotice != null) {
-			NoticeReference noticeReference = userNotice.getNoticeRef();
+                populateNoticeNumbers(noticeReference);
+            }
 
-			if (noticeReference != null) {
-				DisplayText organization = noticeReference.getOrganization();
+            DisplayText explicitText = userNotice.getExplicitText();
 
-				if (organization != null) {
-					jtfOrganization.setText(organization.getString());
-					jtfOrganization.setCaretPosition(0);
-				}
+            if (explicitText != null) {
+                jtfExplicitText.setText(explicitText.getString());
+                jtfExplicitText.setCaretPosition(0);
+            }
+        }
+    }
 
-				populateNoticeNumbers(noticeReference);
-			}
+    private void populateNoticeNumbers(NoticeReference noticeReference) {
+        ASN1Integer[] noticeNumbers = noticeReference.getNoticeNumbers();
 
-			DisplayText explicitText = userNotice.getExplicitText();
+        if (noticeNumbers != null) {
+            StringBuilder sb = new StringBuilder();
 
-			if (explicitText != null) {
-				jtfExplicitText.setText(explicitText.getString());
-				jtfExplicitText.setCaretPosition(0);
-			}
-		}
-	}
+            for (int i = 0; i < noticeNumbers.length; i++) {
+                ASN1Integer noticeNumber = noticeNumbers[i];
 
-	private void populateNoticeNumbers(NoticeReference noticeReference) {
-		ASN1Integer[] noticeNumbers = noticeReference.getNoticeNumbers();
+                sb.append(noticeNumber.getValue().intValue());
 
-		if (noticeNumbers != null) {
-			StringBuilder sb = new StringBuilder();
+                if ((i + 1) < noticeNumbers.length) {
+                    sb.append(" ");
+                }
+            }
 
-			for (int i = 0; i < noticeNumbers.length; i++) {
-				ASN1Integer noticeNumber = noticeNumbers[i];
+            jtfNoticeNumbers.setText(sb.toString());
+            jtfNoticeNumbers.setCaretPosition(0);
+        }
+    }
 
-				sb.append(noticeNumber.getValue().intValue());
+    /**
+     * Get selected user notice.
+     *
+     * @return User notice, or null if none
+     */
+    public UserNotice getUserNotice() {
+        return userNotice;
+    }
 
-				if ((i + 1) < noticeNumbers.length) {
-					sb.append(" ");
-				}
-			}
+    private void okPressed() {
 
-			jtfNoticeNumbers.setText(sb.toString());
-			jtfNoticeNumbers.setCaretPosition(0);
-		}
-	}
+        String organizationString = jtfOrganization.getText().trim();
+        int[] noticeNumberInts = extractNoticeNumbers();
+        String explicitTextString = jtfExplicitText.getText().trim();
 
-	/**
-	 * Get selected user notice.
-	 *
-	 * @return User notice, or null if none
-	 */
-	public UserNotice getUserNotice() {
-		return userNotice;
-	}
+        if (noticeNumberInts == null) {
+            JOptionPane.showMessageDialog(this, res.getString("DUserNoticeChooser.InvalidNoticeNumbers.message"),
+                                          getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-	private void okPressed() {
+        if (((organizationString.length() > 0) && (noticeNumberInts.length == 0)) ||
+            ((organizationString.length() == 0) && (noticeNumberInts.length > 0))) {
+            JOptionPane.showMessageDialog(this, res.getString(
+                                                  "DUserNoticeChooser.OrganizationOrNoticeNumbersValueReq.message"),
+                                          getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		String organizationString = jtfOrganization.getText().trim();
-		int[] noticeNumberInts = extractNoticeNumbers();
-		String explicitTextString = jtfExplicitText.getText().trim();
+        if ((organizationString.length() == 0) && (noticeNumberInts.length == 0) &&
+            (explicitTextString.length() == 0)) {
+            JOptionPane.showMessageDialog(this,
+                                          res.getString("DUserNoticeChooser.NoticeRefOrExplicitTextValueReq.message"),
+                                          getTitle(), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		if (noticeNumberInts == null) {
-			JOptionPane.showMessageDialog(this, res.getString("DUserNoticeChooser.InvalidNoticeNumbers.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        NoticeReference noticeReference = null;
+        if (organizationString.length() > 0) { // If organization is present then so is al of notice reference
 
-		if (((organizationString.length() > 0) && (noticeNumberInts.length == 0))
-				|| ((organizationString.length() == 0) && (noticeNumberInts.length > 0))) {
-			JOptionPane.showMessageDialog(this,
-					res.getString("DUserNoticeChooser.OrganizationOrNoticeNumbersValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+            Vector<ASN1Integer> noticeNumbers = new Vector<>();
 
-		if ((organizationString.length() == 0) && (noticeNumberInts.length == 0) && (explicitTextString.length() == 0)) {
-			JOptionPane.showMessageDialog(this,
-					res.getString("DUserNoticeChooser.NoticeRefOrExplicitTextValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+            for (int noticeNumber : noticeNumberInts) {
+                noticeNumbers.add(new ASN1Integer(noticeNumber));
+            }
 
-		NoticeReference noticeReference = null;
-		if (organizationString.length() > 0) { // If organization is present then so is al of notice reference
+            noticeReference = new NoticeReference(organizationString, noticeNumbers);
+        }
 
-			Vector<ASN1Integer> noticeNumbers = new Vector<>();
+        userNotice = new UserNotice(noticeReference, explicitTextString);
 
-			for (int noticeNumber : noticeNumberInts) {
-				noticeNumbers.add(new ASN1Integer(noticeNumber));
-			}
+        closeDialog();
+    }
 
-			noticeReference = new NoticeReference(organizationString, noticeNumbers);
-		}
+    private int[] extractNoticeNumbers() {
+        // If valid then return array of numbers, if blank return empty array,
+        // if invalid return
+        // null
 
-		userNotice = new UserNotice(noticeReference, explicitTextString);
+        String noticeNumbersString = jtfNoticeNumbers.getText().trim();
 
-		closeDialog();
-	}
+        StringTokenizer strTokCnt = new StringTokenizer(noticeNumbersString, " ", false);
+        int arcCount = strTokCnt.countTokens();
 
-	private int[] extractNoticeNumbers() {
-		// If valid then return array of numbers, if blank return empty array,
-		// if invalid return
-		// null
+        StringTokenizer strTok = new StringTokenizer(noticeNumbersString, " ", true);
 
-		String noticeNumbersString = jtfNoticeNumbers.getText().trim();
+        boolean expectDelimiter = false;
 
-		StringTokenizer strTokCnt = new StringTokenizer(noticeNumbersString, " ", false);
-		int arcCount = strTokCnt.countTokens();
+        int[] noticeNumbers = new int[arcCount];
+        int i = 0;
+        while (strTok.hasMoreTokens()) {
+            String token = strTok.nextToken();
 
-		StringTokenizer strTok = new StringTokenizer(noticeNumbersString, " ", true);
+            if (expectDelimiter && (!token.equals(" ") || !strTok.hasMoreTokens())) {
+                return null;
+            } else if (!expectDelimiter) {
+                try {
+                    noticeNumbers[i] = Integer.parseInt(token);
+                    i++;
+                } catch (NumberFormatException ex) {
+                    return null;
+                }
+            }
 
-		boolean expectDelimiter = false;
+            expectDelimiter = !expectDelimiter;
+        }
 
-		int[] noticeNumbers = new int[arcCount];
-		int i = 0;
-		while (strTok.hasMoreTokens()) {
-			String token = strTok.nextToken();
+        return noticeNumbers;
+    }
 
-			if (expectDelimiter && (!token.equals(" ") || !strTok.hasMoreTokens())) {
-				return null;
-			} else if (!expectDelimiter) {
-				try {
-					noticeNumbers[i] = Integer.parseInt(token);
-					i++;
-				} catch (NumberFormatException ex) {
-					return null;
-				}
-			}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-			expectDelimiter = !expectDelimiter;
-		}
-
-		return noticeNumbers;
-	}
-
-	private void cancelPressed() {
-		closeDialog();
-	}
-
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

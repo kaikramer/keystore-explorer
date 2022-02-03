@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,76 +34,67 @@ import org.kse.utilities.net.URLs;
 
 /**
  * Action to visit the KeyStore Explorer web site.
- *
  */
 public class WebsiteAction extends KeyStoreExplorerAction {
 
-	private static final long serialVersionUID = 1L;
-	private String websiteAddress;
+    private static final long serialVersionUID = 1L;
+    private String websiteAddress;
 
-	public enum Target {
-		MAIN,
-		GITHUB,
-		ISSUE_TRACKER
-	}
+    public enum Target {
+        MAIN,
+        GITHUB,
+        ISSUE_TRACKER
+    }
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public WebsiteAction(KseFrame kseFrame, Target target) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public WebsiteAction(KseFrame kseFrame, Target target) {
+        super(kseFrame);
 
-		switch (target) {
-		case GITHUB:
-			setData(res.getString("WebsiteAction.GitHubProject.statusbar"),
-					res.getString("WebsiteAction.GitHubProject.text"),
-					res.getString("WebsiteAction.GitHubProject.tooltip"),
-					"images/website.png",
-					URLs.GITHUB_PROJECT);
-			break;
-		case ISSUE_TRACKER:
-			setData(res.getString("WebsiteAction.GitHubIssueTracker.statusbar"),
-					res.getString("WebsiteAction.GitHubIssueTracker.text"),
-					res.getString("WebsiteAction.GitHubIssueTracker.tooltip"),
-					"images/website.png",
-					URLs.GITHUB_ISSUE_TRACKER);
-			break;
-		default:
-		case MAIN:
-			setData(res.getString("WebsiteAction.statusbar"),
-					res.getString("WebsiteAction.text"),
-					res.getString("WebsiteAction.tooltip"),
-					"images/website.png",
-					URLs.KSE_WEB_SITE);
-			break;
-		}
-	}
+        switch (target) {
+        case GITHUB:
+            setData(res.getString("WebsiteAction.GitHubProject.statusbar"),
+                    res.getString("WebsiteAction.GitHubProject.text"),
+                    res.getString("WebsiteAction.GitHubProject.tooltip"), "images/website.png", URLs.GITHUB_PROJECT);
+            break;
+        case ISSUE_TRACKER:
+            setData(res.getString("WebsiteAction.GitHubIssueTracker.statusbar"),
+                    res.getString("WebsiteAction.GitHubIssueTracker.text"),
+                    res.getString("WebsiteAction.GitHubIssueTracker.tooltip"), "images/website.png",
+                    URLs.GITHUB_ISSUE_TRACKER);
+            break;
+        default:
+        case MAIN:
+            setData(res.getString("WebsiteAction.statusbar"), res.getString("WebsiteAction.text"),
+                    res.getString("WebsiteAction.tooltip"), "images/website.png", URLs.KSE_WEB_SITE);
+            break;
+        }
+    }
 
-	private void setData(String longDescription, String name, String shortDescription, String image, String url) {
-		putValue(LONG_DESCRIPTION, longDescription);
-		putValue(NAME, name);
-		putValue(SHORT_DESCRIPTION, shortDescription);
-		putValue(SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource(image))));
+    private void setData(String longDescription, String name, String shortDescription, String image, String url) {
+        putValue(LONG_DESCRIPTION, longDescription);
+        putValue(NAME, name);
+        putValue(SHORT_DESCRIPTION, shortDescription);
+        putValue(SMALL_ICON, new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource(image))));
 
-		websiteAddress = url;
-	}
+        websiteAddress = url;
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			Desktop.getDesktop().browse(URI.create(websiteAddress));
-		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"), websiteAddress),
-					KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            Desktop.getDesktop().browse(URI.create(websiteAddress));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame,
+                                          MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"),
+                                                               websiteAddress), KSE.getApplicationName(),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,16 +30,15 @@ import org.kse.crypto.jcepolicy.JcePolicyUtil;
 
 /**
  * Abstract base class for all test cases. Sets up the BC provider.
- *
  */
 public abstract class CryptoTestsBase {
 
-	protected static Provider BC;
+    protected static Provider BC;
 
-	@BeforeAll
-	public static void addBcProvider() {
-		BC = new BouncyCastleProvider();
-		Security.addProvider(BC);
-		JcePolicyUtil.removeRestrictions();
-	}
+    @BeforeAll
+    public static void addBcProvider() {
+        BC = new BouncyCastleProvider();
+        Security.addProvider(BC);
+        JcePolicyUtil.removeRestrictions();
+    }
 }

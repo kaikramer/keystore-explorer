@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,59 +32,57 @@ import org.kse.gui.about.DAbout;
 
 /**
  * Action to show KeyStore Explorer about dialog.
- *
  */
 public class AboutAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public AboutAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public AboutAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("AboutAction.statusbar"));
-		putValue(NAME, res.getString("AboutAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("AboutAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/about.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("AboutAction.statusbar"));
+        putValue(NAME, res.getString("AboutAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("AboutAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/about.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		showAbout();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        showAbout();
+    }
 
-	/**
-	 * Display the about dialog.
-	 */
-	public void showAbout() {
+    /**
+     * Display the about dialog.
+     */
+    public void showAbout() {
 
-		String[] tickerItems = {
-				"Copyright 2004 - 2013 Wayne Grant, 2013 - 2021 Kai Kramer",
-				"Bouncy Castle JCE Provider Copyright 2000 - 2021 The Legion Of The Bouncy Castle (www.bouncycastle.org)",
-				"Apache Commons Copyright 2002 - 2021 The Apache Software Foundation (commons.apache.org)",
-				"MigLayout Copyright 2004, Mikael Grev, MiG InfoCom AB (www.miglayout.com)",
-				"Fugue Icons Copyright 2013 Yusuke Kamiyamane (p.yusukekamiyamane.com)",
-				"JNA Copyright 2007 Timothy Wall (github.com/java-native-access/jna)",
-				"FlatLaf Copyright 2019 - 2021 FormDev Software GmbH (www.formdev.com/flatlaf/)",
-				LnfUtil.isVAquaAvailable() ? "VAqua Copyright 2015 - 2019 Alan Snyder (violetlib.org)" : "",
-		};
+        String[] tickerItems = { "Copyright 2004 - 2013 Wayne Grant, 2013 - 2021 Kai Kramer",
+                                 "Bouncy Castle JCE Provider Copyright 2000 - 2021 The Legion Of The Bouncy Castle " +
+                                 "(www.bouncycastle.org)",
+                                 "Apache Commons Copyright 2002 - 2021 The Apache Software Foundation (commons.apache" +
+                                 ".org)",
+                                 "MigLayout Copyright 2004, Mikael Grev, MiG InfoCom AB (www.miglayout.com)",
+                                 "Fugue Icons Copyright 2013 Yusuke Kamiyamane (p.yusukekamiyamane.com)",
+                                 "JNA Copyright 2007 Timothy Wall (github.com/java-native-access/jna)",
+                                 "FlatLaf Copyright 2019 - 2021 FormDev Software GmbH (www.formdev.com/flatlaf/)",
+                                 LnfUtil.isVAquaAvailable() ?
+                                 "VAqua Copyright 2015 - 2019 Alan Snyder (violetlib.org)" :
+                                 "", };
 
-		URL aboutDialogImageURL = AboutAction.class.getResource("images/aboutdlg.png");
-		DAbout dAbout = new DAbout(frame,
-				MessageFormat.format(res.getString("AboutAction.About.Title"), KSE.getApplicationName()),
-				res.getString("AboutAction.License"),
-				Toolkit.getDefaultToolkit().createImage(aboutDialogImageURL), tickerItems);
-		dAbout.setLocationRelativeTo(frame);
-		dAbout.setVisible(true);
-	}
+        URL aboutDialogImageURL = AboutAction.class.getResource("images/aboutdlg.png");
+        DAbout dAbout = new DAbout(frame, MessageFormat.format(res.getString("AboutAction.About.Title"),
+                                                               KSE.getApplicationName()),
+                                   res.getString("AboutAction.License"),
+                                   Toolkit.getDefaultToolkit().createImage(aboutDialogImageURL), tickerItems);
+        dAbout.setLocationRelativeTo(frame);
+        dAbout.setVisible(true);
+    }
 }

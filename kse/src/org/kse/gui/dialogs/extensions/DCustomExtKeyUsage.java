@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -51,136 +51,134 @@ import org.kse.gui.crypto.customextkeyusage.JCustomExtendedKeyUsage;
 
 /**
  * Dialog used to add or edit custom extended key usages.
- *
  */
 public class DCustomExtKeyUsage extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpCustomExtendedKeyUsage;
-	private JLabel jlCustomExtendedKeyUsage;
-	private JCustomExtendedKeyUsage jCustomExtendedKeyUsage;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpCustomExtendedKeyUsage;
+    private JLabel jlCustomExtendedKeyUsage;
+    private JCustomExtendedKeyUsage jCustomExtendedKeyUsage;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private Set<ASN1ObjectIdentifier> customExtUsageOids;
+    private Set<ASN1ObjectIdentifier> customExtUsageOids;
 
-	/**
-	 * Creates a new DCustomExtKeyUsage dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DCustomExtKeyUsage(JDialog parent, Set<ASN1ObjectIdentifier> customExtUsageOids) {
-		super(parent, ModalityType.DOCUMENT_MODAL);
-		setTitle(res.getString("DCustomExtendedKeyUsage.Title"));
-		this.customExtUsageOids = customExtUsageOids;
-		initComponents();
-		prepopulateWithOidList(customExtUsageOids);
-	}
+    /**
+     * Creates a new DCustomExtKeyUsage dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DCustomExtKeyUsage(JDialog parent, Set<ASN1ObjectIdentifier> customExtUsageOids) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+        setTitle(res.getString("DCustomExtendedKeyUsage.Title"));
+        this.customExtUsageOids = customExtUsageOids;
+        initComponents();
+        prepopulateWithOidList(customExtUsageOids);
+    }
 
-	private void initComponents() {
-		jlCustomExtendedKeyUsage = new JLabel(res.getString("DCustomExtendedKeyUsage.jlCustomExtendedKeyUsage.text"));
+    private void initComponents() {
+        jlCustomExtendedKeyUsage = new JLabel(res.getString("DCustomExtendedKeyUsage.jlCustomExtendedKeyUsage.text"));
 
-		GridBagConstraints gbc_jlCustomExtendedKeyUsage = new GridBagConstraints();
-		gbc_jlCustomExtendedKeyUsage.gridx = 0;
-		gbc_jlCustomExtendedKeyUsage.gridy = 1;
-		gbc_jlCustomExtendedKeyUsage.gridwidth = 1;
-		gbc_jlCustomExtendedKeyUsage.gridheight = 1;
-		gbc_jlCustomExtendedKeyUsage.insets = new Insets(5, 5, 5, 5);
-		gbc_jlCustomExtendedKeyUsage.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints gbc_jlCustomExtendedKeyUsage = new GridBagConstraints();
+        gbc_jlCustomExtendedKeyUsage.gridx = 0;
+        gbc_jlCustomExtendedKeyUsage.gridy = 1;
+        gbc_jlCustomExtendedKeyUsage.gridwidth = 1;
+        gbc_jlCustomExtendedKeyUsage.gridheight = 1;
+        gbc_jlCustomExtendedKeyUsage.insets = new Insets(5, 5, 5, 5);
+        gbc_jlCustomExtendedKeyUsage.anchor = GridBagConstraints.NORTHEAST;
 
-		jCustomExtendedKeyUsage = new JCustomExtendedKeyUsage(res.getString("DCustomExtendedKeyUsage.jCustomExtendedKeyUsage.text"));
-		jCustomExtendedKeyUsage.setPreferredSize(new Dimension(400, 150));
+        jCustomExtendedKeyUsage = new JCustomExtendedKeyUsage(
+                res.getString("DCustomExtendedKeyUsage.jCustomExtendedKeyUsage.text"));
+        jCustomExtendedKeyUsage.setPreferredSize(new Dimension(400, 150));
 
-		GridBagConstraints gbc_jpiCustomExtendedKeyUsage = new GridBagConstraints();
-		gbc_jpiCustomExtendedKeyUsage.gridx = 1;
-		gbc_jpiCustomExtendedKeyUsage.gridy = 1;
-		gbc_jpiCustomExtendedKeyUsage.gridwidth = 1;
-		gbc_jpiCustomExtendedKeyUsage.gridheight = 1;
-		gbc_jpiCustomExtendedKeyUsage.insets = new Insets(5, 5, 5, 5);
-		gbc_jpiCustomExtendedKeyUsage.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jpiCustomExtendedKeyUsage = new GridBagConstraints();
+        gbc_jpiCustomExtendedKeyUsage.gridx = 1;
+        gbc_jpiCustomExtendedKeyUsage.gridy = 1;
+        gbc_jpiCustomExtendedKeyUsage.gridwidth = 1;
+        gbc_jpiCustomExtendedKeyUsage.gridheight = 1;
+        gbc_jpiCustomExtendedKeyUsage.insets = new Insets(5, 5, 5, 5);
+        gbc_jpiCustomExtendedKeyUsage.anchor = GridBagConstraints.WEST;
 
-		jpCustomExtendedKeyUsage = new JPanel(new GridBagLayout());
+        jpCustomExtendedKeyUsage = new JPanel(new GridBagLayout());
 
-		jpCustomExtendedKeyUsage.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
+        jpCustomExtendedKeyUsage.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
-		jpCustomExtendedKeyUsage.add(jlCustomExtendedKeyUsage, gbc_jlCustomExtendedKeyUsage);
-		jpCustomExtendedKeyUsage.add(jCustomExtendedKeyUsage, gbc_jpiCustomExtendedKeyUsage);
+        jpCustomExtendedKeyUsage.add(jlCustomExtendedKeyUsage, gbc_jlCustomExtendedKeyUsage);
+        jpCustomExtendedKeyUsage.add(jCustomExtendedKeyUsage, gbc_jpiCustomExtendedKeyUsage);
 
-		jbOK = new JButton(res.getString("DCustomExtendedKeyUsage.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DCustomExtendedKeyUsage.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DCustomExtendedKeyUsage.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DCustomExtendedKeyUsage.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpCustomExtendedKeyUsage, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpCustomExtendedKeyUsage, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithOidList(Set<ASN1ObjectIdentifier> customExtKeyUsageOids) {
-		Set<ASN1ObjectIdentifier> oids = new HashSet<>(customExtKeyUsageOids);
-		jCustomExtendedKeyUsage.setCustomExtKeyUsages(oids);
-	}
+    private void prepopulateWithOidList(Set<ASN1ObjectIdentifier> customExtKeyUsageOids) {
+        Set<ASN1ObjectIdentifier> oids = new HashSet<>(customExtKeyUsageOids);
+        jCustomExtendedKeyUsage.setCustomExtKeyUsages(oids);
+    }
 
-	private void okPressed() {
-		Set<ASN1ObjectIdentifier> objectIds = jCustomExtendedKeyUsage.getCustomExtKeyUsages();
-		if (objectIds.size() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DCustomExtendedKeyUsage.ValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		customExtUsageOids = objectIds;
+    private void okPressed() {
+        Set<ASN1ObjectIdentifier> objectIds = jCustomExtendedKeyUsage.getCustomExtKeyUsages();
+        if (objectIds.size() == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DCustomExtendedKeyUsage.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        customExtUsageOids = objectIds;
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	/**
-	 * Get extension value DER-encoded.
-	 *
-	 * @return Extension value
-	 */
-	public Set<ASN1ObjectIdentifier> getObjectIds() {
-		return customExtUsageOids;
-	}
+    /**
+     * Get extension value DER-encoded.
+     *
+     * @return Extension value
+     */
+    public Set<ASN1ObjectIdentifier> getObjectIds() {
+        return customExtUsageOids;
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

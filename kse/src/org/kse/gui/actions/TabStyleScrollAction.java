@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -25,30 +25,28 @@ import org.kse.gui.KseFrame;
 
 /**
  * Action to change KeyStore tab style to scroll.
- *
  */
 public class TabStyleScrollAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public TabStyleScrollAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public TabStyleScrollAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("TabStyleScrollAction.statusbar"));
-		putValue(NAME, res.getString("TabStyleScrollAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("TabStyleScrollAction.tooltip"));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("TabStyleScrollAction.statusbar"));
+        putValue(NAME, res.getString("TabStyleScrollAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("TabStyleScrollAction.tooltip"));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		kseFrame.setKeyStoreTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        kseFrame.setKeyStoreTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+    }
 }

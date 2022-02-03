@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,45 +36,43 @@ import org.kse.utilities.net.URLs;
 
 /**
  * Action to show help.
- *
  */
 public class HelpAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String websiteAddress;
+    private String websiteAddress;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public HelpAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public HelpAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-		putValue(LONG_DESCRIPTION, res.getString("HelpAction.statusbar"));
-		putValue(NAME, res.getString("HelpAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("HelpAction.tooltip"));
-		putValue(SMALL_ICON,new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/help.png"))));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+        putValue(LONG_DESCRIPTION, res.getString("HelpAction.statusbar"));
+        putValue(NAME, res.getString("HelpAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("HelpAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/help.png"))));
 
-		websiteAddress = URLs.KSE_USER_MANUAL + KSE.getUserManualVersion() + "/";
-	}
+        websiteAddress = URLs.KSE_USER_MANUAL + KSE.getUserManualVersion() + "/";
+    }
 
-
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			Desktop.getDesktop().browse(URI.create(websiteAddress));
-		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(frame,
-					MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"), websiteAddress),
-					KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            Desktop.getDesktop().browse(URI.create(websiteAddress));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame,
+                                          MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"),
+                                                               websiteAddress), KSE.getApplicationName(),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
 }

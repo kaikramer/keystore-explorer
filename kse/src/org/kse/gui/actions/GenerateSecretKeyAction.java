@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -44,132 +44,128 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to generate a secret key.
- *
  */
 public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public GenerateSecretKeyAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public GenerateSecretKeyAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("GenerateSecretKeyAction.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.ALT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("GenerateSecretKeyAction.statusbar"));
-		putValue(NAME, res.getString("GenerateSecretKeyAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("GenerateSecretKeyAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/genseckey.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("GenerateSecretKeyAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.ALT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("GenerateSecretKeyAction.statusbar"));
+        putValue(NAME, res.getString("GenerateSecretKeyAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("GenerateSecretKeyAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/genseckey.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		generateSecret();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        generateSecret();
+    }
 
-	/**
-	 * Generate a secret key in the currently opened KeyStore.
-	 */
-	public void generateSecret() {
-		try {
-			int secretKeySize = applicationSettings.getGenerateSecretKeySize();
-			SecretKeyType secretKeyType = applicationSettings.getGenerateSecretKeyType();
+    /**
+     * Generate a secret key in the currently opened KeyStore.
+     */
+    public void generateSecret() {
+        try {
+            int secretKeySize = applicationSettings.getGenerateSecretKeySize();
+            SecretKeyType secretKeyType = applicationSettings.getGenerateSecretKeyType();
 
-			DGenerateSecretKey dGenerateSecretKey = new DGenerateSecretKey(frame, secretKeyType, secretKeySize);
-			dGenerateSecretKey.setLocationRelativeTo(frame);
-			dGenerateSecretKey.setVisible(true);
+            DGenerateSecretKey dGenerateSecretKey = new DGenerateSecretKey(frame, secretKeyType, secretKeySize);
+            dGenerateSecretKey.setLocationRelativeTo(frame);
+            dGenerateSecretKey.setVisible(true);
 
-			if (!dGenerateSecretKey.isSuccessful()) {
-				return;
-			}
+            if (!dGenerateSecretKey.isSuccessful()) {
+                return;
+            }
 
-			secretKeySize = dGenerateSecretKey.getSecretKeySize();
-			secretKeyType = dGenerateSecretKey.getSecretKeyType();
+            secretKeySize = dGenerateSecretKey.getSecretKeySize();
+            secretKeyType = dGenerateSecretKey.getSecretKeyType();
 
-			applicationSettings.setGenerateSecretKeySize(secretKeySize);
-			applicationSettings.setGenerateSecretKeyType(secretKeyType);
+            applicationSettings.setGenerateSecretKeySize(secretKeySize);
+            applicationSettings.setGenerateSecretKeyType(secretKeyType);
 
-			SecretKey secretKey = SecretKeyUtil.generateSecretKey(secretKeyType, secretKeySize);
+            SecretKey secretKey = SecretKeyUtil.generateSecretKey(secretKeyType, secretKeySize);
 
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			KeyStoreState currentState = history.getCurrentState();
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
+            KeyStore keyStore = newState.getKeyStore();
 
-			DGetAlias dGetAlias = new DGetAlias(frame,
-					res.getString("GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"), null);
-			dGetAlias.setLocationRelativeTo(frame);
-			dGetAlias.setVisible(true);
-			String alias = dGetAlias.getAlias();
+            DGetAlias dGetAlias = new DGetAlias(frame,
+                                                res.getString("GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"),
+                                                null);
+            dGetAlias.setLocationRelativeTo(frame);
+            dGetAlias.setVisible(true);
+            String alias = dGetAlias.getAlias();
 
-			if (alias == null) {
-				return;
-			}
+            if (alias == null) {
+                return;
+            }
 
-			if (keyStore.containsAlias(alias)) {
-				String message = MessageFormat.format(res.getString("GenerateSecretKeyAction.OverWriteEntry.message"),
-						alias);
+            if (keyStore.containsAlias(alias)) {
+                String message = MessageFormat.format(res.getString("GenerateSecretKeyAction.OverWriteEntry.message"),
+                                                      alias);
 
-				int selected = JOptionPane.showConfirmDialog(frame, message,
-						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"),
-						JOptionPane.YES_NO_OPTION);
-				if (selected != JOptionPane.YES_OPTION) {
-					return;
-				}
-			}
+                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
+                        "GenerateSecretKeyAction.NewSecretKeyEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
+                if (selected != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
 
-			Password password = new Password((char[])null);
-			KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
+            Password password = new Password((char[]) null);
+            KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-			if (type.hasEntryPasswords()) {
-				DGetNewPassword dGetNewPassword = new DGetNewPassword(frame,
-						res.getString("GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"),
-						applicationSettings.getPasswordQualityConfig());
-				dGetNewPassword.setLocationRelativeTo(frame);
-				dGetNewPassword.setVisible(true);
-				password = dGetNewPassword.getPassword();
+            if (type.hasEntryPasswords()) {
+                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
+                        "GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"),
+                                                                      applicationSettings.getPasswordQualityConfig());
+                dGetNewPassword.setLocationRelativeTo(frame);
+                dGetNewPassword.setVisible(true);
+                password = dGetNewPassword.getPassword();
 
-				if (password == null) {
-					return;
-				}
-			}
+                if (password == null) {
+                    return;
+                }
+            }
 
-			if (keyStore.containsAlias(alias)) {
-				keyStore.deleteEntry(alias);
-				newState.removeEntryPassword(alias);
-			}
+            if (keyStore.containsAlias(alias)) {
+                keyStore.deleteEntry(alias);
+                newState.removeEntryPassword(alias);
+            }
 
-			keyStore.setKeyEntry(alias, secretKey, password.toCharArray(), null);
-			newState.setEntryPassword(alias, password);
+            keyStore.setKeyEntry(alias, secretKey, password.toCharArray(), null);
+            newState.setEntryPassword(alias, password);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
+            kseFrame.updateControls(true);
 
-			JOptionPane.showMessageDialog(frame,
-					res.getString("GenerateSecretKeyAction.SecretKeyGenerationSuccessful.message"),
-					res.getString("GenerateSecretKeyAction.GenerateSecretKey.Title"), JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, res.getString(
+                                                  "GenerateSecretKeyAction.SecretKeyGenerationSuccessful.message"),
+                                          res.getString("GenerateSecretKeyAction.GenerateSecretKey.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

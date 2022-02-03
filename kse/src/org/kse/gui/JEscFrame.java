@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,42 +31,42 @@ import javax.swing.KeyStroke;
 
 /**
  * Extended JFrame class that closes itself when escape key was pressed.
- *
  */
 public class JEscFrame extends JFrame {
-	private static final long serialVersionUID = -3773740513817678414L;
+    private static final long serialVersionUID = -3773740513817678414L;
 
-	public JEscFrame() {
-		super();
-	}
+    public JEscFrame() {
+        super();
+    }
 
-	public JEscFrame(GraphicsConfiguration gc) {
-		super(gc);
-	}
+    public JEscFrame(GraphicsConfiguration gc) {
+        super(gc);
+    }
 
-	public JEscFrame(String title) {
-		super(title);
-	}
+    public JEscFrame(String title) {
+        super(title);
+    }
 
-	public JEscFrame(String title, GraphicsConfiguration gc) {
-		super(title, gc);
-	}
+    public JEscFrame(String title, GraphicsConfiguration gc) {
+        super(title, gc);
+    }
 
-	@Override
-	protected JRootPane createRootPane() {
-		JRootPane rootPane = new JRootPane();
+    @Override
+    protected JRootPane createRootPane() {
+        JRootPane rootPane = new JRootPane();
 
-		// Escape key closes dialogs
-		KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "escapeKey");
-		rootPane.getActionMap().put("escapeKey", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
-				dispose();
-			}
-		});
-		return rootPane;
-	}
+        // Escape key closes dialogs
+        KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "escapeKey");
+        rootPane.getActionMap().put("escapeKey", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                dispose();
+            }
+        });
+        return rootPane;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,106 +45,103 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to copy a KeyStore entry.
- *
  */
 public class CopyAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CopyAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CopyAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CopyAction.accelerator").charAt(0), Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("CopyAction.statusbar"));
-		putValue(NAME, res.getString("CopyAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("CopyAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/copy.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CopyAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("CopyAction.statusbar"));
+        putValue(NAME, res.getString("CopyAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("CopyAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/copy.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		List<BufferEntry> bufferEntries = bufferSelectedEntries();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        List<BufferEntry> bufferEntries = bufferSelectedEntries();
 
-		if (bufferEntries != null) {
-			Buffer.populate(bufferEntries);
-			kseFrame.updateControls(false);
-		}
-	}
+        if (bufferEntries != null) {
+            Buffer.populate(bufferEntries);
+            kseFrame.updateControls(false);
+        }
+    }
 
-	private List<BufferEntry> bufferSelectedEntries() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    private List<BufferEntry> bufferSelectedEntries() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			String[] aliases = kseFrame.getSelectedEntryAliases();
+            String[] aliases = kseFrame.getSelectedEntryAliases();
 
-			if (aliases.length == 0) {
-				return null;
-			}
+            if (aliases.length == 0) {
+                return null;
+            }
 
-			List<BufferEntry> bufferEntries = new ArrayList<>();
-			for (String alias : aliases) {
+            List<BufferEntry> bufferEntries = new ArrayList<>();
+            for (String alias : aliases) {
 
-				BufferEntry bufferEntry = null;
+                BufferEntry bufferEntry = null;
 
-				KeyStore keyStore = currentState.getKeyStore();
+                KeyStore keyStore = currentState.getKeyStore();
 
-				if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
-					Password password = getEntryPassword(alias, currentState);
+                if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
+                    Password password = getEntryPassword(alias, currentState);
 
-					if (password == null) {
-						continue;
-					}
+                    if (password == null) {
+                        continue;
+                    }
 
-					Key key = keyStore.getKey(alias, password.toCharArray());
+                    Key key = keyStore.getKey(alias, password.toCharArray());
 
-					if (key instanceof PrivateKey) {
-						JOptionPane.showMessageDialog(frame,
-								res.getString("CopyAction.NoCopyKeyEntryWithPrivateKey.message"),
-								res.getString("CopyAction.Copy.Title"), JOptionPane.WARNING_MESSAGE);
+                    if (key instanceof PrivateKey) {
+                        JOptionPane.showMessageDialog(frame,
+                                                      res.getString("CopyAction.NoCopyKeyEntryWithPrivateKey.message"),
+                                                      res.getString("CopyAction.Copy.Title"),
+                                                      JOptionPane.WARNING_MESSAGE);
 
-						continue;
-					}
+                        continue;
+                    }
 
-					bufferEntry = new KeyBufferEntry(alias, false, key, password);
-				} else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-					Certificate certificate = keyStore.getCertificate(alias);
+                    bufferEntry = new KeyBufferEntry(alias, false, key, password);
+                } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+                    Certificate certificate = keyStore.getCertificate(alias);
 
-					bufferEntry = new TrustedCertificateBufferEntry(alias, false, certificate);
-				} else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-					Password password = getEntryPassword(alias, currentState);
+                    bufferEntry = new TrustedCertificateBufferEntry(alias, false, certificate);
+                } else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+                    Password password = getEntryPassword(alias, currentState);
 
-					if (password == null) {
-						continue;
-					}
+                    if (password == null) {
+                        continue;
+                    }
 
-					PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-					Certificate[] certificateChain = keyStore.getCertificateChain(alias);
+                    PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+                    Certificate[] certificateChain = keyStore.getCertificateChain(alias);
 
-					bufferEntry = new KeyPairBufferEntry(alias, false, privateKey, password, certificateChain);
-				}
+                    bufferEntry = new KeyPairBufferEntry(alias, false, privateKey, password, certificateChain);
+                }
 
-				if (bufferEntry != null) {
-					bufferEntries.add(bufferEntry);
-				}
-			}
+                if (bufferEntry != null) {
+                    bufferEntries.add(bufferEntry);
+                }
+            }
 
-			return bufferEntries;
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-			return null;
-		}
-	}
+            return bufferEntries;
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+            return null;
+        }
+    }
 }

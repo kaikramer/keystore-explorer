@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,13 +27,13 @@ import javax.swing.SwingConstants;
 
 public class MiGUtil {
 
-	private MiGUtil() {
-	}
+    private MiGUtil() {
+    }
 
-	public static void addSeparator(Container container, String text) {
-		JLabel l = new JLabel(text, SwingConstants.LEADING);
+    public static void addSeparator(Container container, String text) {
+        JLabel l = new JLabel(text, SwingConstants.LEADING);
 
-		container.add(l, "gapbottom 1, span, split 2, aligny center");
-		container.add(new JSeparator(), "gapleft rel, growx");
-	}
+        container.add(l, "gapbottom 1, span, split 2, aligny center");
+        container.add(new JSeparator(), "gapleft rel, growx");
+    }
 }

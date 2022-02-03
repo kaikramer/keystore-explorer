@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,83 +27,70 @@ import java.io.Writer;
 
 /**
  * Class of utility methods to copy data between I/O streams.
- *
  */
 public class CopyUtil {
-	private CopyUtil() {
-	}
+    private CopyUtil() {
+    }
 
-	/**
-	 * Copy data from one stream to another and do not close I/O.
-	 *
-	 * @param in
-	 *            Input stream
-	 * @param out
-	 *            Output stream
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public static void copy(InputStream in, OutputStream out) throws IOException {
-		byte[] buffer = new byte[2048];
-		int i;
-		while ((i = in.read(buffer)) > 0) {
-			out.write(buffer, 0, i);
-		}
-	}
+    /**
+     * Copy data from one stream to another and do not close I/O.
+     *
+     * @param in  Input stream
+     * @param out Output stream
+     * @throws IOException If an I/O problem occurred
+     */
+    public static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[2048];
+        int i;
+        while ((i = in.read(buffer)) > 0) {
+            out.write(buffer, 0, i);
+        }
+    }
 
-	/**
-	 * Copy data from one stream to another and close I/O.
-	 *
-	 * @param in
-	 *            Input stream
-	 * @param out
-	 *            Output stream
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public static void copyClose(InputStream in, OutputStream out) throws IOException {
-		try {
-			copy(in, out);
-		} finally {
-			IOUtils.closeQuietly(in);
-			IOUtils.closeQuietly(out);
-		}
-	}
+    /**
+     * Copy data from one stream to another and close I/O.
+     *
+     * @param in  Input stream
+     * @param out Output stream
+     * @throws IOException If an I/O problem occurred
+     */
+    public static void copyClose(InputStream in, OutputStream out) throws IOException {
+        try {
+            copy(in, out);
+        } finally {
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(out);
+        }
+    }
 
-	/**
-	 * Copy data from a reader to a writer and do not close I/O.
-	 *
-	 * @param reader
-	 *            Reader
-	 * @param writer
-	 *            Writer
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public static void copy(Reader reader, Writer writer) throws IOException {
-		char[] buffer = new char[2048];
-		int i;
-		while ((i = reader.read(buffer)) > 0) {
-			writer.write(buffer, 0, i);
-		}
-	}
+    /**
+     * Copy data from a reader to a writer and do not close I/O.
+     *
+     * @param reader Reader
+     * @param writer Writer
+     * @throws IOException If an I/O problem occurred
+     */
+    public static void copy(Reader reader, Writer writer) throws IOException {
+        char[] buffer = new char[2048];
+        int i;
+        while ((i = reader.read(buffer)) > 0) {
+            writer.write(buffer, 0, i);
+        }
+    }
 
-	/**
-	 * Copy data from a reader to a writer and close I/O.
-	 *
-	 * @param reader
-	 *            Reader
-	 * @param writer
-	 *            Writer
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	public static void copyClose(Reader reader, Writer writer) throws IOException {
-		try {
-			copy(reader, writer);
-		} finally {
-			IOUtils.closeQuietly(reader);
-			IOUtils.closeQuietly(writer);
-		}
-	}
+    /**
+     * Copy data from a reader to a writer and close I/O.
+     *
+     * @param reader Reader
+     * @param writer Writer
+     * @throws IOException If an I/O problem occurred
+     */
+    public static void copyClose(Reader reader, Writer writer) throws IOException {
+        try {
+            copy(reader, writer);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(writer);
+        }
+    }
 }

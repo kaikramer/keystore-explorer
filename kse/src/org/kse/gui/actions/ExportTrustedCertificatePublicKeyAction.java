@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -43,97 +43,96 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to export the selected trusted certificate entry's public key.
- *
  */
 public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public ExportTrustedCertificatePublicKeyAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public ExportTrustedCertificatePublicKeyAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificatePublicKeyAction.statusbar"));
-		putValue(NAME, res.getString("ExportTrustedCertificatePublicKeyAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificatePublicKeyAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/trustcertexportpub.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("ExportTrustedCertificatePublicKeyAction.statusbar"));
+        putValue(NAME, res.getString("ExportTrustedCertificatePublicKeyAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("ExportTrustedCertificatePublicKeyAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/trustcertexportpub.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		File exportFile = null;
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        File exportFile = null;
 
-		try {
-			String alias = kseFrame.getSelectedEntryAlias();
+        try {
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			DExportPublicKeyOpenSsl dExportPublicKey = new DExportPublicKeyOpenSsl(frame, alias);
-			dExportPublicKey.setLocationRelativeTo(frame);
-			dExportPublicKey.setVisible(true);
+            DExportPublicKeyOpenSsl dExportPublicKey = new DExportPublicKeyOpenSsl(frame, alias);
+            dExportPublicKey.setLocationRelativeTo(frame);
+            dExportPublicKey.setVisible(true);
 
-			if (!dExportPublicKey.exportSelected()) {
-				return;
-			}
+            if (!dExportPublicKey.exportSelected()) {
+                return;
+            }
 
-			exportFile = dExportPublicKey.getExportFile();
-			boolean pemEncode = dExportPublicKey.pemEncode();
+            exportFile = dExportPublicKey.getExportFile();
+            boolean pemEncode = dExportPublicKey.pemEncode();
 
-			PublicKey publicKey = getPublicKey(alias);
+            PublicKey publicKey = getPublicKey(alias);
 
-			byte[] encoded = null;
+            byte[] encoded = null;
 
-			if (pemEncode) {
-				encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
-			} else {
-				encoded = OpenSslPubUtil.get(publicKey);
-			}
+            if (pemEncode) {
+                encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
+            } else {
+                encoded = OpenSslPubUtil.get(publicKey);
+            }
 
-			exportEncodedPublicKey(encoded, exportFile);
+            exportEncodedPublicKey(encoded, exportFile);
 
-			JOptionPane.showMessageDialog(frame,
-					res.getString("ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSslSuccessful.message"),
-					res.getString("ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl.Title"),
-					JOptionPane.INFORMATION_MESSAGE);
-		} catch (FileNotFoundException ex) {
-			String message = MessageFormat.format(
-					res.getString("ExportTrustedCertificatePublicKeyAction.NoWriteFile.message"), exportFile);
+            JOptionPane.showMessageDialog(frame, res.getString(
+                                                  "ExportTrustedCertificatePublicKeyAction" +
+                                                  ".ExportPublicKeyOpenSslSuccessful.message"), res.getString(
+                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl" +
+                                                  ".Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException ex) {
+            String message = MessageFormat.format(
+                    res.getString("ExportTrustedCertificatePublicKeyAction.NoWriteFile.message"), exportFile);
 
-			JOptionPane.showMessageDialog(frame, message,
-					res.getString("ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl.Title"),
-					JOptionPane.WARNING_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, message, res.getString(
+                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl" +
+                                                  ".Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
-	private PublicKey getPublicKey(String alias) throws CryptoException {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStore keyStore = history.getCurrentState().getKeyStore();
+    private PublicKey getPublicKey(String alias) throws CryptoException {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStore keyStore = history.getCurrentState().getKeyStore();
 
-			X509Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+            X509Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
 
-			return cert.getPublicKey();
-		} catch (KeyStoreException ex) {
-			String message = MessageFormat.format(
-					res.getString("ExportTrustedCertificatePublicKeyAction.NoAccessEntry.message"), alias);
-			throw new CryptoException(message, ex);
-		}
-	}
+            return cert.getPublicKey();
+        } catch (KeyStoreException ex) {
+            String message = MessageFormat.format(
+                    res.getString("ExportTrustedCertificatePublicKeyAction.NoAccessEntry.message"), alias);
+            throw new CryptoException(message, ex);
+        }
+    }
 
-	private void exportEncodedPublicKey(byte[] encoded, File exportFile) throws IOException {
-		try (FileOutputStream fos = new FileOutputStream(exportFile)) {
-			fos.write(encoded);
-			fos.flush();
-		}
-	}
+    private void exportEncodedPublicKey(byte[] encoded, File exportFile) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(exportFile)) {
+            fos.write(encoded);
+            fos.flush();
+        }
+    }
 }

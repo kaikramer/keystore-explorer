@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,56 +34,52 @@ import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to display the details for the selected trusted certificate entry.
- *
  */
 public class TrustedCertificateDetailsAction extends KeyStoreExplorerAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public TrustedCertificateDetailsAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public TrustedCertificateDetailsAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("TrustedCertificateDetailsAction.statusbar"));
-		putValue(NAME, res.getString("TrustedCertificateDetailsAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("TrustedCertificateDetailsAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/certdetails.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("TrustedCertificateDetailsAction.statusbar"));
+        putValue(NAME, res.getString("TrustedCertificateDetailsAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("TrustedCertificateDetailsAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/certdetails.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		showCertificateSelectedEntry();
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        showCertificateSelectedEntry();
+    }
 
-	/**
-	 * Show the certificate details of the selected KeyStore entry.
-	 */
-	public void showCertificateSelectedEntry() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStore keyStore = history.getCurrentState().getKeyStore();
-			String alias = kseFrame.getSelectedEntryAlias();
+    /**
+     * Show the certificate details of the selected KeyStore entry.
+     */
+    public void showCertificateSelectedEntry() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStore keyStore = history.getCurrentState().getKeyStore();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			X509Certificate[] certs = new X509Certificate[1];
-			certs[0] = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+            X509Certificate[] certs = new X509Certificate[1];
+            certs[0] = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
 
-			DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-					res.getString("TrustedCertificateDetailsAction.CertDetailsEntry.Title"), alias), certs,
-					kseFrame, DViewCertificate.EXPORT);
-			dViewCertificate.setLocationRelativeTo(frame);
-			dViewCertificate.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
+                    res.getString("TrustedCertificateDetailsAction.CertDetailsEntry.Title"), alias), certs, kseFrame,
+                                                                     DViewCertificate.EXPORT);
+            dViewCertificate.setLocationRelativeTo(frame);
+            dViewCertificate.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

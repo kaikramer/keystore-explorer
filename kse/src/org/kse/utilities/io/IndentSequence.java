@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,67 +21,64 @@ package org.kse.utilities.io;
 
 /**
  * Indentation sequence.
- *
  */
 public class IndentSequence {
-	public static final IndentSequence FOUR_SPACES = new IndentSequence(IndentChar.SPACE, 4);
-	public static final IndentSequence SINGLE_TAB = new IndentSequence(IndentChar.TAB, 1);
+    public static final IndentSequence FOUR_SPACES = new IndentSequence(IndentChar.SPACE, 4);
+    public static final IndentSequence SINGLE_TAB = new IndentSequence(IndentChar.TAB, 1);
 
-	private IndentChar indentChar;
+    private IndentChar indentChar;
 
-	private int indentSize;
-	/**
-	 * Construct IndentSequence.
-	 *
-	 * @param indentChar
-	 *            Indent character
-	 * @param indentSize
-	 *            Indent size
-	 */
-	public IndentSequence(IndentChar indentChar, int indentSize) {
-		this.indentChar = indentChar;
-		this.indentSize = indentSize;
-	}
+    private int indentSize;
 
-	/**
-	 * Get indent sequence for level.
-	 *
-	 * @param level
-	 *            Indent level
-	 * @return Indent sequence for level
-	 */
-	public String toString(int level) {
-		StringBuilder sb = new StringBuilder();
+    /**
+     * Construct IndentSequence.
+     *
+     * @param indentChar Indent character
+     * @param indentSize Indent size
+     */
+    public IndentSequence(IndentChar indentChar, int indentSize) {
+        this.indentChar = indentChar;
+        this.indentSize = indentSize;
+    }
 
-		for (int i = 0; i < level; i++) {
-			sb.append(toString());
-		}
+    /**
+     * Get indent sequence for level.
+     *
+     * @param level Indent level
+     * @return Indent sequence for level
+     */
+    public String toString(int level) {
+        StringBuilder sb = new StringBuilder();
 
-		return sb.toString();
-	}
+        for (int i = 0; i < level; i++) {
+            sb.append(toString());
+        }
 
-	/**
-	 * Get indent sequence.
-	 *
-	 * @return Indent sequence
-	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+        return sb.toString();
+    }
 
-		for (int i = 0; i < indentSize; i++) {
-			sb.append(indentChar.getIndentChar());
-		}
+    /**
+     * Get indent sequence.
+     *
+     * @return Indent sequence
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		return sb.toString();
-	}
+        for (int i = 0; i < indentSize; i++) {
+            sb.append(indentChar.getIndentChar());
+        }
 
-	/**
-	 * Get the indent character.
-	 *
-	 * @return
-	 */
-	public IndentChar getIndentChar() {
-		return indentChar;
-	}
+        return sb.toString();
+    }
+
+    /**
+     * Get the indent character.
+     *
+     * @return
+     */
+    public IndentChar getIndentChar() {
+        return indentChar;
+    }
 }

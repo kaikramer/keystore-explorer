@@ -41,7 +41,7 @@ If you intend to implement a non-trivial enhancement or a new feature, please ma
 
 Good documentation is crucial for any kind of software. You can help improving the documentation:
 * Please report missing, incorrect, or out-dated documentation as an [issue](https://github.com/kaikramer/keystore-explorer/issues).
-* The [KSE website](http://keystore-explorer.org) is in a [GitHub repository](https://github.com/kaikramer/kaikramer.github.io) just like the KSE source code, which means improvements for the website can be contributed in the same way as code contributions. Or you could open an [issue](https://github.com/kaikramer/keystore-explorer/issues) if you think the website could be improved, but don't want to do it yourself.
+* The [KSE website](https://keystore-explorer.org) is in a [GitHub repository](https://github.com/kaikramer/kaikramer.github.io) just like the KSE source code, which means improvements for the website can be contributed in the same way as code contributions. Or you could open an [issue](https://github.com/kaikramer/keystore-explorer/issues) if you think the website could be improved, but don't want to do it yourself.
 
 ### Translations
 

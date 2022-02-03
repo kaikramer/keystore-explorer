@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,131 +52,124 @@ import net.miginfocom.swing.MigLayout;
 /**
  * An About dialog which displays an image of about information, a ticker for
  * acknowledgements and a button to access system information.
- *
  */
 public class DAbout extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
 
-	private static final Color KSE_COLOR = LnfUtil.isDarkLnf()
-			? new Color(116, 131, 141)
-			: new Color(0, 134, 201);
+    private static final Color KSE_COLOR = LnfUtil.isDarkLnf() ? new Color(116, 131, 141) : new Color(0, 134, 201);
 
-	private JPanel jpAbout = new JPanel();
+    private JPanel jpAbout = new JPanel();
 
-	private JLabel jlKSE = new JLabel(KSE.getApplicationName());
-	private JLabel jlIcon;
-	private JLabel jlVersion;
-	private JLabel jlLicense;
+    private JLabel jlKSE = new JLabel(KSE.getApplicationName());
+    private JLabel jlIcon;
+    private JLabel jlVersion;
+    private JLabel jlLicense;
 
-	private JTicker jtkDetails;
-	private JButton jbOK;
-	private JButton jbCredits;
+    private JTicker jtkDetails;
+    private JButton jbOK;
+    private JButton jbCredits;
 
-	/**
-	 * Creates new DAbout dialog.
-	 *  @param parent
-	 *            Parent frame
-	 * @param title
-	 *            The title of the dialog
-	 * @param aboutImg
-	 *            The image containing the about information
-	 * @param tickerItems
-	 * 			  Content for copyright ticker
-	 */
-	public DAbout(JFrame parent, String title, String licenseNotice, Image aboutImg, String[] tickerItems) {
-		super(parent, title, ModalityType.DOCUMENT_MODAL);
-		initComponents(aboutImg, licenseNotice, tickerItems);
-	}
+    /**
+     * Creates new DAbout dialog.
+     *
+     * @param parent      Parent frame
+     * @param title       The title of the dialog
+     * @param aboutImg    The image containing the about information
+     * @param tickerItems Content for copyright ticker
+     */
+    public DAbout(JFrame parent, String title, String licenseNotice, Image aboutImg, String[] tickerItems) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        initComponents(aboutImg, licenseNotice, tickerItems);
+    }
 
-	private void initComponents(Image aboutImg, String licenseNotice, Object[] tickerItems) {
+    private void initComponents(Image aboutImg, String licenseNotice, Object[] tickerItems) {
 
-		// init ticker
-		jtkDetails = new JTicker();
-		jtkDetails.setIncrement(1);
-		jtkDetails.setGap(40);
-		jtkDetails.setInterval(20);
-		jtkDetails.setInitialDelay(500);
+        // init ticker
+        jtkDetails = new JTicker();
+        jtkDetails.setIncrement(1);
+        jtkDetails.setGap(40);
+        jtkDetails.setInterval(20);
+        jtkDetails.setInitialDelay(500);
 
-		for (Object tickerItem : tickerItems) {
-			jtkDetails.addItem(tickerItem);
-		}
+        for (Object tickerItem : tickerItems) {
+            jtkDetails.addItem(tickerItem);
+        }
 
-		// prepare other elements
-		jlKSE = new JLabel(KSE.getApplicationName());
-		jlKSE.setFont(jlKSE.getFont().deriveFont(20f));
-		jlKSE.setForeground(KSE_COLOR);
+        // prepare other elements
+        jlKSE = new JLabel(KSE.getApplicationName());
+        jlKSE.setFont(jlKSE.getFont().deriveFont(20f));
+        jlKSE.setForeground(KSE_COLOR);
 
-		jlIcon = new JLabel(new ImageIcon(aboutImg));
+        jlIcon = new JLabel(new ImageIcon(aboutImg));
 
-		jlVersion = new JLabel("Version " + KSE.getApplicationVersion());
-		jlLicense = new JLabel(licenseNotice);
+        jlVersion = new JLabel("Version " + KSE.getApplicationVersion());
+        jlLicense = new JLabel(licenseNotice);
 
-		jbOK = new JButton(res.getString("DAbout.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DAbout.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCredits = new JButton(res.getString("DAbout.jbCredits.text"));
-		PlatformUtil.setMnemonic(jbCredits, res.getString("DAbout.jbCredits.mnemonic").charAt(0));
-		jbCredits.addActionListener(evt -> openCreditsPageInBrowser());
+        jbCredits = new JButton(res.getString("DAbout.jbCredits.text"));
+        PlatformUtil.setMnemonic(jbCredits, res.getString("DAbout.jbCredits.mnemonic").charAt(0));
+        jbCredits.addActionListener(evt -> openCreditsPageInBrowser());
 
-		// layout
-		jpAbout.setLayout(new MigLayout("insets dialog, fill"));
-		jpAbout.add(jlKSE, "top");
-		jpAbout.add(jlIcon, "top, right, spany 2, wrap unrel");
-		jpAbout.add(jlVersion, "top, wrap para");
-//		jpAbout.add(jlLicense, "span, wrap unrel");
-		jpAbout.add(jtkDetails, "width 100%, span, wrap para:push");
+        // layout
+        jpAbout.setLayout(new MigLayout("insets dialog, fill"));
+        jpAbout.add(jlKSE, "top");
+        jpAbout.add(jlIcon, "top, right, spany 2, wrap unrel");
+        jpAbout.add(jlVersion, "top, wrap para");
+        //		jpAbout.add(jlLicense, "span, wrap unrel");
+        jpAbout.add(jtkDetails, "width 100%, span, wrap para:push");
 
-		jpAbout.add(jbCredits, "");
-		jpAbout.add(jbOK, "tag ok");
+        jpAbout.add(jbCredits, "");
+        jpAbout.add(jbOK, "tag ok");
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getContentPane().add(jpAbout);
-		getRootPane().setDefaultButton(jbOK);
-		setResizable(false);
-		pack();
+        getContentPane().add(jpAbout);
+        getRootPane().setDefaultButton(jbOK);
+        setResizable(false);
+        pack();
 
-		jtkDetails.start();
+        jtkDetails.start();
 
-		// because in windows laf default button follows focus, OK would not be the default button anymore
-		jbOK.requestFocusInWindow();
-	}
+        // because in windows laf default button follows focus, OK would not be the default button anymore
+        jbOK.requestFocusInWindow();
+    }
 
-	protected void openCreditsPageInBrowser() {
-		try {
-			Desktop.getDesktop().browse(URI.create(URLs.KSE_WEBSITE_CONTRIBUTORS));
-		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(this,
-					MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"),
-							URLs.KSE_WEBSITE_CONTRIBUTORS),
-					KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
+    protected void openCreditsPageInBrowser() {
+        try {
+            Desktop.getDesktop().browse(URI.create(URLs.KSE_WEBSITE_CONTRIBUTORS));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this,
+                                          MessageFormat.format(res.getString("WebsiteAction.NoLaunchBrowser.message"),
+                                                               URLs.KSE_WEBSITE_CONTRIBUTORS), KSE.getApplicationName(),
+                                          JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		jtkDetails.stop();
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        jtkDetails.stop();
+        dispose();
+    }
 
+    public static void main(String[] args) throws Exception {
+        String[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2021 Kai Kramer ..." };
+        URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
+        DAbout dialog = new DAbout(new JFrame(), "About", "See help for details of the end user license agreement.",
+                                   Toolkit.getDefaultToolkit().getImage(kseIconUrl), tickerItems);
 
-	public static void main(String[] args) throws Exception {
-		String[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2021 Kai Kramer ..." };
-		URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
-		DAbout dialog = new DAbout(new JFrame(), "About", "See help for details of the end user license agreement.",
-				Toolkit.getDefaultToolkit().getImage(kseIconUrl), tickerItems);
-
-		DialogViewer.run(dialog);
-	}
+        DialogViewer.run(dialog);
+    }
 }

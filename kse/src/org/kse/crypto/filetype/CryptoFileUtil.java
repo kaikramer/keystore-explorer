@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -67,234 +67,227 @@ import org.kse.crypto.x509.X509CertUtil;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
- *
  */
 public class CryptoFileUtil {
-	private static final int JKS_MAGIC_NUMBER = 0xFEEDFEED;
-	private static final int JCEKS_MAGIC_NUMBER = 0xCECECECE;
+    private static final int JKS_MAGIC_NUMBER = 0xFEEDFEED;
+    private static final int JCEKS_MAGIC_NUMBER = 0xCECECECE;
 
-	private static final int ZIP_MAGIC_NUMBER1 = 0x4C5A4950;
-	private static final int ZIP_MAGIC_NUMBER2 = 0x504B0304;
-	private static final int ZIP_MAGIC_NUMBER3 = 0x504B0506;
-	private static final int ZIP_MAGIC_NUMBER4 = 0x504B0708;
+    private static final int ZIP_MAGIC_NUMBER1 = 0x4C5A4950;
+    private static final int ZIP_MAGIC_NUMBER2 = 0x504B0304;
+    private static final int ZIP_MAGIC_NUMBER3 = 0x504B0506;
+    private static final int ZIP_MAGIC_NUMBER4 = 0x504B0708;
 
-	private CryptoFileUtil() {
-	}
+    private CryptoFileUtil() {
+    }
 
-	/**
-	 * Detect the cryptographic file type of the supplied input stream.
-	 *
-	 * @param file File with cryptographic data
-	 * @return Type or null if file not of a recognised type
-	 * @throws IOException If an I/O problem occurred
-	 */
-	public static CryptoFileType detectFileType(File file) throws IOException {
-		return detectFileType(FileUtils.readFileToByteArray(file));
-	}
+    /**
+     * Detect the cryptographic file type of the supplied input stream.
+     *
+     * @param file File with cryptographic data
+     * @return Type or null if file not of a recognised type
+     * @throws IOException If an I/O problem occurred
+     */
+    public static CryptoFileType detectFileType(File file) throws IOException {
+        return detectFileType(FileUtils.readFileToByteArray(file));
+    }
 
-	/**
-	 * Detect the cryptographic file type of the supplied input stream.
-	 *
-	 * @param data Cryptographic data
-	 * @return Type or null if file not of a recognised type
-	 * @throws IOException If an I/O problem occurred
-	 */
-	public static CryptoFileType detectFileType(byte[] data) throws IOException {
+    /**
+     * Detect the cryptographic file type of the supplied input stream.
+     *
+     * @param data Cryptographic data
+     * @return Type or null if file not of a recognised type
+     * @throws IOException If an I/O problem occurred
+     */
+    public static CryptoFileType detectFileType(byte[] data) throws IOException {
 
-		if (isJarFile(data)) {
-			return JAR;
-		}
+        if (isJarFile(data)) {
+            return JAR;
+        }
 
-		EncryptionType pkcs8EncType = Pkcs8Util.getEncryptionType(data);
+        EncryptionType pkcs8EncType = Pkcs8Util.getEncryptionType(data);
 
-		if (pkcs8EncType != null) {
-			if (pkcs8EncType == ENCRYPTED) {
-				return ENC_PKCS8_PVK;
-			} else if (pkcs8EncType == UNENCRYPTED) {
-				return UNENC_PKCS8_PVK;
-			}
-		}
+        if (pkcs8EncType != null) {
+            if (pkcs8EncType == ENCRYPTED) {
+                return ENC_PKCS8_PVK;
+            } else if (pkcs8EncType == UNENCRYPTED) {
+                return UNENC_PKCS8_PVK;
+            }
+        }
 
-		EncryptionType msPvkEncType = MsPvkUtil.getEncryptionType(data);
+        EncryptionType msPvkEncType = MsPvkUtil.getEncryptionType(data);
 
-		if (msPvkEncType != null) {
-			if (msPvkEncType == ENCRYPTED) {
-				return ENC_MS_PVK;
-			} else if (msPvkEncType == UNENCRYPTED) {
-				return UNENC_MS_PVK;
-			}
-		}
+        if (msPvkEncType != null) {
+            if (msPvkEncType == ENCRYPTED) {
+                return ENC_MS_PVK;
+            } else if (msPvkEncType == UNENCRYPTED) {
+                return UNENC_MS_PVK;
+            }
+        }
 
-		EncryptionType openSslPvkEncType = OpenSslPvkUtil.getEncryptionType(data);
+        EncryptionType openSslPvkEncType = OpenSslPvkUtil.getEncryptionType(data);
 
-		if (openSslPvkEncType != null) {
-			if (openSslPvkEncType == ENCRYPTED) {
-				return ENC_OPENSSL_PVK;
-			} else if (openSslPvkEncType == UNENCRYPTED) {
-				return UNENC_OPENSSL_PVK;
-			}
-		}
+        if (openSslPvkEncType != null) {
+            if (openSslPvkEncType == ENCRYPTED) {
+                return ENC_OPENSSL_PVK;
+            } else if (openSslPvkEncType == UNENCRYPTED) {
+                return UNENC_OPENSSL_PVK;
+            }
+        }
 
-		try {
-			OpenSslPubUtil.load(data);
-			return OPENSSL_PUB;
-		} catch (Exception ex) {
-			// Ignore - not an OpenSSL public key file
-		} catch (OutOfMemoryError ex) {
-			// Ignore - not an OpenSSL public key file, some files cause the
-			// heap space to fill up with the load call
-		}
+        try {
+            OpenSslPubUtil.load(data);
+            return OPENSSL_PUB;
+        } catch (Exception ex) {
+            // Ignore - not an OpenSSL public key file
+        } catch (OutOfMemoryError ex) {
+            // Ignore - not an OpenSSL public key file, some files cause the
+            // heap space to fill up with the load call
+        }
 
-		try {
-			if (X509CertUtil.loadCertificates(data).length > 0) {
-				return CERT;
-			}
-		} catch (Exception ex) {
-			// Ignore - not a certificate file
-		}
+        try {
+            if (X509CertUtil.loadCertificates(data).length > 0) {
+                return CERT;
+            }
+        } catch (Exception ex) {
+            // Ignore - not a certificate file
+        }
 
-		try {
-			X509CertUtil.loadCRL(data);
-			return CRL;
-		} catch (Exception ex) {
-			// Ignore - not a CRL file
-		}
+        try {
+            X509CertUtil.loadCRL(data);
+            return CRL;
+        } catch (Exception ex) {
+            // Ignore - not a CRL file
+        }
 
-		CsrType csrType = detectCsrType(data);
+        CsrType csrType = detectCsrType(data);
 
-		if (csrType != null) {
-			return csrType.getCryptoFileType();
-		}
+        if (csrType != null) {
+            return csrType.getCryptoFileType();
+        }
 
-		KeyStoreType keyStoreType = detectKeyStoreType(data);
+        KeyStoreType keyStoreType = detectKeyStoreType(data);
 
-		if (keyStoreType != null) {
-			return keyStoreType.getCryptoFileType();
-		}
+        if (keyStoreType != null) {
+            return keyStoreType.getCryptoFileType();
+        }
 
-		// Not a recognised type
-		return UNKNOWN;
-	}
+        // Not a recognised type
+        return UNKNOWN;
+    }
 
-	private static boolean isJarFile(byte[] data) {
-		if (data.length < 4) {
-			return false;
-		}
+    private static boolean isJarFile(byte[] data) {
+        if (data.length < 4) {
+            return false;
+        }
 
-		int magic = (data[0] << 24) & 0xff000000
-				| (data[1] << 16) & 0x00ff0000
-				| (data[2] << 8) & 0x0000ff00
-				| (data[3]) & 0x000000ff;
+        int magic = (data[0] << 24) & 0xff000000 | (data[1] << 16) & 0x00ff0000 | (data[2] << 8) & 0x0000ff00 |
+                    (data[3]) & 0x000000ff;
 
-		return magic == ZIP_MAGIC_NUMBER1
-				|| magic == ZIP_MAGIC_NUMBER2
-				|| magic == ZIP_MAGIC_NUMBER3
-				|| magic == ZIP_MAGIC_NUMBER4;
-	}
+        return magic == ZIP_MAGIC_NUMBER1 || magic == ZIP_MAGIC_NUMBER2 || magic == ZIP_MAGIC_NUMBER3 ||
+               magic == ZIP_MAGIC_NUMBER4;
+    }
 
+    private static CsrType detectCsrType(byte[] csrData) throws IOException {
+        try {
+            Pkcs10Util.loadCsr(csrData);
+            return PKCS10;
+        } catch (FileNotFoundException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            // Ignore - not a PKCS #10 file
+        } catch (OutOfMemoryError ex) {
+            // Ignore - not a PKCS #10 file, some files cause the heap space to fill up with the load call
+        }
 
-	private static CsrType detectCsrType(byte[] csrData) throws IOException {
-		try {
-			Pkcs10Util.loadCsr(csrData);
-			return PKCS10;
-		} catch (FileNotFoundException ex) {
-			throw ex;
-		} catch (Exception ex) {
-			// Ignore - not a PKCS #10 file
-		} catch (OutOfMemoryError ex) {
-			// Ignore - not a PKCS #10 file, some files cause the heap space to fill up with the load call
-		}
+        try {
+            new Spkac(csrData);
+            return CsrType.SPKAC;
+        } catch (SpkacException ex) {
+            // Ignore - not an SPKAC file
+        }
 
-		try {
-			new Spkac(csrData);
-			return CsrType.SPKAC;
-		} catch (SpkacException ex) {
-			// Ignore - not an SPKAC file
-		}
+        // Not a recognised type
+        return null;
+    }
 
-		// Not a recognised type
-		return null;
-	}
+    /**
+     * Detect the KeyStore type contained in the supplied file.
+     *
+     * @param file Keystore file
+     * @return KeyStore type or null if none matched
+     * @throws IOException If an I/O problem occurred
+     */
+    public static KeyStoreType detectKeyStoreType(File file) throws IOException {
+        return detectKeyStoreType(FileUtils.readFileToByteArray(file));
+    }
 
+    /**
+     * Detect the KeyStore type contained in the supplied file.
+     *
+     * @param data Keystore data as byte array
+     * @return KeyStore type or null if none matched
+     * @throws IOException If an I/O problem occurred
+     */
+    public static KeyStoreType detectKeyStoreType(byte[] data) throws IOException {
 
-	/**
-	 * Detect the KeyStore type contained in the supplied file.
-	 *
-	 * @param file Keystore file
-	 * @return KeyStore type or null if none matched
-	 * @throws IOException If an I/O problem occurred
-	 */
-	public static KeyStoreType detectKeyStoreType(File file) throws IOException {
-		return detectKeyStoreType(FileUtils.readFileToByteArray(file));
-	}
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data))) {
 
-	/**
-	 * Detect the KeyStore type contained in the supplied file.
-	 *
-	 * @param data Keystore data as byte array
-	 * @return KeyStore type or null if none matched
-	 * @throws IOException If an I/O problem occurred
-	 */
-	public static KeyStoreType detectKeyStoreType(byte[] data) throws IOException {
+            // If less than 4 bytes are available it isn't a KeyStore
+            if (dis.available() < 4) {
+                return null;
+            }
 
-		try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data))) {
+            // Read first integer (4 bytes)
+            int i1 = dis.readInt();
 
-			// If less than 4 bytes are available it isn't a KeyStore
-			if (dis.available() < 4) {
-				return null;
-			}
+            // Test for JKS - starts with appropriate magic number
+            if (i1 == JKS_MAGIC_NUMBER) {
+                return JKS;
+            }
 
-			// Read first integer (4 bytes)
-			int i1 = dis.readInt();
+            // Test for JCEKS - starts with appropriate magic number
+            if (i1 == JCEKS_MAGIC_NUMBER) {
+                return JCEKS;
+            }
 
-			// Test for JKS - starts with appropriate magic number
-			if (i1 == JKS_MAGIC_NUMBER) {
-				return JKS;
-			}
+            // Test for BKS and UBER
 
-			// Test for JCEKS - starts with appropriate magic number
-			if (i1 == JCEKS_MAGIC_NUMBER) {
-				return JCEKS;
-			}
+            // Both start with a version number of 0, 1 or 2
+            // TODO version 0/1 can be removed after update to BC v1.69 which removes support for BKS-1
+            if ((i1 == 0) || (i1 == 1) || (i1 == 2)) {
+                /*
+                 * For BKS and UBER the last 20 bytes of the file are the SHA-1
+                 * Hash while the byte before that is a ASN1Null (0) indicating
+                 * the end of the store. UBER, however, encrypts the store
+                 * content making it highly unlikely that the ASN1Null end byte
+                 * will be preserved. Therefore if the 21st byte from the end of
+                 * the file is a ASN1Null then the KeyStore is BKS
+                 */
 
-			// Test for BKS and UBER
+                if (data.length < 26) {
+                    // Insufficient bytes to be BKS or UBER
+                    return null;
+                }
 
-			// Both start with a version number of 0, 1 or 2
-			// TODO version 0/1 can be removed after update to BC v1.69 which removes support for BKS-1
-			if ((i1 == 0) || (i1 == 1) || (i1 == 2)) {
-				/*
-				 * For BKS and UBER the last 20 bytes of the file are the SHA-1
-				 * Hash while the byte before that is a ASN1Null (0) indicating
-				 * the end of the store. UBER, however, encrypts the store
-				 * content making it highly unlikely that the ASN1Null end byte
-				 * will be preserved. Therefore if the 21st byte from the end of
-				 * the file is a ASN1Null then the KeyStore is BKS
-				 */
+                // Skip to 21st from last byte (file length minus 21 and the 4 bytes already read)
+                dis.skip(data.length - 25l);
 
-				if (data.length < 26) {
-					// Insufficient bytes to be BKS or UBER
-					return null;
-				}
+                // Read what may be the null byte
+                if (dis.readByte() == 0) {
+                    // Found null byte - BKS/BKS-V1
+                    if (i1 == 1) {
+                        return BKS_V1;
+                    } else {
+                        return BKS;
+                    }
+                } else {
+                    // No null byte - UBER
+                    return UBER;
+                }
+            }
+        }
 
-				// Skip to 21st from last byte (file length minus 21 and the 4 bytes already read)
-				dis.skip(data.length - 25l);
-
-				// Read what may be the null byte
-				if (dis.readByte() == 0) {
-					// Found null byte - BKS/BKS-V1
-					if (i1 == 1) {
-						return BKS_V1;
-					} else {
-						return BKS;
-					}
-				} else {
-					// No null byte - UBER
-					return UBER;
-				}
-			}
-		}
-
-		// @formatter:off
+        // @formatter:off
 		/*
 		 * Test for PKCS #12. ASN.1 should look like this:
 		 *
@@ -306,36 +299,36 @@ public class CryptoFileUtil {
 		 */
 		// @formatter:on
 
-		ASN1Primitive pfx = null;
-		try {
-			pfx = ASN1Primitive.fromByteArray(data);
-		} catch (IOException e) {
-			// if it cannot be parsed as ASN1, it is certainly not a pfx key store
-			return null;
-		}
+        ASN1Primitive pfx = null;
+        try {
+            pfx = ASN1Primitive.fromByteArray(data);
+        } catch (IOException e) {
+            // if it cannot be parsed as ASN1, it is certainly not a pfx key store
+            return null;
+        }
 
-		// Is a sequence...
-		if ((pfx instanceof ASN1Sequence)) {
-			// Has two or three components...
-			ASN1Sequence sequence = (ASN1Sequence) pfx;
+        // Is a sequence...
+        if ((pfx instanceof ASN1Sequence)) {
+            // Has two or three components...
+            ASN1Sequence sequence = (ASN1Sequence) pfx;
 
-			if ((sequence.size() == 2) || (sequence.size() == 3)) {
-				// ...the first of which is a version of 3
-				ASN1Encodable firstComponent = sequence.getObjectAt(0);
+            if ((sequence.size() == 2) || (sequence.size() == 3)) {
+                // ...the first of which is a version of 3
+                ASN1Encodable firstComponent = sequence.getObjectAt(0);
 
-				if (firstComponent instanceof ASN1Integer) {
-					ASN1Integer version = (ASN1Integer) firstComponent;
+                if (firstComponent instanceof ASN1Integer) {
+                    ASN1Integer version = (ASN1Integer) firstComponent;
 
-					if (version.getValue().intValue() == 3) {
-						return PKCS12;
-					}
-				} else if(firstComponent instanceof DLSequence){
-					return BCFKS;
-				}
-			}
-		}
+                    if (version.getValue().intValue() == 3) {
+                        return PKCS12;
+                    }
+                } else if (firstComponent instanceof DLSequence) {
+                    return BCFKS;
+                }
+            }
+        }
 
-		// KeyStore type not recognised
-		return null;
-	}
+        // KeyStore type not recognised
+        return null;
+    }
 }

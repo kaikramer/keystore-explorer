@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -41,135 +41,127 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to append to the selected key pair entry's certificate chain.
- *
  */
 public class AppendToCertificateChainAction extends KeyStoreExplorerAction implements HistoryAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public AppendToCertificateChainAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public AppendToCertificateChainAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(LONG_DESCRIPTION, res.getString("AppendToCertificateChainAction.statusbar"));
-		putValue(NAME, res.getString("AppendToCertificateChainAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("AppendToCertificateChainAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/appendcert.png"))));
-	}
+        putValue(LONG_DESCRIPTION, res.getString("AppendToCertificateChainAction.statusbar"));
+        putValue(NAME, res.getString("AppendToCertificateChainAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("AppendToCertificateChainAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/appendcert.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-			KeyStoreState currentState = history.getCurrentState();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
 
-			String alias = kseFrame.getSelectedEntryAlias();
+            String alias = kseFrame.getSelectedEntryAlias();
 
-			Password password = getEntryPassword(alias, currentState);
+            Password password = getEntryPassword(alias, currentState);
 
-			if (password == null) {
-				return;
-			}
+            if (password == null) {
+                return;
+            }
 
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
+            KeyStore keyStore = newState.getKeyStore();
 
-			Key privKey = keyStore.getKey(alias, password.toCharArray());
+            Key privKey = keyStore.getKey(alias, password.toCharArray());
 
-			X509Certificate[] certChain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(keyStore
-					.getCertificateChain(alias)));
+            X509Certificate[] certChain = X509CertUtil.orderX509CertChain(
+                    X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
-			// Certificate to append to is the end one in the chain
-			X509Certificate certToAppendTo = certChain[certChain.length - 1];
+            // Certificate to append to is the end one in the chain
+            X509Certificate certToAppendTo = certChain[certChain.length - 1];
 
-			if (X509CertUtil.isCertificateSelfSigned(certToAppendTo)) {
-				JOptionPane.showMessageDialog(frame,
-						res.getString("AppendToCertificateChainAction.CannotAppendCertSelfSigned.message"),
-						res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (X509CertUtil.isCertificateSelfSigned(certToAppendTo)) {
+                JOptionPane.showMessageDialog(frame, res.getString(
+                        "AppendToCertificateChainAction.CannotAppendCertSelfSigned.message"), res.getString(
+                        "AppendToCertificateChainAction.AppendToCertificateChain.Title"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			File certFile = chooseAppendCertificateFile();
-			if (certFile == null) {
-				return;
-			}
+            File certFile = chooseAppendCertificateFile();
+            if (certFile == null) {
+                return;
+            }
 
-			X509Certificate[] certs = openCertificate(certFile);
+            X509Certificate[] certs = openCertificate(certFile);
 
-			if ((certs == null) || (certs.length == 0)) {
-				return;
-			}
+            if ((certs == null) || (certs.length == 0)) {
+                return;
+            }
 
-			if (certs.length > 1) {
-				JOptionPane.showMessageDialog(frame,
-						res.getString("AppendToCertificateChainAction.NoMultipleAppendCert.message"),
-						res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (certs.length > 1) {
+                JOptionPane.showMessageDialog(frame, res.getString(
+                        "AppendToCertificateChainAction.NoMultipleAppendCert.message"), res.getString(
+                        "AppendToCertificateChainAction.AppendToCertificateChain.Title"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			X509Certificate certToAppend = certs[0];
+            X509Certificate certToAppend = certs[0];
 
-			if (!X509CertUtil.verifyCertificate(certToAppendTo, certToAppend)) {
-				JOptionPane.showMessageDialog(frame,
-						res.getString("AppendToCertificateChainAction.AppendCertNotSigner.message"),
-						res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+            if (!X509CertUtil.verifyCertificate(certToAppendTo, certToAppend)) {
+                JOptionPane.showMessageDialog(frame, res.getString(
+                        "AppendToCertificateChainAction.AppendCertNotSigner.message"), res.getString(
+                        "AppendToCertificateChainAction.AppendToCertificateChain.Title"), JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			X509Certificate[] newCertChain = new X509Certificate[certChain.length + 1];
+            X509Certificate[] newCertChain = new X509Certificate[certChain.length + 1];
 
-			System.arraycopy(certChain, 0, newCertChain, 0, certChain.length);
-			newCertChain[newCertChain.length - 1] = certToAppend;
+            System.arraycopy(certChain, 0, newCertChain, 0, certChain.length);
+            newCertChain[newCertChain.length - 1] = certToAppend;
 
-			keyStore.deleteEntry(alias);
+            keyStore.deleteEntry(alias);
 
-			keyStore.setKeyEntry(alias, privKey, password.toCharArray(), newCertChain);
+            keyStore.setKeyEntry(alias, privKey, password.toCharArray(), newCertChain);
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			kseFrame.updateControls(true);
+            kseFrame.updateControls(true);
 
-			JOptionPane.showMessageDialog(frame,
-					res.getString("AppendToCertificateChainAction.AppendToCertificateChainSuccessful.message"),
-					res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"),
-					JOptionPane.INFORMATION_MESSAGE);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+            JOptionPane.showMessageDialog(frame, res.getString(
+                    "AppendToCertificateChainAction.AppendToCertificateChainSuccessful.message"), res.getString(
+                    "AppendToCertificateChainAction.AppendToCertificateChain.Title"), JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 
-	private File chooseAppendCertificateFile() {
-		JFileChooser chooser = FileChooserFactory.getX509FileChooser();
-		chooser.setCurrentDirectory(CurrentDirectory.get());
-		chooser.setDialogTitle(res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"));
-		chooser.setMultiSelectionEnabled(false);
-		chooser.setApproveButtonText(res.getString("AppendToCertificateChainAction.AppendCertificate.button"));
+    private File chooseAppendCertificateFile() {
+        JFileChooser chooser = FileChooserFactory.getX509FileChooser();
+        chooser.setCurrentDirectory(CurrentDirectory.get());
+        chooser.setDialogTitle(res.getString("AppendToCertificateChainAction.AppendToCertificateChain.Title"));
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setApproveButtonText(res.getString("AppendToCertificateChainAction.AppendCertificate.button"));
 
-		int rtnValue = chooser.showOpenDialog(frame);
-		if (rtnValue == JFileChooser.APPROVE_OPTION) {
-			File openFile = chooser.getSelectedFile();
-			CurrentDirectory.updateForFile(openFile);
-			return openFile;
-		}
-		return null;
-	}
+        int rtnValue = chooser.showOpenDialog(frame);
+        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            File openFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(openFile);
+            return openFile;
+        }
+        return null;
+    }
 }

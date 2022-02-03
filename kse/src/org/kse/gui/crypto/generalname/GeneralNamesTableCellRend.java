@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,41 +31,34 @@ import org.kse.crypto.x509.GeneralNameUtil;
 
 /**
  * Custom cell renderer for the cells of the general names table.
- *
  */
 public class GeneralNamesTableCellRend extends DefaultTableCellRenderer {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Returns the rendered cell.
-	 *
-	 * @param jtGeneralNames
-	 *            The JTable
-	 * @param value
-	 *            The value to assign to the cell
-	 * @param isSelected
-	 *            True if cell is selected
-	 * @param row
-	 *            The row of the cell to render
-	 * @param col
-	 *            The column of the cell to render
-	 * @param hasFocus
-	 *            If true, render cell appropriately
-	 * @return The renderered cell
-	 */
-	@Override
-	public Component getTableCellRendererComponent(JTable jtGeneralNames, Object value, boolean isSelected,
-			boolean hasFocus, int row, int col) {
-		JLabel cell = (JLabel) super.getTableCellRendererComponent(jtGeneralNames, value, isSelected, hasFocus, row,
-				col);
+    /**
+     * Returns the rendered cell.
+     *
+     * @param jtGeneralNames The JTable
+     * @param value          The value to assign to the cell
+     * @param isSelected     True if cell is selected
+     * @param row            The row of the cell to render
+     * @param col            The column of the cell to render
+     * @param hasFocus       If true, render cell appropriately
+     * @return The renderered cell
+     */
+    @Override
+    public Component getTableCellRendererComponent(JTable jtGeneralNames, Object value, boolean isSelected,
+                                                   boolean hasFocus, int row, int col) {
+        JLabel cell = (JLabel) super.getTableCellRendererComponent(jtGeneralNames, value, isSelected, hasFocus, row,
+                                                                   col);
 
-		String generalNameStr = GeneralNameUtil.safeToString((GeneralName) value, false);
-		cell.setText(generalNameStr);
-		cell.setToolTipText(generalNameStr);
+        String generalNameStr = GeneralNameUtil.safeToString((GeneralName) value, false);
+        cell.setText(generalNameStr);
+        cell.setToolTipText(generalNameStr);
 
-		cell.setHorizontalAlignment(LEFT);
-		cell.setBorder(new EmptyBorder(0, 5, 0, 5));
+        cell.setHorizontalAlignment(LEFT);
+        cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-		return cell;
-	}
+        return cell;
+    }
 }

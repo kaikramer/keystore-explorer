@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,108 +45,102 @@ import org.kse.crypto.x509.X509CertUtil;
  * <li>A concatenation of encrypted PEM'd PKCS #8 (private key) and PKCS #7
  * (certificate chain) if drag is to a string.</li>
  * </ol>
- *
  */
 public class DragKeyPairEntry extends DragEntry {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dnd/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dnd/resources");
 
-	private static final String EXTENSION = "p12";
+    private static final String EXTENSION = "p12";
 
-	private byte[] contentBytes;
-	private String contentStr;
-	private ImageIcon image;
+    private byte[] contentBytes;
+    private String contentStr;
+    private ImageIcon image;
 
-	/**
-	 * Construct DragKeyPairEntry.
-	 *
-	 * @param name
-	 *            Entry name
-	 * @param privateKey
-	 *            Private key
-	 * @param password
-	 *            Private key password
-	 * @param certificateChain
-	 *            Certificate chain
-	 * @throws CryptoException
-	 *             If there was a problem creating the content
-	 */
-	public DragKeyPairEntry(String name, PrivateKey privateKey, Password password, Certificate[] certificateChain)
-			throws CryptoException {
-		super(name);
+    /**
+     * Construct DragKeyPairEntry.
+     *
+     * @param name             Entry name
+     * @param privateKey       Private key
+     * @param password         Private key password
+     * @param certificateChain Certificate chain
+     * @throws CryptoException If there was a problem creating the content
+     */
+    public DragKeyPairEntry(String name, PrivateKey privateKey, Password password, Certificate[] certificateChain)
+            throws CryptoException {
+        super(name);
 
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
-			// Binary content is PKCS #12 protected by password
-			KeyStore p12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
-			p12.setKeyEntry(name, privateKey, password.toCharArray(), certificateChain);
-			p12.store(baos, password.toCharArray());
-			contentBytes = baos.toByteArray();
+            // Binary content is PKCS #12 protected by password
+            KeyStore p12 = KeyStoreUtil.create(KeyStoreType.PKCS12);
+            p12.setKeyEntry(name, privateKey, password.toCharArray(), certificateChain);
+            p12.store(baos, password.toCharArray());
+            contentBytes = baos.toByteArray();
 
-			/*
-			 * String content is PKCS #8 PEM (private key) protected by PBE
-			 * (SHA-1 and 128 bit RC4) concatenated with PCKS #7 PEM
-			 * (certificate chain)
-			 */
-			StringBuilder sbContent = new StringBuilder();
-			String pkcs8 = Pkcs8Util.getEncryptedPem(privateKey, Pkcs8PbeType.SHA1_128BIT_RC4, password);
-			String pkcs7 = X509CertUtil.getCertsEncodedPkcs7Pem(X509CertUtil.convertCertificates(certificateChain));
+            /*
+             * String content is PKCS #8 PEM (private key) protected by PBE
+             * (SHA-1 and 128 bit RC4) concatenated with PCKS #7 PEM
+             * (certificate chain)
+             */
+            StringBuilder sbContent = new StringBuilder();
+            String pkcs8 = Pkcs8Util.getEncryptedPem(privateKey, Pkcs8PbeType.SHA1_128BIT_RC4, password);
+            String pkcs7 = X509CertUtil.getCertsEncodedPkcs7Pem(X509CertUtil.convertCertificates(certificateChain));
 
-			// Output notes delimiting the different parts
-			sbContent.append(res.getString("DragKeyPairEntry.StringFlavor.PrivateKeyPart.text"));
-			sbContent.append("\n\n");
-			sbContent.append(pkcs8);
-			sbContent.append('\n');
-			sbContent.append(res.getString("DragKeyPairEntry.StringFlavor.CertificateChainPart.text"));
-			sbContent.append("\n\n");
-			sbContent.append(pkcs7);
+            // Output notes delimiting the different parts
+            sbContent.append(res.getString("DragKeyPairEntry.StringFlavor.PrivateKeyPart.text"));
+            sbContent.append("\n\n");
+            sbContent.append(pkcs8);
+            sbContent.append('\n');
+            sbContent.append(res.getString("DragKeyPairEntry.StringFlavor.CertificateChainPart.text"));
+            sbContent.append("\n\n");
+            sbContent.append(pkcs7);
 
-			contentStr = sbContent.toString();
+            contentStr = sbContent.toString();
 
-			// Get drag image
-			image = new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-					getClass().getResource("images/drag_keypair.png")));
-		} catch (IOException | GeneralSecurityException ex) {
-			throw new CryptoException(res.getString("NoGetKeyPairEntryContent.exception.message"), ex);
-		}
-	}
+            // Get drag image
+            image = new ImageIcon(
+                    Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/drag_keypair.png")));
+        } catch (IOException | GeneralSecurityException ex) {
+            throw new CryptoException(res.getString("NoGetKeyPairEntryContent.exception.message"), ex);
+        }
+    }
 
-	/**
-	 * Get entry image - to display while dragging.
-	 *
-	 * @return Entry image
-	 */
-	@Override
-	public ImageIcon getImage() {
-		return image;
-	}
+    /**
+     * Get entry image - to display while dragging.
+     *
+     * @return Entry image
+     */
+    @Override
+    public ImageIcon getImage() {
+        return image;
+    }
 
-	/**
-	 * Get entry file extension. Used to generate file name.
-	 *
-	 * @return File extension
-	 */
-	@Override
-	public String getExtension() {
-		return EXTENSION;
-	}
+    /**
+     * Get entry file extension. Used to generate file name.
+     *
+     * @return File extension
+     */
+    @Override
+    public String getExtension() {
+        return EXTENSION;
+    }
 
-	/**
-	 * Get entry content as binary. Used to generate dragged file name.
-	 *
-	 * @return Content
-	 */
-	@Override
-	public byte[] getContent() {
-		return contentBytes;
-	}
+    /**
+     * Get entry content as binary. Used to generate dragged file name.
+     *
+     * @return Content
+     */
+    @Override
+    public byte[] getContent() {
+        return contentBytes;
+    }
 
-	/**
-	 * Get entry content as a string.
-	 *
-	 * @return Content
-	 */
-	@Override
-	public String getContentString() {
-		return contentStr;
-	}
+    /**
+     * Get entry content as a string.
+     *
+     * @return Content
+     */
+    @Override
+    public String getContentString() {
+        return contentStr;
+    }
 }

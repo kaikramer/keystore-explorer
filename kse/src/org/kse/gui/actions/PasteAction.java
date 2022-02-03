@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -47,152 +47,150 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to paste a KeyStore entry.
- *
  */
 public class PasteAction extends KeyStoreExplorerAction implements HistoryAction {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public PasteAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public PasteAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("PasteAction.accelerator").charAt(0), Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask()));
-		putValue(LONG_DESCRIPTION, res.getString("PasteAction.statusbar"));
-		putValue(NAME, res.getString("PasteAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("PasteAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/paste.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("PasteAction.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(LONG_DESCRIPTION, res.getString("PasteAction.statusbar"));
+        putValue(NAME, res.getString("PasteAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("PasteAction.tooltip"));
+        putValue(SMALL_ICON,
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/paste.png"))));
+    }
 
-	@Override
-	public String getHistoryDescription() {
-		return (String) getValue(NAME);
-	}
+    @Override
+    public String getHistoryDescription() {
+        return (String) getValue(NAME);
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		List<BufferEntry> bufferEntries = Buffer.interrogate();
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        List<BufferEntry> bufferEntries = Buffer.interrogate();
 
-		if (bufferEntries != null) {
-			boolean changed = pasteEntries(bufferEntries);
+        if (bufferEntries != null) {
+            boolean changed = pasteEntries(bufferEntries);
 
-			if (changed) {
-				kseFrame.updateControls(true);
-			}
-		}
-	}
+            if (changed) {
+                kseFrame.updateControls(true);
+            }
+        }
+    }
 
-	private boolean pasteEntries(List<BufferEntry> bufferEntries) {
-		try {
-			KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+    private boolean pasteEntries(List<BufferEntry> bufferEntries) {
+        try {
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-			KeyStoreState currentState = history.getCurrentState();
-			KeyStoreState newState = currentState.createBasisForNextState(this);
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStoreState newState = currentState.createBasisForNextState(this);
 
-			KeyStore keyStore = newState.getKeyStore();
-			boolean changed = false;
-			for (BufferEntry bufferEntry : bufferEntries) {
-				changed |= pasteEntry(bufferEntry, keyStore, newState);
-			}
+            KeyStore keyStore = newState.getKeyStore();
+            boolean changed = false;
+            for (BufferEntry bufferEntry : bufferEntries) {
+                changed |= pasteEntry(bufferEntry, keyStore, newState);
+            }
 
-			currentState.append(newState);
+            currentState.append(newState);
 
-			return changed;
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-			return false;
-		}
-	}
+            return changed;
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+            return false;
+        }
+    }
 
-	private boolean pasteEntry(BufferEntry bufferEntry, KeyStore keyStore, KeyStoreState newState) throws KeyStoreException {
-		String alias = bufferEntry.getName();
+    private boolean pasteEntry(BufferEntry bufferEntry, KeyStore keyStore, KeyStoreState newState)
+            throws KeyStoreException {
+        String alias = bufferEntry.getName();
 
-		if (keyStore.containsAlias(alias)) {
-			if (bufferEntry.isCut()) {
-				int selected = JOptionPane.showConfirmDialog(frame,
-						MessageFormat.format(res.getString("PasteAction.PasteExistsReplace.message"), alias),
-						res.getString("PasteAction.Paste.Title"), JOptionPane.YES_NO_OPTION);
+        if (keyStore.containsAlias(alias)) {
+            if (bufferEntry.isCut()) {
+                int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
+                                                                     res.getString("PasteAction.PasteExistsReplace" +
+                                                                                   ".message"), alias),
+                                                             res.getString("PasteAction.Paste.Title"),
+                                                             JOptionPane.YES_NO_OPTION);
 
-				if (selected != JOptionPane.YES_OPTION) {
-					return false;
-				}
+                if (selected != JOptionPane.YES_OPTION) {
+                    return false;
+                }
 
-				keyStore.deleteEntry(alias);
-				newState.removeEntryPassword(alias);
-			} else {
-				alias = getUniqueEntryName(alias, keyStore);
-			}
-		}
+                keyStore.deleteEntry(alias);
+                newState.removeEntryPassword(alias);
+            } else {
+                alias = getUniqueEntryName(alias, keyStore);
+            }
+        }
 
-		if (bufferEntry instanceof KeyBufferEntry) {
-			KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
+        if (bufferEntry instanceof KeyBufferEntry) {
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
-			if (!keyStoreType.supportsKeyEntries()) {
-				JOptionPane.showMessageDialog(
-						frame,
-						MessageFormat.format(res.getString("PasteAction.NoPasteKeyEntry.message"),
-								keyStoreType.friendly()), res.getString("PasteAction.Paste.Title"),
-						JOptionPane.WARNING_MESSAGE);
+            if (!keyStoreType.supportsKeyEntries()) {
+                JOptionPane.showMessageDialog(frame,
+                                              MessageFormat.format(res.getString("PasteAction.NoPasteKeyEntry.message"),
+                                                                   keyStoreType.friendly()),
+                                              res.getString("PasteAction.Paste.Title"), JOptionPane.WARNING_MESSAGE);
 
-				return false;
-			}
+                return false;
+            }
 
-			KeyBufferEntry keyBufferEntry = (KeyBufferEntry) bufferEntry;
+            KeyBufferEntry keyBufferEntry = (KeyBufferEntry) bufferEntry;
 
-			Key key = keyBufferEntry.getKey();
+            Key key = keyBufferEntry.getKey();
 
-			Password password = keyBufferEntry.getPassword();
+            Password password = keyBufferEntry.getPassword();
 
-			keyStore.setKeyEntry(alias, key, password.toCharArray(), null);
+            keyStore.setKeyEntry(alias, key, password.toCharArray(), null);
 
-			newState.setEntryPassword(alias, password);
-		} else if (bufferEntry instanceof KeyPairBufferEntry) {
-			KeyPairBufferEntry keyPairBufferEntry = (KeyPairBufferEntry) bufferEntry;
+            newState.setEntryPassword(alias, password);
+        } else if (bufferEntry instanceof KeyPairBufferEntry) {
+            KeyPairBufferEntry keyPairBufferEntry = (KeyPairBufferEntry) bufferEntry;
 
-			PrivateKey privateKey = keyPairBufferEntry.getPrivateKey();
-			Password password = keyPairBufferEntry.getPassword();
+            PrivateKey privateKey = keyPairBufferEntry.getPrivateKey();
+            Password password = keyPairBufferEntry.getPassword();
 
-			Certificate[] certificateChain = keyPairBufferEntry.getCertificateChain();
+            Certificate[] certificateChain = keyPairBufferEntry.getCertificateChain();
 
-			keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
+            keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
 
-			newState.setEntryPassword(alias, password);
-		} else {
-			TrustedCertificateBufferEntry certBufferEntry = (TrustedCertificateBufferEntry) bufferEntry;
+            newState.setEntryPassword(alias, password);
+        } else {
+            TrustedCertificateBufferEntry certBufferEntry = (TrustedCertificateBufferEntry) bufferEntry;
 
-			keyStore.setCertificateEntry(alias, certBufferEntry.getTrustedCertificate());
-		}
+            keyStore.setCertificateEntry(alias, certBufferEntry.getTrustedCertificate());
+        }
 
-		if (bufferEntry.isCut()) {
-			Buffer.clear();
-		}
+        if (bufferEntry.isCut()) {
+            Buffer.clear();
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private String getUniqueEntryName(String name, KeyStore keyStore) throws KeyStoreException {
-		// Get unique KeyStore entry name based on the one supplied, ie *
-		// "<name> (n)" where n is a
-		// number.
-		int i = 1;
-		while (true) {
-			String tryName = MessageFormat.format("{0} ({1})", name, i);
-			if (!keyStore.containsAlias(tryName)) {
-				return tryName;
-			}
-			i++;
-		}
-	}
+    private String getUniqueEntryName(String name, KeyStore keyStore) throws KeyStoreException {
+        // Get unique KeyStore entry name based on the one supplied, ie *
+        // "<name> (n)" where n is a
+        // number.
+        int i = 1;
+        while (true) {
+            String tryName = MessageFormat.format("{0} ({1})", name, i);
+            if (!keyStore.containsAlias(tryName)) {
+                return tryName;
+            }
+            i++;
+        }
+    }
 }

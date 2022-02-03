@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,126 +34,124 @@ import com.formdev.flatlaf.FlatDarkLaf;
 
 /**
  * Look and Feel utility methods.
- *
  */
 public class LnfUtil {
 
-	// VAqua LnF class as constant to avoid compile dependency
-	private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
+    // VAqua LnF class as constant to avoid compile dependency
+    private static final String VAQUA_LAF_CLASS = "org.violetlib.aqua.AquaLookAndFeel";
 
-	private LnfUtil() {
-	}
+    private LnfUtil() {
+    }
 
-	/**
-	 * Do the supplied l&amp;f object and l&amp;f info object refer to the same
-	 * l&amp;f?
-	 *
-	 * @param lookAndFeel     L&amp;F object
-	 * @param lookAndFeelInfo L&amp;F info object
-	 * @return True if they do
-	 */
-	public static boolean matchLnf(LookAndFeel lookAndFeel, UIManager.LookAndFeelInfo lookAndFeelInfo) {
-		return lookAndFeel.getClass().getName().equals(lookAndFeelInfo.getClassName());
-	}
+    /**
+     * Do the supplied l&amp;f object and l&amp;f info object refer to the same
+     * l&amp;f?
+     *
+     * @param lookAndFeel     L&amp;F object
+     * @param lookAndFeelInfo L&amp;F info object
+     * @return True if they do
+     */
+    public static boolean matchLnf(LookAndFeel lookAndFeel, UIManager.LookAndFeelInfo lookAndFeelInfo) {
+        return lookAndFeel.getClass().getName().equals(lookAndFeelInfo.getClassName());
+    }
 
-	/**
-	 * Install L&amp;Fs.
-	 */
-	public static void installLnfs() {
-		// Flat LaF
-		UIManager.installLookAndFeel("Flat Light", com.formdev.flatlaf.FlatLightLaf.class.getName());
-		UIManager.installLookAndFeel("Flat Dark", com.formdev.flatlaf.FlatDarkLaf.class.getName());
-		UIManager.installLookAndFeel("Flat IntelliJ", com.formdev.flatlaf.FlatIntelliJLaf.class.getName());
-		UIManager.installLookAndFeel("Flat Darcula", com.formdev.flatlaf.FlatDarculaLaf.class.getName());
+    /**
+     * Install L&amp;Fs.
+     */
+    public static void installLnfs() {
+        // Flat LaF
+        UIManager.installLookAndFeel("Flat Light", com.formdev.flatlaf.FlatLightLaf.class.getName());
+        UIManager.installLookAndFeel("Flat Dark", com.formdev.flatlaf.FlatDarkLaf.class.getName());
+        UIManager.installLookAndFeel("Flat IntelliJ", com.formdev.flatlaf.FlatIntelliJLaf.class.getName());
+        UIManager.installLookAndFeel("Flat Darcula", com.formdev.flatlaf.FlatDarculaLaf.class.getName());
 
-		// VAqua is optional
-		if (OperatingSystem.isMacOs() && isVAquaAvailable()) {
-			UIManager.installLookAndFeel("macOS (VAqua)", VAQUA_LAF_CLASS);
-		}
-	}
+        // VAqua is optional
+        if (OperatingSystem.isMacOs() && isVAquaAvailable()) {
+            UIManager.installLookAndFeel("macOS (VAqua)", VAQUA_LAF_CLASS);
+        }
+    }
 
-	/**
-	 * Use supplied l&amp;f.
-	 *
-	 * @param lnfClassName L&amp;f class name
-	 */
-	public static void useLnf(String lnfClassName) {
-		try {
-			UIManager.setLookAndFeel(lnfClassName);
-		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
-				| IllegalAccessException e) {
-			// ignore
-		}
-	}
+    /**
+     * Use supplied l&amp;f.
+     *
+     * @param lnfClassName L&amp;f class name
+     */
+    public static void useLnf(String lnfClassName) {
+        try {
+            UIManager.setLookAndFeel(lnfClassName);
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            // ignore
+        }
+    }
 
-	/**
-	 * Is a Mac l&amp;f (Aqua) currently being used?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean usingMacLnf() {
-		String lnfClass = UIManager.getLookAndFeel().getClass().getName();
+    /**
+     * Is a Mac l&amp;f (Aqua) currently being used?
+     *
+     * @return True if it is
+     */
+    public static boolean usingMacLnf() {
+        String lnfClass = UIManager.getLookAndFeel().getClass().getName();
 
-		return OperatingSystem.isMacOs()
-				&& (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS));
-	}
+        return OperatingSystem.isMacOs() &&
+               (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS));
+    }
 
-	/**
-	 * Is the Metal l&amp;f currently being used?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean usingMetalLnf() {
-		return usingLnf(MetalLookAndFeel.class.getName());
-	}
+    /**
+     * Is the Metal l&amp;f currently being used?
+     *
+     * @return True if it is
+     */
+    public static boolean usingMetalLnf() {
+        return usingLnf(MetalLookAndFeel.class.getName());
+    }
 
-	/**
-	 * Is the Windows l&amp;f currently being used?
-	 *
-	 * @return True if it is
-	 */
-	public static boolean usingWindowsLnf() {
-		return usingLnf(UIManager.getSystemLookAndFeelClassName());
-	}
+    /**
+     * Is the Windows l&amp;f currently being used?
+     *
+     * @return True if it is
+     */
+    public static boolean usingWindowsLnf() {
+        return usingLnf(UIManager.getSystemLookAndFeelClassName());
+    }
 
-	/**
-	 * Is the supplied l&amp;f currently being used?
-	 *
-	 * @return l&amp;f class
-	 */
-	private static boolean usingLnf(String lnfClass) {
-		String currentLnfClass = UIManager.getLookAndFeel().getClass().getName();
-		return currentLnfClass.equals(lnfClass);
-	}
+    /**
+     * Is the supplied l&amp;f currently being used?
+     *
+     * @return l&amp;f class
+     */
+    private static boolean usingLnf(String lnfClass) {
+        String currentLnfClass = UIManager.getLookAndFeel().getClass().getName();
+        return currentLnfClass.equals(lnfClass);
+    }
 
-	/**
-	 * Does the currently active l&amp;f use a dark color scheme?
-	 */
-	public static boolean isDarkLnf() {
-		return UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarkLaf.class)
-				|| UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarculaLaf.class);
-	}
+    /**
+     * Does the currently active l&amp;f use a dark color scheme?
+     */
+    public static boolean isDarkLnf() {
+        return UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarkLaf.class) ||
+               UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarculaLaf.class);
+    }
 
-	/**
-	 * Is optional VAqua LaF available?
-	 */
-	public static boolean isVAquaAvailable() {
-		try {
-			Class.forName(VAQUA_LAF_CLASS);
-			return true;
-		} catch (ClassNotFoundException e) {
-			// VAqua jar not included
-		}
-		return false;
-	}
+    /**
+     * Is optional VAqua LaF available?
+     */
+    public static boolean isVAquaAvailable() {
+        try {
+            Class.forName(VAQUA_LAF_CLASS);
+            return true;
+        } catch (ClassNotFoundException e) {
+            // VAqua jar not included
+        }
+        return false;
+    }
 
-	/**
-	 * Get default font size for a label.
-	 *
-	 * @return Font size
-	 */
-	public static int getDefaultFontSize() {
-		Font defaultFont = new JLabel().getFont();
-		return defaultFont.getSize();
-	}
+    /**
+     * Get default font size for a label.
+     *
+     * @return Font size
+     */
+    public static int getDefaultFontSize() {
+        Font defaultFont = new JLabel().getFont();
+        return defaultFont.getSize();
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,11 +21,10 @@ package org.kse.crypto.digest;
 
 /**
  * Enumeration of Digest Types supported by the DigestUtil class.
- *
  */
 public enum DigestType {
 
-	// @formatter:off
+    // @formatter:off
 
 	MD2("MD2", "1.2.840.113549.2.2", "MD2"),
 	MD4("MD4", "1.2.840.113549.2.4", "MD4"),
@@ -51,84 +50,82 @@ public enum DigestType {
 
 	// @formatter:on
 
-	private String jce;
-	private String oid;
-	private String friendly;
+    private String jce;
+    private String oid;
+    private String friendly;
 
-	DigestType(String jce, String oid, String friendly) {
-		this.jce = jce;
-		this.oid = oid;
-		this.friendly = friendly;
-	}
+    DigestType(String jce, String oid, String friendly) {
+        this.jce = jce;
+        this.oid = oid;
+        this.friendly = friendly;
+    }
 
-	/**
-	 * Get digest type JCE name.
-	 *
-	 * @return JCE name
-	 */
-	public String jce() {
-		return jce;
-	}
+    /**
+     * Get digest type JCE name.
+     *
+     * @return JCE name
+     */
+    public String jce() {
+        return jce;
+    }
 
-	/**
-	 * Get digest type Object Identifier.
-	 *
-	 * @return Object Identifier
-	 */
-	public String oid() {
-		return oid;
-	}
+    /**
+     * Get digest type Object Identifier.
+     *
+     * @return Object Identifier
+     */
+    public String oid() {
+        return oid;
+    }
 
-	/**
-	 * Get signature type friendly name.
-	 *
-	 * @return Friendly name
-	 */
-	public String friendly() {
-		return friendly;
-	}
+    /**
+     * Get signature type friendly name.
+     *
+     * @return Friendly name
+     */
+    public String friendly() {
+        return friendly;
+    }
 
-	/**
-	 * Resolve the supplied JCE name to a matching Digest type.
-	 *
-	 * @param jce
-	 *            JCE name
-	 * @return Digest type or null if none
-	 */
-	public static DigestType resolveJce(String jce) {
-		for (DigestType digestType : values()) {
-			if (jce.equals(digestType.jce())) {
-				return digestType;
-			}
-		}
+    /**
+     * Resolve the supplied JCE name to a matching Digest type.
+     *
+     * @param jce JCE name
+     * @return Digest type or null if none
+     */
+    public static DigestType resolveJce(String jce) {
+        for (DigestType digestType : values()) {
+            if (jce.equals(digestType.jce())) {
+                return digestType;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Resolve the supplied OID to a matching Digest type.
-	 *
-	 * @param oid
-	 *            OID of algorithm
-	 * @return Digest type or null if none
-	 */
-	public static DigestType resolveOid(String oid) {
-		for (DigestType digestType : values()) {
-			if (oid.equals(digestType.oid())) {
-				return digestType;
-			}
-		}
+    /**
+     * Resolve the supplied OID to a matching Digest type.
+     *
+     * @param oid OID of algorithm
+     * @return Digest type or null if none
+     */
+    public static DigestType resolveOid(String oid) {
+        for (DigestType digestType : values()) {
+            if (oid.equals(digestType.oid())) {
+                return digestType;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Returns friendly name.
-	 *
-	 * @return Friendly name
-	 */
-	@Override
-	public String toString() {
-		return friendly();
-	}
+    /**
+     * Returns friendly name.
+     *
+     * @return Friendly name
+     */
+    @Override
+    public String toString() {
+        return friendly();
+    }
 }

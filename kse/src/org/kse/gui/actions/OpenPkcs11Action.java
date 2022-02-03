@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -38,61 +38,56 @@ import org.kse.gui.error.DError;
 /**
  * Action to open the PKCS11 KeyStore. If it does not exist provide the
  * user with the option of creating it.
- *
  */
 public class OpenPkcs11Action extends OpenAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public OpenPkcs11Action(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public OpenPkcs11Action(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(
-				ACCELERATOR_KEY,
-				KeyStroke.getKeyStroke(res.getString("OpenPkcs11Action.accelerator").charAt(0), Toolkit
-						.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
-		putValue(LONG_DESCRIPTION, res.getString("OpenPkcs11Action.statusbar"));
-		putValue(NAME, res.getString("OpenPkcs11Action.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("OpenPkcs11Action.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/openpkcs11.png"))));
-	}
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("OpenPkcs11Action.accelerator").charAt(0),
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
+                                                         InputEvent.SHIFT_MASK));
+        putValue(LONG_DESCRIPTION, res.getString("OpenPkcs11Action.statusbar"));
+        putValue(NAME, res.getString("OpenPkcs11Action.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("OpenPkcs11Action.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/openpkcs11.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
 
-		try {
-			DOpenPkcs11KeyStore dOpenPkcs11KeyStore = new DOpenPkcs11KeyStore(frame);
-			dOpenPkcs11KeyStore.setLocationRelativeTo(frame);
-			dOpenPkcs11KeyStore.setVisible(true);
+        try {
+            DOpenPkcs11KeyStore dOpenPkcs11KeyStore = new DOpenPkcs11KeyStore(frame);
+            dOpenPkcs11KeyStore.setLocationRelativeTo(frame);
+            dOpenPkcs11KeyStore.setVisible(true);
 
-			Provider selectedProvider = dOpenPkcs11KeyStore.getSelectedProvider();
-			if (selectedProvider == null) {
-				return;
-			}
+            Provider selectedProvider = dOpenPkcs11KeyStore.getSelectedProvider();
+            if (selectedProvider == null) {
+                return;
+            }
 
-			KeyStore keyStore = KeyStore.getInstance(PKCS11.jce(), selectedProvider);
+            KeyStore keyStore = KeyStore.getInstance(PKCS11.jce(), selectedProvider);
 
-			// register password handler
-			AuthProvider authProvider = (AuthProvider) selectedProvider;
-			authProvider.setCallbackHandler(new PasswordCallbackHandler(frame));
+            // register password handler
+            AuthProvider authProvider = (AuthProvider) selectedProvider;
+            authProvider.setCallbackHandler(new PasswordCallbackHandler(frame));
 
-			keyStore.load(null, null);
+            keyStore.load(null, null);
 
-			kseFrame.addKeyStore(keyStore, selectedProvider.getName(), null, selectedProvider);
+            kseFrame.addKeyStore(keyStore, selectedProvider.getName(), null, selectedProvider);
 
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }

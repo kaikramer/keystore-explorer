@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,19 +23,17 @@ package org.kse.gui.statusbar;
  * Interface for a status bar. Used with the StatusBarChangeHandler to support
  * the placing and removal of help messages into the status bar as menu items
  * are selected/de-selected.
- *
  */
 public interface StatusBar {
-	/**
-	 * Display the supplied text in the status bar.
-	 *
-	 * @param status
-	 *            Text to display
-	 */
-	void setStatusBarText(String status);
+    /**
+     * Display the supplied text in the status bar.
+     *
+     * @param status Text to display
+     */
+    void setStatusBarText(String status);
 
-	/**
-	 * Set the status bar text to its default message.
-	 */
-	void setDefaultStatusBarText();
+    /**
+     * Set the status bar text to its default message.
+     */
+    void setDefaultStatusBarText();
 }

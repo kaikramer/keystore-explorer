@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,27 +27,28 @@ import org.kse.crypto.CryptoTestsBase;
 
 /**
  * Unit tests for DigestUtil. Runs tests to create a digest for each of the supported types.
- *
  */
 public class DigestUtilTest extends CryptoTestsBase {
-	private String MESSAGE = "This is a really good test message honestly";
+    private String MESSAGE = "This is a really good test message honestly";
 
-	@ParameterizedTest
-	@CsvSource({
-		"MD2",
-		"MD4",
-		"MD5",
-		"SHA1",
-		"SHA224",
-		"SHA256",
-		"SHA384",
-		"SHA512",
-		"RIPEMD128",
-		"RIPEMD160",
-		"RIPEMD256",
-	})
-	public void testMessageDigests(DigestType digestType) throws Exception {
-		String digest = DigestUtil.getFriendlyMessageDigest(MESSAGE.getBytes(), digestType);
-		assertThat(digest).isNotEqualTo(MESSAGE);
-	}
+    @ParameterizedTest
+    // @formatter:off
+    @CsvSource({
+            "MD2",
+            "MD4",
+            "MD5",
+            "SHA1",
+            "SHA224",
+            "SHA256",
+            "SHA384",
+            "SHA512",
+            "RIPEMD128",
+            "RIPEMD160",
+            "RIPEMD256",
+    })
+    // @formatter:on
+    public void testMessageDigests(DigestType digestType) throws Exception {
+        String digest = DigestUtil.getFriendlyMessageDigest(MESSAGE.getBytes(), digestType);
+        assertThat(digest).isNotEqualTo(MESSAGE);
+    }
 }

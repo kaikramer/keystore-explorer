@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -45,251 +45,244 @@ import org.kse.utilities.io.CopyUtil;
 
 /**
  * Proxy Selector for Proxy Automatic Configuration (PAC).
- *
  */
 public class PacProxySelector extends ProxySelector {
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/net/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/net/resources");
 
-	private Invocable pacScript;
-	private String pacUrl;
+    private Invocable pacScript;
+    private String pacUrl;
 
-	/**
-	 * Construct PacProxySelector using an Automatic proxy configuration URL.
-	 * Loads the PAC script from the supplied URL.
-	 *
-	 * @param pacUrl
-	 *            Automatic proxy configuration URL
-	 */
-	public PacProxySelector(String pacUrl) {
-		if (pacUrl == null) {
-			throw new NullPointerException();
-		}
+    /**
+     * Construct PacProxySelector using an Automatic proxy configuration URL.
+     * Loads the PAC script from the supplied URL.
+     *
+     * @param pacUrl Automatic proxy configuration URL
+     */
+    public PacProxySelector(String pacUrl) {
+        if (pacUrl == null) {
+            throw new NullPointerException();
+        }
 
-		this.pacUrl = pacUrl;
+        this.pacUrl = pacUrl;
 
-		// As load and compile of pac scripts is time-consuming we do this on first call to select
-	}
+        // As load and compile of pac scripts is time-consuming we do this on first call to select
+    }
 
-	/**
-	 * Get a list of proxies for the supplied URI.
-	 *
-	 * @param uri
-	 *            The URI that a connection is required to
-	 * @return List of proxies
-	 */
-	@Override
-	public List<Proxy> select(URI uri) {
-		// If there are any issues with the PAC return 'no proxy'
-		ArrayList<Proxy> proxies = new ArrayList<>();
+    /**
+     * Get a list of proxies for the supplied URI.
+     *
+     * @param uri The URI that a connection is required to
+     * @return List of proxies
+     */
+    @Override
+    public List<Proxy> select(URI uri) {
+        // If there are any issues with the PAC return 'no proxy'
+        ArrayList<Proxy> proxies = new ArrayList<>();
 
-		if (pacScript == null) {
-			try {
-				pacScript = compilePacScript(loadPacScript(pacUrl));
-			} catch (PacProxyException ex) {
-				ex.printStackTrace();
-				proxies.add(Proxy.NO_PROXY);
-				return proxies;
-			}
-		}
+        if (pacScript == null) {
+            try {
+                pacScript = compilePacScript(loadPacScript(pacUrl));
+            } catch (PacProxyException ex) {
+                ex.printStackTrace();
+                proxies.add(Proxy.NO_PROXY);
+                return proxies;
+            }
+        }
 
-		String pacFunctionReturn = null;
+        String pacFunctionReturn = null;
 
-		try {
-			pacFunctionReturn = (String) pacScript.invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
-		} catch (NoSuchMethodException | ScriptException ex) {
-			ex.printStackTrace();
-			proxies.add(Proxy.NO_PROXY);
-			return proxies;
-		}
+        try {
+            pacFunctionReturn = (String) pacScript.invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
+        } catch (NoSuchMethodException | ScriptException ex) {
+            ex.printStackTrace();
+            proxies.add(Proxy.NO_PROXY);
+            return proxies;
+        }
 
-		if (pacFunctionReturn == null) {
-			proxies.add(Proxy.NO_PROXY);
-			return proxies;
-		}
+        if (pacFunctionReturn == null) {
+            proxies.add(Proxy.NO_PROXY);
+            return proxies;
+        }
 
-		proxies.addAll(parsePacProxies(pacFunctionReturn));
+        proxies.addAll(parsePacProxies(pacFunctionReturn));
 
-		if (proxies.isEmpty()) {
-			proxies.add(Proxy.NO_PROXY);
-		}
+        if (proxies.isEmpty()) {
+            proxies.add(Proxy.NO_PROXY);
+        }
 
-		return proxies;
-	}
+        return proxies;
+    }
 
-	private String loadPacScript(String pacUrl) throws PacProxyException {
-		URLConnection connection = null;
+    private String loadPacScript(String pacUrl) throws PacProxyException {
+        URLConnection connection = null;
 
-		// Save existing default proxy selector...
-		ProxySelector defaultProxySelector = ProxySelector.getDefault();
+        // Save existing default proxy selector...
+        ProxySelector defaultProxySelector = ProxySelector.getDefault();
 
-		try {
-			// ...and set use of no proxy selector. We don't want to try and use any proxy to get the the pac script
-			ProxySelector.setDefault(new NoProxySelector());
+        try {
+            // ...and set use of no proxy selector. We don't want to try and use any proxy to get the the pac script
+            ProxySelector.setDefault(new NoProxySelector());
 
-			URL latestVersionUrl = new URL(pacUrl);
-			connection = latestVersionUrl.openConnection();
+            URL latestVersionUrl = new URL(pacUrl);
+            connection = latestVersionUrl.openConnection();
 
-			try (InputStreamReader isr = new InputStreamReader(connection.getInputStream());
-					StringWriter sw = new StringWriter()) {
-				CopyUtil.copy(isr, sw);
-				return sw.toString();
-			}
-		} catch (IOException ex) {
-			throw new PacProxyException(
-					MessageFormat.format(res.getString("NoLoadPacScript.exception.message"), pacUrl), ex);
-		} finally {
-			// Restore saved default proxy selector
-			ProxySelector.setDefault(defaultProxySelector);
+            try (InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+                 StringWriter sw = new StringWriter()) {
+                CopyUtil.copy(isr, sw);
+                return sw.toString();
+            }
+        } catch (IOException ex) {
+            throw new PacProxyException(
+                    MessageFormat.format(res.getString("NoLoadPacScript.exception.message"), pacUrl), ex);
+        } finally {
+            // Restore saved default proxy selector
+            ProxySelector.setDefault(defaultProxySelector);
 
-			if ((connection instanceof HttpURLConnection)) {
-				((HttpURLConnection) connection).disconnect();
-			}
-		}
-	}
+            if ((connection instanceof HttpURLConnection)) {
+                ((HttpURLConnection) connection).disconnect();
+            }
+        }
+    }
 
-	private Invocable compilePacScript(String pacScript) throws PacProxyException {
-		try {
-			ScriptEngineManager mgr = new ScriptEngineManager();
-			ScriptEngine jsEngine = mgr.getEngineByName("JavaScript");
+    private Invocable compilePacScript(String pacScript) throws PacProxyException {
+        try {
+            ScriptEngineManager mgr = new ScriptEngineManager();
+            ScriptEngine jsEngine = mgr.getEngineByName("JavaScript");
 
-			Invocable invocale = (Invocable) jsEngine;
+            Invocable invocale = (Invocable) jsEngine;
 
-			jsEngine.eval(pacScript);
-			jsEngine.eval(new InputStreamReader(PacProxySelector.class.getResourceAsStream("pacUtils.js")));
+            jsEngine.eval(pacScript);
+            jsEngine.eval(new InputStreamReader(PacProxySelector.class.getResourceAsStream("pacUtils.js")));
 
-			return invocale;
-		} catch (ScriptException ex) {
-			throw new PacProxyException(res.getString("NoCompilePacScript.exception.message"), ex);
-		}
-	}
+            return invocale;
+        } catch (ScriptException ex) {
+            throw new PacProxyException(res.getString("NoCompilePacScript.exception.message"), ex);
+        }
+    }
 
-	private List<Proxy> parsePacProxies(String pacFunctionReturn) {
-		ArrayList<Proxy> proxies = new ArrayList<>();
+    private List<Proxy> parsePacProxies(String pacFunctionReturn) {
+        ArrayList<Proxy> proxies = new ArrayList<>();
 
-		// PAC function return delimits different proxies by ';'
-		StringTokenizer strTok = new StringTokenizer(pacFunctionReturn, ";");
+        // PAC function return delimits different proxies by ';'
+        StringTokenizer strTok = new StringTokenizer(pacFunctionReturn, ";");
 
-		while (strTok.hasMoreTokens()) {
-			String pacFunctionReturnElement = strTok.nextToken().trim();
+        while (strTok.hasMoreTokens()) {
+            String pacFunctionReturnElement = strTok.nextToken().trim();
 
-			if (pacFunctionReturnElement.length() > 0) {
-				Proxy proxy = parsePacProxy(pacFunctionReturnElement);
+            if (pacFunctionReturnElement.length() > 0) {
+                Proxy proxy = parsePacProxy(pacFunctionReturnElement);
 
-				if (proxy != null) {
-					proxies.add(proxy);
-				}
-			}
-		}
+                if (proxy != null) {
+                    proxies.add(proxy);
+                }
+            }
+        }
 
-		return proxies;
-	}
+        return proxies;
+    }
 
-	private Proxy parsePacProxy(String pacProxy) {
-		/*
-		 * PAC formats:
-		 *
-		 * DIRECT Connections should be made directly, without any proxies.
-		 *
-		 * PROXY host:port The specified proxy should be used.
-		 *
-		 * SOCKS host:port The specified SOCKS server should be used.
-		 *
-		 * Where port is not supplied use port 80
-		 */
+    private Proxy parsePacProxy(String pacProxy) {
+        /*
+         * PAC formats:
+         *
+         * DIRECT Connections should be made directly, without any proxies.
+         *
+         * PROXY host:port The specified proxy should be used.
+         *
+         * SOCKS host:port The specified SOCKS server should be used.
+         *
+         * Where port is not supplied use port 80
+         */
 
-		if (pacProxy.equals("DIRECT")) {
-			return Proxy.NO_PROXY;
-		}
+        if (pacProxy.equals("DIRECT")) {
+            return Proxy.NO_PROXY;
+        }
 
-		String[] split = pacProxy.split(" ", 0);
+        String[] split = pacProxy.split(" ", 0);
 
-		if (split.length != 2) {
-			return null;
-		}
+        if (split.length != 2) {
+            return null;
+        }
 
-		String proxyTypeStr = split[0];
-		String address = split[1];
+        String proxyTypeStr = split[0];
+        String address = split[1];
 
-		Proxy.Type proxyType = null;
+        Proxy.Type proxyType = null;
 
-		if (proxyTypeStr.equals("PROXY")) {
-			proxyType = Proxy.Type.HTTP;
-		} else if (proxyTypeStr.equals("SOCKS")) {
-			proxyType = Proxy.Type.SOCKS;
-		}
+        if (proxyTypeStr.equals("PROXY")) {
+            proxyType = Proxy.Type.HTTP;
+        } else if (proxyTypeStr.equals("SOCKS")) {
+            proxyType = Proxy.Type.SOCKS;
+        }
 
-		if (proxyType == null) {
-			return null;
-		}
+        if (proxyType == null) {
+            return null;
+        }
 
-		split = address.split(":", 0);
-		String host = null;
-		int port = 80;
+        split = address.split(":", 0);
+        String host = null;
+        int port = 80;
 
-		if (split.length == 1) {
-			host = split[0];
-		} else if (split.length == 2) {
-			host = split[0];
+        if (split.length == 1) {
+            host = split[0];
+        } else if (split.length == 2) {
+            host = split[0];
 
-			try {
-				port = Integer.parseInt(split[1]);
-			} catch (NumberFormatException ex) {
-				return null;
-			}
-		} else {
-			return null;
-		}
+            try {
+                port = Integer.parseInt(split[1]);
+            } catch (NumberFormatException ex) {
+                return null;
+            }
+        } else {
+            return null;
+        }
 
-		return new Proxy(proxyType, new InetSocketAddress(host, port));
-	}
+        return new Proxy(proxyType, new InetSocketAddress(host, port));
+    }
 
-	/**
-	 * Connection failed. Do nothing.
-	 *
-	 * @param uri
-	 *            The URI that the proxy at socketAddress failed to serve
-	 * @param socketAddress
-	 *            The socket address of the proxy/SOCKS server
-	 * @param ioException
-	 *            The I/O exception thrown when the connect failed
-	 */
-	@Override
-	public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {
-		/*
-		 * Do nothing. Documentation of base class ProxySelector suggests that
-		 * this method may be used to affect what the select method returns.
-		 * This is not relevant to us.
-		 */
-	}
+    /**
+     * Connection failed. Do nothing.
+     *
+     * @param uri           The URI that the proxy at socketAddress failed to serve
+     * @param socketAddress The socket address of the proxy/SOCKS server
+     * @param ioException   The I/O exception thrown when the connect failed
+     */
+    @Override
+    public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {
+        /*
+         * Do nothing. Documentation of base class ProxySelector suggests that
+         * this method may be used to affect what the select method returns.
+         * This is not relevant to us.
+         */
+    }
 
-	/**
-	 * Get Automatic proxy configuration URL.
-	 *
-	 * @return PAC URL
-	 */
-	public String getPacUrl() {
-		return pacUrl;
-	}
+    /**
+     * Get Automatic proxy configuration URL.
+     *
+     * @return PAC URL
+     */
+    public String getPacUrl() {
+        return pacUrl;
+    }
 
-	/**
-	 * Is this PacProxySelector object equal to another object?
-	 *
-	 * @param object
-	 *            Object to compare PacProxySelector with.
-	 * @return true if the equal, false otherwise.
-	 */
-	@Override
-	public boolean equals(Object object) {
-		if (object == this) {
-			return true;
-		}
+    /**
+     * Is this PacProxySelector object equal to another object?
+     *
+     * @param object Object to compare PacProxySelector with.
+     * @return true if the equal, false otherwise.
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
 
-		if (!(object instanceof PacProxySelector)) {
-			return false;
-		}
+        if (!(object instanceof PacProxySelector)) {
+            return false;
+        }
 
-		PacProxySelector cmpPacProxySelector = (PacProxySelector) object;
+        PacProxySelector cmpPacProxySelector = (PacProxySelector) object;
 
-		return this.getPacUrl().equals(cmpPacProxySelector.getPacUrl());
-	}
+        return this.getPacUrl().equals(cmpPacProxySelector.getPacUrl());
+    }
 }

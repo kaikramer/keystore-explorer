@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -53,164 +53,158 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog used to add or edit an Subject Information Access extension.
- *
  */
 public class DSubjectInformationAccess extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpAccessDescriptions;
-	private JLabel jlAccessDescriptions;
-	private JAccessDescriptions jadAccessDescriptions;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpAccessDescriptions;
+    private JLabel jlAccessDescriptions;
+    private JAccessDescriptions jadAccessDescriptions;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
+    private byte[] value;
 
-	/**
-	 * Creates a new DSubjectInformationAccess dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DSubjectInformationAccess(JDialog parent) {
-		super(parent);
-		setTitle(res.getString("DSubjectInformationAccess.Title"));
-		initComponents();
-	}
+    /**
+     * Creates a new DSubjectInformationAccess dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DSubjectInformationAccess(JDialog parent) {
+        super(parent);
+        setTitle(res.getString("DSubjectInformationAccess.Title"));
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DSubjectInformationAccess dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Subject Information Access DER-encoded
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DSubjectInformationAccess(JDialog parent, byte[] value) throws IOException {
-		super(parent);
-		setTitle(res.getString("DSubjectInformationAccess.Title"));
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DSubjectInformationAccess dialog.
+     *
+     * @param parent The parent dialog
+     * @param value  Subject Information Access DER-encoded
+     * @throws IOException If value could not be decoded
+     */
+    public DSubjectInformationAccess(JDialog parent, byte[] value) throws IOException {
+        super(parent);
+        setTitle(res.getString("DSubjectInformationAccess.Title"));
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlAccessDescriptions = new JLabel(res.getString("DSubjectInformationAccess.jlAccessDescriptions.text"));
+    private void initComponents() {
+        jlAccessDescriptions = new JLabel(res.getString("DSubjectInformationAccess.jlAccessDescriptions.text"));
 
-		GridBagConstraints gbc_jlAccessDescriptions = new GridBagConstraints();
-		gbc_jlAccessDescriptions.gridx = 0;
-		gbc_jlAccessDescriptions.gridy = 0;
-		gbc_jlAccessDescriptions.gridwidth = 1;
-		gbc_jlAccessDescriptions.gridheight = 1;
-		gbc_jlAccessDescriptions.insets = new Insets(5, 5, 5, 5);
-		gbc_jlAccessDescriptions.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints gbc_jlAccessDescriptions = new GridBagConstraints();
+        gbc_jlAccessDescriptions.gridx = 0;
+        gbc_jlAccessDescriptions.gridy = 0;
+        gbc_jlAccessDescriptions.gridwidth = 1;
+        gbc_jlAccessDescriptions.gridheight = 1;
+        gbc_jlAccessDescriptions.insets = new Insets(5, 5, 5, 5);
+        gbc_jlAccessDescriptions.anchor = GridBagConstraints.NORTHEAST;
 
-		jadAccessDescriptions = new JAccessDescriptions(
-				res.getString("DSubjectInformationAccess.AccessDescription.Title"));
+        jadAccessDescriptions = new JAccessDescriptions(
+                res.getString("DSubjectInformationAccess.AccessDescription.Title"));
 
-		GridBagConstraints gbc_jadAccessDescriptions = new GridBagConstraints();
-		gbc_jadAccessDescriptions.gridx = 1;
-		gbc_jadAccessDescriptions.gridy = 0;
-		gbc_jadAccessDescriptions.gridwidth = 1;
-		gbc_jadAccessDescriptions.gridheight = 1;
-		gbc_jadAccessDescriptions.insets = new Insets(5, 5, 5, 5);
-		gbc_jadAccessDescriptions.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jadAccessDescriptions = new GridBagConstraints();
+        gbc_jadAccessDescriptions.gridx = 1;
+        gbc_jadAccessDescriptions.gridy = 0;
+        gbc_jadAccessDescriptions.gridwidth = 1;
+        gbc_jadAccessDescriptions.gridheight = 1;
+        gbc_jadAccessDescriptions.insets = new Insets(5, 5, 5, 5);
+        gbc_jadAccessDescriptions.anchor = GridBagConstraints.WEST;
 
-		jpAccessDescriptions = new JPanel(new GridBagLayout());
+        jpAccessDescriptions = new JPanel(new GridBagLayout());
 
-		jpAccessDescriptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpAccessDescriptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                          new CompoundBorder(new EtchedBorder(),
+                                                                             new EmptyBorder(5, 5, 5, 5))));
 
-		jpAccessDescriptions.add(jlAccessDescriptions, gbc_jlAccessDescriptions);
-		jpAccessDescriptions.add(jadAccessDescriptions, gbc_jadAccessDescriptions);
+        jpAccessDescriptions.add(jlAccessDescriptions, gbc_jlAccessDescriptions);
+        jpAccessDescriptions.add(jadAccessDescriptions, gbc_jadAccessDescriptions);
 
-		jbOK = new JButton(res.getString("DSubjectInformationAccess.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DSubjectInformationAccess.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DSubjectInformationAccess.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DSubjectInformationAccess.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpAccessDescriptions, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpAccessDescriptions, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		SubjectInfoAccess subjectInformationAccess = SubjectInfoAccess.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        SubjectInfoAccess subjectInformationAccess = SubjectInfoAccess.getInstance(value);
 
-		jadAccessDescriptions.setAccessDescriptions(subjectInformationAccess
-				.getAccessDescriptionList());
-	}
+        jadAccessDescriptions.setAccessDescriptions(subjectInformationAccess.getAccessDescriptionList());
+    }
 
-	private void okPressed() {
-		List<AccessDescription> accessDescriptions = jadAccessDescriptions.getAccessDescriptions();
+    private void okPressed() {
+        List<AccessDescription> accessDescriptions = jadAccessDescriptions.getAccessDescriptions();
 
-		if (accessDescriptions.size() == 0) {
-			JOptionPane.showMessageDialog(this, res.getString("DSubjectInformationAccess.ValueReq.message"),
-					getTitle(), JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (accessDescriptions.size() == 0) {
+            JOptionPane.showMessageDialog(this, res.getString("DSubjectInformationAccess.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		SubjectInfoAccess subjectInformationAccess = new SubjectInfoAccess(accessDescriptions);
+        SubjectInfoAccess subjectInformationAccess = new SubjectInfoAccess(accessDescriptions);
 
-		try {
-			value = subjectInformationAccess.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+        try {
+            value = subjectInformationAccess.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.SUBJECT_INFORMATION_ACCESS.oid();
-	}
+    @Override
+    public String getOid() {
+        return X509ExtensionType.SUBJECT_INFORMATION_ACCESS.oid();
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

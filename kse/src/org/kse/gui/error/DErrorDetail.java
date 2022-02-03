@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,170 +52,166 @@ import org.kse.gui.PlatformUtil;
 /**
  * Displays an error's stack trace. Cause error's stack trace will be show
  * recursively also.
- *
  */
 public class DErrorDetail extends JEscDialog {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/error/resources");
 
-	private JPanel jpButtons;
-	private JButton jbCopy;
-	private JButton jbOK;
-	private JPanel jpError;
-	private JTree jtrError;
-	private JScrollPane jspError;
+    private JPanel jpButtons;
+    private JButton jbCopy;
+    private JButton jbOK;
+    private JPanel jpError;
+    private JTree jtrError;
+    private JScrollPane jspError;
 
-	private Throwable error;
+    private Throwable error;
 
-	/**
-	 * Creates new DErrorDetail dialog where the parent is a frame.
-	 *
-	 * @param parent
-	 *            Parent frame
-	 * @param modality
-	 *            Dialog modality
-	 * @param error
-	 *            Error to display
-	 */
-	public DErrorDetail(JFrame parent, Dialog.ModalityType modality, Throwable error) {
-		super(parent, modality);
-		this.error = error;
-		initComponents();
-	}
+    /**
+     * Creates new DErrorDetail dialog where the parent is a frame.
+     *
+     * @param parent   Parent frame
+     * @param modality Dialog modality
+     * @param error    Error to display
+     */
+    public DErrorDetail(JFrame parent, Dialog.ModalityType modality, Throwable error) {
+        super(parent, modality);
+        this.error = error;
+        initComponents();
+    }
 
-	/**
-	 * Creates new DErrorDetail dialog where the parent is a dialog.
-	 *  @param parent
-	 *            Parent dialog
-	 * @param error
-	 */
-	public DErrorDetail(JDialog parent, Throwable error) {
-		super(parent, ModalityType.DOCUMENT_MODAL);
-		this.error = error;
-		initComponents();
-	}
+    /**
+     * Creates new DErrorDetail dialog where the parent is a dialog.
+     *
+     * @param parent Parent dialog
+     * @param error
+     */
+    public DErrorDetail(JDialog parent, Throwable error) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+        this.error = error;
+        initComponents();
+    }
 
-	private void initComponents() {
-		jbCopy = new JButton(res.getString("DErrorDetail.jbCopy.text"));
-		PlatformUtil.setMnemonic(jbCopy, res.getString("DErrorDetail.jbCopy.mnemonic").charAt(0));
-		jbCopy.setToolTipText(res.getString("DErrorDetail.jbCopy.tooltip"));
-		jbCopy.addActionListener(evt -> {
-			try {
-				CursorUtil.setCursorBusy(DErrorDetail.this);
-				copyPressed();
-			} finally {
-				CursorUtil.setCursorFree(DErrorDetail.this);
-			}
-		});
+    private void initComponents() {
+        jbCopy = new JButton(res.getString("DErrorDetail.jbCopy.text"));
+        PlatformUtil.setMnemonic(jbCopy, res.getString("DErrorDetail.jbCopy.mnemonic").charAt(0));
+        jbCopy.setToolTipText(res.getString("DErrorDetail.jbCopy.tooltip"));
+        jbCopy.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DErrorDetail.this);
+                copyPressed();
+            } finally {
+                CursorUtil.setCursorFree(DErrorDetail.this);
+            }
+        });
 
-		jbOK = new JButton(res.getString("DErrorDetail.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DErrorDetail.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
 
-		jpError = new JPanel(new BorderLayout());
-		jpError.setBorder(new EmptyBorder(10, 10, 10, 10));
+        jpError = new JPanel(new BorderLayout());
+        jpError.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		jtrError = new JTree(createErrorNodes());
-		jtrError.setRowHeight(Math.max(18, jtrError.getRowHeight()));
-		jtrError.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		ToolTipManager.sharedInstance().registerComponent(jtrError);
-		jtrError.setCellRenderer(new ErrorTreeCellRend());
+        jtrError = new JTree(createErrorNodes());
+        jtrError.setRowHeight(Math.max(18, jtrError.getRowHeight()));
+        jtrError.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        ToolTipManager.sharedInstance().registerComponent(jtrError);
+        jtrError.setCellRenderer(new ErrorTreeCellRend());
 
-		TreeNode topNode = (TreeNode) jtrError.getModel().getRoot();
-		expandTree(jtrError, new TreePath(topNode));
+        TreeNode topNode = (TreeNode) jtrError.getModel().getRoot();
+        expandTree(jtrError, new TreePath(topNode));
 
-		jspError = PlatformUtil.createScrollPane(jtrError, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		jspError.setPreferredSize(new Dimension(500, 250));
-		jpError.add(jspError, BorderLayout.CENTER);
+        jspError = PlatformUtil.createScrollPane(jtrError, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jspError.setPreferredSize(new Dimension(500, 250));
+        jpError.add(jspError, BorderLayout.CENTER);
 
-		getContentPane().add(jpError, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().add(jpError, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		setTitle(res.getString("DErrorDetail.Title"));
-		setResizable(true);
+        setTitle(res.getString("DErrorDetail.Title"));
+        setResizable(true);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
+        pack();
 
-		SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-	}
+        SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
 
-	private DefaultMutableTreeNode createErrorNodes() {
-		DefaultMutableTreeNode topNode = new DefaultMutableTreeNode(res.getString("DErrorDetail.RootNode.text"));
+    private DefaultMutableTreeNode createErrorNodes() {
+        DefaultMutableTreeNode topNode = new DefaultMutableTreeNode(res.getString("DErrorDetail.RootNode.text"));
 
-		Throwable createError = error;
+        Throwable createError = error;
 
-		while (createError != null) {
-			DefaultMutableTreeNode errorNode = new DefaultMutableTreeNode(createError);
-			topNode.add(errorNode);
+        while (createError != null) {
+            DefaultMutableTreeNode errorNode = new DefaultMutableTreeNode(createError);
+            topNode.add(errorNode);
 
-			for (StackTraceElement stackTrace : createError.getStackTrace()) {
-				errorNode.add(new DefaultMutableTreeNode(stackTrace));
-			}
+            for (StackTraceElement stackTrace : createError.getStackTrace()) {
+                errorNode.add(new DefaultMutableTreeNode(stackTrace));
+            }
 
-			createError = createError.getCause();
-		}
+            createError = createError.getCause();
+        }
 
-		return topNode;
-	}
+        return topNode;
+    }
 
-	private void expandTree(JTree tree, TreePath parent) {
-		TreeNode node = (TreeNode) parent.getLastPathComponent();
-		if (node.getChildCount() >= 0) {
-			for (Enumeration<?> children = node.children(); children.hasMoreElements();) {
-				TreeNode subNode = (TreeNode) children.nextElement();
-				TreePath path = parent.pathByAddingChild(subNode);
-				expandTree(tree, path);
-			}
-		}
+    private void expandTree(JTree tree, TreePath parent) {
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration<?> children = node.children(); children.hasMoreElements(); ) {
+                TreeNode subNode = (TreeNode) children.nextElement();
+                TreePath path = parent.pathByAddingChild(subNode);
+                expandTree(tree, path);
+            }
+        }
 
-		tree.expandPath(parent);
-	}
+        tree.expandPath(parent);
+    }
 
-	private void copyPressed() {
-		StringBuilder strBuff = new StringBuilder();
+    private void copyPressed() {
+        StringBuilder strBuff = new StringBuilder();
 
-		Throwable copyError = error;
+        Throwable copyError = error;
 
-		while (copyError != null) {
-			strBuff.append(copyError);
-			strBuff.append('\n');
+        while (copyError != null) {
+            strBuff.append(copyError);
+            strBuff.append('\n');
 
-			for (StackTraceElement stackTrace : copyError.getStackTrace()) {
-				strBuff.append("\tat ");
-				strBuff.append(stackTrace);
-				strBuff.append('\n');
-			}
+            for (StackTraceElement stackTrace : copyError.getStackTrace()) {
+                strBuff.append("\tat ");
+                strBuff.append(stackTrace);
+                strBuff.append('\n');
+            }
 
-			copyError = copyError.getCause();
+            copyError = copyError.getCause();
 
-			if (copyError != null) {
-				strBuff.append('\n');
-			}
-		}
+            if (copyError != null) {
+                strBuff.append('\n');
+            }
+        }
 
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		StringSelection copy = new StringSelection(strBuff.toString());
-		clipboard.setContents(copy, copy);
-	}
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection copy = new StringSelection(strBuff.toString());
+        clipboard.setContents(copy, copy);
+    }
 
-	private void okPressed() {
-		closeDialog();
-	}
+    private void okPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -31,76 +31,70 @@ import java.util.List;
 /**
  * Transferable for KeyStore entries. <code>DataFlavor.javaFileListFlavor</code>
  * and <code>DataFlavor.stringFlavor</code> are supported.
- *
  */
 public class KeyStoreEntryTransferable implements Transferable {
-	private DragEntry dragEntry;
+    private DragEntry dragEntry;
 
-	/**
-	 * Construct KeyStoreEntryTransferable.
-	 *
-	 * @param dragEntry
-	 *            Drag entry
-	 */
-	public KeyStoreEntryTransferable(DragEntry dragEntry) {
-		this.dragEntry = dragEntry;
-	}
+    /**
+     * Construct KeyStoreEntryTransferable.
+     *
+     * @param dragEntry Drag entry
+     */
+    public KeyStoreEntryTransferable(DragEntry dragEntry) {
+        this.dragEntry = dragEntry;
+    }
 
-	/**
-	 * Get supported transfer data flavors.
-	 *
-	 * @return Supported data flavors
-	 */
-	@Override
-	public DataFlavor[] getTransferDataFlavors() {
-		return new DataFlavor[] { DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor };
-	}
+    /**
+     * Get supported transfer data flavors.
+     *
+     * @return Supported data flavors
+     */
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+        return new DataFlavor[] { DataFlavor.javaFileListFlavor, DataFlavor.stringFlavor };
+    }
 
-	/**
-	 * Is supplied data flavor supported?
-	 *
-	 * @param dataFlavor
-	 *            Data flavor
-	 * @return True if it is
-	 */
-	@Override
-	public boolean isDataFlavorSupported(DataFlavor dataFlavor) {
-		return (dataFlavor == DataFlavor.javaFileListFlavor) || (dataFlavor == DataFlavor.stringFlavor);
-	}
+    /**
+     * Is supplied data flavor supported?
+     *
+     * @param dataFlavor Data flavor
+     * @return True if it is
+     */
+    @Override
+    public boolean isDataFlavorSupported(DataFlavor dataFlavor) {
+        return (dataFlavor == DataFlavor.javaFileListFlavor) || (dataFlavor == DataFlavor.stringFlavor);
+    }
 
-	/**
-	 * Get transfer data.
-	 *
-	 * @param dataFlavor
-	 *            Data flavor
-	 * @return Transfer data
-	 * @throws UnsupportedFlavorException
-	 *             If the requested data flavor is not supported
-	 * @throws IOException
-	 *             If an I/O problem occurred
-	 */
-	@Override
-	public Object getTransferData(DataFlavor dataFlavor) throws UnsupportedFlavorException, IOException {
-		if (!isDataFlavorSupported(dataFlavor)) {
-			throw new UnsupportedFlavorException(dataFlavor);
-		}
+    /**
+     * Get transfer data.
+     *
+     * @param dataFlavor Data flavor
+     * @return Transfer data
+     * @throws UnsupportedFlavorException If the requested data flavor is not supported
+     * @throws IOException                If an I/O problem occurred
+     */
+    @Override
+    public Object getTransferData(DataFlavor dataFlavor) throws UnsupportedFlavorException, IOException {
+        if (!isDataFlavorSupported(dataFlavor)) {
+            throw new UnsupportedFlavorException(dataFlavor);
+        }
 
-		if (dataFlavor == DataFlavor.javaFileListFlavor) {
-			String tempDir = System.getProperty("java.io.tmpdir");
+        if (dataFlavor == DataFlavor.javaFileListFlavor) {
+            String tempDir = System.getProperty("java.io.tmpdir");
 
-			File tmpFile = new File(tempDir, dragEntry.getFileName());
-			tmpFile.deleteOnExit();
+            File tmpFile = new File(tempDir, dragEntry.getFileName());
+            tmpFile.deleteOnExit();
 
-			try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
-				fos.write(dragEntry.getContent());
-				fos.flush();
-			}
+            try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
+                fos.write(dragEntry.getContent());
+                fos.flush();
+            }
 
-			List<File> list = new ArrayList<>();
-			list.add(tmpFile);
-			return list;
-		} else {
-			return dragEntry.getContentString();
-		}
-	}
+            List<File> list = new ArrayList<>();
+            list.add(tmpFile);
+            return list;
+        } else {
+            return dragEntry.getContentString();
+        }
+    }
 }

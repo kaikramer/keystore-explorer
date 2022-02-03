@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,243 +52,240 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog used to add or edit a Policy Constraints extension.
- *
  */
 public class DPolicyConstraints extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpPolicyConstraints;
-	private JLabel jlPolicyConstraints;
-	private JLabel jlRequireExplicitPolicy;
-	private JTextField jtfRequireExplicitPolicy;
-	private JLabel jlInhibitPolicyMapping;
-	private JTextField jtfInhibitPolicyMapping;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpPolicyConstraints;
+    private JLabel jlPolicyConstraints;
+    private JLabel jlRequireExplicitPolicy;
+    private JTextField jtfRequireExplicitPolicy;
+    private JLabel jlInhibitPolicyMapping;
+    private JTextField jtfInhibitPolicyMapping;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
+    private byte[] value;
 
-	/**
-	 * Creates a new DPolicyConstraints dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DPolicyConstraints(JDialog parent) {
-		super(parent);
-		setTitle(res.getString("DPolicyConstraints.Title"));
-		initComponents();
-	}
+    /**
+     * Creates a new DPolicyConstraints dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DPolicyConstraints(JDialog parent) {
+        super(parent);
+        setTitle(res.getString("DPolicyConstraints.Title"));
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DPolicyConstraints dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Policy Constraints DER-encoded
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DPolicyConstraints(JDialog parent, byte[] value) throws IOException {
-		super(parent);
-		setTitle(res.getString("DPolicyConstraints.Title"));
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DPolicyConstraints dialog.
+     *
+     * @param parent The parent dialog
+     * @param value  Policy Constraints DER-encoded
+     * @throws IOException If value could not be decoded
+     */
+    public DPolicyConstraints(JDialog parent, byte[] value) throws IOException {
+        super(parent);
+        setTitle(res.getString("DPolicyConstraints.Title"));
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlPolicyConstraints = new JLabel(res.getString("DPolicyConstraints.jlPolicyConstraints.text"));
-		GridBagConstraints gbc_jlPolicyConstraints = new GridBagConstraints();
-		gbc_jlPolicyConstraints.gridx = 0;
-		gbc_jlPolicyConstraints.gridy = 0;
-		gbc_jlPolicyConstraints.gridwidth = 2;
-		gbc_jlPolicyConstraints.insets = new Insets(5, 5, 5, 5);
-		gbc_jlPolicyConstraints.anchor = GridBagConstraints.WEST;
+    private void initComponents() {
+        jlPolicyConstraints = new JLabel(res.getString("DPolicyConstraints.jlPolicyConstraints.text"));
+        GridBagConstraints gbc_jlPolicyConstraints = new GridBagConstraints();
+        gbc_jlPolicyConstraints.gridx = 0;
+        gbc_jlPolicyConstraints.gridy = 0;
+        gbc_jlPolicyConstraints.gridwidth = 2;
+        gbc_jlPolicyConstraints.insets = new Insets(5, 5, 5, 5);
+        gbc_jlPolicyConstraints.anchor = GridBagConstraints.WEST;
 
-		jlRequireExplicitPolicy = new JLabel(res.getString("DPolicyConstraints.jlRequireExplicitPolicy.text"));
-		GridBagConstraints gbc_jlRequireExplicitPolicy = new GridBagConstraints();
-		gbc_jlRequireExplicitPolicy.gridx = 0;
-		gbc_jlRequireExplicitPolicy.gridy = 1;
-		gbc_jlRequireExplicitPolicy.gridwidth = 1;
-		gbc_jlRequireExplicitPolicy.insets = new Insets(5, 5, 5, 5);
-		gbc_jlRequireExplicitPolicy.anchor = GridBagConstraints.EAST;
+        jlRequireExplicitPolicy = new JLabel(res.getString("DPolicyConstraints.jlRequireExplicitPolicy.text"));
+        GridBagConstraints gbc_jlRequireExplicitPolicy = new GridBagConstraints();
+        gbc_jlRequireExplicitPolicy.gridx = 0;
+        gbc_jlRequireExplicitPolicy.gridy = 1;
+        gbc_jlRequireExplicitPolicy.gridwidth = 1;
+        gbc_jlRequireExplicitPolicy.insets = new Insets(5, 5, 5, 5);
+        gbc_jlRequireExplicitPolicy.anchor = GridBagConstraints.EAST;
 
-		jtfRequireExplicitPolicy = new JTextField(3);
-		GridBagConstraints gbc_jtfRequireExplicitPolicy = new GridBagConstraints();
-		gbc_jtfRequireExplicitPolicy.gridx = 1;
-		gbc_jtfRequireExplicitPolicy.gridy = 1;
-		gbc_jtfRequireExplicitPolicy.gridwidth = 1;
-		gbc_jtfRequireExplicitPolicy.insets = new Insets(5, 5, 5, 5);
-		gbc_jtfRequireExplicitPolicy.anchor = GridBagConstraints.WEST;
+        jtfRequireExplicitPolicy = new JTextField(3);
+        GridBagConstraints gbc_jtfRequireExplicitPolicy = new GridBagConstraints();
+        gbc_jtfRequireExplicitPolicy.gridx = 1;
+        gbc_jtfRequireExplicitPolicy.gridy = 1;
+        gbc_jtfRequireExplicitPolicy.gridwidth = 1;
+        gbc_jtfRequireExplicitPolicy.insets = new Insets(5, 5, 5, 5);
+        gbc_jtfRequireExplicitPolicy.anchor = GridBagConstraints.WEST;
 
-		jlInhibitPolicyMapping = new JLabel(res.getString("DPolicyConstraints.jlInhibitPolicyMapping.text"));
-		GridBagConstraints gbc_jlInhibitPolicyMapping = new GridBagConstraints();
-		gbc_jlInhibitPolicyMapping.gridx = 0;
-		gbc_jlInhibitPolicyMapping.gridy = 2;
-		gbc_jlInhibitPolicyMapping.gridwidth = 1;
-		gbc_jlInhibitPolicyMapping.insets = new Insets(5, 5, 5, 5);
-		gbc_jlInhibitPolicyMapping.anchor = GridBagConstraints.EAST;
+        jlInhibitPolicyMapping = new JLabel(res.getString("DPolicyConstraints.jlInhibitPolicyMapping.text"));
+        GridBagConstraints gbc_jlInhibitPolicyMapping = new GridBagConstraints();
+        gbc_jlInhibitPolicyMapping.gridx = 0;
+        gbc_jlInhibitPolicyMapping.gridy = 2;
+        gbc_jlInhibitPolicyMapping.gridwidth = 1;
+        gbc_jlInhibitPolicyMapping.insets = new Insets(5, 5, 5, 5);
+        gbc_jlInhibitPolicyMapping.anchor = GridBagConstraints.EAST;
 
-		jtfInhibitPolicyMapping = new JTextField(3);
-		GridBagConstraints gbc_jtfInhibitPolicyMapping = new GridBagConstraints();
-		gbc_jtfInhibitPolicyMapping.gridx = 1;
-		gbc_jtfInhibitPolicyMapping.gridy = 2;
-		gbc_jtfInhibitPolicyMapping.gridwidth = 1;
-		gbc_jtfInhibitPolicyMapping.insets = new Insets(5, 5, 5, 5);
-		gbc_jtfInhibitPolicyMapping.anchor = GridBagConstraints.WEST;
+        jtfInhibitPolicyMapping = new JTextField(3);
+        GridBagConstraints gbc_jtfInhibitPolicyMapping = new GridBagConstraints();
+        gbc_jtfInhibitPolicyMapping.gridx = 1;
+        gbc_jtfInhibitPolicyMapping.gridy = 2;
+        gbc_jtfInhibitPolicyMapping.gridwidth = 1;
+        gbc_jtfInhibitPolicyMapping.insets = new Insets(5, 5, 5, 5);
+        gbc_jtfInhibitPolicyMapping.anchor = GridBagConstraints.WEST;
 
-		jpPolicyConstraints = new JPanel(new GridBagLayout());
+        jpPolicyConstraints = new JPanel(new GridBagLayout());
 
-		jpPolicyConstraints.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(
-				new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        jpPolicyConstraints.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
+                                                         new CompoundBorder(new EtchedBorder(),
+                                                                            new EmptyBorder(5, 5, 5, 5))));
 
-		jpPolicyConstraints.add(jlPolicyConstraints, gbc_jlPolicyConstraints);
-		jpPolicyConstraints.add(jlRequireExplicitPolicy, gbc_jlRequireExplicitPolicy);
-		jpPolicyConstraints.add(jtfRequireExplicitPolicy, gbc_jtfRequireExplicitPolicy);
-		jpPolicyConstraints.add(jlInhibitPolicyMapping, gbc_jlInhibitPolicyMapping);
-		jpPolicyConstraints.add(jtfInhibitPolicyMapping, gbc_jtfInhibitPolicyMapping);
+        jpPolicyConstraints.add(jlPolicyConstraints, gbc_jlPolicyConstraints);
+        jpPolicyConstraints.add(jlRequireExplicitPolicy, gbc_jlRequireExplicitPolicy);
+        jpPolicyConstraints.add(jtfRequireExplicitPolicy, gbc_jtfRequireExplicitPolicy);
+        jpPolicyConstraints.add(jlInhibitPolicyMapping, gbc_jlInhibitPolicyMapping);
+        jpPolicyConstraints.add(jtfInhibitPolicyMapping, gbc_jtfInhibitPolicyMapping);
 
-		jbOK = new JButton(res.getString("DPolicyConstraints.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DPolicyConstraints.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DPolicyConstraints.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DPolicyConstraints.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpPolicyConstraints, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpPolicyConstraints, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		PolicyConstraints policyConstraints = PolicyConstraints.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        PolicyConstraints policyConstraints = PolicyConstraints.getInstance(value);
 
-		BigInteger requireExplictPolicy = policyConstraints.getRequireExplicitPolicyMapping();
+        BigInteger requireExplictPolicy = policyConstraints.getRequireExplicitPolicyMapping();
 
-		if (requireExplictPolicy != null) {
-			jtfRequireExplicitPolicy.setText("" + requireExplictPolicy);
-			jtfRequireExplicitPolicy.setCaretPosition(0);
-		}
+        if (requireExplictPolicy != null) {
+            jtfRequireExplicitPolicy.setText("" + requireExplictPolicy);
+            jtfRequireExplicitPolicy.setCaretPosition(0);
+        }
 
-		BigInteger inhibitPolicyMapping = policyConstraints.getInhibitPolicyMapping();
+        BigInteger inhibitPolicyMapping = policyConstraints.getInhibitPolicyMapping();
 
-		if (inhibitPolicyMapping != null) {
-			jtfInhibitPolicyMapping.setText("" + inhibitPolicyMapping);
-			jtfInhibitPolicyMapping.setCaretPosition(0);
-		}
-	}
+        if (inhibitPolicyMapping != null) {
+            jtfInhibitPolicyMapping.setText("" + inhibitPolicyMapping);
+            jtfInhibitPolicyMapping.setCaretPosition(0);
+        }
+    }
 
-	private void okPressed() {
-		BigInteger requireExplicitPolicy = null;
+    private void okPressed() {
+        BigInteger requireExplicitPolicy = null;
 
-		String requireExplicitPolicyStr = jtfRequireExplicitPolicy.getText().trim();
+        String requireExplicitPolicyStr = jtfRequireExplicitPolicy.getText().trim();
 
-		if (requireExplicitPolicyStr.length() != 0) {
-			try {
-				requireExplicitPolicy = new BigInteger(requireExplicitPolicyStr);
-			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(this,
-						res.getString("DPolicyConstraints.InvalidRequireExplicitPolicyValue.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+        if (requireExplicitPolicyStr.length() != 0) {
+            try {
+                requireExplicitPolicy = new BigInteger(requireExplicitPolicyStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, res.getString(
+                                                      "DPolicyConstraints.InvalidRequireExplicitPolicyValue.message")
+                        , getTitle(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			if (requireExplicitPolicy.signum() == -1) {
-				JOptionPane.showMessageDialog(this,
-						res.getString("DPolicyConstraints.InvalidRequireExplicitPolicyValue.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-		}
+            if (requireExplicitPolicy.signum() == -1) {
+                JOptionPane.showMessageDialog(this, res.getString(
+                                                      "DPolicyConstraints.InvalidRequireExplicitPolicyValue.message")
+                        , getTitle(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
 
-		BigInteger inhibitPolicyMapping = null;
+        BigInteger inhibitPolicyMapping = null;
 
-		String inhibitPolicyMappingStr = jtfInhibitPolicyMapping.getText().trim();
+        String inhibitPolicyMappingStr = jtfInhibitPolicyMapping.getText().trim();
 
-		if (inhibitPolicyMappingStr.length() != 0) {
-			try {
-				inhibitPolicyMapping = new BigInteger(inhibitPolicyMappingStr);
-			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(this,
-						res.getString("DPolicyConstraints.InvalidInhibitPolicyMappingValue.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
+        if (inhibitPolicyMappingStr.length() != 0) {
+            try {
+                inhibitPolicyMapping = new BigInteger(inhibitPolicyMappingStr);
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, res.getString(
+                                                      "DPolicyConstraints.InvalidInhibitPolicyMappingValue.message"), getTitle(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-			if (inhibitPolicyMapping.signum() == -1) {
-				JOptionPane.showMessageDialog(this,
-						res.getString("DPolicyConstraints.InvalidInhibitPolicyMappingValue.message"), getTitle(),
-						JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-		}
+            if (inhibitPolicyMapping.signum() == -1) {
+                JOptionPane.showMessageDialog(this, res.getString(
+                                                      "DPolicyConstraints.InvalidInhibitPolicyMappingValue.message"), getTitle(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
 
-		if ((requireExplicitPolicy == null) && (inhibitPolicyMapping == null)) {
-			JOptionPane.showMessageDialog(this, res.getString("DPolicyConstraints.ValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if ((requireExplicitPolicy == null) && (inhibitPolicyMapping == null)) {
+            JOptionPane.showMessageDialog(this, res.getString("DPolicyConstraints.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-		PolicyConstraints policyConstraints = new PolicyConstraints(requireExplicitPolicy, inhibitPolicyMapping);
+        PolicyConstraints policyConstraints = new PolicyConstraints(requireExplicitPolicy, inhibitPolicyMapping);
 
-		try {
-			value = policyConstraints.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+        try {
+            value = policyConstraints.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		closeDialog();
-	}
+        closeDialog();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.POLICY_CONSTRAINTS.oid();
+    @Override
+    public String getOid() {
+        return X509ExtensionType.POLICY_CONSTRAINTS.oid();
 
-	}
+    }
 
-	private void cancelPressed() {
-		closeDialog();
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

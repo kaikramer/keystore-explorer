@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -28,153 +28,145 @@ import org.kse.crypto.keystore.KeyStoreType;
 
 /**
  * Undo/redo history for a KeyStore.
- *
  */
 public class KeyStoreHistory {
-	private KeyStoreState initialState;
-	private KeyStoreState currentState;
-	private KeyStoreState savedState;
-	private File file;
-	private String name;
-	private Provider explicitProvider;
+    private KeyStoreState initialState;
+    private KeyStoreState currentState;
+    private KeyStoreState savedState;
+    private File file;
+    private String name;
+    private Provider explicitProvider;
 
-	/**
-	 * Create a new history for an unsaved KeyStore.
-	 *
-	 * @param keyStore
-	 *            KeyStore
-	 * @param name
-	 *            KeyStore name
-	 * @param password
-	 *            KeyStore password
-	 * @param explicitProvider
-	 */
-	public KeyStoreHistory(KeyStore keyStore, String name, Password password, Provider explicitProvider) {
-		this.name = name;
-		this.explicitProvider = explicitProvider;
+    /**
+     * Create a new history for an unsaved KeyStore.
+     *
+     * @param keyStore         KeyStore
+     * @param name             KeyStore name
+     * @param password         KeyStore password
+     * @param explicitProvider
+     */
+    public KeyStoreHistory(KeyStore keyStore, String name, Password password, Provider explicitProvider) {
+        this.name = name;
+        this.explicitProvider = explicitProvider;
 
-		KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
+        KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
 
-		if (type.isFileBased()) {
-			initialState = new KeyStoreState(this, keyStore, password);
-		} else {
-			// we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike
-			initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
-		}
+        if (type.isFileBased()) {
+            initialState = new KeyStoreState(this, keyStore, password);
+        } else {
+            // we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike
+            initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
+        }
 
-		currentState = initialState;
-	}
+        currentState = initialState;
+    }
 
-	/**
-	 * Create a new history for a saved KeyStore.
-	 *
-	 * @param keyStore
-	 *            KeyStore
-	 * @param file
-	 *            Save file
-	 * @param password
-	 *            KeyStore password
-	 */
-	public KeyStoreHistory(KeyStore keyStore, File file, Password password) {
-		this.file = file;
-		this.name = file.getName();
-		initialState = new KeyStoreState(this, keyStore, password);
-		currentState = initialState;
-		savedState = initialState;
-	}
+    /**
+     * Create a new history for a saved KeyStore.
+     *
+     * @param keyStore KeyStore
+     * @param file     Save file
+     * @param password KeyStore password
+     */
+    public KeyStoreHistory(KeyStore keyStore, File file, Password password) {
+        this.file = file;
+        this.name = file.getName();
+        initialState = new KeyStoreState(this, keyStore, password);
+        currentState = initialState;
+        savedState = initialState;
+    }
 
-	/**
-	 * Get the current state in the history.
-	 *
-	 * @return Current state
-	 */
-	public KeyStoreState getCurrentState() {
-		return currentState;
-	}
+    /**
+     * Get the current state in the history.
+     *
+     * @return Current state
+     */
+    public KeyStoreState getCurrentState() {
+        return currentState;
+    }
 
-	/**
-	 * Null all passwords contained in the history.
-	 */
-	public void nullPasswords() {
-		KeyStoreState state = initialState;
+    /**
+     * Null all passwords contained in the history.
+     */
+    public void nullPasswords() {
+        KeyStoreState state = initialState;
 
-		while (true) {
-			state.nullPasswords();
-			state = state.nextState();
+        while (true) {
+            state.nullPasswords();
+            state = state.nextState();
 
-			if (state == null) {
-				break;
-			}
-		}
-	}
+            if (state == null) {
+                break;
+            }
+        }
+    }
 
-	/**
-	 * Get the KeyStore's save file.
-	 *
-	 * @return The KeyStore save file or null if none is set
-	 */
-	public File getFile() {
-		return file;
-	}
+    /**
+     * Get the KeyStore's save file.
+     *
+     * @return The KeyStore save file or null if none is set
+     */
+    public File getFile() {
+        return file;
+    }
 
-	/**
-	 * Set the KeyStore's save file.
-	 *
-	 * @param file
-	 *            The KeyStore save file
-	 */
-	public void setFile(File file) {
-		this.file = file;
+    /**
+     * Set the KeyStore's save file.
+     *
+     * @param file The KeyStore save file
+     */
+    public void setFile(File file) {
+        this.file = file;
 
-		// Update name
-		this.name = file.getName();
-	}
+        // Update name
+        this.name = file.getName();
+    }
 
-	/**
-	 * Get the KeyStore's path.
-	 *
-	 * @return Path if saved, otherwise use the name supplied on construction
-	 */
-	public String getPath() {
-		if (file != null) {
-			return file.getPath();
-		} else {
-			return getName();
-		}
-	}
+    /**
+     * Get the KeyStore's path.
+     *
+     * @return Path if saved, otherwise use the name supplied on construction
+     */
+    public String getPath() {
+        if (file != null) {
+            return file.getPath();
+        } else {
+            return getName();
+        }
+    }
 
-	/**
-	 * Get the KeyStore's name. This will be the save file name where there is
-	 * one, otherwise it will be the name supplied upon construction.
-	 *
-	 * @return KeyStore name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * Get the KeyStore's name. This will be the save file name where there is
+     * one, otherwise it will be the name supplied upon construction.
+     *
+     * @return KeyStore name
+     */
+    public String getName() {
+        return name;
+    }
 
-	KeyStoreState getInitialState() {
-		return initialState;
-	}
+    KeyStoreState getInitialState() {
+        return initialState;
+    }
 
-	void setCurrentState(KeyStoreState state) {
-		currentState = state;
-	}
+    void setCurrentState(KeyStoreState state) {
+        currentState = state;
+    }
 
-	KeyStoreState getSavedState() {
-		return savedState;
-	}
+    KeyStoreState getSavedState() {
+        return savedState;
+    }
 
-	void setSavedState(KeyStoreState state) {
-		savedState = state;
-	}
+    void setSavedState(KeyStoreState state) {
+        savedState = state;
+    }
 
-	public Provider getExplicitProvider() {
-		return explicitProvider;
-	}
+    public Provider getExplicitProvider() {
+        return explicitProvider;
+    }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

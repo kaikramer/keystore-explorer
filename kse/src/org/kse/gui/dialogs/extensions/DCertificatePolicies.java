@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -56,169 +56,161 @@ import org.kse.gui.error.DError;
 
 /**
  * Dialog used to add or edit a Certificate Policies extension.
- *
  */
 public class DCertificatePolicies extends DExtension {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static ResourceBundle res = ResourceBundle
-			.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
-	private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
-	private JPanel jpCertificatePolicies;
-	private JLabel jlCertificatePolicies;
-	private JPolicyInformation jpiCertificatePolicies;
-	private JPanel jpButtons;
-	private JButton jbOK;
-	private JButton jbCancel;
+    private JPanel jpCertificatePolicies;
+    private JLabel jlCertificatePolicies;
+    private JPolicyInformation jpiCertificatePolicies;
+    private JPanel jpButtons;
+    private JButton jbOK;
+    private JButton jbCancel;
 
-	private byte[] value;
+    private byte[] value;
 
-	/**
-	 * Creates a new DCertificatePolicies dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 */
-	public DCertificatePolicies(JDialog parent) {
-		super(parent);
+    /**
+     * Creates a new DCertificatePolicies dialog.
+     *
+     * @param parent The parent dialog
+     */
+    public DCertificatePolicies(JDialog parent) {
+        super(parent);
 
-		setTitle(res.getString("DCertificatePolicies.Title"));
-		initComponents();
-	}
+        setTitle(res.getString("DCertificatePolicies.Title"));
+        initComponents();
+    }
 
-	/**
-	 * Creates a new DCertificatePolicies dialog.
-	 *
-	 * @param parent
-	 *            The parent dialog
-	 * @param value
-	 *            Certificate Policies DER-encoded
-	 * @throws IOException
-	 *             If value could not be decoded
-	 */
-	public DCertificatePolicies(JDialog parent, byte[] value) throws IOException {
-		super(parent);
-		setTitle(res.getString("DCertificatePolicies.Title"));
-		initComponents();
-		prepopulateWithValue(value);
-	}
+    /**
+     * Creates a new DCertificatePolicies dialog.
+     *
+     * @param parent The parent dialog
+     * @param value  Certificate Policies DER-encoded
+     * @throws IOException If value could not be decoded
+     */
+    public DCertificatePolicies(JDialog parent, byte[] value) throws IOException {
+        super(parent);
+        setTitle(res.getString("DCertificatePolicies.Title"));
+        initComponents();
+        prepopulateWithValue(value);
+    }
 
-	private void initComponents() {
-		jlCertificatePolicies = new JLabel(res.getString("DCertificatePolicies.jlCertificatePolicies.text"));
+    private void initComponents() {
+        jlCertificatePolicies = new JLabel(res.getString("DCertificatePolicies.jlCertificatePolicies.text"));
 
-		GridBagConstraints gbc_jlCertificatePolicies = new GridBagConstraints();
-		gbc_jlCertificatePolicies.gridx = 0;
-		gbc_jlCertificatePolicies.gridy = 1;
-		gbc_jlCertificatePolicies.gridwidth = 1;
-		gbc_jlCertificatePolicies.gridheight = 1;
-		gbc_jlCertificatePolicies.insets = new Insets(5, 5, 5, 5);
-		gbc_jlCertificatePolicies.anchor = GridBagConstraints.NORTHEAST;
+        GridBagConstraints gbc_jlCertificatePolicies = new GridBagConstraints();
+        gbc_jlCertificatePolicies.gridx = 0;
+        gbc_jlCertificatePolicies.gridy = 1;
+        gbc_jlCertificatePolicies.gridwidth = 1;
+        gbc_jlCertificatePolicies.gridheight = 1;
+        gbc_jlCertificatePolicies.insets = new Insets(5, 5, 5, 5);
+        gbc_jlCertificatePolicies.anchor = GridBagConstraints.NORTHEAST;
 
-		jpiCertificatePolicies = new JPolicyInformation(res.getString("DCertificatePolicies.PolicyInformation.Title"));
-		jpiCertificatePolicies.setPreferredSize(new Dimension(400, 150));
+        jpiCertificatePolicies = new JPolicyInformation(res.getString("DCertificatePolicies.PolicyInformation.Title"));
+        jpiCertificatePolicies.setPreferredSize(new Dimension(400, 150));
 
-		GridBagConstraints gbc_jpiCertificatePolicies = new GridBagConstraints();
-		gbc_jpiCertificatePolicies.gridx = 1;
-		gbc_jpiCertificatePolicies.gridy = 1;
-		gbc_jpiCertificatePolicies.gridwidth = 1;
-		gbc_jpiCertificatePolicies.gridheight = 1;
-		gbc_jpiCertificatePolicies.insets = new Insets(5, 5, 5, 5);
-		gbc_jpiCertificatePolicies.anchor = GridBagConstraints.WEST;
+        GridBagConstraints gbc_jpiCertificatePolicies = new GridBagConstraints();
+        gbc_jpiCertificatePolicies.gridx = 1;
+        gbc_jpiCertificatePolicies.gridy = 1;
+        gbc_jpiCertificatePolicies.gridwidth = 1;
+        gbc_jpiCertificatePolicies.gridheight = 1;
+        gbc_jpiCertificatePolicies.insets = new Insets(5, 5, 5, 5);
+        gbc_jpiCertificatePolicies.anchor = GridBagConstraints.WEST;
 
-		jpCertificatePolicies = new JPanel(new GridBagLayout());
+        jpCertificatePolicies = new JPanel(new GridBagLayout());
 
-		jpCertificatePolicies.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
+        jpCertificatePolicies.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
-		jpCertificatePolicies.add(jlCertificatePolicies, gbc_jlCertificatePolicies);
-		jpCertificatePolicies.add(jpiCertificatePolicies, gbc_jpiCertificatePolicies);
+        jpCertificatePolicies.add(jlCertificatePolicies, gbc_jlCertificatePolicies);
+        jpCertificatePolicies.add(jpiCertificatePolicies, gbc_jpiCertificatePolicies);
 
-		jbOK = new JButton(res.getString("DCertificatePolicies.jbOK.text"));
-		jbOK.addActionListener(evt -> okPressed());
+        jbOK = new JButton(res.getString("DCertificatePolicies.jbOK.text"));
+        jbOK.addActionListener(evt -> okPressed());
 
-		jbCancel = new JButton(res.getString("DCertificatePolicies.jbCancel.text"));
-		jbCancel.addActionListener(evt -> cancelPressed());
-		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				CANCEL_KEY);
-		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
+        jbCancel = new JButton(res.getString("DCertificatePolicies.jbCancel.text"));
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				cancelPressed();
-			}
-		});
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(jpCertificatePolicies, BorderLayout.CENTER);
-		getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(jpCertificatePolicies, BorderLayout.CENTER);
+        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent evt) {
-				closeDialog();
-			}
-		});
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
 
-		setResizable(false);
+        setResizable(false);
 
-		getRootPane().setDefaultButton(jbOK);
+        getRootPane().setDefaultButton(jbOK);
 
-		pack();
-	}
+        pack();
+    }
 
-	private void prepopulateWithValue(byte[] value) throws IOException {
-		CertificatePolicies certificatePolicies = CertificatePolicies.getInstance(value);
+    private void prepopulateWithValue(byte[] value) throws IOException {
+        CertificatePolicies certificatePolicies = CertificatePolicies.getInstance(value);
 
-		List<PolicyInformation> accessDescriptionList =
-				new ArrayList<>(Arrays.asList(certificatePolicies.getPolicyInformation()));
+        List<PolicyInformation> accessDescriptionList = new ArrayList<>(
+                Arrays.asList(certificatePolicies.getPolicyInformation()));
 
-		jpiCertificatePolicies.setPolicyInformation(accessDescriptionList);
-	}
+        jpiCertificatePolicies.setPolicyInformation(accessDescriptionList);
+    }
 
-	private void okPressed() {
-		List<PolicyInformation> policyInformation = jpiCertificatePolicies.getPolicyInformation();
+    private void okPressed() {
+        List<PolicyInformation> policyInformation = jpiCertificatePolicies.getPolicyInformation();
 
-		if (policyInformation.isEmpty()) {
-			JOptionPane.showMessageDialog(this, res.getString("DCertificatePolicies.ValueReq.message"), getTitle(),
-					JOptionPane.WARNING_MESSAGE);
-			return;
-		}
+        if (policyInformation.isEmpty()) {
+            JOptionPane.showMessageDialog(this, res.getString("DCertificatePolicies.ValueReq.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
+        CertificatePolicies certificatePolicies = new CertificatePolicies(
+                policyInformation.toArray(new PolicyInformation[policyInformation.size()]));
 
+        try {
+            value = certificatePolicies.getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+            return;
+        }
 
-		CertificatePolicies certificatePolicies = new CertificatePolicies(policyInformation.toArray(
-				new PolicyInformation[policyInformation.size()]));
+        closeDialog();
+    }
 
-		try {
-			value = certificatePolicies.getEncoded(ASN1Encoding.DER);
-		} catch (IOException e) {
-			DError.displayError(this, e);
-			return;
-		}
+    @Override
+    public byte[] getValue() {
+        return value;
+    }
 
-		closeDialog();
-	}
+    @Override
+    public String getOid() {
+        return X509ExtensionType.CERTIFICATE_POLICIES.oid();
+    }
 
-	@Override
-	public byte[] getValue() {
-		return value;
-	}
+    private void cancelPressed() {
+        closeDialog();
+    }
 
-	@Override
-	public String getOid() {
-		return X509ExtensionType.CERTIFICATE_POLICIES.oid();
-	}
-
-	private void cancelPressed() {
-		closeDialog();
-	}
-
-	private void closeDialog() {
-		setVisible(false);
-		dispose();
-	}
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -21,33 +21,40 @@ package org.kse.crypto;
 
 /**
  * Enumeration of Security Providers utilized by the crypto utility classes.
- *
  */
 public enum SecurityProvider {
-	/** Sun */
-	SUN("SUN"),
+    /**
+     * Sun
+     */
+    SUN("SUN"),
 
-	/** Bouncy Castle */
-	BOUNCY_CASTLE("BC"),
+    /**
+     * Bouncy Castle
+     */
+    BOUNCY_CASTLE("BC"),
 
-	/** Apple */
-	APPLE("Apple"),
+    /**
+     * Apple
+     */
+    APPLE("Apple"),
 
-	/** Microsoft CAPI */
-	MS_CAPI("SunMSCAPI");
+    /**
+     * Microsoft CAPI
+     */
+    MS_CAPI("SunMSCAPI");
 
-	private String jce;
+    private String jce;
 
-	SecurityProvider(String jce) {
-		this.jce = jce;
-	}
+    SecurityProvider(String jce) {
+        this.jce = jce;
+    }
 
-	/**
-	 * Get SecurityProvider type JCE name.
-	 *
-	 * @return JCE name
-	 */
-	public String jce() {
-		return jce;
-	}
+    /**
+     * Get SecurityProvider type JCE name.
+     *
+     * @return JCE name
+     */
+    public String jce() {
+        return jce;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -23,48 +23,43 @@ import org.kse.crypto.CryptoException;
 
 /**
  * Represents an SPKAC exception.
- *
  */
 public class SpkacException extends CryptoException {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Creates a new SpkacException.
-	 */
-	public SpkacException() {
-		super();
-	}
+    /**
+     * Creates a new SpkacException.
+     */
+    public SpkacException() {
+        super();
+    }
 
-	/**
-	 * Creates a new SpkacException with the specified message.
-	 *
-	 * @param message
-	 *            Exception message
-	 */
-	public SpkacException(String message) {
-		super(message);
-	}
+    /**
+     * Creates a new SpkacException with the specified message.
+     *
+     * @param message Exception message
+     */
+    public SpkacException(String message) {
+        super(message);
+    }
 
-	/**
-	 * Creates a new SpkacException with the specified message and cause
-	 * throwable.
-	 *
-	 * @param message
-	 *            Exception message
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public SpkacException(String message, Throwable causeThrowable) {
-		super(message, causeThrowable);
-	}
+    /**
+     * Creates a new SpkacException with the specified message and cause
+     * throwable.
+     *
+     * @param message        Exception message
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public SpkacException(String message, Throwable causeThrowable) {
+        super(message, causeThrowable);
+    }
 
-	/**
-	 * Creates a new SpkacException with the specified cause throwable.
-	 *
-	 * @param causeThrowable
-	 *            The throwable that caused this exception to be thrown
-	 */
-	public SpkacException(Throwable causeThrowable) {
-		super(causeThrowable);
-	}
+    /**
+     * Creates a new SpkacException with the specified cause throwable.
+     *
+     * @param causeThrowable The throwable that caused this exception to be thrown
+     */
+    public SpkacException(Throwable causeThrowable) {
+        super(causeThrowable);
+    }
 }

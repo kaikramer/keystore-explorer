@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2021 Kai Kramer
+ *           2013 - 2022 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -29,42 +29,38 @@ import org.kse.gui.error.DError;
 
 /**
  * Action to display the Cryptography Strength dialog.
- *
  */
 public class CryptographyStrengthAction extends ExitAction {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 *
-	 * @param kseFrame
-	 *            KeyStore Explorer frame
-	 */
-	public CryptographyStrengthAction(KseFrame kseFrame) {
-		super(kseFrame);
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CryptographyStrengthAction(KseFrame kseFrame) {
+        super(kseFrame);
 
-		putValue(ACCELERATOR_KEY, null); // Blank the accelerators set above in
-		// the class hierarchy
-		putValue(LONG_DESCRIPTION, res.getString("CryptographyStrengthAction.statusbar"));
-		putValue(NAME, res.getString("CryptographyStrengthAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("CryptographyStrengthAction.tooltip"));
-		putValue(
-				SMALL_ICON,
-				new ImageIcon(Toolkit.getDefaultToolkit().createImage(
-						getClass().getResource("images/cryptostrength.png"))));
-	}
+        putValue(ACCELERATOR_KEY, null); // Blank the accelerators set above in
+        // the class hierarchy
+        putValue(LONG_DESCRIPTION, res.getString("CryptographyStrengthAction.statusbar"));
+        putValue(NAME, res.getString("CryptographyStrengthAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("CryptographyStrengthAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/cryptostrength.png"))));
+    }
 
-	/**
-	 * Do action.
-	 */
-	@Override
-	protected void doAction() {
-		try {
-			DCryptoStrength dCryptoStrength = new DCryptoStrength(frame);
-			dCryptoStrength.setLocationRelativeTo(frame);
-			dCryptoStrength.setVisible(true);
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-		}
-	}
+    /**
+     * Do action.
+     */
+    @Override
+    protected void doAction() {
+        try {
+            DCryptoStrength dCryptoStrength = new DCryptoStrength(frame);
+            dCryptoStrength.setLocationRelativeTo(frame);
+            dCryptoStrength.setVisible(true);
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
 }
