@@ -135,35 +135,30 @@ public class SignJarAction extends KeyStoreExplorerAction {
 
             // check if exceptions were caught during jar signing
             if (dSignJarSigning.getFileExceptions().size() > 0) {
-                String strOK = res.getString("SignJarAction.ButtonOK.message");
-                String strView = res.getString("SignJarAction.ButtonView.message");
-                // set view and ok buttons
-                Object[] buttons = { strView, strOK };
-                // set file count
-                String fileCount = Integer.toString(inputJarFile.length);
-                // set exception count
-                String errorCount = Integer.toString(dSignJarSigning.getFileExceptions().size());
-                // set file and exception count to object array
-                Object[] objCount = { errorCount, fileCount };
-                // set message string
-                String message = MessageFormat.format(res.getString("SignJarAction.SignJarError.message"), objCount);
-                // set option dialog with message, view, and ok buttons
+                Integer fileCount = inputJarFile.length;
+                Integer errorCount = dSignJarSigning.getFileExceptions().size();
+                String message = MessageFormat.format(res.getString("SignJarAction.SignJarError.message"),
+                                                      errorCount,
+                                                      fileCount);
+
+                String viewButtonText = res.getString("SignJarAction.ButtonView.message");
+                String okButtonText = res.getString("SignJarAction.ButtonOK.message");
+                Object[] buttonTexts = { viewButtonText, okButtonText };
+
                 int selected = JOptionPane.showOptionDialog(frame, message,
                                                             res.getString("SignJarAction.SignJar.Title"),
                                                             JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                                                            null, buttons, buttons[1]);
+                                                            null, buttonTexts, okButtonText);
+
                 // if view button pressed show error collection
                 if (selected == 0) {
                     DErrorCollection dError = new DErrorCollection(frame, dSignJarSigning.getFileExceptions());
                     dError.setVisible(true);
                 }
             } else {
-                // set file count
-                String fileCount = Integer.toString(inputJarFile.length);
-                // set message string
+                Integer fileCount = inputJarFile.length;
                 String message = MessageFormat.format(res.getString("SignJarAction.SignJarSuccessful.message"),
                                                       fileCount);
-                // show message dialog
                 JOptionPane.showMessageDialog(frame, message, res.getString("SignJarAction.SignJar.Title"),
                                               JOptionPane.INFORMATION_MESSAGE);
             }
