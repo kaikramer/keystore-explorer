@@ -244,7 +244,7 @@ public class Asn1Dump {
         } else {
             sb.append("TAGGED [");
         }
-        sb.append(Integer.toString(o.getTagNo()));
+        sb.append(o.getTagNo());
         sb.append(']');
 
         if (!o.isExplicit()) {

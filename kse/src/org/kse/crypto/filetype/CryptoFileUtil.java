@@ -33,7 +33,6 @@ import static org.kse.crypto.filetype.CryptoFileType.UNENC_PKCS8_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNKNOWN;
 import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
-import static org.kse.crypto.keystore.KeyStoreType.BKS_V1;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
 import static org.kse.crypto.keystore.KeyStoreType.JKS;
 import static org.kse.crypto.keystore.KeyStoreType.PKCS12;
@@ -276,7 +275,7 @@ public class CryptoFileUtil {
                 if (dis.readByte() == 0) {
                     // Found null byte - BKS/BKS-V1
                     if (i1 == 1) {
-                        return BKS_V1;
+                        return null;
                     } else {
                         return BKS;
                     }

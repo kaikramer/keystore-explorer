@@ -366,7 +366,7 @@ public class OpenSslPvkUtil {
                     org.bouncycastle.asn1.sec.ECPrivateKey pKey = org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(
                             seq);
                     AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey,
-                                                                        pKey.getParameters());
+                                                                        pKey.getParametersObject());
                     PrivateKeyInfo privInfo = new PrivateKeyInfo(algId, pKey);
                     return new JcaPEMKeyConverter().getPrivateKey(privInfo);
                 } else {

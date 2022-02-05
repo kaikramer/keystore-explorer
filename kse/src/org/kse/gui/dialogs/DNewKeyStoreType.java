@@ -19,9 +19,8 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -34,16 +33,16 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to retrieve the type to use in the creation of a new KeyStore.
@@ -55,16 +54,13 @@ public class DNewKeyStoreType extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpKeyStoreType;
     private JLabel jlKeyStoreType;
     private JRadioButton jrbJceksKeyStore;
     private JRadioButton jrbJksKeyStore;
     private JRadioButton jrbPkcs12KeyStore;
-    private JRadioButton jrbBksV1KeyStore;
     private JRadioButton jrbBksKeyStore;
     private JRadioButton jrbUberKeyStore;
     private JRadioButton jrbBcfksKeyStore;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -98,11 +94,6 @@ public class DNewKeyStoreType extends JEscDialog {
                                  res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.mnemonic").charAt(0));
         jrbPkcs12KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbPkcs12KeyStore.tooltip"));
 
-        jrbBksV1KeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.text"));
-        PlatformUtil.setMnemonic(jrbBksV1KeyStore,
-                                 res.getString("DNewKeyStoreType.jrbBksV1KeyStore.mnemonic").charAt(0));
-        jrbBksV1KeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksV1KeyStore.tooltip"));
-
         jrbBksKeyStore = new JRadioButton(res.getString("DNewKeyStoreType.jrbBksKeyStore.text"));
         PlatformUtil.setMnemonic(jrbBksKeyStore, res.getString("DNewKeyStoreType.jrbBksKeyStore.mnemonic").charAt(0));
         jrbBksKeyStore.setToolTipText(res.getString("DNewKeyStoreType.jrbBksKeyStore.tooltip"));
@@ -120,48 +111,39 @@ public class DNewKeyStoreType extends JEscDialog {
         keyStoreTypesGroup.add(jrbPkcs12KeyStore);
         keyStoreTypesGroup.add(jrbJceksKeyStore);
         keyStoreTypesGroup.add(jrbJksKeyStore);
-        keyStoreTypesGroup.add(jrbBksV1KeyStore);
         keyStoreTypesGroup.add(jrbBksKeyStore);
         keyStoreTypesGroup.add(jrbUberKeyStore);
         keyStoreTypesGroup.add(jrbBcfksKeyStore);
 
-        jpKeyStoreType = new JPanel(new GridLayout(8, 1));
-        jpKeyStoreType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
-                                                                                                    new EmptyBorder(5,
-                                                                                                                    5,
-                                                                                                                    5,
-                                                                                                                    5))));
-
-        jpKeyStoreType.add(jlKeyStoreType);
-        jpKeyStoreType.add(jrbPkcs12KeyStore);
-        jpKeyStoreType.add(jrbJceksKeyStore);
-        jpKeyStoreType.add(jrbJksKeyStore);
-        jpKeyStoreType.add(jrbBksV1KeyStore);
-        jpKeyStoreType.add(jrbBksKeyStore);
-        jpKeyStoreType.add(jrbUberKeyStore);
-        jpKeyStoreType.add(jrbBcfksKeyStore);
-
         jbOK = new JButton(res.getString("DNewKeyStoreType.jbOK.text"));
-        jbOK.addActionListener(evt -> okPressed());
 
         jbCancel = new JButton(res.getString("DNewKeyStoreType.jbCancel.text"));
+
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "", ""));
+        pane.add(jlKeyStoreType, "wrap unrel");
+        pane.add(jrbPkcs12KeyStore, "wrap");
+        pane.add(jrbJceksKeyStore, "wrap");
+        pane.add(jrbJksKeyStore, "wrap");
+        pane.add(jrbBksKeyStore, "wrap");
+        pane.add(jrbUberKeyStore, "wrap");
+        pane.add(jrbBcfksKeyStore, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap unrel");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
+
+        jbOK.addActionListener(evt -> okPressed());
+
         jbCancel.addActionListener(evt -> cancelPressed());
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 cancelPressed();
             }
         });
-
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpKeyStoreType, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -193,8 +175,6 @@ public class DNewKeyStoreType extends JEscDialog {
             keyStoreType = KeyStoreType.JKS;
         } else if (jrbPkcs12KeyStore.isSelected()) {
             keyStoreType = KeyStoreType.PKCS12;
-        } else if (jrbBksV1KeyStore.isSelected()) {
-            keyStoreType = KeyStoreType.BKS_V1;
         } else if (jrbBksKeyStore.isSelected()) {
             keyStoreType = KeyStoreType.BKS;
         } else if (jrbBcfksKeyStore.isSelected()) {
@@ -213,5 +193,12 @@ public class DNewKeyStoreType extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    // quick ui test
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+        DNewKeyStoreType dialog = new DNewKeyStoreType(new JFrame());
+        DialogViewer.run(dialog);
     }
 }

@@ -19,6 +19,8 @@
  */
 package org.kse.crypto.x509;
 
+import static org.bouncycastle.asn1.ASN1UTF8String.*;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -33,8 +35,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.ASN1UTF8String;
 import org.bouncycastle.asn1.DERIA5String;
-import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x500.DirectoryString;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -241,7 +243,7 @@ public class GeneralNameUtil {
 
         if (UPN_OID.equals(oid.getId())) {
             ASN1TaggedObject asn1TaggedObject = (ASN1TaggedObject) otherName.getObjectAt(1);
-            DERUTF8String upn = DERUTF8String.getInstance(asn1TaggedObject.getObject());
+            ASN1UTF8String upn = ASN1UTF8String.getInstance(asn1TaggedObject.getTagClass());
             return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"), "UPN", upn.getString());
         }
 

@@ -103,8 +103,8 @@ public class EccUtil {
      * @return True, if KeyStoreType is backed by the BC provider
      */
     public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
-        return (keyStoreType == KeyStoreType.BKS || keyStoreType == KeyStoreType.BKS_V1 ||
-                keyStoreType == KeyStoreType.UBER || keyStoreType == KeyStoreType.BCFKS);
+        return (keyStoreType == KeyStoreType.BKS || keyStoreType == KeyStoreType.UBER ||
+                keyStoreType == KeyStoreType.BCFKS);
     }
 
     /**

@@ -41,9 +41,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.PlatformUtil;
@@ -190,7 +190,7 @@ public class DKeyUsage extends DExtension {
 
     private void prepopulateWithValue(byte[] value) throws IOException {
         try (ASN1InputStream asn1InputStream = new ASN1InputStream(value)) {
-            DERBitString keyUsage = DERBitString.getInstance(asn1InputStream.readObject());
+            ASN1BitString keyUsage = ASN1BitString.getInstance(asn1InputStream.readObject());
 
             int keyUsageValue = keyUsage.intValue();
 

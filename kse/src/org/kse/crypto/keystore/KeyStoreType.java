@@ -21,7 +21,6 @@ package org.kse.crypto.keystore;
 
 import static org.kse.crypto.filetype.CryptoFileType.BCFKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.BKS_KS;
-import static org.kse.crypto.filetype.CryptoFileType.BKS_V1_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JCEKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.JKS_KS;
 import static org.kse.crypto.filetype.CryptoFileType.PKCS12_KS;
@@ -40,7 +39,6 @@ public enum KeyStoreType {
     JKS("JKS", "KeyStoreType.Jks", true, JKS_KS),
     JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS),
     PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS),
-    BKS_V1("BKS-V1", "KeyStoreType.BksV1", true, BKS_V1_KS),
     BKS("BKS", "KeyStoreType.Bks", true, BKS_KS),
     UBER("UBER", "KeyStoreType.Uber", true, UBER_KS),
     KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
@@ -114,7 +112,7 @@ public enum KeyStoreType {
      * @return True, if secret key entries are supported by this KeyStore type
      */
     public boolean supportsKeyEntries() {
-        return this == JCEKS || this == BKS || this == BKS_V1 || this == UBER || this == BCFKS || this == PKCS12;
+        return this == JCEKS || this == BKS || this == UBER || this == BCFKS || this == PKCS12;
     }
 
     /**

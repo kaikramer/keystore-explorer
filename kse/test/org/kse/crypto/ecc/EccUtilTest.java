@@ -46,7 +46,6 @@ public class EccUtilTest extends CryptoTestsBase {
             "JKS",
             "JCEKS",
             "PKCS12",
-            "BKS_V1",
             "BKS",
             "UBER",
             "PKCS11"

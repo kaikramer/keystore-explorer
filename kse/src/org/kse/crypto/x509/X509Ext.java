@@ -31,24 +31,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.asn1.ASN1BMPString;
+import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.ASN1Boolean;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
+import org.bouncycastle.asn1.ASN1IA5String;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1PrintableString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.ASN1UTCTime;
-import org.bouncycastle.asn1.DERBMPString;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERGeneralString;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERPrintableString;
 import org.bouncycastle.asn1.DLSequence;
 import org.bouncycastle.asn1.isismtt.x509.AdmissionSyntax;
 import org.bouncycastle.asn1.isismtt.x509.Admissions;
@@ -313,7 +315,7 @@ public class X509Ext {
         case VS_SERIAL_NUMBER_ROLLOVER:
         case VS_ON_SITE_JURISDICTION_HASH:
             // most VeriSign extensions contain just an IA5STRING
-            return DERIA5String.getInstance(octets).getString();
+            return ASN1IA5String.getInstance(octets).getString();
         case VS_TOKEN_TYPE:
         case VS_UNKNOWN:
             return getBitString(octets);
@@ -645,7 +647,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-        DERBitString keyUsage = DERBitString.getInstance(ASN1Primitive.fromByteArray(value));
+        ASN1BitString keyUsage = ASN1BitString.getInstance(ASN1Primitive.fromByteArray(value));
 
         int keyUsages = keyUsage.intValue();
 
@@ -1536,7 +1538,7 @@ public class X509Ext {
         StringBuilder sb = new StringBuilder();
 
         @SuppressWarnings("resource") // we have a ByteArrayInputStream here which does not need to be closed
-        DERBitString netscapeCertType = DERBitString.getInstance(new ASN1InputStream(value).readObject());
+        ASN1BitString netscapeCertType = ASN1BitString.getInstance(new ASN1InputStream(value).readObject());
 
         int netscapeCertTypes = netscapeCertType.intValue();
 
@@ -1596,7 +1598,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        DERIA5String netscapeBaseUrl = DERIA5String.getInstance(value);
+        ASN1IA5String netscapeBaseUrl = ASN1IA5String.getInstance(value);
 
         sb.append(netscapeBaseUrl.getString());
         sb.append(NEWLINE);
@@ -1613,7 +1615,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        DERIA5String netscapeRevocationUrl = DERIA5String.getInstance(value);
+        ASN1IA5String netscapeRevocationUrl = ASN1IA5String.getInstance(value);
 
         sb.append(netscapeRevocationUrl.getString());
         sb.append(NEWLINE);
@@ -1630,7 +1632,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        DERIA5String netscapeCaRevocationUrl = DERIA5String.getInstance(value);
+        ASN1IA5String netscapeCaRevocationUrl = ASN1IA5String.getInstance(value);
 
         sb.append(netscapeCaRevocationUrl.getString());
         sb.append(NEWLINE);
@@ -1647,7 +1649,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        DERIA5String netscapeCertRenewalUrl = DERIA5String.getInstance(value);
+        ASN1IA5String netscapeCertRenewalUrl = ASN1IA5String.getInstance(value);
 
         sb.append(netscapeCertRenewalUrl.getString());
         sb.append(NEWLINE);
@@ -1664,7 +1666,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        DERIA5String netscapeCaPolicyUrl = DERIA5String.getInstance(value);
+        ASN1IA5String netscapeCaPolicyUrl = ASN1IA5String.getInstance(value);
 
         sb.append(netscapeCaPolicyUrl.getString());
         sb.append(NEWLINE);
@@ -1681,7 +1683,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        DERIA5String netscapeSslServerName = DERIA5String.getInstance(value);
+        ASN1IA5String netscapeSslServerName = ASN1IA5String.getInstance(value);
 
         sb.append(netscapeSslServerName.getString());
         sb.append(NEWLINE);
@@ -1698,7 +1700,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        DERIA5String netscapeComment = DERIA5String.getInstance(value);
+        ASN1IA5String netscapeComment = ASN1IA5String.getInstance(value);
 
         sb.append(netscapeComment.getString());
         sb.append(NEWLINE);
@@ -1919,7 +1921,7 @@ public class X509Ext {
         case GENDER:
         case COUNTRY_OF_CITIZENSHIP:
         case COUNTRY_OF_RESIDENCE:
-            return DERPrintableString.getInstance(attributeValue).getString();
+            return ASN1PrintableString.getInstance(attributeValue).getString();
         case COMMON_NAME:
         case LOCALITY_NAME:
         case STATE_NAME:
@@ -1934,7 +1936,7 @@ public class X509Ext {
         case EMAIL_ADDRESS:
         case UNSTRUCTURED_NAME:
         case DOMAIN_COMPONENT:
-            return DERIA5String.getInstance(attributeValue).getString();
+            return ASN1IA5String.getInstance(attributeValue).getString();
         default:
             // Attribute type not recognized - return hex string for value
             return HexUtil.getHexString(attributeValue.toASN1Primitive().getEncoded());
@@ -1990,7 +1992,7 @@ public class X509Ext {
             TypeOfBiometricData typeOfBiometricData = biometricData.getTypeOfBiometricData();
             AlgorithmIdentifier hashAlgorithm = biometricData.getHashAlgorithm();
             ASN1OctetString biometricDataHash = biometricData.getBiometricDataHash();
-            DERIA5String sourceDataUri = biometricData.getSourceDataUri();
+            ASN1IA5String sourceDataUri = biometricData.getSourceDataUriIA5();
 
             sb.append(MessageFormat.format(res.getString("BiometricInfo.BiometricData"), biometricDataNr));
             sb.append(NEWLINE);
@@ -2554,7 +2556,7 @@ public class X509Ext {
 
         if (fullAgeAtCountry != null) {
             ASN1Boolean fullAge = ASN1Boolean.getInstance(fullAgeAtCountry.getObjectAt(0));
-            DERPrintableString country = DERPrintableString.getInstance(fullAgeAtCountry.getObjectAt(1));
+            ASN1PrintableString country = ASN1PrintableString.getInstance(fullAgeAtCountry.getObjectAt(1));
 
             sb.append(MessageFormat.format(res.getString("DeclarationOfMajority.fullAgeAtCountry"), country.toString(),
                                            fullAge.toString()));
@@ -2627,7 +2629,7 @@ public class X509Ext {
 
 		// @formatter:on
 
-        DERBMPString derbmpString = DERBMPString.getInstance(octets);
+        ASN1BMPString derbmpString = ASN1BMPString.getInstance(octets);
 
         return derbmpString.toString();
     }
@@ -2746,7 +2748,7 @@ public class X509Ext {
             return "";
         }
 
-        DERBitString derBitString = DERBitString.getInstance(ASN1Primitive.fromByteArray(octets));
+        ASN1BitString derBitString = ASN1BitString.getInstance(ASN1Primitive.fromByteArray(octets));
         byte[] bitStringBytes = derBitString.getBytes();
 
         return new BigInteger(1, bitStringBytes).toString(2);

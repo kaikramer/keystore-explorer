@@ -48,7 +48,6 @@ public class KeyStoreUtilTest extends CryptoTestsBase {
             "JCEKS",
             "PKCS12",
             "BKS",
-            "BKS_V1",
             "UBER",
     })
     // @formatter:on
