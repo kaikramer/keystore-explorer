@@ -65,6 +65,9 @@ public class LnfUtil {
         UIManager.installLookAndFeel("Flat IntelliJ", com.formdev.flatlaf.FlatIntelliJLaf.class.getName());
         UIManager.installLookAndFeel("Flat Darcula", com.formdev.flatlaf.FlatDarculaLaf.class.getName());
 
+        // enable "eye" on password fields
+        UIManager.put("PasswordField.showRevealButton", true);
+
         // VAqua is optional
         if (OperatingSystem.isMacOs() && isVAquaAvailable()) {
             UIManager.installLookAndFeel("macOS (VAqua)", VAQUA_LAF_CLASS);
