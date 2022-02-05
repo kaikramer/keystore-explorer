@@ -29,6 +29,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -182,18 +184,16 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
             // Expiry status column
             Date expiry = getCertificateExpiry(alias, keyStore);
-            Calendar c = Calendar.getInstance();
-            Calendar a = Calendar.getInstance();
-            c.setTime(new Date()); // Now use today date.
-            a.setTime(new Date()); // Now use today date.
-            a.add(Calendar.DATE, expiryWarnDays); // Adding warning interval
+            ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
+            ZonedDateTime nowPlusExpiryWarnDays = now.plusDays(expiryWarnDays);
             if (expiry == null) {
-                data[i][2] = null; // No expiry - must be a key entry
+                data[i][2] = null; // No certExpiration - must be a key entry
             } else {
-                if (expiry.before(c.getTime())) {
+                ZonedDateTime expiryDateTime = expiry.toInstant().atZone(ZoneId.systemDefault());
+                if (now.isAfter(expiryDateTime)) {
                     data[i][2] = 2; // Expired
                 } else {
-                    if (expiry.before(a.getTime())) {
+                    if (nowPlusExpiryWarnDays.isAfter(expiryDateTime)) {
                         data[i][2] = 1; // Almost expired
                     } else {
                         data[i][2] = 0; // Not expired
@@ -237,7 +237,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 if (expiry != null) {
                     data[i][iCertExpiryColumn] = expiry;
                 } else {
-                    data[i][iCertExpiryColumn] = null; // No expiry date - must be a key entry
+                    data[i][iCertExpiryColumn] = null; // No certExpiration date - must be a key entry
                 }
             }
             if (iLastModifiedColumn > 0) {
