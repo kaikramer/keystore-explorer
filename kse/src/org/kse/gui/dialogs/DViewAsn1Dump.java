@@ -88,6 +88,7 @@ public class DViewAsn1Dump extends JEscFrame {
     public DViewAsn1Dump(JDialog parent, X509Certificate cert) throws Asn1Exception, IOException {
         super(res.getString("DViewAsn1Dump.Certificate.Title"));
         this.certificate = cert;
+        this.setIconImages(parent.getOwner().getIconImages());
         initComponents();
     }
 
@@ -102,6 +103,7 @@ public class DViewAsn1Dump extends JEscFrame {
     public DViewAsn1Dump(JDialog parent, X509CRL crl) throws Asn1Exception, IOException {
         super(res.getString("DViewAsn1Dump.Crl.Title"));
         this.crl = crl;
+        this.setIconImages(parent.getOwner().getIconImages());
         initComponents();
     }
 
@@ -116,6 +118,7 @@ public class DViewAsn1Dump extends JEscFrame {
     public DViewAsn1Dump(JDialog parent, X509Ext extension) throws Asn1Exception, IOException {
         super(res.getString("DViewAsn1Dump.Extension.Title"));
         this.extension = extension;
+        this.setIconImages(parent.getOwner().getIconImages());
         initComponents();
     }
 
@@ -131,6 +134,7 @@ public class DViewAsn1Dump extends JEscFrame {
     public DViewAsn1Dump(JDialog parent, PrivateKey privateKey) throws Asn1Exception, IOException {
         super(res.getString("DViewAsn1Dump.PrivateKey.Title"));
         this.privateKey = privateKey;
+        this.setIconImages(parent.getOwner().getIconImages());
         initComponents();
     }
 
@@ -145,6 +149,7 @@ public class DViewAsn1Dump extends JEscFrame {
     public DViewAsn1Dump(JDialog parent, PublicKey publicKey) throws Asn1Exception, IOException {
         super(res.getString("DViewAsn1Dump.PublicKey.Title"));
         this.publicKey = publicKey;
+        this.setIconImages(parent.getOwner().getIconImages());
         initComponents();
     }
 
@@ -159,6 +164,7 @@ public class DViewAsn1Dump extends JEscFrame {
     public DViewAsn1Dump(JDialog parent, PKCS10CertificationRequest pkcs10Csr) throws Asn1Exception, IOException {
         super(res.getString("DViewAsn1Dump.Csr.Title"));
         this.pkcs10Csr = pkcs10Csr;
+        this.setIconImages(parent.getOwner().getIconImages());
         initComponents();
     }
 
@@ -173,6 +179,7 @@ public class DViewAsn1Dump extends JEscFrame {
     public DViewAsn1Dump(JDialog parent, Spkac spkac) throws Asn1Exception, IOException {
         super(res.getString("DViewAsn1Dump.Csr.Title"));
         this.spkac = spkac;
+        this.setIconImages(parent.getOwner().getIconImages());
         initComponents();
     }
 
