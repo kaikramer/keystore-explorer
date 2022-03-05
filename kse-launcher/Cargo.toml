@@ -2,7 +2,10 @@
 name = "kse-launcher"
 version = "1.0.0"
 authors = ["Kai Kramer <kaikramer@users.noreply.github.com>"]
-edition = "2018"
+edition = "2021"
+
+[profile.release]
+strip = "symbols"
 
 [dependencies]
 winapi = { version = "0.3.9", features = ["winuser", "winnt", "minwindef"] }
