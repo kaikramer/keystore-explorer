@@ -67,7 +67,6 @@ public class DDistributionPointsChooser extends JEscDialog {
     private JLabel jlDistributionPointReasonFlags;
     private JLabel jlDistributionPointCrlIssuer;
     private JGeneralNames jgnDistributionPointCrlIssuer;
-    private JCheckBox jcbUnused;
     private JCheckBox jcbKeyCompromise;
     private JCheckBox jcbCACompromise;
     private JCheckBox jcbAffiliationChanged;
@@ -101,32 +100,29 @@ public class DDistributionPointsChooser extends JEscDialog {
         jlDistributionPointReasonFlags = new JLabel(
                 res.getString("DDistributionPointsChooser.jlDistributionPointReasonFlags.text"));
 
-        jcbUnused = new JCheckBox(res.getString("DDistributionPointsChooser.jcbUnused.text"));
-        jcbUnused.setToolTipText(res.getString("DDistributionPointsChooser.jcbUnused.tooltip"));
-        
         jcbKeyCompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbKeyCompromise.text"));
         jcbKeyCompromise.setToolTipText(res.getString("DDistributionPointsChooser.jcbKeyCompromise.tooltip"));
-        
+
         jcbCACompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbCACompromise.text"));
         jcbCACompromise.setToolTipText(res.getString("DDistributionPointsChooser.jcbCACompromise.tooltip"));
-        
+
         jcbAffiliationChanged = new JCheckBox(res.getString("DDistributionPointsChooser.jcbAffiliationChanged.text"));
         jcbAffiliationChanged.setToolTipText(res.getString("DDistributionPointsChooser.jcbAffiliationChanged.tooltip"));
-        
+
         jcbSuperseded = new JCheckBox(res.getString("DDistributionPointsChooser.jcbSuperseded.text"));
         jcbSuperseded.setToolTipText(res.getString("DDistributionPointsChooser.jcbSuperseded.tooltip"));
-        
+
         jcbCessationOfOperation = new JCheckBox(
                 res.getString("DDistributionPointsChooser.jcbCessationOfOperation.text"));
         jcbCessationOfOperation.setToolTipText(
                 res.getString("DDistributionPointsChooser.jcbCessationOfOperation.tooltip"));
-        
+
         jcbCertificateHold = new JCheckBox(res.getString("DDistributionPointsChooser.jcbCertificateHold.text"));
         jcbCertificateHold.setToolTipText(res.getString("DDistributionPointsChooser.jcbCertificateHold.tooltip"));
-        
+
         jcbPrivilegeWithdrawn = new JCheckBox(res.getString("DDistributionPointsChooser.jcbPrivilegeWithdrawn.text"));
         jcbPrivilegeWithdrawn.setToolTipText(res.getString("DDistributionPointsChooser.jcbPrivilegeWithdrawn.tooltip"));
-        
+
         jcbAACompromise = new JCheckBox(res.getString("DDistributionPointsChooser.jcbAACompromise.text"));
         jcbAACompromise.setToolTipText(res.getString("DDistributionPointsChooser.jcbAACompromise.tooltip"));
 
@@ -148,14 +144,13 @@ public class DDistributionPointsChooser extends JEscDialog {
         pane.add(jlDistributionPointFullName, "top");
         pane.add(jgnDistributionPointFullName, "span 3, wrap unrel");
         pane.add(jlDistributionPointReasonFlags, "");
-        pane.add(jcbUnused, "");
         pane.add(jcbKeyCompromise, "");
-        pane.add(jcbCACompromise, "wrap");
-        pane.add(jcbAffiliationChanged, "skip");
-        pane.add(jcbSuperseded, "");
-        pane.add(jcbCessationOfOperation, "wrap");
-        pane.add(jcbCertificateHold, "skip");
-        pane.add(jcbPrivilegeWithdrawn, "");
+        pane.add(jcbCACompromise, "");
+        pane.add(jcbAffiliationChanged, "wrap");
+        pane.add(jcbSuperseded, "skip");
+        pane.add(jcbCessationOfOperation, "");
+        pane.add(jcbCertificateHold, "wrap");
+        pane.add(jcbPrivilegeWithdrawn, "skip");
         pane.add(jcbAACompromise, "wrap unrel");
         pane.add(jlDistributionPointCrlIssuer, "top");
         pane.add(jgnDistributionPointCrlIssuer, "span 3, wrap unrel");
@@ -200,9 +195,6 @@ public class DDistributionPointsChooser extends JEscDialog {
                 DERBitString reasonFlagsBitString = (DERBitString) reasonFlags.toASN1Primitive();
                 int reasonFlagsInt = reasonFlagsBitString.intValue();
 
-                if (hasReasonFlag(reasonFlagsInt, ReasonFlags.unused)) {
-                    jcbUnused.setSelected(true);
-                }
                 if (hasReasonFlag(reasonFlagsInt, ReasonFlags.keyCompromise)) {
                     jcbKeyCompromise.setSelected(true);
                 }
@@ -233,14 +225,11 @@ public class DDistributionPointsChooser extends JEscDialog {
 
     private void okPressed() {
 
-        DistributionPointName distributionPointName = null;
+        DistributionPointName distributionPointName;
 
         ReasonFlags reasonFlags = null;
         int reasons = 0;
 
-        if (jcbUnused.isSelected()) {
-            reasons = reasons | ReasonFlags.unused;
-        }
         if (jcbKeyCompromise.isSelected()) {
             reasons = reasons | ReasonFlags.keyCompromise;
         }
