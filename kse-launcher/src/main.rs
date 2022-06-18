@@ -24,7 +24,7 @@ extern crate winapi;
 
 use std::{env, process, ptr};
 use std::ffi::CString;
-use std::path::Path;
+use std::path::{PathBuf};
 use std::process::Command;
 
 use libloading::{Library, Symbol};
@@ -76,9 +76,9 @@ fn get_java_home() -> String {
     }
 }
 
-fn get_jar_path() -> String {
+fn get_absolute_parent_path() -> PathBuf {
     match env::current_exe() {
-        Ok(exe_path) => exe_path.parent().unwrap().join("kse.jar").display().to_string(),
+        Ok(exe_path) => exe_path.parent().unwrap().to_path_buf(),
         Err(e) => {
             show_error_message(
                 CString::new("Error Detecting Current Directory").unwrap(),
@@ -91,20 +91,21 @@ fn get_jar_path() -> String {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
 
+    let local_jre_path = get_absolute_parent_path().join("jre");
+    let kse_jar_path = get_absolute_parent_path().join("kse.jar");
+
     // use local JRE preferably
-    let java_path: String = if Path::new("jre").is_dir() {
-        "jre\\bin\\javaw.exe".to_string()
+    let java_path: String = if local_jre_path.is_dir() {
+        format!("{}\\bin\\javaw.exe", local_jre_path.display().to_string())
     } else {
         format!("{}\\bin\\javaw.exe", get_java_home())
     };
-
-    let kse_jar_path = get_jar_path();
 
     let java_process = Command::new(&java_path)
         .arg("-Dkse.exe=true")
         .arg("-splash:splash.png")
         .arg("-jar")
-        .arg(kse_jar_path)
+        .arg(kse_jar_path.display().to_string())
         .args(&args)
         .spawn();
 
