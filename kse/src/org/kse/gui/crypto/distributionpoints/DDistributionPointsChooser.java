@@ -231,28 +231,28 @@ public class DDistributionPointsChooser extends JEscDialog {
         int reasons = 0;
 
         if (jcbKeyCompromise.isSelected()) {
-            reasons = reasons | ReasonFlags.keyCompromise;
+            reasons |= ReasonFlags.keyCompromise;
         }
         if (jcbCACompromise.isSelected()) {
-            reasons = reasons | ReasonFlags.cACompromise;
+            reasons |= ReasonFlags.cACompromise;
         }
         if (jcbAffiliationChanged.isSelected()) {
-            reasons = reasons | ReasonFlags.affiliationChanged;
+            reasons |= ReasonFlags.affiliationChanged;
         }
         if (jcbSuperseded.isSelected()) {
-            reasons = reasons | ReasonFlags.superseded;
+            reasons |= ReasonFlags.superseded;
         }
         if (jcbCessationOfOperation.isSelected()) {
-            reasons = reasons | ReasonFlags.cessationOfOperation;
+            reasons |= ReasonFlags.cessationOfOperation;
         }
         if (jcbCertificateHold.isSelected()) {
-            reasons = reasons | ReasonFlags.certificateHold;
+            reasons |= ReasonFlags.certificateHold;
         }
         if (jcbPrivilegeWithdrawn.isSelected()) {
-            reasons = reasons | ReasonFlags.privilegeWithdrawn;
+            reasons |= ReasonFlags.privilegeWithdrawn;
         }
         if (jcbAACompromise.isSelected()) {
-            reasons = reasons | ReasonFlags.aACompromise;
+            reasons |= ReasonFlags.aACompromise;
         }
         if (reasons > 0) {
             reasonFlags = new ReasonFlags(reasons);

@@ -19,8 +19,6 @@
  */
 package org.kse.crypto.x509;
 
-import static org.bouncycastle.asn1.ASN1UTF8String.*;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -218,7 +216,7 @@ public class GeneralNameUtil {
 
                 try {
                     String netmaskString = InetAddress.getByAddress(netMask).getHostAddress();
-                    ipAddressString = ipAddressString + "/" + netmaskString;
+                    ipAddressString += "/" + netmaskString;
                 } catch (UnknownHostException e) {
                     //length of IP address has been checked before
                 }

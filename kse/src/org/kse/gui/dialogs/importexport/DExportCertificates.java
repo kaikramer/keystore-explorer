@@ -236,16 +236,16 @@ public class DExportCertificates extends JEscDialog {
             jpOptions.add(jrbExportHead, gbc_jrbExportHead);
             jpOptions.add(jrbExportChain, gbc_jrbExportChain);
         } else {
-            gbc_jlExportFormat.gridy = gbc_jlExportFormat.gridy - 1;
-            gbc_jrbExportX509.gridy = gbc_jrbExportX509.gridy - 1;
-            gbc_jrbExportPkcs7.gridy = gbc_jrbExportPkcs7.gridy - 1;
-            gbc_jrbExportPkiPath.gridy = gbc_jrbExportPkiPath.gridy - 1;
-            gbc_jrbExportSpc.gridy = gbc_jrbExportSpc.gridy - 1;
-            gbc_jlExportPem.gridy = gbc_jlExportPem.gridy - 1;
-            gbc_jcbExportPem.gridy = gbc_jcbExportPem.gridy - 1;
-            gbc_jlExportFile.gridy = gbc_jlExportFile.gridy - 1;
-            gbc_jtfExportFile.gridy = gbc_jtfExportFile.gridy - 1;
-            gbc_jbBrowse.gridy = gbc_jbBrowse.gridy - 1;
+            gbc_jlExportFormat.gridy--;
+            gbc_jrbExportX509.gridy--;
+            gbc_jrbExportPkcs7.gridy--;
+            gbc_jrbExportPkiPath.gridy--;
+            gbc_jrbExportSpc.gridy--;
+            gbc_jlExportPem.gridy--;
+            gbc_jcbExportPem.gridy--;
+            gbc_jlExportFile.gridy--;
+            gbc_jtfExportFile.gridy--;
+            gbc_jbBrowse.gridy--;
         }
 
         jpOptions.add(jlExportFormat, gbc_jlExportFormat);
