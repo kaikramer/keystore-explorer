@@ -205,7 +205,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         jdnName = new JDistinguishedName(res.getString("DGenerateKeyPairCert.jdnName.title"), 30, true);
         jdnName.setToolTipText(res.getString("DGenerateKeyPairCert.jdnName.tooltip"));
 
-        jbTransfer = new JButton("Transfer");
+        jbTransfer = new JButton(res.getString("DGenerateKeyPairCert.jbTransfer.text"));
         jbTransfer.setMnemonic(res.getString("DGenerateKeyPairCert.jbTransfer.mnemonic").charAt(0));
         jbTransfer.setToolTipText(res.getString("DGenerateKeyPairCert.jbTransfer.tooltip"));
         
@@ -272,7 +272,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
             }
         });
 
-        jrbVersion3.addChangeListener(evt -> jbAddExtensions.setEnabled(jrbVersion3.isSelected()));
+        jrbVersion3.addChangeListener(evt -> {
+        	jbTransfer.setEnabled(jrbVersion3.isSelected());
+        	jbAddExtensions.setEnabled(jrbVersion3.isSelected());
+        });
 
         jbOK.addActionListener(evt -> okPressed());
 
