@@ -63,10 +63,12 @@ import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
+import org.kse.gui.KseFrame;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
+import org.kse.gui.dialogs.sign.DListCertificatesKS;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 
@@ -98,6 +100,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
     private JTextField jtfSerialNumber;
     private JLabel jlName;
     private JDistinguishedName jdnName;
+    private JButton jbTransfer;    
     private JButton jbAddExtensions;
     private JButton jbOK;
     private JButton jbCancel;
@@ -111,7 +114,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
     private PrivateKey issuerPrivateKey;
 
     private Provider provider;
-
+    
+    private KseFrame kseFrame;
+    private JFrame parent;
+  
     /**
      * Creates a new DGenerateKeyPairCert dialog.
      *
@@ -122,10 +128,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
      * @param issuerPrivateKey The signing key pair (issuer CA)
      * @throws CryptoException A problem was encountered with the supplied key pair
      */
-    public DGenerateKeyPairCert(JFrame parent, String title, KeyPair keyPair, KeyPairType keyPairType,
+    public DGenerateKeyPairCert(JFrame parent, KseFrame kseFrame, String title, KeyPair keyPair, KeyPairType keyPairType,
                                 X509Certificate issuerCert, PrivateKey issuerPrivateKey, Provider provider)
             throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.parent = parent;
+        this.kseFrame = kseFrame;
         this.keyPair = keyPair;
         this.keyPairType = keyPairType;
         this.issuerCert = issuerCert;
@@ -194,6 +202,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
         jdnName = new JDistinguishedName(res.getString("DGenerateKeyPairCert.jdnName.title"), 30, true);
         jdnName.setToolTipText(res.getString("DGenerateKeyPairCert.jdnName.tooltip"));
 
+        jbTransfer = new JButton("Transfer");
+        jbTransfer.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
+        jbTransfer.setToolTipText(res.getString("DGenerateKeyPairCert.jbAddExtensions.tooltip"));
+        
         jbAddExtensions = new JButton(res.getString("DGenerateKeyPairCert.jbAddExtensions.text"));
         jbAddExtensions.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
         jbAddExtensions.setToolTipText(res.getString("DGenerateKeyPairCert.jbAddExtensions.tooltip"));
@@ -222,7 +234,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
         pane.add(jtfSerialNumber, "wrap");
         pane.add(jlName, "");
         pane.add(jdnName, "wrap");
-        pane.add(jbAddExtensions, "spanx");
+        pane.add(jbTransfer, "spanx, split 2");
+        pane.add(jbAddExtensions, "");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
@@ -236,6 +249,15 @@ public class DGenerateKeyPairCert extends JEscDialog {
             Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
             jdtValidityEnd.setDateTime(validityEnd);
 
+        });
+
+        jbTransfer.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DGenerateKeyPairCert.this);
+                transferPressed();
+            } finally {
+                CursorUtil.setCursorFree(DGenerateKeyPairCert.this);
+            }
         });
 
         jbAddExtensions.addActionListener(evt -> {
@@ -276,6 +298,17 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
         pack();
     }
+
+	private void transferPressed() {
+		DListCertificatesKS dialog = new DListCertificatesKS(parent, kseFrame);
+		dialog.setLocationRelativeTo(this);
+		dialog.setVisible(true);
+		X509Certificate certificate = dialog.getCertificate();
+		if (certificate != null) {
+			jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
+			extensions = new X509ExtensionSet(certificate);			
+		}
+	}
 
     private void addExtensionsPressed() {
         PublicKey subjectPublicKey = keyPair.getPublic();
@@ -441,7 +474,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         keyGen.initialize(1024);
         KeyPair keyPair = keyGen.genKeyPair();
 
-        DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), "test", keyPair,
+        DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), null, "test", keyPair,
                                                                KeyPairType.RSA, null, null, new BouncyCastleProvider());
         DialogViewer.run(dialog);
     }
