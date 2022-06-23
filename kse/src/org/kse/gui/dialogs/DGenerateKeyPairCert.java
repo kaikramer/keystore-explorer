@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -52,10 +53,14 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.publickey.KeyIdentifierGenerator;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertificateGenerator;
@@ -116,7 +121,6 @@ public class DGenerateKeyPairCert extends JEscDialog {
     private Provider provider;
     
     private KseFrame kseFrame;
-    private JFrame parent;
   
     /**
      * Creates a new DGenerateKeyPairCert dialog.
@@ -132,7 +136,6 @@ public class DGenerateKeyPairCert extends JEscDialog {
                                 X509Certificate issuerCert, PrivateKey issuerPrivateKey, Provider provider)
             throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.parent = parent;
         this.kseFrame = kseFrame;
         this.keyPair = keyPair;
         this.keyPairType = keyPairType;
@@ -203,8 +206,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
         jdnName.setToolTipText(res.getString("DGenerateKeyPairCert.jdnName.tooltip"));
 
         jbTransfer = new JButton("Transfer");
-        jbTransfer.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
-        jbTransfer.setToolTipText(res.getString("DGenerateKeyPairCert.jbAddExtensions.tooltip"));
+        jbTransfer.setMnemonic(res.getString("DGenerateKeyPairCert.jbTransfer.mnemonic").charAt(0));
+        jbTransfer.setToolTipText(res.getString("DGenerateKeyPairCert.jbTransfer.tooltip"));
         
         jbAddExtensions = new JButton(res.getString("DGenerateKeyPairCert.jbAddExtensions.text"));
         jbAddExtensions.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
@@ -300,13 +303,29 @@ public class DGenerateKeyPairCert extends JEscDialog {
     }
 
 	private void transferPressed() {
-		DListCertificatesKS dialog = new DListCertificatesKS(parent, kseFrame);
+		DListCertificatesKS dialog = new DListCertificatesKS((JFrame) getParent(), kseFrame);
 		dialog.setLocationRelativeTo(this);
 		dialog.setVisible(true);
 		X509Certificate certificate = dialog.getCertificate();
 		if (certificate != null) {
 			jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
-			extensions = new X509ExtensionSet(certificate);			
+			extensions = new X509ExtensionSet(certificate);
+			// if exist SUBJECT_KEY_IDENTIFIER replace  
+			String oid = X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid();
+			if (extensions.getExtensionValue(oid) != null) {
+				boolean isCritical = extensions.getCriticalExtensionOIDs().contains(oid);
+				KeyIdentifierGenerator keyIdentifierGenerator = new KeyIdentifierGenerator(keyPair.getPublic());
+				try {
+					byte[] keyIdentifier160Bit = keyIdentifierGenerator.generate160BitHashId();
+					SubjectKeyIdentifier subjectKeyIdentifier = new SubjectKeyIdentifier(keyIdentifier160Bit);
+					byte[] newExtensionValue = subjectKeyIdentifier.getEncoded(ASN1Encoding.DER);
+					byte[] newExtensionValueOctet = new DEROctetString(newExtensionValue).getEncoded(ASN1Encoding.DER);
+					extensions.removeExtension(oid);
+					extensions.addExtension(oid, isCritical, newExtensionValueOctet);
+				} catch (CryptoException | IOException e) {
+					DError.displayError(this, e);
+				}
+			}
 		}
 	}
 
