@@ -202,9 +202,9 @@ public class DGenerateKeyPairCert extends JEscDialog {
         jdnName = new JDistinguishedName(res.getString("DGenerateKeyPairCert.jdnName.title"), 30, true);
         jdnName.setToolTipText(res.getString("DGenerateKeyPairCert.jdnName.tooltip"));
 
-        jbTransferNameExt = new JButton(res.getString("DGenerateKeyPairCert.jbTransfer.text"));
-        jbTransferNameExt.setMnemonic(res.getString("DGenerateKeyPairCert.jbTransfer.mnemonic").charAt(0));
-        jbTransferNameExt.setToolTipText(res.getString("DGenerateKeyPairCert.jbTransfer.tooltip"));
+        jbTransferNameExt = new JButton(res.getString("DGenerateKeyPairCert.jbTransferNameExt.text"));
+        jbTransferNameExt.setMnemonic(res.getString("DGenerateKeyPairCert.jbTransferNameExt.mnemonic").charAt(0));
+        jbTransferNameExt.setToolTipText(res.getString("DGenerateKeyPairCert.jbTransferNameExt.tooltip"));
         
         jbAddExtensions = new JButton(res.getString("DGenerateKeyPairCert.jbAddExtensions.text"));
         jbAddExtensions.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
