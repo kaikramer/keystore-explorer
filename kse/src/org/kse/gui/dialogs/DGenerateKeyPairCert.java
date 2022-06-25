@@ -53,18 +53,15 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
-import org.kse.crypto.publickey.KeyIdentifierGenerator;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509ExtensionSet;
+import org.kse.crypto.x509.X509ExtensionSetUpdater;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
@@ -105,7 +102,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
     private JTextField jtfSerialNumber;
     private JLabel jlName;
     private JDistinguishedName jdnName;
-    private JButton jbTransfer;    
+    private JButton jbTransferNameExt;    
     private JButton jbAddExtensions;
     private JButton jbOK;
     private JButton jbCancel;
@@ -205,9 +202,9 @@ public class DGenerateKeyPairCert extends JEscDialog {
         jdnName = new JDistinguishedName(res.getString("DGenerateKeyPairCert.jdnName.title"), 30, true);
         jdnName.setToolTipText(res.getString("DGenerateKeyPairCert.jdnName.tooltip"));
 
-        jbTransfer = new JButton(res.getString("DGenerateKeyPairCert.jbTransfer.text"));
-        jbTransfer.setMnemonic(res.getString("DGenerateKeyPairCert.jbTransfer.mnemonic").charAt(0));
-        jbTransfer.setToolTipText(res.getString("DGenerateKeyPairCert.jbTransfer.tooltip"));
+        jbTransferNameExt = new JButton(res.getString("DGenerateKeyPairCert.jbTransfer.text"));
+        jbTransferNameExt.setMnemonic(res.getString("DGenerateKeyPairCert.jbTransfer.mnemonic").charAt(0));
+        jbTransferNameExt.setToolTipText(res.getString("DGenerateKeyPairCert.jbTransfer.tooltip"));
         
         jbAddExtensions = new JButton(res.getString("DGenerateKeyPairCert.jbAddExtensions.text"));
         jbAddExtensions.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
@@ -237,7 +234,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         pane.add(jtfSerialNumber, "wrap");
         pane.add(jlName, "");
         pane.add(jdnName, "wrap");
-        pane.add(jbTransfer, "spanx, split 2");
+        pane.add(jbTransferNameExt, "spanx, split 2");
         pane.add(jbAddExtensions, "");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
@@ -254,10 +251,10 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
         });
 
-        jbTransfer.addActionListener(evt -> {
+        jbTransferNameExt.addActionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DGenerateKeyPairCert.this);
-                transferPressed();
+                transferNameExtPressed();
             } finally {
                 CursorUtil.setCursorFree(DGenerateKeyPairCert.this);
             }
@@ -273,7 +270,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         });
 
         jrbVersion3.addChangeListener(evt -> {
-        	jbTransfer.setEnabled(jrbVersion3.isSelected());
+        	jbTransferNameExt.setEnabled(jrbVersion3.isSelected());
         	jbAddExtensions.setEnabled(jrbVersion3.isSelected());
         });
 
@@ -305,29 +302,29 @@ public class DGenerateKeyPairCert extends JEscDialog {
         pack();
     }
 
-	private void transferPressed() {
+	private void transferNameExtPressed() {
 		DListCertificatesKS dialog = new DListCertificatesKS((JFrame) getParent(), kseFrame);
 		dialog.setLocationRelativeTo(this);
 		dialog.setVisible(true);
 		X509Certificate certificate = dialog.getCertificate();
 		if (certificate != null) {
+
 			jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
 			extensions = new X509ExtensionSet(certificate);
-			// if exist SUBJECT_KEY_IDENTIFIER replace  
-			String oid = X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid();
-			if (extensions.getExtensionValue(oid) != null) {
-				boolean isCritical = extensions.getCriticalExtensionOIDs().contains(oid);
-				KeyIdentifierGenerator keyIdentifierGenerator = new KeyIdentifierGenerator(keyPair.getPublic());
-				try {
-					byte[] keyIdentifier160Bit = keyIdentifierGenerator.generate160BitHashId();
-					SubjectKeyIdentifier subjectKeyIdentifier = new SubjectKeyIdentifier(keyIdentifier160Bit);
-					byte[] newExtensionValue = subjectKeyIdentifier.getEncoded(ASN1Encoding.DER);
-					byte[] newExtensionValueOctet = new DEROctetString(newExtensionValue).getEncoded(ASN1Encoding.DER);
-					extensions.removeExtension(oid);
-					extensions.addExtension(oid, isCritical, newExtensionValueOctet);
-				} catch (CryptoException | IOException e) {
-					DError.displayError(this, e);
+			//upd AUTHORITY_KEY_IDENTIFIER and SUBJECT_KEY_IDENTIFIER
+			try {
+				if (issuerCert == null) {
+					String serialNumberStr = jtfSerialNumber.getText().trim();
+					BigInteger serialNumber = parseDecOrHex(serialNumberStr);
+					X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), keyPair.getPublic(),
+							jdnName.getDistinguishedName(), serialNumber);
+				} else {
+					X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), issuerCert.getPublicKey(),
+							X500NameUtils.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
+							issuerCert.getSerialNumber());
 				}
+			} catch (CryptoException | IOException | NumberFormatException e) {
+				DError.displayError(this, e);
 			}
 		}
 	}
