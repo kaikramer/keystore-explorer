@@ -52,6 +52,7 @@ import org.kse.utilities.history.KeyStoreState;
 public class GenerateKeyPairAction extends KeyStoreExplorerAction implements HistoryAction {
     private static final long serialVersionUID = 1L;
 
+    private KseFrame kseFrame;
     /**
      * Construct action.
      *
@@ -59,7 +60,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
      */
     public GenerateKeyPairAction(KseFrame kseFrame) {
         super(kseFrame);
-
+        this.kseFrame = kseFrame;
         putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("GenerateKeyPairAction.accelerator").charAt(0),
                                                          Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         putValue(LONG_DESCRIPTION, res.getString("GenerateKeyPairAction.statusbar"));
@@ -141,7 +142,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
                 return "";
             }
 
-            DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame, res.getString(
+            DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(frame, kseFrame, res.getString(
                     "GenerateKeyPairAction.GenerateKeyPairCert.Title"), keyPair, keyPairType, issuerCert,
                                                                                  issuerPrivateKey, provider);
             dGenerateKeyPairCert.setLocationRelativeTo(frame);
