@@ -25,7 +25,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
-import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
 
@@ -146,11 +145,7 @@ public class DListCertificatesKS extends JEscDialog {
 
     private void updateCertificateControls() {
 
-        try {
-            jListCertificates.load((KeyStoreHistory) jcbKeyStore.getSelectedItem());
-        } catch (KeyStoreException e) {
-            // ignore
-        }
+        jListCertificates.load((KeyStoreHistory) jcbKeyStore.getSelectedItem());
     }
 
     private void cancelPressed() {
