@@ -20,13 +20,14 @@
 
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -35,15 +36,15 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-
+import javax.swing.UnsupportedLookAndFeelException;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to find a keystore entry
@@ -57,13 +58,18 @@ public class DFindKeyStoreEntry extends JEscDialog {
 
     private JLabel jlEntryName;
     private JTextField jtfEntryName;
-
-    private JPanel jpButtons;
+    private JLabel jlSubjectCN;
+    private JTextField jtfSubjectCN;
+    private JLabel jlIssuerCN;
+    private JTextField jtfIssuerCN;
+    private JLabel jlSerialNumberHex;
+    private JTextField jtfSerialNumberHex;
+    private JLabel jlSerialNumberDec;
+    private JTextField jtfSerialNumberDec;
     private JButton jbOK;
     private JButton jbCancel;
     private boolean success = false;
-    private String entryName;
-
+    private Map<String, String> mapValues = new HashMap<>();
     /**
      * Creates a new DFindKeyStoreEntry dialog.
      *
@@ -75,44 +81,69 @@ public class DFindKeyStoreEntry extends JEscDialog {
     }
 
     private void initComponents() {
-        jlEntryName = new JLabel(res.getString("DFindKeyStoreEntry.jlEntryName.text"));
+		jlEntryName = new JLabel(res.getString("DFindKeyStoreEntry.jlEntryName.text"));
+		jtfEntryName = new JTextField(10);
 
-        jtfEntryName = new JTextField(10);
+		jlSubjectCN = new JLabel(res.getString("DFindKeyStoreEntry.jlSubjectCN.text"));
+		jtfSubjectCN = new JTextField(20);
+		jtfSubjectCN.setToolTipText(res.getString("DFindKeyStoreEntry.jdnSubjectCN.tooltip"));
 
-        jbOK = new JButton(res.getString("DFindKeyStoreEntry.jbOK.text"));
-        jbOK.addActionListener(evt -> okPressed());
+		jlIssuerCN = new JLabel(res.getString("DFindKeyStoreEntry.jlIssuerCN.text"));
+		jtfIssuerCN = new JTextField(20);
+		jtfIssuerCN.setToolTipText(res.getString("DFindKeyStoreEntry.jtfIssuerCN.tooltip"));
 
-        jbCancel = new JButton(res.getString("DFindKeyStoreEntry.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
+		jlSerialNumberHex = new JLabel(res.getString("DFindKeyStoreEntry.jlSerialNumberHex.text"));
+		jtfSerialNumberHex = new JTextField(20);
+		jtfSerialNumberHex.setEditable(true);
+		jtfSerialNumberHex.setToolTipText(res.getString("DFindKeyStoreEntry.jtfSerialNumberHex.tooltip"));
+		jtfSerialNumberHex.setCaretPosition(0);
 
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
+		jlSerialNumberDec = new JLabel(res.getString("DFindKeyStoreEntry.jlSerialNumberDec.text"));
+		jtfSerialNumberDec = new JTextField(20);
+		jtfSerialNumberDec.setEditable(true);
+		jtfSerialNumberDec.setToolTipText(res.getString("DFindKeyStoreEntry.jtfSerialNumberDec.tooltip"));
+		jtfSerialNumberDec.setCaretPosition(0);
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+		jbOK = new JButton(res.getString("DFindKeyStoreEntry.jbOK.text"));
+		jbOK.addActionListener(evt -> okPressed());
 
-        JPanel jpContent = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        jpContent.add(jlEntryName);
-        jpContent.add(jtfEntryName);
-        jpContent.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                               new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+		jbCancel = new JButton(res.getString("DFindKeyStoreEntry.jbCancel.text"));
+		jbCancel.addActionListener(evt -> cancelPressed());
+		jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				CANCEL_KEY);
+		jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpContent, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				cancelPressed();
+			}
+		});
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                closeDialog();
-            }
-        });
+		PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+
+		pane.add(jlEntryName, "");
+		pane.add(jtfEntryName, "growx, pushx, wrap");
+		pane.add(jlSubjectCN, "");
+		pane.add(jtfSubjectCN, "growx, pushx, wrap");
+		pane.add(jlIssuerCN, "");
+		pane.add(jtfIssuerCN, "growx, pushx, wrap");
+		pane.add(jlSerialNumberHex, "");
+		pane.add(jtfSerialNumberHex, "growx, pushx, wrap");
+		pane.add(jlSerialNumberDec, "");
+		pane.add(jtfSerialNumberDec, "growx, pushx, wrap");
+		pane.add(new JSeparator(), "spanx, growx, wrap rel:push");
+		pane.add(jbCancel, "spanx, split 2, tag cancel");
+		pane.add(jbOK, "tag ok");
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent evt) {
+				closeDialog();
+			}
+		});
 
         setResizable(false);
 
@@ -131,13 +162,28 @@ public class DFindKeyStoreEntry extends JEscDialog {
     }
 
     private void okPressed() {
-        if (jtfEntryName.getText().isEmpty()) {
+    	mapValues.clear();
+    	if (!jtfEntryName.getText().isEmpty()) {
+    		mapValues.put("EntryName", jtfEntryName.getText());
+    	}
+    	if (!jtfSubjectCN.getText().isEmpty()) {
+    		mapValues.put("SubjectCN", jtfSubjectCN.getText());
+    	}
+    	if (!jtfIssuerCN.getText().isEmpty()) {
+    		mapValues.put("IssuerCN", jtfIssuerCN.getText());
+    	}
+    	if (!jtfSerialNumberHex.getText().isEmpty()) {
+    		mapValues.put("SerialNumberHex", jtfSerialNumberHex.getText());
+    	}
+    	if (!jtfSerialNumberDec.getText().isEmpty()) {
+    		mapValues.put("SerialNumberDec", jtfSerialNumberDec.getText());
+    	}
+        if (mapValues.isEmpty()) {
             JOptionPane.showMessageDialog(getParent(), res.getString("DFindKeyStoreEntry.NotEmpty.message"),
                                           res.getString("DFindKeyStoreEntry.Title"), JOptionPane.INFORMATION_MESSAGE);
             jtfEntryName.requestFocus();
             return;
         }
-        entryName = jtfEntryName.getText();
         success = true;
         closeDialog();
     }
@@ -146,7 +192,13 @@ public class DFindKeyStoreEntry extends JEscDialog {
         return success;
     }
 
-    public String getEntryName() {
-        return entryName;
+    public Map<String, String> getMapValues()
+    {
+    	return mapValues;
     }
+ 
+    public static void main(String[] args) throws UnsupportedLookAndFeelException {
+    	DFindKeyStoreEntry dialog = new DFindKeyStoreEntry(new javax.swing.JFrame());
+    	DialogViewer.run(dialog);
+	}
 }

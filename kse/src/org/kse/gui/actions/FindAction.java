@@ -21,17 +21,22 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.math.BigInteger;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DFindKeyStoreEntry;
 import org.kse.gui.error.DError;
@@ -68,34 +73,77 @@ public class FindAction extends KeyStoreExplorerAction {
 
         if (dialog.isSuccess()) {
             try {
-                String name = dialog.getEntryName();
+                Map<String, String> mapValues = dialog.getMapValues();
                 kseFrame.keyStoreclearSelection();
-                Set<String> aliases = findEntryAlias(name);
+                Set<String> aliases = findEntry(mapValues);
                 if (aliases.isEmpty()) {
                     JOptionPane.showMessageDialog(frame,
                                                   MessageFormat.format(res.getString("FindAction.NotFound.message"),
-                                                                       name), res.getString("FindAction.Find.Title"),
+                                                		  mapValues.toString()), res.getString("FindAction.Find.Title"),
                                                   JOptionPane.WARNING_MESSAGE);
                 } else {
                     kseFrame.setSelectedEntriesByAliases(aliases);
                 }
-            } catch (KeyStoreException ex) {
+            } catch (KeyStoreException | CryptoException ex) {
                 DError.displayError(frame, ex);
             }
         }
     }
 
-    private Set<String> findEntryAlias(String name) throws KeyStoreException {
-        Set<String> aliases = new HashSet<>();
-        KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
-        Enumeration<String> enumeration = keyStore.aliases();
-        while (enumeration.hasMoreElements()) {
-            String alias = enumeration.nextElement();
-            if (alias.contains(name)) {
-                aliases.add(alias);
-            }
-        }
-        return aliases;
-    }
+	private Set<String> findEntry(Map<String, String> mapValues) throws KeyStoreException, CryptoException {
+		Set<String> aliases = new HashSet<>();
+		KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+		KeyStore keyStore = history.getCurrentState().getKeyStore();
+		Enumeration<String> enumeration = keyStore.aliases();
+		while (enumeration.hasMoreElements()) {
+			String alias = enumeration.nextElement();
+			X509Certificate certicate = (X509Certificate) keyStore.getCertificate(alias);
+			int count = 0;
+			for (Map.Entry<String, String> entry : mapValues.entrySet()) {
+				if ("EntryName".equals(entry.getKey())) {
+					if (alias.toLowerCase().contains(entry.getValue())) {
+						count++;
+					}
+				}
+				if (certicate != null) {
+					if ("SubjectCN".equals(entry.getKey())) {
+						String subjectCN = getCertificateSubjectCN(certicate).toLowerCase();
+						if (subjectCN.contains(entry.getValue())) {
+							count++;
+						}
+					}
+					if ("IssuerCN".equals(entry.getKey())) {
+						String issuerCN = getCertificateIssuerCN(certicate).toLowerCase();
+						if (issuerCN.contains(entry.getValue())) {
+							count++;
+						}
+					}
+					if ("SerialNumberHex".equals(entry.getKey())) {
+						BigInteger serial = new BigInteger(entry.getValue().replaceAll("0x", ""), 16);
+						if (serial.equals(certicate.getSerialNumber())) {
+							count++;
+						}
+					}
+					if ("SerialNumberDec".equals(entry.getKey())) {
+						BigInteger serial = new BigInteger(entry.getValue());
+						if (serial.equals(certicate.getSerialNumber())) {
+							count++;
+						}
+					}
+				}
+			}
+			if (count == mapValues.size()) {
+				aliases.add(alias);
+			}
+		}
+		return aliases;
+	}
+
+	private String getCertificateSubjectCN(X509Certificate x509Cert) throws CryptoException, KeyStoreException {
+		return X500NameUtils.extractCN(x509Cert.getSubjectX500Principal());
+	}
+
+	private String getCertificateIssuerCN(X509Certificate x509Cert) throws CryptoException, KeyStoreException {
+		return X500NameUtils.extractCN(x509Cert.getIssuerX500Principal());
+	}
 }
