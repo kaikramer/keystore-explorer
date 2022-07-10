@@ -27,11 +27,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -40,6 +42,8 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
@@ -66,8 +70,8 @@ public class DFindKeyStoreEntry extends JEscDialog {
     
     private JLabel jlEntryName;
     private JTextField jtfEntryName;
-    private JLabel jlAlgorithm;
-    private JTextField jtfAlgorithm;
+    private JLabel jlSignatureAlgorithm;
+    private JComboBox<SignatureType> jcbSignatureAlgorithm;
     private JLabel jlSubjectCN;
     private JTextField jtfSubjectCN;
     private JLabel jlIssuerCN;
@@ -94,9 +98,11 @@ public class DFindKeyStoreEntry extends JEscDialog {
 		jlEntryName = new JLabel(res.getString("DFindKeyStoreEntry.jlEntryName.text"));
 		jtfEntryName = new JTextField(10);
 
-		jlAlgorithm = new JLabel(res.getString("DFindKeyStoreEntry.jlAlgorithm.text"));
-		jtfAlgorithm = new JTextField(10);
-		jtfAlgorithm.setToolTipText(res.getString("DFindKeyStoreEntry.jtfAlgorithm.tooltip"));
+		jlSignatureAlgorithm = new JLabel(res.getString("DFindKeyStoreEntry.jlSignatureAlgorithm.text"));
+        jcbSignatureAlgorithm = new JComboBox<>();
+        jcbSignatureAlgorithm.setEditable(true);
+        jcbSignatureAlgorithm.setMaximumRowCount(10);
+		populateSignaturesAlgorithm();
 		
 		jlSubjectCN = new JLabel(res.getString("DFindKeyStoreEntry.jlSubjectCN.text"));
 		jtfSubjectCN = new JTextField(20);
@@ -141,8 +147,8 @@ public class DFindKeyStoreEntry extends JEscDialog {
 
 		pane.add(jlEntryName, "");
 		pane.add(jtfEntryName, "growx, pushx, wrap");
-		pane.add(jlAlgorithm, "");
-		pane.add(jtfAlgorithm, "growx, pushx, wrap");
+		pane.add(jlSignatureAlgorithm, "");
+		pane.add(jcbSignatureAlgorithm, "growx, pushx, wrap");
 		pane.add(jlSubjectCN, "");
 		pane.add(jtfSubjectCN, "growx, pushx, wrap");
 		pane.add(jlIssuerCN, "");
@@ -168,6 +174,23 @@ public class DFindKeyStoreEntry extends JEscDialog {
         pack();
     }
 
+    private void populateSignaturesAlgorithm() {
+    	List<SignatureType> sigAlgs;
+        sigAlgs = SignatureType.ecdsaSignatureTypes();
+        for (SignatureType sigAlg : sigAlgs) {
+            jcbSignatureAlgorithm.addItem(sigAlg);
+        }
+        sigAlgs = SignatureType.rsaSignatureTypes(2048);
+        for (SignatureType sigAlg : sigAlgs) {
+            jcbSignatureAlgorithm.addItem(sigAlg);
+        }
+        sigAlgs = SignatureType.dsaSignatureTypes();
+        for (SignatureType sigAlg : sigAlgs) {
+            jcbSignatureAlgorithm.addItem(sigAlg);
+        }
+        jcbSignatureAlgorithm.setSelectedIndex(-1);
+    }
+ 
     protected void closeDialog() {
         setVisible(false);
         dispose();
@@ -182,8 +205,18 @@ public class DFindKeyStoreEntry extends JEscDialog {
     	if (!jtfEntryName.getText().isEmpty()) {
     		mapValues.put(ENTRYNAME, jtfEntryName.getText());
     	}
-    	if (!jtfAlgorithm.getText().isEmpty()) {
-    		mapValues.put(ALGORITHM, jtfAlgorithm.getText());
+    	if (jcbSignatureAlgorithm.getSelectedItem() != null) {
+    		String signatureAlgorithm = "";
+    		Object selected = jcbSignatureAlgorithm.getSelectedItem();
+    		if (selected instanceof String) {
+    			signatureAlgorithm = (String) selected;
+    		}
+    		else if (selected instanceof SignatureType) {
+    			signatureAlgorithm = ((SignatureType)selected).friendly();
+    		}
+    		if (!signatureAlgorithm.isEmpty()) {
+    			mapValues.put(ALGORITHM, signatureAlgorithm);
+    		}
     	}
     	if (!jtfSubjectCN.getText().isEmpty()) {
     		mapValues.put(SUBJECTCN, jtfSubjectCN.getText());
