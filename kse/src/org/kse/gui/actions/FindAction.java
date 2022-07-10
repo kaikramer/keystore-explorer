@@ -37,6 +37,7 @@ import javax.swing.KeyStroke;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X500NameUtils;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DFindKeyStoreEntry;
 import org.kse.gui.error.DError;
@@ -97,34 +98,40 @@ public class FindAction extends KeyStoreExplorerAction {
 		Enumeration<String> enumeration = keyStore.aliases();
 		while (enumeration.hasMoreElements()) {
 			String alias = enumeration.nextElement();
-			X509Certificate certicate = (X509Certificate) keyStore.getCertificate(alias);
 			int count = 0;
 			for (Map.Entry<String, String> entry : mapValues.entrySet()) {
-				if ("EntryName".equals(entry.getKey())) {
-					if (alias.toLowerCase().contains(entry.getValue())) {
+				if (DFindKeyStoreEntry.ENTRYNAME.equals(entry.getKey())) {
+					if (alias.toLowerCase().contains(entry.getValue().toLowerCase())) {
 						count++;
 					}
 				}
-				if (certicate != null) {
-					if ("SubjectCN".equals(entry.getKey())) {
+				if (keyStore.isCertificateEntry(alias)) {
+					X509Certificate certicate = (X509Certificate) keyStore.getCertificate(alias);
+					if (DFindKeyStoreEntry.ALGORITHM.equals(entry.getKey())) {
+						String algorithm = X509CertUtil.getCertificateSignatureAlgorithm(certicate).toLowerCase();
+						if (algorithm.contains(entry.getValue().toLowerCase())) {
+							count++;
+						}
+					}					
+					if (DFindKeyStoreEntry.SUBJECTCN.equals(entry.getKey())) {
 						String subjectCN = getCertificateSubjectCN(certicate).toLowerCase();
-						if (subjectCN.contains(entry.getValue())) {
+						if (subjectCN.contains(entry.getValue().toLowerCase())) {
 							count++;
 						}
 					}
-					if ("IssuerCN".equals(entry.getKey())) {
+					if (DFindKeyStoreEntry.ISSUERCN.equals(entry.getKey())) {
 						String issuerCN = getCertificateIssuerCN(certicate).toLowerCase();
-						if (issuerCN.contains(entry.getValue())) {
+						if (issuerCN.contains(entry.getValue().toLowerCase())) {
 							count++;
 						}
 					}
-					if ("SerialNumberHex".equals(entry.getKey())) {
+					if (DFindKeyStoreEntry.SERIALNUMBERHEX.equals(entry.getKey())) {
 						BigInteger serial = new BigInteger(entry.getValue().replaceAll("0x", ""), 16);
 						if (serial.equals(certicate.getSerialNumber())) {
 							count++;
 						}
 					}
-					if ("SerialNumberDec".equals(entry.getKey())) {
+					if (DFindKeyStoreEntry.SERIALNUMBERDEC.equals(entry.getKey())) {
 						BigInteger serial = new BigInteger(entry.getValue());
 						if (serial.equals(certicate.getSerialNumber())) {
 							count++;

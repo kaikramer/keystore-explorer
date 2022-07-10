@@ -56,8 +56,18 @@ public class DFindKeyStoreEntry extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
+    public static final String ENTRYNAME = "EntryName";
+    public static final String ALGORITHM = "Algorithm";
+    public static final String SUBJECTCN = "SubjectCN";
+    public static final String ISSUERCN = "IssuerCN";
+    public static final String SERIALNUMBERHEX = "SerialNumberHex";
+    public static final String SERIALNUMBERDEC = "SerialNumberDec";
+    
+    
     private JLabel jlEntryName;
     private JTextField jtfEntryName;
+    private JLabel jlAlgorithm;
+    private JTextField jtfAlgorithm;
     private JLabel jlSubjectCN;
     private JTextField jtfSubjectCN;
     private JLabel jlIssuerCN;
@@ -84,6 +94,10 @@ public class DFindKeyStoreEntry extends JEscDialog {
 		jlEntryName = new JLabel(res.getString("DFindKeyStoreEntry.jlEntryName.text"));
 		jtfEntryName = new JTextField(10);
 
+		jlAlgorithm = new JLabel(res.getString("DFindKeyStoreEntry.jlAlgorithm.text"));
+		jtfAlgorithm = new JTextField(10);
+		jtfAlgorithm.setToolTipText(res.getString("DFindKeyStoreEntry.jtfAlgorithm.tooltip"));
+		
 		jlSubjectCN = new JLabel(res.getString("DFindKeyStoreEntry.jlSubjectCN.text"));
 		jtfSubjectCN = new JTextField(20);
 		jtfSubjectCN.setToolTipText(res.getString("DFindKeyStoreEntry.jdnSubjectCN.tooltip"));
@@ -127,6 +141,8 @@ public class DFindKeyStoreEntry extends JEscDialog {
 
 		pane.add(jlEntryName, "");
 		pane.add(jtfEntryName, "growx, pushx, wrap");
+		pane.add(jlAlgorithm, "");
+		pane.add(jtfAlgorithm, "growx, pushx, wrap");
 		pane.add(jlSubjectCN, "");
 		pane.add(jtfSubjectCN, "growx, pushx, wrap");
 		pane.add(jlIssuerCN, "");
@@ -164,19 +180,22 @@ public class DFindKeyStoreEntry extends JEscDialog {
     private void okPressed() {
     	mapValues.clear();
     	if (!jtfEntryName.getText().isEmpty()) {
-    		mapValues.put("EntryName", jtfEntryName.getText());
+    		mapValues.put(ENTRYNAME, jtfEntryName.getText());
+    	}
+    	if (!jtfAlgorithm.getText().isEmpty()) {
+    		mapValues.put(ALGORITHM, jtfAlgorithm.getText());
     	}
     	if (!jtfSubjectCN.getText().isEmpty()) {
-    		mapValues.put("SubjectCN", jtfSubjectCN.getText());
+    		mapValues.put(SUBJECTCN, jtfSubjectCN.getText());
     	}
     	if (!jtfIssuerCN.getText().isEmpty()) {
-    		mapValues.put("IssuerCN", jtfIssuerCN.getText());
+    		mapValues.put(ISSUERCN, jtfIssuerCN.getText());
     	}
     	if (!jtfSerialNumberHex.getText().isEmpty()) {
-    		mapValues.put("SerialNumberHex", jtfSerialNumberHex.getText());
+    		mapValues.put(SERIALNUMBERHEX, jtfSerialNumberHex.getText());
     	}
     	if (!jtfSerialNumberDec.getText().isEmpty()) {
-    		mapValues.put("SerialNumberDec", jtfSerialNumberDec.getText());
+    		mapValues.put(SERIALNUMBERDEC, jtfSerialNumberDec.getText());
     	}
         if (mapValues.isEmpty()) {
             JOptionPane.showMessageDialog(getParent(), res.getString("DFindKeyStoreEntry.NotEmpty.message"),
