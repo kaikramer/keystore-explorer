@@ -28,7 +28,6 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -47,103 +46,97 @@ import org.kse.utilities.history.KeyStoreHistory;
  * Action to Find a KeyStore entry.
  */
 public class FindAction extends KeyStoreExplorerAction {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Construct action
-     *
-     * @param kseFrame KeyStore Explorer frame
-     */
-    public FindAction(KseFrame kseFrame) {
-        super(kseFrame);
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("FindAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        putValue(LONG_DESCRIPTION, res.getString("FindAction.statusbar"));
-        putValue(NAME, res.getString("FindAction.text"));
-        putValue(SHORT_DESCRIPTION, res.getString("FindAction.tooltip"));
-        putValue(SMALL_ICON,
-                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/find.png"))));
-    }
+	/**
+	 * Construct action
+	 *
+	 * @param kseFrame KeyStore Explorer frame
+	 */
+	public FindAction(KseFrame kseFrame) {
+		super(kseFrame);
+		putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("FindAction.accelerator").charAt(0),
+				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		putValue(LONG_DESCRIPTION, res.getString("FindAction.statusbar"));
+		putValue(NAME, res.getString("FindAction.text"));
+		putValue(SHORT_DESCRIPTION, res.getString("FindAction.tooltip"));
+		putValue(SMALL_ICON,
+				new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/find.png"))));
+	}
 
-    @Override
-    protected void doAction() {
+	@Override
+	protected void doAction() {
 
-        DFindKeyStoreEntry dialog = new DFindKeyStoreEntry(frame);
-        dialog.setLocationRelativeTo(frame);
-        dialog.setVisible(true);
+		DFindKeyStoreEntry dialog = new DFindKeyStoreEntry(frame);
+		dialog.setLocationRelativeTo(frame);
+		dialog.setVisible(true);
 
-        if (dialog.isSuccess()) {
-            try {
-                Map<String, String> mapValues = dialog.getMapValues();
-                kseFrame.keyStoreclearSelection();
-                Set<String> aliases = findEntry(mapValues);
-                if (aliases.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame,
-                                                  MessageFormat.format(res.getString("FindAction.NotFound.message"),
-                                                		  mapValues.toString()), res.getString("FindAction.Find.Title"),
-                                                  JOptionPane.WARNING_MESSAGE);
-                } else {
-                    kseFrame.setSelectedEntriesByAliases(aliases);
-                }
-            } catch (KeyStoreException | CryptoException ex) {
-                DError.displayError(frame, ex);
-            }
-        }
-    }
+		if (dialog.isSuccess()) {
+			try {
+				kseFrame.keyStoreclearSelection();
+				Set<String> aliases = findEntry(dialog.getText());
+				if (aliases.isEmpty()) {
+					JOptionPane.showMessageDialog(frame,
+							MessageFormat.format(res.getString("FindAction.NotFound.message"), dialog.getText()),
+							res.getString("FindAction.Find.Title"), JOptionPane.WARNING_MESSAGE);
+				} else {
+					kseFrame.setSelectedEntriesByAliases(aliases);
+				}
+			} catch (KeyStoreException | CryptoException ex) {
+				DError.displayError(frame, ex);
+			}
+		}
+	}
 
-	private Set<String> findEntry(Map<String, String> mapValues) throws KeyStoreException, CryptoException {
+	private Set<String> findEntry(String text) throws KeyStoreException, CryptoException {
 		Set<String> aliases = new HashSet<>();
 		KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 		KeyStore keyStore = history.getCurrentState().getKeyStore();
 		Enumeration<String> enumeration = keyStore.aliases();
 		while (enumeration.hasMoreElements()) {
 			String alias = enumeration.nextElement();
-			int count = 0;
-			for (Map.Entry<String, String> entry : mapValues.entrySet()) {
-				if (DFindKeyStoreEntry.ENTRYNAME.equals(entry.getKey())) {
-					if (alias.toLowerCase().contains(entry.getValue().toLowerCase())) {
-						count++;
-					}
-				}
-				if (keyStore.isCertificateEntry(alias)) {
-					X509Certificate certicate = (X509Certificate) keyStore.getCertificate(alias);
-					if (DFindKeyStoreEntry.ALGORITHM.equals(entry.getKey())) {
-						String algorithm = X509CertUtil.getCertificateSignatureAlgorithm(certicate).toLowerCase();
-						if (algorithm.contains(entry.getValue().toLowerCase())) {
-							count++;
-						}
-					}					
-					if (DFindKeyStoreEntry.SUBJECTCN.equals(entry.getKey())) {
-						String subjectCN = getCertificateSubjectCN(certicate).toLowerCase();
-						if (subjectCN.contains(entry.getValue().toLowerCase())) {
-							count++;
-						}
-					}
-					if (DFindKeyStoreEntry.ISSUERCN.equals(entry.getKey())) {
-						String issuerCN = getCertificateIssuerCN(certicate).toLowerCase();
-						if (issuerCN.contains(entry.getValue().toLowerCase())) {
-							count++;
-						}
-					}
-					if (DFindKeyStoreEntry.SERIALNUMBERHEX.equals(entry.getKey())) {
-						BigInteger serial = new BigInteger(entry.getValue().replaceAll("0x", ""), 16);
-						if (serial.equals(certicate.getSerialNumber())) {
-							count++;
-						}
-					}
-					if (DFindKeyStoreEntry.SERIALNUMBERDEC.equals(entry.getKey())) {
-						BigInteger serial = new BigInteger(entry.getValue());
-						if (serial.equals(certicate.getSerialNumber())) {
-							count++;
-						}
-					}
-				}
+			boolean found = false;
+			if (alias.toLowerCase().contains(text.toLowerCase())) {
+				found = true;
 			}
-			if (count == mapValues.size()) {
+			if (!found && keyStore.isCertificateEntry(alias)) {
+				X509Certificate certicate = (X509Certificate) keyStore.getCertificate(alias);
+				found = searchInCertificate(certicate, text);
+			}
+			if (found) {
 				aliases.add(alias);
 			}
 		}
 		return aliases;
+	}
+
+	private boolean searchInCertificate(X509Certificate certificate, String text)
+			throws KeyStoreException, CryptoException {
+		String algorithm = X509CertUtil.getCertificateSignatureAlgorithm(certificate).toLowerCase();
+		if (algorithm.contains(text.toLowerCase())) {
+			return true;
+		}
+		String subjectCN = getCertificateSubjectCN(certificate).toLowerCase();
+		if (subjectCN.contains(text.toLowerCase())) {
+			return true;
+		}
+		String issuerCN = getCertificateIssuerCN(certificate).toLowerCase();
+		if (issuerCN.contains(text.toLowerCase())) {
+			return true;
+		}
+		if (text.toUpperCase().matches("^[0-9A-F]+$")) {
+			BigInteger serial = new BigInteger(text, 16);
+			if (serial.equals(certificate.getSerialNumber())) {
+				return true;
+			}
+		}
+		if (text.toUpperCase().matches("^[0-9]+$")) {
+			BigInteger serial = new BigInteger(text);
+			if (serial.equals(certificate.getSerialNumber())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String getCertificateSubjectCN(X509Certificate x509Cert) throws CryptoException, KeyStoreException {
