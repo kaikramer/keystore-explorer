@@ -1,0 +1,408 @@
+package org.kse.utilities.net;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.of;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+class PacHelperFunctionsTest {
+
+    @Test void dnsDomainIs() {
+    }
+
+    @Test void dnsDomainLevels() {
+    }
+
+    @Test void dnsResolve() {
+    }
+
+    @Test void myIpAddress() {
+    }
+
+    @Test void isInNet() {
+    }
+
+    @Test void isPlainHostName() {
+    }
+
+    @Test void isResolvable() {
+    }
+
+    @Test void localHostOrDomainIs() {
+    }
+
+    @Test void shExpMatch() {
+    }
+
+    @ParameterizedTest
+    @MethodSource("dates")
+    void dateRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
+
+        // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
+        PacHelperFunctions.setClock(Clock.fixed(Instant.parse(currentDateTime), ZoneOffset.of(offset)));
+
+        assertThat(PacHelperFunctions.dateRange(args)).isEqualTo(expectedResult);
+    }
+
+    private static Stream<Arguments> dates() {
+        return Stream.of(
+                // missing parameters
+                of("2022-05-23T12:34:56Z", "+02:00", new Object[0], false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("GMT"), false),
+
+                // 1 argument: year
+                of("2022-05-23T12:34:56Z", "+02:00", args(2022), true),
+                of("2021-12-31T22:00:00Z", "+02:00", args(2022), true),
+                of("2022-12-31T21:59:59Z", "+02:00", args(2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(2021), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(2023), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2022, "GMT"), true),
+                of("2022-01-01T00:00:00Z", "+00:00", args(2022, "GMT"), true),
+                of("2022-12-12T23:59:59Z", "+00:00", args(2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2021, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2023, "GMT"), false),
+
+                // 1 argument: month
+                of("2022-01-23T12:34:56Z", "+02:00", args("JAN"), true),
+                of("2022-02-23T12:34:56Z", "+02:00", args("FEB"), true),
+                of("2022-03-23T12:34:56Z", "+02:00", args("MAR"), true),
+                of("2022-04-23T12:34:56Z", "+02:00", args("APR"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY"), true),
+                of("2022-06-23T12:34:56Z", "+02:00", args("JUN"), true),
+                of("2022-07-23T12:34:56Z", "+02:00", args("JUL"), true),
+                of("2022-08-23T12:34:56Z", "+02:00", args("AUG"), true),
+                of("2022-09-23T12:34:56Z", "+02:00", args("SEP"), true),
+                of("2022-10-23T12:34:56Z", "+02:00", args("OCT"), true),
+                of("2022-11-23T12:34:56Z", "+02:00", args("NOV"), true),
+                of("2022-12-23T12:34:56Z", "+02:00", args("DEC"), true),
+                of("2022-04-30T22:00:00Z", "+02:00", args("MAY"), true),
+                of("2022-05-31T21:59:59Z", "+02:00", args("MAY"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("APR"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("JUN"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAY", "GMT"), true),
+                of("2022-05-01T00:00:00Z", "+00:00", args("MAY", "GMT"), true),
+                of("2022-05-31T23:59:59Z", "+00:00", args("MAY", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("APR", "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("JUN", "GMT"), false),
+
+                // 1 argument: day
+                of("2022-05-23T12:34:56Z", "+02:00", args(23), true),
+                of("2022-05-22T22:00:00Z", "+02:00", args(23), true),
+                of("2022-05-23T21:59:59Z", "+02:00", args(23), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(22), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(24), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, "GMT"), true),
+                of("2022-05-23T00:00:00Z", "+00:00", args(23, "GMT"), true),
+                of("2022-05-23T23:59:59Z", "+00:00", args(23, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(22, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(24, "GMT"), false),
+
+                // 2 arguments: year1/2
+                of("2022-05-23T12:34:56Z", "+02:00", args(2022, 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(2021, 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(2022, 2023), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(2020, 2021), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(2023, 2024), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2022, 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2021, 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2022, 2023, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2021, 2021, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(2023, 2023, "GMT"), false),
+
+                // 2 arguments: month1/2
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY", "MAY"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("OCT", "AUG"), false), // TODO no rollover?!
+                of("2022-05-23T12:34:56Z", "+02:00", args("APR", "MAY"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY", "JUN"), true),
+                of("2022-04-30T22:00:00Z", "+02:00", args("APR", "MAY"), true),
+                of("2022-05-31T21:59:59Z", "+02:00", args("MAY", "JUN"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAR", "APR"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("JUN", "JUL"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("JUN", "APR"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAY", "MAY", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAR", "APR", "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("JUN", "JUL", "GMT"), false),
+
+                // 2 arguments: day1/2
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, 23), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(22, 23), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, 24), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(20, 25), true),
+                of("2022-05-22T22:00:00Z", "+02:00", args(23, 24), true),
+                of("2022-05-23T21:59:59Z", "+02:00", args(22, 23), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(22, 22), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(24, 25), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(20, 22), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, 23, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(22, 23, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, 24, "GMT"), true),
+                of("2022-05-23T00:00:00Z", "+00:00", args(23, 24, "GMT"), true),
+                of("2022-05-23T23:59:59Z", "+00:00", args(22, 23, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(24, 24, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(24, 27, "GMT"), false),
+
+                // 4 arguments: day1/month1 and day2/month2
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, "MAY", 23, "MAY"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, "MAY", 24, "MAY"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(22, "MAY", 23, "MAY"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "APR", 1, "JUN"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "JAN", 1, "DEC"), true),
+                of("2022-05-22T22:00:00Z", "+02:00", args(23, "MAY", 24, "MAY"), true),
+                of("2022-05-23T21:59:59Z", "+02:00", args(22, "MAY", 23, "MAY"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(22, "MAY", 22, "MAY"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "MAR", 1, "APR"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "JUN", 1, "APR"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, "MAY", 23, "MAY", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, "MAY", 24, "MAY", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(22, "MAY", 23, "MAY", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "APR", 1, "JUN", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "JAN", 1, "DEC", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(22, "MAY", 22, "MAY", "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "MAR", 1, "APR", "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "JUN", 1, "APR", "GMT"), false),
+
+                // 4 arguments: month1/year1 and month2/year2
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY", 2022, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("APR", 2022, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY", 2022, "JUN", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY", 2021, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY", 2022, "MAY", 2023), true),
+                of("2022-04-30T22:00:00Z", "+02:00", args("MAY", 2022, "JUN", 2022), true),
+                of("2022-05-31T21:59:59Z", "+02:00", args("APR", 2022, "MAY", 2022), true),
+                of("2022-04-30T21:59:59Z", "+02:00", args("MAY", 2022, "JUN", 2022), false),
+                of("2022-05-31T22:00:00Z", "+02:00", args("APR", 2022, "MAY", 2022), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("APR", 2022, "APR", 2022), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("JUN", 2022, "JUN", 2022), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MAY", 2021, "MAY", 2021), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAY", 2022, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("APR", 2022, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAY", 2022, "JUN", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAY", 2021, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAY", 2022, "MAY", 2023, "GMT"), true),
+                of("2022-05-01T00:00:00Z", "+00:00", args("MAY", 2022, "JUN", 2022, "GMT"), true),
+                of("2022-05-31T23:59:59Z", "+00:00", args("APR", 2022, "MAY", 2022, "GMT"), true),
+                of("2022-04-30T23:59:59Z", "+00:00", args("MAY", 2022, "JUN", 2022, "GMT"), false),
+                of("2022-06-01T00:00:00Z", "+00:00", args("APR", 2022, "MAY", 2022, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("APR", 2022, "APR", 2022, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("JUN", 2022, "JUN", 2022, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MAY", 2021, "MAY", 2021, "GMT"), false),
+
+                // 6 arguments: day1/month1/year1 and day2/month2/year2
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, "MAY", 2022, 23, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, "MAY", 2022, 24, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(22, "MAY", 2022, 23, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, "MAY", 2022, 23, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "MAY", 2022, 31, "MAY", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "APR", 2022, 30, "JUN", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "JAN", 2022, 31, "DEC", 2022), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "JAN", 2020, 31, "DEC", 2023), true),
+                of("2022-05-22T22:00:00Z", "+02:00", args(23, "MAY", 2022, 23, "MAY", 2022), true),
+                of("2022-05-23T21:59:59Z", "+02:00", args(23, "MAY", 2022, 23, "MAY", 2022), true),
+                of("2022-05-22T21:59:59Z", "+02:00", args(23, "MAY", 2022, 23, "MAY", 2022), false),
+                of("2022-05-23T22:00:00Z", "+02:00", args(23, "MAY", 2022, 23, "MAY", 2022), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, "JAN", 2020, 31, "DEC", 2021), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(22, "MAY", 2022, 22, "MAY", 2022), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(23, "APR", 2022, 23, "APR", 2022), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, "MAY", 2022, 23, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, "MAY", 2022, 24, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(22, "MAY", 2022, 23, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, "MAY", 2022, 23, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "MAY", 2022, 31, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "APR", 2022, 30, "JUN", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "JAN", 2022, 31, "DEC", 2022, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "JAN", 2020, 31, "DEC", 2023, "GMT"), true),
+                of("2022-05-23T00:00:00Z", "+00:00", args(23, "MAY", 2022, 23, "MAY", 2022, "GMT"), true),
+                of("2022-05-23T23:59:59Z", "+00:00", args(23, "MAY", 2022, 23, "MAY", 2022, "GMT"), true),
+                of("2022-05-22T23:59:59Z", "+00:00", args(23, "MAY", 2022, 23, "MAY", 2022, "GMT"), false),
+                of("2022-05-24T00:00:00Z", "+00:00", args(23, "MAY", 2022, 23, "MAY", 2022, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "JAN", 2020, 31, "DEC", 2021, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(22, "MAY", 2022, 22, "MAY", 2022, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(23, "APR", 2022, 23, "APR", 2022, "GMT"), false),
+
+                // too many parameters
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "MAY", 2000, 4, "OCT", 2022, 2022), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1, "MAY", 2000, 4, "OCT", 2022, 2022, "GMT"), false)
+                );
+    }
+
+    @ParameterizedTest
+    @MethodSource("weekdays")
+    void weekdayRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
+
+        // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
+        PacHelperFunctions.setClock(Clock.fixed(Instant.parse(currentDateTime), ZoneOffset.of(offset)));
+
+        assertThat(PacHelperFunctions.weekdayRange(args)).isEqualTo(expectedResult);
+    }
+
+    private static Stream<Arguments> weekdays() {
+        return Stream.of(
+                // first some error cases
+                of("2022-05-23T12:34:56Z", "+02:00", new Object[0], false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("GMT"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("garbage"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MON", "garbage"), false),
+
+                // 1 weekday parameter
+                of("2022-05-23T12:34:56Z", "+02:00", args("MON"), true),
+                of("2022-05-24T12:34:56Z", "+02:00", args("TUE"), true),
+                of("2022-05-25T12:34:56Z", "+02:00", args("WED"), true),
+                of("2022-05-26T12:34:56Z", "+02:00", args("THU"), true),
+                of("2022-05-27T12:34:56Z", "+02:00", args("FRI"), true),
+                of("2022-05-28T12:34:56Z", "+02:00", args("SAT"), true),
+                of("2022-05-29T12:34:56Z", "+02:00", args("SUN"), true),
+                of("2022-05-22T12:34:56Z", "+02:00", args("SUN"), true),
+                of("2022-05-22T22:00:00Z", "+02:00", args("MON"), true),
+                of("2022-05-23T21:59:59Z", "+02:00", args("MON"), true),
+                of("2022-05-22T21:59:59Z", "+02:00", args("MON"), false),
+                of("2022-05-23T22:00:00Z", "+02:00", args("MON"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MON", "GMT"), true),
+                of("2022-05-24T12:34:56Z", "+00:00", args("TUE", "GMT"), true),
+                of("2022-05-25T12:34:56Z", "+00:00", args("WED", "GMT"), true),
+                of("2022-05-26T12:34:56Z", "+00:00", args("THU", "GMT"), true),
+                of("2022-05-27T12:34:56Z", "+00:00", args("FRI", "GMT"), true),
+                of("2022-05-28T12:34:56Z", "+00:00", args("SAT", "GMT"), true),
+                of("2022-05-29T12:34:56Z", "+00:00", args("SUN", "GMT"), true),
+                of("2022-05-22T12:34:56Z", "+00:00", args("SUN", "GMT"), true),
+                of("2022-05-23T00:00:00Z", "+00:00", args("MON", "GMT"), true),
+                of("2022-05-23T21:59:59Z", "+00:00", args("MON", "GMT"), true),
+                of("2022-05-22T23:59:59Z", "+00:00", args("MON", "GMT"), false),
+                of("2022-05-24T00:00:00Z", "+00:00", args("MON", "GMT"), false),
+
+                // 2 weekday parameters
+                of("2022-05-23T12:34:56Z", "+02:00", args("MON", "MON"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("SUN", "MON"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MON", "TUE"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("SUN", "TUE"), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args("FRI", "WED"), true),
+                of("2022-05-22T22:00:00Z", "+02:00", args("MON", "TUE"), true),
+                of("2022-05-23T21:59:59Z", "+02:00", args("SUN", "MON"), true),
+                of("2022-05-22T21:59:59Z", "+02:00", args("MON", "TUE"), false),
+                of("2022-05-23T22:00:00Z", "+02:00", args("SUN", "MON"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("TUE", "WED"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("TUE", "SUN"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MON", "MON", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("SUN", "MON", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("MON", "TUE", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("SUN", "TUE", "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args("FRI", "WED", "GMT"), true),
+                of("2022-05-23T00:00:00Z", "+00:00", args("MON", "TUE", "GMT"), true),
+                of("2022-05-23T21:59:59Z", "+00:00", args("SUN", "MON", "GMT"), true),
+                of("2022-05-22T23:59:59Z", "+00:00", args("MON", "TUE", "GMT"), false),
+                of("2022-05-24T00:00:00Z", "+00:00", args("SUN", "MON", "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("TUE", "WED", "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("TUE", "SUN", "GMT"), false),
+
+                // too many parameters
+                of("2022-05-23T12:34:56Z", "+02:00", args("MON", "TUE", "WED"), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args("MON", "TUE", "WED", "GMT"), false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("time")
+    void timeRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
+
+        // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
+        PacHelperFunctions.setClock(Clock.fixed(Instant.parse(currentDateTime), ZoneOffset.of(offset)));
+
+        assertThat(PacHelperFunctions.timeRange(args)).isEqualTo(expectedResult);
+    }
+
+    private static Stream<Arguments> time() {
+        return Stream.of(
+                // first some error cases
+                of("2022-05-23T12:34:56Z", "+02:00", new Object[0], false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(1234), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12), false),
+
+                // 1 parameter (hour)
+                of("2022-05-23T12:34:56Z", "+02:00", args(14), true),
+                of("2022-05-23T12:00:00Z", "+02:00", args(14), true),
+                of("2022-05-23T12:59:59Z", "+02:00", args(14), true),
+                of("2022-05-23T13:00:00Z", "+02:00", args(15), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(13), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(24), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, "GMT"), true),
+                of("2022-05-23T12:00:00Z", "+00:00", args(12, "GMT"), true),
+                of("2022-05-23T12:59:59Z", "+00:00", args(12, "GMT"), true),
+                of("2022-05-23T13:00:00Z", "+00:00", args(13, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(13, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(24, "GMT"), false),
+
+                // 2 parameters (hour1/2)
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 14), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 15), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(13, 14), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(13, 15), true),
+                of("2022-05-23T12:00:00Z", "+02:00", args(14, 15), true),
+                of("2022-05-23T12:59:59Z", "+02:00", args(13, 14), true),
+                of("2022-05-23T11:59:59Z", "+02:00", args(14, 15), false),
+                of("2022-05-23T13:00:00Z", "+02:00", args(13, 14), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(15, 18), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 12, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 13, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 13, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(11, 14, "GMT"), true),
+                of("2022-05-23T12:00:00Z", "+00:00", args(12, 13, "GMT"), true),
+                of("2022-05-23T12:59:59Z", "+00:00", args(11, 12, "GMT"), true),
+                of("2022-05-23T11:59:59Z", "+00:00", args(12, 13, "GMT"), false),
+                of("2022-05-23T13:00:00Z", "+00:00", args(11, 12, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(14, 18, "GMT"), false),
+
+                // 4 parameters (hour1/minutes1 and hour2/minutes2)
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 14, 34), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 33, 14, 34), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 14, 35), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(13, 34, 14, 34), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 15, 34), true),
+                of("2022-05-23T12:34:00Z", "+02:00", args(14, 34, 14, 34), true),
+                of("2022-05-23T12:34:59Z", "+02:00", args(14, 34, 14, 34), true),
+                of("2022-05-23T12:33:59Z", "+02:00", args(14, 34, 14, 34), false),
+                of("2022-05-23T12:35:00Z", "+02:00", args(14, 34, 14, 34), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 12, 34, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 33, 12, 34, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 12, 35, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(11, 34, 12, 34, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 13, 34, "GMT"), true),
+                of("2022-05-23T12:34:00Z", "+00:00", args(12, 34, 12, 34, "GMT"), true),
+                of("2022-05-23T12:34:59Z", "+00:00", args(12, 34, 12, 34, "GMT"), true),
+                of("2022-05-23T12:33:59Z", "+00:00", args(12, 34, 12, 34, "GMT"), false),
+                of("2022-05-23T12:35:00Z", "+00:00", args(12, 34, 12, 34, "GMT"), false),
+
+                // 6 parameters (hour1/minutes1/seconds1 and hour2/minutes2/seconds2)
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 56, 14, 34, 56), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 55, 14, 34, 56), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 56, 14, 34, 57), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(13, 34, 56, 14, 34, 56), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 56, 14, 35, 0), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 0, 14, 34, 56), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 57, 14, 35, 0), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 0, 14, 34, 55), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(13, 34, 56, 13, 34, 56), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 56, 12, 34, 56, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 55, 12, 34, 56, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 56, 12, 34, 57, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(11, 34, 56, 12, 34, 56, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 56, 12, 35, 0, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 0, 12, 34, 56, "GMT"), true),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 57, 12, 35, 0, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 0, 12, 34, 55, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(13, 34, 56, 13, 34, 56, "GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 12, 12, 12, 12, 12, "GMT"), false)
+                );
+    }
+
+    private static Object[] args(Object... args) {
+        return args;
+    }
+}

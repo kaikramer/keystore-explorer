@@ -35,22 +35,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptException;
 
 import org.kse.utilities.io.CopyUtil;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
  * Proxy Selector for Proxy Automatic Configuration (PAC).
  */
 public class PacProxySelector extends ProxySelector {
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/net/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/net/resources");
 
     private Invocable pacScript;
-    private String pacUrl;
+    private final String pacUrl;
 
     /**
      * Construct PacProxySelector using an Automatic proxy configuration URL.
@@ -146,15 +150,26 @@ public class PacProxySelector extends ProxySelector {
 
     private Invocable compilePacScript(String pacScript) throws PacProxyException {
         try {
-            ScriptEngineManager mgr = new ScriptEngineManager();
-            ScriptEngine jsEngine = mgr.getEngineByName("JavaScript");
+            ScriptEngineFactory scriptEngineFactory = new NashornScriptEngineFactory();
+            ScriptEngine jsEngine = scriptEngineFactory.getScriptEngine();
 
-            Invocable invocale = (Invocable) jsEngine;
+            jsEngine.put("dnsDomainIs", (BiFunction<String, String, Boolean>) PacHelperFunctions::dnsDomainIs);
+            jsEngine.put("dnsDomainLevels", (Function<String, Integer>) PacHelperFunctions::dnsDomainLevels);
+            jsEngine.put("dnsResolve", (Function<String, String>) PacHelperFunctions::dnsResolve);
+            jsEngine.put("isResolvable", (Function<String, Boolean>) PacHelperFunctions::isResolvable);
+            jsEngine.put("myIpAddress", (Supplier<String>) PacHelperFunctions::myIpAddress);
+            jsEngine.put("isPlainHostName", (Function<String, Boolean>) PacHelperFunctions::isPlainHostName);
+            jsEngine.put("localHostOrDomainIs", (BiFunction<String, String, Boolean>) PacHelperFunctions::localHostOrDomainIs);
+            jsEngine.put("shExpMatch", (BiFunction<String, String, Boolean>) PacHelperFunctions::shExpMatch);
+            jsEngine.put("isInNet", (TriFunction<String, String, String, Boolean>) PacHelperFunctions::isInNet);
+            jsEngine.put("dateRange", (Function<Object[], Boolean>) PacHelperFunctions::dateRange);
+            jsEngine.put("weekdayRange", (Function<Object[], Boolean>) PacHelperFunctions::weekdayRange);
+            jsEngine.put("timeRange", (Function<Object[], Boolean>) PacHelperFunctions::timeRange);
 
             jsEngine.eval(pacScript);
-            jsEngine.eval(new InputStreamReader(PacProxySelector.class.getResourceAsStream("pacUtils.js")));
+//            jsEngine.eval(new InputStreamReader(PacProxySelector.class.getResourceAsStream("pacUtils.js")));
 
-            return invocale;
+            return (Invocable) jsEngine;
         } catch (ScriptException ex) {
             throw new PacProxyException(res.getString("NoCompilePacScript.exception.message"), ex);
         }
