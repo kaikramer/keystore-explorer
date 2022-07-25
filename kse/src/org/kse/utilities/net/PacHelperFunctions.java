@@ -29,6 +29,7 @@ public class PacHelperFunctions {
             "OCT", "NOV", "DEC");
 
     private PacHelperFunctions() {
+        // hide default c-tor
     }
 
     // explicitly define a clock for overriding the current time in unit tests
@@ -199,8 +200,7 @@ public class PacHelperFunctions {
      * @param args One or two dates as specified above and an optional GMT flag
      * @return True, if current date is within the given date range
      */
-    public static boolean
-    dateRange(Object... args) {
+    public static boolean dateRange(Object... args) {
         if (args.length == 0) {
             return false;
         }
@@ -408,9 +408,10 @@ public class PacHelperFunctions {
             return false;
         }
 
-        // handle date change
+        // handle special case where the given time range crosses midnight
         if (date2.isBefore(date1)) {
-            date2 = date2.plusDays(1);
+            return now.toInstant().toEpochMilli() <= date2.toInstant().toEpochMilli()
+                   || now.toInstant().toEpochMilli() >= date1.toInstant().toEpochMilli();
         }
 
         // convert to long values because isAfter()/isBefore() are not inclusive
@@ -431,7 +432,7 @@ public class PacHelperFunctions {
 
         byte[] result = new byte[4];
         try {
-            for (int i = 1; i < 4; i++) {
+            for (int i = 1; i <= 4; i++) {
                 int group = Integer.parseInt(matcher.group(i));
                 if (group < 0 || group > 255) {
                     return null;

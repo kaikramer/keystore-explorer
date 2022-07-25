@@ -11,32 +11,83 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class PacHelperFunctionsTest {
 
-    @Test void dnsDomainIs() {
+    @ParameterizedTest
+    @CsvSource({
+            "www.netscape.com, .netscape.com, true",
+            "test.netscape.com, .netscape.com, true",
+            "www.netscape.com, netscape.com, true",
+            "www, .netscape.com, false",
+            "www.mcom.com, .netscape.com, false",
+    })
+    void dnsDomainIs(String host, String domain, boolean result) {
+        assertThat(PacHelperFunctions.dnsDomainIs(host, domain)).isEqualTo(result);
     }
 
-    @Test void dnsDomainLevels() {
+    @ParameterizedTest
+    @CsvSource({
+            "www, 0",
+            "netscape.com, 1",
+            "www.netscape.com, 2",
+    })
+    void dnsDomainLevels(String host, int result) {
+        assertThat(PacHelperFunctions.dnsDomainLevels(host)).isEqualTo(result);
     }
 
     @Test void dnsResolve() {
+        // TODO any way to test this?
     }
 
     @Test void myIpAddress() {
+        // TODO any way to test this?
     }
 
-    @Test void isInNet() {
+    @ParameterizedTest
+    @CsvSource({
+            "198.95.249.79, 198.95.249.79, 255.255.255.255, true",
+            "198.95.249.78, 198.95.249.79, 255.255.255.255, false",
+            "198.95.249.80, 198.95.249.79, 255.255.255.255, false",
+            "198.95.0.0, 198.95.0.0, 255.255.0.0, true",
+            "198.95.0.1, 198.95.0.0, 255.255.0.0, true",
+            "198.95.1.1, 198.95.0.0, 255.255.0.0, true",
+            "198.95.255.1, 198.95.0.0, 255.255.0.0, true",
+            "198.95.255.255, 198.95.0.0, 255.255.0.0, true",
+            "198.94.0.0, 198.95.0.0, 255.255.0.0, false",
+
+            // some general error cases
+            "256.0.0.0, 0.0.0.0, 0.0.0.0, false",
+            "0.256.0.0, 0.0.0.0, 0.0.0.0, false",
+            "0.0.256.0, 0.0.0.0, 0.0.0.0, false",
+            "0.0.0.256, 0.0.0.0, 0.0.0.0, false",
+            "0.0.0.0.0, 0.0.0.0, 0.0.0.0, false",
+            "0.0.0.0, 256.0.0.0, 0.0.0.0, false",
+            "0.0.0.0, 256.0.0.0, 256.0.0.0, false",
+    })
+    void isInNet(String host, String pattern, String mask, boolean result) {
+        assertThat(PacHelperFunctions.isInNet(host, pattern, mask)).isEqualTo(result);
     }
 
-    @Test void isPlainHostName() {
+    @ParameterizedTest
+    @CsvSource({
+            "www, true",
+            "localhost, true",
+            "netscape.com, false",
+            "www.netscape.com, false",
+    })
+    void isPlainHostName(String host, boolean result) {
+        assertThat(PacHelperFunctions.isPlainHostName(host)).isEqualTo(result);
     }
 
     @Test void isResolvable() {
+        // TODO any way to test this?
     }
 
     @Test void localHostOrDomainIs() {
+
     }
 
     @Test void shExpMatch() {
@@ -322,6 +373,8 @@ class PacHelperFunctionsTest {
                 // first some error cases
                 of("2022-05-23T12:34:56Z", "+02:00", new Object[0], false),
                 of("2022-05-23T12:34:56Z", "+00:00", args("GMT"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("garbage"), false),
+                of("2022-05-23T12:34:56Z", "+00:00", args("garbage", "GMT"), false),
                 of("2022-05-23T12:34:56Z", "+00:00", args(1234), false),
                 of("2022-05-23T12:34:56Z", "+00:00", args(12), false),
 
@@ -344,6 +397,8 @@ class PacHelperFunctionsTest {
                 of("2022-05-23T12:34:56Z", "+02:00", args(14, 15), true),
                 of("2022-05-23T12:34:56Z", "+02:00", args(13, 14), true),
                 of("2022-05-23T12:34:56Z", "+02:00", args(13, 15), true),
+                of("2022-05-23T01:34:56Z", "+02:00", args(20, 10), true),
+                of("2022-05-23T12:34:56Z", "+02:00", args(20, 10), false),
                 of("2022-05-23T12:00:00Z", "+02:00", args(14, 15), true),
                 of("2022-05-23T12:59:59Z", "+02:00", args(13, 14), true),
                 of("2022-05-23T11:59:59Z", "+02:00", args(14, 15), false),
@@ -384,6 +439,10 @@ class PacHelperFunctionsTest {
                 of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 55, 14, 34, 56), true),
                 of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 56, 14, 34, 57), true),
                 of("2022-05-23T12:34:56Z", "+02:00", args(13, 34, 56, 14, 34, 56), true),
+                of("2022-05-23T22:00:00Z", "+02:00", args(0, 0, 0, 0, 0, 30), true),
+                of("2022-05-23T22:00:30Z", "+02:00", args(0, 0, 0, 0, 0, 30), true),
+                of("2022-05-23T22:00:31Z", "+02:00", args(0, 0, 0, 0, 0, 30), false),
+                of("2022-05-23T21:59:59Z", "+02:00", args(0, 0, 0, 0, 0, 30), false),
                 of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 56, 14, 35, 0), true),
                 of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 0, 14, 34, 56), true),
                 of("2022-05-23T12:34:56Z", "+02:00", args(14, 34, 57, 14, 35, 0), false),
@@ -398,8 +457,12 @@ class PacHelperFunctionsTest {
                 of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 57, 12, 35, 0, "GMT"), false),
                 of("2022-05-23T12:34:56Z", "+00:00", args(12, 34, 0, 12, 34, 55, "GMT"), false),
                 of("2022-05-23T12:34:56Z", "+00:00", args(13, 34, 56, 13, 34, 56, "GMT"), false),
-                of("2022-05-23T12:34:56Z", "+00:00", args(12, 12, 12, 12, 12, 12, "GMT"), false)
-                );
+                of("2022-05-23T12:34:56Z", "+00:00", args(12, 12, 12, 12, 12, 12, "GMT"), false),
+
+                // too many parameters
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, 2, 3, 4, 5, 6, 7), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(1, 2, 3, 4, 5, 6, 7, "GMT"), false)
+        );
     }
 
     private static Object[] args(Object... args) {
