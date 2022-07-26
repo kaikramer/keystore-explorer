@@ -86,11 +86,26 @@ class PacHelperFunctionsTest {
         // TODO any way to test this?
     }
 
-    @Test void localHostOrDomainIs() {
+    @ParameterizedTest
+    @CsvSource({
+            "www.netscape.com, www.netscape.com, true",
+            "www, www.netscape.com, true",
+            "home.netscape.com, www.netscape.com, false",
+            "www.netscape, www.netscape.com, false",
+            "www.mcom.com, www.netscape.com, false",
 
+    })
+    void localHostOrDomainIs(String host, String domain, boolean result) {
+        assertThat(PacHelperFunctions.localHostOrDomainIs(host, domain)).isEqualTo(result);
     }
 
-    @Test void shExpMatch() {
+    @ParameterizedTest
+    @CsvSource({
+            "http://home.netscape.com/people/ari/index.html, */ari/*, true",
+            "http://home.netscape.com/people/montulli/index.html, */ari/*, false"
+    })
+    void shExpMatch(String str, String shexp, boolean result) {
+        assertThat(PacHelperFunctions.shExpMatch(str, shexp)).isEqualTo(result);
     }
 
     @ParameterizedTest

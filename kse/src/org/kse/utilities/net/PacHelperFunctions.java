@@ -136,12 +136,12 @@ public class PacHelperFunctions {
      * Is true if the hostname matches exactly the specified domain,
      * or if there is no domain name part in the hostname, but the unqualified hostname matches.
      *
-     * @param host A hostname
-     * @param hostDomain A domain
+     * @param hostname A hostname
+     * @param domain A fully qualified hostname to match against
      * @return True, if hostname matches the domain
      */
-    public static boolean localHostOrDomainIs(String host, String hostDomain) {
-        return (Objects.equals(host, hostDomain)) || (hostDomain.lastIndexOf(host + '.', 0) == 0);
+    public static boolean localHostOrDomainIs(String hostname, String domain) {
+        return (Objects.equals(hostname, domain)) || (!hostname.contains(".") && domain.startsWith(hostname));
     }
 
     /**
@@ -217,7 +217,7 @@ public class PacHelperFunctions {
 
         // special case "only one argument": just check if day, month and year match
         if (argCount == 1) {
-            ZonedDateTime otherZdt = updateWithValueFromParams(now, args[0]);
+            ZonedDateTime otherZdt = updateZonedDateTimeWithValueFromParams(now, args[0]);
 
             return now.getDayOfMonth() == otherZdt.getDayOfMonth() &&
                    now.getMonth().equals(otherZdt.getMonth()) &&
@@ -234,12 +234,12 @@ public class PacHelperFunctions {
 
         // first half of arguments always belongs to first date
         for (int i = 0; i < argCount / 2; i++) {
-            date1 = updateWithValueFromParams(date1, args[i]);
+            date1 = updateZonedDateTimeWithValueFromParams(date1, args[i]);
         }
 
         // now same for second date / second half of arguments
         for (int i = argCount / 2; i < argCount; i++) {
-            date2 = updateWithValueFromParams(date2, args[i]);
+            date2 = updateZonedDateTimeWithValueFromParams(date2, args[i]);
         }
 
         // if only day is given, adjust months to current month
@@ -253,7 +253,7 @@ public class PacHelperFunctions {
                && now.toInstant().toEpochMilli() <= date2.toInstant().toEpochMilli();
     }
 
-    private static ZonedDateTime updateWithValueFromParams(ZonedDateTime zdt, Object value) {
+    private static ZonedDateTime updateZonedDateTimeWithValueFromParams(ZonedDateTime zdt, Object value) {
         if (MONTHS.contains(value)) {
             return zdt.withMonth(MONTHS.indexOf(value) + 1);
         } else if (value instanceof Number) {
