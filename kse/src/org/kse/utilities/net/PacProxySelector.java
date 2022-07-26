@@ -41,11 +41,10 @@ import java.util.function.Supplier;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.kse.utilities.io.CopyUtil;
-import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
  * Proxy Selector for Proxy Automatic Configuration (PAC).
@@ -150,8 +149,8 @@ public class PacProxySelector extends ProxySelector {
 
     private Invocable compilePacScript(String pacScript) throws PacProxyException {
         try {
-            ScriptEngineFactory scriptEngineFactory = new NashornScriptEngineFactory();
-            ScriptEngine jsEngine = scriptEngineFactory.getScriptEngine();
+            // this loads the built-in Nashorn engine; only if it's missing (=> Java 15) the standalone Nashorn is used
+            ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("nashorn");
 
             jsEngine.put("dnsDomainIs", (BiFunction<String, String, Boolean>) PacHelperFunctions::dnsDomainIs);
             jsEngine.put("dnsDomainLevels", (Function<String, Integer>) PacHelperFunctions::dnsDomainLevels);
@@ -167,7 +166,6 @@ public class PacProxySelector extends ProxySelector {
             jsEngine.put("timeRange", (Function<Object[], Boolean>) PacHelperFunctions::timeRange);
 
             jsEngine.eval(pacScript);
-//            jsEngine.eval(new InputStreamReader(PacProxySelector.class.getResourceAsStream("pacUtils.js")));
 
             return (Invocable) jsEngine;
         } catch (ScriptException ex) {
