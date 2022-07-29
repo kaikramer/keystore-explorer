@@ -115,11 +115,7 @@ dependencies {
 	implementation("com.miglayout:miglayout-swing:5.3")
 	implementation("com.formdev:flatlaf:2.0.1")
 	implementation('com.nimbusds:nimbus-jose-jwt:9.18')
-
-	// the nashorn jar is compiled for Java 11, so we include it only in the full distribution
-	if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-		implementation('org.openjdk.nashorn:nashorn-core:15.4')
-	}
+	implementation('org.openjdk.nashorn:nashorn-core:15.4')
 
 	// VAqua Look & Feel not in a public repository yet
 	if (file("lib/VAqua8.jar").exists()) {
