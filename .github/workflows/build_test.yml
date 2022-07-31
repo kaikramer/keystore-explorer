@@ -3,6 +3,7 @@ name: Build KSE and run tests
 on:
   pull_request:
     branches: [ main ]
+  push:
 
 jobs:
   build:

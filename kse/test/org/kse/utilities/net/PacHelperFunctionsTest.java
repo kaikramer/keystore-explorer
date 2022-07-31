@@ -3,11 +3,15 @@ package org.kse.utilities.net;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.stream.Stream;
 
+import org.bouncycastle.util.IPAddress;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,6 +19,16 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class PacHelperFunctionsTest {
+
+    private static String myHostName;
+    private static String myIpAddress;
+
+    @BeforeAll
+    static void beforeAll() throws UnknownHostException {
+        // NOTE: some tests require that the unit tests are executed in an environment with working name resolution!
+        myHostName = Inet4Address.getLocalHost().getHostName();
+        myIpAddress = Inet4Address.getLocalHost().getHostAddress();
+    }
 
     @ParameterizedTest
     @CsvSource({
@@ -33,17 +47,41 @@ class PacHelperFunctionsTest {
             "www, 0",
             "netscape.com, 1",
             "www.netscape.com, 2",
+            "sub1.sub2.netscape.com, 3",
     })
     void dnsDomainLevels(String host, int result) {
         assertThat(PacHelperFunctions.dnsDomainLevels(host)).isEqualTo(result);
     }
 
-    @Test void dnsResolve() {
-        // TODO any way to test this?
+    @ParameterizedTest
+    @MethodSource
+    void dnsResolve(String hostName, String expectedIpAddress) {
+        assertThat(PacHelperFunctions.dnsResolve(hostName)).isEqualTo(expectedIpAddress);
     }
 
-    @Test void myIpAddress() {
-        // TODO any way to test this?
+    private static Stream<Arguments> dnsResolve() {
+        return Stream.of(
+                of(myHostName, myIpAddress),
+                of("thishostdoesnotexist", "")
+                );
+    }
+
+    @Test
+    void myIpAddress() {
+        assertThat(IPAddress.isValid(PacHelperFunctions.myIpAddress())).isTrue();
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void isResolvable(String hostName, boolean expectedResult) {
+        assertThat(PacHelperFunctions.isResolvable(hostName)).isEqualTo(expectedResult);
+    }
+
+    private static Stream<Arguments> isResolvable() {
+        return Stream.of(
+                of(myHostName, true),
+                of("thishostdoesnotexist", false)
+        );
     }
 
     @ParameterizedTest
@@ -82,10 +120,6 @@ class PacHelperFunctionsTest {
         assertThat(PacHelperFunctions.isPlainHostName(host)).isEqualTo(result);
     }
 
-    @Test void isResolvable() {
-        // TODO any way to test this?
-    }
-
     @ParameterizedTest
     @CsvSource({
             "www.netscape.com, www.netscape.com, true",
@@ -109,7 +143,7 @@ class PacHelperFunctionsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("dates")
+    @MethodSource
     void dateRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
 
         // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
@@ -118,7 +152,7 @@ class PacHelperFunctionsTest {
         assertThat(PacHelperFunctions.dateRange(args)).isEqualTo(expectedResult);
     }
 
-    private static Stream<Arguments> dates() {
+    private static Stream<Arguments> dateRange() {
         return Stream.of(
                 // missing parameters
                 of("2022-05-23T12:34:56Z", "+02:00", new Object[0], false),
@@ -300,7 +334,7 @@ class PacHelperFunctionsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("weekdays")
+    @MethodSource
     void weekdayRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
 
         // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
@@ -309,7 +343,7 @@ class PacHelperFunctionsTest {
         assertThat(PacHelperFunctions.weekdayRange(args)).isEqualTo(expectedResult);
     }
 
-    private static Stream<Arguments> weekdays() {
+    private static Stream<Arguments> weekdayRange() {
         return Stream.of(
                 // first some error cases
                 of("2022-05-23T12:34:56Z", "+02:00", new Object[0], false),
@@ -374,7 +408,7 @@ class PacHelperFunctionsTest {
     }
 
     @ParameterizedTest
-    @MethodSource("time")
+    @MethodSource
     void timeRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
 
         // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
@@ -383,7 +417,7 @@ class PacHelperFunctionsTest {
         assertThat(PacHelperFunctions.timeRange(args)).isEqualTo(expectedResult);
     }
 
-    private static Stream<Arguments> time() {
+    private static Stream<Arguments> timeRange() {
         return Stream.of(
                 // first some error cases
                 of("2022-05-23T12:34:56Z", "+02:00", new Object[0], false),

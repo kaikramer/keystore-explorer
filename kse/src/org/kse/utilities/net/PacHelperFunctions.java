@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.kse.utilities.StringUtils;
+
 /**
  * Implementation of the 12 PAC script helper functions as defined by Netscape.
  * <p>
@@ -63,14 +65,13 @@ public class PacHelperFunctions {
      * Resolves the given DNS hostname into an IPv4 address, and returns it in the dot separated format as a string.
      *
      * @param host A host name
-     * @return The resolved IPv4 address for the given hostname
+     * @return The resolved IPv4 address for the given hostname or an empty string if an error has occurred
      */
     public static String dnsResolve(String host) {
         try {
             return InetAddress.getByName(host).getHostAddress();
         } catch (UnknownHostException e) {
-            // TODO return a string instead?
-            throw new RuntimeException(e);
+            return "";
         }
     }
 
@@ -78,15 +79,10 @@ public class PacHelperFunctions {
      * Returns the IPv4 address of the host that the application is running on,
      * as a string in the dot-separated integer format.
      *
-     * @return IPv4 address of local machine
+     * @return IPv4 address of local machine or an empty string if an error has occurred
      */
     public static String myIpAddress() {
-        try {
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            // TODO return a string instead?
-            throw new RuntimeException(e);
-        }
+        return IpAddress.getIpAddress();
     }
 
     /**
@@ -129,7 +125,7 @@ public class PacHelperFunctions {
      * @return True if resolving hostname succeeds
      */
     public static boolean isResolvable(String host) {
-        return (dnsResolve(host) != null);
+        return !StringUtils.isBlank(dnsResolve(host));
     }
 
     /**
