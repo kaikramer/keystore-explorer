@@ -364,11 +364,12 @@ public class PacHelperFunctions {
         ZonedDateTime date1 = getCurrentZonedDateTime(zoneId).withHour(0).withMinute(0).withSecond(0);
         ZonedDateTime date2 = getCurrentZonedDateTime(zoneId).withHour(23).withMinute(59).withSecond(59);
 
+        if (areNotInstanceOfNumber(args, argCount)) {
+            return false;
+        }
+
         switch (argCount) {
         case 6:
-            if (areNotInstanceOfNumber(args, 6)) {
-                return false;
-            }
             date1 = date1.withHour(getTime((Number) args[0]))
                          .withMinute(getTime((Number) args[1]))
                          .withSecond(getTime((Number) args[2]));
@@ -377,16 +378,10 @@ public class PacHelperFunctions {
                          .withSecond(getTime((Number) args[5]));
             break;
         case 4:
-            if (areNotInstanceOfNumber(args, 4)) {
-                return false;
-            }
             date1 = date1.withHour(getTime((Number) args[0])).withMinute(getTime((Number) args[1]));
             date2 = date2.withHour(getTime((Number) args[2])).withMinute(getTime((Number) args[3]));
             break;
         case 2:
-            if (areNotInstanceOfNumber(args, 2)) {
-                return false;
-            }
             date1 = date1.withHour(getTime((Number) args[0]));
             date2 = date2.withHour(getTime((Number) args[1]));
             break;
