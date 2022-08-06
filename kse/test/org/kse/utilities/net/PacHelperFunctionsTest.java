@@ -147,7 +147,7 @@ class PacHelperFunctionsTest {
     void dateRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
 
         // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
-        PacHelperFunctions.setClock(Clock.fixed(Instant.parse(currentDateTime), ZoneOffset.of(offset)));
+        setClock(currentDateTime, offset);
 
         assertThat(PacHelperFunctions.dateRange(args)).isEqualTo(expectedResult);
     }
@@ -338,7 +338,7 @@ class PacHelperFunctionsTest {
     void weekdayRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
 
         // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
-        PacHelperFunctions.setClock(Clock.fixed(Instant.parse(currentDateTime), ZoneOffset.of(offset)));
+        setClock(currentDateTime, offset);
 
         assertThat(PacHelperFunctions.weekdayRange(args)).isEqualTo(expectedResult);
     }
@@ -412,7 +412,7 @@ class PacHelperFunctionsTest {
     void timeRange(String currentDateTime, String offset, Object[] args, boolean expectedResult) {
 
         // set clock to a fixed value in order to have consistent test results regardless of actual date/time/timezone
-        PacHelperFunctions.setClock(Clock.fixed(Instant.parse(currentDateTime), ZoneOffset.of(offset)));
+        setClock(currentDateTime, offset);
 
         assertThat(PacHelperFunctions.timeRange(args)).isEqualTo(expectedResult);
     }
@@ -425,7 +425,7 @@ class PacHelperFunctionsTest {
                 of("2022-05-23T12:34:56Z", "+00:00", args("garbage"), false),
                 of("2022-05-23T12:34:56Z", "+00:00", args("garbage", "GMT"), false),
                 of("2022-05-23T12:34:56Z", "+00:00", args(1234), false),
-                of("2022-05-23T12:34:56Z", "+00:00", args(12), false),
+                of("2022-05-23T12:34:56Z", "+02:00", args(14, "x", 14, 34), false),
 
                 // 1 parameter (hour)
                 of("2022-05-23T12:34:56Z", "+02:00", args(14), true),
@@ -512,6 +512,10 @@ class PacHelperFunctionsTest {
                 of("2022-05-23T12:34:56Z", "+02:00", args(1, 2, 3, 4, 5, 6, 7), false),
                 of("2022-05-23T12:34:56Z", "+02:00", args(1, 2, 3, 4, 5, 6, 7, "GMT"), false)
         );
+    }
+
+    private void setClock(String currentDateTime, String offset) {
+        PacHelperFunctions.setClock(Clock.fixed(Instant.parse(currentDateTime), ZoneOffset.of(offset)));
     }
 
     private static Object[] args(Object... args) {

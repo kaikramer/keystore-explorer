@@ -202,9 +202,9 @@ public class PacHelperFunctions {
         }
 
         boolean isGMT = "GMT".equals(args[args.length - 1]);
-        ZoneId zoneId = isGMT ? ZoneOffset.UTC : clock.getZone();
         int argCount = isGMT ? args.length - 1 : args.length;
-        ZonedDateTime now = ZonedDateTime.now(clock.withZone(zoneId));
+        ZoneId zoneId = getZoneId(isGMT);
+        ZonedDateTime now = getCurrentZonedDateTime(zoneId);
 
         // invalid number of parameters
         if (argCount == 0 || argCount > 6) {
@@ -221,12 +221,12 @@ public class PacHelperFunctions {
         }
 
         // init dates that are used for comparison later with default values
-        ZonedDateTime date1 = ZonedDateTime.now(clock.withZone(zoneId))
-                                           .with(TemporalAdjusters.firstDayOfYear())
-                                           .withHour(0).withMinute(0).withSecond(0);
-        ZonedDateTime date2 = ZonedDateTime.now(clock.withZone(zoneId))
-                                           .with(TemporalAdjusters.lastDayOfYear())
-                                           .withHour(23).withMinute(59).withSecond(59);
+        ZonedDateTime date1 = getCurrentZonedDateTime(zoneId).with(TemporalAdjusters.firstDayOfYear())
+                                                             .withHour(0)
+                                                             .withMinute(0).withSecond(0);
+        ZonedDateTime date2 = getCurrentZonedDateTime(zoneId).with(TemporalAdjusters.lastDayOfYear())
+                                                             .withHour(23)
+                                                             .withMinute(59).withSecond(59);
 
         // first half of arguments always belongs to first date
         for (int i = 0; i < argCount / 2; i++) {
@@ -247,22 +247,6 @@ public class PacHelperFunctions {
         // convert to long values because isAfter()/isBefore() are not inclusive
         return date1.toInstant().toEpochMilli() <= now.toInstant().toEpochMilli()
                && now.toInstant().toEpochMilli() <= date2.toInstant().toEpochMilli();
-    }
-
-    private static ZonedDateTime updateZonedDateTimeWithValueFromParams(ZonedDateTime zdt, Object value) {
-        if (MONTHS.contains(value)) {
-            return zdt.withMonth(MONTHS.indexOf(value) + 1);
-        } else if (value instanceof Number) {
-            int intValue = ((Number) value).intValue();
-            if (intValue <= 31) {
-                return zdt.withDayOfMonth(intValue);
-            } else {
-                return zdt.withYear(intValue);
-            }
-        } else {
-            // "GMT" or garbage
-            return zdt;
-        }
     }
 
     /**
@@ -297,9 +281,9 @@ public class PacHelperFunctions {
         }
 
         boolean isGMT = "GMT".equals(args[args.length - 1]);
-        ZoneId zoneId = isGMT ? ZoneOffset.UTC : ZoneId.systemDefault();
         int argCount = isGMT ? args.length - 1 : args.length;
-        ZonedDateTime now = ZonedDateTime.now(clock.withZone(zoneId));
+        ZoneId zoneId = getZoneId(isGMT);
+        ZonedDateTime now = getCurrentZonedDateTime(zoneId);
 
         // single weekday parameter
         if (argCount == 1) {
@@ -359,9 +343,9 @@ public class PacHelperFunctions {
         }
 
         boolean isGMT = "GMT".equals(args[args.length - 1]);
-        ZoneId zoneId = isGMT ? ZoneOffset.UTC : ZoneId.systemDefault();
         int argCount = isGMT ? args.length - 1 : args.length;
-        ZonedDateTime now = ZonedDateTime.now(clock.withZone(zoneId));
+        ZoneId zoneId = getZoneId(isGMT);
+        ZonedDateTime now = getCurrentZonedDateTime(zoneId);
 
         // only parameter is "GMT"
         if (argCount == 0) {
@@ -371,33 +355,40 @@ public class PacHelperFunctions {
         // only one hour parameter
         if (argCount == 1) {
             if (args[0] instanceof Number) {
-                return now.getHour() == getTime(args[0]);
+                return now.getHour() == getTime((Number) args[0]);
             }
             return false;
         }
 
         // init dates that are used later for comparison with default values
-        ZonedDateTime date1 = ZonedDateTime.now(clock.withZone(zoneId))
-                                           .withHour(0)
-                                           .withMinute(0)
-                                           .withSecond(0);
-        ZonedDateTime date2 = ZonedDateTime.now(clock.withZone(zoneId))
-                                           .withHour(23)
-                                           .withMinute(59)
-                                           .withSecond(59);
+        ZonedDateTime date1 = getCurrentZonedDateTime(zoneId).withHour(0).withMinute(0).withSecond(0);
+        ZonedDateTime date2 = getCurrentZonedDateTime(zoneId).withHour(23).withMinute(59).withSecond(59);
 
         switch (argCount) {
         case 6:
-            date1 = date1.withHour(getTime(args[0])).withMinute(getTime(args[1])).withSecond(getTime(args[2]));
-            date2 = date2.withHour(getTime(args[3])).withMinute(getTime(args[4])).withSecond(getTime(args[5]));
+            if (areNotInstanceOfNumber(args, 6)) {
+                return false;
+            }
+            date1 = date1.withHour(getTime((Number) args[0]))
+                         .withMinute(getTime((Number) args[1]))
+                         .withSecond(getTime((Number) args[2]));
+            date2 = date2.withHour(getTime((Number) args[3]))
+                         .withMinute(getTime((Number) args[4]))
+                         .withSecond(getTime((Number) args[5]));
             break;
         case 4:
-            date1 = date1.withHour(getTime(args[0])).withMinute(getTime(args[1]));
-            date2 = date2.withHour(getTime(args[2])).withMinute(getTime(args[3]));
+            if (areNotInstanceOfNumber(args, 4)) {
+                return false;
+            }
+            date1 = date1.withHour(getTime((Number) args[0])).withMinute(getTime((Number) args[1]));
+            date2 = date2.withHour(getTime((Number) args[2])).withMinute(getTime((Number) args[3]));
             break;
         case 2:
-            date1 = date1.withHour(getTime(args[0]));
-            date2 = date2.withHour(getTime(args[1]));
+            if (areNotInstanceOfNumber(args, 2)) {
+                return false;
+            }
+            date1 = date1.withHour(getTime((Number) args[0]));
+            date2 = date2.withHour(getTime((Number) args[1]));
             break;
         default:
             // wrong number of arguments
@@ -415,9 +406,33 @@ public class PacHelperFunctions {
                && now.toInstant().toEpochMilli() <= date2.toInstant().toEpochMilli();
     }
 
-    private static int getTime(Object arg) {
-        // TODO catch exception here?
-        return ((Number) arg).intValue();
+    private static boolean areNotInstanceOfNumber(Object[] args, int argsToCheck) {
+        for (int i = 0; i < argsToCheck; i++) {
+            if (!(args[i] instanceof Number)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int getTime(Number arg) {
+        return arg.intValue();
+    }
+
+    private static ZonedDateTime updateZonedDateTimeWithValueFromParams(ZonedDateTime zdt, Object value) {
+        if (MONTHS.contains(value)) {
+            return zdt.withMonth(MONTHS.indexOf(value) + 1);
+        } else if (value instanceof Number) {
+            int intValue = ((Number) value).intValue();
+            if (intValue <= 31) {
+                return zdt.withDayOfMonth(intValue);
+            } else {
+                return zdt.withYear(intValue);
+            }
+        } else {
+            // "GMT" or garbage
+            return zdt;
+        }
     }
 
     private static byte[] convertIpv4AddressToBytes(String ipAddr) {
@@ -440,5 +455,13 @@ public class PacHelperFunctions {
         }
 
         return result;
+    }
+
+    private static ZoneId getZoneId(boolean isGMT) {
+        return isGMT ? ZoneOffset.UTC : clock.getZone();
+    }
+
+    private static ZonedDateTime getCurrentZonedDateTime(ZoneId zoneId) {
+        return ZonedDateTime.now(clock.withZone(zoneId));
     }
 }
