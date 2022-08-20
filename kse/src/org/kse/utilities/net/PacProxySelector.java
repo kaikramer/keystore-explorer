@@ -19,9 +19,13 @@
  */
 package org.kse.utilities.net;
 
+import static java.util.Collections.singletonList;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -32,19 +36,24 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.kse.utilities.TriFunction;
+import org.kse.utilities.VarFunction;
 import org.kse.utilities.io.CopyUtil;
+import org.kse.version.JavaVersion;
 
 /**
  * Proxy Selector for Proxy Automatic Configuration (PAC).
@@ -53,20 +62,32 @@ public class PacProxySelector extends ProxySelector {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/net/resources");
 
     private Invocable pacScript;
-    private final String pacUrl;
+    private final URI pacURI;
+    private final Map<URI, List<Proxy>> uriToProxiesCache = new HashMap<>();
+
+    /**
+     * Class filter to restrict access to JRE from PAC script
+     */
+    // TODO comment in again when support for Java 8 is dropped
+//    static class PacClassFilter implements ClassFilter {
+//        @Override
+//        public boolean exposeToScripts(String s) {
+//            return false;
+//        }
+//    }
 
     /**
      * Construct PacProxySelector using an Automatic proxy configuration URL.
      * Loads the PAC script from the supplied URL.
      *
-     * @param pacUrl Automatic proxy configuration URL
+     * @param pacURI Automatic proxy configuration URL
      */
-    public PacProxySelector(String pacUrl) {
-        if (pacUrl == null) {
-            throw new NullPointerException();
+    public PacProxySelector(URI pacURI) {
+        if (pacURI == null) {
+            throw new IllegalArgumentException("PAC URL is missing");
         }
 
-        this.pacUrl = pacUrl;
+        this.pacURI = pacURI;
 
         // As load and compile of pac scripts is time-consuming we do this on first call to select
     }
@@ -75,48 +96,48 @@ public class PacProxySelector extends ProxySelector {
      * Get a list of proxies for the supplied URI.
      *
      * @param uri The URI that a connection is required to
-     * @return List of proxies
+     * @return List of proxies; if there are any issues with the PAC returns 'no proxy'
      */
     @Override
     public List<Proxy> select(URI uri) {
-        // If there are any issues with the PAC return 'no proxy'
-        ArrayList<Proxy> proxies = new ArrayList<>();
-
         if (pacScript == null) {
             try {
-                pacScript = compilePacScript(loadPacScript(pacUrl));
+                pacScript = compilePacScript(loadPacScript(pacURI));
             } catch (PacProxyException ex) {
                 ex.printStackTrace();
-                proxies.add(Proxy.NO_PROXY);
-                return proxies;
+                return singletonList(Proxy.NO_PROXY);
             }
+        }
+
+        if (uriToProxiesCache.containsKey(uri)) {
+            return uriToProxiesCache.get(uri);
         }
 
         String pacFunctionReturn = null;
 
         try {
             pacFunctionReturn = (String) pacScript.invokeFunction("FindProxyForURL", uri.toString(), uri.getHost());
-        } catch (NoSuchMethodException | ScriptException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            proxies.add(Proxy.NO_PROXY);
-            return proxies;
+            return singletonList(Proxy.NO_PROXY);
         }
 
         if (pacFunctionReturn == null) {
-            proxies.add(Proxy.NO_PROXY);
-            return proxies;
+            return singletonList(Proxy.NO_PROXY);
         }
 
-        proxies.addAll(parsePacProxies(pacFunctionReturn));
+        List<Proxy> proxies = new ArrayList<>(parsePacProxies(pacFunctionReturn));
 
         if (proxies.isEmpty()) {
             proxies.add(Proxy.NO_PROXY);
         }
 
+        uriToProxiesCache.put(uri, proxies);
+
         return proxies;
     }
 
-    private String loadPacScript(String pacUrl) throws PacProxyException {
+    private String loadPacScript(URI pacURI) throws PacProxyException {
         URLConnection connection = null;
 
         // Save existing default proxy selector...
@@ -126,7 +147,7 @@ public class PacProxySelector extends ProxySelector {
             // ...and set use of no proxy selector. We don't want to try and use any proxy to get the the pac script
             ProxySelector.setDefault(new NoProxySelector());
 
-            URL latestVersionUrl = new URL(pacUrl);
+            URL latestVersionUrl = pacURI.toURL();
             connection = latestVersionUrl.openConnection();
 
             try (InputStreamReader isr = new InputStreamReader(connection.getInputStream());
@@ -136,7 +157,7 @@ public class PacProxySelector extends ProxySelector {
             }
         } catch (IOException ex) {
             throw new PacProxyException(
-                    MessageFormat.format(res.getString("NoLoadPacScript.exception.message"), pacUrl), ex);
+                    MessageFormat.format(res.getString("NoLoadPacScript.exception.message"), pacURI), ex);
         } finally {
             // Restore saved default proxy selector
             ProxySelector.setDefault(defaultProxySelector);
@@ -149,9 +170,19 @@ public class PacProxySelector extends ProxySelector {
 
     private Invocable compilePacScript(String pacScript) throws PacProxyException {
         try {
-            // this loads the built-in Nashorn engine; only if it's missing (=> Java 15) the standalone Nashorn is used
-            ScriptEngine jsEngine = new ScriptEngineManager().getEngineByName("nashorn");
+            ScriptEngine jsEngine;
 
+            // Nashorn was removed in Java 15, the standalone Nashorn uses different packages and is compiled for Java 11
+            // TODO remove this when support for Java 8 is dropped
+            if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_15)) {
+                jsEngine = getScriptEngine("org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory",
+                                           "org.openjdk.nashorn.api.scripting.ClassFilter");
+            } else {
+                jsEngine = getScriptEngine("jdk.nashorn.api.scripting.NashornScriptEngineFactory",
+                                           "jdk.nashorn.api.scripting.ClassFilter");
+            }
+
+            jsEngine.put("alert", (Consumer<String>) PacHelperFunctions::alert);
             jsEngine.put("dnsDomainIs", (BiFunction<String, String, Boolean>) PacHelperFunctions::dnsDomainIs);
             jsEngine.put("dnsDomainLevels", (Function<String, Integer>) PacHelperFunctions::dnsDomainLevels);
             jsEngine.put("dnsResolve", (Function<String, String>) PacHelperFunctions::dnsResolve);
@@ -161,15 +192,43 @@ public class PacProxySelector extends ProxySelector {
             jsEngine.put("localHostOrDomainIs", (BiFunction<String, String, Boolean>) PacHelperFunctions::localHostOrDomainIs);
             jsEngine.put("shExpMatch", (BiFunction<String, String, Boolean>) PacHelperFunctions::shExpMatch);
             jsEngine.put("isInNet", (TriFunction<String, String, String, Boolean>) PacHelperFunctions::isInNet);
-            jsEngine.put("dateRange", (Function<Object[], Boolean>) PacHelperFunctions::dateRange);
-            jsEngine.put("weekdayRange", (Function<Object[], Boolean>) PacHelperFunctions::weekdayRange);
-            jsEngine.put("timeRange", (Function<Object[], Boolean>) PacHelperFunctions::timeRange);
+            jsEngine.put("dateRange", (VarFunction<Object, Boolean>) PacHelperFunctions::dateRange);
+            jsEngine.put("weekdayRange", (VarFunction<Object, Boolean>) PacHelperFunctions::weekdayRange);
+            jsEngine.put("timeRange", (VarFunction<Object, Boolean>) PacHelperFunctions::timeRange);
+
+            // disable access to engine and context
+            jsEngine.eval("Object.defineProperty(this, 'engine', {});");
+            jsEngine.eval("Object.defineProperty(this, 'context', {});");
+            jsEngine.eval("delete this.__noSuchProperty__;");
 
             jsEngine.eval(pacScript);
 
             return (Invocable) jsEngine;
         } catch (ScriptException ex) {
             throw new PacProxyException(res.getString("NoCompilePacScript.exception.message"), ex);
+        }
+    }
+
+    private ScriptEngine getScriptEngine(String nashornScriptEngineFactoryClass, String classFilterClass) {
+        // NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
+        // ScriptEngine jsEngine = nashornScriptEngineFactory.getScriptEngine(new PacClassFilter());
+        try {
+            Class<?> nashornScriptEngineFactory = Class.forName(nashornScriptEngineFactoryClass);
+            Class<?> classFilter = Class.forName(classFilterClass);
+
+            Object classFilterProxy = java.lang.reflect.Proxy.newProxyInstance(
+                    PacProxySelector.class.getClassLoader(), new Class[] { classFilter }, (proxy, method, args) -> {
+                        if (method.getName().equals("exposeToScripts")) {
+                            return Boolean.FALSE;
+                        }
+                        return null;
+                    });
+
+            Method getScriptEngine = nashornScriptEngineFactory.getMethod("getScriptEngine", classFilter);
+            return (ScriptEngine) getScriptEngine.invoke(nashornScriptEngineFactory.newInstance(), classFilterProxy);
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
+                 InstantiationException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -195,43 +254,33 @@ public class PacProxySelector extends ProxySelector {
     }
 
     private Proxy parsePacProxy(String pacProxy) {
-        /*
-         * PAC formats:
-         *
-         * DIRECT Connections should be made directly, without any proxies.
-         *
-         * PROXY host:port The specified proxy should be used.
-         *
-         * SOCKS host:port The specified SOCKS server should be used.
-         *
-         * Where port is not supplied use port 80
-         */
-
-        if (pacProxy.equals("DIRECT")) {
-            return Proxy.NO_PROXY;
-        }
-
         String[] split = pacProxy.split(" ", 0);
+
+        String proxyTypeStr = split[0];
+        Proxy.Type proxyType = null;
+
+        switch (proxyTypeStr) {
+        case "DIRECT":
+            return Proxy.NO_PROXY;
+        case "PROXY":
+        case "HTTP":
+        case "HTTPS":
+            proxyType = Proxy.Type.HTTP;
+            break;
+        case "SOCKS":
+        case "SOCKS4":
+        case "SOCKS5":
+            proxyType = Proxy.Type.SOCKS;
+            break;
+        default:
+            return null;
+        }
 
         if (split.length != 2) {
             return null;
         }
 
-        String proxyTypeStr = split[0];
         String address = split[1];
-
-        Proxy.Type proxyType = null;
-
-        if (proxyTypeStr.equals("PROXY")) {
-            proxyType = Proxy.Type.HTTP;
-        } else if (proxyTypeStr.equals("SOCKS")) {
-            proxyType = Proxy.Type.SOCKS;
-        }
-
-        if (proxyType == null) {
-            return null;
-        }
-
         split = address.split(":", 0);
         String host = null;
         int port = 80;
@@ -272,10 +321,10 @@ public class PacProxySelector extends ProxySelector {
     /**
      * Get Automatic proxy configuration URL.
      *
-     * @return PAC URL
+     * @return PAC URI
      */
-    public String getPacUrl() {
-        return pacUrl;
+    public URI getPacURI() {
+        return pacURI;
     }
 
     /**
@@ -296,6 +345,6 @@ public class PacProxySelector extends ProxySelector {
 
         PacProxySelector cmpPacProxySelector = (PacProxySelector) object;
 
-        return this.getPacUrl().equals(cmpPacProxySelector.getPacUrl());
+        return this.getPacURI().equals(cmpPacProxySelector.getPacURI());
     }
 }

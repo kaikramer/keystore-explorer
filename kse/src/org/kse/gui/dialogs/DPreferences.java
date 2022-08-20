@@ -27,6 +27,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -635,7 +637,7 @@ public class DPreferences extends JEscDialog {
 
             PacProxySelector pacProxySelector = (PacProxySelector) proxySelector;
 
-            jtfPacUrl.setText(pacProxySelector.getPacUrl());
+            jtfPacUrl.setText(pacProxySelector.getPacURI().toString());
         } else if (proxySelector instanceof ManualProxySelector) {
             jrbManualProxyConfig.setSelected(true);
 
@@ -981,7 +983,15 @@ public class DPreferences extends JEscDialog {
                 return false;
             }
 
-            PacProxySelector pacProxySelector = new PacProxySelector(pacUrl);
+            PacProxySelector pacProxySelector = null;
+            try {
+                pacProxySelector = new PacProxySelector(new URI(pacUrl));
+            } catch (URISyntaxException e) {
+                jtpPreferences.setSelectedIndex(3);
+                JOptionPane.showMessageDialog(this, res.getString("DPreferences.PacUrlReq.message"), getTitle(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
 
             if (!pacProxySelector.equals(defaultProxySelector)) {
                 ProxySelector.setDefault(pacProxySelector);

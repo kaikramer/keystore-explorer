@@ -41,6 +41,14 @@ public class PacHelperFunctions {
     }
 
     /**
+     * In browsers the message of alert() is logged to the console, so we do something similar
+     * @param message The message
+     */
+    public static void alert(String message) {
+        System.out.println(message);
+    }
+
+    /**
      * Returns true if the domain of hostname matches.
      *
      * @param host   Hostname from URL
@@ -48,6 +56,9 @@ public class PacHelperFunctions {
      * @return True, if host matches domain
      */
     public static boolean dnsDomainIs(String host, String domain) {
+        if (StringUtils.isBlank(host) || StringUtils.isBlank(domain)) {
+            return false;
+        }
         return host.endsWith(domain);
     }
 
@@ -58,6 +69,9 @@ public class PacHelperFunctions {
      * @return Number of domain levels
      */
     public static int dnsDomainLevels(String host) {
+        if (StringUtils.isBlank(host)) {
+            return 0;
+        }
         return host.split("\\.").length - 1;
     }
 
@@ -68,6 +82,9 @@ public class PacHelperFunctions {
      * @return The resolved IPv4 address for the given hostname or an empty string if an error has occurred
      */
     public static String dnsResolve(String host) {
+        if (StringUtils.isBlank(host)) {
+            return "";
+        }
         try {
             return InetAddress.getByName(host).getHostAddress();
         } catch (UnknownHostException e) {
@@ -137,6 +154,9 @@ public class PacHelperFunctions {
      * @return True, if hostname matches the domain
      */
     public static boolean localHostOrDomainIs(String hostname, String domain) {
+        if (StringUtils.isBlank(hostname) || StringUtils.isBlank(domain)) {
+            return false;
+        }
         return (Objects.equals(hostname, domain)) || (!hostname.contains(".") && domain.startsWith(hostname));
     }
 
@@ -165,6 +185,10 @@ public class PacHelperFunctions {
             }
         }
         String regex = sb.append('$').toString();
+
+        if (url == null) {
+            return "".matches(regex);
+        }
 
         return url.matches(regex);
     }
