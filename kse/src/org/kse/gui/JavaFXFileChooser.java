@@ -39,7 +39,7 @@ import org.kse.utilities.os.OperatingSystem;
 
 public class JavaFXFileChooser extends JFileChooser {
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
     private static final long serialVersionUID = 706991877631924379L;
 
@@ -76,9 +76,6 @@ public class JavaFXFileChooser extends JFileChooser {
     private File[] selectedFiles;
     private String dialogTitle;
     private File currentDirectory;
-    public static final int FILES_ONLY = 0;
-    public static final int DIRECTORIES_ONLY = 1;
-    public static final int FILES_AND_DIRECTORIES = 2;
 
     public static boolean isFxAvailable() {
         return fxAvailable;
@@ -94,7 +91,7 @@ public class JavaFXFileChooser extends JFileChooser {
     @Override
     public void setFileFilter(FileFilter filter) {
         if (filter instanceof FileNameExtensionFilter) {
-            if(!isDuplicateFilter(filters, (FileNameExtensionFilter) filter)) {
+            if (!isDuplicateFilter(filters, (FileNameExtensionFilter) filter)) {
                 addChoosableFileFilter(filter);
             }
             fileFilter = (FileNameExtensionFilter) filter;
@@ -159,8 +156,8 @@ public class JavaFXFileChooser extends JFileChooser {
     /**
      * Creates a method with a callable lambda
      *
-     * @param method Accepts String
-     * @return Int
+     * @param method Name of the method
+     * @return File chooser result
      */
     public int showFxDialog(final String method) {
 
@@ -173,25 +170,25 @@ public class JavaFXFileChooser extends JFileChooser {
                 // set extension filters
                 Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
                 List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
-                
+
                 // checks if the AcceptAll FileFilter is used.
                 if (isAcceptAllFileFilterUsed()) {
                     observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
                                                            .newInstance(res.getString("JavaFXFileChooser.AllFiles"),
                                                                         new String[] { "*.*" }));
                 }
-                
+
                 // add extension filters
                 observableList.addAll(formatListToJFX(filters));
-                
+
                 // set selected file filter
                 if (fileFilter != null) {
                     int filterIndex = getExtensionIndex(observableList, fileFilter);
                     Method setSelectedExtensionFilterMethod = fileChooserClass.getMethod("setSelectedExtensionFilter",
-                                                              extensionFilterClass);
+                                                                                         extensionFilterClass);
                     setSelectedExtensionFilterMethod.invoke(fileChooser, observableList.get(filterIndex));
                 }
-                
+
                 // set window title
                 Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
                 setTitleMethod.invoke(fileChooser, dialogTitle);
@@ -221,8 +218,8 @@ public class JavaFXFileChooser extends JFileChooser {
     /**
      * Creates a method with a callable lambda
      *
-     * @param method Accepts String
-     * @return Int
+     * @param method Name of the method
+     * @return File chooser result
      */
     public int showMultipleFxDialog(final String method) {
 
@@ -235,25 +232,25 @@ public class JavaFXFileChooser extends JFileChooser {
                 // set extension filters
                 Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
                 List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
-                
+
                 // checks if the AcceptAll FileFilter is used.
                 if (isAcceptAllFileFilterUsed()) {
                     observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
                                                            .newInstance(res.getString("JavaFXFileChooser.AllFiles"),
                                                                         new String[] { "*.*" }));
                 }
-                
+
                 // add extension filters
                 observableList.addAll(formatListToJFX(filters));
 
                 // set selected extension filter
                 if (fileFilter != null) {
-                int filterIndex = getExtensionIndex(observableList, fileFilter);
-                Method setSelectedExtensionFilterMethod = fileChooserClass.getMethod("setSelectedExtensionFilter",
-                                                          extensionFilterClass);
-                setSelectedExtensionFilterMethod.invoke(fileChooser, observableList.get(filterIndex));
+                    int filterIndex = getExtensionIndex(observableList, fileFilter);
+                    Method setSelectedExtensionFilterMethod = fileChooserClass.getMethod("setSelectedExtensionFilter",
+                                                                                         extensionFilterClass);
+                    setSelectedExtensionFilterMethod.invoke(fileChooser, observableList.get(filterIndex));
                 }
-                
+
                 // set window title
                 Method setTitleMethod = fileChooserClass.getMethod("setTitle", String.class);
                 setTitleMethod.invoke(fileChooser, dialogTitle);
@@ -291,8 +288,8 @@ public class JavaFXFileChooser extends JFileChooser {
     /**
      * Creates a method with a callable lambda
      *
-     * @param method Accepts String
-     * @return Int
+     * @param method Name of the method
+     * @return File chooser result
      */
     public int showDirectoryFxDialog(final String method) {
 
@@ -330,29 +327,31 @@ public class JavaFXFileChooser extends JFileChooser {
     }
 
     /**
-     * Convert List of FileNameExtensionFilter to List of Java FX ExtensionFilter format
-     * @param List<FileNameExtensionFilter> args
-     * @return List<Object>
+     * Convert List of Swing FileNameExtensionFilter to List of Java FX ExtensionFilter format
+     *
+     * @param fileNameExtensionFilters List of Swing extension filters
+     * @return List of JavaFX extension filters
      */
-    private List<Object> formatListToJFX(List<FileNameExtensionFilter> args){
-        List<Object> extensionList = new ArrayList<Object>();
-        
+    private List<Object> formatListToJFX(List<FileNameExtensionFilter> fileNameExtensionFilters) {
+        List<Object> extensionList = new ArrayList<>();
+
         // parse extension filters to conform to JavaFX
-        for (FileFilter fileFilters : args) {
+        for (FileFilter fileFilters : fileNameExtensionFilters) {
             Object ext = formatToJFXExtensionFilter(fileFilters);
             extensionList.add(ext);
         }
         return extensionList;
     }
-    
+
     /**
      * Helper function to format extension filters
      * from FileNameExtensionFilter to Java FX ExtensionFilter
-     * @param FileFilter arg
-     * @return Object
+     *
+     * @param fileFilter filter
+     * @return Java FX ExtensionFilter
      */
-    private Object formatToJFXExtensionFilter(FileFilter arg) {
-        FileNameExtensionFilter extensions = (FileNameExtensionFilter) arg;
+    private Object formatToJFXExtensionFilter(FileFilter fileFilter) {
+        FileNameExtensionFilter extensions = (FileNameExtensionFilter) fileFilter;
         String[] formatExtensions = extensions.getExtensions();
         Object efc = null; // extension filter conversion
         for (int i = 0; i < formatExtensions.length; i++) {
@@ -364,21 +363,21 @@ public class JavaFXFileChooser extends JFileChooser {
         }
         try {
             efc = extensionFilterClass.getConstructor(String.class, String[].class)
-                .newInstance(extensions.getDescription(), formatExtensions);
-        }
-        catch (Exception e) {
+                                      .newInstance(extensions.getDescription(), formatExtensions);
+        } catch (Exception e) {
             System.out.println(e);
         }
         return efc;
     }
-    
+
     /**
      * Examine file filter extensions for duplicate entries based on unique extensions.
      * For example (*.jpg, *.gif) and (*.jpg) are unique and can both be valid but not
      * more than one extension signature with (*.jpg) regardless of description.
-     * @param List<FileNameExtensionFilter> exts
-     * @param FileNameExtensionFilter ext
-     * @return boolean
+     *
+     * @param exts List of extensions
+     * @param ext Extension
+     * @return True if ext is in exts
      */
     private boolean isDuplicateFilter(List<FileNameExtensionFilter> exts, FileNameExtensionFilter ext) {
         boolean isDuplicate = false;
@@ -386,48 +385,48 @@ public class JavaFXFileChooser extends JFileChooser {
         List<Object> oExts = formatListToJFX(exts);
         String refExt = null;
         String difExt = null;
-        for (int i = 0; i < oExts.size(); i++) {
+        for (Object o : oExts) {
             try {
                 Method getFileExt = extensionFilterClass.getMethod("getExtensions");
-                refExt = getFileExt.invoke(oExts.get(i)).toString();
+                refExt = getFileExt.invoke(o).toString();
                 difExt = getFileExt.invoke(oExt).toString();
-            }
-            catch (Exception e ) {
+            } catch (Exception e) {
                 System.out.println(e);
             }
             // checks if the extension list matches the set file filter
-            if(refExt.equals(difExt)){
-                isDuplicate =  true;
+            if (refExt != null && refExt.equals(difExt)) {
+                isDuplicate = true;
             }
         }
         return isDuplicate;
     }
+
     /**
      * Get the extension filter index from a List of exension filters
-     * 
-     * @param List<Object> arg
-     * @return int
+     *
+     * @param extensionFilters Extension filters
+     * @param ext One extension filter possibly in the list
+     * @return Index of extension filter in list
      */
-    private int getExtensionIndex(List<Object> arg, FileNameExtensionFilter ext) {
+    private int getExtensionIndex(List<Object> extensionFilters, FileNameExtensionFilter ext) {
         int index = 0;
         Object oExt = formatToJFXExtensionFilter(ext);
         String refExt = null;
         String difExt = null;
         // loops through each file extension
-            for (int i = 0; i < arg.size(); i++) {
-                try {
-                    Method getFileExt = extensionFilterClass.getMethod("getExtensions");
-                    refExt = getFileExt.invoke(arg.get(i)).toString();
-                    difExt = getFileExt.invoke(oExt).toString();
-                }
-                catch (Exception e ) {
-                    System.out.println(e);
-                }
-                // checks if the extension list matches the set file filter
-                if(refExt.equals(difExt)){
-                    index =  i;
-                }
+        for (int i = 0; i < extensionFilters.size(); i++) {
+            try {
+                Method getFileExt = extensionFilterClass.getMethod("getExtensions");
+                refExt = getFileExt.invoke(extensionFilters.get(i)).toString();
+                difExt = getFileExt.invoke(oExt).toString();
+            } catch (Exception e) {
+                System.out.println(e);
             }
+            // checks if the extension list matches the set file filter
+            if (refExt.equals(difExt)) {
+                index = i;
+            }
+        }
         return index;
     }
 
@@ -436,9 +435,10 @@ public class JavaFXFileChooser extends JFileChooser {
      *
      * @param callable Accepts a File
      * @return File
-     * @throws Exception
      */
-    public File runLater(final Callable<File> callable) throws Exception {
+    public File runLater(final Callable<File> callable)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException,
+                   ExecutionException, InterruptedException {
 
         final FutureTask<File> task = new FutureTask<>(callable);
 
@@ -446,11 +446,7 @@ public class JavaFXFileChooser extends JFileChooser {
         Method runLaterMethod = platformClass.getMethod("runLater", Runnable.class);
         runLaterMethod.invoke(null, task);
 
-        try {
-            return task.get();
-        } catch (ExecutionException ex) {
-            throw new Exception(ex.getCause());
-        }
+        return task.get();
     }
 
     /**
@@ -458,9 +454,10 @@ public class JavaFXFileChooser extends JFileChooser {
      *
      * @param callable Accepts a File[]
      * @return File[]
-     * @throws Exception
      */
-    public File[] runLaterMultiple(final Callable<File[]> callable) throws Exception {
+    public File[] runLaterMultiple(final Callable<File[]> callable)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException,
+                   ExecutionException, InterruptedException {
 
         final FutureTask<File[]> task = new FutureTask<>(callable);
 
@@ -468,26 +465,22 @@ public class JavaFXFileChooser extends JFileChooser {
         Method runLaterMethod = platformClass.getMethod("runLater", Runnable.class);
         runLaterMethod.invoke(null, task);
 
-        try {
-            return task.get();
-        } catch (ExecutionException ex) {
-            throw new Exception(ex.getCause());
-        }
+        return task.get();
     }
 
     // for quick UI testing
-    public static void main(String[] args) 
-            throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+    public static void main(String[] args)
+            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+                   InvocationTargetException {
 
-            if (!fxAvailable) {
-                System.out.println("JavaFX not available");
-                System.exit(1);
+        if (!fxAvailable) {
+            System.out.println("JavaFX not available");
+            System.exit(1);
         }
 
         //JavaFXFileChooser chooser = new JavaFXFileChooser();
         JFileChooser chooser = FileChooserFactory.getArchiveFileChooser();
-        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.setAcceptAllFileFilterUsed(true);
         chooser.setDialogTitle("Dialog Title");
         chooser.setCurrentDirectory(new File("."));
         chooser.setMultiSelectionEnabled(false);
