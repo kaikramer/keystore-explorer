@@ -144,6 +144,16 @@ public class FileChooserFactory {
      *
      * @return JFileChooser object
      */
+    public static JFileChooser getNoFileChooser() {
+        JFileChooser chooser = getFileChooser();
+        return chooser;
+    }
+    
+    /**
+     * Get a JFileChooser with all filtered files
+     *
+     * @return JFileChooser object
+     */
     public static JFileChooser getAllFileChooser() {
         JFileChooser chooser = getFileChooser();
         chooser.setAcceptAllFileFilterUsed(true);
@@ -157,7 +167,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPemFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
+        chooser.setFileFilter(new FileNameExtensionFilter(PEM_FILE_DESC, PEM_EXT));
         return chooser;
     }
 
@@ -168,13 +178,13 @@ public class FileChooserFactory {
      */
     public static JFileChooser getKeyStoreFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKCS12_FILE_DESC,
-                                                                   new String[] { PKCS12_KEYSTORE_EXT_1,
-                                                                                  PKCS12_KEYSTORE_EXT_2 }));
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(KEYSTORE_FILE_DESC,
+        chooser.setFileFilter(new FileNameExtensionFilter(KEYSTORE_FILE_DESC,
                                                                    new String[] { KEYSTORE_EXT_1, KEYSTORE_EXT_2,
                                                                                   JKS_EXT, JCEKS_EXT, BKS_EXT, UBER_EXT,
                                                                                   BCFKS_EXT }));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKCS12_FILE_DESC,
+                new String[] { PKCS12_KEYSTORE_EXT_1,
+                               PKCS12_KEYSTORE_EXT_2 }));
 
         return chooser;
     }
@@ -186,7 +196,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getX509FileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(
+        chooser.setFileFilter(
                 new FileNameExtensionFilter(X509_FILE_DESC, new String[] { X509_EXT_1, X509_EXT_2 }));
         return chooser;
     }
@@ -198,7 +208,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPkcs7FileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(
+        chooser.setFileFilter(
                 new FileNameExtensionFilter(PKCS7_FILE_DESC, new String[] { PKCS7_EXT_1, PKCS7_EXT_2 }));
         return chooser;
     }
@@ -210,7 +220,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPkiPathFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKI_PATH_FILE_DESC, new String[] { PKI_PATH_EXT }));
+        chooser.setFileFilter(new FileNameExtensionFilter(PKI_PATH_FILE_DESC, new String[] { PKI_PATH_EXT }));
         return chooser;
     }
 
@@ -221,7 +231,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getSpcFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPC_FILE_DESC, new String[] { SPC_EXT }));
+        chooser.setFileFilter(new FileNameExtensionFilter(SPC_FILE_DESC, new String[] { SPC_EXT }));
         return chooser;
     }
 
@@ -232,7 +242,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getCetFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(CET_FILE_DESC, new String[] { CET_EXT }));
+        chooser.setFileFilter(new FileNameExtensionFilter(CET_FILE_DESC, new String[] { CET_EXT }));
         return chooser;
     }
 
@@ -243,12 +253,13 @@ public class FileChooserFactory {
      */
     public static JFileChooser getCertFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPC_FILE_DESC, new String[] { SPC_EXT }));
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKI_PATH_FILE_DESC, new String[] { PKI_PATH_EXT }));
+        chooser.setFileFilter(
+                new FileNameExtensionFilter(X509_FILE_DESC, new String[] { X509_EXT_1, X509_EXT_2 }));
         chooser.addChoosableFileFilter(
                 new FileNameExtensionFilter(PKCS7_FILE_DESC, new String[] { PKCS7_EXT_1, PKCS7_EXT_2 }));
-        chooser.addChoosableFileFilter(
-                new FileNameExtensionFilter(X509_FILE_DESC, new String[] { X509_EXT_1, X509_EXT_2 }));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKI_PATH_FILE_DESC, new String[] { PKI_PATH_EXT }));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPC_FILE_DESC, new String[] { SPC_EXT }));
+
         return chooser;
     }
 
@@ -259,7 +270,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPkcs12FileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKCS12_FILE_DESC,
+        chooser.setFileFilter(new FileNameExtensionFilter(PKCS12_FILE_DESC,
                                                                    new String[] { PKCS12_KEYSTORE_EXT_1,
                                                                                   PKCS12_KEYSTORE_EXT_2 }));
         return chooser;
@@ -272,7 +283,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPkcs8FileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKCS8_FILE_DESC, new String[] { PKCS8_EXT }));
+        chooser.setFileFilter(new FileNameExtensionFilter(PKCS8_FILE_DESC, new String[] { PKCS8_EXT }));
         return chooser;
     }
 
@@ -283,7 +294,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPvkFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(PVK_FILE_DESC, new String[] { PVK_EXT }));
+        chooser.setFileFilter(new FileNameExtensionFilter(PVK_FILE_DESC, new String[] { PVK_EXT }));
         return chooser;
     }
 
@@ -294,7 +305,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getOpenSslPvkFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(
+        chooser.setFileFilter(
                 new FileNameExtensionFilter(OPENSSL_PVK_FILE_DESC, new String[] { OPENSSL_PVK_EXT }));
         return chooser;
     }
@@ -306,7 +317,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPublicKeyFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(
+        chooser.setFileFilter(
                 new FileNameExtensionFilter(PUBLIC_KEY_FILE_DESC, new String[] { PUBLIC_KEY_EXT }));
         return chooser;
     }
@@ -318,9 +329,9 @@ public class FileChooserFactory {
      */
     public static JFileChooser getCsrFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
-        chooser.addChoosableFileFilter(
+        chooser.setFileFilter(
                 new FileNameExtensionFilter(PKCS10_CSR_FILE_DESC, new String[] { PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2 }));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
         return chooser;
     }
 
@@ -331,7 +342,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPkcs10FileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(
+        chooser.setFileFilter(
                 new FileNameExtensionFilter(PKCS10_CSR_FILE_DESC, new String[] { PKCS10_CSR_EXT_1, PKCS10_CSR_EXT_2 }));
 
         return chooser;
@@ -344,7 +355,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getSpkacFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
+        chooser.setFileFilter(new FileNameExtensionFilter(SPKAC_CSR_FILE_DESC, SPKAC_CSR_EXT));
         return chooser;
     }
 
@@ -355,7 +366,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getCaReplyFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(CA_REPLY_FILE_DESC, CA_REPLY_EXT));
+        chooser.setFileFilter(new FileNameExtensionFilter(CA_REPLY_FILE_DESC, CA_REPLY_EXT));
         return chooser;
     }
 
@@ -366,7 +377,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getCrlFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(CRL_FILE_DESC, CRL_EXT));
+        chooser.setFileFilter(new FileNameExtensionFilter(CRL_FILE_DESC, CRL_EXT));
         return chooser;
     }
 
@@ -377,8 +388,8 @@ public class FileChooserFactory {
      */
     public static JFileChooser getArchiveFileChooser() {
         JFileChooser chooser = getFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter(JAR_FILE_DESC, new String[] { JAR_EXT }));
         chooser.addChoosableFileFilter(new FileNameExtensionFilter(ZIP_FILE_DESC, new String[] { ZIP_EXT }));
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(JAR_FILE_DESC, new String[] { JAR_EXT }));
         return chooser;
     }
 
@@ -389,7 +400,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getZipFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(ZIP_FILE_DESC, new String[] { ZIP_EXT }));
+        chooser.setFileFilter(new FileNameExtensionFilter(ZIP_FILE_DESC, new String[] { ZIP_EXT }));
         return chooser;
     }
 
@@ -400,7 +411,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getJadFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.addChoosableFileFilter(new FileNameExtensionFilter(JAD_FILE_DESC, new String[] { JAD_EXT }));
+        chooser.setFileFilter(new FileNameExtensionFilter(JAD_FILE_DESC, new String[] { JAD_EXT }));
         return chooser;
     }
 
@@ -413,13 +424,13 @@ public class FileChooserFactory {
         JFileChooser chooser = getFileChooser();
 
         if (OperatingSystem.isWindows()) {
-            chooser.addChoosableFileFilter(
+            chooser.setFileFilter(
                     new FileNameExtensionFilter(LIB_DLL_FILE_DESC, new String[] { LIB_DLL_EXT }));
         } else if (OperatingSystem.isMacOs()) {
-            chooser.addChoosableFileFilter(
+            chooser.setFileFilter(
                     new FileNameExtensionFilter(LIB_DYLIB_FILE_DESC, new String[] { LIB_DYLIB_EXT }));
         } else if (OperatingSystem.isLinux() || OperatingSystem.isUnix()) {
-            chooser.addChoosableFileFilter(new FileNameExtensionFilter(LIB_SO_FILE_DESC, new String[] { LIB_SO_EXT }));
+            chooser.setFileFilter(new FileNameExtensionFilter(LIB_SO_FILE_DESC, new String[] { LIB_SO_EXT }));
         }
 
         return chooser;
