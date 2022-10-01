@@ -27,8 +27,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.Properties;
@@ -49,6 +47,7 @@ import javax.swing.border.EtchedBorder;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.net.IpAddress;
 
 /**
  * A dialog which displays general system information: OS, Locale, Java version,
@@ -135,30 +134,13 @@ public class DSystemInformation extends JEscDialog {
         jpSystemInformation = new JPanel(new GridBagLayout());
         jpSystemInformation.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
-        String hostname = null;
-
-        try {
-            InetAddress localAddr = InetAddress.getLocalHost();
-
-            String host = localAddr.getCanonicalHostName();
-            String address = localAddr.getHostAddress();
-
-            if (host.equals(address)) {
-                hostname = address;
-            } else {
-                hostname = MessageFormat.format(res.getString("DSystemInformation.jtfHostname.text"), host, address);
-            }
-        } catch (UnknownHostException e) {
-            hostname = res.getString("DSystemInformation.jtfHostname.unknown.text");
-        }
-
         jlHostname = new JLabel(res.getString("DSystemInformation.jlHostname.text"), SwingConstants.RIGHT);
 
         GridBagConstraints gbc_jlHostname = (GridBagConstraints) gbcLabel.clone();
         gbc_jlHostname.gridy = 0;
         jpSystemInformation.add(jlHostname, gbc_jlHostname);
 
-        jtfHostname = new JTextField(hostname, TEXT_FIELD_WIDTH);
+        jtfHostname = new JTextField(getHostname(), TEXT_FIELD_WIDTH);
         jtfHostname.setEditable(false);
         jtfHostname.setCaretPosition(0);
 
@@ -360,6 +342,22 @@ public class DSystemInformation extends JEscDialog {
         pack();
 
         startMemoryUpdater();
+    }
+
+    private String getHostname() {
+        String host = IpAddress.getHostName();
+        String address = IpAddress.getIpAddress();
+
+        String hostname = null;
+        if (host.isEmpty() && address.isEmpty()) {
+            hostname = res.getString("DSystemInformation.jtfHostname.unknown.text");
+        } else if (host.equals(address)) {
+            hostname = address;
+        } else {
+            hostname = MessageFormat.format(res.getString("DSystemInformation.jtfHostname.text"), host, address);
+        }
+
+        return hostname;
     }
 
     private void startMemoryUpdater() {

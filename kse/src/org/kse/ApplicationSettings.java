@@ -27,6 +27,8 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.net.ProxySelector;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -257,7 +259,12 @@ public class ApplicationSettings {
             // Use PAC URL for proxy configuration
             String pacUrl = preferences.get(KSE3_PACURL, null);
             if (pacUrl != null) {
-                ProxySelector.setDefault(new PacProxySelector(pacUrl));
+                try {
+                    ProxySelector.setDefault(new PacProxySelector(new URI(pacUrl)));
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                    ProxySelector.setDefault(new NoProxySelector());
+                }
             } else {
                 ProxySelector.setDefault(new NoProxySelector());
             }
@@ -508,7 +515,7 @@ public class ApplicationSettings {
         } else if (proxySelector instanceof PacProxySelector) {
             PacProxySelector pacProxySelector = (PacProxySelector) proxySelector;
 
-            preferences.put(KSE3_PACURL, pacProxySelector.getPacUrl());
+            preferences.put(KSE3_PACURL, pacProxySelector.getPacURI().toString());
             preferences.put(KSE3_PROXY, ProxyConfigurationType.PAC.name());
         } else if (proxySelector instanceof ManualProxySelector) {
             ManualProxySelector manualProxySelector = (ManualProxySelector) proxySelector;
