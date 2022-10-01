@@ -56,7 +56,7 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
     private static KeyPair ecKeyPair;
 
     @BeforeAll
-    private static void setUp() throws Exception {
+    static void setUp() throws Exception {
         rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, BC);
         dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, BC);
         ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
