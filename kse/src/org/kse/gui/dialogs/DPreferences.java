@@ -121,6 +121,9 @@ public class DPreferences extends JEscDialog {
         }
     }
 
+    /**
+     * Language class for supporting language text.
+     */
     private static class LanguageItem {
         private String displayName;
         private String isoCode;
@@ -337,7 +340,7 @@ public class DPreferences extends JEscDialog {
                 res.getString("DPreferences.jpInternetProxy.tooltip"),
                 res.getString("DPreferences.jpInternetProxy.mnemonic").charAt(0), "jpCard3");
         Action m4 = new createNavItem(res.getString("DPreferences.jpDefaultName.text"),
-                new ImageIcon(this.getClass().getResource("images/tab_authcerts.png")),
+                new ImageIcon(this.getClass().getResource("images/tab_defaultname.png")),
                 res.getString("DPreferences.jpAuthorityCertificates.tooltip"),
                 res.getString("DPreferences.jpDefaultName.mnemonic").charAt(0), "jpCard4");
         Action m5 = new createNavItem(res.getString("DPreferences.jpDisplayColumns.text"),
@@ -1045,7 +1048,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable IP port ranges
      * 
-     * @param port
+     * @param String port
      * @return boolean True if allowed
      */
     private boolean parsePort(String port) {
@@ -1059,7 +1062,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable IPV4 address
      * 
-     * @param host
+     * @param String host
      * @return boolean True if allowed
      */
     private boolean parseIPv4(String host) {
@@ -1073,7 +1076,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable IPV6 address
      * 
-     * @param host
+     * @param String host
      * @return boolean True if allowed
      */
     private boolean parseIPv6(String host) {
@@ -1092,7 +1095,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable URL
      * 
-     * @param url
+     * @param String url
      * @return boolean True if allowed
      */
     private boolean parseURL(String url) {
@@ -1106,7 +1109,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get whether or not the usage of CA Certificates has been chosen.
      *
-     * @return True if it has, false otherwise
+     * @return boolean True if it has, false otherwise
      */
     public boolean getUseCaCertificates() {
         return useCaCertificates;
@@ -1115,7 +1118,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get the chosen CA Certificates KeyStore file.
      *
-     * @return The chosen CA Certificates KeyStore file
+     * @return boolean The chosen CA Certificates KeyStore file
      */
     public File getCaCertificatesFile() {
         return caCertificatesFile;
@@ -1125,7 +1128,7 @@ public class DPreferences extends JEscDialog {
      * Get whether or not the usage of Windows Trusted Root Certificates has been
      * chosen.
      *
-     * @return True if it has, false otherwise
+     * @return boolean True if it has, false otherwise
      */
     public boolean getUseWinTrustRootCertificates() {
         return useWinTrustRootCertificates;
@@ -1135,7 +1138,7 @@ public class DPreferences extends JEscDialog {
      * Get whether or not trust checks are enabled when importing Trusted
      * Certificates.
      *
-     * @return True if they are, false otherwise
+     * @return boolean True if they are, false otherwise
      */
     public boolean getEnableImportTrustedCertTrustCheck() {
         return enableImportTrustedCertTrustCheck;
@@ -1144,7 +1147,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get whether or not trust checks are enabled when importing CA Replies.
      *
-     * @return True if they are, false otherwise
+     * @return boolean True if they are, false otherwise
      */
     public boolean getEnableImportCaReplyTrustCheck() {
         return enableImportCaReplyTrustCheck;
@@ -1162,7 +1165,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get the chosen look & feel information.
      *
-     * @return The chosen look & feel information
+     * @return UIManager.LookAndFeelInfo The chosen look & feel information
      */
     public UIManager.LookAndFeelInfo getLookFeelInfo() {
         return lookFeelInfo;
@@ -1171,7 +1174,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get whether or not the look & feel should be used for window decoration.
      *
-     * @return True id it should, false otherwise.
+     * @return boolean True id it should, false otherwise.
      */
     public boolean getLookFeelDecoration() {
         return lookFeelDecorated;
@@ -1180,7 +1183,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Read the new language setting
      *
-     * @return ISO code of selected language or system (for system default)
+     * @return String ISO code of selected language or system (for system default)
      */
     public String getLanguage() {
         return language;
@@ -1268,7 +1271,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Was the dialog cancelled (ie were no settings made).
      *
-     * @return True f it was cancelled
+     * @return boolean True f it was cancelled
      */
     public boolean wasCancelled() {
         return cancelled;
