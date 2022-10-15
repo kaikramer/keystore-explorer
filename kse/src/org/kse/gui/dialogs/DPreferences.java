@@ -19,12 +19,6 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -33,29 +27,8 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.TreeSet;
-
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.UIManager;
-import javax.swing.border.EmptyBorder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.kse.ApplicationSettings;
@@ -76,19 +49,105 @@ import org.kse.utilities.net.ProxyAddress;
 import org.kse.utilities.net.SystemProxySelector;
 import org.kse.utilities.os.OperatingSystem;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import net.miginfocom.swing.MigLayout;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSpinner;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 
 /**
  * Dialog to allow the users to configure KeyStore Explorer's preferences.
  */
 public class DPreferences extends JEscDialog {
-    private static final long serialVersionUID = 8804918466790662761L;
 
+    /**
+     * Action factory used for menu navigation with keyboard keys and other menu
+     * properties such as description, icon, tooltip, and mnemonic character, and
+     * mouse
+     */
+    private class createNavItem extends AbstractAction {
+        private static final long serialVersionUID = 1L;
+        private String screen;
+
+        public createNavItem(String text, ImageIcon icon, String desc, char mnemonic, String card) {
+            super(text, icon);
+            screen = card;
+            // set character to keystroke and and modifier to ALT as default
+            KeyStroke ks = KeyStroke.getKeyStroke(mnemonic, ActionEvent.ALT_MASK);
+
+            putValue(SHORT_DESCRIPTION, desc);
+            if (!OperatingSystem.isMacOs()) {
+                putValue(MNEMONIC_KEY, ks.getKeyCode());
+            }
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            activeNav(e.getSource());
+            changeScreen(screen);
+        }
+    }
+
+    private static class LanguageItem {
+        private String displayName;
+        private String isoCode;
+
+        public LanguageItem(String displayName, String isoCode) {
+            super();
+            this.displayName = displayName;
+            this.isoCode = isoCode;
+        }
+
+        public String getIsoCode() {
+            return isoCode;
+        }
+
+        @Override
+        public String toString() {
+            return displayName;
+        }
+    }
+
+    private static final long serialVersionUID = -3625128197124011083L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+
+    private JPanel jCardLayout;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JTabbedPane jtpPreferences;
     private JPanel jpAuthorityCertificates;
     private JLabel jlCaCertificatesFile;
     private JTextField jtfCaCertificatesFile;
@@ -140,7 +199,6 @@ public class DPreferences extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
-    private JPanel jpDefaultName;
     private DistinguishedNameChooser distinguishedNameChooser;
     private X500Name distinguishedName;
     private int expiryWarnDays;
@@ -201,24 +259,33 @@ public class DPreferences extends JEscDialog {
     private JLabel jlExpirationWarnDays;
     private JTextField jtfExpirationWarnDays;
     private boolean bColumnsChanged;
+    private Font menuFont;
+    private JToolBar menuTBar;
+    private Object activeNavItem;
+    private JSplitPane jsPane;
 
     /**
-     * Creates a new DPreferences dialog.
-     *
-     * @param parent                            The parent frame
-     * @param useCaCertificates                 Use CA Certificates keystore file?
-     * @param caCertificatesFile                CA Certificates keystore file
-     * @param useWinTrustedRootCertificates     Use Windows Trusted Root Certificates?
-     * @param enableImportTrustedCertTrustCheck Enable trust checks when importing Trusted Certificates?
-     * @param enableImportCaReplyTrustCheck     Enable trust checks when importing CA replies?
-     * @param passwordQualityConfig             Password quality configuration
-     * @param showHiddenFilesEnabled            Show hidden files in file chooser
+     * Creates a new DPreference dialog.
+     * 
+     * @param JFrame                parent
+     * @param boolean               useCaCertificates
+     * @param File                  caCertificatesFile
+     * @param boolean               useWinTrustedRootCertificates
+     * @param boolean               enableImportTrustedCertTrustCheck
+     * @param boolean               enableImportCaReplyTrustCheck
+     * @param PasswordQualityConfig passwordQualityConfig
+     * @param String                defaultDN
+     * @param String                language
+     * @param boolean               autoUpdateChecksEnabled
+     * @param int                   autoUpdateChecksInterval
+     * @param KeyStoreTableColumns  kstColumns
+     * @param boolean               showHiddenFilesEnabled
      */
     public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
-                        boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
-                        boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
-                        String defaultDN, String language, boolean autoUpdateChecksEnabled,
-                        int autoUpdateChecksInterval, KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled) {
+            boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
+            boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig, String defaultDN,
+            String language, boolean autoUpdateChecksEnabled, int autoUpdateChecksInterval,
+            KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.useCaCertificates = useCaCertificates;
         this.caCertificatesFile = caCertificatesFile;
@@ -236,60 +303,60 @@ public class DPreferences extends JEscDialog {
         initComponents();
     }
 
-    private void initComponents() {
-        initAuthorityCertificatesTab();
-        initUserInterfaceTab();
-        initInternetProxyTab();
-        initDefaultNameTab();
-        initDisplayColumnsTab();
+    /**
+     * Create preference menu components for navigation and cardlayout
+     */
+    public void initComponents() {
+        getContentPane().setLayout(new BorderLayout(0, 0));
+        jsPane = new JSplitPane();
+        jsPane.setDividerSize(20);
+        jsPane.setOneTouchExpandable(true);
+        jsPane.setResizeWeight(0.3);
+        getContentPane().add(jsPane);
 
-        jtpPreferences = new JTabbedPane();
-        jtpPreferences.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT);
+        // set default active menu style
+        menuFont = new Font("", Font.BOLD, 15);
 
-        jtpPreferences.addTab(res.getString("DPreferences.jpAuthorityCertificates.text"),
-                              new ImageIcon(getClass().getResource("images/tab_authcerts.png")),
-                              jpAuthorityCertificates, res.getString("DPreferences.jpAuthorityCertificates.tooltip"));
+        // set left split pane for menu navigation
+        menuTBar = new JToolBar();
+        menuTBar.setOrientation(SwingConstants.VERTICAL);
 
-        jtpPreferences.addTab(res.getString("DPreferences.jpUI.text"),
-                              new ImageIcon(getClass().getResource("images/tab_lookfeel.png")), jpUI,
-                              res.getString("DPreferences.jpUI.tooltip"));
+        JScrollPane jScrollPaneNavigation = new JScrollPane(menuTBar);
+        jsPane.setLeftComponent(jScrollPaneNavigation);
 
-        jtpPreferences.addTab(res.getString("DPreferences.jpInternetProxy.text"),
-                              new ImageIcon(getClass().getResource("images/tab_internetproxy.png")), jpInternetProxy,
-                              res.getString("DPreferences.jpInternetProxy.tooltip"));
+        Action m1 = new createNavItem(res.getString("DPreferences.jpAuthorityCertificates.text"),
+                new ImageIcon(this.getClass().getResource("images/tab_authcerts.png")),
+                res.getString("DPreferences.jpAuthorityCertificates.tooltip"),
+                res.getString("DPreferences.jpAuthorityCertificates.mnemonic").charAt(0), "jpCard1");
+        Action m2 = new createNavItem(res.getString("DPreferences.jpUI.text"),
+                new ImageIcon(getClass().getResource("images/tab_lookfeel.png")),
+                res.getString("DPreferences.jpUI.tooltip"), res.getString("DPreferences.jpUI.mnemonic").charAt(0),
+                "jpCard2");
+        Action m3 = new createNavItem(res.getString("DPreferences.jpInternetProxy.text"),
+                new ImageIcon(this.getClass().getResource("images/tab_internetproxy.png")),
+                res.getString("DPreferences.jpInternetProxy.tooltip"),
+                res.getString("DPreferences.jpInternetProxy.mnemonic").charAt(0), "jpCard3");
+        Action m4 = new createNavItem(res.getString("DPreferences.jpDefaultName.text"),
+                new ImageIcon(this.getClass().getResource("images/tab_authcerts.png")),
+                res.getString("DPreferences.jpAuthorityCertificates.tooltip"),
+                res.getString("DPreferences.jpDefaultName.mnemonic").charAt(0), "jpCard4");
+        Action m5 = new createNavItem(res.getString("DPreferences.jpDisplayColumns.text"),
+                new ImageIcon(this.getClass().getResource("images/tab_columns.png")),
+                res.getString("DPreferences.jpDisplayColumns.tooltip"),
+                res.getString("DPreferences.jpDisplayColumns.mnemonic").charAt(0), "jpCard5");
 
-        jtpPreferences.addTab(res.getString("DPreferences.jpDefaultName.text"),
-                              new ImageIcon(getClass().getResource("images/tab_defaultname.png")), jpDefaultName,
-                              res.getString("DPreferences.jpDefaultName.tooltip"));
-
-        jtpPreferences.addTab(res.getString("DPreferences.jpDisplayColumns.text"),
-                              new ImageIcon(getClass().getResource("images/tab_columns.png")), jpDisplayColumns,
-                              res.getString("DPreferences.jpDisplayColumns.tooltip"));
-
-        jtpPreferences.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-        if (!OperatingSystem.isMacOs()) {
-            jtpPreferences.setMnemonicAt(0, res.getString("DPreferences.jpAuthorityCertificates.mnemonic").charAt(0));
-            jtpPreferences.setMnemonicAt(1, res.getString("DPreferences.jpUI.mnemonic").charAt(0));
-            jtpPreferences.setMnemonicAt(2, res.getString("DPreferences.jpInternetProxy.mnemonic").charAt(0));
-            jtpPreferences.setMnemonicAt(3, res.getString("DPreferences.jpDefaultName.mnemonic").charAt(0));
-            jtpPreferences.setMnemonicAt(4, res.getString("DPreferences.jpDisplayColumns.mnemonic").charAt(0));
-        }
+        menuTBar.add(new JButton(m1));
+        menuTBar.add(new JButton(m2));
+        menuTBar.add(new JButton(m3));
+        menuTBar.add(new JButton(m4));
+        menuTBar.add(new JButton(m5));
+        menuTBar.getComponent(0).setFont(menuFont);
+        activeNavItem = menuTBar.getComponent(0);
 
         jbOK = new JButton(res.getString("DPreferences.jbOK.text"));
-        jbOK.addActionListener(evt -> {
-            try {
-                CursorUtil.setCursorBusy(DPreferences.this);
-                okPressed();
-            } finally {
-                CursorUtil.setCursorFree(DPreferences.this);
-            }
-        });
-
         jbCancel = new JButton(res.getString("DPreferences.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                CANCEL_KEY);
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
             private static final long serialVersionUID = 1L;
 
@@ -299,12 +366,22 @@ public class DPreferences extends JEscDialog {
             }
         });
 
+        // set dialog pane buttons
         jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jtpPreferences, BorderLayout.CENTER);
         getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
+        jbOK.addActionListener(e -> {
+            try {
+                CursorUtil.setCursorBusy(DPreferences.this);
+                okPressed();
+            } finally {
+                CursorUtil.setCursorFree(DPreferences.this);
+            }
+        });
+
+        jbCancel.addActionListener(e -> cancelPressed());
+
+        // action listner for window
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
@@ -312,16 +389,48 @@ public class DPreferences extends JEscDialog {
             }
         });
 
+        // set right split pane for card layout
+        jCardLayout = new JPanel();
+        JScrollPane jScrollPaneCardLayout = new JScrollPane(jCardLayout);
+        jsPane.setRightComponent(jScrollPaneCardLayout);
+        jCardLayout.setLayout(new CardLayout(0, 0));
+
+        // initialize each card layout
+        initAuthorityCertificatesCard();
+        initUserInterfaceCard();
+        initInternetProxyCard();
+        initDefaultNameCard();
+        initDisplayColumnsCard();
+
         setTitle(res.getString("DPreferences.Title"));
-        setResizable(false);
-
         getRootPane().setDefaultButton(jbOK);
-
         pack();
     }
 
-    private void initAuthorityCertificatesTab() {
+    /**
+     * Set the preference screen from the selected navigation menu item
+     * 
+     * @param String screen
+     */
+    private void changeScreen(String screen) {
+        ((CardLayout) jCardLayout.getLayout()).show(jCardLayout, screen);
+    }
 
+    /**
+     * Set the navigation item style to indicate the active selection
+     * 
+     * @param Object currentNavItem
+     */
+    private void activeNav(Object currentNavItem) {
+        if (currentNavItem != activeNavItem) {
+            ((Component) activeNavItem).setFont(null);
+            activeNavItem = currentNavItem;
+            ((Component) activeNavItem).setFont(menuFont);
+        }
+    }
+
+    // TODO move to separate class
+    private void initAuthorityCertificatesCard() {
         jlCaCertificatesFile = new JLabel(res.getString("DPreferences.jlCaCertificatesFile.text"));
         jtfCaCertificatesFile = new JTextField(caCertificatesFile.toString(), 25);
         jtfCaCertificatesFile.setToolTipText(res.getString("DPreferences.jtfCaCertificatesFile.tooltip"));
@@ -330,42 +439,44 @@ public class DPreferences extends JEscDialog {
 
         jbBrowseCaCertificatesFile = new JButton(res.getString("DPreferences.jbBrowseCaCertificatesFile.text"));
         PlatformUtil.setMnemonic(jbBrowseCaCertificatesFile,
-                                 res.getString("DPreferences.jbBrowseCaCertificatesFile.mnemonic").charAt(0));
+                res.getString("DPreferences.jbBrowseCaCertificatesFile.mnemonic").charAt(0));
         jbBrowseCaCertificatesFile.setToolTipText(res.getString("DPreferences.jbBrowseCaCertificatesFile.tooltip"));
 
         jcbUseCaCertificates = new JCheckBox(res.getString("DPreferences.jcbUseCaCertificates.text"),
-                                             useCaCertificates);
+                useCaCertificates);
         jcbUseCaCertificates.setToolTipText(res.getString("DPreferences.jcbUseCaCertificates.tooltip"));
         PlatformUtil.setMnemonic(jcbUseCaCertificates,
-                                 res.getString("DPreferences.jcbUseCaCertificates.mnemonic").charAt(0));
+                res.getString("DPreferences.jcbUseCaCertificates.mnemonic").charAt(0));
 
         jcbUseWinTrustedRootCertificates = new JCheckBox(
                 res.getString("DPreferences.jcbUseWinTrustRootCertificates.text"), useWinTrustRootCertificates);
-        jcbUseWinTrustedRootCertificates.setToolTipText(
-                res.getString("DPreferences.jcbUseWinTrustRootCertificates.tooltip"));
+        jcbUseWinTrustedRootCertificates
+                .setToolTipText(res.getString("DPreferences.jcbUseWinTrustRootCertificates.tooltip"));
         PlatformUtil.setMnemonic(jcbUseWinTrustedRootCertificates,
-                                 res.getString("DPreferences.jcbUseWinTrustRootCertificates.menmonic").charAt(0));
+                res.getString("DPreferences.jcbUseWinTrustRootCertificates.menmonic").charAt(0));
 
         jlTrustChecks = new JLabel(res.getString("DPreferences.jlTrustChecks.text"));
 
         jcbEnableImportTrustedCertTrustCheck = new JCheckBox(
                 res.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.text"),
                 enableImportTrustedCertTrustCheck);
-        jcbEnableImportTrustedCertTrustCheck.setToolTipText(
-                res.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.tooltip"));
-        jcbEnableImportTrustedCertTrustCheck.setMnemonic(
-                res.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.mnemonic").charAt(0));
+        jcbEnableImportTrustedCertTrustCheck
+                .setToolTipText(res.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.tooltip"));
+        jcbEnableImportTrustedCertTrustCheck
+                .setMnemonic(res.getString("DPreferences.jcbEnableImportTrustedCertTrustCheck.mnemonic").charAt(0));
 
         jcbEnableImportCaReplyTrustCheck = new JCheckBox(
                 res.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.text"), enableImportCaReplyTrustCheck);
-        jcbEnableImportCaReplyTrustCheck.setToolTipText(
-                res.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.tooltip"));
-        jcbEnableImportCaReplyTrustCheck.setMnemonic(
-                res.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.mnemonic").charAt(0));
+        jcbEnableImportCaReplyTrustCheck
+                .setToolTipText(res.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.tooltip"));
+        jcbEnableImportCaReplyTrustCheck
+                .setMnemonic(res.getString("DPreferences.jcbEnableImportCaReplyTrustCheck.mnemonic").charAt(0));
 
         // layout
         jpAuthorityCertificates = new JPanel();
+        jCardLayout.add(jpAuthorityCertificates, "jpCard1");
         jpAuthorityCertificates.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
+
         jpAuthorityCertificates.add(jlCaCertificatesFile, "split");
         jpAuthorityCertificates.add(jtfCaCertificatesFile, "");
         jpAuthorityCertificates.add(jbBrowseCaCertificatesFile, "wrap rel");
@@ -387,10 +498,11 @@ public class DPreferences extends JEscDialog {
                 CursorUtil.setCursorFree(DPreferences.this);
             }
         });
+
     }
 
-    private void initUserInterfaceTab() {
-
+    // TODO move to separate class
+    private void initUserInterfaceCard() {
         jlLookFeelNote = new JLabel(res.getString("DPreferences.jlLookFeelNote.text"));
         jlLookFeel = new JLabel(res.getString("DPreferences.jlLookFeel.text"));
 
@@ -400,10 +512,10 @@ public class DPreferences extends JEscDialog {
         initLookAndFeelSelection();
 
         jcbLookFeelDecorated = new JCheckBox(res.getString("DPreferences.jcbLookFeelDecorated.text"),
-                                             JFrame.isDefaultLookAndFeelDecorated());
+                JFrame.isDefaultLookAndFeelDecorated());
         jcbLookFeelDecorated.setToolTipText(res.getString("DPreferences.jcbLookFeelDecorated.tooltip"));
         PlatformUtil.setMnemonic(jcbLookFeelDecorated,
-                                 res.getString("DPreferences.jcbLookFeelDecorated.menmonic").charAt(0));
+                res.getString("DPreferences.jcbLookFeelDecorated.menmonic").charAt(0));
 
         jlLanguage = new JLabel(res.getString("DPreferences.jlLanguage.text"));
 
@@ -427,10 +539,10 @@ public class DPreferences extends JEscDialog {
 
         jcbEnforceMinimumPasswordQuality = new JCheckBox(
                 res.getString("DPreferences.jcbEnforceMinimumPasswordQuality.text"));
-        jcbEnforceMinimumPasswordQuality.setMnemonic(
-                res.getString("DPreferences.jcbEnforceMinimumPasswordQuality.mnemonic").charAt(0));
-        jcbEnforceMinimumPasswordQuality.setToolTipText(
-                res.getString("DPreferences.jcbEnforceMinimumPasswordQuality.tooltip"));
+        jcbEnforceMinimumPasswordQuality
+                .setMnemonic(res.getString("DPreferences.jcbEnforceMinimumPasswordQuality.mnemonic").charAt(0));
+        jcbEnforceMinimumPasswordQuality
+                .setToolTipText(res.getString("DPreferences.jcbEnforceMinimumPasswordQuality.tooltip"));
 
         jlMinimumPasswordQuality = new JLabel(res.getString("DPreferences.jlMinimumPasswordQuality.text"));
 
@@ -458,6 +570,7 @@ public class DPreferences extends JEscDialog {
 
         // layout
         jpUI = new JPanel();
+        jCardLayout.add(jpUI, "jpCard2");
         jpUI.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
         jpUI.add(jlLookFeelNote, "split, span, wrap unrel");
         jpUI.add(jlLookFeel, "");
@@ -477,64 +590,27 @@ public class DPreferences extends JEscDialog {
         jpUI.add(jlFileChooser, "spanx, wrap");
         jpUI.add(jcbShowHiddenFiles, "spanx, wrap");
 
-        jcbEnableAutoUpdateChecks.addItemListener(
-                evt -> jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected()));
+        jcbEnableAutoUpdateChecks
+                .addItemListener(evt -> jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected()));
 
         jcbEnablePasswordQuality.addItemListener(evt -> {
             jcbEnforceMinimumPasswordQuality.setEnabled(jcbEnablePasswordQuality.isSelected());
-            jlMinimumPasswordQuality.setEnabled(
-                    jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
-            jsMinimumPasswordQuality.setEnabled(
-                    jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
+            jlMinimumPasswordQuality
+                    .setEnabled(jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
+            jsMinimumPasswordQuality
+                    .setEnabled(jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
         });
 
         jcbEnforceMinimumPasswordQuality.addItemListener(evt -> {
-            jlMinimumPasswordQuality.setEnabled(
-                    jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
-            jsMinimumPasswordQuality.setEnabled(
-                    jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
+            jlMinimumPasswordQuality
+                    .setEnabled(jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
+            jsMinimumPasswordQuality
+                    .setEnabled(jcbEnablePasswordQuality.isSelected() && jcbEnforceMinimumPasswordQuality.isSelected());
         });
     }
 
-    private void initLookAndFeelSelection() {
-        // This may contain duplicates
-        UIManager.LookAndFeelInfo[] lookFeelInfos = UIManager.getInstalledLookAndFeels();
-        LookAndFeel currentLookAndFeel = UIManager.getLookAndFeel();
-        TreeSet<String> lookFeelClasses = new TreeSet<>();
-
-        for (UIManager.LookAndFeelInfo lfi : lookFeelInfos) {
-            // Avoid duplicates
-            if (!lookFeelClasses.contains(lfi.getClassName())) {
-                lookFeelClasses.add(lfi.getClassName());
-
-                lookFeelInfoList.add(lfi);
-                jcbLookFeel.addItem(lfi.getName());
-
-                // Pre-select current look & feel - compare by class as the look
-                // and feel name can differ from the look and feel info name
-                if ((currentLookAndFeel != null) &&
-                    (currentLookAndFeel.getClass().getName().equals(lfi.getClassName()))) {
-                    this.lookFeelInfo = lfi;
-                    jcbLookFeel.setSelectedIndex(jcbLookFeel.getItemCount() - 1);
-                }
-            }
-        }
-    }
-
-    private void initLanguageSelection() {
-        LanguageItem[] languageItems = new LanguageItem[] {
-                new LanguageItem("System", ApplicationSettings.SYSTEM_LANGUAGE), new LanguageItem("English", "en"),
-                new LanguageItem("German", "de"), new LanguageItem("French", "fr") };
-
-        for (LanguageItem languageItem : languageItems) {
-            jcbLanguage.addItem(languageItem);
-            if (languageItem.getIsoCode().equals(language)) {
-                jcbLanguage.setSelectedItem(languageItem);
-            }
-        }
-    }
-
-    private void initInternetProxyTab() {
+    // TODO move to separate class
+    private void initInternetProxyCard() {
         jrbNoProxy = new JRadioButton(res.getString("DPreferences.jrbNoProxy.text"));
         jrbNoProxy.setToolTipText(res.getString("DPreferences.jrbNoProxy.tooltip"));
         PlatformUtil.setMnemonic(jrbNoProxy, res.getString("DPreferences.jrbNoProxy.mnemonic").charAt(0));
@@ -542,12 +618,12 @@ public class DPreferences extends JEscDialog {
         jrbSystemProxySettings = new JRadioButton(res.getString("DPreferences.jrbSystemProxySettings.text"), true);
         jrbSystemProxySettings.setToolTipText(res.getString("DPreferences.jrbSystemProxySettings.tooltip"));
         PlatformUtil.setMnemonic(jrbSystemProxySettings,
-                                 res.getString("DPreferences.jrbSystemProxySettings.mnemonic").charAt(0));
+                res.getString("DPreferences.jrbSystemProxySettings.mnemonic").charAt(0));
 
         jrbManualProxyConfig = new JRadioButton(res.getString("DPreferences.jrbManualProxyConfig.text"));
         jrbManualProxyConfig.setToolTipText(res.getString("DPreferences.jrbManualProxyConfig.tooltip"));
         PlatformUtil.setMnemonic(jrbManualProxyConfig,
-                                 res.getString("DPreferences.jrbManualProxyConfig.mnemonic").charAt(0));
+                res.getString("DPreferences.jrbManualProxyConfig.mnemonic").charAt(0));
 
         jlHttpHost = new JLabel(res.getString("DPreferences.jlHttpHost.text"));
 
@@ -588,7 +664,7 @@ public class DPreferences extends JEscDialog {
         jrbAutomaticProxyConfig = new JRadioButton(res.getString("DPreferences.jrbAutomaticProxyConfig.text"));
         jrbAutomaticProxyConfig.setToolTipText(res.getString("DPreferences.jrbAutomaticProxyConfig.tooltip"));
         PlatformUtil.setMnemonic(jrbAutomaticProxyConfig,
-                                 res.getString("DPreferences.jrbAutomaticProxyConfig.mnemonic").charAt(0));
+                res.getString("DPreferences.jrbAutomaticProxyConfig.mnemonic").charAt(0));
 
         jlPacUrl = new JLabel(res.getString("DPreferences.jlPacUrl.text"));
 
@@ -604,6 +680,7 @@ public class DPreferences extends JEscDialog {
 
         // layout
         jpInternetProxy = new JPanel();
+        jCardLayout.add(jpInternetProxy, "jpCard3");
         jpInternetProxy.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
         jpInternetProxy.add(jrbNoProxy, "left, span, wrap");
         jpInternetProxy.add(jrbSystemProxySettings, "left, span, wrap");
@@ -675,19 +752,17 @@ public class DPreferences extends JEscDialog {
         }
     }
 
-    private void initDefaultNameTab() {
-
+    // Good example to establish separate class and bring into preference menu
+    private void initDefaultNameCard() {
         distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
 
         // layout
-        jpDefaultName = new JPanel();
-        jpDefaultName.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
-        jpDefaultName.add(distinguishedNameChooser, "left, spanx, wrap para");
+        jCardLayout.add(distinguishedNameChooser, "jpCard4");
     }
 
-    private void initDisplayColumnsTab() {
+    // TODO move to separate class
+    private void initDisplayColumnsCard() {
         bColumnsChanged = false;
-        jpDisplayColumns = new JPanel();
 
         bEnableEntryName = kstColumns.getEnableEntryName();
         jcbEnableEntryName = new JCheckBox(res.getString("DPreferences.jcbEnableEntryName.text"), bEnableEntryName);
@@ -708,12 +783,12 @@ public class DPreferences extends JEscDialog {
 
         bEnableCertificateExpiry = kstColumns.getEnableCertificateExpiry();
         jcbEnableCertificateExpiry = new JCheckBox(res.getString("DPreferences.jcbEnableCertificateExpiry.text"),
-                                                   bEnableCertificateExpiry);
+                bEnableCertificateExpiry);
         jcbEnableCertificateExpiry.setSelected(bEnableCertificateExpiry);
 
         bEnableLastModified = kstColumns.getEnableLastModified();
         jcbEnableLastModified = new JCheckBox(res.getString("DPreferences.jcbEnableLastModified.text"),
-                                              bEnableLastModified);
+                bEnableLastModified);
         jcbEnableLastModified.setSelected(bEnableLastModified);
 
         bEnableSKI = kstColumns.getEnableSKI();
@@ -750,12 +825,12 @@ public class DPreferences extends JEscDialog {
 
         bEnableSerialNumberHex = kstColumns.getbEnableSerialNumberHex();
         jcbEnableSerialNumberHex = new JCheckBox(res.getString("DPreferences.jcbEnableSerialNumberHex.text"),
-                                                 bEnableSerialNumberHex);
+                bEnableSerialNumberHex);
         jcbEnableSerialNumberHex.setSelected(bEnableSerialNumberHex);
 
         bEnableSerialNumberDec = kstColumns.getbEnableSerialNumberDec();
         jcbEnableSerialNumberDec = new JCheckBox(res.getString("DPreferences.jcbEnableSerialNumberDec.text"),
-                                                 bEnableSerialNumberDec);
+                bEnableSerialNumberDec);
         jcbEnableSerialNumberDec.setSelected(bEnableSerialNumberDec);
 
         jlExpirationWarnDays = new JLabel(res.getString("DPreferences.jlExpiryWarning.text"));
@@ -763,6 +838,9 @@ public class DPreferences extends JEscDialog {
         jtfExpirationWarnDays.setColumns(3);
         jtfExpirationWarnDays.setText(Integer.toString(expiryWarnDays));
 
+        // layout
+        jpDisplayColumns = new JPanel();
+        jCardLayout.add(jpDisplayColumns, "jpCard5");
         jpDisplayColumns.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
         jpDisplayColumns.add(jcbEnableEntryName, "left");
         jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
@@ -784,40 +862,43 @@ public class DPreferences extends JEscDialog {
         jpDisplayColumns.add(jtfExpirationWarnDays, "wrap");
     }
 
-    private void updateProxyControls() {
-        if (jrbManualProxyConfig.isSelected()) {
-            jtfHttpHost.setEnabled(true);
-            jtfHttpPort.setEnabled(true);
-            jtfHttpsHost.setEnabled(true);
-            jtfHttpsPort.setEnabled(true);
-            jtfSocksHost.setEnabled(true);
-            jtfSocksPort.setEnabled(true);
+    private void initLookAndFeelSelection() {
+        // This may contain duplicates
+        UIManager.LookAndFeelInfo[] lookFeelInfos = UIManager.getInstalledLookAndFeels();
+        LookAndFeel currentLookAndFeel = UIManager.getLookAndFeel();
+        TreeSet<String> lookFeelClasses = new TreeSet<>();
 
-            jtfPacUrl.setEnabled(false);
-        } else if (this.jrbAutomaticProxyConfig.isSelected()) {
-            jtfHttpHost.setEnabled(false);
-            jtfHttpPort.setEnabled(false);
-            jtfHttpsHost.setEnabled(false);
-            jtfHttpsPort.setEnabled(false);
-            jtfSocksHost.setEnabled(false);
-            jtfSocksPort.setEnabled(false);
+        for (UIManager.LookAndFeelInfo lfi : lookFeelInfos) {
+            // Avoid duplicates
+            if (!lookFeelClasses.contains(lfi.getClassName())) {
+                lookFeelClasses.add(lfi.getClassName());
 
-            jtfPacUrl.setEnabled(true);
-        } else {
-            jtfHttpHost.setEnabled(false);
-            jtfHttpPort.setEnabled(false);
-            jtfHttpsHost.setEnabled(false);
-            jtfHttpsPort.setEnabled(false);
-            jtfSocksHost.setEnabled(false);
-            jtfSocksPort.setEnabled(false);
+                lookFeelInfoList.add(lfi);
+                jcbLookFeel.addItem(lfi.getName());
 
-            jtfPacUrl.setEnabled(false);
+                // Pre-select current look & feel - compare by class as the look
+                // and feel name can differ from the look and feel info name
+                if ((currentLookAndFeel != null)
+                        && (currentLookAndFeel.getClass().getName().equals(lfi.getClassName()))) {
+                    this.lookFeelInfo = lfi;
+                    jcbLookFeel.setSelectedIndex(jcbLookFeel.getItemCount() - 1);
+                }
+            }
         }
+    }
+
+    private void updateProxyControls() {
+        jtfHttpHost.setEnabled(jrbManualProxyConfig.isSelected());
+        jtfHttpPort.setEnabled(jrbManualProxyConfig.isSelected());
+        jtfHttpsHost.setEnabled(jrbManualProxyConfig.isSelected());
+        jtfHttpsPort.setEnabled(jrbManualProxyConfig.isSelected());
+        jtfSocksHost.setEnabled(jrbManualProxyConfig.isSelected());
+        jtfSocksPort.setEnabled(jrbManualProxyConfig.isSelected());
+        jtfPacUrl.setEnabled(jrbAutomaticProxyConfig.isSelected());
     }
 
     private boolean storePreferences() {
         caCertificatesFile = new File(jtfCaCertificatesFile.getText());
-
         useCaCertificates = jcbUseCaCertificates.isSelected();
 
         if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
@@ -845,6 +926,7 @@ public class DPreferences extends JEscDialog {
 
         // These may fail:
         boolean returnValue = storeDefaultDN();
+        // bitwise and assignment
         returnValue &= storeProxyPreferences();
 
         return returnValue;
@@ -857,22 +939,28 @@ public class DPreferences extends JEscDialog {
     }
 
     private boolean storeProxyPreferences() {
-        // Store current proxy selector - compare with new one to see if default needs updated
+        // Store current proxy selector - compare with new one to see if default needs
+        // updated
         ProxySelector defaultProxySelector = ProxySelector.getDefault();
 
+        // set no proxy
         if (jrbNoProxy.isSelected()) {
             NoProxySelector noProxySelector = new NoProxySelector();
-
             if (!noProxySelector.equals(defaultProxySelector)) {
                 ProxySelector.setDefault(noProxySelector);
             }
-        } else if (jrbSystemProxySettings.isSelected()) {
-            SystemProxySelector systemProxySelector = new SystemProxySelector();
+        }
 
+        // set system proxy
+        if (jrbSystemProxySettings.isSelected()) {
+            SystemProxySelector systemProxySelector = new SystemProxySelector();
             if (!systemProxySelector.equals(defaultProxySelector)) {
                 ProxySelector.setDefault(systemProxySelector);
             }
-        } else if (jrbManualProxyConfig.isSelected()) {
+        }
+
+        // set manual proxy
+        if (jrbManualProxyConfig.isSelected()) {
             String httpHost = jtfHttpHost.getText().trim();
             String httpPortStr = jtfHttpPort.getText().trim();
             String httpsHost = jtfHttpsHost.getText().trim();
@@ -884,121 +972,135 @@ public class DPreferences extends JEscDialog {
             ProxyAddress httpsProxyAddress = null;
             ProxyAddress socksProxyAddress = null;
 
-            // Require at least one of the HTTP host or HTTPS host or SOCKS host manual settings
+            // Require at least one of the HTTP host or HTTPS host or SOCKS host manual
+            // settings
             if ((httpHost.length() == 0) && (httpsHost.length() == 0) && (socksHost.length() == 0)) {
-                jtpPreferences.setSelectedIndex(3);
                 JOptionPane.showMessageDialog(this, res.getString("DPreferences.ManualConfigReq.message"), getTitle(),
-                                              JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.WARNING_MESSAGE);
                 return false;
-            } else {
-                if (httpHost.length() > 0) {
-                    if (httpPortStr.length() == 0) {
-                        jtpPreferences.setSelectedIndex(3);
-                        JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqHttp.message"),
-                                                      getTitle(), JOptionPane.WARNING_MESSAGE);
-                        return false;
-                    } else {
-                        try {
-                            int httpPort = Integer.parseInt(httpPortStr);
-
-                            if (httpPort < 1) {
-                                throw new NumberFormatException();
-                            }
-
-                            httpProxyAddress = new ProxyAddress(httpHost, httpPort);
-                        } catch (NumberFormatException ex) {
-                            jtpPreferences.setSelectedIndex(3);
-                            JOptionPane.showMessageDialog(this,
-                                                          res.getString("DPreferences.IntegerPortReqHttp.message"),
-                                                          getTitle(), JOptionPane.WARNING_MESSAGE);
-                            return false;
-                        }
-                    }
-                }
-
-                if (httpsHost.length() > 0) {
-                    if (httpsPortStr.length() == 0) {
-                        jtpPreferences.setSelectedIndex(3);
-                        JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqHttps.message"),
-                                                      getTitle(), JOptionPane.WARNING_MESSAGE);
-                        return false;
-                    } else {
-                        try {
-                            int httpsPort = Integer.parseInt(httpsPortStr);
-
-                            if (httpsPort < 1) {
-                                throw new NumberFormatException();
-                            }
-
-                            httpsProxyAddress = new ProxyAddress(httpsHost, httpsPort);
-                        } catch (NumberFormatException ex) {
-                            jtpPreferences.setSelectedIndex(3);
-                            JOptionPane.showMessageDialog(this,
-                                                          res.getString("DPreferences.IntegerPortReqHttps.message"),
-                                                          getTitle(), JOptionPane.WARNING_MESSAGE);
-                            return false;
-                        }
-                    }
-                }
-
-                if (socksHost.length() > 0) {
-                    if (socksPortStr.length() == 0) {
-                        jtpPreferences.setSelectedIndex(3);
-                        JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqSocks.message"),
-                                                      getTitle(), JOptionPane.WARNING_MESSAGE);
-                        return false;
-                    } else {
-                        try {
-                            int socksPort = Integer.parseInt(socksPortStr);
-
-                            if (socksPort < 1) {
-                                throw new NumberFormatException();
-                            }
-
-                            socksProxyAddress = new ProxyAddress(socksHost, socksPort);
-                        } catch (NumberFormatException ex) {
-                            jtpPreferences.setSelectedIndex(3);
-                            JOptionPane.showMessageDialog(this,
-                                                          res.getString("DPreferences.IntegerPortReqSocks.message"),
-                                                          getTitle(), JOptionPane.WARNING_MESSAGE);
-                            return false;
-                        }
-                    }
-                }
-
-                ManualProxySelector manualProxySelector = new ManualProxySelector(httpProxyAddress, httpsProxyAddress,
-                                                                                  null, socksProxyAddress);
-
-                if (!manualProxySelector.equals(defaultProxySelector)) {
-                    ProxySelector.setDefault(manualProxySelector);
-                }
             }
-        } else if (jrbAutomaticProxyConfig.isSelected()) {
+
+            // check http
+            if (httpHost.length() > 0) {
+                if (!parsePort(httpPortStr) || httpPortStr.length() == 0) {
+                    JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqHttp.message"), getTitle(),
+                            JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                int httpPort = Integer.parseInt(httpPortStr);
+                httpProxyAddress = new ProxyAddress(httpHost, httpPort);
+            }
+
+            // check https
+            if (httpsHost.length() > 0) {
+                if (!parsePort(httpsPortStr) || httpsPortStr.length() == 0) {
+                    JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqHttps.message"), getTitle(),
+                            JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                int httpsPort = Integer.parseInt(httpsPortStr);
+                httpsProxyAddress = new ProxyAddress(httpsHost, httpsPort);
+            }
+
+            // check socks
+            if (socksHost.length() > 0) {
+                if (!parsePort(socksPortStr) || socksPortStr.length() == 0) {
+                    JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqSocks.message"), getTitle(),
+                            JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                int socksPort = Integer.parseInt(socksPortStr);
+                socksProxyAddress = new ProxyAddress(socksHost, socksPort);
+            }
+            ManualProxySelector manualProxySelector = new ManualProxySelector(httpProxyAddress, httpsProxyAddress, null,
+                    socksProxyAddress);
+            if (!manualProxySelector.equals(defaultProxySelector)) {
+                ProxySelector.setDefault(manualProxySelector);
+            }
+        }
+
+        // check automatic proxy
+        if (jrbAutomaticProxyConfig.isSelected()) {
             String pacUrl = jtfPacUrl.getText().trim();
-
             if (pacUrl.length() == 0) {
-                jtpPreferences.setSelectedIndex(3);
                 JOptionPane.showMessageDialog(this, res.getString("DPreferences.PacUrlReq.message"), getTitle(),
-                                              JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.WARNING_MESSAGE);
                 return false;
             }
-
             PacProxySelector pacProxySelector = null;
             try {
                 pacProxySelector = new PacProxySelector(new URI(pacUrl));
             } catch (URISyntaxException e) {
-                jtpPreferences.setSelectedIndex(3);
                 JOptionPane.showMessageDialog(this, res.getString("DPreferences.PacUrlReq.message"), getTitle(),
-                                              JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.WARNING_MESSAGE);
                 return false;
             }
-
             if (!pacProxySelector.equals(defaultProxySelector)) {
                 ProxySelector.setDefault(pacProxySelector);
             }
         }
-
         return true;
+    }
+
+    /**
+     * Use regular expression to evaluate allowable IP port ranges
+     * 
+     * @param port
+     * @return boolean True if allowed
+     */
+    private boolean parsePort(String port) {
+        String regex = "^((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0][0-9]{1,4})|([0-9]{1,4}))$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(port);
+        boolean matchFound = matcher.find();
+        return matchFound;
+    }
+
+    /**
+     * Use regular expression to evaluate allowable IPV4 address
+     * 
+     * @param host
+     * @return boolean True if allowed
+     */
+    private boolean parseIPv4(String host) {
+        String regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(host);
+        boolean matchFound = matcher.find();
+        return matchFound;
+    }
+
+    /**
+     * Use regular expression to evaluate allowable IPV6 address
+     * 
+     * @param host
+     * @return boolean True if allowed
+     */
+    private boolean parseIPv6(String host) {
+        String regex = "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|"
+                + "([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:)"
+                + "{1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4})"
+                + "{1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}"
+                + "((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:"
+                + "((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(host);
+        boolean matchFound = matcher.find();
+        return matchFound;
+    }
+
+    /**
+     * Use regular expression to evaluate allowable URL
+     * 
+     * @param url
+     * @return boolean True if allowed
+     */
+    private boolean parseURL(String url) {
+        String regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(url);
+        boolean matchFound = matcher.find();
+        return matchFound;
     }
 
     /**
@@ -1020,8 +1122,8 @@ public class DPreferences extends JEscDialog {
     }
 
     /**
-     * Get whether or not the usage of Windows Trusted Root Certificates has
-     * been chosen.
+     * Get whether or not the usage of Windows Trusted Root Certificates has been
+     * chosen.
      *
      * @return True if it has, false otherwise
      */
@@ -1084,14 +1186,29 @@ public class DPreferences extends JEscDialog {
         return language;
     }
 
+    /**
+     * Read status of show hidden files
+     * 
+     * @return boolean True if show hidden files is enabled
+     */
     public boolean isShowHiddenFilesEnabled() {
         return showHiddenFilesEnabled;
     }
 
+    /**
+     * Read enable status of check auto update
+     * 
+     * @return boolean True if auto update is enabled
+     */
     public boolean isAutoUpdateChecksEnabled() {
         return autoUpdateChecksEnabled;
     }
 
+    /**
+     * Read interval of check auto update
+     * 
+     * @return int
+     */
     public int getAutoUpdateChecksInterval() {
         return autoUpdateChecksInterval;
     }
@@ -1099,7 +1216,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Read the new default DN (RDNs can be empty here)
      *
-     * @return
+     * @return String
      */
     public String getDefaultDN() {
         return defaultDN;
@@ -1109,6 +1226,11 @@ public class DPreferences extends JEscDialog {
         return kstColumns;
     }
 
+    /**
+     * Check if columns have changed
+     * 
+     * @return boolean True if changed
+     */
     public boolean columnsChanged() {
         return bColumnsChanged;
     }
@@ -1137,9 +1259,9 @@ public class DPreferences extends JEscDialog {
             expiryWarnDays = 0;
         }
         kstColumns.setColumns(bEnableEntryName, bEnableAlgorithm, bEnableKeySize, bEnableCertificateExpiry,
-                              bEnableLastModified, bEnableSKI, bEnableAKI, bEnableIssuerDN, bEnableSubjectDN,
-                              bEnableIssuerCN, bEnableSubjectCN, bEnableIssuerO, bEnableSubjectO, bEnableCurve,
-                              bEnableSerialNumberHex, bEnableSerialNumberDec, expiryWarnDays);
+                bEnableLastModified, bEnableSKI, bEnableAKI, bEnableIssuerDN, bEnableSubjectDN, bEnableIssuerCN,
+                bEnableSubjectCN, bEnableIssuerO, bEnableSubjectO, bEnableCurve, bEnableSerialNumberHex,
+                bEnableSerialNumberDec, expiryWarnDays);
         bColumnsChanged = (kstColumns.getColumns() != ist);
     }
 
@@ -1174,47 +1296,54 @@ public class DPreferences extends JEscDialog {
         }
     }
 
+    /**
+     * Validate store preferences Call close dialog method
+     */
     private void okPressed() {
         if (storePreferences()) {
             closeDialog();
         }
     }
 
+    /**
+     * Call the close dialog method
+     */
     private void cancelPressed() {
         cancelled = true;
         bColumnsChanged = false;
         closeDialog();
     }
 
+    /**
+     * Close dialog method dispose of window
+     */
     private void closeDialog() {
         setVisible(false);
         dispose();
     }
 
-    private static class LanguageItem {
-        private String displayName;
-        private String isoCode;
+    private void initLanguageSelection() {
+        LanguageItem[] languageItems = new LanguageItem[] {
+                new LanguageItem("System", ApplicationSettings.SYSTEM_LANGUAGE), new LanguageItem("English", "en"),
+                new LanguageItem("German", "de"), new LanguageItem("French", "fr") };
 
-        public LanguageItem(String displayName, String isoCode) {
-            super();
-            this.displayName = displayName;
-            this.isoCode = isoCode;
-        }
-
-        public String getIsoCode() {
-            return isoCode;
-        }
-
-        @Override
-        public String toString() {
-            return displayName;
+        for (LanguageItem languageItem : languageItems) {
+            jcbLanguage.addItem(languageItem);
+            if (languageItem.getIsoCode().equals(language)) {
+                jcbLanguage.setSelectedItem(languageItem);
+            }
         }
     }
 
+    /**
+     * Quick UI testing
+     * 
+     * @param String[] args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
-                                               new PasswordQualityConfig(true, true, 100), "", "en", true, 14,
-                                               new KeyStoreTableColumns(), true);
+                new PasswordQualityConfig(true, true, 100), "", "en", true, 14, new KeyStoreTableColumns(), true);
         DialogViewer.run(dialog);
     }
 }
