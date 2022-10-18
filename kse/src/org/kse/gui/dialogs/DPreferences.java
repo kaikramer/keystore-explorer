@@ -47,7 +47,6 @@ import org.kse.utilities.net.NoProxySelector;
 import org.kse.utilities.net.PacProxySelector;
 import org.kse.utilities.net.ProxyAddress;
 import org.kse.utilities.net.SystemProxySelector;
-import org.kse.utilities.os.OperatingSystem;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -70,14 +69,20 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeSelectionModel;
 
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -85,7 +90,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 
@@ -95,29 +99,76 @@ import javax.swing.ImageIcon;
 public class DPreferences extends JEscDialog {
 
     /**
-     * Action factory used for menu navigation with keyboard keys and other menu
-     * properties such as description, icon, tooltip, and mnemonic character, and
-     * mouse
+     * Renderer class to populate and style tree cells
      */
-    private class createNavItem extends AbstractAction {
-        private static final long serialVersionUID = 1L;
-        private String screen;
+    private class MyRenderer extends DefaultTreeCellRenderer {
+        private Object userObject;
 
-        public createNavItem(String text, ImageIcon icon, String desc, char mnemonic, String card) {
-            super(text, icon);
-            screen = card;
-            // set character to keystroke and and modifier to ALT as default
-            KeyStroke ks = KeyStroke.getKeyStroke(mnemonic, ActionEvent.ALT_MASK);
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                boolean leaf, int row, boolean hasFocus) {
 
-            putValue(SHORT_DESCRIPTION, desc);
-            if (!OperatingSystem.isMacOs()) {
-                putValue(MNEMONIC_KEY, ks.getKeyCode());
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+            userObject = node;
+            Dimension d = new Dimension(170, 20);
+            setPreferredSize(d); // set cell preferred size
+            if (node.isLeaf()) {
+                MenuTreeNode menuTreeNode = (MenuTreeNode) node.getUserObject();
+                setText(menuTreeNode.getName());
+                setIcon(new ImageIcon(this.getClass().getResource(menuTreeNode.getLabelIcon())));
+                setToolTipText(menuTreeNode.getToolTip());
+            } else {
+                setLeafIcon(null);
+                setClosedIcon(null);
+                setOpenIcon(null);
             }
+            return this;
+        }
+    }
+
+    /**
+     * MenuTreeNode class to compile a set of items used for tree nodes
+     */
+    private class MenuTreeNode {
+        private String name;
+        private String icon;
+        private String tooltip;
+
+        public MenuTreeNode(String name, String icon, String tooltip) {
+            super();
+            this.name = name;
+            this.icon = icon;
+            this.tooltip = tooltip;
         }
 
-        public void actionPerformed(ActionEvent e) {
-            activeNav(e.getSource());
-            changeScreen(screen);
+        public MenuTreeNode() {
+            super();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getLabelIcon() {
+            return icon;
+        }
+
+        public void setLabelIcon(String icon) {
+            this.icon = icon;
+        }
+
+        public String getToolTip() {
+            return tooltip;
+        }
+
+        public void setToolTip(String tooltip) {
+            this.tooltip = tooltip;
         }
     }
 
@@ -262,27 +313,24 @@ public class DPreferences extends JEscDialog {
     private JLabel jlExpirationWarnDays;
     private JTextField jtfExpirationWarnDays;
     private boolean bColumnsChanged;
-    private Font menuFont;
-    private JToolBar menuTBar;
-    private Object activeNavItem;
     private JSplitPane jsPane;
 
     /**
      * Creates a new DPreference dialog.
      * 
-     * @param JFrame                parent
-     * @param boolean               useCaCertificates
-     * @param File                  caCertificatesFile
-     * @param boolean               useWinTrustedRootCertificates
-     * @param boolean               enableImportTrustedCertTrustCheck
-     * @param boolean               enableImportCaReplyTrustCheck
-     * @param PasswordQualityConfig passwordQualityConfig
-     * @param String                defaultDN
-     * @param String                language
-     * @param boolean               autoUpdateChecksEnabled
-     * @param int                   autoUpdateChecksInterval
-     * @param KeyStoreTableColumns  kstColumns
-     * @param boolean               showHiddenFilesEnabled
+     * @param parent
+     * @param useCaCertificates
+     * @param caCertificatesFile
+     * @param useWinTrustedRootCertificates
+     * @param enableImportTrustedCertTrustCheck
+     * @param enableImportCaReplyTrustCheck
+     * @param passwordQualityConfig
+     * @param defaultDN
+     * @param language
+     * @param autoUpdateChecksEnabled
+     * @param autoUpdateChecksInterval
+     * @param kstColumns
+     * @param showHiddenFilesEnabled
      */
     public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
             boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
@@ -317,44 +365,68 @@ public class DPreferences extends JEscDialog {
         jsPane.setResizeWeight(0.3);
         getContentPane().add(jsPane);
 
-        // set default active menu style
-        menuFont = new Font("", Font.BOLD, 15);
-
         // set left split pane for menu navigation
-        menuTBar = new JToolBar();
-        menuTBar.setOrientation(SwingConstants.VERTICAL);
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root", true);
 
-        JScrollPane jScrollPaneNavigation = new JScrollPane(menuTBar);
+        MenuTreeNode[] menus = new MenuTreeNode[] {
+                new MenuTreeNode(res.getString("DPreferences.jpAuthorityCertificates.text"), "images/tab_authcerts.png",
+                        res.getString("DPreferences.jpAuthorityCertificates.tooltip")),
+                new MenuTreeNode(res.getString("DPreferences.jpUI.text"), "images/tab_lookfeel.png",
+                        res.getString("DPreferences.jpUI.tooltip")),
+                new MenuTreeNode(res.getString("DPreferences.jpInternetProxy.text"), "images/tab_internetproxy.png",
+                        res.getString("DPreferences.jpInternetProxy.tooltip")),
+                new MenuTreeNode(res.getString("DPreferences.jpDefaultName.text"), "images/tab_defaultname.png",
+                        res.getString("DPreferences.jpAuthorityCertificates.tooltip")),
+                new MenuTreeNode(res.getString("DPreferences.jpDisplayColumns.text"), "images/tab_columns.png",
+                        res.getString("DPreferences.jpDisplayColumns.tooltip")) };
+
+        for (MenuTreeNode menu : menus) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(menu);
+            rootNode.add(node);
+        }
+
+        JTree jtree = new JTree(rootNode);
+        jtree.setRootVisible(false);
+        jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        jtree.setCellRenderer(new MyRenderer());
+        jtree.setEditable(false);
+
+        JScrollPane jScrollPaneNavigation = new JScrollPane(jtree);
         jsPane.setLeftComponent(jScrollPaneNavigation);
 
-        Action m1 = new createNavItem(res.getString("DPreferences.jpAuthorityCertificates.text"),
-                new ImageIcon(this.getClass().getResource("images/tab_authcerts.png")),
-                res.getString("DPreferences.jpAuthorityCertificates.tooltip"),
-                res.getString("DPreferences.jpAuthorityCertificates.mnemonic").charAt(0), "jpCard1");
-        Action m2 = new createNavItem(res.getString("DPreferences.jpUI.text"),
-                new ImageIcon(getClass().getResource("images/tab_lookfeel.png")),
-                res.getString("DPreferences.jpUI.tooltip"), res.getString("DPreferences.jpUI.mnemonic").charAt(0),
-                "jpCard2");
-        Action m3 = new createNavItem(res.getString("DPreferences.jpInternetProxy.text"),
-                new ImageIcon(this.getClass().getResource("images/tab_internetproxy.png")),
-                res.getString("DPreferences.jpInternetProxy.tooltip"),
-                res.getString("DPreferences.jpInternetProxy.mnemonic").charAt(0), "jpCard3");
-        Action m4 = new createNavItem(res.getString("DPreferences.jpDefaultName.text"),
-                new ImageIcon(this.getClass().getResource("images/tab_defaultname.png")),
-                res.getString("DPreferences.jpAuthorityCertificates.tooltip"),
-                res.getString("DPreferences.jpDefaultName.mnemonic").charAt(0), "jpCard4");
-        Action m5 = new createNavItem(res.getString("DPreferences.jpDisplayColumns.text"),
-                new ImageIcon(this.getClass().getResource("images/tab_columns.png")),
-                res.getString("DPreferences.jpDisplayColumns.tooltip"),
-                res.getString("DPreferences.jpDisplayColumns.mnemonic").charAt(0), "jpCard5");
+        jtree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent e) {
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jtree.getLastSelectedPathComponent();
+                Object nodeInfo = selectedNode.getUserObject();
+                MenuTreeNode mtn = null;
+                String screen = "";
+                if (selectedNode.isLeaf()) {
+                    mtn = (MenuTreeNode) nodeInfo;
+                }
+                if (mtn.getName().equals(res.getString("DPreferences.jpAuthorityCertificates.text"))) {
+                    screen = "jpCard1";
+                }
+                if (mtn.getName().equals(res.getString("DPreferences.jpUI.text"))) {
+                    screen = "jpCard2";
+                }
+                if (mtn.getName().equals(res.getString("DPreferences.jpInternetProxy.text"))) {
+                    screen = "jpCard3";
+                }
+                if (mtn.getName().equals(res.getString("DPreferences.jpDefaultName.text"))) {
+                    screen = "jpCard4";
+                }
+                if (mtn.getName().equals(res.getString("DPreferences.jpDisplayColumns.text"))) {
+                    screen = "jpCard5";
+                }
+                changeScreen(screen);
+            }
+        });
 
-        menuTBar.add(new JButton(m1));
-        menuTBar.add(new JButton(m2));
-        menuTBar.add(new JButton(m3));
-        menuTBar.add(new JButton(m4));
-        menuTBar.add(new JButton(m5));
-        menuTBar.getComponent(0).setFont(menuFont);
-        activeNavItem = menuTBar.getComponent(0);
+        // Enable tool tips.
+        ToolTipManager.sharedInstance().registerComponent(jtree);
+
+        // Set the properties for leaf nodes.
+        jtree.setCellRenderer(new MyRenderer());
 
         jbOK = new JButton(res.getString("DPreferences.jbOK.text"));
         jbCancel = new JButton(res.getString("DPreferences.jbCancel.text"));
@@ -413,23 +485,10 @@ public class DPreferences extends JEscDialog {
     /**
      * Set the preference screen from the selected navigation menu item
      * 
-     * @param String screen
+     * @param screen
      */
     private void changeScreen(String screen) {
         ((CardLayout) jCardLayout.getLayout()).show(jCardLayout, screen);
-    }
-
-    /**
-     * Set the navigation item style to indicate the active selection
-     * 
-     * @param Object currentNavItem
-     */
-    private void activeNav(Object currentNavItem) {
-        if (currentNavItem != activeNavItem) {
-            ((Component) activeNavItem).setFont(null);
-            activeNavItem = currentNavItem;
-            ((Component) activeNavItem).setFont(menuFont);
-        }
     }
 
     // TODO move to separate class
@@ -1048,8 +1107,8 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable IP port ranges
      * 
-     * @param String port
-     * @return boolean True if allowed
+     * @param port
+     * @return True if allowed
      */
     private boolean parsePort(String port) {
         String regex = "^((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0][0-9]{1,4})|([0-9]{1,4}))$";
@@ -1062,8 +1121,8 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable IPV4 address
      * 
-     * @param String host
-     * @return boolean True if allowed
+     * @param host
+     * @return True if allowed
      */
     private boolean parseIPv4(String host) {
         String regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
@@ -1076,8 +1135,8 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable IPV6 address
      * 
-     * @param String host
-     * @return boolean True if allowed
+     * @param host
+     * @return True if allowed
      */
     private boolean parseIPv6(String host) {
         String regex = "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|"
@@ -1095,8 +1154,8 @@ public class DPreferences extends JEscDialog {
     /**
      * Use regular expression to evaluate allowable URL
      * 
-     * @param String url
-     * @return boolean True if allowed
+     * @param url
+     * @return True if allowed
      */
     private boolean parseURL(String url) {
         String regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$";
@@ -1109,7 +1168,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get whether or not the usage of CA Certificates has been chosen.
      *
-     * @return boolean True if it has, false otherwise
+     * @return True if it has, false otherwise
      */
     public boolean getUseCaCertificates() {
         return useCaCertificates;
@@ -1118,7 +1177,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get the chosen CA Certificates KeyStore file.
      *
-     * @return boolean The chosen CA Certificates KeyStore file
+     * @return The chosen CA Certificates KeyStore file
      */
     public File getCaCertificatesFile() {
         return caCertificatesFile;
@@ -1128,7 +1187,7 @@ public class DPreferences extends JEscDialog {
      * Get whether or not the usage of Windows Trusted Root Certificates has been
      * chosen.
      *
-     * @return boolean True if it has, false otherwise
+     * @return True if it has, false otherwise
      */
     public boolean getUseWinTrustRootCertificates() {
         return useWinTrustRootCertificates;
@@ -1138,7 +1197,7 @@ public class DPreferences extends JEscDialog {
      * Get whether or not trust checks are enabled when importing Trusted
      * Certificates.
      *
-     * @return boolean True if they are, false otherwise
+     * @return True if they are, false otherwise
      */
     public boolean getEnableImportTrustedCertTrustCheck() {
         return enableImportTrustedCertTrustCheck;
@@ -1147,7 +1206,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get whether or not trust checks are enabled when importing CA Replies.
      *
-     * @return boolean True if they are, false otherwise
+     * @return True if they are, false otherwise
      */
     public boolean getEnableImportCaReplyTrustCheck() {
         return enableImportCaReplyTrustCheck;
@@ -1165,7 +1224,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get the chosen look & feel information.
      *
-     * @return UIManager.LookAndFeelInfo The chosen look & feel information
+     * @return The chosen look & feel information
      */
     public UIManager.LookAndFeelInfo getLookFeelInfo() {
         return lookFeelInfo;
@@ -1174,7 +1233,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Get whether or not the look & feel should be used for window decoration.
      *
-     * @return boolean True id it should, false otherwise.
+     * @return True id it should, false otherwise.
      */
     public boolean getLookFeelDecoration() {
         return lookFeelDecorated;
@@ -1183,7 +1242,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Read the new language setting
      *
-     * @return String ISO code of selected language or system (for system default)
+     * @return ISO code of selected language or system (for system default)
      */
     public String getLanguage() {
         return language;
@@ -1192,7 +1251,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Read status of show hidden files
      * 
-     * @return boolean True if show hidden files is enabled
+     * @return True if show hidden files is enabled
      */
     public boolean isShowHiddenFilesEnabled() {
         return showHiddenFilesEnabled;
@@ -1201,7 +1260,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Read enable status of check auto update
      * 
-     * @return boolean True if auto update is enabled
+     * @return True if auto update is enabled
      */
     public boolean isAutoUpdateChecksEnabled() {
         return autoUpdateChecksEnabled;
@@ -1210,7 +1269,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Read interval of check auto update
      * 
-     * @return int
+     * @return Auto update interval check
      */
     public int getAutoUpdateChecksInterval() {
         return autoUpdateChecksInterval;
@@ -1219,7 +1278,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Read the new default DN (RDNs can be empty here)
      *
-     * @return String
+     * @return Default DN
      */
     public String getDefaultDN() {
         return defaultDN;
@@ -1232,7 +1291,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Check if columns have changed
      * 
-     * @return boolean True if changed
+     * @return True if changed
      */
     public boolean columnsChanged() {
         return bColumnsChanged;
@@ -1271,7 +1330,7 @@ public class DPreferences extends JEscDialog {
     /**
      * Was the dialog cancelled (ie were no settings made).
      *
-     * @return boolean True f it was cancelled
+     * @return True if it was cancelled
      */
     public boolean wasCancelled() {
         return cancelled;
@@ -1341,8 +1400,8 @@ public class DPreferences extends JEscDialog {
     /**
      * Quick UI testing
      * 
-     * @param String[] args
-     * @throws Exception
+     * @param args
+     * @throws An exception
      */
     public static void main(String[] args) throws Exception {
         DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
