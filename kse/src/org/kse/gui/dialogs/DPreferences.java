@@ -83,7 +83,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -102,7 +101,8 @@ public class DPreferences extends JEscDialog {
      * Renderer class to populate and style tree cells
      */
     private class MyRenderer extends DefaultTreeCellRenderer {
-        private Object userObject;
+
+        private static final long serialVersionUID = -4925141688439747036L;
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
@@ -111,7 +111,6 @@ public class DPreferences extends JEscDialog {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-            userObject = node;
             Dimension d = new Dimension(170, 20);
             setPreferredSize(d); // set cell preferred size
             if (node.isLeaf()) {
@@ -135,12 +134,14 @@ public class DPreferences extends JEscDialog {
         private String name;
         private String icon;
         private String tooltip;
+        private String card;
 
-        public MenuTreeNode(String name, String icon, String tooltip) {
+        public MenuTreeNode(String name, String icon, String tooltip, String card) {
             super();
             this.name = name;
             this.icon = icon;
             this.tooltip = tooltip;
+            this.card = card;
         }
 
         public MenuTreeNode() {
@@ -170,6 +171,14 @@ public class DPreferences extends JEscDialog {
         public void setToolTip(String tooltip) {
             this.tooltip = tooltip;
         }
+
+        public String getCard() {
+            return card;
+        }
+
+        public void setCard(String card) {
+            this.card = card;
+        }
     }
 
     /**
@@ -197,8 +206,6 @@ public class DPreferences extends JEscDialog {
 
     private static final long serialVersionUID = -3625128197124011083L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-
-    private JPanel jCardLayout;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -314,6 +321,10 @@ public class DPreferences extends JEscDialog {
     private JTextField jtfExpirationWarnDays;
     private boolean bColumnsChanged;
     private JSplitPane jsPane;
+    private JScrollPane rightScPane;
+    private JScrollPane leftScPane;
+    private JPanel rightJPanel;
+    private MenuTreeNode[] menus;
 
     /**
      * Creates a new DPreference dialog.
@@ -362,23 +373,23 @@ public class DPreferences extends JEscDialog {
         jsPane = new JSplitPane();
         jsPane.setDividerSize(20);
         jsPane.setOneTouchExpandable(true);
-        jsPane.setResizeWeight(0.3);
+        jsPane.setResizeWeight(.2);
         getContentPane().add(jsPane);
 
-        // set left split pane for menu navigation
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root", true);
 
-        MenuTreeNode[] menus = new MenuTreeNode[] {
+        // set the properties for leaf nodes.
+        menus = new MenuTreeNode[] {
                 new MenuTreeNode(res.getString("DPreferences.jpAuthorityCertificates.text"), "images/tab_authcerts.png",
-                        res.getString("DPreferences.jpAuthorityCertificates.tooltip")),
+                        res.getString("DPreferences.jpAuthorityCertificates.tooltip"), "jpCard1"),
                 new MenuTreeNode(res.getString("DPreferences.jpUI.text"), "images/tab_lookfeel.png",
-                        res.getString("DPreferences.jpUI.tooltip")),
+                        res.getString("DPreferences.jpUI.tooltip"), "jpCard2"),
                 new MenuTreeNode(res.getString("DPreferences.jpInternetProxy.text"), "images/tab_internetproxy.png",
-                        res.getString("DPreferences.jpInternetProxy.tooltip")),
+                        res.getString("DPreferences.jpInternetProxy.tooltip"), "jpCard3"),
                 new MenuTreeNode(res.getString("DPreferences.jpDefaultName.text"), "images/tab_defaultname.png",
-                        res.getString("DPreferences.jpAuthorityCertificates.tooltip")),
+                        res.getString("DPreferences.jpDefaultName.tooltip"), "jpCard4"),
                 new MenuTreeNode(res.getString("DPreferences.jpDisplayColumns.text"), "images/tab_columns.png",
-                        res.getString("DPreferences.jpDisplayColumns.tooltip")) };
+                        res.getString("DPreferences.jpDisplayColumns.tooltip"), "jpCard5") };
 
         for (MenuTreeNode menu : menus) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(menu);
@@ -391,9 +402,6 @@ public class DPreferences extends JEscDialog {
         jtree.setCellRenderer(new MyRenderer());
         jtree.setEditable(false);
 
-        JScrollPane jScrollPaneNavigation = new JScrollPane(jtree);
-        jsPane.setLeftComponent(jScrollPaneNavigation);
-
         jtree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jtree.getLastSelectedPathComponent();
@@ -403,20 +411,10 @@ public class DPreferences extends JEscDialog {
                 if (selectedNode.isLeaf()) {
                     mtn = (MenuTreeNode) nodeInfo;
                 }
-                if (mtn.getName().equals(res.getString("DPreferences.jpAuthorityCertificates.text"))) {
-                    screen = "jpCard1";
-                }
-                if (mtn.getName().equals(res.getString("DPreferences.jpUI.text"))) {
-                    screen = "jpCard2";
-                }
-                if (mtn.getName().equals(res.getString("DPreferences.jpInternetProxy.text"))) {
-                    screen = "jpCard3";
-                }
-                if (mtn.getName().equals(res.getString("DPreferences.jpDefaultName.text"))) {
-                    screen = "jpCard4";
-                }
-                if (mtn.getName().equals(res.getString("DPreferences.jpDisplayColumns.text"))) {
-                    screen = "jpCard5";
+                for (MenuTreeNode menu : menus) {
+                    if (mtn.getName().equals(menu.getName())) {
+                        screen = menu.getCard();
+                    }
                 }
                 changeScreen(screen);
             }
@@ -425,8 +423,15 @@ public class DPreferences extends JEscDialog {
         // Enable tool tips.
         ToolTipManager.sharedInstance().registerComponent(jtree);
 
-        // Set the properties for leaf nodes.
-        jtree.setCellRenderer(new MyRenderer());
+        // set left split pane for navigation menu
+        leftScPane = new JScrollPane(jtree);
+        jsPane.setLeftComponent(leftScPane);
+
+        // set right split pane for card layout
+        rightJPanel = new JPanel();
+        rightJPanel.setLayout(new CardLayout(0, 0));
+        rightScPane = new JScrollPane(rightJPanel);
+        jsPane.setRightComponent(rightScPane);
 
         jbOK = new JButton(res.getString("DPreferences.jbOK.text"));
         jbCancel = new JButton(res.getString("DPreferences.jbCancel.text"));
@@ -464,12 +469,6 @@ public class DPreferences extends JEscDialog {
             }
         });
 
-        // set right split pane for card layout
-        jCardLayout = new JPanel();
-        JScrollPane jScrollPaneCardLayout = new JScrollPane(jCardLayout);
-        jsPane.setRightComponent(jScrollPaneCardLayout);
-        jCardLayout.setLayout(new CardLayout(0, 0));
-
         // initialize each card layout
         initAuthorityCertificatesCard();
         initUserInterfaceCard();
@@ -488,7 +487,7 @@ public class DPreferences extends JEscDialog {
      * @param screen
      */
     private void changeScreen(String screen) {
-        ((CardLayout) jCardLayout.getLayout()).show(jCardLayout, screen);
+        ((CardLayout) rightJPanel.getLayout()).show(rightJPanel, screen);
     }
 
     // TODO move to separate class
@@ -536,7 +535,7 @@ public class DPreferences extends JEscDialog {
 
         // layout
         jpAuthorityCertificates = new JPanel();
-        jCardLayout.add(jpAuthorityCertificates, "jpCard1");
+        rightJPanel.add(jpAuthorityCertificates, "jpCard1");
         jpAuthorityCertificates.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
 
         jpAuthorityCertificates.add(jlCaCertificatesFile, "split");
@@ -632,7 +631,7 @@ public class DPreferences extends JEscDialog {
 
         // layout
         jpUI = new JPanel();
-        jCardLayout.add(jpUI, "jpCard2");
+        rightJPanel.add(jpUI, "jpCard2");
         jpUI.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
         jpUI.add(jlLookFeelNote, "split, span, wrap unrel");
         jpUI.add(jlLookFeel, "");
@@ -742,7 +741,7 @@ public class DPreferences extends JEscDialog {
 
         // layout
         jpInternetProxy = new JPanel();
-        jCardLayout.add(jpInternetProxy, "jpCard3");
+        rightJPanel.add(jpInternetProxy, "jpCard3");
         jpInternetProxy.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
         jpInternetProxy.add(jrbNoProxy, "left, span, wrap");
         jpInternetProxy.add(jrbSystemProxySettings, "left, span, wrap");
@@ -819,7 +818,7 @@ public class DPreferences extends JEscDialog {
         distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
 
         // layout
-        jCardLayout.add(distinguishedNameChooser, "jpCard4");
+        rightJPanel.add(distinguishedNameChooser, "jpCard4");
     }
 
     // TODO move to separate class
@@ -902,7 +901,7 @@ public class DPreferences extends JEscDialog {
 
         // layout
         jpDisplayColumns = new JPanel();
-        jCardLayout.add(jpDisplayColumns, "jpCard5");
+        rightJPanel.add(jpDisplayColumns, "jpCard5");
         jpDisplayColumns.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
         jpDisplayColumns.add(jcbEnableEntryName, "left");
         jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
