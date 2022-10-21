@@ -103,6 +103,8 @@ public class DPreferences extends JEscDialog {
     private class MyRenderer extends DefaultTreeCellRenderer {
 
         private static final long serialVersionUID = -4925141688439747036L;
+        
+
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
@@ -349,6 +351,9 @@ public class DPreferences extends JEscDialog {
             String language, boolean autoUpdateChecksEnabled, int autoUpdateChecksInterval,
             KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        setResizable(true);
+        Dimension d = new Dimension(900,500);
+        setMinimumSize(d);
         this.useCaCertificates = useCaCertificates;
         this.caCertificatesFile = caCertificatesFile;
         this.useWinTrustRootCertificates = useWinTrustedRootCertificates;
@@ -373,7 +378,7 @@ public class DPreferences extends JEscDialog {
         jsPane = new JSplitPane();
         jsPane.setDividerSize(20);
         jsPane.setOneTouchExpandable(true);
-        jsPane.setResizeWeight(.2);
+        jsPane.setResizeWeight(0.2);
         getContentPane().add(jsPane);
 
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root", true);
@@ -412,6 +417,7 @@ public class DPreferences extends JEscDialog {
                     mtn = (MenuTreeNode) nodeInfo;
                 }
                 for (MenuTreeNode menu : menus) {
+                    
                     if (mtn.getName().equals(menu.getName())) {
                         screen = menu.getCard();
                     }
