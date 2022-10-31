@@ -114,6 +114,7 @@ public class DPreferences extends JEscDialog {
 
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
             int iconPadding = 10; // add padding to icon width
+            int heightPadding = 5; // add padding to height
             AffineTransform affinetransform = new AffineTransform();
             FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
             if (node.isLeaf()) {
@@ -121,7 +122,7 @@ public class DPreferences extends JEscDialog {
                 int textWidth = (int) (getFont().getStringBounds(menuTreeNode.getName(), frc).getWidth());
                 int textHeight = (int) (getFont().getStringBounds(menuTreeNode.getName(), frc).getHeight());
                 Dimension d = new Dimension(menuTreeNode.getLabelIcon().getIconWidth() + iconPadding + textWidth,
-                        textHeight);
+                        heightPadding + textHeight);
                 setPreferredSize(d); // set cell preferred size
                 setText(menuTreeNode.getName());
                 setIcon(menuTreeNode.getLabelIcon());
