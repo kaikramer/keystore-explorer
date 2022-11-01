@@ -86,6 +86,8 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -103,8 +105,6 @@ public class DPreferences extends JEscDialog {
     private class MyRenderer extends DefaultTreeCellRenderer {
 
         private static final long serialVersionUID = -4925141688439747036L;
-        
-
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
@@ -113,12 +113,19 @@ public class DPreferences extends JEscDialog {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-            Dimension d = new Dimension(170, 20);
-            setPreferredSize(d); // set cell preferred size
+            int iconPadding = 10; // add padding to icon width
+            int heightPadding = 5; // add padding to height
+            AffineTransform affinetransform = new AffineTransform();
+            FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
             if (node.isLeaf()) {
                 MenuTreeNode menuTreeNode = (MenuTreeNode) node.getUserObject();
+                int textWidth = (int) (getFont().getStringBounds(menuTreeNode.getName(), frc).getWidth());
+                int textHeight = (int) (getFont().getStringBounds(menuTreeNode.getName(), frc).getHeight());
+                Dimension d = new Dimension(menuTreeNode.getLabelIcon().getIconWidth() + iconPadding + textWidth,
+                        heightPadding + textHeight);
+                setPreferredSize(d); // set cell preferred size
                 setText(menuTreeNode.getName());
-                setIcon(new ImageIcon(this.getClass().getResource(menuTreeNode.getLabelIcon())));
+                setIcon(menuTreeNode.getLabelIcon());
                 setToolTipText(menuTreeNode.getToolTip());
             } else {
                 setLeafIcon(null);
@@ -134,15 +141,15 @@ public class DPreferences extends JEscDialog {
      */
     private class MenuTreeNode {
         private String name;
-        private String icon;
+        private ImageIcon icon;
         private String tooltip;
         private String card;
 
         public MenuTreeNode(String name, String icon, String tooltip, String card) {
             super();
-            this.name = name;
-            this.icon = icon;
-            this.tooltip = tooltip;
+            this.name = res.getString(name);
+            this.icon = new ImageIcon(this.getClass().getResource(icon));
+            this.tooltip = res.getString(tooltip);
             this.card = card;
         }
 
@@ -155,15 +162,15 @@ public class DPreferences extends JEscDialog {
         }
 
         public void setName(String name) {
-            this.name = name;
+            this.name = res.getString(name);
         }
 
-        public String getLabelIcon() {
+        public ImageIcon getLabelIcon() {
             return icon;
         }
 
         public void setLabelIcon(String icon) {
-            this.icon = icon;
+            this.icon = new ImageIcon(this.getClass().getResource(icon));
         }
 
         public String getToolTip() {
@@ -171,7 +178,7 @@ public class DPreferences extends JEscDialog {
         }
 
         public void setToolTip(String tooltip) {
-            this.tooltip = tooltip;
+            this.tooltip = res.getString(tooltip);
         }
 
         public String getCard() {
@@ -327,23 +334,28 @@ public class DPreferences extends JEscDialog {
     private JScrollPane leftScPane;
     private JPanel rightJPanel;
     private MenuTreeNode[] menus;
+    private DefaultMutableTreeNode rootNode;
+    private JTree jtree;
 
     /**
      * Creates a new DPreference dialog.
      * 
-     * @param parent
-     * @param useCaCertificates
-     * @param caCertificatesFile
-     * @param useWinTrustedRootCertificates
-     * @param enableImportTrustedCertTrustCheck
-     * @param enableImportCaReplyTrustCheck
-     * @param passwordQualityConfig
+     * @param parent                            The parent frame
+     * @param useCaCertificates                 Use CA Certificates keystore file?
+     * @param caCertificatesFile                CA Certificates keystore file
+     * @param useWinTrustedRootCertificates     Use Windows Trusted Root
+     *                                          Certificates?
+     * @param enableImportTrustedCertTrustCheck Enable trust checks when importing
+     *                                          Trusted Certificates?
+     * @param enableImportCaReplyTrustCheck     Enable trust checks when importing
+     *                                          CA replies?
+     * @param passwordQualityConfig             Password quality configuration
      * @param defaultDN
      * @param language
      * @param autoUpdateChecksEnabled
      * @param autoUpdateChecksInterval
      * @param kstColumns
-     * @param showHiddenFilesEnabled
+     * @param showHiddenFilesEnabled            Show hidden files in file chooser
      */
     public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
             boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
@@ -352,7 +364,7 @@ public class DPreferences extends JEscDialog {
             KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(true);
-        Dimension d = new Dimension(900,500);
+        Dimension d = new Dimension(900, 500);
         setMinimumSize(d);
         this.useCaCertificates = useCaCertificates;
         this.caCertificatesFile = caCertificatesFile;
@@ -381,31 +393,32 @@ public class DPreferences extends JEscDialog {
         jsPane.setResizeWeight(0.2);
         getContentPane().add(jsPane);
 
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Root", true);
+        rootNode = new DefaultMutableTreeNode("Root", true);
 
         // set the properties for leaf nodes.
         menus = new MenuTreeNode[] {
-                new MenuTreeNode(res.getString("DPreferences.jpAuthorityCertificates.text"), "images/tab_authcerts.png",
-                        res.getString("DPreferences.jpAuthorityCertificates.tooltip"), "jpCard1"),
-                new MenuTreeNode(res.getString("DPreferences.jpUI.text"), "images/tab_lookfeel.png",
-                        res.getString("DPreferences.jpUI.tooltip"), "jpCard2"),
-                new MenuTreeNode(res.getString("DPreferences.jpInternetProxy.text"), "images/tab_internetproxy.png",
-                        res.getString("DPreferences.jpInternetProxy.tooltip"), "jpCard3"),
-                new MenuTreeNode(res.getString("DPreferences.jpDefaultName.text"), "images/tab_defaultname.png",
-                        res.getString("DPreferences.jpDefaultName.tooltip"), "jpCard4"),
-                new MenuTreeNode(res.getString("DPreferences.jpDisplayColumns.text"), "images/tab_columns.png",
-                        res.getString("DPreferences.jpDisplayColumns.tooltip"), "jpCard5") };
+                new MenuTreeNode("DPreferences.jpAuthorityCertificates.text", "images/tab_authcerts.png",
+                        "DPreferences.jpAuthorityCertificates.tooltip", "jpCard1"),
+                new MenuTreeNode("DPreferences.jpUI.text", "images/tab_lookfeel.png", "DPreferences.jpUI.tooltip",
+                        "jpCard2"),
+                new MenuTreeNode("DPreferences.jpInternetProxy.text", "images/tab_internetproxy.png",
+                        "DPreferences.jpInternetProxy.tooltip", "jpCard3"),
+                new MenuTreeNode("DPreferences.jpDefaultName.text", "images/tab_defaultname.png",
+                        "DPreferences.jpDefaultName.tooltip", "jpCard4"),
+                new MenuTreeNode("DPreferences.jpDisplayColumns.text", "images/tab_columns.png",
+                        "DPreferences.jpDisplayColumns.tooltip", "jpCard5") };
 
         for (MenuTreeNode menu : menus) {
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(menu);
             rootNode.add(node);
         }
 
-        JTree jtree = new JTree(rootNode);
+        jtree = new JTree(rootNode);
         jtree.setRootVisible(false);
         jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         jtree.setCellRenderer(new MyRenderer());
         jtree.setEditable(false);
+        jtree.setSelectionRow(0);
 
         jtree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
@@ -417,7 +430,6 @@ public class DPreferences extends JEscDialog {
                     mtn = (MenuTreeNode) nodeInfo;
                 }
                 for (MenuTreeNode menu : menus) {
-                    
                     if (mtn.getName().equals(menu.getName())) {
                         screen = menu.getCard();
                     }
