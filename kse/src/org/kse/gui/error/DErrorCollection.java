@@ -108,7 +108,6 @@ public class DErrorCollection extends JEscDialog {
         jlblKeyValue = new JLabel(res.getString("DErrorCollection.jlblKeyValue.text"));
         // jtextarea
         jtaKeyValue = new JTextArea(10, 30);
-        //jtaKeyValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         jtaKeyValue.setEditable(false);
         jtaKeyValue.setToolTipText(res.getString("DErrorCollection.jtaKeyValue.tooltip"));
         jtaKeyValue.setLineWrap(true);
