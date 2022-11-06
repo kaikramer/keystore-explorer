@@ -20,9 +20,10 @@
 
 package org.kse.gui.error;
 
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Font;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -42,11 +43,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
-import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 
@@ -66,6 +65,10 @@ public class DErrorCollection extends JEscDialog {
     private JButton jbOK;
     private JButton jbCopy;
     private JPanel jpButtons;
+    private JScrollPane jspLeft;
+    private JScrollPane jspRight;
+    private JPanel leftPanel;
+    private JPanel rightPanel;
 
     /**
      * Creates new DErrorCollection dialog where the parent is a frame.
@@ -77,6 +80,8 @@ public class DErrorCollection extends JEscDialog {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.errorMap = map;
         setTitle(res.getString("DErrorCollection.Title"));
+        Dimension d = new Dimension(500, 250);
+        setMinimumSize(d);
         initFields();
 
     }
@@ -85,42 +90,53 @@ public class DErrorCollection extends JEscDialog {
      * Create the elements of the dialog
      */
     public void initFields() {
+        // label for file
         jlblKeys = new JLabel(res.getString("DErrorCollection.jlblKeys.text"));
-
+        // jlist 
         jltKeys = new JList();
         jltKeys.setToolTipText(res.getString("DErrorCollection.jltKeys.tooltip"));
         jltKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jltKeys.setBorder(new EtchedBorder());
-
+        jltKeys.setLayoutOrientation(JList.VERTICAL);
+        // left scroll pane
+        jspLeft = PlatformUtil.createScrollPane(jltKeys, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jspLeft.setPreferredSize(new Dimension(250, 200));
+        // left panel
+        leftPanel = new JPanel(new BorderLayout());
+        leftPanel.add(jspLeft);
+        // label for error
         jlblKeyValue = new JLabel(res.getString("DErrorCollection.jlblKeyValue.text"));
+        // jtextarea
         jtaKeyValue = new JTextArea(10, 30);
-        jtaKeyValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         jtaKeyValue.setEditable(false);
         jtaKeyValue.setToolTipText(res.getString("DErrorCollection.jtaKeyValue.tooltip"));
         jtaKeyValue.setLineWrap(true);
-        JScrollPane scrollPane = PlatformUtil.createScrollPane(jtaKeyValue,
-                                                               ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        // right scroll pane
+        jspRight = PlatformUtil.createScrollPane(jtaKeyValue, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jspRight.setPreferredSize(new Dimension(250, 200));
+        // right panel
+        rightPanel = new JPanel(new BorderLayout());
+        rightPanel.add(jspRight);
 
         // keep uneditable color same as editable
         jlblKeyValue.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
         jbOK = new JButton(res.getString("DErrorCollection.jbOK.text"));
-
         jbCopy = new JButton(res.getString("DErrorCollection.jbCopy.text"));
         jbCopy.setToolTipText(res.getString("DErrorCollection.jbCopy.tooltip"));
         PlatformUtil.setMnemonic(jbCopy, res.getString("DErrorCollection.jbCopy.mnemonic").charAt(0));
 
         jpButtons = PlatformUtil.createDialogButtonPanel(new JButton[] { jbOK }, null, new JButton[] { jbCopy },
-                                                         "insets 0");
+                "insets 0");
 
         // layout
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[][]", "[][]"));
         pane.add(jlblKeys, "");
-        pane.add(jlblKeyValue, "wrap unrel");
-        pane.add(jltKeys, "");
-        pane.add(scrollPane, "wrap");
+        pane.add(jlblKeyValue, "wrap");
+        pane.add(leftPanel, "");
+        pane.add(rightPanel, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap unrel");
         pane.add(jpButtons, "right, spanx");
 
@@ -219,8 +235,15 @@ public class DErrorCollection extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
         Map<String, String> testmap = new HashMap<String, String>();
-        testmap.put("file 1", "value of file 1");
-        testmap.put("file 2", "value of file 2");
+        for (int i = 0; i < 50; i++) {
+            testmap.put("file " + i,
+                    "( " + i + " )" + " Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"
+                            + "ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation "
+                            + " ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in "
+                            + "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. "
+                            + "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt"
+                            + " mollit anim id est laborum.");
+        }
 
         DErrorCollection dialog = new DErrorCollection(new JFrame(), testmap);
         DialogViewer.run(dialog);
