@@ -24,10 +24,12 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.security.cert.X509Certificate;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -120,10 +122,19 @@ public class DListCertificatesKS extends JEscDialog {
         });
 
         jbLoadKeystore.addActionListener(evt -> {
-            OpenAction openAction = new OpenAction(kseFrame);
-            openAction.actionPerformed(evt);
-            populate();
-            pack();
+            updateKeyStoreList(evt);
+        });
+
+        // allow to close dialog with enter key
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        jListCertificates.getJtListCerts()
+                         .getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                         .put(enter, "Enter");
+        jListCertificates.getJtListCerts().getActionMap().put("Enter", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                okPressed();
+            }
         });
 
         jbOK.addActionListener(evt -> okPressed());
@@ -138,13 +149,26 @@ public class DListCertificatesKS extends JEscDialog {
         pack();
     }
 
+    private void updateKeyStoreList(ActionEvent evt) {
+        OpenAction openAction = new OpenAction(kseFrame);
+        openAction.actionPerformed(evt);
+
+        populate();
+
+        if (openAction.hasNewKeyStoreBeenAdded()) {
+            KeyStoreHistory[] keyStoreHistories = kseFrame.getKeyStoreHistories();
+            jcbKeyStore.setSelectedItem(keyStoreHistories[keyStoreHistories.length - 1]);
+        }
+
+        pack();
+    }
+
     private void populate() {
         jcbKeyStore.setModel(getKeystoreNames());
         updateCertificateControls();
     }
 
     private void updateCertificateControls() {
-
         jListCertificates.load((KeyStoreHistory) jcbKeyStore.getSelectedItem());
     }
 
@@ -158,13 +182,13 @@ public class DListCertificatesKS extends JEscDialog {
     }
 
     private void okPressed() {
-        X509Certificate selCert = jListCertificates.getCertSelected();
-        if (selCert == null) {
+        X509Certificate selectedCert = jListCertificates.getSelectedCert();
+        if (selectedCert == null) {
             JOptionPane.showMessageDialog(this, res.getString("DListCertificatesKS.SelectCertificate.message"),
                                           getTitle(), JOptionPane.WARNING_MESSAGE);
             return;
         }
-        cert = selCert;
+        cert = selectedCert;
         closeDialog();
     }
 

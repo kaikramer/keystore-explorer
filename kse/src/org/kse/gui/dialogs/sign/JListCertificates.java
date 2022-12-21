@@ -26,6 +26,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -53,7 +54,9 @@ public class JListCertificates extends JPanel {
     private static final long serialVersionUID = 1L;
     private JScrollPane jspListCertsTable;
     private JKseTable jtListCerts;
+
     private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+
     private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
     private KeyStore keyStore;
     private int autoResizeMode = JTable.AUTO_RESIZE_LAST_COLUMN;
@@ -69,7 +72,7 @@ public class JListCertificates extends JPanel {
 
         keyStoreTableColumns = applicationSettings.getKeyStoreTableColumns();
         KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
-        
+
         jtListCerts = new JKseTable(ksModel);
         RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
         jtListCerts.setRowSorter(sorter);
@@ -81,7 +84,7 @@ public class JListCertificates extends JPanel {
         jtListCerts.setRowHeight(Math.max(18, jtListCerts.getRowHeight())); // min. height of 18 because of 16x16 icons
         jtListCerts.setColumnsToIconSize(0, 1, 2);
         jtListCerts.colAdjust(keyStoreTableColumns, autoResizeMode);
-        
+
         jspListCertsTable = PlatformUtil.createScrollPane(jtListCerts, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                           ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspListCertsTable.getViewport().setBackground(jtListCerts.getBackground());
@@ -95,13 +98,13 @@ public class JListCertificates extends JPanel {
     public void load(KeyStoreHistory keyStoreHistory) {
 
         if (keyStoreHistory != null) {
-        	keyStore = keyStoreHistory.getCurrentState().getKeyStore();
+            keyStore = keyStoreHistory.getCurrentState().getKeyStore();
             KeyStoreTableModel rcModel = (KeyStoreTableModel) jtListCerts.getModel();
             try {
-				rcModel.load(keyStoreHistory);
-			} catch (GeneralSecurityException | CryptoException e) {
-				//ignore
-			}
+                rcModel.load(keyStoreHistory);
+            } catch (GeneralSecurityException | CryptoException e) {
+                //ignore
+            }
         }
     }
 
@@ -114,17 +117,21 @@ public class JListCertificates extends JPanel {
 
         return (String) jtListCerts.getValueAt(row, 3);
     }
-    
-    public X509Certificate getCertSelected() {
+
+    public X509Certificate getSelectedCert() {
         int pos = jtListCerts.getSelectedRow();
         if (pos >= 0) {
-        	String alias = getSelectedEntryAlias();
-        	try {
-				return (X509Certificate) keyStore.getCertificate(alias);
-			} catch (KeyStoreException e) {
-				//ignore
-			}
+            String alias = getSelectedEntryAlias();
+            try {
+                return (X509Certificate) keyStore.getCertificate(alias);
+            } catch (KeyStoreException e) {
+                //ignore
+            }
         }
         return null;
+    }
+
+    public JKseTable getJtListCerts() {
+        return jtListCerts;
     }
 }
