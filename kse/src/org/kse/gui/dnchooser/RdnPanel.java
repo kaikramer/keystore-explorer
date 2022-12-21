@@ -126,4 +126,12 @@ public class RdnPanel extends JPanel {
     public JTextField getTextField() {
         return textField;
     }
+
+    public JButton getPlus() {
+        return plus;
+    }
+
+    public JButton getMinus() {
+        return minus;
+    }
 }

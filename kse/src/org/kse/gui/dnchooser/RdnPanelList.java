@@ -19,6 +19,9 @@
  */
 package org.kse.gui.dnchooser;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,7 +48,7 @@ public class RdnPanelList extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private List<RdnPanel> entries = new ArrayList<>();
+    private final List<RdnPanel> entries = new ArrayList<>();
 
     private boolean editable;
 
@@ -53,6 +56,7 @@ public class RdnPanelList extends JPanel {
 
     public RdnPanelList(X500Name x500Name, boolean editable) {
         setLayout(new MigLayout("insets dialog, flowy", "[right]", "[]rel[]"));
+        setFocusCycleRoot(true);
 
         // we have to reverse RDN order for dialog
         List<RDN> rdnsAsList = Arrays.asList(x500Name.getRDNs());
@@ -63,8 +67,44 @@ public class RdnPanelList extends JPanel {
             for (AttributeTypeAndValue atav : rdn.getTypesAndValues()) {
                 String type = OidDisplayNameMapping.getDisplayNameForOid(atav.getType().getId());
                 String value = atav.getValue().toString();
-                addItem(new RdnPanel(new JComboBox<Object>(comboBoxEntries), type, value, this, editable));
+                RdnPanel rdnPanel = new RdnPanel(new JComboBox<Object>(comboBoxEntries), type, value, this, editable);
+                addItem(rdnPanel);
             }
+        }
+    }
+
+
+    public static class RdnFocusTraversalPolicy extends FocusTraversalPolicy {
+        List<Component> order;
+
+        public RdnFocusTraversalPolicy(List<Component> order) {
+            this.order = new ArrayList<>(order.size());
+            this.order.addAll(order);
+        }
+
+        public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
+            int idx = (order.indexOf(aComponent) + 1) % order.size();
+            return order.get(idx);
+        }
+
+        public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
+            int idx = order.indexOf(aComponent) - 1;
+            if (idx < 0) {
+                idx = order.size() - 1;
+            }
+            return order.get(idx);
+        }
+
+        public Component getDefaultComponent(Container focusCycleRoot) {
+            return order.get(0);
+        }
+
+        public Component getLastComponent(Container focusCycleRoot) {
+            return order.size() > 0 ? order.get(order.size() - 1) : null;
+        }
+
+        public Component getFirstComponent(Container focusCycleRoot) {
+            return order.get(0);
         }
     }
 
@@ -78,7 +118,29 @@ public class RdnPanelList extends JPanel {
     private void addItem(RdnPanel entry) {
         entries.add(entry);
         add(entry);
+        updateFocusPolicy();
         refresh();
+    }
+
+    private void updateFocusPolicy() {
+        // set focus order to top-down and column after column
+        List<Component> focusOrder = new ArrayList<>();
+        for (RdnPanel rdnPanel : entries) {
+            JComboBox<?> comboBox = rdnPanel.getComboBox();
+            if (comboBox != null) {
+                focusOrder.add(comboBox);
+            }
+        }
+        for (RdnPanel rdnPanel : entries) {
+            focusOrder.add(rdnPanel.getTextField());
+        }
+        for (RdnPanel rdnPanel : entries) {
+            focusOrder.add(rdnPanel.getPlus());
+        }
+        for (RdnPanel rdnPanel : entries) {
+            focusOrder.add(rdnPanel.getMinus());
+        }
+        setFocusTraversalPolicy(new RdnFocusTraversalPolicy(focusOrder));
     }
 
     private void addItemAfter(RdnPanel entryToAdd, RdnPanel afterThisEntry) {
@@ -93,6 +155,7 @@ public class RdnPanelList extends JPanel {
     public void removeItem(RdnPanel entry) {
         entries.remove(entry);
         remove(entry);
+        updateFocusPolicy();
         refresh();
     }
 
