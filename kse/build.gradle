@@ -113,8 +113,8 @@ dependencies {
 	implementation('net.java.dev.jna:jna:5.12.1')
 	implementation("commons-io:commons-io:2.11.0")
 	implementation("com.miglayout:miglayout-swing:5.3")
-	implementation('com.formdev:flatlaf:2.4')
-	implementation('com.nimbusds:nimbus-jose-jwt:9.25.1')
+	implementation('com.formdev:flatlaf:2.6')
+	implementation('com.nimbusds:nimbus-jose-jwt:9.25.6')
 	implementation('org.violetlib:vaqua:10')
 
 	// the nashorn jar is compiled for Java 11, so for now we include it only in the dist package that comes with Java 17
