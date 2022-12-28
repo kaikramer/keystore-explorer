@@ -73,6 +73,7 @@ public class KseX500NameStyle extends BCStyle {
         DEFAULT_SYMBOLS.put(BUSINESS_CATEGORY, "BusinessCategory");
         DEFAULT_SYMBOLS.put(TELEPHONE_NUMBER, "TelephoneNumber");
         DEFAULT_SYMBOLS.put(NAME, "Name");
+        DEFAULT_SYMBOLS.put(ORGANIZATION_IDENTIFIER, "ORG_ID");
     }
 
     private KseX500NameStyle() {

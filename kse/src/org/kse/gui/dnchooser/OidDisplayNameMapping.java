@@ -52,6 +52,7 @@ public class OidDisplayNameMapping {
     private static final String PSEUDONYM = res.getString("DistinguishedNameChooser.jlPseudonym.text");
     private static final String DN_QUALIFIER = res.getString("DistinguishedNameChooser.jlDnQualifier.text");
     private static final String GENERATION = res.getString("DistinguishedNameChooser.jlGeneration.text");
+    private static final String ORG_ID = res.getString("DistinguishedNameChooser.jlOrganizationIdentifier.text");
 
     private static Map<String, ASN1ObjectIdentifier> displayNameToOID = new HashMap<>();
 
@@ -77,6 +78,7 @@ public class OidDisplayNameMapping {
         displayNameToOID.put(PSEUDONYM, BCStyle.PSEUDONYM);
         displayNameToOID.put(DN_QUALIFIER, BCStyle.DN_QUALIFIER);
         displayNameToOID.put(GENERATION, BCStyle.GENERATION);
+        displayNameToOID.put(ORG_ID, BCStyle.ORGANIZATION_IDENTIFIER);
     }
 
     private static Map<String, String> oidToDisplayName = new HashMap<>();
@@ -103,11 +105,12 @@ public class OidDisplayNameMapping {
         oidToDisplayName.put(BCStyle.PSEUDONYM.getId(), PSEUDONYM);
         oidToDisplayName.put(BCStyle.DN_QUALIFIER.getId(), DN_QUALIFIER);
         oidToDisplayName.put(BCStyle.GENERATION.getId(), GENERATION);
+        oidToDisplayName.put(BCStyle.ORGANIZATION_IDENTIFIER.getId(), ORG_ID);
     }
 
     public static String[] getDisplayNames() {
         return new String[] { CN, OU, O, L, ST, C, E, SN, GIVENNAME, SURNAME, DC, UID, NAME, STREET, TITLE, INITIALS,
-                              PSEUDONYM, DN_QUALIFIER, GENERATION };
+                              PSEUDONYM, DN_QUALIFIER, GENERATION, ORG_ID };
     }
 
     public static ASN1ObjectIdentifier getOidForDisplayName(String displayName) {
