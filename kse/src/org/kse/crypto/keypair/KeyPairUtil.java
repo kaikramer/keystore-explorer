@@ -52,7 +52,6 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.ecc.EccUtil;
@@ -199,29 +198,16 @@ public final class KeyPairUtil {
                 KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
                 RSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
                 BigInteger modulus = keySpec.getModulus();
-                BigInteger exponent = keySpec.getPublicExponent();
-                if (exponent.intValue() < 0x10001) {
-                    return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length(),
-                                       algorithm.toUpperCase() + modulus.toString(2).length());
-                } else {
-                    return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length(),
-                                       algorithm.toLowerCase() + modulus.toString(2).length());
-                }
+                return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
             } else if (algorithm.equals(DSA.jce())) {
                 KeyFactory keyFact = KeyFactory.getInstance(algorithm);
                 DSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
                 BigInteger prime = keySpec.getP();
-                return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length(),
-                                   algorithm.toUpperCase() + prime.toString(2).length());
+                return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
             } else if (algorithm.equals(EC.jce())) {
                 ECPublicKey pubk = (ECPublicKey) publicKey;
-                ECParameterSpec spec = pubk.getParams();
-                int size = spec.getOrder().bitLength();
-                if (spec instanceof ECNamedCurveSpec) {
-                    return new KeyInfo(ASYMMETRIC, algorithm, size, ((ECNamedCurveSpec) spec).getName());
-                } else {
-                    return new KeyInfo(ASYMMETRIC, algorithm, size);
-                }
+                int size = pubk.getParams().getOrder().bitLength();
+                return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(publicKey));
             } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
             } else if (ED448.jce().equalsIgnoreCase(algorithm)) {
@@ -268,11 +254,7 @@ public final class KeyPairUtil {
                 ECPrivateKey privk = (ECPrivateKey) privateKey;
                 ECParameterSpec spec = privk.getParams();
                 int size = spec.getOrder().bitLength();
-                if (spec instanceof ECNamedCurveSpec) {
-                    return new KeyInfo(ASYMMETRIC, algorithm, size, ((ECNamedCurveSpec) spec).getName());
-                } else {
-                    return new KeyInfo(ASYMMETRIC, algorithm, size);
-                }
+                return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(privateKey));
             } else if (ED25519.jce().equalsIgnoreCase(algorithm)) {
                 return new KeyInfo(ASYMMETRIC, algorithm, ED25519.bitLength());
             } else if (ED448.jce().equalsIgnoreCase(algorithm)) {

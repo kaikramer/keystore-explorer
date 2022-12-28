@@ -28,14 +28,19 @@ import java.security.PublicKey;
 import java.security.Security;
 import java.security.interfaces.ECKey;
 import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.List;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.sec.SECNamedCurves;
+import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.X962NamedCurves;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.version.JavaVersion;
@@ -76,12 +81,51 @@ public class EccUtil {
 
         ECKey ecKey = (ECKey) key;
         ECParameterSpec params = ecKey.getParams();
-        if (!(params instanceof ECNamedCurveSpec)) {
-            return "";
+        if (params instanceof ECNamedCurveSpec) {
+            ECNamedCurveSpec ecPrivateKeySpec = (ECNamedCurveSpec) params;
+            return ecPrivateKeySpec.getName();
         }
 
-        ECNamedCurveSpec ecPrivateKeySpec = (ECNamedCurveSpec) params;
-        return ecPrivateKeySpec.getName();
+        if (key instanceof PublicKey) {
+            return getNamedCurve(key);
+        }
+
+        return "";
+    }
+
+    /**
+     * Determines the name of the domain parameters that were used for generating the key.
+     *
+     * @param publicKey An EC key
+     * @return The name of the domain parameters that were used for the EC key,
+     *         or an empty string if curve is unknown.
+     */
+    public static String getNamedCurve(PublicKey publicKey) {
+
+        if (!(publicKey instanceof ECPublicKey)) {
+            throw new InvalidParameterException("Not a EC private key.");
+        }
+
+        SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+        ASN1Encodable parameters = subjectPublicKeyInfo.getAlgorithm().getParameters();
+        ASN1ObjectIdentifier curveId = ASN1ObjectIdentifier.getInstance(parameters);
+
+        String curveName = NISTNamedCurves.getName(curveId);
+        if (curveName == null) {
+            curveName = X962NamedCurves.getName(curveId);
+        }
+        if (curveName == null) {
+            curveName = SECNamedCurves.getName(curveId);
+        }
+        if (curveName == null) {
+            curveName = TeleTrusTNamedCurves.getName(curveId);
+        }
+
+        if (curveName != null) {
+            return curveName;
+        }
+
+        return "";
     }
 
     /**
@@ -158,33 +202,34 @@ public class EccUtil {
     /**
      * Converts PKCS#8 EC private key (RFC 5208/5958 ASN.1 PrivateKeyInfo structure) to "traditional" OpenSSL
      * ASN.1 structure ECPrivateKey from RFC 5915. As ECPrivateKey is already in the PrivateKey field of PrivateKeyInfo,
-     * this must only be extracted:
+     * it must only be extracted:
      * <p>
+     * <pre>
      * SEQUENCE {
-     * INTEGER 0
-     * SEQUENCE {
-     * OBJECT IDENTIFIER ecPublicKey (1 2 840 10045 2 1)
-     * OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
-     * }
-     * OCTET STRING, encapsulates {
-     * SEQUENCE {
-     * INTEGER 1
-     * OCTET STRING
-     * 17 12 CA 42 16 79 1B 45    ...B.y.E
-     * ...
-     * C8 B2 66 0A E5 60 50 0B
-     * [0] {
-     * OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
-     * }
-     * [1] {
-     * BIT STRING
-     * 04 61 C0 08 B4 89 A0 50    .a.....P
-     * ...
-     * AE D5 ED C3 4D 0E 47 91    ....M.G.
-     * 89                         .
-     * }
-     * }
-     * }
+     *      INTEGER 0
+     *      SEQUENCE {
+     *          OBJECT IDENTIFIER ecPublicKey (1 2 840 10045 2 1)
+     *          OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
+     *      }
+     *      OCTET STRING, encapsulates {
+     *          SEQUENCE {
+     *              INTEGER 1
+     *              OCTET STRING
+     *                  17 12 CA 42 16 79 1B 45    ...B.y.E
+     *                  ...
+     *                  C8 B2 66 0A E5 60 50 0B
+     *              [0] {
+     *                  OBJECT IDENTIFIER prime256v1 (1 2 840 10045 3 1 7)
+     *              }
+     *              [1] {
+     *                  BIT STRING
+     *                      04 61 C0 08 B4 89 A0 50    .a.....P
+     *                      ...
+     *                      AE D5 ED C3 4D 0E 47 91    ....M.G.
+     *                      89                         .
+     *              }
+     *          }
+     *      }
      * }
      *
      * @param ecPrivateKey An EC key

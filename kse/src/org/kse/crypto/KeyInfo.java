@@ -36,7 +36,7 @@ public class KeyInfo {
         this.keyType = keyType;
         this.algorithm = algorithm;
         this.size = size;
-        this.detailedAlgorithm = algorithm + Integer.toString(size);
+        this.detailedAlgorithm = "-";
     }
 
     public KeyInfo(KeyType keyType, String algorithm, Integer size, String detailedAlgorithm) {

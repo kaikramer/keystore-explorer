@@ -36,13 +36,28 @@ public class HexUtil {
 
     /**
      * Get hex string for the supplied big integer: "0x<hex string>" where hex
-     * string is output in groups of exactly four characters sub-divided by
+     * string is output in groups of exactly four characters subdivided by
      * spaces.
      *
      * @param bigInt Big integer
      * @return Hex string
      */
     public static String getHexString(BigInteger bigInt) {
+        return getHexString(bigInt, "0x", 4, 0);
+    }
+
+    /**
+     * Get hex string for the supplied big integer: "<prefix><hex string>" where hex
+     * string is optionally output in groups of n characters subdivided by
+     * spaces.
+     *
+     * @param bigInt Big integer
+     * @param groupSize Size of char groups separated by spaces
+     * @param prefix Prefix to put before actual hex data
+     * @param maxLineLength Add new line when max line length is reached; "0" means no line breaks
+     * @return Hex string
+     */
+    public static String getHexString(BigInteger bigInt, String prefix, int groupSize, int maxLineLength) {
         // Convert number to hex string
         String hex = bigInt.toString(16).toUpperCase();
 
@@ -60,20 +75,24 @@ public class HexUtil {
             hex = sb.toString();
         }
 
-        // Output with leading "0x" and spaces to form groups
-        StringBuilder strBuff = new StringBuilder();
+        // Output with leading prefix (usually "0x"), spaces to form groups and line breaks
+        StringBuilder sb = new StringBuilder();
 
-        strBuff.append("0x");
+        sb.append(prefix);
 
         for (int i = 0; i < hex.length(); i++) {
-            strBuff.append(hex.charAt(i));
+            sb.append(hex.charAt(i));
 
-            if ((((i + 1) % 4) == 0) && ((i + 1) != hex.length())) {
-                strBuff.append(' ');
+            if (groupSize != 0 && (((i + 1) % 4) == 0) && ((i + 1) != hex.length())) {
+                sb.append(' ');
+            }
+
+            if (maxLineLength != 0 && (i + 1) % maxLineLength == 0) {
+                sb.append('\n');
             }
         }
 
-        return strBuff.toString();
+        return sb.toString();
     }
 
     /**
@@ -104,7 +123,7 @@ public class HexUtil {
 
     /**
      * Get hex string for the supplied byte array: "0x<hex string>" where hex
-     * string is output in groups of exactly four characters sub-divided by
+     * string is output in groups of exactly four characters subdivided by
      * spaces.
      *
      * @param bytes Byte array

@@ -33,6 +33,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -594,6 +595,9 @@ public class DViewCertificate extends JEscDialog {
                 } else {
                     jtfPublicKey.setText(MessageFormat.format(res.getString("DViewCertificate.jtfPublicKey.text"),
                                                               jtfPublicKey.getText(), "?"));
+                }
+                if (cert.getPublicKey() instanceof ECPublicKey) {
+                    jtfPublicKey.setText(jtfPublicKey.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
                 }
                 jtfPublicKey.setCaretPosition(0);
 

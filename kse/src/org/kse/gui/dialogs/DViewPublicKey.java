@@ -30,6 +30,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -45,6 +46,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -229,6 +231,10 @@ public class DViewPublicKey extends JEscDialog {
 
         jtfAlgorithm.setText(keyInfo.getAlgorithm());
 
+        if (publicKey instanceof ECPublicKey) {
+            jtfAlgorithm.setText(jtfAlgorithm.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
+        }
+
         Integer keyLength = keyInfo.getSize();
 
         if (keyLength != null) {
@@ -242,11 +248,8 @@ public class DViewPublicKey extends JEscDialog {
         jtaEncoded.setText(new BigInteger(1, publicKey.getEncoded()).toString(16).toUpperCase());
         jtaEncoded.setCaretPosition(0);
 
-        if ((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey)) {
-            jbFields.setEnabled(true);
-        } else {
-            jbFields.setEnabled(false);
-        }
+        jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey) ||
+                            (publicKey instanceof ECPublicKey) || (publicKey instanceof BCEdDSAPublicKey));
     }
 
     private void pemEncodingPressed() {
@@ -260,21 +263,9 @@ public class DViewPublicKey extends JEscDialog {
     }
 
     private void fieldsPressed() {
-        if (publicKey instanceof RSAPublicKey) {
-            RSAPublicKey rsaPub = (RSAPublicKey) publicKey;
-
-            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
-                    "DViewPublicKey.RsaFields.Title"), rsaPub);
-            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-            dViewAsymmetricKeyFields.setVisible(true);
-        } else if (publicKey instanceof DSAPublicKey) {
-            DSAPublicKey dsaPub = (DSAPublicKey) publicKey;
-
-            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
-                    "DViewPublicKey.DsaFields.Title"), dsaPub);
-            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-            dViewAsymmetricKeyFields.setVisible(true);
-        }
+        DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, publicKey);
+        dViewAsymmetricKeyFields.setLocationRelativeTo(this);
+        dViewAsymmetricKeyFields.setVisible(true);
     }
 
     private void asn1DumpPressed() {
