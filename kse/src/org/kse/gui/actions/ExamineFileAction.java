@@ -23,11 +23,13 @@ import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Base64;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -106,8 +108,8 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             switch (fileType) {
             case JAR:
                 JarParser jarParser = new JarParser(file);
-                X509Certificate[] signerCerificates = jarParser.getSignerCerificates();
-                showCerts(signerCerificates, file.getName());
+                X509Certificate[] signerCertificates = jarParser.getSignerCerificates();
+                showCerts(signerCertificates, file.getName());
                 break;
             case JCEKS_KS:
             case JKS_KS:
@@ -210,7 +212,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         Spkac spkacCsr = null;
 
         try {
-            byte[] data = FileUtils.readFileToByteArray(file);
+            byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
             if (fileType == CryptoFileType.PKCS10_CSR) {
                 pkcs10Csr = Pkcs10Util.loadCsr(data);
             } else if (fileType == CryptoFileType.SPKAC_CSR) {
@@ -248,7 +250,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
     private void openPrivateKey(File file, CryptoFileType fileType) throws IOException, CryptoException {
 
-        byte[] data = FileUtils.readFileToByteArray(file);
+        byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
         PrivateKey privKey = null;
         Password password = null;
 
@@ -294,13 +296,22 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
     }
 
     private void openPublicKey(File file) throws IOException, CryptoException {
-        byte[] data = FileUtils.readFileToByteArray(file);
+        byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
         PublicKey publicKey = OpenSslPubUtil.load(data);
 
         DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
                 res.getString("ExamineFileAction.PublicKeyDetailsFile.Title"), file.getName()), publicKey);
         dViewPublicKey.setLocationRelativeTo(frame);
         dViewPublicKey.setVisible(true);
+    }
+
+    private static byte[] decodeIfBase64(byte[] data) {
+        try {
+            return Base64.getDecoder().decode(new String(data, StandardCharsets.US_ASCII).trim());
+        } catch(IllegalArgumentException e) {
+            // was not valid b64
+        }
+        return data;
     }
 
     private Password getPassword(File file) {

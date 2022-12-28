@@ -72,6 +72,7 @@ class CryptoFileUtilTest {
             "ec.enc.der.pkcs8, ENC_PKCS8_PVK",
             "ec.unenc.pem.pkcs8, UNENC_PKCS8_PVK",
             "ec.unenc.der.pkcs8, UNENC_PKCS8_PVK",
+            "ec.unenc.der.b64.pkcs8, UNENC_PKCS8_PVK",
             "ec.enc.pem.key, ENC_OPENSSL_PVK",
             "ec.unenc.pem.key, UNENC_OPENSSL_PVK",
             "ec.unenc.der.key, UNENC_OPENSSL_PVK",

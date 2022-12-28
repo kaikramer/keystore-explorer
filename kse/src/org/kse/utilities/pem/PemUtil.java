@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 
 import org.bouncycastle.util.encoders.Base64;
 
@@ -35,7 +36,21 @@ public class PemUtil {
     // Begin OpenSSL EC parameters PEM (see "openssl ecparam -name prime256v1 -genkey -out key.pem"; missing "-noout")
     private static final String OPENSSL_EC_PARAMS_PEM_TYPE = "EC PARAMETERS";
 
+    public static final String PEM_BEGIN_MARKER = "-----BEGIN ";
+    public static final String PEM_FIVE_DASHES = "-----";
+    public static final String PEM_END_MARKER = "-----END ";
+
     private PemUtil() {
+    }
+
+    /**
+     * Simple detection of PEM format (does not check if format is correct, only if it claims to be PEM).
+     *
+     * @param data Binary or text data
+     * @return True, if data starts with PEM header
+     */
+    public static boolean isPemFormat(byte[] data) {
+        return new String(data, StandardCharsets.US_ASCII).startsWith(PEM_BEGIN_MARKER);
     }
 
     /**
@@ -47,10 +62,10 @@ public class PemUtil {
     public static String encode(PemInfo pemInfo) {
         StringBuilder sbPem = new StringBuilder();
 
-        // Ouput header
-        sbPem.append("-----BEGIN ");
+        // Output header
+        sbPem.append(PEM_BEGIN_MARKER);
         sbPem.append(pemInfo.getType());
-        sbPem.append("-----");
+        sbPem.append(PEM_FIVE_DASHES);
         sbPem.append("\n");
 
         // Output any header attributes
@@ -84,9 +99,9 @@ public class PemUtil {
         }
 
         // Output footer
-        sbPem.append("-----END ");
+        sbPem.append(PEM_END_MARKER);
         sbPem.append(pemInfo.getType());
-        sbPem.append("-----");
+        sbPem.append(PEM_FIVE_DASHES);
         sbPem.append("\n");
 
         return sbPem.toString();
@@ -201,7 +216,7 @@ public class PemUtil {
     private static String getTypeFromHeader(String header) {
         String type = null;
 
-        if (header.startsWith("-----BEGIN ") && header.endsWith("-----")) {
+        if (header.startsWith(PEM_BEGIN_MARKER) && header.endsWith(PEM_FIVE_DASHES)) {
             type = header.substring(11, header.length() - 5);
         }
 
@@ -211,7 +226,7 @@ public class PemUtil {
     private static String getTypeFromFooter(String footer) {
         String type = null;
 
-        if (footer.startsWith("-----END ") && footer.endsWith("-----")) {
+        if (footer.startsWith(PEM_END_MARKER) && footer.endsWith(PEM_FIVE_DASHES)) {
             type = footer.substring(9, footer.length() - 5);
         }
 
