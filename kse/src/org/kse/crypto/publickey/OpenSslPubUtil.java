@@ -19,7 +19,8 @@
  */
 package org.kse.crypto.publickey;
 
-import java.io.IOException;
+import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
+
 import java.security.PublicKey;
 import java.util.ResourceBundle;
 
@@ -116,22 +117,21 @@ public class OpenSslPubUtil {
      * @param pkData BA to load the unencrypted public key from
      * @return The public key
      * @throws CryptoException Problem encountered while loading the public key
-     * @throws IOException     An I/O error occurred
      */
-    public static PublicKey load(byte[] pkData) throws CryptoException, IOException {
-
-        // Check if stream is PEM encoded
-        PemInfo pemInfo = PemUtil.decode(pkData);
-
-        if (pemInfo != null) {
-            // It is - get DER from PEM
-            pkData = pemInfo.getContent();
-        }
+    public static PublicKey load(byte[] pkData) throws CryptoException {
 
         try {
+            // Check if stream is PEM encoded
+            PemInfo pemInfo = PemUtil.decode(pkData);
+
+            if (pemInfo != null) {
+                // It is - get DER from PEM
+                pkData = pemInfo.getContent();
+            }
+
             // DER-encoded subjectPublicKeyInfo structure - the OpenSSL format
             SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(pkData);
-            return new JcaPEMKeyConverter().getPublicKey(publicKeyInfo);
+            return new JcaPEMKeyConverter().setProvider(BOUNCY_CASTLE.jce()).getPublicKey(publicKeyInfo);
         } catch (Exception ex) {
             throw new CryptoException(res.getString("NoLoadOpenSslPublicKey.exception.message"), ex);
         }

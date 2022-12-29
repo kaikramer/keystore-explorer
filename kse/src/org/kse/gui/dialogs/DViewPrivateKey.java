@@ -231,6 +231,10 @@ public class DViewPrivateKey extends JEscDialog {
 
         jtfAlgorithm.setText(keyInfo.getAlgorithm());
 
+        if (privateKey instanceof ECPrivateKey) {
+            jtfAlgorithm.setText(jtfAlgorithm.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
+        }
+
         Integer keyLength = keyInfo.getSize();
 
         if (keyLength != null) {

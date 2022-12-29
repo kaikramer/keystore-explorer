@@ -720,26 +720,23 @@ public class JarSigner {
 
             // Workaround for display issue in verify function of jarsigner for Java <= 15
             // see https://github.com/kaikramer/keystore-explorer/issues/293
-            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv,
-                                                                                                 new DefaultCMSSignatureEncryptionAlgorithmFinder() {
-                                                                                                     @Override
-                                                                                                     public AlgorithmIdentifier findEncryptionAlgorithm(
-                                                                                                             AlgorithmIdentifier signatureAlgorithm) {
-                                                                                                         List<ASN1ObjectIdentifier> shaRsaIdentifiers = Arrays.asList(
-                                                                                                                 PKCSObjectIdentifiers.sha256WithRSAEncryption,
-                                                                                                                 PKCSObjectIdentifiers.sha384WithRSAEncryption,
-                                                                                                                 PKCSObjectIdentifiers.sha512WithRSAEncryption);
+            DefaultCMSSignatureEncryptionAlgorithmFinder sigEncAlgFinder =
+                    new DefaultCMSSignatureEncryptionAlgorithmFinder() {
+                @Override
+                public AlgorithmIdentifier findEncryptionAlgorithm(AlgorithmIdentifier signatureAlgorithm) {
+                    List<ASN1ObjectIdentifier> shaRsaIdentifiers = Arrays.asList(
+                            PKCSObjectIdentifiers.sha256WithRSAEncryption,
+                            PKCSObjectIdentifiers.sha384WithRSAEncryption,
+                            PKCSObjectIdentifiers.sha512WithRSAEncryption);
 
-                                                                                                         // map OIDs for RSAwithSHA256/384/512 to OID for RSAEncryption
-                                                                                                         return shaRsaIdentifiers.contains(
-                                                                                                                 signatureAlgorithm.getAlgorithm()) ?
-                                                                                                                new AlgorithmIdentifier(
-                                                                                                                        PKCSObjectIdentifiers.rsaEncryption,
-                                                                                                                        DERNull.INSTANCE) :
-                                                                                                                super.findEncryptionAlgorithm(
-                                                                                                                        signatureAlgorithm);
-                                                                                                     }
-                                                                                                 });
+                    // map OIDs for RSAwithSHA256/384/512 to OID for RSAEncryption
+                    return shaRsaIdentifiers.contains(signatureAlgorithm.getAlgorithm()) ?
+                           new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE) :
+                           super.findEncryptionAlgorithm(signatureAlgorithm);
+                }
+            };
+            JcaSignerInfoGeneratorBuilder siGeneratorBuilder = new JcaSignerInfoGeneratorBuilder(digCalcProv,
+                                                                                                 sigEncAlgFinder);
 
             // remove cmsAlgorithmProtect for compatibility reasons
             SignerInfoGenerator sigGen = siGeneratorBuilder.build(csb.build(privateKey), certificateChain[0]);

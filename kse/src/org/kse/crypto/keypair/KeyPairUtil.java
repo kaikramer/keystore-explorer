@@ -204,7 +204,7 @@ public final class KeyPairUtil {
                 DSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
                 BigInteger prime = keySpec.getP();
                 return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
-            } else if (algorithm.equals(EC.jce())) {
+            } else if (algorithm.equals(EC.jce()) || algorithm.equals(ECDSA.jce())) {
                 ECPublicKey pubk = (ECPublicKey) publicKey;
                 int size = pubk.getParams().getOrder().bitLength();
                 return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(publicKey));

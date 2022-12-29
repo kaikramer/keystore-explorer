@@ -27,6 +27,8 @@ import org.bouncycastle.util.encoders.Hex;
 
 /**
  * Class of utility methods to output data in hex.
+ *
+ * TODO cleanup; centralize all hex conversions in KSE
  */
 public class HexUtil {
     private static final String NEWLINE = "\n";
@@ -52,20 +54,47 @@ public class HexUtil {
      * spaces.
      *
      * @param bigInt Big integer
-     * @param groupSize Size of char groups separated by spaces
+     * @param groupSize Size of char groups separated by spaces (use 0 to disable), 0-padding is added if necessary
      * @param prefix Prefix to put before actual hex data
      * @param maxLineLength Add new line when max line length is reached; "0" means no line breaks
      * @return Hex string
      */
     public static String getHexString(BigInteger bigInt, String prefix, int groupSize, int maxLineLength) {
         // Convert number to hex string
-        String hex = bigInt.toString(16).toUpperCase();
+        return getHexString(bigInt.toByteArray(), prefix, groupSize, maxLineLength);
+    }
+
+    /**
+     * Get hex string for the supplied byte array: "0x<hex string>" where hex
+     * string is output in groups of exactly four characters subdivided by
+     * spaces.
+     *
+     * @param bytes Byte array
+     * @return Hex string
+     */
+    public static String getHexString(byte[] bytes) {
+        return getHexString(bytes, "0x", 4, 0);
+    }
+
+    /**
+     * Get hex string for the supplied big integer: "<prefix><hex string>" where hex
+     * string is optionally output in groups of n characters subdivided by
+     * spaces.
+     *
+     * @param bytes A byte array
+     * @param groupSize Size of char groups separated by spaces (use 0 to disable), 0-padding is added if necessary
+     * @param prefix Prefix to put before actual hex data
+     * @param maxLineLength Add new line when max line length is reached; "0" means no line breaks
+     * @return Hex string
+     */
+    public static String getHexString(byte[] bytes, String prefix, int groupSize, int maxLineLength) {
+        String hex = Hex.toHexString(bytes).toUpperCase();
 
         // Get number padding bytes
         int padding = (4 - (hex.length() % 4));
 
-        // Insert any required padding to get groups of exactly 4 characters
-        if ((padding > 0) && (padding < 4)) {
+        // Insert any required padding to get groups of exactly "groupSize" characters
+        if ((padding > 0) && (padding < groupSize)) {
             StringBuilder sb = new StringBuilder(hex);
 
             for (int i = 0; i < padding; i++) {
@@ -119,18 +148,6 @@ public class HexUtil {
         }
 
         return strBuff.toString();
-    }
-
-    /**
-     * Get hex string for the supplied byte array: "0x<hex string>" where hex
-     * string is output in groups of exactly four characters subdivided by
-     * spaces.
-     *
-     * @param bytes Byte array
-     * @return Hex string
-     */
-    public static String getHexString(byte[] bytes) {
-        return getHexString(new BigInteger(1, bytes));
     }
 
     /**

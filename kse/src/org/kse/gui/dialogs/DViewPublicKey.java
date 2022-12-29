@@ -50,6 +50,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
@@ -62,7 +63,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the details of a public key with the option to display its fields if
- * it is of a supported type (RSA or DSA).
+ * it is of a supported type.
  */
 public class DViewPublicKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
@@ -95,7 +96,7 @@ public class DViewPublicKey extends JEscDialog {
      */
     public DViewPublicKey(JFrame parent, String title, PublicKey publicKey) throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.publicKey = publicKey;
+        this.publicKey = convertKey(publicKey);
         initComponents();
     }
 
@@ -109,8 +110,14 @@ public class DViewPublicKey extends JEscDialog {
      */
     public DViewPublicKey(JDialog parent, String title, PublicKey publicKey) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.publicKey = publicKey;
+        this.publicKey = convertKey(publicKey);
         initComponents();
+    }
+
+    private PublicKey convertKey(PublicKey publicKey) throws CryptoException {
+        // convert public key object from whatever class it currently is (depends on Java version) to a BC object
+        byte[] publicKeyEncoded = publicKey.getEncoded();
+        return OpenSslPubUtil.load(publicKeyEncoded);
     }
 
     private void initComponents() throws CryptoException {
