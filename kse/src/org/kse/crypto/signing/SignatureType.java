@@ -20,11 +20,8 @@
 package org.kse.crypto.signing;
 
 import static org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers.id_RSASSA_PSS;
-import static org.kse.crypto.digest.DigestType.MD2;
 import static org.kse.crypto.digest.DigestType.MD5;
-import static org.kse.crypto.digest.DigestType.RIPEMD128;
 import static org.kse.crypto.digest.DigestType.RIPEMD160;
-import static org.kse.crypto.digest.DigestType.RIPEMD256;
 import static org.kse.crypto.digest.DigestType.SHA1;
 import static org.kse.crypto.digest.DigestType.SHA224;
 import static org.kse.crypto.digest.DigestType.SHA256;
@@ -59,11 +56,8 @@ public enum SignatureType {
 	SHA512_DSA("SHA512withDSA", "2.16.840.1.101.3.4.3.4", SHA512, "SignatureType.Sha512WithDsa"),
 
 	// RSA
-	MD2_RSA("MD2withRSA", "1.2.840.113549.1.1.2", MD2, "SignatureType.Md2WithRsa"),
 	MD5_RSA("MD5withRSA", "1.2.840.113549.1.1.4", MD5, "SignatureType.Md5WithRsa"),
-	RIPEMD128_RSA("RIPEMD128withRSA", "1.3.36.3.3.1.3", RIPEMD128, "SignatureType.Ripemd128WithRsa"),
 	RIPEMD160_RSA("RIPEMD160withRSA", "1.3.36.3.3.1.2", RIPEMD160, "SignatureType.Ripemd160WithRsa"),
-	RIPEMD256_RSA("RIPEMD256withRSA", "1.3.36.3.3.1.4", RIPEMD256, "SignatureType.Ripemd256WithRsa"),
 	SHA1_RSA("SHA1withRSA", "1.2.840.113549.1.1.5", SHA1, "SignatureType.Sha1WithRsa"),
 	SHA224_RSA("SHA224withRSA", "1.2.840.113549.1.1.14", SHA224, "SignatureType.Sha224WithRsa"),
 	SHA256_RSA("SHA256withRSA", "1.2.840.113549.1.1.11", SHA256, "SignatureType.Sha256WithRsa"),
@@ -190,9 +184,7 @@ public enum SignatureType {
     public static List<SignatureType> rsaSignatureTypes() {
         List<SignatureType> signatureTypes = new ArrayList<>();
 
-        signatureTypes.add(RIPEMD128_RSA);
         signatureTypes.add(RIPEMD160_RSA);
-        signatureTypes.add(RIPEMD256_RSA);
         signatureTypes.add(SHA1_RSA);
         signatureTypes.add(SHA224_RSA);
         signatureTypes.add(SHA256_RSA);

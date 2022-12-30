@@ -55,11 +55,8 @@ public class SpkacTest extends KeyPairTestsBase {
     @ParameterizedTest
     // @formatter:off
     @CsvSource({
-            "MD2_RSA",
             "MD5_RSA",
-            "RIPEMD128_RSA",
             "RIPEMD160_RSA",
-            "RIPEMD256_RSA",
             "SHA1_RSA",
             "SHA224_RSA",
             "SHA256_RSA",
