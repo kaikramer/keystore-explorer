@@ -154,7 +154,7 @@ public class DViewCertificate extends JEscDialog {
      */
     public DViewCertificate(Window parent, String title, X509Certificate[] certs, KseFrame kseFrame, int importExport)
             throws CryptoException {
-        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        super(parent, title, Dialog.ModalityType.MODELESS);
         this.kseFrame = kseFrame;
         this.importExport = importExport;
         this.chain = certs;
