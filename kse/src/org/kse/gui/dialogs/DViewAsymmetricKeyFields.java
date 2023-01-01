@@ -57,6 +57,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.util.BigIntegers;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
@@ -309,8 +310,8 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         Field[] fields;
         ECPublicKey ecPublicKey = (ECPublicKey) key;
 
-        String x = getHexString(ecPublicKey.getW().getAffineX());
-        String y = getHexString(ecPublicKey.getW().getAffineY());
+        String x = getHexString(BigIntegers.asUnsignedByteArray(ecPublicKey.getW().getAffineX()));
+        String y = getHexString(BigIntegers.asUnsignedByteArray(ecPublicKey.getW().getAffineY()));
 
         fields = new Field[] { new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubEcAffineX.text"), x),
                                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubEcAffineY.text"), y) };
@@ -321,7 +322,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         Field[] fields;
         ECPrivateKey ecPrivateKey = (ECPrivateKey) key;
 
-        String s = getHexString(ecPrivateKey.getS());
+        String s = getHexString(BigIntegers.asUnsignedByteArray(ecPrivateKey.getS()));
 
         fields = new Field[] {
                 new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivEcPrivateKey.text"), s) };
@@ -333,7 +334,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(key.getEncoded());
 
         byte[] rawKey = subjectPublicKeyInfo.getPublicKeyData().getBytes();
-        String rawKeyHex = HexUtil.getHexString(rawKey, "", 0, MAX_LINE_LENGTH);
+        String rawKeyHex = getHexString(rawKey);
 
         fields = new Field[] {
                 new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubEdKey.text"), rawKeyHex) };
@@ -346,7 +347,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
         // RFC 8410 defines that the EdDSA private key is wrapped in another OCTET STRING...
         ASN1OctetString curvePrivateKey = ASN1OctetString.getInstance(privateKeyInfo.getPrivateKey().getOctets());
-        String rawKeyHex = HexUtil.getHexString(curvePrivateKey.getOctets(), "", 0, MAX_LINE_LENGTH);
+        String rawKeyHex = getHexString(curvePrivateKey.getOctets());
 
         fields = new Field[] {
                 new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivEdPrivateKey.text"), rawKeyHex) };
@@ -355,6 +356,10 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 
     private static String getHexString(BigInteger bigInt) {
         return HexUtil.getHexString(bigInt, "", 0, MAX_LINE_LENGTH);
+    }
+
+    private static String getHexString(byte[] bytes) {
+        return HexUtil.getHexString(bytes, "", 0, MAX_LINE_LENGTH);
     }
 
     private void updateFieldValue() {

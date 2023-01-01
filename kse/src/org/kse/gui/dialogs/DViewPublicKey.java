@@ -55,6 +55,7 @@ import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.crypto.JPublicKeyFingerprint;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -79,6 +80,8 @@ public class DViewPublicKey extends JEscDialog {
     private JLabel jlEncoded;
     private JTextArea jtaEncoded;
     private JScrollPane jspEncoded;
+    private JLabel jlFingerprint;
+    private JPublicKeyFingerprint jcfFingerprint;
     private JButton jbPem;
     private JButton jbFields;
     private JButton jbAsn1;
@@ -153,6 +156,10 @@ public class DViewPublicKey extends JEscDialog {
                                                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jspEncoded.setBorder(jtfFormat.getBorder());
 
+        jlFingerprint = new JLabel(res.getString("DViewCertificate.jlFingerprint.text"));
+
+        jcfFingerprint = new JPublicKeyFingerprint(25);
+
         jbPem = new JButton(res.getString("DViewPublicKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPublicKey.jbPem.mnemonic").charAt(0));
         jbPem.setToolTipText(res.getString("DViewPublicKey.jbPem.tooltip"));
@@ -177,7 +184,9 @@ public class DViewPublicKey extends JEscDialog {
         pane.add(jlFormat, "");
         pane.add(jtfFormat, "growx, pushx, wrap");
         pane.add(jlEncoded, "");
-        pane.add(jspEncoded, "width 400lp:400lp:400lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jspEncoded, "growx, height 150lp:150lp:150lp, wrap");
+        pane.add(jlFingerprint, "");
+        pane.add(jcfFingerprint, "wrap");
         pane.add(jbPem, "spanx, split");
         pane.add(jbFields, "");
         pane.add(jbAsn1, "wrap");
@@ -254,6 +263,8 @@ public class DViewPublicKey extends JEscDialog {
 
         jtaEncoded.setText(new BigInteger(1, publicKey.getEncoded()).toString(16).toUpperCase());
         jtaEncoded.setCaretPosition(0);
+
+        jcfFingerprint.setPublicKey(publicKey);
 
         jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey) ||
                             (publicKey instanceof ECPublicKey) || (publicKey instanceof BCEdDSAPublicKey));

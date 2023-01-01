@@ -20,6 +20,7 @@
 package org.kse.gui.error;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
@@ -108,6 +109,20 @@ public class DError extends JEscDialog {
         setTitle(title);
         this.error = error;
         initComponents();
+    }
+
+    /**
+     * Display an error for the supplied container as application modal.
+     *
+     * @param container Either {@link JFrame} or {@link JDialog}
+     * @param error Error
+     */
+    public static void displayError(Container container, Throwable error) {
+        if (container instanceof JFrame) {
+            displayError((JFrame) container, error);
+        } else {
+            displayError((JDialog) container, error);
+        }
     }
 
     /**

@@ -32,9 +32,10 @@ import org.kse.utilities.pem.PemUtil;
 
 // @formatter:off
 /**
- * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo encoded public keys. The PKCS#1 RSA public key
- * format is not supported.
- *
+ * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo (see RFC 5280) encoded public keys.
+ * <p>
+ * The PKCS#1 RSA public key format is not supported.
+ *</p>
  * <pre>
  * -----BEGIN PUBLIC KEY-----
  * ...
@@ -42,8 +43,6 @@ import org.kse.utilities.pem.PemUtil;
  * </pre>
  *
  * <pre>
- * OpenSSL Public Key structure:
- *
  *     SubjectPublicKeyInfo ::= ASN1Sequence {
  *         algorithm AlgorithmIdentifier,
  *         subjectPublicKey BIT STRING }
@@ -63,6 +62,8 @@ import org.kse.utilities.pem.PemUtil;
  *         namedCurve         OBJECT IDENTIFIER
  *         -- implicitCurve   NULL
  *         -- specifiedCurve  SpecifiedECDomain }
+ *
+ *     Ed25519/Ed448-Params: "... the parameters MUST be absent." - RFC 8410
  *
  *     subjectPublicKey as DERBitString:
  *
@@ -111,7 +112,7 @@ public class OpenSslPubUtil {
     }
 
     /**
-     * Load an unencrypted OpenSSL public key from the stream. The encoding of
+     * Load an unencrypted OpenSSL/RFC5280 public key from the stream. The encoding of
      * the public key may be PEM or DER.
      *
      * @param pkData BA to load the unencrypted public key from
@@ -129,7 +130,7 @@ public class OpenSslPubUtil {
                 pkData = pemInfo.getContent();
             }
 
-            // DER-encoded subjectPublicKeyInfo structure - the OpenSSL format
+            // DER-encoded subjectPublicKeyInfo structure - the OpenSSL/RFC5280 format
             SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(pkData);
             return new JcaPEMKeyConverter().setProvider(BOUNCY_CASTLE.jce()).getPublicKey(publicKeyInfo);
         } catch (Exception ex) {

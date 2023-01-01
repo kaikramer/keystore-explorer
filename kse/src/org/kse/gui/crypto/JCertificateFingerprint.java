@@ -20,9 +20,6 @@
 package org.kse.gui.crypto;
 
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -38,6 +35,8 @@ import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.error.DError;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to view a fingerprint.
@@ -68,24 +67,10 @@ public class JCertificateFingerprint extends JPanel {
         jcbFingerprintAlg.setMaximumRowCount(10);
         jcbFingerprintAlg.addItemListener(evt -> populateFingerprint());
 
-        GridBagConstraints gbc_jcbFingerprintAlg = new GridBagConstraints();
-        gbc_jcbFingerprintAlg.gridwidth = 1;
-        gbc_jcbFingerprintAlg.gridheight = 1;
-        gbc_jcbFingerprintAlg.gridx = 0;
-        gbc_jcbFingerprintAlg.gridy = 0;
-        gbc_jcbFingerprintAlg.insets = new Insets(0, 0, 0, 5);
-
         jtfCertificateFingerprint = new JTextField(columns);
         jtfCertificateFingerprint.setEditable(false);
         jtfCertificateFingerprint.setToolTipText(
                 res.getString("JCertificateFingerprint.jtfCertificateFingerprint.tooltip"));
-
-        GridBagConstraints gbc_jtfCertificateFingerprint = new GridBagConstraints();
-        gbc_jtfCertificateFingerprint.gridwidth = 1;
-        gbc_jtfCertificateFingerprint.gridheight = 1;
-        gbc_jtfCertificateFingerprint.gridx = 1;
-        gbc_jtfCertificateFingerprint.gridy = 0;
-        gbc_jtfCertificateFingerprint.insets = new Insets(0, 0, 0, 5);
 
         ImageIcon viewIcon = new ImageIcon(getClass().getResource("images/view_cert_fingerprint.png"));
         jbViewCertificateFingerprint = new JButton(viewIcon);
@@ -101,17 +86,10 @@ public class JCertificateFingerprint extends JPanel {
             }
         });
 
-        GridBagConstraints gbc_jbViewCertificateFingerprint = new GridBagConstraints();
-        gbc_jbViewCertificateFingerprint.gridwidth = 1;
-        gbc_jbViewCertificateFingerprint.gridheight = 1;
-        gbc_jbViewCertificateFingerprint.gridx = 2;
-        gbc_jbViewCertificateFingerprint.gridy = 0;
-        gbc_jbViewCertificateFingerprint.insets = new Insets(0, 0, 0, 0);
-
-        setLayout(new GridBagLayout());
-        add(jcbFingerprintAlg, gbc_jcbFingerprintAlg);
-        add(jtfCertificateFingerprint, gbc_jtfCertificateFingerprint);
-        add(jbViewCertificateFingerprint, gbc_jbViewCertificateFingerprint);
+        this.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        this.add(jcbFingerprintAlg, "");
+        this.add(jtfCertificateFingerprint, "");
+        this.add(jbViewCertificateFingerprint, "");
 
         populateFingerprintAlgs();
         populateFingerprint();
@@ -163,18 +141,7 @@ public class JCertificateFingerprint extends JPanel {
                 jtfCertificateFingerprint.setText(
                         DigestUtil.getFriendlyMessageDigest(encodedCertificate, fingerprintAlg));
             } catch (CryptoException ex) {
-                Container container = getTopLevelAncestor();
-
-                DError dError = null;
-
-                if (container instanceof JDialog) {
-                    dError = new DError((JDialog) container, ex);
-                } else {
-                    dError = new DError((JFrame) container, ex);
-                }
-
-                dError.setLocationRelativeTo(container);
-                dError.setVisible(true);
+                DError.displayError(getTopLevelAncestor(), ex);
                 return;
             }
         } else {

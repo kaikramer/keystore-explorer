@@ -20,7 +20,6 @@
 package org.kse.gui.crypto;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -31,6 +30,7 @@ import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -50,8 +50,8 @@ import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.digest.DigestType;
-import org.kse.crypto.digest.DigestUtil;
+import org.kse.crypto.digest.PublicKeyFingerprintAlgorithm;
+import org.kse.crypto.digest.PublicKeyFingerprintUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
@@ -61,11 +61,12 @@ import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
+import org.kse.utilities.io.HexUtil;
 
 /**
  * Dialog to view a certificate fingerprint.
  */
-public class DViewCertificateFingerprint extends JEscDialog {
+public class DViewPublicKeyFingerprint extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
@@ -77,51 +78,51 @@ public class DViewCertificateFingerprint extends JEscDialog {
     private JScrollPane jspPolicy;
     private JTextArea jtaFingerprint;
 
-    private byte[] encodedCertificate;
-    private DigestType fingerprintAlg;
+    private PublicKey publicKey;
+    private PublicKeyFingerprintAlgorithm fingerprintAlg;
 
     /**
-     * Creates a new DViewCertificateFingerprint dialog.
+     * Creates a new DViewPublicKeyFingerprint dialog.
      *
-     * @param parent             The parent frame
-     * @param encodedCertificate Encoded certificate to fingerprint
-     * @param fingerprintAlg     Fingerprint algorithm
+     * @param parent         The parent frame
+     * @param publicKey      Public key to fingerprint
+     * @param fingerprintAlg Fingerprint algorithm
      */
-    public DViewCertificateFingerprint(JFrame parent, byte[] encodedCertificate, DigestType fingerprintAlg) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.encodedCertificate = encodedCertificate;
+    public DViewPublicKeyFingerprint(JFrame parent, PublicKey publicKey, PublicKeyFingerprintAlgorithm fingerprintAlg) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+        this.publicKey = publicKey;
         this.fingerprintAlg = fingerprintAlg;
         initComponents();
     }
 
     /**
-     * Creates a new DViewCertificateFingerprint dialog.
+     * Creates a new DViewPublicKeyFingerprint dialog.
      *
-     * @param parent             The parent dialog
-     * @param encodedCertificate Encoded certificate to fingerprint
-     * @param fingerprintAlg     Fingerprint algorithm
+     * @param parent         The parent dialog
+     * @param publicKey      Public key to fingerprint
+     * @param fingerprintAlg Fingerprint algorithm
      */
-    public DViewCertificateFingerprint(JDialog parent, byte[] encodedCertificate, DigestType fingerprintAlg) {
-        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.encodedCertificate = encodedCertificate;
+    public DViewPublicKeyFingerprint(JDialog parent, PublicKey publicKey, PublicKeyFingerprintAlgorithm fingerprintAlg) {
+        super(parent, ModalityType.DOCUMENT_MODAL);
+        this.publicKey = publicKey;
         this.fingerprintAlg = fingerprintAlg;
         initComponents();
     }
 
     private void initComponents() {
-        jbCopy = new JButton(res.getString("DViewCertificateFingerprint.jbCopy.text"));
-        PlatformUtil.setMnemonic(jbCopy, res.getString("DViewCertificateFingerprint.jbCopy.mnemonic").charAt(0));
-        jbCopy.setToolTipText(res.getString("DViewCertificateFingerprint.jbCopy.tooltip"));
+        jbCopy = new JButton(res.getString("DViewPublicKeyFingerprint.jbCopy.text"));
+        PlatformUtil.setMnemonic(jbCopy, res.getString("DViewPublicKeyFingerprint.jbCopy.mnemonic").charAt(0));
+        jbCopy.setToolTipText(res.getString("DViewPublicKeyFingerprint.jbCopy.tooltip"));
         jbCopy.addActionListener(evt -> {
             try {
-                CursorUtil.setCursorBusy(DViewCertificateFingerprint.this);
+                CursorUtil.setCursorBusy(DViewPublicKeyFingerprint.this);
                 copyPressed();
             } finally {
-                CursorUtil.setCursorFree(DViewCertificateFingerprint.this);
+                CursorUtil.setCursorFree(DViewPublicKeyFingerprint.this);
             }
         });
 
-        jbOK = new JButton(res.getString("DViewCertificateFingerprint.jbOK.text"));
+        jbOK = new JButton(res.getString("DViewPublicKeyFingerprint.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
         jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null, jbCopy);
@@ -137,7 +138,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
         // JGoodies - keep uneditable color same as editable
         jtaFingerprint.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
         jtaFingerprint.setToolTipText(
-                MessageFormat.format(res.getString("DViewCertificateFingerprint.jtaFingerprint.tooltip"),
+                MessageFormat.format(res.getString("DViewPublicKeyFingerprint.jtaFingerprint.tooltip"),
                                      fingerprintAlg.friendly()));
 
         jspPolicy = PlatformUtil.createScrollPane(jtaFingerprint, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -149,7 +150,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
         getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
-        setTitle(MessageFormat.format(res.getString("DViewCertificateFingerprint.Title"), fingerprintAlg.friendly()));
+        setTitle(MessageFormat.format(res.getString("DViewPublicKeyFingerprint.Title"), fingerprintAlg.friendly()));
         setResizable(true);
 
         addWindowListener(new WindowAdapter() {
@@ -169,9 +170,11 @@ public class DViewCertificateFingerprint extends JEscDialog {
     }
 
     private void populateFingerprint() {
-        if (encodedCertificate != null) {
+        if (publicKey != null) {
             try {
-                jtaFingerprint.setText(DigestUtil.getFriendlyMessageDigest(encodedCertificate, fingerprintAlg));
+                byte[] fingerprintBytes = PublicKeyFingerprintUtil.calculateFingerprint(publicKey, fingerprintAlg);
+                String fingerprintHex = HexUtil.getHexString(fingerprintBytes, "", 0, 0);
+                jtaFingerprint.setText(fingerprintHex);
             } catch (CryptoException ex) {
                 DError.displayError(this.getParent(), ex);
                 return;
@@ -213,8 +216,8 @@ public class DViewCertificateFingerprint extends JEscDialog {
                                                             caKeyPair.getPublic(), caKeyPair.getPrivate(),
                                                             SignatureType.SHA224WITHRSAANDMGF1, BigInteger.ONE);
 
-        DViewCertificateFingerprint dialog = new DViewCertificateFingerprint(new javax.swing.JFrame(),
-                                                                             caCert.getEncoded(), DigestType.SHA1);
+        DViewPublicKeyFingerprint dialog = new DViewPublicKeyFingerprint(new JFrame(), caCert.getPublicKey(),
+                                                                         PublicKeyFingerprintAlgorithm.SKI_METHOD1);
         DialogViewer.run(dialog);
     }
 }
