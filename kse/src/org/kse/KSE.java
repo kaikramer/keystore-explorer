@@ -22,6 +22,7 @@ package org.kse;
 import java.awt.Toolkit;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -52,6 +53,8 @@ import com.sun.jna.WString;
  */
 public class KSE {
     private static final ResourceBundle props = ResourceBundle.getBundle("org/kse/version");
+
+    public static Provider BC = new BouncyCastleProvider();
 
     static {
         // set default style for Bouncy Castle's X500Name class
@@ -145,8 +148,7 @@ public class KSE {
     }
 
     private static void setInstallDirProperty() {
-        // Use this for restarts
-        // Install directory is always user.dir, but we change user.dir in CurrentDirectory class
+        // Use this for restarts; install directory is always user.dir, but we change user.dir in CurrentDirectory class
         System.setProperty("kse.install.dir", System.getProperty("user.dir"));
     }
 
@@ -159,9 +161,8 @@ public class KSE {
     }
 
     private static void initialiseSecurity() {
-
         // Add BouncyCastle provider
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BC);
     }
 
     /**

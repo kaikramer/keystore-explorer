@@ -20,8 +20,6 @@
 
 package org.kse.gui.actions;
 
-import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
-
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.File;
@@ -79,6 +77,7 @@ import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
 import org.bouncycastle.operator.DigestCalculatorProvider;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -226,7 +225,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
 
     private static OCSPReq makeOcspRequest(X509Certificate caCert, X509Certificate certToCheck)
             throws OCSPException, OperatorCreationException, CertificateEncodingException {
-        DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(BOUNCY_CASTLE.jce())
+        DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(KSE.BC)
                                                                                        .build();
 
         CertificateID certId = new JcaCertificateID(digCalcProv.get(CertificateID.HASH_SHA1), caCert,

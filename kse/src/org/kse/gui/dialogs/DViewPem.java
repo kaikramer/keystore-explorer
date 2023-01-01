@@ -55,6 +55,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.privatekey.Pkcs8Util;
@@ -350,12 +351,12 @@ public class DViewPem extends JEscDialog {
 
     // for quick testing
     public static void main(String[] args) throws Exception {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
         KeyPair keyPair = keyGen.genKeyPair();
         JcaPKCS10CertificationRequestBuilder csrBuilder = new JcaPKCS10CertificationRequestBuilder(
                 new X500Name("cn=test"), keyPair.getPublic());
         PKCS10CertificationRequest csr = csrBuilder.build(
-                new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(keyPair.getPrivate()));
+                new JcaContentSignerBuilder("SHA256withRSA").setProvider(KSE.BC).build(keyPair.getPrivate()));
 
         DViewPem dialog = new DViewPem(new javax.swing.JFrame(), "Title", csr);
         DialogViewer.run(dialog);

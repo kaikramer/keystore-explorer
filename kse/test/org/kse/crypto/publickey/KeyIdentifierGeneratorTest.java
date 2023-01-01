@@ -25,12 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.security.PublicKey;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMException;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyTestsBase;
 
@@ -44,7 +44,7 @@ class KeyIdentifierGeneratorTest extends KeyTestsBase {
     })
     void generate160BitHashId(String testName, String spkiHex, String keyHashHex) throws PEMException, CryptoException {
         SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(Hex.decode(spkiHex));
-        PublicKey publicKey = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider())
+        PublicKey publicKey = new JcaPEMKeyConverter().setProvider(KSE.BC)
                                                       .getPublicKey(publicKeyInfo);
 
         KeyIdentifierGenerator cut = new KeyIdentifierGenerator(publicKey);

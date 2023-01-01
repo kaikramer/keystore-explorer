@@ -57,6 +57,7 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.digest.DigestType;
@@ -610,7 +611,7 @@ public class OpenSslPvkUtil {
         IvParameterSpec ivParams = new IvParameterSpec(iv);
 
         try {
-            Cipher cipher = Cipher.getInstance(transformation, "BC");
+            Cipher cipher = Cipher.getInstance(transformation, KSE.BC);
             cipher.init(operation, secretKey, ivParams);
             return cipher;
         } catch (GeneralSecurityException ex) {

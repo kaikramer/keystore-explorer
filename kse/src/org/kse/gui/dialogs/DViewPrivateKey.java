@@ -47,6 +47,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -290,7 +291,7 @@ public class DViewPrivateKey extends JEscDialog {
     // for quick testing
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", KSE.BC);
         KeyPair keyPair = keyGen.genKeyPair();
 
         PrivateKey privKey = keyPair.getPrivate();

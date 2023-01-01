@@ -38,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.KeyInfo;
@@ -61,7 +62,7 @@ public class KeyPairUtilTest extends CryptoTestsBase {
     })
     // @formatter:on
     public void generateRsaDsaKeys(KeyPairType keyPairType, Integer keySize) throws Exception {
-        KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, BC);
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, KSE.BC);
 
         PrivateKey privateKey = keyPair.getPrivate();
         KeyInfo privateKeyInfo = KeyPairUtil.getKeyInfo(privateKey);
@@ -103,7 +104,7 @@ public class KeyPairUtilTest extends CryptoTestsBase {
     })
     // @formatter:on
     public void generateEcKeys(String curveName) throws Exception {
-        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, BC);
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
         assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
     }
 
@@ -112,7 +113,7 @@ public class KeyPairUtilTest extends CryptoTestsBase {
             throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, CryptoException,
                    InvalidKeySpecException {
 
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("ECDSA", BC);
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("ECDSA", KSE.BC);
         keyPairGenerator.initialize(new ECGenParameterSpec("prime256v1"), SecureRandom.getInstance("SHA1PRNG"));
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
 

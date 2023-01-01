@@ -49,6 +49,7 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import org.kse.ApplicationSettings;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.filetype.CryptoFileUtil;
@@ -378,16 +379,13 @@ public final class KeyStoreUtil {
                             MessageFormat.format(res.getString("NoProvider.exception.message"), BOUNCY_CASTLE.jce()));
                 }
 
-                return KeyStore.getInstance(keyStoreType.jce(), BOUNCY_CASTLE.jce());
+                return KeyStore.getInstance(keyStoreType.jce(), KSE.BC);
             } else {
                 return KeyStore.getInstance(keyStoreType.jce());
             }
         } catch (KeyStoreException ex) {
             throw new CryptoException(
                     MessageFormat.format(res.getString("NoCreateKeyStore.exception.message"), keyStoreType), ex);
-        } catch (NoSuchProviderException ex) {
-            throw new CryptoException(
-                    MessageFormat.format(res.getString("NoProvider.exception.message"), BOUNCY_CASTLE.jce()));
         }
     }
 

@@ -20,8 +20,6 @@
 
 package org.kse.gui.dialogs;
 
-import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
-
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -50,6 +48,7 @@ import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.params.DHParameters;
+import org.kse.KSE;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.error.DError;
 
@@ -195,7 +194,7 @@ public class DGeneratingDHParameters extends JEscDialog {
         @Override
         public void run() {
             try {
-                AlgorithmParameterGenerator algGen = AlgorithmParameterGenerator.getInstance("DH", BOUNCY_CASTLE.jce());
+                AlgorithmParameterGenerator algGen = AlgorithmParameterGenerator.getInstance("DH", KSE.BC);
                 algGen.init(keySize, new SecureRandom());
                 AlgorithmParameters dhParams = algGen.generateParameters();
                 DHParameterSpec dhSpec = dhParams.getParameterSpec(DHParameterSpec.class);

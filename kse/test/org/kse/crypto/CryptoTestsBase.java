@@ -21,11 +21,10 @@
 
 package org.kse.crypto;
 
-import java.security.Provider;
 import java.security.Security;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
+import org.kse.KSE;
 import org.kse.crypto.jcepolicy.JcePolicyUtil;
 
 /**
@@ -33,12 +32,9 @@ import org.kse.crypto.jcepolicy.JcePolicyUtil;
  */
 public abstract class CryptoTestsBase {
 
-    protected static Provider BC;
-
     @BeforeAll
     public static void addBcProvider() {
-        BC = new BouncyCastleProvider();
-        Security.addProvider(BC);
+        Security.addProvider(KSE.BC);
         JcePolicyUtil.removeRestrictions();
     }
 }

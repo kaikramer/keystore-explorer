@@ -92,7 +92,7 @@ public class DErrorCollection extends JEscDialog {
     public void initFields() {
         // label for file
         jlblKeys = new JLabel(res.getString("DErrorCollection.jlblKeys.text"));
-        // jlist 
+        // jlist
         jltKeys = new JList();
         jltKeys.setToolTipText(res.getString("DErrorCollection.jltKeys.tooltip"));
         jltKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -181,7 +181,7 @@ public class DErrorCollection extends JEscDialog {
      * @param map Hashmap
      */
     private void populateKeys(Map<?, ?> map) {
-        // convert hash map keys to a string array
+        // convert hash map keys to a string array // TODO seems hacky
         String[] listData = (String[]) map.keySet().toArray(new String[map.size()]);
 
         if (listData != null) {

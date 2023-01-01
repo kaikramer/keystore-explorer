@@ -21,7 +21,6 @@
 package org.kse.crypto.secretkey;
 
 import static org.kse.crypto.KeyType.SYMMETRIC;
-import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -31,6 +30,7 @@ import java.util.ResourceBundle;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 
@@ -50,7 +50,7 @@ public class SecretKeyUtil {
      */
     public static SecretKey generateSecretKey(SecretKeyType secretKeyType, int keySize) throws CryptoException {
         try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance(secretKeyType.jce(), BOUNCY_CASTLE.jce());
+            KeyGenerator keyGenerator = KeyGenerator.getInstance(secretKeyType.jce(), KSE.BC);
             keyGenerator.init(keySize, SecureRandom.getInstance("SHA1PRNG"));
 
             return keyGenerator.generateKey();

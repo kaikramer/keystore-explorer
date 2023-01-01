@@ -34,6 +34,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.kse.KSE;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
@@ -77,7 +78,7 @@ public class EccUtilTest extends CryptoTestsBase {
     // @formatter:on
     public void convertToECPrivateKeyStructure(String curveName) throws Exception {
 
-        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, BC);
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
         ECPrivateKey ecPrivateKey = (ECPrivateKey) keyPair.getPrivate();
 
         byte[] encoded = EccUtil.convertToECPrivateKeyStructure(ecPrivateKey).toASN1Primitive().getEncoded();

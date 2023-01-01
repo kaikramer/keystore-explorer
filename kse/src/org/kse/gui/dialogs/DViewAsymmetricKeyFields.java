@@ -58,6 +58,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.util.BigIntegers;
+import org.kse.KSE;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
@@ -411,15 +412,15 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
 
-//        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+//        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
 //        KeyPair keyPair = keyGen.genKeyPair();
 
 //        ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("secp256r1");
-//        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+//        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", KSE.BC);
 //        keyGen.initialize(ecSpec);
 //        KeyPair keyPair = keyGen.generateKeyPair();
 
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("Ed25519", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("Ed25519", KSE.BC);
         KeyPair keyPair = keyGen.generateKeyPair();
 
         DViewAsymmetricKeyFields dialog = new DViewAsymmetricKeyFields(new JDialog(), keyPair.getPrivate());

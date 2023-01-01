@@ -27,16 +27,16 @@ import java.io.IOException;
 import java.security.Security;
 
 import org.apache.commons.io.FileUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.kse.KSE;
 
 class CryptoFileUtilTest {
 
     private static final String TEST_FILES_PATH = "test/testdata/CryptoFileUtilTest";
 
     static {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(KSE.BC);
     }
 
     @ParameterizedTest

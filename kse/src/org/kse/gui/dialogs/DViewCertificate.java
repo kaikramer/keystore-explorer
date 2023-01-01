@@ -65,6 +65,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.ApplicationSettings;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -733,7 +734,7 @@ public class DViewCertificate extends JEscDialog {
 
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
 
         KeyPair caKeyPair = keyGen.genKeyPair();
         X509CertificateGenerator certGen = new X509CertificateGenerator(X509CertificateVersion.VERSION3);

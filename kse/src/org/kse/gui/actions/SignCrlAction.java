@@ -57,6 +57,7 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509v2CRLBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairType;
@@ -205,7 +206,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
         X509CRLHolder crl = crlGen.build(
                 new JcaContentSignerBuilder(signatureAlgorithm).setProvider(provider).build(caPrivateKey));
-        return new JcaX509CRLConverter().setProvider(BOUNCY_CASTLE.jce()).getCRL(crl);
+        return new JcaX509CRLConverter().setProvider(KSE.BC).getCRL(crl);
     }
 
     private void exportFile(X509CRL x509CRL, File fileExported, boolean pemEncode)

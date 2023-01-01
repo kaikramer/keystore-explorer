@@ -20,7 +20,6 @@
 package org.kse.crypto.keypair;
 
 import static org.kse.crypto.KeyType.ASYMMETRIC;
-import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static org.kse.crypto.ecc.EdDSACurves.ED25519;
 import static org.kse.crypto.ecc.EdDSACurves.ED448;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
@@ -51,7 +50,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.ecc.EccUtil;
@@ -86,7 +85,7 @@ public final class KeyPairUtil {
             } else {
                 // Always use BC provider for RSA
                 if (keyPairType == RSA) {
-                    keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), BOUNCY_CASTLE.jce());
+                    keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
                 } else {
                     // Use default provider for DSA
                     keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce());
@@ -121,12 +120,12 @@ public final class KeyPairUtil {
             KeyPairGenerator keyPairGen;
 
             if (EdDSACurves.ED25519.jce().equals(curveName) || EdDSACurves.ED448.jce().equals(curveName)) {
-                keyPairGen = KeyPairGenerator.getInstance(curveName, BOUNCY_CASTLE.jce());
+                keyPairGen = KeyPairGenerator.getInstance(curveName, KSE.BC);
             } else if (provider != null) {
                 keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), provider);
                 keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
             } else {
-                keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), BOUNCY_CASTLE.jce());
+                keyPairGen = KeyPairGenerator.getInstance(KeyPairType.EC.jce(), KSE.BC);
                 keyPairGen.initialize(new ECGenParameterSpec(curveName), SecureRandom.getInstance("SHA1PRNG"));
             }
 
@@ -195,7 +194,7 @@ public final class KeyPairUtil {
             String algorithm = publicKey.getAlgorithm();
 
             if (algorithm.equals(RSA.jce())) {
-                KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
+                KeyFactory keyFact = KeyFactory.getInstance(algorithm, KSE.BC);
                 RSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
                 BigInteger modulus = keySpec.getModulus();
                 return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
@@ -237,7 +236,7 @@ public final class KeyPairUtil {
             if (RSA.jce().equals(algorithm)) {
                 if (privateKey instanceof RSAPrivateKey) {
                     // Using default provider does not work for BKS and UBER resident private keys
-                    KeyFactory keyFact = KeyFactory.getInstance(algorithm, BOUNCY_CASTLE.jce());
+                    KeyFactory keyFact = KeyFactory.getInstance(algorithm, KSE.BC);
                     RSAPrivateKeySpec keySpec = keyFact.getKeySpec(privateKey, RSAPrivateKeySpec.class);
                     BigInteger modulus = keySpec.getModulus();
                     return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
@@ -330,7 +329,7 @@ public final class KeyPairUtil {
 
     private static byte[] sign(byte[] toSign, PrivateKey privateKey, String signatureAlgorithm)
             throws GeneralSecurityException {
-        Signature signature = Signature.getInstance(signatureAlgorithm, new BouncyCastleProvider());
+        Signature signature = Signature.getInstance(signatureAlgorithm, KSE.BC);
         signature.initSign(privateKey);
         signature.update(toSign);
         return signature.sign();
@@ -338,7 +337,7 @@ public final class KeyPairUtil {
 
     private static boolean verify(byte[] signed, byte[] signaureToVerify, PublicKey publicKey,
                                   String signatureAlgorithm) throws GeneralSecurityException {
-        Signature signature = Signature.getInstance(signatureAlgorithm, new BouncyCastleProvider());
+        Signature signature = Signature.getInstance(signatureAlgorithm, KSE.BC);
         signature.initVerify(publicKey);
         signature.update(signed);
         return signature.verify(signaureToVerify);

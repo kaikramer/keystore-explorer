@@ -49,6 +49,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.PublicKeyFingerprintAlgorithm;
 import org.kse.crypto.digest.PublicKeyFingerprintUtil;
@@ -207,7 +208,7 @@ public class DViewPublicKeyFingerprint extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
 
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
 
         KeyPair caKeyPair = keyGen.genKeyPair();
         X509CertificateGenerator certGen = new X509CertificateGenerator(X509CertificateVersion.VERSION3);

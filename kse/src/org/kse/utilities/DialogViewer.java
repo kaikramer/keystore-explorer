@@ -26,7 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.KSE;
 import org.kse.gui.JEscDialog;
 
 import com.formdev.flatlaf.FlatLightLaf;
@@ -44,7 +44,7 @@ public class DialogViewer {
      */
     public static void prepare() throws UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel(new FlatLightLaf());
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(KSE.BC);
     }
 
     /**

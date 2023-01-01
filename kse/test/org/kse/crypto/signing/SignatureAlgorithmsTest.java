@@ -32,11 +32,11 @@ import java.security.PublicKey;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.kse.KSE;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -57,9 +57,9 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
 
     @BeforeAll
     static void setUp() throws Exception {
-        rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, BC);
-        dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, BC);
-        ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
+        rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, KSE.BC);
+        dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, KSE.BC);
+        ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", KSE.BC);
     }
 
     @ParameterizedTest
@@ -136,7 +136,7 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
         } else {
             PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(x500Principal, publicKey, privateKey,
                                                                        signatureType, "w/e", "w/e", null,
-                                                                       new BouncyCastleProvider());
+                                                                       KSE.BC);
             byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
             pkcs10 = Pkcs10Util.loadCsr(encoded);
             assertThat(Pkcs10Util.verifyCsr(pkcs10)).isTrue();

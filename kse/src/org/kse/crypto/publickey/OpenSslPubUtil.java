@@ -19,13 +19,12 @@
  */
 package org.kse.crypto.publickey;
 
-import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
-
 import java.security.PublicKey;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
@@ -132,7 +131,7 @@ public class OpenSslPubUtil {
 
             // DER-encoded subjectPublicKeyInfo structure - the OpenSSL/RFC5280 format
             SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(pkData);
-            return new JcaPEMKeyConverter().setProvider(BOUNCY_CASTLE.jce()).getPublicKey(publicKeyInfo);
+            return new JcaPEMKeyConverter().setProvider(KSE.BC).getPublicKey(publicKeyInfo);
         } catch (Exception ex) {
             throw new CryptoException(res.getString("NoLoadOpenSslPublicKey.exception.message"), ex);
         }
