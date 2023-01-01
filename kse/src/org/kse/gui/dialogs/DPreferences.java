@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -339,7 +339,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Creates a new DPreference dialog.
-     * 
+     *
      * @param parent                            The parent frame
      * @param useCaCertificates                 Use CA Certificates keystore file?
      * @param caCertificatesFile                CA Certificates keystore file
@@ -501,7 +501,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Set the preference screen from the selected navigation menu item
-     * 
+     *
      * @param screen
      */
     private void changeScreen(String screen) {
@@ -1123,7 +1123,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Use regular expression to evaluate allowable IP port ranges
-     * 
+     *
      * @param port
      * @return True if allowed
      */
@@ -1137,7 +1137,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Use regular expression to evaluate allowable IPV4 address
-     * 
+     *
      * @param host
      * @return True if allowed
      */
@@ -1151,7 +1151,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Use regular expression to evaluate allowable IPV6 address
-     * 
+     *
      * @param host
      * @return True if allowed
      */
@@ -1170,7 +1170,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Use regular expression to evaluate allowable URL
-     * 
+     *
      * @param url
      * @return True if allowed
      */
@@ -1267,7 +1267,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Read status of show hidden files
-     * 
+     *
      * @return True if show hidden files is enabled
      */
     public boolean isShowHiddenFilesEnabled() {
@@ -1276,7 +1276,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Read enable status of check auto update
-     * 
+     *
      * @return True if auto update is enabled
      */
     public boolean isAutoUpdateChecksEnabled() {
@@ -1285,7 +1285,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Read interval of check auto update
-     * 
+     *
      * @return Auto update interval check
      */
     public int getAutoUpdateChecksInterval() {
@@ -1307,7 +1307,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Check if columns have changed
-     * 
+     *
      * @return True if changed
      */
     public boolean columnsChanged() {
@@ -1416,7 +1416,7 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Quick UI testing
-     * 
+     *
      * @param args
      * @throws An exception
      */

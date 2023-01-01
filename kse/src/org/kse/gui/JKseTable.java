@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -78,7 +78,7 @@ public class JKseTable extends JTable {
         int fontHeight = getFontMetrics(getFont()).getHeight();
         setRowHeight(fontHeight + (int) (0.2 * fontHeight + 0.5));
     }
-    
+
     public void setColumnsToIconSize(int... columnNumbers) {
         for (int i : columnNumbers) {
             TableColumn typeCol = getColumnModel().getColumn(i);
@@ -88,7 +88,7 @@ public class JKseTable extends JTable {
             typeCol.setPreferredWidth(ICON_SIZE);
         }
     }
-    
+
     public void colAdjust(KeyStoreTableColumns keyStoreTableColumns, int autoResizeMode) {
         setAutoResizeMode(autoResizeMode);
         // Add custom renderers for headers and cells

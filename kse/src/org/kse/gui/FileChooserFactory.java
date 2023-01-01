@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -148,7 +148,7 @@ public class FileChooserFactory {
         JFileChooser chooser = getFileChooser();
         return chooser;
     }
-    
+
     /**
      * Get a JFileChooser with all filtered files
      *
