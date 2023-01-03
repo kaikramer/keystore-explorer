@@ -38,7 +38,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableRowSorter;
 
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.crypto.CryptoException;
 import org.kse.gui.JKseTable;
 import org.kse.gui.KeyStoreTableColumns;

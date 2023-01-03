@@ -35,10 +35,12 @@ import javax.swing.SwingUtilities;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.csr.pkcs12.Pkcs12Util;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CreateApplicationGui;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.os.OperatingSystem;
 import org.kse.version.JavaVersion;
 import org.kse.version.Version;
@@ -101,6 +103,8 @@ public class KSE {
             }
 
             initialiseSecurity();
+
+            Pkcs12Util.setEncryptionStrength(applicationSettings.getPkcs12EncryptionSetting());
 
             // list of files to open after start
             List<File> parameterFiles = new ArrayList<>();

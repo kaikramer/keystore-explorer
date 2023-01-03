@@ -17,8 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.gui.dialogs;
+package org.kse.gui.preferences;
 
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.ProxySelector;
 import java.net.URI;
@@ -30,24 +38,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bouncycastle.asn1.x500.X500Name;
-import org.kse.ApplicationSettings;
-import org.kse.crypto.SecurityProvider;
-import org.kse.gui.CurrentDirectory;
-import org.kse.gui.CursorUtil;
-import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JEscDialog;
-import org.kse.gui.KeyStoreTableColumns;
-import org.kse.gui.PlatformUtil;
-import org.kse.gui.dnchooser.DistinguishedNameChooser;
-import org.kse.gui.password.PasswordQualityConfig;
-import org.kse.utilities.DialogViewer;
-import org.kse.utilities.net.ManualProxySelector;
-import org.kse.utilities.net.NoProxySelector;
-import org.kse.utilities.net.PacProxySelector;
-import org.kse.utilities.net.ProxyAddress;
-import org.kse.utilities.net.SystemProxySelector;
-
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -56,12 +48,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import net.miginfocom.swing.MigLayout;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -78,143 +64,34 @@ import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
-import java.awt.event.ActionEvent;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.kse.crypto.SecurityProvider;
+import org.kse.gui.CurrentDirectory;
+import org.kse.gui.CursorUtil;
+import org.kse.gui.FileChooserFactory;
+import org.kse.gui.JEscDialog;
+import org.kse.gui.KeyStoreTableColumns;
+import org.kse.gui.PlatformUtil;
+import org.kse.gui.dnchooser.DistinguishedNameChooser;
+import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.utilities.DialogViewer;
+import org.kse.utilities.net.ManualProxySelector;
+import org.kse.utilities.net.NoProxySelector;
+import org.kse.utilities.net.PacProxySelector;
+import org.kse.utilities.net.ProxyAddress;
+import org.kse.utilities.net.SystemProxySelector;
 
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog to allow the users to configure KeyStore Explorer's preferences.
  */
 public class DPreferences extends JEscDialog {
 
-    /**
-     * Renderer class to populate and style tree cells
-     */
-    private class MyRenderer extends DefaultTreeCellRenderer {
-
-        private static final long serialVersionUID = -4925141688439747036L;
-
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-                boolean leaf, int row, boolean hasFocus) {
-
-            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-            int iconPadding = 10; // add padding to icon width
-            int heightPadding = 5; // add padding to height
-            AffineTransform affinetransform = new AffineTransform();
-            FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
-            if (node.isLeaf()) {
-                MenuTreeNode menuTreeNode = (MenuTreeNode) node.getUserObject();
-                int textWidth = (int) (getFont().getStringBounds(menuTreeNode.getName(), frc).getWidth());
-                int textHeight = (int) (getFont().getStringBounds(menuTreeNode.getName(), frc).getHeight());
-                Dimension d = new Dimension(menuTreeNode.getLabelIcon().getIconWidth() + iconPadding + textWidth,
-                        heightPadding + textHeight);
-                setPreferredSize(d); // set cell preferred size
-                setText(menuTreeNode.getName());
-                setIcon(menuTreeNode.getLabelIcon());
-                setToolTipText(menuTreeNode.getToolTip());
-            } else {
-                setLeafIcon(null);
-                setClosedIcon(null);
-                setOpenIcon(null);
-            }
-            return this;
-        }
-    }
-
-    /**
-     * MenuTreeNode class to compile a set of items used for tree nodes
-     */
-    private class MenuTreeNode {
-        private String name;
-        private ImageIcon icon;
-        private String tooltip;
-        private String card;
-
-        public MenuTreeNode(String name, String icon, String tooltip, String card) {
-            super();
-            this.name = res.getString(name);
-            this.icon = new ImageIcon(this.getClass().getResource(icon));
-            this.tooltip = res.getString(tooltip);
-            this.card = card;
-        }
-
-        public MenuTreeNode() {
-            super();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = res.getString(name);
-        }
-
-        public ImageIcon getLabelIcon() {
-            return icon;
-        }
-
-        public void setLabelIcon(String icon) {
-            this.icon = new ImageIcon(this.getClass().getResource(icon));
-        }
-
-        public String getToolTip() {
-            return tooltip;
-        }
-
-        public void setToolTip(String tooltip) {
-            this.tooltip = res.getString(tooltip);
-        }
-
-        public String getCard() {
-            return card;
-        }
-
-        public void setCard(String card) {
-            this.card = card;
-        }
-    }
-
-    /**
-     * Language class for supporting language text.
-     */
-    private static class LanguageItem {
-        private String displayName;
-        private String isoCode;
-
-        public LanguageItem(String displayName, String isoCode) {
-            super();
-            this.displayName = displayName;
-            this.isoCode = isoCode;
-        }
-
-        public String getIsoCode() {
-            return isoCode;
-        }
-
-        @Override
-        public String toString() {
-            return displayName;
-        }
-    }
-
     private static final long serialVersionUID = -3625128197124011083L;
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -241,6 +118,8 @@ public class DPreferences extends JEscDialog {
     private JLabel jlFileChooser;
     private JCheckBox jcbShowHiddenFiles;
     private JCheckBox jcbLookFeelDecorated;
+    private JLabel jlPkcs12Encryption;
+    private JComboBox<Pkcs12EncryptionSetting> jcbPkcs12Encryption;
     private JPanel jpInternetProxy;
     private JRadioButton jrbNoProxy;
     private JRadioButton jrbSystemProxySettings;
@@ -284,6 +163,7 @@ public class DPreferences extends JEscDialog {
     private boolean lookFeelDecorated;
     private String language;
     private boolean showHiddenFilesEnabled;
+    private Pkcs12EncryptionSetting pkcs12EncryptionSetting;
 
     private boolean autoUpdateChecksEnabled;
     private int autoUpdateChecksInterval;
@@ -337,6 +217,7 @@ public class DPreferences extends JEscDialog {
     private DefaultMutableTreeNode rootNode;
     private JTree jtree;
 
+
     /**
      * Creates a new DPreference dialog.
      *
@@ -350,18 +231,20 @@ public class DPreferences extends JEscDialog {
      * @param enableImportCaReplyTrustCheck     Enable trust checks when importing
      *                                          CA replies?
      * @param passwordQualityConfig             Password quality configuration
-     * @param defaultDN
-     * @param language
-     * @param autoUpdateChecksEnabled
-     * @param autoUpdateChecksInterval
-     * @param kstColumns
+     * @param defaultDN                         Default subject DN for new certificates
+     * @param language                          KSE UI language
+     * @param autoUpdateChecksEnabled           Automatic check for updates enabled or not
+     * @param autoUpdateChecksInterval          Interval for autmatic update checks
+     * @param kstColumns                        Shown columns in the main table
      * @param showHiddenFilesEnabled            Show hidden files in file chooser
+     * @param pkcs12EncryptionSetting           Strong or compatible PKCS#12 encryption?
      */
     public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
-            boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
-            boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig, String defaultDN,
-            String language, boolean autoUpdateChecksEnabled, int autoUpdateChecksInterval,
-            KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled) {
+                        boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
+                        boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
+                        String defaultDN, String language, boolean autoUpdateChecksEnabled,
+                        int autoUpdateChecksInterval, KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled,
+                        Pkcs12EncryptionSetting pkcs12EncryptionSetting) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(true);
         Dimension d = new Dimension(900, 500);
@@ -376,9 +259,10 @@ public class DPreferences extends JEscDialog {
         this.language = language;
         this.autoUpdateChecksEnabled = autoUpdateChecksEnabled;
         this.autoUpdateChecksInterval = autoUpdateChecksInterval;
-        this.showHiddenFilesEnabled = showHiddenFilesEnabled;
-        this.expiryWarnDays = kstColumns.getExpiryWarnDays();
         this.kstColumns = kstColumns;
+        this.expiryWarnDays = kstColumns.getExpiryWarnDays();
+        this.showHiddenFilesEnabled = showHiddenFilesEnabled;
+        this.pkcs12EncryptionSetting = pkcs12EncryptionSetting;
         initComponents();
     }
 
@@ -416,7 +300,7 @@ public class DPreferences extends JEscDialog {
         jtree = new JTree(rootNode);
         jtree.setRootVisible(false);
         jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        jtree.setCellRenderer(new MyRenderer());
+        jtree.setCellRenderer(new SettingsTreeCellRenderer());
         jtree.setEditable(false);
         jtree.setSelectionRow(0);
 
@@ -508,7 +392,6 @@ public class DPreferences extends JEscDialog {
         ((CardLayout) rightJPanel.getLayout()).show(rightJPanel, screen);
     }
 
-    // TODO move to separate class
     private void initAuthorityCertificatesCard() {
         jlCaCertificatesFile = new JLabel(res.getString("DPreferences.jlCaCertificatesFile.text"));
         jtfCaCertificatesFile = new JTextField(caCertificatesFile.toString(), 25);
@@ -580,7 +463,6 @@ public class DPreferences extends JEscDialog {
 
     }
 
-    // TODO move to separate class
     private void initUserInterfaceCard() {
         jlLookFeelNote = new JLabel(res.getString("DPreferences.jlLookFeelNote.text"));
         jlLookFeel = new JLabel(res.getString("DPreferences.jlLookFeel.text"));
@@ -647,6 +529,11 @@ public class DPreferences extends JEscDialog {
         jcbShowHiddenFiles = new JCheckBox(res.getString("DPreferences.jcbShowHiddenFiles.text"));
         jcbShowHiddenFiles.setSelected(showHiddenFilesEnabled);
 
+        jlPkcs12Encryption  = new JLabel(res.getString("DPreferences.jlPkcs12Encryption.text"));
+        jcbPkcs12Encryption = new JComboBox<>(Pkcs12EncryptionSetting.values());
+        jcbPkcs12Encryption.setSelectedItem(pkcs12EncryptionSetting);
+        jcbPkcs12Encryption.setToolTipText(res.getString("DPreferences.jcbPkcs12Encryption.tooltip"));
+
         // layout
         jpUI = new JPanel();
         rightJPanel.add(jpUI, "jpCard2");
@@ -666,8 +553,10 @@ public class DPreferences extends JEscDialog {
         jpUI.add(jcbEnforceMinimumPasswordQuality, "spanx, gapx indent, wrap");
         jpUI.add(jlMinimumPasswordQuality, "gapx 4*indent, top, spanx, split 3");
         jpUI.add(jsMinimumPasswordQuality, "wrap");
-        jpUI.add(jlFileChooser, "spanx, wrap");
-        jpUI.add(jcbShowHiddenFiles, "spanx, wrap");
+        jpUI.add(jlFileChooser, "");
+        jpUI.add(jcbShowHiddenFiles, "spanx, wrap unrel");
+        jpUI.add(jlPkcs12Encryption, "");
+        jpUI.add(jcbPkcs12Encryption, "");
 
         jcbEnableAutoUpdateChecks
                 .addItemListener(evt -> jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected()));
@@ -688,7 +577,6 @@ public class DPreferences extends JEscDialog {
         });
     }
 
-    // TODO move to separate class
     private void initInternetProxyCard() {
         jrbNoProxy = new JRadioButton(res.getString("DPreferences.jrbNoProxy.text"));
         jrbNoProxy.setToolTipText(res.getString("DPreferences.jrbNoProxy.tooltip"));
@@ -831,7 +719,6 @@ public class DPreferences extends JEscDialog {
         }
     }
 
-    // Good example to establish separate class and bring into preference menu
     private void initDefaultNameCard() {
         distinguishedNameChooser = new DistinguishedNameChooser(distinguishedName, true, defaultDN);
 
@@ -839,7 +726,6 @@ public class DPreferences extends JEscDialog {
         rightJPanel.add(distinguishedNameChooser, "jpCard4");
     }
 
-    // TODO move to separate class
     private void initDisplayColumnsCard() {
         bColumnsChanged = false;
 
@@ -920,7 +806,7 @@ public class DPreferences extends JEscDialog {
         // layout
         jpDisplayColumns = new JPanel();
         rightJPanel.add(jpDisplayColumns, "jpCard5");
-        jpDisplayColumns.setLayout(new MigLayout("insets dialog, fill", "[][]", ""));
+        jpDisplayColumns.setLayout(new MigLayout("insets dialog", "20lp[]20lp[]", "20lp[]rel[]"));
         jpDisplayColumns.add(jcbEnableEntryName, "left");
         jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
         jpDisplayColumns.add(jcbEnableKeySize, "left");
@@ -936,7 +822,7 @@ public class DPreferences extends JEscDialog {
         jpDisplayColumns.add(jcbEnableIssuerO, "left");
         jpDisplayColumns.add(jcbEnableSubjectO, "left, wrap");
         jpDisplayColumns.add(jcbEnableSerialNumberHex, "left");
-        jpDisplayColumns.add(jcbEnableSerialNumberDec, "left, wrap");
+        jpDisplayColumns.add(jcbEnableSerialNumberDec, "left, wrap para");
         jpDisplayColumns.add(jlExpirationWarnDays, "left, spanx, split");
         jpDisplayColumns.add(jtfExpirationWarnDays, "wrap");
     }
@@ -1002,6 +888,8 @@ public class DPreferences extends JEscDialog {
         autoUpdateChecksInterval = ((Number) jspAutoUpdateCheckInterval.getValue()).intValue();
 
         showHiddenFilesEnabled = jcbShowHiddenFiles.isSelected();
+
+        pkcs12EncryptionSetting = (Pkcs12EncryptionSetting) jcbPkcs12Encryption.getSelectedItem();
 
         // These may fail:
         boolean returnValue = storeDefaultDN();
@@ -1301,8 +1189,21 @@ public class DPreferences extends JEscDialog {
         return defaultDN;
     }
 
+    /**
+     * Get columns list for main table
+     *
+     * @return Columns config
+     */
     public KeyStoreTableColumns getColumns() {
         return kstColumns;
+    }
+
+    /**
+     * Get PKCS12 encryption settings
+     * @return P12 encryption settings
+     */
+    public Pkcs12EncryptionSetting getPkcs12EncryptionSetting() {
+        return pkcs12EncryptionSetting;
     }
 
     /**
@@ -1416,13 +1317,11 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Quick UI testing
-     *
-     * @param args
-     * @throws An exception
      */
     public static void main(String[] args) throws Exception {
         DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
-                new PasswordQualityConfig(true, true, 100), "", "en", true, 14, new KeyStoreTableColumns(), true);
+                                               new PasswordQualityConfig(true, true, 100), "", "en", true, 14,
+                                               new KeyStoreTableColumns(), true, Pkcs12EncryptionSetting.strong);
         DialogViewer.run(dialog);
     }
 }

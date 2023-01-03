@@ -43,7 +43,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.crypto.CryptoException;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;

@@ -64,7 +64,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.util.encoders.Hex;
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;

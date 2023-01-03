@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.os.OperatingSystem;
 
 /**

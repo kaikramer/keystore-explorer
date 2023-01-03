@@ -48,7 +48,7 @@ import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;

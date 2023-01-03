@@ -42,7 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.crypto.Password;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.KseFrame;

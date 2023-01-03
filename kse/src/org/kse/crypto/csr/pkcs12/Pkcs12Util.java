@@ -18,23 +18,28 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.kse.gui.preferences.ApplicationSettings;
+package org.kse.crypto.csr.pkcs12;
+
+import org.kse.gui.preferences.Pkcs12EncryptionSetting;
 
 /**
- * Erase all KSE application preferences.
+ * Provides utility methods relating to PKCS #12 containers.
  */
-public class PurgePreferences {
+public class Pkcs12Util {
+
     /**
-     * Erase all KSE application preferences.
+     * Updates encryption algorithms to the given settings.
      *
-     * @param args Arguments
+     * @param pkcs12EncryptionSetting Setting for strength of P12 encryption algorithms
      */
-    public static void main(String[] args) {
-        try {
-            ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
-            applicationSettings.clear();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public static void setEncryptionStrength(Pkcs12EncryptionSetting pkcs12EncryptionSetting) {
+        switch (pkcs12EncryptionSetting) {
+        case strong:
+            System.clearProperty("keystore.pkcs12.legacy");
+            break;
+        case legacy:
+            System.setProperty("keystore.pkcs12.legacy", "true");
+            break;
         }
     }
 }

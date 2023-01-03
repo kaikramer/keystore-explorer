@@ -28,10 +28,11 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import org.kse.ApplicationSettings;
+import org.kse.crypto.csr.pkcs12.Pkcs12Util;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.AuthorityCertificates;
 import org.kse.gui.KseFrame;
-import org.kse.gui.dialogs.DPreferences;
+import org.kse.gui.preferences.DPreferences;
 
 /**
  * Action to show preferences.
@@ -84,7 +85,8 @@ public class PreferencesAction extends ExitAction {
                                                      applicationSettings.isAutoUpdateCheckEnabled(),
                                                      applicationSettings.getAutoUpdateCheckInterval(),
                                                      applicationSettings.getKeyStoreTableColumns(),
-                                                     applicationSettings.isShowHiddenFilesEnabled());
+                                                     applicationSettings.isShowHiddenFilesEnabled(),
+                                                     applicationSettings.getPkcs12EncryptionSetting());
         dPreferences.setLocationRelativeTo(frame);
         dPreferences.setVisible(true);
 
@@ -111,6 +113,9 @@ public class PreferencesAction extends ExitAction {
         applicationSettings.setAutoUpdateCheckEnabled(dPreferences.isAutoUpdateChecksEnabled());
         applicationSettings.setAutoUpdateCheckInterval(dPreferences.getAutoUpdateChecksInterval());
         applicationSettings.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
+        applicationSettings.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
+
+        Pkcs12Util.setEncryptionStrength(applicationSettings.getPkcs12EncryptionSetting());
 
         UIManager.LookAndFeelInfo lookFeelInfo = dPreferences.getLookFeelInfo();
         applicationSettings.setLookAndFeelClass(lookFeelInfo.getClassName());

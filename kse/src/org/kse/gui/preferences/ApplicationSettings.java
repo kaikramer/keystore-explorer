@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse;
+package org.kse.gui.preferences;
 
 import static org.kse.crypto.digest.DigestType.SHA1;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
@@ -39,6 +39,7 @@ import java.util.prefs.Preferences;
 
 import javax.swing.JTabbedPane;
 
+import org.kse.AuthorityCertificates;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.secretkey.SecretKeyType;
@@ -113,6 +114,7 @@ public class ApplicationSettings {
     private static final String KSE3_EXPIRY_WARN_DAYS = "kse3.expirywarndays";
     private static final String KSE3_COLUMNS = "kse3.columns";
     private static final String KSE3_SHOW_HIDDEN_FILES = "kse3.showhiddenfiles";
+    private static final String KSE3_PKCS12_ENCRYPTION = "kse3.pkcs12encryption";
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -153,6 +155,7 @@ public class ApplicationSettings {
     private KeyStoreTableColumns kstColumns = new KeyStoreTableColumns();
     private int expiryWarnDays;
     private boolean showHiddenFilesEnabled;
+    private Pkcs12EncryptionSetting pkcs12EncryptionSetting;
 
     private ApplicationSettings() {
 
@@ -377,6 +380,9 @@ public class ApplicationSettings {
 
         // show hidden files in file chooser dialogs?
         showHiddenFilesEnabled = preferences.getBoolean(KSE3_SHOW_HIDDEN_FILES, true);
+
+        // pkcs12 encryption strong or compatible?
+        pkcs12EncryptionSetting = Pkcs12EncryptionSetting.valueOf(preferences.get(KSE3_PKCS12_ENCRYPTION, "strong"));
     }
 
     private File cleanFilePath(File filePath) {
@@ -489,6 +495,9 @@ public class ApplicationSettings {
 
         // hide/show hidden files in file chooser
         preferences.putBoolean(KSE3_SHOW_HIDDEN_FILES, isShowHiddenFilesEnabled());
+
+        // pkcs12 encryption strong or compatible?
+        preferences.put(KSE3_PKCS12_ENCRYPTION, pkcs12EncryptionSetting.name());
     }
 
     private void clearExistingRecentFiles(Preferences preferences) {
@@ -877,5 +886,13 @@ public class ApplicationSettings {
 
     public void setShowHiddenFilesEnabled(boolean showHiddenFilesEnabled) {
         this.showHiddenFilesEnabled = showHiddenFilesEnabled;
+    }
+
+    public Pkcs12EncryptionSetting getPkcs12EncryptionSetting() {
+        return pkcs12EncryptionSetting;
+    }
+
+    public void setPkcs12EncryptionSetting(Pkcs12EncryptionSetting pkcs12EncryptionSetting) {
+        this.pkcs12EncryptionSetting = pkcs12EncryptionSetting;
     }
 }
