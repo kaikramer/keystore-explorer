@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.io.IOUtils;
 import org.kse.KSE;
@@ -107,7 +108,9 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
         String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
         final Version latestVersion = new Version(versionString);
 
-        compareVersions(latestVersion, true);
+        SwingUtilities.invokeLater(() -> {
+            compareVersions(latestVersion, true);
+        });
     }
 
     private void compareVersions(Version latestVersion, boolean autoUpdateCheck) {
@@ -143,7 +146,8 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
             Desktop.getDesktop().browse(URI.create(URLs.DOWNLOADS_WEB_ADDRESS));
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(
-                                                  res.getString("CheckUpdateAction.NoLaunchBrowser.message"), URLs.DOWNLOADS_WEB_ADDRESS),
+                                                  res.getString("CheckUpdateAction.NoLaunchBrowser.message"),
+                                                  URLs.DOWNLOADS_WEB_ADDRESS),
                                           KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
         }
     }

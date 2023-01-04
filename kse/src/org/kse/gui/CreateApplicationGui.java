@@ -143,15 +143,12 @@ public class CreateApplicationGui implements Runnable {
 
     private void checkForUpdates(final KseFrame kseFrame) {
         new Thread(() -> {
-            // show update dialog to user
-            SwingUtilities.invokeLater(() -> {
-                CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
-                try {
-                    checkUpdateAction.doAutoUpdateCheck();
-                } catch (Exception e) {
-                    // ignore exceptions here
-                }
-            });
+            CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
+            try {
+                checkUpdateAction.doAutoUpdateCheck();
+            } catch (Exception e) {
+                // ignore exceptions here
+            }
         }).start();
     }
 
