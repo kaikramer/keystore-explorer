@@ -10,22 +10,24 @@ jobs:
 
   launcher:
     name: Build KSE launcher
-    runs-on: windows-2019
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up the required rust toolchain
-        run: rustup default stable-i686-pc-windows-gnu
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install nim mingw-w64
       - name: Build
-        run: cargo build --release
-        working-directory: kse-launcher
+        run: nim -d:mingw --cpu:i386 -d:release --app:gui --opt:size --out:kse-launcher.exe c kse_launcher.nim
+        working-directory: kse/res
       - name: Shrink executable
-        run: strip kse-launcher\target\i686-pc-windows-gnu\release\kse-launcher.exe
+        run: strip kse/res/kse-launcher.exe
       - name: Store artifacts for release
         uses: actions/upload-artifact@v2
         with:
           name: kse-launcher
-          path: kse-launcher\target\i686-pc-windows-gnu\release\kse-launcher.exe
+          path: kse/res/kse-launcher.exe
 
   windows:
     name: Create artifacts on Windows
@@ -189,12 +191,12 @@ jobs:
             kse*.rpm
           token: ${{ secrets.github_token }}
       - name: VirusTotal Scan
-        uses: crazy-max/ghaction-virustotal@v2
+        uses: crazy-max/ghaction-virustotal@v3
         with:
           vt_api_key: ${{ secrets.VT_API_KEY }}
           update_release_body: true
-          # API calls to VT are limited to 32 MB, so kse-*-setup.exe is not possible right now
           files: |
             kse.exe
             kse-*.zip
+            kse-*-setup.exe
             kse-*-setup-no-jre.exe
