@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,6 +22,7 @@ package org.kse.crypto;
 import java.security.KeyPair;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 
@@ -36,11 +37,11 @@ public abstract class KeyPairTestsBase extends CryptoTestsBase {
     public static void initKeyPairs() throws CryptoException {
 
         if (rsaKeyPair == null) {
-            rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, BC);
+            rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, KSE.BC);
         }
 
         if (dsaKeyPair == null) {
-            dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
+            dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, KSE.BC);
         }
     }
 }

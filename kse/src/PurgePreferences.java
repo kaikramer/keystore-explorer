@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -18,7 +18,7 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 
 /**
  * Erase all KSE application preferences.

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,11 +32,11 @@ import java.security.PublicKey;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.kse.KSE;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -56,40 +56,34 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
     private static KeyPair ecKeyPair;
 
     @BeforeAll
-    private static void setUp() throws Exception {
-        rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, BC);
-        dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, BC);
-        ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
+    static void setUp() throws Exception {
+        rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, KSE.BC);
+        dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, KSE.BC);
+        ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", KSE.BC);
     }
 
     @ParameterizedTest
     // @formatter:off
     @CsvSource({
-            "RSA, MD2_RSA, SPKAC",
             "RSA, MD5_RSA, SPKAC",
             "RSA, SHA1_RSA, SPKAC",
             "RSA, SHA224_RSA, SPKAC",
             "RSA, SHA256_RSA, SPKAC",
             "RSA, SHA384_RSA, SPKAC",
             "RSA, SHA512_RSA, SPKAC",
-            "RSA, RIPEMD128_RSA, SPKAC",
             "RSA, RIPEMD160_RSA, SPKAC",
-            "RSA, RIPEMD256_RSA, SPKAC",
             "DSA, SHA1_DSA, SPKAC",
             "DSA, SHA224_DSA, SPKAC",
             "DSA, SHA256_DSA, SPKAC",
             "DSA, SHA384_DSA, SPKAC",
             "DSA, SHA512_DSA, SPKAC",
-            "RSA, MD2_RSA, PKCS10",
             "RSA, MD5_RSA, PKCS10",
             "RSA, SHA1_RSA, PKCS10",
             "RSA, SHA224_RSA, PKCS10",
             "RSA, SHA256_RSA, PKCS10",
             "RSA, SHA384_RSA, PKCS10",
             "RSA, SHA512_RSA, PKCS10",
-            "RSA, RIPEMD128_RSA, PKCS10",
             "RSA, RIPEMD160_RSA, PKCS10",
-            "RSA, RIPEMD256_RSA, PKCS10",
             "DSA, SHA1_DSA, PKCS10",
             "DSA, SHA224_DSA, PKCS10",
             "DSA, SHA256_DSA, PKCS10",
@@ -142,7 +136,7 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
         } else {
             PKCS10CertificationRequest pkcs10 = Pkcs10Util.generateCsr(x500Principal, publicKey, privateKey,
                                                                        signatureType, "w/e", "w/e", null,
-                                                                       new BouncyCastleProvider());
+                                                                       KSE.BC);
             byte[] encoded = Pkcs10Util.getCsrEncodedDer(pkcs10);
             pkcs10 = Pkcs10Util.loadCsr(encoded);
             assertThat(Pkcs10Util.verifyCsr(pkcs10)).isTrue();

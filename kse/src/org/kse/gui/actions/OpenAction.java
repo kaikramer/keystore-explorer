@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -46,6 +46,8 @@ import org.kse.gui.password.DGetPassword;
  */
 public class OpenAction extends KeyStoreExplorerAction {
     private static final long serialVersionUID = 1L;
+
+    private boolean newKeyStoreWasAdded = false;
 
     /**
      * Construct action.
@@ -165,6 +167,7 @@ public class OpenAction extends KeyStoreExplorerAction {
             }
 
             kseFrame.addKeyStore(openedKeyStore, keyStoreFile, password);
+            this.newKeyStoreWasAdded = true;
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("OpenAction.NoReadFile.message"),
                                                                       keyStoreFile),
@@ -197,5 +200,9 @@ public class OpenAction extends KeyStoreExplorerAction {
 
         return JOptionPane.showConfirmDialog(frame, res.getString("OpenAction.TryAgain.message"),
                                              res.getString("OpenAction.TryAgain.Title"), JOptionPane.YES_NO_OPTION);
+    }
+
+    public boolean hasNewKeyStoreBeenAdded() {
+        return newKeyStoreWasAdded;
     }
 }

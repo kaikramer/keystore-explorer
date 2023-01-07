@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -44,7 +44,6 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.ContentVerifierProvider;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -55,6 +54,7 @@ import org.bouncycastle.pkcs.PKCSException;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509ExtensionSet;
@@ -114,7 +114,7 @@ public class Pkcs10Util {
 
             // fall back to bouncy castle provider if given provider does not support the requested algorithm
             if (provider != null && provider.getService("Signature", signatureType.jce()) == null) {
-                provider = new BouncyCastleProvider();
+                provider = KSE.BC;
             }
 
             ContentSigner contentSigner = null;
@@ -149,7 +149,7 @@ public class Pkcs10Util {
         try {
             PublicKey pubKey = new JcaPKCS10CertificationRequest(csr).getPublicKey();
 
-            ContentVerifierProvider contentVerifierProvider = new JcaContentVerifierProviderBuilder().setProvider("BC")
+            ContentVerifierProvider contentVerifierProvider = new JcaContentVerifierProviderBuilder().setProvider(KSE.BC)
                                                                                                      .build(pubKey);
             return csr.isSignatureValid(contentVerifierProvider);
         } catch (InvalidKeyException | OperatorCreationException | NoSuchAlgorithmException | PKCSException e) {

@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,6 +30,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -45,6 +46,8 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -229,6 +232,10 @@ public class DViewPrivateKey extends JEscDialog {
 
         jtfAlgorithm.setText(keyInfo.getAlgorithm());
 
+        if (privateKey instanceof ECPrivateKey) {
+            jtfAlgorithm.setText(jtfAlgorithm.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
+        }
+
         Integer keyLength = keyInfo.getSize();
 
         if (keyLength != null) {
@@ -242,11 +249,8 @@ public class DViewPrivateKey extends JEscDialog {
         jtaEncoded.setText(new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase());
         jtaEncoded.setCaretPosition(0);
 
-        if ((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)) {
-            jbFields.setEnabled(true);
-        } else {
-            jbFields.setEnabled(false);
-        }
+        jbFields.setEnabled((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey) ||
+                            (privateKey instanceof ECPrivateKey) || (privateKey instanceof BCEdDSAPrivateKey));
     }
 
     private void pemEncodingPressed() {
@@ -260,21 +264,9 @@ public class DViewPrivateKey extends JEscDialog {
     }
 
     private void fieldsPressed() {
-        if (privateKey instanceof RSAPrivateKey) {
-            RSAPrivateKey rsaPvk = (RSAPrivateKey) privateKey;
-
-            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
-                    "DViewPrivateKey.RsaFields.Title"), rsaPvk);
-            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-            dViewAsymmetricKeyFields.setVisible(true);
-        } else if (privateKey instanceof DSAPrivateKey) {
-            DSAPrivateKey dsaPvk = (DSAPrivateKey) privateKey;
-
-            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
-                    "DViewPrivateKey.DsaFields.Title"), dsaPvk);
-            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-            dViewAsymmetricKeyFields.setVisible(true);
-        }
+        DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, privateKey);
+        dViewAsymmetricKeyFields.setLocationRelativeTo(this);
+        dViewAsymmetricKeyFields.setVisible(true);
     }
 
     private void asn1DumpPressed() {
@@ -299,7 +291,7 @@ public class DViewPrivateKey extends JEscDialog {
     // for quick testing
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", KSE.BC);
         KeyPair keyPair = keyGen.genKeyPair();
 
         PrivateKey privKey = keyPair.getPrivate();

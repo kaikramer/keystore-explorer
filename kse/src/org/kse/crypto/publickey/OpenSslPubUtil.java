@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,21 +19,22 @@
  */
 package org.kse.crypto.publickey;
 
-import java.io.IOException;
 import java.security.PublicKey;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
 // @formatter:off
 /**
- * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo encoded public keys. The PKCS#1 RSA public key
- * format is not supported.
- *
+ * Provides utility methods relating to OpenSSL/SubjectPublicKeyInfo (see RFC 5280) encoded public keys.
+ * <p>
+ * The PKCS#1 RSA public key format is not supported.
+ *</p>
  * <pre>
  * -----BEGIN PUBLIC KEY-----
  * ...
@@ -41,8 +42,6 @@ import org.kse.utilities.pem.PemUtil;
  * </pre>
  *
  * <pre>
- * OpenSSL Public Key structure:
- *
  *     SubjectPublicKeyInfo ::= ASN1Sequence {
  *         algorithm AlgorithmIdentifier,
  *         subjectPublicKey BIT STRING }
@@ -62,6 +61,8 @@ import org.kse.utilities.pem.PemUtil;
  *         namedCurve         OBJECT IDENTIFIER
  *         -- implicitCurve   NULL
  *         -- specifiedCurve  SpecifiedECDomain }
+ *
+ *     Ed25519/Ed448-Params: "... the parameters MUST be absent." - RFC 8410
  *
  *     subjectPublicKey as DERBitString:
  *
@@ -110,28 +111,27 @@ public class OpenSslPubUtil {
     }
 
     /**
-     * Load an unencrypted OpenSSL public key from the stream. The encoding of
+     * Load an unencrypted OpenSSL/RFC5280 public key from the stream. The encoding of
      * the public key may be PEM or DER.
      *
      * @param pkData BA to load the unencrypted public key from
      * @return The public key
      * @throws CryptoException Problem encountered while loading the public key
-     * @throws IOException     An I/O error occurred
      */
-    public static PublicKey load(byte[] pkData) throws CryptoException, IOException {
-
-        // Check if stream is PEM encoded
-        PemInfo pemInfo = PemUtil.decode(pkData);
-
-        if (pemInfo != null) {
-            // It is - get DER from PEM
-            pkData = pemInfo.getContent();
-        }
+    public static PublicKey load(byte[] pkData) throws CryptoException {
 
         try {
-            // DER-encoded subjectPublicKeyInfo structure - the OpenSSL format
+            // Check if stream is PEM encoded
+            PemInfo pemInfo = PemUtil.decode(pkData);
+
+            if (pemInfo != null) {
+                // It is - get DER from PEM
+                pkData = pemInfo.getContent();
+            }
+
+            // DER-encoded subjectPublicKeyInfo structure - the OpenSSL/RFC5280 format
             SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(pkData);
-            return new JcaPEMKeyConverter().getPublicKey(publicKeyInfo);
+            return new JcaPEMKeyConverter().setProvider(KSE.BC).getPublicKey(publicKeyInfo);
         } catch (Exception ex) {
             throw new CryptoException(res.getString("NoLoadOpenSslPublicKey.exception.message"), ex);
         }

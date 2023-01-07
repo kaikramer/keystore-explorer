@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -20,7 +20,6 @@
 package org.kse.gui.crypto;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -29,7 +28,14 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -42,14 +48,20 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.bouncycastle.asn1.x500.X500Name;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
+import org.kse.crypto.signing.SignatureType;
+import org.kse.crypto.x509.X509CertificateGenerator;
+import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 
 /**
  * Dialog to view a certificate fingerprint.
@@ -162,18 +174,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
             try {
                 jtaFingerprint.setText(DigestUtil.getFriendlyMessageDigest(encodedCertificate, fingerprintAlg));
             } catch (CryptoException ex) {
-                Container container = this.getParent();
-
-                DError dError = null;
-
-                if (container instanceof JDialog) {
-                    dError = new DError((JDialog) container, ex);
-                } else {
-                    dError = new DError((JFrame) container, ex);
-                }
-
-                dError.setLocationRelativeTo(container);
-                dError.setVisible(true);
+                DError.displayError(this.getParent(), ex);
                 return;
             }
         } else {
@@ -198,5 +199,23 @@ public class DViewCertificateFingerprint extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
+
+        KeyPair caKeyPair = keyGen.genKeyPair();
+        X509CertificateGenerator certGen = new X509CertificateGenerator(X509CertificateVersion.VERSION3);
+        X509Certificate caCert = certGen.generateSelfSigned(new X500Name("cn=CA"), Date.from(Instant.now()),
+                                                            Date.from(Instant.now().plus(3650, ChronoUnit.DAYS)),
+                                                            caKeyPair.getPublic(), caKeyPair.getPrivate(),
+                                                            SignatureType.SHA224WITHRSAANDMGF1, BigInteger.ONE);
+
+        DViewCertificateFingerprint dialog = new DViewCertificateFingerprint(new javax.swing.JFrame(),
+                                                                             caCert.getEncoded(), DigestType.SHA1);
+        DialogViewer.run(dialog);
     }
 }

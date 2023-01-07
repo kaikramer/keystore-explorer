@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,7 +30,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.AuthorityCertificates;
 import org.kse.KSE;
 import org.kse.crypto.jcepolicy.JcePolicyUtil;
@@ -143,15 +143,12 @@ public class CreateApplicationGui implements Runnable {
 
     private void checkForUpdates(final KseFrame kseFrame) {
         new Thread(() -> {
-            // show update dialog to user
-            SwingUtilities.invokeLater(() -> {
-                CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
-                try {
-                    checkUpdateAction.doAutoUpdateCheck();
-                } catch (Exception e) {
-                    // ignore exceptions here
-                }
-            });
+            CheckUpdateAction checkUpdateAction = new CheckUpdateAction(kseFrame);
+            try {
+                checkUpdateAction.doAutoUpdateCheck();
+            } catch (Exception e) {
+                // ignore exceptions here
+            }
         }).start();
     }
 

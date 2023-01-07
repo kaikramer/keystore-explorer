@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -19,7 +19,7 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -27,32 +27,46 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
 import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.util.BigIntegers;
+import org.kse.KSE;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.utilities.DialogViewer;
+import org.kse.utilities.io.HexUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the fields of a asymmetric key.
@@ -60,18 +74,15 @@ import org.kse.gui.PlatformUtil;
 public class DViewAsymmetricKeyFields extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
+    public static final int MAX_LINE_LENGTH = 32;
+
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private JPanel jpFields;
-    private JPanel jpFieldsList;
     private JLabel jlFields;
     private JList<Field> jltFields;
-    private JPanel jpFieldValue;
     private JLabel jlFieldValue;
-    private JPanel jpFieldValueTextArea;
     private JScrollPane jspFieldValue;
     private JTextArea jtaFieldValue;
-    private JPanel jpOK;
     private JButton jbOK;
 
     private Key key;
@@ -80,52 +91,46 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
      * Creates new DViewAsymmetricKeyFields dialog.
      *
      * @param parent       Parent dialog
-     * @param title        The dialog title
-     * @param rsaPublicKey RSA public key to display fields of
+     * @param key          RSA/DSA/EC public or private key to display fields of
      */
-    public DViewAsymmetricKeyFields(JDialog parent, String title, RSAPublicKey rsaPublicKey) {
-        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        key = rsaPublicKey;
+    public DViewAsymmetricKeyFields(JDialog parent, Key key) {
+        super(parent, getTitle(key), Dialog.ModalityType.DOCUMENT_MODAL);
+        this.key = key;
         initFields();
     }
 
-    /**
-     * Creates new DViewAsymmetricKeyFields dialog.
-     *
-     * @param parent       Parent dialog
-     * @param title        The dialog title
-     * @param dsaPublicKey DSA public key to display fields of
-     */
-    public DViewAsymmetricKeyFields(JDialog parent, String title, DSAPublicKey dsaPublicKey) {
-        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        key = dsaPublicKey;
-        initFields();
+    private static String getTitle(Key key) {
+        if (key instanceof RSAPublicKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "RSA");
+        } else if (key instanceof RSAPrivateKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "RSA");
+        } else if (key instanceof DSAPublicKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "DSA");
+        } else if (key instanceof DSAPrivateKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "DSA");
+        } else if (key instanceof ECPublicKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "EC");
+        } else if (key instanceof ECPrivateKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "EC");
+        } else if (key instanceof BCEdDSAPublicKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), getEdAlg(key));
+        } else if (key instanceof BCEdDSAPrivateKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), getEdAlg(key));
+        }
+        throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
     }
 
-    /**
-     * Creates new DViewAsymmetricKeyFields dialog.
-     *
-     * @param parent        Parent dialog
-     * @param title         The dialog title
-     * @param rsaPrivateKey RSA private key to display fields of
-     */
-    public DViewAsymmetricKeyFields(JDialog parent, String title, RSAPrivateKey rsaPrivateKey) {
-        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        key = rsaPrivateKey;
-        initFields();
-    }
-
-    /**
-     * Creates new DViewAsymmetricKeyFields dialog.
-     *
-     * @param parent        Parent dialog
-     * @param title         The dialog title
-     * @param dsaPrivateKey DSA private key to display fields of
-     */
-    public DViewAsymmetricKeyFields(JDialog parent, String title, DSAPrivateKey dsaPrivateKey) {
-        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        key = dsaPrivateKey;
-        initFields();
+    private static String getEdAlg(Key key) {
+        // Ed25519 or Ed448?
+        String edAlg;
+        if (key instanceof BCEdDSAPublicKey) {
+            BCEdDSAPublicKey bcEdDSAPublicKey = (BCEdDSAPublicKey) key;
+            edAlg = bcEdDSAPublicKey.getAlgorithm(); // Ed25519 or Ed448
+        } else {
+            BCEdDSAPrivateKey bcEdDSAPrivateKey = (BCEdDSAPrivateKey) key;
+            edAlg = bcEdDSAPrivateKey.getAlgorithm();
+        }
+        return edAlg;
     }
 
     private void initFields() {
@@ -145,48 +150,30 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             }
         });
 
-        jpFieldsList = new JPanel(new BorderLayout(5, 5));
-        jpFieldsList.add(jlFields, BorderLayout.NORTH);
-        jpFieldsList.add(jltFields, BorderLayout.CENTER);
-
-        jpFieldValue = new JPanel(new BorderLayout(5, 5));
-
         jlFieldValue = new JLabel(res.getString("DViewAsymmetricKeyFields.jlFieldValue.text"));
-
-        jpFieldValue.add(jlFieldValue, BorderLayout.NORTH);
 
         jtaFieldValue = new JTextArea();
         jtaFieldValue.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         jtaFieldValue.setEditable(false);
         jtaFieldValue.setToolTipText(res.getString("DViewAsymmetricKeyFields.jtaFieldValue.tooltip"));
-        // JGoodies - keep uneditable color same as editable
-        jtaFieldValue.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
         jspFieldValue = PlatformUtil.createScrollPane(jtaFieldValue, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        jpFieldValueTextArea = new JPanel(new BorderLayout(10, 10));
-        jpFieldValueTextArea.setPreferredSize(new Dimension(275, 200));
-        jpFieldValueTextArea.add(jspFieldValue, BorderLayout.CENTER);
-
-        jpFieldValue.add(jpFieldValueTextArea, BorderLayout.CENTER);
-
-        jpFields = new JPanel(new BorderLayout(5, 5));
-        jpFields.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                              new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
-        jpFields.add(jpFieldsList, BorderLayout.WEST);
-        jpFields.add(jpFieldValue, BorderLayout.CENTER);
+        jspFieldValue.setPreferredSize(new Dimension(300, 200));
 
         jbOK = new JButton(res.getString("DViewAsymmetricKeyFields.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
-
         populateFields();
 
-        getContentPane().add(jpFields, BorderLayout.CENTER);
-        getContentPane().add(jpOK, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]unrel[]", "[]rel[]"));
+        pane.add(jlFields, "");
+        pane.add(jlFieldValue, "wrap");
+        pane.add(jltFields, "grow");
+        pane.add(jspFieldValue, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jbOK, "spanx, tag ok");
 
         setResizable(false);
 
@@ -208,70 +195,172 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         Field[] fields = null;
 
         if (key instanceof RSAPublicKey) {
-            RSAPublicKey rsaPub = (RSAPublicKey) key;
-
-            fields = new Field[] {
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubRsaPublicExponent.text"),
-                              rsaPub.getPublicExponent()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubRsaModulus.text"),
-                              rsaPub.getModulus()) };
-        } else if (key instanceof DSAPublicKey) {
-            DSAPublicKey dsaPub = (DSAPublicKey) key;
-            DSAParams dsaParams = dsaPub.getParams();
-
-            fields = new Field[] {
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaPrimeModulusP.text"),
-                              dsaParams.getP()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaPrimeQ.text"), dsaParams.getQ()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaGeneratorG.text"),
-                              dsaParams.getG()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaPublicKeyY.text"),
-                              dsaPub.getY()) };
+            fields = getRsaPubFields();
         } else if (key instanceof RSAPrivateCrtKey) {
-            RSAPrivateCrtKey rsaPvk = (RSAPrivateCrtKey) key;
-
-            fields = new Field[] {
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPublicExponent.text"),
-                              rsaPvk.getPublicExponent()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaModulus.text"),
-                              rsaPvk.getModulus()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeP.text"),
-                              rsaPvk.getPrimeP()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeQ.text"),
-                              rsaPvk.getPrimeQ()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeExponentP.text"),
-                              rsaPvk.getPrimeExponentP()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeExponentQ.text"),
-                              rsaPvk.getPrimeExponentQ()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaCrtCoefficient.text"),
-                              rsaPvk.getCrtCoefficient()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrivateExponent.text"),
-                              rsaPvk.getPrivateExponent()) };
+            fields = getRsaPrivateCrtFields();
         } else if (key instanceof RSAPrivateKey) {
-            RSAPrivateKey rsaPvk = (RSAPrivateKey) key;
-
-            fields = new Field[] { new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaModulus.text"),
-                                             rsaPvk.getModulus()), new Field(
-                    res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrivateExponent.text"),
-                    rsaPvk.getPrivateExponent()) };
+            fields = getRsaPrivateFields();
+        } else if (key instanceof DSAPublicKey) {
+            fields = getDsaPubFields();
         } else if (key instanceof DSAPrivateKey) {
-            DSAPrivateKey dsaPvk = (DSAPrivateKey) key;
-            DSAParams dsaParams = dsaPvk.getParams();
-
-            fields = new Field[] {
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaPrimeModulusP.text"),
-                              dsaParams.getP()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaPrimeQ.text"), dsaParams.getQ()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaGeneratorG.text"),
-                              dsaParams.getG()),
-                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaSecretExponentX.text"),
-                              dsaPvk.getX()) };
+            fields = getDsaPrivateFields();
+        } else if (key instanceof ECPublicKey) {
+            fields = getEcPubFields();
+        } else if (key instanceof ECPrivateKey) {
+            fields = getEcPrivateFields();
+        } else if (key instanceof BCEdDSAPublicKey) {
+            fields = getEdPubFields();
+        } else if (key instanceof BCEdDSAPrivateKey) {
+            fields = getEdPrivateFields();
         }
 
         if (fields != null) {
             jltFields.setListData(fields);
             jltFields.setSelectedIndex(0);
         }
+    }
+
+    private Field[] getRsaPubFields() {
+        Field[] fields;
+        RSAPublicKey rsaPub = (RSAPublicKey) key;
+
+        String modulus = getHexString(rsaPub.getModulus());
+        String exponent = getHexString(rsaPub.getPublicExponent());
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubRsaModulus.text"), modulus),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubRsaPublicExponent.text"), exponent) };
+        return fields;
+    }
+
+    private Field[] getRsaPrivateFields() {
+        Field[] fields;
+        RSAPrivateKey rsaPvk = (RSAPrivateKey) key;
+
+        String modulus = getHexString(rsaPvk.getModulus());
+        String exponent = getHexString(rsaPvk.getPrivateExponent());
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaModulus.text"), modulus),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrivateExponent.text"), exponent) };
+        return fields;
+    }
+
+    private Field[] getRsaPrivateCrtFields() {
+        Field[] fields;
+        RSAPrivateCrtKey rsaPvk = (RSAPrivateCrtKey) key;
+
+        String pubExp = getHexString(rsaPvk.getPublicExponent());
+        String modulus = getHexString(rsaPvk.getModulus());
+        String primeP = getHexString(rsaPvk.getPrimeP());
+        String primeQ = getHexString(rsaPvk.getPrimeQ());
+        String primeExpP = getHexString(rsaPvk.getPrimeExponentP());
+        String primeExpQ = getHexString(rsaPvk.getPrimeExponentQ());
+        String crtCoeff = getHexString(rsaPvk.getCrtCoefficient());
+        String privExp = getHexString(rsaPvk.getPrivateExponent());
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPublicExponent.text"), pubExp),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaModulus.text"), modulus),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeP.text"), primeP),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeQ.text"), primeQ),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeExponentP.text"), primeExpP),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrimeExponentQ.text"), primeExpQ),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaCrtCoefficient.text"), crtCoeff),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivRsaPrivateExponent.text"), privExp) };
+        return fields;
+    }
+
+    private Field[] getDsaPubFields() {
+        Field[] fields;
+        DSAPublicKey dsaPub = (DSAPublicKey) key;
+        DSAParams dsaParams = dsaPub.getParams();
+
+        String p = getHexString(dsaParams.getP());
+        String q = getHexString(dsaParams.getQ());
+        String g = getHexString(dsaParams.getG());
+        String y = getHexString(dsaPub.getY());
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaPrimeModulusP.text"), p),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaPrimeQ.text"), q),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaGeneratorG.text"), g),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubDsaPublicKeyY.text"), y) };
+        return fields;
+    }
+
+    private Field[] getDsaPrivateFields() {
+        Field[] fields;
+        DSAPrivateKey dsaPvk = (DSAPrivateKey) key;
+        DSAParams dsaParams = dsaPvk.getParams();
+
+        String p = getHexString(dsaParams.getP());
+        String q = getHexString(dsaParams.getQ());
+        String g = getHexString(dsaParams.getG());
+        String x = getHexString(dsaPvk.getX());
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaPrimeModulusP.text"), p),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaPrimeQ.text"), q),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaGeneratorG.text"), g),
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivDsaSecretExponentX.text"), x) };
+        return fields;
+    }
+
+    private Field[] getEcPubFields() {
+        Field[] fields;
+        ECPublicKey ecPublicKey = (ECPublicKey) key;
+
+        String x = getHexString(BigIntegers.asUnsignedByteArray(ecPublicKey.getW().getAffineX()));
+        String y = getHexString(BigIntegers.asUnsignedByteArray(ecPublicKey.getW().getAffineY()));
+
+        fields = new Field[] { new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubEcAffineX.text"), x),
+                               new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubEcAffineY.text"), y) };
+        return fields;
+    }
+
+    private Field[] getEcPrivateFields() {
+        Field[] fields;
+        ECPrivateKey ecPrivateKey = (ECPrivateKey) key;
+
+        String s = getHexString(BigIntegers.asUnsignedByteArray(ecPrivateKey.getS()));
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivEcPrivateKey.text"), s) };
+        return fields;
+    }
+
+    private Field[] getEdPubFields() {
+        Field[] fields;
+        SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(key.getEncoded());
+
+        byte[] rawKey = subjectPublicKeyInfo.getPublicKeyData().getBytes();
+        String rawKeyHex = getHexString(rawKey);
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubEdKey.text"), rawKeyHex) };
+        return fields;
+    }
+
+    private Field[] getEdPrivateFields() {
+        Field[] fields;
+        PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(key.getEncoded());
+
+        // RFC 8410 defines that the EdDSA private key is wrapped in another OCTET STRING...
+        ASN1OctetString curvePrivateKey = ASN1OctetString.getInstance(privateKeyInfo.getPrivateKey().getOctets());
+        String rawKeyHex = getHexString(curvePrivateKey.getOctets());
+
+        fields = new Field[] {
+                new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivEdPrivateKey.text"), rawKeyHex) };
+        return fields;
+    }
+
+    private static String getHexString(BigInteger bigInt) {
+        return HexUtil.getHexString(bigInt, "", 0, MAX_LINE_LENGTH);
+    }
+
+    private static String getHexString(byte[] bytes) {
+        return HexUtil.getHexString(bytes, "", 0, MAX_LINE_LENGTH);
     }
 
     private void updateFieldValue() {
@@ -282,7 +371,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         } else {
             Field field = jltFields.getSelectedValue();
 
-            jtaFieldValue.setText(field.getFormattedValue());
+            jtaFieldValue.setText(field.getValue());
             jtaFieldValue.setCaretPosition(0);
         }
     }
@@ -296,13 +385,11 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         dispose();
     }
 
-    private class Field {
-        private static final int FORMATTED_FIELD_LINE_MAX_LENGTH = 32;
-
+    private static class Field {
         private String name;
-        private BigInteger value;
+        private String value;
 
-        public Field(String name, BigInteger value) {
+        public Field(String name, String value) {
             this.name = name;
             this.value = value;
         }
@@ -311,33 +398,32 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             return name;
         }
 
-        public BigInteger getValue() {
+        public String getValue() {
             return value;
-        }
-
-        public String getFormattedValue() {
-            /*
-             * Get formatted field value, interface Hex pre-fixed with '0x'
-             * divided over lines of length FORMATTED_FIELD_LINE_LENGTH
-             */
-            String value = "0x" + getValue().toString(16).toUpperCase();
-
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < value.length(); i++) {
-                sb.append(value.charAt(i));
-
-                if ((i + 1) % FORMATTED_FIELD_LINE_MAX_LENGTH == 0) {
-                    sb.append('\n');
-                }
-            }
-
-            return sb.toString();
         }
 
         @Override
         public String toString() {
             return getName();
         }
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+
+//        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
+//        KeyPair keyPair = keyGen.genKeyPair();
+
+//        ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("secp256r1");
+//        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", KSE.BC);
+//        keyGen.initialize(ecSpec);
+//        KeyPair keyPair = keyGen.generateKeyPair();
+
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("Ed25519", KSE.BC);
+        KeyPair keyPair = keyGen.generateKeyPair();
+
+        DViewAsymmetricKeyFields dialog = new DViewAsymmetricKeyFields(new JDialog(), keyPair.getPrivate());
+        DialogViewer.run(dialog);
     }
 }

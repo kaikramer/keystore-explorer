@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -125,5 +125,13 @@ public class RdnPanel extends JPanel {
 
     public JTextField getTextField() {
         return textField;
+    }
+
+    public JButton getPlus() {
+        return plus;
+    }
+
+    public JButton getMinus() {
+        return minus;
     }
 }

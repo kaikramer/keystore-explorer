@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,17 +34,13 @@ public class DigestUtilTest extends CryptoTestsBase {
     @ParameterizedTest
     // @formatter:off
     @CsvSource({
-            "MD2",
-            "MD4",
             "MD5",
             "SHA1",
             "SHA224",
             "SHA256",
             "SHA384",
             "SHA512",
-            "RIPEMD128",
             "RIPEMD160",
-            "RIPEMD256",
     })
     // @formatter:on
     public void testMessageDigests(DigestType digestType) throws Exception {

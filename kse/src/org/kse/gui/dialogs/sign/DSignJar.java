@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -55,6 +55,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
@@ -664,7 +665,7 @@ public class DSignJar extends JEscDialog {
     // for quick UI testing
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), "BC");
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance(KeyPairType.RSA.jce(), KSE.BC);
         kpg.initialize(1024, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
 

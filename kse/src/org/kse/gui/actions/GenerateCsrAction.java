@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -20,6 +20,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -53,7 +54,6 @@ import org.kse.gui.dialogs.DGenerateCsr;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
-import org.kse.utilities.io.IOUtils;
 
 /**
  * Action to generate a CSR using the selected key pair entry.
@@ -82,7 +82,6 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
     @Override
     protected void doAction() {
         File csrFile = null;
-        FileOutputStream fos = null;
 
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
@@ -146,22 +145,24 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
                 extensions = certificate.getTBSCertificate().getExtensions();
             }
 
-            fos = new FileOutputStream(csrFile);
+            try (FileOutputStream fos = new FileOutputStream(csrFile)) {
 
-            if (format == CsrType.PKCS10) {
-                String csr = Pkcs10Util.getCsrEncodedDerPem(
-                        Pkcs10Util.generateCsr(subjectDN, publicKey, privateKey, signatureType, challenge,
-                                               unstructuredName, extensions, provider));
+                if (format == CsrType.PKCS10) {
+                    String csr = Pkcs10Util.getCsrEncodedDerPem(
+                            Pkcs10Util.generateCsr(subjectDN, publicKey, privateKey, signatureType, challenge,
+                                                   unstructuredName, extensions, provider));
+                    fos.write(csr.getBytes());
 
-                fos.write(csr.getBytes());
-            } else {
-                SpkacSubject subject = new SpkacSubject(
-                        X500NameUtils.x500PrincipalToX500Name(firstCertInChain.getSubjectX500Principal()));
+                    copyCsrToSystemClipboard(csr);
+                } else {
+                    SpkacSubject subject = new SpkacSubject(
+                            X500NameUtils.x500PrincipalToX500Name(firstCertInChain.getSubjectX500Principal()));
 
-                // TODO handle other providers (PKCS11 etc)
-                Spkac spkac = new Spkac(challenge, signatureType, subject, publicKey, privateKey);
+                    // TODO handle other providers (PKCS11 etc)
+                    Spkac spkac = new Spkac(challenge, signatureType, subject, publicKey, privateKey);
 
-                spkac.output(fos);
+                    spkac.output(fos);
+                }
             }
 
             JOptionPane.showMessageDialog(frame, res.getString("GenerateCsrAction.CsrGenerationSuccessful.message"),
@@ -175,8 +176,14 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
                                           JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-        } finally {
-            IOUtils.closeQuietly(fos);
+        }
+    }
+
+    private static void copyCsrToSystemClipboard(String csr) {
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(csr), null);
+        } catch (Exception e) {
+            // ignore
         }
     }
 }

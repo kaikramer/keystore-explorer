@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,16 +27,16 @@ import java.io.IOException;
 import java.security.Security;
 
 import org.apache.commons.io.FileUtils;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.kse.KSE;
 
 class CryptoFileUtilTest {
 
     private static final String TEST_FILES_PATH = "test/testdata/CryptoFileUtilTest";
 
     static {
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(KSE.BC);
     }
 
     @ParameterizedTest
@@ -72,6 +72,7 @@ class CryptoFileUtilTest {
             "ec.enc.der.pkcs8, ENC_PKCS8_PVK",
             "ec.unenc.pem.pkcs8, UNENC_PKCS8_PVK",
             "ec.unenc.der.pkcs8, UNENC_PKCS8_PVK",
+            "ec.unenc.der.b64.pkcs8, UNENC_PKCS8_PVK",
             "ec.enc.pem.key, ENC_OPENSSL_PVK",
             "ec.unenc.pem.key, UNENC_OPENSSL_PVK",
             "ec.unenc.der.key, UNENC_OPENSSL_PVK",

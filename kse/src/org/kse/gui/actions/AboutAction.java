@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -64,7 +64,7 @@ public class AboutAction extends KeyStoreExplorerAction {
      */
     public void showAbout() {
 
-        String[] tickerItems = { "Copyright 2004 - 2013 Wayne Grant, 2013 - 2021 Kai Kramer",
+        String[] tickerItems = { "Copyright 2004 - 2013 Wayne Grant, 2013 - 2023 Kai Kramer",
                                  "Bouncy Castle JCE Provider Copyright 2000 - 2021 The Legion Of The Bouncy Castle " +
                                  "(www.bouncycastle.org)",
                                  "Apache Commons Copyright 2002 - 2021 The Apache Software Foundation (commons.apache" +

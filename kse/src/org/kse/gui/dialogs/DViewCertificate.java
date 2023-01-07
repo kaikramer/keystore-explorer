@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,6 +33,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -63,7 +64,8 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.util.encoders.Hex;
-import org.kse.ApplicationSettings;
+import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -595,6 +597,9 @@ public class DViewCertificate extends JEscDialog {
                     jtfPublicKey.setText(MessageFormat.format(res.getString("DViewCertificate.jtfPublicKey.text"),
                                                               jtfPublicKey.getText(), "?"));
                 }
+                if (cert.getPublicKey() instanceof ECPublicKey) {
+                    jtfPublicKey.setText(jtfPublicKey.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
+                }
                 jtfPublicKey.setCaretPosition(0);
 
                 jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(cert));
@@ -729,7 +734,7 @@ public class DViewCertificate extends JEscDialog {
 
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
 
         KeyPair caKeyPair = keyGen.genKeyPair();
         X509CertificateGenerator certGen = new X509CertificateGenerator(X509CertificateVersion.VERSION3);

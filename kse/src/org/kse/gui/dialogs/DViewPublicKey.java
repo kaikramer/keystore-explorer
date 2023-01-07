@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -30,6 +30,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -45,13 +46,17 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.crypto.JPublicKeyFingerprint;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -60,7 +65,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the details of a public key with the option to display its fields if
- * it is of a supported type (RSA or DSA).
+ * it is of a supported type.
  */
 public class DViewPublicKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
@@ -76,6 +81,8 @@ public class DViewPublicKey extends JEscDialog {
     private JLabel jlEncoded;
     private JTextArea jtaEncoded;
     private JScrollPane jspEncoded;
+    private JLabel jlFingerprint;
+    private JPublicKeyFingerprint jcfFingerprint;
     private JButton jbPem;
     private JButton jbFields;
     private JButton jbAsn1;
@@ -93,7 +100,7 @@ public class DViewPublicKey extends JEscDialog {
      */
     public DViewPublicKey(JFrame parent, String title, PublicKey publicKey) throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.publicKey = publicKey;
+        this.publicKey = convertKey(publicKey);
         initComponents();
     }
 
@@ -107,8 +114,14 @@ public class DViewPublicKey extends JEscDialog {
      */
     public DViewPublicKey(JDialog parent, String title, PublicKey publicKey) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.publicKey = publicKey;
+        this.publicKey = convertKey(publicKey);
         initComponents();
+    }
+
+    private PublicKey convertKey(PublicKey publicKey) throws CryptoException {
+        // convert public key object from whatever class it currently is (depends on Java version) to a BC object
+        byte[] publicKeyEncoded = publicKey.getEncoded();
+        return OpenSslPubUtil.load(publicKeyEncoded);
     }
 
     private void initComponents() throws CryptoException {
@@ -144,6 +157,10 @@ public class DViewPublicKey extends JEscDialog {
                                                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jspEncoded.setBorder(jtfFormat.getBorder());
 
+        jlFingerprint = new JLabel(res.getString("DViewCertificate.jlFingerprint.text"));
+
+        jcfFingerprint = new JPublicKeyFingerprint(25);
+
         jbPem = new JButton(res.getString("DViewPublicKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPublicKey.jbPem.mnemonic").charAt(0));
         jbPem.setToolTipText(res.getString("DViewPublicKey.jbPem.tooltip"));
@@ -168,7 +185,9 @@ public class DViewPublicKey extends JEscDialog {
         pane.add(jlFormat, "");
         pane.add(jtfFormat, "growx, pushx, wrap");
         pane.add(jlEncoded, "");
-        pane.add(jspEncoded, "width 400lp:400lp:400lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jspEncoded, "growx, height 150lp:150lp:150lp, wrap");
+        pane.add(jlFingerprint, "");
+        pane.add(jcfFingerprint, "wrap");
         pane.add(jbPem, "spanx, split");
         pane.add(jbFields, "");
         pane.add(jbAsn1, "wrap");
@@ -229,6 +248,10 @@ public class DViewPublicKey extends JEscDialog {
 
         jtfAlgorithm.setText(keyInfo.getAlgorithm());
 
+        if (publicKey instanceof ECPublicKey) {
+            jtfAlgorithm.setText(jtfAlgorithm.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
+        }
+
         Integer keyLength = keyInfo.getSize();
 
         if (keyLength != null) {
@@ -242,11 +265,10 @@ public class DViewPublicKey extends JEscDialog {
         jtaEncoded.setText(new BigInteger(1, publicKey.getEncoded()).toString(16).toUpperCase());
         jtaEncoded.setCaretPosition(0);
 
-        if ((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey)) {
-            jbFields.setEnabled(true);
-        } else {
-            jbFields.setEnabled(false);
-        }
+        jcfFingerprint.setPublicKey(publicKey);
+
+        jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey) ||
+                            (publicKey instanceof ECPublicKey) || (publicKey instanceof BCEdDSAPublicKey));
     }
 
     private void pemEncodingPressed() {
@@ -260,21 +282,9 @@ public class DViewPublicKey extends JEscDialog {
     }
 
     private void fieldsPressed() {
-        if (publicKey instanceof RSAPublicKey) {
-            RSAPublicKey rsaPub = (RSAPublicKey) publicKey;
-
-            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
-                    "DViewPublicKey.RsaFields.Title"), rsaPub);
-            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-            dViewAsymmetricKeyFields.setVisible(true);
-        } else if (publicKey instanceof DSAPublicKey) {
-            DSAPublicKey dsaPub = (DSAPublicKey) publicKey;
-
-            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, res.getString(
-                    "DViewPublicKey.DsaFields.Title"), dsaPub);
-            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-            dViewAsymmetricKeyFields.setVisible(true);
-        }
+        DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, publicKey);
+        dViewAsymmetricKeyFields.setLocationRelativeTo(this);
+        dViewAsymmetricKeyFields.setVisible(true);
     }
 
     private void asn1DumpPressed() {
@@ -299,7 +309,7 @@ public class DViewPublicKey extends JEscDialog {
     // for quick testing
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
         KeyPair keyPair = keyGen.genKeyPair();
 
         DViewPublicKey dialog = new DViewPublicKey(new javax.swing.JFrame(), "Title", keyPair.getPublic());

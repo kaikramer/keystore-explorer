@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -47,7 +47,7 @@ public class URLs {
     // list of TSA servers for sign jar dialog
     public static final String[] TSA_URLS = new String[] { "http://timestamp.digicert.com",
                                                            "http://rfc3161timestamp.globalsign.com/advanced",
-                                                           //"http://tsa.starfieldtech.com",
+                                                           "http://timestamp.identrust.com",
                                                            "http://time.certum.pl",
                                                            "http://sha256timestamp.ws.symantec.com/sha256/timestamp",
                                                            "http://timestamp.sectigo.com/?td=sha384" };

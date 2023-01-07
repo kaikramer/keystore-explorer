@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -33,7 +33,7 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
-	id 'nebula.ospackage' version '8.6.3'
+	id 'nebula.ospackage' version '9.1.1'
 }
 
 defaultTasks 'zip'
@@ -109,22 +109,23 @@ targetCompatibility = 1.8
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 dependencies {
-	implementation('org.bouncycastle:bcpkix-jdk15on:1.70')
-	implementation("net.java.dev.jna:jna:5.9.0")
+	implementation('org.bouncycastle:bcpkix-jdk18on:1.72')
+	implementation('net.java.dev.jna:jna:5.12.1')
 	implementation("commons-io:commons-io:2.11.0")
 	implementation("com.miglayout:miglayout-swing:5.3")
-	implementation("com.formdev:flatlaf:2.0.1")
-	implementation('com.nimbusds:nimbus-jose-jwt:9.18')
+	implementation('com.formdev:flatlaf:2.6')
+	implementation('com.nimbusds:nimbus-jose-jwt:9.25.6')
+	implementation('org.violetlib:vaqua:10')
 
-	// VAqua Look & Feel not in a public repository yet
-	if (file("lib/VAqua8.jar").exists()) {
-		implementation files('lib/VAqua8.jar')
+	// the nashorn jar is compiled for Java 11, so for now we include it only in the dist package that comes with Java 17
+	if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+		implementation('org.openjdk.nashorn:nashorn-core:15.4')
 	}
 
-	testImplementation("org.assertj:assertj-core:3.22.0")
-	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-	testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
-	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+	testImplementation('org.assertj:assertj-core:3.23.1')
+	testImplementation('org.junit.jupiter:junit-jupiter-api:5.9.0')
+	testImplementation('org.junit.jupiter:junit-jupiter-params:5.9.0')
+	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.9.0')
 }
 
 test {

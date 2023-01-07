@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,7 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.KSE;
 import org.kse.gui.JEscDialog;
 
 import com.formdev.flatlaf.FlatLightLaf;
@@ -44,7 +44,7 @@ public class DialogViewer {
      */
     public static void prepare() throws UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel(new FlatLightLaf());
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(KSE.BC);
     }
 
     /**

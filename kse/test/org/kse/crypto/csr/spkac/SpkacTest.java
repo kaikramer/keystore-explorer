@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -55,11 +55,8 @@ public class SpkacTest extends KeyPairTestsBase {
     @ParameterizedTest
     // @formatter:off
     @CsvSource({
-            "MD2_RSA",
             "MD5_RSA",
-            "RIPEMD128_RSA",
             "RIPEMD160_RSA",
-            "RIPEMD256_RSA",
             "SHA1_RSA",
             "SHA224_RSA",
             "SHA256_RSA",

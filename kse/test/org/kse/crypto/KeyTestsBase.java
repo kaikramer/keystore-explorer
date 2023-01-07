@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 
@@ -59,19 +60,19 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
     public static void initKeys() throws CryptoException {
 
         if (rsaPrivateKey == null) {
-            KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, BC);
+            KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
             rsaPrivateKey = (RSAPrivateCrtKey) rsaKeyPair.getPrivate();
             rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
         }
 
         if (dsaPrivateKey == null) {
-            KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, BC);
+            KeyPair dsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.DSA, 1024, KSE.BC);
             dsaPrivateKey = (DSAPrivateKey) dsaKeyPair.getPrivate();
             dsaPublicKey = (DSAPublicKey) dsaKeyPair.getPublic();
         }
 
         if (ecPrivateKey == null) {
-            KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", BC);
+            KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", KSE.BC);
             ecPrivateKey = (ECPrivateKey) ecKeyPair.getPrivate();
             ecPublicKey = (ECPublicKey) ecKeyPair.getPublic();
         }

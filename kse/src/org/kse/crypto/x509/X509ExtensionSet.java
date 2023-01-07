@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -18,6 +18,8 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kse.crypto.x509;
+
+import static org.kse.utilities.ArrayUtils.emptyIfNull;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -62,11 +64,9 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
      * @param extensions Sequence with extensions.
      */
     public X509ExtensionSet(ASN1Sequence extensions) {
-
         ASN1Encodable[] asn1Encodables = extensions.toArray();
 
-        for (int i = 0; i < asn1Encodables.length; i++) {
-            ASN1Encodable asn1Encodable = asn1Encodables[i];
+        for (ASN1Encodable asn1Encodable : asn1Encodables) {
             Extension ext = Extension.getInstance(asn1Encodable);
             if (ext != null) {
                 try {
@@ -84,11 +84,11 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
      * @param extensions Sequence with extensions.
      */
     public X509ExtensionSet(X509Extension extensions) {
-        for (String oid : extensions.getCriticalExtensionOIDs()) {
+        for (String oid : emptyIfNull(extensions.getCriticalExtensionOIDs())) {
             criticalExtensions.put(oid, extensions.getExtensionValue(oid));
         }
 
-        for (String oid : extensions.getNonCriticalExtensionOIDs()) {
+        for (String oid : emptyIfNull(extensions.getNonCriticalExtensionOIDs())) {
             nonCriticalExtensions.put(oid, extensions.getExtensionValue(oid));
         }
     }

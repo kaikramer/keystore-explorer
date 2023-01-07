@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -34,6 +34,7 @@ import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -128,6 +129,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         if (data == null) {
             return;
         }
+
         try {
             URL url = new URL(data);
             if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt") || url.getPath().endsWith(".pem")) {
@@ -140,19 +142,22 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         } catch (IOException | CryptoException e) {
             // ignore
         }
+
         try {
-            CryptoFileType fileType = CryptoFileUtil.detectFileType(data.getBytes());
+            byte[] dataAsBytes = decodeIfBase64(data);
+
+            CryptoFileType fileType = CryptoFileUtil.detectFileType(dataAsBytes);
 
             switch (fileType) {
             case CERT:
-                showCert(data.getBytes());
+                showCert(dataAsBytes);
                 break;
             case CRL:
-                showCrl(data.getBytes());
+                showCrl(dataAsBytes);
                 break;
             case PKCS10_CSR:
             case SPKAC_CSR:
-                showCsr(data.getBytes(), fileType);
+                showCsr(dataAsBytes, fileType);
                 break;
             case ENC_PKCS8_PVK:
             case UNENC_PKCS8_PVK:
@@ -160,10 +165,10 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             case UNENC_OPENSSL_PVK:
             case ENC_MS_PVK:
             case UNENC_MS_PVK:
-                showPrivateKey(data.getBytes(), fileType);
+                showPrivateKey(dataAsBytes, fileType);
                 break;
             case OPENSSL_PUB:
-                showPublicKey(data.getBytes());
+                showPublicKey(dataAsBytes);
                 break;
             case JCEKS_KS:
             case JKS_KS:
@@ -183,6 +188,18 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
+    }
+
+    private static byte[] decodeIfBase64(String data) {
+        byte[] dataAsBytes = data.getBytes();
+
+        // first handle base64 encoded binary data
+        try {
+            dataAsBytes = Base64.getDecoder().decode(data.trim());
+        } catch(IllegalArgumentException e) {
+            // was not valid b64
+        }
+        return dataAsBytes;
     }
 
     private void downloadCrl(URL url) throws IOException, CryptoException {

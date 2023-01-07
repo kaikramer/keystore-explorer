@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -54,7 +54,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.SignatureType;
@@ -102,7 +102,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
     private JTextField jtfSerialNumber;
     private JLabel jlName;
     private JDistinguishedName jdnName;
-    private JButton jbTransferNameExt;    
+    private JButton jbTransferNameExt;
     private JButton jbAddExtensions;
     private JButton jbOK;
     private JButton jbCancel;
@@ -116,9 +116,9 @@ public class DGenerateKeyPairCert extends JEscDialog {
     private PrivateKey issuerPrivateKey;
 
     private Provider provider;
-    
+
     private KseFrame kseFrame;
-  
+
     /**
      * Creates a new DGenerateKeyPairCert dialog.
      *
@@ -205,7 +205,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         jbTransferNameExt = new JButton(res.getString("DGenerateKeyPairCert.jbTransferNameExt.text"));
         jbTransferNameExt.setMnemonic(res.getString("DGenerateKeyPairCert.jbTransferNameExt.mnemonic").charAt(0));
         jbTransferNameExt.setToolTipText(res.getString("DGenerateKeyPairCert.jbTransferNameExt.tooltip"));
-        
+
         jbAddExtensions = new JButton(res.getString("DGenerateKeyPairCert.jbAddExtensions.text"));
         jbAddExtensions.setMnemonic(res.getString("DGenerateKeyPairCert.jbAddExtensions.mnemonic").charAt(0));
         jbAddExtensions.setToolTipText(res.getString("DGenerateKeyPairCert.jbAddExtensions.tooltip"));
@@ -489,12 +489,12 @@ public class DGenerateKeyPairCert extends JEscDialog {
     // for quick testing
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
         keyGen.initialize(1024);
         KeyPair keyPair = keyGen.genKeyPair();
 
         DGenerateKeyPairCert dialog = new DGenerateKeyPairCert(new javax.swing.JFrame(), null, "test", keyPair,
-                                                               KeyPairType.RSA, null, null, new BouncyCastleProvider());
+                                                               KeyPairType.RSA, null, null, KSE.BC);
         DialogViewer.run(dialog);
     }
 }

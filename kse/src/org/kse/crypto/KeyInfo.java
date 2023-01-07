@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -36,7 +36,7 @@ public class KeyInfo {
         this.keyType = keyType;
         this.algorithm = algorithm;
         this.size = size;
-        this.detailedAlgorithm = algorithm + Integer.toString(size);
+        this.detailedAlgorithm = "-";
     }
 
     public KeyInfo(KeyType keyType, String algorithm, Integer size, String detailedAlgorithm) {

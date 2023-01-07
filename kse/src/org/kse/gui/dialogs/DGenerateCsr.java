@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -52,7 +52,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.keypair.KeyPairType;
@@ -458,8 +458,8 @@ public class DGenerateCsr extends JEscDialog {
 
     // for quick testing
     public static void main(String[] args) throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", "BC");
+        Security.addProvider(KSE.BC);
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
         PrivateKey privateKey = keyGen.genKeyPair().getPrivate();
         X500Principal dn = new X500Principal("CN=test,OU=Test Department,O=Test Organisation,C=US");
 

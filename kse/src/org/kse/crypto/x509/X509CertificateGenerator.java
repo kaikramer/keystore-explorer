@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -40,10 +40,10 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v1CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 
@@ -81,7 +81,7 @@ public class X509CertificateGenerator {
                                     PublicKey publicKey, PrivateKey privateKey, SignatureType signatureType,
                                     BigInteger serialNumber) throws CryptoException {
         return generate(subject, issuer, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber,
-                        null, new BouncyCastleProvider());
+                        null, KSE.BC);
     }
 
     /**
@@ -154,7 +154,7 @@ public class X509CertificateGenerator {
                                               PrivateKey privateKey, SignatureType signatureType,
                                               BigInteger serialNumber) throws CryptoException {
         return generateSelfSigned(name, validityStart, validityEnd, publicKey, privateKey, signatureType, serialNumber,
-                                  null, new BouncyCastleProvider());
+                                  null, KSE.BC);
     }
 
     /**
@@ -189,9 +189,9 @@ public class X509CertificateGenerator {
                                                                                   notAfter, subject, publicKey);
 
         try {
-            ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC")
+            ContentSigner certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(KSE.BC)
                                                                                        .build(privateKey);
-            return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
+            return new JcaX509CertificateConverter().setProvider(KSE.BC).getCertificate(certBuilder.build(certSigner));
         } catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
             throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
         }
@@ -221,12 +221,12 @@ public class X509CertificateGenerator {
             ContentSigner certSigner = null;
 
             if (provider == null) {
-                certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider("BC").build(privateKey);
+                certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(KSE.BC).build(privateKey);
             } else {
                 certSigner = new JcaContentSignerBuilder(signatureType.jce()).setProvider(provider).build(privateKey);
             }
 
-            return new JcaX509CertificateConverter().setProvider("BC").getCertificate(certBuilder.build(certSigner));
+            return new JcaX509CertificateConverter().setProvider(KSE.BC).getCertificate(certBuilder.build(certSigner));
         } catch (CertificateException | IllegalStateException | OperatorCreationException ex) {
             throw new CryptoException(res.getString("CertificateGenFailed.exception.message"), ex);
         }

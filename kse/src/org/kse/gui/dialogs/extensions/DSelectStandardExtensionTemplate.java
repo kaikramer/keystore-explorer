@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -51,8 +51,8 @@ import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.IPAddress;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -304,8 +304,8 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
 
     // for quick UI testing
     public static void main(String[] args) throws Exception {
-        final KeyPair issuerKP = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
-        final KeyPair subjectKP = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, new BouncyCastleProvider());
+        final KeyPair issuerKP = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
+        final KeyPair subjectKP = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
 
         DSelectStandardExtensionTemplate dialog = new DSelectStandardExtensionTemplate(new JDialog(),
                                                                                        issuerKP.getPublic(),

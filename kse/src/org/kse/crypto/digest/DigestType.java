@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -26,13 +26,9 @@ public enum DigestType {
 
     // @formatter:off
 
-	MD2("MD2", "1.2.840.113549.2.2", "MD2"),
-	MD4("MD4", "1.2.840.113549.2.4", "MD4"),
 	MD5("MD5", "1.2.840.113549.2.5", "MD5"),
 
-	RIPEMD128("RIPEMD128", "1.3.36.3.2.2", "RIPEMD-128"),
 	RIPEMD160("RIPEMD160", "1.3.36.3.2.1", "RIPEMD-160"),
-	RIPEMD256("RIPEMD256", "1.3.36.3.2.3", "RIPEMD-256"),
 
 	SHA1("SHA1", "1.3.14.3.2.26", "SHA-1"),
 
@@ -45,6 +41,7 @@ public enum DigestType {
 	SHA3_256("SHA3-256", "2.16.840.1.101.3.4.2.8", "SHA3-256"),
 	SHA3_384("SHA3-384", "2.16.840.1.101.3.4.2.9", "SHA3-384"),
 	SHA3_512("SHA3-512", "2.16.840.1.101.3.4.2.10", "SHA3-512"),
+
 	SHAKE128("SHAKE128-256", "2.16.840.1.101.3.4.2.11", "SHAKE128"),
 	SHAKE256("SHAKE256-512", "2.16.840.1.101.3.4.2.12", "SHAKE256");
 

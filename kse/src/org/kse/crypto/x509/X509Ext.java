@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -27,7 +27,6 @@ import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -367,20 +366,20 @@ public class X509Ext {
     private static String getEntrustVersionInformationStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * EntrustVersInfoSyntax ::= OCTET STRING
-		 *
-		 * entrustVersInfo EXTENSION ::= { SYNTAX EntrustVersInfoSyntax,
-		 * IDENTIFIED BY {id-entrust 0} }
-		 *
-		 * EntrustVersInfoSyntax ::= ASN1Sequence { entrustVers GeneralString,
-		 * entrustInfoFlags EntrustInfoFlags }
-		 *
-		 * EntrustInfoFlags ::= BIT STRING { keyUpdateAllowed newExtensions (1),
-		 * pKIXCertificate (2) }
-		 */
+        /*
+         * EntrustVersInfoSyntax ::= OCTET STRING
+         *
+         * entrustVersInfo EXTENSION ::= { SYNTAX EntrustVersInfoSyntax,
+         * IDENTIFIED BY {id-entrust 0} }
+         *
+         * EntrustVersInfoSyntax ::= ASN1Sequence { entrustVers GeneralString,
+         * entrustInfoFlags EntrustInfoFlags }
+         *
+         * EntrustInfoFlags ::= BIT STRING { keyUpdateAllowed newExtensions (1),
+         * pKIXCertificate (2) }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -400,15 +399,15 @@ public class X509Ext {
     private static String getAuthorityInformationAccessStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * AuthorityInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF
-		 * AccessDescription
-		 *
-		 * AccessDescription ::= ASN1Sequence { accessMethod OBJECT IDENTIFIER,
-		 * accessLocation GeneralName }
-		 */
+        /*
+         * AuthorityInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF
+         * AccessDescription
+         *
+         * AccessDescription ::= ASN1Sequence { accessMethod OBJECT IDENTIFIER,
+         * accessLocation GeneralName }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -456,15 +455,15 @@ public class X509Ext {
     private static String getSubjectInformationAccessStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * SubjectInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF
-		 * AccessDescription
-		 *
-		 * AccessDescription ::= ASN1Sequence { accessMethod OBJECT IDENTIFIER,
-		 * accessLocation GeneralName }
-		 */
+        /*
+         * SubjectInfoAccessSyntax ::= ASN1Sequence SIZE (1..MAX) OF
+         * AccessDescription
+         *
+         * AccessDescription ::= ASN1Sequence { accessMethod OBJECT IDENTIFIER,
+         * accessLocation GeneralName }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -513,24 +512,24 @@ public class X509Ext {
     private static String getSubjectDirectoryAttributesStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * SubjectDirectoryAttributes ::= ASN1Sequence SIZE (1..MAX) OF Attribute
-		 *
-		 * Attribute ::= ASN1Sequence
-		 * {
-		 *      type AttributeType,
-		 *      values SET OF AttributeValue
-		 * }
-		 *
-		 * RFC 3739: "Compliant implementations SHALL be able to interpret the following attributes:"
-		 *    DateOfBirth (1.3.6.1.5.5.7.9.1) ::= GeneralizedTime
-		 *    PlaceOfBirth (1.3.6.1.5.5.7.9.2) ::= DirectoryString
-		 *    Gender (1.3.6.1.5.5.7.9.3) ::= PrintableString (SIZE(1)) -- "M", "F", "m" or "f"
-		 *    CountryOfCitizenship (1.3.6.1.5.5.7.9.4) ::= PrintableString (SIZE (2)) -- ISO 3166 Country Code
-		 *    CountryOfResidence (1.3.6.1.5.5.7.9.5) ::= PrintableString (SIZE (2)) -- ISO 3166 Country Code
-		 */
+        /*
+         * SubjectDirectoryAttributes ::= ASN1Sequence SIZE (1..MAX) OF Attribute
+         *
+         * Attribute ::= ASN1Sequence
+         * {
+         *      type AttributeType,
+         *      values SET OF AttributeValue
+         * }
+         *
+         * RFC 3739: "Compliant implementations SHALL be able to interpret the following attributes:"
+         *    DateOfBirth (1.3.6.1.5.5.7.9.1) ::= GeneralizedTime
+         *    PlaceOfBirth (1.3.6.1.5.5.7.9.2) ::= DirectoryString
+         *    Gender (1.3.6.1.5.5.7.9.3) ::= PrintableString (SIZE(1)) -- "M", "F", "m" or "f"
+         *    CountryOfCitizenship (1.3.6.1.5.5.7.9.4) ::= PrintableString (SIZE (2)) -- ISO 3166 Country Code
+         *    CountryOfResidence (1.3.6.1.5.5.7.9.5) ::= PrintableString (SIZE (2)) -- ISO 3166 Country Code
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -559,13 +558,13 @@ public class X509Ext {
     private static String getSubjectKeyIndentifierStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * SubjectKeyIdentifier ::= KeyIdentifier
-		 *
-		 * KeyIdentifier ::= OCTET STRING
-		 */
+        /*
+         * SubjectKeyIdentifier ::= KeyIdentifier
+         *
+         * KeyIdentifier ::= OCTET STRING
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -584,21 +583,21 @@ public class X509Ext {
     private static String getAuthorityKeyIdentifierStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * AuthorityKeyIdentifier ::= ASN1Sequence {
-		 *   keyIdentifier [0] KeyIdentifier OPTIONAL,
-		 *   authorityCertIssuer [1] GeneralNames OPTIONAL,
-		 *   authorityCertSerialNumber [2] CertificateSerialNumber OPTIONAL
-		 * }
-		 *
-		 * KeyIdentifier ::= OCTET STRING
-		 *
-		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-		 *
-		 * CertificateSerialNumber ::= ASN1Integer
-		 */
+        /*
+         * AuthorityKeyIdentifier ::= ASN1Sequence {
+         *   keyIdentifier [0] KeyIdentifier OPTIONAL,
+         *   authorityCertIssuer [1] GeneralNames OPTIONAL,
+         *   authorityCertSerialNumber [2] CertificateSerialNumber OPTIONAL
+         * }
+         *
+         * KeyIdentifier ::= OCTET STRING
+         *
+         * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
+         *
+         * CertificateSerialNumber ::= ASN1Integer
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -639,13 +638,13 @@ public class X509Ext {
     private static String getKeyUsageStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * KeyUsage ::= BIT STRING { digitalSignature (0), nonRepudiation (1),
-		 * keyEncipherment (2), dataEncipherment (3), keyAgreement (4),
-		 * keyCertSign (5), cRLSign (6), encipherOnly (7), decipherOnly (8) }
-		 */
+        /*
+         * KeyUsage ::= BIT STRING { digitalSignature (0), nonRepudiation (1),
+         * keyEncipherment (2), dataEncipherment (3), keyAgreement (4),
+         * keyCertSign (5), cRLSign (6), encipherOnly (7), decipherOnly (8) }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         ASN1BitString keyUsage = ASN1BitString.getInstance(ASN1Primitive.fromByteArray(value));
 
@@ -700,12 +699,12 @@ public class X509Ext {
     private static String getPrivateKeyUsagePeriodStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * PrivateKeyUsagePeriod ::= ASN1Sequence { notBefore [0]
-		 * ASN1GeneralizedTime OPTIONAL, notAfter [1] ASN1GeneralizedTime OPTIONAL }
-		 */
+        /*
+         * PrivateKeyUsagePeriod ::= ASN1Sequence { notBefore [0]
+         * ASN1GeneralizedTime OPTIONAL, notAfter [1] ASN1GeneralizedTime OPTIONAL }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -736,13 +735,13 @@ public class X509Ext {
     private static String getSubjectAlternativeNameStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * SubjectAltName ::= GeneralNames
-		 *
-		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-		 */
+        /*
+         * SubjectAltName ::= GeneralNames
+         *
+         * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -759,13 +758,13 @@ public class X509Ext {
     private static String getIssuerAlternativeNameStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * IssuerAltName ::= GeneralNames
-		 *
-		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-		 */
+        /*
+         * IssuerAltName ::= GeneralNames
+         *
+         * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -782,12 +781,12 @@ public class X509Ext {
     private static String getBasicConstraintsStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * BasicConstraints ::= ASN1Sequence { cA ASN1Boolean DEFAULT FALSE,
-		 * pathLenConstraint ASN1Integer (0..MAX) OPTIONAL }
-		 */
+        /*
+         * BasicConstraints ::= ASN1Sequence { cA ASN1Boolean DEFAULT FALSE,
+         * pathLenConstraint ASN1Integer (0..MAX) OPTIONAL }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         /*
          * Getting the DEFAULT returns a false ASN1Boolean when no value present
@@ -822,8 +821,8 @@ public class X509Ext {
 
     private static String getCrlNumberStringValue(byte[] value) throws IOException {
         // @formatter:off
-		/* CRLNumber ::= ASN1Integer (0..MAX) */
-		// @formatter:on
+        /* CRLNumber ::= ASN1Integer (0..MAX) */
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -838,16 +837,16 @@ public class X509Ext {
     private static String getReasonCodeStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * ReasonCode ::= { CRLReason }
-		 *
-		 * CRLReason ::= ASN1Enumerated { unspecified (0), keyCompromise (1),
-		 * cACompromise (2), affiliationChanged (3), superseded (4),
-		 * cessationOfOperation (5), certificateHold (6), removeFromCRL (8),
-		 * privilegeWithdrawn (9), aACompromise (10) }
-		 */
+        /*
+         * ReasonCode ::= { CRLReason }
+         *
+         * CRLReason ::= ASN1Enumerated { unspecified (0), keyCompromise (1),
+         * cACompromise (2), affiliationChanged (3), superseded (4),
+         * cessationOfOperation (5), certificateHold (6), removeFromCRL (8),
+         * privilegeWithdrawn (9), aACompromise (10) }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -886,8 +885,8 @@ public class X509Ext {
 
     private static String getHoldInstructionCodeStringValue(byte[] value) throws IOException {
         // @formatter:off
-		/* HoldInstructionCode ::= OBJECT IDENTIFIER */
-		// @formatter:on
+        /* HoldInstructionCode ::= OBJECT IDENTIFIER */
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -909,9 +908,9 @@ public class X509Ext {
     private static String getInvalidityDateStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* InvalidityDate ::= ASN1GeneralizedTime */
+        /* InvalidityDate ::= ASN1GeneralizedTime */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -926,16 +925,16 @@ public class X509Ext {
     private static String getDeltaCrlIndicatorStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * deltaCRLIndicator EXTENSION ::= { SYNTAX BaseCRLNumber IDENTIFIED BY
-		 * id-ce-deltaCRLIndicator }
-		 *
-		 * BaseCRLNumber ::= CRLNumber
-		 *
-		 * CRLNumber ::= ASN1Integer (0..MAX)
-		 */
+        /*
+         * deltaCRLIndicator EXTENSION ::= { SYNTAX BaseCRLNumber IDENTIFIED BY
+         * id-ce-deltaCRLIndicator }
+         *
+         * BaseCRLNumber ::= CRLNumber
+         *
+         * CRLNumber ::= ASN1Integer (0..MAX)
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         CRLNumber crlNumber = CRLNumber.getInstance(value);
         BigInteger crlNum = crlNumber.getCRLNumber();
@@ -946,17 +945,17 @@ public class X509Ext {
     private static String getIssuingDistributionPointStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * IssuingDistributionPoint ::= ASN1Sequence {
-		 *     distributionPoint [0] DistributionPointName OPTIONAL,
-		 *     onlyContainsUserCerts [1] ASN1Boolean DEFAULT FALSE,
-		 *     onlyContainsCACerts [2] ASN1Boolean DEFAULT FALSE,
-		 *     onlySomeReasons [3] ReasonFlags OPTIONAL,
-		 *     indirectCRL [4] ASN1Boolean DEFAULT FALSE,
-		 *     onlyContainsAttributeCerts [5] ASN1Boolean DEFAULT FALSE }
-		 */
+        /*
+         * IssuingDistributionPoint ::= ASN1Sequence {
+         *     distributionPoint [0] DistributionPointName OPTIONAL,
+         *     onlyContainsUserCerts [1] ASN1Boolean DEFAULT FALSE,
+         *     onlyContainsCACerts [2] ASN1Boolean DEFAULT FALSE,
+         *     onlySomeReasons [3] ReasonFlags OPTIONAL,
+         *     indirectCRL [4] ASN1Boolean DEFAULT FALSE,
+         *     onlyContainsAttributeCerts [5] ASN1Boolean DEFAULT FALSE }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         /*
          * Getting any DEFAULTS returns a false ASN1Boolean when no value
@@ -1009,13 +1008,13 @@ public class X509Ext {
     private static String getCertificateIssuerStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * certificateIssuer ::= GeneralNames
-		 *
-		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-		 */
+        /*
+         * certificateIssuer ::= GeneralNames
+         *
+         * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1032,20 +1031,20 @@ public class X509Ext {
     private static String getNameConstraintsStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * NameConstraints ::= ASN1Sequence { permittedSubtrees [0]
-		 * GeneralSubtrees OPTIONAL, excludedSubtrees [1] GeneralSubtrees
-		 * OPTIONAL }
-		 *
-		 * GeneralSubtrees ::= ASN1Sequence SIZE (1..MAX) OF GeneralSubtree
-		 *
-		 * GeneralSubtree ::= ASN1Sequence { base GeneralName, minimum [0]
-		 * BaseDistance DEFAULT nodistance, maximum [1] BaseDistance OPTIONAL }
-		 *
-		 * BaseDistance ::= ASN1Integer {nodistance(0) } (0..MAX)
-		 */
+        /*
+         * NameConstraints ::= ASN1Sequence { permittedSubtrees [0]
+         * GeneralSubtrees OPTIONAL, excludedSubtrees [1] GeneralSubtrees
+         * OPTIONAL }
+         *
+         * GeneralSubtrees ::= ASN1Sequence SIZE (1..MAX) OF GeneralSubtree
+         *
+         * GeneralSubtree ::= ASN1Sequence { base GeneralName, minimum [0]
+         * BaseDistance DEFAULT nodistance, maximum [1] BaseDistance OPTIONAL }
+         *
+         * BaseDistance ::= ASN1Integer {nodistance(0) } (0..MAX)
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1173,12 +1172,12 @@ public class X509Ext {
     private static String getCrlDistributionPointsStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * CRLDistPointSyntax ::= ASN1Sequence SIZE (1..MAX) OF
-		 * DistributionPoint
-		 */
+        /*
+         * CRLDistPointSyntax ::= ASN1Sequence SIZE (1..MAX) OF
+         * DistributionPoint
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1201,55 +1200,55 @@ public class X509Ext {
     private static String getCertificatePoliciesStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * CertificatePolicies ::= ASN1Sequence SIZE (1..MAX) OF PolicyInformation
-		 *
-		 * PolicyInformation ::= ASN1Sequence
-		 * {
-		 *      policyIdentifier CertPolicyId,
-		 *      policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
-		 * }
-		 *
-		 * CertPolicyId ::= OBJECT IDENTIFIER
-		 *
-		 * PolicyQualifierInfo ::= ASN1Sequence
-		 * {
-		 *      policyQualifierId PolicyQualifierId,
-		 *      qualifier ANY DEFINED BY policyQualifierId
-		 * }
-		 *
-		 * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
-		 *
-		 * Qualifier ::= CHOICE
-		 * {
-		 *      cPSuri CPSuri,
-		 *      userNotice UserNotice
-		 * }
-		 *
-		 * CPSuri ::= DERIA5String
-		 *
-		 * UserNotice ::= ASN1Sequence
-		 * {
-		 *      noticeRef NoticeReference OPTIONAL,
-		 *      explicitText DisplayText OPTIONAL
-		 * }
-		 *
-		 * NoticeReference ::= ASN1Sequence
-		 * {
-		 *      organization DisplayText,
-		 *      noticeNumbers ASN1Sequence OF ASN1Integer
-		 * }
-		 *
-		 * DisplayText ::= CHOICE
-		 * {
-		 *      ia5String DERIA5String (SIZE (1..200)),
-		 *      visibleString VisibleString (SIZE (1..200)),
-		 *      bmpString BMPString (SIZE (1..200)),
-		 *      utf8String UTF8String (SIZE (1..200))
-		 * }
-		 */
+        /*
+         * CertificatePolicies ::= ASN1Sequence SIZE (1..MAX) OF PolicyInformation
+         *
+         * PolicyInformation ::= ASN1Sequence
+         * {
+         *      policyIdentifier CertPolicyId,
+         *      policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
+         * }
+         *
+         * CertPolicyId ::= OBJECT IDENTIFIER
+         *
+         * PolicyQualifierInfo ::= ASN1Sequence
+         * {
+         *      policyQualifierId PolicyQualifierId,
+         *      qualifier ANY DEFINED BY policyQualifierId
+         * }
+         *
+         * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
+         *
+         * Qualifier ::= CHOICE
+         * {
+         *      cPSuri CPSuri,
+         *      userNotice UserNotice
+         * }
+         *
+         * CPSuri ::= DERIA5String
+         *
+         * UserNotice ::= ASN1Sequence
+         * {
+         *      noticeRef NoticeReference OPTIONAL,
+         *      explicitText DisplayText OPTIONAL
+         * }
+         *
+         * NoticeReference ::= ASN1Sequence
+         * {
+         *      organization DisplayText,
+         *      noticeNumbers ASN1Sequence OF ASN1Integer
+         * }
+         *
+         * DisplayText ::= CHOICE
+         * {
+         *      ia5String DERIA5String (SIZE (1..200)),
+         *      visibleString VisibleString (SIZE (1..200)),
+         *      bmpString BMPString (SIZE (1..200)),
+         *      utf8String UTF8String (SIZE (1..200))
+         * }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1361,16 +1360,16 @@ public class X509Ext {
     private static String getPolicyMappingsStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * PolicyMappings ::= ASN1Sequence SIZE (1..MAX) OF PolicyMappings
-		 *
-		 * PolicyMappings ::= ASN1Sequence { issuerDomainPolicy CertPolicyId,
-		 * subjectDomainPolicy CertPolicyId }
-		 *
-		 * CertPolicyId ::= OBJECT IDENTIFIER
-		 */
+        /*
+         * PolicyMappings ::= ASN1Sequence SIZE (1..MAX) OF PolicyMappings
+         *
+         * PolicyMappings ::= ASN1Sequence { issuerDomainPolicy CertPolicyId,
+         * subjectDomainPolicy CertPolicyId }
+         *
+         * CertPolicyId ::= OBJECT IDENTIFIER
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1407,16 +1406,16 @@ public class X509Ext {
     private static String getPolicyConstraintsStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * PolicyConstraints ::= ASN1Sequence {
-		 * 		requireExplicitPolicy [0] SkipCerts OPTIONAL,
-		 * 		inhibitPolicyMapping [1] SkipCerts OPTIONAL
-		 * }
-		 *
-		 * SkipCerts ::= ASN1Integer (0..MAX)
-		 */
+        /*
+         * PolicyConstraints ::= ASN1Sequence {
+         * 		requireExplicitPolicy [0] SkipCerts OPTIONAL,
+         * 		inhibitPolicyMapping [1] SkipCerts OPTIONAL
+         * }
+         *
+         * SkipCerts ::= ASN1Integer (0..MAX)
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1441,13 +1440,13 @@ public class X509Ext {
     private static String getExtendedKeyUsageStringValue(byte[] value) {
         // @formatter:off
 
-		/*
-		 * ExtendedKeyUsage ::= ASN1Sequence SIZE (1..MAX) OF KeyPurposeId
-		 *
-		 * KeyPurposeId ::= OBJECT IDENTIFIER
-		 */
+        /*
+         * ExtendedKeyUsage ::= ASN1Sequence SIZE (1..MAX) OF KeyPurposeId
+         *
+         * KeyPurposeId ::= OBJECT IDENTIFIER
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1474,14 +1473,14 @@ public class X509Ext {
     private static String getFreshestCrlStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * FreshestCRL ::= CRLDistributionPoints
-		 *
-		 * CRLDistributionPoints ::= ASN1Sequence SIZE (1..MAX) OF
-		 * DistributionPoint
-		 */
+        /*
+         * FreshestCRL ::= CRLDistributionPoints
+         *
+         * CRLDistributionPoints ::= ASN1Sequence SIZE (1..MAX) OF
+         * DistributionPoint
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1504,13 +1503,13 @@ public class X509Ext {
     private static String getInhibitAnyPolicyStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * InhibitAnyPolicy ::= SkipCerts
-		 *
-		 * SkipCerts ::= ASN1Integer (0..MAX)
-		 */
+        /*
+         * InhibitAnyPolicy ::= SkipCerts
+         *
+         * SkipCerts ::= ASN1Integer (0..MAX)
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1527,13 +1526,13 @@ public class X509Ext {
     private static String getNetscapeCertificateTypeStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/*
-		 * NetscapeCertType ::= BIT STRING { sslClient (0), sslServer (1), smime
-		 * (2), objectSigning (3), reserved (4), sslCA (5), smimeCA (6),
-		 * objectSigningCA (7) }
-		 */
+        /*
+         * NetscapeCertType ::= BIT STRING { sslClient (0), sslServer (1), smime
+         * (2), objectSigning (3), reserved (4), sslCA (5), smimeCA (6),
+         * objectSigningCA (7) }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1592,9 +1591,9 @@ public class X509Ext {
     private static String getNetscapeBaseUrlStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* NetscapeBaseUrl ::= DERIA5String */
+        /* NetscapeBaseUrl ::= DERIA5String */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1609,9 +1608,9 @@ public class X509Ext {
     private static String getNetscapeRevocationUrlStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* NetscapeRevocationUrl ::= DERIA5String */
+        /* NetscapeRevocationUrl ::= DERIA5String */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1626,9 +1625,9 @@ public class X509Ext {
     private static String getNetscapeCaRevocationUrlStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* NetscapeCARevocationUrl ::= DERIA5String */
+        /* NetscapeCARevocationUrl ::= DERIA5String */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1643,9 +1642,9 @@ public class X509Ext {
     private static String getNetscapeCertificateRenewalStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* NetscapeCertRenewalUrl ::= DERIA5String */
+        /* NetscapeCertRenewalUrl ::= DERIA5String */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1660,9 +1659,9 @@ public class X509Ext {
     private static String getNetscapeCaPolicyUrlStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* NetscapeCAPolicyUrl ::= DERIA5String */
+        /* NetscapeCAPolicyUrl ::= DERIA5String */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1677,9 +1676,9 @@ public class X509Ext {
     private static String getNetscapeSslServerNameStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* NetscapeSslServerName ::= DERIA5String */
+        /* NetscapeSslServerName ::= DERIA5String */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1694,9 +1693,9 @@ public class X509Ext {
     private static String getNetscapeCommentStringValue(byte[] value) throws IOException {
         // @formatter:off
 
-		/* NetscapeComment ::= DERIA5String */
+        /* NetscapeComment ::= DERIA5String */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1712,17 +1711,17 @@ public class X509Ext {
             throws IOException {
         // @formatter:off
 
-		/*
-		 * DistributionPoint ::= ASN1Sequence {
-		 * 		distributionPoint [0] DistributionPointName OPTIONAL,
-		 * 		reasons [1] ReasonFlags OPTIONAL,
-		 * 		cRLIssuer [2] GeneralNames OPTIONAL
-		 * }
-		 *
-		 * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
-		 */
+        /*
+         * DistributionPoint ::= ASN1Sequence {
+         * 		distributionPoint [0] DistributionPointName OPTIONAL,
+         * 		reasons [1] ReasonFlags OPTIONAL,
+         * 		cRLIssuer [2] GeneralNames OPTIONAL
+         * }
+         *
+         * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -1769,80 +1768,80 @@ public class X509Ext {
             throws IOException {
         // @formatter:off
 
-		/*
-		 * DistributionPointName ::= CHOICE {
-		 * 		fullname [0] GeneralNames,
-		 * 		nameRelativeToCRLIssuer [1] RelativeDistinguishedName
-		 * }
-		 *
-		 * RelativeDistinguishedName ::= SET SIZE (1 .. MAX) OF
-		 * AttributeTypeAndValue
-		 *
-		 * AttributeTypeAndValue ::= ASN1Sequence { type AttributeType, value
-		 * AttributeValue }
-		 */
+        /*
+         * DistributionPointName ::= CHOICE {
+         * 		fullname [0] GeneralNames,
+         * 		nameRelativeToCRLIssuer [1] RelativeDistinguishedName
+         * }
+         *
+         * RelativeDistinguishedName ::= SET SIZE (1 .. MAX) OF
+         * AttributeTypeAndValue
+         *
+         * AttributeTypeAndValue ::= ASN1Sequence { type AttributeType, value
+         * AttributeValue }
+         */
 
-		// @formatter: on
+        // @formatter: on
 
-		StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-		sb.append(baseIndent);
-		sb.append(res.getString("DistributionPointName"));
-		sb.append(NEWLINE);
+        sb.append(baseIndent);
+        sb.append(res.getString("DistributionPointName"));
+        sb.append(NEWLINE);
 
-		if (distributionPointName.getType() == DistributionPointName.FULL_NAME) {
-			sb.append(baseIndent);
-			sb.append(INDENT);
-			sb.append(res.getString("DistributionPointFullName"));
-			sb.append(NEWLINE);
+        if (distributionPointName.getType() == DistributionPointName.FULL_NAME) {
+            sb.append(baseIndent);
+            sb.append(INDENT);
+            sb.append(res.getString("DistributionPointFullName"));
+            sb.append(NEWLINE);
 
-			GeneralNames generalNames = GeneralNames.getInstance(distributionPointName.getName());
+            GeneralNames generalNames = GeneralNames.getInstance(distributionPointName.getName());
 
-			for (GeneralName generalName : generalNames.getNames()) {
-				sb.append(baseIndent);
-				sb.append(INDENT);
-				sb.append(INDENT);
-				sb.append(GeneralNameUtil.toString(generalName));
-				sb.append(NEWLINE);
-			}
-		} else {
-			// DistributionPointName.TAG_NAMERELATIVETOCRLISSUER
-			sb.append(baseIndent);
-			sb.append(INDENT);
-			sb.append(res.getString("DistributionPointNameRelativeToCrlIssuer"));
-			sb.append(NEWLINE);
+            for (GeneralName generalName : generalNames.getNames()) {
+                sb.append(baseIndent);
+                sb.append(INDENT);
+                sb.append(INDENT);
+                sb.append(GeneralNameUtil.toString(generalName));
+                sb.append(NEWLINE);
+            }
+        } else {
+            // DistributionPointName.TAG_NAMERELATIVETOCRLISSUER
+            sb.append(baseIndent);
+            sb.append(INDENT);
+            sb.append(res.getString("DistributionPointNameRelativeToCrlIssuer"));
+            sb.append(NEWLINE);
 
-			RDN rdn = RDN.getInstance(distributionPointName.getName());
+            RDN rdn = RDN.getInstance(distributionPointName.getName());
 
-			for (AttributeTypeAndValue attributeTypeAndValue : rdn.getTypesAndValues()) {
-				ASN1ObjectIdentifier attributeType = attributeTypeAndValue.getType();
-				ASN1Encodable attributeValue = attributeTypeAndValue.getValue();
+            for (AttributeTypeAndValue attributeTypeAndValue : rdn.getTypesAndValues()) {
+                ASN1ObjectIdentifier attributeType = attributeTypeAndValue.getType();
+                ASN1Encodable attributeValue = attributeTypeAndValue.getValue();
 
-				String attributeTypeStr = getAttributeTypeString(attributeType);
-				String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
+                String attributeTypeStr = getAttributeTypeString(attributeType);
+                String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
-				sb.append(baseIndent);
-				sb.append(INDENT);
-				sb.append(INDENT);
-				sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
-				sb.append(NEWLINE);
-			}
-		}
+                sb.append(baseIndent);
+                sb.append(INDENT);
+                sb.append(INDENT);
+                sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
+                sb.append(NEWLINE);
+            }
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
-	private static String[] getReasonFlagsStrings(ReasonFlags reasonFlags) throws IOException {
-		// @formatter:off
+    private static String[] getReasonFlagsStrings(ReasonFlags reasonFlags)  {
+        // @formatter:off
 
-		/*
-		 * ReasonFlags ::= BIT STRING { unused(0), keyCompromise(1),
-		 * cACompromise(2), affiliationChanged(3), superseded(4),
-		 * cessationOfOperation(5), certificateHold(6), privilegeWithdrawn(7),
-		 * aACompromise(8)}
-		 */
+        /*
+         * ReasonFlags ::= BIT STRING { unused(0), keyCompromise(1),
+         * cACompromise(2), affiliationChanged(3), superseded(4),
+         * cessationOfOperation(5), certificateHold(6), privilegeWithdrawn(7),
+         * aACompromise(8)}
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         List<String> reasonFlagsList = new ArrayList<>();
 
@@ -1889,9 +1888,9 @@ public class X509Ext {
     private static String getAttributeTypeString(ASN1ObjectIdentifier oid) {
         // @formatter:off
 
-		/* AttributeType ::= OBJECT IDENTIFIER */
+        /* AttributeType ::= OBJECT IDENTIFIER */
 
-		// @formatter:on
+        // @formatter:on
 
         AttributeTypeType attributeTypeType = AttributeTypeType.resolveOid(oid.getId());
 
@@ -1943,44 +1942,48 @@ public class X509Ext {
         }
     }
 
-    private static String getGeneralizedTimeString(ASN1GeneralizedTime notBefore) {
-        // Get generalized time as a date
-        Date date;
+    private static String getGeneralizedTimeString(ASN1GeneralizedTime asn1GeneralizedTime) {
         try {
-            date = notBefore.getDate();
+            return StringUtils.formatDate(asn1GeneralizedTime.getDate());
         } catch (ParseException e) {
             throw new IllegalArgumentException("Cannot parse date");
         }
+    }
 
-        return StringUtils.formatDate(date);
+    private static String getUtcTimeString(ASN1UTCTime asn1UTCTime) {
+        try {
+            return StringUtils.formatDate(asn1UTCTime.getDate());
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Cannot parse date");
+        }
     }
 
     private static String getBiometricInfoStringValue(byte[] octets) {
 
         // @formatter:off
 
-		/*
-			BiometricSyntax ::= SEQUENCE OF BiometricData
-			BiometricData ::= SEQUENCE
-			{
-				typeOfBiometricData TypeOfBiometricData,
-				hashAlgorithm AlgorithmIdentifier,
-				biometricDataHash OCTET STRING,
-				sourceDataUri IA5String OPTIONAL
-			}
-			TypeOfBiometricData ::= CHOICE
-			{
-				predefinedBiometricType PredefinedBiometricType,
-				biometricDataId OBJECT IDENTIIFER
-			}
-			PredefinedBiometricType ::= INTEGER
-			{
-				picture(0),
-				handwritten-signature(1)
-			}
-		 */
+        /*
+            BiometricSyntax ::= SEQUENCE OF BiometricData
+            BiometricData ::= SEQUENCE
+            {
+                typeOfBiometricData TypeOfBiometricData,
+                hashAlgorithm AlgorithmIdentifier,
+                biometricDataHash OCTET STRING,
+                sourceDataUri IA5String OPTIONAL
+            }
+            TypeOfBiometricData ::= CHOICE
+            {
+                predefinedBiometricType PredefinedBiometricType,
+                biometricDataId OBJECT IDENTIIFER
+            }
+            PredefinedBiometricType ::= INTEGER
+            {
+                picture(0),
+                handwritten-signature(1)
+            }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
         int biometricDataNr = 0;
@@ -2031,18 +2034,18 @@ public class X509Ext {
 
         // @formatter:off
 
-		/*
-			QCStatements ::= SEQUENCE OF QSStatement
-		    QSStatement ::= SEQUENCE
-		    {
-		        statementId OBJECT IDENTIFIER,
-		        statementInfo ANY DEFINED BY statementId OPTIONAL
-		    }
-		    QcEuLimitValue ::= MonetaryValue
-			QcRetentionPeriod ::= INTEGER
-		 */
+        /*
+            QCStatements ::= SEQUENCE OF QSStatement
+            QSStatement ::= SEQUENCE
+            {
+                statementId OBJECT IDENTIFIER,
+                statementInfo ANY DEFINED BY statementId OPTIONAL
+            }
+            QcEuLimitValue ::= MonetaryValue
+            QcRetentionPeriod ::= INTEGER
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -2136,16 +2139,16 @@ public class X509Ext {
 
         // @formatter:off
 
-		/*
-		SemanticsInformation ::= SEQUENCE
-		{
-			semanticsIdentifier OBJECT IDENTIFIER OPTIONAL,
-			nameRegistrationAuthorities NameRegistrationAuthorities OPTIONAL
-		}
-		NameRegistrationAuthorities ::= SEQUENCE SIZE(1..MAX) OF GeneralName
-		 */
+        /*
+        SemanticsInformation ::= SEQUENCE
+        {
+            semanticsIdentifier OBJECT IDENTIFIER OPTIONAL,
+            nameRegistrationAuthorities NameRegistrationAuthorities OPTIONAL
+        }
+        NameRegistrationAuthorities ::= SEQUENCE SIZE(1..MAX) OF GeneralName
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         ASN1ObjectIdentifier semanticsIdentifier = semanticsInfo.getSemanticsIdentifier();
         GeneralName[] nameRegistrationAuthorities = semanticsInfo.getNameRegistrationAuthorities();
@@ -2185,21 +2188,21 @@ public class X509Ext {
 
         // @formatter:off
 
-		/*
-		    MonetaryValue ::= SEQUENCE
-		    {
-		        currency Iso4217CurrencyCode,
-		        amount INTEGER,
-		        exponent INTEGER
-		    }
-		    Iso4217CurrencyCode ::= CHOICE
-		    {
-		        alphabetic PrintableString,
-		        numeric INTEGER(1..999)
-		    }
-		 */
+        /*
+            MonetaryValue ::= SEQUENCE
+            {
+                currency Iso4217CurrencyCode,
+                amount INTEGER,
+                exponent INTEGER
+            }
+            Iso4217CurrencyCode ::= CHOICE
+            {
+                alphabetic PrintableString,
+                numeric INTEGER(1..999)
+            }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -2241,36 +2244,34 @@ public class X509Ext {
     private static String getAdmissionStringValue(byte[] octets) throws IOException {
 
         // @formatter:off
-
-		/*
-			 AdmissionSyntax ::= SEQUENCE
-		     {
-		       admissionAuthority GeneralName OPTIONAL,
-		       contentsOfAdmissions SEQUENCE OF Admissions
-		     }
-		     Admissions ::= SEQUENCE
-		     {
-		       admissionAuthority [0] EXPLICIT GeneralName OPTIONAL
-		       namingAuthority [1] EXPLICIT NamingAuthority OPTIONAL
-		       professionInfos SEQUENCE OF ProfessionInfo
-		     }
-		     NamingAuthority ::= SEQUENCE
-		     {
-		       namingAuthorityId OBJECT IDENTIFIER OPTIONAL,
-		       namingAuthorityUrl IA5String OPTIONAL,
-		       namingAuthorityText DirectoryString(SIZE(1..128)) OPTIONAL
-		     }
-		     ProfessionInfo ::= SEQUENCE
-		     {
-		       namingAuthority [0] EXPLICIT NamingAuthority OPTIONAL,
-		       professionItems SEQUENCE OF DirectoryString (SIZE(1..128)),
-		       professionOIDs SEQUENCE OF OBJECT IDENTIFIER OPTIONAL,
-		       registrationNumber PrintableString(SIZE(1..128)) OPTIONAL,
-		       addProfessionInfo OCTET STRING OPTIONAL
-		     }
-		 */
-
-		// @formatter:on
+        /*
+         AdmissionSyntax ::= SEQUENCE
+         {
+           admissionAuthority GeneralName OPTIONAL,
+           contentsOfAdmissions SEQUENCE OF Admissions
+         }
+         Admissions ::= SEQUENCE
+         {
+           admissionAuthority [0] EXPLICIT GeneralName OPTIONAL
+           namingAuthority [1] EXPLICIT NamingAuthority OPTIONAL
+           professionInfos SEQUENCE OF ProfessionInfo
+         }
+         NamingAuthority ::= SEQUENCE
+         {
+           namingAuthorityId OBJECT IDENTIFIER OPTIONAL,
+           namingAuthorityUrl IA5String OPTIONAL,
+           namingAuthorityText DirectoryString(SIZE(1..128)) OPTIONAL
+         }
+         ProfessionInfo ::= SEQUENCE
+         {
+           namingAuthority [0] EXPLICIT NamingAuthority OPTIONAL,
+           professionItems SEQUENCE OF DirectoryString (SIZE(1..128)),
+           professionOIDs SEQUENCE OF OBJECT IDENTIFIER OPTIONAL,
+           registrationNumber PrintableString(SIZE(1..128)) OPTIONAL,
+           addProfessionInfo OCTET STRING OPTIONAL
+         }
+         */
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
         int indentLevel = 1;
@@ -2358,18 +2359,18 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getNamingAuthorityStringValue(NamingAuthority namingAuthority, int indentLevel)
-            throws IOException {
+    private static String getNamingAuthorityStringValue(NamingAuthority namingAuthority, int indentLevel) {
+
         // @formatter:off
-		/*
-		     NamingAuthority ::= SEQUENCE
-		     {
-		       namingAuthorityId OBJECT IDENTIFIER OPTIONAL,
-		       namingAuthorityUrl IA5String OPTIONAL,
-		       namingAuthorityText DirectoryString(SIZE(1..128)) OPTIONAL
-		     }
-		 */
-		// @formatter:on
+        /*
+             NamingAuthority ::= SEQUENCE
+             {
+               namingAuthorityId OBJECT IDENTIFIER OPTIONAL,
+               namingAuthorityUrl IA5String OPTIONAL,
+               namingAuthorityText DirectoryString(SIZE(1..128)) OPTIONAL
+             }
+         */
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -2419,22 +2420,22 @@ public class X509Ext {
 
         // @formatter:off
 
-		/*
-			ProcurationSyntax ::= SEQUENCE
-			{
-				country [1] EXPLICIT PrintableString(SIZE(2)) OPTIONAL,
-				typeOfSubstitution [2] EXPLICIT DirectoryString(SIZE(1..128)) OPTIONAL,
-				signingFor [3] EXPLICIT SigningFor
-			}
+        /*
+            ProcurationSyntax ::= SEQUENCE
+            {
+                country [1] EXPLICIT PrintableString(SIZE(2)) OPTIONAL,
+                typeOfSubstitution [2] EXPLICIT DirectoryString(SIZE(1..128)) OPTIONAL,
+                signingFor [3] EXPLICIT SigningFor
+            }
 
-			SigningFor ::= CHOICE
-			{
-				thirdPerson GeneralName,
-				certRef IssuerSerial
-			}
-		 */
+            SigningFor ::= CHOICE
+            {
+                thirdPerson GeneralName,
+                certRef IssuerSerial
+            }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -2488,16 +2489,16 @@ public class X509Ext {
 
         // @formatter:off
 
-		/*
-			MonetaryLimitSyntax ::= SEQUENCE
-			{
-				currency PrintableString (SIZE(3)),
-				amount INTEGER,
-				exponent INTEGER
-			}
-		 */
+        /*
+            MonetaryLimitSyntax ::= SEQUENCE
+            {
+                currency PrintableString (SIZE(3)),
+                amount INTEGER,
+                exponent INTEGER
+            }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -2528,19 +2529,19 @@ public class X509Ext {
 
         // @formatter:off
 
-		/*
-			DeclarationOfMajoritySyntax ::= CHOICE
-			{
-				notYoungerThan [0] IMPLICIT INTEGER,
-				fullAgeAtCountry [1] IMPLICIT SEQUENCE {
-					fullAge BOOLEAN DEFAULT TRUE,
-					country PrintableString (SIZE(2))
-				},
-				dateOfBirth [2] IMPLICIT GeneralizedTime
-			}
-		 */
+        /*
+            DeclarationOfMajoritySyntax ::= CHOICE
+            {
+                notYoungerThan [0] IMPLICIT INTEGER,
+                fullAgeAtCountry [1] IMPLICIT SEQUENCE {
+                    fullAge BOOLEAN DEFAULT TRUE,
+                    country PrintableString (SIZE(2))
+                },
+                dateOfBirth [2] IMPLICIT GeneralizedTime
+            }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -2595,16 +2596,14 @@ public class X509Ext {
     private static String getValidityModelStringValue(byte[] octets) {
 
         // @formatter:off
-
-		/*
-			ValidityModel::= SEQUENCE
-			{
-				validityModelId OBJECT IDENTIFIER
-				validityModelInfo ANY DEFINED BY validityModelId OPTIONAL
-			}
-		 */
-
-		// @formatter:on
+        /*
+            ValidityModel::= SEQUENCE
+            {
+                validityModelId OBJECT IDENTIFIER
+                validityModelInfo ANY DEFINED BY validityModelId OPTIONAL
+            }
+         */
+        // @formatter:on
 
         ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(octets);
         ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(asn1Sequence.getObjectAt(0));
@@ -2616,18 +2615,16 @@ public class X509Ext {
     private static String getMsCertTypeStringValue(byte[] octets) {
 
         // @formatter:off
+        /*
+            Not much information available about that extension...
 
-		/*
-			Not much information available about that extension...
-
-			06 09		; OBJECT_ID (9 Bytes)
-			|  2b 06 01 04 01 82 37 14  02
-			|     ; 1.3.6.1.4.1.311.20.2 Certificate Template Name (Certificate Type)
-			04 0a		; OCTET_STRING (a Bytes)#
-			   1e 08 00 55 00 73 00 65  00 72                    ; ...U.s.e.r
-		 */
-
-		// @formatter:on
+            06 09		; OBJECT_ID (9 Bytes)
+            |  2b 06 01 04 01 82 37 14  02
+            |     ; 1.3.6.1.4.1.311.20.2 Certificate Template Name (Certificate Type)
+            04 0a		; OCTET_STRING (a Bytes)#
+               1e 08 00 55 00 73 00 65  00 72                    ; ...U.s.e.r
+         */
+        // @formatter:on
 
         ASN1BMPString derbmpString = ASN1BMPString.getInstance(octets);
 
@@ -2636,10 +2633,10 @@ public class X509Ext {
 
     private static String getMsCaVersionStringValue(byte[] octets) {
 
-		/*
+        /*
             "The extension data is a DWORD value (encoded as X509_INTEGER in the extension);
             the low 16 bits are the certificate index, and the high 16 bits are the key index."
-		 */
+         */
 
         ASN1Integer asn1Integer = ASN1Integer.getInstance(octets);
         int version = asn1Integer.getValue().intValue();
@@ -2656,26 +2653,38 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getMsCrlNextPublishStringValue(byte[] octets) {
-        ASN1UTCTime time = ASN1UTCTime.getInstance(octets);
-        return time.getTime();
+    private static String getMsCrlNextPublishStringValue(byte[] octets) throws IOException {
+
+        // @formatter:off
+        /*
+        ChoiceOfTime ::= CHOICE {
+            utcTime                 UTCTime,
+            generalTime             GeneralizedTime
+        }
+         */
+        // @formatter:on
+
+        ASN1Primitive asn1Primitive = ASN1Primitive.fromByteArray(octets);
+        if (asn1Primitive instanceof ASN1GeneralizedTime) {
+            return getGeneralizedTimeString((ASN1GeneralizedTime) asn1Primitive);
+        } else {
+            return getUtcTimeString((ASN1UTCTime) asn1Primitive);
+        }
     }
 
     private static String getMsCertificateTemplateStringValue(byte[] octets) {
 
         // @formatter:off
-
-		/*
-			CertificateTemplate ::= SEQUENCE
-			{
-				templateID              EncodedObjectID,
-				templateMajorVersion    TemplateVersion,
-				templateMinorVersion    TemplateVersion OPTIONAL
-			}
-			TemplateVersion ::= INTEGER (0..4294967295)
-		 */
-
-		// @formatter:on
+        /*
+            CertificateTemplate ::= SEQUENCE
+            {
+                templateID              EncodedObjectID,
+                templateMajorVersion    TemplateVersion,
+                templateMinorVersion    TemplateVersion OPTIONAL
+            }
+            TemplateVersion ::= INTEGER (0..4294967295)
+         */
+        // @formatter:on
 
         ASN1Sequence asn1Sequence = ASN1Sequence.getInstance(octets);
         ASN1ObjectIdentifier templateID = (ASN1ObjectIdentifier) asn1Sequence.getObjectAt(0);
@@ -2702,17 +2711,17 @@ public class X509Ext {
 
         // @formatter:off
 
-		/*
-			SMIMECapabilities ::= SEQUENCE OF SMIMECapability
+        /*
+            SMIMECapabilities ::= SEQUENCE OF SMIMECapability
 
-			SMIMECapability ::= SEQUENCE
-			{
-				capabilityID OBJECT IDENTIFIER,
-				parameters ANY DEFINED BY capabilityID OPTIONAL
-			}
-		 */
+            SMIMECapability ::= SEQUENCE
+            {
+                capabilityID OBJECT IDENTIFIER,
+                parameters ANY DEFINED BY capabilityID OPTIONAL
+            }
+         */
 
-		// @formatter:on
+        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
 
@@ -2756,9 +2765,9 @@ public class X509Ext {
 
     private static String getVeriSignNonVerified(byte[] octets) throws IOException {
 
-		/*
-		    NonVerified ::= SET OF ATTRIBUTE
-		 */
+        /*
+            NonVerified ::= SET OF ATTRIBUTE
+         */
 
         StringBuilder sb = new StringBuilder();
 

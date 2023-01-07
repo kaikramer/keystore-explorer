@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -61,7 +61,7 @@ public class KeyIdentifierGenerator {
      */
     public byte[] generate160BitHashId() throws CryptoException {
         /*
-         * RFC 3280: The keyIdentifier is composed of the 160-bit SHA-1 hash of
+         * RFC 5280: The keyIdentifier is composed of the 160-bit SHA-1 hash of
          * the value of the BIT STRING subjectPublicKey (excluding the tag,
          * length, and number of unused bits)
          */
@@ -82,7 +82,7 @@ public class KeyIdentifierGenerator {
      */
     public byte[] generate64BitHashId() throws CryptoException {
         /*
-         * RFC 3280: The keyIdentifier is composed of a four bit type field with
+         * RFC 5280: The keyIdentifier is composed of a four bit type field with
          * the value 0100 followed by the least significant 60 bits of the SHA-1
          * hash of the value of the BIT STRING subjectPublicKey (excluding the
          * tag, length, and number of unused bit string bits)

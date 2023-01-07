@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2022 Kai Kramer
+ *           2013 - 2023 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -22,6 +22,7 @@ package org.kse;
 import java.awt.Toolkit;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -34,10 +35,12 @@ import javax.swing.SwingUtilities;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.kse.crypto.csr.pkcs12.Pkcs12Util;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CreateApplicationGui;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.os.OperatingSystem;
 import org.kse.version.JavaVersion;
 import org.kse.version.Version;
@@ -52,6 +55,8 @@ import com.sun.jna.WString;
  */
 public class KSE {
     private static final ResourceBundle props = ResourceBundle.getBundle("org/kse/version");
+
+    public static Provider BC = new BouncyCastleProvider();
 
     static {
         // set default style for Bouncy Castle's X500Name class
@@ -99,6 +104,8 @@ public class KSE {
 
             initialiseSecurity();
 
+            Pkcs12Util.setEncryptionStrength(applicationSettings.getPkcs12EncryptionSetting());
+
             // list of files to open after start
             List<File> parameterFiles = new ArrayList<>();
             for (String arg : args) {
@@ -145,8 +152,7 @@ public class KSE {
     }
 
     private static void setInstallDirProperty() {
-        // Use this for restarts
-        // Install directory is always user.dir, but we change user.dir in CurrentDirectory class
+        // Use this for restarts; install directory is always user.dir, but we change user.dir in CurrentDirectory class
         System.setProperty("kse.install.dir", System.getProperty("user.dir"));
     }
 
@@ -159,9 +165,8 @@ public class KSE {
     }
 
     private static void initialiseSecurity() {
-
         // Add BouncyCastle provider
-        Security.addProvider(new BouncyCastleProvider());
+        Security.addProvider(BC);
     }
 
     /**
