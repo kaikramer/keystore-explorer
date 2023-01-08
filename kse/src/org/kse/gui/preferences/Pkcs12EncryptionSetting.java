@@ -26,15 +26,27 @@ public enum Pkcs12EncryptionSetting {
     strong("Pkcs12EncryptionSetting.strong"),
     legacy("Pkcs12EncryptionSetting.legacy");
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
-    private String friendlyName;
+    private String resourceBundleKey;
+    private static ResourceBundle res;
 
-    Pkcs12EncryptionSetting(String friendlyName) {
-        this.friendlyName = friendlyName;
+    Pkcs12EncryptionSetting(String resourceBundleKey) {
+        this.resourceBundleKey = resourceBundleKey;
+    }
+
+    /**
+     * Allows to pass a resource bundle (which unfortunately cannot be intialized in this enum)
+     * that is then used to translate the result of the {@code toString()} method.
+     * @param resourceBundle An initialized resource bundle
+     */
+    public static void setResourceBundle(ResourceBundle resourceBundle) {
+        res = resourceBundle;
     }
 
     @Override
     public String toString() {
-        return res.getString(friendlyName);
+        if (res == null) {
+            return this.name();
+        }
+        return res.getString(this.resourceBundleKey);
     }
 }

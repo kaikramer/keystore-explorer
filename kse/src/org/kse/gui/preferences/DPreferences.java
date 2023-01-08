@@ -530,6 +530,7 @@ public class DPreferences extends JEscDialog {
         jcbShowHiddenFiles.setSelected(showHiddenFilesEnabled);
 
         jlPkcs12Encryption  = new JLabel(res.getString("DPreferences.jlPkcs12Encryption.text"));
+        Pkcs12EncryptionSetting.setResourceBundle(res);
         jcbPkcs12Encryption = new JComboBox<>(Pkcs12EncryptionSetting.values());
         jcbPkcs12Encryption.setSelectedItem(pkcs12EncryptionSetting);
         jcbPkcs12Encryption.setToolTipText(res.getString("DPreferences.jcbPkcs12Encryption.tooltip"));
