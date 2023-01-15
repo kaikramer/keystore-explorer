@@ -284,6 +284,7 @@ task jlink(type: Exec) {
 					'jdk.crypto.cryptoki,' +
 					'jdk.crypto.mscapi,' +
 					'jdk.zipfs',
+					'jdk.dynalink',
 		'--output', "$jlinkOutDir/jre"
 }
 
@@ -356,6 +357,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 				jmod(name: "jdk.security.auth")
 				jmod(name: "jdk.crypto.cryptoki")
 				jmod(name: "jdk.zipfs")
+				jmod(name: "jdk.dynalink")
 
 				argument(value: "--compress=2")
 				argument(value: "--no-header-files")
