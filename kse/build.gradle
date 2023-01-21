@@ -419,13 +419,11 @@ task dmg(type: Exec, dependsOn: signapp) {
 	new File("${distDir}/${dmgFile}").delete()
 	workingDir buildDir
 
-	commandLine 'dropdmg',
-			"--format", "zlib",
-			"--layout-name", "KSE 5",
-			"--signing-identity", "Kai Kramer",
-			"--base-name", "${appSimpleName}-${appSimpleVersion}",
-			"--destination", "${distDir}",
-			"${appBundleDir}/${appBundle}"
+	commandLine 'create-dmg', '--overwrite', "${appBundleDir}/${appBundle}", "${distDir}"
+
+	doLast {
+		file("${distDir}/${appName} ${appVersion}.dmg").renameTo(file("${distDir}/${dmgFile}"))
+	}
 }
 
 task notarization(type: Exec, dependsOn: dmg) {
