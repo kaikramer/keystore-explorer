@@ -284,7 +284,6 @@ task jlink(type: Exec) {
 					'jdk.crypto.cryptoki,' +
 					'jdk.crypto.mscapi,' +
 					'jdk.zipfs',
-					'jdk.dynalink',
 		'--output', "$jlinkOutDir/jre"
 }
 
