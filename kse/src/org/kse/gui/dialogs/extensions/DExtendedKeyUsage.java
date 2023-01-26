@@ -87,7 +87,7 @@ public class DExtendedKeyUsage extends DExtension {
     private JCheckBox jcbIpSecurityEndSystem;
     private JCheckBox jcbIpSecurityTunnelTermination;
     private JCheckBox jcbIpSecurityUser;
-    private JCheckBox jcbOcspStamping;
+    private JCheckBox jcbOcspSigning;
     private JCheckBox jcbTimeStamping;
     private JCheckBox jcbTlsWebClientAuthentication;
     private JCheckBox jcbTlsWebServerAuthentication;
@@ -159,8 +159,8 @@ public class DExtendedKeyUsage extends DExtension {
         jcbIpSecurityUser = new JCheckBox(res.getString("DExtendedKeyUsage.jcbIpSecurityUser.text"));
         jcbIpSecurityUser.setToolTipText(resCryptoX509.getString("IpsecUserExtKeyUsage"));
 
-        jcbOcspStamping = new JCheckBox(res.getString("DExtendedKeyUsage.jcbOcspStamping.text"));
-        jcbOcspStamping.setToolTipText(resCryptoX509.getString("OcspSigningExtKeyUsage"));
+        jcbOcspSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbOcspSigning.text"));
+        jcbOcspSigning.setToolTipText(resCryptoX509.getString("OcspSigningExtKeyUsage"));
 
         jcbTimeStamping = new JCheckBox(res.getString("DExtendedKeyUsage.jcbTimeStamping.text"));
         jcbTimeStamping.setToolTipText(resCryptoX509.getString("TimeStampingExtKeyUsage"));
@@ -199,7 +199,7 @@ public class DExtendedKeyUsage extends DExtension {
         pane.add(jcbIpSecurityEndSystem, "");
         pane.add(jcbIpSecurityTunnelTermination, "");
         pane.add(jcbIpSecurityUser, "wrap");
-        pane.add(jcbOcspStamping, "");
+        pane.add(jcbOcspSigning, "");
         pane.add(jcbSmartcardLogon, "");
         pane.add(jcbTimeStamping, "wrap");
         pane.add(jcbTlsWebClientAuthentication, "");
@@ -289,7 +289,7 @@ public class DExtendedKeyUsage extends DExtension {
             } else if (type == TIME_STAMPING) {
                 jcbTimeStamping.setSelected(true);
             } else if (type == OCSP_SIGNING) {
-                jcbOcspStamping.setSelected(true);
+                jcbOcspSigning.setSelected(true);
             } else if (type == ANY_EXTENDED_KEY_USAGE) {
                 jcbAnyExtendedKeyUsage.setSelected(true);
             } else {
@@ -311,7 +311,7 @@ public class DExtendedKeyUsage extends DExtension {
         if (!jcbTlsWebServerAuthentication.isSelected() && !jcbTlsWebClientAuthentication.isSelected() &&
             !jcbCodeSigning.isSelected() && !jcbEmailProtection.isSelected() && !jcbIpSecurityEndSystem.isSelected() &&
             !jcbIpSecurityTunnelTermination.isSelected() && !jcbIpSecurityUser.isSelected() &&
-            !jcbTimeStamping.isSelected() && !jcbOcspStamping.isSelected() && !jcbDocumentSigning.isSelected() &&
+            !jcbTimeStamping.isSelected() && !jcbOcspSigning.isSelected() && !jcbDocumentSigning.isSelected() &&
             !jcbAdobePDFSigning.isSelected() && !jcbTslSigning.isSelected() && !jcbEncryptedFileSystem.isSelected() &&
             !jcbAnyExtendedKeyUsage.isSelected() && !jcbSmartcardLogon.isSelected() &&
             !jcbCustomExtKeyUsage.isSelected()) {
@@ -370,7 +370,7 @@ public class DExtendedKeyUsage extends DExtension {
             keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(TIME_STAMPING.oid())));
         }
 
-        if (jcbOcspStamping.isSelected()) {
+        if (jcbOcspSigning.isSelected()) {
             keyPurposeIds.add(KeyPurposeId.getInstance(new ASN1ObjectIdentifier(OCSP_SIGNING.oid())));
         }
 
