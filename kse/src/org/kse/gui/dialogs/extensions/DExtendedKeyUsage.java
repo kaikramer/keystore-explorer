@@ -75,6 +75,7 @@ public class DExtendedKeyUsage extends DExtension {
     private static final long serialVersionUID = -972351635055954L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static ResourceBundle resCryptoX509 = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -129,24 +130,55 @@ public class DExtendedKeyUsage extends DExtension {
 
     private void initComponents() {
         jlExtendedKeyUsage = new JLabel(res.getString("DExtendedKeyUsage.jlExtendedKeyUsage.text"));
+
         jcbCodeSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbCodeSigning.text"));
+        jcbCodeSigning.setToolTipText(resCryptoX509.getString("CodeSigningExtKeyUsage"));
+
         jcbDocumentSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbDocumentSigning.text"));
+        jcbDocumentSigning.setToolTipText(resCryptoX509.getString("DocumentSigningExtKeyUsage"));
+
         jcbAdobePDFSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAdobePDFSigning.text"));
+        jcbAdobePDFSigning.setToolTipText(resCryptoX509.getString("AdobePDFSigningExtKeyUsage"));
+
         jcbTslSigning = new JCheckBox(res.getString("DExtendedKeyUsage.jcbTslSigning.text"));
+        jcbTslSigning.setToolTipText(resCryptoX509.getString("TSLSignExtKeyUsage"));
+
         jcbEncryptedFileSystem = new JCheckBox(res.getString("DExtendedKeyUsage.jcbEncryptedFileSystem.text"));
+        jcbEncryptedFileSystem.setToolTipText(resCryptoX509.getString("EncryptedFileSystemExtKeyUsage"));
+
         jcbEmailProtection = new JCheckBox(res.getString("DExtendedKeyUsage.jcbEmailProtection.text"));
+        jcbEmailProtection.setToolTipText(resCryptoX509.getString("EmailProtectionExtKeyUsage"));
+
         jcbIpSecurityEndSystem = new JCheckBox(res.getString("DExtendedKeyUsage.jcbIpSecurityEndSystem.text"));
+        jcbIpSecurityEndSystem.setToolTipText(resCryptoX509.getString("IpsecEndSystemExtKeyUsage"));
+
         jcbIpSecurityTunnelTermination = new JCheckBox(
                 res.getString("DExtendedKeyUsage.jcbIpSecurityTunnelTermination.text"));
+        jcbIpSecurityTunnelTermination.setToolTipText(resCryptoX509.getString("IpsecTunnelExtKeyUsage"));
+
         jcbIpSecurityUser = new JCheckBox(res.getString("DExtendedKeyUsage.jcbIpSecurityUser.text"));
+        jcbIpSecurityUser.setToolTipText(resCryptoX509.getString("IpsecUserExtKeyUsage"));
+
         jcbOcspStamping = new JCheckBox(res.getString("DExtendedKeyUsage.jcbOcspStamping.text"));
+        jcbOcspStamping.setToolTipText(resCryptoX509.getString("OcspSigningExtKeyUsage"));
+
         jcbTimeStamping = new JCheckBox(res.getString("DExtendedKeyUsage.jcbTimeStamping.text"));
+        jcbTimeStamping.setToolTipText(resCryptoX509.getString("TimeStampingExtKeyUsage"));
+
         jcbTlsWebClientAuthentication = new JCheckBox(
                 res.getString("DExtendedKeyUsage.jcbTlsWebClientAuthentication.text"));
+        jcbTlsWebClientAuthentication.setToolTipText(resCryptoX509.getString("ClientAuthExtKeyUsage"));
+
         jcbTlsWebServerAuthentication = new JCheckBox(
                 res.getString("DExtendedKeyUsage.jcbTlsWebServerAuthentication.text"));
+        jcbTlsWebServerAuthentication.setToolTipText(resCryptoX509.getString("ServerAuthExtKeyUsage"));
+
         jcbSmartcardLogon = new JCheckBox(res.getString("DExtendedKeyUsage.jcbSmartcardLogon.text"));
+        jcbSmartcardLogon.setToolTipText(resCryptoX509.getString("SmartcardLogonExtKeyUsage"));
+
         jcbAnyExtendedKeyUsage = new JCheckBox(res.getString("DExtendedKeyUsage.jcbAnyExtendedKeyUsage.text"));
+        jcbAnyExtendedKeyUsage.setToolTipText(resCryptoX509.getString("AnyExtendedKeyUsageExtKeyUsage"));
+
         jcbCustomExtKeyUsage = new JCheckBox(res.getString("DExtendedKeyUsage.jcbCustomExtendedKeyUsage.text"));
         jbAddEku = new JButton(res.getString("DExtendedKeyUsage.jbAddEku.text"));
         jbOK = new JButton(res.getString("DExtendedKeyUsage.jbOK.text"));
