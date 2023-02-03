@@ -62,6 +62,7 @@ import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
+import org.kse.utilities.io.FileNameUtil;
 
 /**
  * Action to examine a certificate.
@@ -290,7 +291,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         }
 
         DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
-                res.getString("ExamineFileAction.PrivateKeyDetailsFile.Title"), file.getName()), privKey);
+                res.getString("ExamineFileAction.PrivateKeyDetailsFile.Title"), file.getName()), FileNameUtil.removeExtension(file.getName()), privKey, applicationSettings);
         dViewPrivateKey.setLocationRelativeTo(frame);
         dViewPrivateKey.setVisible(true);
     }

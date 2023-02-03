@@ -270,7 +270,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         }
 
         DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, res.getString(
-                "ExamineClipboardAction.PrivateKeyDetails.Title"), privKey);
+                "ExamineClipboardAction.PrivateKeyDetails.Title"), "", privKey, applicationSettings);
         dViewPrivateKey.setLocationRelativeTo(frame);
         dViewPrivateKey.setVisible(true);
     }
