@@ -1,4 +1,4 @@
-package org.kse.crypto.privatekey;
+package org.kse.gui.crypto.privatekey;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,13 +15,29 @@ import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
+import org.kse.crypto.privatekey.MsPvkUtil;
+import org.kse.crypto.privatekey.OpenSslPbeType;
+import org.kse.crypto.privatekey.OpenSslPvkUtil;
+import org.kse.crypto.privatekey.Pkcs8PbeType;
+import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyOpenSsl;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyPkcs8;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyPvk;
 import org.kse.gui.preferences.ApplicationSettings;
 
-public class PrivateUtils {
+public class PrivateKeyUtils {
 
+	/**
+	 * Export a private key to format pkcs8
+	 * 
+	 * @param privateKey            Private key
+	 * @param alias                 Name of alias or file name
+	 * @param frame                 The parent frame
+	 * @param applicationSettings   Password quality configuration
+	 * @param res                   ResourceBundle
+	 * @throws CryptoException
+	 * @throws IOException
+	 */
     public static void exportAsPkcs8(PrivateKey privateKey, String alias, JFrame frame, 
     		ApplicationSettings applicationSettings, ResourceBundle res) throws CryptoException, IOException {
         File exportFile = null;
@@ -94,6 +110,17 @@ public class PrivateUtils {
         }
     }
 
+    /**
+     * Export a private key to format pvk
+     * 
+	 * @param privateKey            Private key
+	 * @param alias                 Name of alias or file name
+	 * @param frame                 The parent frame
+	 * @param applicationSettings   Password quality configuration
+	 * @param res                   ResourceBundle
+     * @throws CryptoException
+     * @throws IOException
+     */
     public static void exportAsPvk(PrivateKey privateKey, String alias, JFrame frame, 
     		ApplicationSettings applicationSettings, ResourceBundle res) throws CryptoException, IOException {
         File exportFile = null;
@@ -158,7 +185,18 @@ public class PrivateUtils {
 
 		return encoded;
 	}
-	
+	/**
+	 * 
+	 * Export a private key to format openssl
+	 * 
+	 * @param privateKey            Private key
+	 * @param alias                 Name of alias or file name
+	 * @param frame                 The parent frame
+	 * @param applicationSettings   Password quality configuration
+	 * @param res                   ResourceBundle
+	 * @throws CryptoException
+	 * @throws IOException
+	 */
     public static void exportAsOpenSsl(PrivateKey privateKey, String alias, JFrame frame, 
     		ApplicationSettings applicationSettings, ResourceBundle res) throws CryptoException, IOException {
         File exportFile = null;

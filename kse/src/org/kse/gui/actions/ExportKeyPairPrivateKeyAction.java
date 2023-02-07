@@ -26,8 +26,8 @@ import javax.swing.ImageIcon;
 import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.crypto.privatekey.PrivateUtils;
 import org.kse.gui.KseFrame;
+import org.kse.gui.crypto.privatekey.PrivateKeyUtils;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyType;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -84,11 +84,11 @@ public class ExportKeyPairPrivateKeyAction extends KeyStoreExplorerAction {
             }
 
             if (dExportPrivateKeyType.exportPkcs8()) {
-            	PrivateUtils.exportAsPkcs8(privateKey, alias, frame, applicationSettings, res);
+            	PrivateKeyUtils.exportAsPkcs8(privateKey, alias, frame, applicationSettings, res);
             } else if (dExportPrivateKeyType.exportPvk()) {
-            	PrivateUtils.exportAsPvk(privateKey, alias, frame, applicationSettings, res);
+            	PrivateKeyUtils.exportAsPvk(privateKey, alias, frame, applicationSettings, res);
             } else {
-            	PrivateUtils.exportAsOpenSsl(privateKey, alias, frame, applicationSettings, res);
+            	PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, frame, applicationSettings, res);
             }
         } catch (Exception ex) {
             DError.displayError(frame, ex);
