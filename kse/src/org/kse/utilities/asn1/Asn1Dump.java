@@ -262,7 +262,7 @@ public class Asn1Dump {
         byte[] bytes = asn1OctetString.getOctets();
 
         sb.append(indentSequence.toString(indentLevel));
-        sb.append("OCTET STRING");
+        sb.append("OCTET STRING (L:").append(bytes.length).append((")"));
         try {
             String encapsulated = dump(bytes);
             sb.append(", encapsulates:");
@@ -287,7 +287,7 @@ public class Asn1Dump {
         byte[] bytes = asn1BitString.getBytes();
 
         sb.append(indentSequence.toString(indentLevel));
-        sb.append("BIT STRING");
+        sb.append("BIT STRING (L:").append(bytes.length).append((")"));
         try {
             String dump = dump(bytes);
             sb.append(", encapsulates:");
