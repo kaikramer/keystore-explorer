@@ -50,12 +50,16 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.crypto.privatekey.PrivateKeyUtils;
+import org.kse.gui.dialogs.importexport.DExportPrivateKeyType;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
 
@@ -69,6 +73,7 @@ public class DViewPrivateKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle resActions = ResourceBundle.getBundle("org/kse/gui/actions/resources");
 
     private JLabel jlAlgorithm;
     private JTextField jtfAlgorithm;
@@ -79,12 +84,16 @@ public class DViewPrivateKey extends JEscDialog {
     private JLabel jlEncoded;
     private JTextArea jtaEncoded;
     private JScrollPane jspEncoded;
+    private JButton jbExport;
     private JButton jbPem;
     private JButton jbFields;
     private JButton jbAsn1;
     private JButton jbOK;
 
+    private String alias;
     private PrivateKey privateKey;
+    
+    private ApplicationSettings applicationSettings;
 
     /**
      * Creates a new DViewPrivateKey dialog.
@@ -94,9 +103,11 @@ public class DViewPrivateKey extends JEscDialog {
      * @param privateKey Private key to display
      * @throws CryptoException A problem was encountered getting the private key's details
      */
-    public DViewPrivateKey(JFrame parent, String title, PrivateKey privateKey) throws CryptoException {
+    public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, ApplicationSettings applicationSettings) throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.alias = alias;
         this.privateKey = privateKey;
+        this.applicationSettings = applicationSettings;
         initComponents();
     }
 
@@ -112,6 +123,7 @@ public class DViewPrivateKey extends JEscDialog {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.privateKey = privateKey;
         initComponents();
+        jbExport.setVisible(false);
     }
 
     private void initComponents() throws CryptoException {
@@ -147,6 +159,11 @@ public class DViewPrivateKey extends JEscDialog {
                                                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jspEncoded.setBorder(jtfFormat.getBorder());
 
+        
+        jbExport = new JButton(res.getString("DViewPrivateKey.jbExport.text"));
+        PlatformUtil.setMnemonic(jbExport, res.getString("DViewPrivateKey.jbExport.mnemonic").charAt(0));
+        jbExport.setToolTipText(res.getString("DViewPrivateKey.jbExport.tooltip"));
+        
         jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
         jbPem.setToolTipText(res.getString("DViewPrivateKey.jbPem.tooltip"));
@@ -172,13 +189,17 @@ public class DViewPrivateKey extends JEscDialog {
         pane.add(jtfFormat, "growx, pushx, wrap");
         pane.add(jlEncoded, "");
         pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
-        pane.add(jbPem, "spanx, split");
+        
+        pane.add(jbExport, "spanx, split");
+        pane.add(jbPem, "");
         pane.add(jbFields, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
         pane.add(jbOK, "spanx, tag ok");
 
         // actions
+
+        jbExport.addActionListener(evt -> exportPressed());
 
         jbOK.addActionListener(evt -> okPressed());
 
@@ -227,7 +248,32 @@ public class DViewPrivateKey extends JEscDialog {
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
-    private void populateDialog() throws CryptoException {
+    private void exportPressed() {
+    	KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+        DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType((JFrame) this.getParent(), keyPairType);
+        dExportPrivateKeyType.setLocationRelativeTo(null);
+        dExportPrivateKeyType.setVisible(true);
+
+        if (!dExportPrivateKeyType.exportTypeSelected()) {
+            return;
+        }
+        try
+        {
+            if (dExportPrivateKeyType.exportPkcs8()) {
+            	PrivateKeyUtils.exportAsPkcs8(privateKey, alias,(JFrame) this.getParent(), applicationSettings, resActions);
+            } else if (dExportPrivateKeyType.exportPvk()) {
+            	PrivateKeyUtils.exportAsPvk(privateKey, alias, (JFrame) this.getParent(), applicationSettings, resActions);
+            } else {
+            	PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, (JFrame) this.getParent(), applicationSettings, resActions);
+            }
+        }
+        catch (Exception ex) {
+            DError.displayError((JFrame) this.getParent(), ex);
+        }
+
+	}
+    
+	private void populateDialog() throws CryptoException {
         KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
 
         jtfAlgorithm.setText(keyInfo.getAlgorithm());
@@ -295,7 +341,7 @@ public class DViewPrivateKey extends JEscDialog {
         KeyPair keyPair = keyGen.genKeyPair();
 
         PrivateKey privKey = keyPair.getPrivate();
-        DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", privKey);
+        DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", "private", privKey, null);
         DialogViewer.run(dialog);
     }
 }

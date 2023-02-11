@@ -76,7 +76,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
             PrivateKey privKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
 
             DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
-                    res.getString("KeyPairPrivateKeyDetailsAction.PrivKeyDetailsEntry.Title"), alias), privKey);
+                    res.getString("KeyPairPrivateKeyDetailsAction.PrivKeyDetailsEntry.Title"), alias), alias, privKey, applicationSettings);
             dViewPrivateKey.setLocationRelativeTo(frame);
             dViewPrivateKey.setVisible(true);
         } catch (Exception ex) {
