@@ -107,14 +107,31 @@ public class DKeyUsage extends DExtension {
         jlKeyUsage.setBorder(new EmptyBorder(5, 5, 0, 5));
 
         jcbCertificateSigning = new JCheckBox(res.getString("DKeyUsage.jcbCertificateSigning.text"));
+        jcbCertificateSigning.setToolTipText(res.getString("DKeyUsage.jcbCertificateSigning.tooltip"));
+
         jcbCrlSign = new JCheckBox(res.getString("DKeyUsage.jcbCrlSign.text"));
+        jcbCrlSign.setToolTipText(res.getString("DKeyUsage.jcbCrlSign.tooltip"));
+
         jcbDataEncipherment = new JCheckBox(res.getString("DKeyUsage.jcbDataEncipherment.text"));
+        jcbDataEncipherment.setToolTipText(res.getString("DKeyUsage.jcbDataEncipherment.tooltip"));
+
         jcbDecipherOnly = new JCheckBox(res.getString("DKeyUsage.jcbDecipherOnly.text"));
+        jcbDecipherOnly.setToolTipText(res.getString("DKeyUsage.jcbDecipherOnly.tooltip"));
+
         jcbDigitalSignature = new JCheckBox(res.getString("DKeyUsage.jcbDigitalSignature.text"));
+        jcbDigitalSignature.setToolTipText(res.getString("DKeyUsage.jcbDigitalSignature.tooltip"));
+
         jcbEncipherOnly = new JCheckBox(res.getString("DKeyUsage.jcbEncipherOnly.text"));
+        jcbEncipherOnly.setToolTipText(res.getString("DKeyUsage.jcbEncipherOnly.tooltip"));
+
         jcbKeyAgreement = new JCheckBox(res.getString("DKeyUsage.jcbKeyAgreement.text"));
+        jcbKeyAgreement.setToolTipText(res.getString("DKeyUsage.jcbKeyAgreement.tooltip"));
+
         jcbKeyEncipherment = new JCheckBox(res.getString("DKeyUsage.jcbKeyEncipherment.text"));
+        jcbKeyEncipherment.setToolTipText(res.getString("DKeyUsage.jcbKeyEncipherment.tooltip"));
+
         jcbNonRepudiation = new JCheckBox(res.getString("DKeyUsage.jcbNonRepudiation.text"));
+        jcbNonRepudiation.setToolTipText(res.getString("DKeyUsage.jcbNonRepudiation.tooltip"));
 
         JPanel jpFirstColumn = new JPanel();
         jpFirstColumn.setLayout(new BoxLayout(jpFirstColumn, BoxLayout.Y_AXIS));
