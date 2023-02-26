@@ -101,6 +101,7 @@ import org.kse.gui.actions.CheckUpdateAction;
 import org.kse.gui.actions.CloseAction;
 import org.kse.gui.actions.CloseAllAction;
 import org.kse.gui.actions.CloseOthersAction;
+import org.kse.gui.actions.CompareCertificateAction;
 import org.kse.gui.actions.CopyAction;
 import org.kse.gui.actions.CopyKeyPairAction;
 import org.kse.gui.actions.CopyTrustedCertificateAction;
@@ -393,11 +394,13 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiKeySetPassword;
     private JMenuItem jmiKeyDelete;
     private JMenuItem jmiKeyRename;
+    
 
     private JPopupMenu jpmMultiEntrySel;
     private JMenuItem jmiMultiEntrySelCut;
     private JMenuItem jmiMultEntrySelCopy;
     private JMenuItem jmiMultiEntrySelDelete;
+    private JMenuItem jmiMultiEntryCompare;
 
     //
     // Main display controls
@@ -435,6 +438,7 @@ public final class KseFrame implements StatusBar {
     private final CopyAction copyAction = new CopyAction(this);
     private final PasteAction pasteAction = new PasteAction(this);
     private final FindAction findAction = new FindAction(this);
+    private final CompareCertificateAction compareCertificateAction = new CompareCertificateAction(this);
     private final ShowHideToolBarAction showHideToolBarAction = new ShowHideToolBarAction(this);
     private final ShowHideStatusBarAction showHideStatusBarAction = new ShowHideStatusBarAction(this);
     private final TabStyleWrapAction tabStyleWrapAction = new TabStyleWrapAction(this);
@@ -2192,10 +2196,17 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiMultiEntrySelDelete,
                                    (String) deleteMultipleEntriesAction.getValue(Action.LONG_DESCRIPTION), this);
 
+        jmiMultiEntryCompare = new JMenuItem(compareCertificateAction);
+        jmiMultiEntryCompare.setToolTipText(null);
+        new StatusBarChangeHandler(jmiMultiEntryCompare,
+                (String) compareCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
+        
         jpmMultiEntrySel = new JPopupMenu();
         jpmMultiEntrySel.add(jmiMultiEntrySelCut);
         jpmMultiEntrySel.add(jmiMultEntrySelCopy);
         jpmMultiEntrySel.add(jmiMultiEntrySelDelete);
+        jpmMultiEntrySel.add(jmiMultiEntryCompare);
+        
     }
 
     private void maybeShowSelectedEntryDetails(MouseEvent evt) {
