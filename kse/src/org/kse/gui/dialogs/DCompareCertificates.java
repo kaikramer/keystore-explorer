@@ -16,7 +16,9 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.kse.crypto.CryptoException;
@@ -122,8 +124,11 @@ public class DCompareCertificates extends JEscFrame {
 		jpAsn1Dump = new JPanel(new BorderLayout());
 		jpAsn1Dump.setBorder(new EmptyBorder(5, 5, 5, 5));
 		jpAsn1Dump.add(editorLeft, BorderLayout.WEST);
+		JSeparator s = new JSeparator();
+		s.setOrientation(SwingConstants.VERTICAL);
+		jpAsn1Dump.add(s,BorderLayout.CENTER);
 		jpAsn1Dump.add(editorRight, BorderLayout.EAST);
-
+		
 		jspAsn1Dump = PlatformUtil.createScrollPane(jpAsn1Dump, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		jspAsn1Dump.setPreferredSize(new Dimension(1400, 600));
