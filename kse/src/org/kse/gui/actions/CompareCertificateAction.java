@@ -15,22 +15,30 @@ import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
+/**
+ * Action to show Compare Certificate dialog.
+ *
+ */
 public class CompareCertificateAction extends KeyStoreExplorerAction {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Construct action.
+	 * 
+	 * @param kseFrame KeyStore Explorer frame
+	 */
 	public CompareCertificateAction(KseFrame kseFrame) {
 		super(kseFrame);
 		putValue(LONG_DESCRIPTION, res.getString("CompareCertificateAction.statusbar"));
 		putValue(NAME, res.getString("CompareCertificateAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("CompareCertificateAction.tooltip"));
 		putValue(SMALL_ICON, new ImageIcon(
-				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/genkeypair.png"))));
+				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exportkeypair.png"))));
 	}
 
 	@Override
 	protected void doAction() {
-
 		List<Certificate> listCertificate = getCertificates();
 		if (listCertificate != null) {
 			DCompareCertificates dialog = new DCompareCertificates(listCertificate);
