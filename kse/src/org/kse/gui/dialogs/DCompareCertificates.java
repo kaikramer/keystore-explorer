@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -42,6 +43,8 @@ import org.kse.utilities.io.IndentSequence;
 import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;
 
+import net.miginfocom.swing.MigLayout;
+
 /*
  * Displays the differences of two certificates
  */
@@ -56,6 +59,7 @@ public class DCompareCertificates extends JEscFrame {
 	private JEditorPane editorRight;
 	private JPanel jpAsn1Dump;
 	private JScrollPane jspAsn1Dump;
+	private JLabel jlMatch;
 	private JButton jbOK;
 	private JPanel jpButtons;
 
@@ -82,11 +86,15 @@ public class DCompareCertificates extends JEscFrame {
 
 		jbOK = new JButton(res.getString("DCompareCertificates.jbOK.text"));
 		jbOK.addActionListener(evt -> okPressed());
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, null);
+		
+		jlMatch = new JLabel();
+		jpButtons =  new JPanel(new MigLayout("nogrid, fillx, aligny 100%"));
+		jpButtons.add(jbOK,"tag ok");
+		jpButtons.add(jlMatch,"sgx");
 
 		DiffRowGenerator generator = DiffRowGenerator.create().showInlineDiffs(true).inlineDiffByWord(true)
-				.oldTag(f -> f ? "<font color='red'><b>" : "</b></font>").newTag(f -> f ? "<font color='red'><b>" : "</b></font>")
-				.build();
+				.oldTag(f -> f ? "<font color='red'><b>" : "</b></font>")
+				.newTag(f -> f ? "<font color='red'><b>" : "</b></font>").build();
 
 		try {
 			X509Certificate cert1 = (X509Certificate) listCertificate.get(0);
@@ -100,12 +108,21 @@ public class DCompareCertificates extends JEscFrame {
 			StringBuilder sbuilderRight = new StringBuilder();
 			sbuilderLeft.append("<tt>");
 			sbuilderRight.append("<tt>");
+			int equals = 0;
 			for (DiffRow row : rows) {
+				if (row.getOldLine().equals(row.getNewLine())) {
+					equals++;
+				}
 				sbuilderLeft.append(row.getOldLine().replace(" ", "&nbsp;"));
 				sbuilderLeft.append("<br>");
 				sbuilderRight.append(row.getNewLine().replace(" ", "&nbsp;"));
 				sbuilderRight.append("<br>");
 			}
+			if (rows.size() > 0) {
+				float percent = equals * 100 / rows.size();
+				jlMatch.setText(MessageFormat.format(res.getString("DCompareCertificates.jlMatch.text"), String.format("%.1f", percent)));
+			}
+
 			sbuilderLeft.append("</tt>");
 			editorLeft.setText(sbuilderLeft.toString());
 			sbuilderRight.append("</tt>");
@@ -167,7 +184,7 @@ public class DCompareCertificates extends JEscFrame {
 		if (value != null) {
 			X509Ext ext = new X509Ext(X509ExtensionType.KEY_USAGE.oid(), value, true);
 			String keyUsage = ext.getStringValue();
-			String keyUsages [] = keyUsage.split(NEWLINE);
+			String keyUsages[] = keyUsage.split(NEWLINE);
 			return MessageFormat.format(res.getString("DCompareCertificates.KeyUsage"), String.join(", ", keyUsages));
 		}
 		return null;
