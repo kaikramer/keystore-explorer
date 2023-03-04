@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
@@ -40,10 +41,13 @@ public class CompareCertificateAction extends KeyStoreExplorerAction {
 	@Override
 	protected void doAction() {
 		List<Certificate> listCertificate = getCertificates();
-		if (listCertificate != null) {
+		if (listCertificate != null && listCertificate.size() == 2) {
 			DCompareCertificates dialog = new DCompareCertificates(listCertificate);
 			dialog.setLocationRelativeTo(null);
 			dialog.setVisible(true);
+		} else {
+			JOptionPane.showMessageDialog(frame, res.getString("CompareCertificateAction.onlytwo.message"),
+					res.getString("CompareCertificateAction.Title"), JOptionPane.WARNING_MESSAGE);
 		}
 	}
 
@@ -65,12 +69,8 @@ public class CompareCertificateAction extends KeyStoreExplorerAction {
 					Certificate certificate = keyStore.getCertificate(alias);
 					listCertificates.add(certificate);
 				}
-				// first two certificates found
-				if (listCertificates.size() == 2) {
-					return listCertificates;
-				}
 			}
-			return null;
+			return listCertificates;
 		} catch (Exception ex) {
 			DError.displayError(frame, ex);
 			return null;
