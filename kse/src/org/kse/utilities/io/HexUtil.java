@@ -159,10 +159,10 @@ public class HexUtil {
      */
     public static String getHexClearDump(byte[] bytes) throws IOException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes)) {
-            // Divide dump into 8 byte lines
+            // Divide dump into 16 bytes lines
             StringBuilder sb = new StringBuilder();
 
-            byte[] line = new byte[8];
+            byte[] line = new byte[16];
             int read = -1;
             boolean firstLine = true;
 
@@ -202,6 +202,10 @@ public class HexUtil {
             if ((cnt + 1) < len) {
                 // Divider between hex characters
                 sbHex.append(' ');
+                if (((cnt + 1) % 8) == 0) {
+                    // Divider between 8 hex characters
+                    sbHex.append(' ');
+                }
             }
 
             // Get clear character
