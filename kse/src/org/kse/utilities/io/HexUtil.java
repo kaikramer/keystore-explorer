@@ -234,6 +234,10 @@ public class HexUtil {
         int i = bytes.length - len;
         for (int cnt = 0; cnt < i; cnt++) {
             strBuff.append("   "); // Each missing byte takes up three spaces
+            if (((cnt + 1) % 8) == 0) {
+                // Add a space for each 8 hex characters
+                strBuff.append(' ');
+            }
         }
 
         strBuff.append("   "); // The gap between hex and clear output is three
