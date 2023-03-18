@@ -1,10 +1,8 @@
 package org.kse.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.security.cert.X509Extension;
@@ -16,6 +14,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,6 +22,8 @@ import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
@@ -68,37 +69,41 @@ public class DCompareCertificates extends JEscFrame {
 	 * 
 	 * @param listCertificate List of certificate for compare
 	 */
-	public DCompareCertificates(List<Certificate> listCertificate) {
-
-		super(res.getString("DCompareCertificates.Title"));
-		initComponents(listCertificate);
+	public DCompareCertificates(JFrame frame, X509Certificate cert1, X509Certificate cert2) {
+		super(MessageFormat.format(res.getString("DCompareCertificates.Title"), X509CertUtil.getShortName(cert1),
+				X509CertUtil.getShortName(cert2)));
+		this.setIconImages(frame.getIconImages());
+		initComponents(cert1, cert2);
 	}
 
-	private void initComponents(List<Certificate> listCertificate) {
+	private void initComponents(X509Certificate cert1, X509Certificate cert2) {
 
+		HTMLEditorKit kit = new HTMLEditorKit();
+		StyleSheet styleSheet = kit.getStyleSheet();
+		styleSheet.addRule(".editOldInline {background-color: #CD853F;}");
+		styleSheet.addRule(".editNewInline {background-color: #CD5C5C;}");
 		editorLeft = new JEditorPane();
 		editorLeft.setContentType("text/html");
 		editorLeft.setEditable(false);
+		editorLeft.setEditorKit(kit);
 
 		editorRight = new JEditorPane();
 		editorRight.setContentType("text/html");
 		editorRight.setEditable(false);
+		editorRight.setEditorKit(kit);
 
 		jbOK = new JButton(res.getString("DCompareCertificates.jbOK.text"));
 		jbOK.addActionListener(evt -> okPressed());
-		
+
 		jlMatch = new JLabel();
-		jpButtons =  new JPanel(new MigLayout("nogrid, fillx, aligny 100%"));
-		jpButtons.add(jbOK,"tag ok");
-		jpButtons.add(jlMatch,"sgx");
+		jpButtons = new JPanel(new MigLayout("nogrid, fillx, aligny 100%"));
+		jpButtons.add(jbOK, "tag ok");
+		jpButtons.add(jlMatch, "sgx");
 
 		DiffRowGenerator generator = DiffRowGenerator.create().showInlineDiffs(true).inlineDiffByWord(true)
-				.oldTag(f -> f ? "<font color='red'><b>" : "</b></font>")
-				.newTag(f -> f ? "<font color='red'><b>" : "</b></font>").build();
+				.ignoreWhiteSpaces(true).build();
 
 		try {
-			X509Certificate cert1 = (X509Certificate) listCertificate.get(0);
-			X509Certificate cert2 = (X509Certificate) listCertificate.get(1);
 
 			String text1 = getCertificateDump(cert1);
 			String text2 = getCertificateDump(cert2);
@@ -120,7 +125,8 @@ public class DCompareCertificates extends JEscFrame {
 			}
 			if (rows.size() > 0) {
 				float percent = equals * 100 / rows.size();
-				jlMatch.setText(MessageFormat.format(res.getString("DCompareCertificates.jlMatch.text"), String.format("%.1f", percent)));
+				jlMatch.setText(MessageFormat.format(res.getString("DCompareCertificates.jlMatch.text"),
+						String.format("%.1f", percent)));
 			}
 
 			sbuilderLeft.append("</tt>");
@@ -128,7 +134,6 @@ public class DCompareCertificates extends JEscFrame {
 			sbuilderRight.append("</tt>");
 			editorRight.setText(sbuilderRight.toString());
 
-			editorLeft.setCaretPosition(0);
 		} catch (Asn1Exception | IOException | CertificateEncodingException | CryptoException ex) {
 			DError.displayError(this, ex);
 		}
@@ -143,7 +148,6 @@ public class DCompareCertificates extends JEscFrame {
 
 		jspAsn1Dump = PlatformUtil.createScrollPane(jpAsn1Dump, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		jspAsn1Dump.setPreferredSize(new Dimension(1350, 600));
 
 		getContentPane().add(jspAsn1Dump, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
