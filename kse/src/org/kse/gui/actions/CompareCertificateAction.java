@@ -3,6 +3,7 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,9 @@ public class CompareCertificateAction extends KeyStoreExplorerAction {
 	protected void doAction() {
 		List<Certificate> listCertificate = getCertificates();
 		if (listCertificate != null && listCertificate.size() == 2) {
-			DCompareCertificates dialog = new DCompareCertificates(listCertificate);
+			X509Certificate cert1 = (X509Certificate) listCertificate.get(0);
+			X509Certificate cert2 = (X509Certificate) listCertificate.get(1);
+			DCompareCertificates dialog = new DCompareCertificates(frame, cert1,cert2);
 			dialog.setLocationRelativeTo(null);
 			dialog.setVisible(true);
 		} else {
