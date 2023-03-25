@@ -59,7 +59,7 @@ public class DCompareCertificates extends JEscFrame {
 	private JEditorPane editorLeft;
 	private JEditorPane editorRight;
 	private JPanel jpAsn1Dump;
-	private JScrollPane jspAsn1Dump;
+	private JScrollPane jspCompareCert;
 	private JLabel jlMatch;
 	private JButton jbOK;
 	private JPanel jpButtons;
@@ -146,10 +146,10 @@ public class DCompareCertificates extends JEscFrame {
 		jpAsn1Dump.add(js, BorderLayout.CENTER);
 		jpAsn1Dump.add(editorRight, BorderLayout.EAST);
 
-		jspAsn1Dump = PlatformUtil.createScrollPane(jpAsn1Dump, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+		jspCompareCert = PlatformUtil.createScrollPane(jpAsn1Dump, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-		getContentPane().add(jspAsn1Dump, BorderLayout.CENTER);
+		getContentPane().add(jspCompareCert, BorderLayout.CENTER);
 		getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
 		setResizable(true);

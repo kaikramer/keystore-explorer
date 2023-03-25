@@ -244,6 +244,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiCopy;
     private JMenuItem jmiPaste;
     private JMenuItem jmiFind;
+    private JMenuItem jmiCompare;
 
     private JMenu jmView;
     private JCheckBoxMenuItem jcbmiShowHideToolBar;
@@ -786,6 +787,11 @@ public final class KseFrame implements StatusBar {
         jmEdit.add(jmiPaste);
 
         jmEdit.addSeparator();
+
+        jmiCompare = new JMenuItem(compareCertificateAction);
+        jmiCompare.setToolTipText(null);
+        new StatusBarChangeHandler(jmiCompare, (String) compareCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
+        jmEdit.add(jmiCompare);
 
         jmiFind = new JMenuItem(findAction);
         PlatformUtil.setMnemonic(jmiFind, res.getString("KseFrame.jmiFind.mnemonic").charAt(0));
@@ -2887,6 +2893,7 @@ public final class KseFrame implements StatusBar {
         cutKeyPairAction.setEnabled(false);
         cutTrustedCertificateAction.setEnabled(false);
         copyAction.setEnabled(false);
+        compareCertificateAction.setEnabled(false);
         findAction.setEnabled(false);
         copyKeyPairAction.setEnabled(false);
         copyTrustedCertificateAction.setEnabled(false);
@@ -2936,6 +2943,7 @@ public final class KseFrame implements StatusBar {
         boolean cutAndCopyEnabled = getActiveKeyStoreTable().getSelectedRow() != -1;
 
         cutAction.setEnabled(cutAndCopyEnabled);
+        compareCertificateAction.setEnabled(getActiveKeyStoreTable().getSelectedRowCount() == 2);
         cutKeyPairAction.setEnabled(cutAndCopyEnabled);
         cutTrustedCertificateAction.setEnabled(cutAndCopyEnabled);
         copyAction.setEnabled(cutAndCopyEnabled);
