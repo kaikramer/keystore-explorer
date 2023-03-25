@@ -121,6 +121,11 @@ public enum CryptoFileType {
     JAR("CryptoFileType.Jar"),
 
     /**
+     * JSON Web Token
+     */
+    JSON_WEB_TOKEN("CryptoFileType.JsonWebToken"),
+
+    /**
      * Unknown file type
      */
     UNKNOWN("CryptoFileType.Unknown");

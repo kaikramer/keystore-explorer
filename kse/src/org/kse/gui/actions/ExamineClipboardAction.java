@@ -60,6 +60,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewCrl;
 import org.kse.gui.dialogs.DViewCsr;
+import org.kse.gui.dialogs.DViewJwt;
 import org.kse.gui.dialogs.DViewPrivateKey;
 import org.kse.gui.dialogs.DViewPublicKey;
 import org.kse.gui.dnd.DroppedFileHandler;
@@ -67,6 +68,9 @@ import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
+
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 
 /**
  * Action to examine a certificate.
@@ -169,6 +173,9 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 break;
             case OPENSSL_PUB:
                 showPublicKey(dataAsBytes);
+                break;
+            case JSON_WEB_TOKEN:
+                showJwt(data);
                 break;
             case JCEKS_KS:
             case JKS_KS:
@@ -396,6 +403,17 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 dViewCsr.setLocationRelativeTo(frame);
                 dViewCsr.setVisible(true);
             }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
+
+    private void showJwt(String data) {
+        try {
+            JWT jwt = JWTParser.parse(data);
+            DViewJwt dViewJwt = new DViewJwt(frame, jwt);
+            dViewJwt.setLocationRelativeTo(frame);
+            dViewJwt.setVisible(true);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
