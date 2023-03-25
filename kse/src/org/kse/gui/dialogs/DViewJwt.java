@@ -20,30 +20,38 @@
 
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
+
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.shaded.gson.Gson;
+import com.nimbusds.jose.shaded.gson.GsonBuilder;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -55,11 +63,18 @@ public class DViewJwt extends JEscDialog {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private JPanel jpJwt;
-    private JScrollPane jspJwt;
-    private JTextArea jtAreaJwt;
-    private JButton jbOK;
+    private JLabel jlAlgorithm;
+    private JTextField jtfAlgorithm;
+    private JLabel jlPayload;
+    private JTextArea jtaPayload;
+    private JScrollPane jspPayload;
+    private JLabel jlEncoded;
+    private JTextArea jtaEncoded;
+    private JScrollPane jspEncoded;
     private JButton jbCopy;
+    private JButton jbOK;
+
+    private JWT jwt;
 
     /**
      * Creates a new DViewJwt dialog.
@@ -67,28 +82,45 @@ public class DViewJwt extends JEscDialog {
      * @param parent The parent frame
      * @param jwt    The encoded JWT
      */
-    public DViewJwt(JFrame parent, String jwt) {
-
+    public DViewJwt(JFrame parent, JWT jwt) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         setTitle(res.getString("DViewJwt.Title"));
-        initComponents(jwt);
+        this.jwt = jwt;
+        initComponents();
     }
 
-    private void initComponents(String jwt) {
-        jpJwt = new JPanel(new BorderLayout());
-        jpJwt.setBorder(new EmptyBorder(5, 5, 5, 5));
+    private void initComponents() {
+        jlAlgorithm = new JLabel(res.getString("DViewJwt.jlAlgorithm.text"));
 
-        jtAreaJwt = new JTextArea(jwt);
-        jtAreaJwt.setToolTipText(res.getString("DViewJwt.jtAreaJwt.tooltip"));
-        jtAreaJwt.setEditable(false);
-        jtAreaJwt.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-        // keep uneditable color same as editable
-        jtAreaJwt.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
-        jtAreaJwt.setLineWrap(true);
-        jspJwt = PlatformUtil.createScrollPane(jtAreaJwt, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                               ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jspJwt.setPreferredSize(new Dimension(400, 200));
-        jpJwt.add(jspJwt, BorderLayout.CENTER);
+        jtfAlgorithm = new JTextField();
+        jtfAlgorithm.setEditable(false);
+        jtfAlgorithm.setToolTipText(res.getString("DViewJwt.jtfAlgorithm.tooltip"));
+
+        jlPayload = new JLabel(res.getString("DViewJwt.jlPayload.text"));
+
+        jtaPayload = new JTextArea();
+        jtaPayload.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jtaPayload.setBackground(jtfAlgorithm.getBackground());
+        jtaPayload.setEditable(false);
+        jtaPayload.setLineWrap(true);
+        jtaPayload.setToolTipText(res.getString("DViewJwt.jtaPayload.tooltip"));
+
+        jspPayload = PlatformUtil.createScrollPane(jtaPayload, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jspPayload.setBorder(jtfAlgorithm.getBorder());
+
+        jlEncoded = new JLabel(res.getString("DViewJwt.jlEncoded.text"));
+
+        jtaEncoded = new JTextArea();
+        jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jtaEncoded.setBackground(jtfAlgorithm.getBackground());
+        jtaEncoded.setEditable(false);
+        jtaEncoded.setLineWrap(true);
+        jtaEncoded.setToolTipText(res.getString("DViewJwt.jtaEncoded.tooltip"));
+
+        jspEncoded = PlatformUtil.createScrollPane(jtaEncoded, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        jspEncoded.setBorder(jtfAlgorithm.getBorder());
 
         jbCopy = new JButton(res.getString("DViewJwt.jbCopy.text"));
         jbCopy.setToolTipText(res.getString("DViewJwt.jbCopy.tooltip"));
@@ -96,11 +128,20 @@ public class DViewJwt extends JEscDialog {
 
         jbOK = new JButton(res.getString("DViewJwt.jbOK.text"));
 
+        // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog"));
-        pane.add(jpJwt, "span");
-        pane.add(jbCopy, "tag Copy");
-        pane.add(jbOK, "tag Ok");
+        pane.setLayout(new MigLayout("insets dialog", "[right]unrel[]", "[]unrel[]"));
+        pane.add(jlAlgorithm, "");
+        pane.add(jtfAlgorithm, "growx, pushx, wrap");
+        pane.add(jlPayload, "");
+        pane.add(jspPayload, "width 300lp:300lp:300lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jlEncoded, "");
+        pane.add(jspEncoded, "width 300lp:300lp:300lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jbCopy, "spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
+        pane.add(jbOK, "spanx, tag ok");
+
+        // actions
 
         jbOK.addActionListener(evt -> okPressed());
 
@@ -115,11 +156,34 @@ public class DViewJwt extends JEscDialog {
 
         setResizable(false);
 
+        populateDialog();
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                closeDialog();
+            }
+        });
+
         getRootPane().setDefaultButton(jbCopy);
 
         pack();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
+
+    private void populateDialog() {
+        jtfAlgorithm.setText(jwt.getHeader().getAlgorithm().getName());
+
+        if (jwt instanceof JWSObject) {
+            Payload payload = ((JWSObject) jwt).getPayload();
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            jtaPayload.setText(gson.toJson(payload.toJSONObject()));
+        } else {
+            jtaPayload.setText("{}");
+        }
+
+        jtaEncoded.setText(jwt.serialize());
     }
 
     private void okPressed() {
@@ -132,7 +196,7 @@ public class DViewJwt extends JEscDialog {
     }
 
     private void copyPressed() {
-        String policy = jtAreaJwt.getText();
+        String policy = jtaEncoded.getText();
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection copy = new StringSelection(policy);
@@ -140,8 +204,11 @@ public class DViewJwt extends JEscDialog {
     }
 
     public static void main(String[] args) throws Exception {
-        DViewJwt dialog = new DViewJwt(new javax.swing.JFrame(),
-                                       "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9");
+        DialogViewer.prepare();
+        JWT jwt = JWTParser.parse("eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9" +
+                                   ".eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9");
+
+        DViewJwt dialog = new DViewJwt(new javax.swing.JFrame(), jwt);
         DialogViewer.run(dialog);
     }
 
