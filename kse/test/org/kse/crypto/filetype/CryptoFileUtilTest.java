@@ -100,6 +100,9 @@ class CryptoFileUtilTest {
             "test.pem.crl, CRL",
             "test.der.crl, CRL",
 
+            // JWTs
+            "test.jwt, JSON_WEB_TOKEN",
+
             // text file without any cryptographic content
             "unknown.txt, UNKNOWN",
 

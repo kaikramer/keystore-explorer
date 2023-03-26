@@ -94,8 +94,8 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             dSignJwt.setLocationRelativeTo(frame);
             dSignJwt.setVisible(true);
             if (dSignJwt.isOk()) {
-                String encodedJWT = signJwt(dSignJwt, privateKey, provider);
-                DViewJwt dialog = new DViewJwt(frame, encodedJWT);
+                SignedJWT jwt = signJwt(dSignJwt, privateKey, provider);
+                DViewJwt dialog = new DViewJwt(frame, jwt);
                 dialog.setLocationRelativeTo(frame);
                 dialog.setVisible(true);
             }
@@ -104,7 +104,7 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         }
     }
 
-    private String signJwt(DSignJwt dSignJwt, PrivateKey privateKey, Provider provider) throws Exception {
+    private SignedJWT signJwt(DSignJwt dSignJwt, PrivateKey privateKey, Provider provider) throws Exception {
 
         Curve curve = null;
         JWSAlgorithm signatureAlgorithm = null;
@@ -183,6 +183,6 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         SignedJWT signedJWT = new SignedJWT(new JWSHeader.Builder(signatureAlgorithm).keyID(null).build(), claimsSet);
         signedJWT.sign(signer);
 
-        return signedJWT.serialize();
+        return signedJWT;
     }
 }

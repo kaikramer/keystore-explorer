@@ -26,6 +26,7 @@ import static org.kse.crypto.filetype.CryptoFileType.ENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_OPENSSL_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.ENC_PKCS8_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.JAR;
+import static org.kse.crypto.filetype.CryptoFileType.JSON_WEB_TOKEN;
 import static org.kse.crypto.filetype.CryptoFileType.OPENSSL_PUB;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_MS_PVK;
 import static org.kse.crypto.filetype.CryptoFileType.UNENC_OPENSSL_PVK;
@@ -65,6 +66,8 @@ import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
+
+import com.nimbusds.jwt.JWTParser;
 
 /**
  * Provides utility methods for the detection of cryptographic file types.
@@ -179,6 +182,10 @@ public class CryptoFileUtil {
             return keyStoreType.getCryptoFileType();
         }
 
+        if (isJwt(data)) {
+            return JSON_WEB_TOKEN;
+        }
+
         // Not a recognised type
         return UNKNOWN;
     }
@@ -193,6 +200,15 @@ public class CryptoFileUtil {
 
         return magic == ZIP_MAGIC_NUMBER1 || magic == ZIP_MAGIC_NUMBER2 || magic == ZIP_MAGIC_NUMBER3 ||
                magic == ZIP_MAGIC_NUMBER4;
+    }
+
+    private static boolean isJwt(byte[] data) {
+        try {
+            JWTParser.parse(new String(data));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private static CsrType detectCsrType(byte[] csrData) throws IOException {
