@@ -36,7 +36,6 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
@@ -46,6 +45,7 @@ import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 
+import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.shaded.gson.Gson;
@@ -63,8 +63,9 @@ public class DViewJwt extends JEscDialog {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private JLabel jlAlgorithm;
-    private JTextField jtfAlgorithm;
+    private JLabel jlHeader;
+    private JTextArea jtaHeader;
+    private JScrollPane jspHeader;
     private JLabel jlPayload;
     private JTextArea jtaPayload;
     private JScrollPane jspPayload;
@@ -90,37 +91,38 @@ public class DViewJwt extends JEscDialog {
     }
 
     private void initComponents() {
-        jlAlgorithm = new JLabel(res.getString("DViewJwt.jlAlgorithm.text"));
+        jlHeader = new JLabel(res.getString("DViewJwt.jlHeader.text"));
 
-        jtfAlgorithm = new JTextField();
-        jtfAlgorithm.setEditable(false);
-        jtfAlgorithm.setToolTipText(res.getString("DViewJwt.jtfAlgorithm.tooltip"));
+        jtaHeader = new JTextArea();
+        jtaHeader.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jtaHeader.setEditable(false);
+        jtaHeader.setLineWrap(false);
+        jtaHeader.setToolTipText(res.getString("DViewJwt.jtaHeader.tooltip"));
+
+        jspHeader = PlatformUtil.createScrollPane(jtaHeader, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         jlPayload = new JLabel(res.getString("DViewJwt.jlPayload.text"));
 
         jtaPayload = new JTextArea();
         jtaPayload.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-        jtaPayload.setBackground(jtfAlgorithm.getBackground());
         jtaPayload.setEditable(false);
         jtaPayload.setLineWrap(false);
         jtaPayload.setToolTipText(res.getString("DViewJwt.jtaPayload.tooltip"));
 
-        jspPayload = PlatformUtil.createScrollPane(jtaPayload, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jspPayload.setBorder(jtfAlgorithm.getBorder());
+        jspPayload = PlatformUtil.createScrollPane(jtaPayload, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         jlEncoded = new JLabel(res.getString("DViewJwt.jlEncoded.text"));
 
         jtaEncoded = new JTextArea();
         jtaEncoded.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-        jtaEncoded.setBackground(jtfAlgorithm.getBackground());
         jtaEncoded.setEditable(false);
         jtaEncoded.setLineWrap(true);
         jtaEncoded.setToolTipText(res.getString("DViewJwt.jtaEncoded.tooltip"));
 
-        jspEncoded = PlatformUtil.createScrollPane(jtaEncoded, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jspEncoded.setBorder(jtfAlgorithm.getBorder());
+        jspEncoded = PlatformUtil.createScrollPane(jtaEncoded, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         jbCopy = new JButton(res.getString("DViewJwt.jbCopy.text"));
         jbCopy.setToolTipText(res.getString("DViewJwt.jbCopy.tooltip"));
@@ -131,8 +133,8 @@ public class DViewJwt extends JEscDialog {
         // layout
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog", "[right]unrel[]", "[]unrel[]"));
-        pane.add(jlAlgorithm, "");
-        pane.add(jtfAlgorithm, "growx, pushx, wrap");
+        pane.add(jlHeader, "");
+        pane.add(jspHeader, "width 400lp:400lp:400lp, height 100lp:100lp:100lp, wrap");
         pane.add(jlPayload, "");
         pane.add(jspPayload, "width 400lp:400lp:400lp, height 200lp:200lp:200lp, wrap");
         pane.add(jlEncoded, "");
@@ -173,11 +175,13 @@ public class DViewJwt extends JEscDialog {
     }
 
     private void populateDialog() {
-        jtfAlgorithm.setText(jwt.getHeader().getAlgorithm().getName());
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Header header = jwt.getHeader();
+        jtaHeader.setText(gson.toJson(header.toJSONObject()));
 
         if (jwt instanceof JWSObject) {
             Payload payload = ((JWSObject) jwt).getPayload();
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             jtaPayload.setText(gson.toJson(payload.toJSONObject()));
         } else {
             jtaPayload.setText("{}");
@@ -205,8 +209,8 @@ public class DViewJwt extends JEscDialog {
 
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        JWT jwt = JWTParser.parse("eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9" +
-                                  ".eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9");
+        JWT jwt = JWTParser.parse(
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
 
         DViewJwt dialog = new DViewJwt(new javax.swing.JFrame(), jwt);
         DialogViewer.run(dialog);
