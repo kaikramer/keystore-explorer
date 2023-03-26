@@ -232,7 +232,7 @@ public class DViewAsn1Dump extends JEscFrame {
 
         jspAsn1Dump = PlatformUtil.createScrollPane(jtaAsn1Dump, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                                                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        jspAsn1Dump.setPreferredSize(new Dimension(500, 300));
+        jspAsn1Dump.setPreferredSize(new Dimension(800, 400));
         jpAsn1Dump.add(jspAsn1Dump, BorderLayout.CENTER);
 
         getContentPane().add(jpAsn1Dump, BorderLayout.CENTER);
