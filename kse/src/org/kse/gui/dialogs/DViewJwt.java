@@ -102,7 +102,7 @@ public class DViewJwt extends JEscDialog {
         jtaPayload.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         jtaPayload.setBackground(jtfAlgorithm.getBackground());
         jtaPayload.setEditable(false);
-        jtaPayload.setLineWrap(true);
+        jtaPayload.setLineWrap(false);
         jtaPayload.setToolTipText(res.getString("DViewJwt.jtaPayload.tooltip"));
 
         jspPayload = PlatformUtil.createScrollPane(jtaPayload, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -134,9 +134,9 @@ public class DViewJwt extends JEscDialog {
         pane.add(jlAlgorithm, "");
         pane.add(jtfAlgorithm, "growx, pushx, wrap");
         pane.add(jlPayload, "");
-        pane.add(jspPayload, "width 300lp:300lp:300lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jspPayload, "width 400lp:400lp:400lp, height 200lp:200lp:200lp, wrap");
         pane.add(jlEncoded, "");
-        pane.add(jspEncoded, "width 300lp:300lp:300lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jspEncoded, "width 400lp:400lp:400lp, height 200lp:200lp:200lp, wrap");
         pane.add(jbCopy, "spanx");
         pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
         pane.add(jbOK, "spanx, tag ok");
@@ -206,7 +206,7 @@ public class DViewJwt extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
         JWT jwt = JWTParser.parse("eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9" +
-                                   ".eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9");
+                                  ".eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9");
 
         DViewJwt dialog = new DViewJwt(new javax.swing.JFrame(), jwt);
         DialogViewer.run(dialog);
