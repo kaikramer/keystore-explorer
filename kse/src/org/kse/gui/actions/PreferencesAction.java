@@ -86,7 +86,8 @@ public class PreferencesAction extends ExitAction {
                                                      applicationSettings.getAutoUpdateCheckInterval(),
                                                      applicationSettings.getKeyStoreTableColumns(),
                                                      applicationSettings.isShowHiddenFilesEnabled(),
-                                                     applicationSettings.getPkcs12EncryptionSetting());
+                                                     applicationSettings.getPkcs12EncryptionSetting(),
+                                                     applicationSettings.getSnRandomBytes());
         dPreferences.setLocationRelativeTo(frame);
         dPreferences.setVisible(true);
 
@@ -114,6 +115,7 @@ public class PreferencesAction extends ExitAction {
         applicationSettings.setAutoUpdateCheckInterval(dPreferences.getAutoUpdateChecksInterval());
         applicationSettings.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
         applicationSettings.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
+        applicationSettings.setSnRandomBytes(dPreferences.getSnRandomBytes());
 
         Pkcs12Util.setEncryptionStrength(applicationSettings.getPkcs12EncryptionSetting());
 
