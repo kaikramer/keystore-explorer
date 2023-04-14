@@ -72,7 +72,9 @@ import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
 import org.kse.gui.dialogs.sign.DListCertificatesKS;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.DialogViewer;
+import org.kse.utilities.SerialNumbers;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -194,7 +196,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
         jlSerialNumber = new JLabel(res.getString("DGenerateKeyPairCert.jlSerialNumber.text"));
 
-        jtfSerialNumber = new JTextField("" + generateSerialNumber(), 20);
+        final int snRandomBytes = ApplicationSettings.getInstance().getSnRandomBytes();
+        jtfSerialNumber = new JTextField(SerialNumbers.fromCurrentTime(snRandomBytes), 20);
         jtfSerialNumber.setToolTipText(res.getString("DGenerateKeyPairCert.jtfSerialNumber.tooltip"));
 
         jlName = new JLabel(res.getString("DGenerateKeyPairCert.jlName.text"));
@@ -455,10 +458,6 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
     private boolean hasCriticalSAN() {
         return extensions.isCritical(X509ExtensionType.SUBJECT_ALTERNATIVE_NAME.oid());
-    }
-
-    private long generateSerialNumber() {
-        return System.currentTimeMillis() / 1000;
     }
 
     /**

@@ -93,7 +93,9 @@ import org.kse.gui.dialogs.DialogHelper;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.DialogViewer;
+import org.kse.utilities.SerialNumbers;
 import org.kse.utilities.asn1.Asn1Exception;
 
 import net.miginfocom.swing.MigLayout;
@@ -294,7 +296,8 @@ public class DSignCsr extends JEscDialog {
 
         jlSerialNumber = new JLabel(res.getString("DSignCsr.jlSerialNumber.text"));
 
-        jtfSerialNumber = new JTextField("" + generateSerialNumber(), 15);
+        final int snRandomBytes = ApplicationSettings.getInstance().getSnRandomBytes();
+        jtfSerialNumber = new JTextField(SerialNumbers.fromCurrentTime(snRandomBytes), 15);
         jtfSerialNumber.setToolTipText(res.getString("DSignCsr.jtfSerialNumber.tooltip"));
 
         jbTransferExtensions = new JButton(res.getString("DSignCsr.jbTransferExtensions.text"));
@@ -537,10 +540,6 @@ public class DSignCsr extends JEscDialog {
         }
 
         jtfCsrPublicKey.setCaretPosition(0);
-    }
-
-    private long generateSerialNumber() {
-        return System.currentTimeMillis() / 1000;
     }
 
     private void extensionsPressed() {

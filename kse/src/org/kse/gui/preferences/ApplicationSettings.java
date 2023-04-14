@@ -115,6 +115,7 @@ public class ApplicationSettings {
     private static final String KSE3_COLUMNS = "kse3.columns";
     private static final String KSE3_SHOW_HIDDEN_FILES = "kse3.showhiddenfiles";
     private static final String KSE3_PKCS12_ENCRYPTION = "kse3.pkcs12encryption";
+    private static final String KSE3_SN_RANDOM_BYTES = "kse3.snrandombytes";
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -156,6 +157,7 @@ public class ApplicationSettings {
     private int expiryWarnDays;
     private boolean showHiddenFilesEnabled;
     private Pkcs12EncryptionSetting pkcs12EncryptionSetting;
+    private int snRandomBytes;
 
     private ApplicationSettings() {
 
@@ -383,6 +385,9 @@ public class ApplicationSettings {
 
         // pkcs12 encryption strong or compatible?
         pkcs12EncryptionSetting = Pkcs12EncryptionSetting.valueOf(preferences.get(KSE3_PKCS12_ENCRYPTION, "strong"));
+
+        // number of random bytes in serial number generation
+        snRandomBytes = preferences.getInt(KSE3_SN_RANDOM_BYTES, 0);
     }
 
     private File cleanFilePath(File filePath) {
@@ -498,6 +503,9 @@ public class ApplicationSettings {
 
         // pkcs12 encryption strong or compatible?
         preferences.put(KSE3_PKCS12_ENCRYPTION, pkcs12EncryptionSetting.name());
+
+        // number of random bytes in serial number generation
+        preferences.putInt(KSE3_SN_RANDOM_BYTES, snRandomBytes);
     }
 
     private void clearExistingRecentFiles(Preferences preferences) {
@@ -894,5 +902,13 @@ public class ApplicationSettings {
 
     public void setPkcs12EncryptionSetting(Pkcs12EncryptionSetting pkcs12EncryptionSetting) {
         this.pkcs12EncryptionSetting = pkcs12EncryptionSetting;
+    }
+
+    public int getSnRandomBytes() {
+        return snRandomBytes;
+    }
+
+    public void setSnRandomBytes(int snRandomBytes) {
+        this.snRandomBytes = snRandomBytes;
     }
 }
