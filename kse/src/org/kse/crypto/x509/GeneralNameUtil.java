@@ -241,7 +241,7 @@ public class GeneralNameUtil {
 
         if (UPN_OID.equals(oid.getId())) {
             ASN1TaggedObject asn1TaggedObject = (ASN1TaggedObject) otherName.getObjectAt(1);
-            ASN1UTF8String upn = ASN1UTF8String.getInstance(asn1TaggedObject.getTagClass());
+            ASN1UTF8String upn = ASN1UTF8String.getInstance(asn1TaggedObject.getBaseObject());
             return MessageFormat.format(res.getString("GeneralNameUtil.OtherGeneralName"), "UPN", upn.getString());
         }
 
