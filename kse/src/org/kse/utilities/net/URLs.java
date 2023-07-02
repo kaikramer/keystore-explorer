@@ -46,9 +46,9 @@ public class URLs {
 
     // list of TSA servers for sign jar dialog
     public static final String[] TSA_URLS = new String[] { "http://timestamp.digicert.com",
+                                                           "http://tsa.quovadisglobal.com/TSS/HttpTspServer",
                                                            "http://rfc3161timestamp.globalsign.com/advanced",
-                                                           "http://timestamp.identrust.com",
                                                            "http://time.certum.pl",
                                                            "http://sha256timestamp.ws.symantec.com/sha256/timestamp",
-                                                           "http://timestamp.sectigo.com/?td=sha384" };
+                                                           "http://timestamp.sectigo.com" };
 }
