@@ -173,7 +173,7 @@ public class DDateTimeChooser extends JEscDialog {
         jcbMonth = new JComboBox<>(MONTH_NAMES);
         jcbMonth.addItemListener(evt -> update());
 
-        jsYear = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 1900, 2100, 1));
+        jsYear = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 1900, 2200, 1));
         jsYear.setEditor(new JSpinner.NumberEditor(jsYear, "0000"));
         jsYear.addChangeListener(evt -> update());
 

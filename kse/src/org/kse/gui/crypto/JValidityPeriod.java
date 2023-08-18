@@ -19,9 +19,6 @@
  */
 package org.kse.gui.crypto;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +30,8 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component that allows a user to choose a validity period. User can choose an
@@ -80,24 +79,10 @@ public class JValidityPeriod extends JPanel {
 
     private void initComponents(int periodType) {
         jsValue = new JSpinner();
-        GridBagConstraints gbc_jsValue = new GridBagConstraints();
-        gbc_jsValue.gridheight = 1;
-        gbc_jsValue.gridwidth = 1;
-        gbc_jsValue.gridx = 0;
-        gbc_jsValue.gridy = 0;
-        gbc_jsValue.insets = new Insets(0, 0, 0, 5);
-
         jcbType = new JComboBox<>(new String[] { res.getString("JValidityPeriod.jcbType.years.text"),
                                                  res.getString("JValidityPeriod.jcbType.months.text"),
                                                  res.getString("JValidityPeriod.jcbType.weeks.text"),
                                                  res.getString("JValidityPeriod.jcbType.days.text"), });
-
-        GridBagConstraints gbc_jcbType = new GridBagConstraints();
-        gbc_jcbType.gridheight = 1;
-        gbc_jcbType.gridwidth = 1;
-        gbc_jcbType.gridx = 1;
-        gbc_jcbType.gridy = 0;
-        gbc_jcbType.insets = new Insets(0, 0, 0, 5);
 
         switch (periodType) {
         case YEARS:
@@ -122,17 +107,10 @@ public class JValidityPeriod extends JPanel {
 
         jbApply = new JButton(res.getString("JValidityPeriod.jbApply.text"));
 
-        GridBagConstraints gbc_jbApply = new GridBagConstraints();
-        gbc_jbApply.gridheight = 1;
-        gbc_jbApply.gridwidth = 1;
-        gbc_jbApply.gridx = 2;
-        gbc_jbApply.gridy = 0;
-        gbc_jbApply.insets = new Insets(0, 0, 0, 0);
-
-        setLayout(new GridBagLayout());
-        add(jsValue, gbc_jsValue);
-        add(jcbType, gbc_jcbType);
-        add(jbApply, gbc_jbApply);
+        setLayout(new MigLayout("insets 0", "[]", "[]"));
+        add(jsValue);
+        add(jcbType);
+        add(jbApply);
     }
 
     /**
@@ -155,7 +133,7 @@ public class JValidityPeriod extends JPanel {
 
         switch (periodType) {
         case YEARS:
-            model = new SpinnerNumberModel(1, 1, 999, 1);
+            model = new SpinnerNumberModel(1, 1, 100, 1);
             break;
         case MONTHS:
             model = new SpinnerNumberModel(1, 1, 12, 1);
