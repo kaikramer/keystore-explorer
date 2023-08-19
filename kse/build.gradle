@@ -33,7 +33,7 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
-	id "com.netflix.nebula.ospackage" version "11.0.0"
+	id "com.netflix.nebula.ospackage" version "11.4.0"
 }
 
 defaultTasks 'zip'
@@ -111,11 +111,11 @@ gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 dependencies {
 	implementation('org.bouncycastle:bcpkix-jdk18on:1.72')
 	implementation('net.java.dev.jna:jna:5.12.1')
-	implementation("commons-io:commons-io:2.11.0")
-	implementation("com.miglayout:miglayout-swing:5.3")
-	implementation('com.formdev:flatlaf:2.6')
-	implementation('com.nimbusds:nimbus-jose-jwt:9.25.6')
-	implementation('org.violetlib:vaqua:10')
+	implementation('commons-io:commons-io:2.11.0')
+	implementation('com.miglayout:miglayout-swing:5.3')
+	implementation('com.formdev:flatlaf:3.0')
+	implementation('com.nimbusds:nimbus-jose-jwt:9.30.2')
+	implementation('org.violetlib:vaqua:11')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
 
 
