@@ -19,65 +19,64 @@ import org.kse.utilities.history.KeyStoreState;
 
 /**
  * Action to show Compare Certificate dialog.
- *
  */
 public class CompareCertificateAction extends KeyStoreExplorerAction {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Construct action.
-	 * 
-	 * @param kseFrame KeyStore Explorer frame
-	 */
-	public CompareCertificateAction(KseFrame kseFrame) {
-		super(kseFrame);
-		putValue(LONG_DESCRIPTION, res.getString("CompareCertificateAction.statusbar"));
-		putValue(NAME, res.getString("CompareCertificateAction.text"));
-		putValue(SHORT_DESCRIPTION, res.getString("CompareCertificateAction.tooltip"));
-		putValue(SMALL_ICON, new ImageIcon(
-				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exportkeypair.png"))));
-	}
+    /**
+     * Construct action.
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
+    public CompareCertificateAction(KseFrame kseFrame) {
+        super(kseFrame);
+        putValue(LONG_DESCRIPTION, res.getString("CompareCertificateAction.statusbar"));
+        putValue(NAME, res.getString("CompareCertificateAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("CompareCertificateAction.tooltip"));
+        putValue(SMALL_ICON, new ImageIcon(
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exportkeypair.png"))));
+    }
 
-	@Override
-	protected void doAction() {
-		List<Certificate> listCertificate = getCertificates();
-		if (listCertificate != null && listCertificate.size() == 2) {
-			X509Certificate cert1 = (X509Certificate) listCertificate.get(0);
-			X509Certificate cert2 = (X509Certificate) listCertificate.get(1);
-			DCompareCertificates dialog = new DCompareCertificates(frame, cert1,cert2);
-			dialog.setLocationRelativeTo(null);
-			dialog.setVisible(true);
-		} else {
-			JOptionPane.showMessageDialog(frame, res.getString("CompareCertificateAction.onlytwo.message"),
-					res.getString("CompareCertificateAction.Title"), JOptionPane.WARNING_MESSAGE);
-		}
-	}
+    @Override
+    protected void doAction() {
+        List<Certificate> listCertificate = getCertificates();
+        if (listCertificate != null && listCertificate.size() == 2) {
+            X509Certificate cert1 = (X509Certificate) listCertificate.get(0);
+            X509Certificate cert2 = (X509Certificate) listCertificate.get(1);
+            DCompareCertificates dialog = new DCompareCertificates(frame, cert1, cert2);
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(frame, res.getString("CompareCertificateAction.onlytwo.message"),
+                                          res.getString("CompareCertificateAction.Title"), JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
-	private List<Certificate> getCertificates() {
-		KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-		KeyStoreState currentState = history.getCurrentState();
+    private List<Certificate> getCertificates() {
+        KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+        KeyStoreState currentState = history.getCurrentState();
 
-		String[] aliases = kseFrame.getSelectedEntryAliases();
+        String[] aliases = kseFrame.getSelectedEntryAliases();
 
-		if (aliases.length < 2) {
-			return null;
-		}
-		try {
-			List<Certificate> listCertificates = new ArrayList<>();
-			KeyStore keyStore = currentState.getKeyStore();
-			for (String alias : aliases) {
-				if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)
-						|| KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-					Certificate certificate = keyStore.getCertificate(alias);
-					listCertificates.add(certificate);
-				}
-			}
-			return listCertificates;
-		} catch (Exception ex) {
-			DError.displayError(frame, ex);
-			return null;
-		}
-	}
+        if (aliases.length < 2) {
+            return null;
+        }
+        try {
+            List<Certificate> listCertificates = new ArrayList<>();
+            KeyStore keyStore = currentState.getKeyStore();
+            for (String alias : aliases) {
+                if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore) ||
+                    KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+                    Certificate certificate = keyStore.getCertificate(alias);
+                    listCertificates.add(certificate);
+                }
+            }
+            return listCertificates;
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+            return null;
+        }
+    }
 
 }

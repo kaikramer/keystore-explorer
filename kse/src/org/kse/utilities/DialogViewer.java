@@ -19,15 +19,18 @@
  */
 package org.kse.utilities;
 
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.Security;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.kse.KSE;
 import org.kse.gui.JEscDialog;
+import org.kse.gui.JEscFrame;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
@@ -58,9 +61,9 @@ public class DialogViewer {
 
         SwingUtilities.invokeLater(() -> {
 
-            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            dialog.addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosing(java.awt.event.WindowEvent e) {
+                public void windowClosing(WindowEvent e) {
                     super.windowClosing(e);
                     System.exit(0);
                 }
@@ -74,5 +77,15 @@ public class DialogViewer {
             dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
         });
+    }
+
+    /**
+     * Create environment for showing the given frame
+     */
+    public static void run(final JEscFrame frame) throws UnsupportedLookAndFeelException {
+        prepare();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

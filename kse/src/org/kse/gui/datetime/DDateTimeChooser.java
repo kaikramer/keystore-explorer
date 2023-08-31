@@ -76,6 +76,9 @@ import net.miginfocom.swing.MigLayout;
 public class DDateTimeChooser extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
+    public static int MAX_YEAR = 2200;
+    public static int MIN_YEAR = 1900;
+
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/datetime/resources");
 
     private static final String[] MONTH_NAMES = new String[] { res.getString("DDateTimeChooser.Month.January"),
@@ -173,7 +176,7 @@ public class DDateTimeChooser extends JEscDialog {
         jcbMonth = new JComboBox<>(MONTH_NAMES);
         jcbMonth.addItemListener(evt -> update());
 
-        jsYear = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), 1900, 2200, 1));
+        jsYear = new JSpinner(new SpinnerNumberModel(calendar.get(Calendar.YEAR), MIN_YEAR, MAX_YEAR, 1));
         jsYear.setEditor(new JSpinner.NumberEditor(jsYear, "0000"));
         jsYear.addChangeListener(evt -> update());
 
