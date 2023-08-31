@@ -27,24 +27,25 @@ import org.kse.gui.preferences.ApplicationSettings;
 
 public class PrivateKeyUtils {
 
-	/**
-	 * Export a private key to format pkcs8
-	 * 
-	 * @param privateKey            Private key
-	 * @param alias                 Name of alias or file name
-	 * @param frame                 The parent frame
-	 * @param applicationSettings   Password quality configuration
-	 * @param res                   ResourceBundle
-	 * @throws CryptoException
-	 * @throws IOException
-	 */
-    public static void exportAsPkcs8(PrivateKey privateKey, String alias, JFrame frame, 
-    		ApplicationSettings applicationSettings, ResourceBundle res) throws CryptoException, IOException {
+    /**
+     * Export a private key to format pkcs8
+     *
+     * @param privateKey          Private key
+     * @param alias               Name of alias or file name
+     * @param frame               The parent frame
+     * @param applicationSettings Password quality configuration
+     * @param res                 ResourceBundle
+     * @throws CryptoException
+     * @throws IOException
+     */
+    public static void exportAsPkcs8(PrivateKey privateKey, String alias, JFrame frame,
+                                     ApplicationSettings applicationSettings, ResourceBundle res)
+            throws CryptoException, IOException {
         File exportFile = null;
 
         try {
-            DExportPrivateKeyPkcs8 dExportPrivateKeyPkcs8 = new DExportPrivateKeyPkcs8(frame, alias,
-                                                                                       applicationSettings.getPasswordQualityConfig());
+            DExportPrivateKeyPkcs8 dExportPrivateKeyPkcs8 =
+                    new DExportPrivateKeyPkcs8(frame, alias, applicationSettings.getPasswordQualityConfig());
             dExportPrivateKeyPkcs8.setLocationRelativeTo(frame);
             dExportPrivateKeyPkcs8.setVisible(true);
 
@@ -71,38 +72,38 @@ public class PrivateKeyUtils {
             JOptionPane.showMessageDialog(frame, res.getString(
                                                   "ExportKeyPairPrivateKeyAction.ExportPrivateKeyPkcs8Successful" +
                                                   ".message"),
-            		res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPkcs8.Title"),
+                                          res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPkcs8.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                                                   exportFile);
             JOptionPane.showMessageDialog(frame, message,
-            		res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPkcs8.Title"),
+                                          res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPkcs8.Title"),
                                           JOptionPane.WARNING_MESSAGE);
         }
     }
 
-	private static byte[] getPkcs8EncodedPrivateKey(PrivateKey privateKey, boolean pemEncode, Pkcs8PbeType pbeAlgorithm,
-			Password password) throws CryptoException, IOException {
-		byte[] encoded = null;
+    private static byte[] getPkcs8EncodedPrivateKey(PrivateKey privateKey, boolean pemEncode, Pkcs8PbeType pbeAlgorithm,
+                                                    Password password) throws CryptoException, IOException {
+        byte[] encoded = null;
 
-		if (pemEncode) {
-			if ((pbeAlgorithm != null) && (password != null)) {
-				encoded = Pkcs8Util.getEncryptedPem(privateKey, pbeAlgorithm, password).getBytes();
-			} else {
-				encoded = Pkcs8Util.getPem(privateKey).getBytes();
-			}
-		} else {
-			if ((pbeAlgorithm != null) && (password != null)) {
-				encoded = Pkcs8Util.getEncrypted(privateKey, pbeAlgorithm, password);
-			} else {
-				encoded = Pkcs8Util.get(privateKey);
-			}
-		}
+        if (pemEncode) {
+            if ((pbeAlgorithm != null) && (password != null)) {
+                encoded = Pkcs8Util.getEncryptedPem(privateKey, pbeAlgorithm, password).getBytes();
+            } else {
+                encoded = Pkcs8Util.getPem(privateKey).getBytes();
+            }
+        } else {
+            if ((pbeAlgorithm != null) && (password != null)) {
+                encoded = Pkcs8Util.getEncrypted(privateKey, pbeAlgorithm, password);
+            } else {
+                encoded = Pkcs8Util.get(privateKey);
+            }
+        }
 
-		return encoded;
-	} 
-	
+        return encoded;
+    }
+
     private static void exportEncodedPrivateKey(byte[] encoded, File exportFile) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(exportFile)) {
             fos.write(encoded);
@@ -112,17 +113,18 @@ public class PrivateKeyUtils {
 
     /**
      * Export a private key to format pvk
-     * 
-	 * @param privateKey            Private key
-	 * @param alias                 Name of alias or file name
-	 * @param frame                 The parent frame
-	 * @param applicationSettings   Password quality configuration
-	 * @param res                   ResourceBundle
+     *
+     * @param privateKey            Private key
+     * @param alias                 Name of alias or file name
+     * @param frame                 The parent frame
+     * @param applicationSettings   Password quality configuration
+     * @param res                   ResourceBundle
      * @throws CryptoException
      * @throws IOException
      */
-    public static void exportAsPvk(PrivateKey privateKey, String alias, JFrame frame, 
-    		ApplicationSettings applicationSettings, ResourceBundle res) throws CryptoException, IOException {
+    public static void exportAsPvk(PrivateKey privateKey, String alias, JFrame frame,
+                                   ApplicationSettings applicationSettings, ResourceBundle res)
+            throws CryptoException, IOException {
         File exportFile = null;
 
         try {
@@ -154,56 +156,57 @@ public class PrivateKeyUtils {
             JOptionPane.showMessageDialog(frame, res.getString(
                                                   "ExportKeyPairPrivateKeyAction.ExportPrivateKeyPvkSuccessful" +
                                                   ".message"),
-            		res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPvk.Title"),
+                                          res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPvk.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                                                   exportFile);
             JOptionPane.showMessageDialog(frame, message,
-            		res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPvk.Title"),
+                                          res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPvk.Title"),
                                           JOptionPane.WARNING_MESSAGE);
         }
     }
-    
-	private static byte[] getPvkEncodedPrivateKey(PrivateKey privateKey, int keyType, Password password,
-			boolean strongEncryption) throws CryptoException, IOException {
-		byte[] encoded = null;
 
-		if (password != null) {
-			if (privateKey instanceof RSAPrivateCrtKey) {
-				encoded = MsPvkUtil.getEncrypted((RSAPrivateCrtKey) privateKey, keyType, password, strongEncryption);
-			} else {
-				encoded = MsPvkUtil.getEncrypted((DSAPrivateKey) privateKey, password, strongEncryption);
-			}
-		} else {
-			if (privateKey instanceof RSAPrivateCrtKey) {
-				encoded = MsPvkUtil.get((RSAPrivateCrtKey) privateKey, keyType);
-			} else {
-				encoded = MsPvkUtil.get((DSAPrivateKey) privateKey);
-			}
-		}
+    private static byte[] getPvkEncodedPrivateKey(PrivateKey privateKey, int keyType, Password password,
+                                                  boolean strongEncryption) throws CryptoException, IOException {
+        byte[] encoded = null;
 
-		return encoded;
-	}
-	/**
-	 * 
-	 * Export a private key to format openssl
-	 * 
-	 * @param privateKey            Private key
-	 * @param alias                 Name of alias or file name
-	 * @param frame                 The parent frame
-	 * @param applicationSettings   Password quality configuration
-	 * @param res                   ResourceBundle
-	 * @throws CryptoException
-	 * @throws IOException
-	 */
-    public static void exportAsOpenSsl(PrivateKey privateKey, String alias, JFrame frame, 
-    		ApplicationSettings applicationSettings, ResourceBundle res) throws CryptoException, IOException {
+        if (password != null) {
+            if (privateKey instanceof RSAPrivateCrtKey) {
+                encoded = MsPvkUtil.getEncrypted((RSAPrivateCrtKey) privateKey, keyType, password, strongEncryption);
+            } else {
+                encoded = MsPvkUtil.getEncrypted((DSAPrivateKey) privateKey, password, strongEncryption);
+            }
+        } else {
+            if (privateKey instanceof RSAPrivateCrtKey) {
+                encoded = MsPvkUtil.get((RSAPrivateCrtKey) privateKey, keyType);
+            } else {
+                encoded = MsPvkUtil.get((DSAPrivateKey) privateKey);
+            }
+        }
+
+        return encoded;
+    }
+
+    /**
+     * Export a private key to format openssl
+     *
+     * @param privateKey          Private key
+     * @param alias               Name of alias or file name
+     * @param frame               The parent frame
+     * @param applicationSettings Password quality configuration
+     * @param res                 ResourceBundle
+     * @throws CryptoException
+     * @throws IOException
+     */
+    public static void exportAsOpenSsl(PrivateKey privateKey, String alias, JFrame frame,
+                                       ApplicationSettings applicationSettings, ResourceBundle res)
+            throws CryptoException, IOException {
         File exportFile = null;
 
         try {
-            DExportPrivateKeyOpenSsl dExportPrivateKeyOpenSsl = new DExportPrivateKeyOpenSsl(frame, alias,
-                                                                                             applicationSettings.getPasswordQualityConfig());
+            DExportPrivateKeyOpenSsl dExportPrivateKeyOpenSsl =
+                    new DExportPrivateKeyOpenSsl(frame, alias, applicationSettings.getPasswordQualityConfig());
             dExportPrivateKeyOpenSsl.setLocationRelativeTo(frame);
             dExportPrivateKeyOpenSsl.setVisible(true);
 
@@ -230,31 +233,32 @@ public class PrivateKeyUtils {
             JOptionPane.showMessageDialog(frame, res.getString(
                                                   "ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSslSuccessful" +
                                                   ".message"),
-            		res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSsl.Title"),
+                                          res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSsl.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                                                   exportFile);
             JOptionPane.showMessageDialog(frame, message,
-            		res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSsl.Title"),
+                                          res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSsl.Title"),
                                           JOptionPane.WARNING_MESSAGE);
         }
     }
-    
-	private static byte[] getOpenSslEncodedPrivateKey(PrivateKey privateKey, boolean pemEncoded, OpenSslPbeType pbeAlgorithm,
-			Password password) throws CryptoException, IOException {
-		byte[] encoded = null;
 
-		if (pemEncoded) {
-			if ((pbeAlgorithm != null) && (password != null)) {
-				encoded = OpenSslPvkUtil.getEncrypted(privateKey, pbeAlgorithm, password).getBytes();
-			} else {
-				encoded = OpenSslPvkUtil.getPem(privateKey).getBytes();
-			}
-		} else {
-			encoded = OpenSslPvkUtil.get(privateKey);
-		}
+    private static byte[] getOpenSslEncodedPrivateKey(PrivateKey privateKey, boolean pemEncoded,
+                                                      OpenSslPbeType pbeAlgorithm, Password password)
+            throws CryptoException, IOException {
+        byte[] encoded = null;
 
-		return encoded;
-	}
+        if (pemEncoded) {
+            if ((pbeAlgorithm != null) && (password != null)) {
+                encoded = OpenSslPvkUtil.getEncrypted(privateKey, pbeAlgorithm, password).getBytes();
+            } else {
+                encoded = OpenSslPvkUtil.getPem(privateKey).getBytes();
+            }
+        } else {
+            encoded = OpenSslPvkUtil.get(privateKey);
+        }
+
+        return encoded;
+    }
 }

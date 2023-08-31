@@ -92,7 +92,7 @@ public class DViewPrivateKey extends JEscDialog {
 
     private String alias;
     private PrivateKey privateKey;
-    
+
     private ApplicationSettings applicationSettings;
 
     /**
@@ -159,11 +159,11 @@ public class DViewPrivateKey extends JEscDialog {
                                                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jspEncoded.setBorder(jtfFormat.getBorder());
 
-        
+
         jbExport = new JButton(res.getString("DViewPrivateKey.jbExport.text"));
         PlatformUtil.setMnemonic(jbExport, res.getString("DViewPrivateKey.jbExport.mnemonic").charAt(0));
         jbExport.setToolTipText(res.getString("DViewPrivateKey.jbExport.tooltip"));
-        
+
         jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
         jbPem.setToolTipText(res.getString("DViewPrivateKey.jbPem.tooltip"));
@@ -189,7 +189,7 @@ public class DViewPrivateKey extends JEscDialog {
         pane.add(jtfFormat, "growx, pushx, wrap");
         pane.add(jlEncoded, "");
         pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
-        
+
         pane.add(jbExport, "spanx, split");
         pane.add(jbPem, "");
         pane.add(jbFields, "");
@@ -249,7 +249,7 @@ public class DViewPrivateKey extends JEscDialog {
     }
 
     private void exportPressed() {
-    	KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+        KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
         DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType((JFrame) this.getParent(), keyPairType);
         dExportPrivateKeyType.setLocationRelativeTo(null);
         dExportPrivateKeyType.setVisible(true);
@@ -257,23 +257,24 @@ public class DViewPrivateKey extends JEscDialog {
         if (!dExportPrivateKeyType.exportTypeSelected()) {
             return;
         }
-        try
-        {
+        try {
             if (dExportPrivateKeyType.exportPkcs8()) {
-            	PrivateKeyUtils.exportAsPkcs8(privateKey, alias,(JFrame) this.getParent(), applicationSettings, resActions);
+                PrivateKeyUtils.exportAsPkcs8(privateKey, alias, (JFrame) this.getParent(), applicationSettings,
+                                              resActions);
             } else if (dExportPrivateKeyType.exportPvk()) {
-            	PrivateKeyUtils.exportAsPvk(privateKey, alias, (JFrame) this.getParent(), applicationSettings, resActions);
+                PrivateKeyUtils.exportAsPvk(privateKey, alias, (JFrame) this.getParent(), applicationSettings,
+                                            resActions);
             } else {
-            	PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, (JFrame) this.getParent(), applicationSettings, resActions);
+                PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, (JFrame) this.getParent(), applicationSettings,
+                                                resActions);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             DError.displayError((JFrame) this.getParent(), ex);
         }
 
-	}
-    
-	private void populateDialog() throws CryptoException {
+    }
+
+    private void populateDialog() throws CryptoException {
         KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
 
         jtfAlgorithm.setText(keyInfo.getAlgorithm());

@@ -19,11 +19,8 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -43,11 +40,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.Password;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
@@ -59,7 +54,10 @@ import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.password.JPasswordQualityField;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to display options to export a private key from a KeyStore entry
@@ -86,7 +84,6 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     private JLabel jlExportFile;
     private JTextField jtfExportFile;
     private JButton jbBrowse;
-    private JPanel jpButtons;
     private JButton jbExport;
     private JButton jbCancel;
 
@@ -114,44 +111,20 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
-        gbcLbl.gridx = 0;
-        gbcLbl.gridwidth = 3;
-        gbcLbl.gridheight = 1;
-        gbcLbl.insets = new Insets(5, 5, 5, 5);
-        gbcLbl.anchor = GridBagConstraints.EAST;
-
-        GridBagConstraints gbcEdCtrl = new GridBagConstraints();
-        gbcEdCtrl.gridx = 3;
-        gbcEdCtrl.gridwidth = 3;
-        gbcEdCtrl.gridheight = 1;
-        gbcEdCtrl.insets = new Insets(5, 5, 5, 5);
-        gbcEdCtrl.anchor = GridBagConstraints.WEST;
-
         jlEncrypt = new JLabel(res.getString("DExportPrivateKeyPkcs8.jlEncrypt.text"));
-        GridBagConstraints gbc_jlEncrypt = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlEncrypt.gridy = 0;
 
         jcbEncrypt = new JCheckBox();
         jcbEncrypt.setSelected(true);
         jcbEncrypt.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jcbEncrypt.tooltip"));
-        GridBagConstraints gbc_jcbEncrypt = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbEncrypt.gridy = 0;
 
         jlPbeAlg = new JLabel(res.getString("DExportPrivateKeyPkcs8.jlPbeAlg.text"));
-        GridBagConstraints gbc_jlPbeAlg = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlPbeAlg.gridy = 1;
 
         jcbPbeAlg = new JComboBox<>();
         populatePbeAlgs();
         jcbPbeAlg.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jcbPbeAlg.tooltip"));
         jcbPbeAlg.setSelectedIndex(0);
-        GridBagConstraints gbc_jcbPbeAlg = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbPbeAlg.gridy = 1;
 
         jlPassword = new JLabel(res.getString("DExportPrivateKeyPkcs8.jlPassword.text"));
-        GridBagConstraints gbc_jlPassword = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlPassword.gridy = 2;
 
         if (passwordQualityConfig.getEnabled()) {
             if (passwordQualityConfig.getEnforced()) {
@@ -164,44 +137,51 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
         }
 
         jpfPassword.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jpqfPassword.tooltip"));
-        GridBagConstraints gbc_jpfPassword = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jpfPassword.gridy = 2;
 
         jlConfirmPassword = new JLabel(res.getString("DExportPrivateKeyPkcs8.jlConfirmPassword.text"));
-        GridBagConstraints gbc_jlConfirmPassword = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlConfirmPassword.gridy = 3;
 
         jpfConfirmPassword = new JPasswordField(15);
         jpfConfirmPassword.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jpfConfirmPassword.tooltip"));
-        GridBagConstraints gbc_jpfConfirmPassword = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jpfConfirmPassword.gridy = 3;
 
         jlExportPem = new JLabel(res.getString("DExportPrivateKeyPkcs8.jlExportPem.text"));
-        GridBagConstraints gbc_jlExportPem = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportPem.gridy = 4;
 
         jcbExportPem = new JCheckBox();
         jcbExportPem.setSelected(true);
         jcbExportPem.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jcbExportPem.tooltip"));
-        GridBagConstraints gbc_jcbExportPem = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbExportPem.gridy = 4;
 
         jlExportFile = new JLabel(res.getString("DExportPrivateKeyPkcs8.jlExportFile.text"));
-        GridBagConstraints gbc_jlExportFile = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportFile.gridy = 5;
 
         jtfExportFile = new JTextField(30);
         jtfExportFile.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jtfExportFile.tooltip"));
-        GridBagConstraints gbc_jtfExportFile = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jtfExportFile.gridy = 5;
-        gbc_jtfExportFile.gridwidth = 6;
 
         jbBrowse = new JButton(res.getString("DExportPrivateKeyPkcs8.jbBrowse.text"));
         jbBrowse.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jbBrowse.tooltip"));
         PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportPrivateKeyPkcs8.jbBrowse.mnemonic").charAt(0));
-        GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jbBrowse.gridy = 5;
-        gbc_jbBrowse.gridx = 9;
+
+        jbExport = new JButton(res.getString("DExportPrivateKeyPkcs8.jbExport.text"));
+        jbCancel = new JButton(res.getString("DExportPrivateKeyPkcs8.jbCancel.text"));
+
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.add(jlEncrypt, "");
+        pane.add(jcbEncrypt, "wrap");
+        pane.add(jlPbeAlg, "");
+        pane.add(jcbPbeAlg, "growx, pushx, wrap");
+        pane.add(jlPassword, "");
+        pane.add(jpfPassword, "wrap");
+        pane.add(jlConfirmPassword, "");
+        pane.add(jpfConfirmPassword, "wrap");
+        pane.add(jlExportPem, "");
+        pane.add(jcbExportPem, "wrap");
+        pane.add(jlExportFile, "");
+        pane.add(jtfExportFile, "growx, split");
+        pane.add(jbBrowse, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jbExport, "right, spanx, split, tag ok");
+        pane.add(jbCancel, "tag cancel");
+
+        // actions
 
         jbBrowse.addActionListener(evt -> {
             try {
@@ -211,29 +191,6 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
                 CursorUtil.setCursorFree(DExportPrivateKeyPkcs8.this);
             }
         });
-
-        jpOptions = new JPanel(new GridBagLayout());
-        jpOptions.setBorder(new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()),
-                                               new EmptyBorder(5, 5, 5, 5)));
-
-        jpOptions.add(jlEncrypt, gbc_jlEncrypt);
-        jpOptions.add(jcbEncrypt, gbc_jcbEncrypt);
-
-        jpOptions.add(jlPbeAlg, gbc_jlPbeAlg);
-        jpOptions.add(jcbPbeAlg, gbc_jcbPbeAlg);
-
-        jpOptions.add(jlPassword, gbc_jlPassword);
-        jpOptions.add(jpfPassword, gbc_jpfPassword);
-
-        jpOptions.add(jlConfirmPassword, gbc_jlConfirmPassword);
-        jpOptions.add(jpfConfirmPassword, gbc_jpfConfirmPassword);
-
-        jpOptions.add(jlExportPem, gbc_jlExportPem);
-        jpOptions.add(jcbExportPem, gbc_jcbExportPem);
-
-        jpOptions.add(jlExportFile, gbc_jlExportFile);
-        jpOptions.add(jtfExportFile, gbc_jtfExportFile);
-        jpOptions.add(jbBrowse, gbc_jbBrowse);
 
         jcbEncrypt.addItemListener(evt -> {
             if (jcbEncrypt.isSelected()) {
@@ -253,7 +210,6 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
             }
         });
 
-        jbExport = new JButton(res.getString("DExportPrivateKeyPkcs8.jbExport.text"));
         PlatformUtil.setMnemonic(jbExport, res.getString("DExportPrivateKeyPkcs8.jbExport.mnemonic").charAt(0));
         jbExport.setToolTipText(res.getString("DExportPrivateKeyPkcs8.jbExport.tooltip"));
         jbExport.addActionListener(evt -> {
@@ -265,7 +221,6 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
             }
         });
 
-        jbCancel = new JButton(res.getString("DExportPrivateKeyPkcs8.jbCancel.text"));
         jbCancel.addActionListener(evt -> cancelPressed());
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
@@ -277,12 +232,6 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
                 cancelPressed();
             }
         });
-
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpOptions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -365,11 +314,11 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     private void populatePbeAlgs() {
         Pkcs8PbeType[] pbeAlgs = Pkcs8PbeType.values();
 
-        for (int i = 0; i < pbeAlgs.length; i++) {
-            jcbPbeAlg.addItem(pbeAlgs[i]);
+        for (Pkcs8PbeType pbeAlg : pbeAlgs) {
+            jcbPbeAlg.addItem(pbeAlg);
         }
 
-        jcbPbeAlg.setSelectedIndex(0);
+        jcbPbeAlg.setSelectedItem(Pkcs8PbeType.PBES2_AES256_SHA256);
     }
 
     private void browsePressed() {
@@ -473,5 +422,10 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.run(new DExportPrivateKeyPkcs8(new JFrame(), "alias", new PasswordQualityConfig(false, false, 1)));
     }
 }

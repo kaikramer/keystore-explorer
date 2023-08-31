@@ -27,8 +27,6 @@ import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.AlgorithmParameters;
-import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -37,13 +35,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.ResourceBundle;
-
-import javax.crypto.Cipher;
-import javax.crypto.EncryptedPrivateKeyInfo;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -56,7 +47,11 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.InputDecryptorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.OutputEncryptor;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfoBuilder;
+import org.bouncycastle.pkcs.jcajce.JcePKCSPBEOutputEncryptorBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
@@ -108,34 +103,18 @@ public class Pkcs8Util {
     public static byte[] getEncrypted(PrivateKey privateKey, Pkcs8PbeType pbeType, Password password)
             throws CryptoException, IOException {
         try {
-            byte[] pkcs8 = get(privateKey);
+            JcePKCSPBEOutputEncryptorBuilder encryptorBuilder = new JcePKCSPBEOutputEncryptorBuilder(pbeType.oid());
+            encryptorBuilder.setProvider(KSE.BC);
+            if (pbeType.prf() != null) {
+                encryptorBuilder.setPRF(pbeType.prf());
+            }
+            OutputEncryptor encryptor = encryptorBuilder.build(password.toCharArray());
 
-            // Generate PBE secret key from password
-            SecretKeyFactory keyFact = SecretKeyFactory.getInstance(pbeType.jce());
-            PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray());
-            SecretKey pbeKey = keyFact.generateSecret(pbeKeySpec);
+            PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo =
+                    new PKCS8EncryptedPrivateKeyInfoBuilder(get(privateKey)).build(encryptor);
 
-            // Generate random salt and iteration count
-            byte[] salt = generateSalt();
-            int iterationCount = generateIterationCount();
-
-            // Store in algorithm parameters
-            PBEParameterSpec pbeParameterSpec = new PBEParameterSpec(salt, iterationCount);
-            AlgorithmParameters params = AlgorithmParameters.getInstance(pbeType.jce());
-            params.init(pbeParameterSpec);
-
-            // Create PBE cipher from key and params
-            Cipher cipher = Cipher.getInstance(pbeType.jce());
-            cipher.init(Cipher.ENCRYPT_MODE, pbeKey, params);
-
-            // Encrypt key
-            byte[] encPkcs8 = cipher.doFinal(pkcs8);
-
-            // Create and return encrypted private key information
-            EncryptedPrivateKeyInfo encPrivateKeyInfo = new EncryptedPrivateKeyInfo(params, encPkcs8);
-
-            return encPrivateKeyInfo.getEncoded();
-        } catch (GeneralSecurityException ex) {
+            return encryptedPrivateKeyInfo.getEncoded();
+        } catch (OperatorCreationException ex) {
             throw new CryptoException("NoEncryptPkcs8PrivateKey.exception.message", ex);
         }
     }
