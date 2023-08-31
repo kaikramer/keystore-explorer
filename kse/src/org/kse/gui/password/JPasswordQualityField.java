@@ -243,27 +243,24 @@ public class JPasswordQualityField extends JPanel {
 
     private int calculatePasswordQuality() {
         // @formatter:off
-
-		/*
-		 * Calculate password quality in range 0-100. Quality determined by: -
-		 * Number of characters - Contains numbers - Non-alphanumeric characters
-		 * - Contains both upper and lower case characters
-		 */
-
-		// @formatter:on
+        /*
+         * Calculate password quality in range 0-100. Quality determined by:
+         *  - Number of characters
+         *  - Contains numbers
+         *  - Non-alphanumeric characters
+         *  - Contains both upper and lower case characters
+         */
+        // @formatter:on
 
         char[] password = jpfPassword.getPassword();
 
         int length = password.length;
 
-        if (length > 6) {
-            length = 6; // Maximum score for length is six
+        if (length > 12) {
+            length = 12; // Maximum score for length
         }
 
-        /*
-         * Get number of digits and symbols in password and whether upper and
-         * lower case characters are used
-         */
+        // Get number of digits and symbols in password and whether upper and lower case characters are used
         int digits = 0;
         int symbols = 0;
 
@@ -289,17 +286,15 @@ public class JPasswordQualityField extends JPanel {
         }
 
         if ((digits > 0) && (symbols == 0) && (!lower) && (!upper)) {
-            return 0; // Password contains only digits - score zero
+            return 2; // Password contains only digits
         }
 
         if ((digits == 0) && (symbols == 0) && (lower) && (!upper)) {
-            return 0; // Password contains only lower case characters - score
-            // zero
+            return 2; // Password contains only lower case characters
         }
 
         if ((digits == 0) && (symbols == 0) && (!lower) && (upper)) {
-            return 0; // Password contains only upper case characters - score
-            // zero
+            return 2; // Password contains only upper case characters
         }
 
         if (digits > 3) {
@@ -317,7 +312,7 @@ public class JPasswordQualityField extends JPanel {
         }
 
         // Calculate overall quality
-        int quality = ((length * 10) - 30) + (digits * 10) + (symbols * 15) + (lowerUpper * 10);
+        int quality = ((length * 10) - 80) + (digits * 10) + (symbols * 15) + (lowerUpper * 10);
 
         // Force into range 0-100
         if (quality < 0) {
