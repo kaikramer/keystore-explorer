@@ -360,7 +360,8 @@ public final class X509CertUtil {
                     return true;
                 }
             } catch (CryptoException e) {
-                // wrong certificate, continue
+                // ignore technical verification issues as they are not relevant for finding chains
+                return true;
             }
         }
         return false;
