@@ -19,7 +19,7 @@
  */
 package org.kse.gui.dialogs.extensions;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -44,8 +44,6 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -55,12 +53,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
@@ -70,11 +66,19 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.KeyPurposeId;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.publickey.KeyIdentifierGenerator;
+import org.kse.crypto.x509.ExtendedKeyUsageType;
 import org.kse.crypto.x509.GeneralNameUtil;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
@@ -91,6 +95,8 @@ import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.oid.ObjectIdComparator;
 import org.kse.utilities.os.OperatingSystem;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Allows selection of X.509 Extensions to add to a certificate.
@@ -181,7 +187,7 @@ public class DAddExtensions extends JEscDialog {
     private void initComponents() {
         jbAdd = new JButton(
                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/add_ext.png"))));
-        jbAdd.setMargin(new Insets(2, 2, 0, 0));
+        jbAdd.setMargin(new Insets(2, 2, 2, 2));
         jbAdd.setToolTipText(res.getString("DAddExtensions.jbAdd.tooltip"));
         jbAdd.setMnemonic(res.getString("DAddExtensions.jbAdd.mnemonic").charAt(0));
 
@@ -196,7 +202,7 @@ public class DAddExtensions extends JEscDialog {
 
         jbEdit = new JButton(
                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/edit_ext.png"))));
-        jbEdit.setMargin(new Insets(2, 2, 0, 0));
+        jbEdit.setMargin(new Insets(2, 2, 2, 2));
         jbEdit.setToolTipText(res.getString("DAddExtensions.jbEdit.tooltip"));
         jbEdit.setMnemonic(res.getString("DAddExtensions.jbEdit.mnemonic").charAt(0));
 
@@ -213,7 +219,7 @@ public class DAddExtensions extends JEscDialog {
 
         jbToggleCriticality = new JButton(new ImageIcon(
                 Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/toggle_ext_crit.png"))));
-        jbToggleCriticality.setMargin(new Insets(2, 2, 0, 0));
+        jbToggleCriticality.setMargin(new Insets(2, 2, 2, 2));
         jbToggleCriticality.setToolTipText(res.getString("DAddExtensions.jbToggleCriticality.tooltip"));
         jbToggleCriticality.setMnemonic(res.getString("DAddExtensions.jbToggleCriticality.mnemonic").charAt(0));
 
@@ -230,7 +236,7 @@ public class DAddExtensions extends JEscDialog {
 
         jbRemove = new JButton(new ImageIcon(
                 Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/remove_ext.png"))));
-        jbRemove.setMargin(new Insets(2, 2, 0, 0));
+        jbRemove.setMargin(new Insets(2, 2, 2, 2));
         jbRemove.setToolTipText(res.getString("DAddExtensions.jbRemove.tooltip"));
         jbRemove.setMnemonic(res.getString("DAddExtensions.jbRemove.mnemonic").charAt(0));
 
@@ -244,18 +250,6 @@ public class DAddExtensions extends JEscDialog {
                 CursorUtil.setCursorFree(DAddExtensions.this);
             }
         });
-
-        jpExtensionButtons = new JPanel();
-        jpExtensionButtons.setLayout(new BoxLayout(jpExtensionButtons, BoxLayout.Y_AXIS));
-        jpExtensionButtons.add(Box.createVerticalGlue());
-        jpExtensionButtons.add(jbAdd);
-        jpExtensionButtons.add(Box.createVerticalStrut(3));
-        jpExtensionButtons.add(jbEdit);
-        jpExtensionButtons.add(Box.createVerticalStrut(3));
-        jpExtensionButtons.add(jbToggleCriticality);
-        jpExtensionButtons.add(Box.createVerticalStrut(3));
-        jpExtensionButtons.add(jbRemove);
-        jpExtensionButtons.add(Box.createVerticalGlue());
 
         ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
         jtExtensions = new JKseTable(extensionsTableModel);
@@ -347,6 +341,7 @@ public class DAddExtensions extends JEscDialog {
                                                            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jspExtensionsTable.getViewport().setBackground(jtExtensions.getBackground());
+        jspExtensionsTable.setPreferredSize(new Dimension(400, 250));
 
         jbSelectStandardTemplate = new JButton(res.getString("DAddExtensions.jbSelectStandardTemplate.text"));
         jbSelectStandardTemplate.setMnemonic(
@@ -388,24 +383,6 @@ public class DAddExtensions extends JEscDialog {
             }
         });
 
-        jpLoadSaveTemplate = new JPanel();
-        jpLoadSaveTemplate.setLayout(new BoxLayout(jpLoadSaveTemplate, BoxLayout.X_AXIS));
-        jpLoadSaveTemplate.add(Box.createHorizontalGlue());
-        jpLoadSaveTemplate.add(jbSelectStandardTemplate);
-        jpLoadSaveTemplate.add(Box.createHorizontalStrut(5));
-        jpLoadSaveTemplate.add(jbLoadTemplate);
-        jpLoadSaveTemplate.add(Box.createHorizontalStrut(5));
-        jpLoadSaveTemplate.add(jbSaveTemplate);
-
-        jpExtensions = new JPanel(new BorderLayout(5, 5));
-        jpExtensions.setPreferredSize(new Dimension(450, 200));
-        jpExtensions.add(jspExtensionsTable, BorderLayout.CENTER);
-        jpExtensions.add(jpExtensionButtons, BorderLayout.EAST);
-        jpExtensions.add(jpLoadSaveTemplate, BorderLayout.SOUTH);
-
-        jpExtensions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                  new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
-
         jbOK = new JButton(res.getString("DAddExtensions.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
@@ -422,15 +399,25 @@ public class DAddExtensions extends JEscDialog {
             }
         });
 
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         reloadExtensionsTable();
         selectFirstExtensionInTable();
         updateButtonControls();
 
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpExtensions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]", "[]"));
+        pane.add(jspExtensionsTable, "growx, pushx");
+        pane.add(jbAdd, "split 4, flowy");
+        pane.add(jbEdit);
+        pane.add(jbToggleCriticality);
+        pane.add(jbRemove, "wrap rel");
+        pane.add(jbSelectStandardTemplate, "right, spanx, split 3");
+        pane.add(jbLoadTemplate);
+        pane.add(jbSaveTemplate);
+        pane.add(new JSeparator(), "spanx, growx");
+        pane.add(jpButtons, "right, growx, spanx");
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -889,7 +876,32 @@ public class DAddExtensions extends JEscDialog {
     public static void main(String[] args) throws Exception {
         final KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
 
-        DAddExtensions dialog = new DAddExtensions(new JFrame(), "Add Extensions", new X509ExtensionSet(),
+        X509ExtensionSet extensionSet = new X509ExtensionSet();
+
+        KeyIdentifierGenerator akiGenerator = new KeyIdentifierGenerator(keyPair.getPublic());
+        AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(akiGenerator.generate160BitHashId());
+        byte[] akiEncoded = X509Ext.wrapInOctetString(aki.getEncoded());
+        extensionSet.addExtension(X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid(), false, akiEncoded);
+
+        KeyIdentifierGenerator skiGenerator = new KeyIdentifierGenerator(keyPair.getPublic());
+        SubjectKeyIdentifier ski = new SubjectKeyIdentifier(skiGenerator.generate160BitHashId());
+        byte[] skiEncoded = X509Ext.wrapInOctetString(ski.getEncoded());
+        extensionSet.addExtension(X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid(), false, skiEncoded);
+
+        BasicConstraints bc = new BasicConstraints(true);
+        byte[] bcEncoded = X509Ext.wrapInOctetString(bc.getEncoded());
+        extensionSet.addExtension(X509ExtensionType.BASIC_CONSTRAINTS.oid(), true, bcEncoded);
+
+        KeyUsage ku = new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyEncipherment);
+        byte[] kuEncoded = X509Ext.wrapInOctetString(ku.getEncoded());
+        extensionSet.addExtension(X509ExtensionType.KEY_USAGE.oid(), true, kuEncoded);
+
+        ExtendedKeyUsage eku = new ExtendedKeyUsage(new KeyPurposeId[] {
+                KeyPurposeId.getInstance(new ASN1ObjectIdentifier(ExtendedKeyUsageType.SERVER_AUTH.oid())) });
+        byte[] ekuEncoded = X509Ext.wrapInOctetString(eku.getEncoded());
+        extensionSet.addExtension(X509ExtensionType.EXTENDED_KEY_USAGE.oid(), false, ekuEncoded);
+
+        DAddExtensions dialog = new DAddExtensions(new JFrame(), "Add Extensions", extensionSet,
                                                    keyPair.getPublic(), new X500Name("cn=test"), BigInteger.ONE,
                                                    keyPair.getPublic(), new X500Name("cn=www.example.com"));
         DialogViewer.run(dialog);
