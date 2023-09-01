@@ -305,32 +305,32 @@ public class DGenerateKeyPairCert extends JEscDialog {
         pack();
     }
 
-	private void transferNameExtPressed() {
-		DListCertificatesKS dialog = new DListCertificatesKS((JFrame) getParent(), kseFrame);
-		dialog.setLocationRelativeTo(this);
-		dialog.setVisible(true);
-		X509Certificate certificate = dialog.getCertificate();
-		if (certificate != null) {
-
-			jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
-			extensions = new X509ExtensionSet(certificate);
-			//upd AUTHORITY_KEY_IDENTIFIER and SUBJECT_KEY_IDENTIFIER
-			try {
-				if (issuerCert == null) {
-					String serialNumberStr = jtfSerialNumber.getText().trim();
-					BigInteger serialNumber = parseDecOrHex(serialNumberStr);
-					X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), keyPair.getPublic(),
-							jdnName.getDistinguishedName(), serialNumber);
-				} else {
-					X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), issuerCert.getPublicKey(),
-							X500NameUtils.x500PrincipalToX500Name(issuerCert.getSubjectX500Principal()),
-							issuerCert.getSerialNumber());
-				}
-			} catch (CryptoException | IOException | NumberFormatException e) {
-				DError.displayError(this, e);
-			}
-		}
-	}
+    private void transferNameExtPressed() {
+        DListCertificatesKS dialog = new DListCertificatesKS((JFrame) getParent(), kseFrame);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+        X509Certificate certificate = dialog.getCertificate();
+        if (certificate != null) {
+            jdnName.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(certificate.getSubjectX500Principal()));
+            extensions = new X509ExtensionSet(certificate);
+            // update AUTHORITY_KEY_IDENTIFIER and SUBJECT_KEY_IDENTIFIER
+            try {
+                if (issuerCert == null) {
+                    String serialNumberStr = jtfSerialNumber.getText().trim();
+                    BigInteger serialNumber = parseDecOrHex(serialNumberStr);
+                    X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), keyPair.getPublic(),
+                                                   jdnName.getDistinguishedName(), serialNumber);
+                } else {
+                    X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), issuerCert.getPublicKey(),
+                                                   X500NameUtils.x500PrincipalToX500Name(
+                                                           issuerCert.getSubjectX500Principal()),
+                                                   issuerCert.getSerialNumber());
+                }
+            } catch (CryptoException | IOException | NumberFormatException e) {
+                DError.displayError(this, e);
+            }
+        }
+    }
 
     private void addExtensionsPressed() {
         PublicKey subjectPublicKey = keyPair.getPublic();

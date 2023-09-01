@@ -33,17 +33,14 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableRowSorter;
 
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.crypto.CryptoException;
 import org.kse.gui.JKseTable;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KeyStoreTableModel;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.history.KeyStoreHistory;
 
 /**
@@ -89,10 +86,9 @@ public class JListCertificates extends JPanel {
                                                           ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspListCertsTable.getViewport().setBackground(jtListCerts.getBackground());
 
-        this.setLayout(new BorderLayout(5, 5));
+        this.setLayout(new BorderLayout());
         this.setPreferredSize(new Dimension(800, 300));
         this.add(jspListCertsTable, BorderLayout.CENTER);
-        this.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5)));
     }
 
     public void load(KeyStoreHistory keyStoreHistory) {

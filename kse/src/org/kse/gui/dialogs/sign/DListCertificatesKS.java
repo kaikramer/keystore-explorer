@@ -105,15 +105,15 @@ public class DListCertificatesKS extends JEscDialog {
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
 
-        JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
+        JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
 
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+        pane.setLayout(new MigLayout("insets dialog", "[left]rel[]", "[]"));
 
-        pane.add(jlKeyStore);
+        pane.add(jlKeyStore, "split");
         pane.add(jcbKeyStore);
         pane.add(jbLoadKeystore, "wrap");
-        pane.add(jListCertificates, "spanx, growx, wrap");
+        pane.add(jListCertificates, "spanx, push, grow, wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jpButtons, "right, spanx");
 
@@ -121,9 +121,7 @@ public class DListCertificatesKS extends JEscDialog {
             updateCertificateControls();
         });
 
-        jbLoadKeystore.addActionListener(evt -> {
-            updateKeyStoreList(evt);
-        });
+        jbLoadKeystore.addActionListener(this::updateKeyStoreList);
 
         // allow to close dialog with enter key
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -142,7 +140,8 @@ public class DListCertificatesKS extends JEscDialog {
 
         populate();
 
-        setResizable(false);
+        setMinimumSize(new Dimension(400, 200));
+        setResizable(true);
 
         getRootPane().setDefaultButton(jbOK);
 
