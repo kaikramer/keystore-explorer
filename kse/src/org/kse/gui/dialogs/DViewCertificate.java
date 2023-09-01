@@ -442,19 +442,15 @@ public class DViewCertificate extends JEscDialog {
     }
 
     private DefaultMutableTreeNode findIssuer(X509Certificate cert, DefaultMutableTreeNode node) {
-        // Matches on certificate's distinguished name
-
         // If certificate is self-signed then finding an issuer is irrelevant
         if (cert.getIssuerX500Principal().equals(cert.getSubjectX500Principal())) {
             return null;
         }
 
-        Object nodeObj = node.getUserObject();
+        if (node.getUserObject() instanceof X509Certificate) {
+            X509Certificate possibleIssuerCert = (X509Certificate) node.getUserObject();
 
-        if (nodeObj instanceof X509Certificate) {
-            X509Certificate nodeCert = (X509Certificate) nodeObj;
-
-            if (cert.getIssuerX500Principal().equals(nodeCert.getSubjectX500Principal())) {
+            if (X509CertUtil.isIssuedBy(cert, possibleIssuerCert)) {
                 return node;
             }
         }
@@ -478,8 +474,8 @@ public class DViewCertificate extends JEscDialog {
             return false;
         }
 
-        for (X509Certificate certToTest : certSet) {
-            if (cert.getIssuerX500Principal().equals(certToTest.getSubjectX500Principal())) {
+        for (X509Certificate possibleIssuer : certSet) {
+            if (X509CertUtil.isIssuedBy(cert, possibleIssuer)) {
                 return true;
             }
         }

@@ -327,20 +327,43 @@ public final class X509CertUtil {
     }
 
     private static X509Certificate findIssuedCert(X509Certificate issuerCert, X509Certificate[] certs) {
-        // Find a certificate issued by the supplied certificate based on  distiguished name
+        // Find a certificate issued by the supplied certificate
         for (X509Certificate cert : certs) {
             if (issuerCert.getSubjectX500Principal().equals(cert.getSubjectX500Principal()) &&
-                issuerCert.getIssuerX500Principal().equals(cert.getIssuerX500Principal())) {
+                issuerCert.getIssuerX500Principal().equals(cert.getIssuerX500Principal()) &&
+                issuerCert.getSerialNumber().equals(cert.getSerialNumber())) {
                 // Checked certificate is issuer - ignore it
                 continue;
             }
 
-            if (issuerCert.getSubjectX500Principal().equals(cert.getIssuerX500Principal())) {
+            if (isIssuedBy(cert, issuerCert)) {
                 return cert;
             }
         }
-
         return null;
+    }
+
+    /**
+     * Checks if certificate was issued by the other certificate by checking first the DN and only if the issuer DN
+     * matches the subject DN, then the signature is verified. This avoids the slow verification operation when it is
+     * impossible that the second certificate has signed the first one.
+     *
+     * @param cert The issued certificate
+     * @param issuerCert The possible issuer certificate
+     * @return True, if issuerCert has issued cert, false otherwise
+     */
+    public static boolean isIssuedBy(X509Certificate cert, X509Certificate issuerCert) {
+        if (issuerCert.getSubjectX500Principal().equals(cert.getIssuerX500Principal())) {
+            // possible candidate found, now check if signature matches the issuer key
+            try {
+                if (verifyCertificate(cert, issuerCert)) {
+                    return true;
+                }
+            } catch (CryptoException e) {
+                // wrong certificate, continue
+            }
+        }
+        return false;
     }
 
     /**
