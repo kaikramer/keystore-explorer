@@ -25,12 +25,15 @@ import javax.swing.JLabel;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.kse.utilities.os.OperatingSystem;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 
 /**
  * Look and Feel utility methods.
@@ -60,10 +63,12 @@ public class LnfUtil {
      */
     public static void installLnfs() {
         // Flat LaF
-        UIManager.installLookAndFeel("Flat Light", com.formdev.flatlaf.FlatLightLaf.class.getName());
-        UIManager.installLookAndFeel("Flat Dark", com.formdev.flatlaf.FlatDarkLaf.class.getName());
-        UIManager.installLookAndFeel("Flat IntelliJ", com.formdev.flatlaf.FlatIntelliJLaf.class.getName());
-        UIManager.installLookAndFeel("Flat Darcula", com.formdev.flatlaf.FlatDarculaLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf Light", FlatLightLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf Dark", FlatDarkLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf IntelliJ", FlatIntelliJLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf Darcula", FlatDarculaLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf macOS Light", FlatMacLightLaf.class.getName());
+        UIManager.installLookAndFeel("FlatLaf macOS Dark", FlatMacDarkLaf.class.getName());
 
         // enable "eye" on password fields
         UIManager.put("PasswordField.showRevealButton", true);
@@ -88,7 +93,7 @@ public class LnfUtil {
     }
 
     /**
-     * Is a Mac l&amp;f (Aqua) currently being used?
+     * Is a macOS l&amp;f currently being used?
      *
      * @return True if it is
      */
@@ -96,16 +101,10 @@ public class LnfUtil {
         String lnfClass = UIManager.getLookAndFeel().getClass().getName();
 
         return OperatingSystem.isMacOs() &&
-               (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) || lnfClass.equals(VAQUA_LAF_CLASS));
-    }
-
-    /**
-     * Is the Metal l&amp;f currently being used?
-     *
-     * @return True if it is
-     */
-    public static boolean usingMetalLnf() {
-        return usingLnf(MetalLookAndFeel.class.getName());
+               (UIManager.getSystemLookAndFeelClassName().equals(lnfClass) ||
+                lnfClass.equals(FlatMacLightLaf.class.getName()) ||
+                lnfClass.equals(FlatMacDarkLaf.class.getName()) ||
+                lnfClass.equals(VAQUA_LAF_CLASS));
     }
 
     /**
@@ -132,6 +131,7 @@ public class LnfUtil {
      */
     public static boolean isDarkLnf() {
         return UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarkLaf.class) ||
+               UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatMacDarkLaf.class) ||
                UIManager.getLookAndFeel().getClass().isAssignableFrom(FlatDarculaLaf.class);
     }
 
