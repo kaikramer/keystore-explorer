@@ -115,7 +115,7 @@ public class EccUtilTest extends CryptoTestsBase {
         assertThat(asn1TaggedObject.getTagNo()).isEqualTo(0);
 
         // check that EC parameters contain the right curve name
-        ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) asn1TaggedObject.getObject();
+        ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) asn1TaggedObject.getBaseObject();
         String resolvedCurveName = ObjectIdUtil.toString(oid);
         assertThat(resolvedCurveName).containsIgnoringCase(curveName);
     }

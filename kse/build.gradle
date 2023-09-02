@@ -109,7 +109,7 @@ targetCompatibility = 1.8
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 dependencies {
-	implementation('org.bouncycastle:bcpkix-jdk18on:1.72')
+	implementation('org.bouncycastle:bcpkix-jdk18on:1.76')
 	implementation('net.java.dev.jna:jna:5.12.1')
 	implementation('commons-io:commons-io:2.11.0')
 	implementation('com.miglayout:miglayout-swing:5.3')

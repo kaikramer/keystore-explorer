@@ -41,6 +41,7 @@ import org.bouncycastle.asn1.ASN1Enumerated;
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Null;
+import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -197,7 +198,7 @@ public class Asn1Dump {
      * @throws Asn1Exception A problem was encountered getting the ASN.1 dump
      * @throws IOException   If an I/O problem occurred
      */
-    public String dump(ASN1Primitive asn1Object) throws Asn1Exception, IOException {
+    public String dump(ASN1Object asn1Object) throws Asn1Exception, IOException {
         // Get dump of the supplied ASN.1 object incrementing the indent level of the output
         try {
             indentLevel++;
@@ -252,7 +253,7 @@ public class Asn1Dump {
         }
         sb.append(":");
         sb.append(NEWLINE);
-        sb.append(dump(o.getObject()));
+        sb.append(dump(o.getBaseObject()));
 
         return sb.toString();
     }
