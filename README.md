@@ -79,3 +79,6 @@ We encourage you to contribute to KSE! Please check out the [Contributing to KSE
 ## License
 
 [GNU General Public License v3.0](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
+
+## See also
+* [List of cryptography GUI tools](https://gist.github.com/stokito/eea7ee50d51e1db30122e2e33a62723e)
