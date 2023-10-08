@@ -34,6 +34,7 @@ import java.util.List;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
@@ -76,7 +77,7 @@ public class EccUtil {
     public static String getNamedCurve(Key key) {
 
         if (!(key instanceof ECKey)) {
-            throw new InvalidParameterException("Not a EC private key.");
+            throw new InvalidParameterException("Not a EC key.");
         }
 
         ECKey ecKey = (ECKey) key;
@@ -87,7 +88,7 @@ public class EccUtil {
         }
 
         if (key instanceof PublicKey) {
-            return getNamedCurve(key);
+            return getNamedCurve((PublicKey) key);
         }
 
         return "";
@@ -108,21 +109,36 @@ public class EccUtil {
 
         SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
         ASN1Encodable parameters = subjectPublicKeyInfo.getAlgorithm().getParameters();
-        ASN1ObjectIdentifier curveId = ASN1ObjectIdentifier.getInstance(parameters);
 
-        String curveName = NISTNamedCurves.getName(curveId);
-        if (curveName == null) {
-            curveName = X962NamedCurves.getName(curveId);
-        }
-        if (curveName == null) {
-            curveName = SECNamedCurves.getName(curveId);
-        }
-        if (curveName == null) {
-            curveName = TeleTrusTNamedCurves.getName(curveId);
-        }
+        /*
+         * ECParameters ::= CHOICE {
+         *        namedCurve         OBJECT IDENTIFIER
+         *        -- implicitCurve   NULL
+         *        -- specifiedCurve  SpecifiedECDomain
+         *      }
+         */
+        if (parameters instanceof ASN1ObjectIdentifier) {
+            ASN1ObjectIdentifier curveId = ASN1ObjectIdentifier.getInstance(parameters);
 
-        if (curveName != null) {
-            return curveName;
+            String curveName = NISTNamedCurves.getName(curveId);
+            if (curveName == null) {
+                curveName = X962NamedCurves.getName(curveId);
+            }
+            if (curveName == null) {
+                curveName = SECNamedCurves.getName(curveId);
+            }
+            if (curveName == null) {
+                curveName = TeleTrusTNamedCurves.getName(curveId);
+            }
+
+            if (curveName != null) {
+                return curveName;
+            }
+        } else if (parameters instanceof ASN1Sequence) {
+            // RFC 5480: "specifiedCurve, which is of type SpecifiedECDomain type (defined
+            //        in [X9.62]), allows all of the elliptic curve domain parameters
+            //        to be explicitly specified.  This choice MUST NOT be used."
+            return "explicitly specified curve";
         }
 
         return "";
