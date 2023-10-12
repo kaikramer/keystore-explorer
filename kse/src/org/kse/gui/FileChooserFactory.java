@@ -54,6 +54,8 @@ public class FileChooserFactory {
     public static final String SPC_EXT = "spc";
     public static final String CET_EXT = "cet";
     public static final String PKCS8_EXT = "pkcs8";
+    public static final String P8_EXT = "p8";
+    public static final String P8E_EXT = "p8e";
     public static final String PVK_EXT = "pvk";
     public static final String OPENSSL_PVK_EXT = "key";
     public static final String PUBLIC_KEY_EXT = "pub";
@@ -90,7 +92,7 @@ public class FileChooserFactory {
     private static final String PKCS12_FILE_DESC =
             format(res.getString("FileChooserFactory.Pkcs12Files"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2);
 
-    private static final String PKCS8_FILE_DESC = format(res.getString("FileChooserFactory.Pkcs8Files"), PKCS8_EXT);
+    private static final String PKCS8_FILE_DESC = format(res.getString("FileChooserFactory.Pkcs8Files"), PKCS8_EXT, P8_EXT, P8E_EXT);
 
     private static final String PVK_FILE_DESC = format(res.getString("FileChooserFactory.PvkFiles"), PVK_EXT);
 
@@ -268,7 +270,7 @@ public class FileChooserFactory {
      */
     public static JFileChooser getPkcs8FileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter(PKCS8_FILE_DESC, PKCS8_EXT));
+        chooser.setFileFilter(new FileNameExtensionFilter(PKCS8_FILE_DESC, PKCS8_EXT, P8_EXT, P8E_EXT));
         return chooser;
     }
 
