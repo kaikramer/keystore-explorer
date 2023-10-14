@@ -240,7 +240,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
         }
 
         if (authorityCertSerialNumber != null) {
-            jtfAuthorityCertSerialNumber.setText("" + authorityCertSerialNumber.toString());
+            jtfAuthorityCertSerialNumber.setText("" + authorityCertSerialNumber);
             jtfAuthorityCertSerialNumber.setCaretPosition(0);
         }
     }

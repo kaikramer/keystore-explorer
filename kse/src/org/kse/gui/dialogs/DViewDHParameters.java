@@ -231,7 +231,7 @@ public class DViewDHParameters extends JEscDialog {
         }
 
         if (!chosenFile.getAbsolutePath().toString().endsWith(FILE_SUFFIX)) {
-            writeDHParams(chosenFile.getAbsolutePath().toString() + FILE_SUFFIX, dhParameters);
+            writeDHParams(chosenFile.getAbsolutePath() + FILE_SUFFIX, dhParameters);
         } else {
             writeDHParams(chosenFile.getAbsolutePath().toString(), dhParameters);
         }

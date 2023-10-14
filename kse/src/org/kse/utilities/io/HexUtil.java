@@ -229,7 +229,7 @@ public class HexUtil {
          */
         StringBuilder strBuff = new StringBuilder();
 
-        strBuff.append(sbHex.toString());
+        strBuff.append(sbHex);
 
         int i = bytes.length - len;
         for (int cnt = 0; cnt < i; cnt++) {
@@ -242,7 +242,7 @@ public class HexUtil {
 
         strBuff.append("   "); // The gap between hex and clear output is three
         // spaces
-        strBuff.append(sbClr.toString());
+        strBuff.append(sbClr);
 
         return strBuff.toString();
     }

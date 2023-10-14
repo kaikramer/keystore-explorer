@@ -2123,7 +2123,7 @@ public class X509Ext {
                 sb.append(INDENT.toString(indentLevel));
                 sb.append(ObjectIdUtil.toString(statementId));
                 if (statementInfo != null) {
-                    sb.append(statementInfo.toString());
+                    sb.append(statementInfo);
                 }
                 sb.append(NEWLINE);
             }
