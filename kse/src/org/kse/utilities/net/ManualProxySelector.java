@@ -26,6 +26,7 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Proxy selector for 'manual' proxies, i.e. where individual proxies are
@@ -186,9 +187,7 @@ public class ManualProxySelector extends ProxySelector {
         ProxyAddress proxyHttpAddress = this.getHttpProxyAddress();
         ProxyAddress cmpHttpProxyAddress = cmpManualProxySelector.getHttpProxyAddress();
 
-        boolean httpEquals = (proxyHttpAddress == null ?
-                              cmpHttpProxyAddress == null :
-                              proxyHttpAddress.equals(cmpHttpProxyAddress));
+        boolean httpEquals = (Objects.equals(proxyHttpAddress, cmpHttpProxyAddress));
 
         if (!httpEquals) {
             return false;
@@ -197,9 +196,7 @@ public class ManualProxySelector extends ProxySelector {
         ProxyAddress proxyHttpsAddress = this.getHttpsProxyAddress();
         ProxyAddress cmpHttpsProxyAddress = cmpManualProxySelector.getHttpsProxyAddress();
 
-        boolean httpsEquals = (proxyHttpsAddress == null ?
-                               cmpHttpsProxyAddress == null :
-                               proxyHttpsAddress.equals(cmpHttpsProxyAddress));
+        boolean httpsEquals = (Objects.equals(proxyHttpsAddress, cmpHttpsProxyAddress));
 
         if (!httpsEquals) {
             return false;
@@ -208,9 +205,7 @@ public class ManualProxySelector extends ProxySelector {
         ProxyAddress proxyFtpAddress = this.getFtpProxyAddress();
         ProxyAddress cmpFtpProxyAddress = cmpManualProxySelector.getFtpProxyAddress();
 
-        boolean ftpEquals = (proxyFtpAddress == null ?
-                             cmpFtpProxyAddress == null :
-                             proxyFtpAddress.equals(cmpFtpProxyAddress));
+        boolean ftpEquals = (Objects.equals(proxyFtpAddress, cmpFtpProxyAddress));
 
         if (!ftpEquals) {
             return false;
@@ -219,9 +214,7 @@ public class ManualProxySelector extends ProxySelector {
         ProxyAddress proxySocksAddress = this.getSocksProxyAddress();
         ProxyAddress cmpSocksProxyAddress = cmpManualProxySelector.getSocksProxyAddress();
 
-        return (proxySocksAddress == null ?
-                cmpSocksProxyAddress == null :
-                proxySocksAddress.equals(cmpSocksProxyAddress));
+        return (Objects.equals(proxySocksAddress, cmpSocksProxyAddress));
 
     }
 }
