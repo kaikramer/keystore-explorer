@@ -179,7 +179,7 @@ public class Spkac {
 
                     lastName = name;
                 } else if (lastName != null) {
-                    properties.setProperty(lastName, String.valueOf(properties.get(lastName)) + line);
+                    properties.setProperty(lastName, properties.get(lastName) + line);
                 }
             }
         }
