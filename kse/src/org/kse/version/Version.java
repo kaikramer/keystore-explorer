@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
  */
 public class Version implements Comparable<Object>, Serializable {
     private static final long serialVersionUID = 775513157889646154L;
-    private static transient ResourceBundle res = ResourceBundle.getBundle("org/kse/version/resources");
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/version/resources");
     private List<Integer> iSections;
 
     /**
