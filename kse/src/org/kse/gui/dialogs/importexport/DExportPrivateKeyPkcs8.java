@@ -253,7 +253,7 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     private void populateExportFileName() {
         File currentDirectory = CurrentDirectory.get();
         String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
-        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.PKCS8_EXT);
+        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.P8_EXT);
         jtfExportFile.setText(csrFile.getPath());
     }
 
