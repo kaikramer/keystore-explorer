@@ -296,8 +296,8 @@ public class DSignCsr extends JEscDialog {
 
         jlSerialNumber = new JLabel(res.getString("DSignCsr.jlSerialNumber.text"));
 
-        final int snRandomBytes = ApplicationSettings.getInstance().getSnRandomBytes();
-        jtfSerialNumber = new JTextField(SerialNumbers.fromCurrentTime(snRandomBytes), 15);
+        final int snLength = ApplicationSettings.getInstance().getSerialNumberLengthInBytes();
+        jtfSerialNumber = new JTextField(SerialNumbers.generate(snLength).toString(10), 40);
         jtfSerialNumber.setToolTipText(res.getString("DSignCsr.jtfSerialNumber.tooltip"));
 
         jbTransferExtensions = new JButton(res.getString("DSignCsr.jbTransferExtensions.text"));

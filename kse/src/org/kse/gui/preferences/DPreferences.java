@@ -122,6 +122,7 @@ public class DPreferences extends JEscDialog {
     private JComboBox<Pkcs12EncryptionSetting> jcbPkcs12Encryption;
     private JLabel jlSnRandomBytes;
     private JSpinner jspSnRandomBytes;
+    private JLabel jlSnRandomBytesPostfix;
     private JPanel jpInternetProxy;
     private JRadioButton jrbNoProxy;
     private JRadioButton jrbSystemProxySettings;
@@ -166,7 +167,7 @@ public class DPreferences extends JEscDialog {
     private String language;
     private boolean showHiddenFilesEnabled;
     private Pkcs12EncryptionSetting pkcs12EncryptionSetting;
-    private int snRandomBytes;
+    private int serialNumberLengthInBytes;
 
     private boolean autoUpdateChecksEnabled;
     private int autoUpdateChecksInterval;
@@ -241,14 +242,14 @@ public class DPreferences extends JEscDialog {
      * @param kstColumns                        Shown columns in the main table
      * @param showHiddenFilesEnabled            Show hidden files in file chooser
      * @param pkcs12EncryptionSetting           Strong or compatible PKCS#12 encryption?
-     * @param snRandomBytes                     Length of serial number random bytes
+     * @param serialNumberLengthInBytes           Length of serial number random bytes
      */
     public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
                         boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
                         boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
                         String defaultDN, String language, boolean autoUpdateChecksEnabled,
                         int autoUpdateChecksInterval, KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled,
-                        Pkcs12EncryptionSetting pkcs12EncryptionSetting, int snRandomBytes) {
+                        Pkcs12EncryptionSetting pkcs12EncryptionSetting, int serialNumberLengthInBytes) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(true);
         Dimension d = new Dimension(900, 500);
@@ -267,7 +268,7 @@ public class DPreferences extends JEscDialog {
         this.expiryWarnDays = kstColumns.getExpiryWarnDays();
         this.showHiddenFilesEnabled = showHiddenFilesEnabled;
         this.pkcs12EncryptionSetting = pkcs12EncryptionSetting;
-        this.snRandomBytes = snRandomBytes;
+        this.serialNumberLengthInBytes = serialNumberLengthInBytes;
         initComponents();
     }
 
@@ -541,8 +542,13 @@ public class DPreferences extends JEscDialog {
         jcbPkcs12Encryption.setToolTipText(res.getString("DPreferences.jcbPkcs12Encryption.tooltip"));
 
         jlSnRandomBytes = new JLabel(res.getString("DPreferences.jlSnRandomBytes.text"));
-        SpinnerNumberModel snSpinnerModel = new SpinnerNumberModel(snRandomBytes, 0.0, 16.0, 1.0);
+        SpinnerNumberModel snSpinnerModel = new SpinnerNumberModel(serialNumberLengthInBytes, 8.0, 20.0, 1.0);
         jspSnRandomBytes = new JSpinner(snSpinnerModel);
+        JSpinner.DefaultEditor editor = ( JSpinner.DefaultEditor ) jspSnRandomBytes.getEditor();
+        editor.getTextField().setEnabled(true);
+        editor.getTextField().setEditable(false);
+        jspSnRandomBytes.setToolTipText(res.getString("DPreferences.jlSnRandomBytes.tooltip"));
+        jlSnRandomBytesPostfix = new JLabel(res.getString("DPreferences.jlSnRandomBytesPostfix.text"));
 
         // layout
         jpUI = new JPanel();
@@ -568,7 +574,8 @@ public class DPreferences extends JEscDialog {
         jpUI.add(jlPkcs12Encryption, "");
         jpUI.add(jcbPkcs12Encryption, "spanx, wrap unrel");
         jpUI.add(jlSnRandomBytes, "");
-        jpUI.add(jspSnRandomBytes, "");
+        jpUI.add(jspSnRandomBytes, "split 2");
+        jpUI.add(jlSnRandomBytesPostfix, "");
 
         jcbEnableAutoUpdateChecks
                 .addItemListener(evt -> jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected()));
@@ -903,7 +910,7 @@ public class DPreferences extends JEscDialog {
 
         pkcs12EncryptionSetting = (Pkcs12EncryptionSetting) jcbPkcs12Encryption.getSelectedItem();
 
-        snRandomBytes = ((Number) jspSnRandomBytes.getValue()).intValue();
+        serialNumberLengthInBytes = ((Number) jspSnRandomBytes.getValue()).intValue();
 
         // These may fail:
         boolean returnValue = storeDefaultDN();
@@ -1222,11 +1229,11 @@ public class DPreferences extends JEscDialog {
 
     /**
      * Returns length of serial number random bytes
-     * 
+     *
      * @return serial number random bytes
      */
-    public int getSnRandomBytes() {
-        return snRandomBytes;
+    public int getSerialNumberLengthInBytes() {
+        return serialNumberLengthInBytes;
     }
 
     /**
@@ -1344,7 +1351,7 @@ public class DPreferences extends JEscDialog {
     public static void main(String[] args) throws Exception {
         DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
                                                new PasswordQualityConfig(true, true, 100), "", "en", true, 14,
-                                               new KeyStoreTableColumns(), true, Pkcs12EncryptionSetting.strong, 0);
+                                               new KeyStoreTableColumns(), true, Pkcs12EncryptionSetting.strong, 8);
         DialogViewer.run(dialog);
     }
 }

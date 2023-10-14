@@ -196,8 +196,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
         jlSerialNumber = new JLabel(res.getString("DGenerateKeyPairCert.jlSerialNumber.text"));
 
-        final int snRandomBytes = ApplicationSettings.getInstance().getSnRandomBytes();
-        jtfSerialNumber = new JTextField(SerialNumbers.fromCurrentTime(snRandomBytes), 20);
+        final int snLength = ApplicationSettings.getInstance().getSerialNumberLengthInBytes();
+        jtfSerialNumber = new JTextField(SerialNumbers.generate(snLength).toString(10), 30);
         jtfSerialNumber.setToolTipText(res.getString("DGenerateKeyPairCert.jtfSerialNumber.tooltip"));
 
         jlName = new JLabel(res.getString("DGenerateKeyPairCert.jlName.text"));

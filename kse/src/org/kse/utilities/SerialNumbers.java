@@ -22,39 +22,35 @@ package org.kse.utilities;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+import org.bouncycastle.util.Arrays;
+
 public class SerialNumbers {
+
+    static final SecureRandom rng = new SecureRandom();
+
+    private SerialNumbers() {
+    }
+
     /**
      * Returns a new serial number from current time and random bytes.
      *
-     * @param randomBytes the length of random bytes
-     * @return new serial number
+     * @param length the total length of the resulting serial number (bytes from current time and rest filled
+     *                    with random data); minimum is 8, maximum is 20
+     * @return new serial number as decimal format string
      */
-    public static String fromCurrentTime(int randomBytes) {
-    	final long time = System.currentTimeMillis() / 1000;
-        if (randomBytes <= 0) {
-            return String.valueOf(time);
+    public static BigInteger generate(int length) {
+        if (length < 8 || length > 20) {
+            throw new IllegalArgumentException("Length parameter must be between 8 and 20");
         }
-        final SecureRandom rng = new SecureRandom();
-        // ensure most significant byte is positive
-        byte mostSigByte;
-        do {
-            mostSigByte = (byte) rng.nextInt();
-        } while (mostSigByte <= 0);
-        // generate remaining random bytes
-        final byte[] otherRandomBytes = new byte[randomBytes - 1];
-        rng.nextBytes(otherRandomBytes);
-        // magnitude of a big integer from random bytes and current time
-        final byte[] magnitude = new byte[randomBytes + 4];
-        magnitude[0] = mostSigByte;
-        System.arraycopy(otherRandomBytes, 0, magnitude, 1, otherRandomBytes.length);
-        magnitude[randomBytes] = (byte) (time >> 24);
-        magnitude[randomBytes + 1] = (byte) (time >> 16);
-        magnitude[randomBytes + 2] = (byte) (time >> 8);
-        magnitude[randomBytes + 3] = (byte) time;
-        // convert bytes to a string using big integer
-        return new BigInteger(1, magnitude).toString();
-    }
 
-    private SerialNumbers() {
+        byte[] timeBytes = BigInteger.valueOf(System.currentTimeMillis() / 1000).toByteArray();
+        byte[] rndBytes = new byte[length - timeBytes.length];
+        rng.nextBytes(rndBytes);
+        byte[] snBytes = Arrays.concatenate(rndBytes, timeBytes);
+
+        // ensure most significant byte is positive
+        snBytes[0] &= 0x7F;
+
+        return new BigInteger(1, snBytes);
     }
 }
