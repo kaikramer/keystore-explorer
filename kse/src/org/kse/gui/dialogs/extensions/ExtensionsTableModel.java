@@ -68,8 +68,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
         // Rows will be sorted by extension name
         List<X509Ext> sortedExts = new ArrayList<>();
 
-        for (Iterator<String> itr = critExts.iterator(); itr.hasNext(); ) {
-            String extOid = itr.next();
+        for (String extOid : critExts) {
             byte[] value = extensions.getExtensionValue(extOid);
 
             X509Ext ext = new X509Ext(new ASN1ObjectIdentifier(extOid), value, true);
@@ -77,8 +76,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
             sortedExts.add(ext);
         }
 
-        for (Iterator<String> itr = nonCritExts.iterator(); itr.hasNext(); ) {
-            String extOid = itr.next();
+        for (String extOid : nonCritExts) {
             byte[] value = extensions.getExtensionValue(extOid);
 
             X509Ext ext = new X509Ext(new ASN1ObjectIdentifier(extOid), value, false);
@@ -91,8 +89,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
         data = new Object[sortedExts.size()][3];
 
         int i = 0;
-        for (Iterator<X509Ext> itrSortedExts = sortedExts.iterator(); itrSortedExts.hasNext(); ) {
-            X509Ext ext = itrSortedExts.next();
+        for (X509Ext ext : sortedExts) {
             loadRow(ext, i);
             i++;
         }

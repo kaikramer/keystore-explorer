@@ -447,8 +447,8 @@ public class DViewCrl extends JEscDialog {
 
             X509CRLEntry x509CrlEntry = null;
 
-            for (Iterator<?> itr = revokedCertsSet.iterator(); itr.hasNext(); ) {
-                X509CRLEntry entry = (X509CRLEntry) itr.next();
+            for (Object o : revokedCertsSet) {
+                X509CRLEntry entry = (X509CRLEntry) o;
                 if (serialNumber.equals(entry.getSerialNumber())) {
                     x509CrlEntry = entry;
                     break;
@@ -511,8 +511,8 @@ public class DViewCrl extends JEscDialog {
 
             X509CRLEntry x509CrlEntry = null;
 
-            for (Iterator<?> itr = revokedCertsSet.iterator(); itr.hasNext(); ) {
-                X509CRLEntry entry = (X509CRLEntry) itr.next();
+            for (Object o : revokedCertsSet) {
+                X509CRLEntry entry = (X509CRLEntry) o;
                 if (serialNumber.equals(entry.getSerialNumber())) {
                     x509CrlEntry = entry;
                     break;

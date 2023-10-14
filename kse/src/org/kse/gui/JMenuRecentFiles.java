@@ -51,12 +51,12 @@ public class JMenuRecentFiles extends JMenu {
     }
 
     private void removeAllRecentFiles() {
-        for (int i = 0; i < jmiRecentFiles.length; i++) {
-            if (jmiRecentFiles[i] == null) {
+        for (JMenuItemRecentFile jmiRecentFile : jmiRecentFiles) {
+            if (jmiRecentFile == null) {
                 break;
             }
 
-            remove(jmiRecentFiles[i]);
+            remove(jmiRecentFile);
         }
     }
 
@@ -173,12 +173,12 @@ public class JMenuRecentFiles extends JMenu {
     public File[] getRecentFiles() {
         ArrayList<File> recentFiles = new ArrayList<>();
 
-        for (int i = 0; i < jmiRecentFiles.length; i++) {
-            if (jmiRecentFiles[i] == null) {
+        for (JMenuItemRecentFile jmiRecentFile : jmiRecentFiles) {
+            if (jmiRecentFile == null) {
                 break;
             }
 
-            recentFiles.add(jmiRecentFiles[i].getFile());
+            recentFiles.add(jmiRecentFile.getFile());
         }
 
         return recentFiles.toArray(new File[recentFiles.size()]);

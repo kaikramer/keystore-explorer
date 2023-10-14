@@ -362,11 +362,11 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
             if (isSelectedColumn) {
                 int[] columns = table.getSelectedColumns();
 
-                for (int i = 0; i < columns.length; i++) {
+                for (int column : columns) {
                     if (isAdjust) {
-                        adjustColumn(columns[i]);
+                        adjustColumn(column);
                     } else {
-                        restoreColumn(columns[i]);
+                        restoreColumn(column);
                     }
                 }
             } else {

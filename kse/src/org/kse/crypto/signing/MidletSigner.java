@@ -157,10 +157,7 @@ public class MidletSigner {
 
         // Write out new JAD properties to JAD file
         try (FileWriter fw = new FileWriter(outputJadFile)) {
-            for (Iterator<Entry<String, String>> itrSorted = sortedJadProperties.entrySet().iterator();
-                 itrSorted.hasNext(); ) {
-                Entry<String, String> property = itrSorted.next();
-
+            for (Entry<String, String> property : sortedJadProperties.entrySet()) {
                 fw.write(MessageFormat.format(JAD_ATTR_TEMPLATE, property.getKey(), property.getValue()));
                 fw.write(CRLF);
             }

@@ -970,8 +970,8 @@ public class MsPvkUtil {
         // Remove leading zero bytes
         int skipZeroPos = 0;
 
-        for (int i = 0; i < bigInt.length; i++) {
-            if (bigInt[i] != 0) {
+        for (byte b : bigInt) {
+            if (b != 0) {
                 break;
             }
             skipZeroPos++;

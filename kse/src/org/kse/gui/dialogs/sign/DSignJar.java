@@ -542,13 +542,13 @@ public class DSignJar extends JEscDialog {
     private boolean checkSignature(File[] files) {
         JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
 
-        for (int i = 0; i < files.length; i++) {
+        for (File file : files) {
             try {
                 // check if the existing signature matches the current signature
-                if (JarSigner.hasSignature(files[i], this.signatureName)) {
+                if (JarSigner.hasSignature(file, this.signatureName)) {
                     String message = MessageFormat.format(res.getString("DSignJar.SignatureOverwrite.message"),
-                                                          this.signatureName, files[i].getName());
-                    Object[] params = { message, checkbox };
+                            this.signatureName, file.getName());
+                    Object[] params = {message, checkbox};
                     // check if overwrite is allowed and present checkbox to skip overwrite message
                     int selected = JOptionPane.showConfirmDialog(this, params, getTitle(), JOptionPane.YES_NO_OPTION);
                     if (selected != JOptionPane.YES_OPTION) {

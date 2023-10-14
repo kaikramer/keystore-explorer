@@ -45,12 +45,12 @@ public class PasswordCallbackHandler implements CallbackHandler {
     @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 
-        for (int i = 0; i < callbacks.length; i++) {
-            if (callbacks[i] instanceof PasswordCallback) {
-                handlePasswordCallback((PasswordCallback) callbacks[i]);
+        for (Callback callback : callbacks) {
+            if (callback instanceof PasswordCallback) {
+                handlePasswordCallback((PasswordCallback) callback);
             } else {
-                throw new UnsupportedCallbackException(callbacks[i],
-                                                       "Callback not supported " + callbacks[i].getClass().getName());
+                throw new UnsupportedCallbackException(callback,
+                        "Callback not supported " + callback.getClass().getName());
             }
         }
     }
