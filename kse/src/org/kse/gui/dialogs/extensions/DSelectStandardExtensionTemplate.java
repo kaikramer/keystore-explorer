@@ -244,7 +244,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
         } else {
             // if subject DN already exists, we use value of CN
             String cn = X500NameUtils.extractCN(subjectDN);
-            if (cn == "") {
+            if (cn.isEmpty()) {
                 generalNames[0] = new GeneralName(GeneralName.dNSName, new DERIA5String(""));
             } else {
                 if (IPAddress.isValid(cn)) {
