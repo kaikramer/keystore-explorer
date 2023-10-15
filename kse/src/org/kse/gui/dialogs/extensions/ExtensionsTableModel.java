@@ -84,7 +84,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
             sortedExts.add(ext);
         }
 
-        Collections.sort(sortedExts, new ExtensionNameComparator());
+        sortedExts.sort(new ExtensionNameComparator());
 
         data = new Object[sortedExts.size()][3];
 

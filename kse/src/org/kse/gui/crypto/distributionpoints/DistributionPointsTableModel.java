@@ -62,7 +62,7 @@ public class DistributionPointsTableModel extends AbstractTableModel {
     public void load(CRLDistPoint cRLDistPoint) {
         DistributionPoint[] distributionPointArray = cRLDistPoint.getDistributionPoints();
         data = new ArrayList<>(Arrays.asList(distributionPointArray));
-        Collections.sort(data, new DistributionPointComparator());
+        data.sort(new DistributionPointComparator());
         fireTableDataChanged();
     }
 
@@ -139,7 +139,7 @@ public class DistributionPointsTableModel extends AbstractTableModel {
      */
     public void addRow(DistributionPoint distributionPoint) {
         data.add(distributionPoint);
-        Collections.sort(data, new DistributionPointComparator());
+        data.sort(new DistributionPointComparator());
         fireTableDataChanged();
     }
 
