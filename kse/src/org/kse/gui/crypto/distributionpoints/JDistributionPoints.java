@@ -221,20 +221,10 @@ public class JDistributionPoints extends JPanel {
         updateButtonControls();
     }
 
-    /**
-     * Get general names.
-     *
-     * @return General names
-     */
     public CRLDistPoint getCRLDistPoint() {
         return new CRLDistPoint(getDistributionPointsTableModel().getData().toArray(new DistributionPoint[0]));
     }
 
-    /**
-     * Set general names.
-     *
-     * @param generalNames General names
-     */
     public void setCRLDistPoint(CRLDistPoint cRLDistPoint) {
         getDistributionPointsTableModel().load(cRLDistPoint);
     }

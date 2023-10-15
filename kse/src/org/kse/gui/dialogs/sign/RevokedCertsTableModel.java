@@ -53,7 +53,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
     /**
      * Load the RevokedCertsTableModel with an map of RevokedEntry.
      *
-     * @param revokedCerts The X.509 CRL entries
+     * @param mapRevokedEntry The X.509 CRL entries
      */
     public void load(Map<BigInteger, RevokedEntry> mapRevokedEntry) {
         data = new Object[mapRevokedEntry.size()][2];
