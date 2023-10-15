@@ -440,14 +440,13 @@ public class JarSigner {
             String md64Str = new String(md64);
 
             // Write manifest entries for JARs digest
-            StringBuilder sbManifestEntry = new StringBuilder();
-            sbManifestEntry.append(createAttributeText(NAME_ATTR, jarEntry.getName()));
-            sbManifestEntry.append(CRLF);
-            sbManifestEntry.append(createAttributeText(MessageFormat.format(DIGEST_ATTR, digestType.jce()), md64Str));
-            sbManifestEntry.append(CRLF);
-            sbManifestEntry.append(CRLF);
+            String sbManifestEntry = createAttributeText(NAME_ATTR, jarEntry.getName()) +
+                    CRLF +
+                    createAttributeText(MessageFormat.format(DIGEST_ATTR, digestType.jce()), md64Str) +
+                    CRLF +
+                    CRLF;
 
-            return sbManifestEntry.toString();
+            return sbManifestEntry;
         }
     }
 
