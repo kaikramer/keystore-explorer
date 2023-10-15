@@ -59,9 +59,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
         data = new Object[mapRevokedEntry.size()][2];
 
         int i = 0;
-        Iterator<Map.Entry<BigInteger, RevokedEntry>> it = mapRevokedEntry.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<BigInteger, RevokedEntry> pair = it.next();
+        for (Map.Entry<BigInteger, RevokedEntry> pair : mapRevokedEntry.entrySet()) {
             RevokedEntry entry = pair.getValue();
             data[i][0] = entry.getUserCertificateSerial();
             data[i][1] = entry.getRevocationDate();

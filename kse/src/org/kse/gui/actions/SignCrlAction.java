@@ -190,9 +190,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
         if (mapRevokedCertificate != null) {
 
-            Iterator<Map.Entry<BigInteger, RevokedEntry>> it = mapRevokedCertificate.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<BigInteger, RevokedEntry> pair = it.next();
+            for (Map.Entry<BigInteger, RevokedEntry> pair : mapRevokedCertificate.entrySet()) {
                 RevokedEntry entry = pair.getValue();
                 crlGen.addCRLEntry(entry.getUserCertificateSerial(), entry.getRevocationDate(), entry.getReason());
             }

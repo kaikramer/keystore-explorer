@@ -78,9 +78,8 @@ public class CRLDistributionPoints extends ASN1Object {
     @Override
     public ASN1Primitive toASN1Primitive() {
         ASN1EncodableVector v = new ASN1EncodableVector();
-        Iterator<DistributionPoint> it = distributionPointList.iterator();
-        while (it.hasNext()) {
-            v.add(it.next().toASN1Primitive());
+        for (DistributionPoint distributionPoint : distributionPointList) {
+            v.add(distributionPoint.toASN1Primitive());
         }
         return new DERSequence(v);
     }
