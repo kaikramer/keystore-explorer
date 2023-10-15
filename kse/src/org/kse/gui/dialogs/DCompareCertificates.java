@@ -182,7 +182,7 @@ public class DCompareCertificates extends JEscFrame {
     }
 
     private List<String> getLines(String text) {
-        String lines[] = text.split(NEWLINE);
+        String[] lines = text.split(NEWLINE);
         return Arrays.asList(lines);
     }
 
