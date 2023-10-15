@@ -92,8 +92,7 @@ public class DErrorCollection extends JEscDialog {
     public void initFields() {
         // label for file
         jlblKeys = new JLabel(res.getString("DErrorCollection.jlblKeys.text"));
-        // jlist
-        jltKeys = new JList();
+        jltKeys = new JList<>();
         jltKeys.setToolTipText(res.getString("DErrorCollection.jltKeys.tooltip"));
         jltKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jltKeys.setLayoutOrientation(JList.VERTICAL);
