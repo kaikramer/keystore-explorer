@@ -98,7 +98,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
     }
 
     private void loadRow(X509Ext extension, int row) {
-        data[row][0] = Boolean.valueOf(extension.isCriticalExtension());
+        data[row][0] = extension.isCriticalExtension();
 
         String name = extension.getName();
 

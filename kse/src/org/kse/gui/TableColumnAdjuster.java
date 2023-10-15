@@ -183,7 +183,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
             width = Math.max(width, tableColumn.getPreferredWidth());
         }
 
-        columnSizes.put(tableColumn, Integer.valueOf(tableColumn.getWidth()));
+        columnSizes.put(tableColumn, tableColumn.getWidth());
 
         table.getTableHeader().setResizingColumn(tableColumn);
         tableColumn.setWidth(width);
