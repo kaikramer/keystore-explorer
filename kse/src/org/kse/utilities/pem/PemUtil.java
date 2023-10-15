@@ -143,7 +143,7 @@ public class PemUtil {
                             line = line.trim();
 
                             // Empty line - end of attributes
-                            if (line.equals("")) {
+                            if (line.isEmpty()) {
                                 line = lnr.readLine();
                                 break;
                             }
