@@ -42,10 +42,9 @@ import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.List;
@@ -208,15 +207,15 @@ public class DUpgradeCryptoStrength extends JEscDialog {
             File usExportPolicyJar = JcePolicyUtil.getJarFile(US_EXPORT_POLICY);
             File usExportPolicyJarBkp = new File(usExportPolicyJar.getPath() + ".bkp");
 
-            CopyUtil.copyClose(new FileInputStream(localPolicyJar), new FileOutputStream(localPolicyJarBkp));
+            CopyUtil.copyClose(Files.newInputStream(localPolicyJar.toPath()), Files.newOutputStream(localPolicyJarBkp.toPath()));
 
-            CopyUtil.copyClose(new FileInputStream(usExportPolicyJar), new FileOutputStream(usExportPolicyJarBkp));
+            CopyUtil.copyClose(Files.newInputStream(usExportPolicyJar.toPath()), Files.newOutputStream(usExportPolicyJarBkp.toPath()));
 
             // Overwrite local and US Export JARs with new unlimited strength versions
-            CopyUtil.copyClose(new ByteArrayInputStream(localPolicyJarContents), new FileOutputStream(localPolicyJar));
+            CopyUtil.copyClose(new ByteArrayInputStream(localPolicyJarContents), Files.newOutputStream(localPolicyJar.toPath()));
 
             CopyUtil.copyClose(new ByteArrayInputStream(usExportPolicyJarContents),
-                               new FileOutputStream(usExportPolicyJar));
+                    Files.newOutputStream(usExportPolicyJar.toPath()));
 
             cryptoStrengthUpgraded = true;
         } catch (IOException ex) {

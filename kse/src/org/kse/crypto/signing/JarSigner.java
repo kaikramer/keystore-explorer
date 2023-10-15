@@ -24,11 +24,11 @@ import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -185,7 +185,7 @@ public class JarSigner {
                             String tsaUrl, Provider provider) throws IOException, CryptoException {
 
         try (JarFile jar = new JarFile(jarFile);
-             JarOutputStream jos = new JarOutputStream(new FileOutputStream(signedJarFile))) {
+             JarOutputStream jos = new JarOutputStream(Files.newOutputStream(signedJarFile.toPath()))) {
 
             // Replace illegal characters in signature name
             signatureName = convertSignatureName(signatureName);

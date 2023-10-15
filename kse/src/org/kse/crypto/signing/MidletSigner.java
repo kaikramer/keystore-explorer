@@ -21,11 +21,11 @@ package org.kse.crypto.signing;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
 import java.security.cert.CertificateEncodingException;
@@ -33,7 +33,6 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -84,7 +83,7 @@ public class MidletSigner {
 
         sign(jadFile, tmpFile, jarFile, privateKey, certificateChain, certificateNumber);
 
-        CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jadFile));
+        CopyUtil.copyClose(Files.newInputStream(tmpFile.toPath()), Files.newOutputStream(jadFile.toPath()));
 
         tmpFile.delete();
     }
