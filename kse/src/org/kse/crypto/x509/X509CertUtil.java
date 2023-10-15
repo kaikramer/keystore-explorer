@@ -57,7 +57,10 @@ import org.bouncycastle.openssl.X509TrustedCertificateBlock;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
+import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.utilities.SerialNumbers;
 import org.kse.utilities.StringUtils;
+import org.kse.utilities.io.HexUtil;
 import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
@@ -732,7 +735,7 @@ public final class X509CertUtil {
      * @return Serial number as hex string
      */
     public static String getSerialNumberAsHex(X509Certificate cert) {
-        return "0x" + new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase();
+        return HexUtil.getHexString(cert.getSerialNumber(), "0x", 0, 0);
     }
 
     /**
@@ -745,4 +748,13 @@ public final class X509CertUtil {
         return new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(10);
     }
 
+    /**
+     * Generate certificate serial number with the length configured in the application preferences.
+     *
+     * @return Serial number as hex string with "0x" prefix
+     */
+    public static String generateCertSerialNumber() {
+        int snLength = ApplicationSettings.getInstance().getSerialNumberLengthInBytes();
+        return HexUtil.getHexString(SerialNumbers.generate(snLength), "0x", 0, 0);
+    }
 }

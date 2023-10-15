@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigInteger;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class SerialNumbersTest {
@@ -42,7 +43,26 @@ class SerialNumbersTest {
     @ParameterizedTest
     @ValueSource(ints = { 0, 1, 2, 3, 4, 5, 6, 7, 21, 22, 100 })
     void generateWrongLength(int length) {
-        assertThatThrownBy(() -> SerialNumbers.generate(length))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> SerialNumbers.generate(length)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "0, 0",
+            "0x00, 0",
+            "1, 1",
+            "01, 1",
+            "0x01, 1",
+            "a0, 160",
+            "ff, 255",
+            "0abc, 2748",
+            "0x0abc, 2748",
+            "abc, 2748",
+            "0xabc, 2748",
+            "1234567890, 1234567890",
+            "0x1234567890, 78187493520",
+    })
+    void parse(String sn, BigInteger expectedResult) {
+        assertThat(SerialNumbers.parse(sn)).isEqualTo(expectedResult);
     }
 }

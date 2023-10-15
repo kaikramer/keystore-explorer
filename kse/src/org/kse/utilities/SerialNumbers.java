@@ -39,18 +39,40 @@ public class SerialNumbers {
      * @return new serial number as decimal format string
      */
     public static BigInteger generate(int length) {
-        if (length < 8 || length > 20) {
+        if ((length < 8) || (length > 20)) {
             throw new IllegalArgumentException("Length parameter must be between 8 and 20");
         }
 
-        byte[] timeBytes = BigInteger.valueOf(System.currentTimeMillis() / 1000).toByteArray();
+        byte[] timeBytes = BigInteger.valueOf(System.currentTimeMillis()).toByteArray();
         byte[] rndBytes = new byte[length - timeBytes.length];
         rng.nextBytes(rndBytes);
         byte[] snBytes = Arrays.concatenate(rndBytes, timeBytes);
 
-        // ensure most significant byte is positive
+        // ensure most significant byte is positive but not zero
         snBytes[0] &= 0x7F;
+        snBytes[0] |= (1 << 6);
 
         return new BigInteger(1, snBytes);
+    }
+
+    /**
+     * Parses a string initially as a decimal value, or as a hexadecimal value if that failed but the string is a
+     * valid hex value. To avoid ambiguity, hex parsing can be forced by prefixing the input with '0x'.
+     *
+     * @param input The String to parse
+     * @return a BigInteger representation of the input.
+     */
+    public static BigInteger parse(String input) {
+        try {
+            return new BigInteger(input);
+        } catch (NumberFormatException nfe) {
+            if (input.startsWith("0x")) {
+                return new BigInteger(input.substring(2), 16);
+            } else if (input.matches("^\\p{XDigit}+$")) {
+                return new BigInteger(input, 16);
+            } else {
+                throw nfe;
+            }
+        }
     }
 }

@@ -75,6 +75,7 @@ import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
@@ -93,7 +94,6 @@ import org.kse.gui.dialogs.DialogHelper;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.SerialNumbers;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -206,7 +206,7 @@ public class DSignCsr extends JEscDialog {
 
         jlCsrFormat = new JLabel(res.getString("DSignCsr.jlCsrFormat.text"));
 
-        jtfCsrFormat = new JTextField(15);
+        jtfCsrFormat = new JTextField(40);
         jtfCsrFormat.setEditable(false);
         jtfCsrFormat.setToolTipText(res.getString("DSignCsr.jtfCsrFormat.tooltip"));
 
@@ -217,7 +217,7 @@ public class DSignCsr extends JEscDialog {
 
         jlCsrPublicKey = new JLabel(res.getString("DSignCsr.jlCsrPublicKey.text"));
 
-        jtfCsrPublicKey = new JTextField(15);
+        jtfCsrPublicKey = new JTextField(40);
         jtfCsrPublicKey.setEditable(false);
         jtfCsrPublicKey.setToolTipText(res.getString("DSignCsr.jtfCsrPublicKey.tooltip"));
 
@@ -228,13 +228,13 @@ public class DSignCsr extends JEscDialog {
 
         jlCsrSignatureAlgorithm = new JLabel(res.getString("DSignCsr.jlCsrSignatureAlgorithm.text"));
 
-        jtfCsrSignatureAlgorithm = new JTextField(15);
+        jtfCsrSignatureAlgorithm = new JTextField(40);
         jtfCsrSignatureAlgorithm.setEditable(false);
         jtfCsrSignatureAlgorithm.setToolTipText(res.getString("DSignCsr.jtfCsrSignatureAlgorithm.tooltip"));
 
         jlCsrChallenge = new JLabel(res.getString("DSignCsr.jlCsrChallenge.text"));
 
-        jtfCsrChallenge = new JTextField(15);
+        jtfCsrChallenge = new JTextField(40);
         jtfCsrChallenge.setEditable(false);
         jtfCsrChallenge.setToolTipText(res.getString("DSignCsr.jtfCsrChallenge.tooltip"));
 
@@ -296,8 +296,7 @@ public class DSignCsr extends JEscDialog {
 
         jlSerialNumber = new JLabel(res.getString("DSignCsr.jlSerialNumber.text"));
 
-        final int snLength = ApplicationSettings.getInstance().getSerialNumberLengthInBytes();
-        jtfSerialNumber = new JTextField(SerialNumbers.generate(snLength).toString(10), 40);
+        jtfSerialNumber = new JTextField(X509CertUtil.generateCertSerialNumber(), 40);
         jtfSerialNumber.setToolTipText(res.getString("DSignCsr.jtfSerialNumber.tooltip"));
 
         jbTransferExtensions = new JButton(res.getString("DSignCsr.jbTransferExtensions.text"));
@@ -325,7 +324,7 @@ public class DSignCsr extends JEscDialog {
         pane.add(jdnCsrSubject, "wrap");
         pane.add(jlCsrPublicKey, "");
         pane.add(jtfCsrPublicKey, "split 2");
-        pane.add(jbViewCsrPublicKeyDetails, "wrap");
+        pane.add(jbViewCsrPublicKeyDetails, "gapx 5px, wrap"); // TODO change gap after JDistinguishedName has been migrated
         pane.add(jlCsrSignatureAlgorithm, "");
         pane.add(jtfCsrSignatureAlgorithm, "wrap");
         pane.add(jlCsrChallenge, "");
@@ -706,7 +705,7 @@ public class DSignCsr extends JEscDialog {
             return;
         }
         try {
-            serialNumber = new BigInteger(serialNumberStr);
+            serialNumber = SerialNumbers.parse(serialNumberStr);
             if (serialNumber.compareTo(BigInteger.ONE) < 0) {
                 JOptionPane.showMessageDialog(this, res.getString("DSignCsr.SerialNumberNonZero.message"), getTitle(),
                                               JOptionPane.WARNING_MESSAGE);

@@ -59,6 +59,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
@@ -72,7 +73,6 @@ import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
 import org.kse.gui.dialogs.sign.DListCertificatesKS;
 import org.kse.gui.error.DError;
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.SerialNumbers;
 
@@ -196,8 +196,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
         jlSerialNumber = new JLabel(res.getString("DGenerateKeyPairCert.jlSerialNumber.text"));
 
-        final int snLength = ApplicationSettings.getInstance().getSerialNumberLengthInBytes();
-        jtfSerialNumber = new JTextField(SerialNumbers.generate(snLength).toString(10), 30);
+        jtfSerialNumber = new JTextField(X509CertUtil.generateCertSerialNumber(), 30);
         jtfSerialNumber.setToolTipText(res.getString("DGenerateKeyPairCert.jtfSerialNumber.tooltip"));
 
         jlName = new JLabel(res.getString("DGenerateKeyPairCert.jlName.text"));
@@ -273,8 +272,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
         });
 
         jrbVersion3.addChangeListener(evt -> {
-        	jbTransferNameExt.setEnabled(jrbVersion3.isSelected());
-        	jbAddExtensions.setEnabled(jrbVersion3.isSelected());
+            jbTransferNameExt.setEnabled(jrbVersion3.isSelected());
+            jbAddExtensions.setEnabled(jrbVersion3.isSelected());
         });
 
         jbOK.addActionListener(evt -> okPressed());
@@ -317,7 +316,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
             try {
                 if (issuerCert == null) {
                     String serialNumberStr = jtfSerialNumber.getText().trim();
-                    BigInteger serialNumber = parseDecOrHex(serialNumberStr);
+                    BigInteger serialNumber = SerialNumbers.parse(serialNumberStr);
                     X509ExtensionSetUpdater.update(extensions, keyPair.getPublic(), keyPair.getPublic(),
                                                    jdnName.getDistinguishedName(), serialNumber);
                 } else {
@@ -348,7 +347,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
             String serialNumberStr = jtfSerialNumber.getText().trim();
             if (!serialNumberStr.isEmpty()) {
                 try {
-                    caSerialNumber = parseDecOrHex(serialNumberStr);
+                    caSerialNumber = SerialNumbers.parse(serialNumberStr);
                 } catch (NumberFormatException ex) {
                     // Don't set serial number
                 }
@@ -365,27 +364,6 @@ public class DGenerateKeyPairCert extends JEscDialog {
         }
     }
 
-    /**
-     * Parses a string initially as a decimal value, or as a hexadecimal value if that failed but the string is a
-     * valid hex value. To avoid ambiguity, hex parsing can be forced by prefixing the input with '0x'.
-     *
-     * @param input The String to parse
-     * @return a BigInteger representation of the input.
-     */
-    private BigInteger parseDecOrHex(String input) {
-        try {
-            return new BigInteger(input);
-        } catch (NumberFormatException nfe) {
-            if (input.startsWith("0x")) {
-                return new BigInteger(input.substring(2), 16);
-            } else if (input.matches("^\\p{XDigit}+$")) {
-                return new BigInteger(input, 16);
-            } else {
-                throw nfe;
-            }
-        }
-    }
-
     private boolean generateCertificate() {
         Date validityStart = jdtValidityStart.getDateTime();
         Date validityEnd = jdtValidityEnd.getDateTime();
@@ -398,7 +376,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         }
         BigInteger serialNumber;
         try {
-            serialNumber = parseDecOrHex(serialNumberStr);
+            serialNumber = SerialNumbers.parse(serialNumberStr);
             if (serialNumber.compareTo(BigInteger.ONE) < 0) {
                 JOptionPane.showMessageDialog(this, res.getString("DGenerateKeyPairCert.SerialNumberNonZero.message"),
                                               getTitle(), JOptionPane.WARNING_MESSAGE);
