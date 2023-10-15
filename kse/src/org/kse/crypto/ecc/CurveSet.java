@@ -96,13 +96,7 @@ public enum CurveSet {
 
         // filter out unsupported curves
         List<String> curveNames = getAllCurveNames();
-        Iterator<String> it = curveNames.iterator();
-        while (it.hasNext()) {
-            String curveName = it.next();
-            if (!EccUtil.isCurveAvailable(curveName, keyStoreType)) {
-                it.remove();
-            }
-        }
+        curveNames.removeIf(curveName -> !EccUtil.isCurveAvailable(curveName, keyStoreType));
 
         return curveNames;
     }
