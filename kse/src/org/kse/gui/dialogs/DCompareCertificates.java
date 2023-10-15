@@ -127,9 +127,9 @@ public class DCompareCertificates extends JEscFrame {
                 sbuilderRight.append("<br>");
             }
             if (!rows.isEmpty()) {
-                float percent = equals * 100 / rows.size();
+                int percent = equals * 100 / rows.size();
                 jlMatch.setText(MessageFormat.format(res.getString("DCompareCertificates.jlMatch.text"),
-                                                     String.format("%.1f", percent)));
+                                                     percent));
             }
 
             sbuilderLeft.append("</tt>");
