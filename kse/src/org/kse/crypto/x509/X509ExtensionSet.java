@@ -276,18 +276,6 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
     }
 
     /**
-     * Load X.509 extension set.
-     *
-     * @param is
-     *            Stream to load from
-     * @return X.509 extension set
-     * @throws X509ExtensionSetLoadException
-     *             If stream contents are not a valid X.509 extension set
-     * @throws IOException
-     *             If an I/O problem occurred
-     */
-
-    /**
      * Save X.509 extension set.
      *
      * @param os Stream to save to
