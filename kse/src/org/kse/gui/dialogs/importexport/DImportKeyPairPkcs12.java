@@ -318,7 +318,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
             }
 
             X509Certificate[] certs = X509CertUtil.convertCertificates(
-                    certsList.toArray(new Certificate[certsList.size()]));
+                    certsList.toArray(new Certificate[0]));
 
             return new Keypair(privKey, certs);
         } catch (FileNotFoundException ex) {

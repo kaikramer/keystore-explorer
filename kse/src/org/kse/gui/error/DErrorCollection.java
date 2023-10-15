@@ -181,7 +181,7 @@ public class DErrorCollection extends JEscDialog {
      */
     private void populateKeys(Map<?, ?> map) {
         // convert hash map keys to a string array // TODO seems hacky
-        String[] listData = (String[]) map.keySet().toArray(new String[map.size()]);
+        String[] listData = (String[]) map.keySet().toArray(new String[0]);
 
         if (listData != null) {
             jltKeys.setListData(listData);

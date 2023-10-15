@@ -449,7 +449,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
         causeList.add(res.getString("DImportKeyPairPkcs8.NotPkcs8.Cause"));
         causeList.add(res.getString("DImportKeyPairPkcs8.CorruptedPkcs8.Cause"));
 
-        String[] causes = causeList.toArray(new String[causeList.size()]);
+        String[] causes = causeList.toArray(new String[0]);
 
         return new Problem(problemStr, causes, exception);
     }

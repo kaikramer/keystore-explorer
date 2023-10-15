@@ -282,7 +282,7 @@ public class DProviderInfo extends JEscDialog {
             }
         }
 
-        String[] algorithms = algorithmList.toArray(new String[algorithmList.size()]);
+        String[] algorithms = algorithmList.toArray(new String[0]);
         Arrays.sort(algorithms);
 
         return algorithms;
@@ -335,7 +335,7 @@ public class DProviderInfo extends JEscDialog {
             attributes.add(attributeMap.get(key));
         }
 
-        return attributes.toArray(new String[attributes.size()]);
+        return attributes.toArray(new String[0]);
     }
 
     private String[] getAlgorithmAliases(String algorithm, String serviceType, Provider provider) {
@@ -359,7 +359,7 @@ public class DProviderInfo extends JEscDialog {
             }
         }
 
-        String[] aliases = aliasList.toArray(new String[aliasList.size()]);
+        String[] aliases = aliasList.toArray(new String[0]);
         Arrays.sort(aliases);
 
         return aliases;

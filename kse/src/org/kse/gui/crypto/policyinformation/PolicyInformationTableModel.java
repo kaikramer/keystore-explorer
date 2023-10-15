@@ -58,7 +58,7 @@ public class PolicyInformationTableModel extends AbstractTableModel {
      */
     public void load(List<PolicyInformation> policyInformation) {
         PolicyInformation[] policyInformationArray = policyInformation.toArray(
-                new PolicyInformation[policyInformation.size()]);
+                new PolicyInformation[0]);
         Arrays.sort(policyInformationArray, new PolicyInformationComparator());
 
         data = new Object[policyInformation.size()][1];

@@ -1878,7 +1878,7 @@ public class X509Ext {
             reasonFlagsList.add(res.getString("AaCompromiseReasonFlag"));
         }
 
-        return reasonFlagsList.toArray(new String[reasonFlagsList.size()]);
+        return reasonFlagsList.toArray(new String[0]);
     }
 
     private static boolean hasReasonFlag(int reasonFlags, int reasonFlag) {

@@ -196,7 +196,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
                     }
 
                     X509Certificate[] trustChain = X509CertUtil.establishTrust(certs[0], compKeyStores.toArray(
-                            new KeyStore[compKeyStores.size()]));
+                            new KeyStore[0]));
 
                     if (trustChain != null) {
                         newCertChain = trustChain;

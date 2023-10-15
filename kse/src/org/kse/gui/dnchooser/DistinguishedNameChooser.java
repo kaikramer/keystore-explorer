@@ -81,13 +81,13 @@ public class DistinguishedNameChooser extends JPanel {
         boolean noEmptyRdns = true;
         List<RDN> rdns = listPanel.getRdns(noEmptyRdns);
         Collections.reverse(rdns);
-        return new X500Name(rdns.toArray(new RDN[rdns.size()]));
+        return new X500Name(rdns.toArray(new RDN[0]));
     }
 
     public X500Name getDNWithEmptyRdns() {
         List<RDN> rdns = listPanel.getRdns(false);
         Collections.reverse(rdns);
-        return new X500Name(rdns.toArray(new RDN[rdns.size()]));
+        return new X500Name(rdns.toArray(new RDN[0]));
     }
 
     public JTextField getFirstTextField() {

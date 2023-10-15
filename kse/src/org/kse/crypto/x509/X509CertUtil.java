@@ -146,7 +146,7 @@ public final class X509CertUtil {
                 }
             }
 
-            return loadedCerts.toArray(new X509Certificate[loadedCerts.size()]);
+            return loadedCerts.toArray(new X509Certificate[0]);
         } catch (CertificateException e) {
             throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), e);
         } finally {
@@ -323,7 +323,7 @@ public final class X509CertUtil {
         }
 
         // Return longest path
-        return longestPath.toArray(new X509Certificate[longestPath.size()]);
+        return longestPath.toArray(new X509Certificate[0]);
     }
 
     private static X509Certificate findIssuedCert(X509Certificate issuerCert, X509Certificate[] certs) {

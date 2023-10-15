@@ -440,7 +440,7 @@ public class DImportKeyPairPvk extends JEscDialog {
         causeList.add(res.getString("DImportKeyPairPvk.NotPvk.Cause"));
         causeList.add(res.getString("DImportKeyPairPvk.CorruptedPvk.Cause"));
 
-        String[] causes = causeList.toArray(new String[causeList.size()]);
+        String[] causes = causeList.toArray(new String[0]);
 
         return new Problem(problemStr, causes, exception);
     }
