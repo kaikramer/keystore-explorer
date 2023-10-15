@@ -310,22 +310,20 @@ public class DPreferences extends JEscDialog {
         jtree.setEditable(false);
         jtree.setSelectionRow(0);
 
-        jtree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent e) {
-                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jtree.getLastSelectedPathComponent();
-                Object nodeInfo = selectedNode.getUserObject();
-                MenuTreeNode mtn = null;
-                String screen = "";
-                if (selectedNode.isLeaf()) {
-                    mtn = (MenuTreeNode) nodeInfo;
-                }
-                for (MenuTreeNode menu : menus) {
-                    if (mtn.getName().equals(menu.getName())) {
-                        screen = menu.getCard();
-                    }
-                }
-                changeScreen(screen);
+        jtree.getSelectionModel().addTreeSelectionListener(e -> {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jtree.getLastSelectedPathComponent();
+            Object nodeInfo = selectedNode.getUserObject();
+            MenuTreeNode mtn = null;
+            String screen = "";
+            if (selectedNode.isLeaf()) {
+                mtn = (MenuTreeNode) nodeInfo;
             }
+            for (MenuTreeNode menu : menus) {
+                if (mtn.getName().equals(menu.getName())) {
+                    screen = menu.getCard();
+                }
+            }
+            changeScreen(screen);
         });
 
         // Enable tool tips.
