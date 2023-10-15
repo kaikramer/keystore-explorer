@@ -42,7 +42,7 @@ public class ListClaimsTableModel extends AbstractTableModel {
         columnNames[0] = res.getString("ListClaimsTableModel.NameColumn");
         columnNames[1] = res.getString("ListClaimsTableModel.ValueColumn");
 
-        listClaims = new ArrayList<CustomClaim>();
+        listClaims = new ArrayList<>();
     }
 
     /**

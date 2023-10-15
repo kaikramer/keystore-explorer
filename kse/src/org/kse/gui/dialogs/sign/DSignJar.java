@@ -500,7 +500,7 @@ public class DSignJar extends JEscDialog {
         JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
 
         // set input files array to output files list
-        this.outputJarFiles = new ArrayList<File>(Arrays.asList(files));
+        this.outputJarFiles = new ArrayList<>(Arrays.asList(files));
 
         if (jrbOutputJarFixes.isSelected()) {
             // loop through output JAR files

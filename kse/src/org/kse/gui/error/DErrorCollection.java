@@ -234,7 +234,7 @@ public class DErrorCollection extends JEscDialog {
     // quick ui test
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        Map<String, String> testmap = new HashMap<String, String>();
+        Map<String, String> testmap = new HashMap<>();
         for (int i = 0; i < 50; i++) {
             testmap.put("file " + i,
                     "( " + i + " )" + " Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"

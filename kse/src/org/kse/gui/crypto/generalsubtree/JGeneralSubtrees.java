@@ -275,7 +275,7 @@ public class JGeneralSubtrees extends JPanel {
 
     private void populate() {
         if (generalSubtrees == null) {
-            generalSubtrees = new GeneralSubtrees(new ArrayList<GeneralSubtree>());
+            generalSubtrees = new GeneralSubtrees(new ArrayList<>());
         }
 
         reloadGeneralSubtreesTable();

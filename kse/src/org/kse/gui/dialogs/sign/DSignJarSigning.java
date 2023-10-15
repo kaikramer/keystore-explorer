@@ -216,7 +216,7 @@ public class DSignJarSigning extends JEscDialog {
         public void run() {
             try {
                 // set new hashmap
-                fileExceptions = new HashMap<String, String>();
+                fileExceptions = new HashMap<>();
                 for (int i = 0; i < inputJarFiles.length; i++) {
                     try {
                         if (inputJarFiles[i].equals(outputJarFiles.get(i))) {
