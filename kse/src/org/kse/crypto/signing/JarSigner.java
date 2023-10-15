@@ -688,7 +688,7 @@ public class JarSigner {
         while (true) {
             if (remainingText.length() > 70) {
                 // Split a line
-                sb.append(remainingText.substring(0, 70));
+                sb.append(remainingText, 0, 70);
                 sb.append(CRLF);
                 sb.append(" ");
                 remainingText = remainingText.substring(70);
