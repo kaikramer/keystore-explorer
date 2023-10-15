@@ -162,7 +162,7 @@ public class DGetAlias extends JEscDialog {
     private boolean checkAlias() {
         String alias = jtfAlias.getText().trim().toLowerCase();
 
-        if (alias.length() > 0) {
+        if (!alias.isEmpty()) {
             this.alias = alias;
             return true;
         }

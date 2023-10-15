@@ -231,7 +231,7 @@ public class DSignJwt extends JEscDialog {
     }
 
     public String getIssuer() {
-        if (jtfIssuer.getText().length() > 0) {
+        if (!jtfIssuer.getText().isEmpty()) {
             return jtfIssuer.getText();
         } else {
             return null;
@@ -239,7 +239,7 @@ public class DSignJwt extends JEscDialog {
     }
 
     public String getId() {
-        if (jtfId.getText().length() > 0) {
+        if (!jtfId.getText().isEmpty()) {
             return jtfId.getText();
         } else {
             return null;
@@ -260,7 +260,7 @@ public class DSignJwt extends JEscDialog {
     }
 
     public String getSubject() {
-        if (jtfSubject.getText().length() > 0) {
+        if (!jtfSubject.getText().isEmpty()) {
             return jtfSubject.getText();
         } else {
             return null;
@@ -268,7 +268,7 @@ public class DSignJwt extends JEscDialog {
     }
 
     public String getAudience() {
-        if (jtfAudience.getText().length() > 0) {
+        if (!jtfAudience.getText().isEmpty()) {
             return jtfAudience.getText();
         } else {
             return null;

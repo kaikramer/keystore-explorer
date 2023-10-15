@@ -296,7 +296,7 @@ public class DExtendedKeyUsage extends DExtension {
                 customExtKeyUsagesOids.add(oid);
             }
         }
-        jcbCustomExtKeyUsage.setSelected(customExtKeyUsagesOids.size() > 0);
+        jcbCustomExtKeyUsage.setSelected(!customExtKeyUsagesOids.isEmpty());
     }
 
     private void addCustomExtKeyUsagePressed() {
@@ -304,7 +304,7 @@ public class DExtendedKeyUsage extends DExtension {
         dCustomExtKeyUsage.setLocationRelativeTo(this);
         dCustomExtKeyUsage.setVisible(true);
         customExtKeyUsagesOids = dCustomExtKeyUsage.getObjectIds();
-        jcbCustomExtKeyUsage.setSelected(customExtKeyUsagesOids.size() > 0);
+        jcbCustomExtKeyUsage.setSelected(!customExtKeyUsagesOids.isEmpty());
     }
 
     private void okPressed() {

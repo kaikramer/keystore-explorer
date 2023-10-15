@@ -200,7 +200,7 @@ public class JarSigner {
             // Write out all entries' attributes to manifest
             String entryManifestAttrs = getManifestEntriesAttrs(jar);
 
-            if (entryManifestAttrs.length() > 0) {
+            if (!entryManifestAttrs.isEmpty()) {
                 // Only output if there are any
                 sbManifest.append(entryManifestAttrs);
                 sbManifest.append(CRLF);
@@ -483,7 +483,7 @@ public class JarSigner {
             // Keep reading until a blank line is found - the end of the main
             // attributes
             while ((line = lnr.readLine()) != null) {
-                if (line.trim().length() == 0) {
+                if (line.trim().isEmpty()) {
                     break;
                 }
 
@@ -530,7 +530,7 @@ public class JarSigner {
             // Keep reading until a blank line is found - the end of the entry's
             // attributes
             while ((line = lnr.readLine()) != null) {
-                if (line.trim().length() == 0) {
+                if (line.trim().isEmpty()) {
                     break;
                 }
 

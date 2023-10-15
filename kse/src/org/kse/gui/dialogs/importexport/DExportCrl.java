@@ -271,7 +271,7 @@ public class DExportCrl extends JEscDialog {
 
         String exportFileStr = jtfExportFile.getText().trim();
 
-        if (exportFileStr.length() == 0) {
+        if (exportFileStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DExportCrl.ExportFileRequired.message"),
                                           res.getString("DExportCrl.Simple.Title"), JOptionPane.WARNING_MESSAGE);
             return;

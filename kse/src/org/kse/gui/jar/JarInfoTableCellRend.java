@@ -50,7 +50,7 @@ public class JarInfoTableCellRend extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable jtJarInfo, Object value, boolean isSelected, boolean hasFocus,
                                                    int row, int col) {
         JLabel cell = (JLabel) super.getTableCellRendererComponent(jtJarInfo, value, isSelected, hasFocus, row, col);
-        if (cell.getText().length() == 0) {
+        if (cell.getText().isEmpty()) {
             cell.setText("-");
             cell.setHorizontalAlignment(CENTER);
         } else {

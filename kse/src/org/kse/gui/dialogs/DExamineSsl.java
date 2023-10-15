@@ -244,7 +244,7 @@ public class DExamineSsl extends JEscDialog {
     private void okPressed() {
         String sslHost = ((String) jcbSslHost.getSelectedItem()).trim();
 
-        if (sslHost.length() == 0) {
+        if (sslHost.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.SslHostReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;
@@ -252,7 +252,7 @@ public class DExamineSsl extends JEscDialog {
 
         String sslPortStr = ((String) jcbSslPort.getSelectedItem()).trim();
 
-        if (sslPortStr.length() == 0) {
+        if (sslPortStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DExamineSsl.SslPortReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

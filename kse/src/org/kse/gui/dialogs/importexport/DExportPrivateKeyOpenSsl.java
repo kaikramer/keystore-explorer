@@ -450,7 +450,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
         String exportFileChars = jtfExportFile.getText().trim();
 
-        if (exportFileChars.length() == 0) {
+        if (exportFileChars.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DExportPrivateKeyOpenSsl.ExportFileRequired.message"),
                                           res.getString("DExportPrivateKeyOpenSsl.Simple.Title"),
                                           JOptionPane.WARNING_MESSAGE);

@@ -121,13 +121,13 @@ public class DCustomClaim extends JEscDialog {
 
     private void okPressed() {
         name = jtfName.getText().trim();
-        if (name.length() == 0) {
+        if (name.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DCustomClaim.ValName.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;
         }
         value = jtfValue.getText().trim();
-        if (value.length() == 0) {
+        if (value.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DCustomClaim.ValValue.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

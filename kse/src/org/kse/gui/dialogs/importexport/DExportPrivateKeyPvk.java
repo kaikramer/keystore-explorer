@@ -482,7 +482,7 @@ public class DExportPrivateKeyPvk extends JEscDialog {
 
         String exportFileChars = jtfExportFile.getText().trim();
 
-        if (exportFileChars.length() == 0) {
+        if (exportFileChars.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DExportPrivateKeyPvk.ExportFileRequired.message"),
                                           res.getString("DExportPrivateKeyPvk.Simple.Title"),
                                           JOptionPane.WARNING_MESSAGE);

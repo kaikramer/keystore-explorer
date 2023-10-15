@@ -42,7 +42,7 @@ public class StringUtils {
 
         String newStr = str.trim();
 
-        if (newStr.length() < 1) {
+        if (newStr.isEmpty()) {
             return null;
         }
 

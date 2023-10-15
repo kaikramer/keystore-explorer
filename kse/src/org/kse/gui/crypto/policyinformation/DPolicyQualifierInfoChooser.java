@@ -271,7 +271,7 @@ public class DPolicyQualifierInfoChooser extends JEscDialog {
             if (jrbCps.isSelected()) {
                 String cps = jtfCps.getText().trim();
 
-                if (cps.length() == 0) {
+                if (cps.isEmpty()) {
                     JOptionPane.showMessageDialog(this,
                                                   res.getString("DPolicyQualifierInfoChooser.CpsValueReq.message"),
                                                   getTitle(), JOptionPane.WARNING_MESSAGE);

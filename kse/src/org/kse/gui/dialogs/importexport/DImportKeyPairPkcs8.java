@@ -374,7 +374,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
     private PrivateKey loadPrivateKey() {
         String privateKeyPath = jtfPrivateKeyPath.getText().trim();
 
-        if (privateKeyPath.length() == 0) {
+        if (privateKeyPath.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DImportKeyPairPkcs8.PrivateKeyRequired.message"),
                                           getTitle(), JOptionPane.WARNING_MESSAGE);
             return null;
@@ -475,7 +475,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
     private X509Certificate[] loadCertificates() {
         String certificatePath = jtfCertificatePath.getText().trim();
 
-        if (certificatePath.length() == 0) {
+        if (certificatePath.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DImportKeyPairPkcs8.CertificateRequired.message"),
                                           getTitle(), JOptionPane.WARNING_MESSAGE);
             return null;

@@ -241,13 +241,13 @@ public class DGeneralSubtreeChooser extends JEscDialog {
         int minimum = -1;
         String minimumStr = jtfMinimum.getText().trim();
 
-        if (minimumStr.length() == 0) {
+        if (minimumStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DGeneralSubtreeChooser.MinimumValueReq.message"),
                                           getTitle(), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        if (minimumStr.length() > 0) {
+        if (!minimumStr.isEmpty()) {
             try {
                 minimum = Integer.parseInt(minimumStr);
             } catch (NumberFormatException ex) {
@@ -266,7 +266,7 @@ public class DGeneralSubtreeChooser extends JEscDialog {
         int maximum = -1;
         String maximumStr = jtfMaximum.getText().trim();
 
-        if (maximumStr.length() > 0) {
+        if (!maximumStr.isEmpty()) {
             try {
                 maximum = Integer.parseInt(maximumStr);
             } catch (NumberFormatException ex) {

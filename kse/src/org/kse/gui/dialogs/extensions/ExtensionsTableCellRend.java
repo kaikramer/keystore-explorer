@@ -73,7 +73,7 @@ public class ExtensionsTableCellRend extends DefaultTableCellRenderer {
         }
         // Name column - may be unknown
         else if (col == 1) {
-            if (cell.getText().length() == 0) {
+            if (cell.getText().isEmpty()) {
                 cell.setText("-");
                 cell.setHorizontalAlignment(CENTER);
             } else {

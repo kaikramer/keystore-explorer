@@ -960,15 +960,15 @@ public class DPreferences extends JEscDialog {
 
             // Require at least one of the HTTP host or HTTPS host or SOCKS host manual
             // settings
-            if ((httpHost.length() == 0) && (httpsHost.length() == 0) && (socksHost.length() == 0)) {
+            if ((httpHost.isEmpty()) && (httpsHost.isEmpty()) && (socksHost.isEmpty())) {
                 JOptionPane.showMessageDialog(this, res.getString("DPreferences.ManualConfigReq.message"), getTitle(),
                         JOptionPane.WARNING_MESSAGE);
                 return false;
             }
 
             // check http
-            if (httpHost.length() > 0) {
-                if (!parsePort(httpPortStr) || httpPortStr.length() == 0) {
+            if (!httpHost.isEmpty()) {
+                if (!parsePort(httpPortStr) || httpPortStr.isEmpty()) {
                     JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqHttp.message"), getTitle(),
                             JOptionPane.WARNING_MESSAGE);
                     return false;
@@ -978,8 +978,8 @@ public class DPreferences extends JEscDialog {
             }
 
             // check https
-            if (httpsHost.length() > 0) {
-                if (!parsePort(httpsPortStr) || httpsPortStr.length() == 0) {
+            if (!httpsHost.isEmpty()) {
+                if (!parsePort(httpsPortStr) || httpsPortStr.isEmpty()) {
                     JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqHttps.message"), getTitle(),
                             JOptionPane.WARNING_MESSAGE);
                     return false;
@@ -989,8 +989,8 @@ public class DPreferences extends JEscDialog {
             }
 
             // check socks
-            if (socksHost.length() > 0) {
-                if (!parsePort(socksPortStr) || socksPortStr.length() == 0) {
+            if (!socksHost.isEmpty()) {
+                if (!parsePort(socksPortStr) || socksPortStr.isEmpty()) {
                     JOptionPane.showMessageDialog(this, res.getString("DPreferences.PortReqSocks.message"), getTitle(),
                             JOptionPane.WARNING_MESSAGE);
                     return false;
@@ -1008,7 +1008,7 @@ public class DPreferences extends JEscDialog {
         // check automatic proxy
         if (jrbAutomaticProxyConfig.isSelected()) {
             String pacUrl = jtfPacUrl.getText().trim();
-            if (pacUrl.length() == 0) {
+            if (pacUrl.isEmpty()) {
                 JOptionPane.showMessageDialog(this, res.getString("DPreferences.PacUrlReq.message"), getTitle(),
                         JOptionPane.WARNING_MESSAGE);
                 return false;

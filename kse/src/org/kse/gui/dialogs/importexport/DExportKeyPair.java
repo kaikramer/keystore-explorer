@@ -344,7 +344,7 @@ public class DExportKeyPair extends JEscDialog {
 
         String exportFileStr = jtfExportFile.getText().trim();
 
-        if (exportFileStr.length() == 0) {
+        if (exportFileStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DExportKeyPair.ExportFileRequired.message"),
                                           res.getString("DExportKeyPair.Simple.Title"), JOptionPane.WARNING_MESSAGE);
             return;

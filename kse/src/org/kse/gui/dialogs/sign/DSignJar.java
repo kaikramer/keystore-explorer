@@ -437,7 +437,7 @@ public class DSignJar extends JEscDialog {
         }
 
         // check if signature field was filled
-        if (signatureName.length() == 0) {
+        if (signatureName.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSignJar.ValReqSignatureName.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;
@@ -459,7 +459,7 @@ public class DSignJar extends JEscDialog {
 
         // checks if file prefix or suffix fields were filled
         if (jrbOutputJarFixes.isSelected()) {
-            if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
+            if ((outputJarPrefix.isEmpty()) && (outputJarSuffix.isEmpty())) {
                 JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
                                               JOptionPane.WARNING_MESSAGE);
                 return;

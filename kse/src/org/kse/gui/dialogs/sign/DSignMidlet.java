@@ -299,7 +299,7 @@ public class DSignMidlet extends JEscDialog {
     private void okPressed() {
         String inputJad = jtfInputJad.getText().trim();
 
-        if (inputJad.length() == 0) {
+        if (inputJad.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSignMidlet.InputJadRequired.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;
@@ -340,7 +340,7 @@ public class DSignMidlet extends JEscDialog {
         } else {
             String outputJad = jtfOutputJad.getText().trim();
 
-            if (outputJad.length() == 0) {
+            if (outputJad.isEmpty()) {
                 JOptionPane.showMessageDialog(this, res.getString("DSignMidlet.OutputJadRequired.message"), getTitle(),
                                               JOptionPane.WARNING_MESSAGE);
                 return;
@@ -351,7 +351,7 @@ public class DSignMidlet extends JEscDialog {
 
         String jar = jtfJar.getText().trim();
 
-        if (jar.length() == 0) {
+        if (jar.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSignMidlet.JarRequired.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

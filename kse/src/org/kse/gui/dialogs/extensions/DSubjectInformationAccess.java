@@ -171,7 +171,7 @@ public class DSubjectInformationAccess extends DExtension {
     private void okPressed() {
         List<AccessDescription> accessDescriptions = jadAccessDescriptions.getAccessDescriptions();
 
-        if (accessDescriptions.size() == 0) {
+        if (accessDescriptions.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSubjectInformationAccess.ValueReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

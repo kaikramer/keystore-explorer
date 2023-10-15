@@ -216,7 +216,7 @@ public class DError extends JEscDialog {
         while (strTok.hasMoreTokens()) {
             String word = strTok.nextToken();
 
-            if (currentLine.length() == 0) {
+            if (currentLine.isEmpty()) {
                 currentLine += word;
                 continue;
             }

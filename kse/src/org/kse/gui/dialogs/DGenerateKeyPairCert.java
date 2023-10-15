@@ -346,7 +346,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
             caPublicKey = keyPair.getPublic();
 
             String serialNumberStr = jtfSerialNumber.getText().trim();
-            if (serialNumberStr.length() != 0) {
+            if (!serialNumberStr.isEmpty()) {
                 try {
                     caSerialNumber = parseDecOrHex(serialNumberStr);
                 } catch (NumberFormatException ex) {
@@ -391,7 +391,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         Date validityEnd = jdtValidityEnd.getDateTime();
 
         String serialNumberStr = jtfSerialNumber.getText().trim();
-        if (serialNumberStr.length() == 0) {
+        if (serialNumberStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DGenerateKeyPairCert.ValReqSerialNumber.message"),
                                           getTitle(), JOptionPane.WARNING_MESSAGE);
             return false;

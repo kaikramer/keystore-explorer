@@ -241,7 +241,7 @@ public class PacProxySelector extends ProxySelector {
         while (strTok.hasMoreTokens()) {
             String pacFunctionReturnElement = strTok.nextToken().trim();
 
-            if (pacFunctionReturnElement.length() > 0) {
+            if (!pacFunctionReturnElement.isEmpty()) {
                 Proxy proxy = parsePacProxy(pacFunctionReturnElement);
 
                 if (proxy != null) {

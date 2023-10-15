@@ -268,7 +268,7 @@ public class DImportKeyPairPkcs12 extends JEscDialog {
     private Keypair loadKeyPair() {
         String pkcs12Path = jtfPkcs12Path.getText().trim();
 
-        if (pkcs12Path.length() == 0) {
+        if (pkcs12Path.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DImportKeyPairPkcs12.KeyPairRequired.message"),
                                           getTitle(), JOptionPane.WARNING_MESSAGE);
             return null;
