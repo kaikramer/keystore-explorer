@@ -209,7 +209,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
 
         if (width != null) {
             table.getTableHeader().setResizingColumn(tableColumn);
-            tableColumn.setWidth(width.intValue());
+            tableColumn.setWidth(width);
         }
     }
 
