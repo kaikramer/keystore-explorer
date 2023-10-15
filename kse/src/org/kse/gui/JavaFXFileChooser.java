@@ -486,7 +486,7 @@ public class JavaFXFileChooser extends JFileChooser {
         chooser.setMultiSelectionEnabled(false);
         // chooser.addChoosableFileFilter(new FileNameExtensionFilter("Description1",
         // new String[] { "jks" }));
-        chooser.setFileFilter(new FileNameExtensionFilter("ZIP Filez", new String[] { "zip" }));
+        chooser.setFileFilter(new FileNameExtensionFilter("ZIP Filez", "zip"));
         //chooser.setFileFilter(new FileNameExtensionFilter("Description_1", new String[] { "mkv", "jpg" }));
         // chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.showDialog(null, "Button Text");
