@@ -211,13 +211,12 @@ public class HexUtil {
             // Get clear character
 
             // Character to display if character not defined in Unicode or is a
-            // control charcter
+            // control character
             char c = '.';
 
             // Not a control character and defined in Unicode
             if ((!Character.isISOControl((char) i)) && (Character.isDefined((char) i))) {
-                Character clr = (char) i;
-                c = clr;
+                c = (char) i;
             }
 
             sbClr.append(c);
