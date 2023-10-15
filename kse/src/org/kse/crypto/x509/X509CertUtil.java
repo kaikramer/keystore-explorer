@@ -526,7 +526,7 @@ public final class X509CertUtil {
 
     /**
      * Check whether or not a trust path exists between the supplied X.509
-     * certificate and and the supplied keystores based on the trusted
+     * certificate and the supplied keystores based on the trusted
      * certificates contained therein, ie that a chain of trust exists between
      * the supplied certificate and a self-signed trusted certificate in the
      * KeyStores.
@@ -550,7 +550,7 @@ public final class X509CertUtil {
             throws CryptoException {
         /*
          * Check whether or not a trust path exists between the supplied X.509
-         * certificate and and the supplied comparison certificates , ie that a
+         * certificate and the supplied comparison certificates , ie that a
          * chain of trust exists between the certificate and a self-signed
          * trusted certificate in the comparison set
          */

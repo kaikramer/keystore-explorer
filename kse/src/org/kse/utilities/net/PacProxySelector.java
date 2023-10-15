@@ -144,7 +144,7 @@ public class PacProxySelector extends ProxySelector {
         ProxySelector defaultProxySelector = ProxySelector.getDefault();
 
         try {
-            // ...and set use of no proxy selector. We don't want to try and use any proxy to get the the pac script
+            // ...and set use of no proxy selector. We don't want to try and use any proxy to get the pac script
             ProxySelector.setDefault(new NoProxySelector());
 
             URL latestVersionUrl = pacURI.toURL();
@@ -307,7 +307,7 @@ public class PacProxySelector extends ProxySelector {
      *
      * @param uri           The URI that the proxy at socketAddress failed to serve
      * @param socketAddress The socket address of the proxy/SOCKS server
-     * @param ioException   The I/O exception thrown when the connect failed
+     * @param ioException   The I/O exception thrown when the connection failed
      */
     @Override
     public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {

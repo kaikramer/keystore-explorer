@@ -22,7 +22,7 @@ package org.kse.gui.actions;
 import org.kse.gui.KseFrame;
 
 /**
- * Action to show/hide the tool bar.
+ * Action to show/hide the toolbar.
  */
 public class ShowHideToolBarAction extends KeyStoreExplorerAction {
     private static final long serialVersionUID = 1L;

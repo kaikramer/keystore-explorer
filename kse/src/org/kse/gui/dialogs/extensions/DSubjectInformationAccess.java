@@ -52,7 +52,7 @@ import org.kse.gui.crypto.accessdescription.JAccessDescriptions;
 import org.kse.gui.error.DError;
 
 /**
- * Dialog used to add or edit an Subject Information Access extension.
+ * Dialog used to add or edit a Subject Information Access extension.
  */
 public class DSubjectInformationAccess extends DExtension {
     private static final long serialVersionUID = 1L;

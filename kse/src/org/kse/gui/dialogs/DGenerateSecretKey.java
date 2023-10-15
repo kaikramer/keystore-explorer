@@ -49,7 +49,7 @@ import org.kse.gui.PlatformUtil;
 
 /**
  * Dialog used to choose the parameters required for secret key generation. The
- * user may select an secret key algorithm and enter a key size in bits.
+ * user may select a secret key algorithm and enter a key size in bits.
  */
 public class DGenerateSecretKey extends JEscDialog {
     private static final long serialVersionUID = 1L;

@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * The table model used to display an list of custom claims
+ * The table model used to display a list of custom claims
  */
 public class ListClaimsTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;

@@ -104,7 +104,7 @@ public class JMenuRecentFiles extends JMenu {
 
         jmirfNew.setPosition(1);
 
-        // Item already exists outside of first position
+        // Item already exists outside first position
         if (index != -1) {
             // Introduce it to the first position and move the others up over
             // its old position

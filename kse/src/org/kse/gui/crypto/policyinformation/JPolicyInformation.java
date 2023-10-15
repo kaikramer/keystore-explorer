@@ -206,7 +206,7 @@ public class JPolicyInformation extends JPanel {
 
             @Override
             public void keyTyped(KeyEvent evt) {
-                // Delete on Mac if back space typed
+                // Delete on Mac if backspace typed
                 if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
                     try {
                         CursorUtil.setCursorBusy(JPolicyInformation.this);

@@ -50,7 +50,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.generalname.JGeneralName;
 
 /**
- * Dialog to choose an general subtree.
+ * Dialog to choose a general subtree.
  */
 public class DGeneralSubtreeChooser extends JEscDialog {
     private static final long serialVersionUID = 1L;

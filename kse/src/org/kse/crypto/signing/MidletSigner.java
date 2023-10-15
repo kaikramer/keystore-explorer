@@ -165,7 +165,7 @@ public class MidletSigner {
 
     private static byte[] signJarDigest(File jarFile, RSAPrivateKey privateKey) throws CryptoException {
 
-        // Create a SHA-1 signature for the supplied JAR file
+        // Create an SHA-1 signature for the supplied JAR file
         try (FileInputStream fis = new FileInputStream(jarFile)) {
             Signature signature = Signature.getInstance(SignatureType.SHA1_RSA.jce());
             signature.initSign(privateKey);

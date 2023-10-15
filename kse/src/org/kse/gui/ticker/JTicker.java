@@ -260,7 +260,7 @@ public class JTicker extends JComponent implements ActionListener, ListDataListe
     /**
      * Get JTicker's model.
      *
-     * @return model Model
+     * @return Model
      */
     public TickerModel getModel() {
         return model;

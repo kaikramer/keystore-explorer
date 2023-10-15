@@ -119,7 +119,7 @@ public class ManualProxySelector extends ProxySelector {
      *
      * @param uri           The URI that the proxy at socketAddress failed to serve
      * @param socketAddress The socket address of the proxy/SOCKS server
-     * @param ioException   The I/O exception thrown when the connect failed
+     * @param ioException   The I/O exception thrown when the connection failed
      */
     @Override
     public void connectFailed(URI uri, SocketAddress socketAddress, IOException ioException) {

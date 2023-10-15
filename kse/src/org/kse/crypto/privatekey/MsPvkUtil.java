@@ -418,7 +418,7 @@ public class MsPvkUtil {
             ByteBuffer bb = ByteBuffer.wrap(new byte[PVK_BUFFER_LENGTH]);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
-            // Write magic number, reserved and and key type fields
+            // Write magic number, reserved and key type fields
             writeReservedMagicKeyType(bb, keyType);
 
             // Get unencrypted private key blob
@@ -490,7 +490,7 @@ public class MsPvkUtil {
             ByteBuffer bb = ByteBuffer.wrap(new byte[PVK_BUFFER_LENGTH]);
             bb.order(ByteOrder.LITTLE_ENDIAN);
 
-            // Write magic number, reserved and and key type fields
+            // Write magic number, reserved and key type fields
             writeReservedMagicKeyType(bb, keyType);
 
             // Get password as bytes
@@ -936,7 +936,7 @@ public class MsPvkUtil {
     private static byte[] getBufferBytes(ByteBuffer bb) {
         byte[] buffer = bb.array();
 
-        // Read all of the byte's in the backing array to the extent writing
+        // Read all the byte's in the backing array to the extent writing
         // took place
         byte[] written = new byte[bb.position()];
 

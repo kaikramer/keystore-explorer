@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * The table model used to display an list of X.509 certificates sorted by name
+ * The table model used to display a list of X.509 certificates sorted by name
  * column
  */
 public class ListCertsTableModel extends AbstractTableModel {

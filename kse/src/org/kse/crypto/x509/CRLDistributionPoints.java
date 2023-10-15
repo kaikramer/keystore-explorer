@@ -42,7 +42,7 @@ public class CRLDistributionPoints extends ASN1Object {
     List<DistributionPoint> distributionPointList;
 
     /**
-     * Create an new CRLDistributionPoints object from given distribution
+     * Create a new CRLDistributionPoints object from given distribution
      * points.
      */
     public CRLDistributionPoints(List<DistributionPoint> distributionPointList) {

@@ -69,7 +69,7 @@ import org.kse.utilities.io.HexUtil;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * Displays the fields of a asymmetric key.
+ * Displays the fields of an asymmetric key.
  */
 public class DViewAsymmetricKeyFields extends JEscDialog {
     private static final long serialVersionUID = 1L;
