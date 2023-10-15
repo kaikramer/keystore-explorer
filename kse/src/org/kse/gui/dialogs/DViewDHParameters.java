@@ -230,10 +230,10 @@ public class DViewDHParameters extends JEscDialog {
             }
         }
 
-        if (!chosenFile.getAbsolutePath().toString().endsWith(FILE_SUFFIX)) {
-            writeDHParams(chosenFile.getAbsolutePath().toString() + FILE_SUFFIX, dhParameters);
+        if (!chosenFile.getAbsolutePath().endsWith(FILE_SUFFIX)) {
+            writeDHParams(chosenFile.getAbsolutePath() + FILE_SUFFIX, dhParameters);
         } else {
-            writeDHParams(chosenFile.getAbsolutePath().toString(), dhParameters);
+            writeDHParams(chosenFile.getAbsolutePath(), dhParameters);
         }
 
         JOptionPane.showMessageDialog(this, res.getString("DViewDHParameters.ExportPemSuccessful.message"), title,

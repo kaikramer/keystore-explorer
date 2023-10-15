@@ -59,7 +59,7 @@ public class AccessDescriptionsTableModel extends AbstractTableModel {
      */
     public void load(List<AccessDescription> accessDescriptions) {
         AccessDescription[] accessDescriptionsArray = accessDescriptions.toArray(
-                new AccessDescription[accessDescriptions.size()]);
+                new AccessDescription[0]);
         Arrays.sort(accessDescriptionsArray, new AccessDescriptionMethodComparator());
 
         data = new Object[accessDescriptionsArray.length][2];

@@ -58,7 +58,7 @@ public class PolicyQualifierInfoTableModel extends AbstractTableModel {
      */
     public void load(List<PolicyQualifierInfo> policyQualifierInfo) {
         PolicyQualifierInfo[] policyQualifierInfoArray = policyQualifierInfo.toArray(
-                new PolicyQualifierInfo[policyQualifierInfo.size()]);
+                new PolicyQualifierInfo[0]);
         Arrays.sort(policyQualifierInfoArray, new PolicyQualifierInfoComparator());
 
         data = new Object[policyQualifierInfoArray.length][1];

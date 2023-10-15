@@ -77,7 +77,7 @@ public class CustomSslSocketFactory extends SSLSocketFactory {
         Method setServerNamesMethod;
         try {
             setServerNamesMethod = sslParameters.getClass().getMethod("setServerNames", List.class);
-            setServerNamesMethod.invoke(sslParameters, new ArrayList<Object>());
+            setServerNamesMethod.invoke(sslParameters, new ArrayList<>());
             socket.setSSLParameters(sslParameters);
         } catch (Exception e) {
             // Java 6/7, nothing we can do here (setting jsse.enableSNIExtension wouldn't work here anymore)

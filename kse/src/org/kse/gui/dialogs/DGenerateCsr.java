@@ -403,7 +403,7 @@ public class DGenerateCsr extends JEscDialog {
         }
 
         challenge = jtfChallenge.getText();
-        if (challenge.length() == 0) {
+        if (challenge.isEmpty()) {
             if (format == SPKAC) {
                 // Challenge is mandatory for SPKAC
                 JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.ChallengeRequiredForSpkac.message"),
@@ -416,14 +416,14 @@ public class DGenerateCsr extends JEscDialog {
         }
 
         unstructuredName = jtfUnstructuredName.getText();
-        if (unstructuredName.length() == 0) {
+        if (unstructuredName.isEmpty()) {
             unstructuredName = null;
         }
 
         addExtensionsWanted = jcbExtensions.isSelected();
 
         String csrFileStr = jtfCsrFile.getText().trim();
-        if (csrFileStr.length() == 0) {
+        if (csrFileStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.CsrFileRequired.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

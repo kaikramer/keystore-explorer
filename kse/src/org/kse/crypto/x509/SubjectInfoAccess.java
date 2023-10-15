@@ -80,9 +80,8 @@ public class SubjectInfoAccess extends ASN1Object {
     @Override
     public ASN1Primitive toASN1Primitive() {
         ASN1EncodableVector vec = new ASN1EncodableVector();
-        Iterator<AccessDescription> it = accessDescriptions.iterator();
-        while (it.hasNext()) {
-            vec.add(it.next().toASN1Primitive());
+        for (AccessDescription accessDescription : accessDescriptions) {
+            vec.add(accessDescription.toASN1Primitive());
         }
 
         return new DERSequence(vec);

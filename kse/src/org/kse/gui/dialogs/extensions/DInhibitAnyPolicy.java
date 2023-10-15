@@ -162,7 +162,7 @@ public class DInhibitAnyPolicy extends DExtension {
 
         String skipCertificatesStr = jtfSkipCertificates.getText().trim();
 
-        if (skipCertificatesStr.length() == 0) {
+        if (skipCertificatesStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DInhibitAnyPolicy.ValueReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

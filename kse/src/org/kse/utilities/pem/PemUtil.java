@@ -94,7 +94,7 @@ public class PemUtil {
                 lineLength = MAX_PRINTABLE_ENCODING_LINE_LENGTH;
             }
 
-            sbPem.append(base64.substring(i, i + lineLength));
+            sbPem.append(base64, i, i + lineLength);
             sbPem.append("\n");
         }
 
@@ -143,7 +143,7 @@ public class PemUtil {
                             line = line.trim();
 
                             // Empty line - end of attributes
-                            if (line.equals("")) {
+                            if (line.isEmpty()) {
                                 line = lnr.readLine();
                                 break;
                             }

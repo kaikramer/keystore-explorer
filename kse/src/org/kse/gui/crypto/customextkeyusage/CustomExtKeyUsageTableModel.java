@@ -53,7 +53,7 @@ public class CustomExtKeyUsageTableModel extends AbstractTableModel {
      * @param objectIds The EKU oids
      */
     public void load(Set<ASN1ObjectIdentifier> objectIds) {
-        ASN1ObjectIdentifier[] objectIdsArray = objectIds.toArray(new ASN1ObjectIdentifier[objectIds.size()]);
+        ASN1ObjectIdentifier[] objectIdsArray = objectIds.toArray(new ASN1ObjectIdentifier[0]);
         Arrays.sort(objectIdsArray, Comparator.comparing(ASN1ObjectIdentifier::getId,
                                                          Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER)));
 

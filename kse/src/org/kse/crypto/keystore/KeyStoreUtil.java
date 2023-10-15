@@ -390,11 +390,11 @@ public final class KeyStoreUtil {
     }
 
     /**
-     * Is the key pair entry identified by alias a EC key pair?
+     * Is the key pair entry identified by alias an EC key pair?
      *
      * @param alias    Alias of key pair entry
      * @param keyStore KeyStore that contains the key pair
-     * @return True, if alias is a EC key pair
+     * @return True, if alias is an EC key pair
      * @throws KeyStoreException If there was a problem accessing the KeyStore.
      */
     public static boolean isECKeyPair(String alias, KeyStore keyStore) throws KeyStoreException {

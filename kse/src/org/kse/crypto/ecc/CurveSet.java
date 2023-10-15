@@ -65,7 +65,7 @@ public enum CurveSet {
             sets.add(TELETRUST.visibleName);
         }
         sets.add(ED.visibleName);
-        return sets.toArray(new String[sets.size()]);
+        return sets.toArray(new String[0]);
     }
 
     /**
@@ -96,13 +96,7 @@ public enum CurveSet {
 
         // filter out unsupported curves
         List<String> curveNames = getAllCurveNames();
-        Iterator<String> it = curveNames.iterator();
-        while (it.hasNext()) {
-            String curveName = it.next();
-            if (!EccUtil.isCurveAvailable(curveName, keyStoreType)) {
-                it.remove();
-            }
-        }
+        curveNames.removeIf(curveName -> !EccUtil.isCurveAvailable(curveName, keyStoreType));
 
         return curveNames;
     }

@@ -114,7 +114,7 @@ public class JarInfoTableModel extends AbstractTableModel {
             }
 
             data[i][0] = file.getName();
-            data[i][1] = Math.round(file.length() / 1024);
+            data[i][1] = file.length() / 1024;
             data[i][2] = specificationTitle;
             data[i][3] = specificationVersion;
             data[i][4] = specificationVendor;

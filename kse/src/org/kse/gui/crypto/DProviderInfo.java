@@ -147,11 +147,9 @@ public class DProviderInfo extends JEscDialog {
 
         Provider[] providers = Security.getProviders();
 
-        for (int i = 0; i < providers.length; i++) {
-            Provider provider = providers[i];
-
+        for (Provider provider : providers) {
             String nameVersion = MessageFormat.format(res.getString("DProviderInfo.ProviderNode.text"),
-                                                      provider.getName(), provider.getVersion());
+                    provider.getName(), provider.getVersion());
             DefaultMutableTreeNode providerNode = new DefaultMutableTreeNode(nameVersion);
             topNode.add(providerNode);
 
@@ -163,58 +161,58 @@ public class DProviderInfo extends JEscDialog {
             providerNode.add(servicesNode);
 
             addServiceNode("AlgorithmParameterGenerator",
-                           res.getString("DProviderInfo.Service.AlgorithmParameterGenerator.text"), provider,
-                           servicesNode);
+                    res.getString("DProviderInfo.Service.AlgorithmParameterGenerator.text"), provider,
+                    servicesNode);
             addServiceNode("AlgorithmParameters", res.getString("DProviderInfo.Service.AlgorithmParameters.text"),
-                           provider, servicesNode);
+                    provider, servicesNode);
             addServiceNode("CertificateFactory", res.getString("DProviderInfo.Service.CertificateFactory.text"),
-                           provider, servicesNode);
+                    provider, servicesNode);
             addServiceNode("CertPathBuilder", res.getString("DProviderInfo.Service.CertPathBuilder.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("CertPathValidator", res.getString("DProviderInfo.Service.CertPathValidator.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("CertStore", res.getString("DProviderInfo.Service.CertStore.text"), provider, servicesNode);
             addServiceNode("Cipher", res.getString("DProviderInfo.Service.Cipher.text"), provider, servicesNode);
             addServiceNode("Configuration", res.getString("DProviderInfo.Service.Configuration.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("GssApiMechanism", res.getString("DProviderInfo.Service.GssApiMechanism.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("KeyAgreement", res.getString("DProviderInfo.Service.KeyAgreement.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("KeyFactory", res.getString("DProviderInfo.Service.KeyFactory.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("KeyGenerator", res.getString("DProviderInfo.Service.KeyGenerator.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("KeyInfoFactory", res.getString("DProviderInfo.Service.KeyInfoFactory.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("KeyManagerFactory", res.getString("DProviderInfo.Service.KeyManagerFactory.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("KeyPairGenerator", res.getString("DProviderInfo.Service.KeyPairGenerator.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("KeyStore", res.getString("DProviderInfo.Service.KeyStore.text"), provider, servicesNode);
             addServiceNode("Mac", res.getString("DProviderInfo.Service.Mac.text"), provider, servicesNode);
             addServiceNode("MessageDigest", res.getString("DProviderInfo.Service.MessageDigest.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("Policy", res.getString("DProviderInfo.Service.Policy.text"), provider, servicesNode);
             addServiceNode("SecretKeyFactory", res.getString("DProviderInfo.Service.SecretKeyFactory.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("SecureRandom", res.getString("DProviderInfo.Service.SecureRandom.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("Signature", res.getString("DProviderInfo.Service.Signature.text"), provider, servicesNode);
             addServiceNode("SaslClientFactory", res.getString("DProviderInfo.Service.SaslClientFactory.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("SaslServerFactory", res.getString("DProviderInfo.Service.SaslServerFactory.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("SSLContext", res.getString("DProviderInfo.Service.SSLContext.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("TerminalFactory", res.getString("DProviderInfo.Service.TerminalFactory.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("TransformService", res.getString("DProviderInfo.Service.TransformService.text"), provider,
-                           servicesNode);
+                    servicesNode);
             addServiceNode("TrustManagerFactory", res.getString("DProviderInfo.Service.TrustManagerFactory.text"),
-                           provider, servicesNode);
+                    provider, servicesNode);
             addServiceNode("XMLSignatureFactory", res.getString("DProviderInfo.Service.XMLSignatureFactory.text"),
-                           provider, servicesNode);
+                    provider, servicesNode);
         }
 
         return topNode;
@@ -226,9 +224,7 @@ public class DProviderInfo extends JEscDialog {
 
         String[] algorithms = getServiceAlgorithms(serviceType, provider);
 
-        for (int algCnt = 0; algCnt < algorithms.length; algCnt++) {
-            String algorithm = algorithms[algCnt];
-
+        for (String algorithm : algorithms) {
             DefaultMutableTreeNode algorithmNode = new DefaultMutableTreeNode(algorithm);
             serviceNode.add(algorithmNode);
 
@@ -243,8 +239,8 @@ public class DProviderInfo extends JEscDialog {
                         res.getString("DProviderInfo.AttributesNode.text"));
                 algorithmNode.add(attributesNode);
 
-                for (int attrCnt = 0; attrCnt < attributes.length; attrCnt++) {
-                    DefaultMutableTreeNode attributeNode = new DefaultMutableTreeNode(attributes[attrCnt]);
+                for (String attribute : attributes) {
+                    DefaultMutableTreeNode attributeNode = new DefaultMutableTreeNode(attribute);
                     attributesNode.add(attributeNode);
                 }
             }
@@ -256,8 +252,8 @@ public class DProviderInfo extends JEscDialog {
                         res.getString("DProviderInfo.AliasesNode.text"));
                 algorithmNode.add(aliasesNode);
 
-                for (int aliasCnt = 0; aliasCnt < aliases.length; aliasCnt++) {
-                    DefaultMutableTreeNode aliasNode = new DefaultMutableTreeNode(aliases[aliasCnt]);
+                for (String alias : aliases) {
+                    DefaultMutableTreeNode aliasNode = new DefaultMutableTreeNode(alias);
                     aliasesNode.add(aliasNode);
                 }
             }
@@ -286,7 +282,7 @@ public class DProviderInfo extends JEscDialog {
             }
         }
 
-        String[] algorithms = algorithmList.toArray(new String[algorithmList.size()]);
+        String[] algorithms = algorithmList.toArray(new String[0]);
         Arrays.sort(algorithms);
 
         return algorithms;
@@ -339,7 +335,7 @@ public class DProviderInfo extends JEscDialog {
             attributes.add(attributeMap.get(key));
         }
 
-        return attributes.toArray(new String[attributes.size()]);
+        return attributes.toArray(new String[0]);
     }
 
     private String[] getAlgorithmAliases(String algorithm, String serviceType, Provider provider) {
@@ -363,7 +359,7 @@ public class DProviderInfo extends JEscDialog {
             }
         }
 
-        String[] aliases = aliasList.toArray(new String[aliasList.size()]);
+        String[] aliases = aliasList.toArray(new String[0]);
         Arrays.sort(aliases);
 
         return aliases;

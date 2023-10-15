@@ -268,8 +268,8 @@ public class DUserNoticeChooser extends JEscDialog {
             return;
         }
 
-        if (((organizationString.length() > 0) && (noticeNumberInts.length == 0)) ||
-            ((organizationString.length() == 0) && (noticeNumberInts.length > 0))) {
+        if (((!organizationString.isEmpty()) && (noticeNumberInts.length == 0)) ||
+            ((organizationString.isEmpty()) && (noticeNumberInts.length > 0))) {
             JOptionPane.showMessageDialog(this, res.getString(
                                                   "DUserNoticeChooser.OrganizationOrNoticeNumbersValueReq.message"),
                                           getTitle(),
@@ -277,8 +277,8 @@ public class DUserNoticeChooser extends JEscDialog {
             return;
         }
 
-        if ((organizationString.length() == 0) && (noticeNumberInts.length == 0) &&
-            (explicitTextString.length() == 0)) {
+        if ((organizationString.isEmpty()) && (noticeNumberInts.length == 0) &&
+            (explicitTextString.isEmpty())) {
             JOptionPane.showMessageDialog(this,
                                           res.getString("DUserNoticeChooser.NoticeRefOrExplicitTextValueReq.message"),
                                           getTitle(), JOptionPane.WARNING_MESSAGE);
@@ -286,7 +286,7 @@ public class DUserNoticeChooser extends JEscDialog {
         }
 
         NoticeReference noticeReference = null;
-        if (organizationString.length() > 0) { // If organization is present then so is al of notice reference
+        if (!organizationString.isEmpty()) { // If organization is present then so is al of notice reference
 
             Vector<ASN1Integer> noticeNumbers = new Vector<>();
 

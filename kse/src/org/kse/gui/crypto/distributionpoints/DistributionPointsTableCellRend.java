@@ -36,7 +36,7 @@ public class DistributionPointsTableCellRend extends DefaultTableCellRenderer {
     /**
      * Returns the rendered cell.
      *
-     * @param jtGeneralNames The JTable
+     * @param jtDistributionPoints The JTable
      * @param value          The value to assign to the cell
      * @param isSelected     True if cell is selected
      * @param row            The row of the cell to render

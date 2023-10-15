@@ -60,8 +60,8 @@ public class RevokedCertsTableModel extends AbstractTableModel {
     public void load(X509CRLEntry[] revokedCerts) {
         TreeMap<BigInteger, X509CRLEntry> sortedRevokedCerts = new TreeMap<>();
 
-        for (int i = 0; i < revokedCerts.length; i++) {
-            sortedRevokedCerts.put(revokedCerts[i].getSerialNumber(), revokedCerts[i]);
+        for (X509CRLEntry revokedCert : revokedCerts) {
+            sortedRevokedCerts.put(revokedCert.getSerialNumber(), revokedCert);
         }
 
         data = new Object[sortedRevokedCerts.size()][2];

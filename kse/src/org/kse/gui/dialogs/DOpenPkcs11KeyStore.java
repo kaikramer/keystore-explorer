@@ -283,7 +283,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
                 String pkcs11ConfigSettings =
                         "name = Slot" + jspSlotListIndex.getValue() + "\n" + "library = " + selectedLib + "\n" +
-                        "slotListIndex = " + jspSlotListIndex.getValue() + "";
+                        "slotListIndex = " + jspSlotListIndex.getValue();
                 ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11ConfigSettings.getBytes());
 
                 // instantiate the provider

@@ -226,7 +226,7 @@ public class OpenSslPvkUtil {
 
     /**
      * OpenSSL encode and encrypt a private key. Encrypted OpenSSL private keys
-     * must always by PEM'd.
+     * must always be PEM'd.
      *
      * @param privateKey The private key
      * @param pbeType    PBE algorithm to use for encryption
@@ -257,7 +257,7 @@ public class OpenSslPvkUtil {
         try {
             byte[] encryptKey = deriveKeyFromPassword(password, salt, pbeType.keySize());
 
-            // Create cipher - use all of the salt as the IV
+            // Create cipher - use all the salt as the IV
             Cipher cipher = createCipher(pbeType.jceCipher(), encryptKey, salt, ENCRYPT_MODE);
 
             encOpenSsl = cipher.doFinal(openSsl);
@@ -438,7 +438,7 @@ public class OpenSslPvkUtil {
         try {
             byte[] decryptKey = deriveKeyFromPassword(password, saltBytes, pbeType.keySize());
 
-            // Create cipher - use all of the salt as the IV
+            // Create cipher - use all the salt as the IV
             Cipher cipher = createCipher(pbeType.jceCipher(), decryptKey, saltBytes, DECRYPT_MODE);
 
             byte[] key = cipher.doFinal(encKey);

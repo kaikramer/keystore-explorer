@@ -167,7 +167,7 @@ public class DGenerateDHParameters extends JEscDialog {
     /**
      * Get the selected key size.
      *
-     * @return The the key size value
+     * @return The key size value
      */
     public int getKeySize() {
         return dhKeySize;

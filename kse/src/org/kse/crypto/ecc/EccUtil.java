@@ -200,7 +200,7 @@ public class EccUtil {
     /**
      * Finds the longest curve name in all curves that are provided by BC.
      *
-     * @return String with longest curve name
+     * @return String with the longest curve name
      */
     public static String findLongestCurveName() {
         String longestCurveName = "";

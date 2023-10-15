@@ -256,8 +256,8 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     protected boolean isKeyStoreFileOpen(File keyStoreFile) {
         KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
 
-        for (int i = 0; i < histories.length; i++) {
-            File f = histories[i].getFile();
+        for (KeyStoreHistory history : histories) {
+            File f = history.getFile();
 
             if (f != null && f.equals(keyStoreFile)) {
                 return true;

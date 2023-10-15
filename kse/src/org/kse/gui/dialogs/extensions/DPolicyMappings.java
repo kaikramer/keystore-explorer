@@ -51,7 +51,7 @@ import org.kse.gui.crypto.policymapping.JPolicyMappings;
 import org.kse.gui.error.DError;
 
 /**
- * Dialog used to add or edit an Policy Mappings extension.
+ * Dialog used to add or edit a Policy Mappings extension.
  */
 public class DPolicyMappings extends DExtension {
     private static final long serialVersionUID = 1L;

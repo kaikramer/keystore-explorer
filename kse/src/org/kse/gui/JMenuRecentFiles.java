@@ -51,12 +51,12 @@ public class JMenuRecentFiles extends JMenu {
     }
 
     private void removeAllRecentFiles() {
-        for (int i = 0; i < jmiRecentFiles.length; i++) {
-            if (jmiRecentFiles[i] == null) {
+        for (JMenuItemRecentFile jmiRecentFile : jmiRecentFiles) {
+            if (jmiRecentFile == null) {
                 break;
             }
 
-            remove(jmiRecentFiles[i]);
+            remove(jmiRecentFile);
         }
     }
 
@@ -104,7 +104,7 @@ public class JMenuRecentFiles extends JMenu {
 
         jmirfNew.setPosition(1);
 
-        // Item already exists outside of first position
+        // Item already exists outside first position
         if (index != -1) {
             // Introduce it to the first position and move the others up over
             // its old position
@@ -173,14 +173,14 @@ public class JMenuRecentFiles extends JMenu {
     public File[] getRecentFiles() {
         ArrayList<File> recentFiles = new ArrayList<>();
 
-        for (int i = 0; i < jmiRecentFiles.length; i++) {
-            if (jmiRecentFiles[i] == null) {
+        for (JMenuItemRecentFile jmiRecentFile : jmiRecentFiles) {
+            if (jmiRecentFile == null) {
                 break;
             }
 
-            recentFiles.add(jmiRecentFiles[i].getFile());
+            recentFiles.add(jmiRecentFile.getFile());
         }
 
-        return recentFiles.toArray(new File[recentFiles.size()]);
+        return recentFiles.toArray(new File[0]);
     }
 }

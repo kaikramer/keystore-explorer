@@ -47,7 +47,7 @@ public class CertificateTreeCellRend extends DefaultTreeCellRenderer {
      * @param leaf         True if cell is a lesaf
      * @param row          The row of the cell to render
      * @param hasFocus     If true, render cell appropriately
-     * @return The renderered cell
+     * @return The rendered cell
      */
     @Override
     public Component getTreeCellRendererComponent(JTree jtrHierarchy, Object value, boolean isSelected,

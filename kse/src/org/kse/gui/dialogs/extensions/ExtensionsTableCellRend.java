@@ -58,7 +58,7 @@ public class ExtensionsTableCellRend extends DefaultTableCellRenderer {
         if (col == 0) {
             ImageIcon icon = null;
 
-            if (((Boolean) value).booleanValue()) {
+            if ((Boolean) value) {
                 icon = new ImageIcon(getClass().getResource("images/table/crit_ext.png"));
                 cell.setToolTipText(res.getString("ExtensionsTableCellRend.CriticalExtension.tooltip"));
             } else {
@@ -73,7 +73,7 @@ public class ExtensionsTableCellRend extends DefaultTableCellRenderer {
         }
         // Name column - may be unknown
         else if (col == 1) {
-            if (cell.getText().length() == 0) {
+            if (cell.getText().isEmpty()) {
                 cell.setText("-");
                 cell.setHorizontalAlignment(CENTER);
             } else {

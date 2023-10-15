@@ -84,7 +84,7 @@ public class X500NameUtils {
     }
 
     /**
-     * Return CN of a X.500 name
+     * Return CN of an X.500 name
      *
      * @param name X.500 name object
      * @return CN from Name or an empty string if no CN found
@@ -102,7 +102,7 @@ public class X500NameUtils {
     }
 
     /**
-     * Return CN of a X.500 principal
+     * Return CN of an X.500 principal
      *
      * @param principal X.500 principal object
      * @return CN from DN or an empty string if no CN found

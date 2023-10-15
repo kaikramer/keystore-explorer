@@ -175,7 +175,7 @@ public class DBasicConstraints extends DExtension {
 
         String pathLengthConstraintStr = jtfPathLengthConstraint.getText().trim();
 
-        if (pathLengthConstraintStr.length() > 0) {
+        if (!pathLengthConstraintStr.isEmpty()) {
             try {
                 pathLengthConstraint = Integer.parseInt(pathLengthConstraintStr);
             } catch (NumberFormatException ex) {

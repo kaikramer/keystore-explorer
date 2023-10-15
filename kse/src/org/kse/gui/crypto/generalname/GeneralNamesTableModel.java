@@ -62,7 +62,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
         GeneralName[] generalNamesArray = generalNames.getNames();
 
         data = new ArrayList<>(Arrays.asList(generalNamesArray));
-        Collections.sort(data, new GeneralNameComparator());
+        data.sort(new GeneralNameComparator());
 
         fireTableDataChanged();
     }
@@ -140,7 +140,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
      */
     public void addRow(GeneralName generalName) {
         data.add(generalName);
-        Collections.sort(data, new GeneralNameComparator());
+        data.sort(new GeneralNameComparator());
         fireTableDataChanged();
     }
 

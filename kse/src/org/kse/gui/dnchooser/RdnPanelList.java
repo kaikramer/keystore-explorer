@@ -100,7 +100,7 @@ public class RdnPanelList extends JPanel {
         }
 
         public Component getLastComponent(Container focusCycleRoot) {
-            return order.size() > 0 ? order.get(order.size() - 1) : null;
+            return !order.isEmpty() ? order.get(order.size() - 1) : null;
         }
 
         public Component getFirstComponent(Container focusCycleRoot) {

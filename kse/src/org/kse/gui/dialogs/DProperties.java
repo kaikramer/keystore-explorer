@@ -445,9 +445,7 @@ public class DProperties extends JEscDialog {
                     res.getString("DProperties.properties.Certificates"));
             keyPairNode.add(certificatesNode);
 
-            for (int i = 0; i < certificates.length; i++) {
-                X509Certificate certificate = certificates[i];
-
+            for (X509Certificate certificate : certificates) {
                 DefaultMutableTreeNode certificateNode = new DefaultMutableTreeNode(
                         X509CertUtil.getShortName(certificate));
                 certificatesNode.add(certificateNode);

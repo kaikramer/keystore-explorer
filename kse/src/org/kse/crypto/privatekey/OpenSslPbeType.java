@@ -113,7 +113,7 @@ public enum OpenSslPbeType implements PbeType {
     }
 
     /**
-     * Resolve the supplied DEK-Info name name to a matching PBE type.
+     * Resolve the supplied DEK-Info name to a matching PBE type.
      *
      * @param dekInfo DEK-Info name name
      * @return PBE type or null if none

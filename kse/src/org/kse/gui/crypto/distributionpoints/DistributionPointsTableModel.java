@@ -54,15 +54,10 @@ public class DistributionPointsTableModel extends AbstractTableModel {
         data = new ArrayList<>();
     }
 
-    /**
-     * Load the GeneralNamesTableModel with general names.
-     *
-     * @param generalNames The general names
-     */
     public void load(CRLDistPoint cRLDistPoint) {
         DistributionPoint[] distributionPointArray = cRLDistPoint.getDistributionPoints();
         data = new ArrayList<>(Arrays.asList(distributionPointArray));
-        Collections.sort(data, new DistributionPointComparator());
+        data.sort(new DistributionPointComparator());
         fireTableDataChanged();
     }
 
@@ -134,12 +129,10 @@ public class DistributionPointsTableModel extends AbstractTableModel {
 
     /**
      * Add a row
-     *
-     * @param generalName General name
      */
     public void addRow(DistributionPoint distributionPoint) {
         data.add(distributionPoint);
-        Collections.sort(data, new DistributionPointComparator());
+        data.sort(new DistributionPointComparator());
         fireTableDataChanged();
     }
 

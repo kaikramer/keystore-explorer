@@ -24,11 +24,11 @@ import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -185,7 +185,7 @@ public class JarSigner {
                             String tsaUrl, Provider provider) throws IOException, CryptoException {
 
         try (JarFile jar = new JarFile(jarFile);
-             JarOutputStream jos = new JarOutputStream(new FileOutputStream(signedJarFile))) {
+             JarOutputStream jos = new JarOutputStream(Files.newOutputStream(signedJarFile.toPath()))) {
 
             // Replace illegal characters in signature name
             signatureName = convertSignatureName(signatureName);
@@ -200,7 +200,7 @@ public class JarSigner {
             // Write out all entries' attributes to manifest
             String entryManifestAttrs = getManifestEntriesAttrs(jar);
 
-            if (entryManifestAttrs.length() > 0) {
+            if (!entryManifestAttrs.isEmpty()) {
                 // Only output if there are any
                 sbManifest.append(entryManifestAttrs);
                 sbManifest.append(CRLF);
@@ -440,14 +440,13 @@ public class JarSigner {
             String md64Str = new String(md64);
 
             // Write manifest entries for JARs digest
-            StringBuilder sbManifestEntry = new StringBuilder();
-            sbManifestEntry.append(createAttributeText(NAME_ATTR, jarEntry.getName()));
-            sbManifestEntry.append(CRLF);
-            sbManifestEntry.append(createAttributeText(MessageFormat.format(DIGEST_ATTR, digestType.jce()), md64Str));
-            sbManifestEntry.append(CRLF);
-            sbManifestEntry.append(CRLF);
+            String sbManifestEntry = createAttributeText(NAME_ATTR, jarEntry.getName()) +
+                    CRLF +
+                    createAttributeText(MessageFormat.format(DIGEST_ATTR, digestType.jce()), md64Str) +
+                    CRLF +
+                    CRLF;
 
-            return sbManifestEntry.toString();
+            return sbManifestEntry;
         }
     }
 
@@ -483,7 +482,7 @@ public class JarSigner {
             // Keep reading until a blank line is found - the end of the main
             // attributes
             while ((line = lnr.readLine()) != null) {
-                if (line.trim().length() == 0) {
+                if (line.trim().isEmpty()) {
                     break;
                 }
 
@@ -530,7 +529,7 @@ public class JarSigner {
             // Keep reading until a blank line is found - the end of the entry's
             // attributes
             while ((line = lnr.readLine()) != null) {
-                if (line.trim().length() == 0) {
+                if (line.trim().isEmpty()) {
                     break;
                 }
 
@@ -689,7 +688,7 @@ public class JarSigner {
         while (true) {
             if (remainingText.length() > 70) {
                 // Split a line
-                sb.append(remainingText.substring(0, 70));
+                sb.append(remainingText, 0, 70);
                 sb.append(CRLF);
                 sb.append(" ");
                 remainingText = remainingText.substring(70);

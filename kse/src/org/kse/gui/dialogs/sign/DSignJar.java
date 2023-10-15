@@ -437,7 +437,7 @@ public class DSignJar extends JEscDialog {
         }
 
         // check if signature field was filled
-        if (signatureName.length() == 0) {
+        if (signatureName.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSignJar.ValReqSignatureName.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;
@@ -459,7 +459,7 @@ public class DSignJar extends JEscDialog {
 
         // checks if file prefix or suffix fields were filled
         if (jrbOutputJarFixes.isSelected()) {
-            if ((outputJarPrefix.length() == 0) && (outputJarSuffix.length() == 0)) {
+            if ((outputJarPrefix.isEmpty()) && (outputJarSuffix.isEmpty())) {
                 JOptionPane.showMessageDialog(this, res.getString("DSignJar.OutputJarRequired.message"), getTitle(),
                                               JOptionPane.WARNING_MESSAGE);
                 return;
@@ -500,7 +500,7 @@ public class DSignJar extends JEscDialog {
         JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
 
         // set input files array to output files list
-        this.outputJarFiles = new ArrayList<File>(Arrays.asList(files));
+        this.outputJarFiles = new ArrayList<>(Arrays.asList(files));
 
         if (jrbOutputJarFixes.isSelected()) {
             // loop through output JAR files
@@ -542,13 +542,13 @@ public class DSignJar extends JEscDialog {
     private boolean checkSignature(File[] files) {
         JCheckBox checkbox = new JCheckBox(res.getString("DSignJar.OverwriteSkip.message"));
 
-        for (int i = 0; i < files.length; i++) {
+        for (File file : files) {
             try {
                 // check if the existing signature matches the current signature
-                if (JarSigner.hasSignature(files[i], this.signatureName)) {
+                if (JarSigner.hasSignature(file, this.signatureName)) {
                     String message = MessageFormat.format(res.getString("DSignJar.SignatureOverwrite.message"),
-                                                          this.signatureName, files[i].getName());
-                    Object[] params = { message, checkbox };
+                            this.signatureName, file.getName());
+                    Object[] params = {message, checkbox};
                     // check if overwrite is allowed and present checkbox to skip overwrite message
                     int selected = JOptionPane.showConfirmDialog(this, params, getTitle(), JOptionPane.YES_NO_OPTION);
                     if (selected != JOptionPane.YES_OPTION) {

@@ -62,8 +62,7 @@ public class SaveAllAction extends SaveAction {
         try {
             KeyStoreHistory[] histories = kseFrame.getKeyStoreHistories();
 
-            for (int i = 0; i < histories.length; i++) {
-                KeyStoreHistory history = histories[i];
+            for (KeyStoreHistory history : histories) {
                 KeyStoreState currentState = history.getCurrentState();
 
                 // Does KeyStore require saving and has file been saved before?

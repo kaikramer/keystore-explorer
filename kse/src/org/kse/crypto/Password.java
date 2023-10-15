@@ -19,6 +19,7 @@
  */
 package org.kse.crypto;
 
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -103,9 +104,7 @@ public class Password {
         if (wrappedPassword == null) {
             return;
         }
-        for (int i = 0; i < wrappedPassword.length; i++) {
-            wrappedPassword[i] = 0;
-        }
+        Arrays.fill(wrappedPassword, (char) 0);
         nulled = true;
     }
 

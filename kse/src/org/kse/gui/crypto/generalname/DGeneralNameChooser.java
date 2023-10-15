@@ -308,7 +308,7 @@ public class DGeneralNameChooser extends JEscDialog {
             } else if (jrbDnsName.isSelected()) {
                 String dnsName = jtfDnsName.getText().trim();
 
-                if (dnsName.length() == 0) {
+                if (dnsName.isEmpty()) {
                     JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.DnsNameValueReq.message"),
                                                   getTitle(), JOptionPane.WARNING_MESSAGE);
                     return;
@@ -319,7 +319,7 @@ public class DGeneralNameChooser extends JEscDialog {
 
                 String ipAddress = jtfIpAddress.getText().trim();
 
-                if (ipAddress.length() == 0) {
+                if (ipAddress.isEmpty()) {
                     JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.IpAddressValueReq.message"),
                                                   getTitle(), JOptionPane.WARNING_MESSAGE);
                     return;
@@ -352,7 +352,7 @@ public class DGeneralNameChooser extends JEscDialog {
             } else if (jrbRfc822Name.isSelected()) {
                 String rfc822Name = jtfRfc822Name.getText().trim();
 
-                if (rfc822Name.length() == 0) {
+                if (rfc822Name.isEmpty()) {
                     JOptionPane.showMessageDialog(this, res.getString("DGeneralNameChooser.Rfc822NameValueReq.message"),
                                                   getTitle(), JOptionPane.WARNING_MESSAGE);
                     return;
@@ -362,7 +362,7 @@ public class DGeneralNameChooser extends JEscDialog {
             } else if (jrbUniformResourceIdentifier.isSelected()) {
                 String uniformResourceIdentifier = jtfUniformResourceIdentifier.getText().trim();
 
-                if (uniformResourceIdentifier.length() == 0) {
+                if (uniformResourceIdentifier.isEmpty()) {
                     JOptionPane.showMessageDialog(this, res.getString(
                                                           "DGeneralNameChooser.UniformResourceIdentifierValueReq.message"), getTitle(),
                                                   JOptionPane.WARNING_MESSAGE);
@@ -374,7 +374,7 @@ public class DGeneralNameChooser extends JEscDialog {
             } else if (jrbPrincipalName.isSelected()) {
                 String upnString = jtfPrincipalName.getText().trim();
 
-                if (upnString.length() == 0) {
+                if (upnString.isEmpty()) {
                     JOptionPane.showMessageDialog(this,
                                                   res.getString("DGeneralNameChooser.PrincipalNameValueReq.message"),
                                                   getTitle(), JOptionPane.WARNING_MESSAGE);

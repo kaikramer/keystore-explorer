@@ -61,7 +61,7 @@ public class GeneralSubtreesTableModel extends AbstractTableModel {
      */
     public void load(GeneralSubtrees generalSubtrees) {
         List<GeneralSubtree> generalSubtreesList = generalSubtrees.getGeneralSubtrees();
-        Collections.sort(generalSubtreesList, new GeneralSubtreeBaseComparator());
+        generalSubtreesList.sort(new GeneralSubtreeBaseComparator());
 
         data = new Object[generalSubtreesList.size()][3];
 

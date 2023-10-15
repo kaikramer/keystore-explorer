@@ -266,7 +266,7 @@ public class DSignCrl extends JEscDialog {
     private void okPressed() {
 
         String crlNumberStr = jtfCrlNumber.getText().trim();
-        if (crlNumberStr.length() == 0) {
+        if (crlNumberStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSignCrl.ValReqCrlNumber.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

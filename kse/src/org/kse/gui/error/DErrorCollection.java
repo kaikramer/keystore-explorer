@@ -92,8 +92,7 @@ public class DErrorCollection extends JEscDialog {
     public void initFields() {
         // label for file
         jlblKeys = new JLabel(res.getString("DErrorCollection.jlblKeys.text"));
-        // jlist
-        jltKeys = new JList();
+        jltKeys = new JList<>();
         jltKeys.setToolTipText(res.getString("DErrorCollection.jltKeys.tooltip"));
         jltKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jltKeys.setLayoutOrientation(JList.VERTICAL);
@@ -182,7 +181,7 @@ public class DErrorCollection extends JEscDialog {
      */
     private void populateKeys(Map<?, ?> map) {
         // convert hash map keys to a string array // TODO seems hacky
-        String[] listData = (String[]) map.keySet().toArray(new String[map.size()]);
+        String[] listData = (String[]) map.keySet().toArray(new String[0]);
 
         if (listData != null) {
             jltKeys.setListData(listData);
@@ -234,7 +233,7 @@ public class DErrorCollection extends JEscDialog {
     // quick ui test
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        Map<String, String> testmap = new HashMap<String, String>();
+        Map<String, String> testmap = new HashMap<>();
         for (int i = 0; i < 50; i++) {
             testmap.put("file " + i,
                     "( " + i + " )" + " Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"

@@ -700,7 +700,7 @@ public class DSignCsr extends JEscDialog {
         }
 
         String serialNumberStr = jtfSerialNumber.getText().trim();
-        if (serialNumberStr.length() == 0) {
+        if (serialNumberStr.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSignCsr.ValReqSerialNumber.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

@@ -240,7 +240,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
         }
 
         if (authorityCertSerialNumber != null) {
-            jtfAuthorityCertSerialNumber.setText("" + authorityCertSerialNumber.toString());
+            jtfAuthorityCertSerialNumber.setText("" + authorityCertSerialNumber);
             jtfAuthorityCertSerialNumber.setCaretPosition(0);
         }
     }
@@ -273,7 +273,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 
         String authorityCertSerialNumberStr = jtfAuthorityCertSerialNumber.getText().trim();
 
-        if (authorityCertSerialNumberStr.length() != 0) {
+        if (!authorityCertSerialNumberStr.isEmpty()) {
             try {
                 authorityCertSerialNumber = new BigInteger(authorityCertSerialNumberStr);
                 if (authorityCertSerialNumber.compareTo(BigInteger.ONE) < 0) {

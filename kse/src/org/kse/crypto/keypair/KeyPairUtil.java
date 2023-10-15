@@ -107,7 +107,7 @@ public final class KeyPairUtil {
     }
 
     /**
-     * Generate a EC key pair.
+     * Generate an EC key pair.
      *
      * @param curveName Name of the ECC curve
      * @param provider  A JCE provider.

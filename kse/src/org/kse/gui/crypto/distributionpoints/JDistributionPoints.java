@@ -195,7 +195,7 @@ public class JDistributionPoints extends JPanel {
 
             @Override
             public void keyTyped(KeyEvent evt) {
-                // Delete on Mac if back space typed
+                // Delete on Mac if backspace typed
                 if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
                     try {
                         CursorUtil.setCursorBusy(JDistributionPoints.this);
@@ -221,20 +221,10 @@ public class JDistributionPoints extends JPanel {
         updateButtonControls();
     }
 
-    /**
-     * Get general names.
-     *
-     * @return General names
-     */
     public CRLDistPoint getCRLDistPoint() {
         return new CRLDistPoint(getDistributionPointsTableModel().getData().toArray(new DistributionPoint[0]));
     }
 
-    /**
-     * Set general names.
-     *
-     * @param generalNames General names
-     */
     public void setCRLDistPoint(CRLDistPoint cRLDistPoint) {
         getDistributionPointsTableModel().load(cRLDistPoint);
     }

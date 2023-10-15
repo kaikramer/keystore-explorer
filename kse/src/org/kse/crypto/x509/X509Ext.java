@@ -1878,7 +1878,7 @@ public class X509Ext {
             reasonFlagsList.add(res.getString("AaCompromiseReasonFlag"));
         }
 
-        return reasonFlagsList.toArray(new String[reasonFlagsList.size()]);
+        return reasonFlagsList.toArray(new String[0]);
     }
 
     private static boolean hasReasonFlag(int reasonFlags, int reasonFlag) {
@@ -2123,7 +2123,7 @@ public class X509Ext {
                 sb.append(INDENT.toString(indentLevel));
                 sb.append(ObjectIdUtil.toString(statementId));
                 if (statementInfo != null) {
-                    sb.append(statementInfo.toString());
+                    sb.append(statementInfo);
                 }
                 sb.append(NEWLINE);
             }
@@ -2643,14 +2643,12 @@ public class X509Ext {
         String certIndex = String.valueOf(version & 0xffff);
         String keyIndex = String.valueOf(version >> 16);
 
-        StringBuilder sb = new StringBuilder();
+        String sb = MessageFormat.format(res.getString("MSCaVersion.CertIndex"), certIndex) +
+                NEWLINE +
+                MessageFormat.format(res.getString("MSCaVersion.KeyIndex"), keyIndex) +
+                NEWLINE;
 
-        sb.append(MessageFormat.format(res.getString("MSCaVersion.CertIndex"), certIndex));
-        sb.append(NEWLINE);
-        sb.append(MessageFormat.format(res.getString("MSCaVersion.KeyIndex"), keyIndex));
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return sb;
     }
 
     private static String getMsCrlNextPublishStringValue(byte[] octets) throws IOException {

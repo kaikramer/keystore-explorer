@@ -87,7 +87,6 @@ public class DSignJarSigning extends JEscDialog {
      * Creates a new DSignJarSigning dialog.
      *
      * @param parent  The parent frame
-     * @param keySize The key size to generate
      */
     public DSignJarSigning(JFrame parent, File[] inputJarFiles, List<File> outputJarFiles, PrivateKey privateKey,
                            X509Certificate[] certs, SignatureType signatureType, String signatureName, String signer,
@@ -216,7 +215,7 @@ public class DSignJarSigning extends JEscDialog {
         public void run() {
             try {
                 // set new hashmap
-                fileExceptions = new HashMap<String, String>();
+                fileExceptions = new HashMap<>();
                 for (int i = 0; i < inputJarFiles.length; i++) {
                     try {
                         if (inputJarFiles[i].equals(outputJarFiles.get(i))) {

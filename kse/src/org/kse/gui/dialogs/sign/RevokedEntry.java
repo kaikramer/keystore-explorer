@@ -24,7 +24,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 /**
- * Class for a entry revoked certificate.
+ * Class for an entry revoked certificate.
  */
 public class RevokedEntry {
 

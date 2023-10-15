@@ -118,7 +118,7 @@ public class ClickableLinkTickerRenderer extends JLabel implements TickerRendere
         final StringBuilder rawText = new StringBuilder(text.substring(0, lTags.get(0)[0]));
         lTags.get(0)[2] = rawText.length();
         for (int i = 1; i < lTags.size(); i++) {
-            rawText.append(text.substring(lTags.get(i - 1)[1], lTags.get(i)[0]));
+            rawText.append(text, lTags.get(i - 1)[1], lTags.get(i)[0]);
             lTags.get(i)[2] = rawText.length();
         }
         LinkDescriptor entry = new LinkDescriptor();

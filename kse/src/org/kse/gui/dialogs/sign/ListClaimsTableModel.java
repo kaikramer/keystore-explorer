@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * The table model used to display an list of custom claims
+ * The table model used to display a list of custom claims
  */
 public class ListClaimsTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
@@ -42,7 +42,7 @@ public class ListClaimsTableModel extends AbstractTableModel {
         columnNames[0] = res.getString("ListClaimsTableModel.NameColumn");
         columnNames[1] = res.getString("ListClaimsTableModel.ValueColumn");
 
-        listClaims = new ArrayList<CustomClaim>();
+        listClaims = new ArrayList<>();
     }
 
     /**

@@ -22,7 +22,7 @@ package org.kse.crypto.privatekey;
 import org.kse.crypto.CryptoException;
 
 /**
- * Thrown when a encrypted private key is encrypted with an unsupported PBE
+ * Thrown when an encrypted private key is encrypted with an unsupported PBE
  * algorithm.
  */
 public class PrivateKeyPbeNotSupportedException extends CryptoException {

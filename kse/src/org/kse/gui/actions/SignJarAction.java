@@ -134,7 +134,7 @@ public class SignJarAction extends KeyStoreExplorerAction {
             }
 
             // check if exceptions were caught during jar signing
-            if (dSignJarSigning.getFileExceptions().size() > 0) {
+            if (!dSignJarSigning.getFileExceptions().isEmpty()) {
                 Integer fileCount = inputJarFile.length;
                 Integer errorCount = dSignJarSigning.getFileExceptions().size();
                 String message = MessageFormat.format(res.getString("SignJarAction.SignJarError.message"),

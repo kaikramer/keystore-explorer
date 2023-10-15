@@ -33,7 +33,7 @@ import org.kse.gui.KseFrame;
 import org.kse.utilities.net.URLs;
 
 /**
- * Action to visit the KeyStore Explorer web site.
+ * Action to visit the KeyStore Explorer website.
  */
 public class WebsiteAction extends KeyStoreExplorerAction {
 

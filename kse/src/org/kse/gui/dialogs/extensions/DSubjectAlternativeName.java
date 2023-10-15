@@ -51,7 +51,7 @@ import org.kse.gui.crypto.generalname.JGeneralNames;
 import org.kse.gui.error.DError;
 
 /**
- * Dialog used to add or edit an Subject Alternative Name extension.
+ * Dialog used to add or edit a Subject Alternative Name extension.
  */
 public class DSubjectAlternativeName extends DExtension {
     private static final long serialVersionUID = 1L;

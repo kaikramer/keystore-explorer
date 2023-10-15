@@ -211,13 +211,12 @@ public class HexUtil {
             // Get clear character
 
             // Character to display if character not defined in Unicode or is a
-            // control charcter
+            // control character
             char c = '.';
 
             // Not a control character and defined in Unicode
             if ((!Character.isISOControl((char) i)) && (Character.isDefined((char) i))) {
-                Character clr = Character.valueOf((char) i);
-                c = clr.charValue();
+                c = (char) i;
             }
 
             sbClr.append(c);
@@ -229,7 +228,7 @@ public class HexUtil {
          */
         StringBuilder strBuff = new StringBuilder();
 
-        strBuff.append(sbHex.toString());
+        strBuff.append(sbHex);
 
         int i = bytes.length - len;
         for (int cnt = 0; cnt < i; cnt++) {
@@ -242,7 +241,7 @@ public class HexUtil {
 
         strBuff.append("   "); // The gap between hex and clear output is three
         // spaces
-        strBuff.append(sbClr.toString());
+        strBuff.append(sbClr);
 
         return strBuff.toString();
     }

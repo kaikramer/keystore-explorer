@@ -39,7 +39,7 @@ public class InhibitAnyPolicy extends ASN1Object {
     int skipCerts;
 
     /**
-     * Creates an new instance with the given skipCerts.
+     * Creates a new instance with the given skipCerts.
      */
     public InhibitAnyPolicy(int skipCerts) {
         this.skipCerts = skipCerts;

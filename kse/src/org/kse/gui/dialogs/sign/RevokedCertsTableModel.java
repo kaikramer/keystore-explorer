@@ -28,7 +28,7 @@ import java.util.ResourceBundle;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * The table model used to display an map of RevokedEntry sorted by
+ * The table model used to display a map of RevokedEntry sorted by
  * serial number.
  */
 public class RevokedCertsTableModel extends AbstractTableModel {
@@ -51,17 +51,15 @@ public class RevokedCertsTableModel extends AbstractTableModel {
     }
 
     /**
-     * Load the RevokedCertsTableModel with an map of RevokedEntry.
+     * Load the RevokedCertsTableModel with a map of RevokedEntry.
      *
-     * @param revokedCerts The X.509 CRL entries
+     * @param mapRevokedEntry The X.509 CRL entries
      */
     public void load(Map<BigInteger, RevokedEntry> mapRevokedEntry) {
         data = new Object[mapRevokedEntry.size()][2];
 
         int i = 0;
-        Iterator<Map.Entry<BigInteger, RevokedEntry>> it = mapRevokedEntry.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<BigInteger, RevokedEntry> pair = it.next();
+        for (Map.Entry<BigInteger, RevokedEntry> pair : mapRevokedEntry.entrySet()) {
             RevokedEntry entry = pair.getValue();
             data[i][0] = entry.getUserCertificateSerial();
             data[i][1] = entry.getRevocationDate();

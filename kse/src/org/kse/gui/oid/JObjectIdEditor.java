@@ -87,7 +87,7 @@ public class JObjectIdEditor extends JPanel {
 
         jlSecondPeriod = new JLabel(".");
 
-        jtfRemainingArcs = new JComboBox<ObjectOid>();
+        jtfRemainingArcs = new JComboBox<>();
         jtfRemainingArcs.setMinimumSize(new Dimension(300, 20));
         jtfRemainingArcs.setEditable(true);
         jtfRemainingArcs.setToolTipText(res.getString("DObjectIdChooser.jtfRemainingArcs.tooltip"));
@@ -118,7 +118,7 @@ public class JObjectIdEditor extends JPanel {
 
         ObjectOid[] oids = ObjectIdUtil.getAllOidsStartingWith(prefix);
 
-        jtfRemainingArcs.setModel(new DefaultComboBoxModel<ObjectOid>(oids));
+        jtfRemainingArcs.setModel(new DefaultComboBoxModel<>(oids));
     }
 
     private void populate(ASN1ObjectIdentifier objectId) throws InvalidObjectIdException {

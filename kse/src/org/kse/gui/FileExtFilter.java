@@ -74,9 +74,7 @@ public class FileExtFilter extends FileFilter {
             return false;
         }
 
-        for (int i = 0; i < exts.length; i++) {
-            String ext = exts[i];
-
+        for (String ext : exts) {
             if (fileExt.equalsIgnoreCase(ext)) {
                 return true;
             }

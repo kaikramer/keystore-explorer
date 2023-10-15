@@ -51,7 +51,7 @@ public class IndentSequence {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < level; i++) {
-            sb.append(toString());
+            sb.append(this);
         }
 
         return sb.toString();

@@ -209,7 +209,7 @@ public class DPolicyConstraints extends DExtension {
 
         String requireExplicitPolicyStr = jtfRequireExplicitPolicy.getText().trim();
 
-        if (requireExplicitPolicyStr.length() != 0) {
+        if (!requireExplicitPolicyStr.isEmpty()) {
             try {
                 requireExplicitPolicy = new BigInteger(requireExplicitPolicyStr);
             } catch (NumberFormatException ex) {
@@ -233,7 +233,7 @@ public class DPolicyConstraints extends DExtension {
 
         String inhibitPolicyMappingStr = jtfInhibitPolicyMapping.getText().trim();
 
-        if (inhibitPolicyMappingStr.length() != 0) {
+        if (!inhibitPolicyMappingStr.isEmpty()) {
             try {
                 inhibitPolicyMapping = new BigInteger(inhibitPolicyMappingStr);
             } catch (NumberFormatException ex) {

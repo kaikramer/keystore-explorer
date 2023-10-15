@@ -204,8 +204,8 @@ public class DNameConstraints extends DExtension {
         List<GeneralSubtree> excludedSubtrees = jgsExcludedSubtrees.getGeneralSubtrees().getGeneralSubtrees();
 
         GeneralSubtree[] permittedSubtreesArray = permittedSubtrees.toArray(
-                new GeneralSubtree[permittedSubtrees.size()]);
-        GeneralSubtree[] excludedSubtreesArray = excludedSubtrees.toArray(new GeneralSubtree[excludedSubtrees.size()]);
+                new GeneralSubtree[0]);
+        GeneralSubtree[] excludedSubtreesArray = excludedSubtrees.toArray(new GeneralSubtree[0]);
 
         NameConstraints nameConstraints = new NameConstraints(permittedSubtreesArray, excludedSubtreesArray);
 

@@ -417,7 +417,7 @@ public final class KseFrame implements StatusBar {
     private JLabel jlStatusBar;
 
     //
-    // Actions - these are shared between menus and tool bar
+    // Actions - these are shared between menus and toolbar
     //
 
     private final NewAction newAction = new NewAction(this);
@@ -1657,7 +1657,7 @@ public final class KseFrame implements StatusBar {
 
             @Override
             public void keyTyped(KeyEvent evt) {
-                // Delete on Mac if back space typed
+                // Delete on Mac if backspace typed
                 if (OperatingSystem.isMacOs() && evt.getKeyChar() == 0x08) {
                     handleDeleteSelectedEntry();
                 }
@@ -2532,7 +2532,7 @@ public final class KseFrame implements StatusBar {
     }
 
     /**
-     * Get a the selected entry as a drag entry for DnD.
+     * Get the selected entry as a drag entry for DnD.
      *
      * @return Drag entry or null if entry could not be dragged
      */
@@ -3100,7 +3100,7 @@ public final class KseFrame implements StatusBar {
     }
 
     /**
-     * If the tool bar is currently displayed hide it and vice versa.
+     * If the toolbar is currently displayed hide it and vice versa.
      */
     public void showHideToolBar() {
         Container contentPane = frame.getContentPane();

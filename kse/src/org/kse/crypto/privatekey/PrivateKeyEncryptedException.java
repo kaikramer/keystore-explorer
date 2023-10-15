@@ -22,7 +22,7 @@ package org.kse.crypto.privatekey;
 import org.kse.crypto.CryptoException;
 
 /**
- * Thrown when a unencrypted private key load is attempted when it is, in fact,
+ * Thrown when an unencrypted private key load is attempted when it is, in fact,
  * encrypted.
  */
 public class PrivateKeyEncryptedException extends CryptoException {

@@ -21,11 +21,11 @@ package org.kse.crypto.signing;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
 import java.security.cert.CertificateEncodingException;
@@ -33,7 +33,6 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -84,7 +83,7 @@ public class MidletSigner {
 
         sign(jadFile, tmpFile, jarFile, privateKey, certificateChain, certificateNumber);
 
-        CopyUtil.copyClose(new FileInputStream(tmpFile), new FileOutputStream(jadFile));
+        CopyUtil.copyClose(Files.newInputStream(tmpFile.toPath()), Files.newOutputStream(jadFile.toPath()));
 
         tmpFile.delete();
     }
@@ -157,10 +156,7 @@ public class MidletSigner {
 
         // Write out new JAD properties to JAD file
         try (FileWriter fw = new FileWriter(outputJadFile)) {
-            for (Iterator<Entry<String, String>> itrSorted = sortedJadProperties.entrySet().iterator();
-                 itrSorted.hasNext(); ) {
-                Entry<String, String> property = itrSorted.next();
-
+            for (Entry<String, String> property : sortedJadProperties.entrySet()) {
                 fw.write(MessageFormat.format(JAD_ATTR_TEMPLATE, property.getKey(), property.getValue()));
                 fw.write(CRLF);
             }
@@ -169,7 +165,7 @@ public class MidletSigner {
 
     private static byte[] signJarDigest(File jarFile, RSAPrivateKey privateKey) throws CryptoException {
 
-        // Create a SHA-1 signature for the supplied JAR file
+        // Create an SHA-1 signature for the supplied JAR file
         try (FileInputStream fis = new FileInputStream(jarFile)) {
             Signature signature = Signature.getInstance(SignatureType.SHA1_RSA.jce());
             signature.initSign(privateKey);

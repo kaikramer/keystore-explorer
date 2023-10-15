@@ -66,8 +66,8 @@ public class DViewKeyPair extends JEscDialog {
      * @param parent           The parent frame
      * @param title            The dialog title
      * @param modality         Dialog modality
-     * @param privateKey       Private Private key part of keypair
-     * @param certificateChain Certificates Certificates part of keypair
+     * @param privateKey       Private key part of keypair
+     * @param certificateChain Certificates part of keypair
      */
     public DViewKeyPair(JFrame parent, String title, Dialog.ModalityType modality, PrivateKey privateKey,
                         X509Certificate[] certificateChain) {
@@ -80,9 +80,9 @@ public class DViewKeyPair extends JEscDialog {
     /**
      * Creates a new DViewKeyPair dialog where the parent is a dialog.
      *
-     * @param parent           The parent dualog
+     * @param parent           The parent dialog
      * @param title            The dialog title
-     * @param privateKey       Private Private key part of keypair
+     * @param privateKey       Private key part of keypair
      * @param certificateChain
      */
     public DViewKeyPair(JDialog parent, String title, PrivateKey privateKey, X509Certificate[] certificateChain) {

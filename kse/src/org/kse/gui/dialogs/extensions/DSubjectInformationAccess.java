@@ -52,7 +52,7 @@ import org.kse.gui.crypto.accessdescription.JAccessDescriptions;
 import org.kse.gui.error.DError;
 
 /**
- * Dialog used to add or edit an Subject Information Access extension.
+ * Dialog used to add or edit a Subject Information Access extension.
  */
 public class DSubjectInformationAccess extends DExtension {
     private static final long serialVersionUID = 1L;
@@ -171,7 +171,7 @@ public class DSubjectInformationAccess extends DExtension {
     private void okPressed() {
         List<AccessDescription> accessDescriptions = jadAccessDescriptions.getAccessDescriptions();
 
-        if (accessDescriptions.size() == 0) {
+        if (accessDescriptions.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DSubjectInformationAccess.ValueReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

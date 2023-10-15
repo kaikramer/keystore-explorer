@@ -84,8 +84,8 @@ public class GeneralSubtrees implements ASN1Encodable {
     @Override
     public ASN1Primitive toASN1Primitive() {
         ASN1EncodableVector vec = new ASN1EncodableVector();
-        for (int i = 0; i < subtrees.size(); i++) {
-            vec.add(subtrees.get(i));
+        for (GeneralSubtree subtree : subtrees) {
+            vec.add(subtree);
         }
         return new DERSequence(vec);
     }

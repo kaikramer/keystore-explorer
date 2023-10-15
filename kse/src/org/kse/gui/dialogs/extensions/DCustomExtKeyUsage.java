@@ -154,7 +154,7 @@ public class DCustomExtKeyUsage extends JEscDialog {
 
     private void okPressed() {
         Set<ASN1ObjectIdentifier> objectIds = jCustomExtendedKeyUsage.getCustomExtKeyUsages();
-        if (objectIds.size() == 0) {
+        if (objectIds.isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DCustomExtendedKeyUsage.ValueReq.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);
             return;

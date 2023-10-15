@@ -311,24 +311,22 @@ public class Asn1Dump {
     }
 
     private String dumpObjectIdentifier(ASN1ObjectIdentifier asn1ObjectIdentifier) {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append(indentSequence.toString(indentLevel));
-        sb.append("OBJECT IDENTIFIER=");
-        sb.append(ObjectIdUtil.toString(asn1ObjectIdentifier));
-        sb.append(NEWLINE);
+        String sb = indentSequence.toString(indentLevel) +
+                "OBJECT IDENTIFIER=" +
+                ObjectIdUtil.toString(asn1ObjectIdentifier) +
+                NEWLINE;
 
-        return sb.toString();
+        return sb;
     }
 
     private String dumpNull() {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append(indentSequence.toString(indentLevel));
-        sb.append("NULL");
-        sb.append(NEWLINE);
+        String sb = indentSequence.toString(indentLevel) +
+                "NULL" +
+                NEWLINE;
 
-        return sb.toString();
+        return sb;
     }
 
     private String dumpInteger(ASN1Integer asn1Integer) throws IOException {
@@ -354,25 +352,23 @@ public class Asn1Dump {
     }
 
     private String dumpEnumerated(ASN1Enumerated asn1Enumerated) {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append(indentSequence.toString(indentLevel));
-        sb.append("ENUMERATED=");
-        sb.append(asn1Enumerated.getValue());
-        sb.append(NEWLINE);
+        String sb = indentSequence.toString(indentLevel) +
+                "ENUMERATED=" +
+                asn1Enumerated.getValue() +
+                NEWLINE;
 
-        return sb.toString();
+        return sb;
     }
 
     private String dumpBoolean(ASN1Boolean asn1Boolean) {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append(indentSequence.toString(indentLevel));
-        sb.append("BOOLEAN=");
-        sb.append(asn1Boolean.isTrue());
-        sb.append(NEWLINE);
+        String sb = indentSequence.toString(indentLevel) +
+                "BOOLEAN=" +
+                asn1Boolean.isTrue() +
+                NEWLINE;
 
-        return sb.toString();
+        return sb;
     }
 
     private String dumpSetOrSequence(ASN1Encodable asn1ConstructedType) throws Asn1Exception, IOException {

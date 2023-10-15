@@ -170,7 +170,7 @@ public class DCheckUpdate extends JEscDialog {
         @Override
         public void run() {
             try {
-                // Get the version number of the latest KeyStore Explorer from its web site
+                // Get the version number of the latest KeyStore Explorer from its website
                 URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
 
                 String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
