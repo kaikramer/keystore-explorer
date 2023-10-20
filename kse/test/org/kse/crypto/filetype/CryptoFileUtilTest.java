@@ -103,6 +103,13 @@ class CryptoFileUtilTest {
             // JWTs
             "test.jwt, JSON_WEB_TOKEN",
 
+            // various PEM files with format issues like trailing whitespace, long lines, ...
+            "problematic-pem1.crl, CRL",
+            "problematic-pem2.crl, CRL",
+            "problematic-pem3.crl, CRL",
+            "problematic-pem4.p10, PKCS10_CSR",
+            "problematic-pem5.cer, CERT",
+
             // text file without any cryptographic content
             "unknown.txt, UNKNOWN",
 

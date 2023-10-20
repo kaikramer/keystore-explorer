@@ -231,8 +231,9 @@ public class Pkcs10Util {
             String line = lnr.readLine();
             StringBuilder sbPem = new StringBuilder();
 
-            if ((line != null) && (line.equals(BEGIN_CSR_FORM_1) || line.equals(BEGIN_CSR_FORM_2))) {
+            if ((line != null) && (line.trim().equals(BEGIN_CSR_FORM_1) || line.trim().equals(BEGIN_CSR_FORM_2))) {
                 while ((line = lnr.readLine()) != null) {
+                    line = line.trim();
                     if (line.equals(END_CSR_FORM_1) || line.equals(END_CSR_FORM_2)) {
                         csrBytes = Base64.decode(sbPem.toString());
                         break;
