@@ -29,4 +29,12 @@ jobs:
       with:
         name: 'test-report'
         path: kse/build/reports/tests/test/*
+    - name: 'Publish Build'
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: 'artifacts'
+        path: |
+          build/libs/kse.jar
+          kse/build/distributions/kse-*.zip
 
