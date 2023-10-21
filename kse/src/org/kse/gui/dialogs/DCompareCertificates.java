@@ -1,6 +1,9 @@
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
@@ -21,7 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
@@ -33,6 +35,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.JEscFrame;
+import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
@@ -59,7 +62,7 @@ public class DCompareCertificates extends JEscFrame {
 
     private JEditorPane editorLeft;
     private JEditorPane editorRight;
-    private JPanel jpAsn1Dump;
+    private JPanel jpCompareCert;
     private JScrollPane jspCompareCert;
     private JLabel jlMatch;
     private JButton jbOK;
@@ -83,8 +86,13 @@ public class DCompareCertificates extends JEscFrame {
 
         HTMLEditorKit kit = new HTMLEditorKit();
         StyleSheet styleSheet = kit.getStyleSheet();
-        styleSheet.addRule(".editOldInline {background-color: #CD853F;}");
-        styleSheet.addRule(".editNewInline {background-color: #CD5C5C;}");
+        if (LnfUtil.isDarkLnf()) {
+            styleSheet.addRule(".editOldInline {background-color: #B27537;}");
+            styleSheet.addRule(".editNewInline {background-color: #CD5C5C;}");
+        } else {
+            styleSheet.addRule(".editOldInline {background-color: #EFCB05;}");
+            styleSheet.addRule(".editNewInline {background-color: #EF7774;}");
+        }
         editorLeft = new JEditorPane();
         editorLeft.setContentType("text/html");
         editorLeft.setEditable(false);
@@ -100,8 +108,8 @@ public class DCompareCertificates extends JEscFrame {
 
         jlMatch = new JLabel();
         jpButtons = new JPanel(new MigLayout("nogrid, fillx, aligny 100%"));
-        jpButtons.add(jbOK, "tag ok");
         jpButtons.add(jlMatch, "sgx");
+        jpButtons.add(jbOK, "right, tag ok");
 
         DiffRowGenerator generator =
                 DiffRowGenerator.create().showInlineDiffs(true).inlineDiffByWord(true).ignoreWhiteSpaces(true).build();
@@ -141,23 +149,33 @@ public class DCompareCertificates extends JEscFrame {
             DError.displayError(this, ex);
         }
 
-        jpAsn1Dump = new JPanel(new BorderLayout());
-        jpAsn1Dump.setBorder(new EmptyBorder(5, 5, 5, 5));
-        jpAsn1Dump.add(editorLeft, BorderLayout.WEST);
-        JSeparator js = new JSeparator();
-        js.setOrientation(SwingConstants.VERTICAL);
-        jpAsn1Dump.add(js, BorderLayout.CENTER);
-        jpAsn1Dump.add(editorRight, BorderLayout.EAST);
+        jpCompareCert = new JPanel();
+        jpCompareCert.setLayout(new MigLayout("insets 0", "[]", "[]"));
+        jpCompareCert.add(editorLeft, "");
+        jpCompareCert.add(new JSeparator(SwingConstants.VERTICAL), "");
+        jpCompareCert.add(editorRight, "");
 
-        jspCompareCert = PlatformUtil.createScrollPane(jpAsn1Dump, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        jspCompareCert = PlatformUtil.createScrollPane(jpCompareCert, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                                                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-        getContentPane().add(jspCompareCert, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
+        pane.add(jspCompareCert, "wrap, growx");
+        pane.add(jpButtons, "spanx, growx");
 
         setResizable(true);
-
         pack();
+
+        // as the compare window can become quite large, we adjust its size depending on the screen size
+        Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        if (getWidth() > maximumWindowBounds.width) {
+            setSize(maximumWindowBounds.width, getHeight());
+        }
+        if (getHeight() > maximumWindowBounds.height) {
+            setSize(getWidth(), maximumWindowBounds.height);
+        }
+
+        setMinimumSize(new Dimension(getWidth(), 200));
     }
 
     private String getCertificateDump(X509Certificate certificate)
@@ -316,6 +334,7 @@ public class DCompareCertificates extends JEscFrame {
         X509Certificate cert1 = X509CertUtil.loadCertificates(cert1Pem.getBytes())[0];
         X509Certificate cert2 = X509CertUtil.loadCertificates(cert2Pem.getBytes())[0];
 
+        DialogViewer.prepare();
         DialogViewer.run(new DCompareCertificates(new JFrame(), cert1, cert2));
     }
 }

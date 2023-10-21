@@ -32,7 +32,7 @@ import org.kse.KSE;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JEscFrame;
 
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 
 /**
  * This is a helper class for quickly viewing KSE dialogs (mainly for testing purposes during development).
@@ -46,7 +46,7 @@ public class DialogViewer {
      * Add BC provider and set l&f (only required when BC is needed before calling the run() method)
      */
     public static void prepare() throws UnsupportedLookAndFeelException {
-        UIManager.setLookAndFeel(new FlatLightLaf());
+        UIManager.setLookAndFeel(new FlatDarkLaf());
         Security.addProvider(KSE.BC);
     }
 

@@ -395,7 +395,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiKeySetPassword;
     private JMenuItem jmiKeyDelete;
     private JMenuItem jmiKeyRename;
-    
+
 
     private JPopupMenu jpmMultiEntrySel;
     private JMenuItem jmiMultiEntrySelCut;
@@ -789,6 +789,7 @@ public final class KseFrame implements StatusBar {
         jmEdit.addSeparator();
 
         jmiCompare = new JMenuItem(compareCertificateAction);
+        PlatformUtil.setMnemonic(jmiCompare, res.getString("KseFrame.jmiCompareCertificates.mnemonic").charAt(0));
         jmiCompare.setToolTipText(null);
         new StatusBarChangeHandler(jmiCompare, (String) compareCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
         jmEdit.add(jmiCompare);
@@ -2206,13 +2207,13 @@ public final class KseFrame implements StatusBar {
         jmiMultiEntryCompare.setToolTipText(null);
         new StatusBarChangeHandler(jmiMultiEntryCompare,
                 (String) compareCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
-        
+
         jpmMultiEntrySel = new JPopupMenu();
         jpmMultiEntrySel.add(jmiMultiEntrySelCut);
         jpmMultiEntrySel.add(jmiMultEntrySelCopy);
         jpmMultiEntrySel.add(jmiMultiEntrySelDelete);
         jpmMultiEntrySel.add(jmiMultiEntryCompare);
-        
+
     }
 
     private void maybeShowSelectedEntryDetails(MouseEvent evt) {

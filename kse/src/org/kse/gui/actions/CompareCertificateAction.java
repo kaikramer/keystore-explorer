@@ -1,6 +1,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -9,6 +10,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
@@ -31,11 +33,14 @@ public class CompareCertificateAction extends KeyStoreExplorerAction {
      */
     public CompareCertificateAction(KseFrame kseFrame) {
         super(kseFrame);
+        putValue(ACCELERATOR_KEY,
+                 KeyStroke.getKeyStroke(res.getString("CompareCertificateAction.accelerator").charAt(0),
+                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.ALT_MASK));
         putValue(LONG_DESCRIPTION, res.getString("CompareCertificateAction.statusbar"));
         putValue(NAME, res.getString("CompareCertificateAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("CompareCertificateAction.tooltip"));
         putValue(SMALL_ICON, new ImageIcon(
-                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exportkeypair.png"))));
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/comparecerts.png"))));
     }
 
     @Override
