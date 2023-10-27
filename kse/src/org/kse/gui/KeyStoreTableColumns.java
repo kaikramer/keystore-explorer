@@ -236,7 +236,7 @@ public class KeyStoreTableColumns {
         bEnableSubjectO = ((col & 0x2000) != 0);
         bEnableSerialNumberHex = ((col & 0x4000) != 0);
         bEnableSerialNumberDec = ((col & 0x8000) != 0);
-        bEnableCertificateValidity = ((col & 0x16000) != 0);
+        bEnableCertificateValidity = ((col & 0x10000) != 0);
         sortCol();
     }
 
@@ -296,7 +296,7 @@ public class KeyStoreTableColumns {
             col += 0x8000;
         }
         if (bEnableCertificateValidity) {
-            col += 0x16000;
+            col += 0x10000;
         }
         return col;
     }

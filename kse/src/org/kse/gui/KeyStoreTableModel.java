@@ -238,7 +238,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 if (validity != null) {
                     data[i][iCertValidityColumn] = validity;
                 } else {
-                    data[i][iCertValidityColumn] = null; // No certExpiration date - must be a key entry
+                    data[i][iCertValidityColumn] = null; // No validity from date - must be a key entry
                 }
             }
             if (iCertExpiryColumn > 0) {
