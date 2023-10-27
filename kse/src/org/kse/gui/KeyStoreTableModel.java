@@ -102,6 +102,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
     private int iAlgorithmColumn = -1;
     private int iKeySizeColumn = -1;
     private int iCurveColumn = -1;
+    private int iCertValidityColumn = -1;
     private int iCertExpiryColumn = -1;
     private int iLastModifiedColumn = -1;
     private int iAKIColumn = -1;
@@ -182,8 +183,8 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 data[i][1] = null; // Lock status does not apply
             }
 
-            // Expiry status column
-            Date expiry = getCertificateExpiry(alias, keyStore);
+            Date validity = getCertificateValidity(alias, keyStore); // Validity status column
+            Date expiry = getCertificateExpiry(alias, keyStore); // Expiry status column
             ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
             ZonedDateTime nowPlusExpiryWarnDays = now.plusDays(expiryWarnDays);
             if (expiry == null) {
@@ -230,6 +231,14 @@ public class KeyStoreTableModel extends AbstractTableModel {
                     if (iColWidth[iCurveColumn] < data[i][iCurveColumn].toString().length()) {
                         iColWidth[iCurveColumn] = data[i][iCurveColumn].toString().length();
                     }
+                }
+            }
+            if (iCertValidityColumn > 0) {
+                // Validity date column
+                if (validity != null) {
+                    data[i][iCertValidityColumn] = validity;
+                } else {
+                    data[i][iCertValidityColumn] = null; // No certExpiration date - must be a key entry
                 }
             }
             if (iCertExpiryColumn > 0) {
@@ -354,6 +363,23 @@ public class KeyStoreTableModel extends AbstractTableModel {
         }
 
         fireTableDataChanged();
+    }
+
+    private Date getCertificateValidity(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+        if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+            return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getNotBefore();
+        } else {
+            Certificate[] chain = keyStore.getCertificateChain(alias);
+
+            if (chain == null) {
+                // Key entry - no validity date
+                return null;
+            }
+
+            // Key pair - first certificate in chain will be for the private key
+            X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+            return x509Chain[0].getNotBefore();
+        }
     }
 
     private Date getCertificateExpiry(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
@@ -529,6 +555,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
         iAlgorithmColumn = -1;
         iKeySizeColumn = -1;
         iCurveColumn = -1;
+        iCertValidityColumn = -1;
         iCertExpiryColumn = -1;
         iLastModifiedColumn = -1;
         iAKIColumn = -1;
@@ -574,6 +601,12 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
                 columnTypes[col] = String.class;
                 iCurveColumn = col;
+            }
+            if (col == keyStoreTableColumns.colCertificateValidity()) {
+                columnNames[col] = res.getString("KeyStoreTableModel.CertValidityColumn");
+                columnTypes[col] = Date.class;
+                iCertValidityColumn = col;
+                iColWidth[col] = " 20.00.2000 00:00:00 MESZ ".length();
             }
             if (col == keyStoreTableColumns.colCertificateExpiry()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");

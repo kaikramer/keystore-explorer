@@ -27,6 +27,7 @@ public class KeyStoreTableColumns {
     private boolean bEnableEntryName;
     private boolean bEnableAlgorithm;
     private boolean bEnableKeySize;
+    private boolean bEnableCertificateValidity;
     private boolean bEnableCertificateExpiry;
     private boolean bEnableLastModified;
     private boolean bEnableSKI;
@@ -47,6 +48,7 @@ public class KeyStoreTableColumns {
     private int iAlgorithmColumn = -1;
     private int iKeySizeColumn = -1;
     private int iCurveColumn = -1;
+    private int iCertValidityColumn = -1;
     private int iCertExpiryColumn = -1;
     private int iLastModifiedColumn = -1;
     private int iAKIColumn = -1;
@@ -66,6 +68,7 @@ public class KeyStoreTableColumns {
         bEnableEntryName = true;
         bEnableAlgorithm = true;
         bEnableKeySize = true;
+        bEnableCertificateValidity = false;
         bEnableCertificateExpiry = true;
         bEnableLastModified = true;
         bEnableSKI = false;
@@ -82,15 +85,17 @@ public class KeyStoreTableColumns {
     }
 
     public KeyStoreTableColumns(boolean bEnableEntryName, boolean bEnableAlgorithm, boolean bEnableKeySize,
-                                boolean bEnableCertificateExpiry, boolean bEnableLastModified, boolean bEnableSKI,
-                                boolean bEnableAKI, boolean bEnableIssuerDN, boolean bEnableSubjectDN,
-                                boolean bEnableIssuerCN, boolean bEnableSubjectCN, boolean bEnableIssuerO,
-                                boolean bEnableSubjectO, boolean bEnableCurve, int expiryWarnDays,
-                                boolean bEnableSerialNumberHex, boolean bEnableSerialNumberDec) {
+                                boolean bEnableCertificateValidity, boolean bEnableCertificateExpiry,
+                                boolean bEnableLastModified, boolean bEnableSKI, boolean bEnableAKI,
+                                boolean bEnableIssuerDN, boolean bEnableSubjectDN, boolean bEnableIssuerCN,
+                                boolean bEnableSubjectCN, boolean bEnableIssuerO, boolean bEnableSubjectO,
+                                boolean bEnableCurve, int expiryWarnDays, boolean bEnableSerialNumberHex,
+                                boolean bEnableSerialNumberDec) {
         super();
         this.bEnableEntryName = bEnableEntryName;
         this.bEnableAlgorithm = bEnableAlgorithm;
         this.bEnableKeySize = bEnableKeySize;
+        this.bEnableCertificateValidity = bEnableCertificateValidity;
         this.bEnableCertificateExpiry = bEnableCertificateExpiry;
         this.bEnableLastModified = bEnableLastModified;
         this.bEnableSKI = bEnableSKI;
@@ -114,6 +119,7 @@ public class KeyStoreTableColumns {
         iAlgorithmColumn = -1;
         iKeySizeColumn = -1;
         iCurveColumn = -1;
+        iCertValidityColumn = -1;
         iCertExpiryColumn = -1;
         iLastModifiedColumn = -1;
         iAKIColumn = -1;
@@ -138,6 +144,9 @@ public class KeyStoreTableColumns {
         }
         if (bEnableCurve) {
             iCurveColumn = ++col;
+        }
+        if (bEnableCertificateValidity) {
+            iCertValidityColumn = ++col;
         }
         if (bEnableCertificateExpiry) {
             iCertExpiryColumn = ++col;
@@ -178,14 +187,15 @@ public class KeyStoreTableColumns {
     }
 
     public void setColumns(boolean bEnableEntryName, boolean bEnableAlgorithm, boolean bEnableKeySize,
-                           boolean bEnableCertificateExpiry, boolean bEnableLastModified, boolean bEnableSKI,
-                           boolean bEnableAKI, boolean bEnableIssuerDN, boolean bEnableSubjectDN,
-                           boolean bEnableIssuerCN, boolean bEnableSubjectCN, boolean bEnableIssuerO,
-                           boolean bEnableSubjectO, boolean bEnableCurve, boolean bEnableSerialNumberHex,
-                           boolean bEnableSerialNumberDec, int expiryWarnDays) {
+                           boolean bEnableCertificateValidity, boolean bEnableCertificateExpiry,
+                           boolean bEnableLastModified, boolean bEnableSKI, boolean bEnableAKI, boolean bEnableIssuerDN,
+                           boolean bEnableSubjectDN, boolean bEnableIssuerCN, boolean bEnableSubjectCN,
+                           boolean bEnableIssuerO, boolean bEnableSubjectO, boolean bEnableCurve,
+                           boolean bEnableSerialNumberHex, boolean bEnableSerialNumberDec, int expiryWarnDays) {
         this.bEnableEntryName = bEnableEntryName;
         this.bEnableAlgorithm = bEnableAlgorithm;
         this.bEnableKeySize = bEnableKeySize;
+        this.bEnableCertificateValidity = bEnableCertificateValidity;
         this.bEnableCertificateExpiry = bEnableCertificateExpiry;
         this.bEnableLastModified = bEnableLastModified;
         this.bEnableSKI = bEnableSKI;
@@ -226,6 +236,7 @@ public class KeyStoreTableColumns {
         bEnableSubjectO = ((col & 0x2000) != 0);
         bEnableSerialNumberHex = ((col & 0x4000) != 0);
         bEnableSerialNumberDec = ((col & 0x8000) != 0);
+        bEnableCertificateValidity = ((col & 0x16000) != 0);
         sortCol();
     }
 
@@ -284,6 +295,9 @@ public class KeyStoreTableColumns {
         if (bEnableSerialNumberDec) {
             col += 0x8000;
         }
+        if (bEnableCertificateValidity) {
+            col += 0x16000;
+        }
         return col;
     }
 
@@ -301,6 +315,9 @@ public class KeyStoreTableColumns {
             col++;
         }
         if (bEnableKeySize) {
+            col++;
+        }
+        if (bEnableCertificateValidity) {
             col++;
         }
         if (bEnableCertificateExpiry) {
@@ -355,6 +372,10 @@ public class KeyStoreTableColumns {
 
     public boolean getEnableKeySize() {
         return bEnableKeySize;
+    }
+
+    public boolean getEnableCertificateValidity() {
+        return bEnableCertificateValidity;
     }
 
     public boolean getEnableCertificateExpiry() {
@@ -427,6 +448,10 @@ public class KeyStoreTableColumns {
 
     public int colKeySize() {
         return iKeySizeColumn;
+    }
+
+    public int colCertificateValidity() {
+        return iCertValidityColumn;
     }
 
     public int colCertificateExpiry() {
