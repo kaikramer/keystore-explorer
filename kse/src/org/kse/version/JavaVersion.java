@@ -69,6 +69,9 @@ public class JavaVersion implements Comparable<Object> {
     public static final JavaVersion JRE_VERSION_18 = new JavaVersion("18");
     public static final JavaVersion JRE_VERSION_19 = new JavaVersion("19");
     public static final JavaVersion JRE_VERSION_20 = new JavaVersion("20");
+    public static final JavaVersion JRE_VERSION_21 = new JavaVersion("21");
+    public static final JavaVersion JRE_VERSION_22 = new JavaVersion("22");
+    public static final JavaVersion JRE_VERSION_23 = new JavaVersion("23");
 
     /**
      * Construct a JavaVersion object for the current Java environment.
