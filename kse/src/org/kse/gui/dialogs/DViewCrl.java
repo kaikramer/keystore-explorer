@@ -21,12 +21,9 @@ package org.kse.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -39,7 +36,6 @@ import java.security.cert.X509CRLEntry;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -49,6 +45,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
@@ -62,6 +59,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JKseTable;
@@ -69,8 +67,11 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.asn1.Asn1Exception;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the details of a Certificate Revocation List (CRL).
@@ -133,68 +134,34 @@ public class DViewCrl extends JEscDialog {
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
-        gbcLbl.gridx = 0;
-        gbcLbl.gridwidth = 1;
-        gbcLbl.gridheight = 1;
-        gbcLbl.insets = new Insets(5, 5, 5, 5);
-        gbcLbl.anchor = GridBagConstraints.EAST;
-
-        GridBagConstraints gbcCtrl = new GridBagConstraints();
-        gbcCtrl.gridx = 1;
-        gbcCtrl.gridwidth = 1;
-        gbcCtrl.gridheight = 1;
-        gbcCtrl.insets = new Insets(5, 5, 5, 5);
-        gbcCtrl.anchor = GridBagConstraints.WEST;
-
         jlVersion = new JLabel(res.getString("DViewCrl.jlVersion.text"));
-        GridBagConstraints gbc_jlVersion = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlVersion.gridy = 0;
 
         jtfVersion = new JTextField(3);
         jtfVersion.setEditable(false);
         jtfVersion.setToolTipText(res.getString("DViewCrl.jtfVersion.tooltip"));
-        GridBagConstraints gbc_jtfVersion = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jtfVersion.gridy = 0;
 
         jlIssuer = new JLabel(res.getString("DViewCrl.jlIssuer.text"));
-        GridBagConstraints gbc_jlIssuer = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlIssuer.gridy = 1;
 
         jdnIssuer = new JDistinguishedName(res.getString("DViewCrl.Issuer.Title"), 30, false);
         jdnIssuer.setToolTipText(res.getString("DViewCrl.jdnIssuer.tooltip"));
-        GridBagConstraints gbc_jdnIssuer = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jdnIssuer.gridy = 1;
 
         jlEffectiveDate = new JLabel(res.getString("DViewCrl.jlEffectiveDate.text"));
-        GridBagConstraints gbc_jlEffectiveDate = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlEffectiveDate.gridy = 2;
 
         jtfEffectiveDate = new JTextField(30);
         jtfEffectiveDate.setEditable(false);
         jtfEffectiveDate.setToolTipText(res.getString("DViewCrl.jtfEffectiveDate.tooltip"));
-        GridBagConstraints gbc_jtfEffectiveDate = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jtfEffectiveDate.gridy = 2;
 
         jlNextUpdate = new JLabel(res.getString("DViewCrl.jlNextUpdate.text"));
-        GridBagConstraints gbc_jlNextUpdate = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlNextUpdate.gridy = 3;
 
         jtfNextUpdate = new JTextField(30);
         jtfNextUpdate.setEditable(false);
         jtfNextUpdate.setToolTipText(res.getString("DViewCrl.jtfNextUpdate.tooltip"));
-        GridBagConstraints gbc_jtfNextUpdate = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jtfNextUpdate.gridy = 3;
 
         jlSignatureAlgorithm = new JLabel(res.getString("DViewCrl.jlSignatureAlgorithm.text"));
-        GridBagConstraints gbc_jlSignatureAlgorithm = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlSignatureAlgorithm.gridy = 4;
 
         jtfSignatureAlgorithm = new JTextField(15);
         jtfSignatureAlgorithm.setEditable(false);
         jtfSignatureAlgorithm.setToolTipText(res.getString("DViewCrl.jtfSignatureAlgorithm.tooltip"));
-        GridBagConstraints gbc_jtfSignatureAlgorithm = (GridBagConstraints) gbcCtrl.clone();
-        gbc_jtfSignatureAlgorithm.gridy = 4;
 
         jbCrlExtensions = new JButton(res.getString("DViewCrl.jbCrlExtensions.text"));
 
@@ -222,19 +189,8 @@ public class DViewCrl extends JEscDialog {
             }
         });
 
-        jpCrlButtons = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        jpCrlButtons.add(jbCrlExtensions);
-        jpCrlButtons.add(jbCrlAsn1);
-
-        GridBagConstraints gbc_jpCrlButtons = new GridBagConstraints();
-        gbc_jpCrlButtons.gridx = 0;
-        gbc_jpCrlButtons.gridy = 5;
-        gbc_jpCrlButtons.gridwidth = 2;
-        gbc_jpCrlButtons.gridheight = 1;
-        gbc_jpCrlButtons.insets = new Insets(5, 0, 5, 0);
-        gbc_jpCrlButtons.anchor = GridBagConstraints.EAST;
-
-        jlRevokedCerts = new JLabel(res.getString("DViewCrl.jlRevokedCerts.text"));
+        jlRevokedCerts = new JLabel(MessageFormat.format(res.getString("DViewCrl.jlRevokedCerts.text"),
+                                                         getCrlEntrySize()));
 
         RevokedCertsTableModel rcModel = new RevokedCertsTableModel();
 
@@ -263,9 +219,7 @@ public class DViewCrl extends JEscDialog {
 
         ListSelectionModel listSelectionModel = jtRevokedCerts.getSelectionModel();
         listSelectionModel.addListSelectionListener(evt -> {
-            if (!evt.getValueIsAdjusting()) // Ignore spurious
-            // events
-            {
+            if (!evt.getValueIsAdjusting())  { // Ignore spurious events
                 try {
                     CursorUtil.setCursorBusy(DViewCrl.this);
                     crlEntrySelection();
@@ -308,45 +262,32 @@ public class DViewCrl extends JEscDialog {
             }
         });
 
-        jpCrlEntryExtensions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        jpCrlEntryExtensions.add(jbCrlEntryExtensions);
-
-        jpRevokedCertsTable.add(jpCrlEntryExtensions, BorderLayout.SOUTH);
-
-        GridBagConstraints gbc_jpRevokedCertsTable = new GridBagConstraints();
-        gbc_jpRevokedCertsTable.gridx = 0;
-        gbc_jpRevokedCertsTable.gridy = 6;
-        gbc_jpRevokedCertsTable.gridwidth = 2;
-        gbc_jpRevokedCertsTable.gridheight = 1;
-        gbc_jpRevokedCertsTable.insets = new Insets(5, 5, 5, 5);
-        gbc_jpRevokedCertsTable.fill = GridBagConstraints.BOTH;
-        gbc_jpRevokedCertsTable.anchor = GridBagConstraints.CENTER;
-
-        jpCRL = new JPanel(new GridBagLayout());
-        jpCRL.setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10), new EtchedBorder()));
-
-        jpCRL.add(jlVersion, gbc_jlVersion);
-        jpCRL.add(jtfVersion, gbc_jtfVersion);
-        jpCRL.add(jlIssuer, gbc_jlIssuer);
-        jpCRL.add(jdnIssuer, gbc_jdnIssuer);
-        jpCRL.add(jlEffectiveDate, gbc_jlEffectiveDate);
-        jpCRL.add(jtfEffectiveDate, gbc_jtfEffectiveDate);
-        jpCRL.add(jlNextUpdate, gbc_jlNextUpdate);
-        jpCRL.add(jtfNextUpdate, gbc_jtfNextUpdate);
-        jpCRL.add(jlSignatureAlgorithm, gbc_jlSignatureAlgorithm);
-        jpCRL.add(jtfSignatureAlgorithm, gbc_jtfSignatureAlgorithm);
-        jpCRL.add(jpCrlButtons, gbc_jpCrlButtons);
-        jpCRL.add(jpRevokedCertsTable, gbc_jpRevokedCertsTable);
-
-        populateDialog();
-
         jbOK = new JButton(res.getString("DViewCrl.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
-        jpOK = PlatformUtil.createDialogButtonPanel(jbOK);
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", ""));
 
-        getContentPane().add(jpCRL, BorderLayout.CENTER);
-        getContentPane().add(jpOK, BorderLayout.SOUTH);
+        pane.add(jlVersion, "");
+        pane.add(jtfVersion, "wrap");
+        pane.add(jlIssuer, "");
+        pane.add(jdnIssuer, "wrap");
+        pane.add(jlEffectiveDate, "");
+        pane.add(jtfEffectiveDate, "wrap");
+        pane.add(jlNextUpdate, "");
+        pane.add(jtfNextUpdate, "wrap");
+        pane.add(jlSignatureAlgorithm, "");
+        pane.add(jtfSignatureAlgorithm, "wrap");
+        pane.add(jbCrlExtensions, "split, spanx, right");
+        pane.add(jbCrlAsn1, "wrap unrel");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jlRevokedCerts, "split, wrap");
+        pane.add(jpRevokedCertsTable, "split, spanx, growx, wrap");
+        pane.add(jbCrlEntryExtensions, "split, spanx, right, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jbOK, "split, spanx, right, tag ok");
+
+        populateDialog();
 
         setResizable(false);
 
@@ -362,6 +303,14 @@ public class DViewCrl extends JEscDialog {
         pack();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
+
+    private int getCrlEntrySize() {
+        Set<? extends X509CRLEntry> revokedCertificates = crl.getRevokedCertificates();
+        if (revokedCertificates == null) {
+            return 0;
+        }
+        return revokedCertificates.size();
     }
 
     private void populateDialog() {
@@ -536,5 +485,25 @@ public class DViewCrl extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+
+        String crl = "-----BEGIN X509 CRL-----\n" +
+                     "MIIBtTCBngIBATANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdzbiB0ZXN0Fw0y\n" +
+                     "MzEwMjgxNzA3NTNaFw0yMzExMjcxNzA3NTNaMCcwJQIUSXX6U4SXixlXQ1f2L/sB\n" +
+                     "i3dBWaUXDTIzMTAyODE3MDc1OFqgLzAtMB8GA1UdIwQYMBaAFIxZhDgaOqA0MAui\n" +
+                     "yg21310lZe5LMAoGA1UdFAQDAgECMA0GCSqGSIb3DQEBCwUAA4IBAQCP86Weka+q\n" +
+                     "+RHsqKAh2qswKY6fMkCnKGg6ru0wC7sDWBTxl6+ycgJNrhiTDIWciMR+aPWOz0lC\n" +
+                     "ktyU6UwwtFuXUmPSFYtAoqGN5k6yXI5bYwIlQG7eJ5emawxKbvUGwhS1etJA0BCN\n" +
+                     "mYwQEYNvoiOmSmbQyhP7sUz6mIPqSwGokHrfCl2hG3xGOjeSN/SbwG5bAGcmWUie\n" +
+                     "xKzh538xuGi49tJoIn51u4lZGHytM1KGInCKbs8zqqcJJJIFAc3PgeJv2VdUFJ2O\n" +
+                     "vUqtA1loeTXTzHRvjE0PgyfSiIeKRdcvJ4rLvdYz11utUmq9PEICkExWZdR/7CY8\n" +
+                     "NnDBrnJ3rf7k\n" +
+                     "-----END X509 CRL-----";
+
+        DialogViewer.run(new DViewCrl(new JFrame(), "CRL", X509CertUtil.loadCRL(crl.getBytes())));
     }
 }
