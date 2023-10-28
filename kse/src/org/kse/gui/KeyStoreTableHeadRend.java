@@ -113,8 +113,8 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.AlgorithmColumn.tooltip"));
                 } else if (col == keyStoreTableColumns.colKeySize()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.KeySizeColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colCertificateValidity()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertValidityColumn.tooltip"));
+                } else if (col == keyStoreTableColumns.colCertificateValidityStart()) {
+                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertValidityStartColumn.tooltip"));
                 } else if (col == keyStoreTableColumns.colCertificateExpiry()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertExpiryColumn.tooltip"));
                 } else if (col == keyStoreTableColumns.colLastModified()) {

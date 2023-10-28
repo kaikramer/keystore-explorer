@@ -61,8 +61,6 @@ import javax.swing.LookAndFeel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -184,8 +182,8 @@ public class DPreferences extends JEscDialog {
     private boolean bEnableAlgorithm;
     private JCheckBox jcbEnableKeySize;
     private boolean bEnableKeySize;
-    private JCheckBox jcbEnableCertificateValidity;
-    private boolean bEnableCertificateValidity;
+    private JCheckBox jcbEnableCertificateValidityStart;
+    private boolean bEnableCertificateValidityStart;
     private JCheckBox jcbEnableCertificateExpiry;
     private boolean bEnableCertificateExpiry;
     private JCheckBox jcbEnableLastModified;
@@ -765,10 +763,10 @@ public class DPreferences extends JEscDialog {
         jcbEnableCurve = new JCheckBox(res.getString("DPreferences.jcbEnableCurve.text"), bEnableCurve);
         jcbEnableCurve.setSelected(bEnableCurve);
 
-        bEnableCertificateValidity = kstColumns.getEnableCertificateValidity();
-        jcbEnableCertificateValidity = new JCheckBox(res.getString("DPreferences.jcbEnableCertificateValidity.text"),
-                bEnableCertificateValidity);
-        jcbEnableCertificateValidity.setSelected(bEnableCertificateValidity);
+        bEnableCertificateValidityStart = kstColumns.getEnableCertificateValidityStart();
+        jcbEnableCertificateValidityStart = new JCheckBox(res.getString(
+                "DPreferences.jcbEnableCertificateValidityStart.text"), bEnableCertificateValidityStart);
+        jcbEnableCertificateValidityStart.setSelected(bEnableCertificateValidityStart);
 
         bEnableCertificateExpiry = kstColumns.getEnableCertificateExpiry();
         jcbEnableCertificateExpiry = new JCheckBox(res.getString("DPreferences.jcbEnableCertificateExpiry.text"),
@@ -835,7 +833,7 @@ public class DPreferences extends JEscDialog {
         jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
         jpDisplayColumns.add(jcbEnableKeySize, "left");
         jpDisplayColumns.add(jcbEnableCurve, "left, wrap");
-        jpDisplayColumns.add(jcbEnableCertificateValidity, "left");
+        jpDisplayColumns.add(jcbEnableCertificateValidityStart, "left");
         jpDisplayColumns.add(jcbEnableCertificateExpiry, "left, wrap");
         jpDisplayColumns.add(jcbEnableLastModified, "left");
         jpDisplayColumns.add(jcbEnableSKI, "left, wrap");
@@ -1256,7 +1254,7 @@ public class DPreferences extends JEscDialog {
         bEnableEntryName = jcbEnableEntryName.isSelected();
         bEnableAlgorithm = jcbEnableAlgorithm.isSelected();
         bEnableKeySize = jcbEnableKeySize.isSelected();
-        bEnableCertificateValidity = jcbEnableCertificateValidity.isSelected();
+        bEnableCertificateValidityStart = jcbEnableCertificateValidityStart.isSelected();
         bEnableCertificateExpiry = jcbEnableCertificateExpiry.isSelected();
         bEnableLastModified = jcbEnableLastModified.isSelected();
         bEnableCurve = jcbEnableCurve.isSelected();
@@ -1275,7 +1273,7 @@ public class DPreferences extends JEscDialog {
         } catch (Exception e) {
             expiryWarnDays = 0;
         }
-        kstColumns.setColumns(bEnableEntryName, bEnableAlgorithm, bEnableKeySize, bEnableCertificateValidity,
+        kstColumns.setColumns(bEnableEntryName, bEnableAlgorithm, bEnableKeySize, bEnableCertificateValidityStart,
                 bEnableCertificateExpiry, bEnableLastModified, bEnableSKI, bEnableAKI, bEnableIssuerDN,
                 bEnableSubjectDN, bEnableIssuerCN, bEnableSubjectCN, bEnableIssuerO, bEnableSubjectO, bEnableCurve,
                 bEnableSerialNumberHex, bEnableSerialNumberDec, expiryWarnDays);
