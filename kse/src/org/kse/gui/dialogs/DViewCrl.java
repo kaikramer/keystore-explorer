@@ -19,7 +19,6 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -43,17 +42,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
@@ -62,7 +58,6 @@ import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
@@ -81,9 +76,7 @@ public class DViewCrl extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private JPanel jpOK;
     private JButton jbOK;
-    private JPanel jpCRL;
     private JLabel jlVersion;
     private JTextField jtfVersion;
     private JLabel jlIssuer;
@@ -94,14 +87,11 @@ public class DViewCrl extends JEscDialog {
     private JTextField jtfNextUpdate;
     private JLabel jlSignatureAlgorithm;
     private JTextField jtfSignatureAlgorithm;
-    private JPanel jpCrlButtons;
     private JButton jbCrlExtensions;
     private JButton jbCrlAsn1;
-    private JPanel jpRevokedCertsTable;
     private JLabel jlRevokedCerts;
     private JScrollPane jspRevokedCertsTable;
-    private JKseTable jtRevokedCerts;
-    private JPanel jpCrlEntryExtensions;
+    private JTable jtRevokedCerts;
     private JButton jbCrlEntryExtensions;
 
     private X509CRL crl;
@@ -136,7 +126,7 @@ public class DViewCrl extends JEscDialog {
     private void initComponents() {
         jlVersion = new JLabel(res.getString("DViewCrl.jlVersion.text"));
 
-        jtfVersion = new JTextField(3);
+        jtfVersion = new JTextField(30);
         jtfVersion.setEditable(false);
         jtfVersion.setToolTipText(res.getString("DViewCrl.jtfVersion.tooltip"));
 
@@ -159,7 +149,7 @@ public class DViewCrl extends JEscDialog {
 
         jlSignatureAlgorithm = new JLabel(res.getString("DViewCrl.jlSignatureAlgorithm.text"));
 
-        jtfSignatureAlgorithm = new JTextField(15);
+        jtfSignatureAlgorithm = new JTextField(30);
         jtfSignatureAlgorithm.setEditable(false);
         jtfSignatureAlgorithm.setToolTipText(res.getString("DViewCrl.jtfSignatureAlgorithm.tooltip"));
 
@@ -194,7 +184,7 @@ public class DViewCrl extends JEscDialog {
 
         RevokedCertsTableModel rcModel = new RevokedCertsTableModel();
 
-        jtRevokedCerts = new JKseTable(rcModel);
+        jtRevokedCerts = new JTable(rcModel);
 
         RowSorter<RevokedCertsTableModel> sorter = new TableRowSorter<>(rcModel);
         jtRevokedCerts.setRowSorter(sorter);
@@ -203,13 +193,13 @@ public class DViewCrl extends JEscDialog {
         jtRevokedCerts.setRowMargin(0);
         jtRevokedCerts.getColumnModel().setColumnMargin(0);
         jtRevokedCerts.getTableHeader().setReorderingAllowed(false);
-        jtRevokedCerts.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtRevokedCerts.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
 
         for (int i = 0; i < jtRevokedCerts.getColumnCount(); i++) {
             TableColumn column = jtRevokedCerts.getColumnModel().getColumn(i);
 
             if (i == 0) {
-                column.setPreferredWidth(100);
+                column.setPreferredWidth(150);
             }
 
             column.setHeaderRenderer(
@@ -240,12 +230,7 @@ public class DViewCrl extends JEscDialog {
                                                              ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                              ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspRevokedCertsTable.getViewport().setBackground(jtRevokedCerts.getBackground());
-
-        jpRevokedCertsTable = new JPanel(new BorderLayout(10, 10));
-        jpRevokedCertsTable.setPreferredSize(new Dimension(100, 200));
-        jpRevokedCertsTable.add(jlRevokedCerts, BorderLayout.NORTH);
-        jpRevokedCertsTable.add(jspRevokedCertsTable, BorderLayout.CENTER);
-        jpRevokedCertsTable.setBorder(new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5)));
+        jspRevokedCertsTable.setPreferredSize(new Dimension(300, 200));
 
         jbCrlEntryExtensions = new JButton(res.getString("DViewCrl.jbCrlEntryExtensions.text"));
 
@@ -282,7 +267,7 @@ public class DViewCrl extends JEscDialog {
         pane.add(jbCrlAsn1, "wrap unrel");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jlRevokedCerts, "split, wrap");
-        pane.add(jpRevokedCertsTable, "split, spanx, growx, wrap");
+        pane.add(jspRevokedCertsTable, "split, spanx, growx, wrap");
         pane.add(jbCrlEntryExtensions, "split, spanx, right, wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jbOK, "split, spanx, right, tag ok");
@@ -367,11 +352,8 @@ public class DViewCrl extends JEscDialog {
         Set<?> critExts = crl.getCriticalExtensionOIDs();
         Set<?> nonCritExts = crl.getNonCriticalExtensionOIDs();
 
-        if ((critExts != null && !critExts.isEmpty()) || (nonCritExts != null && !nonCritExts.isEmpty())) {
-            jbCrlExtensions.setEnabled(true);
-        } else {
-            jbCrlExtensions.setEnabled(false);
-        }
+        jbCrlExtensions.setEnabled(
+                (critExts != null && !critExts.isEmpty()) || (nonCritExts != null && !nonCritExts.isEmpty()));
 
         Set<? extends X509CRLEntry> revokedCertsSet = crl.getRevokedCertificates();
         if (revokedCertsSet == null) {

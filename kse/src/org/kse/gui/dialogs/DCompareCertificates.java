@@ -231,8 +231,7 @@ public class DCompareCertificates extends JEscFrame {
 
     private String getSerialNumber(X509Certificate certificate) {
         String serialNumber = MessageFormat.format(res.getString("DProperties.properties.SerialNumber"),
-                                                   new BigInteger(certificate.getSerialNumber().toByteArray()).toString(
-                                                           16).toUpperCase());
+                                                   X509CertUtil.getSerialNumberAsHex(certificate));
         return serialNumber;
     }
 

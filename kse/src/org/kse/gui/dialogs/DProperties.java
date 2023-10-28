@@ -290,9 +290,7 @@ public class DProperties extends JEscDialog {
             certificateNode.add(new DefaultMutableTreeNode(issuer));
 
             String serialNumber = MessageFormat.format(res.getString("DProperties.properties.SerialNumber"),
-                                                       new BigInteger(
-                                                               certificate.getSerialNumber().toByteArray()).toString(16)
-                                                                                                           .toUpperCase());
+                                                       X509CertUtil.getSerialNumberAsHex(certificate));
             certificateNode.add(new DefaultMutableTreeNode(serialNumber));
 
             Date validFromDate = certificate.getNotBefore();

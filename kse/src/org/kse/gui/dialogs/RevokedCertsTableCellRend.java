@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.kse.utilities.StringUtils;
+import org.kse.utilities.io.HexUtil;
 
 /**
  * Custom cell renderer for the cells of the RevokedCerts table of DViewCrl.
@@ -55,7 +56,7 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
                                                                    col);
 
         if (col == 0) {
-            cell.setText(formatSerialNumberAsHexString((BigInteger) value));
+            cell.setText(HexUtil.getHexString((BigInteger) value, "0x", 4, 0));
         } else {
             cell.setText(StringUtils.formatDate((Date) value));
         }
@@ -63,24 +64,5 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
         cell.setBorder(new EmptyBorder(0, 5, 0, 5));
 
         return cell;
-    }
-
-    private String formatSerialNumberAsHexString(BigInteger serialNumber) {
-        // The string is divided by spaces into groups of four hex characters.
-        String hexSerialNumber = serialNumber.toString(16).toUpperCase();
-
-        StringBuilder strBuff = new StringBuilder();
-
-        strBuff.append("0x");
-
-        for (int i = 0; i < hexSerialNumber.length(); i++) {
-            strBuff.append(hexSerialNumber.charAt(i));
-
-            if ((i + 1) % 4 == 0 && i + 1 != hexSerialNumber.length()) {
-                strBuff.append(' ');
-            }
-        }
-
-        return strBuff.toString();
     }
 }
