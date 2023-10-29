@@ -102,6 +102,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
     private int iAlgorithmColumn = -1;
     private int iKeySizeColumn = -1;
     private int iCurveColumn = -1;
+    private int iCertValidityStartColumn = -1;
     private int iCertExpiryColumn = -1;
     private int iLastModifiedColumn = -1;
     private int iAKIColumn = -1;
@@ -232,6 +233,15 @@ public class KeyStoreTableModel extends AbstractTableModel {
                     }
                 }
             }
+            if (iCertValidityStartColumn > 0) {
+                Date validityStart = getCertificateValidityStart(alias, keyStore);
+                // Validity start date column
+                if (validityStart != null) {
+                    data[i][iCertValidityStartColumn] = validityStart;
+                } else {
+                    data[i][iCertValidityStartColumn] = null; // No validity start date - must be a key entry
+                }
+            }
             if (iCertExpiryColumn > 0) {
                 // Expiry date column
                 if (expiry != null) {
@@ -354,6 +364,22 @@ public class KeyStoreTableModel extends AbstractTableModel {
         }
 
         fireTableDataChanged();
+    }
+
+    private Date getCertificateValidityStart(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
+        if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+            return X509CertUtil.convertCertificate(keyStore.getCertificate(alias)).getNotBefore();
+        } else {
+            Certificate[] chain = keyStore.getCertificateChain(alias);
+
+            if (chain == null) {
+                return null; // Key entry - no validity start date
+            }
+
+            // Key pair - first certificate in chain will be for the private key
+            X509Certificate[] x509Chain = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(chain));
+            return x509Chain[0].getNotBefore();
+        }
     }
 
     private Date getCertificateExpiry(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
@@ -529,6 +555,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
         iAlgorithmColumn = -1;
         iKeySizeColumn = -1;
         iCurveColumn = -1;
+        iCertValidityStartColumn = -1;
         iCertExpiryColumn = -1;
         iLastModifiedColumn = -1;
         iAKIColumn = -1;
@@ -574,6 +601,12 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
                 columnTypes[col] = String.class;
                 iCurveColumn = col;
+            }
+            if (col == keyStoreTableColumns.colCertificateValidityStart()) {
+                columnNames[col] = res.getString("KeyStoreTableModel.CertValidityStartColumn");
+                columnTypes[col] = Date.class;
+                iCertValidityStartColumn = col;
+                iColWidth[col] = " 20.00.2000 00:00:00 MESZ ".length();
             }
             if (col == keyStoreTableColumns.colCertificateExpiry()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
