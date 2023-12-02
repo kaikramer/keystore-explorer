@@ -102,8 +102,10 @@ application {
 	mainClass = project.mainClassName
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 // always show stacktrace when build fails
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
