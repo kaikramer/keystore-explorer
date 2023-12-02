@@ -39,7 +39,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 /*
- * Class to manage the widths of colunmns in a table.
+ * Class to manage the widths of columns in a table.
  * https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
  *
  * Various properties control how the width of the column is calculated.
@@ -158,7 +158,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
      * Get the preferred width for the specified cell
      */
     private int getCellDataWidth(int row, int column) {
-        // Inovke the renderer for the cell to calculate the preferred width
+        // Invoke the renderer for the cell to calculate the preferred width
 
         TableCellRenderer cellRenderer = table.getCellRenderer(row, column);
         Component c = table.prepareRenderer(cellRenderer, row, column);

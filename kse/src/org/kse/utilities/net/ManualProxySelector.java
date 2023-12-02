@@ -58,7 +58,7 @@ public class ManualProxySelector extends ProxySelector {
         this.ftpProxyAddress = ftpProxyAddress;
         this.socksProxyAddress = socksProxyAddress;
 
-        // As creation of Proxy objects is time-comsuming we do this on first
+        // As creation of Proxy objects is time-consuming we do this on first
         // call to select
     }
 

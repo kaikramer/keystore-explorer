@@ -210,7 +210,7 @@ public class X509Ext {
         case SUBJECT_DIRECTORY_ATTRIBUTES:
             return getSubjectDirectoryAttributesStringValue(octets);
         case SUBJECT_KEY_IDENTIFIER:
-            return getSubjectKeyIndentifierStringValue(octets);
+            return getSubjectKeyIdentifierStringValue(octets);
         case KEY_USAGE:
             return getKeyUsageStringValue(octets);
         case PRIVATE_KEY_USAGE_PERIOD:
@@ -354,7 +354,7 @@ public class X509Ext {
             return type.friendly();
         }
 
-        // use full OID registry as fallback
+        // use a full OID registry as fallback
         String friendlyName = ObjectIdUtil.getFriendlyName(oid.getId());
         if (friendlyName != null) {
             return friendlyName;
@@ -555,7 +555,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getSubjectKeyIndentifierStringValue(byte[] value) throws IOException {
+    private static String getSubjectKeyIdentifierStringValue(byte[] value) throws IOException {
         // @formatter:off
 
         /*

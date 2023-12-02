@@ -45,7 +45,7 @@ public class PolicyInformationTableCellRend extends DefaultTableCellRenderer {
      * @param row                 The row of the cell to render
      * @param col                 The column of the cell to render
      * @param hasFocus            If true, render cell appropriately
-     * @return The renderered cell
+     * @return The rendered cell
      */
     @Override
     public Component getTableCellRendererComponent(JTable jtPolicyInformation, Object value, boolean isSelected,

@@ -46,7 +46,7 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
      * @param leaf          True if cell is a leaf
      * @param row           The row of the cell to render
      * @param hasFocus      If true, render cell appropriately
-     * @return The renderered cell
+     * @return The rendered cell
      */
     @Override
     public Component getTreeCellRendererComponent(JTree jtrProperties, Object value, boolean isSelected,

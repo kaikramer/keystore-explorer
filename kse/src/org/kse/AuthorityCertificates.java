@@ -55,8 +55,8 @@ public class AuthorityCertificates {
     }
 
     /**
-     * Get CA Certificates KeyStore. If not set this is not loaded. Instead load
-     * seperately and set it for future reference.
+     * Get CA Certificates KeyStore. If not set this is not loaded.
+     * Instead load separately and set it for future reference.
      *
      * @return CA Certificates KeyStore
      */

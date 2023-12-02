@@ -70,7 +70,7 @@ public class TimeStampingClient {
             MessageDigest digest = MessageDigest.getInstance(hashAlg.jce());
             byte[] hashValue = digest.digest(data);
 
-            // Setup the time stamp request
+            // Set up the time stamp request
             TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
             tsqGenerator.setCertReq(true);
             BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());

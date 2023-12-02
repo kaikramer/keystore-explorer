@@ -335,11 +335,11 @@ public final class KeyPairUtil {
         return signature.sign();
     }
 
-    private static boolean verify(byte[] signed, byte[] signaureToVerify, PublicKey publicKey,
+    private static boolean verify(byte[] signed, byte[] signatureToVerify, PublicKey publicKey,
                                   String signatureAlgorithm) throws GeneralSecurityException {
         Signature signature = Signature.getInstance(signatureAlgorithm, KSE.BC);
         signature.initVerify(publicKey);
         signature.update(signed);
-        return signature.verify(signaureToVerify);
+        return signature.verify(signatureToVerify);
     }
 }
