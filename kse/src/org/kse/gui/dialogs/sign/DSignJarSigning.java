@@ -227,11 +227,7 @@ public class DSignJarSigning extends JEscDialog {
                         }
                     }
                     // Add any jar sign exceptions to the map
-                    catch (NumberFormatException e) {
-                        fileExceptions.put(inputJarFiles[i].getName(), e.toString());
-                    } catch (NullPointerException e) {
-                        fileExceptions.put(inputJarFiles[i].getName(), e.toString());
-                    } catch (Exception e) {
+                    catch (Exception e) {
                         fileExceptions.put(inputJarFiles[i].getName(), e.toString());
                     }
                     // update the progress bar
