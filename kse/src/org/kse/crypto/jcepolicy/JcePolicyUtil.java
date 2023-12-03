@@ -37,9 +37,9 @@ import java.util.jar.Manifest;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.io.CopyUtil;
-import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.net.URLs;
 import org.kse.version.JavaVersion;
 

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Class of utility methods to copy data between I/O streams.
