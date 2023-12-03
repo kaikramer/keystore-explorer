@@ -41,11 +41,7 @@ public class CopyUtil {
      * @throws IOException If an I/O problem occurred
      */
     public static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[2048];
-        int i;
-        while ((i = in.read(buffer)) > 0) {
-            out.write(buffer, 0, i);
-        }
+        IOUtils.copy(in, out);
     }
 
     /**
@@ -57,7 +53,7 @@ public class CopyUtil {
      */
     public static void copyClose(InputStream in, OutputStream out) throws IOException {
         try {
-            copy(in, out);
+            IOUtils.copy(in, out);
         } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
@@ -72,26 +68,7 @@ public class CopyUtil {
      * @throws IOException If an I/O problem occurred
      */
     public static void copy(Reader reader, Writer writer) throws IOException {
-        char[] buffer = new char[2048];
-        int i;
-        while ((i = reader.read(buffer)) > 0) {
-            writer.write(buffer, 0, i);
-        }
+        IOUtils.copy(reader, writer);
     }
 
-    /**
-     * Copy data from a reader to a writer and close I/O.
-     *
-     * @param reader Reader
-     * @param writer Writer
-     * @throws IOException If an I/O problem occurred
-     */
-    public static void copyClose(Reader reader, Writer writer) throws IOException {
-        try {
-            copy(reader, writer);
-        } finally {
-            IOUtils.closeQuietly(reader);
-            IOUtils.closeQuietly(writer);
-        }
-    }
 }
