@@ -39,7 +39,6 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
-import org.kse.utilities.io.CopyUtil;
 import org.kse.utilities.net.URLs;
 import org.kse.version.JavaVersion;
 
@@ -145,7 +144,7 @@ public class JcePolicyUtil {
                     sw.write(entryName + ":\n\n");
 
                     try (InputStreamReader isr = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
-                        CopyUtil.copy(isr, sw);
+                        IOUtils.copy(isr, sw);
                     }
 
                     sw.write('\n');

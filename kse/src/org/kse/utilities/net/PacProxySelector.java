@@ -50,9 +50,9 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import org.apache.commons.io.IOUtils;
 import org.kse.utilities.TriFunction;
 import org.kse.utilities.VarFunction;
-import org.kse.utilities.io.CopyUtil;
 import org.kse.version.JavaVersion;
 
 /**
@@ -152,7 +152,7 @@ public class PacProxySelector extends ProxySelector {
 
             try (InputStreamReader isr = new InputStreamReader(connection.getInputStream());
                  StringWriter sw = new StringWriter()) {
-                CopyUtil.copy(isr, sw);
+                IOUtils.copy(isr, sw);
                 return sw.toString();
             }
         } catch (IOException ex) {

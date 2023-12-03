@@ -22,8 +22,7 @@ package org.kse.utilities.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -31,17 +30,6 @@ import org.apache.commons.io.IOUtils;
  */
 public class CopyUtil {
     private CopyUtil() {
-    }
-
-    /**
-     * Copy data from one stream to another and do not close I/O.
-     *
-     * @param in  Input stream
-     * @param out Output stream
-     * @throws IOException If an I/O problem occurred
-     */
-    public static void copy(InputStream in, OutputStream out) throws IOException {
-        IOUtils.copy(in, out);
     }
 
     /**
@@ -58,17 +46,6 @@ public class CopyUtil {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
         }
-    }
-
-    /**
-     * Copy data from a reader to a writer and do not close I/O.
-     *
-     * @param reader Reader
-     * @param writer Writer
-     * @throws IOException If an I/O problem occurred
-     */
-    public static void copy(Reader reader, Writer writer) throws IOException {
-        IOUtils.copy(reader, writer);
     }
 
 }
