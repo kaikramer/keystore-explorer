@@ -52,10 +52,10 @@ public class ListCertsTableModel extends AbstractTableModel {
         data = new Object[0][0];
     }
 
-    public void load(List<X509Certificate> listCertificados) {
-        data = new Object[listCertificados.size()][3];
+    public void load(List<X509Certificate> listCertificates) {
+        data = new Object[listCertificates.size()][3];
         int i = 0;
-        for (X509Certificate cert : listCertificados) {
+        for (X509Certificate cert : listCertificates) {
             data[i][0] = cert.getSubjectX500Principal().getName();
             data[i][1] = cert.getSerialNumber();
             data[i][2] = cert.getNotAfter();

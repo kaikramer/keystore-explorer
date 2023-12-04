@@ -222,7 +222,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 
             caReplyChain[0] = caReplyCert;
 
-            // Add all of the signing chain to the reply
+            // Add all the signing chain to the reply
             System.arraycopy(signingChain, 0, caReplyChain, 1, signingChain.length);
         } catch (Exception ex) {
             DError.displayError(frame, ex);

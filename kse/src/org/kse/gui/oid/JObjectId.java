@@ -123,7 +123,7 @@ public class JObjectId extends JPanel {
     /**
      * Get object identifier.
      *
-     * @return Object identifer, or null if none chosen
+     * @return Object identifier, or null if none chosen
      */
     public ASN1ObjectIdentifier getObjectId() {
         return objectId;

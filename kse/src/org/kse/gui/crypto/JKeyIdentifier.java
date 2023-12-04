@@ -133,7 +133,7 @@ public class JKeyIdentifier extends JPanel {
     }
 
     /**
-     * Set key identifer.
+     * Set key identifier.
      *
      * @param keyIdentifier Key identifier
      */

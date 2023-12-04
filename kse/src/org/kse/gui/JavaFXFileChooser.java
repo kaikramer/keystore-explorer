@@ -402,7 +402,7 @@ public class JavaFXFileChooser extends JFileChooser {
     }
 
     /**
-     * Get the extension filter index from a List of exension filters
+     * Get the extension filter index from a List of extension filters
      *
      * @param extensionFilters Extension filters
      * @param ext One extension filter possibly in the list
@@ -486,7 +486,7 @@ public class JavaFXFileChooser extends JFileChooser {
         chooser.setMultiSelectionEnabled(false);
         // chooser.addChoosableFileFilter(new FileNameExtensionFilter("Description1",
         // new String[] { "jks" }));
-        chooser.setFileFilter(new FileNameExtensionFilter("ZIP Filez", "zip"));
+        chooser.setFileFilter(new FileNameExtensionFilter("ZIP Files", "zip"));
         //chooser.setFileFilter(new FileNameExtensionFilter("Description_1", new String[] { "mkv", "jpg" }));
         // chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.showDialog(null, "Button Text");

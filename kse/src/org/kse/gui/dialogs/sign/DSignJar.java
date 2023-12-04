@@ -55,6 +55,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.apache.commons.io.IOUtils;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
@@ -73,7 +74,6 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
-import org.kse.utilities.io.IOUtils;
 import org.kse.utilities.net.URLs;
 
 import net.miginfocom.swing.MigLayout;

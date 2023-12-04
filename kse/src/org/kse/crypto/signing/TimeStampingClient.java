@@ -37,6 +37,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -70,7 +71,7 @@ public class TimeStampingClient {
             MessageDigest digest = MessageDigest.getInstance(hashAlg.jce());
             byte[] hashValue = digest.digest(data);
 
-            // Setup the time stamp request
+            // Set up the time stamp request
             TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
             tsqGenerator.setCertReq(true);
             BigInteger nonce = BigInteger.valueOf(System.currentTimeMillis());
@@ -149,14 +150,7 @@ public class TimeStampingClient {
             out.close();
 
             InputStream is = con.getInputStream();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead = 0;
-            while ((bytesRead = is.read(buffer, 0, buffer.length)) >= 0) {
-                baos.write(buffer, 0, bytesRead);
-            }
-            byte[] respBytes = baos.toByteArray();
-
+            byte[] respBytes = IOUtils.toByteArray(is);
             String encoding = con.getContentEncoding();
             if (encoding != null && encoding.equalsIgnoreCase("base64")) {
                 respBytes = Base64.decode(new String(respBytes));

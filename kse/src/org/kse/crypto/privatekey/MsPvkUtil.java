@@ -148,10 +148,10 @@ public class MsPvkUtil {
     // PVK BLOB reserved field value
     private static final int BLOB_RESERVED = 0;
 
-    // PVK key algortihm id field value for RSA signature private key
+    // PVK key algorithm id field value for RSA signature private key
     private static final int CALG_RSA_SIGN = 0x2400;
 
-    // PVK key algortihm id field value for RSA exchange private key
+    // PVK key algorithm id field value for RSA exchange private key
     private static final int CALG_RSA_KEYX = 0xa400;
 
     // PVK key algorithm id field value for DSA signature private key

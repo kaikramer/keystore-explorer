@@ -333,7 +333,7 @@ public class JPasswordQualityField extends JPanel {
         private static final long serialVersionUID = 1L;
         private Color BACKGROUND_COLOUR = Color.WHITE;
         private Color BORDER_COLOUR = Color.LIGHT_GRAY;
-        private Color QUALITY_SATISIFIED_COLOUR = new Color(129, 180, 88); // green
+        private Color QUALITY_SATISFIED_COLOUR = new Color(129, 180, 88); // green
         private Color QUALITY_NOT_SATISFIED_COLOUR = new Color(192, 72, 56); // red
 
         private int passwordQuality;
@@ -377,14 +377,14 @@ public class JPasswordQualityField extends JPanel {
                 if (passwordQuality < minPasswordQuality) {
                     barColour = QUALITY_NOT_SATISFIED_COLOUR;
                 } else {
-                    barColour = QUALITY_SATISIFIED_COLOUR;
+                    barColour = QUALITY_SATISFIED_COLOUR;
                 }
 
                 jpqmQuality.setToolTipText(
                         MessageFormat.format(res.getString("JPasswordQualityField.jpbQuality.Min.tooltip"),
                                              passwordQuality, minPasswordQuality));
             } else {
-                barColour = QUALITY_SATISIFIED_COLOUR;
+                barColour = QUALITY_SATISFIED_COLOUR;
 
                 jpqmQuality.setToolTipText(
                         MessageFormat.format(res.getString("JPasswordQualityField.jpbQuality.NoMin.tooltip"),

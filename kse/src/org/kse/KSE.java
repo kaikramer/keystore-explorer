@@ -81,7 +81,7 @@ public class KSE {
      */
     public static void main(String[] args) {
         try {
-            // To take affect these must be set before the splash screen is instantiated
+            // To take effect these must be set before the splash screen is instantiated
             if (OperatingSystem.isMacOs()) {
                 setAppleSystemProperties();
             } else if (OperatingSystem.isWindows7() || OperatingSystem.isWindows8() || OperatingSystem.isWindows10()) {

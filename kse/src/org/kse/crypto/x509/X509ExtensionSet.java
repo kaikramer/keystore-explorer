@@ -117,11 +117,8 @@ public class X509ExtensionSet implements X509Extension, Cloneable, Serializable 
      * @param oid X509Extension object identifier
      */
     public void removeExtension(String oid) {
-        if (criticalExtensions.containsKey(oid)) {
-            criticalExtensions.remove(oid);
-        } else if (nonCriticalExtensions.containsKey(oid)) {
-            nonCriticalExtensions.remove(oid);
-        }
+        criticalExtensions.remove(oid);
+        nonCriticalExtensions.remove(oid);
     }
 
     /**

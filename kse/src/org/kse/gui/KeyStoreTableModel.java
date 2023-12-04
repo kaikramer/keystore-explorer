@@ -399,7 +399,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 return x509Chain[0].getNotAfter();
             } else {
                 Calendar cal = Calendar.getInstance();
-                cal.set(9999, 1, 1);
+                cal.set(9999, Calendar.FEBRUARY, 1);
                 Date earliest = cal.getTime();
                 for (X509Certificate x509Certificate : x509Chain) {
                     if (x509Certificate.getNotAfter().before(earliest)) {

@@ -136,7 +136,7 @@ public class EccUtil {
             }
         } else if (parameters instanceof ASN1Sequence) {
             // RFC 5480: "specifiedCurve, which is of type SpecifiedECDomain type (defined
-            //        in [X9.62]), allows all of the elliptic curve domain parameters
+            //        in [X9.62]), allows all the elliptic curve domain parameters
             //        to be explicitly specified.  This choice MUST NOT be used."
             return "explicitly specified curve";
         }

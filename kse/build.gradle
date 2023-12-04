@@ -79,7 +79,7 @@ ext {
 	launcherOutDir = "$buildDir/launcher"
 	jlinkOutDir = "$buildDir/jlink"
 	appBundleDir = "$buildDir/appBundle"
-	distDir = "$buildDir/$distsDirName"
+	distDir = "$buildDir/${base.distsDirName}"
 	dmgDir = "$projectDir/dmg"
 	dependenciesDir = Paths.get(buildDir.toString(), "dependencies") // for NSIS we need Windows path separators
 
@@ -102,16 +102,18 @@ application {
 	mainClass = project.mainClassName
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 // always show stacktrace when build fails
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 dependencies {
-	implementation('org.bouncycastle:bcpkix-jdk18on:1.76')
-	implementation('net.java.dev.jna:jna:5.12.1')
-	implementation('commons-io:commons-io:2.11.0')
+	implementation('org.bouncycastle:bcpkix-jdk18on:1.77')
+	implementation('net.java.dev.jna:jna:5.13.0')
+	implementation('commons-io:commons-io:2.15.1')
 	implementation('com.miglayout:miglayout-swing:5.3')
 	implementation('com.formdev:flatlaf:3.2')
 	implementation('com.nimbusds:nimbus-jose-jwt:9.30.2')

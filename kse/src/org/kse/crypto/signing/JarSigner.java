@@ -122,10 +122,10 @@ public class JarSigner {
     // Manifest location in JAR file
     private static final String MANIFEST_LOCATION = "META-INF/MANIFEST.MF";
 
-    // DSA siganture block extension
+    // DSA signature block extension
     private static final String DSA_SIG_BLOCK_EXT = "DSA";
 
-    // RSA siganture block extension
+    // RSA signature block extension
     private static final String RSA_SIG_BLOCK_EXT = "RSA";
 
     // Signature file extension

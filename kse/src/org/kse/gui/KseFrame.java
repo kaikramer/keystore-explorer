@@ -2218,7 +2218,7 @@ public final class KseFrame implements StatusBar {
 
     private void maybeShowSelectedEntryDetails(MouseEvent evt) {
         // Check if a double click occurred on the KeyStore table. If it has
-        // show the relevant details of the entry clicked upon
+        // shown the relevant details of the entry clicked upon
         if (evt.getClickCount() > 1) {
             JTable jtKeyStore = (JTable) evt.getComponent();
 

@@ -55,7 +55,7 @@ public class RevokedCertsTableHeadRend extends DefaultTableCellRenderer {
      * @param hasFocus   If true, render cell appropriately
      * @param row        The row of the cell to render
      * @param col        The column of the cell to render
-     * @return The renderered cell
+     * @return The rendered cell
      */
     @Override
     public Component getTableCellRendererComponent(JTable jTable, Object value, boolean isSelected, boolean hasFocus,

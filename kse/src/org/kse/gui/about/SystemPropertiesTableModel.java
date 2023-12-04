@@ -63,7 +63,7 @@ public class SystemPropertiesTableModel extends AbstractTableModel {
             String value = sysProps.getProperty(name);
 
             if (name.equals("line.separator")) {
-                value = convertLineSeperatorToBePrintable(value);
+                value = convertLineSeparatorToBePrintable(value);
             }
 
             sortedSysProps.put(name, value);
@@ -83,7 +83,7 @@ public class SystemPropertiesTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    private String convertLineSeperatorToBePrintable(String value) {
+    private String convertLineSeparatorToBePrintable(String value) {
         StringBuilder sbValue = new StringBuilder();
 
         for (int i = 0; i < value.length(); i++) {
