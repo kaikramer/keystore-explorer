@@ -38,6 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
@@ -89,6 +90,7 @@ public class DViewCsr extends JEscDialog {
     private JTextField jtfChallenge;
     private JLabel jlUnstructuredName;
     private JTextField jtfUnstructuredName;
+    private JButton jbVerify;
     private JButton jbExtensions;
     private JButton jbPem;
     private JButton jbAsn1;
@@ -167,6 +169,10 @@ public class DViewCsr extends JEscDialog {
         jtfUnstructuredName.setEditable(false);
         jtfUnstructuredName.setToolTipText(res.getString("DViewCsr.jtfUnstructuredName.tooltip"));
 
+        jbVerify = new JButton(res.getString("DViewCsr.jbVerify.text"));
+        PlatformUtil.setMnemonic(jbVerify, res.getString("DViewCsr.jbVerify.mnemonic").charAt(0));
+        jbVerify.setToolTipText(res.getString("DViewCsr.jbVerify.tooltip"));
+
         jbExtensions = new JButton(res.getString("DViewCsr.jbExtensions.text"));
         PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewCsr.jbExtensions.mnemonic").charAt(0));
         jbExtensions.setToolTipText(res.getString("DViewCsr.jbExtensions.tooltip"));
@@ -196,7 +202,8 @@ public class DViewCsr extends JEscDialog {
         pane.add(jtfChallenge, "wrap");
         pane.add(jlUnstructuredName, "");
         pane.add(jtfUnstructuredName, "wrap para");
-        pane.add(jbExtensions, "spanx, split");
+        pane.add(jbVerify, "spanx, split");
+        pane.add(jbExtensions, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
@@ -208,6 +215,15 @@ public class DViewCsr extends JEscDialog {
             try {
                 CursorUtil.setCursorBusy(DViewCsr.this);
                 pubKeyDetailsPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewCsr.this);
+            }
+        });
+
+        jbVerify.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewCsr.this);
+                verifyPressed();
             } finally {
                 CursorUtil.setCursorFree(DViewCsr.this);
             }
@@ -350,6 +366,20 @@ public class DViewCsr extends JEscDialog {
             return new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
         } catch (GeneralSecurityException ex) {
             throw new CryptoException(res.getString("DViewCsr.NoGetPublicKey.message"), ex);
+        }
+    }
+
+    private void verifyPressed() {
+        try {
+            if (Pkcs10Util.verifyCsr(pkcs10Csr)) {
+                JOptionPane.showMessageDialog(this, res.getString("DViewCsr.VerifyOK.message"),
+                                              res.getString("DViewCsr.Verify.title"), JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, res.getString("DViewCsr.NoVerify.message"),
+                                              res.getString("DViewCsr.Verify.title"), JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (CryptoException e) {
+            DError.displayError(this, e);
         }
     }
 
