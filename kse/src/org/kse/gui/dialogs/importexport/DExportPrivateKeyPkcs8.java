@@ -19,6 +19,10 @@
  */
 package org.kse.gui.dialogs.importexport;
 
+import static org.kse.gui.FileChooserFactory.P8_EXT;
+import static org.kse.gui.FileChooserFactory.PEM_EXT;
+import static org.kse.gui.FileChooserFactory.getPkcs8FileChooser;
+
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -48,7 +52,6 @@ import org.kse.crypto.Password;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
@@ -67,6 +70,9 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
+
+    public static final String PEM_FILE_EXT = "." + P8_EXT + "." + PEM_EXT;
+    public static final String NON_PEM_FILE_EXT = "." + P8_EXT;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -221,6 +227,17 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
             }
         });
 
+        jcbExportPem.addItemListener(evt -> {
+            String currentFileName = jtfExportFile.getText();
+            String pemFileExt = "." + PEM_EXT;
+            // add or remove ".pem" depending on current selection of PEM checkbox
+            if (jcbExportPem.isSelected() && !currentFileName.contains(pemFileExt)) {
+                jtfExportFile.setText(currentFileName + pemFileExt);
+            } else if (!jcbExportPem.isSelected() && currentFileName.contains(pemFileExt)) {
+                jtfExportFile.setText(currentFileName.replaceAll(pemFileExt, ""));
+            }
+        });
+
         jbCancel.addActionListener(evt -> cancelPressed());
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
@@ -253,7 +270,7 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     private void populateExportFileName() {
         File currentDirectory = CurrentDirectory.get();
         String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
-        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.P8_EXT);
+        File csrFile = new File(currentDirectory, sanitizedAlias + PEM_FILE_EXT);
         jtfExportFile.setText(csrFile.getPath());
     }
 
@@ -322,7 +339,7 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
     }
 
     private void browsePressed() {
-        JFileChooser chooser = FileChooserFactory.getPkcs8FileChooser();
+        JFileChooser chooser = getPkcs8FileChooser();
 
         File currentExportFile = new File(jtfExportFile.getText().trim());
 

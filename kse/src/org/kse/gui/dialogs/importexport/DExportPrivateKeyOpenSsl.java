@@ -19,11 +19,11 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import java.awt.BorderLayout;
+import static org.kse.gui.FileChooserFactory.OPENSSL_PVK_EXT;
+import static org.kse.gui.FileChooserFactory.PEM_EXT;
+
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -41,13 +41,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.Password;
 import org.kse.crypto.privatekey.OpenSslPbeType;
@@ -59,7 +56,10 @@ import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.password.JPasswordQualityField;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to display options to export a private key from a KeyStore entry
@@ -70,9 +70,10 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
+    public static final String PEM_FILE_EXT = '.' + OPENSSL_PVK_EXT + '.' + PEM_EXT;
+
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpOptions;
     private JLabel jlEncrypt;
     private JCheckBox jcbEncrypt;
     private JLabel jlPbeAlg;
@@ -86,7 +87,6 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
     private JLabel jlExportFile;
     private JTextField jtfExportFile;
     private JButton jbBrowse;
-    private JPanel jpButtons;
     private JButton jbExport;
     private JButton jbCancel;
 
@@ -114,53 +114,21 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
-        gbcLbl.gridx = 0;
-        gbcLbl.gridwidth = 3;
-        gbcLbl.gridheight = 1;
-        gbcLbl.insets = new Insets(5, 5, 5, 5);
-        gbcLbl.anchor = GridBagConstraints.EAST;
-
-        GridBagConstraints gbcEdCtrl = new GridBagConstraints();
-        gbcEdCtrl.gridx = 3;
-        gbcEdCtrl.gridwidth = 3;
-        gbcEdCtrl.gridheight = 1;
-        gbcEdCtrl.insets = new Insets(5, 5, 5, 5);
-        gbcEdCtrl.anchor = GridBagConstraints.WEST;
 
         jlEncrypt = new JLabel(res.getString("DExportPrivateKeyOpenSsl.jlEncrypt.text"));
-        GridBagConstraints gbc_jlEncrypt = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlEncrypt.gridy = 0;
 
         jcbEncrypt = new JCheckBox();
         jcbEncrypt.setSelected(true);
         jcbEncrypt.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jcbEncrypt.tooltip"));
-        GridBagConstraints gbc_jcbEncrypt = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbEncrypt.gridy = 0;
-
-        jcbEncrypt.addChangeListener(evt -> {
-            if (jcbEncrypt.isSelected()) {
-                jcbExportPem.setSelected(true);
-                jcbExportPem.setEnabled(false);
-            } else {
-                jcbExportPem.setEnabled(true);
-            }
-        });
 
         jlPbeAlg = new JLabel(res.getString("DExportPrivateKeyOpenSsl.jlPbeAlg.text"));
-        GridBagConstraints gbc_jlPbeAlg = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlPbeAlg.gridy = 1;
 
         jcbPbeAlg = new JComboBox<>();
         populatePbeAlgs();
         jcbPbeAlg.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jcbPbeAlg.tooltip"));
         jcbPbeAlg.setSelectedIndex(0);
-        GridBagConstraints gbc_jcbPbeAlg = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbPbeAlg.gridy = 1;
 
         jlPassword = new JLabel(res.getString("DExportPrivateKeyOpenSsl.jlPassword.text"));
-        GridBagConstraints gbc_jlPassword = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlPassword.gridy = 2;
 
         if (passwordQualityConfig.getEnabled()) {
             if (passwordQualityConfig.getEnforced()) {
@@ -173,47 +141,64 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
         }
 
         jpfPassword.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jpqfPassword.tooltip"));
-        GridBagConstraints gbc_jpfPassword = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jpfPassword.gridy = 2;
 
         jlConfirmPassword = new JLabel(res.getString("DExportPrivateKeyOpenSsl.jlConfirmPassword.text"));
-        GridBagConstraints gbc_jlConfirmPassword = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlConfirmPassword.gridy = 3;
 
         jpfConfirmPassword = new JPasswordField(15);
         jpfConfirmPassword.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jpfConfirmPassword.tooltip"));
-        GridBagConstraints gbc_jpfConfirmPassword = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jpfConfirmPassword.gridy = 3;
 
         jlExportPem = new JLabel(res.getString("DExportPrivateKeyOpenSsl.jlExportPem.text"));
-        GridBagConstraints gbc_jlExportPem = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportPem.gridy = 4;
 
         jcbExportPem = new JCheckBox();
-        jcbExportPem.setSelected(true);
-        jcbExportPem.setEnabled(false); // Itinitla export setting is with
-        // encryption - must be pem
-        // export
+        jcbExportPem.setSelected(true); // Initial export setting is with encryption => must be PEM
+        jcbExportPem.setEnabled(false);
         jcbExportPem.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jcbExportPem.tooltip"));
-        GridBagConstraints gbc_jcbExportPem = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbExportPem.gridy = 4;
 
         jlExportFile = new JLabel(res.getString("DExportPrivateKeyOpenSsl.jlExportFile.text"));
-        GridBagConstraints gbc_jlExportFile = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportFile.gridy = 5;
 
         jtfExportFile = new JTextField(30);
         jtfExportFile.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jtfExportFile.tooltip"));
-        GridBagConstraints gbc_jtfExportFile = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jtfExportFile.gridy = 5;
-        gbc_jtfExportFile.gridwidth = 6;
 
         jbBrowse = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbBrowse.text"));
         jbBrowse.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jbBrowse.tooltip"));
         PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportPrivateKeyOpenSsl.jbBrowse.mnemonic").charAt(0));
-        GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jbBrowse.gridy = 5;
-        gbc_jbBrowse.gridx = 9;
+
+        jbExport = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbExport.text"));
+        PlatformUtil.setMnemonic(jbExport, res.getString("DExportPrivateKeyOpenSsl.jbExport.mnemonic").charAt(0));
+        jbExport.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jbExport.tooltip"));
+
+        jbCancel = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbCancel.text"));
+
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.add(jlEncrypt, "");
+        pane.add(jcbEncrypt, "wrap");
+        pane.add(jlPbeAlg, "");
+        pane.add(jcbPbeAlg, "wrap");
+        pane.add(jlPassword, "");
+        pane.add(jpfPassword, "wrap");
+        pane.add(jlConfirmPassword, "");
+        pane.add(jpfConfirmPassword, "wrap");
+        pane.add(jlExportPem, "");
+        pane.add(jcbExportPem, "wrap");
+        pane.add(jlExportFile, "");
+        pane.add(jtfExportFile, "");
+        pane.add(jbBrowse, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jbExport, "right, spanx, split, tag ok");
+        pane.add(jbCancel, "tag cancel");
+
+        // actions
+
+        jcbEncrypt.addChangeListener(evt -> {
+            if (jcbEncrypt.isSelected()) {
+                jcbExportPem.setSelected(true);
+                jcbExportPem.setEnabled(false);
+            } else {
+                jcbExportPem.setEnabled(true);
+            }
+        });
 
         jbBrowse.addActionListener(evt -> {
             try {
@@ -223,29 +208,6 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
                 CursorUtil.setCursorFree(DExportPrivateKeyOpenSsl.this);
             }
         });
-
-        jpOptions = new JPanel(new GridBagLayout());
-        jpOptions.setBorder(new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()),
-                                               new EmptyBorder(5, 5, 5, 5)));
-
-        jpOptions.add(jlEncrypt, gbc_jlEncrypt);
-        jpOptions.add(jcbEncrypt, gbc_jcbEncrypt);
-
-        jpOptions.add(jlPbeAlg, gbc_jlPbeAlg);
-        jpOptions.add(jcbPbeAlg, gbc_jcbPbeAlg);
-
-        jpOptions.add(jlPassword, gbc_jlPassword);
-        jpOptions.add(jpfPassword, gbc_jpfPassword);
-
-        jpOptions.add(jlConfirmPassword, gbc_jlConfirmPassword);
-        jpOptions.add(jpfConfirmPassword, gbc_jpfConfirmPassword);
-
-        jpOptions.add(jlExportPem, gbc_jlExportPem);
-        jpOptions.add(jcbExportPem, gbc_jcbExportPem);
-
-        jpOptions.add(jlExportFile, gbc_jlExportFile);
-        jpOptions.add(jtfExportFile, gbc_jtfExportFile);
-        jpOptions.add(jbBrowse, gbc_jbBrowse);
 
         jcbEncrypt.addItemListener(evt -> {
             if (jcbEncrypt.isSelected()) {
@@ -265,9 +227,6 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
             }
         });
 
-        jbExport = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbExport.text"));
-        PlatformUtil.setMnemonic(jbExport, res.getString("DExportPrivateKeyOpenSsl.jbExport.mnemonic").charAt(0));
-        jbExport.setToolTipText(res.getString("DExportPrivateKeyOpenSsl.jbExport.tooltip"));
         jbExport.addActionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DExportPrivateKeyOpenSsl.this);
@@ -277,7 +236,17 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
             }
         });
 
-        jbCancel = new JButton(res.getString("DExportPrivateKeyOpenSsl.jbCancel.text"));
+        jcbExportPem.addItemListener(evt -> {
+            String currentFileName = jtfExportFile.getText();
+            String pemFileExt = '.' + PEM_EXT;
+            // add or remove ".pem" depending on current selection of PEM checkbox
+            if (jcbExportPem.isSelected() && !currentFileName.contains(pemFileExt)) {
+                jtfExportFile.setText(currentFileName + pemFileExt);
+            } else if (!jcbExportPem.isSelected() && currentFileName.contains(pemFileExt)) {
+                jtfExportFile.setText(currentFileName.replaceAll(pemFileExt, ""));
+            }
+        });
+
         jbCancel.addActionListener(evt -> cancelPressed());
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
@@ -289,12 +258,6 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
                 cancelPressed();
             }
         });
-
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpOptions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -316,7 +279,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
     private void populateExportFileName() {
         File currentDirectory = CurrentDirectory.get();
         String sanitizedAlias = FileNameUtil.cleanFileName(entryAlias);
-        File csrFile = new File(currentDirectory, sanitizedAlias + "." + FileChooserFactory.OPENSSL_PVK_EXT);
+        File csrFile = new File(currentDirectory, sanitizedAlias + PEM_FILE_EXT);
         jtfExportFile.setText(csrFile.getPath());
     }
 
@@ -485,5 +448,10 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.run(new DExportPrivateKeyOpenSsl(new JFrame(), "alias", new PasswordQualityConfig(false, false, 1)));
     }
 }
