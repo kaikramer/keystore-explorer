@@ -161,14 +161,4 @@ public class Password {
 
         return true;
     }
-
-    /**
-     * Nulls the password. Just a fail-safe, applications should null the
-     * password programmatically.
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        nullPassword();
-    }
 }

@@ -74,8 +74,9 @@ public class AboutAction extends KeyStoreExplorerAction {
                                  "JNA Copyright 2007 Timothy Wall (github.com/java-native-access/jna)",
                                  "FlatLaf Copyright 2019 - 2021 FormDev Software GmbH (www.formdev.com/flatlaf/)",
                                  LnfUtil.isVAquaAvailable() ?
-                                 "VAqua Copyright 2015 - 2019 Alan Snyder (violetlib.org)" :
-                                 "", };
+                                 "VAqua Copyright 2015 - 2019 Alan Snyder (violetlib.org)" : "",
+                                 "Nimbus JOSE + JWT Copyright 2012 - 2022, Connect2id Ltd. (connect2id.com)",
+                                 "Diff Utils library Copyright 2009-2022 java-diff-utils (github.com/java-diff-utils)"};
 
         URL aboutDialogImageURL = AboutAction.class.getResource("images/aboutdlg.png");
         DAbout dAbout = new DAbout(frame, MessageFormat.format(res.getString("AboutAction.About.Title"),

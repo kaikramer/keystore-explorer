@@ -324,7 +324,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
     }
 
     private File chooseFile() {
-        JFileChooser chooser = FileChooserFactory.getCertFileChooser();
+        JFileChooser chooser = FileChooserFactory.getAllFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
         chooser.setMultiSelectionEnabled(false);
