@@ -138,10 +138,10 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k buildchain build.chain
           rm -f macos_cert.p12
           # actions/setup-java@v2 removes the directories MacOS and _CodeSignature and the file Info.plist from the JDK, so we cannot use it for the application
-          wget https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.5%2B8/OpenJDK17U-jdk_x64_mac_hotspot_17.0.5_8.tar.gz
-          tar zxf OpenJDK17U-jdk_x64_mac_hotspot_17.0.5_8.tar.gz -C $RUNNER_TEMP
-          echo "JAVA_HOME=$RUNNER_TEMP/jdk-17.0.5+8/Contents/Home" >> $GITHUB_ENV
-          echo "$RUNNER_TEMP/jdk-17.0.5+8/Contents/Home/bin" >> $GITHUB_PATH
+          wget https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.9%2B9/OpenJDK17U-jdk_x64_mac_hotspot_17.0.9_9.tar.gz
+          tar zxf OpenJDK17U-jdk_x64_mac_hotspot_17.0.9_9.tar.gz -C $RUNNER_TEMP
+          echo "JAVA_HOME=$RUNNER_TEMP/jdk-17.0.9+9/Contents/Home" >> $GITHUB_ENV
+          echo "$RUNNER_TEMP/jdk-17.0.9+9/Contents/Home/bin" >> $GITHUB_PATH
           # install tools for DMG creation:
           npm install --global create-dmg
           brew install graphicsmagick imagemagick
