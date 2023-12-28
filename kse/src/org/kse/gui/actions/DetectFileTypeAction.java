@@ -67,7 +67,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
         File detectTypeFile = null;
 
         try {
-            JFileChooser chooser = FileChooserFactory.getCertFileChooser();
+            JFileChooser chooser = FileChooserFactory.getAllFileChooser();
             chooser.setCurrentDirectory(CurrentDirectory.get());
             chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
             chooser.setMultiSelectionEnabled(false);

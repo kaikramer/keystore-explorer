@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.security.cert.X509Extension;
@@ -24,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
@@ -114,40 +114,39 @@ public class DCompareCertificates extends JEscFrame {
         DiffRowGenerator generator =
                 DiffRowGenerator.create().showInlineDiffs(true).inlineDiffByWord(true).ignoreWhiteSpaces(true).build();
 
+        List<DiffRow> rows = null;
         try {
-
             String text1 = getCertificateDump(cert1);
             String text2 = getCertificateDump(cert2);
-
-            List<DiffRow> rows = generator.generateDiffRows(getLines(text1), getLines(text2));
-            StringBuilder sbuilderLeft = new StringBuilder();
-            StringBuilder sbuilderRight = new StringBuilder();
-            sbuilderLeft.append("<tt>");
-            sbuilderRight.append("<tt>");
-            int equals = 0;
-            for (DiffRow row : rows) {
-                if (row.getOldLine().equals(row.getNewLine())) {
-                    equals++;
-                }
-                sbuilderLeft.append(row.getOldLine().replace(" ", "&nbsp;"));
-                sbuilderLeft.append("<br>");
-                sbuilderRight.append(row.getNewLine().replace(" ", "&nbsp;"));
-                sbuilderRight.append("<br>");
-            }
-            if (!rows.isEmpty()) {
-                int percent = equals * 100 / rows.size();
-                jlMatch.setText(MessageFormat.format(res.getString("DCompareCertificates.jlMatch.text"),
-                                                     percent));
-            }
-
-            sbuilderLeft.append("</tt>");
-            editorLeft.setText(sbuilderLeft.toString());
-            sbuilderRight.append("</tt>");
-            editorRight.setText(sbuilderRight.toString());
-
+            rows = generator.generateDiffRows(getLines(text1), getLines(text2));
         } catch (Asn1Exception | IOException | CertificateEncodingException | CryptoException ex) {
             DError.displayError(this, ex);
         }
+
+        StringBuilder sbuilderLeft = new StringBuilder();
+        StringBuilder sbuilderRight = new StringBuilder();
+        sbuilderLeft.append("<tt>");
+        sbuilderRight.append("<tt>");
+        int equals = 0;
+        for (DiffRow row : rows) {
+            if (row.getOldLine().equals(row.getNewLine())) {
+                equals++;
+            }
+            sbuilderLeft.append(row.getOldLine().replace(" ", "&nbsp;"));
+            sbuilderLeft.append("<br>");
+            sbuilderRight.append(row.getNewLine().replace(" ", "&nbsp;"));
+            sbuilderRight.append("<br>");
+        }
+        if (!rows.isEmpty()) {
+            int percent = equals * 100 / rows.size();
+            jlMatch.setText(MessageFormat.format(res.getString("DCompareCertificates.jlMatch.text"),
+                                                 percent));
+        }
+
+        sbuilderLeft.append("</tt>");
+        editorLeft.setText(sbuilderLeft.toString());
+        sbuilderRight.append("</tt>");
+        editorRight.setText(sbuilderRight.toString());
 
         jpCompareCert = new JPanel();
         jpCompareCert.setLayout(new MigLayout("insets 0", "[]", "[]"));
@@ -176,6 +175,7 @@ public class DCompareCertificates extends JEscFrame {
         }
 
         setMinimumSize(new Dimension(getWidth(), 200));
+        SwingUtilities.invokeLater(() -> jspCompareCert.getVerticalScrollBar().setValue(0));
     }
 
     private String getCertificateDump(X509Certificate certificate)
