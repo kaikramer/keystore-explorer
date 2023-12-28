@@ -19,11 +19,8 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -41,13 +38,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -57,6 +51,8 @@ import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to display options to export certificate(s) from a KeyStore
@@ -69,7 +65,6 @@ public class DExportCertificates extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpOptions;
     private JLabel jlExportLength;
     private JRadioButton jrbExportHead;
     private JRadioButton jrbExportChain;
@@ -83,7 +78,6 @@ public class DExportCertificates extends JEscDialog {
     private JLabel jlExportFile;
     private JTextField jtfExportFile;
     private JButton jbBrowse;
-    private JPanel jpButtons;
     private JButton jbExport;
     private JButton jbCancel;
 
@@ -113,37 +107,16 @@ public class DExportCertificates extends JEscDialog {
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
-        gbcLbl.gridx = 0;
-        gbcLbl.gridwidth = 3;
-        gbcLbl.gridheight = 1;
-        gbcLbl.insets = new Insets(5, 5, 5, 5);
-        gbcLbl.anchor = GridBagConstraints.EAST;
-
-        GridBagConstraints gbcEdCtrl = new GridBagConstraints();
-        gbcEdCtrl.gridx = 3;
-        gbcEdCtrl.gridwidth = 3;
-        gbcEdCtrl.gridheight = 1;
-        gbcEdCtrl.insets = new Insets(5, 5, 5, 5);
-        gbcEdCtrl.anchor = GridBagConstraints.WEST;
-
         jlExportLength = new JLabel(res.getString("DExportCertificates.jlExportLength.text"));
-        GridBagConstraints gbc_jlExportLength = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportLength.gridy = 0;
 
         jrbExportHead = new JRadioButton(res.getString("DExportCertificates.jrbExportHead.text"));
         jrbExportHead.setToolTipText(res.getString("DExportCertificates.jrbExportHead.tooltip"));
         PlatformUtil.setMnemonic(jrbExportHead, res.getString("DExportCertificates.jrbExportHead.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbExportHead = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbExportHead.gridy = 0;
 
         jrbExportChain = new JRadioButton(res.getString("DExportCertificates.jrbExportChain.text"));
         jrbExportChain.setToolTipText(res.getString("DExportCertificates.jrbExportChain.tooltip"));
         PlatformUtil.setMnemonic(jrbExportChain,
                                  res.getString("DExportCertificates.jrbExportChain.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbExportChain = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbExportChain.gridy = 0;
-        gbc_jrbExportChain.gridx = 6;
 
         ButtonGroup bgExportLength = new ButtonGroup();
         bgExportLength.add(jrbExportHead);
@@ -151,37 +124,24 @@ public class DExportCertificates extends JEscDialog {
         jrbExportHead.setSelected(true);
 
         jlExportFormat = new JLabel(res.getString("DExportCertificates.jlExportFormat.text"));
-        GridBagConstraints gbc_jlExportFormat = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportFormat.gridy = 1;
 
         jrbExportX509 = new JRadioButton(res.getString("DExportCertificates.jrbExportX509.text"));
         jrbExportX509.setToolTipText(res.getString("DExportCertificates.jrbExportX509.tooltip"));
         PlatformUtil.setMnemonic(jrbExportX509, res.getString("DExportCertificates.jrbExportX509.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbExportX509 = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbExportX509.gridy = 1;
 
         jrbExportPkcs7 = new JRadioButton(res.getString("DExportCertificates.jrbExportPkcs7.text"));
         jrbExportPkcs7.setToolTipText(res.getString("DExportCertificates.jrbExportPkcs7.tooltip"));
         PlatformUtil.setMnemonic(jrbExportPkcs7,
                                  res.getString("DExportCertificates.jrbExportPkcs7.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbExportPkcs7 = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbExportPkcs7.gridy = 1;
-        gbc_jrbExportPkcs7.gridx = 6;
 
         jrbExportPkiPath = new JRadioButton(res.getString("DExportCertificates.jrbExportPkiPath.text"));
         jrbExportPkiPath.setToolTipText(res.getString("DExportCertificates.jrbExportPkiPath.tooltip"));
         PlatformUtil.setMnemonic(jrbExportPkiPath,
                                  res.getString("DExportCertificates.jrbExportPkiPath.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbExportPkiPath = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbExportPkiPath.gridy = 1;
-        gbc_jrbExportPkiPath.gridx = 9;
 
         jrbExportSpc = new JRadioButton(res.getString("DExportCertificates.jrbExportSpc.text"));
         jrbExportSpc.setToolTipText(res.getString("DExportCertificates.jrbExportSpc.tooltip"));
         PlatformUtil.setMnemonic(jrbExportSpc, res.getString("DExportCertificates.jrbExportSpc.mnemonic").charAt(0));
-        GridBagConstraints gbc_jrbExportSpc = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jrbExportSpc.gridy = 1;
-        gbc_jrbExportSpc.gridx = 12;
 
         ButtonGroup bgExportFormat = new ButtonGroup();
         bgExportFormat.add(jrbExportX509);
@@ -191,32 +151,71 @@ public class DExportCertificates extends JEscDialog {
         jrbExportX509.setSelected(true);
 
         jlExportPem = new JLabel(res.getString("DExportCertificates.jlExportPem.text"));
-        GridBagConstraints gbc_jlExportPem = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportPem.gridy = 2;
 
         jcbExportPem = new JCheckBox();
         jcbExportPem.setSelected(true);
         jcbExportPem.setToolTipText(res.getString("DExportCertificates.jcbExportPem.tooltip"));
-        GridBagConstraints gbc_jcbExportPem = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbExportPem.gridy = 2;
 
         jlExportFile = new JLabel(res.getString("DExportCertificates.jlExportFile.text"));
-        GridBagConstraints gbc_jlExportFile = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportFile.gridy = 3;
 
         jtfExportFile = new JTextField(30);
         jtfExportFile.setToolTipText(res.getString("DExportCertificates.jtfExportFile.tooltip"));
-        GridBagConstraints gbc_jtfExportFile = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jtfExportFile.gridy = 3;
-        gbc_jtfExportFile.gridwidth = 12;
-        gbc_jtfExportFile.fill = GridBagConstraints.HORIZONTAL;
 
         jbBrowse = new JButton(res.getString("DExportCertificates.jbBrowse.text"));
         jbBrowse.setToolTipText(res.getString("DExportCertificates.jbBrowse.tooltip"));
         PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportCertificates.jbBrowse.mnemonic").charAt(0));
-        GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jbBrowse.gridy = 3;
-        gbc_jbBrowse.gridx = 15;
+
+        jbExport = new JButton(res.getString("DExportCertificates.jbExport.text"));
+        PlatformUtil.setMnemonic(jbExport, res.getString("DExportCertificates.jbExport.mnemonic").charAt(0));
+        jbExport.setToolTipText(res.getString("DExportCertificates.jbExport.tooltip"));
+
+        jbCancel = new JButton(res.getString("DExportCertificates.jbCancel.text"));
+
+
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        if (chain) {
+            pane.add(jlExportLength, "");
+            pane.add(jrbExportHead, "split");
+            pane.add(jrbExportChain, "wrap");
+        }
+        pane.add(jlExportFormat, "");
+        pane.add(jrbExportX509, "split");
+        pane.add(jrbExportPkcs7, "");
+        pane.add(jrbExportPkiPath, "");
+        pane.add(jrbExportSpc, "wrap");
+        pane.add(jlExportPem, "");
+        pane.add(jcbExportPem, "wrap");
+        pane.add(jlExportFile, "");
+        pane.add(jtfExportFile, "");
+        pane.add(jbBrowse, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jbExport, "right, spanx, split, tag ok");
+        pane.add(jbCancel, "tag cancel");
+
+        // actions
+
+        jbExport.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DExportCertificates.this);
+                exportPressed();
+            } finally {
+                CursorUtil.setCursorFree(DExportCertificates.this);
+            }
+        });
+
+        jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
         jbBrowse.addActionListener(evt -> {
             try {
@@ -226,40 +225,6 @@ public class DExportCertificates extends JEscDialog {
                 CursorUtil.setCursorFree(DExportCertificates.this);
             }
         });
-
-        jpOptions = new JPanel(new GridBagLayout());
-        jpOptions.setBorder(new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()),
-                                               new EmptyBorder(5, 5, 5, 5)));
-
-        if (chain) {
-            jpOptions.add(jlExportLength, gbc_jlExportLength);
-            jpOptions.add(jrbExportHead, gbc_jrbExportHead);
-            jpOptions.add(jrbExportChain, gbc_jrbExportChain);
-        } else {
-            gbc_jlExportFormat.gridy--;
-            gbc_jrbExportX509.gridy--;
-            gbc_jrbExportPkcs7.gridy--;
-            gbc_jrbExportPkiPath.gridy--;
-            gbc_jrbExportSpc.gridy--;
-            gbc_jlExportPem.gridy--;
-            gbc_jcbExportPem.gridy--;
-            gbc_jlExportFile.gridy--;
-            gbc_jtfExportFile.gridy--;
-            gbc_jbBrowse.gridy--;
-        }
-
-        jpOptions.add(jlExportFormat, gbc_jlExportFormat);
-        jpOptions.add(jrbExportX509, gbc_jrbExportX509);
-        jpOptions.add(jrbExportPkcs7, gbc_jrbExportPkcs7);
-        jpOptions.add(jrbExportPkiPath, gbc_jrbExportPkiPath);
-        jpOptions.add(jrbExportSpc, gbc_jrbExportSpc);
-
-        jpOptions.add(jlExportPem, gbc_jlExportPem);
-        jpOptions.add(jcbExportPem, gbc_jcbExportPem);
-
-        jpOptions.add(jlExportFile, gbc_jlExportFile);
-        jpOptions.add(jtfExportFile, gbc_jtfExportFile);
-        jpOptions.add(jbBrowse, gbc_jbBrowse);
 
         jrbExportChain.addItemListener(evt -> {
             if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
@@ -309,37 +274,6 @@ public class DExportCertificates extends JEscDialog {
                 jcbExportPem.setEnabled(true);
             }
         });
-
-        jbExport = new JButton(res.getString("DExportCertificates.jbExport.text"));
-        PlatformUtil.setMnemonic(jbExport, res.getString("DExportCertificates.jbExport.mnemonic").charAt(0));
-        jbExport.setToolTipText(res.getString("DExportCertificates.jbExport.tooltip"));
-        jbExport.addActionListener(evt -> {
-            try {
-                CursorUtil.setCursorBusy(DExportCertificates.this);
-                exportPressed();
-            } finally {
-                CursorUtil.setCursorFree(DExportCertificates.this);
-            }
-        });
-
-        jbCancel = new JButton(res.getString("DExportCertificates.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
-        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                cancelPressed();
-            }
-        });
-
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpOptions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override

@@ -20,12 +20,9 @@
 
 package org.kse.gui.dialogs.importexport;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -43,12 +40,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -58,6 +53,8 @@ import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to display options to export a CRL file.
@@ -97,46 +94,39 @@ public class DExportCrl extends JEscDialog {
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
-        gbcLbl.gridx = 0;
-        gbcLbl.gridwidth = 3;
-        gbcLbl.gridheight = 1;
-        gbcLbl.insets = new Insets(5, 5, 5, 5);
-        gbcLbl.anchor = GridBagConstraints.EAST;
-
-        GridBagConstraints gbcEdCtrl = new GridBagConstraints();
-        gbcEdCtrl.gridx = 3;
-        gbcEdCtrl.gridwidth = 3;
-        gbcEdCtrl.gridheight = 1;
-        gbcEdCtrl.insets = new Insets(5, 5, 5, 5);
-        gbcEdCtrl.anchor = GridBagConstraints.WEST;
-
         jlExportPem = new JLabel(res.getString("DExportCrl.jlExportPem.text"));
-        GridBagConstraints gbc_jlExportPem = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportPem.gridy = 4;
 
         jcbExportPem = new JCheckBox();
         jcbExportPem.setSelected(true);
         jcbExportPem.setToolTipText(res.getString("DExportCrl.jcbExportPem.tooltip"));
-        GridBagConstraints gbc_jcbExportPem = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jcbExportPem.gridy = 4;
 
         jlExportFile = new JLabel(res.getString("DExportCrl.jlExportFile.text"));
-        GridBagConstraints gbc_jlExportFile = (GridBagConstraints) gbcLbl.clone();
-        gbc_jlExportFile.gridy = 5;
 
         jtfExportFile = new JTextField(30);
         jtfExportFile.setToolTipText(res.getString("DExportCrl.jtfExportFile.tooltip"));
-        GridBagConstraints gbc_jtfExportFile = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jtfExportFile.gridy = 5;
-        gbc_jtfExportFile.gridwidth = 6;
 
         jbBrowse = new JButton(res.getString("DExportCrl.jbBrowse.text"));
         jbBrowse.setToolTipText(res.getString("DExportCrl.jbBrowse.tooltip"));
         PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportCrl.jbBrowse.mnemonic").charAt(0));
-        GridBagConstraints gbc_jbBrowse = (GridBagConstraints) gbcEdCtrl.clone();
-        gbc_jbBrowse.gridy = 5;
-        gbc_jbBrowse.gridx = 9;
+
+        jbExport = new JButton(res.getString("DExportCrl.jbExport.text"));
+        jbExport.setToolTipText(res.getString("DExportCrl.jbExport.tooltip"));
+        PlatformUtil.setMnemonic(jbExport, res.getString("DExportCrl.jbExport.mnemonic").charAt(0));
+
+        jbCancel = new JButton(res.getString("DExportCrl.jbCancel.text"));
+
+        // layout
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.add(jlExportPem, "");
+        pane.add(jcbExportPem, "wrap");
+        pane.add(jlExportFile, "");
+        pane.add(jtfExportFile, "");
+        pane.add(jbBrowse, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jbExport, "right, spanx, split, tag ok");
+        pane.add(jbCancel, "tag cancel");
+
 
         jbBrowse.addActionListener(evt -> {
             try {
@@ -147,20 +137,6 @@ public class DExportCrl extends JEscDialog {
             }
         });
 
-        jpOptions = new JPanel(new GridBagLayout());
-        jpOptions.setBorder(new CompoundBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()),
-                                               new EmptyBorder(5, 5, 5, 5)));
-
-        jpOptions.add(jlExportPem, gbc_jlExportPem);
-        jpOptions.add(jcbExportPem, gbc_jcbExportPem);
-
-        jpOptions.add(jlExportFile, gbc_jlExportFile);
-        jpOptions.add(jtfExportFile, gbc_jtfExportFile);
-        jpOptions.add(jbBrowse, gbc_jbBrowse);
-
-        jbExport = new JButton(res.getString("DExportCrl.jbExport.text"));
-        PlatformUtil.setMnemonic(jbExport, res.getString("DExportCrl.jbExport.mnemonic").charAt(0));
-        jbExport.setToolTipText(res.getString("DExportCrl.jbExport.tooltip"));
         jbExport.addActionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DExportCrl.this);
@@ -170,7 +146,6 @@ public class DExportCrl extends JEscDialog {
             }
         });
 
-        jbCancel = new JButton(res.getString("DExportCrl.jbCancel.text"));
         jbCancel.addActionListener(evt -> cancelPressed());
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
@@ -182,12 +157,6 @@ public class DExportCrl extends JEscDialog {
                 cancelPressed();
             }
         });
-
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbExport, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpOptions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override
