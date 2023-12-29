@@ -103,8 +103,9 @@ application {
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
 }
 
 // always show stacktrace when build fails
@@ -119,12 +120,7 @@ dependencies {
 	implementation('com.nimbusds:nimbus-jose-jwt:9.30.2')
 	implementation('org.violetlib:vaqua:11')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
-
-
-	// the nashorn jar is compiled for Java 11, so for now we include it only in the dist package that comes with Java 17
-	if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-		implementation('org.openjdk.nashorn:nashorn-core:15.4')
-	}
+	implementation('org.openjdk.nashorn:nashorn-core:15.4')
 
 	testImplementation('org.assertj:assertj-core:3.23.1')
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.9.0')
@@ -258,7 +254,7 @@ task jlink(type: Exec) {
 	delete "$jlinkOutDir/jre"
 
 	onlyIf {
-		JavaVersion.current() != JavaVersion.VERSION_1_8
+		JavaVersion.current() != JavaVersion.VERSION_11
 	}
 
 	workingDir "$buildDir"
@@ -306,7 +302,7 @@ task innosetup(dependsOn: [jar, prepareExe, jlink, copyDependencies]) {
 					LIB_DIR: dependenciesDir.toString(),
 					LAUNCHER: "$launcherOutDir\\$appExe".toString(),
 					JAVA_INFO_DLL: "$resDir\\JavaInfo.dll".toString(),
-					NO_JRE: (JavaVersion.current() != JavaVersion.VERSION_1_8) ? "" : "-no-jre",
+					NO_JRE: (JavaVersion.current() != JavaVersion.VERSION_11) ? "" : "-no-jre",
 					ICONS_DIR: iconsDir.toString(),
 					RES_DIR: resDir.toString(),
 					JRE_DIR: "$jlinkOutDir\\jre".toString(),

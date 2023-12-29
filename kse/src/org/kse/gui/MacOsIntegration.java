@@ -31,7 +31,6 @@ import org.kse.gui.actions.AboutAction;
 import org.kse.gui.actions.ExitAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.PreferencesAction;
-import org.kse.version.JavaVersion;
 
 /**
  * Integrate KSE with macOS. Handles call backs from macOS.
@@ -48,43 +47,22 @@ public class MacOsIntegration implements InvocationHandler {
             throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException,
                    InstantiationException {
 
-        if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_9)) {
+        // using reflection to avoid Mac specific classes being required for compiling KSE on other platforms
+        Class<?> quitHandlerClass = Class.forName("java.awt.desktop.QuitHandler");
+        Class<?> aboutHandlerClass = Class.forName("java.awt.desktop.AboutHandler");
+        Class<?> openFilesHandlerClass = Class.forName("java.awt.desktop.OpenFilesHandler");
+        Class<?> prefsHandlerClass = Class.forName("java.awt.desktop.PreferencesHandler");
 
-            // using reflection to avoid Mac specific classes being required for compiling KSE on other platforms
-            Class<?> quitHandlerClass = Class.forName("java.awt.desktop.QuitHandler");
-            Class<?> aboutHandlerClass = Class.forName("java.awt.desktop.AboutHandler");
-            Class<?> openFilesHandlerClass = Class.forName("java.awt.desktop.OpenFilesHandler");
-            Class<?> prefsHandlerClass = Class.forName("java.awt.desktop.PreferencesHandler");
+        Desktop desktop = Desktop.getDesktop();
 
-            Desktop desktop = Desktop.getDesktop();
+        Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(),
+                                              new Class<?>[] { quitHandlerClass, aboutHandlerClass,
+                                                               openFilesHandlerClass, prefsHandlerClass }, this);
 
-            Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(),
-                                                  new Class<?>[] { quitHandlerClass, aboutHandlerClass,
-                                                                   openFilesHandlerClass, prefsHandlerClass }, this);
-
-            desktop.getClass().getDeclaredMethod("setQuitHandler", quitHandlerClass).invoke(desktop, proxy);
-            desktop.getClass().getDeclaredMethod("setAboutHandler", aboutHandlerClass).invoke(desktop, proxy);
-            desktop.getClass().getDeclaredMethod("setOpenFileHandler", openFilesHandlerClass).invoke(desktop, proxy);
-            desktop.getClass().getDeclaredMethod("setPreferencesHandler", prefsHandlerClass).invoke(desktop, proxy);
-        } else {
-            Class<?> applicationClass = Class.forName("com.apple.eawt.Application");
-            Class<?> quitHandlerClass = Class.forName("com.apple.eawt.QuitHandler");
-            Class<?> aboutHandlerClass = Class.forName("com.apple.eawt.AboutHandler");
-            Class<?> openFilesHandlerClass = Class.forName("com.apple.eawt.OpenFilesHandler");
-            Class<?> preferencesHandlerClass = Class.forName("com.apple.eawt.PreferencesHandler");
-
-            Object application = applicationClass.getConstructor((Class[]) null).newInstance((Object[]) null);
-            Object proxy = Proxy.newProxyInstance(MacOsIntegration.class.getClassLoader(),
-                                                  new Class<?>[] { quitHandlerClass, aboutHandlerClass,
-                                                                   openFilesHandlerClass, preferencesHandlerClass },
-                                                  this);
-
-            applicationClass.getDeclaredMethod("setQuitHandler", quitHandlerClass).invoke(application, proxy);
-            applicationClass.getDeclaredMethod("setAboutHandler", aboutHandlerClass).invoke(application, proxy);
-            applicationClass.getDeclaredMethod("setOpenFileHandler", openFilesHandlerClass).invoke(application, proxy);
-            applicationClass.getDeclaredMethod("setPreferencesHandler", preferencesHandlerClass)
-                            .invoke(application, proxy);
-        }
+        desktop.getClass().getDeclaredMethod("setQuitHandler", quitHandlerClass).invoke(desktop, proxy);
+        desktop.getClass().getDeclaredMethod("setAboutHandler", aboutHandlerClass).invoke(desktop, proxy);
+        desktop.getClass().getDeclaredMethod("setOpenFileHandler", openFilesHandlerClass).invoke(desktop, proxy);
+        desktop.getClass().getDeclaredMethod("setPreferencesHandler", prefsHandlerClass).invoke(desktop, proxy);
     }
 
     @Override

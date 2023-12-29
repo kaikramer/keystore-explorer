@@ -27,8 +27,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.Provider;
 import java.security.Security;
@@ -54,7 +52,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
@@ -62,7 +59,7 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
-import org.kse.version.JavaVersion;
+import org.kse.gui.preferences.ApplicationSettings;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -287,18 +284,12 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
                 ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11ConfigSettings.getBytes());
 
                 // instantiate the provider
-                Provider p11Provider = null;
-                if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_9)) {
-                    p11Provider = Security.getProvider("SunPKCS11");
-                    // add marker ("--") for inline config
-                    pkcs11ConfigSettings = "--" + pkcs11ConfigSettings;
-                    Method method = Provider.class.getMethod("configure", String.class);
-                    p11Provider = (Provider) method.invoke(p11Provider, pkcs11ConfigSettings);
-                } else {
-                    Class<?> cl = Class.forName("sun.security.pkcs11.SunPKCS11");
-                    Constructor<?> cons = cl.getConstructor(InputStream.class);
-                    p11Provider = (Provider) cons.newInstance(confStream);
-                }
+                Provider p11Provider = Security.getProvider("SunPKCS11");
+
+                // add marker ("--") for inline config
+                pkcs11ConfigSettings = "--" + pkcs11ConfigSettings;
+                Method method = Provider.class.getMethod("configure", String.class);
+                p11Provider = (Provider) method.invoke(p11Provider, pkcs11ConfigSettings);
 
                 Security.addProvider(p11Provider);
                 selectedProvider = p11Provider;
