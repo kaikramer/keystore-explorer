@@ -42,17 +42,8 @@ repositories {
 	mavenCentral()
 }
 
-sourceSets {
-	main.java.srcDirs = ['src']
-	main.resources.srcDirs = ['src']
-	main.resources.excludes = [ '**/*.java', '**/Thumbs.db' ]
-	test.java.srcDirs = ['test']
-	test.resources.srcDirs = ['test']
-	test.resources.excludes = [ '**/*.java' ]
-}
-
 Properties props = new Properties()
-props.load(project.rootProject.file('src/org/kse/version.properties').newDataInputStream())
+props.load(project.rootProject.file('src/main/resources/org/kse/version.properties').newDataInputStream())
 version = props."KSE.Version"
 
 ext {
