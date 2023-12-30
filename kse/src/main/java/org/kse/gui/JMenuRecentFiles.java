@@ -38,16 +38,11 @@ public class JMenuRecentFiles extends JMenu {
      * Construct a JMenuRecentFiles.
      *
      * @param title  Title of menu
-     * @param length Length of recent files list to maintain
      */
-    public JMenuRecentFiles(String title, int length) {
+    public JMenuRecentFiles(String title) {
         super(title);
 
-        if (length > MAX_LENGTH) {
-            length = MAX_LENGTH;
-        }
-
-        jmiRecentFiles = new JMenuItemRecentFile[length];
+        jmiRecentFiles = new JMenuItemRecentFile[MAX_LENGTH];
     }
 
     private void removeAllRecentFiles() {
@@ -106,19 +101,15 @@ public class JMenuRecentFiles extends JMenu {
 
         // Item already exists outside first position
         if (index != -1) {
-            // Introduce it to the first position and move the others up over
-            // its old position
+            // Introduce it to the first position and move the others up over its old position
             for (int i = 0; i <= index; i++) {
                 JMenuItemRecentFile jmirfTmp = jmiRecentFiles[i];
                 jmiRecentFiles[i] = jmirfNew;
                 jmirfNew = jmirfTmp;
                 jmirfNew.setPosition(i + 2);
             }
-        }
-        // Item does not exist in the menu
-        else {
-            // Introduce new item to the start of the list and shift the others
-            // up one
+        } else {
+            // Introduce new item to the start of the list and shift the others up one
             for (int i = 0; i < jmiRecentFiles.length; i++) {
                 JMenuItemRecentFile jmirfTmp = jmiRecentFiles[i];
                 jmiRecentFiles[i] = jmirfNew;

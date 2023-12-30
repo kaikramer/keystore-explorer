@@ -19,12 +19,15 @@
  */
 package org.kse.gui.dialogs;
 
+import static org.kse.utilities.StringUtils.addToList;
+
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -42,13 +45,14 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.crypto.Password;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.OpenAction;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.history.KeyStoreHistory;
 
@@ -60,7 +64,9 @@ import net.miginfocom.swing.MigLayout;
 public class DExamineSsl extends JEscDialog {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-    private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+
+    private transient KsePreferences preferences = PreferencesManager.getPreferences();
+    public static final int MAX_LIST_SIZE = 10;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -225,13 +231,13 @@ public class DExamineSsl extends JEscDialog {
     }
 
     private String[] getSslHosts() {
-        String sslHosts = applicationSettings.getSslHosts();
-        return sslHosts.split(";");
+        List<String> sslHosts = preferences.getExamineSslHosts();
+        return sslHosts.toArray(new String[sslHosts.size()]);
     }
 
     private String[] getSslPorts() {
-        String sslPorts = applicationSettings.getSslPorts();
-        return sslPorts.split(";");
+        List<String> sslPorts = preferences.getExamineSslPorts();
+        return sslPorts.toArray(new String[sslPorts.size()]);
     }
 
     private void updateClientAuthComponents() {
@@ -295,8 +301,8 @@ public class DExamineSsl extends JEscDialog {
         }
 
         // save host/port in preferences
-        applicationSettings.addSslHost(sslHost);
-        applicationSettings.addSslPort(sslPortStr);
+        preferences.setExamineSslHosts(addToList(sslHost, preferences.getExamineSslHosts(), MAX_LIST_SIZE));
+        preferences.setExamineSslPorts(addToList(sslPortStr, preferences.getExamineSslPorts(), MAX_LIST_SIZE));
 
         cancelled = false;
         closeDialog();

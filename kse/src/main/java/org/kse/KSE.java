@@ -40,7 +40,10 @@ import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CreateApplicationGui;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.error.DError;
-import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
+import org.kse.gui.preferences.data.LanguageItem;
+import org.kse.utilities.net.ProxySettingsUpdater;
 import org.kse.utilities.os.OperatingSystem;
 import org.kse.version.JavaVersion;
 import org.kse.version.Version;
@@ -94,17 +97,19 @@ public class KSE {
 
             setInstallDirProperty();
 
-            ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
-            setCurrentDirectory(applicationSettings);
+            KsePreferences preferences = PreferencesManager.getPreferences();
+            setCurrentDirectory(preferences.getCurrentDirectory());
 
-            String languageCode = applicationSettings.getLanguage();
-            if (!ApplicationSettings.SYSTEM_LANGUAGE.equals(languageCode)) {
-                Locale.setDefault(new Locale(languageCode));
+            ProxySettingsUpdater.updateSystem(preferences.getProxySettings());
+
+            String language = preferences.getLanguage();
+            if (!language.equals(LanguageItem.SYSTEM_LANGUAGE)) {
+                Locale.setDefault(new Locale(language));
             }
 
             initialiseSecurity();
 
-            Pkcs12Util.setEncryptionStrength(applicationSettings.getPkcs12EncryptionSetting());
+            Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
 
             // list of files to open after start
             List<File> parameterFiles = new ArrayList<>();
@@ -115,7 +120,7 @@ public class KSE {
                 }
             }
 
-            SwingUtilities.invokeLater(new CreateApplicationGui(applicationSettings, parameterFiles));
+            SwingUtilities.invokeLater(new CreateApplicationGui(preferences, parameterFiles));
         } catch (Throwable t) {
             DError dError = new DError(new JFrame(), t);
             dError.setLocationRelativeTo(null);
@@ -156,11 +161,9 @@ public class KSE {
         System.setProperty("kse.install.dir", System.getProperty("user.dir"));
     }
 
-    private static void setCurrentDirectory(ApplicationSettings applicationSettings) {
-        File currentDirectory = applicationSettings.getCurrentDirectory();
-
-        if (currentDirectory != null) {
-            CurrentDirectory.update(currentDirectory);
+    private static void setCurrentDirectory(String currentDir) {
+        if (currentDir != null) {
+            CurrentDirectory.update(new File(currentDir));
         }
     }
 

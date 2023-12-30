@@ -94,8 +94,7 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
             Certificate[] certificates = keyStore.getCertificateChain(alias);
 
-            DExportKeyPair dExportKeyPair = new DExportKeyPair(frame, alias,
-                                                               applicationSettings.getPasswordQualityConfig());
+            DExportKeyPair dExportKeyPair = new DExportKeyPair(frame, alias, preferences.getPasswordQualityConfig());
             dExportKeyPair.setLocationRelativeTo(frame);
             dExportKeyPair.setVisible(true);
 

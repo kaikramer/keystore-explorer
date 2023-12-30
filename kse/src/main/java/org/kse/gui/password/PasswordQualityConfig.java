@@ -29,6 +29,12 @@ public class PasswordQualityConfig {
     private int minimumQuality;
 
     /**
+     * Default c-tor to qualify as Java Bean
+     */
+    public PasswordQualityConfig() {
+    }
+
+    /**
      * Construct password quality configuration.
      *
      * @param enabled                Is password quality enabled?

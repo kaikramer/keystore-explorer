@@ -62,7 +62,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 
         KeyStore caCertificates = null;
 
-        if (applicationSettings.getUseCaCertificates()) {
+        if (preferences.getCaCertsSettings().isUseCaCertificates()) {
             caCertificates = authorityCertificates.getCaCertificates();
 
             if (caCertificates == null) {
@@ -88,7 +88,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
 
         KeyStore windowsTrustedRootCertificates = null;
 
-        if (applicationSettings.getUseWindowsTrustedRootCertificates()) {
+        if (preferences.getCaCertsSettings().isUseWindowsTrustedRootCertificates()) {
             windowsTrustedRootCertificates = authorityCertificates.getWindowsTrustedRootCertificates();
         }
 
@@ -96,7 +96,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
     }
 
     private KeyStore loadCaCertificatesKeyStore() {
-        File caCertificatesFile = applicationSettings.getCaCertificatesFile();
+        File caCertificatesFile = new File(preferences.getCaCertsSettings().getCaCertificatesFile());
 
         KeyStore caCertificatesKeyStore = null;
         try {

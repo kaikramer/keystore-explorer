@@ -208,7 +208,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         }
         return dataAsBytes;
     }
-    
+
     private boolean isRedirect(int status) {
 		// normally, 3xx is redirect
     	if (status != HttpURLConnection.HTTP_OK) {
@@ -218,7 +218,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 		}
     	return false;
     }
-    
+
     private void downloadCrl(URL url) throws IOException, CryptoException {
     	HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
 		int status = urlConn.getResponseCode();
@@ -299,7 +299,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         }
 
         DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, res.getString(
-                "ExamineClipboardAction.PrivateKeyDetails.Title"), "", privKey, applicationSettings);
+                "ExamineClipboardAction.PrivateKeyDetails.Title"), "", privKey, preferences);
         dViewPrivateKey.setLocationRelativeTo(frame);
         dViewPrivateKey.setVisible(true);
     }

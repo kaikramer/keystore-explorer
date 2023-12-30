@@ -86,7 +86,7 @@ public class SetKeyPasswordAction extends KeyStoreExplorerAction implements Hist
 
             DChangePassword dChangePassword = new DChangePassword(frame, DOCUMENT_MODAL, res.getString(
                     "SetKeyPasswordAction.SetKeyPassword.Title"), oldPassword,
-                                                                  applicationSettings.getPasswordQualityConfig());
+                                                                  preferences.getPasswordQualityConfig());
             dChangePassword.setLocationRelativeTo(frame);
             dChangePassword.setVisible(true);
 

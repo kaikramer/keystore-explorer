@@ -21,456 +21,342 @@ package org.kse.gui;
 
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * POJO class to configure the cells shown in the KeyStore table of KeyStore Explorer.
  */
 public class KeyStoreTableColumns {
-    private int expiryWarnDays;
-    private boolean bEnableEntryName;
-    private boolean bEnableAlgorithm;
-    private boolean bEnableKeySize;
-    private boolean bEnableCertificateValidityStart;
-    private boolean bEnableCertificateExpiry;
-    private boolean bEnableLastModified;
-    private boolean bEnableSKI;
-    private boolean bEnableAKI;
-    private boolean bEnableIssuerDN;
-    private boolean bEnableSubjectDN;
-    private boolean bEnableIssuerCN;
-    private boolean bEnableSubjectCN;
-    private boolean bEnableIssuerO;
-    private boolean bEnableSubjectO;
-    private boolean bEnableCurve;
-    private boolean bEnableSerialNumberHex;
-    private boolean bEnableSerialNumberDec;
-    /**
-     * Column for a property
-     */
-    private int iNameColumn = -1;
-    private int iAlgorithmColumn = -1;
-    private int iKeySizeColumn = -1;
-    private int iCurveColumn = -1;
-    private int iCertValidityStartColumn = -1;
-    private int iCertExpiryColumn = -1;
-    private int iLastModifiedColumn = -1;
-    private int iAKIColumn = -1;
-    private int iSKIColumn = -1;
-    private int iIssuerDNColumn = -1;
-    private int iSubjectDNColumn = -1;
-    private int iIssuerCNColumn = -1;
-    private int iSubjectCNColumn = -1;
-    private int iIssuerOColumn = -1;
-    private int iSubjectOColumn = -1;
-    private int iSerialNumberHexColumn = -1;
-    private int iSerialNumberDecColumn = -1;
 
-    // As default set to previous layout from older KSE versions
-    public KeyStoreTableColumns() {
-        expiryWarnDays = 0;
-        bEnableEntryName = true;
-        bEnableAlgorithm = true;
-        bEnableKeySize = true;
-        bEnableCertificateValidityStart = false;
-        bEnableCertificateExpiry = true;
-        bEnableLastModified = true;
-        bEnableSKI = false;
-        bEnableAKI = false;
-        bEnableIssuerDN = false;
-        bEnableSubjectDN = false;
-        bEnableCurve = false;
-        bEnableIssuerCN = false;
-        bEnableSubjectCN = false;
-        bEnableIssuerO = false;
-        bEnableSubjectO = false;
-        bEnableSerialNumberHex = false;
-        bEnableSerialNumberDec = false;
-    }
-
-    public KeyStoreTableColumns(boolean bEnableEntryName, boolean bEnableAlgorithm, boolean bEnableKeySize,
-                                boolean bEnableCertificateValidityStart, boolean bEnableCertificateExpiry,
-                                boolean bEnableLastModified, boolean bEnableSKI, boolean bEnableAKI,
-                                boolean bEnableIssuerDN, boolean bEnableSubjectDN, boolean bEnableIssuerCN,
-                                boolean bEnableSubjectCN, boolean bEnableIssuerO, boolean bEnableSubjectO,
-                                boolean bEnableCurve, int expiryWarnDays, boolean bEnableSerialNumberHex,
-                                boolean bEnableSerialNumberDec) {
-        super();
-        this.bEnableEntryName = bEnableEntryName;
-        this.bEnableAlgorithm = bEnableAlgorithm;
-        this.bEnableKeySize = bEnableKeySize;
-        this.bEnableCertificateValidityStart = bEnableCertificateValidityStart;
-        this.bEnableCertificateExpiry = bEnableCertificateExpiry;
-        this.bEnableLastModified = bEnableLastModified;
-        this.bEnableSKI = bEnableSKI;
-        this.bEnableAKI = bEnableAKI;
-        this.bEnableIssuerDN = bEnableIssuerDN;
-        this.bEnableSubjectDN = bEnableSubjectDN;
-        this.bEnableIssuerCN = bEnableIssuerCN;
-        this.bEnableSubjectCN = bEnableSubjectCN;
-        this.bEnableIssuerO = bEnableIssuerO;
-        this.bEnableSubjectO = bEnableSubjectO;
-        this.bEnableCurve = bEnableCurve;
-        this.expiryWarnDays = expiryWarnDays;
-        this.bEnableSerialNumberHex = bEnableSerialNumberHex;
-        this.bEnableSerialNumberDec = bEnableSerialNumberDec;
-        sortCol();
-    }
-
-    private void sortCol() {
-        int col = 2;
-        iNameColumn = -1;
-        iAlgorithmColumn = -1;
-        iKeySizeColumn = -1;
-        iCurveColumn = -1;
-        iCertValidityStartColumn = -1;
-        iCertExpiryColumn = -1;
-        iLastModifiedColumn = -1;
-        iAKIColumn = -1;
-        iSKIColumn = -1;
-        iIssuerDNColumn = -1;
-        iSubjectDNColumn = -1;
-        iIssuerCNColumn = -1;
-        iSubjectCNColumn = -1;
-        iIssuerOColumn = -1;
-        iSubjectOColumn = -1;
-        iSerialNumberHexColumn = -1;
-        iSerialNumberDecColumn = -1;
-
-        if (bEnableEntryName) {
-            iNameColumn = ++col;
-        }
-        if (bEnableAlgorithm) {
-            iAlgorithmColumn = ++col;
-        }
-        if (bEnableKeySize) {
-            iKeySizeColumn = ++col;
-        }
-        if (bEnableCurve) {
-            iCurveColumn = ++col;
-        }
-        if (bEnableCertificateValidityStart) {
-            iCertValidityStartColumn = ++col;
-        }
-        if (bEnableCertificateExpiry) {
-            iCertExpiryColumn = ++col;
-        }
-        if (bEnableLastModified) {
-            iLastModifiedColumn = ++col;
-        }
-        if (bEnableAKI) {
-            iAKIColumn = ++col;
-        }
-        if (bEnableSKI) {
-            iSKIColumn = ++col;
-        }
-        if (bEnableIssuerDN) {
-            iIssuerDNColumn = ++col;
-        }
-        if (bEnableSubjectDN) {
-            iSubjectDNColumn = ++col;
-        }
-        if (bEnableIssuerCN) {
-            iIssuerCNColumn = ++col;
-        }
-        if (bEnableSubjectCN) {
-            iSubjectCNColumn = ++col;
-        }
-        if (bEnableIssuerO) {
-            iIssuerOColumn = ++col;
-        }
-        if (bEnableSubjectO) {
-            iSubjectOColumn = ++col;
-        }
-        if (bEnableSerialNumberHex) {
-            iSerialNumberHexColumn = ++col;
-        }
-        if (bEnableSerialNumberDec) {
-            iSerialNumberDecColumn = ++col;
-        }
-    }
-
-    public void setColumns(boolean bEnableEntryName, boolean bEnableAlgorithm, boolean bEnableKeySize,
-                           boolean bEnableCertificateValidityStart, boolean bEnableCertificateExpiry,
-                           boolean bEnableLastModified, boolean bEnableSKI, boolean bEnableAKI, boolean bEnableIssuerDN,
-                           boolean bEnableSubjectDN, boolean bEnableIssuerCN, boolean bEnableSubjectCN,
-                           boolean bEnableIssuerO, boolean bEnableSubjectO, boolean bEnableCurve,
-                           boolean bEnableSerialNumberHex, boolean bEnableSerialNumberDec, int expiryWarnDays) {
-        this.bEnableEntryName = bEnableEntryName;
-        this.bEnableAlgorithm = bEnableAlgorithm;
-        this.bEnableKeySize = bEnableKeySize;
-        this.bEnableCertificateValidityStart = bEnableCertificateValidityStart;
-        this.bEnableCertificateExpiry = bEnableCertificateExpiry;
-        this.bEnableLastModified = bEnableLastModified;
-        this.bEnableSKI = bEnableSKI;
-        this.bEnableAKI = bEnableAKI;
-        this.bEnableIssuerDN = bEnableIssuerDN;
-        this.bEnableSubjectDN = bEnableSubjectDN;
-        this.bEnableIssuerCN = bEnableIssuerCN;
-        this.bEnableSubjectCN = bEnableSubjectCN;
-        this.bEnableIssuerO = bEnableIssuerO;
-        this.bEnableSubjectO = bEnableSubjectO;
-        this.bEnableCurve = bEnableCurve;
-        this.bEnableSerialNumberHex = bEnableSerialNumberHex;
-        this.bEnableSerialNumberDec = bEnableSerialNumberDec;
-        this.expiryWarnDays = expiryWarnDays;
-        sortCol();
-    }
+    private boolean enableEntryName = true;
+    private boolean enableAlgorithm = true;
+    private boolean enableKeySize = true;
+    private boolean enableCertificateValidityStart = false;
+    private boolean enableCertificateExpiry = true;
+    private boolean enableLastModified = true;
+    private boolean enableSKI = false;
+    private boolean enableAKI = false;
+    private boolean enableIssuerDN = false;
+    private boolean enableSubjectDN = false;
+    private boolean enableCurve = false;
+    private boolean enableIssuerCN = false;
+    private boolean enableSubjectCN = false;
+    private boolean enableIssuerO = false;
+    private boolean enableSubjectO = false;
+    private boolean enableSerialNumberHex = false;
+    private boolean enableSerialNumberDec = false;
 
     /**
-     * Restore from bitmap
-     *
-     * @param col
-     */
-    public void setColumns(int col) {
-
-        bEnableEntryName = ((col & 1 << 0) != 0);
-        bEnableAlgorithm = ((col & 1 << 1) != 0);
-        bEnableKeySize = ((col & 1 << 2) != 0);
-        bEnableCertificateExpiry = ((col & 1 << 3) != 0);
-        bEnableLastModified = ((col & 1 << 4) != 0);
-        bEnableSKI = ((col & 1 << 5) != 0);
-        bEnableAKI = ((col & 1 << 6) != 0);
-        bEnableIssuerDN = ((col & 1 << 7) != 0);
-        bEnableSubjectDN = ((col & 1 << 8) != 0);
-        bEnableCurve = ((col & 1 << 9) != 0);
-        bEnableIssuerCN = ((col & 1 << 10) != 0);
-        bEnableSubjectCN = ((col & 1 << 11) != 0);
-        bEnableIssuerO = ((col & 1 << 12) != 0);
-        bEnableSubjectO = ((col & 1 << 13) != 0);
-        bEnableSerialNumberHex = ((col & 1 << 14) != 0);
-        bEnableSerialNumberDec = ((col & 1 << 15) != 0);
-        bEnableCertificateValidityStart = ((col & 1 << 16) != 0);
-        sortCol();
-    }
-
-    /**
-     * Get as bitmap
-     *
-     * @return col
-     */
-    public int getColumns() {
-        int col = 0;
-        if (bEnableEntryName) {
-            col += 1 << 0;
-        }
-        if (bEnableAlgorithm) {
-            col += 1 << 1;
-        }
-        if (bEnableKeySize) {
-            col += 1 << 2;
-        }
-        if (bEnableCertificateExpiry) {
-            col += 1 << 3;
-        }
-        if (bEnableLastModified) {
-            col += 1 << 4;
-        }
-        if (bEnableSKI) {
-            col += 1 << 5;
-        }
-        if (bEnableAKI) {
-            col += 1 << 6;
-        }
-        if (bEnableIssuerDN) {
-            col += 1 << 7;
-        }
-        if (bEnableSubjectDN) {
-            col += 1 << 8;
-        }
-        if (bEnableCurve) {
-            col += 1 << 9;
-        }
-        if (bEnableIssuerCN) {
-            col += 1 << 10;
-        }
-        if (bEnableSubjectCN) {
-            col += 1 << 11;
-        }
-        if (bEnableIssuerO) {
-            col += 1 << 12;
-        }
-        if (bEnableSubjectO) {
-            col += 1 << 13;
-        }
-        if (bEnableSerialNumberHex) {
-            col += 1 << 14;
-        }
-        if (bEnableSerialNumberDec) {
-            col += 1 << 15;
-        }
-        if (bEnableCertificateValidityStart) {
-            col += 1 << 16;
-        }
-        return col;
-    }
-
-    /**
-     * Get number of columns selected. The actual table has 3 columns more, as the first 3 are fixed.
+     * Get number of activated columns. The actual table has 3 columns more, as the first 3 are fixed.
      *
      * @return number of columns selected
      */
+    @JsonIgnore
     public int getNofColumns() {
-        return Stream.of(
-                bEnableEntryName,
-                bEnableAlgorithm,
-                bEnableKeySize,
-                bEnableCertificateValidityStart,
-                bEnableCertificateExpiry,
-                bEnableLastModified,
-                bEnableSKI,
-                bEnableAKI,
-                bEnableIssuerDN,
-                bEnableSubjectDN,
-                bEnableCurve,
-                bEnableIssuerCN,
-                bEnableSubjectCN,
-                bEnableIssuerO,
-                bEnableSubjectO,
-                bEnableSerialNumberHex,
-                bEnableSerialNumberDec
+        return Stream.of(enableEntryName, enableAlgorithm, enableKeySize, enableCertificateValidityStart,
+                         enableCertificateExpiry, enableLastModified, enableSKI, enableAKI, enableIssuerDN,
+                         enableSubjectDN, enableCurve, enableIssuerCN, enableSubjectCN, enableIssuerO, enableSubjectO,
+                         enableSerialNumberHex, enableSerialNumberDec
         ).mapToInt(b -> b ? 1 : 0).sum();
     }
 
+    private int calculateActualColumnIndex(int originalIndex) {
+        // convert from original index of column to index for actually enabled columns; columns 0-2 are fixed
+        return 2 + Stream.of(enableEntryName, enableAlgorithm, enableKeySize, enableCurve,
+                             enableCertificateValidityStart, enableCertificateExpiry, enableLastModified, enableAKI,
+                             enableSKI, enableIssuerDN, enableSubjectDN, enableIssuerCN, enableSubjectCN, enableIssuerO,
+                             enableSubjectO, enableSerialNumberHex, enableSerialNumberDec)
+                         .mapToInt(b -> b ? 1 : 0)
+                         .limit(originalIndex)
+                         .sum();
+    }
+
+    public int colIndexEntryName() {
+        return calculateActualColumnIndex(1);
+    }
+
+    public int colIndexAlgorithm() {
+        return calculateActualColumnIndex(2);
+    }
+
+    public int colIndexKeySize() {
+        return calculateActualColumnIndex(3);
+    }
+
+    public int colIndexCurve() {
+        return calculateActualColumnIndex(4);
+    }
+
+    public int colIndexCertificateValidityStart() {
+        return calculateActualColumnIndex(5);
+    }
+
+    public int colIndexCertificateExpiry() {
+        return calculateActualColumnIndex(6);
+    }
+
+    public int colIndexLastModified() {
+        return calculateActualColumnIndex(7);
+    }
+
+    public int colIndexAKI() {
+        return calculateActualColumnIndex(8);
+    }
+
+    public int colIndexSKI() {
+        return calculateActualColumnIndex(9);
+    }
+
+    public int colIndexIssuerDN() {
+        return calculateActualColumnIndex(10);
+    }
+
+    public int colIndexSubjectDN() {
+        return calculateActualColumnIndex(11);
+    }
+
+    public int colIndexIssuerCN() {
+        return calculateActualColumnIndex(12);
+    }
+
+    public int colIndexSubjectCN() {
+        return calculateActualColumnIndex(13);
+    }
+
+    public int colIndexIssuerO() {
+        return calculateActualColumnIndex(14);
+    }
+
+    public int colIndexSubjectO() {
+        return calculateActualColumnIndex(15);
+    }
+
+    public int colIndexSerialNumberHex() {
+        return calculateActualColumnIndex(16);
+    }
+
+    public int colIndexSerialNumberDec() {
+        return calculateActualColumnIndex(17);
+    }
+
+
     public boolean getEnableEntryName() {
-        return bEnableEntryName;
+        return enableEntryName;
     }
 
     public boolean getEnableAlgorithm() {
-        return bEnableAlgorithm;
+        return enableAlgorithm;
     }
 
     public boolean getEnableKeySize() {
-        return bEnableKeySize;
+        return enableKeySize;
     }
 
     public boolean getEnableCertificateValidityStart() {
-        return bEnableCertificateValidityStart;
+        return enableCertificateValidityStart;
     }
 
     public boolean getEnableCertificateExpiry() {
-        return bEnableCertificateExpiry;
+        return enableCertificateExpiry;
     }
 
     public boolean getEnableLastModified() {
-        return bEnableLastModified;
+        return enableLastModified;
     }
 
     public boolean getEnableSKI() {
-        return bEnableSKI;
+        return enableSKI;
     }
 
     public boolean getEnableAKI() {
-        return bEnableAKI;
+        return enableAKI;
     }
 
     public boolean getEnableCurve() {
-        return bEnableCurve;
+        return enableCurve;
     }
 
     public boolean getEnableIssuerDN() {
-        return bEnableIssuerDN;
+        return enableIssuerDN;
     }
 
     public boolean getEnableSubjectDN() {
-        return bEnableSubjectDN;
+        return enableSubjectDN;
     }
 
     public boolean getEnableIssuerCN() {
-        return bEnableIssuerCN;
+        return enableIssuerCN;
     }
 
     public boolean getEnableSubjectCN() {
-        return bEnableSubjectCN;
+        return enableSubjectCN;
     }
 
     public boolean getEnableIssuerO() {
-        return bEnableIssuerO;
+        return enableIssuerO;
     }
 
     public boolean getEnableSubjectO() {
-        return bEnableSubjectO;
+        return enableSubjectO;
     }
 
-    public boolean getbEnableSerialNumberHex() {
-        return bEnableSerialNumberHex;
+    public boolean getEnableSerialNumberHex() {
+        return enableSerialNumberHex;
     }
 
-    public boolean getbEnableSerialNumberDec() {
-        return bEnableSerialNumberDec;
+    public boolean getEnableSerialNumberDec() {
+        return enableSerialNumberDec;
     }
 
-    public int getExpiryWarnDays() {
-        return expiryWarnDays;
+    public void setEnableEntryName(boolean enableEntryName) {
+        this.enableEntryName = enableEntryName;
     }
 
-    public void setExpiryWarnDays(int expiryWarnDays) {
-        this.expiryWarnDays = expiryWarnDays;
+    public void setEnableAlgorithm(boolean enableAlgorithm) {
+        this.enableAlgorithm = enableAlgorithm;
     }
 
-    public int colEntryName() {
-        return iNameColumn;
+    public void setEnableKeySize(boolean enableKeySize) {
+        this.enableKeySize = enableKeySize;
     }
 
-    public int colAlgorithm() {
-        return iAlgorithmColumn;
+    public void setEnableCertificateValidityStart(boolean enableCertificateValidityStart) {
+        this.enableCertificateValidityStart = enableCertificateValidityStart;
     }
 
-    public int colKeySize() {
-        return iKeySizeColumn;
+    public void setEnableCertificateExpiry(boolean enableCertificateExpiry) {
+        this.enableCertificateExpiry = enableCertificateExpiry;
     }
 
-    public int colCertificateValidityStart() {
-        return iCertValidityStartColumn;
+    public void setEnableLastModified(boolean enableLastModified) {
+        this.enableLastModified = enableLastModified;
     }
 
-    public int colCertificateExpiry() {
-        return iCertExpiryColumn;
+    public void setEnableSKI(boolean enableSKI) {
+        this.enableSKI = enableSKI;
     }
 
-    public int colLastModified() {
-        return iLastModifiedColumn;
+    public void setEnableAKI(boolean enableAKI) {
+        this.enableAKI = enableAKI;
     }
 
-    public int colSKI() {
-        return iSKIColumn;
+    public void setEnableIssuerDN(boolean enableIssuerDN) {
+        this.enableIssuerDN = enableIssuerDN;
     }
 
-    public int colAKI() {
-        return iAKIColumn;
+    public void setEnableSubjectDN(boolean enableSubjectDN) {
+        this.enableSubjectDN = enableSubjectDN;
     }
 
-    public int colCurve() {
-        return iCurveColumn;
+    public void setEnableCurve(boolean enableCurve) {
+        this.enableCurve = enableCurve;
     }
 
-    public int colIssuerDN() {
-        return iIssuerDNColumn;
+    public void setEnableIssuerCN(boolean enableIssuerCN) {
+        this.enableIssuerCN = enableIssuerCN;
     }
 
-    public int colSubjectDN() {
-        return iSubjectDNColumn;
+    public void setEnableSubjectCN(boolean enableSubjectCN) {
+        this.enableSubjectCN = enableSubjectCN;
     }
 
-    public int colIssuerCN() {
-        return iIssuerCNColumn;
+    public void setEnableIssuerO(boolean enableIssuerO) {
+        this.enableIssuerO = enableIssuerO;
     }
 
-    public int colSubjectCN() {
-        return iSubjectCNColumn;
+    public void setEnableSubjectO(boolean enableSubjectO) {
+        this.enableSubjectO = enableSubjectO;
     }
 
-    public int colIssuerO() {
-        return iIssuerOColumn;
+    public void setEnableSerialNumberHex(boolean enableSerialNumberHex) {
+        this.enableSerialNumberHex = enableSerialNumberHex;
     }
 
-    public int colSubjectO() {
-        return iSubjectOColumn;
+    public void setEnableSerialNumberDec(boolean enableSerialNumberDec) {
+        this.enableSerialNumberDec = enableSerialNumberDec;
     }
 
-    public int colSerialNumberHex() {
-        return iSerialNumberHexColumn;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        KeyStoreTableColumns that = (KeyStoreTableColumns) o;
+
+        if (enableEntryName != that.enableEntryName) {
+            return false;
+        }
+        if (enableAlgorithm != that.enableAlgorithm) {
+            return false;
+        }
+        if (enableKeySize != that.enableKeySize) {
+            return false;
+        }
+        if (enableCertificateValidityStart != that.enableCertificateValidityStart) {
+            return false;
+        }
+        if (enableCertificateExpiry != that.enableCertificateExpiry) {
+            return false;
+        }
+        if (enableLastModified != that.enableLastModified) {
+            return false;
+        }
+        if (enableSKI != that.enableSKI) {
+            return false;
+        }
+        if (enableAKI != that.enableAKI) {
+            return false;
+        }
+        if (enableIssuerDN != that.enableIssuerDN) {
+            return false;
+        }
+        if (enableSubjectDN != that.enableSubjectDN) {
+            return false;
+        }
+        if (enableCurve != that.enableCurve) {
+            return false;
+        }
+        if (enableIssuerCN != that.enableIssuerCN) {
+            return false;
+        }
+        if (enableSubjectCN != that.enableSubjectCN) {
+            return false;
+        }
+        if (enableIssuerO != that.enableIssuerO) {
+            return false;
+        }
+        if (enableSubjectO != that.enableSubjectO) {
+            return false;
+        }
+        if (enableSerialNumberHex != that.enableSerialNumberHex) {
+            return false;
+        }
+        return enableSerialNumberDec == that.enableSerialNumberDec;
     }
 
-    public int colSerialNumberDec() {
-        return iSerialNumberDecColumn;
+    @Override
+    public int hashCode() {
+        int result = (enableEntryName ? 1 : 0);
+        result = 31 * result + (enableAlgorithm ? 1 : 0);
+        result = 31 * result + (enableKeySize ? 1 : 0);
+        result = 31 * result + (enableCertificateValidityStart ? 1 : 0);
+        result = 31 * result + (enableCertificateExpiry ? 1 : 0);
+        result = 31 * result + (enableLastModified ? 1 : 0);
+        result = 31 * result + (enableSKI ? 1 : 0);
+        result = 31 * result + (enableAKI ? 1 : 0);
+        result = 31 * result + (enableIssuerDN ? 1 : 0);
+        result = 31 * result + (enableSubjectDN ? 1 : 0);
+        result = 31 * result + (enableCurve ? 1 : 0);
+        result = 31 * result + (enableIssuerCN ? 1 : 0);
+        result = 31 * result + (enableSubjectCN ? 1 : 0);
+        result = 31 * result + (enableIssuerO ? 1 : 0);
+        result = 31 * result + (enableSubjectO ? 1 : 0);
+        result = 31 * result + (enableSerialNumberHex ? 1 : 0);
+        result = 31 * result + (enableSerialNumberDec ? 1 : 0);
+        return result;
     }
 }

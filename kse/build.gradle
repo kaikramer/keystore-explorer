@@ -112,6 +112,8 @@ dependencies {
 	implementation('org.violetlib:vaqua:11')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
 	implementation('org.openjdk.nashorn:nashorn-core:15.4')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.14.2')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.14.2')
 
 	testImplementation('org.assertj:assertj-core:3.23.1')
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.9.0')

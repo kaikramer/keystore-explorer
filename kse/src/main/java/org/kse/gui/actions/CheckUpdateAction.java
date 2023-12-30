@@ -26,8 +26,8 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.time.LocalDate;
+import java.time.Period;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -89,19 +89,19 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
      */
     public void doAutoUpdateCheck() throws IOException {
         // abort auto update check if not enabled
-        if (!applicationSettings.isAutoUpdateCheckEnabled()) {
+        if (!preferences.getAutoUpdateCheckSettings().isEnabled()) {
             return;
         }
 
-        Date lastCheck = applicationSettings.getAutoUpdateCheckLastCheck();
-        Date now = new Date();
-        int checkInterval = applicationSettings.getAutoUpdateCheckInterval();
-        if (TimeUnit.MILLISECONDS.toDays(now.getTime() - lastCheck.getTime()) < checkInterval) {
+        LocalDate lastCheck = preferences.getAutoUpdateCheckSettings().getLastCheck();
+        LocalDate now = LocalDate.now();
+        int checkInterval = preferences.getAutoUpdateCheckSettings().getCheckInterval();
+        if (Period.between(lastCheck, now).getDays() < checkInterval) {
             return;
-        } else {
-            // save in settings when last check (this one) has happened
-            applicationSettings.setAutoUpdateCheckLastCheck(new Date());
         }
+
+        // save in settings when last check (this one) has happened
+        preferences.getAutoUpdateCheckSettings().setLastCheck(now);
 
         // Get the version number of the latest KeyStore Explorer from its website
         URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);

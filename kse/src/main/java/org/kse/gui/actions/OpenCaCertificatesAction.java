@@ -67,7 +67,7 @@ public class OpenCaCertificatesAction extends OpenAction {
      */
     @Override
     protected void doAction() {
-        File caCertificatesFile = applicationSettings.getCaCertificatesFile();
+        File caCertificatesFile = new File(preferences.getCaCertsSettings().getCaCertificatesFile());
 
         if (caCertificatesFile.isFile()) {
             openKeyStore(caCertificatesFile, AuthorityCertificates.CACERTS_DEFAULT_PWD);

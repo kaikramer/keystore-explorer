@@ -40,7 +40,8 @@ import org.kse.gui.JKseTable;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KeyStoreTableModel;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.history.KeyStoreHistory;
 
 /**
@@ -52,9 +53,9 @@ public class JListCertificates extends JPanel {
     private JScrollPane jspListCertsTable;
     private JKseTable jtListCerts;
 
-    private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+    private KsePreferences preferences = PreferencesManager.getPreferences();
 
-    private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
+    private KeyStoreTableColumns keyStoreTableColumns;
     private KeyStore keyStore;
     private int autoResizeMode = JTable.AUTO_RESIZE_LAST_COLUMN;
     /**
@@ -67,8 +68,8 @@ public class JListCertificates extends JPanel {
 
     private void initComponents() {
 
-        keyStoreTableColumns = applicationSettings.getKeyStoreTableColumns();
-        KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
+        keyStoreTableColumns = preferences.getKeyStoreTableColumns();
+        KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns, preferences.getExpiryWarnDays());
 
         jtListCerts = new JKseTable(ksModel);
         RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);

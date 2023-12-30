@@ -84,11 +84,11 @@ public class ExportKeyPairPrivateKeyAction extends KeyStoreExplorerAction {
             }
 
             if (dExportPrivateKeyType.exportPkcs8()) {
-                PrivateKeyUtils.exportAsPkcs8(privateKey, alias, frame, applicationSettings, res);
+                PrivateKeyUtils.exportAsPkcs8(privateKey, alias, frame, preferences, res);
             } else if (dExportPrivateKeyType.exportPvk()) {
-                PrivateKeyUtils.exportAsPvk(privateKey, alias, frame, applicationSettings, res);
+                PrivateKeyUtils.exportAsPvk(privateKey, alias, frame, preferences, res);
             } else {
-                PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, frame, applicationSettings, res);
+                PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, frame, preferences, res);
             }
         } catch (Exception ex) {
             DError.displayError(frame, ex);

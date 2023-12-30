@@ -124,7 +124,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
             // Holds the new certificate chain for the entry should the import succeed
             X509Certificate[] newCertChain = null;
 
-            if (!applicationSettings.getEnableImportCaReplyTrustCheck()) {
+            if (!preferences.getCaCertsSettings().isImportCaReplyTrustCheckEnabled()) {
                 newCertChain = certs;
             } else {
                 KeyStore caCertificates = getCaCertificates();

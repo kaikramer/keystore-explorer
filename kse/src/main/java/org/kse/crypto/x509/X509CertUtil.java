@@ -58,7 +58,7 @@ import org.bouncycastle.openssl.X509TrustedCertificateBlock;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.gui.preferences.PreferencesManager;
 import org.kse.utilities.SerialNumbers;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.HexUtil;
@@ -754,7 +754,7 @@ public final class X509CertUtil {
      * @return Serial number as hex string with "0x" prefix
      */
     public static String generateCertSerialNumber() {
-        int snLength = ApplicationSettings.getInstance().getSerialNumberLengthInBytes();
+        int snLength = PreferencesManager.getPreferences().getSerialNumberLengthInBytes();
         return HexUtil.getHexString(SerialNumbers.generate(snLength), "0x", 0, 0);
     }
 }

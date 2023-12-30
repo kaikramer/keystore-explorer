@@ -18,23 +18,29 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.kse.gui.preferences.ApplicationSettings;
+package org.kse.gui.preferences.data;
 
 /**
- * Erase all KSE application preferences.
+ * Language class for supporting language text.
  */
-public class PurgePreferences {
-    /**
-     * Erase all KSE application preferences.
-     *
-     * @param args Arguments
-     */
-    public static void main(String[] args) {
-        try {
-            ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
-            applicationSettings.clear();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+public class LanguageItem {
+    public static final String SYSTEM_LANGUAGE = "system";
+
+    private String displayName;
+    private String isoCode;
+
+    public LanguageItem(String displayName, String isoCode) {
+        super();
+        this.displayName = displayName;
+        this.isoCode = isoCode;
+    }
+
+    public String getIsoCode() {
+        return isoCode;
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
     }
 }

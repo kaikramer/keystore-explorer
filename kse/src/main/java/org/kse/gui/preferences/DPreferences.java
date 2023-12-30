@@ -74,6 +74,9 @@ import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dnchooser.DistinguishedNameChooser;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.gui.preferences.data.KsePreferences;
+import org.kse.gui.preferences.data.LanguageItem;
+import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.net.ManualProxySelector;
 import org.kse.utilities.net.NoProxySelector;
@@ -177,41 +180,24 @@ public class DPreferences extends JEscDialog {
 
     private JPanel jpDisplayColumns;
     private JCheckBox jcbEnableEntryName;
-    private boolean bEnableEntryName;
     private JCheckBox jcbEnableAlgorithm;
-    private boolean bEnableAlgorithm;
     private JCheckBox jcbEnableKeySize;
-    private boolean bEnableKeySize;
     private JCheckBox jcbEnableCertificateValidityStart;
-    private boolean bEnableCertificateValidityStart;
     private JCheckBox jcbEnableCertificateExpiry;
-    private boolean bEnableCertificateExpiry;
     private JCheckBox jcbEnableLastModified;
-    private boolean bEnableLastModified;
     private JCheckBox jcbEnableCurve;
-    private boolean bEnableCurve;
     private JCheckBox jcbEnableSKI;
-    private boolean bEnableSKI;
     private JCheckBox jcbEnableAKI;
-    private boolean bEnableAKI;
     private JCheckBox jcbEnableIssuerDN;
-    private boolean bEnableIssuerDN;
     private JCheckBox jcbEnableIssuerCN;
-    private boolean bEnableIssuerCN;
     private JCheckBox jcbEnableSubjectDN;
-    private boolean bEnableSubjectDN;
     private JCheckBox jcbEnableSubjectCN;
-    private boolean bEnableSubjectCN;
     private JCheckBox jcbEnableIssuerO;
-    private boolean bEnableIssuerO;
     private JCheckBox jcbEnableSubjectO;
-    private boolean bEnableSerialNumberHex;
     private JCheckBox jcbEnableSerialNumberHex;
-    private boolean bEnableSerialNumberDec;
     private JCheckBox jcbEnableSerialNumberDec;
-    private boolean bEnableSubjectO;
     private JLabel jlExpirationWarnDays;
-    private JTextField jtfExpirationWarnDays;
+    private JSpinner jspExpirationWarnDays;
     private boolean bColumnsChanged;
     private JSplitPane jsPane;
     private JScrollPane rightScPane;
@@ -221,54 +207,32 @@ public class DPreferences extends JEscDialog {
     private DefaultMutableTreeNode rootNode;
     private JTree jtree;
 
-
     /**
      * Creates a new DPreference dialog.
      *
-     * @param parent                            The parent frame
-     * @param useCaCertificates                 Use CA Certificates keystore file?
-     * @param caCertificatesFile                CA Certificates keystore file
-     * @param useWinTrustedRootCertificates     Use Windows Trusted Root
-     *                                          Certificates?
-     * @param enableImportTrustedCertTrustCheck Enable trust checks when importing
-     *                                          Trusted Certificates?
-     * @param enableImportCaReplyTrustCheck     Enable trust checks when importing
-     *                                          CA replies?
-     * @param passwordQualityConfig             Password quality configuration
-     * @param defaultDN                         Default subject DN for new certificates
-     * @param language                          KSE UI language
-     * @param autoUpdateChecksEnabled           Automatic check for updates enabled or not
-     * @param autoUpdateChecksInterval          Interval for autmatic update checks
-     * @param kstColumns                        Shown columns in the main table
-     * @param showHiddenFilesEnabled            Show hidden files in file chooser
-     * @param pkcs12EncryptionSetting           Strong or compatible PKCS#12 encryption?
-     * @param serialNumberLengthInBytes           Length of serial number random bytes
+     * @param parent      The parent frame
+     * @param preferences Current state of preferences, probably as loaded from config file
      */
-    public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
-                        boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
-                        boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
-                        String defaultDN, String language, boolean autoUpdateChecksEnabled,
-                        int autoUpdateChecksInterval, KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled,
-                        Pkcs12EncryptionSetting pkcs12EncryptionSetting, int serialNumberLengthInBytes) {
+    public DPreferences(JFrame parent, KsePreferences preferences) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(true);
         Dimension d = new Dimension(900, 500);
         setMinimumSize(d);
-        this.useCaCertificates = useCaCertificates;
-        this.caCertificatesFile = caCertificatesFile;
-        this.useWinTrustRootCertificates = useWinTrustedRootCertificates;
-        this.enableImportTrustedCertTrustCheck = enableImportTrustedCertTrustCheck;
-        this.enableImportCaReplyTrustCheck = enableImportCaReplyTrustCheck;
-        this.passwordQualityConfig = passwordQualityConfig;
-        this.defaultDN = defaultDN;
-        this.language = language;
-        this.autoUpdateChecksEnabled = autoUpdateChecksEnabled;
-        this.autoUpdateChecksInterval = autoUpdateChecksInterval;
-        this.kstColumns = kstColumns;
-        this.expiryWarnDays = kstColumns.getExpiryWarnDays();
-        this.showHiddenFilesEnabled = showHiddenFilesEnabled;
-        this.pkcs12EncryptionSetting = pkcs12EncryptionSetting;
-        this.serialNumberLengthInBytes = serialNumberLengthInBytes;
+        this.useCaCertificates = preferences.getCaCertsSettings().isUseCaCertificates();
+        this.caCertificatesFile = new File(preferences.getCaCertsSettings().getCaCertificatesFile());
+        this.useWinTrustRootCertificates = preferences.getCaCertsSettings().isUseWindowsTrustedRootCertificates();
+        this.enableImportTrustedCertTrustCheck = preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled();
+        this.enableImportCaReplyTrustCheck = preferences.getCaCertsSettings().isImportCaReplyTrustCheckEnabled();
+        this.passwordQualityConfig = preferences.getPasswordQualityConfig();
+        this.defaultDN = preferences.getDefaultSubjectDN();
+        this.language = preferences.getLanguage();
+        this.autoUpdateChecksEnabled = preferences.getAutoUpdateCheckSettings().isEnabled();
+        this.autoUpdateChecksInterval = preferences.getAutoUpdateCheckSettings().getCheckInterval();
+        this.kstColumns = preferences.getKeyStoreTableColumns();
+        this.expiryWarnDays = preferences.getExpiryWarnDays();
+        this.showHiddenFilesEnabled = preferences.isShowHiddenFilesEnabled();
+        this.pkcs12EncryptionSetting = preferences.getPkcs12EncryptionSetting();
+        this.serialNumberLengthInBytes = preferences.getSerialNumberLengthInBytes();
         initComponents();
     }
 
@@ -746,84 +710,85 @@ public class DPreferences extends JEscDialog {
     private void initDisplayColumnsCard() {
         bColumnsChanged = false;
 
-        bEnableEntryName = kstColumns.getEnableEntryName();
+        boolean bEnableEntryName = kstColumns.getEnableEntryName();
         jcbEnableEntryName = new JCheckBox(res.getString("DPreferences.jcbEnableEntryName.text"), bEnableEntryName);
         // fix for problem that without entry name a lot of things do not work
         jcbEnableEntryName.setSelected(true);
         jcbEnableEntryName.setEnabled(false);
 
-        bEnableAlgorithm = kstColumns.getEnableAlgorithm();
+        boolean bEnableAlgorithm = kstColumns.getEnableAlgorithm();
         jcbEnableAlgorithm = new JCheckBox(res.getString("DPreferences.jcbEnableAlgorithm.text"), bEnableAlgorithm);
 
-        bEnableKeySize = kstColumns.getEnableKeySize();
+        boolean bEnableKeySize = kstColumns.getEnableKeySize();
         jcbEnableKeySize = new JCheckBox(res.getString("DPreferences.jcbEnableKeySize.text"), bEnableKeySize);
         jcbEnableKeySize.setSelected(bEnableKeySize);
 
-        bEnableCurve = kstColumns.getEnableCurve();
+        boolean bEnableCurve = kstColumns.getEnableCurve();
         jcbEnableCurve = new JCheckBox(res.getString("DPreferences.jcbEnableCurve.text"), bEnableCurve);
         jcbEnableCurve.setSelected(bEnableCurve);
 
-        bEnableCertificateValidityStart = kstColumns.getEnableCertificateValidityStart();
+        boolean bEnableCertificateValidityStart = kstColumns.getEnableCertificateValidityStart();
         jcbEnableCertificateValidityStart = new JCheckBox(res.getString(
                 "DPreferences.jcbEnableCertificateValidityStart.text"), bEnableCertificateValidityStart);
         jcbEnableCertificateValidityStart.setSelected(bEnableCertificateValidityStart);
 
-        bEnableCertificateExpiry = kstColumns.getEnableCertificateExpiry();
+        boolean bEnableCertificateExpiry = kstColumns.getEnableCertificateExpiry();
         jcbEnableCertificateExpiry = new JCheckBox(res.getString("DPreferences.jcbEnableCertificateExpiry.text"),
                 bEnableCertificateExpiry);
         jcbEnableCertificateExpiry.setSelected(bEnableCertificateExpiry);
 
-        bEnableLastModified = kstColumns.getEnableLastModified();
+        boolean bEnableLastModified = kstColumns.getEnableLastModified();
         jcbEnableLastModified = new JCheckBox(res.getString("DPreferences.jcbEnableLastModified.text"),
                 bEnableLastModified);
         jcbEnableLastModified.setSelected(bEnableLastModified);
 
-        bEnableSKI = kstColumns.getEnableSKI();
+        boolean bEnableSKI = kstColumns.getEnableSKI();
         jcbEnableSKI = new JCheckBox(res.getString("DPreferences.jcbEnableSKI.text"), bEnableSKI);
         jcbEnableSKI.setSelected(bEnableSKI);
 
-        bEnableAKI = kstColumns.getEnableAKI();
+        boolean bEnableAKI = kstColumns.getEnableAKI();
         jcbEnableAKI = new JCheckBox(res.getString("DPreferences.jcbEnableAKI.text"), bEnableAKI);
         jcbEnableAKI.setSelected(bEnableAKI);
 
-        bEnableIssuerDN = kstColumns.getEnableIssuerDN();
+        boolean bEnableIssuerDN = kstColumns.getEnableIssuerDN();
         jcbEnableIssuerDN = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerDN.text"), bEnableIssuerDN);
         jcbEnableIssuerDN.setSelected(bEnableIssuerDN);
 
-        bEnableSubjectDN = kstColumns.getEnableSubjectDN();
+        boolean bEnableSubjectDN = kstColumns.getEnableSubjectDN();
         jcbEnableSubjectDN = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectDN.text"), bEnableSubjectDN);
         jcbEnableSubjectDN.setSelected(bEnableSubjectDN);
 
-        bEnableIssuerCN = kstColumns.getEnableIssuerCN();
+        boolean bEnableIssuerCN = kstColumns.getEnableIssuerCN();
         jcbEnableIssuerCN = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerCN.text"), bEnableIssuerCN);
         jcbEnableIssuerCN.setSelected(bEnableIssuerCN);
 
-        bEnableSubjectCN = kstColumns.getEnableSubjectCN();
+        boolean bEnableSubjectCN = kstColumns.getEnableSubjectCN();
         jcbEnableSubjectCN = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectCN.text"), bEnableSubjectCN);
         jcbEnableSubjectCN.setSelected(bEnableSubjectCN);
 
-        bEnableIssuerO = kstColumns.getEnableIssuerO();
+        boolean bEnableIssuerO = kstColumns.getEnableIssuerO();
         jcbEnableIssuerO = new JCheckBox(res.getString("DPreferences.jcbEnableIssuerO.text"), bEnableIssuerO);
         jcbEnableIssuerO.setSelected(bEnableIssuerO);
 
-        bEnableSubjectO = kstColumns.getEnableSubjectO();
+        boolean bEnableSubjectO = kstColumns.getEnableSubjectO();
         jcbEnableSubjectO = new JCheckBox(res.getString("DPreferences.jcbEnableSubjectO.text"), bEnableSubjectO);
         jcbEnableSubjectO.setSelected(bEnableSubjectO);
 
-        bEnableSerialNumberHex = kstColumns.getbEnableSerialNumberHex();
+        boolean bEnableSerialNumberHex = kstColumns.getEnableSerialNumberHex();
         jcbEnableSerialNumberHex = new JCheckBox(res.getString("DPreferences.jcbEnableSerialNumberHex.text"),
                 bEnableSerialNumberHex);
         jcbEnableSerialNumberHex.setSelected(bEnableSerialNumberHex);
 
-        bEnableSerialNumberDec = kstColumns.getbEnableSerialNumberDec();
+        boolean bEnableSerialNumberDec = kstColumns.getEnableSerialNumberDec();
         jcbEnableSerialNumberDec = new JCheckBox(res.getString("DPreferences.jcbEnableSerialNumberDec.text"),
                 bEnableSerialNumberDec);
         jcbEnableSerialNumberDec.setSelected(bEnableSerialNumberDec);
 
         jlExpirationWarnDays = new JLabel(res.getString("DPreferences.jlExpiryWarning.text"));
-        jtfExpirationWarnDays = new JTextField();
-        jtfExpirationWarnDays.setColumns(3);
-        jtfExpirationWarnDays.setText(Integer.toString(expiryWarnDays));
+        jspExpirationWarnDays = new JSpinner(new SpinnerNumberModel(expiryWarnDays, 0, 90, 1));
+        JSpinner.DefaultEditor editor = ( JSpinner.DefaultEditor ) jspExpirationWarnDays.getEditor();
+        editor.getTextField().setEnabled(true);
+        editor.getTextField().setEditable(false);
 
         // layout
         jpDisplayColumns = new JPanel();
@@ -847,7 +812,7 @@ public class DPreferences extends JEscDialog {
         jpDisplayColumns.add(jcbEnableSerialNumberHex, "left, wrap");
         jpDisplayColumns.add(jcbEnableSerialNumberDec, "left, wrap para");
         jpDisplayColumns.add(jlExpirationWarnDays, "left, spanx, split");
-        jpDisplayColumns.add(jtfExpirationWarnDays, "wrap");
+        jpDisplayColumns.add(jspExpirationWarnDays, "wrap");
     }
 
     private void initLookAndFeelSelection() {
@@ -1224,6 +1189,14 @@ public class DPreferences extends JEscDialog {
     }
 
     /**
+     * Get number of days before certificate expiration warnings in the main table are shown in advance
+     * @return Expiry warn
+     */
+    public int getExpiryWarnDays() {
+        return expiryWarnDays;
+    }
+
+    /**
      * Get PKCS12 encryption settings
      * @return P12 encryption settings
      */
@@ -1250,34 +1223,28 @@ public class DPreferences extends JEscDialog {
     }
 
     private void storeColumns() {
-        int ist = kstColumns.getColumns();
-        bEnableEntryName = jcbEnableEntryName.isSelected();
-        bEnableAlgorithm = jcbEnableAlgorithm.isSelected();
-        bEnableKeySize = jcbEnableKeySize.isSelected();
-        bEnableCertificateValidityStart = jcbEnableCertificateValidityStart.isSelected();
-        bEnableCertificateExpiry = jcbEnableCertificateExpiry.isSelected();
-        bEnableLastModified = jcbEnableLastModified.isSelected();
-        bEnableCurve = jcbEnableCurve.isSelected();
-        bEnableSKI = jcbEnableSKI.isSelected();
-        bEnableAKI = jcbEnableAKI.isSelected();
-        bEnableIssuerDN = jcbEnableIssuerDN.isSelected();
-        bEnableSubjectDN = jcbEnableSubjectDN.isSelected();
-        bEnableIssuerCN = jcbEnableIssuerCN.isSelected();
-        bEnableSubjectCN = jcbEnableSubjectCN.isSelected();
-        bEnableIssuerO = jcbEnableIssuerO.isSelected();
-        bEnableSubjectO = jcbEnableSubjectO.isSelected();
-        bEnableSerialNumberHex = jcbEnableSerialNumberHex.isSelected();
-        bEnableSerialNumberDec = jcbEnableSerialNumberDec.isSelected();
-        try {
-            expiryWarnDays = Integer.parseInt(jtfExpirationWarnDays.getText());
-        } catch (Exception e) {
-            expiryWarnDays = 0;
-        }
-        kstColumns.setColumns(bEnableEntryName, bEnableAlgorithm, bEnableKeySize, bEnableCertificateValidityStart,
-                bEnableCertificateExpiry, bEnableLastModified, bEnableSKI, bEnableAKI, bEnableIssuerDN,
-                bEnableSubjectDN, bEnableIssuerCN, bEnableSubjectCN, bEnableIssuerO, bEnableSubjectO, bEnableCurve,
-                bEnableSerialNumberHex, bEnableSerialNumberDec, expiryWarnDays);
-        bColumnsChanged = (kstColumns.getColumns() != ist);
+        var newKstColumns = new KeyStoreTableColumns();
+        newKstColumns.setEnableEntryName(jcbEnableEntryName.isSelected());
+        newKstColumns.setEnableAlgorithm(jcbEnableAlgorithm.isSelected());
+        newKstColumns.setEnableKeySize(jcbEnableKeySize.isSelected());
+        newKstColumns.setEnableCertificateValidityStart(jcbEnableCertificateValidityStart.isSelected());
+        newKstColumns.setEnableCertificateExpiry(jcbEnableCertificateExpiry.isSelected());
+        newKstColumns.setEnableLastModified(jcbEnableLastModified.isSelected());
+        newKstColumns.setEnableCurve(jcbEnableCurve.isSelected());
+        newKstColumns.setEnableSKI(jcbEnableSKI.isSelected());
+        newKstColumns.setEnableAKI(jcbEnableAKI.isSelected());
+        newKstColumns.setEnableIssuerDN(jcbEnableIssuerDN.isSelected());
+        newKstColumns.setEnableSubjectDN(jcbEnableSubjectDN.isSelected());
+        newKstColumns.setEnableIssuerCN(jcbEnableIssuerCN.isSelected());
+        newKstColumns.setEnableSubjectCN(jcbEnableSubjectCN.isSelected());
+        newKstColumns.setEnableIssuerO(jcbEnableIssuerO.isSelected());
+        newKstColumns.setEnableSubjectO(jcbEnableSubjectO.isSelected());
+        newKstColumns.setEnableSerialNumberHex(jcbEnableSerialNumberHex.isSelected());
+        newKstColumns.setEnableSerialNumberDec(jcbEnableSerialNumberDec.isSelected());
+        bColumnsChanged = !kstColumns.equals(newKstColumns);
+        kstColumns = newKstColumns;
+
+        expiryWarnDays = ((Number) jspExpirationWarnDays.getValue()).intValue();
     }
 
     /**
@@ -1339,8 +1306,10 @@ public class DPreferences extends JEscDialog {
 
     private void initLanguageSelection() {
         LanguageItem[] languageItems = new LanguageItem[] {
-                new LanguageItem("System", ApplicationSettings.SYSTEM_LANGUAGE), new LanguageItem("English", "en"),
-                new LanguageItem("German", "de"), new LanguageItem("French", "fr") };
+                new LanguageItem("System", LanguageItem.SYSTEM_LANGUAGE),
+                new LanguageItem("English", "en"),
+                new LanguageItem("German", "de"),
+                new LanguageItem("French", "fr") };
 
         for (LanguageItem languageItem : languageItems) {
             jcbLanguage.addItem(languageItem);
@@ -1354,9 +1323,7 @@ public class DPreferences extends JEscDialog {
      * Quick UI testing
      */
     public static void main(String[] args) throws Exception {
-        DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
-                                               new PasswordQualityConfig(true, true, 100), "", "en", true, 14,
-                                               new KeyStoreTableColumns(), true, Pkcs12EncryptionSetting.strong, 8);
+        DPreferences dialog = new DPreferences(new JFrame(), new KsePreferences());
         DialogViewer.run(dialog);
     }
 }

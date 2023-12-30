@@ -33,7 +33,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
@@ -44,6 +43,7 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.password.DGetPassword;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -71,7 +71,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     /**
      * Application settings
      */
-    protected ApplicationSettings applicationSettings;
+    protected KsePreferences preferences;
 
     /**
      * Construct a KeyStoreExplorerAction.
@@ -81,7 +81,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     public KeyStoreExplorerAction(KseFrame kseFrame) {
         this.kseFrame = kseFrame;
         frame = kseFrame.getUnderlyingFrame();
-        applicationSettings = kseFrame.getApplicationSettings();
+        preferences = kseFrame.getPreferences();
     }
 
     /**
@@ -239,8 +239,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
      */
     protected Password getNewKeyStorePassword() {
         DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                "KeyStoreExplorerAction.SetKeyStorePassword.Title"), ApplicationSettings.getInstance()
-                                                                                        .getPasswordQualityConfig());
+                "KeyStoreExplorerAction.SetKeyStorePassword.Title"), preferences.getPasswordQualityConfig());
         dGetNewPassword.setLocationRelativeTo(frame);
         dGetNewPassword.setVisible(true);
 

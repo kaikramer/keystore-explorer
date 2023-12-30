@@ -291,7 +291,8 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         }
 
         DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
-                res.getString("ExamineFileAction.PrivateKeyDetailsFile.Title"), file.getName()), FileNameUtil.removeExtension(file.getName()), privKey, applicationSettings);
+                res.getString("ExamineFileAction.PrivateKeyDetailsFile.Title"), file.getName()), FileNameUtil.removeExtension(file.getName()), privKey,
+                                                              preferences);
         dViewPrivateKey.setLocationRelativeTo(frame);
         dViewPrivateKey.setVisible(true);
     }

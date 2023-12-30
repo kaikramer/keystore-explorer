@@ -19,6 +19,8 @@
  */
 package org.kse.gui.dialogs;
 
+import static org.kse.utilities.StringUtils.addToList;
+
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -31,6 +33,7 @@ import java.lang.reflect.Method;
 import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -59,7 +62,8 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
-import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -71,7 +75,8 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+    private transient KsePreferences preferences = PreferencesManager.getPreferences();
+    public static final int MAX_LIST_SIZE = 10;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -226,8 +231,8 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
     }
 
     private String[] getLibraryList() {
-        String p11Libs = applicationSettings.getP11Libs();
-        return p11Libs.split(";");
+        List<String> p11Libs = preferences.getPkcs11Libraries();
+        return p11Libs.toArray(new String[p11Libs.size()]);
     }
 
     private void browsePressed() {
@@ -295,7 +300,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
                 selectedProvider = p11Provider;
 
                 // save library in preferences
-                applicationSettings.addP11Lib(selectedLib);
+                preferences.setPkcs11Libraries(addToList(selectedLib, preferences.getPkcs11Libraries(), MAX_LIST_SIZE));
             }
 
             closeDialog();

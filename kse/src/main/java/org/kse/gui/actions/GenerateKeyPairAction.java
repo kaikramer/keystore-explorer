@@ -104,11 +104,11 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
         String alias = "";
         try {
             // Restore preferences regarding key type and length (or EC curve)
-            KeyPairType keyPairType = applicationSettings.getGenerateKeyPairType();
-            int keyPairSizeRSA = applicationSettings.getGenerateKeyPairSizeRSA();
-            int keyPairSizeDSA = applicationSettings.getGenerateKeyPairSizeDSA();
-            String keyPairCurveSet = applicationSettings.getGenerateKeyPairCurveSet();
-            String keyPairCurveName = applicationSettings.getGenerateKeyPairCurveName();
+            KeyPairType keyPairType = preferences.getKeyGenerationDefaults().getKeyPairType();
+            int keyPairSizeRSA = preferences.getKeyGenerationDefaults().getKeyPairSizeRSA();
+            int keyPairSizeDSA = preferences.getKeyGenerationDefaults().getKeyPairSizeDSA();
+            String keyPairCurveSet = preferences.getKeyGenerationDefaults().getEcCurveSet();
+            String keyPairCurveName = preferences.getKeyGenerationDefaults().getEcCurveName();
 
             KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
             KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
@@ -131,11 +131,11 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             keyPairSizeDSA = dGenerateKeyPair.getKeyPairSizeDSA();
             keyPairCurveSet = dGenerateKeyPair.getCurveSet();
             keyPairCurveName = dGenerateKeyPair.getCurveName();
-            applicationSettings.setGenerateKeyPairType(keyPairType);
-            applicationSettings.setGenerateKeyPairSizeRSA(keyPairSizeRSA);
-            applicationSettings.setGenerateKeyPairSizeDSA(keyPairSizeDSA);
-            applicationSettings.setGenerateKeyPairCurveSet(keyPairCurveSet);
-            applicationSettings.setGenerateKeyPairCurveName(keyPairCurveName);
+            preferences.getKeyGenerationDefaults().setKeyPairType(keyPairType);
+            preferences.getKeyGenerationDefaults().setKeyPairSizeRSA(keyPairSizeRSA);
+            preferences.getKeyGenerationDefaults().setKeyPairSizeDSA(keyPairSizeDSA);
+            preferences.getKeyGenerationDefaults().setEcCurveSet(keyPairCurveSet);
+            preferences.getKeyGenerationDefaults().setEcCurveName(keyPairCurveName);
 
             KeyPair keyPair = generateKeyPair(keyPairType, keyPairSizeRSA, keyPairSizeDSA, keyPairCurveName, provider);
             if (keyPair == null) {
@@ -186,8 +186,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
             if (keyStoreType.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "GenerateKeyPairAction.NewKeyPairEntryPassword.Title"),
-                                                                      applicationSettings.getPasswordQualityConfig());
+                        "GenerateKeyPairAction.NewKeyPairEntryPassword.Title"), preferences.getPasswordQualityConfig());
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();

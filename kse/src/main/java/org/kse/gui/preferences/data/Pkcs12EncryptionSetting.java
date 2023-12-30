@@ -18,10 +18,13 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kse.gui.preferences;
+package org.kse.gui.preferences.data;
 
 import java.util.ResourceBundle;
 
+/**
+ * Options for PKCS#12 encryption (currently only strong/legacy)
+ */
 public enum Pkcs12EncryptionSetting {
     strong("Pkcs12EncryptionSetting.strong"),
     legacy("Pkcs12EncryptionSetting.legacy");
@@ -34,7 +37,7 @@ public enum Pkcs12EncryptionSetting {
     }
 
     /**
-     * Allows to pass a resource bundle (which unfortunately cannot be intialized in this enum)
+     * Allows to pass a resource bundle (which unfortunately cannot be initialized in this enum)
      * that is then used to translate the result of the {@code toString()} method.
      * @param resourceBundle An initialized resource bundle
      */

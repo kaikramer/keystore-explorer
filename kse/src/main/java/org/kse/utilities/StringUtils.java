@@ -22,6 +22,8 @@ package org.kse.utilities;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class StringUtils {
 
@@ -62,32 +64,33 @@ public class StringUtils {
     }
 
     /**
-     * Add a new item to a semicolon separated list of strings.
+     * Add given string to list. The string is put at the first position of the new list. If the list already
+     * contains this value, it is moved to the first position instead. If maxSize is exceeded after adding the value,
+     * the last item in the list is removed.
+     * <p>
+     *     Note: This does not modify the input list (as it is probably immutable), but returns a new list instead.
+     * </p>
      *
-     * @param newItem          The new item to be added.
-     * @param semicolonSepList Current semicolon separated list of strings.
-     * @param maxItems         Maximum number of items to keep in list.
-     * @return New semicolon separated list of strings with new item at the first position.
+     * @param value   The new item to be added.
+     * @param list    Current list of strings.
+     * @param maxSize Maximum number of items to keep in list.
+     * @return New list of strings with new item at the first position.
      */
-    public static String addToList(String newItem, String semicolonSepList, int maxItems) {
+    public static List<String> addToList(String value, List<String> list, int maxSize) {
+        LinkedList<String> newList = new LinkedList<>(list);
 
-        // add new item at first position of the list
-        StringBuilder sb = new StringBuilder(newItem);
-        String[] items = semicolonSepList.split(";");
-        for (int i = 0; i < items.length && i < maxItems; i++) {
-
-            String port = items[i];
-
-            // if saved list already contains new item, bring it to first position
-            if (port.equals(newItem)) {
-                continue;
-            }
-
-            sb.append(";");
-            sb.append(port);
+        if (newList.contains(value)) {
+            newList.remove(value);
+            newList.addFirst(value);
+            return newList;
         }
 
-        return sb.toString();
+        newList.addFirst(value);
+
+        if (newList.size() > maxSize) {
+            newList.removeLast();
+        }
+        return newList;
     }
 
     /**

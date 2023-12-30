@@ -119,7 +119,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
                 trustCert = trustCertFromConstructor;
             }
 
-            if (applicationSettings.getEnableImportTrustedCertTrustCheck()) {
+            if (preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled()) {
                 String matchAlias = X509CertUtil.matchCertificate(keyStore, trustCert);
                 if (matchAlias != null) {
                     int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(

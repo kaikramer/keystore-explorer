@@ -53,6 +53,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -88,7 +89,6 @@ import javax.swing.border.MatteBorder;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.table.TableRowSorter;
 
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
@@ -184,6 +184,8 @@ import org.kse.gui.dnd.DragKeyPairEntry;
 import org.kse.gui.dnd.DragTrustedCertificateEntry;
 import org.kse.gui.dnd.KeyStoreEntryDragGestureListener;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.quickstart.JQuickStartPane;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarChangeHandler;
@@ -207,13 +209,10 @@ public final class KseFrame implements StatusBar {
     // Default KeyStores tabbed pane - dictates height of this frame
     public static final int DEFAULT_HEIGHT = 450;
 
-    // Maximum number of recent files to maintain in file menu
-    public static final int RECENT_FILES_SIZE = 9;
-
     private ArrayList<KeyStoreHistory> histories = new ArrayList<>();
     private ArrayList<JTable> keyStoreTables = new ArrayList<>();
     private JFrame frame = new JFrame();
-    private ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+    private KsePreferences preferences = PreferencesManager.getPreferences();
     private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
     private int autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS;
 
@@ -561,14 +560,14 @@ public final class KseFrame implements StatusBar {
      *
      * @return Application settings
      */
-    public ApplicationSettings getApplicationSettings() {
-        return applicationSettings;
+    public KsePreferences getPreferences() {
+        return preferences;
     }
 
     void display() {
         frame.setVisible(true);
 
-        if (applicationSettings.getShowTipsOnStartUp()) {
+        if (preferences.isShowTipsOnStartUp()) {
             tipOfTheDayAction.showTipOfTheDay();
         }
     }
@@ -601,7 +600,7 @@ public final class KseFrame implements StatusBar {
     }
 
     private void initApplicationPosition() {
-        Rectangle sizeAndPosition = applicationSettings.getSizeAndPosition();
+        Rectangle sizeAndPosition = preferences.getMainWindowSizeAndPosition();
 
         int xPos = sizeAndPosition.x;
         int yPos = sizeAndPosition.y;
@@ -729,16 +728,16 @@ public final class KseFrame implements StatusBar {
 
         jmFile.addSeparator();
 
-        jmrfRecentFiles = new JMenuRecentFiles(res.getString("KseFrame.jmrfRecentFiles.text"), RECENT_FILES_SIZE);
+        jmrfRecentFiles = new JMenuRecentFiles(res.getString("KseFrame.jmrfRecentFiles.text"));
         jmrfRecentFiles.setIcon(new ImageIcon(
                 Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/menu/recentfiles.png"))));
         PlatformUtil.setMnemonic(jmrfRecentFiles, res.getString("KseFrame.jmrfRecentFiles.mnemonic").charAt(0));
         jmFile.add(jmrfRecentFiles);
 
-        File[] recentFiles = applicationSettings.getRecentFiles();
+        List<String> recentFiles = preferences.getRecentFiles();
 
-        for (int i = recentFiles.length - 1; i >= 0; i--) {
-            jmrfRecentFiles.add(createRecentFileMenuItem(jmrfRecentFiles, recentFiles[i]));
+        for (int i = recentFiles.size() - 1; i >= 0; i--) {
+            jmrfRecentFiles.add(createRecentFileMenuItem(jmrfRecentFiles, new File(recentFiles.get(i))));
         }
 
         if (!OperatingSystem.isMacOs()) {
@@ -803,7 +802,7 @@ public final class KseFrame implements StatusBar {
         jmView = new JMenu(res.getString("KseFrame.jmView.text"));
         PlatformUtil.setMnemonic(jmView, res.getString("KseFrame.jmView.mnemonic").charAt(0));
 
-        boolean showToolBar = applicationSettings.getShowToolBar();
+        boolean showToolBar = preferences.isShowToolBar();
 
         jcbmiShowHideToolBar = new JCheckBoxMenuItem(showHideToolBarAction);
         jcbmiShowHideToolBar.setState(showToolBar);
@@ -815,7 +814,7 @@ public final class KseFrame implements StatusBar {
         jmView.add(jcbmiShowHideToolBar);
 
         jcbmiShowHideStatusBar = new JCheckBoxMenuItem(showHideStatusBarAction);
-        jcbmiShowHideStatusBar.setState(applicationSettings.getShowStatusBar());
+        jcbmiShowHideStatusBar.setState(preferences.isShowStatusBar());
         PlatformUtil.setMnemonic(jcbmiShowHideStatusBar,
                                  res.getString("KseFrame.jcbmiShowHideStatusBar.mnemonic").charAt(0));
         jcbmiShowHideStatusBar.setToolTipText(null);
@@ -849,7 +848,7 @@ public final class KseFrame implements StatusBar {
         bgTabStyles.add(jrbmiTabStyleWrap);
         bgTabStyles.add(jrbmiTabStyleScroll);
 
-        int tabLayout = applicationSettings.getTabLayout();
+        int tabLayout = preferences.getTabLayout();
 
         if (tabLayout == JTabbedPane.WRAP_TAB_LAYOUT) {
             jrbmiTabStyleWrap.setSelected(true);
@@ -1485,7 +1484,7 @@ public final class KseFrame implements StatusBar {
 
         jtbToolBar.add(jbHelp);
 
-        if (applicationSettings.getShowToolBar()) {
+        if (preferences.isShowToolBar()) {
             frame.getContentPane().add(jtbToolBar, BorderLayout.NORTH);
         }
     }
@@ -1499,7 +1498,7 @@ public final class KseFrame implements StatusBar {
 
         jkstpKeyStores = new JKeyStoreTabbedPane(this);
 
-        int tabLayout = applicationSettings.getTabLayout();
+        int tabLayout = preferences.getTabLayout();
         jkstpKeyStores.setTabLayoutPolicy(tabLayout);
 
         jkstpKeyStores.setBorder(new EmptyBorder(3, 3, 3, 3));
@@ -1529,7 +1528,7 @@ public final class KseFrame implements StatusBar {
             }
         });
 
-        Rectangle sizeAndPosition = applicationSettings.getSizeAndPosition();
+        Rectangle sizeAndPosition = preferences.getMainWindowSizeAndPosition();
         int width = sizeAndPosition.width;
         int height = sizeAndPosition.height;
 
@@ -1558,8 +1557,8 @@ public final class KseFrame implements StatusBar {
     }
 
     private JTable createEmptyKeyStoreTable() {
-        keyStoreTableColumns = applicationSettings.getKeyStoreTableColumns();
-        KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
+        keyStoreTableColumns = preferences.getKeyStoreTableColumns();
+        KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns, preferences.getExpiryWarnDays());
         final JKseTable jtKeyStore = new JKseTable(ksModel);
 
         RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
@@ -1714,7 +1713,7 @@ public final class KseFrame implements StatusBar {
 
         setDefaultStatusBarText();
 
-        if (applicationSettings.getShowStatusBar()) {
+        if (preferences.isShowStatusBar()) {
             frame.getContentPane().add(jlStatusBar, BorderLayout.SOUTH);
         }
     }
@@ -2428,16 +2427,17 @@ public final class KseFrame implements StatusBar {
     /**
      * Re-draw all keystore tables
      *
-     * @param applicationSettings settings
+     * @param preferences settings
      */
-    public void redrawKeyStores(ApplicationSettings applicationSettings) {
+    public void redrawKeyStores(KsePreferences preferences) {
         if (keyStoreTables != null) {
 
-            keyStoreTableColumns = applicationSettings.getKeyStoreTableColumns();
+            keyStoreTableColumns = preferences.getKeyStoreTableColumns();
+            int expiryWarnDays = preferences.getExpiryWarnDays();
 
             for (JTable keyStoreTable : keyStoreTables) {
                 KeyStoreHistory history = ((KeyStoreTableModel) keyStoreTable.getModel()).getHistory();
-                KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns);
+                KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns, expiryWarnDays);
                 try {
                     ksModel.load(history);
                     keyStoreTable.setModel(ksModel);
@@ -2445,9 +2445,9 @@ public final class KseFrame implements StatusBar {
                     RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
                     keyStoreTable.setRowSorter(sorter);
                     if (keyStoreTable instanceof JKseTable) {
-                    	JKseTable keyStoreTab = (JKseTable)keyStoreTable;
-                    	keyStoreTab.setColumnsToIconSize(0, 1, 2);
-                    	keyStoreTab.colAdjust(keyStoreTableColumns, autoResizeMode);
+                        JKseTable keyStoreTab = (JKseTable) keyStoreTable;
+                        keyStoreTab.setColumnsToIconSize(0, 1, 2);
+                        keyStoreTab.colAdjust(keyStoreTableColumns, autoResizeMode);
                     }
                 } catch (GeneralSecurityException | CryptoException e) {
                     DError.displayError(frame, e);
@@ -3096,7 +3096,7 @@ public final class KseFrame implements StatusBar {
     public void setKeyStoreTabLayoutPolicy(int tabLayoutPolicy) {
         if (tabLayoutPolicy == JTabbedPane.WRAP_TAB_LAYOUT || tabLayoutPolicy == JTabbedPane.SCROLL_TAB_LAYOUT) {
             jkstpKeyStores.setTabLayoutPolicy(tabLayoutPolicy);
-            applicationSettings.setTabLayout(tabLayoutPolicy);
+            preferences.setTabLayout(tabLayoutPolicy);
         }
     }
 
@@ -3115,10 +3115,10 @@ public final class KseFrame implements StatusBar {
 
         if (toolBarShown) {
             frame.getContentPane().remove(jtbToolBar);
-            applicationSettings.setShowToolBar(false);
+            preferences.setShowToolBar(false);
         } else {
             frame.getContentPane().add(jtbToolBar, BorderLayout.NORTH);
-            applicationSettings.setShowToolBar(true);
+            preferences.setShowToolBar(true);
         }
     }
 
@@ -3137,10 +3137,10 @@ public final class KseFrame implements StatusBar {
 
         if (statusBarShown) {
             frame.getContentPane().remove(jlStatusBar);
-            applicationSettings.setShowStatusBar(false);
+            preferences.setShowStatusBar(false);
         } else {
             frame.getContentPane().add(jlStatusBar, BorderLayout.SOUTH);
-            applicationSettings.setShowStatusBar(true);
+            preferences.setShowStatusBar(true);
         }
     }
 }

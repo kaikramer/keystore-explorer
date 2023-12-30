@@ -88,7 +88,7 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
 
             DChangePassword dChangePassword = new DChangePassword(frame, DOCUMENT_MODAL, res.getString(
                     "SetKeyPairPasswordAction.SetKeyPairPassword.Title"), oldPassword,
-                                                                  applicationSettings.getPasswordQualityConfig());
+                                                                  preferences.getPasswordQualityConfig());
             dChangePassword.setLocationRelativeTo(frame);
             dChangePassword.setVisible(true);
 

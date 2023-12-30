@@ -22,6 +22,9 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
@@ -29,6 +32,7 @@ import javax.swing.KeyStroke;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.KseRestart;
+import org.kse.gui.preferences.PreferencesManager;
 
 /**
  * Action to exit.
@@ -81,10 +85,12 @@ public class ExitAction extends CloseAllAction {
         }
 
         // Save dynamic application settings
-        applicationSettings.setSizeAndPosition(kseFrame.getSizeAndPosition(keyStoresClosed));
-        applicationSettings.setRecentFiles(kseFrame.getRecentFiles());
-        applicationSettings.setCurrentDirectory(CurrentDirectory.get());
-        applicationSettings.save();
+        preferences.setMainWindowSizeAndPosition(kseFrame.getSizeAndPosition(keyStoresClosed));
+        preferences.setRecentFiles(Arrays.stream(kseFrame.getRecentFiles())
+                                         .map(File::getAbsolutePath)
+                                         .collect(Collectors.toList()));
+        preferences.setCurrentDirectory(CurrentDirectory.get().getAbsolutePath());
+        PreferencesManager.persist();
 
         if (restart) {
             KseRestart.restart();

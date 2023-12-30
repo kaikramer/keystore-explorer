@@ -48,11 +48,11 @@ import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.Password;
 import org.kse.crypto.filetype.CryptoFileUtil;
+import org.kse.gui.preferences.PreferencesManager;
 
 /**
  * Provides utility methods for loading/saving KeyStores. The BouncyCastle
@@ -230,7 +230,7 @@ public final class KeyStoreUtil {
     public static KeyStore loadMsCapiStore(MsCapiStoreType msCapiStoreType) throws CryptoException {
         if (!areMsCapiStoresSupported()) {
             // May previously have been set on an MSCAPI supporting JRE
-            ApplicationSettings.getInstance().setUseWindowsTrustedRootCertificates(false);
+            PreferencesManager.getPreferences().getCaCertsSettings().setUseWindowsTrustedRootCertificates(false);
             throw new CryptoException(res.getString("MsCapiStoresNotSupported.exception.message"));
         }
 

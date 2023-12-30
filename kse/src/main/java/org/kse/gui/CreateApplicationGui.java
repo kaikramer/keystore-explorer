@@ -30,7 +30,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.AuthorityCertificates;
 import org.kse.KSE;
 import org.kse.crypto.jcepolicy.JcePolicyUtil;
@@ -38,6 +37,7 @@ import org.kse.gui.actions.CheckUpdateAction;
 import org.kse.gui.crypto.DUpgradeCryptoStrength;
 import org.kse.gui.dnd.DroppedFileHandler;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.os.OperatingSystem;
 import org.kse.version.JavaVersion;
 import org.kse.version.VersionException;
@@ -51,17 +51,17 @@ public class CreateApplicationGui implements Runnable {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
     private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_180;
-    private ApplicationSettings applicationSettings;
+    private KsePreferences ksePreferences;
     private List<File> parameterFiles;
 
     /**
      * Construct CreateApplicationGui.
      *
-     * @param applicationSettings Application settings
+     * @param ksePreferences Application settings
      * @param parameterFiles      File list to open
      */
-    public CreateApplicationGui(ApplicationSettings applicationSettings, List<File> parameterFiles) {
-        this.applicationSettings = applicationSettings;
+    public CreateApplicationGui(KsePreferences ksePreferences, List<File> parameterFiles) {
+        this.ksePreferences = ksePreferences;
         this.parameterFiles = parameterFiles;
     }
 
@@ -75,7 +75,7 @@ public class CreateApplicationGui implements Runnable {
                 System.exit(1);
             }
 
-            initLookAndFeel(applicationSettings);
+            initLookAndFeel(ksePreferences);
 
             // try to remove crypto restrictions
             JcePolicyUtil.removeRestrictions();
@@ -119,7 +119,7 @@ public class CreateApplicationGui implements Runnable {
 
     private void checkCaCerts(final KseFrame kseFrame) {
 
-        File caCertificatesFile = applicationSettings.getCaCertificatesFile();
+        File caCertificatesFile = new File(ksePreferences.getCaCertsSettings().getCaCertificatesFile());
 
         if (caCertificatesFile.exists()) {
             return;
@@ -136,7 +136,7 @@ public class CreateApplicationGui implements Runnable {
                                                          KSE.getApplicationName(), JOptionPane.YES_NO_OPTION);
 
             if (selected == JOptionPane.YES_OPTION) {
-                applicationSettings.setCaCertificatesFile(newCaCertsFile);
+                ksePreferences.getCaCertsSettings().setCaCertificatesFile(newCaCertsFile.getAbsolutePath());
             }
         });
     }
@@ -152,7 +152,7 @@ public class CreateApplicationGui implements Runnable {
         }).start();
     }
 
-    private static void initLookAndFeel(ApplicationSettings applicationSettings) {
+    private static void initLookAndFeel(KsePreferences applicationSettings) {
         LnfUtil.installLnfs();
 
         String lookFeelClassName = applicationSettings.getLookAndFeelClass();
@@ -163,7 +163,7 @@ public class CreateApplicationGui implements Runnable {
         }
         LnfUtil.useLnf(lookFeelClassName);
 
-        boolean lookFeelDecorated = applicationSettings.getLookAndFeelDecorated();
+        boolean lookFeelDecorated = applicationSettings.isLookAndFeelDecorated();
 
         JFrame.setDefaultLookAndFeelDecorated(lookFeelDecorated);
         JDialog.setDefaultLookAndFeelDecorated(lookFeelDecorated);

@@ -64,7 +64,6 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.util.encoders.Hex;
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -85,6 +84,8 @@ import org.kse.gui.crypto.JCertificateFingerprint;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -100,6 +101,8 @@ public class DViewCertificate extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+
+    private KsePreferences preferences = PreferencesManager.getPreferences();
 
     public static final int NONE = 0;
     public static final int IMPORT = 1;
@@ -610,7 +613,7 @@ public class DViewCertificate extends JEscDialog {
 
                 jcfFingerprint.setEncodedCertificate(encodedCertificate);
 
-                jcfFingerprint.setFingerprintAlg(ApplicationSettings.getInstance().getCertificateFingerprintType());
+                jcfFingerprint.setFingerprintAlg(preferences.getCertificateFingerprintAlgorithm());
 
                 Set<?> critExts = cert.getCriticalExtensionOIDs();
                 Set<?> nonCritExts = cert.getNonCriticalExtensionOIDs();
@@ -685,7 +688,7 @@ public class DViewCertificate extends JEscDialog {
     }
 
     private void okPressed() {
-        ApplicationSettings.getInstance().setCertificateFingerprintType(jcfFingerprint.getSelectedFingerprintAlg());
+        preferences.setCertificateFingerprintAlgorithm(jcfFingerprint.getSelectedFingerprintAlg());
         closeDialog();
     }
 

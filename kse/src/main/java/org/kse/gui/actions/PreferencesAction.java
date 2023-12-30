@@ -19,6 +19,8 @@
  */
 package org.kse.gui.actions;
 
+import static org.kse.utilities.net.ProxySettingsUpdater.updateSettings;
+
 import java.awt.Toolkit;
 import java.io.File;
 
@@ -28,9 +30,8 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import org.kse.crypto.csr.pkcs12.Pkcs12Util;
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.AuthorityCertificates;
+import org.kse.crypto.csr.pkcs12.Pkcs12Util;
 import org.kse.gui.KseFrame;
 import org.kse.gui.preferences.DPreferences;
 
@@ -70,24 +71,9 @@ public class PreferencesAction extends ExitAction {
      * Display the preferences dialog and store the user's choices.
      */
     public void showPreferences() {
-        ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+        File caCertificatesFile = new File(preferences.getCaCertsSettings().getCaCertificatesFile());
 
-        File caCertificatesFile = applicationSettings.getCaCertificatesFile();
-
-        DPreferences dPreferences = new DPreferences(frame, applicationSettings.getUseCaCertificates(),
-                                                     caCertificatesFile,
-                                                     applicationSettings.getUseWindowsTrustedRootCertificates(),
-                                                     applicationSettings.getEnableImportTrustedCertTrustCheck(),
-                                                     applicationSettings.getEnableImportCaReplyTrustCheck(),
-                                                     applicationSettings.getPasswordQualityConfig(),
-                                                     applicationSettings.getDefaultDN(),
-                                                     applicationSettings.getLanguage(),
-                                                     applicationSettings.isAutoUpdateCheckEnabled(),
-                                                     applicationSettings.getAutoUpdateCheckInterval(),
-                                                     applicationSettings.getKeyStoreTableColumns(),
-                                                     applicationSettings.isShowHiddenFilesEnabled(),
-                                                     applicationSettings.getPkcs12EncryptionSetting(),
-                                                     applicationSettings.getSerialNumberLengthInBytes());
+        DPreferences dPreferences = new DPreferences(frame, preferences);
         dPreferences.setLocationRelativeTo(frame);
         dPreferences.setVisible(true);
 
@@ -104,38 +90,39 @@ public class PreferencesAction extends ExitAction {
 
         caCertificatesFile = tmpFile;
 
-        applicationSettings.setCaCertificatesFile(caCertificatesFile);
-        applicationSettings.setUseCaCertificates(dPreferences.getUseCaCertificates());
-        applicationSettings.setUseWindowsTrustedRootCertificates(dPreferences.getUseWinTrustRootCertificates());
-        applicationSettings.setEnableImportTrustedCertTrustCheck(dPreferences.getEnableImportTrustedCertTrustCheck());
-        applicationSettings.setEnableImportCaReplyTrustCheck(dPreferences.getEnableImportCaReplyTrustCheck());
-        applicationSettings.setPasswordQualityConfig(dPreferences.getPasswordQualityConfig());
-        applicationSettings.setDefaultDN(dPreferences.getDefaultDN());
-        applicationSettings.setAutoUpdateCheckEnabled(dPreferences.isAutoUpdateChecksEnabled());
-        applicationSettings.setAutoUpdateCheckInterval(dPreferences.getAutoUpdateChecksInterval());
-        applicationSettings.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
-        applicationSettings.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
-        applicationSettings.setSerialNumberLengthInBytes(dPreferences.getSerialNumberLengthInBytes());
+        preferences.getCaCertsSettings().setCaCertificatesFile(caCertificatesFile.getAbsolutePath());
+        preferences.getCaCertsSettings().setUseCaCertificates(dPreferences.getUseCaCertificates());
+        preferences.getCaCertsSettings().setUseWindowsTrustedRootCertificates(dPreferences.getUseWinTrustRootCertificates());
+        preferences.getCaCertsSettings().setImportTrustedCertTrustCheckEnabled(dPreferences.getEnableImportTrustedCertTrustCheck());
+        preferences.getCaCertsSettings().setImportCaReplyTrustCheckEnabled(dPreferences.getEnableImportCaReplyTrustCheck());
+        preferences.setPasswordQualityConfig(dPreferences.getPasswordQualityConfig());
+        preferences.setDefaultSubjectDN(dPreferences.getDefaultDN());
+        preferences.getAutoUpdateCheckSettings().setEnabled(dPreferences.isAutoUpdateChecksEnabled());
+        preferences.getAutoUpdateCheckSettings().setCheckInterval(dPreferences.getAutoUpdateChecksInterval());
+        preferences.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
+        preferences.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
+        preferences.setSerialNumberLengthInBytes(dPreferences.getSerialNumberLengthInBytes());
 
-        Pkcs12Util.setEncryptionStrength(applicationSettings.getPkcs12EncryptionSetting());
+        Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
 
-        UIManager.LookAndFeelInfo lookFeelInfo = dPreferences.getLookFeelInfo();
-        applicationSettings.setLookAndFeelClass(lookFeelInfo.getClassName());
-
-        boolean lookAndFeelDecorated = dPreferences.getLookFeelDecoration();
-        applicationSettings.setLookAndFeelDecorated(lookAndFeelDecorated);
+        preferences.setLookAndFeelClass(dPreferences.getLookFeelInfo().getClassName());
+        preferences.setLookAndFeelDecorated(dPreferences.getLookFeelDecoration());
 
         String language = dPreferences.getLanguage();
-        boolean languageHasChanged = !language.equals(applicationSettings.getLanguage());
-        applicationSettings.setLanguage(language);
+        boolean languageHasChanged = !language.equals(preferences.getLanguage());
+        preferences.setLanguage(language);
 
         if (dPreferences.columnsChanged()) {
-            applicationSettings.setKeyStoreTableColumns(dPreferences.getColumns());
-            kseFrame.redrawKeyStores(applicationSettings);
+            preferences.setKeyStoreTableColumns(dPreferences.getColumns());
+            kseFrame.redrawKeyStores(preferences);
         }
 
-        if ((!lookFeelInfo.getClassName().equals(UIManager.getLookAndFeel().getClass().getName())) ||
-            (lookAndFeelDecorated != JFrame.isDefaultLookAndFeelDecorated()) || languageHasChanged) {
+        preferences.setExpiryWarnDays(dPreferences.getExpiryWarnDays());
+
+        preferences.setProxySettings(updateSettings(preferences.getProxySettings()));
+
+        if ((!dPreferences.getLookFeelInfo().getClassName().equals(UIManager.getLookAndFeel().getClass().getName())) ||
+            (dPreferences.getLookFeelDecoration() != JFrame.isDefaultLookAndFeelDecorated()) || languageHasChanged) {
             // L&F or language changed - restart required for upgrade to take effect
             JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
                                           res.getString("PreferencesAction.LookFeelChanged.Title"),

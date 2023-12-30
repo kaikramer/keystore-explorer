@@ -59,7 +59,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.privatekey.PrivateKeyUtils;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyType;
 import org.kse.gui.error.DError;
-import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
 
@@ -93,7 +93,7 @@ public class DViewPrivateKey extends JEscDialog {
     private String alias;
     private PrivateKey privateKey;
 
-    private ApplicationSettings applicationSettings;
+    private KsePreferences preferences;
 
     /**
      * Creates a new DViewPrivateKey dialog.
@@ -103,11 +103,12 @@ public class DViewPrivateKey extends JEscDialog {
      * @param privateKey Private key to display
      * @throws CryptoException A problem was encountered getting the private key's details
      */
-    public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, ApplicationSettings applicationSettings) throws CryptoException {
+    public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, KsePreferences preferences)
+            throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.alias = alias;
         this.privateKey = privateKey;
-        this.applicationSettings = applicationSettings;
+        this.preferences = preferences;
         initComponents();
     }
 
@@ -259,13 +260,13 @@ public class DViewPrivateKey extends JEscDialog {
         }
         try {
             if (dExportPrivateKeyType.exportPkcs8()) {
-                PrivateKeyUtils.exportAsPkcs8(privateKey, alias, (JFrame) this.getParent(), applicationSettings,
+                PrivateKeyUtils.exportAsPkcs8(privateKey, alias, (JFrame) this.getParent(), preferences,
                                               resActions);
             } else if (dExportPrivateKeyType.exportPvk()) {
-                PrivateKeyUtils.exportAsPvk(privateKey, alias, (JFrame) this.getParent(), applicationSettings,
+                PrivateKeyUtils.exportAsPvk(privateKey, alias, (JFrame) this.getParent(), preferences,
                                             resActions);
             } else {
-                PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, (JFrame) this.getParent(), applicationSettings,
+                PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, (JFrame) this.getParent(), preferences,
                                                 resActions);
             }
         } catch (Exception ex) {

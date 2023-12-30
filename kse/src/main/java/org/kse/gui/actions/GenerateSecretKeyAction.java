@@ -84,8 +84,8 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
      */
     public void generateSecret() {
         try {
-            int secretKeySize = applicationSettings.getGenerateSecretKeySize();
-            SecretKeyType secretKeyType = applicationSettings.getGenerateSecretKeyType();
+            int secretKeySize = preferences.getKeyGenerationDefaults().getSecretKeySize();
+            SecretKeyType secretKeyType = preferences.getKeyGenerationDefaults().getSecretKeyType();
 
             DGenerateSecretKey dGenerateSecretKey = new DGenerateSecretKey(frame, secretKeyType, secretKeySize);
             dGenerateSecretKey.setLocationRelativeTo(frame);
@@ -98,8 +98,8 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
             secretKeySize = dGenerateSecretKey.getSecretKeySize();
             secretKeyType = dGenerateSecretKey.getSecretKeyType();
 
-            applicationSettings.setGenerateSecretKeySize(secretKeySize);
-            applicationSettings.setGenerateSecretKeyType(secretKeyType);
+            preferences.getKeyGenerationDefaults().setSecretKeySize(secretKeySize);
+            preferences.getKeyGenerationDefaults().setSecretKeyType(secretKeyType);
 
             SecretKey secretKey = SecretKeyUtil.generateSecretKey(secretKeyType, secretKeySize);
 
@@ -137,8 +137,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 
             if (type.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"),
-                                                                      applicationSettings.getPasswordQualityConfig());
+                        "GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"), preferences.getPasswordQualityConfig());
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();

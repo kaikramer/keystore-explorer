@@ -23,7 +23,7 @@ import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyOpenSsl;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyPkcs8;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyPvk;
-import org.kse.gui.preferences.ApplicationSettings;
+import org.kse.gui.preferences.data.KsePreferences;
 
 public class PrivateKeyUtils {
 
@@ -33,19 +33,19 @@ public class PrivateKeyUtils {
      * @param privateKey          Private key
      * @param alias               Name of alias or file name
      * @param frame               The parent frame
-     * @param applicationSettings Password quality configuration
+     * @param preferences Password quality configuration
      * @param res                 ResourceBundle
      * @throws CryptoException
      * @throws IOException
      */
     public static void exportAsPkcs8(PrivateKey privateKey, String alias, JFrame frame,
-                                     ApplicationSettings applicationSettings, ResourceBundle res)
+                                     KsePreferences preferences, ResourceBundle res)
             throws CryptoException, IOException {
         File exportFile = null;
 
         try {
             DExportPrivateKeyPkcs8 dExportPrivateKeyPkcs8 =
-                    new DExportPrivateKeyPkcs8(frame, alias, applicationSettings.getPasswordQualityConfig());
+                    new DExportPrivateKeyPkcs8(frame, alias, preferences.getPasswordQualityConfig());
             dExportPrivateKeyPkcs8.setLocationRelativeTo(frame);
             dExportPrivateKeyPkcs8.setVisible(true);
 
@@ -117,19 +117,19 @@ public class PrivateKeyUtils {
      * @param privateKey            Private key
      * @param alias                 Name of alias or file name
      * @param frame                 The parent frame
-     * @param applicationSettings   Password quality configuration
+     * @param preferences           Password quality configuration
      * @param res                   ResourceBundle
      * @throws CryptoException
      * @throws IOException
      */
     public static void exportAsPvk(PrivateKey privateKey, String alias, JFrame frame,
-                                   ApplicationSettings applicationSettings, ResourceBundle res)
+                                   KsePreferences preferences, ResourceBundle res)
             throws CryptoException, IOException {
         File exportFile = null;
 
         try {
             DExportPrivateKeyPvk dExportPrivateKeyPvk = new DExportPrivateKeyPvk(frame, alias, privateKey,
-                                                                                 applicationSettings.getPasswordQualityConfig());
+                                                                                 preferences.getPasswordQualityConfig());
             dExportPrivateKeyPvk.setLocationRelativeTo(frame);
             dExportPrivateKeyPvk.setVisible(true);
 
@@ -194,19 +194,19 @@ public class PrivateKeyUtils {
      * @param privateKey          Private key
      * @param alias               Name of alias or file name
      * @param frame               The parent frame
-     * @param applicationSettings Password quality configuration
+     * @param preferences Password quality configuration
      * @param res                 ResourceBundle
      * @throws CryptoException
      * @throws IOException
      */
     public static void exportAsOpenSsl(PrivateKey privateKey, String alias, JFrame frame,
-                                       ApplicationSettings applicationSettings, ResourceBundle res)
+                                       KsePreferences preferences, ResourceBundle res)
             throws CryptoException, IOException {
         File exportFile = null;
 
         try {
             DExportPrivateKeyOpenSsl dExportPrivateKeyOpenSsl =
-                    new DExportPrivateKeyOpenSsl(frame, alias, applicationSettings.getPasswordQualityConfig());
+                    new DExportPrivateKeyOpenSsl(frame, alias, preferences.getPasswordQualityConfig());
             dExportPrivateKeyOpenSsl.setLocationRelativeTo(frame);
             dExportPrivateKeyOpenSsl.setVisible(true);
 

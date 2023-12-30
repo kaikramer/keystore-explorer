@@ -18,28 +18,41 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kse.crypto.csr.pkcs12;
+package org.kse.gui.preferences.data;
 
-import org.kse.gui.preferences.data.Pkcs12EncryptionSetting;
+import java.time.LocalDate;
 
 /**
- * Provides utility methods relating to PKCS #12 containers.
+ * Config bean for storing settings for automatic update check
  */
-public class Pkcs12Util {
+public class AutoUpdateCheckSettings {
 
-    /**
-     * Updates encryption algorithms to the given settings.
-     *
-     * @param pkcs12EncryptionSetting Setting for strength of P12 encryption algorithms
-     */
-    public static void setEncryptionStrength(Pkcs12EncryptionSetting pkcs12EncryptionSetting) {
-        switch (pkcs12EncryptionSetting) {
-        case strong:
-            System.clearProperty("keystore.pkcs12.legacy");
-            break;
-        case legacy:
-            System.setProperty("keystore.pkcs12.legacy", "true");
-            break;
-        }
+    private boolean enabled = true;
+    private LocalDate lastCheck = LocalDate.now();
+    private int checkInterval = 14;
+
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public LocalDate getLastCheck() {
+        return lastCheck;
+    }
+
+    public void setLastCheck(LocalDate lastCheck) {
+        this.lastCheck = lastCheck;
+    }
+
+    public int getCheckInterval() {
+        return checkInterval;
+    }
+
+    public void setCheckInterval(int checkInterval) {
+        this.checkInterval = checkInterval;
     }
 }

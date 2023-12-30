@@ -18,27 +18,17 @@
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kse.gui.preferences;
+package org.kse.gui.preferences.json;
+
+import com.fasterxml.jackson.jr.ob.JacksonJrExtension;
+import com.fasterxml.jackson.jr.ob.api.ExtensionContext;
 
 /**
- * Language class for supporting language text.
+ * Register custom converters for jackson-jr
  */
-class LanguageItem {
-    private String displayName;
-    private String isoCode;
-
-    public LanguageItem(String displayName, String isoCode) {
-        super();
-        this.displayName = displayName;
-        this.isoCode = isoCode;
-    }
-
-    public String getIsoCode() {
-        return isoCode;
-    }
-
+public class KseJacksonJrExtension extends JacksonJrExtension {
     @Override
-    public String toString() {
-        return displayName;
+    protected void register(ExtensionContext ctxt) {
+        ctxt.appendProvider(new KseReaderWriterProvider());
     }
 }

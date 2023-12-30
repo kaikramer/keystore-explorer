@@ -107,35 +107,35 @@ public class JKseTable extends JTable {
             }
             int l = width;
 
-            if (i == keyStoreTableColumns.colEntryName()) {
+            if (i == keyStoreTableColumns.colIndexEntryName()) {
                 column.setMinWidth((2 + res.getString("KeyStoreTableModel.NameColumn")).length() * iFontSize);
                 column.setPreferredWidth(
                         Math.max(1 + res.getString("KeyStoreTableModel.NameColumn").length(), 20) * iFontSize);
                 column.setMaxWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.NameColumn").length(), 50) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colAlgorithm()) {
+            if (i == keyStoreTableColumns.colIndexAlgorithm()) {
                 column.setMinWidth((4) * iFontSize);
                 column.setPreferredWidth(
                         Math.max(1 + res.getString("KeyStoreTableModel.AlgorithmColumn").length(), 4) * iFontSize);
                 column.setMaxWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.AlgorithmColumn").length(), 5) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colKeySize()) {
+            if (i == keyStoreTableColumns.colIndexKeySize()) {
                 column.setMinWidth((4) * iFontSize);
                 column.setPreferredWidth(
                         Math.max(1 + res.getString("KeyStoreTableModel.KeySizeColumn").length(), (l + 1)) * iFontSize);
                 column.setMaxWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.KeySizeColumn").length(), l + 1) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colCurve()) {
+            if (i == keyStoreTableColumns.colIndexCurve()) {
                 column.setMinWidth(8 * iFontSize);
                 column.setPreferredWidth(
                         1 + Math.max(res.getString("KeyStoreTableModel.CurveColumn").length(), l) * iFontSize);
                 column.setMaxWidth(2 + Math.max("brainpool999r1".length(),
                                                 res.getString("KeyStoreTableModel.CurveColumn").length()) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colCertificateExpiry()) {
+            if (i == keyStoreTableColumns.colIndexCertificateExpiry()) {
                 l = "20.00.2000 00:00:00 MESZ".length();
                 column.setMinWidth("20.00.2000".length() * iFontSize);
                 column.setPreferredWidth(
@@ -143,7 +143,7 @@ public class JKseTable extends JTable {
                 column.setMaxWidth(
                         2 + Math.max(res.getString("KeyStoreTableModel.CertExpiryColumn").length(), l) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colLastModified()) {
+            if (i == keyStoreTableColumns.colIndexLastModified()) {
                 l = "20.09.2000 00:00:00 MESZ".length();
                 column.setMinWidth("20.00.2000".length() * iFontSize);
                 column.setPreferredWidth(
@@ -151,7 +151,7 @@ public class JKseTable extends JTable {
                 column.setMaxWidth(
                         2 + Math.max(res.getString("KeyStoreTableModel.LastModifiedColumn").length(), l) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colAKI()) {
+            if (i == keyStoreTableColumns.colIndexAKI()) {
                 l = 41;
                 column.setMinWidth(8 * iFontSize);
                 column.setPreferredWidth(
@@ -159,7 +159,7 @@ public class JKseTable extends JTable {
                 column.setMaxWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.AKIColumn").length(), (l + 1)) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colSKI()) {
+            if (i == keyStoreTableColumns.colIndexSKI()) {
                 l = 41;
                 column.setMinWidth(8 * iFontSize);
                 column.setPreferredWidth(
@@ -167,19 +167,19 @@ public class JKseTable extends JTable {
                 column.setMaxWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.SKIColumn").length(), (l + 1)) * iFontSize);
             }
-            if (i == keyStoreTableColumns.colIssuerCN()) {
+            if (i == keyStoreTableColumns.colIndexIssuerCN()) {
                 column.setMinWidth(8 * iFontSize);
                 column.setPreferredWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.IssuerCNColumn").length(), (l + 1)) * iFontSize);
                 column.setMaxWidth(100 * iFontSize);
             }
-            if (i == keyStoreTableColumns.colIssuerDN()) {
+            if (i == keyStoreTableColumns.colIndexIssuerDN()) {
                 column.setMinWidth(8 * iFontSize);
                 column.setPreferredWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.IssuerDNColumn").length(), (l + 1)) * iFontSize);
                 column.setMaxWidth(100 * iFontSize);
             }
-            if (i == keyStoreTableColumns.colIssuerO()) {
+            if (i == keyStoreTableColumns.colIndexIssuerO()) {
                 column.setMinWidth(8 * iFontSize);
                 column.setPreferredWidth(
                         Math.max(2 + res.getString("KeyStoreTableModel.IssuerOColumn").length(), (l + 1)) * iFontSize);

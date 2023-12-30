@@ -107,35 +107,35 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
                 header.setHorizontalAlignment(LEFT);
                 header.setIcon(null);
 
-                if (col == keyStoreTableColumns.colEntryName()) {
+                if (col == keyStoreTableColumns.colIndexEntryName()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.NameColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colAlgorithm()) {
+                } else if (col == keyStoreTableColumns.colIndexAlgorithm()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.AlgorithmColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colKeySize()) {
+                } else if (col == keyStoreTableColumns.colIndexKeySize()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.KeySizeColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colCertificateValidityStart()) {
+                } else if (col == keyStoreTableColumns.colIndexCertificateValidityStart()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertValidityStartColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colCertificateExpiry()) {
+                } else if (col == keyStoreTableColumns.colIndexCertificateExpiry()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertExpiryColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colLastModified()) {
+                } else if (col == keyStoreTableColumns.colIndexLastModified()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.LastModifiedColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colAKI()) {
+                } else if (col == keyStoreTableColumns.colIndexAKI()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.AKIColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colSKI()) {
+                } else if (col == keyStoreTableColumns.colIndexSKI()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.SKIColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIssuerDN()) {
+                } else if (col == keyStoreTableColumns.colIndexIssuerDN()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerDNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colSubjectDN()) {
+                } else if (col == keyStoreTableColumns.colIndexSubjectDN()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectDNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIssuerCN()) {
+                } else if (col == keyStoreTableColumns.colIndexIssuerCN()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerCNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colSubjectCN()) {
+                } else if (col == keyStoreTableColumns.colIndexSubjectCN()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectCNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIssuerO()) {
+                } else if (col == keyStoreTableColumns.colIndexIssuerO()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerOColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colSubjectO()) {
+                } else if (col == keyStoreTableColumns.colIndexSubjectO()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectOColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colCurve()) {
+                } else if (col == keyStoreTableColumns.colIndexCurve()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.CurveColumn.tooltip"));
                 }
             }

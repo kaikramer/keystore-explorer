@@ -41,10 +41,11 @@ import javax.swing.SwingUtilities;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.kse.gui.preferences.ApplicationSettings;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dnchooser.DistinguishedNameChooser;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -71,7 +72,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
     String defaultDN;
 
-    private transient ApplicationSettings applicationSettings = ApplicationSettings.getInstance();
+    private transient KsePreferences preferences = PreferencesManager.getPreferences();
 
     /**
      * Creates a new DDistinguishedNameChooser dialog.
@@ -105,7 +106,7 @@ public class DDistinguishedNameChooser extends JEscDialog {
 
     private void initComponents() {
 
-        defaultDN = applicationSettings.getDefaultDN();
+        defaultDN = preferences.getDefaultSubjectDN();
 
         jbReset = new JButton(res.getString("DDistinguishedNameChooser.jbReset.text"));
         PlatformUtil.setMnemonic(jbReset, res.getString("DDistinguishedNameChooser.jbReset.mnemonic").charAt(0));
