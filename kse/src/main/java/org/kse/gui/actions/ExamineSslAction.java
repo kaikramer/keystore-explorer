@@ -21,7 +21,9 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
@@ -31,8 +33,6 @@ import org.kse.gui.dialogs.DExamineSsl;
 import org.kse.gui.dialogs.DExaminingSsl;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.error.DError;
-import org.kse.utilities.history.KeyStoreHistory;
-import org.kse.utilities.ssl.SslConnectionInfos;
 
 /**
  * Action to examine an SSL connection's certificates.
@@ -70,27 +70,25 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
 
             String sslHost = dExamineSsl.getSslHost();
             int sslPort = dExamineSsl.getSslPort();
-            boolean useClientAuth = dExamineSsl.useClientAuth();
-            KeyStoreHistory ksh = dExamineSsl.getKeyStore();
 
             if (dExamineSsl.wasCancelled()) {
                 return;
             }
 
-            DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort, useClientAuth, ksh);
+            DExaminingSsl dExaminingSsl = new DExaminingSsl(frame, sslHost, sslPort);
             dExaminingSsl.setLocationRelativeTo(frame);
             dExaminingSsl.startExamination();
             dExaminingSsl.setVisible(true);
 
-            SslConnectionInfos sslInfos = dExaminingSsl.getSSLConnectionInfos();
+            List<X509Certificate> certificates = dExaminingSsl.getServerCertificates();
 
-            if (sslInfos == null || sslInfos.getServerCertificates() == null) {
+            if (certificates.isEmpty()) {
                 return;
             }
 
             DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
                     res.getString("ExamineSslAction.CertDetailsSsl.Title"), sslHost, Integer.toString(sslPort)),
-                                                                     sslInfos.getServerCertificates(), kseFrame,
+                                                                     certificates.toArray(new X509Certificate[0]), kseFrame,
                                                                      DViewCertificate.IMPORT_EXPORT);
             dViewCertificate.setLocationRelativeTo(frame);
             dViewCertificate.setVisible(true);

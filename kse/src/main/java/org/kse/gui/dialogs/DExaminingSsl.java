@@ -26,8 +26,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.security.KeyStore;
+import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -43,14 +45,11 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.kse.crypto.Password;
+import nl.altindag.ssl.util.CertificateUtils;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
-import org.kse.utilities.history.KeyStoreHistory;
-import org.kse.utilities.ssl.SslConnectionInfos;
-import org.kse.utilities.ssl.SslUtils;
 
 /**
  * Examines an SSL connection's certificates - a process which the user may
@@ -72,9 +71,7 @@ public class DExaminingSsl extends JEscDialog {
 
     private String sslHost;
     private int sslPort;
-    private KeyStore keyStore;
-    private char[] password;
-    private SslConnectionInfos sslInfos;
+    private List<X509Certificate> serverCertificates;
     private Thread examiner;
 
     /**
@@ -83,24 +80,13 @@ public class DExaminingSsl extends JEscDialog {
      * @param parent        The parent frame
      * @param sslHost       SSL connection's host name
      * @param sslPort       SSL connection's port number
-     * @param useClientAuth Try to connect with client certificate
-     * @param ksh           KeyStore with client certificate
      */
-    public DExaminingSsl(JFrame parent, String sslHost, int sslPort, boolean useClientAuth, KeyStoreHistory ksh) {
+    public DExaminingSsl(JFrame parent, String sslHost, int sslPort) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 
         this.sslHost = sslHost;
         this.sslPort = sslPort;
 
-        if (useClientAuth) {
-            this.keyStore = ksh.getCurrentState().getKeyStore();
-
-            // some keystore types like MSCAPI and PKCS#11 have no password stored in their state
-            Password pwd = ksh.getCurrentState().getPassword();
-            if (pwd != null) {
-                this.password = pwd.toCharArray();
-            }
-        }
         initComponents();
     }
 
@@ -166,14 +152,8 @@ public class DExaminingSsl extends JEscDialog {
         examiner.start();
     }
 
-    /**
-     * Get the SSL connection's certificates and some details like protocol version or cipher suite.
-     *
-     * @return The SSL connection's details or null if the user cancelled
-     *         the dialog or an error occurred
-     */
-    public SslConnectionInfos getSSLConnectionInfos() {
-        return sslInfos;
+    public List<X509Certificate> getServerCertificates() {
+        return serverCertificates;
     }
 
     private void cancelPressed() {
@@ -192,7 +172,8 @@ public class DExaminingSsl extends JEscDialog {
         @Override
         public void run() {
             try {
-                sslInfos = SslUtils.readSSLConnectionInfos(sslHost, sslPort, keyStore, password);
+                URL url = new URL(MessageFormat.format("https://{0}:{1}/", sslHost, "" + sslPort));
+                serverCertificates = CertificateUtils.getCertificatesFromExternalSource(url.toString());
 
                 SwingUtilities.invokeLater(() -> {
                     if (DExaminingSsl.this.isShowing()) {
