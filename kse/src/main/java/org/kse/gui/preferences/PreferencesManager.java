@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.kse.gui.JEscFrame;
+import org.kse.gui.KseRestart;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.json.KseJacksonJrExtension;
@@ -51,6 +52,7 @@ public class PreferencesManager {
     private static final String CONFIG_BASE_DIR = "kse";
     private static final String CONFIG_DOTTED_BASE_DIR = ".kse";
     private static final String CONFIG_FILE_NAME = "config.json";
+    private static final String ENV_VAR_CONFIG_DIR = "KSE_CONFIG_DIR";
 
     private static KsePreferences ksePreferences;
 
@@ -77,7 +79,7 @@ public class PreferencesManager {
         try {
             return json.beanFrom(KsePreferences.class, determineConfigFilePath());
         } catch (FileNotFoundException e) {
-            // ignore
+            // ignore, happens always on first run
             return new KsePreferences();
         } catch (Exception e) {
             DError.displayError(new JEscFrame(), e);
@@ -85,14 +87,30 @@ public class PreferencesManager {
         }
     }
 
-    private static File determineConfigFilePath() {
-        if (OperatingSystem.isWindows()) {
-            return new File(getAppDataConfigDir(), CONFIG_FILE_NAME);
-        } else if (OperatingSystem.isLinux()) {
-            return new File(getXdgConfigDir(), CONFIG_FILE_NAME);
-        } else if (OperatingSystem.isMacOs()){
-            return new File(getXdgConfigDir(), CONFIG_FILE_NAME);
+    private static File determineConfigFilePath() throws IOException {
+
+        // 1. Location with highest priority: Config dir set from outside via env var
+        File envDirConfigFile = new File(System.getenv(ENV_VAR_CONFIG_DIR), CONFIG_FILE_NAME);
+        if (envDirConfigFile.exists()) {
+            return envDirConfigFile.getCanonicalFile();
         }
+
+        // 2. Config found in KSE base directory (where kse.jar is located)
+        File kseInstallDirConfigFile = new File(System.getProperty(KseRestart.KSE_INSTALL_DIR), CONFIG_FILE_NAME);
+        if (kseInstallDirConfigFile.exists()) {
+            return kseInstallDirConfigFile.getCanonicalFile();
+        }
+
+        // 3. OS specific local/user config
+        if (OperatingSystem.isWindows()) {
+            return new File(getAppDataConfigDir(), CONFIG_FILE_NAME).getCanonicalFile();
+        } else if (OperatingSystem.isLinux()) {
+            return new File(getXdgConfigDir(), CONFIG_FILE_NAME).getCanonicalFile();
+        } else if (OperatingSystem.isMacOs()){
+            return new File(getXdgConfigDir(), CONFIG_FILE_NAME).getCanonicalFile();
+        }
+
+        // default to HOME dir
         return new File(System.getProperty("user.home"), ".kse" + File.separator + CONFIG_FILE_NAME);
     }
 
@@ -122,7 +140,7 @@ public class PreferencesManager {
             File configFile = determineConfigFilePath();
             configFile.getParentFile().mkdirs();
             json.write(ksePreferences, configFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             DError.displayError(new JEscFrame(), e);
         }
     }

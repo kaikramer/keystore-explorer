@@ -39,6 +39,7 @@ import org.kse.crypto.csr.pkcs12.Pkcs12Util;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CreateApplicationGui;
 import org.kse.gui.CurrentDirectory;
+import org.kse.gui.KseRestart;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.gui.preferences.data.KsePreferences;
@@ -158,7 +159,7 @@ public class KSE {
 
     private static void setInstallDirProperty() {
         // Use this for restarts; install directory is always user.dir, but we change user.dir in CurrentDirectory class
-        System.setProperty("kse.install.dir", System.getProperty("user.dir"));
+        System.setProperty(KseRestart.KSE_INSTALL_DIR, System.getProperty("user.dir"));
     }
 
     private static void setCurrentDirectory(String currentDir) {

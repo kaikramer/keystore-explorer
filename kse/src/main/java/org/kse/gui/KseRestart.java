@@ -35,7 +35,7 @@ public class KseRestart {
     private static final String JAVA_HOME = "java.home";
     private static final String JAVA_CLASS_PATH = "java.class.path";
 
-    private static final String KSE_INSTALL_DIR = "kse.install.dir";
+    public static final String KSE_INSTALL_DIR = "kse.install.dir";
 
     // macOS: location of native app stub (passed from appbundler)
     private static final String KSE_APP_STUB = "kse.app.stub";
