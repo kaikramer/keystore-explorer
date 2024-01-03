@@ -26,6 +26,7 @@ import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.text.MessageFormat;
+import java.util.Optional;
 
 import javax.crypto.SecretKey;
 import javax.swing.ImageIcon;
@@ -103,7 +104,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
                 PrivateKey privateKey = (PrivateKey) key;
 
                 DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
-                        res.getString("KeyDetailsAction.PrivateKeyDetailsEntry.Title"), alias), alias, privateKey, applicationSettings);
+                        res.getString("KeyDetailsAction.PrivateKeyDetailsEntry.Title"), alias), alias, privateKey, applicationSettings, Optional.empty());
                 dViewPrivateKey.setLocationRelativeTo(frame);
                 dViewPrivateKey.setVisible(true);
             } else if (key instanceof PublicKey) {
