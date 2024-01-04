@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2023 Kai Kramer
+ *           2013 - 2024 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -165,7 +165,7 @@ public class DAbout extends JEscDialog {
     }
 
     public static void main(String[] args) throws Exception {
-        String[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2023 Kai Kramer ..." };
+        String[] tickerItems = { "Copyright 2004 -2013 Wayne Grant, 2013 - 2024 Kai Kramer ..." };
         URL kseIconUrl = AboutAction.class.getResource("images/aboutdlg.png");
         DAbout dialog = new DAbout(new JFrame(), "About", "See help for details of the end user license agreement.",
                                    Toolkit.getDefaultToolkit().getImage(kseIconUrl), tickerItems);
