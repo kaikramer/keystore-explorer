@@ -30,6 +30,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Base64;
+import java.util.Optional;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -47,6 +48,7 @@ import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
+import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.signing.JarParser;
 import org.kse.crypto.x509.X509CertUtil;
@@ -254,6 +256,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
         PrivateKey privKey = null;
         Password password = null;
+        PrivateKeyFormat format = null;
 
         switch (fileType) {
         case ENC_PKCS8_PVK:
@@ -262,9 +265,11 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                 return;
             }
             privKey = Pkcs8Util.loadEncrypted(data, password);
+            format = PrivateKeyFormat.PKCS8;
             break;
         case UNENC_PKCS8_PVK:
             privKey = Pkcs8Util.load(data);
+            format = PrivateKeyFormat.PKCS8;
             break;
         case ENC_OPENSSL_PVK:
             password = getPassword(file);
@@ -272,9 +277,11 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                 return;
             }
             privKey = OpenSslPvkUtil.loadEncrypted(data, password);
+            format = PrivateKeyFormat.PKCS1;
             break;
         case UNENC_OPENSSL_PVK:
             privKey = OpenSslPvkUtil.load(data);
+            format = PrivateKeyFormat.PKCS1;
             break;
         case ENC_MS_PVK:
             password = getPassword(file);
@@ -282,9 +289,11 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                 return;
             }
             privKey = MsPvkUtil.loadEncrypted(data, password);
+            format = PrivateKeyFormat.MSPVK;
             break;
         case UNENC_MS_PVK:
             privKey = MsPvkUtil.load(data);
+            format = PrivateKeyFormat.MSPVK;
             break;
         default:
             break;
@@ -292,7 +301,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
         DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
                 res.getString("ExamineFileAction.PrivateKeyDetailsFile.Title"), file.getName()), FileNameUtil.removeExtension(file.getName()), privKey,
-                                                              preferences);
+                                                              preferences, Optional.ofNullable(format));
         dViewPrivateKey.setLocationRelativeTo(frame);
         dViewPrivateKey.setVisible(true);
     }
