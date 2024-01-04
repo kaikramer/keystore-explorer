@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.text.MessageFormat;
+import java.util.Optional;
 
 import javax.swing.ImageIcon;
 
@@ -77,7 +78,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
 
             DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, MessageFormat.format(
                     res.getString("KeyPairPrivateKeyDetailsAction.PrivKeyDetailsEntry.Title"), alias), alias, privKey,
-                                                                  preferences);
+                                                                  preferences, Optional.empty());
             dViewPrivateKey.setLocationRelativeTo(frame);
             dViewPrivateKey.setVisible(true);
         } catch (Exception ex) {

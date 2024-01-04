@@ -33,6 +33,7 @@ import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.text.MessageFormat;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -52,6 +53,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.LnfUtil;
@@ -95,6 +97,8 @@ public class DViewPrivateKey extends JEscDialog {
 
     private KsePreferences preferences;
 
+    private Optional<PrivateKeyFormat> format;
+
     /**
      * Creates a new DViewPrivateKey dialog.
      *
@@ -103,12 +107,13 @@ public class DViewPrivateKey extends JEscDialog {
      * @param privateKey Private key to display
      * @throws CryptoException A problem was encountered getting the private key's details
      */
-    public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, KsePreferences preferences)
+    public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, KsePreferences preferences, Optional<PrivateKeyFormat> format)
             throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.alias = alias;
         this.privateKey = privateKey;
         this.preferences = preferences;
+        this.format = format;
         initComponents();
     }
 
@@ -123,6 +128,7 @@ public class DViewPrivateKey extends JEscDialog {
     public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.privateKey = privateKey;
+        this.format = Optional.empty();
         initComponents();
         jbExport.setVisible(false);
     }
@@ -292,7 +298,7 @@ public class DViewPrivateKey extends JEscDialog {
             jtfKeySize.setText(MessageFormat.format(res.getString("DViewPrivateKey.jtfKeySize.text"), "?"));
         }
 
-        jtfFormat.setText(privateKey.getFormat());
+        jtfFormat.setText(format.map(PrivateKeyFormat::getValue).orElse(privateKey.getFormat()));
 
         jtaEncoded.setText(new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase());
         jtaEncoded.setCaretPosition(0);
@@ -343,7 +349,7 @@ public class DViewPrivateKey extends JEscDialog {
         KeyPair keyPair = keyGen.genKeyPair();
 
         PrivateKey privKey = keyPair.getPrivate();
-        DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", "private", privKey, null);
+        DViewPrivateKey dialog = new DViewPrivateKey(new javax.swing.JFrame(), "Title", "private", privKey, null, Optional.empty());
         DialogViewer.run(dialog);
     }
 }

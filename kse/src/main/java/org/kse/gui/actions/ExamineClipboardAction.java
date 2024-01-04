@@ -36,6 +36,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -54,6 +55,7 @@ import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
+import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -262,6 +264,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
     private void showPrivateKey(byte[] data, CryptoFileType fileType) throws IOException, CryptoException {
         PrivateKey privKey = null;
         Password password = null;
+        PrivateKeyFormat format = null;
 
         switch (fileType) {
         case ENC_PKCS8_PVK:
@@ -270,9 +273,11 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 return;
             }
             privKey = Pkcs8Util.loadEncrypted(data, password);
+            format = PrivateKeyFormat.PKCS8;
             break;
         case UNENC_PKCS8_PVK:
             privKey = Pkcs8Util.load(data);
+            format = PrivateKeyFormat.PKCS8;
             break;
         case ENC_OPENSSL_PVK:
             password = getPassword();
@@ -280,9 +285,11 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 return;
             }
             privKey = OpenSslPvkUtil.loadEncrypted(data, password);
+            format = PrivateKeyFormat.PKCS1;
             break;
         case UNENC_OPENSSL_PVK:
             privKey = OpenSslPvkUtil.load(data);
+            format = PrivateKeyFormat.PKCS1;
             break;
         case ENC_MS_PVK:
             password = getPassword();
@@ -290,16 +297,18 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
                 return;
             }
             privKey = MsPvkUtil.loadEncrypted(data, password);
+            format = PrivateKeyFormat.MSPVK;
             break;
         case UNENC_MS_PVK:
             privKey = MsPvkUtil.load(data);
+            format = PrivateKeyFormat.MSPVK;
             break;
         default:
             break;
         }
 
         DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(frame, res.getString(
-                "ExamineClipboardAction.PrivateKeyDetails.Title"), "", privKey, preferences);
+                "ExamineClipboardAction.PrivateKeyDetails.Title"), "", privKey, preferences, Optional.ofNullable(format));
         dViewPrivateKey.setLocationRelativeTo(frame);
         dViewPrivateKey.setVisible(true);
     }
