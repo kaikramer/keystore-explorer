@@ -174,8 +174,7 @@ public class JavaFXFileChooser extends JFileChooser {
                 if (isAcceptAllFileFilterUsed()) {
                     observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
                                                            .newInstance(res.getString("JavaFXFileChooser.AllFiles"),
-                                                                        new String[] { "*.*" }));
-                    // TODO *.* is probably the reason for issue #184
+                                                                        new String[] { "*.*", "*" }));
                 }
 
                 // add extension filters
