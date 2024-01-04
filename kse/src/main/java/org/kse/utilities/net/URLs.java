@@ -19,6 +19,9 @@
  */
 package org.kse.utilities.net;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Contains constants for all URLs used by KSE
  */
@@ -51,4 +54,18 @@ public class URLs {
                                                            "http://time.certum.pl",
                                                            "http://sha256timestamp.ws.symantec.com/sha256/timestamp",
                                                            "http://timestamp.sectigo.com" };
+
+
+    /**
+     * Use regular expression to evaluate allowable URL
+     *
+     * @param url String to check
+     * @return True if allowed
+     */
+    public static boolean isValidUrl(String url) {
+        String regex = "^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(url);
+        return matcher.find();
+    }
 }
