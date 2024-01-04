@@ -70,7 +70,7 @@ ext {
 	launcherOutDir = "$buildDir/launcher"
 	jlinkOutDir = "$buildDir/jlink"
 	appBundleDir = "$buildDir/appBundle"
-	distDir = "$buildDir/${base.distsDirName}"
+	distDir = base.distsDirectory.toString()
 	dmgDir = "$projectDir/dmg"
 	dependenciesDir = Paths.get(buildDir.toString(), "dependencies") // for NSIS we need Windows path separators
 
@@ -106,8 +106,8 @@ dependencies {
 	implementation('org.bouncycastle:bcpkix-jdk18on:1.77')
 	implementation('net.java.dev.jna:jna:5.13.0')
 	implementation('commons-io:commons-io:2.15.1')
-	implementation('com.miglayout:miglayout-swing:5.3')
-	implementation('com.formdev:flatlaf:3.2')
+	implementation('com.miglayout:miglayout-swing:11.3')
+	implementation('com.formdev:flatlaf:3.2.5')
 	implementation('com.nimbusds:nimbus-jose-jwt:9.30.2')
 	implementation('org.violetlib:vaqua:11')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
@@ -115,10 +115,11 @@ dependencies {
 	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.14.2')
 	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.14.2')
 
-	testImplementation('org.assertj:assertj-core:3.23.1')
-	testImplementation('org.junit.jupiter:junit-jupiter-api:5.9.0')
-	testImplementation('org.junit.jupiter:junit-jupiter-params:5.9.0')
-	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.9.0')
+	testImplementation('org.assertj:assertj-core:3.25.1')
+	testImplementation('org.junit.jupiter:junit-jupiter-api:5.10.1')
+	testImplementation('org.junit.jupiter:junit-jupiter-params:5.10.1')
+	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.10.1')
+	testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
 
 test {
