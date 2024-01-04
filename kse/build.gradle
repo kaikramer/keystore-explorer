@@ -115,6 +115,17 @@ dependencies {
 	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.14.2')
 	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.14.2')
 
+	// TODO restrict to right OS dependency depending on build (all for zip, linux for .deb/.rpm etc.)
+	implementation('org.openjfx:javafx-base:17.0.9:win')
+	implementation('org.openjfx:javafx-base:17.0.9:linux')
+	implementation('org.openjfx:javafx-base:17.0.9:mac')
+	implementation('org.openjfx:javafx-graphics:17.0.9:win')
+	implementation('org.openjfx:javafx-graphics:17.0.9:linux')
+	implementation('org.openjfx:javafx-graphics:17.0.9:mac')
+	implementation('org.openjfx:javafx-swing:17.0.9:win')
+	implementation('org.openjfx:javafx-swing:17.0.9:linux')
+	implementation('org.openjfx:javafx-swing:17.0.9:mac')
+
 	testImplementation('org.assertj:assertj-core:3.25.1')
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.10.1')
 	testImplementation('org.junit.jupiter:junit-jupiter-params:5.10.1')

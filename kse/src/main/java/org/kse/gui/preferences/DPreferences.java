@@ -118,6 +118,7 @@ public class DPreferences extends JEscDialog {
     private JComboBox<LanguageItem> jcbLanguage;
     private JLabel jlFileChooser;
     private JCheckBox jcbShowHiddenFiles;
+    private JCheckBox jcbShowNativeFileChooser;
     private JCheckBox jcbLookFeelDecorated;
     private JLabel jlPkcs12Encryption;
     private JComboBox<Pkcs12EncryptionSetting> jcbPkcs12Encryption;
@@ -156,6 +157,7 @@ public class DPreferences extends JEscDialog {
     private X500Name distinguishedName;
     private int expiryWarnDays;
 
+    private KsePreferences preferences;
     private boolean useCaCertificates;
     private File caCertificatesFile;
     private boolean useWinTrustRootCertificates;
@@ -233,6 +235,7 @@ public class DPreferences extends JEscDialog {
         this.showHiddenFilesEnabled = preferences.isShowHiddenFilesEnabled();
         this.pkcs12EncryptionSetting = preferences.getPkcs12EncryptionSetting();
         this.serialNumberLengthInBytes = preferences.getSerialNumberLengthInBytes();
+        this.preferences = preferences;
         initComponents();
     }
 
@@ -494,8 +497,12 @@ public class DPreferences extends JEscDialog {
         jsMinimumPasswordQuality.setEnabled(passwordQualityEnabled && passwordQualityEnforced);
 
         jlFileChooser = new JLabel(res.getString("DPreferences.jlFileChooser.text"));
+
         jcbShowHiddenFiles = new JCheckBox(res.getString("DPreferences.jcbShowHiddenFiles.text"));
         jcbShowHiddenFiles.setSelected(showHiddenFilesEnabled);
+
+        jcbShowNativeFileChooser = new JCheckBox(res.getString("DPreferences.jcbShowNativeFileChooser.text"));
+        jcbShowNativeFileChooser.setSelected(preferences.isNativeFileChooserEnabled());
 
         jlPkcs12Encryption  = new JLabel(res.getString("DPreferences.jlPkcs12Encryption.text"));
         Pkcs12EncryptionSetting.setResourceBundle(res);
@@ -531,8 +538,9 @@ public class DPreferences extends JEscDialog {
         jpUI.add(jcbEnforceMinimumPasswordQuality, "spanx, gapx indent, wrap");
         jpUI.add(jlMinimumPasswordQuality, "gapx 4*indent, top, spanx, split 3");
         jpUI.add(jsMinimumPasswordQuality, "wrap");
-        jpUI.add(jlFileChooser, "");
-        jpUI.add(jcbShowHiddenFiles, "spanx, wrap unrel");
+        jpUI.add(jlFileChooser, "wrap");
+        jpUI.add(jcbShowHiddenFiles, "spanx, gapx indent, wrap rel");
+        jpUI.add(jcbShowNativeFileChooser, "spanx, gapx indent, wrap unrel");
         jpUI.add(jlPkcs12Encryption, "");
         jpUI.add(jcbPkcs12Encryption, "spanx, wrap unrel");
         jpUI.add(jlSnRandomBytes, "");
@@ -896,8 +904,7 @@ public class DPreferences extends JEscDialog {
     }
 
     private boolean storeProxyPreferences() {
-        // Store current proxy selector - compare with new one to see if default needs
-        // updated
+        // Store current proxy selector - compare with new one to see if default needs updated
         ProxySelector defaultProxySelector = ProxySelector.getDefault();
 
         // set no proxy
@@ -929,8 +936,7 @@ public class DPreferences extends JEscDialog {
             ProxyAddress httpsProxyAddress = null;
             ProxyAddress socksProxyAddress = null;
 
-            // Require at least one of the HTTP host or HTTPS host or SOCKS host manual
-            // settings
+            // Require at least one of the HTTP host or HTTPS host or SOCKS host manual settings
             if ((httpHost.isEmpty()) && (httpsHost.isEmpty()) && (socksHost.isEmpty())) {
                 JOptionPane.showMessageDialog(this, res.getString("DPreferences.ManualConfigReq.message"), getTitle(),
                         JOptionPane.WARNING_MESSAGE);
@@ -1150,6 +1156,15 @@ public class DPreferences extends JEscDialog {
      */
     public boolean isShowHiddenFilesEnabled() {
         return showHiddenFilesEnabled;
+    }
+
+    /**
+     * Get value of "show native file chooser" option
+     *
+     * @return True if show native file chooser is enabled
+     */
+    public boolean isNativeFileChooserEnabled() {
+        return jcbShowNativeFileChooser.isSelected();
     }
 
     /**

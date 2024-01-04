@@ -40,7 +40,7 @@ public class KsePreferences {
     private KeyGenerationSettings keyGenerationDefaults = new KeyGenerationSettings();
     private DigestType certificateFingerprintAlgorithm = DigestType.SHA1;
     private PasswordQualityConfig passwordQualityConfig = new PasswordQualityConfig(false, false, 60);
-    private ProxySettings proxySettings = new ProxySettings(); // TODO convert back from ProxySelector.getDefault()?!?
+    private ProxySettings proxySettings = new ProxySettings();
     private Rectangle mainWindowSizeAndPosition = new Rectangle(0, 0, KseFrame.DEFAULT_WIDTH, KseFrame.DEFAULT_HEIGHT);
     private boolean showToolBar = true;
     private boolean showStatusBar = true;
@@ -60,6 +60,7 @@ public class KsePreferences {
     private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
     private int expiryWarnDays = 0;
     private boolean showHiddenFilesEnabled = true;
+    private boolean nativeFileChooserEnabled = false;
     private Pkcs12EncryptionSetting pkcs12EncryptionSetting = Pkcs12EncryptionSetting.strong;
     private int serialNumberLengthInBytes = 20;
 
@@ -271,5 +272,13 @@ public class KsePreferences {
 
     public void setKeyGenerationDefaults(KeyGenerationSettings keyGenerationDefaults) {
         this.keyGenerationDefaults = keyGenerationDefaults;
+    }
+
+    public boolean isNativeFileChooserEnabled() {
+        return nativeFileChooserEnabled;
+    }
+
+    public void setNativeFileChooserEnabled(boolean nativeFileChooserEnabled) {
+        this.nativeFileChooserEnabled = nativeFileChooserEnabled;
     }
 }

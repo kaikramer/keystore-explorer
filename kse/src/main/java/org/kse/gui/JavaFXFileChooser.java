@@ -35,7 +35,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.kse.utilities.os.OperatingSystem;
+import org.kse.gui.preferences.PreferencesManager;
 
 public class JavaFXFileChooser extends JFileChooser {
 
@@ -54,9 +54,8 @@ public class JavaFXFileChooser extends JFileChooser {
     static {
         // check for availability and initialize javafx thread
         try {
-            // disabled for macOS because there are incompatibilities between JavaFX file
-            // chooser and some mac tools
-            if (!OperatingSystem.isMacOs()) {
+            // disabled for macOS because there are incompatibilities between JavaFX file chooser and some mac tools
+//            if (!OperatingSystem.isMacOs()) { // testing if this issue with tools like Karabiner or Cinch still exists
                 Class.forName("javafx.embed.swing.JFXPanel").getConstructor().newInstance();
                 platformClass = Class.forName("javafx.application.Platform");
                 fileChooserClass = Class.forName("javafx.stage.FileChooser");
@@ -64,7 +63,7 @@ public class JavaFXFileChooser extends JFileChooser {
                 extensionFilterClass = Class.forName("javafx.stage.FileChooser$ExtensionFilter");
                 windowClass = Class.forName("javafx.stage.Window");
                 fxAvailable = true;
-            }
+//            }
         } catch (Exception e) {
             fxAvailable = false;
         }
@@ -78,7 +77,7 @@ public class JavaFXFileChooser extends JFileChooser {
     private File currentDirectory;
 
     public static boolean isFxAvailable() {
-        return fxAvailable;
+        return fxAvailable && PreferencesManager.getPreferences().isNativeFileChooserEnabled();
     }
 
     @Override
@@ -176,6 +175,7 @@ public class JavaFXFileChooser extends JFileChooser {
                     observableList.add(extensionFilterClass.getConstructor(String.class, String[].class)
                                                            .newInstance(res.getString("JavaFXFileChooser.AllFiles"),
                                                                         new String[] { "*.*" }));
+                    // TODO *.* is probably the reason for issue #184
                 }
 
                 // add extension filters

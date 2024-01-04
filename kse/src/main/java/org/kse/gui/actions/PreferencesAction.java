@@ -100,9 +100,9 @@ public class PreferencesAction extends ExitAction {
         preferences.getAutoUpdateCheckSettings().setEnabled(dPreferences.isAutoUpdateChecksEnabled());
         preferences.getAutoUpdateCheckSettings().setCheckInterval(dPreferences.getAutoUpdateChecksInterval());
         preferences.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
-        preferences.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
         preferences.setSerialNumberLengthInBytes(dPreferences.getSerialNumberLengthInBytes());
 
+        preferences.setPkcs12EncryptionSetting(dPreferences.getPkcs12EncryptionSetting());
         Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
 
         preferences.setLookAndFeelClass(dPreferences.getLookFeelInfo().getClassName());
@@ -120,6 +120,8 @@ public class PreferencesAction extends ExitAction {
         preferences.setExpiryWarnDays(dPreferences.getExpiryWarnDays());
 
         preferences.setProxySettings(updateSettings(preferences.getProxySettings()));
+
+        preferences.setNativeFileChooserEnabled(dPreferences.isNativeFileChooserEnabled());
 
         if ((!dPreferences.getLookFeelInfo().getClassName().equals(UIManager.getLookAndFeel().getClass().getName())) ||
             (dPreferences.getLookFeelDecoration() != JFrame.isDefaultLookAndFeelDecorated()) || languageHasChanged) {
