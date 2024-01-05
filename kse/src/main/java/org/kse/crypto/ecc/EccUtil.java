@@ -152,8 +152,7 @@ public class EccUtil {
      * @return True, if there are EC curves available
      */
     public static boolean isECAvailable(KeyStoreType keyStoreType) {
-        return ((JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_170) && sunECProviderAvailable) ||
-                isBouncyCastleKeyStore(keyStoreType));
+        return (sunECProviderAvailable) || isBouncyCastleKeyStore(keyStoreType);
     }
 
     /**

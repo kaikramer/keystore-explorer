@@ -50,7 +50,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 public class CreateApplicationGui implements Runnable {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
-    private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_180;
+    private static final JavaVersion MIN_JRE_VERSION = JavaVersion.JRE_VERSION_11;
     private KsePreferences ksePreferences;
     private List<File> parameterFiles;
 
