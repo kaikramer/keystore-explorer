@@ -63,16 +63,15 @@ ext {
 	rh = "c:\\Program Files (x86)\\Resource Hacker\\ResourceHacker.exe"
 
 	// Directories
-	resDir = "$projectDir/res"
-	iconsDir = "$projectDir/icons"
-	licensesDir = "$projectDir/licenses"
-	readmesDir = "$resDir"
-	launcherOutDir = "$buildDir/launcher"
-	jlinkOutDir = "$buildDir/jlink"
-	appBundleDir = "$buildDir/appBundle"
-	distDir = "$buildDir/${base.distsDirName}"
-	dmgDir = "$projectDir/dmg"
-	dependenciesDir = Paths.get(buildDir.toString(), "dependencies") // for NSIS we need Windows path separators
+	resDir = layout.projectDirectory.dir("res").asFile.getAbsolutePath()
+	iconsDir = layout.projectDirectory.dir("icons").asFile.getAbsolutePath()
+	licensesDir = layout.projectDirectory.dir("licenses").asFile.getAbsolutePath()
+	launcherOutDir = layout.buildDirectory.dir("launcher").get().asFile.getAbsolutePath()
+	jlinkOutDir = layout.buildDirectory.dir("jlink").get().asFile.getAbsolutePath()
+	appBundleDir = layout.buildDirectory.dir("appBundle").get().asFile.getAbsolutePath()
+	distDir = base.distsDirectory.get().asFile.getAbsolutePath()
+	dmgDir = layout.projectDirectory.dir("dmg").asFile.getAbsolutePath()
+	dependenciesDir = Paths.get(layout.buildDirectory.get().asFile.getAbsolutePath(), "dependencies") // for NSIS we need Windows path separators
 
 	// Icons
 	kseIco = "$iconsDir/kse.ico"
@@ -229,8 +228,6 @@ task zip(type: Zip, dependsOn: prepareExe) {
 		from(resDir) {
 			include 'kse.sh'
 			fileMode 0755
-		}
-		from(readmesDir) {
 			include 'readme.txt'
 		}
 	}
@@ -262,7 +259,7 @@ task jlink(type: Exec) {
 		JavaVersion.current() != JavaVersion.VERSION_11
 	}
 
-	workingDir "$buildDir"
+	workingDir layout.buildDirectory
 
 	def javaHome = System.properties.'java.home'
 	commandLine "${javaHome}/bin/jlink",
@@ -424,7 +421,7 @@ task signapp(dependsOn: appbundler) {
 task dmg(type: Exec, dependsOn: signapp) {
 	mkdir distDir
 	new File("${distDir}/${dmgFile}").delete()
-	workingDir buildDir
+	workingDir layout.buildDirectory
 
 	commandLine 'create-dmg', '--overwrite', "${appBundleDir}/${appBundle}", "${distDir}"
 
@@ -434,7 +431,7 @@ task dmg(type: Exec, dependsOn: signapp) {
 }
 
 task notarization(type: Exec, dependsOn: dmg) {
-	workingDir buildDir
+	workingDir layout.buildDirectory
 
 	commandLine 'xcrun',
 			"notarytool",
