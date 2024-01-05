@@ -24,8 +24,6 @@ import static java.util.Collections.singletonList;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -53,7 +51,8 @@ import javax.script.ScriptException;
 import org.apache.commons.io.IOUtils;
 import org.kse.utilities.TriFunction;
 import org.kse.utilities.VarFunction;
-import org.kse.version.JavaVersion;
+import org.openjdk.nashorn.api.scripting.ClassFilter;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
  * Proxy Selector for Proxy Automatic Configuration (PAC).
@@ -68,13 +67,12 @@ public class PacProxySelector extends ProxySelector {
     /**
      * Class filter to restrict access to JRE from PAC script
      */
-    // TODO comment in again when support for Java 8 is dropped
-//    static class PacClassFilter implements ClassFilter {
-//        @Override
-//        public boolean exposeToScripts(String s) {
-//            return false;
-//        }
-//    }
+    static class PacClassFilter implements ClassFilter {
+        @Override
+        public boolean exposeToScripts(String s) {
+            return false;
+        }
+    }
 
     /**
      * Construct PacProxySelector using an Automatic proxy configuration URL.
@@ -169,19 +167,11 @@ public class PacProxySelector extends ProxySelector {
     }
 
     private Invocable compilePacScript(String pacScript) throws PacProxyException {
+        // Nashorn was removed in Java 15, the standalone Nashorn uses different packages and is compiled for Java 11
+        NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
+        ScriptEngine jsEngine = nashornScriptEngineFactory.getScriptEngine(new PacClassFilter());
+
         try {
-            ScriptEngine jsEngine;
-
-            // Nashorn was removed in Java 15, the standalone Nashorn uses different packages and is compiled for Java 11
-            // TODO remove this when support for Java 8 is dropped
-            if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_15)) {
-                jsEngine = getScriptEngine("org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory",
-                                           "org.openjdk.nashorn.api.scripting.ClassFilter");
-            } else {
-                jsEngine = getScriptEngine("jdk.nashorn.api.scripting.NashornScriptEngineFactory",
-                                           "jdk.nashorn.api.scripting.ClassFilter");
-            }
-
             jsEngine.put("alert", (Consumer<String>) PacHelperFunctions::alert);
             jsEngine.put("dnsDomainIs", (BiFunction<String, String, Boolean>) PacHelperFunctions::dnsDomainIs);
             jsEngine.put("dnsDomainLevels", (Function<String, Integer>) PacHelperFunctions::dnsDomainLevels);
@@ -206,29 +196,6 @@ public class PacProxySelector extends ProxySelector {
             return (Invocable) jsEngine;
         } catch (ScriptException ex) {
             throw new PacProxyException(res.getString("NoCompilePacScript.exception.message"), ex);
-        }
-    }
-
-    private ScriptEngine getScriptEngine(String nashornScriptEngineFactoryClass, String classFilterClass) {
-        // NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
-        // ScriptEngine jsEngine = nashornScriptEngineFactory.getScriptEngine(new PacClassFilter());
-        try {
-            Class<?> nashornScriptEngineFactory = Class.forName(nashornScriptEngineFactoryClass);
-            Class<?> classFilter = Class.forName(classFilterClass);
-
-            Object classFilterProxy = java.lang.reflect.Proxy.newProxyInstance(
-                    PacProxySelector.class.getClassLoader(), new Class[] { classFilter }, (proxy, method, args) -> {
-                        if (method.getName().equals("exposeToScripts")) {
-                            return Boolean.FALSE;
-                        }
-                        return null;
-                    });
-
-            Method getScriptEngine = nashornScriptEngineFactory.getMethod("getScriptEngine", classFilter);
-            return (ScriptEngine) getScriptEngine.invoke(nashornScriptEngineFactory.newInstance(), classFilterProxy);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
-                 InstantiationException e) {
-            throw new RuntimeException(e);
         }
     }
 
