@@ -85,8 +85,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
 
             CryptoFileType fileType = CryptoFileUtil.detectFileType(detectTypeFile);
 
-            String message = null;
-
+            String message;
             if (fileType != null) {
                 message = MessageFormat.format(res.getString("DetectFileTypeAction.DetectedFileType.message"),
                                                detectTypeFile.getName(), fileType.friendly());

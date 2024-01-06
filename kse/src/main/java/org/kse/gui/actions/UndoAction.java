@@ -35,7 +35,7 @@ import org.kse.utilities.history.KeyStoreState;
  */
 public class UndoAction extends KeyStoreExplorerAction {
     private static final long serialVersionUID = 1L;
-    private String defaultName;
+    private final String defaultName;
 
     /**
      * Construct action.

@@ -109,9 +109,7 @@ public class CloseAction extends SaveAction {
 
     private boolean needSave(KeyStoreState state) {
         if (state != null) {
-            if (!state.isSavedState() && !state.isInitialState()) {
-                return true;
-            }
+            return !state.isSavedState() && !state.isInitialState();
         }
         return false;
     }

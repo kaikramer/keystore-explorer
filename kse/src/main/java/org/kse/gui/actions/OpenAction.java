@@ -121,7 +121,7 @@ public class OpenAction extends KeyStoreExplorerAction {
             // use (optional) default password for first try
             Password password = (defaultPassword != null) ? new Password(defaultPassword.toCharArray()) : null;
 
-            KeyStore openedKeyStore = null;
+            KeyStore openedKeyStore;
             boolean firstTry = true;
             while (true) {
 

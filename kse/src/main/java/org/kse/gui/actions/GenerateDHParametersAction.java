@@ -79,8 +79,6 @@ public class GenerateDHParametersAction extends KeyStoreExplorerAction implement
 
     /**
      * Generate DH Parameters in the currently opened KeyStore.
-     *
-     * @return Does not return any value
      */
     public void generateDHParameters() {
 

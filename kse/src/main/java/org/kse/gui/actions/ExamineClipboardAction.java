@@ -79,7 +79,7 @@ import com.nimbusds.jwt.JWTParser;
  */
 public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
-    private static ResourceBundle resExt = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
+    private static final ResourceBundle resExt = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
     private static final long serialVersionUID = -4374420674229658652L;
 
@@ -211,23 +211,22 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
     }
 
     private boolean isRedirect(int status) {
-		// normally, 3xx is redirect
-    	if (status != HttpURLConnection.HTTP_OK) {
-			if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-					|| status == HttpURLConnection.HTTP_SEE_OTHER)
-				return true;
-		}
-    	return false;
+        // normally, 3xx is redirect
+        if (status != HttpURLConnection.HTTP_OK) {
+            return status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM ||
+                   status == HttpURLConnection.HTTP_SEE_OTHER;
+        }
+        return false;
     }
 
     private void downloadCrl(URL url) throws IOException, CryptoException {
-    	HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-		int status = urlConn.getResponseCode();
-		if (isRedirect(status)) {
-			String newUrl = urlConn.getHeaderField("Location");
-			url = new URL(newUrl);
-			urlConn = (HttpURLConnection) url.openConnection();
-		}
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        int status = urlConn.getResponseCode();
+        if (isRedirect(status)) {
+            String newUrl = urlConn.getHeaderField("Location");
+            url = new URL(newUrl);
+            urlConn = (HttpURLConnection) url.openConnection();
+        }
         try (InputStream is = urlConn.getInputStream()) {
             X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
             if (crl != null) {
@@ -262,7 +261,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
     private void showPrivateKey(byte[] data, CryptoFileType fileType) throws IOException, CryptoException {
         PrivateKey privKey = null;
-        Password password = null;
+        Password password;
         PrivateKeyFormat format = null;
 
         switch (fileType) {
@@ -320,7 +319,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
         return dGetPassword.getPassword();
     }
 
-    private void showPublicKey(byte[] data) throws IOException, CryptoException {
+    private void showPublicKey(byte[] data) throws CryptoException {
         PublicKey publicKey = OpenSslPubUtil.load(data);
 
         DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, res.getString(

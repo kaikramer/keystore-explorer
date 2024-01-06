@@ -52,7 +52,7 @@ import org.kse.utilities.history.KeyStoreState;
 public class GenerateKeyPairAction extends KeyStoreExplorerAction implements HistoryAction {
     private static final long serialVersionUID = 1L;
 
-    private KseFrame kseFrame;
+    private final KseFrame kseFrame;
     /**
      * Construct action.
      *

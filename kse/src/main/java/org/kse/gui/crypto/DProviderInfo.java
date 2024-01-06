@@ -60,7 +60,7 @@ import org.kse.gui.PlatformUtil;
 public class DProviderInfo extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
     private JPanel jpButtons;
     private JButton jbCopy;

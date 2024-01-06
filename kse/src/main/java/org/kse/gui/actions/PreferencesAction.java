@@ -40,7 +40,7 @@ import org.kse.gui.preferences.DPreferences;
  */
 public class PreferencesAction extends ExitAction {
     private static final long serialVersionUID = 1L;
-    private KseFrame kseFrame;
+    private final KseFrame kseFrame;
 
     /**
      * Construct action.

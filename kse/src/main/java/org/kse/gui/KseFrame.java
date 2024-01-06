@@ -105,7 +105,6 @@ import org.kse.gui.actions.CompareCertificateAction;
 import org.kse.gui.actions.CopyAction;
 import org.kse.gui.actions.CopyKeyPairAction;
 import org.kse.gui.actions.CopyTrustedCertificateAction;
-import org.kse.gui.actions.CryptographyStrengthAction;
 import org.kse.gui.actions.CutAction;
 import org.kse.gui.actions.CutKeyPairAction;
 import org.kse.gui.actions.CutTrustedCertificateAction;
@@ -470,7 +469,6 @@ public final class KseFrame implements StatusBar {
     private final CheckUpdateAction checkUpdateAction = new CheckUpdateAction(this);
     private final SecurityProvidersAction securityProvidersAction = new SecurityProvidersAction(this);
     private final SystemInformationAction systemInformationAction = new SystemInformationAction(this);
-    private final CryptographyStrengthAction cryptographyStrengthAction = new CryptographyStrengthAction(this);
     private final JarsAction jarsAction = new JarsAction(this);
     private final AboutAction aboutAction = new AboutAction(this);
     private final KeyPairCertificateChainDetailsAction keyPairCertificateChainDetailsAction =
@@ -1072,14 +1070,6 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiSecurityProviders,
                                    (String) securityProvidersAction.getValue(Action.LONG_DESCRIPTION), this);
         jmHelp.add(jmiSecurityProviders);
-
-        jmiCryptographyStrength = new JMenuItem(cryptographyStrengthAction);
-        PlatformUtil.setMnemonic(jmiCryptographyStrength,
-                                 res.getString("KseFrame.jmiCryptographyStrength.mnemonic").charAt(0));
-        jmiCryptographyStrength.setToolTipText(null);
-        new StatusBarChangeHandler(jmiCryptographyStrength,
-                                   (String) cryptographyStrengthAction.getValue(Action.LONG_DESCRIPTION), this);
-        jmHelp.add(jmiCryptographyStrength);
 
         jmiJars = new JMenuItem(jarsAction);
         PlatformUtil.setMnemonic(jmiJars, res.getString("KseFrame.jmiJars.mnemonic").charAt(0));
