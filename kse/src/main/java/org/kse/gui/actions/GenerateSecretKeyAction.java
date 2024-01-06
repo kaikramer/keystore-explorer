@@ -56,9 +56,9 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
     public GenerateSecretKeyAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("GenerateSecretKeyAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
-                                                         InputEvent.ALT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('G',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                         InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("GenerateSecretKeyAction.statusbar"));
         putValue(NAME, res.getString("GenerateSecretKeyAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("GenerateSecretKeyAction.tooltip"));

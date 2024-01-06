@@ -44,8 +44,7 @@ public class CloseAction extends SaveAction {
     public CloseAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CloseAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("CloseAction.statusbar"));
         putValue(NAME, res.getString("CloseAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("CloseAction.tooltip"));

@@ -52,9 +52,8 @@ public class OpenCaCertificatesAction extends OpenAction {
     public OpenCaCertificatesAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY,
-                 KeyStroke.getKeyStroke(res.getString("OpenCaCertificatesAction.accelerator").charAt(0),
-                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.SHIFT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                              InputEvent.SHIFT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("OpenCaCertificatesAction.statusbar"));
         putValue(NAME, res.getString("OpenCaCertificatesAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("OpenCaCertificatesAction.tooltip"));

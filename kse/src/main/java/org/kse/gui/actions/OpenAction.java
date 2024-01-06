@@ -57,8 +57,8 @@ public class OpenAction extends KeyStoreExplorerAction {
     public OpenAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("OpenAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('O',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("OpenAction.statusbar"));
         putValue(NAME, res.getString("OpenAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("OpenAction.tooltip"));

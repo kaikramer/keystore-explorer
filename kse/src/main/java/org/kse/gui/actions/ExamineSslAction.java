@@ -48,9 +48,9 @@ public class ExamineSslAction extends KeyStoreExplorerAction {
     public ExamineSslAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ExamineSslAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
-                                                         InputEvent.ALT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('S',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                         InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("ExamineSslAction.statusbar"));
         putValue(NAME, res.getString("ExamineSslAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("ExamineSslAction.tooltip"));

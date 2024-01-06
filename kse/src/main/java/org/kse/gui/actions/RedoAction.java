@@ -47,8 +47,8 @@ public class RedoAction extends KeyStoreExplorerAction {
 
         defaultName = res.getString("RedoAction.text");
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("RedoAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('Y',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("RedoAction.statusbar"));
         putValue(NAME, defaultName);
         putValue(SHORT_DESCRIPTION, res.getString("RedoAction.tooltip"));

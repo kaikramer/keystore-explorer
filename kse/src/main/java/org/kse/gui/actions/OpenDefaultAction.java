@@ -50,9 +50,9 @@ public class OpenDefaultAction extends OpenAction {
     public OpenDefaultAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("OpenDefaultAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
-                                                         InputEvent.SHIFT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('D',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                         InputEvent.SHIFT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("OpenDefaultAction.statusbar"));
         putValue(NAME, res.getString("OpenDefaultAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("OpenDefaultAction.tooltip"));

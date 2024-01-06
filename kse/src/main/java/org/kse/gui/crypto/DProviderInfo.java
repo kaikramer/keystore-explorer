@@ -149,7 +149,7 @@ public class DProviderInfo extends JEscDialog {
 
         for (Provider provider : providers) {
             String nameVersion = MessageFormat.format(res.getString("DProviderInfo.ProviderNode.text"),
-                    provider.getName(), provider.getVersion());
+                    provider.getName(), provider.getVersionStr());
             DefaultMutableTreeNode providerNode = new DefaultMutableTreeNode(nameVersion);
             topNode.add(providerNode);
 

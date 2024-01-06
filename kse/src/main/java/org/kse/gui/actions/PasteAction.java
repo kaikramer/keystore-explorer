@@ -60,8 +60,8 @@ public class PasteAction extends KeyStoreExplorerAction implements HistoryAction
     public PasteAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("PasteAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('V',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("PasteAction.statusbar"));
         putValue(NAME, res.getString("PasteAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("PasteAction.tooltip"));

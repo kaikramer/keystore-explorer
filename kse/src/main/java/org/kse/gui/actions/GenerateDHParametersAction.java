@@ -21,6 +21,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -55,9 +56,8 @@ public class GenerateDHParametersAction extends KeyStoreExplorerAction implement
     public GenerateDHParametersAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY,
-                 KeyStroke.getKeyStroke(res.getString("GenerateDHParametersAction.accelerator").charAt(0),
-                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('D', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                              InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("GenerateDHParametersAction.statusbar"));
         putValue(NAME, res.getString("GenerateDHParametersAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("GenerateDHParametersAction.tooltip"));

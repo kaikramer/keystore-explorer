@@ -81,8 +81,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
     public ExamineFileAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ExamineFileAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('E', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("ExamineFileAction.statusbar"));
         putValue(NAME, res.getString("ExamineFileAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("ExamineFileAction.tooltip"));

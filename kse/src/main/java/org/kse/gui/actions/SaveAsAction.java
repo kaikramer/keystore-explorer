@@ -53,9 +53,9 @@ public class SaveAsAction extends KeyStoreExplorerAction {
     public SaveAsAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SaveAsAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
-                                                         InputEvent.ALT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('S',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                         InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("SaveAsAction.statusbar"));
         putValue(NAME, res.getString("SaveAsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("SaveAsAction.tooltip"));

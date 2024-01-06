@@ -47,8 +47,8 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
     public SetPasswordAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SetPasswordAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('P',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("SetPasswordAction.statusbar"));
         putValue(NAME, res.getString("SetPasswordAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("SetPasswordAction.tooltip"));

@@ -60,8 +60,8 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
     public ImportKeyPairAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("ImportKeyPairAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('K',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("ImportKeyPairAction.statusbar"));
         putValue(NAME, res.getString("ImportKeyPairAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("ImportKeyPairAction.tooltip"));

@@ -47,8 +47,8 @@ public class UndoAction extends KeyStoreExplorerAction {
 
         defaultName = res.getString("UndoAction.text");
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("UndoAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('Z',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("UndoAction.statusbar"));
         putValue(NAME, defaultName);
         putValue(SHORT_DESCRIPTION, res.getString("UndoAction.tooltip"));

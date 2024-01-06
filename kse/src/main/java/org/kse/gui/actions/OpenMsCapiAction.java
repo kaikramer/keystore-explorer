@@ -47,9 +47,9 @@ public class OpenMsCapiAction extends OpenAction {
     public OpenMsCapiAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("OpenMsCapiAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
-                                                         InputEvent.SHIFT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('M',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                         InputEvent.SHIFT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("OpenMsCapiAction.statusbar"));
         putValue(NAME, res.getString("OpenMsCapiAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("OpenMsCapiAction.tooltip"));

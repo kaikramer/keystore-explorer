@@ -50,9 +50,9 @@ public class OpenPkcs11Action extends OpenAction {
     public OpenPkcs11Action(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("OpenPkcs11Action.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
-                                                         InputEvent.SHIFT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('1',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                         InputEvent.SHIFT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("OpenPkcs11Action.statusbar"));
         putValue(NAME, res.getString("OpenPkcs11Action.text"));
         putValue(SHORT_DESCRIPTION, res.getString("OpenPkcs11Action.tooltip"));

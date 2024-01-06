@@ -45,7 +45,7 @@ public class PropertiesAction extends KeyStoreExplorerAction {
     public PropertiesAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("PropertiesAction.statusbar"));
         putValue(NAME, res.getString("PropertiesAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("PropertiesAction.tooltip"));

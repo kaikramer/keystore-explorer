@@ -50,8 +50,7 @@ public class FindAction extends KeyStoreExplorerAction {
      */
     public FindAction(KseFrame kseFrame) {
         super(kseFrame);
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("FindAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('F', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("FindAction.statusbar"));
         putValue(NAME, res.getString("FindAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("FindAction.tooltip"));

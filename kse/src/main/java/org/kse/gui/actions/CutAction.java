@@ -58,8 +58,7 @@ public class CutAction extends KeyStoreExplorerAction implements HistoryAction {
     public CutAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CutAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("CutAction.statusbar"));
         putValue(NAME, res.getString("CutAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("CutAction.tooltip"));

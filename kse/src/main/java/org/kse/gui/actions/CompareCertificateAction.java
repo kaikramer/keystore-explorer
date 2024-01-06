@@ -33,9 +33,8 @@ public class CompareCertificateAction extends KeyStoreExplorerAction {
      */
     public CompareCertificateAction(KseFrame kseFrame) {
         super(kseFrame);
-        putValue(ACCELERATOR_KEY,
-                 KeyStroke.getKeyStroke(res.getString("CompareCertificateAction.accelerator").charAt(0),
-                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() + InputEvent.ALT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                              InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("CompareCertificateAction.statusbar"));
         putValue(NAME, res.getString("CompareCertificateAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("CompareCertificateAction.tooltip"));

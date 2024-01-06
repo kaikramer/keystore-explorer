@@ -49,8 +49,8 @@ public class SaveAction extends SaveAsAction {
     public SaveAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("SaveAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('S',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("SaveAction.statusbar"));
         putValue(NAME, res.getString("SaveAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("SaveAction.tooltip"));

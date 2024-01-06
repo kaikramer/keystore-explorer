@@ -70,8 +70,8 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
         this.trustCertFromConstructor = trustCert;
 
         putValue(ACCELERATOR_KEY,
-                 KeyStroke.getKeyStroke(res.getString("ImportTrustedCertificateAction.accelerator").charAt(0),
-                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+                 KeyStroke.getKeyStroke('T',
+                                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("ImportTrustedCertificateAction.statusbar"));
         putValue(NAME, res.getString("ImportTrustedCertificateAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("ImportTrustedCertificateAction.tooltip"));

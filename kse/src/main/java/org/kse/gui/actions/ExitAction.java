@@ -48,7 +48,7 @@ public class ExitAction extends CloseAllAction {
     public ExitAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("ExitAction.statusbar"));
         putValue(NAME, res.getString("ExitAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("ExitAction.tooltip"));

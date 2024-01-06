@@ -47,8 +47,8 @@ public class NewAction extends KeyStoreExplorerAction {
     public NewAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("NewAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('N',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("NewAction.statusbar"));
         putValue(NAME, res.getString("NewAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("NewAction.tooltip"));

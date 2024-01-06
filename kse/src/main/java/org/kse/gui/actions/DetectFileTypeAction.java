@@ -50,8 +50,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
     public DetectFileTypeAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("DetectFileTypeAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('D', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("DetectFileTypeAction.statusbar"));
         putValue(NAME, res.getString("DetectFileTypeAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("DetectFileTypeAction.tooltip"));

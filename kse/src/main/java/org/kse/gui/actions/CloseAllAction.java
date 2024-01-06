@@ -42,9 +42,8 @@ public class CloseAllAction extends CloseAction {
     public CloseAllAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CloseAllAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() +
-                                                         InputEvent.SHIFT_MASK));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
+                                                              InputEvent.SHIFT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("CloseAllAction.statusbar"));
         putValue(NAME, res.getString("CloseAllAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("CloseAllAction.tooltip"));

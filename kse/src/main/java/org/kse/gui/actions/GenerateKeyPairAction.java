@@ -61,8 +61,8 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
     public GenerateKeyPairAction(KseFrame kseFrame) {
         super(kseFrame);
         this.kseFrame = kseFrame;
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("GenerateKeyPairAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('G',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("GenerateKeyPairAction.statusbar"));
         putValue(NAME, res.getString("GenerateKeyPairAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("GenerateKeyPairAction.tooltip"));

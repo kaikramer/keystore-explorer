@@ -50,8 +50,8 @@ public class PreferencesAction extends ExitAction {
     public PreferencesAction(KseFrame kseFrame) {
         super(kseFrame);
         this.kseFrame = kseFrame;
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("PreferencesAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(',',
+                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("PreferencesAction.statusbar"));
         putValue(NAME, res.getString("PreferencesAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("PreferencesAction.tooltip"));

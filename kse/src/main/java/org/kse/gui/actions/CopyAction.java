@@ -57,8 +57,7 @@ public class CopyAction extends KeyStoreExplorerAction {
     public CopyAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(res.getString("CopyAction.accelerator").charAt(0),
-                                                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         putValue(LONG_DESCRIPTION, res.getString("CopyAction.statusbar"));
         putValue(NAME, res.getString("CopyAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("CopyAction.tooltip"));
