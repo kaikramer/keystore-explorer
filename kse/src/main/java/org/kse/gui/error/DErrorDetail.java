@@ -123,7 +123,7 @@ public class DErrorDetail extends JEscDialog {
         expandTree(jtrError, new TreePath(topNode));
 
         jspError = PlatformUtil.createScrollPane(jtrError, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jspError.setPreferredSize(new Dimension(500, 250));
         jpError.add(jspError, BorderLayout.CENTER);
 
@@ -169,7 +169,7 @@ public class DErrorDetail extends JEscDialog {
     private void expandTree(JTree tree, TreePath parent) {
         TreeNode node = (TreeNode) parent.getLastPathComponent();
         if (node.getChildCount() >= 0) {
-            for (Enumeration<?> children = node.children(); children.hasMoreElements(); ) {
+            for (Enumeration<?> children = node.children(); children.hasMoreElements();) {
                 TreeNode subNode = (TreeNode) children.nextElement();
                 TreePath path = parent.pathByAddingChild(subNode);
                 expandTree(tree, path);
@@ -181,24 +181,28 @@ public class DErrorDetail extends JEscDialog {
 
     private void copyPressed() {
         StringBuilder strBuff = new StringBuilder();
-
-        Throwable copyError = error;
-
-        while (copyError != null) {
-            strBuff.append(copyError);
-            strBuff.append('\n');
-
-            for (StackTraceElement stackTrace : copyError.getStackTrace()) {
-                strBuff.append("\tat ");
-                strBuff.append(stackTrace);
+        TreePath root =  jtrError.getPathForRow(0);
+        TreePath treePath = jtrError.getSelectionPath();
+        if (treePath == null || root.equals(treePath)) {
+            Throwable copyError = error;
+            while (copyError != null) {
+                strBuff.append(copyError);
                 strBuff.append('\n');
-            }
 
-            copyError = copyError.getCause();
+                for (StackTraceElement stackTrace : copyError.getStackTrace()) {
+                    strBuff.append("\tat ");
+                    strBuff.append(stackTrace);
+                    strBuff.append('\n');
+                }
 
-            if (copyError != null) {
-                strBuff.append('\n');
+                copyError = copyError.getCause();
+
+                if (copyError != null) {
+                    strBuff.append('\n');
+                }
             }
+        } else {
+            strBuff.append(treePath.toString());
         }
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
