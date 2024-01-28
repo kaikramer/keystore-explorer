@@ -151,9 +151,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
                 }
             }
         } catch (CertPathValidatorException cex) {
-            JOptionPane.showMessageDialog(frame, cex.getMessage(),
-                                          MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
-                                                               alias), JOptionPane.WARNING_MESSAGE);
+            DError.displayError(frame, cex);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         } finally {
@@ -371,10 +369,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             return false;
         }
         if (trustStore.size() == 0) {
-            JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.trustStoreEmpty.message"),
-                                          MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
-                                                               alias), JOptionPane.WARNING_MESSAGE);
-            return false;
+            throw new CertPathValidatorException(res.getString("VerifyCertificateAction.trustStoreEmpty.message"));
         }
         System.setProperty("com.sun.net.ssl.checkRevocation", crl);
         System.setProperty("com.sun.security.enableCRLDP", crl);
