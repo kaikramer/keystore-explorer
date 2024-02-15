@@ -88,7 +88,8 @@ public class PreferencesAction extends ExitAction {
 				applicationSettings.isAutoUpdateCheckEnabled(),
 				applicationSettings.getAutoUpdateCheckInterval(),
 				applicationSettings.getKeyStoreTableColumns(),
-				applicationSettings.isShowHiddenFilesEnabled());
+				applicationSettings.isShowHiddenFilesEnabled(),
+				applicationSettings.getSerialNumberFormatter());
 		dPreferences.setLocationRelativeTo(frame);
 		dPreferences.setVisible(true);
 
@@ -115,6 +116,7 @@ public class PreferencesAction extends ExitAction {
 		applicationSettings.setAutoUpdateCheckEnabled(dPreferences.isAutoUpdateChecksEnabled());
 		applicationSettings.setAutoUpdateCheckInterval(dPreferences.getAutoUpdateChecksInterval());
 		applicationSettings.setShowHiddenFilesEnabled(dPreferences.isShowHiddenFilesEnabled());
+		applicationSettings.setSerialNumberFormatter(dPreferences.getSerialNumberFormatter());
 
 		UIManager.LookAndFeelInfo lookFeelInfo = dPreferences.getLookFeelInfo();
 		applicationSettings.setLookAndFeelClass(lookFeelInfo.getClassName());

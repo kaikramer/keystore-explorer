@@ -50,6 +50,7 @@ import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.util.encoders.Base64;
+import org.kse.ApplicationSettings;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.utilities.ArrayUtils;
@@ -752,4 +753,39 @@ public final class X509CertUtil {
 		return new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(10);
 	}
 
+	public static String getFormattedSerialNumber(X509Certificate cert) {
+		String rawHexString = new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase();
+		return ApplicationSettings.getInstance().getSerialNumberFormatter().formatSerialNumber(rawHexString);
+	}
+
+	public interface ISerialNumberFormatter {
+		String formatSerialNumber(String serialNumber);
+	}
+
+	public enum SerialNumberFormatter implements ISerialNumberFormatter {
+		HEX_STRING {
+			@Override
+			public String formatSerialNumber(String serialNumber) {
+				return "0x" + serialNumber;
+			}
+		},
+		LOWERCASE_COLONS {
+			@Override
+			public String formatSerialNumber(String serialNumber) {
+				String tmpSerialNumber = serialNumber.toLowerCase();
+				if (tmpSerialNumber.length() % 2 != 0) {
+					tmpSerialNumber = "0" + tmpSerialNumber;
+				}
+				char[] chars = tmpSerialNumber.toCharArray();
+				StringBuilder result = new StringBuilder();
+				for (int i = 0; i < chars.length; i++) {
+					result.append(chars[i]);
+					if (i % 2 == 1 && i < chars.length - 1) {
+						result.append(':');
+					}
+				}
+				return result.toString();
+			}
+		}
+	}
 }

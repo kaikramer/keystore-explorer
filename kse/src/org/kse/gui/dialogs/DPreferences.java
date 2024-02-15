@@ -61,6 +61,7 @@ import javax.swing.border.EmptyBorder;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.kse.ApplicationSettings;
 import org.kse.crypto.SecurityProvider;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
@@ -114,6 +115,8 @@ public class DPreferences extends JEscDialog {
 	private JLabel jlFileChooser;
 	private JCheckBox jcbShowHiddenFiles;
 	private JCheckBox jcbLookFeelDecorated;
+	private JLabel jlSerialNumberFormatter;
+	private JComboBox<X509CertUtil.SerialNumberFormatter> jcbSerialNumberFormatter;
 	private JPanel jpInternetProxy;
 	private JRadioButton jrbNoProxy;
 	private JRadioButton jrbSystemProxySettings;
@@ -159,6 +162,7 @@ public class DPreferences extends JEscDialog {
 	private boolean lookFeelDecorated;
 	private String language;
 	private boolean showHiddenFilesEnabled;
+	private X509CertUtil.SerialNumberFormatter serialNumberFormatter;
 
 	private boolean autoUpdateChecksEnabled;
 	private int autoUpdateChecksInterval;
@@ -226,10 +230,10 @@ public class DPreferences extends JEscDialog {
 	 * 			  Show hidden files in file chooser
 	 */
 	public DPreferences(JFrame parent, boolean useCaCertificates, File caCertificatesFile,
-			boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
-			boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
-			String defaultDN, String language, boolean autoUpdateChecksEnabled, int autoUpdateChecksInterval,
-			KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled) {
+						boolean useWinTrustedRootCertificates, boolean enableImportTrustedCertTrustCheck,
+						boolean enableImportCaReplyTrustCheck, PasswordQualityConfig passwordQualityConfig,
+						String defaultDN, String language, boolean autoUpdateChecksEnabled, int autoUpdateChecksInterval,
+						KeyStoreTableColumns kstColumns, boolean showHiddenFilesEnabled, X509CertUtil.SerialNumberFormatter serialNumberFormatter) {
 		super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
 		this.useCaCertificates = useCaCertificates;
 		this.caCertificatesFile = caCertificatesFile;
@@ -242,6 +246,7 @@ public class DPreferences extends JEscDialog {
 		this.autoUpdateChecksEnabled = autoUpdateChecksEnabled;
 		this.autoUpdateChecksInterval = autoUpdateChecksInterval;
 		this.showHiddenFilesEnabled = showHiddenFilesEnabled;
+		this.serialNumberFormatter = serialNumberFormatter;
 		this.expiryWarnDays =  kstColumns.getExpiryWarnDays();
 		this.kstColumns = kstColumns;
 		initComponents();
@@ -480,6 +485,10 @@ public class DPreferences extends JEscDialog {
 		jcbShowHiddenFiles = new JCheckBox(res.getString("DPreferences.jcbShowHiddenFiles.text"));
 		jcbShowHiddenFiles.setSelected(showHiddenFilesEnabled);
 
+		jlSerialNumberFormatter = new JLabel(res.getString("DPreferences.jlSerialNumberFormatter.text"));
+		jcbSerialNumberFormatter = new JComboBox<>();
+		initSerialNumberFormatter();
+
 		// layout
 		jpUI = new JPanel();
 		jpUI.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
@@ -500,6 +509,8 @@ public class DPreferences extends JEscDialog {
 		jpUI.add(jsMinimumPasswordQuality, "wrap");
 		jpUI.add(jlFileChooser, "spanx, wrap");
 		jpUI.add(jcbShowHiddenFiles, "spanx, wrap");
+		jpUI.add(jlSerialNumberFormatter, "spanx, wrap");
+		jpUI.add(jcbSerialNumberFormatter, "spanx, wrap");
 
 		jcbEnableAutoUpdateChecks.addItemListener(new ItemListener() {
 			@Override
@@ -566,6 +577,15 @@ public class DPreferences extends JEscDialog {
 			jcbLanguage.addItem(languageItem);
 			if (languageItem.getIsoCode().equals(language)) {
 				jcbLanguage.setSelectedItem(languageItem);
+			}
+		}
+	}
+
+	private void initSerialNumberFormatter() {
+		for (X509CertUtil.SerialNumberFormatter formatter : X509CertUtil.SerialNumberFormatter.values()) {
+			jcbSerialNumberFormatter.addItem(formatter);
+			if (serialNumberFormatter == formatter) {
+				jcbSerialNumberFormatter.setSelectedItem(formatter);
 			}
 		}
 	}
@@ -889,6 +909,8 @@ public class DPreferences extends JEscDialog {
 
 		showHiddenFilesEnabled = jcbShowHiddenFiles.isSelected();
 
+		serialNumberFormatter = (X509CertUtil.SerialNumberFormatter) jcbSerialNumberFormatter.getSelectedItem();
+
 		// These may fail:
 		boolean returnValue = storeDefaultDN();
 		returnValue &= storeProxyPreferences();
@@ -1125,6 +1147,10 @@ public class DPreferences extends JEscDialog {
 		return showHiddenFilesEnabled;
 	}
 
+	public X509CertUtil.SerialNumberFormatter getSerialNumberFormatter() {
+		return serialNumberFormatter;
+	}
+
 	public boolean isAutoUpdateChecksEnabled() {
 		return autoUpdateChecksEnabled;
 	}
@@ -1246,7 +1272,8 @@ public class DPreferences extends JEscDialog {
 
 	public static void main(String[] args) throws Exception {
 		DPreferences dialog = new DPreferences(new javax.swing.JFrame(), true, new File(""), true, true, true,
-				new PasswordQualityConfig(true, true, 100), "", "en", true, 14, new KeyStoreTableColumns(), true);
+				new PasswordQualityConfig(true, true, 100), "", "en", true, 14, new KeyStoreTableColumns(), true,
+				X509CertUtil.SerialNumberFormatter.HEX_STRING);
 		DialogViewer.run(dialog);
 	}
 }

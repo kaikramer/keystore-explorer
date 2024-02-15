@@ -40,6 +40,7 @@ import javax.swing.JTabbedPane;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.secretkey.SecretKeyType;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
@@ -108,6 +109,7 @@ public class ApplicationSettings {
 	private static final String KSE3_EXPIRY_WARN_DAYS = "kse3.expirywarndays";
 	private static final String KSE3_COLUMNS = "kse3.columns";
 	private static final String KSE3_SHOW_HIDDEN_FILES = "kse3.showhiddenfiles";
+	private static final String KSE3_SERIAL_FORMATTING = "kse3.serialformatting";
 
 
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -146,6 +148,7 @@ public class ApplicationSettings {
 	private KeyStoreTableColumns kstColumns = new KeyStoreTableColumns();
 	private int expiryWarnDays;
 	private boolean showHiddenFilesEnabled;
+	private X509CertUtil.SerialNumberFormatter serialNumberFormatter;
 
 	private ApplicationSettings() {
 
@@ -361,6 +364,14 @@ public class ApplicationSettings {
 
 		// show hidden files in file chooser dialogs?
 		showHiddenFilesEnabled = preferences.getBoolean(KSE3_SHOW_HIDDEN_FILES, true);
+
+		// serial number formatting
+		try {
+			serialNumberFormatter = X509CertUtil.SerialNumberFormatter.valueOf(
+					preferences.get(KSE3_SERIAL_FORMATTING, X509CertUtil.SerialNumberFormatter.HEX_STRING.name()));
+		} catch (IllegalArgumentException e) {
+			serialNumberFormatter = X509CertUtil.SerialNumberFormatter.HEX_STRING;
+		}
 	}
 
 	private File cleanFilePath(File filePath) {
@@ -470,6 +481,9 @@ public class ApplicationSettings {
 
 		// hide/show hidden files in file chooser
 		preferences.putBoolean(KSE3_SHOW_HIDDEN_FILES, isShowHiddenFilesEnabled());
+
+		// serial number formatter
+		preferences.put(KSE3_SERIAL_FORMATTING, getSerialNumberFormatter().name());
 	}
 
 	private void clearExistingRecentFiles(Preferences preferences) {
@@ -838,5 +852,13 @@ public class ApplicationSettings {
 
 	public void setShowHiddenFilesEnabled(boolean showHiddenFilesEnabled) {
 		this.showHiddenFilesEnabled = showHiddenFilesEnabled;
+	}
+
+	public X509CertUtil.SerialNumberFormatter getSerialNumberFormatter() {
+		return serialNumberFormatter;
+	}
+
+	public void setSerialNumberFormatter(X509CertUtil.SerialNumberFormatter serialNumberFormatter) {
+		this.serialNumberFormatter = serialNumberFormatter;
 	}
 }
