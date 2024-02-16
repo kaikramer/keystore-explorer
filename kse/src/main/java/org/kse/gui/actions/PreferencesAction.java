@@ -123,6 +123,8 @@ public class PreferencesAction extends ExitAction {
 
         preferences.setNativeFileChooserEnabled(dPreferences.isNativeFileChooserEnabled());
 
+        preferences.setSerialNumberFormatter(dPreferences.getSerialNumberFormatter());
+
         if ((!dPreferences.getLookFeelInfo().getClassName().equals(UIManager.getLookAndFeel().getClass().getName())) ||
             (dPreferences.getLookFeelDecoration() != JFrame.isDefaultLookAndFeelDecorated()) || languageHasChanged) {
             // L&F or language changed - restart required for upgrade to take effect

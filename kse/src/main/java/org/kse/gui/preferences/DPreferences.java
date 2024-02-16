@@ -63,6 +63,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.crypto.SecurityProvider;
+import org.kse.crypto.x509.SerialNumberFormatter;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
@@ -148,6 +149,8 @@ public class DPreferences extends JEscDialog {
     private JCheckBox jcbEnableAutoUpdateChecks;
     private JSpinner jspAutoUpdateCheckInterval;
     private JLabel jlAutoUpdateChecksDays;
+    private JLabel jlSerialNumberFormatter;
+    private JComboBox<SerialNumberFormatter> jcbSerialNumberFormatter;
 
     private JPanel jpButtons;
     private JButton jbOK;
@@ -490,6 +493,12 @@ public class DPreferences extends JEscDialog {
         jspSnRandomBytes.setToolTipText(res.getString("DPreferences.jlSnRandomBytes.tooltip"));
         jlSnRandomBytesPostfix = new JLabel(res.getString("DPreferences.jlSnRandomBytesPostfix.text"));
 
+        jlSerialNumberFormatter = new JLabel(res.getString("DPreferences.jlSerialNumberFormatter.text"));
+        SerialNumberFormatter.setResourceBundle(res);
+        jcbSerialNumberFormatter = new JComboBox<>(SerialNumberFormatter.values());
+        jcbSerialNumberFormatter.setSelectedItem(preferences.getSerialNumberFormatter());
+        jcbSerialNumberFormatter.setToolTipText(res.getString("DPreferences.jcbSerialNumberFormatter.tooltip"));
+
         // layout
         jpUI = new JPanel();
         rightJPanel.add(jpUI, "jpCard2");
@@ -516,7 +525,9 @@ public class DPreferences extends JEscDialog {
         jpUI.add(jcbPkcs12Encryption, "spanx, wrap unrel");
         jpUI.add(jlSnRandomBytes, "");
         jpUI.add(jspSnRandomBytes, "split 2");
-        jpUI.add(jlSnRandomBytesPostfix, "");
+        jpUI.add(jlSnRandomBytesPostfix, "spanx, wrap unrel");
+        jpUI.add(jlSerialNumberFormatter, "");
+        jpUI.add(jcbSerialNumberFormatter, "");
 
         jcbEnableAutoUpdateChecks
                 .addItemListener(evt -> jspAutoUpdateCheckInterval.setEnabled(jcbEnableAutoUpdateChecks.isSelected()));
@@ -1095,6 +1106,15 @@ public class DPreferences extends JEscDialog {
     public int getSerialNumberLengthInBytes() {
         return ((Number) jspSnRandomBytes.getValue()).intValue();
     }
+
+    /**
+     * Returns the formatter for the serial number
+     *
+     * @return serial number formatter
+     */
+	public SerialNumberFormatter getSerialNumberFormatter() {
+		return (SerialNumberFormatter) jcbSerialNumberFormatter.getSelectedItem();
+	}
 
     /**
      * Check if columns have changed
