@@ -37,5 +37,5 @@ JAVA_OPTIONS="-splash:${SCRIPT_DIR}/splash.png"
 if [ -d "${SCRIPT_DIR}/jre" ]; then
     "${SCRIPT_DIR}/jre/bin/java" ${JAVA_OPTIONS} -jar "${JAR_FILE}" "$@"
 else
-    java ${JAVA_OPTIONS} -jar "${JAR_FILE}" "$@"
+    java "${JAVA_OPTIONS}" -jar "${JAR_FILE}" "$@"
 fi
