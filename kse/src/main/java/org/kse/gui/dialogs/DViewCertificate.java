@@ -555,7 +555,7 @@ public class DViewCertificate extends JEscDialog {
 
                 jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
 
-                jtfSerialNumberHex.setText(X509CertUtil.getSerialNumberAsHex(cert));
+                jtfSerialNumberHex.setText(X509CertUtil.getFormattedSerialNumber(cert));
                 jtfSerialNumberHex.setCaretPosition(0);
 
                 jtfSerialNumberDec.setText(X509CertUtil.getSerialNumberAsDec(cert));

@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.JTabbedPane;
 
 import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.x509.SerialNumberFormatter;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
@@ -63,6 +64,7 @@ public class KsePreferences {
     private boolean nativeFileChooserEnabled = false;
     private Pkcs12EncryptionSetting pkcs12EncryptionSetting = Pkcs12EncryptionSetting.strong;
     private int serialNumberLengthInBytes = 20;
+    private SerialNumberFormatter serialNumberFormatter = SerialNumberFormatter.HEX_STRING;
 
     // auto-generated getters/setters
 
@@ -281,4 +283,12 @@ public class KsePreferences {
     public void setNativeFileChooserEnabled(boolean nativeFileChooserEnabled) {
         this.nativeFileChooserEnabled = nativeFileChooserEnabled;
     }
+
+	public SerialNumberFormatter getSerialNumberFormatter() {
+		return serialNumberFormatter;
+	}
+
+	public void setSerialNumberFormatter(SerialNumberFormatter serialNumberFormatter) {
+		this.serialNumberFormatter = serialNumberFormatter;
+	}
 }

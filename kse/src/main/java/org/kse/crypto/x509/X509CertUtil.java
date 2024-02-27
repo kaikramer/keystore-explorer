@@ -748,6 +748,18 @@ public final class X509CertUtil {
         return new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(10);
     }
 
+	/**
+	 * Return the certificate serial number in the configured format configured in
+	 * the application preferences
+	 *
+	 * @param cert a certificate
+	 * @return Serial number as a formatted hex string
+	 */
+	public static String getFormattedSerialNumber(X509Certificate cert) {
+		String rawHexString = new BigInteger(1, cert.getSerialNumber().toByteArray()).toString(16).toUpperCase();
+		return PreferencesManager.getPreferences().getSerialNumberFormatter().format(rawHexString);
+	}
+
     /**
      * Generate certificate serial number with the length configured in the application preferences.
      *
