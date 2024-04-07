@@ -46,7 +46,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
 /**

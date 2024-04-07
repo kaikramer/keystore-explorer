@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Abstract base class for all private or public key test cases.

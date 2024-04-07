@@ -55,7 +55,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
@@ -63,7 +63,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dialogs.DViewKeyPair;
 import org.kse.gui.error.DError;

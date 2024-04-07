@@ -43,7 +43,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.publickey.KeyIdentifierGenerator;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
 /**

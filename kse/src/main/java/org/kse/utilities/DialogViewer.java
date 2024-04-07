@@ -29,8 +29,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.kse.KSE;
-import org.kse.gui.JEscDialog;
-import org.kse.gui.JEscFrame;
+import org.kse.gui.components.JEscDialog;
+import org.kse.gui.components.JEscFrame;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 

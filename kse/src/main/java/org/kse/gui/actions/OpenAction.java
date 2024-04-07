@@ -24,13 +24,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.security.KeyStore;
 import java.text.MessageFormat;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreLoadException;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.CurrentDirectory;
@@ -40,6 +40,8 @@ import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordManager;
 
 /**
  * Action to open a KeyStore.
@@ -118,16 +120,30 @@ public class OpenAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            // use (optional) default password for first try
-            Password password = (defaultPassword != null) ? new Password(defaultPassword.toCharArray()) : null;
+            Password password;
+            PasswordManager passwordManager = PasswordManager.getInstance();
+            if (passwordManager.isKeyStorePasswordKnown(keyStoreFile)) {
+                unlockPasswordManager();
+                password = passwordManager.getKeyStorePassword(keyStoreFile).map(Password::new).orElse(null);
+            } else {
+                // use (optional) default password for first try
+                password = (defaultPassword != null) ? new Password(defaultPassword.toCharArray()) : null;
+            }
 
             KeyStore openedKeyStore;
             boolean firstTry = true;
             while (true) {
 
                 // show password dialog if no default password was passed or if last try to unlock ks has failed
+                boolean passwordManagerWanted = false;
                 if (password == null) {
-                    password = showPasswordDialog(keyStoreFile);
+                    DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
+                            res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()), true);
+                    dGetPassword.setLocationRelativeTo(frame);
+                    dGetPassword.setVisible(true);
+
+                    password = dGetPassword.getPassword();
+                    passwordManagerWanted = dGetPassword.isPasswordManagerWanted();
                 }
 
                 // user did not enter password -> abort
@@ -138,6 +154,13 @@ public class OpenAction extends KeyStoreExplorerAction {
                 // try to load keystore
                 try {
                     openedKeyStore = KeyStoreUtil.load(keyStoreFile, password);
+
+                    // store password in password manager
+                    if (passwordManagerWanted) {
+                        unlockPasswordManager();
+                        passwordManager.update(keyStoreFile, password.toCharArray(), new HashMap<>());
+                    }
+
                     break;
                 } catch (KeyStoreLoadException klex) {
 
@@ -175,14 +198,6 @@ public class OpenAction extends KeyStoreExplorerAction {
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
-    }
-
-    private Password showPasswordDialog(File keyStoreFile) {
-        DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-                res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()));
-        dGetPassword.setLocationRelativeTo(frame);
-        dGetPassword.setVisible(true);
-        return dGetPassword.getPassword();
     }
 
     private int showErrorMessage(File keyStoreFile, KeyStoreLoadException klex) {

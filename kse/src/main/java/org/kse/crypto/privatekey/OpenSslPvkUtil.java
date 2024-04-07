@@ -59,7 +59,7 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.ecc.EccUtil;

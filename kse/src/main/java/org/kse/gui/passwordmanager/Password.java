@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.crypto;
+package org.kse.gui.passwordmanager;
 
 import java.util.Arrays;
 import java.util.ResourceBundle;

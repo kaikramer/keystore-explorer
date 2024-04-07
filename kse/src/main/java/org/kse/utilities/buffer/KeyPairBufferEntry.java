@@ -22,7 +22,7 @@ package org.kse.utilities.buffer;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Key pair buffer entry.

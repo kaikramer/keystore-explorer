@@ -91,7 +91,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.actions.AboutAction;

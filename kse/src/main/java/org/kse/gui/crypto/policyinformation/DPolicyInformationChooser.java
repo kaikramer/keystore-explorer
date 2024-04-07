@@ -51,7 +51,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 import org.kse.gui.oid.JObjectId;

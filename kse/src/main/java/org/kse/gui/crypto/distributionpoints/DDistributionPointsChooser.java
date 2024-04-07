@@ -44,7 +44,7 @@ import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.ReasonFlags;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.generalname.JGeneralNames;
 import org.kse.utilities.DialogViewer;

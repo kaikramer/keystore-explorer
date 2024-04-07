@@ -38,7 +38,7 @@ import javax.swing.JOptionPane;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.csr.CsrType;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;

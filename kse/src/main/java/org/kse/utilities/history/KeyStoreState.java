@@ -29,28 +29,25 @@ import java.util.ResourceBundle;
 
 import org.bouncycastle.jce.provider.JDKDSAPrivateKey;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Records a single state for a KeyStore in the undo/redo history. This includes
  * a cache of both the KeyStore and its entries' passwords.
  */
 public class KeyStoreState {
-    /**
-     * Resource bundle
-     */
     protected static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/history/resources");
 
     private KeyStoreHistory history;
+
     HistoryAction action;
     private KeyStore keyStore;
     private Password password;
     private HashMap<String, Password> entryPasswords = new HashMap<>();
     private KeyStoreState previous;
     private KeyStoreState next;
-
     /**
      * Create an empty state.
      */
@@ -203,6 +200,15 @@ public class KeyStoreState {
      */
     public KeyStore getKeyStore() {
         return keyStore;
+    }
+
+    /**
+     * Get keystore history.
+     *
+     * @return The history of this keystore
+     */
+    public KeyStoreHistory getHistory() {
+        return history;
     }
 
     /**

@@ -28,10 +28,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -99,6 +99,8 @@ public class SaveAction extends SaveAsAction {
                     return false;
                 }
             }
+
+            saveInPasswordManager(currentState, saveFile, password);
 
             KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 

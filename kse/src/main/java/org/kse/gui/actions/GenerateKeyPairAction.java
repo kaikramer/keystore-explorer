@@ -31,7 +31,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
@@ -42,6 +41,7 @@ import org.kse.gui.dialogs.DGeneratingKeyPair;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
 import org.kse.gui.password.DGetNewPassword;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;

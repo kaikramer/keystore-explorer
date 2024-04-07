@@ -21,7 +21,7 @@ package org.kse.utilities.buffer;
 
 import java.security.Key;
 
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Key buffer entry.

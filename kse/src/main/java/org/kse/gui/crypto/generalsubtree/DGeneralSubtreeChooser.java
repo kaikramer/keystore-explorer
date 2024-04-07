@@ -45,7 +45,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralSubtree;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.generalname.JGeneralName;
 

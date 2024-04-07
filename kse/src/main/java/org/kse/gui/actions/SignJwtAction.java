@@ -30,7 +30,7 @@ import java.util.Base64;
 
 import javax.swing.ImageIcon;
 
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;

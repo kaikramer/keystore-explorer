@@ -47,7 +47,7 @@ import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JEscFrame;
+import org.kse.gui.components.JEscFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.asn1.Asn1Dump;

@@ -44,7 +44,7 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.actions.OpenAction;

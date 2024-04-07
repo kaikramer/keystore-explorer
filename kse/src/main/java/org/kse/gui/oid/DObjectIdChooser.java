@@ -38,7 +38,7 @@ import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.oid.InvalidObjectIdException;
 

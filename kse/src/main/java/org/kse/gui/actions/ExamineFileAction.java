@@ -40,7 +40,6 @@ import javax.swing.KeyStroke;
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.filetype.CryptoFileType;
@@ -64,6 +63,7 @@ import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.io.FileNameUtil;
 
 /**

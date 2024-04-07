@@ -45,8 +45,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.Password;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;

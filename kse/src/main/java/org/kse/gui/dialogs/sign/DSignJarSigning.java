@@ -47,7 +47,7 @@ import javax.swing.SwingUtilities;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 
 import net.miginfocom.swing.MigLayout;

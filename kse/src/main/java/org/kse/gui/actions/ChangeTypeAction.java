@@ -31,7 +31,7 @@ import java.util.Enumeration;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;

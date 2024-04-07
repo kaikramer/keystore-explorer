@@ -24,8 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -33,7 +36,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
@@ -43,6 +45,10 @@ import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.password.DGetPassword;
+import org.kse.gui.passwordmanager.DInitPasswordManager;
+import org.kse.gui.passwordmanager.DUnlockPasswordManager;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -141,18 +147,34 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     protected Password unlockEntry(String alias, KeyStoreState state) {
         try {
             KeyStore keyStore = state.getKeyStore();
+            KeyStoreHistory history = state.getHistory();
+            Password password = null;
 
-            DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-                    res.getString("KeyStoreExplorerAction.UnlockEntry.Title"), alias));
-            dGetPassword.setLocationRelativeTo(frame);
-            dGetPassword.setVisible(true);
-            Password password = dGetPassword.getPassword();
+            // try to get password from password manager
+            if (history.getFile() != null) {
+                password = PasswordManager.getInstance()
+                                          .getKeyStoreEntryPassword(history.getFile(), alias)
+                                          .map(Password::new)
+                                          .orElse(null);
+            }
+
+            // no password found, ask user to enter it
+            if (password == null) {
+                DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
+                        res.getString("KeyStoreExplorerAction.UnlockEntry.Title"), alias));
+                dGetPassword.setLocationRelativeTo(frame);
+                dGetPassword.setVisible(true);
+                password = dGetPassword.getPassword();
+            }
 
             if (password == null) {
                 return null;
             }
 
             keyStore.getKey(alias, password.toCharArray()); // Test password is correct
+
+            // add pwd to pwd-mgr - no-op if the keystore (and its pwd) is not known by the pwd-mgr (all or nothing)
+            PasswordManager.getInstance().updateEntryPassword(history.getFile(), alias, password.toCharArray());
 
             state.setEntryPassword(alias, password);
             kseFrame.updateControls(true);
@@ -235,15 +257,57 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     /**
      * Get a new KeyStore password.
      *
+     * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
      * @return The new KeyStore password, or null if none entered by the user
      */
-    protected Password getNewKeyStorePassword() {
-        DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                "KeyStoreExplorerAction.SetKeyStorePassword.Title"), preferences.getPasswordQualityConfig());
+    protected Password getNewKeyStorePassword(boolean askUserForPasswordManager) {
+        DGetNewPassword dGetNewPassword =
+                new DGetNewPassword(frame, res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"),
+                                    preferences.getPasswordQualityConfig(), askUserForPasswordManager);
         dGetNewPassword.setLocationRelativeTo(frame);
         dGetNewPassword.setVisible(true);
 
+        if (askUserForPasswordManager && dGetNewPassword.isPasswordManagerWanted()) {
+            unlockPasswordManager();
+        }
+
         return dGetNewPassword.getPassword();
+    }
+
+    protected void unlockPasswordManager() {
+        if (!PasswordManager.getInstance().isInitialized()) {
+            var dInitPasswordManager = new DInitPasswordManager(frame, preferences.getPasswordQualityConfig());
+            dInitPasswordManager.setLocationRelativeTo(frame);
+            dInitPasswordManager.setVisible(true);
+            if (dInitPasswordManager.getPassword() != null) {
+                PasswordManager.getInstance().unlock(dInitPasswordManager.getPassword().toCharArray());
+            }
+        }
+        if (!PasswordManager.getInstance().isUnlocked()) {
+            var dUnlockPasswordManager = new DUnlockPasswordManager(frame);
+            dUnlockPasswordManager.setLocationRelativeTo(frame);
+            dUnlockPasswordManager.setVisible(true);
+            if (!dUnlockPasswordManager.isCancelled()) {
+                PasswordManager.getInstance().unlock(dUnlockPasswordManager.getPassword().toCharArray());
+            }
+        }
+    }
+
+    protected static void saveInPasswordManager(KeyStoreState currentState, File saveFile, Password password)
+            throws KeyStoreException {
+        if (PasswordManager.getInstance().isUnlocked()) {
+            var entryPasswords = new HashMap<String, char[]>();
+            for (String alias : Collections.list(currentState.getKeyStore().aliases())) {
+                if (currentState.getEntryPassword(alias) != null) {
+                    char[] entryPassword = currentState.getEntryPassword(alias).toCharArray();
+                    if (entryPassword != null) {
+                        entryPasswords.put(alias, entryPassword);
+                    }
+                }
+            }
+            PasswordManager.getInstance().update(saveFile, password.toCharArray(), entryPasswords);
+            PasswordManager.getInstance().save();
+        }
     }
 
     /**

@@ -46,12 +46,12 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.privatekey.OpenSslPbeType;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.password.JPasswordQualityField;
@@ -218,7 +218,7 @@ public class DExportPrivateKeyOpenSsl extends JEscDialog {
                 jcbPbeAlg.setEnabled(false);
                 jpfPassword.setEnabled(false);
                 if (jpfPassword instanceof JPasswordQualityField) {
-                    ((JPasswordQualityField) jpfPassword).setText("");
+                    ((JPasswordQualityField) jpfPassword).setPassword("");
                 } else {
                     ((JPasswordField) jpfPassword).setText("");
                 }

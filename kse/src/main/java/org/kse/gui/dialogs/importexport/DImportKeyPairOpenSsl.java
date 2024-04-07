@@ -55,7 +55,7 @@ import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.io.FileUtils;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.PrivateKeyEncryptedException;
@@ -65,7 +65,7 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewPrivateKey;

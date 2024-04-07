@@ -26,9 +26,9 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -90,7 +90,7 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
         KeyStoreState currentState = history.getCurrentState();
         KeyStoreState newState = currentState.createBasisForNextState(this);
 
-        Password password = getNewKeyStorePassword();
+        Password password = getNewKeyStorePassword(false);
 
         if (password == null) {
             return false;

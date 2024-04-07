@@ -43,7 +43,7 @@ import javax.swing.KeyStroke;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.DialogHelper;

@@ -50,7 +50,7 @@ import java.util.ResourceBundle;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.gui.preferences.PreferencesManager;
 

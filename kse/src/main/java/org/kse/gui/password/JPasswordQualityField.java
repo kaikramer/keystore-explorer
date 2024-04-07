@@ -208,9 +208,19 @@ public class JPasswordQualityField extends JPanel {
      * @param text
      *            Text
      */
-    public void setText(String text) {
+    public void setPassword(String text) {
         jpfPassword.setText(text);
         passwordChanged();
+    }
+
+    /**
+     * Set the password quality field's text.
+     *
+     * @param password
+     *            Text
+     */
+    public void setPassword(char[] password) {
+        setPassword(new String(password));
     }
 
     /**

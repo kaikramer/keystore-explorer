@@ -29,14 +29,14 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.swing.JFrame;
 
-import org.kse.crypto.Password;
 import org.kse.gui.password.DGetPassword;
+import org.kse.gui.passwordmanager.Password;
 
 public class PasswordCallbackHandler implements CallbackHandler {
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-    private JFrame frame;
+    private final JFrame frame;
 
     public PasswordCallbackHandler(JFrame frame) {
         this.frame = frame;

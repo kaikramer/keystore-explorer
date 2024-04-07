@@ -65,7 +65,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -76,7 +76,7 @@ import org.kse.crypto.secretkey.SecretKeyUtil;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;

@@ -44,7 +44,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.jcepolicy.JcePolicy;
 import org.kse.crypto.jcepolicy.JcePolicyUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 

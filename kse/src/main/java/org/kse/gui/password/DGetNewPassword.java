@@ -19,11 +19,8 @@
  */
 package org.kse.gui.password;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -32,22 +29,23 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
-import org.kse.crypto.Password;
-import org.kse.gui.JEscDialog;
-import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.DialogViewer;
+import org.kse.utilities.PRNG;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used for entering and confirming a password.
@@ -55,35 +53,31 @@ import org.kse.gui.PlatformUtil;
 public class DGetNewPassword extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/password/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/password/resources");
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPassword;
     private JLabel jlFirst;
     private JComponent jpfFirst;
     private JLabel jlConfirm;
     private JPasswordField jpfConfirm;
-    private JPanel jpButtons;
+    private JCheckBox jcbStoreInPasswordManager;
     private JButton jbOK;
     private JButton jbCancel;
 
     private PasswordQualityConfig passwordQualityConfig;
+    private boolean askUserForPasswordManager = false;
     private Password password;
 
     /**
      * Creates new DGetNewPassword dialog where the parent is a frame.
      *
      * @param parent                Parent frame
-     * @param modality              Dialog modality
+     * @param title                 The dialog's title
      * @param passwordQualityConfig Password quality configuration
      */
-    public DGetNewPassword(JFrame parent, Dialog.ModalityType modality, PasswordQualityConfig passwordQualityConfig) {
-        super(parent, res.getString("DGetNewPassword.Title"), modality);
-
-        this.passwordQualityConfig = passwordQualityConfig;
-
-        initComponents();
+    public DGetNewPassword(JFrame parent, String title, PasswordQualityConfig passwordQualityConfig) {
+        this(parent, title, passwordQualityConfig, false);
     }
 
     /**
@@ -91,25 +85,15 @@ public class DGetNewPassword extends JEscDialog {
      *
      * @param parent                Parent frame
      * @param title                 The dialog's title
-     * @param passwordQualityConfig
-     */
-    public DGetNewPassword(JFrame parent, String title, PasswordQualityConfig passwordQualityConfig) {
-        super(parent, title, ModalityType.DOCUMENT_MODAL);
-
-        this.passwordQualityConfig = passwordQualityConfig;
-
-        initComponents();
-    }
-
-    /**
-     * Creates new DGetNewPassword dialog where the parent is a dialog.
-     *
-     * @param parent                Parent dialog
-     * @param modality              Dialog modality
      * @param passwordQualityConfig Password quality configuration
+     * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
      */
-    public DGetNewPassword(JDialog parent, Dialog.ModalityType modality, PasswordQualityConfig passwordQualityConfig) {
-        this(parent, res.getString("DGetNewPassword.Title"), modality, passwordQualityConfig);
+    public DGetNewPassword(JFrame parent, String title, PasswordQualityConfig passwordQualityConfig,
+                           boolean askUserForPasswordManager) {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.passwordQualityConfig = passwordQualityConfig;
+        this.askUserForPasswordManager = askUserForPasswordManager;
+        initComponents();
     }
 
     /**
@@ -123,68 +107,43 @@ public class DGetNewPassword extends JEscDialog {
     public DGetNewPassword(JDialog parent, String title, Dialog.ModalityType modality,
                            PasswordQualityConfig passwordQualityConfig) {
         super(parent, title, modality);
-
         this.passwordQualityConfig = passwordQualityConfig;
-
         initComponents();
     }
 
     private void initComponents() {
-        getContentPane().setLayout(new BorderLayout());
-
         jlFirst = new JLabel(res.getString("DGetNewPassword.jlFirst.text"));
-        GridBagConstraints gbc_jlFirst = new GridBagConstraints();
-        gbc_jlFirst.gridx = 0;
-        gbc_jlFirst.gridy = 0;
-        gbc_jlFirst.anchor = GridBagConstraints.EAST;
-        gbc_jlFirst.insets = new Insets(5, 5, 5, 5);
+        jpfFirst = createPasswordInputField(passwordQualityConfig);
 
         jlConfirm = new JLabel(res.getString("DGetNewPassword.jlConfirm.text"));
-        GridBagConstraints gbc_jpfFirst = new GridBagConstraints();
-        gbc_jpfFirst.gridx = 1;
-        gbc_jpfFirst.gridy = 0;
-        gbc_jpfFirst.anchor = GridBagConstraints.WEST;
-        gbc_jpfFirst.insets = new Insets(5, 5, 5, 5);
-
-        if (passwordQualityConfig.getEnabled()) {
-            if (passwordQualityConfig.getEnforced()) {
-                jpfFirst = new JPasswordQualityField(15, passwordQualityConfig.getMinimumQuality());
-            } else {
-                jpfFirst = new JPasswordQualityField(15);
-            }
-        } else {
-            jpfFirst = new JPasswordField(15);
-        }
-
-        GridBagConstraints gbc_jlConfirm = new GridBagConstraints();
-        gbc_jlConfirm.gridx = 0;
-        gbc_jlConfirm.gridy = 1;
-        gbc_jlConfirm.anchor = GridBagConstraints.EAST;
-        gbc_jlConfirm.insets = new Insets(5, 5, 5, 5);
-
         jpfConfirm = new JPasswordField(15);
-        GridBagConstraints gbc_jpfConfirm = new GridBagConstraints();
-        gbc_jpfConfirm.gridx = 1;
-        gbc_jpfConfirm.gridy = 1;
-        gbc_jpfConfirm.anchor = GridBagConstraints.WEST;
-        gbc_jpfConfirm.insets = new Insets(5, 5, 5, 5);
 
-        jpPassword = new JPanel(new GridBagLayout());
-        jpPassword.add(jlFirst, gbc_jlFirst);
-        jpPassword.add(jpfFirst, gbc_jpfFirst);
-
-        jpPassword.add(jlConfirm, gbc_jlConfirm);
-        jpPassword.add(jpfConfirm, gbc_jpfConfirm);
-        jpPassword.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
-                                                new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
+        preFillPasswordFields(jpfFirst, jpfConfirm);
 
         jbOK = new JButton(res.getString("DGetNewPassword.jbOK.text"));
-        jbOK.addActionListener(evt -> okPressed());
 
         jbCancel = new JButton(res.getString("DGetNewPassword.jbCancel.text"));
-        jbCancel.addActionListener(evt -> cancelPressed());
         jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+
+        jcbStoreInPasswordManager = new JCheckBox(res.getString("DGetNewPassword.jcbStoreInPasswordManager.text"));
+        jcbStoreInPasswordManager.setSelected(true);
+        jcbStoreInPasswordManager.setVisible(askUserForPasswordManager);
+
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[]rel[grow]", ""));
+        pane.add(jlFirst, "");
+        pane.add(jpfFirst, "wrap, growx");
+        pane.add(jlConfirm, "");
+        pane.add(jpfConfirm, "growx, wrap unrelated");
+        pane.add(jcbStoreInPasswordManager, "hidemode 3, split 2, spanx, growx, wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap unrelated");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
+
+        jbOK.addActionListener(evt -> okPressed());
+
+        jbCancel.addActionListener(evt -> cancelPressed());
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
             private static final long serialVersionUID = 1L;
 
@@ -193,11 +152,6 @@ public class DGetNewPassword extends JEscDialog {
                 cancelPressed();
             }
         });
-
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().add(jpPassword, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -215,6 +169,28 @@ public class DGetNewPassword extends JEscDialog {
         SwingUtilities.invokeLater(() -> jpfFirst.requestFocus());
     }
 
+    private void preFillPasswordFields(JComponent jpfFirst, JPasswordField jpfConfirm) {
+        char[] generatedPassword = PRNG.generatePassword(20);
+        if (jpfFirst instanceof JPasswordQualityField) {
+            ((JPasswordQualityField) jpfFirst).setPassword(generatedPassword);
+        } else {
+            ((JPasswordField) jpfFirst).setText(new String(generatedPassword));
+        }
+        jpfConfirm.setText(new String(generatedPassword));
+    }
+
+    private JComponent createPasswordInputField(PasswordQualityConfig passwordQualityConfig) {
+        if (passwordQualityConfig.getEnabled()) {
+            if (passwordQualityConfig.getEnforced()) {
+                return new JPasswordQualityField(15, passwordQualityConfig.getMinimumQuality());
+            } else {
+                return new JPasswordQualityField(15);
+            }
+        } else {
+            return new JPasswordField(15);
+        }
+    }
+
     /**
      * Get the password set in the dialog.
      *
@@ -222,6 +198,14 @@ public class DGetNewPassword extends JEscDialog {
      */
     public Password getPassword() {
         return password;
+    }
+
+    /**
+     * Return whether user wants to use password manager or not
+     * @return True if password manager is requested
+     */
+    public boolean isPasswordManagerWanted() {
+        return jcbStoreInPasswordManager.isSelected();
     }
 
     private boolean checkPassword() {
@@ -267,5 +251,11 @@ public class DGetNewPassword extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.run(new DGetNewPassword(new javax.swing.JFrame(), "New Password",
+                                             new PasswordQualityConfig(false, false, 20), true));
     }
 }

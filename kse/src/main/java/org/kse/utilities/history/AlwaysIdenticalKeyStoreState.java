@@ -24,7 +24,7 @@ import java.security.KeyStore;
 import java.util.ResourceBundle;
 
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Special version of KeyStoreState for KeyStores that cannot be copied (like PKCS#11).

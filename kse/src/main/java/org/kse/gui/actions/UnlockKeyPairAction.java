@@ -26,8 +26,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.KSE;
-import org.kse.crypto.Password;
 import org.kse.gui.KseFrame;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 

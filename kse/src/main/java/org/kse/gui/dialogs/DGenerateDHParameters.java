@@ -40,9 +40,10 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JMultiLineLabel;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -93,13 +94,6 @@ public class DGenerateDHParameters extends JEscDialog {
      * Initializes the dialogue panel and associated elements
      */
     private void initComponents() {
-
-        //TODO Generate DH Parameters icon
-        //ImageIcon icon = new ImageIcon(getClass().getResource("images/gendhp.png"));
-        //jlGenDHParam.setIcon(icon);
-        //jlGenDHParam.setHorizontalTextPosition(SwingConstants.LEADING);
-        //jlGenDHParam.setIconTextGap(15);
-
         jlDHKeySize = new JLabel(res.getString("DGenerateDHParameters.jlDHKeySize.text"));
 
         jcbDHKeySize = new JComboBox<>();
@@ -107,13 +101,8 @@ public class DGenerateDHParameters extends JEscDialog {
         jcbDHKeySize.setSelectedIndex(1);
         jcbDHKeySize.setToolTipText(res.getString("DGenerateDHParameters.jcbDHKeySize.tooltip"));
 
-        JTextArea jtAreaFooter = new JTextArea();
-        jtAreaFooter.setColumns(25);
-        jtAreaFooter.setText(res.getString("DGenerateDHParameters.jtAreaFooter.text"));
-        jtAreaFooter.setEditable(false);
-        jtAreaFooter.setLineWrap(true);
-        jtAreaFooter.setWrapStyleWord(true);
-        jtAreaFooter.setBackground(getBackground());
+        JMultiLineLabel jmllFooter = new JMultiLineLabel(res.getString("DGenerateDHParameters.jtAreaFooter.text"));
+        jmllFooter.setColumns(25);
 
         jbCancel = new JButton(res.getString("DGenerateDHParameters.jbCancel.text"));
         jbOK = new JButton(res.getString("DGenerateDHParameters.jbOK.text"));
@@ -126,7 +115,7 @@ public class DGenerateDHParameters extends JEscDialog {
         MiGUtil.addSeparator(pane, res.getString("DGenerateDHParameters.jpContent.text"));
         pane.add(jlDHKeySize, "skip, align right");
         pane.add(jcbDHKeySize, "wrap");
-        pane.add(jtAreaFooter, "growx, spanx, wrap");
+        pane.add(jmllFooter, "growx, spanx, wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(buttons, "right, spanx");
 

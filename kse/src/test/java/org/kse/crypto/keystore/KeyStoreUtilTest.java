@@ -27,7 +27,7 @@ import java.security.KeyStore;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.crypto.CryptoTestsBase;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.filetype.CryptoFileUtil;
 
 /**

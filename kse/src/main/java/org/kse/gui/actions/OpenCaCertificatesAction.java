@@ -29,12 +29,12 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.kse.AuthorityCertificates;
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DNewKeyStoreType;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Action to open the CA Certificates KeyStore. If it does not exist provide the
@@ -92,7 +92,7 @@ public class OpenCaCertificatesAction extends OpenAction {
                 return;
             }
 
-            Password password = getNewKeyStorePassword();
+            Password password = getNewKeyStorePassword(false);
 
             if (password == null) {
                 return;

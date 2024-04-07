@@ -47,7 +47,6 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.filetype.CryptoFileType;
@@ -70,6 +69,7 @@ import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
+import org.kse.gui.passwordmanager.Password;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
@@ -313,8 +313,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
     }
 
     private Password getPassword() {
-        DGetPassword dGetPassword = new DGetPassword(frame,
-                                                     res.getString("ExamineClipboardAction.EnterPassword.Title"));
+        var dGetPassword = new DGetPassword(frame, res.getString("ExamineClipboardAction.EnterPassword.Title"));
         dGetPassword.setLocationRelativeTo(frame);
         dGetPassword.setVisible(true);
         return dGetPassword.getPassword();

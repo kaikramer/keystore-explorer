@@ -32,6 +32,7 @@ import javax.swing.KeyStroke;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.KseRestart;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.gui.preferences.PreferencesManager;
 
 /**
@@ -90,7 +91,11 @@ public class ExitAction extends CloseAllAction {
                                          .map(File::getAbsolutePath)
                                          .collect(Collectors.toList()));
         preferences.setCurrentDirectory(CurrentDirectory.get().getAbsolutePath());
-        PreferencesManager.persist();
+        PreferencesManager.persistPreferences();
+
+        if (PasswordManager.getInstance().isInitialized() && PasswordManager.getInstance().isUnlocked()) {
+            PasswordManager.getInstance().save();
+        }
 
         if (restart) {
             KseRestart.restart();

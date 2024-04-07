@@ -21,7 +21,7 @@ package org.kse.gui.dialogs.extensions;
 
 import javax.swing.JDialog;
 
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 
 /**
  * Abstract base for all extension dialogs.

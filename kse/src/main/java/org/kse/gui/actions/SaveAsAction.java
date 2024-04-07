@@ -30,12 +30,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -109,6 +109,7 @@ public class SaveAsAction extends KeyStoreExplorerAction {
             saveFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(saveFile);
 
+            // TODO check for response if JavaFX file dialog (because overwrite dialog is shown 2x)
             if (saveFile.isFile()) {
                 String message = MessageFormat.format(res.getString("SaveAsAction.OverWriteFile.message"), saveFile);
 
@@ -126,6 +127,8 @@ public class SaveAsAction extends KeyStoreExplorerAction {
                                               JOptionPane.WARNING_MESSAGE);
                 return false;
             }
+
+            saveInPasswordManager(currentState, saveFile, password);
 
             KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 

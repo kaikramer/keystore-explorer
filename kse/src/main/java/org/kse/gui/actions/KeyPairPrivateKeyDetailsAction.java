@@ -27,7 +27,7 @@ import java.util.Optional;
 
 import javax.swing.ImageIcon;
 
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewPrivateKey;
 import org.kse.gui.error.DError;

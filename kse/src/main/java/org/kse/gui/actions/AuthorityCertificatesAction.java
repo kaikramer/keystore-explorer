@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 
 import org.kse.AuthorityCertificates;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreLoadException;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
@@ -36,6 +35,7 @@ import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Abstract base class for actions that utilize authority certificates.

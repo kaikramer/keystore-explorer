@@ -23,7 +23,7 @@ import java.awt.Toolkit;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import javax.swing.ImageIcon;
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.KseFrame;

@@ -24,18 +24,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.kse.gui.JEscFrame;
+import org.kse.gui.components.JEscFrame;
 import org.kse.gui.KseRestart;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.json.KseJacksonJrExtension;
+import org.kse.gui.preferences.passwordmanager.EncryptedKeyStorePasswords;
 import org.kse.utilities.os.OperatingSystem;
 
 import com.fasterxml.jackson.jr.annotationsupport.JacksonAnnotationExtension;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 /**
- * Load, provide access and store the application preferences.
+ * Load, provide access and store the application preferences and other config files of KSE like keystore passwords.
  * <p>
  *     The base directory for the config files is selected depending on the operating system:
  *     <ol>
@@ -52,30 +53,42 @@ public class PreferencesManager {
     private static final String CONFIG_BASE_DIR = "kse";
     private static final String CONFIG_DOTTED_BASE_DIR = ".kse";
     private static final String CONFIG_FILE_NAME = "config.json";
+    private static final String PASSWORDS_FILE_NAME = "keystore-passwords.json";
     private static final String ENV_VAR_CONFIG_DIR = "KSE_CONFIG_DIR";
 
     private static KsePreferences ksePreferences;
+    private static EncryptedKeyStorePasswords keyStorePasswords;
 
     // configure jackson-jr
-    private static JSON json = JSON.builder()
-                                   .register(JacksonAnnotationExtension.std)
-                                   .register(new KseJacksonJrExtension())
-                                   .build()
-                                   .with(JSON.Feature.PRETTY_PRINT_OUTPUT)
-                                   .with(JSON.Feature.WRITE_NULL_PROPERTIES)
-                                   .with(JSON.Feature.FAIL_ON_DUPLICATE_MAP_KEYS);
+    private static final JSON json = JSON.builder()
+                                         .register(JacksonAnnotationExtension.std)
+                                         .register(new KseJacksonJrExtension())
+                                         .build()
+                                         .with(JSON.Feature.PRETTY_PRINT_OUTPUT)
+                                         .with(JSON.Feature.WRITE_NULL_PROPERTIES)
+                                         .with(JSON.Feature.FAIL_ON_DUPLICATE_MAP_KEYS);
 
     /**
      * Returns a singleton object of the application preferences.
      */
     public static KsePreferences getPreferences() {
         if (ksePreferences == null) {
-            ksePreferences = load();
+            ksePreferences = loadPreferences();
         }
         return ksePreferences;
     }
 
-    private static KsePreferences load() {
+    /**
+     * Returns the encrypted keystore passwords and metadata from JSON file
+     */
+    public static EncryptedKeyStorePasswords getKeyStorePasswords() {
+        if (keyStorePasswords == null) {
+            keyStorePasswords = loadKeyStorePasswords();
+        }
+        return keyStorePasswords;
+    }
+
+    private static KsePreferences loadPreferences() {
         try {
             return json.beanFrom(KsePreferences.class, determineConfigFilePath());
         } catch (FileNotFoundException e) {
@@ -87,9 +100,20 @@ public class PreferencesManager {
         }
     }
 
+    private static EncryptedKeyStorePasswords loadKeyStorePasswords() {
+        try {
+            return json.beanFrom(EncryptedKeyStorePasswords.class, determinePasswordsFilePath());
+        } catch (FileNotFoundException e) {
+            return new EncryptedKeyStorePasswords();
+        } catch (Exception e) {
+            DError.displayError(new JEscFrame(), e);
+            return new EncryptedKeyStorePasswords();
+        }
+    }
+
     private static File determineConfigFilePath() throws IOException {
 
-        // 1. Location with highest priority: Config dir set from outside via env var
+        // 1. Location with the highest priority: Config dir set from outside via env var
         File envDirConfigFile = new File(System.getenv(ENV_VAR_CONFIG_DIR), CONFIG_FILE_NAME);
         if (envDirConfigFile.exists()) {
             return envDirConfigFile.getCanonicalFile();
@@ -114,6 +138,10 @@ public class PreferencesManager {
         return new File(System.getProperty("user.home"), ".kse" + File.separator + CONFIG_FILE_NAME);
     }
 
+    private static File determinePasswordsFilePath() throws IOException {
+        // location of passwords file should be right next to the config file
+        return new File(determineConfigFilePath().getParentFile(), PASSWORDS_FILE_NAME).getCanonicalFile();
+    }
 
     private static String getAppDataConfigDir() {
         String dir = System.getenv("APPDATA");
@@ -135,11 +163,27 @@ public class PreferencesManager {
         return dir;
     }
 
-    public static void persist() {
+    /**
+     * Save preferences to file
+     */
+    public static void persistPreferences() {
         try {
             File configFile = determineConfigFilePath();
             configFile.getParentFile().mkdirs();
             json.write(ksePreferences, configFile);
+        } catch (Exception e) {
+            DError.displayError(new JEscFrame(), e);
+        }
+    }
+
+    /**
+     * Save encrypted keystore passwords and metadata to JSON file
+     */
+    public static void persistKeyStorePasswords() {
+        try {
+            File passwordsFilePath = determinePasswordsFilePath();
+            passwordsFilePath.getParentFile().mkdirs();
+            json.write(keyStorePasswords, passwordsFilePath);
         } catch (Exception e) {
             DError.displayError(new JEscFrame(), e);
         }

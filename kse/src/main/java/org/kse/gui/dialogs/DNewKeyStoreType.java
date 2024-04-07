@@ -38,7 +38,7 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreType;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
 

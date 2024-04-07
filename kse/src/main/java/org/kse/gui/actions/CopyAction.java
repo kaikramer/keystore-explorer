@@ -31,7 +31,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.Password;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;

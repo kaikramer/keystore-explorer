@@ -52,7 +52,7 @@ import javax.swing.KeyStroke;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;

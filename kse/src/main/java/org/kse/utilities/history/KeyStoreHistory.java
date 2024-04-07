@@ -23,8 +23,8 @@ import java.io.File;
 import java.security.KeyStore;
 import java.security.Provider;
 
-import org.kse.crypto.Password;
 import org.kse.crypto.keystore.KeyStoreType;
+import org.kse.gui.passwordmanager.Password;
 
 /**
  * Undo/redo history for a KeyStore.

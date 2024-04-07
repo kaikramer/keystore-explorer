@@ -49,7 +49,7 @@ import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.kse.KSE;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 
 import net.miginfocom.swing.MigLayout;

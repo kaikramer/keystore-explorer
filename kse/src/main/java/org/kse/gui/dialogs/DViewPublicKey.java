@@ -53,7 +53,7 @@ import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JEscDialog;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JPublicKeyFingerprint;
