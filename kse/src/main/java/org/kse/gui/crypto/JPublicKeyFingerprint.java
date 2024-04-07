@@ -102,8 +102,6 @@ public class JPublicKeyFingerprint extends JPanel {
         for (PublicKeyFingerprintAlgorithm fingerprintAlgorithm : fingerprintAlgorithms) {
             jcbFingerprintAlg.addItem(fingerprintAlgorithm);
         }
-
-        jcbFingerprintAlg.setSelectedIndex(0);
     }
 
     /**
@@ -141,7 +139,7 @@ public class JPublicKeyFingerprint extends JPanel {
 
             try {
                 byte[] fingerprint = PublicKeyFingerprintUtil.calculateFingerprint(publicKey, fingerprintAlg);
-                String fingerprintHex = HexUtil.getHexString(fingerprint, "", 0, 0);
+                String fingerprintHex = HexUtil.getHexStringWithSep(fingerprint, ':');
                 jtfPublicKeyFingerprint.setText(fingerprintHex);
             } catch (Exception ex) {
                 DError.displayError(getTopLevelAncestor(), ex);

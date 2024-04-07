@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.JTabbedPane;
 
 import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.digest.PublicKeyFingerprintAlgorithm;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
@@ -39,6 +40,7 @@ public class KsePreferences {
     private CaCertsSettings caCertsSettings = new CaCertsSettings();
     private KeyGenerationSettings keyGenerationDefaults = new KeyGenerationSettings();
     private DigestType certificateFingerprintAlgorithm = DigestType.SHA1;
+    private PublicKeyFingerprintAlgorithm publicKeyFingerprintAlgorithm = PublicKeyFingerprintAlgorithm.SKI_METHOD1;
     private PasswordQualityConfig passwordQualityConfig = new PasswordQualityConfig(false, false, 60);
     private ProxySettings proxySettings = new ProxySettings();
     private Rectangle mainWindowSizeAndPosition = new Rectangle(0, 0, KseFrame.DEFAULT_WIDTH, KseFrame.DEFAULT_HEIGHT);
@@ -281,4 +283,12 @@ public class KsePreferences {
     public void setNativeFileChooserEnabled(boolean nativeFileChooserEnabled) {
         this.nativeFileChooserEnabled = nativeFileChooserEnabled;
     }
+
+	public PublicKeyFingerprintAlgorithm getPublicKeyFingerprintAlgorithm() {
+		return publicKeyFingerprintAlgorithm;
+	}
+
+	public void setPublicKeyFingerprintAlgorithm(PublicKeyFingerprintAlgorithm publicKeyFingerprintAlgorithm) {
+		this.publicKeyFingerprintAlgorithm = publicKeyFingerprintAlgorithm;
+	}   
 }

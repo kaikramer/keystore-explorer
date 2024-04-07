@@ -58,6 +58,8 @@ import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JPublicKeyFingerprint;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.asn1.Asn1Exception;
 
@@ -70,6 +72,7 @@ import net.miginfocom.swing.MigLayout;
 public class DViewPublicKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
+    private KsePreferences preferences = PreferencesManager.getPreferences();
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private JLabel jlAlgorithm;
@@ -266,6 +269,7 @@ public class DViewPublicKey extends JEscDialog {
         jtaEncoded.setCaretPosition(0);
 
         jcfFingerprint.setPublicKey(publicKey);
+        jcfFingerprint.setFingerprintAlg(preferences.getPublicKeyFingerprintAlgorithm());
 
         jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey) ||
                             (publicKey instanceof ECPublicKey) || (publicKey instanceof BCEdDSAPublicKey));
@@ -298,6 +302,7 @@ public class DViewPublicKey extends JEscDialog {
     }
 
     private void okPressed() {
+    	preferences.setPublicKeyFingerprintAlgorithm(jcfFingerprint.getSelectedFingerprintAlg());
         closeDialog();
     }
 

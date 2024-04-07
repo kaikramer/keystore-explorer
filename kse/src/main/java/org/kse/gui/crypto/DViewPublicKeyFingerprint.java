@@ -20,11 +20,13 @@
 package org.kse.gui.crypto;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.math.BigInteger;
@@ -35,14 +37,17 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -64,6 +69,8 @@ import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.HexUtil;
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Dialog to view a certificate fingerprint.
  */
@@ -76,11 +83,19 @@ public class DViewPublicKeyFingerprint extends JEscDialog {
     private JButton jbCopy;
     private JButton jbOK;
     private JPanel jpFingerprint;
-    private JScrollPane jspPolicy;
+    private JScrollPane jspFingerprint;
+    private JLabel jlFingerprint;
     private JTextArea jtaFingerprint;
-
+    private JScrollPane jspFormatFingerprint;
+    private JLabel jlFormatFingerprint;
+    private JTextArea jtaFormatFingerprint;
+    private JScrollPane jspBase64Fingerprint;
+    private JLabel jlBase64Fingerprint;
+    private JTextArea jtaBase64Fingerprint;
+    
     private PublicKey publicKey;
     private PublicKeyFingerprintAlgorithm fingerprintAlg;
+    private String fingerprint;
 
     /**
      * Creates a new DViewPublicKeyFingerprint dialog.
@@ -131,25 +146,34 @@ public class DViewPublicKeyFingerprint extends JEscDialog {
         jpFingerprint = new JPanel(new BorderLayout());
         jpFingerprint.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-        jtaFingerprint = new JTextArea();
-        jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-        jtaFingerprint.setEditable(false);
-        jtaFingerprint.setTabSize(4);
-        jtaFingerprint.setLineWrap(true);
-        // JGoodies - keep uneditable color same as editable
-        jtaFingerprint.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
-        jtaFingerprint.setToolTipText(
-                MessageFormat.format(res.getString("DViewPublicKeyFingerprint.jtaFingerprint.tooltip"),
-                                     fingerprintAlg.friendly()));
+		jlFingerprint = new JLabel(res.getString("DViewPublicKeyFingerprint.jlFingerprint.text"));
+		jtaFingerprint = newJtaFingerprint("DViewPublicKeyFingerprint.jtaFingerprint.tooltip");
+		jspFingerprint = PlatformUtil.createScrollPane(jtaFingerprint, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        jspPolicy = PlatformUtil.createScrollPane(jtaFingerprint, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                  ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jspPolicy.setPreferredSize(new Dimension(280, 125));
-        jpFingerprint.add(jspPolicy, BorderLayout.CENTER);
+		jlFormatFingerprint = new JLabel(res.getString("DViewPublicKeyFingerprint.jlFormatFingerprint.text"));
+		jtaFormatFingerprint = newJtaFingerprint("DViewPublicKeyFingerprint.jtaFormatFingerprint.tooltip");
+		jspFormatFingerprint = PlatformUtil.createScrollPane(jtaFormatFingerprint,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        getContentPane().add(jpFingerprint, BorderLayout.CENTER);
+		jlBase64Fingerprint = new JLabel(res.getString("DViewPublicKeyFingerprint.jlBase64Fingerprint.text"));
+		jtaBase64Fingerprint = newJtaFingerprint("DViewPublicKeyFingerprint.jtaBase64Fingerprint.tooltip");
+		jspBase64Fingerprint = PlatformUtil.createScrollPane(jtaBase64Fingerprint,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		Container pane = getContentPane();
+		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+		pane.add(jlFingerprint, "");
+		pane.add(jspFingerprint, "growx, height 40lp:40lp:40lp, width 30lp:400lp:n, wrap");
 
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
+		pane.add(jlFormatFingerprint, "");
+		pane.add(jspFormatFingerprint, "growx, height 60lp:60lp:60lp, wrap");
+
+		pane.add(jlBase64Fingerprint, "");
+		pane.add(jspBase64Fingerprint, "growx, height 40lp:40lp:40lp, wrap");
+
+		pane.add(new JSeparator(), "spanx, growx, wrap");
+		pane.add(jpButtons, "spanx, tag ok");
 
         setTitle(MessageFormat.format(res.getString("DViewPublicKeyFingerprint.Title"), fingerprintAlg.friendly()));
         setResizable(true);
@@ -170,26 +194,47 @@ public class DViewPublicKeyFingerprint extends JEscDialog {
         populateFingerprint();
     }
 
-    private void populateFingerprint() {
-        if (publicKey != null) {
-            try {
-                byte[] fingerprintBytes = PublicKeyFingerprintUtil.calculateFingerprint(publicKey, fingerprintAlg);
-                String fingerprintHex = HexUtil.getHexString(fingerprintBytes, "", 0, 0);
-                jtaFingerprint.setText(fingerprintHex);
-            } catch (CryptoException ex) {
-                DError.displayError(this.getParent(), ex);
-                return;
-            }
-        } else {
-            jtaFingerprint.setText("");
-        }
+	private JTextArea newJtaFingerprint(String toolTipText) {
+		JTextArea jtaFingerprint = new JTextArea();
+		jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+		jtaFingerprint.setEditable(false);
+		jtaFingerprint.setTabSize(4);
+		jtaFingerprint.setLineWrap(true);
+		// JGoodies - keep uneditable color same as editable
+		jtaFingerprint.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+		jtaFingerprint.setToolTipText(MessageFormat.format(res.getString(toolTipText), fingerprintAlg.friendly()));
+		jtaFingerprint.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				fingerprint = jtaFingerprint.getText();
+			}
 
-        jtaFingerprint.setCaretPosition(0);
-    }
+			@Override
+			public void focusLost(FocusEvent e) {
+			}
+		});
+		return jtaFingerprint;
+	}
+	
+	private void populateFingerprint() {
+		if (publicKey != null) {
+			try {
+				byte[] fingerprintBytes = PublicKeyFingerprintUtil.calculateFingerprint(publicKey, fingerprintAlg);
+				jtaFingerprint.setText(HexUtil.getHexString(fingerprintBytes, "", 0, 0));
+				jtaFormatFingerprint.setText(HexUtil.getHexStringWithSep(fingerprintBytes, ':'));
+				jtaBase64Fingerprint.setText(Base64.getEncoder().encodeToString(fingerprintBytes));
+			} catch (CryptoException ex) {
+				DError.displayError(this.getParent(), ex);
+				return;
+			}
+		} else {
+			jtaFingerprint.setText("");
+		}
+
+		jtaFingerprint.setCaretPosition(0);
+	}
 
     private void copyPressed() {
-        String fingerprint = jtaFingerprint.getText();
-
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection copy = new StringSelection(fingerprint);
         clipboard.setContents(copy, copy);
