@@ -164,7 +164,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 		pane.add(jlFingerprint, "");
-		pane.add(jspFingerprint, "growx, height 80lp:80lp:80lp, width 30lp:300lp:n, wrap");
+		pane.add(jspFingerprint, "growx, height 80lp:80lp:80lp, width 30lp:400lp:n, wrap");
 
 		pane.add(jlFormatFingerprint, "");
 		pane.add(jspFormatFingerprint, "growx, height 100lp:100lp:100lp, wrap");

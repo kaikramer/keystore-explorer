@@ -102,8 +102,6 @@ public class JPublicKeyFingerprint extends JPanel {
         for (PublicKeyFingerprintAlgorithm fingerprintAlgorithm : fingerprintAlgorithms) {
             jcbFingerprintAlg.addItem(fingerprintAlgorithm);
         }
-
-        jcbFingerprintAlg.setSelectedIndex(0);
     }
 
     /**
