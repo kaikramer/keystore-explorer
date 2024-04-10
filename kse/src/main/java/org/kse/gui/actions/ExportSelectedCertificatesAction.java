@@ -38,7 +38,7 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
 		putValue(NAME, res.getString("ExportSelectedCertificatesAction.text"));
 		putValue(SHORT_DESCRIPTION, res.getString("ExportSelectedCertificatesAction.tooltip"));
 		putValue(SMALL_ICON, new ImageIcon(
-				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exporttrustcert.png"))));
+				Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/exportselectedcerts.png"))));
 	}
 
 	@Override
@@ -57,9 +57,7 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
 					return;
 				}
 				X509Certificate[] certs = listCertificate.toArray(new X509Certificate[0]);
-				if (dExportCertificates.orderCertificates()) {
-					certs = X509CertUtil.orderX509CertsChain(certs);
-				}
+				certs = X509CertUtil.orderX509CertsChain(certs);
 				exportFile = dExportCertificates.getExportFile();
 
 				boolean pemEncode = dExportCertificates.pemEncode();
@@ -110,10 +108,16 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
 			List<X509Certificate> listCertificates = new ArrayList<>();
 			KeyStore keyStore = currentState.getKeyStore();
 			for (String alias : aliases) {
-				if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)
-						|| KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+				if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
 					Certificate certificate = keyStore.getCertificate(alias);
-					listCertificates.add((X509Certificate)certificate);
+					listCertificates.add((X509Certificate) certificate);
+				} else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+					Certificate[] chain = keyStore.getCertificateChain(alias);
+					if (chain != null) {
+						for (Certificate certificate : chain) {
+							listCertificates.add((X509Certificate) certificate);
+						}
+					}
 				}
 			}
 			return listCertificates;

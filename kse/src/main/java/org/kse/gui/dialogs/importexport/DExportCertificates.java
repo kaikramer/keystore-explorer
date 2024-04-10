@@ -75,8 +75,6 @@ public class DExportCertificates extends JEscDialog {
     private JRadioButton jrbExportSpc;
     private JLabel jlExportPem;
     private JCheckBox jcbExportPem;
-    private JLabel jlOrder;
-    private JCheckBox jcbOrder;
     private JLabel jlExportFile;
     private JTextField jtfExportFile;
     private JButton jbBrowse;
@@ -85,7 +83,6 @@ public class DExportCertificates extends JEscDialog {
 
     private String certificateAlias;
     private boolean chain;
-    private boolean orderCert;
     private boolean exportSelected = false;
     private File exportFile;
     private boolean exportChain;
@@ -94,6 +91,7 @@ public class DExportCertificates extends JEscDialog {
     private boolean formatPkiPath;
     private boolean formatSpc;
     private boolean pemEncode;
+    private boolean certificateSelected = false;
 
     /**
      * Creates a new DExportCertificate dialog.
@@ -106,18 +104,17 @@ public class DExportCertificates extends JEscDialog {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.certificateAlias = certificateAlias;
         this.chain = chain;
-        this.orderCert = false;
         initComponents();
     }
 
-    public DExportCertificates(JFrame parent, String certificateAlias, boolean chain, boolean order) {
+    public DExportCertificates(JFrame parent, String certificateAlias, boolean chain, boolean certificateSelected) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.certificateAlias = certificateAlias;
         this.chain = chain;
-        this.orderCert = order;
+        this.certificateSelected = certificateSelected;
         initComponents();
     }
-    
+
     private void initComponents() {
         jlExportLength = new JLabel(res.getString("DExportCertificates.jlExportLength.text"));
 
@@ -133,11 +130,7 @@ public class DExportCertificates extends JEscDialog {
         ButtonGroup bgExportLength = new ButtonGroup();
         bgExportLength.add(jrbExportHead);
         bgExportLength.add(jrbExportChain);
-		if (orderCert) {
-			jrbExportChain.setSelected(true);
-		} else {
-			jrbExportHead.setSelected(true);
-		}
+		jrbExportHead.setSelected(true);
 
         jlExportFormat = new JLabel(res.getString("DExportCertificates.jlExportFormat.text"));
 
@@ -174,12 +167,6 @@ public class DExportCertificates extends JEscDialog {
 		if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
 			jcbExportPem.setEnabled(false);
 		}
-		jlOrder = new JLabel(res.getString("DExportCertificates.jlOrder.text"));
-
-		jcbOrder = new JCheckBox();
-		jcbOrder.setSelected(orderCert);
-		jcbOrder.setToolTipText(res.getString("DExportCertificates.jcbOrder.tooltip"));
-
         jlExportFile = new JLabel(res.getString("DExportCertificates.jlExportFile.text"));
 
         jtfExportFile = new JTextField(30);
@@ -211,10 +198,6 @@ public class DExportCertificates extends JEscDialog {
         pane.add(jrbExportSpc, "wrap");
         pane.add(jlExportPem, "");
 		pane.add(jcbExportPem, "wrap");
-		if (orderCert) {
-			pane.add(jlOrder, "");
-			pane.add(jcbOrder, "wrap");
-		}
 		pane.add(jlExportFile, "");
         pane.add(jtfExportFile, "");
         pane.add(jbBrowse, "wrap");
@@ -310,8 +293,8 @@ public class DExportCertificates extends JEscDialog {
             }
         });
 
-		if (orderCert) {
-			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateOrder.Title"),
+		if (certificateSelected) {
+			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateSelected.Title"),
 					certificateAlias));
 		} else if (chain) {
 			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateChain.Title"),
@@ -423,10 +406,6 @@ public class DExportCertificates extends JEscDialog {
         return pemEncode;
     }
 
-	public boolean orderCertificates() {
-		return orderCert;
-	}
-
     private void browsePressed() {
         JFileChooser chooser = null;
 
@@ -498,7 +477,6 @@ public class DExportCertificates extends JEscDialog {
         formatPkiPath = jrbExportPkiPath.isSelected();
         formatSpc = jrbExportSpc.isSelected();
         pemEncode = jcbExportPem.isSelected();
-        orderCert =  jcbOrder.isSelected();
 
         exportSelected = true;
 
