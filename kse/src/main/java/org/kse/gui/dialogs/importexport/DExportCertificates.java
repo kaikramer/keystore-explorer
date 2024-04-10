@@ -130,7 +130,7 @@ public class DExportCertificates extends JEscDialog {
         ButtonGroup bgExportLength = new ButtonGroup();
         bgExportLength.add(jrbExportHead);
         bgExportLength.add(jrbExportChain);
-		jrbExportHead.setSelected(true);
+        jrbExportHead.setSelected(true);
 
         jlExportFormat = new JLabel(res.getString("DExportCertificates.jlExportFormat.text"));
 
@@ -164,9 +164,9 @@ public class DExportCertificates extends JEscDialog {
         jcbExportPem = new JCheckBox();
         jcbExportPem.setSelected(true);
         jcbExportPem.setToolTipText(res.getString("DExportCertificates.jcbExportPem.tooltip"));
-		if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
-			jcbExportPem.setEnabled(false);
-		}
+        if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
+            jcbExportPem.setEnabled(false);
+        }
         jlExportFile = new JLabel(res.getString("DExportCertificates.jlExportFile.text"));
 
         jtfExportFile = new JTextField(30);
@@ -197,8 +197,8 @@ public class DExportCertificates extends JEscDialog {
         pane.add(jrbExportPkiPath, "");
         pane.add(jrbExportSpc, "wrap");
         pane.add(jlExportPem, "");
-		pane.add(jcbExportPem, "wrap");
-		pane.add(jlExportFile, "");
+        pane.add(jcbExportPem, "wrap");
+        pane.add(jlExportFile, "");
         pane.add(jtfExportFile, "");
         pane.add(jbBrowse, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap");
