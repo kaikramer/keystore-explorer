@@ -240,19 +240,19 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
     }
 
     private void downloadCert(URL url) throws IOException, CryptoException {
-    	HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-		int status = urlConn.getResponseCode();
-		if (isRedirect(status)) {
-			String newUrl = urlConn.getHeaderField("Location");
-			url = new URL(newUrl);
-			urlConn = (HttpURLConnection) url.openConnection();
-		}
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        int status = urlConn.getResponseCode();
+        if (isRedirect(status)) {
+            String newUrl = urlConn.getHeaderField("Location");
+            url = new URL(newUrl);
+            urlConn = (HttpURLConnection) url.openConnection();
+        }
         try (InputStream is = urlConn.getInputStream()) {
             X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
             if (certs != null && certs.length > 0) {
-                DViewCertificate dViewCertificate = new DViewCertificate(frame, MessageFormat.format(
-                        resExt.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs, null,
-                                                                         DViewCertificate.NONE);
+                DViewCertificate dViewCertificate = new DViewCertificate(frame,
+                        MessageFormat.format(resExt.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
+                        this.kseFrame, DViewCertificate.NONE);
                 dViewCertificate.setLocationRelativeTo(frame);
                 dViewCertificate.setVisible(true);
             }
