@@ -271,6 +271,7 @@ public class DViewCertificate extends JEscDialog {
 
         jbVerify = new JButton(res.getString("DViewCertificate.jbVerify.text"));
         jbVerify.setToolTipText(res.getString("DViewCertificate.jbVerify.tooltip"));
+        jbVerify.setVisible(importExport != NONE);
         PlatformUtil.setMnemonic(jbVerify, res.getString("DViewCertificate.jbVerify.mnemonic").charAt(0));
 
         Container pane = getContentPane();
@@ -302,7 +303,7 @@ public class DViewCertificate extends JEscDialog {
         pane.add(jbExport, "hidemode 1");
         pane.add(jbExtensions, "");
         pane.add(jbPem, "");
-        pane.add(jbVerify, "");
+        pane.add(jbVerify, "hidemode 1");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbOK, "spanx, tag ok");
