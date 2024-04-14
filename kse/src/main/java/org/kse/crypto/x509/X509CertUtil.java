@@ -328,6 +328,79 @@ public final class X509CertUtil {
         // Return longest path
         return longestPath.toArray(new X509Certificate[0]);
     }
+    /*
+     * Tries to sort the certificates according to their hierarchy, 
+     * and adds at the end those that have no dependencies.
+     */
+    public static X509Certificate[] orderX509CertsChain(X509Certificate[] certs) {
+        if (certs == null) {
+            return new X509Certificate[0];
+        }
+        if (certs.length <= 1) {
+            return certs;
+        }
+        ArrayList<ArrayList<X509Certificate>> paths = new ArrayList<>();
+        for (X509Certificate cert : certs) {
+            ArrayList<X509Certificate> path = new ArrayList<>();
+            path.add(cert);
+            for (X509Certificate issuerCert : certs) {
+                if (certificatesEquals(issuerCert, cert)) {
+                    continue;
+                }
+                if (isIssuedBy(cert, issuerCert)) {
+                    path.add(issuerCert);
+                }
+            }
+            if (path.size() > 1) {
+                paths.add(path);
+            }
+        }
+        List<X509Certificate> listCertificates = new ArrayList<>();
+        for (ArrayList<X509Certificate> path : paths) {
+            X509Certificate cert = path.get(0);
+            X509Certificate issuerCert = path.get(1);
+            int posIssuer = -1;
+            int posCert = -1;
+            for (int i = 0; i < listCertificates.size(); i++) {
+                X509Certificate cert2 = listCertificates.get(i);
+                if (certificatesEquals(issuerCert, cert2)) {
+                    posIssuer = i;
+                }
+                if (certificatesEquals(cert, cert2)) {
+                    posCert = i;
+                }
+            }
+            if (posIssuer == -1) {
+                if (posCert == -1) {
+                    listCertificates.add(cert);
+                }
+                listCertificates.add(issuerCert);
+            } else {
+                listCertificates.add(posIssuer, cert);
+            }
+        }
+        if (listCertificates.size() != certs.length) {
+            for (X509Certificate cert1 : certs) {
+                boolean found = false;
+                for (X509Certificate cert2 : listCertificates) {
+                    if (certificatesEquals(cert1, cert2)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    listCertificates.add(cert1);
+                }
+            }
+        }
+        return listCertificates.toArray(new X509Certificate[0]);
+    }
+
+    private static boolean certificatesEquals(X509Certificate cert1, X509Certificate cert2) {
+        return cert1.getSubjectX500Principal().equals(cert2.getSubjectX500Principal())
+                && cert1.getIssuerX500Principal().equals(cert2.getIssuerX500Principal())
+                && cert1.getSerialNumber().equals(cert2.getSerialNumber());
+    }
 
     private static X509Certificate findIssuedCert(X509Certificate issuerCert, X509Certificate[] certs) {
         // Find a certificate issued by the supplied certificate

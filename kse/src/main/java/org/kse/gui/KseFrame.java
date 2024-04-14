@@ -121,6 +121,7 @@ import org.kse.gui.actions.ExportKeyPairAction;
 import org.kse.gui.actions.ExportKeyPairCertificateChainAction;
 import org.kse.gui.actions.ExportKeyPairPrivateKeyAction;
 import org.kse.gui.actions.ExportKeyPairPublicKeyAction;
+import org.kse.gui.actions.ExportSelectedCertificatesAction;
 import org.kse.gui.actions.ExportTrustedCertificateAction;
 import org.kse.gui.actions.ExportTrustedCertificatePublicKeyAction;
 import org.kse.gui.actions.FindAction;
@@ -400,6 +401,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiMultEntrySelCopy;
     private JMenuItem jmiMultiEntrySelDelete;
     private JMenuItem jmiMultiEntryCompare;
+    private JMenuItem jmiMultiEntryExport;
 
     //
     // Main display controls
@@ -530,6 +532,7 @@ public final class KseFrame implements StatusBar {
     private final SetKeyPasswordAction setKeyPasswordAction = new SetKeyPasswordAction(this);
     private final DeleteKeyAction deleteKeyAction = new DeleteKeyAction(this);
     private final RenameKeyAction renameKeyAction = new RenameKeyAction(this);
+    private final ExportSelectedCertificatesAction exportSelectedCertificatesAction = new ExportSelectedCertificatesAction(this);
 
     //
     // Action map keys - map input to action
@@ -2197,11 +2200,17 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiMultiEntryCompare,
                 (String) compareCertificateAction.getValue(Action.LONG_DESCRIPTION), this);
 
+        jmiMultiEntryExport = new  JMenuItem(exportSelectedCertificatesAction);
+        jmiMultiEntryExport.setToolTipText(null);
+        new StatusBarChangeHandler(jmiMultiEntryExport,
+                (String) exportSelectedCertificatesAction.getValue(Action.LONG_DESCRIPTION), this);
+        
         jpmMultiEntrySel = new JPopupMenu();
         jpmMultiEntrySel.add(jmiMultiEntrySelCut);
         jpmMultiEntrySel.add(jmiMultEntrySelCopy);
         jpmMultiEntrySel.add(jmiMultiEntrySelDelete);
         jpmMultiEntrySel.add(jmiMultiEntryCompare);
+        jpmMultiEntrySel.add(jmiMultiEntryExport);
 
     }
 

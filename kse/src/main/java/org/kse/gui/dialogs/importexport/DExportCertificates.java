@@ -91,6 +91,7 @@ public class DExportCertificates extends JEscDialog {
     private boolean formatPkiPath;
     private boolean formatSpc;
     private boolean pemEncode;
+    private boolean certificateSelected = false;
 
     /**
      * Creates a new DExportCertificate dialog.
@@ -103,6 +104,14 @@ public class DExportCertificates extends JEscDialog {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.certificateAlias = certificateAlias;
         this.chain = chain;
+        initComponents();
+    }
+
+    public DExportCertificates(JFrame parent, String certificateAlias, boolean chain, boolean certificateSelected) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.certificateAlias = certificateAlias;
+        this.chain = chain;
+        this.certificateSelected = certificateSelected;
         initComponents();
     }
 
@@ -155,7 +164,9 @@ public class DExportCertificates extends JEscDialog {
         jcbExportPem = new JCheckBox();
         jcbExportPem.setSelected(true);
         jcbExportPem.setToolTipText(res.getString("DExportCertificates.jcbExportPem.tooltip"));
-
+        if (jrbExportChain.isSelected() && jrbExportX509.isSelected()) {
+            jcbExportPem.setEnabled(false);
+        }
         jlExportFile = new JLabel(res.getString("DExportCertificates.jlExportFile.text"));
 
         jtfExportFile = new JTextField(30);
@@ -282,12 +293,15 @@ public class DExportCertificates extends JEscDialog {
             }
         });
 
-        if (chain) {
-            setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateChain.Title"),
-                                          certificateAlias));
-        } else {
-            setTitle(MessageFormat.format(res.getString("DExportCertificates.Certificate.Title"), certificateAlias));
-        }
+		if (certificateSelected) {
+			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateSelected.Title"),
+					certificateAlias));
+		} else if (chain) {
+			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateChain.Title"),
+					certificateAlias));
+		} else {
+			setTitle(MessageFormat.format(res.getString("DExportCertificates.Certificate.Title"), certificateAlias));
+		}
 
         setResizable(false);
 
