@@ -65,6 +65,7 @@ import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.JEscDialog;
 import org.kse.gui.JKseTable;
+import org.kse.gui.KseFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dialogs.DViewAsn1Dump;
@@ -97,6 +98,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     private JButton jbOK;
 
     private X509Extension extensions;
+    private KseFrame kseFrame;
 
     /**
      * Creates a new DViewExtensions dialog.
@@ -121,6 +123,20 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     public DViewExtensions(JDialog parent, String title, X509Extension extensions) {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.extensions = extensions;
+        initComponents();
+    }
+
+    /**
+     * Creates new DViewExtensions dialog. 
+     * @param parent Parent dialog
+     * @param title The dialog title
+     * @param extensions Extensions to display
+     * @param kseFrame Reference to main class with currently opened keystores and their contents
+     */
+    public DViewExtensions(JDialog parent, String title, X509Extension extensions, KseFrame kseFrame) {
+        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.extensions = extensions;
+        this.kseFrame = kseFrame;
         initComponents();
     }
 
@@ -336,7 +352,9 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             try {
                 URL url = e.getURL();
                 if (url != null) {
-                    if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt")) {
+                    String path = url.getPath();
+                    if (path.endsWith(".cer") || path.endsWith(".crt") || path.endsWith(".pem")
+                            || path.endsWith(".der")) {
                         downloadCert(url);
                     } else if (url.getPath().endsWith(".crl")) {
                         downloadCrl(url);
@@ -392,9 +410,10 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
         try (InputStream is = urlConn.getInputStream()) {
             X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
             if (certs != null && certs.length > 0) {
-                DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
-                        res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs, null,
-                                                                         DViewCertificate.NONE);
+                int importExport = kseFrame == null ? DViewCertificate.NONE : DViewCertificate.IMPORT_EXPORT;
+                DViewCertificate dViewCertificate = new DViewCertificate(this,
+                        MessageFormat.format(res.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
+                        kseFrame, importExport);
                 dViewCertificate.setLocationRelativeTo(this);
                 dViewCertificate.setVisible(true);
             }
