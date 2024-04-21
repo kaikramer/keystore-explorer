@@ -649,7 +649,7 @@ public class DViewCertificate extends JEscDialog {
         X509Certificate cert = getSelectedCertificate();
 
         DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCertificate.Extensions.Title"),
-                                                              cert);
+                cert, kseFrame);
         dViewExtensions.setLocationRelativeTo(this);
         dViewExtensions.setVisible(true);
     }

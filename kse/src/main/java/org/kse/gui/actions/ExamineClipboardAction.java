@@ -137,7 +137,8 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
 
         try {
             URL url = new URL(data);
-            if (url.getPath().endsWith(".cer") || url.getPath().endsWith(".crt") || url.getPath().endsWith(".pem")) {
+            String path = url.getPath();
+            if (path.endsWith(".cer") || path.endsWith(".crt") || path.endsWith(".pem") || path.endsWith(".der")) {
                 downloadCert(url);
                 return;
             } else if (url.getPath().endsWith(".crl")) {
@@ -252,7 +253,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             if (certs != null && certs.length > 0) {
                 DViewCertificate dViewCertificate = new DViewCertificate(frame,
                         MessageFormat.format(resExt.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,
-                        this.kseFrame, DViewCertificate.NONE);
+                        this.kseFrame, DViewCertificate.IMPORT_EXPORT);
                 dViewCertificate.setLocationRelativeTo(frame);
                 dViewCertificate.setVisible(true);
             }
