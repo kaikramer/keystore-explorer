@@ -20,7 +20,9 @@
 
 package org.kse.crypto.x509;
 
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
@@ -39,6 +41,7 @@ public class KseX500NameStyle extends BCStyle {
     private static final ASN1ObjectIdentifier DNQ = new ASN1ObjectIdentifier("2.5.4.46");
 
     private static final Hashtable<ASN1ObjectIdentifier, String> DEFAULT_SYMBOLS = new Hashtable<>();
+    private static final Hashtable<String, ASN1ObjectIdentifier> DEFAULT_LOOKUP = new Hashtable<>();
 
     static {
         DEFAULT_SYMBOLS.put(C, "C");
@@ -73,7 +76,47 @@ public class KseX500NameStyle extends BCStyle {
         DEFAULT_SYMBOLS.put(BUSINESS_CATEGORY, "BusinessCategory");
         DEFAULT_SYMBOLS.put(TELEPHONE_NUMBER, "TelephoneNumber");
         DEFAULT_SYMBOLS.put(NAME, "Name");
-        DEFAULT_SYMBOLS.put(ORGANIZATION_IDENTIFIER, "ORG_ID");
+        DEFAULT_SYMBOLS.put(ORGANIZATION_IDENTIFIER, "organizationIdentifier");
+
+        DEFAULT_LOOKUP.put("c", C);
+        DEFAULT_LOOKUP.put("o", O);
+        DEFAULT_LOOKUP.put("t", T);
+        DEFAULT_LOOKUP.put("ou", OU);
+        DEFAULT_LOOKUP.put("cn", CN);
+        DEFAULT_LOOKUP.put("l", L);
+        DEFAULT_LOOKUP.put("st", ST);
+        DEFAULT_LOOKUP.put("sn", SURNAME);
+        DEFAULT_LOOKUP.put("serialnumber", SERIALNUMBER);
+        DEFAULT_LOOKUP.put("street", STREET);
+        DEFAULT_LOOKUP.put("emailaddress", E);
+        DEFAULT_LOOKUP.put("dc", DC);
+        DEFAULT_LOOKUP.put("e", E);
+        DEFAULT_LOOKUP.put("uid", UID);
+        DEFAULT_LOOKUP.put("surname", SURNAME);
+        DEFAULT_LOOKUP.put("givenname", GIVENNAME);
+        DEFAULT_LOOKUP.put("initials", INITIALS);
+        DEFAULT_LOOKUP.put("generation", GENERATION);
+        DEFAULT_LOOKUP.put("description", DESCRIPTION);
+        DEFAULT_LOOKUP.put("role", ROLE);
+        DEFAULT_LOOKUP.put("unstructuredaddress", UnstructuredAddress);
+        DEFAULT_LOOKUP.put("unstructuredname", UnstructuredName);
+        DEFAULT_LOOKUP.put("uniqueidentifier", UNIQUE_IDENTIFIER);
+        DEFAULT_LOOKUP.put("dn", DN_QUALIFIER);
+        DEFAULT_LOOKUP.put("dnq", DN_QUALIFIER);
+        DEFAULT_LOOKUP.put("pseudonym", PSEUDONYM);
+        DEFAULT_LOOKUP.put("postaladdress", POSTAL_ADDRESS);
+        DEFAULT_LOOKUP.put("nameatbirth", NAME_AT_BIRTH);
+        DEFAULT_LOOKUP.put("countryofcitizenship", COUNTRY_OF_CITIZENSHIP);
+        DEFAULT_LOOKUP.put("countryofresidence", COUNTRY_OF_RESIDENCE);
+        DEFAULT_LOOKUP.put("gender", GENDER);
+        DEFAULT_LOOKUP.put("placeofbirth", PLACE_OF_BIRTH);
+        DEFAULT_LOOKUP.put("dateofbirth", DATE_OF_BIRTH);
+        DEFAULT_LOOKUP.put("postalcode", POSTAL_CODE);
+        DEFAULT_LOOKUP.put("businesscategory", BUSINESS_CATEGORY);
+        DEFAULT_LOOKUP.put("telephonenumber", TELEPHONE_NUMBER);
+        DEFAULT_LOOKUP.put("name", NAME);
+        DEFAULT_LOOKUP.put("org_id", ORGANIZATION_IDENTIFIER);
+        DEFAULT_LOOKUP.put("organizationidentifier", ORGANIZATION_IDENTIFIER);
     }
 
     private KseX500NameStyle() {
@@ -81,12 +124,7 @@ public class KseX500NameStyle extends BCStyle {
 
     @Override
     public ASN1ObjectIdentifier attrNameToOID(String attrName) {
-        // Add support for 'DNQ', BCStyle only supports 'DN'
-        if (attrName.equalsIgnoreCase("DNQ")) {
-            return DNQ;
-        }
-
-        return super.attrNameToOID(attrName);
+        return IETFUtils.decodeAttrName(attrName, DEFAULT_LOOKUP);
     }
 
     @Override
