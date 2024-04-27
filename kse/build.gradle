@@ -106,13 +106,13 @@ dependencies {
 	implementation('net.java.dev.jna:jna:5.13.0')
 	implementation('commons-io:commons-io:2.15.1')
 	implementation('com.miglayout:miglayout-swing:11.3')
-	implementation('com.formdev:flatlaf:3.2.5')
+	implementation('com.formdev:flatlaf:3.4.1')
 	implementation('com.nimbusds:nimbus-jose-jwt:9.30.2')
 	implementation('org.violetlib:vaqua:11')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
 	implementation('org.openjdk.nashorn:nashorn-core:15.4')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.14.2')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.14.2')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.17.0')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.17.0')
 
 	// TODO restrict to right OS dependency depending on build (all for zip, linux for .deb/.rpm etc.)
 	implementation('org.openjfx:javafx-base:17.0.9:win')
@@ -509,4 +509,11 @@ buildRpm {
 buildDeb {
 	arch = "all"
 	requires("default-jre").or("java8-runtime")
+}
+
+idea {
+	module {
+		downloadJavadoc = true
+		downloadSources = true
+	}
 }
