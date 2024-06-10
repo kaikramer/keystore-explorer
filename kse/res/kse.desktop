@@ -2,8 +2,10 @@
 Name=KeyStore Explorer
 GenericName=Multipurpose keystore and certificate tool
 GenericName[fr]=Outil de gestion de magasins de certificats cryptographiques
+GenericName[ru]=Инструмент управления хранилищем криптографических сертификатов
 Comment=User friendly GUI application for creating, managing and examining keystores, keys, certificates, certificate requests, certificate revocation lists and more.
 Comment[fr]=Outil graphique de cryptographie permettant la création, la gestion et l’examen de magasins de clefs, de certificats X.509, de demandes de certificats, de listes de révocation et bien plus encore.
+Comment[ru]=Графический инструмент для создания, управления и просмотра хранилищ ключей, сертификатов X.509, запросов сертификатов (CSR), списков отзыва (CRL) и многого другого.
 Exec=kse %f
 TryExec=kse
 Terminal=false

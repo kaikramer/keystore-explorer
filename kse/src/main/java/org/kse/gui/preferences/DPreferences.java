@@ -1168,7 +1168,9 @@ public class DPreferences extends JEscDialog {
                 new LanguageItem("System", LanguageItem.SYSTEM_LANGUAGE),
                 new LanguageItem("English", "en"),
                 new LanguageItem("German", "de"),
-                new LanguageItem("French", "fr") };
+                new LanguageItem("French", "fr"),
+                new LanguageItem("Russian", "ru"),
+        };
 
         for (LanguageItem languageItem : languageItems) {
             jcbLanguage.addItem(languageItem);

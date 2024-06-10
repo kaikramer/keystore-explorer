@@ -367,7 +367,7 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 				argument(value: "--no-header-files")
 				argument(value: "--no-man-pages")
 				argument(value: "--strip-debug")
-				argument(value: "--include-locales=en,de,fr")
+				argument(value: "--include-locales=en,de,fr,ru")
 			}
 
 			bundledocument(extensions: "ks,jks,jceks,keystore,bks,uber,pfx,p12",
