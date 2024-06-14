@@ -49,16 +49,13 @@ public class JarParser {
      * @return Unordered array with signer certificates
      * @throws IOException if an I/O error has occurred
      */
-    public X509Certificate[] getSignerCerificates() throws IOException {
+    public X509Certificate[] getSignerCertificates() throws IOException {
         try (JarFile jf = new JarFile(jarFile, true)) {
-
             Set<Certificate> allSignerCerts = new HashSet<>();
             Enumeration<JarEntry> entries = jf.entries();
 
             while (entries.hasMoreElements()) {
-
                 JarEntry entry = entries.nextElement();
-
                 // reading entry completely is required for calling getCodeSigners()/getCertificates()
                 readEntry(jf, entry);
 

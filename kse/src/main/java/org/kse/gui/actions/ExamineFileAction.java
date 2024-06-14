@@ -110,7 +110,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             switch (fileType) {
             case JAR:
                 JarParser jarParser = new JarParser(file);
-                X509Certificate[] signerCertificates = jarParser.getSignerCerificates();
+                X509Certificate[] signerCertificates = jarParser.getSignerCertificates();
                 showCerts(signerCertificates, file.getName());
                 break;
             case JCEKS_KS:
