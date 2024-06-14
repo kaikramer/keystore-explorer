@@ -59,18 +59,19 @@ public class JarParser {
                 // reading entry completely is required for calling getCodeSigners()/getCertificates()
                 readEntry(jf, entry);
 
-                if (!entry.isDirectory()) {
-                    CodeSigner[] codeSigners = entry.getCodeSigners();
-                    if (codeSigners != null) {
-                        for (CodeSigner cs : entry.getCodeSigners()) {
-                            allSignerCerts.addAll(cs.getSignerCertPath().getCertificates());
-                        }
+                if (entry.isDirectory()) {
+                    continue;
+                }
+                CodeSigner[] codeSigners = entry.getCodeSigners();
+                if (codeSigners != null) {
+                    for (CodeSigner cs : entry.getCodeSigners()) {
+                        allSignerCerts.addAll(cs.getSignerCertPath().getCertificates());
                     }
+                }
 
-                    Certificate[] certificates = entry.getCertificates();
-                    if (certificates != null) {
-                        allSignerCerts.addAll(Arrays.asList(certificates));
-                    }
+                Certificate[] certificates = entry.getCertificates();
+                if (certificates != null) {
+                    allSignerCerts.addAll(Arrays.asList(certificates));
                 }
             }
 
