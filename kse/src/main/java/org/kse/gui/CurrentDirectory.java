@@ -43,7 +43,7 @@ public class CurrentDirectory {
     }
 
     /**
-     * Update CurrentSirectory to be the supplied directory.
+     * Update CurrentDirectory to be the supplied directory.
      *
      * @param directory Used to set current directory
      */

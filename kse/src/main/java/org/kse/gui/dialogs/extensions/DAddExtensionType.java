@@ -192,9 +192,9 @@ public class DAddExtensionType extends JEscDialog {
         // Population is the supported set minus those already added
         ArrayList<X509ExtensionType> availableExtensions = new ArrayList<>();
 
-        for (X509ExtensionType extentionType : SUPPORTED_EXTENSIONS) {
-            if (extensions.getExtensionValue(extentionType.oid()) == null) {
-                availableExtensions.add(extentionType);
+        for (X509ExtensionType extensionType : SUPPORTED_EXTENSIONS) {
+            if (extensions.getExtensionValue(extensionType.oid()) == null) {
+                availableExtensions.add(extensionType);
             }
         }
 

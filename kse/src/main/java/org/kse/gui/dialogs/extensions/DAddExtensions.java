@@ -825,7 +825,7 @@ public class DAddExtensions extends JEscDialog {
     }
 
     /**
-     * Get chosen certficate extensions.
+     * Get chosen certificate extensions.
      *
      * @return Certificate extensions or null if dialog cancelled.
      */
