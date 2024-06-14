@@ -2311,8 +2311,7 @@ public class ObjectIdUtil {
      */
     public static ObjectOid[] getAllOidsStartingWith(String prefix) {
         ObjectOid[] oids = oidToNameMapping.entrySet().stream().filter(e -> e.getKey().startsWith(prefix))
-                                           .map(e -> new ObjectOid(prefix, e.getKey(), e.getValue())).sorted()
-                                           .collect(Collectors.toList()).toArray(new ObjectOid[0]);
+                .map(e -> new ObjectOid(prefix, e.getKey(), e.getValue())).sorted().toArray(ObjectOid[]::new);
         return oids;
     }
 
