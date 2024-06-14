@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.List;
@@ -80,7 +81,7 @@ import org.kse.utilities.io.CopyUtil;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * Dialog to upgrade cyptography strength.
+ * Dialog to upgrade cryptography strength.
  */
 public class DUpgradeCryptoStrength extends JEscDialog {
     private static final long serialVersionUID = 1L;
@@ -234,10 +235,9 @@ public class DUpgradeCryptoStrength extends JEscDialog {
                                       JOptionPane.WARNING_MESSAGE);
 
         String javaHome = System.getProperty("java.home");
-        String fileSeparator = System.getProperty("file.separator");
-
+        String javaSecurityLibFolder = Path.of(javaHome, "lib", "security").toString();
         String manualInstructions = MessageFormat.format(
-                res.getString("DUpgradeCryptoStrength.ManualInstructions.message"), javaHome, fileSeparator);
+                res.getString("DUpgradeCryptoStrength.ManualInstructions.message"), javaSecurityLibFolder);
 
         JOptionPane.showMessageDialog(this, manualInstructions, getTitle(), JOptionPane.INFORMATION_MESSAGE);
     }
