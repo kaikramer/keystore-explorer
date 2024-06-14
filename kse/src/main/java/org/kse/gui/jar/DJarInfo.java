@@ -145,7 +145,7 @@ public class DJarInfo extends JEscDialog {
         Vector<JarFile> jars = new Vector<>();
 
         String classPath = System.getProperty("java.class.path");
-        String pathSeparator = System.getProperty("path.separator");
+        String pathSeparator = File.pathSeparator;
 
         StringTokenizer strTok = new StringTokenizer(classPath, pathSeparator);
 

@@ -100,7 +100,7 @@ public class Spkac {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/csr/spkac/resources");
 
     private static final String SPKAC_PROPERTY = "SPKAC";
-    private static final String NEWLINE = System.getProperty("line.separator");
+    private static final String NEWLINE = System.lineSeparator();
 
     private String challenge;
     private SpkacSubject subject;
