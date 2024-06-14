@@ -91,14 +91,10 @@ public class KeyStoreHistory {
     public void nullPasswords() {
         KeyStoreState state = initialState;
 
-        while (true) {
+        do {
             state.nullPasswords();
             state = state.nextState();
-
-            if (state == null) {
-                break;
-            }
-        }
+        } while (state != null);
     }
 
     /**
