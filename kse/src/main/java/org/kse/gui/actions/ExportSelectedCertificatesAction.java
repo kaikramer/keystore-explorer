@@ -46,7 +46,7 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
         List<X509Certificate> listCertificate = getCertificates();
         File exportFile = null;
         try {
-            if (listCertificate.size() > 0) {
+            if (!listCertificate.isEmpty()) {
                 KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
                 String fileName = FileNameUtil.removeExtension(history.getName());
                 DExportCertificates dExportCertificates = new DExportCertificates(frame, fileName, false, true);
