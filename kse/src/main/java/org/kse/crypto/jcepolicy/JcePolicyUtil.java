@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.text.MessageFormat;
@@ -167,9 +168,8 @@ public class JcePolicyUtil {
      * @return JAR file
      */
     public static File getJarFile(JcePolicy jcePolicy) {
-        String fileSeperator = System.getProperty("file.separator");
         String javaHome = System.getProperty("java.home");
-        File libSecurityFile = new File(javaHome, "lib" + fileSeperator + "security");
+        File libSecurityFile = Path.of(javaHome, "lib", "security").toFile();
 
         return new File(libSecurityFile, jcePolicy.jar());
     }

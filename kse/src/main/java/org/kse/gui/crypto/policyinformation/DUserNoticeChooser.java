@@ -287,11 +287,9 @@ public class DUserNoticeChooser extends JEscDialog {
 
         NoticeReference noticeReference = null;
         if (!organizationString.isEmpty()) { // If organization is present then so is al of notice reference
-
             Vector<Integer> noticeNumbers = new Vector<>();
-
             for (int noticeNumber : noticeNumberInts) {
-                noticeNumbers.add(new Integer(noticeNumber));
+                noticeNumbers.add(noticeNumber);
             }
 
             noticeReference = new NoticeReference(organizationString, noticeNumbers);

@@ -114,8 +114,8 @@ public class DialogHelper {
      */
     public static void populatePkcs10Challenge(Attribute[] attributes, JTextField textField) {
 
-        ASN1ObjectIdentifier pkcs9AtChallengepassword = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
-        populateTextField(attributes, textField, pkcs9AtChallengepassword);
+        ASN1ObjectIdentifier pkcs9AtChallengePassword = PKCSObjectIdentifiers.pkcs_9_at_challengePassword;
+        populateTextField(attributes, textField, pkcs9AtChallengePassword);
     }
 
     /**

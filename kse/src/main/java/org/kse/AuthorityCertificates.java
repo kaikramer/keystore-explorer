@@ -21,6 +21,7 @@ package org.kse;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.security.KeyStore;
 
 import org.kse.crypto.CryptoException;
@@ -80,8 +81,7 @@ public class AuthorityCertificates {
      */
     public static File getDefaultCaCertificatesLocation() {
         String javaInstallDir = System.getProperty("java.home");
-        String fileSep = System.getProperty("file.separator");
-        File cacertsFile = new File(javaInstallDir, "lib" + fileSep + "security" + fileSep + "cacerts");
+        File cacertsFile = Path.of(javaInstallDir, "lib",  "security", "cacerts").toFile();
         try {
             return cacertsFile.getCanonicalFile();
         } catch (IOException e) {
