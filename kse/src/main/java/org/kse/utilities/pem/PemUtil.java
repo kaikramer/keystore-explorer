@@ -66,7 +66,7 @@ public class PemUtil {
         sbPem.append(PEM_BEGIN_MARKER);
         sbPem.append(pemInfo.getType());
         sbPem.append(PEM_FIVE_DASHES);
-        sbPem.append("\n");
+        sbPem.append('\n');
 
         // Output any header attributes
         PemAttributes attributes = pemInfo.getAttributes();
@@ -95,14 +95,14 @@ public class PemUtil {
             }
 
             sbPem.append(base64, i, i + lineLength);
-            sbPem.append("\n");
+            sbPem.append('\n');
         }
 
         // Output footer
         sbPem.append(PEM_END_MARKER);
         sbPem.append(pemInfo.getType());
         sbPem.append(PEM_FIVE_DASHES);
-        sbPem.append("\n");
+        sbPem.append('\n');
 
         return sbPem.toString();
     }
