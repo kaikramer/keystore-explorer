@@ -82,7 +82,7 @@ public class PemUtil {
         }
 
         // Output content
-        String base64 = new String(Base64.encode(pemInfo.getContent()));
+        String base64 = Base64.toBase64String(pemInfo.getContent());
 
         // Limit line lengths
         for (int i = 0; i < base64.length(); i += MAX_PRINTABLE_ENCODING_LINE_LENGTH) {
