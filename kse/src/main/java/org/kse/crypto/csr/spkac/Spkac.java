@@ -341,7 +341,7 @@ public class Spkac {
             osw = new OutputStreamWriter(os);
 
             outputProperty(osw, SPKAC_PROPERTY,
-                           new String(Base64.encode(createSignedPublicKeyAndChallenge().getEncoded(ASN1Encoding.DER))));
+                           Base64.toBase64String(createSignedPublicKeyAndChallenge().getEncoded(ASN1Encoding.DER)));
             outputProperty(osw, CN_PROPERTY, subject.getCN());
             outputProperty(osw, OU_PROPERTY, subject.getOU());
             outputProperty(osw, O_PROPERTY, subject.getO());

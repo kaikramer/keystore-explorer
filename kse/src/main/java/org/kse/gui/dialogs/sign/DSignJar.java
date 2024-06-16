@@ -57,7 +57,6 @@ import javax.swing.KeyStroke;
 
 import org.apache.commons.io.IOUtils;
 import org.kse.KSE;
-import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.JarSigner;
@@ -132,11 +131,8 @@ public class DSignJar extends JEscDialog {
      * @param signPrivateKey  Signing key pair's private key
      * @param signKeyPairType Signing key pair's type
      * @param signatureName   Default signature name
-     * @throws CryptoException A crypto problem was encountered constructing the
-     *                         dialog
      */
-    public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName)
-            throws CryptoException {
+    public DSignJar(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, String signatureName) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.signPrivateKey = signPrivateKey;
         this.signKeyPairType = signKeyPairType;
@@ -148,9 +144,8 @@ public class DSignJar extends JEscDialog {
      * Initializes the dialogue panel and associated elements
      *
      * @param signatureName String
-     * @throws CryptoException
      */
-    private void initComponents(String signatureName) throws CryptoException {
+    private void initComponents(String signatureName) {
         jlSignDirectly = new JLabel(res.getString("DSignJar.jlSignDirectly.text"));
         jrbSignDirectly = new JRadioButton("", true);
         jrbSignDirectly.setToolTipText(res.getString("DSignJar.jrbSignDirectly.tooltip"));

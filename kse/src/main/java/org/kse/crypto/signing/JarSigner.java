@@ -227,8 +227,7 @@ public class JarSigner {
 
                         // Get the digest of manifest entries created above
                         byte[] mdSf = DigestUtil.getMessageDigest(manifestEntry.getBytes(), digestType);
-                        byte[] mdSf64 = Base64.encode(mdSf);
-                        String mdSf64Str = new String(mdSf64);
+                        String mdSf64Str = Base64.toBase64String(mdSf);
 
                         // Write this digest as entries in signature file
                         sbSf.append(createAttributeText(NAME_ATTR, jarEntry.getName()));
@@ -245,13 +244,13 @@ public class JarSigner {
             byte[] manifest = sbManifest.toString().getBytes();
 
             byte[] digestMf = DigestUtil.getMessageDigest(manifest, digestType);
-            String digestMfStr = new String(Base64.encode(digestMf));
+            String digestMfStr = Base64.toBase64String(digestMf);
 
             // Get base 64 encoded digest of manifest's main attributes for inclusion in signature file
             byte[] manifestMainAttrsBytes = manifestMainAttrs.getBytes();
 
             byte[] digestMfMainAttrs = DigestUtil.getMessageDigest(manifestMainAttrsBytes, digestType);
-            String digestMfMainAttrsStr = new String(Base64.encode(digestMfMainAttrs));
+            String digestMfMainAttrsStr = Base64.toBase64String(digestMfMainAttrs);
 
             // Write out Manifest Digest, Created By and Signature Version to start of signature file
             sbSf.insert(0, CRLF);
@@ -436,8 +435,7 @@ public class JarSigner {
 
             // Get the digest of content in Base64
             byte[] md = DigestUtil.getMessageDigest(jis, digestType);
-            byte[] md64 = Base64.encode(md);
-            String md64Str = new String(md64);
+            String md64Str = Base64.toBase64String(md);
 
             // Write manifest entries for JARs digest
             String sbManifestEntry = createAttributeText(NAME_ATTR, jarEntry.getName()) +

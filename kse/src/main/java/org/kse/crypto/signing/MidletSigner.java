@@ -130,7 +130,7 @@ public class MidletSigner {
             X509Certificate certificate = certificateChain[i];
             String base64Cert = null;
             try {
-                base64Cert = new String(Base64.encode(certificate.getEncoded()));
+                base64Cert = Base64.toBase64String(certificate.getEncoded());
             } catch (CertificateEncodingException ex) {
                 throw new CryptoException(res.getString("Base64CertificateFailed.exception.message"), ex);
             }
@@ -141,7 +141,7 @@ public class MidletSigner {
 
         // Get signed Base 64 SHA-1 digest of JAR file as attr
         byte[] signedJarDigest = signJarDigest(jarFile, privateKey);
-        String base64SignedJarDigest = new String(Base64.encode(signedJarDigest));
+        String base64SignedJarDigest = Base64.toBase64String(signedJarDigest);
         newJadProperties.put(MIDLET_JAR_RSA_SHA1_ATTR, base64SignedJarDigest);
 
         // Sort properties alphabetically

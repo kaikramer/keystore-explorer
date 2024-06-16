@@ -54,10 +54,9 @@ public class DialogHelper {
      * @param keyPairType
      * @param privateKey
      * @param jcbSignatureAlgorithm
-     * @throws CryptoException
      */
     public static void populateSigAlgs(KeyPairType keyPairType, PrivateKey privateKey,
-                                       JComboBox<SignatureType> jcbSignatureAlgorithm) throws CryptoException {
+                                       JComboBox<SignatureType> jcbSignatureAlgorithm) {
 
         List<SignatureType> sigAlgs;
 
@@ -84,8 +83,12 @@ public class DialogHelper {
             break;
         case RSA:
         default:
-            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
-            sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
+            try {
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+                sigAlgs = SignatureType.rsaSignatureTypes(keyInfo.getSize());
+            } catch (CryptoException e) {
+                sigAlgs = Collections.emptyList();
+            }
         }
 
         jcbSignatureAlgorithm.removeAllItems();

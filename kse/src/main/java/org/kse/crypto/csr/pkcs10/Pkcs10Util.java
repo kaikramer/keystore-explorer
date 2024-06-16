@@ -185,7 +185,7 @@ public class Pkcs10Util {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ASN1OutputStream deros = ASN1OutputStream.create(baos, ASN1Encoding.DER);
             deros.writeObject(csr.toASN1Structure().toASN1Primitive());
-            String tmp = new String(Base64.encode(baos.toByteArray()));
+            String tmp = Base64.toBase64String(baos.toByteArray());
 
             // Header
             String csrStr = BEGIN_CSR_FORM_1 + "\n";
