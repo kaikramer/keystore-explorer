@@ -37,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -71,6 +72,7 @@ public class DViewDHParameters extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private JTextArea jtAreaPem;
+    private JScrollPane jspAreaPem;
     private JButton jbExport;
     private JButton jbOK;
     private JButton jbCopy;
@@ -107,9 +109,9 @@ public class DViewDHParameters extends JEscDialog {
         jtAreaPem.setEditable(false);
         jtAreaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         // keep uneditable color same as editable
-        jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+		jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
-		var jspAreaPem = PlatformUtil.createScrollPane(jtAreaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+		jspAreaPem = PlatformUtil.createScrollPane(jtAreaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
         jbExport = new JButton(res.getString("DViewDHParameters.jbExport.export.text"));
