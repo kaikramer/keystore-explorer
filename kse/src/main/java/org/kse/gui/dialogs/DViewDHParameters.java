@@ -37,7 +37,9 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -70,6 +72,7 @@ public class DViewDHParameters extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private JTextArea jtAreaPem;
+    private JScrollPane jspAreaPem;
     private JButton jbExport;
     private JButton jbOK;
     private JButton jbCopy;
@@ -106,8 +109,11 @@ public class DViewDHParameters extends JEscDialog {
         jtAreaPem.setEditable(false);
         jtAreaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         // keep uneditable color same as editable
-        jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+		jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
+		jspAreaPem = PlatformUtil.createScrollPane(jtAreaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		
         jbExport = new JButton(res.getString("DViewDHParameters.jbExport.export.text"));
         jbExport.setToolTipText(res.getString("DViewDHParameters.jbExport.export.tooltip"));
         PlatformUtil.setMnemonic(jbExport, res.getString("DViewDHParameters.jbExport.mnemonic").charAt(0));
@@ -120,7 +126,7 @@ public class DViewDHParameters extends JEscDialog {
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog"));
-        pane.add(jtAreaPem, "span");
+        pane.add(jspAreaPem, "span");
         pane.add(jbCopy, "tag Copy");
         pane.add(jbExport, "tag Export");
         pane.add(jbOK, "tag Ok");
