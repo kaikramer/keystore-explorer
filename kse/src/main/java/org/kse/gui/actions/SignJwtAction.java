@@ -25,6 +25,8 @@ import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.cert.Certificate;
+import java.util.Base64;
 
 import javax.swing.ImageIcon;
 
@@ -88,14 +90,17 @@ public class SignJwtAction extends KeyStoreExplorerAction {
 
             Provider provider = history.getExplicitProvider();
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+            Certificate cert = keyStore.getCertificate(alias);
             KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
             DSignJwt dSignJwt = new DSignJwt(frame, keyPairType, privateKey);
             dSignJwt.setLocationRelativeTo(frame);
             dSignJwt.setVisible(true);
             if (dSignJwt.isOk()) {
+                byte[] dataPublic = cert.getPublicKey().getEncoded();
                 SignedJWT jwt = signJwt(dSignJwt, privateKey, provider);
                 DViewJwt dialog = new DViewJwt(frame, jwt);
+                dialog.setPublicKey(Base64.getEncoder().encodeToString(dataPublic));
                 dialog.setLocationRelativeTo(frame);
                 dialog.setVisible(true);
             }
