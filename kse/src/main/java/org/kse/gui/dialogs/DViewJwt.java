@@ -145,42 +145,42 @@ public class DViewJwt extends JEscDialog {
         jtaEncoded.setEditable(true);
         jtaEncoded.setLineWrap(true);
         jtaEncoded.setToolTipText(res.getString("DViewJwt.jtaEncoded.tooltip"));
-		jtaEncoded.addFocusListener(new FocusListener() {
+        jtaEncoded.addFocusListener(new FocusListener() {
 
-			@Override
-			public void focusGained(FocusEvent arg0) {
-			}
+            @Override
+            public void focusGained(FocusEvent arg0) {
+            }
 
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				try {
-					JWT jwtVeri = JWTParser.parse(jtaEncoded.getText());
-					if (!jwt.equals(jwtVeri)) {
-						jwt = jwtVeri;
-						populateDialog();
-					}
-				} catch (ParseException e) {
-					jtaPayload.setText("");
-					jtaHeader.setText("");
-				}
-			}
-		});
+            @Override
+            public void focusLost(FocusEvent arg0) {
+                try {
+                    JWT jwtVeri = JWTParser.parse(jtaEncoded.getText());
+                    if (!jwt.equals(jwtVeri)) {
+                        jwt = jwtVeri;
+                        populateDialog();
+                    }
+                } catch (ParseException e) {
+                    jtaPayload.setText("");
+                    jtaHeader.setText("");
+                }
+            }
+        });
 
         jspEncoded = PlatformUtil.createScrollPane(jtaEncoded, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                                   ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		jlPublicKey = new JLabel(res.getString("DViewJwt.jlPublicKey.text"));
+        jlPublicKey = new JLabel(res.getString("DViewJwt.jlPublicKey.text"));
 
-		jtaPublicKey = new JTextArea();
-		jtaPublicKey.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
-		jtaPublicKey.setEditable(true);
-		jtaPublicKey.setLineWrap(true);
-		jtaPublicKey.setToolTipText(res.getString("DViewJwt.jtaPublicKey.tooltip"));
+        jtaPublicKey = new JTextArea();
+        jtaPublicKey.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
+        jtaPublicKey.setEditable(true);
+        jtaPublicKey.setLineWrap(true);
+        jtaPublicKey.setToolTipText(res.getString("DViewJwt.jtaPublicKey.tooltip"));
 
-		jspPublicKey = PlatformUtil.createScrollPane(jtaPublicKey, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        jspPublicKey = PlatformUtil.createScrollPane(jtaPublicKey, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		jbCopy = new JButton(res.getString("DViewJwt.jbCopy.text"));
+        jbCopy = new JButton(res.getString("DViewJwt.jbCopy.text"));
         jbCopy.setToolTipText(res.getString("DViewJwt.jbCopy.tooltip"));
         PlatformUtil.setMnemonic(jbCopy, res.getString("DViewJwt.jbCopy.mnemonic").charAt(0));
 
@@ -196,15 +196,15 @@ public class DViewJwt extends JEscDialog {
         pane.add(jlPayload, "");
         pane.add(jspPayload, "width 400lp:400lp:400lp, height 150lp:150lp:150lp, wrap");
         pane.add(jlEncoded, "");
-        pane.add(jspEncoded, "width 400lp:400lp:400lp, height 150lp:150lp:150lp");
+        pane.add(jspEncoded, "width 400lp:400lp:400lp, height 200lp:200lp:200lp");
         pane.add(jlPublicKey, "");
-        pane.add(jspPublicKey, "width 400lp:400lp:400lp, height 150lp:150lp:150lp, wrap");
+        pane.add(jspPublicKey, "width 400lp:400lp:400lp, height 200lp:200lp:200lp, wrap");
         
-		jpButtons = PlatformUtil.createDialogButtonPanel(jbCopy, jbVerify, "insets 0");
+        jpButtons = PlatformUtil.createDialogButtonPanel(jbCopy, jbVerify, "insets 0");
 
-		pane.add(jpButtons, "right, spanx");
-		pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
-        
+        pane.add(jpButtons, "right, spanx");
+        pane.add(new JSeparator(), "spanx, growx, wrap unrel:push");
+
         pane.add(jbOK, "spanx, tag ok");
 
         // actions
@@ -260,60 +260,60 @@ public class DViewJwt extends JEscDialog {
         closeDialog();
     }
 
-	private static byte[] decodeIfBase64(String data) {
-		byte[] dataAsBytes = data.getBytes();
+    private static byte[] decodeIfBase64(String data) {
+        byte[] dataAsBytes = data.getBytes();
 
-		// first handle base64 encoded binary data
-		try {
-			dataAsBytes = Base64.getDecoder().decode(data.trim());
-		} catch (IllegalArgumentException e) {
-			// was not valid b64
-		}
-		return dataAsBytes;
-	}
+        // first handle base64 encoded binary data
+        try {
+            dataAsBytes = Base64.getDecoder().decode(data.trim());
+        } catch (IllegalArgumentException e) {
+            // was not valid b64
+        }
+        return dataAsBytes;
+    }
     
-	private void verifyPressed() {	
-		String data = jtaPublicKey.getText();
-		if (data.isEmpty()) {
-			JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
-					res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		byte[] dataAsBytes = decodeIfBase64(data);
-		try {
-			CryptoFileType fileType = CryptoFileUtil.detectFileType(dataAsBytes);
-			if (fileType != CryptoFileType.OPENSSL_PUB) {
-				JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
-						res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			PublicKey publicKey = OpenSslPubUtil.load(dataAsBytes);
-			var signedJWT = SignedJWT.parse(jwt.serialize());
-			JWSVerifier verifier = null;
-			if (publicKey instanceof ECPublicKey) {
-				verifier = new ECDSAVerifier((ECPublicKey) publicKey);
-			} else if (publicKey instanceof RSAPublicKey) {
-				verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
-			} else {
-				JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
-						res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			if (signedJWT.verify(verifier)) {
-				JOptionPane.showMessageDialog(this, res.getString("DViewJwt.SignatureVerified.message"),
-						res.getString("DViewJwt.Verify.Title"), JOptionPane.INFORMATION_MESSAGE);
-			} else {
-				JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidSignature.message"),
-						res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
-			}
-		} catch (IOException | CryptoException | JOSEException | ParseException ex) {
-			DError.displayError(this, ex);
-		}
-	}
+    private void verifyPressed() {
+        String data = jtaPublicKey.getText();
+        if (data.isEmpty()) {
+            JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
+                    res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        byte[] dataAsBytes = decodeIfBase64(data);
+        try {
+            CryptoFileType fileType = CryptoFileUtil.detectFileType(dataAsBytes);
+            if (fileType != CryptoFileType.OPENSSL_PUB) {
+                JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
+                        res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            PublicKey publicKey = OpenSslPubUtil.load(dataAsBytes);
+            var signedJWT = SignedJWT.parse(jwt.serialize());
+            JWSVerifier verifier = null;
+            if (publicKey instanceof ECPublicKey) {
+                verifier = new ECDSAVerifier((ECPublicKey) publicKey);
+            } else if (publicKey instanceof RSAPublicKey) {
+                verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
+            } else {
+                JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
+                        res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (signedJWT.verify(verifier)) {
+                JOptionPane.showMessageDialog(this, res.getString("DViewJwt.SignatureVerified.message"),
+                        res.getString("DViewJwt.Verify.Title"), JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidSignature.message"),
+                        res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException | CryptoException | JOSEException | ParseException ex) {
+            DError.displayError(this, ex);
+        }
+    }
 
-	public void setPublicKey(String publicKey) {
-		jtaPublicKey.setText(publicKey);
-	}
+    public void setPublicKey(String publicKey) {
+        jtaPublicKey.setText(publicKey);
+    }
 
     private void closeDialog() {
         setVisible(false);

@@ -97,7 +97,7 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             dSignJwt.setLocationRelativeTo(frame);
             dSignJwt.setVisible(true);
             if (dSignJwt.isOk()) {
-            	byte [] dataPublic = cert.getPublicKey().getEncoded();            	
+                byte[] dataPublic = cert.getPublicKey().getEncoded();
                 SignedJWT jwt = signJwt(dSignJwt, privateKey, provider);
                 DViewJwt dialog = new DViewJwt(frame, jwt);
                 dialog.setPublicKey(Base64.getEncoder().encodeToString(dataPublic));
