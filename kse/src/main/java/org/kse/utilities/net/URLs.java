@@ -52,7 +52,7 @@ public class URLs {
                                                            "http://tsa.quovadisglobal.com/TSS/HttpTspServer",
                                                            "http://rfc3161timestamp.globalsign.com/advanced",
                                                            "http://time.certum.pl",
-                                                           "http://sha256timestamp.ws.symantec.com/sha256/timestamp",
+                                                           "http://timestamp.acs.microsoft.com",
                                                            "http://timestamp.sectigo.com" };
 
 
