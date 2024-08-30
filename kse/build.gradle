@@ -102,7 +102,7 @@ java {
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 dependencies {
-	implementation('org.bouncycastle:bcpkix-jdk18on:1.77')
+	implementation('org.bouncycastle:bcpkix-jdk18on:1.78.1')
 	implementation('net.java.dev.jna:jna:5.13.0')
 	implementation('commons-io:commons-io:2.15.1')
 	implementation('com.miglayout:miglayout-swing:11.3')
