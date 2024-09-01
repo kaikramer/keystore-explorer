@@ -44,7 +44,6 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.kse.crypto.keystore.KeyStoreType;
-import org.kse.version.JavaVersion;
 
 /**
  * Static helper methods for ECC stuff, mainly detection of available ECC algorithms.
@@ -87,6 +86,13 @@ public class EccUtil {
             return ecPrivateKeySpec.getName();
         }
 
+        // if ECParameterSpec is a sun.security.util.NamedCurve we cannot simply cast it, so we do ASN.1 parsing instead
+        if (key instanceof PrivateKey) {
+            PrivateKeyInfo privateKeyInfo = PrivateKeyInfo.getInstance(key.getEncoded());
+            AlgorithmIdentifier algorithmIdentifier = privateKeyInfo.getPrivateKeyAlgorithm();
+            return getCurveNameFromAlgorithmParameters(algorithmIdentifier.getParameters());
+        }
+
         if (key instanceof PublicKey) {
             return getNamedCurve((PublicKey) key);
         }
@@ -110,6 +116,15 @@ public class EccUtil {
         SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
         ASN1Encodable parameters = subjectPublicKeyInfo.getAlgorithm().getParameters();
 
+        String curveName = getCurveNameFromAlgorithmParameters(parameters);
+        if (curveName != null) {
+            return curveName;
+        }
+
+        return "";
+    }
+
+    private static String getCurveNameFromAlgorithmParameters(ASN1Encodable parameters) {
         /*
          * ECParameters ::= CHOICE {
          *        namedCurve         OBJECT IDENTIFIER
@@ -140,8 +155,7 @@ public class EccUtil {
             //        to be explicitly specified.  This choice MUST NOT be used."
             return "explicitly specified curve";
         }
-
-        return "";
+        return null;
     }
 
     /**
