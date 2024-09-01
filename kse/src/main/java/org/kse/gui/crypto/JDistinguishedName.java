@@ -20,9 +20,6 @@
 package org.kse.gui.crypto;
 
 import java.awt.Container;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -36,6 +33,8 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.kse.crypto.x509.KseX500NameStyle;
 import org.kse.gui.CursorUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Component to view or edit a distinguished name.
@@ -70,13 +69,6 @@ public class JDistinguishedName extends JPanel {
         jtfDistinguishedName = new JTextField(columns);
         jtfDistinguishedName.setEditable(false);
 
-        GridBagConstraints gbcJtfDistinguishedName = new GridBagConstraints();
-        gbcJtfDistinguishedName.gridwidth = 1;
-        gbcJtfDistinguishedName.gridheight = 1;
-        gbcJtfDistinguishedName.gridx = 0;
-        gbcJtfDistinguishedName.gridy = 0;
-        gbcJtfDistinguishedName.insets = new Insets(0, 0, 0, 5);
-
         ImageIcon viewEditIcon = new ImageIcon(getClass().getResource("images/view_edit_dn.png"));
         jbViewEditDistinguishedName = new JButton(viewEditIcon);
 
@@ -104,18 +96,6 @@ public class JDistinguishedName extends JPanel {
             });
         }
 
-        GridBagConstraints gbcJbViewEditDistinguishedName = new GridBagConstraints();
-        gbcJbViewEditDistinguishedName.gridwidth = 1;
-        gbcJbViewEditDistinguishedName.gridheight = 1;
-        gbcJbViewEditDistinguishedName.gridx = 1;
-        gbcJbViewEditDistinguishedName.gridy = 0;
-
-        if (editable) {
-            gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 5);
-        } else {
-            gbcJbViewEditDistinguishedName.insets = new Insets(0, 0, 0, 0);
-        }
-
         ImageIcon clearIcon = new ImageIcon(getClass().getResource("images/clear_dn.png"));
         jbClearDistinguishedName = new JButton(clearIcon);
         jbClearDistinguishedName.setToolTipText(res.getString("JDistinguishedName.jbClearDistinguishedName.tooltip"));
@@ -128,19 +108,12 @@ public class JDistinguishedName extends JPanel {
             }
         });
 
-        GridBagConstraints gbcJbClearDistinguishedName = new GridBagConstraints();
-        gbcJbClearDistinguishedName.gridwidth = 1;
-        gbcJbClearDistinguishedName.gridheight = 1;
-        gbcJbClearDistinguishedName.gridx = 2;
-        gbcJbClearDistinguishedName.gridy = 0;
-        gbcJbClearDistinguishedName.insets = new Insets(0, 0, 0, 0);
-
-        setLayout(new GridBagLayout());
-        add(jtfDistinguishedName, gbcJtfDistinguishedName);
-        add(jbViewEditDistinguishedName, gbcJbViewEditDistinguishedName);
+        setLayout(new MigLayout("insets 0, fill", "[]5px[]", ""));
+        add(jtfDistinguishedName, "");
+        add(jbViewEditDistinguishedName, "");
 
         if (editable) {
-            add(jbClearDistinguishedName, gbcJbClearDistinguishedName);
+            add(jbClearDistinguishedName, "");
         }
 
         populate();

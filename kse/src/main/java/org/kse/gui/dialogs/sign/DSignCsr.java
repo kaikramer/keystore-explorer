@@ -81,9 +81,9 @@ import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
@@ -324,7 +324,7 @@ public class DSignCsr extends JEscDialog {
         pane.add(jdnCsrSubject, "wrap");
         pane.add(jlCsrPublicKey, "");
         pane.add(jtfCsrPublicKey, "split 2");
-        pane.add(jbViewCsrPublicKeyDetails, "gapx 5px, wrap"); // TODO change gap after JDistinguishedName has been migrated
+        pane.add(jbViewCsrPublicKeyDetails, "gapx 5px, wrap");
         pane.add(jlCsrSignatureAlgorithm, "");
         pane.add(jtfCsrSignatureAlgorithm, "wrap");
         pane.add(jlCsrChallenge, "");

@@ -17,7 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.codehaus.groovy.runtime.GStringImpl
+
 import java.nio.file.Paths
 
 /*
@@ -33,7 +36,7 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
-	id "com.netflix.nebula.ospackage" version "11.4.0"
+	id "com.netflix.nebula.ospackage" version "11.10.0"
 }
 
 defaultTasks 'zip'
@@ -53,11 +56,11 @@ ext {
 	appSimpleName = project.hasProperty('appSimpleName') ? project.getProperty('appSimpleName') : props."KSE.SimpleName"
 	appSimpleVersion = props."KSE.SimpleVersion"
 	appUserModelId = props."KSE.AppUserModelId"
-	distFileNamePrefix = "$appSimpleName-$appSimpleVersion"
-	appJarName = "${appSimpleName}.jar"
-	appExe = "${appSimpleName}.exe"
-	appBundle = "${appName}.app"
-	dmgFile = "${appSimpleName}-${appSimpleVersion}.dmg"
+	distFileNamePrefix = "$appSimpleName-$appSimpleVersion" as GStringImpl
+	appJarName = "${appSimpleName}.jar" as GStringImpl
+	appExe = "${appSimpleName}.exe" as GStringImpl
+	appBundle = "${appName}.app" as GStringImpl
+	dmgFile = "${appSimpleName}-${appSimpleVersion}.dmg" as GStringImpl
 
 	// Resource Hacker for setting the version info and icon of kse.exe
 	rh = "c:\\Program Files (x86)\\Resource Hacker\\ResourceHacker.exe"
@@ -74,10 +77,10 @@ ext {
 	dependenciesDir = Paths.get(layout.buildDirectory.get().asFile.getAbsolutePath(), "dependencies") // for NSIS we need Windows path separators
 
 	// Icons
-	kseIco = "$iconsDir/kse.ico"
-	ksePng = "$iconsDir/kse.png"
-	kseIcns = "$iconsDir/kse.icns"
-	keystoreIcns = "$iconsDir/keystore.icns"
+	kseIco = "$iconsDir/kse.ico" as GStringImpl
+	ksePng = "$iconsDir/kse.png" as GStringImpl
+	kseIcns = "$iconsDir/kse.icns" as GStringImpl
+	keystoreIcns = "$iconsDir/keystore.icns" as GStringImpl
 
 	// Vendor details
 	copyright = "Copyright 2004 - 2013 Wayne Grant, 2013 - 2024 Kai Kramer"
@@ -98,7 +101,6 @@ java {
 	}
 }
 
-// always show stacktrace when build fails
 gradle.startParameter.showStacktrace = ShowStacktrace.ALWAYS
 
 dependencies {
@@ -107,23 +109,28 @@ dependencies {
 	implementation('commons-io:commons-io:2.15.1')
 	implementation('com.miglayout:miglayout-swing:11.3')
 	implementation('com.formdev:flatlaf:3.4.1')
-	implementation('com.nimbusds:nimbus-jose-jwt:9.30.2')
+	implementation('com.nimbusds:nimbus-jose-jwt:9.37.2')
 	implementation('org.violetlib:vaqua:11')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
 	implementation('org.openjdk.nashorn:nashorn-core:15.4')
 	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.17.0')
 	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.17.0')
 
-	// TODO restrict to right OS dependency depending on build (all for zip, linux for .deb/.rpm etc.)
-	implementation('org.openjfx:javafx-base:17.0.9:win')
-	implementation('org.openjfx:javafx-base:17.0.9:linux')
-	implementation('org.openjfx:javafx-base:17.0.9:mac')
-	implementation('org.openjfx:javafx-graphics:17.0.9:win')
-	implementation('org.openjfx:javafx-graphics:17.0.9:linux')
-	implementation('org.openjfx:javafx-graphics:17.0.9:mac')
-	implementation('org.openjfx:javafx-swing:17.0.9:win')
-	implementation('org.openjfx:javafx-swing:17.0.9:linux')
-	implementation('org.openjfx:javafx-swing:17.0.9:mac')
+	if (gradle.startParameter.taskNames.any { ['innosetup', 'zip'].contains(it) }) {
+		implementation('org.openjfx:javafx-base:17.0.9:win')
+		implementation('org.openjfx:javafx-graphics:17.0.9:win')
+		implementation('org.openjfx:javafx-swing:17.0.9:win')
+	}
+	if (gradle.startParameter.taskNames.any { ['buildDeb', 'buildRpm', 'zip'].contains(it) }) {
+		implementation('org.openjfx:javafx-swing:17.0.9:linux')
+		implementation('org.openjfx:javafx-base:17.0.9:linux')
+		implementation('org.openjfx:javafx-graphics:17.0.9:linux')
+	}
+	if (gradle.startParameter.taskNames.any { ['dmg', 'zip'].contains(it) }) {
+		implementation('org.openjfx:javafx-base:17.0.9:mac')
+		implementation('org.openjfx:javafx-graphics:17.0.9:mac')
+		implementation('org.openjfx:javafx-swing:17.0.9:mac')
+	}
 
 	testImplementation('org.assertj:assertj-core:3.25.1')
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.10.1')
@@ -154,7 +161,7 @@ jar {
 	}
 }
 
-task prepareExe() {
+tasks.register('prepareExe') {
 	doLast {
 		copy {
 			from("$resDir/kse-launcher.exe")
@@ -192,9 +199,9 @@ task prepareExe() {
 		exec {
 			workingDir projectDir
 			commandLine "${rh}",
-						'-open', "${launcherOutDir}\\kse.rc",
-						'-save', "${launcherOutDir}\\kse.res",
-						'-action', 'compile'
+					'-open', "${launcherOutDir}\\kse.rc",
+					'-save', "${launcherOutDir}\\kse.res",
+					'-action', 'compile'
 		}
 		exec {
 			workingDir projectDir
@@ -217,7 +224,8 @@ task prepareExe() {
 	}
 }
 
-task zip(type: Zip, dependsOn: prepareExe) {
+tasks.register('zip', Zip) {
+	dependsOn prepareExe
 	archiveVersion.set(appSimpleVersion)
 	into(distFileNamePrefix) {
 		from jar.archiveFile
@@ -246,12 +254,12 @@ task zip(type: Zip, dependsOn: prepareExe) {
 	}
 }
 
-task copyDependencies(type: Copy) {
-   from configurations.runtimeClasspath.files
-   into dependenciesDir
+tasks.register('copyDependencies', Copy) {
+	from configurations.runtimeClasspath.files
+	into dependenciesDir
 }
 
-task jlink(type: Exec) {
+tasks.register('jlink', Exec) {
 	outputs.dir(jlinkOutDir)
 	delete "$jlinkOutDir/jre"
 
@@ -263,14 +271,14 @@ task jlink(type: Exec) {
 
 	def javaHome = System.properties.'java.home'
 	commandLine "${javaHome}/bin/jlink",
-		'--module-path', "${javaHome}/jmods",
-		'--compress', '2',
-		'--strip-debug',
-		'--no-header-files',
-		'--no-man-pages',
-		'--include-locales=en,de,fr',
-		'--add-modules',
-					'java.base,' +
+			'--module-path', "${javaHome}/jmods",
+			'--compress', '2',
+			'--strip-debug',
+			'--no-header-files',
+			'--no-man-pages',
+			'--include-locales=en,de,fr',
+			'--add-modules',
+			'java.base,' +
 					'java.datatransfer,' +
 					'java.desktop,' +
 					'java.logging,' +
@@ -288,28 +296,29 @@ task jlink(type: Exec) {
 					'jdk.zipfs,' +
 					'jdk.unsupported,' +
 					'jdk.dynalink',
-		'--output', "$jlinkOutDir/jre"
+			'--output', "$jlinkOutDir/jre"
 }
 
-task innosetup(dependsOn: [jar, prepareExe, jlink, copyDependencies]) {
+tasks.register('innosetup') {
+	dependsOn jar, prepareExe, jlink, copyDependencies
 	doLast {
 		mkdir distDir
 		copy {
 			from("innosetup/setup.iss.template")
 			rename("setup.iss.template", "setup.iss")
 			filter(ReplaceTokens, beginToken: '%', endToken: '%', tokens: [
-					KSE_VERSION: appVersion,
+					KSE_VERSION          : appVersion,
 					KSE_APP_USER_MODEL_ID: appUserModelId,
-					KSE_JAR: jar.archiveFile.get().asFile.getAbsolutePath(),
-					LIB_DIR: dependenciesDir.toString(),
-					LAUNCHER: "$launcherOutDir\\$appExe".toString(),
-					JAVA_INFO_DLL: "$resDir\\JavaInfo.dll".toString(),
-					NO_JRE: (JavaVersion.current() != JavaVersion.VERSION_11) ? "" : "-no-jre",
-					ICONS_DIR: iconsDir.toString(),
-					RES_DIR: resDir.toString(),
-					JRE_DIR: "$jlinkOutDir\\jre".toString(),
-					LICENSES_DIR: licensesDir.toString(),
-					DIST_DIR: distDir.toString()
+					KSE_JAR              : jar.archiveFile.get().asFile.getAbsolutePath(),
+					LIB_DIR              : dependenciesDir.toString(),
+					LAUNCHER             : "$launcherOutDir\\$appExe".toString(),
+					JAVA_INFO_DLL        : "$resDir\\JavaInfo.dll".toString(),
+					NO_JRE               : (JavaVersion.current() != JavaVersion.VERSION_11) ? "" : "-no-jre",
+					ICONS_DIR            : iconsDir.toString(),
+					RES_DIR              : resDir.toString(),
+					JRE_DIR              : "$jlinkOutDir\\jre".toString(),
+					LICENSES_DIR         : licensesDir.toString(),
+					DIST_DIR             : distDir.toString()
 			])
 			into("innosetup")
 		}
@@ -320,26 +329,27 @@ task innosetup(dependsOn: [jar, prepareExe, jlink, copyDependencies]) {
 	}
 }
 
-task appbundler(dependsOn: [jar, copyDependencies]) {
+tasks.register('appbundler') {
+	dependsOn jar, copyDependencies
 	doLast {
 		ant.taskdef(name: 'bundleapp', classname: 'com.oracle.appbundler.AppBundlerTask') {
 			classpath {
-				fileset(dir: 'lib', includes: 'appbundler-1.0ea.jar' )
+				fileset(dir: 'lib', includes: 'appbundler-1.0ea.jar')
 			}
 		}
 		mkdir appBundleDir
 		ant.bundleapp(outputdirectory: appBundleDir,
-					name: appName,
-					displayname: appName,
-					executableName: appName,
-					identifier: "org.kse.${appAltName}", //An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A�Z, a�z), the dot (�.�), and the hyphen (�-�).
-					shortversion: appVersion,  // The release version number is a string composed of three period-separated integers.
-					version: appVersion, // The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zero�for example, 3.1.2.
-					icon: kseIcns,
-					mainclassname: mainClassName,
-					copyright: copyright,
-					applicationCategory: "public.app-category.developer-tools"
-					) {
+				name: appName,
+				displayname: appName,
+				executableName: appName,
+				identifier: "org.kse.${appAltName}", //An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A�Z, a�z), the dot (�.�), and the hyphen (�-�).
+				shortversion: appVersion,  // The release version number is a string composed of three period-separated integers.
+				version: appVersion, // The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zero�for example, 3.1.2.
+				icon: kseIcns,
+				mainclassname: mainClassName,
+				copyright: copyright,
+				applicationCategory: "public.app-category.developer-tools"
+		) {
 			classpath(dir: dependenciesDir)
 			classpath(file: jar.archiveFile.get().asFile.getAbsolutePath())
 			arch(name: "x86_64")
@@ -371,9 +381,9 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 			}
 
 			bundledocument(extensions: "ks,jks,jceks,keystore,bks,uber,pfx,p12",
-							icon: keystoreIcns,
-							name: "KeyStore",
-							role: "editor")
+					icon: keystoreIcns,
+					name: "KeyStore",
+					role: "editor")
 			option(value: "-Dapple.laf.useScreenMenuBar=true")
 			option(value: "-Dcom.apple.macos.use-file-dialog-packages=true")
 			option(value: "-Dcom.apple.macos.useScreenMenuBar=true")
@@ -382,7 +392,8 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 			option(value: "-Dfile.encoding=UTF-8")
 			option(value: '-splash:$APP_ROOT/Contents/Resources/splash.png')
 			option(value: "-Dkse.app=true")
-			option(value: '-Dkse.app.stub=$APP_ROOT/Contents/MacOS/KeyStore Explorer') // provide app location for restart
+			option(value: '-Dkse.app.stub=$APP_ROOT/Contents/MacOS/KeyStore Explorer')
+			// provide app location for restart
 		}
 		copy {
 			from("${resDir}")
@@ -392,33 +403,35 @@ task appbundler(dependsOn: [jar, copyDependencies]) {
 	}
 }
 
-task signapp(dependsOn: appbundler) {
+tasks.register('signapp') {
+	dependsOn appbundler
 	def javaBaseDirName = new File(System.properties.'java.home').getParentFile().getParentFile().getName()
 	doLast {
 		exec {
 			workingDir appBundleDir
 			commandLine 'codesign',
-						'-vvv',
-						'--force',
-						'--options=runtime',
-						'--entitlements', "${dmgDir}/entitlements.xml",
-						'-s', 'Kai Kramer',
-						"${appBundle}/Contents/PlugIns/${javaBaseDirName}"
+					'-vvv',
+					'--force',
+					'--options=runtime',
+					'--entitlements', "${dmgDir}/entitlements.xml",
+					'-s', 'Kai Kramer',
+					"${appBundle}/Contents/PlugIns/${javaBaseDirName}"
 		}
 		exec {
 			workingDir appBundleDir
 			commandLine 'codesign',
-						'-vvv',
-						'--force',
-						'--options=runtime',
-						'--entitlements', "${dmgDir}/entitlements.xml",
-						'-s', 'Kai Kramer',
-						"${appBundle}"
+					'-vvv',
+					'--force',
+					'--options=runtime',
+					'--entitlements', "${dmgDir}/entitlements.xml",
+					'-s', 'Kai Kramer',
+					"${appBundle}"
 		}
 	}
 }
 
-task dmg(type: Exec, dependsOn: signapp) {
+tasks.register('dmg', Exec) {
+	dependsOn signapp
 	mkdir distDir
 	new File("${distDir}/${dmgFile}").delete()
 	workingDir layout.buildDirectory
@@ -430,7 +443,8 @@ task dmg(type: Exec, dependsOn: signapp) {
 	}
 }
 
-task notarization(type: Exec, dependsOn: dmg) {
+tasks.register('notarization', Exec) {
+	dependsOn dmg
 	workingDir layout.buildDirectory
 
 	commandLine 'xcrun',
