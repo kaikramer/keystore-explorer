@@ -45,7 +45,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: kse-launcher
           path: kse/res
@@ -107,7 +107,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: kse-launcher
           path: kse/res
@@ -164,16 +164,16 @@ jobs:
     needs: [windows, linux, windows-with-jre]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: windows-artifacts
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: linux-artifacts
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: windows-with-jre-artifact
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4.1.7
         with:
           name: macos-artifact
       - name: Create a release
