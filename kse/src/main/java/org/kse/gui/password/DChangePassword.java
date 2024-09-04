@@ -22,7 +22,6 @@ package org.kse.gui.password;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -36,7 +35,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
@@ -58,14 +56,12 @@ public class DChangePassword extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpPassword;
     private JLabel jlOld;
     private JPasswordField jpfOld;
     private JLabel jlFirst;
     private JComponent jpfFirst;
     private JLabel jlConfirm;
     private JPasswordField jpfConfirm;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -145,8 +141,6 @@ public class DChangePassword extends JEscDialog {
             jpfOld = new JPasswordField(15);
         }
 
-        GridBagConstraints gbc_jpfOld = new GridBagConstraints();
-
         jlFirst = new JLabel(res.getString("DChangePassword.jlFirst.text"));
 
         if (passwordQualityConfig.getEnabled()) {
@@ -158,8 +152,6 @@ public class DChangePassword extends JEscDialog {
         } else {
             jpfFirst = new JPasswordField(15);
         }
-
-        GridBagConstraints gbc_jpqfFirst = new GridBagConstraints();
 
         jlConfirm = new JLabel(res.getString("DChangePassword.jlConfirm.text"));
 
