@@ -19,7 +19,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install nim mingw-w64
       - name: Build
-        run: nim -d:mingw --cpu:i386 -d:release --app:gui --opt:size --out:kse-launcher.exe c kse_launcher.nim
+        run: nim -d:mingw --cpu:amd64 -d:release --app:gui --opt:size --out:kse-launcher.exe c kse_launcher.nim
         working-directory: kse/res
       - name: Shrink executable
         run: strip kse/res/kse-launcher.exe
