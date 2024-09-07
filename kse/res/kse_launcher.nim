@@ -27,10 +27,12 @@ type
     HANDLE* = int
     HWND* = HANDLE
     UINT* = int32
+    DWORD* = int32
     LPCSTR* = cstring
+    LPWSTR* = WideCString
     PCWSTR* = WideCString
-    DWORD = int32
-    GetJavaHome = proc (path: WideCString, length: DWORD): DWORD {.gcsafe, stdcall.}
+    GetJavaHome = proc (path: LPWSTR, length: DWORD): DWORD {.gcsafe, stdcall.}
+    IsBinary64Bit = proc (path: LPWSTR, is64Bit: ptr DWORD): DWORD {.gcsafe, stdcall.}
 
     JliLaunchProc = proc (argc: cint, argv: cstringArray, jargc: cint, jargv: cstringArray,
                            appclassc: cint, appclassv: cstringArray, fullversion: cstring, dotversion: cstring,
@@ -64,12 +66,35 @@ proc getJavaHome(): string =
     var javaHomeLength = javaInfoGetJavaHome(nil, 0)
     var javaHomeWideStr = newWideCString(newString(javaHomeLength))
 
-    javaHomeLength = javaInfoGetJavaHome(javaHomeWideStr, javaHomeLength);
+    javaHomeLength = javaInfoGetJavaHome(javaHomeWideStr, javaHomeLength)
     if javaHomeLength == 0:
         showMessageBox(0, "No Java Runtime found! Please set JAVA_HOME!", "Error Detecting Java Installation", MB_ICONERROR)
         quit(1)
 
     result = $javaHomeWideStr
+
+    unloadLib(libHandle)
+
+
+proc is64BitDll(filePath: string): bool =
+    let libHandle: LibHandle = loadLib("JavaInfo.dll")
+    if libHandle.isNil:
+        showMessageBox(0, "Error loading JavaInfo.dll!\nIt has to be in the same folder as kse.exe!", "Error", MB_ICONERROR)
+        quit(1)
+
+    let isBinary64Bit = cast[IsBinary64Bit](symAddr(libHandle, "IsBinary64Bit"))
+    if isBinary64Bit.isNil:
+        showMessageBox(0, "Could not find symbol IsBinary64Bit", "Error Detecting Java Installation", MB_ICONERROR)
+        quit(1)
+
+    var is64Bit: ptr DWORD = cast[ptr DWORD](alloc(DWORD.sizeof))
+    if isBinary64Bit(filePath.newWideCString(), is64Bit) != 0:
+        showMessageBox(0, "Could not call IsBinary64Bit", "Error Detecting Java Installation", MB_ICONERROR)
+        quit(1)
+
+    result = is64Bit[] == DWORD(1)
+    dealloc(is64Bit)
+    unloadLib(libHandle)
 
 
 proc getJliDllPath(): string =
@@ -82,10 +107,16 @@ proc getJliDllPath(): string =
 
 
 proc callJliLaunch() =
-    var jliDllHandle: LibHandle = loadLib(getJliDllPath())
+    let jliDllPath = getJliDllPath()
+    let jliDllHandle: LibHandle = loadLib(jliDllPath)
     if jliDllHandle.isNil:
-        showMessageBox(0, "Could not load jli.dll!", "Error Loading DLL", MB_ICONERROR)
-        quit(1)
+        if not is64BitDll(jliDllPath):
+            let errMsg = cstring(jliDllPath & " is a 32 bit Java runtime.\nPlease install a 64 bit JRE!")
+            showMessageBox(0, errMsg, "Error Loading DLL", MB_ICONERROR)
+            quit(1)
+        else:
+            showMessageBox(0, "Could not load jli.dll!", "Error Loading DLL", MB_ICONERROR)
+            quit(1)
 
     let jliLaunch: JliLaunchProc = cast[JliLaunchProc](symAddr(jliDllHandle, "JLI_Launch"))
     if jliLaunch.isNil:
