@@ -462,8 +462,10 @@ ospackage {
 
 	url "${website}"
 	summary "Multipurpose keystore and certificate tool"
-	packageGroup 'Security'
-	packageDescription 'KeyStore Explorer is a user friendly GUI application for creating, managing and examining keystores, keys, certificates, certificate requests, certificate revocation lists and more.'
+	packageGroup 'utils'
+	packageDescription 'KeyStore Explorer is a user friendly GUI application for creating,\n' +
+			'managing and examining keystores, keys, certificates, certificate requests,\n' +
+			'certificate revocation lists and more.'
 	license 'GPLv3+'
 	packager ''
 	vendor "${vendor}"
@@ -486,6 +488,7 @@ ospackage {
 		include '**/*.txt'
 		into 'licenses'
 		fileType LICENSE
+		fileMode 0644
 	}
 	from(iconsDir) {
 		include '**/kse_*.png'
@@ -509,6 +512,7 @@ ospackage {
 	link('/usr/share/applications/kse.desktop', '/opt/kse/kse.desktop', 0644)
 	for (size in [16, 32, 48, 128, 256, 512]) {
 		link("/usr/share/icons/hicolor/${size}x${size}/apps/kse.png", "/opt/kse/icons/kse_${size}.png", 0644)
+		fileMode 0644
 	}
 }
 
