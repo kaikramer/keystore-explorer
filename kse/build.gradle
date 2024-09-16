@@ -481,9 +481,6 @@ ospackage {
 	from(configurations.runtimeClasspath.files) {
 		into 'lib'
 	}
-	from('lib') {
-		into 'lib'
-	}
 	from(licensesDir) {
 		include '**/*.txt'
 		into 'licenses'
