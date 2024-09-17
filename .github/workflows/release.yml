@@ -24,7 +24,7 @@ jobs:
       - name: Shrink executable
         run: strip kse/res/kse-launcher.exe
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: kse-launcher
           path: kse/res/kse-launcher.exe
@@ -53,13 +53,13 @@ jobs:
         run: .\gradlew.bat test zip innosetup
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows-artifacts
           path: |
             kse/build/launcher/kse.exe
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           # use second step with same artifact name in order to avoid sub-folders
           name: windows-artifacts
@@ -84,7 +84,7 @@ jobs:
         run: ./gradlew test buildDeb buildRpm
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: linux-artifacts
           path: |
@@ -115,7 +115,7 @@ jobs:
         run: .\gradlew.bat test innosetup
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows-with-jre-artifact
           path: kse/build/distributions/kse-*-setup.exe
@@ -155,7 +155,7 @@ jobs:
           ./gradlew dmg
         working-directory: kse
       - name: Store artifacts for release
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: macos-artifact
           path: kse/build/distributions/kse*.dmg

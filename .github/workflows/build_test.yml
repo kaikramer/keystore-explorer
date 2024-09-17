@@ -25,13 +25,13 @@ jobs:
       working-directory: kse
     - name: 'Publish Test Report'
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: 'test-report'
         path: kse/build/reports/tests/test/*
     - name: 'Publish Build'
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: 'artifacts'
         path: |
