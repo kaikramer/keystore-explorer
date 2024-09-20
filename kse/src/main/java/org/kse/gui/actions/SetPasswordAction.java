@@ -20,6 +20,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -29,6 +30,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -90,7 +92,17 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
         KeyStoreState currentState = history.getCurrentState();
         KeyStoreState newState = currentState.createBasisForNextState(this);
 
-        Password password = getNewKeyStorePassword(false);
+        // check if we have to ask user to use password manager or if this ks is already managed by pwd mgr
+        File keyStoreFile = history.getFile();
+        boolean askUserForPasswordManager = false;
+        if (keyStoreFile != null) {
+            boolean passwordKnown = PasswordManager.getInstance().isKeyStorePasswordKnown(keyStoreFile);
+            askUserForPasswordManager = !passwordKnown;
+        } else {
+            askUserForPasswordManager = true;
+        }
+
+        Password password = getNewKeyStorePassword(askUserForPasswordManager);
 
         if (password == null) {
             return false;
