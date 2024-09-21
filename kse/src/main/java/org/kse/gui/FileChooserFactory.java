@@ -72,6 +72,7 @@ public class FileChooserFactory {
     public static final String LIB_SO_EXT = "so";
     public static final String LIB_DYLIB_EXT = "dylib";
     public static final String PEM_EXT = "pem";
+    public static final String JWK_EXT = "json";
 
     private static final String KEYSTORE_FILE_DESC =
             format(res.getString("FileChooserFactory.KeyStoreFiles"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,

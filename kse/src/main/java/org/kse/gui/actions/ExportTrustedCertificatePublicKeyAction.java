@@ -37,7 +37,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
-import org.kse.gui.dialogs.importexport.DExportPublicKeyOpenSsl;
+import org.kse.gui.dialogs.importexport.DExportPublicKey;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 
@@ -72,7 +72,7 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
         try {
             String alias = kseFrame.getSelectedEntryAlias();
 
-            DExportPublicKeyOpenSsl dExportPublicKey = new DExportPublicKeyOpenSsl(frame, alias);
+            DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias);
             dExportPublicKey.setLocationRelativeTo(frame);
             dExportPublicKey.setVisible(true);
 
