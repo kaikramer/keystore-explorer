@@ -102,15 +102,15 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
             exportEncodedPublicKey(encoded, exportFile);
 
             JOptionPane.showMessageDialog(frame, res.getString(
-                                                  "ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSslSuccessful.message"),
-                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSsl.Title"),
+                                                  "ExportKeyPairPublicKeyAction.ExportPublicKeySuccessful.message"),
+                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKey.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPublicKeyAction.NoWriteFile.message"),
                                                   exportFile);
 
             JOptionPane.showMessageDialog(frame, message,
-                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSsl.Title"),
+                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKey.Title"),
                                           JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);

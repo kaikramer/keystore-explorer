@@ -97,8 +97,8 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
 
             JOptionPane.showMessageDialog(frame, res.getString(
                                                   "ExportTrustedCertificatePublicKeyAction" +
-                                                  ".ExportPublicKeyOpenSslSuccessful.message"), res.getString(
-                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl" +
+                                                  ".ExportPublicKeySuccessful.message"), res.getString(
+                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKey" +
                                                   ".Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
@@ -106,7 +106,7 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
                     res.getString("ExportTrustedCertificatePublicKeyAction.NoWriteFile.message"), exportFile);
 
             JOptionPane.showMessageDialog(frame, message, res.getString(
-                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl" +
+                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKey" +
                                                   ".Title"),
                                           JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
