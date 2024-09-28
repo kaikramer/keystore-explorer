@@ -67,7 +67,8 @@ public class DExportPublicKey extends JEscDialog {
     private String entryAlias;
     private boolean exportSelected = false;
     private File exportFile;
-    private boolean pemEncode;
+
+    private PubkeyFormat selectedPubKeyFormat = PubkeyFormat.OPENSSL_PEM;
 
     /**
      * Creates a new DExportPublicKey dialog.
@@ -160,8 +161,10 @@ public class DExportPublicKey extends JEscDialog {
             // add or remove ".pem" depending on current selection of PEM checkbox
             if (jrbExportOpenSslPem.isSelected() && !currentFileName.contains(pemFileExt)) {
                 jtfExportFile.setText(currentFileName + pemFileExt);
+                selectedPubKeyFormat = PubkeyFormat.OPENSSL_PEM;
             } else if (!jrbExportOpenSslPem.isSelected() && currentFileName.contains(pemFileExt)) {
                 jtfExportFile.setText(currentFileName.replaceAll(pemFileExt, ""));
+                selectedPubKeyFormat = PubkeyFormat.OPENSSL;
             }
         });
 
@@ -170,6 +173,7 @@ public class DExportPublicKey extends JEscDialog {
             String jwkFileExt = "." + JWK_EXT;
             if (jrbExportJwk.isSelected() && !currentFileName.contains(jwkFileExt)) {
                 jtfExportFile.setText(currentFileName + jwkFileExt);
+                selectedPubKeyFormat = PubkeyFormat.JWK;
             } else if (!jrbExportJwk.isSelected() && currentFileName.contains(jwkFileExt)) {
                 jtfExportFile.setText(currentFileName.replaceAll(jwkFileExt, ""));
             }
@@ -235,7 +239,11 @@ public class DExportPublicKey extends JEscDialog {
      * @return True if it was
      */
     public boolean pemEncode() {
-        return pemEncode;
+        return selectedPubKeyFormat == PubkeyFormat.OPENSSL_PEM;
+    }
+
+    public PubkeyFormat getSelectedPubKeyFormat() {
+        return selectedPubKeyFormat;
     }
 
     private void browsePressed() {
@@ -265,8 +273,6 @@ public class DExportPublicKey extends JEscDialog {
     }
 
     private void exportPressed() {
-        pemEncode = jrbExportOpenSslPem.isSelected();
-
         String exportFileStr = jtfExportFile.getText().trim();
 
         if (exportFileStr.isEmpty()) {
@@ -304,6 +310,12 @@ public class DExportPublicKey extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    public enum PubkeyFormat {
+        OPENSSL,
+        OPENSSL_PEM,
+        JWK
     }
 
     // for quick testing

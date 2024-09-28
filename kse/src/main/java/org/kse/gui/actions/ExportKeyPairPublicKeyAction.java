@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.publickey.JwkPublicKey;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -81,23 +82,27 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
             }
 
             exportFile = dExportPublicKey.getExportFile();
-            boolean pemEncode = dExportPublicKey.pemEncode();
 
             PublicKey publicKey = getPublicKey(alias);
 
             byte[] encoded = null;
 
-            if (pemEncode) {
-                encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
-            } else {
-                encoded = OpenSslPubUtil.get(publicKey);
+            switch (dExportPublicKey.getSelectedPubKeyFormat()) {
+                case OPENSSL_PEM:
+                    encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
+                    break;
+                case OPENSSL:
+                    encoded = OpenSslPubUtil.get(publicKey);
+                    break;
+                case JWK:
+                    encoded = JwkPublicKey.from(publicKey, alias).get();
+                    break;
             }
 
             exportEncodedPublicKey(encoded, exportFile);
 
             JOptionPane.showMessageDialog(frame, res.getString(
-                                                  "ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSslSuccessful" +
-                                                  ".message"),
+                                                  "ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSslSuccessful.message"),
                                           res.getString("ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSsl.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
