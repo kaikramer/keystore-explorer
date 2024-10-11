@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -72,7 +73,12 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
         try {
             String alias = kseFrame.getSelectedEntryAlias();
 
-            DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias);
+            PublicKey publicKey = getPublicKey(alias);
+
+            JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKey, alias);
+            boolean isKeyExportableAsJWK = jwkPublicKeyExporter.canExport();
+
+            DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
             dExportPublicKey.setVisible(true);
 
@@ -82,8 +88,6 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
 
             exportFile = dExportPublicKey.getExportFile();
             boolean pemEncode = dExportPublicKey.pemEncode();
-
-            PublicKey publicKey = getPublicKey(alias);
 
             byte[] encoded = null;
 

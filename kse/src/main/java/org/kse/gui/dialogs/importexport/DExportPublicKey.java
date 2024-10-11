@@ -50,7 +50,7 @@ public class DExportPublicKey extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
     public static final String FULL_PEM_FILE_EXT = "." + PUBLIC_KEY_EXT + "." + PEM_EXT;
-    public static final String FULL_JWK_FILE_EXT = "." + PUBLIC_KEY_EXT + "." + JWK_EXT;
+    private boolean isKeyExportableAsJWK;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -76,9 +76,10 @@ public class DExportPublicKey extends JEscDialog {
      * @param parent     The parent frame
      * @param entryAlias The KeyStore entry to export private key from
      */
-    public DExportPublicKey(JFrame parent, String entryAlias) {
+    public DExportPublicKey(JFrame parent, String entryAlias, boolean isKeyExportableAsJWK) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.entryAlias = entryAlias;
+        this.isKeyExportableAsJWK = isKeyExportableAsJWK;
         initComponents();
     }
 
@@ -95,6 +96,7 @@ public class DExportPublicKey extends JEscDialog {
 
         jrbExportJwk = new JRadioButton(res.getString("DExportPublicKey.jrbExportJwk.text"));
         jrbExportJwk.setSelected(false);
+        jrbExportJwk.setEnabled(isKeyExportableAsJWK);
         jrbExportJwk.setName("jrbExportJwk");
         jrbExportJwk.setToolTipText(res.getString("DExportPublicKey.jrbExportJwk.tooltip"));
 
@@ -320,6 +322,6 @@ public class DExportPublicKey extends JEscDialog {
 
     // for quick testing
     public static void main(String[] args) throws Exception {
-        DialogViewer.run(new DExportPublicKey(new JFrame(), "alias"));
+        DialogViewer.run(new DExportPublicKey(new JFrame(), "alias", true));
     }
 }
