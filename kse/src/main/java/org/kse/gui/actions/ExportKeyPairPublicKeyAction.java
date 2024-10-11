@@ -34,7 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.publickey.JwkPubExporter;
+import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -95,7 +95,7 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
                     encoded = OpenSslPubUtil.get(publicKey);
                     break;
                 case JWK:
-                    encoded = JwkPubExporter.from(publicKey, alias).get();
+                    encoded = JwkPublicKeyExporter.from(publicKey, alias).get();
                     break;
             }
 
