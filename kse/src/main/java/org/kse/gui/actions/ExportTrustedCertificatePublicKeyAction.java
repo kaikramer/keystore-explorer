@@ -34,10 +34,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
-import org.kse.gui.dialogs.importexport.DExportPublicKeyOpenSsl;
+import org.kse.gui.dialogs.importexport.DExportPublicKey;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 
@@ -72,7 +73,12 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
         try {
             String alias = kseFrame.getSelectedEntryAlias();
 
-            DExportPublicKeyOpenSsl dExportPublicKey = new DExportPublicKeyOpenSsl(frame, alias);
+            PublicKey publicKey = getPublicKey(alias);
+
+            JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKey, alias);
+            boolean isKeyExportableAsJWK = jwkPublicKeyExporter.canExport();
+
+            DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
             dExportPublicKey.setVisible(true);
 
@@ -82,8 +88,6 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
 
             exportFile = dExportPublicKey.getExportFile();
             boolean pemEncode = dExportPublicKey.pemEncode();
-
-            PublicKey publicKey = getPublicKey(alias);
 
             byte[] encoded = null;
 
@@ -97,8 +101,8 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
 
             JOptionPane.showMessageDialog(frame, res.getString(
                                                   "ExportTrustedCertificatePublicKeyAction" +
-                                                  ".ExportPublicKeyOpenSslSuccessful.message"), res.getString(
-                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl" +
+                                                  ".ExportPublicKeySuccessful.message"), res.getString(
+                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKey" +
                                                   ".Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
@@ -106,7 +110,7 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
                     res.getString("ExportTrustedCertificatePublicKeyAction.NoWriteFile.message"), exportFile);
 
             JOptionPane.showMessageDialog(frame, message, res.getString(
-                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKeyOpenSsl" +
+                                                  "ExportTrustedCertificatePublicKeyAction.ExportPublicKey" +
                                                   ".Title"),
                                           JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {

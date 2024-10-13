@@ -19,33 +19,14 @@
  */
 package org.kse.gui.dialogs.importexport;
 
-import static org.kse.gui.FileChooserFactory.PEM_EXT;
-import static org.kse.gui.FileChooserFactory.PUBLIC_KEY_EXT;
-import static org.kse.gui.FileChooserFactory.getPublicKeyFileChooser;
-
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -57,33 +38,37 @@ import org.kse.utilities.io.FileNameUtil;
 
 import net.miginfocom.swing.MigLayout;
 
+import static org.kse.gui.FileChooserFactory.*;
+
 /**
  * Dialog used to display options to export a public key from a KeyStore entry
  * as OpenSSL.
  */
-public class DExportPublicKeyOpenSsl extends JEscDialog {
+public class DExportPublicKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
 
     public static final String FULL_PEM_FILE_EXT = "." + PUBLIC_KEY_EXT + "." + PEM_EXT;
+    private boolean isKeyExportableAsJWK;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpOptions;
-    private JLabel jlExportPem;
-    private JCheckBox jcbExportPem;
+    private JRadioButton jrbExportOpenSsl;
+    private JRadioButton jrbExportOpenSslPem;
+    private JRadioButton jrbExportJwk;
+
     private JLabel jlExportFile;
     private JTextField jtfExportFile;
     private JButton jbBrowse;
-    private JPanel jpButtons;
     private JButton jbExport;
     private JButton jbCancel;
 
     private String entryAlias;
     private boolean exportSelected = false;
     private File exportFile;
-    private boolean pemEncode;
+
+    private PubkeyFormat selectedPubKeyFormat = PubkeyFormat.OPENSSL_PEM;
 
     /**
      * Creates a new DExportPublicKey dialog.
@@ -91,78 +76,108 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
      * @param parent     The parent frame
      * @param entryAlias The KeyStore entry to export private key from
      */
-    public DExportPublicKeyOpenSsl(JFrame parent, String entryAlias) {
+    public DExportPublicKey(JFrame parent, String entryAlias, boolean isKeyExportableAsJWK) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.entryAlias = entryAlias;
+        this.isKeyExportableAsJWK = isKeyExportableAsJWK;
         initComponents();
     }
 
     private void initComponents() {
-        GridBagConstraints gbcLbl = new GridBagConstraints();
+        jrbExportOpenSslPem = new JRadioButton(res.getString("DExportPublicKey.jrbExportOpenSslPem.text"));
+        jrbExportOpenSslPem.setSelected(true);
+        jrbExportOpenSslPem.setName("jcbExportOpenSslPem");
+        jrbExportOpenSslPem.setToolTipText(res.getString("DExportPublicKey.jrbExportOpenSslPem.tooltip"));
 
-        GridBagConstraints gbcEdCtrl = new GridBagConstraints();
+        jrbExportOpenSsl = new JRadioButton(res.getString("DExportPublicKey.jrbExportOpenSsl.text"));
+        jrbExportOpenSsl.setSelected(false);
+        jrbExportOpenSsl.setName("jrbExportOpenSsl");
+        jrbExportOpenSsl.setToolTipText(res.getString("DExportPublicKey.jrbExportOpenSsl.tooltip"));
 
-        jlExportPem = new JLabel(res.getString("DExportPublicKeyOpenSsl.jlExportPem.text"));
+        jrbExportJwk = new JRadioButton(res.getString("DExportPublicKey.jrbExportJwk.text"));
+        jrbExportJwk.setSelected(false);
+        jrbExportJwk.setEnabled(isKeyExportableAsJWK);
+        jrbExportJwk.setName("jrbExportJwk");
+        jrbExportJwk.setToolTipText(res.getString("DExportPublicKey.jrbExportJwk.tooltip"));
 
-        jcbExportPem = new JCheckBox();
-        jcbExportPem.setSelected(true);
-        jcbExportPem.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jcbExportPem.tooltip"));
-
-        jlExportFile = new JLabel(res.getString("DExportPublicKeyOpenSsl.jlExportFile.text"));
+        jlExportFile = new JLabel(res.getString("DExportPublicKey.jlExportFile.text"));
 
         jtfExportFile = new JTextField(30);
-        jtfExportFile.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jtfExportFile.tooltip"));
+        jtfExportFile.setToolTipText(res.getString("DExportPublicKey.jtfExportFile.tooltip"));
 
-        jbBrowse = new JButton(res.getString("DExportPublicKeyOpenSsl.jbBrowse.text"));
-        jbBrowse.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jbBrowse.tooltip"));
-        PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportPublicKeyOpenSsl.jbBrowse.mnemonic").charAt(0));
+        jbBrowse = new JButton(res.getString("DExportPublicKey.jbBrowse.text"));
+        jbBrowse.setToolTipText(res.getString("DExportPublicKey.jbBrowse.tooltip"));
+        PlatformUtil.setMnemonic(jbBrowse, res.getString("DExportPublicKey.jbBrowse.mnemonic").charAt(0));
 
-        jbExport = new JButton(res.getString("DExportPublicKeyOpenSsl.jbExport.text"));
-        PlatformUtil.setMnemonic(jbExport, res.getString("DExportPublicKeyOpenSsl.jbExport.mnemonic").charAt(0));
-        jbExport.setToolTipText(res.getString("DExportPublicKeyOpenSsl.jbExport.tooltip"));
+        jbExport = new JButton(res.getString("DExportPublicKey.jbExport.text"));
+        PlatformUtil.setMnemonic(jbExport, res.getString("DExportPublicKey.jbExport.mnemonic").charAt(0));
+        jbExport.setToolTipText(res.getString("DExportPublicKey.jbExport.tooltip"));
 
-        jbCancel = new JButton(res.getString("DExportPublicKeyOpenSsl.jbCancel.text"));
+        jbCancel = new JButton(res.getString("DExportPublicKey.jbCancel.text"));
+
+        ButtonGroup keyTypes = new ButtonGroup();
+        keyTypes.add(jrbExportOpenSslPem);
+        keyTypes.add(jrbExportOpenSsl);
+        keyTypes.add(jrbExportJwk);
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
-        pane.add(jlExportPem, "");
-        pane.add(jcbExportPem, "wrap");
-        pane.add(jlExportFile, "");
-        pane.add(jtfExportFile, "");
-        pane.add(jbBrowse, "wrap");
+        pane.setLayout(new MigLayout("insets dialog, fill", "[grow 0]0[grow]", "[]unrel[]"));
+
+        // Add the radio buttons on the left, and keep the label and text field in the second column
+        pane.add(jrbExportOpenSslPem, "cell 0 0, align left");
+        pane.add(jrbExportOpenSsl, "cell 0 1, align left");
+        pane.add(jrbExportJwk, "cell 0 2, align left");
+
+        pane.add(jlExportFile, "cell 0 3, align left");
+        pane.add(jtfExportFile, "cell 0 3, growx");
+        pane.add(jbBrowse, "cell 0 3, align left, wrap");
+
+        // Add separator and buttons
         pane.add(new JSeparator(), "spanx, growx, wrap");
-        pane.add(jbExport, "right, spanx, split, tag ok");
+        pane.add(jbExport, "right, spanx, split 2, tag ok");
         pane.add(jbCancel, "tag cancel");
 
         // actions
-
         jbBrowse.addActionListener(evt -> {
             try {
-                CursorUtil.setCursorBusy(DExportPublicKeyOpenSsl.this);
+                CursorUtil.setCursorBusy(DExportPublicKey.this);
                 browsePressed();
             } finally {
-                CursorUtil.setCursorFree(DExportPublicKeyOpenSsl.this);
+                CursorUtil.setCursorFree(DExportPublicKey.this);
             }
         });
 
         jbExport.addActionListener(evt -> {
             try {
-                CursorUtil.setCursorBusy(DExportPublicKeyOpenSsl.this);
+                CursorUtil.setCursorBusy(DExportPublicKey.this);
                 exportPressed();
             } finally {
-                CursorUtil.setCursorFree(DExportPublicKeyOpenSsl.this);
+                CursorUtil.setCursorFree(DExportPublicKey.this);
             }
         });
 
-        jcbExportPem.addItemListener(evt -> {
+        jrbExportOpenSslPem.addItemListener(evt -> {
             String currentFileName = jtfExportFile.getText();
             String pemFileExt = "." + PEM_EXT;
             // add or remove ".pem" depending on current selection of PEM checkbox
-            if (jcbExportPem.isSelected() && !currentFileName.contains(pemFileExt)) {
+            if (jrbExportOpenSslPem.isSelected() && !currentFileName.contains(pemFileExt)) {
                 jtfExportFile.setText(currentFileName + pemFileExt);
-            } else if (!jcbExportPem.isSelected() && currentFileName.contains(pemFileExt)) {
+                selectedPubKeyFormat = PubkeyFormat.OPENSSL_PEM;
+            } else if (!jrbExportOpenSslPem.isSelected() && currentFileName.contains(pemFileExt)) {
                 jtfExportFile.setText(currentFileName.replaceAll(pemFileExt, ""));
+                selectedPubKeyFormat = PubkeyFormat.OPENSSL;
+            }
+        });
+
+        jrbExportJwk.addItemListener(evt -> {
+            String currentFileName = jtfExportFile.getText();
+            String jwkFileExt = "." + JWK_EXT;
+            if (jrbExportJwk.isSelected() && !currentFileName.contains(jwkFileExt)) {
+                jtfExportFile.setText(currentFileName + jwkFileExt);
+                selectedPubKeyFormat = PubkeyFormat.JWK;
+            } else if (!jrbExportJwk.isSelected() && currentFileName.contains(jwkFileExt)) {
+                jtfExportFile.setText(currentFileName.replaceAll(jwkFileExt, ""));
             }
         });
 
@@ -185,7 +200,7 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
             }
         });
 
-        setTitle(MessageFormat.format(res.getString("DExportPublicKeyOpenSsl.Title"), entryAlias));
+        setTitle(MessageFormat.format(res.getString("DExportPublicKey.Title"), entryAlias));
         setResizable(false);
 
         getRootPane().setDefaultButton(jbExport);
@@ -226,7 +241,11 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
      * @return True if it was
      */
     public boolean pemEncode() {
-        return pemEncode;
+        return selectedPubKeyFormat == PubkeyFormat.OPENSSL_PEM;
+    }
+
+    public PubkeyFormat getSelectedPubKeyFormat() {
+        return selectedPubKeyFormat;
     }
 
     private void browsePressed() {
@@ -241,12 +260,12 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
             chooser.setCurrentDirectory(CurrentDirectory.get());
         }
 
-        chooser.setDialogTitle(res.getString("DExportPublicKeyOpenSsl.ChooseExportFile.Title"));
+        chooser.setDialogTitle(res.getString("DExportPublicKey.ChooseExportFile.Title"));
         chooser.setMultiSelectionEnabled(false);
 
         int rtnValue = JavaFXFileChooser.isFxAvailable() ?
                        chooser.showSaveDialog(this) :
-                       chooser.showDialog(this, res.getString("DExportPublicKeyOpenSsl.ChooseExportFile.button"));
+                       chooser.showDialog(this, res.getString("DExportPublicKey.ChooseExportFile.button"));
         if (rtnValue == JFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
@@ -256,13 +275,11 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
     }
 
     private void exportPressed() {
-        pemEncode = jcbExportPem.isSelected();
-
         String exportFileStr = jtfExportFile.getText().trim();
 
         if (exportFileStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, res.getString("DExportPublicKeyOpenSsl.ExportFileRequired.message"),
-                                          res.getString("DExportPublicKeyOpenSsl.Simple.Title"),
+            JOptionPane.showMessageDialog(this, res.getString("DExportPublicKey.ExportFileRequired.message"),
+                                          res.getString("DExportPublicKey.Simple.Title"),
                                           JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -270,11 +287,11 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
         File exportFile = new File(exportFileStr);
 
         if (exportFile.isFile()) {
-            String message = MessageFormat.format(res.getString("DExportPublicKeyOpenSsl.OverWriteExportFile.message"),
+            String message = MessageFormat.format(res.getString("DExportPublicKey.OverWriteExportFile.message"),
                                                   exportFile);
 
             int selected = JOptionPane.showConfirmDialog(this, message,
-                                                         res.getString("DExportPublicKeyOpenSsl.Simple.Title"),
+                                                         res.getString("DExportPublicKey.Simple.Title"),
                                                          JOptionPane.YES_NO_OPTION);
             if (selected != JOptionPane.YES_OPTION) {
                 return;
@@ -297,8 +314,14 @@ public class DExportPublicKeyOpenSsl extends JEscDialog {
         dispose();
     }
 
+    public enum PubkeyFormat {
+        OPENSSL,
+        OPENSSL_PEM,
+        JWK
+    }
+
     // for quick testing
     public static void main(String[] args) throws Exception {
-        DialogViewer.run(new DExportPublicKeyOpenSsl(new JFrame(), "alias"));
+        DialogViewer.run(new DExportPublicKey(new JFrame(), "alias", true));
     }
 }

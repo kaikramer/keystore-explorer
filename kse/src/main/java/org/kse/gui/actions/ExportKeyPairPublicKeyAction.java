@@ -34,10 +34,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
-import org.kse.gui.dialogs.importexport.DExportPublicKeyOpenSsl;
+import org.kse.gui.dialogs.importexport.DExportPublicKey;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 
@@ -72,7 +73,11 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
         try {
             String alias = kseFrame.getSelectedEntryAlias();
 
-            DExportPublicKeyOpenSsl dExportPublicKey = new DExportPublicKeyOpenSsl(frame, alias);
+            PublicKey publicKey = getPublicKey(alias);
+
+            JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKey, alias);
+            boolean isKeyExportableAsJWK = jwkPublicKeyExporter.canExport();
+            DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
             dExportPublicKey.setVisible(true);
 
@@ -81,31 +86,33 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
             }
 
             exportFile = dExportPublicKey.getExportFile();
-            boolean pemEncode = dExportPublicKey.pemEncode();
-
-            PublicKey publicKey = getPublicKey(alias);
 
             byte[] encoded = null;
 
-            if (pemEncode) {
-                encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
-            } else {
-                encoded = OpenSslPubUtil.get(publicKey);
+            switch (dExportPublicKey.getSelectedPubKeyFormat()) {
+                case OPENSSL_PEM:
+                    encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
+                    break;
+                case OPENSSL:
+                    encoded = OpenSslPubUtil.get(publicKey);
+                    break;
+                case JWK:
+                    encoded = jwkPublicKeyExporter.get();
+                    break;
             }
 
             exportEncodedPublicKey(encoded, exportFile);
 
             JOptionPane.showMessageDialog(frame, res.getString(
-                                                  "ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSslSuccessful" +
-                                                  ".message"),
-                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSsl.Title"),
+                                                  "ExportKeyPairPublicKeyAction.ExportPublicKeySuccessful.message"),
+                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKey.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPublicKeyAction.NoWriteFile.message"),
                                                   exportFile);
 
             JOptionPane.showMessageDialog(frame, message,
-                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKeyOpenSsl.Title"),
+                                          res.getString("ExportKeyPairPublicKeyAction.ExportPublicKey.Title"),
                                           JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
