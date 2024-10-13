@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.util.Base64URL;
+
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
@@ -88,9 +90,11 @@ public class JwkPublicKeyExporter {
                 return new byte[0];
             }
             Curve curve = maybeCurve.get();
+            SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(bcEdDSAPublicKey.getEncoded());
+            byte[] rawKey = subjectPublicKeyInfo.getPublicKeyData().getBytes();
             OctetKeyPair.Builder builder = new OctetKeyPair.Builder(
                     curve,
-                    Base64URL.encode(bcEdDSAPublicKey.getEncoded())
+                    Base64URL.encode(rawKey)
             );
             if (alias != null) {
                 builder.keyID(alias);

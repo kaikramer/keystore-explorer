@@ -139,8 +139,8 @@ public class JwkPublicKeyExporterTest {
         String expectedJson =
                 "{\"kty\":\"OKP\","
                         + "\"crv\":\"Ed25519\","
-                        + "\"x\":\"MCowBQYDK2VwAyEA11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo\","
-                        + "\"kid\":\"WUUC6gG4mhDQjFBONx9OeTjwrob3FMjth4JN6I-M0vA\"}";
+                        + "\"x\":\"11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo\","
+                        + "\"kid\":\"kPrK_qmxVWaYVA9wwBF6Iuo3vVzz7TxHCTwXBygrS4k\"}";
         JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
     }
 
@@ -157,7 +157,7 @@ public class JwkPublicKeyExporterTest {
         String expectedJson =
                 "{\"kty\":\"OKP\","
                         + "\"crv\":\"Ed448\","
-                        + "\"x\":\"MEMwBQYDK2VxAzoAX9dEm1m0Yf0s54fsYWrUah2hNCSFpw4fig6nXYDpZ3jt8SR2m0bHBhvWeD3x5Q9s0foavq_oJWGA\","
+                        + "\"x\":\"X9dEm1m0Yf0s54fsYWrUah2hNCSFpw4fig6nXYDpZ3jt8SR2m0bHBhvWeD3x5Q9s0foavq_oJWGA\","
                         + "\"kid\":\"testAlias\"}";
         JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
     }
