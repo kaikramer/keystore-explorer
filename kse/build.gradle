@@ -108,6 +108,7 @@ dependencies {
 	implementation('commons-io:commons-io:2.15.1')
 	implementation('com.miglayout:miglayout-swing:11.3')
 	implementation('com.formdev:flatlaf:3.4.1')
+	implementation('com.google.crypto.tink:tink:1.15.0')
 	implementation('com.nimbusds:nimbus-jose-jwt:9.37.2')
 	implementation('org.violetlib:vaqua:11')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')

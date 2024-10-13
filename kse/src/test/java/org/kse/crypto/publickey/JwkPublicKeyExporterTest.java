@@ -1,25 +1,10 @@
 package org.kse.crypto.publickey;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.interfaces.ECPublicKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.ECFieldFp;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPoint;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.EllipticCurve;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
-
+import com.nimbusds.jose.JOSEException;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,11 +16,20 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-import com.nimbusds.jose.JOSEException;
+import java.math.BigInteger;
+import java.security.*;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Execution(ExecutionMode.CONCURRENT)
 public class JwkPublicKeyExporterTest {
     private static ECPublicKey ecPublicKey;
+
     private static RSAPublicKey rsaPublicKey;
 
     private static RSAPublicKeySpec getRsaPublicKeySpec() {
@@ -43,8 +37,7 @@ public class JwkPublicKeyExporterTest {
                 "00c1b4c7b1d4d3a72950c1df4c67fe2192679855829161e5825c9dc29c88a00a54c42260d55e3569db33efb63b9a568d913735a7dbdcae6937ab967bd93d35ecf7326c1d132896bbfbc7b73c0fb09d7ef92cc0484fa616cd92a0458028ad69d7e0b662e7c1115f08c5e74a43f50832c9e04125fd3311aa6d183b87b9b3d593bb",
                 16);
         BigInteger exponent = new BigInteger("10001", 16);
-        RSAPublicKeySpec rsaPublicKeySpec = new RSAPublicKeySpec(modulus, exponent);
-        return rsaPublicKeySpec;
+        return new RSAPublicKeySpec(modulus, exponent);
     }
 
     private static ECPublicKeySpec getEcPublicKeySpec() {
@@ -63,6 +56,8 @@ public class JwkPublicKeyExporterTest {
 
     @BeforeAll
     public static void setUp() throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
+
         ECPublicKeySpec ecPublicKeySpec = getEcPublicKeySpec();
         KeyFactory keyFactory = KeyFactory.getInstance("EC");
         ecPublicKey = (ECPublicKey) keyFactory.generatePublic(ecPublicKeySpec);
@@ -77,7 +72,7 @@ public class JwkPublicKeyExporterTest {
         String exportedKey = new String(exporter.get());
         String expectedJson =
                 "{\"kty\":\"EC\",\"crv\":\"P-256\"," + "\"x\":\"axfR8uEsQkf4vOblY6RA8ncDfYEt6zOg9KE5RdiYwpY\"," +
-                "\"y\":\"T-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU\"," + "\"kid\":\"testAlias\"}";
+                        "\"y\":\"T-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU\"," + "\"kid\":\"testAlias\"}";
         JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
     }
 
@@ -88,13 +83,13 @@ public class JwkPublicKeyExporterTest {
 
         String expectedJson =
                 "{\"kty\":\"EC\",\"crv\":\"P-256\"," + "\"x\":\"axfR8uEsQkf4vOblY6RA8ncDfYEt6zOg9KE5RdiYwpY\"," +
-                "\"y\":\"T-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU\"," +
-                "\"kid\":\"xx0BcA-wMohw8atYDJOe6peGModklG2wRHBlXHMvl0M\"}";
+                        "\"y\":\"T-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU\"," +
+                        "\"kid\":\"xx0BcA-wMohw8atYDJOe6peGModklG2wRHBlXHMvl0M\"}";
         JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
     }
 
     @Test
-    void shouldExportRSAPublicKey(){
+    void shouldExportRSAPublicKey() {
         JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(rsaPublicKey, "testAlias");
         Assertions.assertTrue(exporter.canExport());
     }
@@ -105,8 +100,8 @@ public class JwkPublicKeyExporterTest {
         String exportedKey = new String(exporter.get());
 
         String expectedJson = "{\"kty\":\"RSA\"," +
-                              "\"n\":\"wbTHsdTTpylQwd9MZ_4hkmeYVYKRYeWCXJ3CnIigClTEImDVXjVp2zPvtjuaVo2RNzWn29yuaTerlnvZPTXs9zJsHRMolrv7x7c8D7CdfvkswEhPphbNkqBFgCitadfgtmLnwRFfCMXnSkP1CDLJ4EEl_TMRqm0YO4e5s9WTuw\"," +
-                              "\"e\":\"AQAB\",\"kid\":\"testAlias\"}";
+                "\"n\":\"wbTHsdTTpylQwd9MZ_4hkmeYVYKRYeWCXJ3CnIigClTEImDVXjVp2zPvtjuaVo2RNzWn29yuaTerlnvZPTXs9zJsHRMolrv7x7c8D7CdfvkswEhPphbNkqBFgCitadfgtmLnwRFfCMXnSkP1CDLJ4EEl_TMRqm0YO4e5s9WTuw\"," +
+                "\"e\":\"AQAB\",\"kid\":\"testAlias\"}";
         JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
     }
 
@@ -116,15 +111,71 @@ public class JwkPublicKeyExporterTest {
         String exportedKey = new String(exporter.get());
 
         String expectedJson = "{\"kty\":\"RSA\"," +
-                              "\"n\":\"wbTHsdTTpylQwd9MZ_4hkmeYVYKRYeWCXJ3CnIigClTEImDVXjVp2zPvtjuaVo2RNzWn29yuaTerlnvZPTXs9zJsHRMolrv7x7c8D7CdfvkswEhPphbNkqBFgCitadfgtmLnwRFfCMXnSkP1CDLJ4EEl_TMRqm0YO4e5s9WTuw\"," +
-                              "\"e\":\"AQAB\",\"kid\":\"O5S4xk_n66c64bA1zSz4KVIGFRaxvgbtUKGLoNMSYLw\"}";
+                "\"n\":\"wbTHsdTTpylQwd9MZ_4hkmeYVYKRYeWCXJ3CnIigClTEImDVXjVp2zPvtjuaVo2RNzWn29yuaTerlnvZPTXs9zJsHRMolrv7x7c8D7CdfvkswEhPphbNkqBFgCitadfgtmLnwRFfCMXnSkP1CDLJ4EEl_TMRqm0YO4e5s9WTuw\"," +
+                "\"e\":\"AQAB\",\"kid\":\"O5S4xk_n66c64bA1zSz4KVIGFRaxvgbtUKGLoNMSYLw\"}";
+        JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void shouldExportEdDSAPublicKeyWithAlias() throws JOSEException, JSONException {
+        JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(ecPublicKey, "testAlias");
+        String exportedKey = new String(exporter.get());
+        String expectedJson =
+                "{\"kty\":\"EC\",\"crv\":\"P-256\"," + "\"x\":\"axfR8uEsQkf4vOblY6RA8ncDfYEt6zOg9KE5RdiYwpY\"," +
+                        "\"y\":\"T-NC4v4af5uO5-tKfA-eFivOM1drMV7Oy7ZAaDe_UfU\"," + "\"kid\":\"testAlias\"}";
+        JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void shouldExportEd25519PublicKeyWithoutAlias() throws JOSEException, JSONException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
+        byte[] spkiEncoded = Hex.decode("302a300506032b6570032100d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a");
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(spkiEncoded);
+        KeyFactory keyFactory = KeyFactory.getInstance("Ed25519", "BC");
+
+        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyFactory.generatePublic(keySpec);
+        JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(publicKey, null);
+        String exportedKey = new String(exporter.get());
+
+        String expectedJson =
+                "{\"kty\":\"OKP\","
+                        + "\"crv\":\"Ed25519\","
+                        + "\"x\":\"MCowBQYDK2VwAyEA11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo\","
+                        + "\"kid\":\"WUUC6gG4mhDQjFBONx9OeTjwrob3FMjth4JN6I-M0vA\"}";
+        JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void shouldExportEd448PublicKeyWithAlias() throws JOSEException, JSONException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException {
+        byte[] spkiEncoded = Hex.decode("3043300506032b6571033a005fd7449b59b461fd2ce787ec616ad46a1da1342485a70e1f8a0ea75d80e96778edf124769b46c7061bd6783df1e50f6cd1fa1abeafe8256180");
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(spkiEncoded);
+        KeyFactory keyFactory = KeyFactory.getInstance("Ed448", "BC");
+
+        BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyFactory.generatePublic(keySpec);
+        JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(publicKey, "testAlias");
+        String exportedKey = new String(exporter.get());
+
+        String expectedJson =
+                "{\"kty\":\"OKP\","
+                        + "\"crv\":\"Ed448\","
+                        + "\"x\":\"MEMwBQYDK2VxAzoAX9dEm1m0Yf0s54fsYWrUah2hNCSFpw4fig6nXYDpZ3jt8SR2m0bHBhvWeD3x5Q9s0foavq_oJWGA\","
+                        + "\"kid\":\"testAlias\"}";
         JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
     }
 
     @ParameterizedTest
     @ValueSource(
-            strings = { "prime256v1", "secp256r1", "NIST P-256", "secp256k1", "secp384r1", "NIST P-384", "secp521r1",
-                        "NIST P-521", "Ed25519", "Ed2448" })
+            strings = {"Ed25519", "Ed448"})
+    void supportsEdDSACurve(String curveName) {
+        BCEdDSAPublicKey publicKeyMock = mock(BCEdDSAPublicKey.class);
+        when(publicKeyMock.getAlgorithm()).thenReturn(curveName);
+        JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKeyMock, null);
+        assertTrue(jwkPublicKeyExporter.canExport());
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"prime256v1", "secp256r1", "NIST P-256", "secp256k1", "secp384r1", "NIST P-384", "secp521r1",
+                    "NIST P-521"})
     void supportsECCurve(String curveName) {
         ECPublicKey ecPublicKeyMock = mock(ECPublicKey.class);
         ECNamedCurveSpec specMock = mock(ECNamedCurveSpec.class);
@@ -133,6 +184,16 @@ public class JwkPublicKeyExporterTest {
         JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(ecPublicKeyMock, null);
         assertTrue(jwkPublicKeyExporter.canExport());
     }
+
+    @Test
+    void handlesAttemptToExportUnsupportedEdDSAKeyWithGrace() throws JOSEException {
+        BCEdDSAPublicKey publicKeyMock = mock(BCEdDSAPublicKey.class);
+        when(publicKeyMock.getAlgorithm()).thenReturn("UnsupportedCurve");
+        JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKeyMock, null);
+        assertFalse(jwkPublicKeyExporter.canExport());
+        assertArrayEquals(jwkPublicKeyExporter.get(), new byte[]{});
+    }
+
     @Test
     void supportsOnlyNamedECCurveSpec() {
         ECPublicKey ecPublicKeyMock = mock(ECPublicKey.class);
@@ -141,8 +202,9 @@ public class JwkPublicKeyExporterTest {
         JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(ecPublicKeyMock, null);
         assertFalse(jwkPublicKeyExporter.canExport());
     }
+
     @Test
-    void shouldHandleAttemptToExportUnsupportedCurveKeyWithGrace()
+    void handlesAttemptToExportUnsupportedCurveKeyWithGrace()
             throws NoSuchAlgorithmException, InvalidKeySpecException, JOSEException {
         EllipticCurve ellipticCurve = new EllipticCurve(
                 new ECFieldFp(new BigInteger("FFFFFFFDFFFFFFFFFFFFFFFFFFFFFFFF", 16)),
@@ -165,8 +227,9 @@ public class JwkPublicKeyExporterTest {
         Assertions.assertFalse(jwkPublicKeyExporter.canExport());
         Assertions.assertArrayEquals(jwkPublicKeyExporter.get(), new byte[0]);
     }
+
     @Test
-    void shouldHandleUnsupportedPublicKeyTypeWithGrace() throws JOSEException {
+    void handlesUnsupportedPublicKeyTypeWithGrace() throws JOSEException {
         PublicKey unsupportedKey = new PublicKey() {
             @Override
             public String getAlgorithm() {

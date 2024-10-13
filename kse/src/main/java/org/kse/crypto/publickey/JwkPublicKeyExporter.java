@@ -8,6 +8,9 @@ import java.security.spec.ECParameterSpec;
 import java.util.Map;
 import java.util.Optional;
 
+import com.nimbusds.jose.jwk.OctetKeyPair;
+import com.nimbusds.jose.util.Base64URL;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
 import com.nimbusds.jose.JOSEException;
@@ -23,6 +26,8 @@ public class JwkPublicKeyExporter {
         this.alias = alias;
         if (publicKey instanceof ECPublicKey) {
             this.keyExporter = new ECPublicKeyExporter(publicKey);
+        } else if (publicKey instanceof BCEdDSAPublicKey) {
+            this.keyExporter = new EdDSAPublicKeyExporter(publicKey);
         } else if (publicKey instanceof RSAPublicKey) {
             this.keyExporter = new RSAPublicKeyExporter(publicKey);
         } else {
@@ -44,12 +49,13 @@ public class JwkPublicKeyExporter {
 
     interface KeyExporter {
         byte[] exportWithAlias(String alias) throws JOSEException;
+
         boolean supportsKey();
     }
 
-    private static class NotSupportedKeyTypeExporter implements KeyExporter{
+    private static class NotSupportedKeyTypeExporter implements KeyExporter {
         @Override
-        public byte[] exportWithAlias(String alias)  {
+        public byte[] exportWithAlias(String alias) {
             return new byte[0];
         }
 
@@ -59,7 +65,49 @@ public class JwkPublicKeyExporter {
         }
     }
 
-    private static class ECPublicKeyExporter implements KeyExporter{
+    private static class EdDSAPublicKeyExporter implements KeyExporter {
+        private final BCEdDSAPublicKey bcEdDSAPublicKey;
+        private static final Map<String, Curve> supportedCurvesMap =
+                Map.of(
+                        "Ed25519", Curve.Ed25519,
+                        "Ed448", Curve.Ed448
+                );
+
+        EdDSAPublicKeyExporter(PublicKey publicKey) {
+            this.bcEdDSAPublicKey = (BCEdDSAPublicKey) publicKey;
+        }
+
+        private Optional<Curve> getCurve(BCEdDSAPublicKey bcEdDSAPublicKey) {
+            return Optional.ofNullable(supportedCurvesMap.get(bcEdDSAPublicKey.getAlgorithm()));
+        }
+
+        @Override
+        public byte[] exportWithAlias(String alias) throws JOSEException {
+            Optional<Curve> maybeCurve = getCurve(bcEdDSAPublicKey);
+            if (maybeCurve.isEmpty()) {
+                return new byte[0];
+            }
+            Curve curve = maybeCurve.get();
+            OctetKeyPair.Builder builder = new OctetKeyPair.Builder(
+                    curve,
+                    Base64URL.encode(bcEdDSAPublicKey.getEncoded())
+            );
+            if (alias != null) {
+                builder.keyID(alias);
+            } else {
+                builder.keyIDFromThumbprint();
+            }
+            OctetKeyPair key = builder.build();
+            return key.toPublicJWK().toJSONString().getBytes(StandardCharsets.UTF_8);
+        }
+
+        @Override
+        public boolean supportsKey() {
+            return getCurve(bcEdDSAPublicKey).isPresent();
+        }
+    }
+
+    private static class ECPublicKeyExporter implements KeyExporter {
         private static final Map<String, Curve> supportedCurvesMap =
                 Map.of(
                         "prime256v1", Curve.P_256,
@@ -69,9 +117,7 @@ public class JwkPublicKeyExporter {
                         "secp384r1", Curve.P_384,
                         "NIST P-384", Curve.P_384,
                         "secp521r1", Curve.P_521,
-                        "NIST P-521", Curve.P_521,
-                        "Ed25519", Curve.Ed25519,
-                        "Ed2448", Curve.Ed448
+                        "NIST P-521", Curve.P_521
                 );
 
         private final ECPublicKey ecPublicKey;
@@ -95,7 +141,7 @@ public class JwkPublicKeyExporter {
 
         public byte[] exportWithAlias(String alias) throws JOSEException {
             Optional<Curve> maybeCurve = getCurve(ecPublicKey);
-            if (maybeCurve.isEmpty()){
+            if (maybeCurve.isEmpty()) {
                 return new byte[0];
             }
             Curve curve = maybeCurve.get();
@@ -115,7 +161,7 @@ public class JwkPublicKeyExporter {
         }
     }
 
-    private static class RSAPublicKeyExporter implements KeyExporter{
+    private static class RSAPublicKeyExporter implements KeyExporter {
         private final RSAPublicKey rsaPublicKey;
 
         public RSAPublicKeyExporter(PublicKey publicKey) {
