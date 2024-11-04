@@ -60,6 +60,7 @@ public class DExportPrivateKeyType extends JEscDialog {
     private JRadioButton jrbPkcs8;
     private JRadioButton jrbPvk;
     private JRadioButton jrbOpenSsl;
+    private JRadioButton jrbJwk;
     private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
@@ -103,13 +104,32 @@ public class DExportPrivateKeyType extends JEscDialog {
             jrbOpenSsl.setEnabled(false);
         }
 
+        jrbJwk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbJwk.text"));
+        PlatformUtil.setMnemonic(jrbJwk, res.getString("DExportPrivateKeyType.jrbJwk.mnemonic").charAt(0));
+        jrbJwk.setToolTipText(res.getString("DExportPrivateKeyType.jrbJwk.tooltip"));
+        switch (keyPairType) {
+            case ED448:
+            case ED25519:
+            case RSA:
+                jrbJwk.setEnabled(true);
+                break;
+            default:
+                jrbJwk.setEnabled(false);
+        }
+
+
+        if (keyPairType == KeyPairType.EDDSA || keyPairType == KeyPairType.ED25519 ||
+                keyPairType == KeyPairType.ED448) {
+            jrbOpenSsl.setEnabled(false);
+        }
+
         ButtonGroup keyStoreTypes = new ButtonGroup();
 
         keyStoreTypes.add(jrbPkcs8);
         keyStoreTypes.add(jrbPvk);
         keyStoreTypes.add(jrbOpenSsl);
 
-        jpExportType = new JPanel(new GridLayout(4, 1));
+        jpExportType = new JPanel(new GridLayout(5, 1));
         jpExportType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
                                                   new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
@@ -117,6 +137,7 @@ public class DExportPrivateKeyType extends JEscDialog {
         jpExportType.add(jrbPkcs8);
         jpExportType.add(jrbPvk);
         jpExportType.add(jrbOpenSsl);
+        jpExportType.add(jrbJwk);
 
         jbOK = new JButton(res.getString("DExportPrivateKeyType.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
