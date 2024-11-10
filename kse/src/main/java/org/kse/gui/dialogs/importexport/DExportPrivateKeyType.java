@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.security.PrivateKey;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -41,7 +42,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
@@ -68,15 +71,14 @@ public class DExportPrivateKeyType extends JEscDialog {
     private boolean exportTypeSelected = false;
 
     private KeyPairType keyPairType;
-
     /**
      * Creates a new DExportPrivateKeyType dialog.
      *
      * @param parent The parent frame
      */
-    public DExportPrivateKeyType(JFrame parent, KeyPairType keyPairType) {
+    public DExportPrivateKeyType(JFrame parent, PrivateKey privateKey) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.keyPairType = keyPairType;
+        this.keyPairType = KeyPairUtil.getKeyPairType(privateKey);
         setTitle(res.getString("DExportPrivateKeyType.Title"));
         initComponents();
     }
@@ -111,6 +113,7 @@ public class DExportPrivateKeyType extends JEscDialog {
             case ED448:
             case ED25519:
             case RSA:
+            case EC:
                 jrbJwk.setEnabled(true);
                 break;
             default:

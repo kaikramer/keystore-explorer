@@ -51,7 +51,6 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
@@ -256,8 +255,7 @@ public class DViewPrivateKey extends JEscDialog {
     }
 
     private void exportPressed() {
-        KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
-        DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType((JFrame) this.getParent(), keyPairType);
+        DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType((JFrame) this.getParent(), privateKey);
         dExportPrivateKeyType.setLocationRelativeTo(null);
         dExportPrivateKeyType.setVisible(true);
 
