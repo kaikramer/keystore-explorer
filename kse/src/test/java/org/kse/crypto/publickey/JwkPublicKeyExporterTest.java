@@ -13,6 +13,8 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -174,14 +176,11 @@ public class JwkPublicKeyExporterTest {
 
     @ParameterizedTest
     @ValueSource(
-            strings = {"prime256v1", "secp256r1", "NIST P-256", "secp256k1", "secp384r1", "NIST P-384", "secp521r1",
-                    "NIST P-521"})
-    void supportsECCurve(String curveName) {
-        ECPublicKey ecPublicKeyMock = mock(ECPublicKey.class);
-        ECNamedCurveSpec specMock = mock(ECNamedCurveSpec.class);
-        when(ecPublicKeyMock.getParams()).thenReturn(specMock);
-        when(specMock.getName()).thenReturn(curveName);
-        JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(ecPublicKeyMock, null);
+            strings = {"prime256v1", "secp256r1", "P-256", "secp256k1", "secp384r1", "P-384", "secp521r1",
+                    "P-521"})
+    void supportsECCurve(String curveName) throws CryptoException {
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, new BouncyCastleProvider());
+        JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(keyPair.getPublic(), null);
         assertTrue(jwkPublicKeyExporter.canExport());
     }
 
@@ -192,15 +191,6 @@ public class JwkPublicKeyExporterTest {
         JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKeyMock, null);
         assertFalse(jwkPublicKeyExporter.canExport());
         assertArrayEquals(jwkPublicKeyExporter.get(), new byte[]{});
-    }
-
-    @Test
-    void supportsOnlyNamedECCurveSpec() {
-        ECPublicKey ecPublicKeyMock = mock(ECPublicKey.class);
-        ECParameterSpec specMock = mock(ECParameterSpec.class);
-        when(ecPublicKeyMock.getParams()).thenReturn(specMock);
-        JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(ecPublicKeyMock, null);
-        assertFalse(jwkPublicKeyExporter.canExport());
     }
 
     @Test
