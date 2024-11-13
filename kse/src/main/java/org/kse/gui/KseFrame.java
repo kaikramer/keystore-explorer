@@ -178,6 +178,7 @@ import org.kse.gui.actions.UndoAction;
 import org.kse.gui.actions.UnlockKeyAction;
 import org.kse.gui.actions.UnlockKeyPairAction;
 import org.kse.gui.actions.VerifyCertificateAction;
+import org.kse.gui.actions.VerifySignatureAction;
 import org.kse.gui.actions.WebsiteAction;
 import org.kse.gui.dnd.DragEntry;
 import org.kse.gui.dnd.DragKeyPairEntry;
@@ -258,6 +259,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiGenerateSecretKey;
     private JMenuItem jmiImportTrustedCertificate;
     private JMenuItem jmiImportKeyPair;
+    private JMenuItem jmiVerifySignature;
     private JMenu jmChangeType;
     private JRadioButtonMenuItem jrbmiChangeTypeJks;
     private JRadioButtonMenuItem jrbmiChangeTypeJceks;
@@ -306,6 +308,7 @@ public final class KseFrame implements StatusBar {
     private JButton jbGenerateSecretKey;
     private JButton jbImportTrustedCertificate;
     private JButton jbImportKeyPair;
+    private JButton jbVerifySignature;
     private JButton jbSetPassword;
     private JButton jbProperties;
     private JButton jbExamineFile;
@@ -489,6 +492,7 @@ public final class KseFrame implements StatusBar {
     private final ExportKeyPairPublicKeyAction exportKeyPairPublicKeyAction = new ExportKeyPairPublicKeyAction(this);
     private final GenerateCsrAction generateCsrAction = new GenerateCsrAction(this);
     private final VerifyCertificateAction verifyCertificateAction = new VerifyCertificateAction(this);
+    private final VerifySignatureAction verifySignatureAction = new VerifySignatureAction(this);
     private final ImportCaReplyFromFileAction importCaReplyFromFileAction = new ImportCaReplyFromFileAction(this);
     private final ImportCaReplyFromClipboardAction importCaReplyFromClipboardAction =
             new ImportCaReplyFromClipboardAction(
@@ -897,6 +901,15 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiImportKeyPair, (String) importKeyPairAction.getValue(Action.LONG_DESCRIPTION),
                                    this);
         jmTools.add(jmiImportKeyPair);
+
+        jmTools.addSeparator();
+
+        jmiVerifySignature = new JMenuItem(verifySignatureAction);
+        PlatformUtil.setMnemonic(jmiVerifySignature, res.getString("KseFrame.jmiVerifySignature.mnemonic").charAt(0));
+        jmiVerifySignature.setToolTipText(null);
+        new StatusBarChangeHandler(jmiVerifySignature, (String) verifySignatureAction.getValue(Action.LONG_DESCRIPTION),
+                                   this);
+        jmTools.add(jmiVerifySignature);
 
         jmTools.addSeparator();
 
@@ -1329,6 +1342,23 @@ public final class KseFrame implements StatusBar {
             }
         });
 
+        jbVerifySignature = new JButton();
+        jbVerifySignature.setAction(verifySignatureAction);
+        jbVerifySignature.setText(null);
+        PlatformUtil.setMnemonic(jbVerifySignature, 0);
+        jbVerifySignature.setFocusable(false);
+        jbVerifySignature.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                setStatusBarText((String) verifySignatureAction.getValue(Action.LONG_DESCRIPTION));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                setDefaultStatusBarText();
+            }
+        });
+
         jbSetPassword = new JButton();
         jbSetPassword.setAction(setPasswordAction);
         jbSetPassword.setText(null);
@@ -1464,6 +1494,7 @@ public final class KseFrame implements StatusBar {
         jtbToolBar.add(jbGenerateSecretKey);
         jtbToolBar.add(jbImportTrustedCertificate);
         jtbToolBar.add(jbImportKeyPair);
+        jtbToolBar.add(jbVerifySignature);
         jtbToolBar.add(jbSetPassword);
         jtbToolBar.add(jbProperties);
 
@@ -1793,6 +1824,16 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiKeyStoreImportKeyPair,
                                    (String) importKeyPairAction.getValue(Action.LONG_DESCRIPTION), this);
         jpmKeyStore.add(jmiKeyStoreImportKeyPair);
+
+        jpmKeyStore.addSeparator();
+
+        // TODO JW - Need to figure out how to disable this until a key store is loaded
+        jmiVerifySignature = new JMenuItem(verifySignatureAction);
+        PlatformUtil.setMnemonic(jmiVerifySignature, res.getString("KseFrame.jmiVerifySignature.mnemonic").charAt(0));
+        jmiVerifySignature.setToolTipText(null);
+        new StatusBarChangeHandler(jmiVerifySignature, (String) verifySignatureAction.getValue(Action.LONG_DESCRIPTION),
+                                   this);
+        jpmKeyStore.add(jmiVerifySignature);
 
         jpmKeyStore.addSeparator();
 
@@ -2778,6 +2819,7 @@ public final class KseFrame implements StatusBar {
         generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
         importTrustedCertificateAction.setEnabled(true);
         importKeyPairAction.setEnabled(true);
+        verifySignatureAction.setEnabled(true);
         propertiesAction.setEnabled(true);
         if (type.isFileBased()) {
             setPasswordAction.setEnabled(true);
@@ -2904,6 +2946,7 @@ public final class KseFrame implements StatusBar {
         generateSecretKeyAction.setEnabled(false);
         importTrustedCertificateAction.setEnabled(false);
         importKeyPairAction.setEnabled(false);
+        verifySignatureAction.setEnabled(false);
         setPasswordAction.setEnabled(false);
         jmChangeType.setEnabled(false);
         propertiesAction.setEnabled(false);
