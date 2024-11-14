@@ -73,6 +73,7 @@ public class FileChooserFactory {
     public static final String LIB_DYLIB_EXT = "dylib";
     public static final String PEM_EXT = "pem";
     public static final String JWK_EXT = "json";
+    public static final String SIG_EXT = "sig";
 
     private static final String KEYSTORE_FILE_DESC =
             format(res.getString("FileChooserFactory.KeyStoreFiles"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
@@ -131,6 +132,9 @@ public class FileChooserFactory {
             format(res.getString("FileChooserFactory.LibDylibFiles"), LIB_DYLIB_EXT);
 
     private static final String PEM_FILE_DESC = format(res.getString("FileChooserFactory.PemFiles"), PEM_EXT);
+
+    private static final String SIG_FILE_DESC =
+            format(res.getString("FileChooserFactory.SignatureFiles"), SIG_EXT);
 
     private FileChooserFactory() {
     }
@@ -425,7 +429,18 @@ public class FileChooserFactory {
         return chooser;
     }
 
-    private static JFileChooser getFileChooser() {
+    /**
+     * Get a JFileChooser filtered for signature files.
+     *
+     * @return JFileChooser object
+     */
+    public static JFileChooser getSignatureFileChooser() {
+        JFileChooser chooser = getFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter(SIG_FILE_DESC, SIG_EXT));
+        return chooser;
+    }
+
+   private static JFileChooser getFileChooser() {
         JFileChooser fileChooser = JavaFXFileChooser.isFxAvailable() ? new JavaFXFileChooser() : new JFileChooser();
 
         // show/hide hidden files

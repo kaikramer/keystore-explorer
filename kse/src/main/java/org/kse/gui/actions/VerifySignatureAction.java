@@ -60,41 +60,32 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.cert.ocsp.BasicOCSPResp;
-import org.bouncycastle.cert.ocsp.CertificateID;
-import org.bouncycastle.cert.ocsp.CertificateStatus;
-import org.bouncycastle.cert.ocsp.OCSPException;
-import org.bouncycastle.cert.ocsp.OCSPReq;
-import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
-import org.bouncycastle.cert.ocsp.OCSPResp;
-import org.bouncycastle.cert.ocsp.RevokedStatus;
-import org.bouncycastle.cert.ocsp.SingleResp;
-import org.bouncycastle.cert.ocsp.jcajce.JcaCertificateID;
-import org.bouncycastle.operator.DigestCalculatorProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
+import org.kse.gui.CurrentDirectory;
+import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
+import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.dialogs.DVerifyCertificate;
+import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DVerifyCertificate.VerifyOptions;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
+import org.kse.utilities.history.KeyStoreState;
 
-public class VerifySignatureAction extends KeyStoreExplorerAction {
-
+public class VerifySignatureAction extends AuthorityCertificatesAction {
     private static final long serialVersionUID = 1L;
-    private X509Certificate certificateEval;
-    private X509Certificate[] keyCertChain;
+    private File signatureFile;
 
     public VerifySignatureAction(KseFrame kseFrame) {
         super(kseFrame);
@@ -111,304 +102,84 @@ public class VerifySignatureAction extends KeyStoreExplorerAction {
                 Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifycert.png"))));
     }
 
-    public VerifySignatureAction(KseFrame kseFrame, X509Certificate cert, X509Certificate[] keyCertChain) {
-        super(kseFrame);
-        this.certificateEval = cert;
-        this.keyCertChain = keyCertChain;
-    }
-
     @Override
     protected void doAction() {
-
-        String alias = "";
         try {
-            // TODO JW - how to get all certs in keystore and remove this specific cert selection.
-            if (certificateEval == null) {
-                alias = kseFrame.getSelectedEntryAlias();
-                certificateEval = getCertificate(alias);
-                keyCertChain = getCertificateChain(alias);
-            } else {
-                alias = X509CertUtil.getCertificateAlias(certificateEval);
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+
+            // TODO JW - Use cacerts truststore if no keystore is currently opened
+            // handle case that no keystore is currently opened (-> create new keystore)
+//            if (history == null) {
+//                new NewAction(kseFrame).actionPerformed(null);
+//                history = kseFrame.getActiveKeyStoreHistory();
+//
+//                // cancel pressed => abort
+//                if (history == null) {
+//                    return;
+//                }
+//            }
+
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStore keyStore = currentState.getKeyStore();
+
+            X509Certificate signature = showFileSelectionDialog();
+            if (signature == null) {
+                return;
             }
-            // TODO JW - create dialog for verify
-            DVerifyCertificate dVerifyCertificate = new DVerifyCertificate(frame, alias, kseFrame);
-            dVerifyCertificate.setLocationRelativeTo(frame);
-            dVerifyCertificate.setVisible(true);
-            if (dVerifyCertificate.isVerifySelected()) {
-                
-                VerifyOptions verifyOptions = dVerifyCertificate.getVerifyOption();
-                KeyStoreHistory keyStoreHistory = dVerifyCertificate.getKeyStore();
-                if (verifyOptions == VerifyOptions.CRL_DIST) {
-                    verifyStatusCrl(keyStoreHistory, alias);
-                } else if (verifyOptions == VerifyOptions.CRL_FILE) {
-                    verifyStatusCrlFile(keyStoreHistory, alias, dVerifyCertificate.getCrlFile());
-                } else if (verifyOptions == VerifyOptions.OCSP_AIA) {
-                    verifyStatusOCSP(keyStoreHistory, alias);
-                } else if (verifyOptions == VerifyOptions.OCSP_URL) {
-                    verifyStatusOcspUrl(keyStoreHistory, alias, dVerifyCertificate.getOcspUrl());
-                } else {
-                    verifyChain(keyStoreHistory, alias);
+
+            // TODO JW - Add new option for using cacerts for signature verification.
+            if (preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled()) {
+//                String matchAlias = X509CertUtil.matchCertificate(keyStore, trustCert);
+//                if (matchAlias != null) {
+//                    int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
+//                                                                         res.getString(
+//                                                                                 "ImportTrustedCertificateAction" +
+//                                                                                 ".TrustCertExistsConfirm.message"),
+//                                                                         matchAlias),
+//                                                                 res.getString(
+//                                                                         "ImportTrustedCertificateAction" +
+//                                                                         ".ImportTrustCert.Title"),
+//                                                                 JOptionPane.YES_NO_OPTION);
+//                    if (selected != JOptionPane.YES_OPTION) {
+//                        return;
+//                    }
+//                }
+
+                KeyStore caCertificates = getCaCertificates();
+                KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
+
+                // Establish against current KeyStore
+                ArrayList<KeyStore> compKeyStores = new ArrayList<>();
+                compKeyStores.add(keyStore);
+
+                if (caCertificates != null) {
+                    // Establish trust against CA Certificates KeyStore
+                    compKeyStores.add(caCertificates);
                 }
+
+                if (windowsTrustedRootCertificates != null) {
+                    // Establish trust against Windows Trusted Root Certificates KeyStore
+                    compKeyStores.add(windowsTrustedRootCertificates);
+                }
+
+                // TODO JW - Verify the signature using the CA certs
+                // TODO JW - Display dialog with option to see signature details.
+
+                return;
             }
-        } catch (CertPathValidatorException cex) {
-            DError.displayError(frame, cex);
+
+            // TODO JW - Verify the signature using the keystore
+            // TODO JW - Display dialog with option to see signature details.
+
+            kseFrame.updateControls(true);
+
+            JOptionPane.showMessageDialog(frame, res.getString(
+                                                  "ImportTrustedCertificateAction.ImportTrustCertSuccessful.message"),
+                                          res.getString("ImportTrustedCertificateAction.ImportTrustCert.Title"),
+                                          JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-        } finally {
-            certificateEval = null;
         }
-    }
-
-    private void verifyChain(KeyStoreHistory keyStoreHistory, String alias)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
-        if (verify("false", "false", false, keyStoreHistory, null, alias)) {
-            JOptionPane.showMessageDialog(frame, res.getString("VerifySignatureAction.ChainSuccessful.message"),
-                                          MessageFormat.format(res.getString("VerifySignatureAction.Verify.Title"),
-                                                               alias), JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private void verifyStatusOCSP(KeyStoreHistory keyStoreHistory, String alias)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
-        if (verify("false", "true", true, keyStoreHistory, null, alias)) {
-            JOptionPane.showMessageDialog(frame, res.getString("VerifySignatureAction.OcspSuccessful.message"),
-                                          MessageFormat.format(res.getString("VerifySignatureAction.Verify.Title"),
-                                                               alias), JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private void verifyStatusOcspUrl(KeyStoreHistory keyStoreHistory, String alias, String ocspUrl)
-            throws OperatorCreationException, OCSPException, IOException, HeadlessException, CertPathValidatorException,
-                   KeyStoreException, NoSuchAlgorithmException, CertificateException,
-                   InvalidAlgorithmParameterException, IllegalStateException, CryptoException {
-
-        if (verify("false", "false", false, keyStoreHistory, null, alias)) {
-            // search issuer
-            X509Certificate issuer = null;
-
-            if (keyCertChain == null || keyCertChain.length == 1) {
-                KeyStore trustStore = getKeyStore(keyStoreHistory);
-                Enumeration<String> enumeration = trustStore.aliases();
-                while (enumeration.hasMoreElements()) {
-                    String tempAlias = enumeration.nextElement();
-                    X509Certificate cert = (X509Certificate) trustStore.getCertificate(tempAlias);
-                    try {
-                        certificateEval.verify(cert.getPublicKey());
-                        issuer = cert;
-                        break;
-                    } catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException e) {
-                        // ignore
-                    }
-                }
-            } else {
-                issuer = keyCertChain[1];
-            }
-            if (issuer == null) {
-                throw new CertPathValidatorException(res.getString("VerifySignatureAction.trustStoreEmpty.message"));
-            }
-            OCSPReq request = makeOcspRequest(issuer, certificateEval);
-            OCSPResp response = requestOCSPResponse(ocspUrl, request);
-            if (isGoodCertificate(response)) {
-                JOptionPane.showMessageDialog(frame, res.getString("VerifySignatureAction.OcspSuccessful.message"),
-                                              MessageFormat.format(
-                                                      res.getString("VerifySignatureAction.Verify.Title"), alias),
-                                              JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-    }
-
-    private static OCSPReq makeOcspRequest(X509Certificate caCert, X509Certificate certToCheck)
-            throws OCSPException, OperatorCreationException, CertificateEncodingException {
-        DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(KSE.BC)
-                                                                                       .build();
-
-        CertificateID certId = new JcaCertificateID(digCalcProv.get(CertificateID.HASH_SHA1), caCert,
-                                                    certToCheck.getSerialNumber());
-
-        OCSPReqBuilder gen = new OCSPReqBuilder();
-        gen.addRequest(certId);
-        return gen.build();
-    }
-
-    private OCSPResp requestOCSPResponse(String url, OCSPReq ocspReq) throws IOException {
-        byte[] ocspReqData = ocspReq.getEncoded();
-
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-        try {
-            con.setRequestProperty("Content-Type", "application/ocsp-request");
-            con.setRequestProperty("Accept", "application/ocsp-response");
-            con.setDoInput(true);
-            con.setDoOutput(true);
-            con.setUseCaches(false);
-            try (OutputStream out = con.getOutputStream()) {
-                IOUtils.write(ocspReqData, out);
-                out.flush();
-            }
-            byte[] responseBytes = IOUtils.toByteArray(con.getInputStream());
-            OCSPResp ocspResp = new OCSPResp(responseBytes);
-            return ocspResp;
-        } finally {
-            if (con != null) {
-                con.disconnect();
-            }
-        }
-    }
-
-    private boolean isGoodCertificate(OCSPResp ocspResp) throws OCSPException, CertPathValidatorException {
-
-        if (ocspResp.getStatus() != OCSPResp.SUCCESSFUL) {
-            throw new CertPathValidatorException(getMessageStatus(ocspResp.getStatus()));
-        }
-        BasicOCSPResp basicResponse = (BasicOCSPResp) ocspResp.getResponseObject();
-        SingleResp first = basicResponse.getResponses()[0];
-
-        CertificateStatus certStatus = first.getCertStatus();
-
-        if (certStatus != CertificateStatus.GOOD) {
-            if (certStatus instanceof RevokedStatus) {
-                RevokedStatus status = (RevokedStatus) certStatus;
-                int reason;
-                try {
-                    reason = status.getRevocationReason();
-                } catch (IllegalStateException ex) {
-                    reason = -1;
-                }
-                Date revocationTime = status.getRevocationTime();
-                throw new CertPathValidatorException(
-                        MessageFormat.format(res.getString("VerifySignatureAction.revokedStatus.message"), reason,
-                                             StringUtils.formatDate(revocationTime)));
-            } else {
-                throw new CertPathValidatorException(
-                        MessageFormat.format(res.getString("VerifySignatureAction.certStatus.message"), certStatus));
-            }
-        }
-        BigInteger certSerial = certificateEval.getSerialNumber();
-        BigInteger ocspSerial = first.getCertID().getSerialNumber();
-        if (!certSerial.equals(ocspSerial)) {
-            throw new CertPathValidatorException(
-                    MessageFormat.format(res.getString("VerifySignatureAction.badSerials.message"), certSerial,
-                                         ocspSerial));
-        }
-        return true;
-    }
-
-    private String getMessageStatus(int status) {
-        if (status == OCSPResp.MALFORMED_REQUEST) {
-            return res.getString("VerifySignatureAction.malformedRequest.message");
-        }
-        if (status == OCSPResp.INTERNAL_ERROR) {
-            return res.getString("VerifySignatureAction.internalError.message");
-        }
-        if (status == OCSPResp.TRY_LATER) {
-            return res.getString("VerifySignatureAction.tryLater.message");
-        }
-        if (status == OCSPResp.SIG_REQUIRED) {
-            return res.getString("VerifySignatureAction.sigRequired.message");
-        }
-        if (status == OCSPResp.UNAUTHORIZED) {
-            return res.getString("VerifySignatureAction.unauthorized.message");
-        }
-        return MessageFormat.format(res.getString("VerifySignatureAction.unknownStatus.message"), status);
-    }
-
-    private void verifyStatusCrlFile(KeyStoreHistory keyStoreHistory, String alias, String crlFile)
-            throws HeadlessException, KeyStoreException, NoSuchAlgorithmException, CertificateException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException, IOException,
-                   CryptoException {
-        File file = new File(crlFile);
-        X509CRL crl = null;
-        try {
-            byte[] data = FileUtils.readFileToByteArray(file);
-            crl = X509CertUtil.loadCRL(data);
-        } catch (Exception ex) {
-            String problemStr = MessageFormat.format(res.getString("ExamineFileAction.NoOpenCrl.Problem"),
-                                                     file.getName());
-
-            String[] causes = new String[] { res.getString("ExamineFileAction.NotCrl.Cause"),
-                                             res.getString("ExamineFileAction.CorruptedCrl.Cause") };
-
-            Problem problem = new Problem(problemStr, causes, ex);
-
-            DProblem dProblem = new DProblem(frame, res.getString("ExamineFileAction.ProblemOpeningCrl.Title"),
-                                             problem);
-            dProblem.setLocationRelativeTo(frame);
-            dProblem.setVisible(true);
-            return;
-        }
-        if (verify("true", "false", true, keyStoreHistory, crl, alias)) {
-            JOptionPane.showMessageDialog(frame, res.getString("VerifySignatureAction.CrlSuccessful.message"),
-                                          MessageFormat.format(res.getString("VerifySignatureAction.Verify.Title"),
-                                                               alias), JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private void verifyStatusCrl(KeyStoreHistory keyStoreHistory, String alias)
-            throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
-        if (verify("true", "false", true, keyStoreHistory, null, alias)) {
-            JOptionPane.showMessageDialog(frame, res.getString("VerifySignatureAction.CrlSuccessful.message"),
-                                          MessageFormat.format(res.getString("VerifySignatureAction.Verify.Title"),
-                                                               alias), JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private boolean verify(String crl, String ocsp, boolean revocationEnabled, KeyStoreHistory keyStoreHistory,
-                           X509CRL xCrl, String alias)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-                   InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
-                   CryptoException {
-
-        KeyStore trustStore = getKeyStore(keyStoreHistory);
-
-        if (trustStore == null) {
-            return false;
-        }
-        if (trustStore.size() == 0) {
-            throw new CertPathValidatorException(res.getString("VerifySignatureAction.trustStoreEmpty.message"));
-        }
-        System.setProperty("com.sun.net.ssl.checkRevocation", crl);
-        System.setProperty("com.sun.security.enableCRLDP", crl);
-        Security.setProperty("ocsp.enable", ocsp);
-
-        List<X509Certificate> listCertificates = new ArrayList<>();
-        if (revocationEnabled) {
-            listCertificates.add(certificateEval);
-        } else {
-            if (keyCertChain != null) {
-                for (int i = keyCertChain.length - 1; i >= 0; i--) {
-                    X509Certificate cert = keyCertChain[i];
-                    listCertificates.add(0, cert);
-                    if (cert.equals(certificateEval)) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        CertPathValidator validator = CertPathValidator.getInstance("PKIX");
-        CertificateFactory factory = CertificateFactory.getInstance("X509");
-        CertPath certPath = factory.generateCertPath(listCertificates);
-        PKIXParameters params = new PKIXParameters(trustStore);
-        if (xCrl != null) {
-            params.addCertStore(CertStore.getInstance("Collection", new CollectionCertStoreParameters(
-                    Collections.singletonList(xCrl))));
-        }
-
-        // remove some critical extensions that are private to companies and would
-        // otherwise cause a validation failure
-        PKIXCertPathChecker certPathChecker = new ExtensionRemovingCertPathChecker();
-        params.addCertPathChecker(certPathChecker);
-
-        Date now = new Date(System.currentTimeMillis());
-        params.setDate(now);
-        params.setRevocationEnabled(revocationEnabled);
-        validator.validate(certPath, params);
-        return true;
     }
 
     private boolean isCA(X509Certificate cert) {
@@ -444,15 +215,15 @@ public class VerifySignatureAction extends KeyStoreExplorerAction {
             }
         }
         if (trustStore.size() == 0) {
-            if (keyCertChain != null) {
-                for (int i = 0; i < keyCertChain.length; i++) {
-                    X509Certificate cert = keyCertChain[i];
-                    if (isCA(cert)) {
-                        String entry = "entry" + i;
-                        trustStore.setCertificateEntry(entry, cert);
-                    }
-                }
-            }
+//            if (keyCertChain != null) {
+//                for (int i = 0; i < keyCertChain.length; i++) {
+//                    X509Certificate cert = keyCertChain[i];
+//                    if (isCA(cert)) {
+//                        String entry = "entry" + i;
+//                        trustStore.setCertificateEntry(entry, cert);
+//                    }
+//                }
+//            }
         }
         return trustStore;
     }
@@ -483,32 +254,44 @@ public class VerifySignatureAction extends KeyStoreExplorerAction {
         }
     }
 
-    static class ExtensionRemovingCertPathChecker extends PKIXCertPathChecker {
-        @Override
-        public void init(boolean forward) throws CertPathValidatorException {
-            // nothing to do here
+    private X509Certificate showFileSelectionDialog() {
+        signatureFile = chooseSignatureFile();
+        if (signatureFile == null) {
+            return null;
         }
 
-        @Override
-        public boolean isForwardCheckingSupported() {
-            return false;
+        // TODO JW ...
+        X509Certificate[] certs = openCertificate(signatureFile);
+
+        if ((certs == null) || (certs.length == 0)) {
+            return null;
         }
 
-        @Override
-        public Set<String> getSupportedExtensions() {
-            HashSet<String> hashSet = new HashSet<>();
-
-            // appleCertificateExtensionCodeSigning
-            hashSet.add("1.2.840.113635.100.6.1.13");
-
-            return hashSet;
+        if (certs.length > 1) {
+            // TODO JW - fix resource strings.
+            JOptionPane.showMessageDialog(frame, res.getString(
+                                                  "ImportTrustedCertificateAction.NoMultipleTrustCertImport.message"),
+                                          res.getString("ImportTrustedCertificateAction.ImportTrustCert.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+            return null;
         }
 
-        @Override
-        public void check(Certificate cert, Collection<String> unresolvedCritExts) throws CertPathValidatorException {
-            // remove critical Apple private extension that causes certificate validation to
-            // fail
-            unresolvedCritExts.remove("1.2.840.113635.100.6.1.13");
+        return certs[0];
+    }
+
+    private File chooseSignatureFile() {
+        JFileChooser chooser = FileChooserFactory.getSignatureFileChooser();
+        chooser.setCurrentDirectory(CurrentDirectory.get());
+        chooser.setDialogTitle(res.getString("VerifySignatureAction.ChooseSignature.Title"));
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setApproveButtonText(res.getString("VerifySignatureAction.ChooseSignature.button"));
+
+        int rtnValue = chooser.showOpenDialog(frame);
+        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            File importFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(importFile);
+            return importFile;
         }
+        return null;
     }
 }
