@@ -23,7 +23,10 @@ package org.kse.gui.actions;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -66,6 +69,19 @@ import javax.swing.KeyStroke;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSProcessable;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSProcessableFile;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.util.Selector;
+import org.bouncycastle.util.Store;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
@@ -122,10 +138,18 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             KeyStoreState currentState = history.getCurrentState();
             KeyStore keyStore = currentState.getKeyStore();
 
-            X509Certificate signature = showFileSelectionDialog();
+            byte[] signature = showFileSelectionDialog();
             if (signature == null) {
                 return;
             }
+
+            int extensionIndex = signatureFile.getAbsolutePath().lastIndexOf('.');
+            if (extensionIndex < 0) {
+                // TODO JW - signature doesn't have a file extension
+                return;
+            }
+            String contentFileName = signatureFile.getAbsolutePath().substring(0, extensionIndex);
+            File contentFile = new File(contentFileName);
 
             // TODO JW - Add new option for using cacerts for signature verification.
             if (preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled()) {
@@ -169,6 +193,25 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             }
 
             // TODO JW - Verify the signature using the keystore
+            CMSProcessable data = new CMSProcessableFile(contentFile);
+            CMSSignedData signedData = new CMSSignedData(data, signature);
+
+            // TODO build Store using certs from the truststore. If a cert cannot be found
+            // then the signature should not be trusted (even if valid)
+            boolean verified = false;
+            Store<X509CertificateHolder> certStore = signedData.getCertificates();
+            printStore(certStore);
+            SignerInformationStore signers = signedData.getSignerInfos();
+            for (SignerInformation signer : signers.getSigners()) {
+                Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
+                for (X509CertificateHolder cert : matchedCerts) {
+                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+                        System.out.println("Verified by: " + cert.getSubject());
+                        verified = true;
+                    }
+                }
+            }
+            System.out.println("Verified: " + verified);
             // TODO JW - Display dialog with option to see signature details.
 
             kseFrame.updateControls(true);
@@ -179,6 +222,26 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
+        }
+    }
+
+    private static <T> void printStore(Store<T> store) {
+        for (T obj : store.getMatches(new Selector<T>() {
+            @Override
+            public Object clone() {
+                return null;
+            }
+
+            @Override
+            public boolean match(T obj) {
+                return true;
+            }
+        })) {
+            if (obj instanceof X509CertificateHolder) {
+                System.out.println(((X509CertificateHolder) obj).getSubject());
+            } else {
+                System.out.println(obj);
+            }
         }
     }
 
@@ -254,29 +317,39 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         }
     }
 
-    private X509Certificate showFileSelectionDialog() {
+    /**
+     * Open a signature file.
+     *
+     * @param signatureFile The signature file
+     * @return The signature found in the file or null if open failed
+     */
+    protected byte[] openSignature(File signatureFile) {
+        try {
+            return FileUtils.readFileToByteArray(signatureFile);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                  res.getString("KeyStoreExplorerAction.NoReadFile.message"),
+                                                  signatureFile),
+                                          // TODO JW - Create a new resource for open signature.
+                                          res.getString("KeyStoreExplorerAction.OpenCertificate.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+    }
+
+    private byte[] showFileSelectionDialog() {
         signatureFile = chooseSignatureFile();
         if (signatureFile == null) {
             return null;
         }
 
-        // TODO JW ...
-        X509Certificate[] certs = openCertificate(signatureFile);
+        byte[] sig = openSignature(signatureFile);
 
-        if ((certs == null) || (certs.length == 0)) {
+        if (sig == null) {
             return null;
         }
 
-        if (certs.length > 1) {
-            // TODO JW - fix resource strings.
-            JOptionPane.showMessageDialog(frame, res.getString(
-                                                  "ImportTrustedCertificateAction.NoMultipleTrustCertImport.message"),
-                                          res.getString("ImportTrustedCertificateAction.ImportTrustCert.Title"),
-                                          JOptionPane.WARNING_MESSAGE);
-            return null;
-        }
-
-        return certs[0];
+        return sig;
     }
 
     private File chooseSignatureFile() {
