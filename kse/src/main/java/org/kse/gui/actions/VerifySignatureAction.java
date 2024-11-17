@@ -59,6 +59,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -69,6 +70,8 @@ import javax.swing.KeyStroke;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
@@ -91,6 +94,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.dialogs.DVerifyCertificate;
 import org.kse.gui.dialogs.DViewCertificate;
+import org.kse.gui.dialogs.DViewSignature;
 import org.kse.gui.dialogs.DVerifyCertificate.VerifyOptions;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
@@ -198,21 +202,49 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 
             // TODO build Store using certs from the truststore. If a cert cannot be found
             // then the signature should not be trusted (even if valid)
-            boolean verified = false;
-            Store<X509CertificateHolder> certStore = signedData.getCertificates();
-            printStore(certStore);
-            SignerInformationStore signers = signedData.getSignerInfos();
-            for (SignerInformation signer : signers.getSigners()) {
-                Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
-                for (X509CertificateHolder cert : matchedCerts) {
-                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-                        System.out.println("Verified by: " + cert.getSubject());
-                        verified = true;
-                    }
-                }
-            }
-            System.out.println("Verified: " + verified);
-            // TODO JW - Display dialog with option to see signature details.
+//            boolean verified = false;
+//            Store<X509CertificateHolder> certStore = signedData.getCertificates();
+//            printStore(certStore);
+//            SignerInformationStore signers = signedData.getSignerInfos();
+//            for (SignerInformation signer : signers.getSigners()) {
+//                signer.getCounterSignatures();
+//                AttributeTable signedAttributes = signer.getSignedAttributes();
+//                AttributeTable unsignedAttributes = signer.getUnsignedAttributes();
+//
+//                Hashtable ht = signedAttributes.toHashtable();
+//                for (Object k : ht.keySet()) {
+//                    System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
+//                }
+//
+//                Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
+//                for (X509CertificateHolder cert : matchedCerts) {
+//                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+//                        System.out.println("Verified by: " + cert.getSubject());
+//                        verified = true;
+//                    }
+//                }
+//            }
+//            System.out.println("Verified: " + verified);
+            // TODO JW - Display signature details dialog with option to see signature details.
+            DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat.format(
+                    // TODO JW - view signature resource string
+                    res.getString("ImportTrustedCertificateAction.CertDetailsFile.Title"),
+                    signatureFile.getName()), signedData, null, DViewSignature.NONE);
+            dViewSignature.setLocationRelativeTo(frame);
+            dViewSignature.setVisible(true);
+
+            /*
+Signers:
+    Signer's issuer DN: O=ICU Medical,CN=ICU Medical Dev Issuing
+    Signer's serial: 30bc7fadef7fe924fa77a0f376f31d92b68fa33e
+    Signing time: Mon Feb 07 23:07:19 UTC 2022
+    Signature Algorithm: RSA-SHA256
+    Signed Attributes:
+        messageDigest: 0420ed6b93a0a57ff71b075d7628f807db2d6f9a8727557a02b2f6f9ff520eb4caaf
+        1.2.840.113549.1.9.52: 301c300b0609608648016503040201a10d06092a864886f70d01010b0500
+        signingTime: 170d3232303230373233303731395a
+        contentType: 06092a864886f70d010701
+             */
 
             kseFrame.updateControls(true);
 
