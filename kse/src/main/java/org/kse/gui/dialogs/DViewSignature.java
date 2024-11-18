@@ -35,6 +35,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -66,6 +67,10 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.bouncycastle.asn1.ASN1GeneralizedTime;
+import org.bouncycastle.asn1.ASN1UTCTime;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -95,6 +100,7 @@ import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.asn1.Asn1Exception;
+import org.kse.utilities.io.HexUtil;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -110,45 +116,30 @@ public class DViewSignature extends JEscDialog {
 
     private KsePreferences preferences = PreferencesManager.getPreferences();
 
-    public static final int NONE = 0;
-    public static final int IMPORT = 1;
-    public static final int EXPORT = 2;
-    public static final int IMPORT_EXPORT = 3;
-    private int importExport = 0;
-
     private KseFrame kseFrame;
 
     private JLabel jlSigners;
     private JList<SignerInformation> jlbSigners;
     private JScrollPane jspSigners;
+    private JLabel jlVersion;
+    private JTextField jtfVersion;
     private JLabel jlSignerDN;
-    private JTextField jtfSignerDN;
-    private JLabel jlSerial;
-    private JDistinguishedName jdnSerial;
-    private JLabel jlIssuer;
-    private JDistinguishedName jdnIssuer;
+    private JDistinguishedName jdnSignerDN;
     private JLabel jlSerialNumberHex;
     private JTextField jtfSerialNumberHex;
     private JLabel jlSerialNumberDec;
     private JTextField jtfSerialNumberDec;
-    private JLabel jlValidFrom;
-    private JTextField jtfValidFrom;
-    private JLabel jlValidUntil;
-    private JTextField jtfValidUntil;
-    private JLabel jlPublicKey;
-    private JTextField jtfPublicKey;
-    private JButton jbViewPublicKeyDetails;
+    private JLabel jlSigningTime;
+    private JTextField jtfSigningTime;
     private JLabel jlSignatureAlgorithm;
     private JTextField jtfSignatureAlgorithm;
-    private JLabel jlFingerprint;
-    private JCertificateFingerprint jcfFingerprint;
+    // TODO JW - Add content type
+    // TODO JW - Add content digest
+    // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
     private JButton jbExtensions;
     private JButton jbPem;
     private JButton jbAsn1;
-    private JButton jbImport;
-    private JButton jbExport;
     private JButton jbOK;
-    private JButton jbVerify;
 
     private CMSSignedData signedData;
 
@@ -159,14 +150,12 @@ public class DViewSignature extends JEscDialog {
      * @param title        The dialog title
      * @param signedData   Signature to display
      * @param kseFrame     Reference to main class with currently opened keystores and their contents
-     * @param importExport Show import button/export button/no extra button?
      * @throws CryptoException A problem was encountered getting the certificates' details
      */
-    public DViewSignature(Window parent, String title, CMSSignedData signedData, KseFrame kseFrame, int importExport)
+    public DViewSignature(Window parent, String title, CMSSignedData signedData, KseFrame kseFrame)
             throws CryptoException {
         super(parent, title, Dialog.ModalityType.MODELESS);
         this.kseFrame = kseFrame;
-        this.importExport = importExport;
         this.signedData = signedData;
         initComponents(signedData);
     }
@@ -185,21 +174,16 @@ public class DViewSignature extends JEscDialog {
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspSigners.setPreferredSize(new Dimension(100, 75));
 
-        jlSignerDN = new JLabel(res.getString("DViewCertificate.jlVersion.text"));
+        jlVersion = new JLabel(res.getString("DViewCertificate.jlVersion.text"));
 
-        jtfSignerDN = new JTextField(40);
-        jtfSignerDN.setEditable(false);
-        jtfSignerDN.setToolTipText(res.getString("DViewCertificate.jtfVersion.tooltip"));
+        jtfVersion = new JTextField(40);
+        jtfVersion.setEditable(false);
+        jtfVersion.setToolTipText(res.getString("DViewCertificate.jtfVersion.tooltip"));
 
-        jlSerial = new JLabel(res.getString("DViewCertificate.jlSubject.text"));
+        jlSignerDN = new JLabel(res.getString("DViewCertificate.jlSubject.text"));
 
-        jdnSerial = new JDistinguishedName(res.getString("DViewCertificate.Subject.Title"), 40, false);
-        jdnSerial.setToolTipText(res.getString("DViewCertificate.jdnSubject.tooltip"));
-
-        jlIssuer = new JLabel(res.getString("DViewCertificate.jlIssuer.text"));
-
-        jdnIssuer = new JDistinguishedName(res.getString("DViewCertificate.Issuer.Title"), 40, false);
-        jdnIssuer.setToolTipText(res.getString("DViewCertificate.jdnIssuer.tooltip"));
+        jdnSignerDN = new JDistinguishedName(res.getString("DViewCertificate.Subject.Title"), 40, false);
+        jdnSignerDN.setToolTipText(res.getString("DViewCertificate.jdnSubject.tooltip"));
 
         jlSerialNumberHex = new JLabel(res.getString("DViewCertificate.jlSerialNumberHex.text"));
 
@@ -215,38 +199,17 @@ public class DViewSignature extends JEscDialog {
         jtfSerialNumberDec.setToolTipText(res.getString("DViewCertificate.jtfSerialNumberDec.tooltip"));
         jtfSerialNumberDec.setCaretPosition(0);
 
-        jlValidFrom = new JLabel(res.getString("DViewCertificate.jlValidFrom.text"));
+        jlSigningTime = new JLabel(res.getString("DViewCertificate.jlValidFrom.text"));
 
-        jtfValidFrom = new JTextField(40);
-        jtfValidFrom.setEditable(false);
-        jtfValidFrom.setToolTipText(res.getString("DViewCertificate.jtfValidFrom.tooltip"));
-
-        jlValidUntil = new JLabel(res.getString("DViewCertificate.jlValidUntil.text"));
-
-        jtfValidUntil = new JTextField(40);
-        jtfValidUntil.setEditable(false);
-        jtfValidUntil.setToolTipText(res.getString("DViewCertificate.jtfValidUntil.tooltip"));
-
-        jlPublicKey = new JLabel(res.getString("DViewCertificate.jlPublicKey.text"));
-
-        jtfPublicKey = new JTextField(40);
-        jtfPublicKey.setEditable(false);
-        jtfPublicKey.setToolTipText(res.getString("DViewCertificate.jtfPublicKey.tooltip"));
-
-        jbViewPublicKeyDetails = new JButton();
-        jbViewPublicKeyDetails.setToolTipText(res.getString("DViewCertificate.jbViewPublicKeyDetails.tooltip"));
-        jbViewPublicKeyDetails.setIcon(new ImageIcon(
-                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/viewpubkey.png"))));
+        jtfSigningTime = new JTextField(40);
+        jtfSigningTime.setEditable(false);
+        jtfSigningTime.setToolTipText(res.getString("DViewCertificate.jtfValidFrom.tooltip"));
 
         jlSignatureAlgorithm = new JLabel(res.getString("DViewCertificate.jlSignatureAlgorithm.text"));
 
         jtfSignatureAlgorithm = new JTextField(40);
         jtfSignatureAlgorithm.setEditable(false);
         jtfSignatureAlgorithm.setToolTipText(res.getString("DViewCertificate.jtfSignatureAlgorithm.tooltip"));
-
-        jlFingerprint = new JLabel(res.getString("DViewCertificate.jlFingerprint.text"));
-
-        jcfFingerprint = new JCertificateFingerprint(30);
 
         jbExtensions = new JButton(res.getString("DViewCertificate.jbExtensions.text"));
         jbExtensions.setToolTipText(res.getString("DViewCertificate.jbExtensions.tooltip"));
@@ -260,100 +223,46 @@ public class DViewSignature extends JEscDialog {
         jbAsn1.setToolTipText(res.getString("DViewCertificate.jbAsn1.tooltip"));
         PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewCertificate.jbAsn1.mnemonic").charAt(0));
 
-        jbImport = new JButton(res.getString("DViewCertificate.jbImportExport.import.text"));
-        jbImport.setToolTipText(res.getString("DViewCertificate.jbImportExport.import.tooltip"));
-        jbImport.setVisible(importExport == IMPORT || importExport == IMPORT_EXPORT);
-        PlatformUtil.setMnemonic(jbImport, res.getString("DViewCertificate.jbImport.mnemonic").charAt(0));
-
-        jbExport = new JButton(res.getString("DViewCertificate.jbImportExport.export.text"));
-        jbExport.setToolTipText(res.getString("DViewCertificate.jbImportExport.export.tooltip"));
-        jbExport.setVisible(importExport == EXPORT || importExport == IMPORT_EXPORT);
-        PlatformUtil.setMnemonic(jbExport, res.getString("DViewCertificate.jbExport.mnemonic").charAt(0));
-
         jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
-
-        jbVerify = new JButton(res.getString("DViewCertificate.jbVerify.text"));
-        jbVerify.setToolTipText(res.getString("DViewCertificate.jbVerify.tooltip"));
-        jbVerify.setVisible(importExport != NONE);
-        PlatformUtil.setMnemonic(jbVerify, res.getString("DViewCertificate.jbVerify.mnemonic").charAt(0));
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlSigners, "");
         pane.add(jspSigners, "sgx, wrap");
+        pane.add(jlVersion, "");
+        pane.add(jtfVersion, "sgx, wrap");
         pane.add(jlSignerDN, "");
-        pane.add(jtfSignerDN, "sgx, wrap");
-        pane.add(jlSerial, "");
-        pane.add(jdnSerial, "wrap");
-        pane.add(jlIssuer, "");
-        pane.add(jdnIssuer, "wrap");
+        pane.add(jdnSignerDN, "wrap");
         pane.add(jlSerialNumberHex, "");
         pane.add(jtfSerialNumberHex, "wrap");
         pane.add(jlSerialNumberDec, "");
         pane.add(jtfSerialNumberDec, "wrap");
-        pane.add(jlValidFrom, "");
-        pane.add(jtfValidFrom, "wrap");
-        pane.add(jlValidUntil, "");
-        pane.add(jtfValidUntil, "wrap");
-        pane.add(jlPublicKey, "");
-        pane.add(jtfPublicKey, "spanx, split");
-        pane.add(jbViewPublicKeyDetails, "wrap");
+        pane.add(jlSigningTime, "");
+        pane.add(jtfSigningTime, "wrap");
         pane.add(jlSignatureAlgorithm, "");
         pane.add(jtfSignatureAlgorithm, "wrap");
-        pane.add(jlFingerprint, "");
-        pane.add(jcfFingerprint, "spanx, growx, wrap");
-        pane.add(jbImport, "hidemode 1, spanx, split");
-        pane.add(jbExport, "hidemode 1");
+        // TODO JW - buttons are not aligned correctly.
         pane.add(jbExtensions, "");
         pane.add(jbPem, "");
-        pane.add(jbVerify, "hidemode 1");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbOK, "spanx, tag ok");
 
-        // TODO JW - list selection listener
-//        jlbSigners.addTreeSelectionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                populateDetails();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
+        jlbSigners.addListSelectionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewSignature.this);
+                populateDetails();
+            } finally {
+                CursorUtil.setCursorFree(DViewSignature.this);
+            }
+        });
 
         jbOK.addActionListener(evt -> okPressed());
 
-//        jbExport.addActionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                exportPressed();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
-//
 //        jbExtensions.addActionListener(evt -> {
 //            try {
 //                CursorUtil.setCursorBusy(DViewSignature.this);
 //                extensionsPressed();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
-//
-//        jbImport.addActionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                importPressed();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
-//
-//        jbViewPublicKeyDetails.addActionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                pubKeyDetailsPressed();
 //            } finally {
 //                CursorUtil.setCursorFree(DViewSignature.this);
 //            }
@@ -376,15 +285,6 @@ public class DViewSignature extends JEscDialog {
 //                CursorUtil.setCursorFree(DViewSignature.this);
 //            }
 //        });
-//
-//        jbVerify.addActionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                verifyPressed();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -395,10 +295,8 @@ public class DViewSignature extends JEscDialog {
 
         setResizable(false);
 
-        // TODO JW - select first entry in list
-        // select (first) leaf in certificate tree
-//        DefaultMutableTreeNode firstLeaf = ((DefaultMutableTreeNode) topNode).getFirstLeaf();
-//        jlbSigners.setSelectionPath(new TreePath(firstLeaf.getPath()));
+        // select first signer in signer list
+        jlbSigners.setSelectedIndex(0);
 
         getRootPane().setDefaultButton(jbOK);
 
@@ -406,12 +304,6 @@ public class DViewSignature extends JEscDialog {
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
-
-//    private void verifyPressed() {
-//
-//        X509Certificate cert = getSelectedCertificate();
-//        new VerifyCertificateAction(kseFrame, cert, chain).actionPerformed(null);
-//    }
 
     private ListModel<SignerInformation> createSignerList(CMSSignedData signedData) {
         DefaultListModel<SignerInformation> signerList = new DefaultListModel<>();
@@ -421,124 +313,89 @@ public class DViewSignature extends JEscDialog {
         return signerList;
     }
 
-//    private X509Certificate getSelectedCertificate() {
-//        TreePath[] selections = jlbSigners.getSelectionPaths();
-//
-//        if (selections == null) {
-//            return null;
-//        }
-//
-//        return (X509Certificate) ((DefaultMutableTreeNode) selections[0].getLastPathComponent()).getUserObject();
-//    }
+    private SignerInformation getSelectedSignerInfo() {
+        return jlbSigners.getSelectedValue();
+    }
 
-//    private void populateDetails() {
-//        X509Certificate cert = getSelectedCertificate();
-//
-//        if (cert == null) {
-//            jdnSerial.setEnabled(false);
-//            jdnIssuer.setEnabled(false);
-//            jbViewPublicKeyDetails.setEnabled(false);
-//            jcfFingerprint.setEnabled(false);
-//            jbExtensions.setEnabled(false);
-//            jbPem.setEnabled(false);
-//            jbAsn1.setEnabled(false);
-//
-//            jtfSignerDN.setText("");
-//            jdnSerial.setDistinguishedName(null);
-//            jdnIssuer.setDistinguishedName(null);
-//            jtfSerialNumberHex.setText("");
-//            jtfSerialNumberDec.setText("");
-//            jtfValidFrom.setText("");
-//            jtfValidUntil.setText("");
-//            jtfPublicKey.setText("");
-//            jtfSignatureAlgorithm.setText("");
-//            jcfFingerprint.setEncodedCertificate(null);
-//        } else {
-//            jdnSerial.setEnabled(true);
-//            jdnIssuer.setEnabled(true);
-//            jbViewPublicKeyDetails.setEnabled(true);
-//            jbExtensions.setEnabled(true);
-//            jbPem.setEnabled(true);
-//            jbAsn1.setEnabled(true);
-//
+    private void populateDetails() {
+        SignerInformation signerInfo = getSelectedSignerInfo();
+
+        if (signerInfo == null) {
+            jdnSignerDN.setEnabled(false);
+            jbExtensions.setEnabled(false);
+            jbPem.setEnabled(false);
+            jbAsn1.setEnabled(false);
+
+            jtfVersion.setText("");
+            jdnSignerDN.setDistinguishedName(null);
+            jtfSerialNumberHex.setText("");
+            jtfSerialNumberDec.setText("");
+            jtfSigningTime.setText("");
+            jtfSignatureAlgorithm.setText("");
+        } else {
+            jdnSignerDN.setEnabled(true);
+            jbExtensions.setEnabled(true);
+            jbPem.setEnabled(true);
+            jbAsn1.setEnabled(true);
+
 //            try {
-//                Date currentDate = new Date();
-//
-//                Date startDate = cert.getNotBefore();
-//                Date endDate = cert.getNotAfter();
-//
-//                boolean notYetValid = currentDate.before(startDate);
+                Date currentDate = new Date();
+                Date signingTime = null;
+                
+                // TODO JW - Make the signing time extraction logic a utility method.
+                Attribute signingTimeAttribute = signerInfo.getSignedAttributes().get(CMSAttributes.signingTime);
+                if (signingTimeAttribute != null) {
+                    Enumeration<?> e = signingTimeAttribute.getAttrValues().getObjects();
+                    if (e.hasMoreElements()) {
+                        Object o = e.nextElement();
+                        try {
+                            if (o instanceof ASN1UTCTime) {
+                                signingTime = ((ASN1UTCTime) o).getAdjustedDate();
+                            } else if (o instanceof ASN1GeneralizedTime) {
+                                signingTime = ((ASN1GeneralizedTime) o).getDate();
+                            }
+                        } catch (ParseException e1) {
+                            // TODO JW Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+                
+
+                // TODO JW - Need to determine valid date?
+                boolean noLongerValid = false;
 //                boolean noLongerValid = currentDate.after(endDate);
-//
-//                jtfSignerDN.setText(Integer.toString(cert.getVersion()));
-//                jtfSignerDN.setCaretPosition(0);
-//
-//                jdnSerial.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));
-//
-//                jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
-//
-//                jtfSerialNumberHex.setText(X509CertUtil.getSerialNumberAsHex(cert));
-//                jtfSerialNumberHex.setCaretPosition(0);
-//
-//                jtfSerialNumberDec.setText(X509CertUtil.getSerialNumberAsDec(cert));
-//                jtfSerialNumberDec.setCaretPosition(0);
-//
-//                jtfValidFrom.setText(StringUtils.formatDate(startDate));
-//
-//                if (notYetValid) {
-//                    jtfValidFrom.setText(
-//                            MessageFormat.format(res.getString("DViewCertificate.jtfValidFrom.notyetvalid.text"),
-//                                                 jtfValidFrom.getText()));
-//                    jtfValidFrom.setForeground(Color.red);
-//                } else {
-//                    jtfValidFrom.setForeground(jtfSignerDN.getForeground());
-//                }
-//                jtfValidFrom.setCaretPosition(0);
-//
-//                jtfValidUntil.setText(StringUtils.formatDate(endDate));
-//
-//                if (noLongerValid) {
-//                    jtfValidUntil.setText(
-//                            MessageFormat.format(res.getString("DViewCertificate.jtfValidUntil.expired.text"),
-//                                                 jtfValidUntil.getText()));
-//                    jtfValidUntil.setForeground(Color.red);
-//                } else {
-//                    jtfValidUntil.setForeground(jtfSignerDN.getForeground());
-//                }
-//                jtfValidUntil.setCaretPosition(0);
-//
-//                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(cert.getPublicKey());
-//                jtfPublicKey.setText(keyInfo.getAlgorithm());
-//                Integer keySize = keyInfo.getSize();
-//
-//                if (keySize != null) {
-//                    jtfPublicKey.setText(MessageFormat.format(res.getString("DViewCertificate.jtfPublicKey.text"),
-//                                                              jtfPublicKey.getText(), "" + keySize));
-//                } else {
-//                    jtfPublicKey.setText(MessageFormat.format(res.getString("DViewCertificate.jtfPublicKey.text"),
-//                                                              jtfPublicKey.getText(), "?"));
-//                }
-//                if (cert.getPublicKey() instanceof ECPublicKey) {
-//                    jtfPublicKey.setText(jtfPublicKey.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
-//                }
-//                jtfPublicKey.setCaretPosition(0);
-//
-//                jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(cert));
+
+                jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
+                jtfVersion.setCaretPosition(0);
+
+                jdnSignerDN.setDistinguishedName(signerInfo.getSID().getIssuer());
+
+                // TODO JW - Make the HexUtil call generic? It was copied from X509CertUtil.
+                jtfSerialNumberHex.setText(HexUtil.getHexString(signerInfo.getSID().getSerialNumber(), "0x", 0, 0));
+                jtfSerialNumberHex.setCaretPosition(0);
+
+                // TODO JW - Make the BigInteger call generic? It was copied from X509CertUtil.
+                jtfSerialNumberDec.setText(new BigInteger(1, signerInfo.getSID().getSerialNumber().toByteArray()).toString(10));
+                jtfSerialNumberDec.setCaretPosition(0);
+
+                jtfSigningTime.setText(StringUtils.formatDate(signingTime));
+
+                if (noLongerValid) {
+                    jtfSigningTime.setText(
+                            MessageFormat.format(res.getString("DViewCertificate.jtfSigningTime.expired.text"),
+                                                 jtfSigningTime.getText()));
+                    jtfSigningTime.setForeground(Color.red);
+                } else {
+                    jtfSigningTime.setForeground(jtfVersion.getForeground());
+                }
+                jtfSigningTime.setCaretPosition(0);
+
+//                jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(signerInfo));
 //                jtfSignatureAlgorithm.setCaretPosition(0);
-//
-//                byte[] encodedCertificate;
-//                try {
-//                    encodedCertificate = cert.getEncoded();
-//                } catch (CertificateEncodingException ex) {
-//                    throw new CryptoException(res.getString("DViewCertificate.NoGetEncodedCert.exception.message"), ex);
-//                }
-//
-//                jcfFingerprint.setEncodedCertificate(encodedCertificate);
-//
-//                jcfFingerprint.setFingerprintAlg(preferences.getCertificateFingerprintAlgorithm());
-//
-//                Set<?> critExts = cert.getCriticalExtensionOIDs();
-//                Set<?> nonCritExts = cert.getNonCriticalExtensionOIDs();
+
+//                Set<?> critExts = signerInfo.getCriticalExtensionOIDs();
+//                Set<?> nonCritExts = signerInfo.getNonCriticalExtensionOIDs();
 //
 //                if ((critExts != null && !critExts.isEmpty()) || (nonCritExts != null && !nonCritExts.isEmpty())) {
 //                    jbExtensions.setEnabled(true);
@@ -549,25 +406,11 @@ public class DViewSignature extends JEscDialog {
 //                DError.displayError(this, e);
 //                dispose();
 //            }
-//        }
-//    }
-//
-//    private void pubKeyDetailsPressed() {
-//        try {
-//            X509Certificate cert = getSelectedCertificate();
-//
-//            DViewPublicKey dViewPublicKey = new DViewPublicKey(this,
-//                                                               res.getString("DViewCertificate.PubKeyDetails.Title"),
-//                                                               cert.getPublicKey());
-//            dViewPublicKey.setLocationRelativeTo(this);
-//            dViewPublicKey.setVisible(true);
-//        } catch (CryptoException e) {
-//            DError.displayError(this, e);
-//        }
-//    }
-//
+        }
+    }
+
 //    private void extensionsPressed() {
-//        X509Certificate cert = getSelectedCertificate();
+//        X509Certificate cert = getSelectedSignerInfo();
 //
 //        DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCertificate.Extensions.Title"),
 //                cert, kseFrame);
@@ -576,7 +419,8 @@ public class DViewSignature extends JEscDialog {
 //    }
 //
 //    private void pemEncodingPressed() {
-//        X509Certificate cert = getSelectedCertificate();
+//        TODO JW - PEM encoding needs to be for the entire signature (PKCS #7 strusture)
+//        X509Certificate cert = getSelectedSignerInfo();
 //
 //        try {
 //            DViewPem dViewCertPem = new DViewPem(this, res.getString("DViewCertificate.Pem.Title"), cert);
@@ -588,7 +432,8 @@ public class DViewSignature extends JEscDialog {
 //    }
 //
 //    private void asn1DumpPressed() {
-//        X509Certificate cert = getSelectedCertificate();
+//        TODO JW - ASN.1 dump needs to be for the entire signature (PKCS #7 strusture)
+//        X509Certificate cert = getSelectedSignerInfo();
 //
 //        try {
 //            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, cert);
@@ -598,19 +443,9 @@ public class DViewSignature extends JEscDialog {
 //            DError.displayError(this, e);
 //        }
 //    }
-//
-//    private void importPressed() {
-//        X509Certificate cert = getSelectedCertificate();
-//        new ImportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
-//    }
-//
-//    private void exportPressed() {
-//        X509Certificate cert = getSelectedCertificate();
-//        new ExportTrustedCertificateAction(kseFrame, cert).actionPerformed(null);
-//    }
 
     private void okPressed() {
-        preferences.setCertificateFingerprintAlgorithm(jcfFingerprint.getSelectedFingerprintAlg());
+        // TODO JW - set any preferences here (e.g., chosen fingerprint algorithm)
         closeDialog();
     }
 
