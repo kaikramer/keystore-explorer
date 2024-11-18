@@ -43,7 +43,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
@@ -68,9 +70,11 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -134,6 +138,10 @@ public class DViewSignature extends JEscDialog {
     private JLabel jlSignatureAlgorithm;
     private JTextField jtfSignatureAlgorithm;
     // TODO JW - Add content type
+    private JLabel jlContentType;
+    private JTextField jtfContentType;
+    private JLabel jlContentDigest;
+    private JTextField jtfContentDigest;
     // TODO JW - Add content digest
     // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
     private JButton jbExtensions;
@@ -161,7 +169,7 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void initComponents(CMSSignedData signedData) throws CryptoException {
-        jlSigners = new JLabel(res.getString("DViewCertificate.jlHierarchy.text"));
+        jlSigners = new JLabel(res.getString("DViewSignature.jlSigners.text"));
 
         jlbSigners = new JList<>(createSignerList(signedData));
         // TODO JW - Signer list row height?
@@ -174,56 +182,68 @@ public class DViewSignature extends JEscDialog {
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspSigners.setPreferredSize(new Dimension(100, 75));
 
-        jlVersion = new JLabel(res.getString("DViewCertificate.jlVersion.text"));
+        jlVersion = new JLabel(res.getString("DViewSignature.jlVersion.text"));
 
         jtfVersion = new JTextField(40);
         jtfVersion.setEditable(false);
-        jtfVersion.setToolTipText(res.getString("DViewCertificate.jtfVersion.tooltip"));
+        jtfVersion.setToolTipText(res.getString("DViewSignature.jtfVersion.tooltip"));
 
-        jlSignerDN = new JLabel(res.getString("DViewCertificate.jlSubject.text"));
+        jlSignerDN = new JLabel(res.getString("DViewSignature.jlSignerDN.text"));
 
-        jdnSignerDN = new JDistinguishedName(res.getString("DViewCertificate.Subject.Title"), 40, false);
-        jdnSignerDN.setToolTipText(res.getString("DViewCertificate.jdnSubject.tooltip"));
+        jdnSignerDN = new JDistinguishedName(res.getString("DViewSignature.SignerDN.Title"), 40, false);
+        jdnSignerDN.setToolTipText(res.getString("DViewSignature.jdnSignerDN.tooltip"));
 
-        jlSerialNumberHex = new JLabel(res.getString("DViewCertificate.jlSerialNumberHex.text"));
+        jlSerialNumberHex = new JLabel(res.getString("DViewSignature.jlSerialNumberHex.text"));
 
         jtfSerialNumberHex = new JTextField(40);
         jtfSerialNumberHex.setEditable(false);
-        jtfSerialNumberHex.setToolTipText(res.getString("DViewCertificate.jtfSerialNumberHex.tooltip"));
+        jtfSerialNumberHex.setToolTipText(res.getString("DViewSignature.jtfSerialNumberHex.tooltip"));
         jtfSerialNumberHex.setCaretPosition(0);
 
-        jlSerialNumberDec = new JLabel(res.getString("DViewCertificate.jlSerialNumberDec.text"));
+        jlSerialNumberDec = new JLabel(res.getString("DViewSignature.jlSerialNumberDec.text"));
 
         jtfSerialNumberDec = new JTextField(40);
         jtfSerialNumberDec.setEditable(false);
-        jtfSerialNumberDec.setToolTipText(res.getString("DViewCertificate.jtfSerialNumberDec.tooltip"));
+        jtfSerialNumberDec.setToolTipText(res.getString("DViewSignature.jtfSerialNumberDec.tooltip"));
         jtfSerialNumberDec.setCaretPosition(0);
 
-        jlSigningTime = new JLabel(res.getString("DViewCertificate.jlValidFrom.text"));
+        jlSigningTime = new JLabel(res.getString("DViewSignature.jlSigningTime.text"));
 
         jtfSigningTime = new JTextField(40);
         jtfSigningTime.setEditable(false);
-        jtfSigningTime.setToolTipText(res.getString("DViewCertificate.jtfValidFrom.tooltip"));
+        jtfSigningTime.setToolTipText(res.getString("DViewSignature.jtfSigningTime.tooltip"));
 
-        jlSignatureAlgorithm = new JLabel(res.getString("DViewCertificate.jlSignatureAlgorithm.text"));
+        jlSignatureAlgorithm = new JLabel(res.getString("DViewSignature.jlSignatureAlgorithm.text"));
 
         jtfSignatureAlgorithm = new JTextField(40);
         jtfSignatureAlgorithm.setEditable(false);
-        jtfSignatureAlgorithm.setToolTipText(res.getString("DViewCertificate.jtfSignatureAlgorithm.tooltip"));
+        jtfSignatureAlgorithm.setToolTipText(res.getString("DViewSignature.jtfSignatureAlgorithm.tooltip"));
+        
+        jlContentType = new JLabel(res.getString("DViewSignature.jlContentType.text"));
 
-        jbExtensions = new JButton(res.getString("DViewCertificate.jbExtensions.text"));
-        jbExtensions.setToolTipText(res.getString("DViewCertificate.jbExtensions.tooltip"));
-        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewCertificate.jbExtensions.mnemonic").charAt(0));
+        jtfContentType = new JTextField(40);
+        jtfContentType.setEditable(false);
+        jtfContentType.setToolTipText(res.getString("DViewSignature.jtfContentType.tooltip"));
 
-        jbPem = new JButton(res.getString("DViewCertificate.jbPem.text"));
-        jbPem.setToolTipText(res.getString("DViewCertificate.jbPem.tooltip"));
-        PlatformUtil.setMnemonic(jbPem, res.getString("DViewCertificate.jbPem.mnemonic").charAt(0));
+        jlContentDigest = new JLabel(res.getString("DViewSignature.jlContentDigest.text"));
+        
+        jtfContentDigest = new JTextField(40);
+        jtfContentDigest.setEditable(false);
+        jtfContentDigest.setToolTipText(res.getString("DViewSignature.jtfContentDigest.tooltip"));
 
-        jbAsn1 = new JButton(res.getString("DViewCertificate.jbAsn1.text"));
-        jbAsn1.setToolTipText(res.getString("DViewCertificate.jbAsn1.tooltip"));
-        PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewCertificate.jbAsn1.mnemonic").charAt(0));
+//        jbExtensions = new JButton(res.getString("DViewSignature.jbExtensions.text"));
+//        jbExtensions.setToolTipText(res.getString("DViewSignature.jbExtensions.tooltip"));
+//        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewSignature.jbExtensions.mnemonic").charAt(0));
 
-        jbOK = new JButton(res.getString("DViewCertificate.jbOK.text"));
+        jbPem = new JButton(res.getString("DViewSignature.jbPem.text"));
+        jbPem.setToolTipText(res.getString("DViewSignature.jbPem.tooltip"));
+        PlatformUtil.setMnemonic(jbPem, res.getString("DViewSignature.jbPem.mnemonic").charAt(0));
+
+        jbAsn1 = new JButton(res.getString("DViewSignature.jbAsn1.text"));
+        jbAsn1.setToolTipText(res.getString("DViewSignature.jbAsn1.tooltip"));
+        PlatformUtil.setMnemonic(jbAsn1, res.getString("DViewSignature.jbAsn1.mnemonic").charAt(0));
+
+        jbOK = new JButton(res.getString("DViewSignature.jbOK.text"));
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
@@ -241,8 +261,12 @@ public class DViewSignature extends JEscDialog {
         pane.add(jtfSigningTime, "wrap");
         pane.add(jlSignatureAlgorithm, "");
         pane.add(jtfSignatureAlgorithm, "wrap");
+        pane.add(jlContentType, "");
+        pane.add(jtfContentType, "wrap");
+        pane.add(jlContentDigest, "");
+        pane.add(jtfContentDigest, "wrap");
         // TODO JW - buttons are not aligned correctly.
-        pane.add(jbExtensions, "");
+//        pane.add(jbExtensions, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
@@ -322,7 +346,7 @@ public class DViewSignature extends JEscDialog {
 
         if (signerInfo == null) {
             jdnSignerDN.setEnabled(false);
-            jbExtensions.setEnabled(false);
+//            jbExtensions.setEnabled(false);
             jbPem.setEnabled(false);
             jbAsn1.setEnabled(false);
 
@@ -332,9 +356,11 @@ public class DViewSignature extends JEscDialog {
             jtfSerialNumberDec.setText("");
             jtfSigningTime.setText("");
             jtfSignatureAlgorithm.setText("");
+            jtfContentType.setText("");
+            jtfContentDigest.setText("");
         } else {
             jdnSignerDN.setEnabled(true);
-            jbExtensions.setEnabled(true);
+//            jbExtensions.setEnabled(true);
             jbPem.setEnabled(true);
             jbAsn1.setEnabled(true);
 
@@ -390,6 +416,18 @@ public class DViewSignature extends JEscDialog {
                     jtfSigningTime.setForeground(jtfVersion.getForeground());
                 }
                 jtfSigningTime.setCaretPosition(0);
+
+                // TODO JW - These map strings need to be moved to a resource bundle.
+                Map<ASN1ObjectIdentifier, String> CONTENT_TYPES = new HashMap<>();
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.data, "Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedData, "Signed Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.envelopedData, "Enveloped Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedAndEnvelopedData, "Signed and Enveloped Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.digestedData, "Digested Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
+                jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
+                
+                jtfContentDigest.setText(HexUtil.getHexStringWithSep(signerInfo.getContentDigest(), ':'));
 
 //                jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(signerInfo));
 //                jtfSignatureAlgorithm.setCaretPosition(0);
