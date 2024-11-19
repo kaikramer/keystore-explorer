@@ -278,6 +278,47 @@ public final class X509CertUtil {
     }
 
     /**
+     * Convert the supplied array of X509CertificateHolder objects into X509Certificate
+     * objects.
+     *
+     * @param certs The X509CertificateHolder objects
+     * @return The converted X509Certificate objects
+     * @throws CryptoException A problem occurred during the conversion
+     */
+    public static List<X509Certificate> convertCertificateHolders(Collection<? extends X509CertificateHolder> certs)
+            throws CryptoException {
+
+        ArrayList<X509Certificate> convertedCerts = new ArrayList<>();
+
+        if (certs == null) {
+            return convertedCerts;
+        }
+
+        for (X509CertificateHolder cert : certs) {
+            convertedCerts.add(convertCertificate(cert));
+        }
+
+        return convertedCerts;
+    }
+
+    /**
+     * Convert the supplied X509CertificateHolder object into an X509Certificate object.
+     *
+     * @param certIn The X509CertificateHolder object
+     * @return The converted X509Certificate object
+     * @throws CryptoException A problem occurred during the conversion
+     */
+    public static X509Certificate convertCertificate(X509CertificateHolder certIn) throws CryptoException {
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+            ByteArrayInputStream bais = new ByteArrayInputStream(certIn.getEncoded());
+            return (X509Certificate) cf.generateCertificate(bais);
+        } catch (CertificateException | IOException e) {
+            throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), e);
+        }
+    }
+
+    /**
      * Order the supplied array of X.509 certificates in issued to issuer order.
      *
      * @param certs X.509 certificates

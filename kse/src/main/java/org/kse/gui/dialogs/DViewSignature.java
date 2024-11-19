@@ -32,6 +32,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.text.MessageFormat;
@@ -79,8 +80,10 @@ import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
@@ -138,13 +141,12 @@ public class DViewSignature extends JEscDialog {
     private JTextField jtfSigningTime;
     private JLabel jlSignatureAlgorithm;
     private JTextField jtfSignatureAlgorithm;
-    // TODO JW - Add content type
     private JLabel jlContentType;
     private JTextField jtfContentType;
     private JLabel jlContentDigest;
     private JTextField jtfContentDigest;
-    // TODO JW - Add content digest
     // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
+    private JButton jbCertificates;
     private JButton jbExtensions;
     private JButton jbPem;
     private JButton jbAsn1;
@@ -223,6 +225,10 @@ public class DViewSignature extends JEscDialog {
         jtfContentDigest.setEditable(false);
         jtfContentDigest.setToolTipText(res.getString("DViewSignature.jtfContentDigest.tooltip"));
 
+        jbCertificates = new JButton(res.getString("DViewSignature.jbCertificates.text"));
+        jbCertificates.setToolTipText(res.getString("DViewSignature.jbCertificates.tooltip"));
+        PlatformUtil.setMnemonic(jbCertificates, res.getString("DViewSignature.jbCertificates.mnemonic").charAt(0));
+
 //        jbExtensions = new JButton(res.getString("DViewSignature.jbExtensions.text"));
 //        jbExtensions.setToolTipText(res.getString("DViewSignature.jbExtensions.tooltip"));
 //        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewSignature.jbExtensions.mnemonic").charAt(0));
@@ -255,8 +261,8 @@ public class DViewSignature extends JEscDialog {
         pane.add(jtfContentType, "wrap");
         pane.add(jlContentDigest, "");
         pane.add(jtfContentDigest, "wrap");
-        // TODO JW - buttons are not aligned correctly.
-//        pane.add(jbExtensions, "");
+        pane.add(jbCertificates, "spanx, split");
+//      pane.add(jbExtensions, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
@@ -272,6 +278,15 @@ public class DViewSignature extends JEscDialog {
         });
 
         jbOK.addActionListener(evt -> okPressed());
+
+        jbCertificates.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewSignature.this);
+                certificatesPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewSignature.this);
+            }
+        });
 
 //        jbExtensions.addActionListener(evt -> {
 //            try {
@@ -439,6 +454,37 @@ public class DViewSignature extends JEscDialog {
         }
     }
 
+    private static class SelectAll<T> implements Selector<T> {
+        @Override
+        public Object clone() {
+            return null;
+        }
+
+        @Override
+        public boolean match(T obj) {
+            return true;
+        }
+    }
+
+    private void certificatesPressed() {
+        try {
+            List<X509Certificate> certs = X509CertUtil.convertCertificateHolders(
+                    signedData.getCertificates().getMatches(new SelectAll<X509CertificateHolder>()));
+//            JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
+//            for (X509CertificateHolder certHolder : signedData.getCertificates()
+//                    .getMatches(new SelectAll<X509CertificateHolder>())) {
+//                certs.add(converter.getCertificate(certHolder));
+//            }
+            DViewCertificate dViewCertificates = new DViewCertificate(this,
+                    res.getString("DViewSignature.Certificates.Title"), certs.toArray(X509Certificate[]::new), kseFrame,
+                    DViewCertificate.NONE);
+            dViewCertificates.setLocationRelativeTo(this);
+            dViewCertificates.setVisible(true);
+        } catch (CryptoException e) {
+            DError.displayError(this, e);
+        }
+    }
+
 //    private void extensionsPressed() {
 //        X509Certificate cert = getSelectedSignerInfo();
 //
@@ -449,7 +495,7 @@ public class DViewSignature extends JEscDialog {
 //    }
 //
 //    private void pemEncodingPressed() {
-//        TODO JW - PEM encoding needs to be for the entire signature (PKCS #7 strusture)
+//        TODO JW - PEM encoding needs to be for the entire signature (PKCS #7 structure)
 //        X509Certificate cert = getSelectedSignerInfo();
 //
 //        try {
@@ -462,7 +508,7 @@ public class DViewSignature extends JEscDialog {
 //    }
 //
 //    private void asn1DumpPressed() {
-//        TODO JW - ASN.1 dump needs to be for the entire signature (PKCS #7 strusture)
+//        TODO JW - ASN.1 dump needs to be for the entire signature (PKCS #7 structure)
 //        X509Certificate cert = getSelectedSignerInfo();
 //
 //        try {
