@@ -20,12 +20,15 @@
 package org.kse.gui.dialogs;
 
 import java.awt.Component;
+import java.util.Collection;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.utilities.StringUtils;
@@ -35,11 +38,11 @@ import org.kse.utilities.StringUtils;
  */
 public class SignerListCellRend extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
-//    private CMSSignedData signedData;
-//
-//    public SignerListCellRend(CMSSignedData signedData) {
-//        this.signedData = signedData;
-//    }
+    private CMSSignedData signedData;
+
+    public SignerListCellRend(CMSSignedData signedData) {
+        this.signedData = signedData;
+    }
 
     /**
      * Returns the rendered cell for the supplied value.
@@ -58,17 +61,28 @@ public class SignerListCellRend extends DefaultListCellRenderer {
 
         if (value instanceof SignerInformation) {
             SignerInformation signer = (SignerInformation) value;
-            X500Name issuer = signer.getSID().getIssuer();
+            // TODO JW Need to move cert lookup to a utility class.
+            X509CertificateHolder cert = null;
+            Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates().getMatches(signer.getSID());
+            if (!matchedCerts.isEmpty()) {
+                cert = matchedCerts.iterator().next();
+            }
 
-            String shortName = X500NameUtils.extractCN(issuer);
+            if (cert == null) {
+                // TODO JW - what type of error handling
+            }
+
+            X500Name subject = cert.getSubject();
+
+            String shortName = X500NameUtils.extractCN(subject);
 
             if (StringUtils.isBlank(shortName)) {
-                shortName = issuer.toString();
+                shortName = subject.toString();
             }
 
             // subject DN can be empty in some cases
             if (StringUtils.isBlank(shortName)) {
-                shortName = signer.getSID().getSerialNumber().toString();
+                shortName = cert.getSerialNumber().toString();
             }
 
             cell.setText(shortName);
@@ -77,7 +91,7 @@ public class SignerListCellRend extends DefaultListCellRenderer {
 //            ImageIcon icon = new ImageIcon(getClass().getResource("images/certificate_node.png"));
 //            cell.setIcon(icon);
 
-            cell.setToolTipText(issuer.toString());
+            cell.setToolTipText(subject.toString());
         }
 
         return cell;

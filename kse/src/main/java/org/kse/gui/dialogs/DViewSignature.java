@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -76,6 +77,8 @@ import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509AttributeCertificateHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.util.encoders.Hex;
@@ -127,12 +130,10 @@ public class DViewSignature extends JEscDialog {
     private JScrollPane jspSigners;
     private JLabel jlVersion;
     private JTextField jtfVersion;
-    private JLabel jlSignerDN;
-    private JDistinguishedName jdnSignerDN;
-    private JLabel jlSerialNumberHex;
-    private JTextField jtfSerialNumberHex;
-    private JLabel jlSerialNumberDec;
-    private JTextField jtfSerialNumberDec;
+    private JLabel jlSubject;
+    private JDistinguishedName jdnSubject;
+    private JLabel jlIssuer;
+    private JDistinguishedName jdnIssuer;
     private JLabel jlSigningTime;
     private JTextField jtfSigningTime;
     private JLabel jlSignatureAlgorithm;
@@ -176,7 +177,7 @@ public class DViewSignature extends JEscDialog {
 //        jlbSigners.setRowHeight(Math.max(18, jlbSigners.getRowHeight()));
         jlbSigners.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ToolTipManager.sharedInstance().registerComponent(jlbSigners);
-        jlbSigners.setCellRenderer(new SignerListCellRend());
+        jlbSigners.setCellRenderer(new SignerListCellRend(signedData));
 
         jspSigners = PlatformUtil.createScrollPane(jlbSigners, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -188,24 +189,15 @@ public class DViewSignature extends JEscDialog {
         jtfVersion.setEditable(false);
         jtfVersion.setToolTipText(res.getString("DViewSignature.jtfVersion.tooltip"));
 
-        jlSignerDN = new JLabel(res.getString("DViewSignature.jlSignerDN.text"));
+        jlSubject = new JLabel(res.getString("DViewSignature.jlSubject.text"));
 
-        jdnSignerDN = new JDistinguishedName(res.getString("DViewSignature.SignerDN.Title"), 40, false);
-        jdnSignerDN.setToolTipText(res.getString("DViewSignature.jdnSignerDN.tooltip"));
+        jdnSubject = new JDistinguishedName(res.getString("DViewSignature.Subject.Title"), 40, false);
+        jdnSubject.setToolTipText(res.getString("DViewSignature.jdnSubject.tooltip"));
 
-        jlSerialNumberHex = new JLabel(res.getString("DViewSignature.jlSerialNumberHex.text"));
+        jlIssuer = new JLabel(res.getString("DViewSignature.jlIssuer.text"));
 
-        jtfSerialNumberHex = new JTextField(40);
-        jtfSerialNumberHex.setEditable(false);
-        jtfSerialNumberHex.setToolTipText(res.getString("DViewSignature.jtfSerialNumberHex.tooltip"));
-        jtfSerialNumberHex.setCaretPosition(0);
-
-        jlSerialNumberDec = new JLabel(res.getString("DViewSignature.jlSerialNumberDec.text"));
-
-        jtfSerialNumberDec = new JTextField(40);
-        jtfSerialNumberDec.setEditable(false);
-        jtfSerialNumberDec.setToolTipText(res.getString("DViewSignature.jtfSerialNumberDec.tooltip"));
-        jtfSerialNumberDec.setCaretPosition(0);
+        jdnIssuer = new JDistinguishedName(res.getString("DViewSignature.Issuer.Title"), 40, false);
+        jdnIssuer.setToolTipText(res.getString("DViewSignature.jdnIssuer.tooltip"));
 
         jlSigningTime = new JLabel(res.getString("DViewSignature.jlSigningTime.text"));
 
@@ -251,12 +243,10 @@ public class DViewSignature extends JEscDialog {
         pane.add(jspSigners, "sgx, wrap");
         pane.add(jlVersion, "");
         pane.add(jtfVersion, "sgx, wrap");
-        pane.add(jlSignerDN, "");
-        pane.add(jdnSignerDN, "wrap");
-        pane.add(jlSerialNumberHex, "");
-        pane.add(jtfSerialNumberHex, "wrap");
-        pane.add(jlSerialNumberDec, "");
-        pane.add(jtfSerialNumberDec, "wrap");
+        pane.add(jlSubject, "");
+        pane.add(jdnSubject, "wrap");
+        pane.add(jlIssuer, "");
+        pane.add(jdnIssuer, "wrap");
         pane.add(jlSigningTime, "");
         pane.add(jtfSigningTime, "wrap");
         pane.add(jlSignatureAlgorithm, "");
@@ -343,23 +333,29 @@ public class DViewSignature extends JEscDialog {
 
     private void populateDetails() {
         SignerInformation signerInfo = getSelectedSignerInfo();
+        X509CertificateHolder cert = null;
+        Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates().getMatches(signerInfo.getSID());
+        if (!matchedCerts.isEmpty()) {
+            cert = matchedCerts.iterator().next();
+        }
 
         if (signerInfo == null) {
-            jdnSignerDN.setEnabled(false);
+            jdnSubject.setEnabled(false);
+            jdnIssuer.setEnabled(false);
 //            jbExtensions.setEnabled(false);
             jbPem.setEnabled(false);
             jbAsn1.setEnabled(false);
 
             jtfVersion.setText("");
-            jdnSignerDN.setDistinguishedName(null);
-            jtfSerialNumberHex.setText("");
-            jtfSerialNumberDec.setText("");
+            jdnSubject.setDistinguishedName(null);
+            jdnIssuer.setDistinguishedName(null);
             jtfSigningTime.setText("");
             jtfSignatureAlgorithm.setText("");
             jtfContentType.setText("");
             jtfContentDigest.setText("");
         } else {
-            jdnSignerDN.setEnabled(true);
+            jdnSubject.setEnabled(true);
+            jdnIssuer.setEnabled(true);
 //            jbExtensions.setEnabled(true);
             jbPem.setEnabled(true);
             jbAsn1.setEnabled(true);
@@ -395,15 +391,9 @@ public class DViewSignature extends JEscDialog {
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
 
-                jdnSignerDN.setDistinguishedName(signerInfo.getSID().getIssuer());
+                jdnSubject.setDistinguishedName(cert.getSubject());
 
-                // TODO JW - Make the HexUtil call generic? It was copied from X509CertUtil.
-                jtfSerialNumberHex.setText(HexUtil.getHexString(signerInfo.getSID().getSerialNumber(), "0x", 0, 0));
-                jtfSerialNumberHex.setCaretPosition(0);
-
-                // TODO JW - Make the BigInteger call generic? It was copied from X509CertUtil.
-                jtfSerialNumberDec.setText(new BigInteger(1, signerInfo.getSID().getSerialNumber().toByteArray()).toString(10));
-                jtfSerialNumberDec.setCaretPosition(0);
+                jdnIssuer.setDistinguishedName(cert.getIssuer());
 
                 jtfSigningTime.setText(StringUtils.formatDate(signingTime));
 
@@ -426,8 +416,10 @@ public class DViewSignature extends JEscDialog {
                 CONTENT_TYPES.put(PKCSObjectIdentifiers.digestedData, "Digested Data");
                 CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
                 jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
+                jtfContentType.setCaretPosition(0);
                 
                 jtfContentDigest.setText(HexUtil.getHexStringWithSep(signerInfo.getContentDigest(), ':'));
+                jtfContentDigest.setCaretPosition(0);
 
 //                jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(signerInfo));
 //                jtfSignatureAlgorithm.setCaretPosition(0);
