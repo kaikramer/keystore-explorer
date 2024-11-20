@@ -42,7 +42,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.kse.crypto.ecc.EccUtil;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.JwkExporter;
+import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.components.JEscDialog;
@@ -71,19 +73,36 @@ public class DExportPrivateKeyType extends JEscDialog {
     private boolean exportTypeSelected = false;
 
     private KeyPairType keyPairType;
+    private PrivateKey privateKey;
     /**
      * Creates a new DExportPrivateKeyType dialog.
      *
      * @param parent The parent frame
      */
-    public DExportPrivateKeyType(JFrame parent, PrivateKey privateKey) {
+    public DExportPrivateKeyType(JFrame parent, PrivateKey privateKey) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.privateKey = privateKey;
         this.keyPairType = KeyPairUtil.getKeyPairType(privateKey);
         setTitle(res.getString("DExportPrivateKeyType.Title"));
         initComponents();
     }
 
-    private void initComponents() {
+    private boolean isJwkSupported() throws CryptoException {
+        switch (keyPairType) {
+            case ED448:
+            case ED25519:
+            case RSA:
+                return true;
+            case EC:
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+                String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
+                return JwkExporter.JwkECKeyExporter.supportsCurve(detailedAlgorithm);
+            default:
+                return false;
+        }
+    }
+
+    private void initComponents() throws CryptoException {
         jlExportType = new JLabel(res.getString("DExportPrivateKeyType.jlExportType.text"));
 
         jrbPkcs8 = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPkcs8.text"), true);
@@ -109,28 +128,14 @@ public class DExportPrivateKeyType extends JEscDialog {
         jrbJwk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbJwk.text"));
         PlatformUtil.setMnemonic(jrbJwk, res.getString("DExportPrivateKeyType.jrbJwk.mnemonic").charAt(0));
         jrbJwk.setToolTipText(res.getString("DExportPrivateKeyType.jrbJwk.tooltip"));
-        switch (keyPairType) {
-            case ED448:
-            case ED25519:
-            case RSA:
-            case EC:
-                jrbJwk.setEnabled(true);
-                break;
-            default:
-                jrbJwk.setEnabled(false);
-        }
-
-
-        if (keyPairType == KeyPairType.EDDSA || keyPairType == KeyPairType.ED25519 ||
-                keyPairType == KeyPairType.ED448) {
-            jrbOpenSsl.setEnabled(false);
-        }
+        jrbJwk.setEnabled(isJwkSupported());
 
         ButtonGroup keyStoreTypes = new ButtonGroup();
 
         keyStoreTypes.add(jrbPkcs8);
         keyStoreTypes.add(jrbPvk);
         keyStoreTypes.add(jrbOpenSsl);
+        keyStoreTypes.add(jrbJwk);
 
         jpExportType = new JPanel(new GridLayout(5, 1));
         jpExportType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
