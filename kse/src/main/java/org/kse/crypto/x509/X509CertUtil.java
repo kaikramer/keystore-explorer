@@ -159,12 +159,11 @@ public final class X509CertUtil {
 
     private static List<X509Certificate> loadAsPEM(byte[] bytes, CertificateFactory cf) {
 
-        PEMParser pemParser = new PEMParser(new StringReader(new String(bytes)));
         JcaX509CertificateConverter jcaX509CertConverter = new JcaX509CertificateConverter();
 
         List<X509Certificate> certs = new ArrayList<>();
 
-        try {
+        try (PEMParser pemParser = new PEMParser(new StringReader(new String(bytes)))) {
             Object pemObject = pemParser.readObject();
             while (pemObject != null) {
                 // check for all possible certificate classes
