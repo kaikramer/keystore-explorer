@@ -368,11 +368,6 @@ public class DViewSignature extends JEscDialog {
 
     private void populateDetails() {
         SignerInformation signerInfo = getSelectedSignerInfo();
-        X509CertificateHolder cert = null;
-        Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates().getMatches(signerInfo.getSID());
-        if (!matchedCerts.isEmpty()) {
-            cert = matchedCerts.iterator().next();
-        }
 
         if (signerInfo == null) {
             jdnSubject.setEnabled(false);
@@ -394,6 +389,14 @@ public class DViewSignature extends JEscDialog {
 //            jbExtensions.setEnabled(true);
             jbPem.setEnabled(true);
             jbAsn1.setEnabled(true);
+
+            X509CertificateHolder cert = null;
+            @SuppressWarnings("unchecked") // SignerId does not specify a type when extending Selector<T>
+            Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates()
+                    .getMatches(signerInfo.getSID());
+            if (!matchedCerts.isEmpty()) {
+                cert = matchedCerts.iterator().next();
+            }
 
 //            try {
                 Date signingTime = null;
