@@ -40,6 +40,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -147,12 +148,14 @@ public class DViewSignature extends JEscDialog {
     private JTextField jtfContentDigest;
     // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
     private JButton jbCertificates;
+    private JButton jbCounterSigners;
     private JButton jbExtensions;
     private JButton jbPem;
     private JButton jbAsn1;
     private JButton jbOK;
 
     private CMSSignedData signedData;
+    private Collection<SignerInformation> signerInfos;
 
     /**
      * Creates a new DViewCertificate dialog.
@@ -160,21 +163,23 @@ public class DViewSignature extends JEscDialog {
      * @param parent       Parent frame
      * @param title        The dialog title
      * @param signedData   Signature to display
+     * @param signers      Signature(s) to display
      * @param kseFrame     Reference to main class with currently opened keystores and their contents
      * @throws CryptoException A problem was encountered getting the certificates' details
      */
-    public DViewSignature(Window parent, String title, CMSSignedData signedData, KseFrame kseFrame)
-            throws CryptoException {
+    public DViewSignature(Window parent, String title, CMSSignedData signedData, Collection<SignerInformation> signers,
+            KseFrame kseFrame) throws CryptoException {
         super(parent, title, Dialog.ModalityType.MODELESS);
         this.kseFrame = kseFrame;
         this.signedData = signedData;
-        initComponents(signedData);
+        this.signerInfos = signers;
+        initComponents(signers);
     }
 
-    private void initComponents(CMSSignedData signedData) throws CryptoException {
+    private void initComponents(Collection<SignerInformation> signers) throws CryptoException {
         jlSigners = new JLabel(res.getString("DViewSignature.jlSigners.text"));
 
-        jlbSigners = new JList<>(createSignerList(signedData));
+        jlbSigners = new JList<>(createSignerList(signers));
         // TODO JW - Signer list row height?
 //        jlbSigners.setRowHeight(Math.max(18, jlbSigners.getRowHeight()));
         jlbSigners.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -229,6 +234,11 @@ public class DViewSignature extends JEscDialog {
         jbCertificates.setToolTipText(res.getString("DViewSignature.jbCertificates.tooltip"));
         PlatformUtil.setMnemonic(jbCertificates, res.getString("DViewSignature.jbCertificates.mnemonic").charAt(0));
 
+        jbCounterSigners = new JButton(res.getString("DViewSignature.jbCounterSigners.text"));
+        jbCounterSigners.setToolTipText(res.getString("DViewSignature.jbCounterSigners.tooltip"));
+        // TODO JW - Need mnemonic for counter signers button
+        PlatformUtil.setMnemonic(jbCounterSigners, res.getString("DViewSignature.jbCounterSigners.mnemonic").charAt(0));
+
 //        jbExtensions = new JButton(res.getString("DViewSignature.jbExtensions.text"));
 //        jbExtensions.setToolTipText(res.getString("DViewSignature.jbExtensions.tooltip"));
 //        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewSignature.jbExtensions.mnemonic").charAt(0));
@@ -262,6 +272,7 @@ public class DViewSignature extends JEscDialog {
         pane.add(jlContentDigest, "");
         pane.add(jtfContentDigest, "wrap");
         pane.add(jbCertificates, "spanx, split");
+        pane.add(jbCounterSigners, "");
 //      pane.add(jbExtensions, "");
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
@@ -283,6 +294,15 @@ public class DViewSignature extends JEscDialog {
             try {
                 CursorUtil.setCursorBusy(DViewSignature.this);
                 certificatesPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewSignature.this);
+            }
+        });
+
+        jbCounterSigners.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewSignature.this);
+                counterSignersPressed();
             } finally {
                 CursorUtil.setCursorFree(DViewSignature.this);
             }
@@ -334,10 +354,10 @@ public class DViewSignature extends JEscDialog {
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
-    private ListModel<SignerInformation> createSignerList(CMSSignedData signedData) {
+    private ListModel<SignerInformation> createSignerList(Collection<SignerInformation> signers) {
         DefaultListModel<SignerInformation> signerList = new DefaultListModel<>();
         
-        signerList.addAll(signedData.getSignerInfos().getSigners());
+        signerList.addAll(signers);
 
         return signerList;
     }
@@ -376,7 +396,6 @@ public class DViewSignature extends JEscDialog {
             jbAsn1.setEnabled(true);
 
 //            try {
-                Date currentDate = new Date();
                 Date signingTime = null;
                 
                 // TODO JW - Make the signing time extraction logic a utility method.
@@ -399,10 +418,6 @@ public class DViewSignature extends JEscDialog {
                 }
                 
 
-                // TODO JW - Need to determine valid date?
-                boolean noLongerValid = false;
-//                boolean noLongerValid = currentDate.after(endDate);
-
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
 
@@ -412,14 +427,14 @@ public class DViewSignature extends JEscDialog {
 
                 jtfSigningTime.setText(StringUtils.formatDate(signingTime));
 
-                if (noLongerValid) {
-                    jtfSigningTime.setText(
-                            MessageFormat.format(res.getString("DViewCertificate.jtfSigningTime.expired.text"),
-                                                 jtfSigningTime.getText()));
-                    jtfSigningTime.setForeground(Color.red);
-                } else {
-                    jtfSigningTime.setForeground(jtfVersion.getForeground());
-                }
+//                if (noLongerValid) {
+//                    jtfSigningTime.setText(
+//                            MessageFormat.format(res.getString("DViewCertificate.jtfSigningTime.expired.text"),
+//                                                 jtfSigningTime.getText()));
+//                    jtfSigningTime.setForeground(Color.red);
+//                } else {
+//                    jtfSigningTime.setForeground(jtfVersion.getForeground());
+//                }
                 jtfSigningTime.setCaretPosition(0);
 
                 // TODO JW - These map strings need to be moved to a resource bundle.
@@ -438,6 +453,12 @@ public class DViewSignature extends JEscDialog {
 
 //                jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(signerInfo));
 //                jtfSignatureAlgorithm.setCaretPosition(0);
+
+                if (signerInfo.getCounterSignatures().size() > 0) {
+                    jbCounterSigners.setEnabled(true);
+                } else {
+                    jbCounterSigners.setEnabled(false);
+                }
 
 //                Set<?> critExts = signerInfo.getCriticalExtensionOIDs();
 //                Set<?> nonCritExts = signerInfo.getNonCriticalExtensionOIDs();
@@ -480,6 +501,20 @@ public class DViewSignature extends JEscDialog {
                     DViewCertificate.NONE);
             dViewCertificates.setLocationRelativeTo(this);
             dViewCertificates.setVisible(true);
+        } catch (CryptoException e) {
+            DError.displayError(this, e);
+        }
+    }
+
+    private void counterSignersPressed() {
+        SignerInformation signer = getSelectedSignerInfo();
+
+        try {
+            DViewSignature dViewSignature = new DViewSignature(this,
+                    res.getString("DViewSignature.CounterSigners.Title"), signedData,
+                    signer.getCounterSignatures().getSigners(), null);
+            dViewSignature.setLocationRelativeTo(this);
+            dViewSignature.setVisible(true);
         } catch (CryptoException e) {
             DError.displayError(this, e);
         }

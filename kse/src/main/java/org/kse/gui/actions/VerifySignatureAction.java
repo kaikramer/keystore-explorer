@@ -207,13 +207,20 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 //            printStore(certStore);
 //            SignerInformationStore signers = signedData.getSignerInfos();
 //            for (SignerInformation signer : signers.getSigners()) {
-//                signer.getCounterSignatures();
 //                AttributeTable signedAttributes = signer.getSignedAttributes();
 //                AttributeTable unsignedAttributes = signer.getUnsignedAttributes();
 //
-//                Hashtable ht = signedAttributes.toHashtable();
-//                for (Object k : ht.keySet()) {
-//                    System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
+//                if (signedAttributes != null) {
+//                    Hashtable ht = signedAttributes.toHashtable();
+//                    for (Object k : ht.keySet()) {
+//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
+//                    }
+//                }
+//                if (unsignedAttributes != null) {
+//                    Hashtable ht = unsignedAttributes.toHashtable();
+//                    for (Object k : ht.keySet()) {
+//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
+//                    }
 //                }
 //
 //                Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
@@ -225,11 +232,10 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 //                }
 //            }
 //            System.out.println("Verified: " + verified);
-            // TODO JW - Display signature details dialog with option to see signature details.
-            DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat.format(
-                    // TODO JW - view signature resource string
-                    res.getString("ImportTrustedCertificateAction.CertDetailsFile.Title"),
-                    signatureFile.getName()), signedData, null, DViewSignature.NONE);
+
+            DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
+                    .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
+                    signedData, signedData.getSignerInfos().getSigners(), null);
             dViewSignature.setLocationRelativeTo(frame);
             dViewSignature.setVisible(true);
 
