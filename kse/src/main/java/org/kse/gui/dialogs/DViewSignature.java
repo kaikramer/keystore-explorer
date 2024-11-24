@@ -82,13 +82,17 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
@@ -390,17 +394,34 @@ public class DViewSignature extends JEscDialog {
             jbPem.setEnabled(true);
             jbAsn1.setEnabled(true);
 
-            X509CertificateHolder cert = null;
-            @SuppressWarnings("unchecked") // SignerId does not specify a type when extending Selector<T>
-            Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates()
-                    .getMatches(signerInfo.getSID());
-            if (!matchedCerts.isEmpty()) {
-                cert = matchedCerts.iterator().next();
-            }
-
-//            try {
+            try {
                 Date signingTime = null;
-                
+                X509Certificate cert = null;
+
+                @SuppressWarnings("unchecked") // SignerId does not specify a type when extending Selector<T>
+                Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates()
+                        .getMatches(signerInfo.getSID());
+                // TODO JW - What to do when there isn't a matched certificate?
+                // A matched certificate is needed for content digest
+                if (!matchedCerts.isEmpty()) {
+                    X509CertificateHolder certHolder = matchedCerts.iterator().next();
+                    try {
+                        // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
+                        signerInfo.verify(new JcaSimpleSignerInfoVerifierBuilder().build(certHolder));
+                    } catch (OperatorCreationException e) {
+                        // TODO JW Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (CMSException e) {
+                        // TODO JW Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (CertificateException e) {
+                        // TODO JW Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    cert = X509CertUtil.convertCertificate(certHolder);
+                }
+                // TODO JW - Need to check for null certificate
+
                 // TODO JW - Make the signing time extraction logic a utility method.
                 Attribute signingTimeAttribute = signerInfo.getSignedAttributes().get(CMSAttributes.signingTime);
                 if (signingTimeAttribute != null) {
@@ -424,9 +445,9 @@ public class DViewSignature extends JEscDialog {
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
 
-                jdnSubject.setDistinguishedName(cert.getSubject());
+                jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));
 
-                jdnIssuer.setDistinguishedName(cert.getIssuer());
+                jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
 
                 jtfSigningTime.setText(StringUtils.formatDate(signingTime));
 
@@ -450,12 +471,23 @@ public class DViewSignature extends JEscDialog {
                 CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
                 jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
                 jtfContentType.setCaretPosition(0);
-                
+
                 jtfContentDigest.setText(HexUtil.getHexStringWithSep(signerInfo.getContentDigest(), ':'));
                 jtfContentDigest.setCaretPosition(0);
 
-//                jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(signerInfo));
-//                jtfSignatureAlgorithm.setCaretPosition(0);
+                DigestType digestType = DigestType.resolveOid(signerInfo.getDigestAlgOID());
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(cert.getPublicKey());
+                String algorithm = keyInfo.getAlgorithm();
+                // TODO JW - Is there a better method for getting signature algorithm name from cert algorithm?
+                if (algorithm.equals("EC")) {
+                    algorithm = "ECDSA";
+                }
+                String signatureAlgorithm = digestType.friendly().replace("-", "") + "with" + algorithm;
+                SignatureType signatureType = SignatureType.resolveJce(signatureAlgorithm);
+                if (signatureType != null ) {
+                    jtfSignatureAlgorithm.setText(signatureType.friendly());
+                    jtfSignatureAlgorithm.setCaretPosition(0);
+                }
 
                 if (signerInfo.getCounterSignatures().size() > 0) {
                     jbCounterSigners.setEnabled(true);
@@ -471,10 +503,10 @@ public class DViewSignature extends JEscDialog {
 //                } else {
 //                    jbExtensions.setEnabled(false);
 //                }
-//            } catch (CryptoException e) {
-//                DError.displayError(this, e);
-//                dispose();
-//            }
+            } catch (CryptoException e) {
+                DError.displayError(this, e);
+                dispose();
+            }
         }
     }
 
