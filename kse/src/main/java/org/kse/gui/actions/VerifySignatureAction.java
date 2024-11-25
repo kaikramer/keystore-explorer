@@ -102,6 +102,8 @@ import org.kse.gui.error.Problem;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.pem.PemInfo;
+import org.kse.utilities.pem.PemUtil;
 
 public class VerifySignatureAction extends AuthorityCertificatesAction {
     private static final long serialVersionUID = 1L;
@@ -197,6 +199,19 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             }
 
             // TODO JW - Verify the signature using the keystore
+            if (PemUtil.isPemFormat(signature)) {
+                PemInfo signaturePem = PemUtil.decode(signature);
+                if (signaturePem == null ) {
+                    // TODO JW - What to throw if the signature is detected as PEM, but is not PEM?
+                    throw new Exception("Not a PEM file, but has PEM header!");
+                }
+                // TODO JW - Do we even want to check the type? Should we just let the BC CMS class bomb out?
+                if (!"CMS".equals(signaturePem.getType()) && !"PKCS7".equals(signaturePem.getType())) {
+                    // TODO JW - What to throw if the signature is not the correct type?
+                    throw new Exception("PEM is not of type CMS or PKCS7");
+                }
+                signature = signaturePem.getContent();
+            }
             CMSProcessable data = new CMSProcessableFile(contentFile);
             CMSSignedData signedData = new CMSSignedData(data, signature);
 
