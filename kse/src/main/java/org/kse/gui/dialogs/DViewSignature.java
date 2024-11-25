@@ -331,14 +331,14 @@ public class DViewSignature extends JEscDialog {
             }
         });
 
-//        jbAsn1.addActionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                asn1DumpPressed();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
+        jbAsn1.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewSignature.this);
+                asn1DumpPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewSignature.this);
+            }
+        });
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -574,18 +574,16 @@ public class DViewSignature extends JEscDialog {
         }
     }
 
-//    private void asn1DumpPressed() {
-//        // TODO JW - ASN.1 dump needs to be for the entire signature (PKCS #7 structure)
-//        X509Certificate cert = getSelectedSignerInfo();
-//
-//        try {
-//            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, cert);
-//            dViewAsn1Dump.setLocationRelativeTo(this);
-//            dViewAsn1Dump.setVisible(true);
-//        } catch (Asn1Exception | IOException e) {
-//            DError.displayError(this, e);
-//        }
-//    }
+    private void asn1DumpPressed() {
+        // TODO JW - Should this show only the ASN.1 for the selected signer?
+        try {
+            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, signedData);
+            dViewAsn1Dump.setLocationRelativeTo(this);
+            dViewAsn1Dump.setVisible(true);
+        } catch (Asn1Exception | IOException e) {
+            DError.displayError(this, e);
+        }
+    }
 
     private void okPressed() {
         // TODO JW - set any preferences here (e.g., chosen fingerprint algorithm)
