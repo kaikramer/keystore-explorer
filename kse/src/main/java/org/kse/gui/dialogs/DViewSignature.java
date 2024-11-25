@@ -321,16 +321,16 @@ public class DViewSignature extends JEscDialog {
 //                CursorUtil.setCursorFree(DViewSignature.this);
 //            }
 //        });
-//
-//        jbPem.addActionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                pemEncodingPressed();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
-//
+
+        jbPem.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewSignature.this);
+                pemEncodingPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewSignature.this);
+            }
+        });
+
 //        jbAsn1.addActionListener(evt -> {
 //            try {
 //                CursorUtil.setCursorBusy(DViewSignature.this);
@@ -563,20 +563,17 @@ public class DViewSignature extends JEscDialog {
 //        dViewExtensions.setLocationRelativeTo(this);
 //        dViewExtensions.setVisible(true);
 //    }
-//
-//    private void pemEncodingPressed() {
-//        // TODO JW - PEM encoding needs to be for the entire signature (PKCS #7 structure)
-//        X509Certificate cert = getSelectedSignerInfo();
-//
-//        try {
-//            DViewPem dViewCertPem = new DViewPem(this, res.getString("DViewCertificate.Pem.Title"), cert);
-//            dViewCertPem.setLocationRelativeTo(this);
-//            dViewCertPem.setVisible(true);
-//        } catch (CryptoException e) {
-//            DError.displayError(this, e);
-//        }
-//    }
-//
+
+    private void pemEncodingPressed() {
+        try {
+            DViewPem dViewCertPem = new DViewPem(this, res.getString("DViewSignature.Pem.Title"), signedData);
+            dViewCertPem.setLocationRelativeTo(this);
+            dViewCertPem.setVisible(true);
+        } catch (CryptoException e) {
+            DError.displayError(this, e);
+        }
+    }
+
 //    private void asn1DumpPressed() {
 //        // TODO JW - ASN.1 dump needs to be for the entire signature (PKCS #7 structure)
 //        X509Certificate cert = getSelectedSignerInfo();
