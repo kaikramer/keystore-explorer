@@ -76,6 +76,7 @@ import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -408,13 +409,7 @@ public class DViewSignature extends JEscDialog {
                     try {
                         // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
                         signerInfo.verify(new JcaSimpleSignerInfoVerifierBuilder().build(certHolder));
-                    } catch (OperatorCreationException e) {
-                        // TODO JW Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (CMSException e) {
-                        // TODO JW Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (CertificateException e) {
+                    } catch (OperatorCreationException | CMSException | CertificateException e) {
                         // TODO JW Auto-generated catch block
                         e.printStackTrace();
                     }
@@ -423,24 +418,26 @@ public class DViewSignature extends JEscDialog {
                 // TODO JW - Need to check for null certificate
 
                 // TODO JW - Make the signing time extraction logic a utility method.
-                Attribute signingTimeAttribute = signerInfo.getSignedAttributes().get(CMSAttributes.signingTime);
-                if (signingTimeAttribute != null) {
-                    Enumeration<?> e = signingTimeAttribute.getAttrValues().getObjects();
-                    if (e.hasMoreElements()) {
-                        Object o = e.nextElement();
-                        try {
-                            if (o instanceof ASN1UTCTime) {
-                                signingTime = ((ASN1UTCTime) o).getAdjustedDate();
-                            } else if (o instanceof ASN1GeneralizedTime) {
-                                signingTime = ((ASN1GeneralizedTime) o).getDate();
+                AttributeTable signedAttributes = signerInfo.getSignedAttributes();
+                if (signedAttributes != null) {
+                    Attribute signingTimeAttribute = signedAttributes.get(CMSAttributes.signingTime);
+                    if (signingTimeAttribute != null) {
+                        Enumeration<?> e = signingTimeAttribute.getAttrValues().getObjects();
+                        if (e.hasMoreElements()) {
+                            Object o = e.nextElement();
+                            try {
+                                if (o instanceof ASN1UTCTime) {
+                                    signingTime = ((ASN1UTCTime) o).getAdjustedDate();
+                                } else if (o instanceof ASN1GeneralizedTime) {
+                                    signingTime = ((ASN1GeneralizedTime) o).getDate();
+                                }
+                            } catch (ParseException e1) {
+                                // TODO JW Auto-generated catch block
+                                e1.printStackTrace();
                             }
-                        } catch (ParseException e1) {
-                            // TODO JW Auto-generated catch block
-                            e1.printStackTrace();
                         }
                     }
                 }
-                
 
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
@@ -449,7 +446,10 @@ public class DViewSignature extends JEscDialog {
 
                 jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
 
-                jtfSigningTime.setText(StringUtils.formatDate(signingTime));
+                // TODO JW - What to do if the signature doesn't have a signing time?
+                if (signingTime != null) {
+                    jtfSigningTime.setText(StringUtils.formatDate(signingTime));
+                }
 
 //                if (noLongerValid) {
 //                    jtfSigningTime.setText(
@@ -565,7 +565,7 @@ public class DViewSignature extends JEscDialog {
 //    }
 //
 //    private void pemEncodingPressed() {
-//        TODO JW - PEM encoding needs to be for the entire signature (PKCS #7 structure)
+//        // TODO JW - PEM encoding needs to be for the entire signature (PKCS #7 structure)
 //        X509Certificate cert = getSelectedSignerInfo();
 //
 //        try {
@@ -578,7 +578,7 @@ public class DViewSignature extends JEscDialog {
 //    }
 //
 //    private void asn1DumpPressed() {
-//        TODO JW - ASN.1 dump needs to be for the entire signature (PKCS #7 structure)
+//        // TODO JW - ASN.1 dump needs to be for the entire signature (PKCS #7 structure)
 //        X509Certificate cert = getSelectedSignerInfo();
 //
 //        try {
