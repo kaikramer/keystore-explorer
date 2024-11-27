@@ -95,6 +95,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
@@ -396,48 +397,16 @@ public class DViewSignature extends JEscDialog {
             jbAsn1.setEnabled(true);
 
             try {
-                Date signingTime = null;
+                Date signingTime = CmsUtil.getSigningTime(signerInfo);
                 X509Certificate cert = null;
 
                 @SuppressWarnings("unchecked") // SignerId does not specify a type when extending Selector<T>
                 Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates()
                         .getMatches(signerInfo.getSID());
-                // TODO JW - What to do when there isn't a matched certificate?
-                // A matched certificate is needed for content digest
                 if (!matchedCerts.isEmpty()) {
-                    X509CertificateHolder certHolder = matchedCerts.iterator().next();
-                    try {
-                        // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
-                        signerInfo.verify(new JcaSimpleSignerInfoVerifierBuilder().build(certHolder));
-                    } catch (OperatorCreationException | CMSException | CertificateException e) {
-                        // TODO JW Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    cert = X509CertUtil.convertCertificate(certHolder);
+                    cert = X509CertUtil.convertCertificate(matchedCerts.iterator().next());
                 }
                 // TODO JW - Need to check for null certificate
-
-                // TODO JW - Make the signing time extraction logic a utility method.
-                AttributeTable signedAttributes = signerInfo.getSignedAttributes();
-                if (signedAttributes != null) {
-                    Attribute signingTimeAttribute = signedAttributes.get(CMSAttributes.signingTime);
-                    if (signingTimeAttribute != null) {
-                        Enumeration<?> e = signingTimeAttribute.getAttrValues().getObjects();
-                        if (e.hasMoreElements()) {
-                            Object o = e.nextElement();
-                            try {
-                                if (o instanceof ASN1UTCTime) {
-                                    signingTime = ((ASN1UTCTime) o).getAdjustedDate();
-                                } else if (o instanceof ASN1GeneralizedTime) {
-                                    signingTime = ((ASN1GeneralizedTime) o).getDate();
-                                }
-                            } catch (ParseException e1) {
-                                // TODO JW Auto-generated catch block
-                                e1.printStackTrace();
-                            }
-                        }
-                    }
-                }
 
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
@@ -472,6 +441,7 @@ public class DViewSignature extends JEscDialog {
                 jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
                 jtfContentType.setCaretPosition(0);
 
+                // TODO JW - digest is only available after verify is called.
                 jtfContentDigest.setText(HexUtil.getHexStringWithSep(signerInfo.getContentDigest(), ':'));
                 jtfContentDigest.setCaretPosition(0);
 
@@ -593,40 +563,6 @@ public class DViewSignature extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
-    }
-
-    private class X509CertificateComparator implements Comparator<X509Certificate> {
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(X509Certificate cert1, X509Certificate cert2) {
-
-            // Compare certificates for equality. Where all we care about is if
-            // the certificates are equal or not - the order is unimportant
-            if (cert1.equals(cert2)) {
-                return 0;
-            }
-
-            // Compare on subject DN
-            int i = cert1.getSubjectX500Principal().toString().compareTo(cert2.getSubjectX500Principal().toString());
-
-            if (i != 0) {
-                return i;
-            }
-
-            // Compare on issuer DN
-            i = cert1.getIssuerX500Principal().toString().compareTo(cert2.getIssuerX500Principal().toString());
-
-            if (i != 0) {
-                return i;
-            }
-
-            // If all else fails then compare serial numbers - if this is the
-            // same and the DNs are the same then it is probably the same certificate anyway
-            return cert1.getSerialNumber().subtract(cert2.getSerialNumber()).intValue();
-        }
     }
 
     public static void main(String[] args) throws Exception {

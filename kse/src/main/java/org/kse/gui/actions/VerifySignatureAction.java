@@ -217,11 +217,10 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 
             // TODO build Store using certs from the truststore. If a cert cannot be found
             // then the signature should not be trusted (even if valid)
-//            boolean verified = false;
-//            Store<X509CertificateHolder> certStore = signedData.getCertificates();
-//            printStore(certStore);
-//            SignerInformationStore signers = signedData.getSignerInfos();
-//            for (SignerInformation signer : signers.getSigners()) {
+            boolean verified = false;
+            Store<X509CertificateHolder> certStore = signedData.getCertificates();
+            SignerInformationStore signers = signedData.getSignerInfos();
+            for (SignerInformation signer : signers.getSigners()) {
 //                AttributeTable signedAttributes = signer.getSignedAttributes();
 //                AttributeTable unsignedAttributes = signer.getUnsignedAttributes();
 //
@@ -238,14 +237,16 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 //                    }
 //                }
 //
-//                Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
-//                for (X509CertificateHolder cert : matchedCerts) {
-//                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-//                        System.out.println("Verified by: " + cert.getSubject());
-//                        verified = true;
-//                    }
-//                }
-//            }
+                @SuppressWarnings("unchecked") // SignerId does not specify a type when extending Selector<T>
+                Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
+                for (X509CertificateHolder cert : matchedCerts) {
+                    // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
+                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+                        System.out.println("Verified by: " + cert.getSubject());
+                        verified = true;
+                    }
+                }
+            }
 //            System.out.println("Verified: " + verified);
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
@@ -275,26 +276,6 @@ Signers:
                                           JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-        }
-    }
-
-    private static <T> void printStore(Store<T> store) {
-        for (T obj : store.getMatches(new Selector<T>() {
-            @Override
-            public Object clone() {
-                return null;
-            }
-
-            @Override
-            public boolean match(T obj) {
-                return true;
-            }
-        })) {
-            if (obj instanceof X509CertificateHolder) {
-                System.out.println(((X509CertificateHolder) obj).getSubject());
-            } else {
-                System.out.println(obj);
-            }
         }
     }
 
@@ -383,8 +364,7 @@ Signers:
             JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                   res.getString("KeyStoreExplorerAction.NoReadFile.message"),
                                                   signatureFile),
-                                          // TODO JW - Create a new resource for open signature.
-                                          res.getString("KeyStoreExplorerAction.OpenCertificate.Title"),
+                                          res.getString("KeyStoreExplorerAction.OpenSignature.Title"),
                                           JOptionPane.WARNING_MESSAGE);
             return null;
         }

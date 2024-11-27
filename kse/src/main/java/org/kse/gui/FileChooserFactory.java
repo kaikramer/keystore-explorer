@@ -73,6 +73,8 @@ public class FileChooserFactory {
     public static final String LIB_DYLIB_EXT = "dylib";
     public static final String PEM_EXT = "pem";
     public static final String JWK_EXT = "json";
+    public static final String CMS_EXT_1 = "p7s";
+    public static final String CMS_EXT_2 = "p7m";
     public static final String SIG_EXT = "sig";
 
     private static final String KEYSTORE_FILE_DESC =
@@ -132,6 +134,9 @@ public class FileChooserFactory {
             format(res.getString("FileChooserFactory.LibDylibFiles"), LIB_DYLIB_EXT);
 
     private static final String PEM_FILE_DESC = format(res.getString("FileChooserFactory.PemFiles"), PEM_EXT);
+
+    private static final String CMS_FILE_DESC =
+            format(res.getString("FileChooserFactory.CmsSigFiles"), CMS_EXT_1, CMS_EXT_2);
 
     private static final String SIG_FILE_DESC =
             format(res.getString("FileChooserFactory.SignatureFiles"), SIG_EXT);
@@ -436,7 +441,8 @@ public class FileChooserFactory {
      */
     public static JFileChooser getSignatureFileChooser() {
         JFileChooser chooser = getFileChooser();
-        chooser.setFileFilter(new FileNameExtensionFilter(SIG_FILE_DESC, SIG_EXT));
+        chooser.setFileFilter(new FileNameExtensionFilter(CMS_FILE_DESC, CMS_EXT_1, CMS_EXT_2));
+        chooser.addChoosableFileFilter(new FileNameExtensionFilter(SIG_FILE_DESC, SIG_EXT));
         return chooser;
     }
 
