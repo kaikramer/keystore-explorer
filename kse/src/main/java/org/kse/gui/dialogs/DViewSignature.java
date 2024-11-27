@@ -496,11 +496,6 @@ public class DViewSignature extends JEscDialog {
         try {
             List<X509Certificate> certs = X509CertUtil.convertCertificateHolders(
                     signedData.getCertificates().getMatches(new SelectAll<X509CertificateHolder>()));
-//            JcaX509CertificateConverter converter = new JcaX509CertificateConverter();
-//            for (X509CertificateHolder certHolder : signedData.getCertificates()
-//                    .getMatches(new SelectAll<X509CertificateHolder>())) {
-//                certs.add(converter.getCertificate(certHolder));
-//            }
             DViewCertificate dViewCertificates = new DViewCertificate(this,
                     res.getString("DViewSignature.Certificates.Title"), certs.toArray(X509Certificate[]::new), kseFrame,
                     DViewCertificate.NONE);
