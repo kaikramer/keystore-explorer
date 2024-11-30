@@ -141,6 +141,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 //                }
 //            }
 
+            // TODO JW - Remove these?
             KeyStoreState currentState = history.getCurrentState();
             KeyStore keyStore = currentState.getKeyStore();
 
@@ -149,13 +150,33 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                 return;
             }
 
-            int extensionIndex = signatureFile.getAbsolutePath().lastIndexOf('.');
-            if (extensionIndex < 0) {
-                // TODO JW - signature doesn't have a file extension
+            if (PemUtil.isPemFormat(signature)) {
+                PemInfo signaturePem = PemUtil.decode(signature);
+                if (signaturePem == null) {
+                    // TODO JW - What to throw if the signature is detected as PEM, but is not PEM?
+                    throw new CryptoException("Not a PEM file, but has PEM header!");
+                }
+                // TODO JW - Do we even want to check the type? Should we just let the BC CMS
+                // class bomb out?
+                if (!"CMS".equals(signaturePem.getType()) && !"PKCS7".equals(signaturePem.getType())) {
+                    // TODO JW - What to throw if the signature is not the correct type?
+                    throw new CryptoException("PEM is not of type CMS or PKCS7");
+                }
+                signature = signaturePem.getContent();
+            }
+            CMSSignedData signedData = new CMSSignedData(signature);
+
+            if (signedData.isCertificateManagementMessage()) {
+                // TODO JW - Display a message indicating that the file doesn't have any signatures.
                 return;
             }
-            String contentFileName = signatureFile.getAbsolutePath().substring(0, extensionIndex);
-            File contentFile = new File(contentFileName);
+
+            if (signedData.isDetachedSignature()) {
+                signedData = handleDetachedSignature(signature);
+                if (signedData == null) {
+                    return;
+                }
+            }
 
             // TODO JW - Add new option for using cacerts for signature verification.
             if (preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled()) {
@@ -199,23 +220,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             }
 
             // TODO JW - Verify the signature using the keystore
-            if (PemUtil.isPemFormat(signature)) {
-                PemInfo signaturePem = PemUtil.decode(signature);
-                if (signaturePem == null ) {
-                    // TODO JW - What to throw if the signature is detected as PEM, but is not PEM?
-                    throw new Exception("Not a PEM file, but has PEM header!");
-                }
-                // TODO JW - Do we even want to check the type? Should we just let the BC CMS class bomb out?
-                if (!"CMS".equals(signaturePem.getType()) && !"PKCS7".equals(signaturePem.getType())) {
-                    // TODO JW - What to throw if the signature is not the correct type?
-                    throw new Exception("PEM is not of type CMS or PKCS7");
-                }
-                signature = signaturePem.getContent();
-            }
-            CMSProcessable data = new CMSProcessableFile(contentFile);
-            CMSSignedData signedData = new CMSSignedData(data, signature);
-
-            // TODO build Store using certs from the truststore. If a cert cannot be found
+            // TODO JW build Store using certs from the truststore. If a cert cannot be found
             // then the signature should not be trusted (even if valid)
             boolean verified = false;
             Store<X509CertificateHolder> certStore = signedData.getCertificates();
@@ -247,7 +252,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                     }
                 }
             }
-//            System.out.println("Verified: " + verified);
+            System.out.println("Verified: " + verified);
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
@@ -277,6 +282,32 @@ Signers:
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
+    }
+
+    private CMSSignedData handleDetachedSignature(byte[] signature) throws CMSException {
+        // Look for the content file. if not present, prompt for it.
+        File contentFile = null;
+
+        // First try file name with signature extension stripped.
+        int extensionIndex = signatureFile.getAbsolutePath().lastIndexOf('.');
+        if (extensionIndex > 0) {
+            // Turn file_name.txt.p7s into file_name.txt
+            String contentFileName = signatureFile.getAbsolutePath().substring(0, extensionIndex);
+            contentFile = new File(contentFileName);
+            if (!contentFile.exists()) {
+                contentFile = null;
+            }
+        }
+
+        // No file - ask for one
+        if (contentFile == null) {
+            contentFile = chooseContentFile();
+            if (contentFile == null) {
+                return null;
+            }
+        }
+
+        return new CMSSignedData(new CMSProcessableFile(contentFile), signature);
     }
 
     private boolean isCA(X509Certificate cert) {
@@ -391,6 +422,22 @@ Signers:
         chooser.setDialogTitle(res.getString("VerifySignatureAction.ChooseSignature.Title"));
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("VerifySignatureAction.ChooseSignature.button"));
+
+        int rtnValue = chooser.showOpenDialog(frame);
+        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            File importFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(importFile);
+            return importFile;
+        }
+        return null;
+    }
+
+    private File chooseContentFile() {
+        JFileChooser chooser = FileChooserFactory.getNoFileChooser();
+        chooser.setCurrentDirectory(CurrentDirectory.get());
+        chooser.setDialogTitle(res.getString("VerifySignatureAction.ChooseContent.Title"));
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setApproveButtonText(res.getString("VerifySignatureAction.ChooseContent.button"));
 
         int rtnValue = chooser.showOpenDialog(frame);
         if (rtnValue == JFileChooser.APPROVE_OPTION) {
