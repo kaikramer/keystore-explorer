@@ -96,8 +96,6 @@ public class DSignFile extends JEscDialog {
     private JCheckBox jcbDetachedSignature;
     private JLabel jlSignatureAlgorithm;
     private JComboBox<SignatureType> jcbSignatureAlgorithm;
-    private JLabel jlDigestAlgorithm;
-    private JComboBox<DigestType> jcbDigestAlgorithm;
     private JLabel jlAddTimestamp;
     private JCheckBox jcbAddTimestamp;
     private JLabel jlTimestampServerUrl;
@@ -111,8 +109,8 @@ public class DSignFile extends JEscDialog {
     private File inputFile;
     // TODO JW - get rid of outputFile. It will be set automatically.
     private File outputFile;
+    private boolean detachedSignature;
     private SignatureType signatureType;
-    private DigestType digestType;
     private String tsaUrl;
     private boolean successStatus = true;
 
@@ -162,11 +160,6 @@ public class DSignFile extends JEscDialog {
         DialogHelper.populateSigAlgs(signKeyPairType, this.signPrivateKey, jcbSignatureAlgorithm);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignFile.jcbSignatureAlgorithm.tooltip"));
 
-        jlDigestAlgorithm = new JLabel(res.getString("DSignFile.jlDigestAlgorithm.text"));
-        jcbDigestAlgorithm = new JComboBox<>();
-        populateDigestAlgs();
-        jcbDigestAlgorithm.setToolTipText(res.getString("DSignFile.jcbDigestAlgorithm.tooltip"));
-
         jlAddTimestamp = new JLabel(res.getString("DSignFile.jlAddTimestamp.text"));
         jcbAddTimestamp = new JCheckBox();
         jcbAddTimestamp.setSelected(false);
@@ -190,17 +183,12 @@ public class DSignFile extends JEscDialog {
         // layout
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
-        MiGUtil.addSeparator(pane, res.getString("DSignFile.jlFiles.text"));
         pane.add(jlInputFile, "skip");
         pane.add(jpInputFile, "wrap");
         pane.add(jlDetachedSignature, "skip");
         pane.add(jcbDetachedSignature, "wrap");
-        MiGUtil.addSeparator(pane, res.getString("DSignFile.jlSignature.text"));
         pane.add(jlSignatureAlgorithm, "skip");
         pane.add(jcbSignatureAlgorithm, "sgx, wrap");
-        pane.add(jlDigestAlgorithm, "skip");
-        pane.add(jcbDigestAlgorithm, "sgx, wrap para");
-        MiGUtil.addSeparator(pane, res.getString("DSignFile.jlTimestamp.text"));
         pane.add(jlAddTimestamp, "skip");
         pane.add(jcbAddTimestamp, "wrap");
         pane.add(jlTimestampServerUrl, "skip");
@@ -257,21 +245,6 @@ public class DSignFile extends JEscDialog {
     }
 
     /**
-     * Populate combination box with items
-     */
-    private void populateDigestAlgs() {
-        jcbDigestAlgorithm.removeAllItems();
-
-        jcbDigestAlgorithm.addItem(DigestType.SHA1);
-        jcbDigestAlgorithm.addItem(DigestType.SHA224);
-        jcbDigestAlgorithm.addItem(DigestType.SHA256);
-        jcbDigestAlgorithm.addItem(DigestType.SHA384);
-        jcbDigestAlgorithm.addItem(DigestType.SHA512);
-
-        jcbDigestAlgorithm.setSelectedItem(DigestType.SHA256);
-    }
-
-    /**
      * Get chosen input file.
      *
      * @return <b>File</b> input file
@@ -290,21 +263,21 @@ public class DSignFile extends JEscDialog {
     }
 
     /**
+     * Get the chosen detached signature setting
+     * 
+     * @return <b>boolean</b> detached signature setting
+     */
+    public boolean isDetachedSignature() {
+        return detachedSignature;
+    }
+
+    /**
      * Get chosen signature type.
      *
      * @return <b>SignatureType</b> or null if dialog cancelled
      */
     public SignatureType getSignatureType() {
         return signatureType;
-    }
-
-    /**
-     * Get chosen digest type.
-     *
-     * @return <b>DigestType</b> or null if dialog cancelled
-     */
-    public DigestType getDigestType() {
-        return digestType;
     }
 
     /**
@@ -339,17 +312,14 @@ public class DSignFile extends JEscDialog {
         }
 
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
-        digestType = (DigestType) jcbDigestAlgorithm.getSelectedItem();
+        detachedSignature = jcbDetachedSignature.isSelected();
 
         // check add time stamp is selected and assign value
         if (jcbAddTimestamp.isSelected()) {
             tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
         }
 
-//        // set output Jar files and Overwrite File if selected
-//        if (!setOutputJarFiles(inputJarFiles)) {
-//            return;
-//        }
+        outputFile = new File(inputFile.getAbsolutePath() + (detachedSignature ? ".p7s" : ".p7m"));
 
         closeDialog();
     }

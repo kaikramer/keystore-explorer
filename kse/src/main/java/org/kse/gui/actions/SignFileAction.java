@@ -21,18 +21,31 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSProcessableFile;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.kse.KSE;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -101,9 +114,6 @@ public class SignFileAction extends KeyStoreExplorerAction {
             // set the key pair type
             KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-            // set the signer
-            String signer = KSE.getFullApplicationName();
-
             // get the jars, signatures, and time stamp
             DSignFile dSignFile = new DSignFile(frame, privateKey, keyPairType, alias);
             dSignFile.setLocationRelativeTo(frame);
@@ -114,11 +124,15 @@ public class SignFileAction extends KeyStoreExplorerAction {
                 return;
             }
 
+            // TODO JW - When using RSA and MFG1, the MFG1 is not displayed when viewing the signature.
+            boolean detachedSignature = dSignFile.isDetachedSignature();
             SignatureType signatureType = dSignFile.getSignatureType();
             File inputFile = dSignFile.getInputFile();
             File outputFile = dSignFile.getOutputFile();
             String tsaUrl = dSignFile.getTimestampingServerUrl();
-            DigestType digestType = dSignFile.getDigestType();
+
+            // TODO JW - What if the dialog is cancelled?
+            sign(inputFile, outputFile, privateKey, certs, detachedSignature, signatureType, tsaUrl, provider);
 
             // start jar signing process
 //            DSignJarSigning dSignJarSigning = new DSignJarSigning(frame, inputJarFile, outputJarFile, privateKey, certs,
@@ -165,6 +179,31 @@ public class SignFileAction extends KeyStoreExplorerAction {
 
         } catch (Exception ex) {
             DError.displayError(frame, ex);
+        }
+    }
+
+    public static void sign(File inputFile, File outputFile, PrivateKey privateKey, X509Certificate[] certificateChain,
+            boolean detachedSignature, SignatureType signatureType, String tsaUrl, Provider provider)
+            throws CryptoException {
+        try {
+            CMSTypedData msg = new CMSProcessableFile(inputFile);
+
+            CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
+            ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
+            generator.addSignerInfoGenerator(
+                    new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().build())
+                            .build(contentSigner, certificateChain[0]));
+            generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
+
+            CMSSignedData sig = generator.generate(msg, !detachedSignature);
+
+            try (OutputStream os = new FileOutputStream(outputFile)) {
+                os.write(sig.getEncoded());
+            }
+        }
+        catch (Exception e) {
+            // TODO JW - Create exception message
+            throw new CryptoException("TODO");
         }
     }
 }
