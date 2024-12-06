@@ -34,6 +34,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
 import java.security.cert.CertPath;
@@ -64,6 +65,10 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.ExtensionsGenerator;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.CertificateID;
 import org.bouncycastle.cert.ocsp.CertificateStatus;
@@ -79,6 +84,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.ocsp.OcspDigestAlgorithm;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DVerifyCertificate;
@@ -144,7 +150,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
                     } else if (verifyOptions == VerifyOptions.OCSP_AIA) {
                         verifyStatusOCSP(keyStoreHistory, alias);
                     } else if (verifyOptions == VerifyOptions.OCSP_URL) {
-                        verifyStatusOcspUrl(keyStoreHistory, alias, dVerifyCertificate.getOcspUrl());
+                        verifyStatusOcspUrl(keyStoreHistory, alias, dVerifyCertificate.getOcspUrl(), dVerifyCertificate.getOcspDigestAlgorithm(), dVerifyCertificate.isOcspIncludeNonceSelected());
                     } else {
                         verifyChain(keyStoreHistory, alias);
                     }
@@ -181,7 +187,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         }
     }
 
-    private void verifyStatusOcspUrl(KeyStoreHistory keyStoreHistory, String alias, String ocspUrl)
+    private void verifyStatusOcspUrl(KeyStoreHistory keyStoreHistory, String alias, String ocspUrl, OcspDigestAlgorithm ocspDigestAlgorithm, boolean ocspIncludeNonce)
             throws OperatorCreationException, OCSPException, IOException, HeadlessException, CertPathValidatorException,
                    KeyStoreException, NoSuchAlgorithmException, CertificateException,
                    InvalidAlgorithmParameterException, IllegalStateException, CryptoException {
@@ -210,7 +216,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             if (issuer == null) {
                 throw new CertPathValidatorException(res.getString("VerifyCertificateAction.trustStoreEmpty.message"));
             }
-            OCSPReq request = makeOcspRequest(issuer, certificateEval);
+            OCSPReq request = makeOcspRequest(issuer, certificateEval, ocspDigestAlgorithm.algorithmIdentifier(), ocspIncludeNonce);
             OCSPResp response = requestOCSPResponse(ocspUrl, request);
             if (isGoodCertificate(response)) {
                 JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
@@ -221,16 +227,23 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         }
     }
 
-    private static OCSPReq makeOcspRequest(X509Certificate caCert, X509Certificate certToCheck)
-            throws OCSPException, OperatorCreationException, CertificateEncodingException {
+    private static OCSPReq makeOcspRequest(X509Certificate caCert, X509Certificate certToCheck, AlgorithmIdentifier digestAlgorithm, boolean includeNonce)
+            throws IOException, OCSPException, OperatorCreationException, CertificateEncodingException {
         DigestCalculatorProvider digCalcProv = new JcaDigestCalculatorProviderBuilder().setProvider(KSE.BC)
                                                                                        .build();
 
-        CertificateID certId = new JcaCertificateID(digCalcProv.get(CertificateID.HASH_SHA1), caCert,
+        CertificateID certId = new JcaCertificateID(digCalcProv.get(digestAlgorithm), caCert,
                                                     certToCheck.getSerialNumber());
 
         OCSPReqBuilder gen = new OCSPReqBuilder();
         gen.addRequest(certId);
+        if (includeNonce) {
+            byte[] nonce = new byte[16];
+            new SecureRandom().nextBytes(nonce);
+            ExtensionsGenerator extGen = new ExtensionsGenerator();
+            extGen.addExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false, new DEROctetString(nonce));
+            gen.setRequestExtensions(extGen.generate());
+        }
         return gen.build();
     }
 
