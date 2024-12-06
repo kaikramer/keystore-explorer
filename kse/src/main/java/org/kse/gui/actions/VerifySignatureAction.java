@@ -83,10 +83,12 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
@@ -242,13 +244,24 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 //                    }
 //                }
 //
-                @SuppressWarnings("unchecked") // SignerId does not specify a type when extending Selector<T>
+                // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
                 Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
-                for (X509CertificateHolder cert : matchedCerts) {
+                if (!matchedCerts.isEmpty()) {
+                    X509CertificateHolder cert = matchedCerts.iterator().next();
                     // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
                     if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
                         System.out.println("Verified by: " + cert.getSubject());
                         verified = true;
+
+                        TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
+                        if (tspToken != null) {
+                            matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
+                            if (!matchedCerts.isEmpty()) {
+                                cert = matchedCerts.iterator().next();
+                                tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
+                                System.out.println("Time stamped by: " + cert.getSubject());
+                            }
+                        }
                     }
                 }
             }

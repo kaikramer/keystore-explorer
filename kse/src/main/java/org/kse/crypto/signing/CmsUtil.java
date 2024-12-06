@@ -29,12 +29,20 @@ import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampToken;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
+/**
+ * Provides utility methods relating to Cryptographic Message Syntax (CMS).
+ */
 public class CmsUtil {
     private static final String CMS_PEM_TYPE = "CMS";
     private static final String PKCS7_PEM_TYPE = "PKCS7";
@@ -90,5 +98,53 @@ public class CmsUtil {
             }
         }
         return signingTime;
+    }
+
+    /**
+     * Extracts the time stamp token, if present, from the signature's unsigned attributes.
+     *
+     * @param signerInfo The signer information.
+     * @return The time stamp token as TimeStampToken, if present, else null.
+     */
+    public static TimeStampToken getTimeStampToken(SignerInformation signerInfo) throws CryptoException
+    {
+        TimeStampToken timeStampToken = null;
+        AttributeTable unsignedAttributes = signerInfo.getUnsignedAttributes();
+        if (unsignedAttributes != null) {
+            Attribute tsTokenAttribute = unsignedAttributes.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
+            if (tsTokenAttribute != null) {
+                try {
+                    timeStampToken = new TimeStampToken(ContentInfo.getInstance(tsTokenAttribute.getAttributeValues()[0]));
+                } catch (TSPException | IOException e) {
+                    // TODO JW Auto-generated catch block
+                    throw new CryptoException(e);
+                }
+            }
+        }
+        return timeStampToken;
+    }
+
+    /**
+     * Extracts the time stamp token, if present, from the signature's unsigned attributes.
+     *
+     * @param signerInfo The signer information.
+     * @return The time stamp token as CMSSignedData, if present, else null.
+     */
+    public static CMSSignedData getTimeStampSignature(SignerInformation signerInfo) throws CryptoException
+    {
+        CMSSignedData timeStampToken = null;
+        AttributeTable unsignedAttributes = signerInfo.getUnsignedAttributes();
+        if (unsignedAttributes != null) {
+            Attribute tsTokenAttribute = unsignedAttributes.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
+            if (tsTokenAttribute != null) {
+                try {
+                    timeStampToken = new CMSSignedData(ContentInfo.getInstance(tsTokenAttribute.getAttributeValues()[0]));
+                } catch (CMSException e) {
+                    // TODO JW Auto-generated catch block
+                    throw new CryptoException(e);
+                }
+            }
+        }
+        return timeStampToken;
     }
 }

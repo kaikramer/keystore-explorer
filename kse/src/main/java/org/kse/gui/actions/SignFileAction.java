@@ -34,21 +34,30 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.cms.Attribute;
+import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampToken;
 import org.kse.KSE;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -195,10 +204,14 @@ public class SignFileAction extends KeyStoreExplorerAction {
                             .build(contentSigner, certificateChain[0]));
             generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
 
-            CMSSignedData sig = generator.generate(msg, !detachedSignature);
+            CMSSignedData signedData = generator.generate(msg, !detachedSignature);
+
+            if (tsaUrl != null) {
+                signedData = JarSigner.addTimestamp(tsaUrl, signedData);
+            }
 
             try (OutputStream os = new FileOutputStream(outputFile)) {
-                os.write(sig.getEncoded());
+                os.write(signedData.getEncoded());
             }
         }
         catch (Exception e) {
