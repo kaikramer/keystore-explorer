@@ -49,6 +49,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.kse.crypto.ocsp.OcspDigestAlgorithm;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
@@ -99,6 +100,9 @@ public class DVerifyCertificate extends JEscDialog {
     private JComboBox<KeyStoreHistory> jcbKeyStore;
     private JButton jbLoadKeystore;
 
+    private JComboBox<OcspDigestAlgorithm> jcbOcspDigestAlgorithm;
+    private JCheckBox jcbOcspIncludeNonce;
+
     private boolean verifySelected = false;
     private VerifyOptions verifyOption = VerifyOptions.CRL_DIST;
     private String fileCrl;
@@ -147,6 +151,14 @@ public class DVerifyCertificate extends JEscDialog {
         jtfOcspUrl.setEditable(false);
         jtfOcspUrl.setToolTipText(res.getString("DVerifyCertificate.jtfOcspUrl.tooltip"));
 
+        jcbOcspDigestAlgorithm = new JComboBox<>(new DefaultComboBoxModel<>(OcspDigestAlgorithm.values()));
+        jcbOcspDigestAlgorithm.setToolTipText(res.getString("DVerifyCertificate.jcbOcspDigestAlgorithm.tooltip"));
+        jcbOcspDigestAlgorithm.setEnabled(false);
+
+        jcbOcspIncludeNonce = new JCheckBox(res.getString("DVerifyCertificate.jcbOcspIncludeNonce.text"));
+        jcbOcspIncludeNonce.setToolTipText(res.getString("DVerifyCertificate.jcbOcspIncludeNonce.tooltip"));
+        jcbOcspIncludeNonce.setEnabled(false);
+
         jrbChainCheck = new JRadioButton(res.getString("DVerifyCertificate.jrbChainCheck.text"));
         jrbChainCheck.setToolTipText(res.getString("DVerifyCertificate.jrbChainCheck.tooltip"));
 
@@ -181,8 +193,11 @@ public class DVerifyCertificate extends JEscDialog {
         pane.add(jtfCrlFile, "growx");
         pane.add(jbLoadCrl, "wrap");
         pane.add(jrbOcspAiaCheck, "gapleft indent, wrap");
-        pane.add(jrbOcspUrlCheck, "gapleft indent, split 2");
-        pane.add(jtfOcspUrl, "growx, wrap, left");
+        pane.add(jrbOcspUrlCheck, "gapleft indent, split 3");
+        pane.add(jtfOcspUrl, "growx, left, wrap");
+        pane.add(new JLabel(res.getString("DVerifyCertificate.jlOcspDigestAlgorithm.text")), "gapleft indent, split 3, right");
+        pane.add(jcbOcspDigestAlgorithm, "right");
+        pane.add(jcbOcspIncludeNonce, "right, wrap");
         pane.add(jrbChainCheck, "gapleft indent, spanx, wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jcbSelectKeyStore, "left, spanx, wrap");
@@ -268,6 +283,13 @@ public class DVerifyCertificate extends JEscDialog {
         } else {
             jcbKeyStore.setEnabled(false);
             jbLoadKeystore.setEnabled(false);
+        }
+        if (jrbOcspUrlCheck.isSelected()) {
+            jcbOcspDigestAlgorithm.setEnabled(true);
+            jcbOcspIncludeNonce.setEnabled(true);
+        } else {
+            jcbOcspDigestAlgorithm.setEnabled(false);
+            jcbOcspIncludeNonce.setEnabled(false);
         }
     }
 
@@ -365,6 +387,14 @@ public class DVerifyCertificate extends JEscDialog {
         }
 
         return new DefaultComboBoxModel<>(keyStoreHistories);
+    }
+
+    public OcspDigestAlgorithm getOcspDigestAlgorithm() {
+        return (OcspDigestAlgorithm) jcbOcspDigestAlgorithm.getSelectedItem();
+    }
+
+    public boolean isOcspIncludeNonceSelected() {
+        return jcbOcspIncludeNonce.isSelected();
     }
 
     public static void main(String[] args) throws Exception {
