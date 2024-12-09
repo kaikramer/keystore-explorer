@@ -19,10 +19,13 @@
  */
 package org.kse.crypto.signing;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.function.Supplier;
 
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1UTCTime;
@@ -32,6 +35,7 @@ import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.tsp.TSPException;
@@ -48,6 +52,71 @@ public class CmsUtil {
     private static final String PKCS7_PEM_TYPE = "PKCS7";
 
     private CmsUtil() {
+    }
+
+    public static CMSSignedData loadSignature(File signatureFile, Supplier<File> chooser)
+            throws IOException, CryptoException, CMSException {
+
+        // TODO JW - What if the file cannot be opened?
+        byte[] signature = Files.readAllBytes(signatureFile.toPath());
+
+        if (PemUtil.isPemFormat(signature)) {
+            PemInfo signaturePem = PemUtil.decode(signature);
+            if (signaturePem == null) {
+                // TODO JW - What to throw if the signature is detected as PEM, but is not PEM?
+                throw new CryptoException("Not a PEM file, but has PEM header!");
+            }
+            // TODO JW - Do we even want to check the type? Should we just let the BC CMS
+            // class bomb out?
+            if (!"CMS".equals(signaturePem.getType()) && !"PKCS7".equals(signaturePem.getType())) {
+                // TODO JW - What to throw if the signature is not the correct type?
+                throw new CryptoException("PEM is not of type CMS or PKCS7");
+            }
+            signature = signaturePem.getContent();
+        }
+        CMSSignedData signedData = new CMSSignedData(signature);
+
+        if (signedData.isCertificateManagementMessage()) {
+            // TODO JW - Display a message indicating that the file doesn't have any
+            // signatures.
+            return null;
+        }
+
+        if (signedData.isDetachedSignature()) {
+            CMSProcessableFile content = loadDetachedContent(signatureFile, chooser);
+            if (content == null) {
+                return null;
+            }
+            signedData = new CMSSignedData(content, signature);
+        }
+        return signedData;
+    }
+
+    private static CMSProcessableFile loadDetachedContent(File signatureFile, Supplier<File> chooser)
+            throws CMSException {
+        // Look for the content file. if not present, prompt for it.
+        File contentFile = null;
+
+        // First try file name with signature extension stripped.
+        int extensionIndex = signatureFile.getAbsolutePath().lastIndexOf('.');
+        if (extensionIndex > 0) {
+            // Turn file_name.txt.p7s into file_name.txt
+            String contentFileName = signatureFile.getAbsolutePath().substring(0, extensionIndex);
+            contentFile = new File(contentFileName);
+            if (!contentFile.exists()) {
+                contentFile = null;
+            }
+        }
+
+        // No file - ask for one (if choose is available)
+        if (contentFile == null && chooser != null) {
+            contentFile = chooser.get();
+            if (contentFile == null) {
+                return null;
+            }
+        }
+
+        return new CMSProcessableFile(contentFile);
     }
 
     /**

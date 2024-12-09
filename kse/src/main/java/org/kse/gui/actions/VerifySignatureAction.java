@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -62,6 +63,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -109,7 +111,6 @@ import org.kse.utilities.pem.PemUtil;
 
 public class VerifySignatureAction extends AuthorityCertificatesAction {
     private static final long serialVersionUID = 1L;
-    private File signatureFile;
 
     public VerifySignatureAction(KseFrame kseFrame) {
         super(kseFrame);
@@ -147,38 +148,13 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             KeyStoreState currentState = history.getCurrentState();
             KeyStore keyStore = currentState.getKeyStore();
 
-            byte[] signature = showFileSelectionDialog();
-            if (signature == null) {
+            File signatureFile = showFileSelectionDialog();
+            if (signatureFile == null) {
                 return;
             }
 
-            if (PemUtil.isPemFormat(signature)) {
-                PemInfo signaturePem = PemUtil.decode(signature);
-                if (signaturePem == null) {
-                    // TODO JW - What to throw if the signature is detected as PEM, but is not PEM?
-                    throw new CryptoException("Not a PEM file, but has PEM header!");
-                }
-                // TODO JW - Do we even want to check the type? Should we just let the BC CMS
-                // class bomb out?
-                if (!"CMS".equals(signaturePem.getType()) && !"PKCS7".equals(signaturePem.getType())) {
-                    // TODO JW - What to throw if the signature is not the correct type?
-                    throw new CryptoException("PEM is not of type CMS or PKCS7");
-                }
-                signature = signaturePem.getContent();
-            }
-            CMSSignedData signedData = new CMSSignedData(signature);
-
-            if (signedData.isCertificateManagementMessage()) {
-                // TODO JW - Display a message indicating that the file doesn't have any signatures.
-                return;
-            }
-
-            if (signedData.isDetachedSignature()) {
-                signedData = handleDetachedSignature(signature);
-                if (signedData == null) {
-                    return;
-                }
-            }
+            // TODO JW - What about the logic in openSignature?
+            CMSSignedData signedData = CmsUtil.loadSignature(signatureFile, this::chooseContentFile);
 
             // TODO JW - Add new option for using cacerts for signature verification.
             if (preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled()) {
@@ -248,21 +224,22 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                 Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
                 if (!matchedCerts.isEmpty()) {
                     X509CertificateHolder cert = matchedCerts.iterator().next();
+                    // TODO JW- Counter signing breaks the signature...
                     // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
-                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-                        System.out.println("Verified by: " + cert.getSubject());
-                        verified = true;
-
-                        TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
-                        if (tspToken != null) {
-                            matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
-                            if (!matchedCerts.isEmpty()) {
-                                cert = matchedCerts.iterator().next();
-                                tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
-                                System.out.println("Time stamped by: " + cert.getSubject());
-                            }
-                        }
-                    }
+//                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+//                        System.out.println("Verified by: " + cert.getSubject());
+//                        verified = true;
+//
+//                        TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
+//                        if (tspToken != null) {
+//                            matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
+//                            if (!matchedCerts.isEmpty()) {
+//                                cert = matchedCerts.iterator().next();
+//                                tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
+//                                System.out.println("Time stamped by: " + cert.getSubject());
+//                            }
+//                        }
+//                    }
                 }
             }
             System.out.println("Verified: " + verified);
@@ -279,6 +256,7 @@ Signers:
     Signer's serial: 30bc7fadef7fe924fa77a0f376f31d92b68fa33e
     Signing time: Mon Feb 07 23:07:19 UTC 2022
     Signature Algorithm: RSA-SHA256
+    Signature Algorithm: RSA-PSS-SHA256           certtool shows SHA-256, but KSE shows SHA-384, which is what was used. (CmsSigner.java.p7m)
     Signed Attributes:
         messageDigest: 0420ed6b93a0a57ff71b075d7628f807db2d6f9a8727557a02b2f6f9ff520eb4caaf
         1.2.840.113549.1.9.52: 301c300b0609608648016503040201a10d06092a864886f70d01010b0500
@@ -295,32 +273,6 @@ Signers:
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
-    }
-
-    private CMSSignedData handleDetachedSignature(byte[] signature) throws CMSException {
-        // Look for the content file. if not present, prompt for it.
-        File contentFile = null;
-
-        // First try file name with signature extension stripped.
-        int extensionIndex = signatureFile.getAbsolutePath().lastIndexOf('.');
-        if (extensionIndex > 0) {
-            // Turn file_name.txt.p7s into file_name.txt
-            String contentFileName = signatureFile.getAbsolutePath().substring(0, extensionIndex);
-            contentFile = new File(contentFileName);
-            if (!contentFile.exists()) {
-                contentFile = null;
-            }
-        }
-
-        // No file - ask for one
-        if (contentFile == null) {
-            contentFile = chooseContentFile();
-            if (contentFile == null) {
-                return null;
-            }
-        }
-
-        return new CMSSignedData(new CMSProcessableFile(contentFile), signature);
     }
 
     private boolean isCA(X509Certificate cert) {
@@ -403,7 +355,7 @@ Signers:
      */
     protected byte[] openSignature(File signatureFile) {
         try {
-            return FileUtils.readFileToByteArray(signatureFile);
+            return Files.readAllBytes(signatureFile.toPath());
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                   res.getString("KeyStoreExplorerAction.NoReadFile.message"),
@@ -414,19 +366,13 @@ Signers:
         }
     }
 
-    private byte[] showFileSelectionDialog() {
-        signatureFile = chooseSignatureFile();
+    private File showFileSelectionDialog() {
+        File signatureFile = chooseSignatureFile();
         if (signatureFile == null) {
             return null;
         }
 
-        byte[] sig = openSignature(signatureFile);
-
-        if (sig == null) {
-            return null;
-        }
-
-        return sig;
+        return signatureFile;
     }
 
     private File chooseSignatureFile() {

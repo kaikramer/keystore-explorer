@@ -755,39 +755,13 @@ public class JarSigner {
 
             // now let TSA time-stamp the signature
             if (tsaUrl != null && !tsaUrl.isEmpty()) {
-                signedData = addTimestamp(tsaUrl, signedData);
+                signedData = CmsSigner.addTimestamp(tsaUrl, signedData);
             }
 
             return signedData.getEncoded();
         } catch (Exception ex) {
             throw new CryptoException(res.getString("SignatureBlockCreationFailed.exception.message"), ex);
         }
-    }
-
-    private static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData) throws IOException {
-
-        Collection<SignerInformation> signerInfos = signedData.getSignerInfos().getSigners();
-
-        // get signature of first signer (should be the only one)
-        SignerInformation si = signerInfos.iterator().next();
-        byte[] signature = si.getSignature();
-
-        // send request to TSA
-        byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, DigestType.SHA256);
-
-        // create new SignerInformation with TS attribute
-        Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,
-                                            new DERSet(ASN1Primitive.fromByteArray(token)));
-        ASN1EncodableVector timestampVector = new ASN1EncodableVector();
-        timestampVector.add(tokenAttr);
-        AttributeTable at = new AttributeTable(timestampVector);
-        si = SignerInformation.replaceUnsignedAttributes(si, at);
-        signerInfos.clear();
-        signerInfos.add(si);
-        SignerInformationStore newSignerStore = new SignerInformationStore(signerInfos);
-
-        // create new signed data
-        return CMSSignedData.replaceSigners(signedData, newSignerStore);
     }
 
     /*

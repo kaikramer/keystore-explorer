@@ -255,6 +255,8 @@ public class DViewSignature extends JEscDialog {
 //        jbExtensions.setToolTipText(res.getString("DViewSignature.jbExtensions.tooltip"));
 //        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewSignature.jbExtensions.mnemonic").charAt(0));
 
+        // TODO JW - Display PEM and ASN1 buttons for counter signatures? What about for time stamps?
+        // TODO JW - Need to make certain these buttons work as expected.
         jbPem = new JButton(res.getString("DViewSignature.jbPem.text"));
         jbPem.setToolTipText(res.getString("DViewSignature.jbPem.tooltip"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewSignature.jbPem.mnemonic").charAt(0));

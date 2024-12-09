@@ -105,6 +105,7 @@ import org.kse.gui.actions.CompareCertificateAction;
 import org.kse.gui.actions.CopyAction;
 import org.kse.gui.actions.CopyKeyPairAction;
 import org.kse.gui.actions.CopyTrustedCertificateAction;
+import org.kse.gui.actions.CounterSignAction;
 import org.kse.gui.actions.CutAction;
 import org.kse.gui.actions.CutKeyPairAction;
 import org.kse.gui.actions.CutTrustedCertificateAction;
@@ -373,6 +374,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiKeyPairSignJwt;
     private JMenuItem jmiKeyPairSignNewKeyPair;
     private JMenuItem jmiKeyPairSignFile;
+    private JMenuItem jmiKeyPairSignSignature;
     private JMenuItem jmiKeyPairUnlock;
     private JMenuItem jmiKeyPairSetPassword;
     private JMenuItem jmiKeyPairDelete;
@@ -510,6 +512,7 @@ public final class KseFrame implements StatusBar {
     private final SignCrlAction signCrlAction = new SignCrlAction(this);
     private final SignJwtAction signJwtAction = new SignJwtAction(this);
     private final SignFileAction signFileAction = new SignFileAction(this);
+    private final CounterSignAction counterSignAction = new CounterSignAction(this);
     private final SignNewKeyPairAction signNewKeyPairAction = new SignNewKeyPairAction(this);
     private final UnlockKeyPairAction unlockKeyPairAction = new UnlockKeyPairAction(this);
     private final SetKeyPairPasswordAction setKeyPairPasswordAction = new SetKeyPairPasswordAction(this);
@@ -2045,6 +2048,10 @@ public final class KseFrame implements StatusBar {
         jmiKeyPairSignFile.setToolTipText(null);
         new StatusBarChangeHandler(jmiKeyPairSignFile, (String) signFileAction.getValue(Action.LONG_DESCRIPTION), this);
 
+        jmiKeyPairSignSignature = new JMenuItem(counterSignAction);
+        jmiKeyPairSignSignature.setToolTipText(null);
+        new StatusBarChangeHandler(jmiKeyPairSignSignature, (String) counterSignAction.getValue(Action.LONG_DESCRIPTION), this);
+
         jmiKeyPairSignNewKeyPair = new JMenuItem(signNewKeyPairAction);
         jmiKeyPairSignNewKeyPair.setToolTipText(null);
         new StatusBarChangeHandler(jmiKeyPairSignNewKeyPair,
@@ -2100,6 +2107,7 @@ public final class KseFrame implements StatusBar {
         jmKeyPairSign.add(jmiKeyPairSignCrl);
         jmKeyPairSign.add(jmiKeyPairSignJwt);
         jmKeyPairSign.add(jmiKeyPairSignFile);
+        jmKeyPairSign.add(jmiKeyPairSignSignature);
         jpmKeyPair.addSeparator();
         jpmKeyPair.add(jmiKeyPairUnlock);
         jpmKeyPair.add(jmiKeyPairSetPassword);

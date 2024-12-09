@@ -22,23 +22,23 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
@@ -47,29 +47,27 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.DigestCalculatorProvider;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.tsp.TimeStampResponse;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.kse.KSE;
-import org.kse.gui.passwordmanager.Password;
+import org.bouncycastle.util.Store;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.signing.CmsSigner;
 import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.sign.DSignFile;
-import org.kse.gui.dialogs.sign.DSignJarSigning;
 import org.kse.gui.error.DError;
-import org.kse.gui.error.DErrorCollection;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
 /**
- * Action to sign a JAR using the selected key pair entry.
+ * Action to sign a file using the selected key pair entry.
  */
 public class SignFileAction extends KeyStoreExplorerAction {
     private static final long serialVersionUID = 6227240459189308322L;
@@ -123,12 +121,12 @@ public class SignFileAction extends KeyStoreExplorerAction {
             // set the key pair type
             KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-            // get the jars, signatures, and time stamp
-            DSignFile dSignFile = new DSignFile(frame, privateKey, keyPairType, alias);
+            // get the file, signatures, and time stamp
+            DSignFile dSignFile = new DSignFile(frame, privateKey, keyPairType, false);
             dSignFile.setLocationRelativeTo(frame);
             dSignFile.setVisible(true);
 
-            // check if jar sign dialog was successful
+            // check if file sign dialog was successful
             if (!dSignFile.isSuccessful()) {
                 return;
             }
@@ -140,8 +138,13 @@ public class SignFileAction extends KeyStoreExplorerAction {
             File outputFile = dSignFile.getOutputFile();
             String tsaUrl = dSignFile.getTimestampingServerUrl();
 
-            // TODO JW - What if the dialog is cancelled?
-            sign(inputFile, outputFile, privateKey, certs, detachedSignature, signatureType, tsaUrl, provider);
+            CMSSignedData signedData = CmsSigner.sign(inputFile, privateKey, certs, detachedSignature, signatureType,
+                    tsaUrl, provider);
+
+            try (OutputStream os = new FileOutputStream(outputFile)) {
+                // TODO JW - What about generating a PEM encoded file?
+                os.write(signedData.getEncoded());
+            }
 
             // start jar signing process
 //            DSignJarSigning dSignJarSigning = new DSignJarSigning(frame, inputJarFile, outputJarFile, privateKey, certs,
@@ -188,35 +191,6 @@ public class SignFileAction extends KeyStoreExplorerAction {
 
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-        }
-    }
-
-    public static void sign(File inputFile, File outputFile, PrivateKey privateKey, X509Certificate[] certificateChain,
-            boolean detachedSignature, SignatureType signatureType, String tsaUrl, Provider provider)
-            throws CryptoException {
-        try {
-            CMSTypedData msg = new CMSProcessableFile(inputFile);
-
-            CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
-            generator.addSignerInfoGenerator(
-                    new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().build())
-                            .build(contentSigner, certificateChain[0]));
-            generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
-
-            CMSSignedData signedData = generator.generate(msg, !detachedSignature);
-
-            if (tsaUrl != null) {
-                signedData = JarSigner.addTimestamp(tsaUrl, signedData);
-            }
-
-            try (OutputStream os = new FileOutputStream(outputFile)) {
-                os.write(signedData.getEncoded());
-            }
-        }
-        catch (Exception e) {
-            // TODO JW - Create exception message
-            throw new CryptoException("TODO");
         }
     }
 }
