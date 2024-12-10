@@ -62,7 +62,6 @@ public class CmsSigner {
      * Signs a file using PKCS #7 CMS.
      *
      * @param inputFile         The file to sign.
-     * @param outputFile        The output file for the signature.
      * @param privateKey        The private key to use for signing.
      * @param certificateChain  The certificate chain for the private key.
      * @param detachedSignature True if the signature is to be detached. False,
@@ -71,6 +70,7 @@ public class CmsSigner {
      * @param tsaUrl            An optional TSA URL for adding a time stamp token to
      *                          the signature.
      * @param provider
+     * @return The signature in a CMSSignedData object.
      */
     public static CMSSignedData sign(File inputFile, PrivateKey privateKey, X509Certificate[] certificateChain,
             boolean detachedSignature, SignatureType signatureType, String tsaUrl, Provider provider)
@@ -97,6 +97,20 @@ public class CmsSigner {
         }
     }
 
+    /**
+     * Counter signs a signature using PKCS #7 CMS.
+     *
+     * @param signedData        The signature to counter sign.
+     * @param privateKey        The private key to use for signing.
+     * @param certificateChain  The certificate chain for the private key.
+     * @param detachedSignature True if the signature is to be detached. False,
+     *                          encapsulate the file into the signature.
+     * @param signatureType     The signature type to use for signing.
+     * @param tsaUrl            An optional TSA URL for adding a time stamp token to
+     *                          the signature.
+     * @param provider
+     * @return The counter signed signature in a CMSSignedData object.
+     */
     public static CMSSignedData counterSign(CMSSignedData signedData, PrivateKey privateKey,
             X509Certificate[] certificateChain, boolean detachedSignature, SignatureType signatureType, String tsaUrl,
             Provider provider) throws CryptoException {
@@ -126,8 +140,7 @@ public class CmsSigner {
 
             return counterSignedData;
         } catch (CertificateEncodingException | OperatorCreationException | CMSException e) {
-            // TODO Auto-generated catch block
-            throw new CryptoException("TODO");
+            throw new CryptoException(res.getString("CmsCounterSignatureFailed.exception.message"), e);
         }
     }
 
