@@ -68,7 +68,7 @@ public class CmsUtil {
             }
             // TODO JW - Do we even want to check the type? Should we just let the BC CMS
             // class bomb out?
-            if (!"CMS".equals(signaturePem.getType()) && !"PKCS7".equals(signaturePem.getType())) {
+            if (!CMS_PEM_TYPE.equals(signaturePem.getType()) && !PKCS7_PEM_TYPE.equals(signaturePem.getType())) {
                 // TODO JW - What to throw if the signature is not the correct type?
                 throw new CryptoException("PEM is not of type CMS or PKCS7");
             }

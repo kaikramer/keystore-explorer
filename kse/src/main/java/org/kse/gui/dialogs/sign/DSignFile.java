@@ -114,7 +114,7 @@ public class DSignFile extends JEscDialog {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.signPrivateKey = signPrivateKey;
         this.signKeyPairType = signKeyPairType;
-        String title = "DSignFile.Sign.Title";;
+        String title = "DSignFile.Sign.Title";
         if (isCounterSign) {
             title = "DSignFile.CounterSign.Title";
         }
