@@ -110,7 +110,6 @@ public class SignFileAction extends KeyStoreExplorerAction {
 
             // TODO JW - When using RSA and MFG1, the MFG1 is not displayed when viewing the signature.
             boolean detachedSignature = dSignFile.isDetachedSignature();
-            boolean outputPem = dSignFile.isOutputPem();
             SignatureType signatureType = dSignFile.getSignatureType();
             File inputFile = dSignFile.getInputFile();
             File outputFile = dSignFile.getOutputFile();
@@ -119,14 +118,15 @@ public class SignFileAction extends KeyStoreExplorerAction {
             CMSSignedData signedData = CmsSigner.sign(inputFile, privateKey, certs, detachedSignature, signatureType,
                     tsaUrl, provider);
 
+            byte[] encoded;
+            if (!dSignFile.isOutputPem()) {
+                encoded = signedData.getEncoded();
+            } else {
+                encoded = CmsUtil.getPem(signedData).getBytes();
+            }
+
             try (OutputStream os = new FileOutputStream(outputFile)) {
-                if (!outputPem) {
-                    os.write(signedData.getEncoded());
-                } else {
-                    // shouldn't need character encoding since PEM is plain ASCII.
-                    // TODO JW - see out how other actions handle PEM output
-                    os.write(CmsUtil.getPem(signedData).getBytes());
-                }
+                os.write(encoded);
             }
 
         } catch (Exception ex) {
