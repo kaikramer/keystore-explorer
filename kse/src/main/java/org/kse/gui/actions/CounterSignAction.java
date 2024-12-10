@@ -29,6 +29,7 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 
 import org.bouncycastle.cms.CMSSignedData;
 import org.kse.crypto.keypair.KeyPairType;
@@ -37,6 +38,8 @@ import org.kse.crypto.signing.CmsSigner;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
+import org.kse.gui.CurrentDirectory;
+import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.sign.DSignFile;
 import org.kse.gui.error.DError;
@@ -116,8 +119,7 @@ public class CounterSignAction extends KeyStoreExplorerAction {
             File outputFile = dSignFile.getOutputFile();
             String tsaUrl = dSignFile.getTimestampingServerUrl();
 
-            // TODO JW - Implement a chooser for finding the detached content.
-            CMSSignedData signature = CmsUtil.loadSignature(inputFile, null);
+            CMSSignedData signature = CmsUtil.loadSignature(inputFile, this::chooseContentFile);
             if (signature == null) {
                 // TODO JW - identify the error conditions.
                 return;
@@ -134,5 +136,21 @@ public class CounterSignAction extends KeyStoreExplorerAction {
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
+    }
+
+    private File chooseContentFile() {
+        JFileChooser chooser = FileChooserFactory.getNoFileChooser();
+        chooser.setCurrentDirectory(CurrentDirectory.get());
+        chooser.setDialogTitle(res.getString("CounterSignAction.ChooseContent.Title"));
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setApproveButtonText(res.getString("CounterSignAction.ChooseContent.button"));
+
+        int rtnValue = chooser.showOpenDialog(frame);
+        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            File importFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(importFile);
+            return importFile;
+        }
+        return null;
     }
 }
