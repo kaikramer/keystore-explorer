@@ -111,7 +111,6 @@ public class CounterSignAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            // TODO JW - When using RSA and MFG1, the MFG1 is not displayed when viewing the signature.
             boolean detachedSignature = dSignFile.isDetachedSignature();
             SignatureType signatureType = dSignFile.getSignatureType();
             File inputFile = dSignFile.getInputFile();

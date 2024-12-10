@@ -466,19 +466,13 @@ public class DViewSignature extends JEscDialog {
 //                jtfContentDigest.setText(HexUtil.getHexStringWithSep(signerInfo.getContentDigest(), ':'));
 //                jtfContentDigest.setCaretPosition(0);
 
-                DigestType digestType = DigestType.resolveOid(signerInfo.getDigestAlgOID());
-                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(cert.getPublicKey());
-                String algorithm = keyInfo.getAlgorithm();
-                // TODO JW - Is there a better method for getting signature algorithm name from cert algorithm?
-                if (algorithm.equals("EC")) {
-                    algorithm = "ECDSA";
-                }
-                String signatureAlgorithm = digestType.friendly().replace("-", "") + "with" + algorithm;
-                SignatureType signatureType = SignatureType.resolveJce(signatureAlgorithm);
+                SignatureType signatureType = lookupSignatureType(signerInfo);
                 if (signatureType != null ) {
                     jtfSignatureAlgorithm.setText(signatureType.friendly());
-                    jtfSignatureAlgorithm.setCaretPosition(0);
+                } else {
+                    jtfSignatureAlgorithm.setText("");
                 }
+                jtfSignatureAlgorithm.setCaretPosition(0);
 
                 timeStampSigner = CmsUtil.getTimeStampSignature(signerInfo);
 
@@ -508,6 +502,20 @@ public class DViewSignature extends JEscDialog {
                 dispose();
             }
         }
+    }
+
+    private SignatureType lookupSignatureType(SignerInformation signerInfo) {
+        SignatureType signatureType = null;
+        if (PKCSObjectIdentifiers.rsaEncryption.getId().equals(signerInfo.getEncryptionAlgOID())) {
+            // Lookup by JCE name for RSA
+            DigestType digestType = DigestType.resolveOid(signerInfo.getDigestAlgOID());
+            String signatureAlgorithm = digestType.friendly().replace("-", "") + "withRSA";
+            signatureType = SignatureType.resolveJce(signatureAlgorithm);
+        } else {
+            signatureType = SignatureType.resolveOid(signerInfo.getEncryptionAlgOID(),
+                    signerInfo.getEncryptionAlgParams());
+        }
+        return signatureType;
     }
 
     private static class SelectAll<T> implements Selector<T> {
