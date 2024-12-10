@@ -27,6 +27,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -55,6 +56,7 @@ import org.kse.crypto.digest.DigestType;
  * Message Syntax (CMS).
  */
 public class CmsSigner {
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
 
     /**
      * Signs a file using PKCS #7 CMS.
@@ -86,13 +88,12 @@ public class CmsSigner {
             CMSSignedData signedData = generator.generate(msg, !detachedSignature);
 
             if (tsaUrl != null) {
-                signedData = addTimestamp(tsaUrl, signedData);
+                signedData = addTimestamp(tsaUrl, signedData, signatureType.digestType());
             }
 
             return signedData;
         } catch (Exception e) {
-            // TODO JW - Create exception message
-            throw new CryptoException("TODO");
+            throw new CryptoException(res.getString("CmsSignatureFailed.exception.message"), e);
         }
     }
 
@@ -133,11 +134,13 @@ public class CmsSigner {
     /**
      * Adds a timestamp to a PKCS #7 signature.
      *
-     * @param tsaUrl     The URL of the time stamp authority
+     * @param tsaUrl     The URL of the time stamp authority.
      * @param signedData The signature to time stamp.
+     * @param digestType The digest type to use for the time stamp.
      * @return <b>CMSSignedData</b> with time stamp.
      */
-    public static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData) throws IOException {
+    public static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData, DigestType digestType)
+            throws IOException {
 
         Collection<SignerInformation> signerInfos = signedData.getSignerInfos().getSigners();
 
@@ -146,7 +149,7 @@ public class CmsSigner {
         byte[] signature = si.getSignature();
 
         // send request to TSA
-        byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, DigestType.SHA256);
+        byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, digestType);
 
         // create new SignerInformation with TS attribute
         Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,

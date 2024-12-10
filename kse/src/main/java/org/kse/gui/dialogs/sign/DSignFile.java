@@ -91,6 +91,7 @@ public class DSignFile extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
+    // TODO store settings (e.g., signature algorithm, TS setting and URL) in preferences.
     private PrivateKey signPrivateKey;
     private KeyPairType signKeyPairType;
     private File inputFile;

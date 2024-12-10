@@ -755,7 +755,7 @@ public class JarSigner {
 
             // now let TSA time-stamp the signature
             if (tsaUrl != null && !tsaUrl.isEmpty()) {
-                signedData = CmsSigner.addTimestamp(tsaUrl, signedData);
+                signedData = CmsSigner.addTimestamp(tsaUrl, signedData, DigestType.SHA256);
             }
 
             return signedData.getEncoded();
