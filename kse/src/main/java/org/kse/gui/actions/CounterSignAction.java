@@ -64,9 +64,8 @@ public class CounterSignAction extends KeyStoreExplorerAction {
         putValue(LONG_DESCRIPTION, res.getString("CounterSignAction.statusbar"));
         putValue(NAME, res.getString("CounterSignAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("CounterSignAction.tooltip"));
-        // TODO JW - Need icon for sign file.
         putValue(SMALL_ICON,
-                new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signjar.png"))));
+                new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signsignature.png"))));
     }
 
     /**
@@ -114,6 +113,7 @@ public class CounterSignAction extends KeyStoreExplorerAction {
 
             // TODO JW - When using RSA and MFG1, the MFG1 is not displayed when viewing the signature.
             boolean detachedSignature = dSignFile.isDetachedSignature();
+            boolean outputPem = dSignFile.isOutputPem();
             SignatureType signatureType = dSignFile.getSignatureType();
             File inputFile = dSignFile.getInputFile();
             File outputFile = dSignFile.getOutputFile();
@@ -129,8 +129,13 @@ public class CounterSignAction extends KeyStoreExplorerAction {
                     signatureType, tsaUrl, provider);
 
             try (OutputStream os = new FileOutputStream(outputFile)) {
-                // TODO JW - What about generating a PEM encoded file?
-                os.write(signedData.getEncoded());
+                if (!outputPem) {
+                    os.write(signedData.getEncoded());
+                } else {
+                    // shouldn't need character encoding since PEM is plain ASCII.
+                    // TODO JW - see out how other actions handle PEM output
+                    os.write(CmsUtil.getPem(signedData).getBytes());
+                }
             }
 
         } catch (Exception ex) {

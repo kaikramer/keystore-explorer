@@ -26,20 +26,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.jar.JarFile;
 
 import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -50,29 +43,20 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.KSE;
-import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
-import org.kse.crypto.signing.JarSigner;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
-import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.dialogs.DialogHelper;
-import org.kse.gui.error.DError;
-import org.kse.gui.error.DProblem;
-import org.kse.gui.error.Problem;
 import org.kse.utilities.DialogViewer;
-import org.kse.utilities.io.FileNameUtil;
 import org.kse.utilities.net.URLs;
 
 import net.miginfocom.swing.MigLayout;
@@ -81,8 +65,7 @@ import net.miginfocom.swing.MigLayout;
  * Dialog that displays the presents JAR signing options.
  */
 public class DSignFile extends JEscDialog {
-    // TODO JW - update this after adjusting the fields
-    private static final long serialVersionUID = -5095469699284737624L;
+    private static final long serialVersionUID = 9162242907697268949L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
 
@@ -92,8 +75,14 @@ public class DSignFile extends JEscDialog {
     private JPanel jpInputFile;
     private JTextField jtfInputFile;
     private JButton jbInputFileBrowse;
+    private JLabel jlOutputFile;
+    private JPanel jpOutputFile;
+    private JTextField jtfOutputFile;
+    private JButton jbOutputFileBrowse;
     private JLabel jlDetachedSignature;
     private JCheckBox jcbDetachedSignature;
+    private JLabel jlOutputPem;
+    private JCheckBox jcbOutputPem;
     private JLabel jlSignatureAlgorithm;
     private JComboBox<SignatureType> jcbSignatureAlgorithm;
     private JLabel jlAddTimestamp;
@@ -107,9 +96,9 @@ public class DSignFile extends JEscDialog {
     private PrivateKey signPrivateKey;
     private KeyPairType signKeyPairType;
     private File inputFile;
-    // TODO JW - get rid of outputFile. It will be set automatically.
     private File outputFile;
-    private boolean detachedSignature;
+    private boolean detachedSignature = true;
+    private boolean outputPem;
     private SignatureType signatureType;
     private String tsaUrl;
     private boolean successStatus = true;
@@ -126,7 +115,6 @@ public class DSignFile extends JEscDialog {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.signPrivateKey = signPrivateKey;
         this.signKeyPairType = signKeyPairType;
-        // TODO JW - for counter signing only choose a signature file.
         String title = "DSignFile.Sign.Title";;
         if (isCounterSign) {
             title = "DSignFile.CounterSign.Title";
@@ -141,11 +129,6 @@ public class DSignFile extends JEscDialog {
      * @param isCounterSign True for counter signing. False for signing.
      */
     private void initComponents(boolean isCounterSign) {
-        jlDetachedSignature = new JLabel(res.getString("DSignFile.jlDetachedSignature.text"));
-        jcbDetachedSignature = new JCheckBox();
-        jcbDetachedSignature.setSelected(true);
-        jcbDetachedSignature.setToolTipText(res.getString("DSignFile.jcbDetachedSignature.tooltip"));
-
         jlInputFile = new JLabel(res.getString("DSignFile.jlInputFile.text"));
         jtfInputFile = new JTextField(30);
         jtfInputFile.setCaretPosition(0);
@@ -159,6 +142,30 @@ public class DSignFile extends JEscDialog {
         jpInputFile = new JPanel();
         jpInputFile.add(jtfInputFile);
         jpInputFile.add(jbInputFileBrowse);
+
+        jlOutputFile = new JLabel(res.getString("DSignFile.jlOutputFile.text"));
+        jtfOutputFile = new JTextField(30);
+        jtfOutputFile.setCaretPosition(0);
+        jtfOutputFile.setToolTipText(res.getString("DSignFile.jtfOutputFile.tooltip"));
+
+        jbOutputFileBrowse = new JButton(res.getString("DSignFile.jbOutputFileBrowse.text"));
+        PlatformUtil.setMnemonic(jbOutputFileBrowse, res.getString("DSignFile.jbOutputFileBrowse.mnemonic").charAt(0));
+        jbOutputFileBrowse.setToolTipText(res.getString("DSignFile.jbOutputFileBrowse.tooltip"));
+
+        // TODO JW - Remove default panel margin/insets.
+        jpOutputFile = new JPanel();
+        jpOutputFile.add(jtfOutputFile);
+        jpOutputFile.add(jbOutputFileBrowse);
+
+        jlDetachedSignature = new JLabel(res.getString("DSignFile.jlDetachedSignature.text"));
+        jcbDetachedSignature = new JCheckBox();
+        jcbDetachedSignature.setSelected(true);
+        jcbDetachedSignature.setToolTipText(res.getString("DSignFile.jcbDetachedSignature.tooltip"));
+
+        jlOutputPem = new JLabel(res.getString("DSignFile.jlOutputPem.text"));
+        jcbOutputPem = new JCheckBox();
+        jcbOutputPem.setSelected(false);
+        jcbOutputPem.setToolTipText(res.getString("DSignFile.jcbOutputPem.tooltip"));
 
         jlSignatureAlgorithm = new JLabel(res.getString("DSignFile.jlSignatureAlgorithm.text"));
         jcbSignatureAlgorithm = new JComboBox<>();
@@ -190,8 +197,12 @@ public class DSignFile extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
         pane.add(jlInputFile, "skip");
         pane.add(jpInputFile, "wrap");
+        pane.add(jlOutputFile, "skip");
+        pane.add(jpOutputFile, "wrap");
         pane.add(jlDetachedSignature, "skip");
         pane.add(jcbDetachedSignature, "wrap");
+        pane.add(jlOutputPem, "skip");
+        pane.add(jcbOutputPem, "wrap");
         pane.add(jlSignatureAlgorithm, "skip");
         pane.add(jcbSignatureAlgorithm, "sgx, wrap");
         pane.add(jlAddTimestamp, "skip");
@@ -211,8 +222,17 @@ public class DSignFile extends JEscDialog {
             }
         });
 
-        jcbAddTimestamp.addItemListener(evt -> enableDisableElements());
-        jcbDetachedSignature.addItemListener(evt -> enableDisableElements());
+        jbOutputFileBrowse.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DSignFile.this);
+                outputFileBrowsePressed();
+            } finally {
+                CursorUtil.setCursorFree(DSignFile.this);
+            }
+        });
+
+        jcbAddTimestamp.addItemListener(evt -> enableDisableTsaElements());
+        jcbDetachedSignature.addItemListener(evt -> detachedSignatureStateChange());
 
         jbOK.addActionListener(evt -> okPressed());
 
@@ -245,8 +265,13 @@ public class DSignFile extends JEscDialog {
     /**
      * This function enables and disables elements in the dialog
      */
-    protected void enableDisableElements() {
+    protected void enableDisableTsaElements() {
         jcbTimestampServerUrl.setEnabled(jcbAddTimestamp.isSelected());
+    }
+
+    protected void detachedSignatureStateChange() {
+        detachedSignature = jcbDetachedSignature.isSelected();
+        // TODO JW - implement output file name update -- even if user chooses a file?
     }
 
     /**
@@ -274,6 +299,15 @@ public class DSignFile extends JEscDialog {
      */
     public boolean isDetachedSignature() {
         return detachedSignature;
+    }
+
+    /**
+     * Gets the chosen output PEM setting
+     *
+     * @return <b>booleans</b> output PEM setting
+     */
+    public boolean isOutputPem() {
+        return outputPem;
     }
 
     /**
@@ -318,95 +352,15 @@ public class DSignFile extends JEscDialog {
 
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
         detachedSignature = jcbDetachedSignature.isSelected();
+        outputPem = jcbOutputPem.isSelected();
 
         // check add time stamp is selected and assign value
         if (jcbAddTimestamp.isSelected()) {
             tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
         }
 
-        outputFile = new File(inputFile.getAbsolutePath() + (detachedSignature ? ".p7s" : ".p7m"));
-
         closeDialog();
     }
-
-//    /**
-//     * Set output JAR files and check files for overwrite
-//     *
-//     * @return <b>Boolean</b> true if successful false if no option chosen
-//     */
-//    private boolean setOutputJarFiles(File[] files) {
-//        String outputJarPrefix = jtfPrefix.getText().trim();
-//        String outputJarSuffix = jtfSuffix.getText().trim();
-//        final String FILE_SUFFIX = ".jar";
-//        JCheckBox checkbox = new JCheckBox(res.getString("DSignFile.OverwriteSkip.message"));
-//
-//        // set input files array to output files list
-//        this.outputJarFiles = new ArrayList<>(Arrays.asList(files));
-//
-//        if (jrbOutputJarFixes.isSelected()) {
-//            // loop through output JAR files
-//            for (int i = 0; i < outputJarFiles.size(); i++) {
-//                // set prefix and suffix to the file name
-//                String fileBaseName = FileNameUtil.removeExtension(outputJarFiles.get(i).getName());
-//                String outFileName =
-//                        outputJarFiles.get(i).getParent() + "\\" + outputJarPrefix + fileBaseName + outputJarSuffix +
-//                        FILE_SUFFIX;
-//                // replace file object in arraylist
-//                this.outputJarFiles.set(i, new File(outFileName));
-//
-//                if (!checkbox.isSelected()) {
-//                    // check if file exists
-//                    if (outputJarFiles.get(i).isFile()) {
-//                        String message = MessageFormat.format(res.getString("DSignFile.OverWriteOutputJarFile.message"),
-//                                                              outputJarFiles.get(i));
-//                        Object[] params = { message, checkbox };
-//
-//                        // check if overwrite is allowed and present checkbox to skip overwrite message
-//                        int selected = JOptionPane.showConfirmDialog(this, params, getTitle(),
-//                                                                     JOptionPane.YES_NO_OPTION);
-//                        if (selected != JOptionPane.YES_OPTION) {
-//                            this.outputJarFiles.clear();
-//                            return false;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return true;
-//    }
-
-//    /**
-//     * Checks to overwrite an existing signature
-//     *
-//     * @return <b>Boolean</b> continues jar signing if true cancels process if false
-//     */
-//    private boolean checkSignature(File[] files) {
-//        JCheckBox checkbox = new JCheckBox(res.getString("DSignFile.OverwriteSkip.message"));
-//
-//        for (File file : files) {
-//            try {
-//                // check if the existing signature matches the current signature
-//                if (JarSigner.hasSignature(file, this.signatureName)) {
-//                    String message = MessageFormat.format(res.getString("DSignFile.SignatureOverwrite.message"),
-//                            this.signatureName, file.getName());
-//                    Object[] params = {message, checkbox};
-//                    // check if overwrite is allowed and present checkbox to skip overwrite message
-//                    int selected = JOptionPane.showConfirmDialog(this, params, getTitle(), JOptionPane.YES_NO_OPTION);
-//                    if (selected != JOptionPane.YES_OPTION) {
-//                        return false;
-//                    }
-//                }
-//            } catch (IOException ex) {
-//                DError.displayError(this, ex);
-//                return false;
-//            }
-//            // check to skip overwrite alert message
-//            if (checkbox.isSelected()) {
-//                return true;
-//            }
-//        }
-//        return true;
-//    }
 
     /**
      * Get input file
@@ -430,9 +384,37 @@ public class DSignFile extends JEscDialog {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             inputFile = chosenFile;
+            outputFile = new File(inputFile.getAbsolutePath() + (detachedSignature ? ".p7s" : ".p7m"));
+
             // TODO JW - Is there a better location for this code?
             jtfInputFile.setText(inputFile.getAbsolutePath());
             jtfInputFile.setCaretPosition(0);
+
+            jtfOutputFile.setText(outputFile.getAbsolutePath());
+            jtfOutputFile.setCaretPosition(0);
+        }
+    }
+
+    /**
+     * Get input file
+     */
+    private void outputFileBrowsePressed() {
+        JFileChooser chooser = FileChooserFactory.getSignatureFileChooser();
+        chooser.setDialogTitle(res.getString("DSignFile.ChooseOutputFile.Title"));
+        chooser.setCurrentDirectory(CurrentDirectory.get());
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setApproveButtonText(res.getString("DSignFile.OutputFileChooser.button"));
+
+        int rtnValue = chooser.showOpenDialog(this);
+        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            File chosenFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(chosenFile);
+            // TODO JW - Need to add extension to chosen file?
+            outputFile = chosenFile;
+
+            // TODO JW - Is there a better location for this code?
+            jtfOutputFile.setText(outputFile.getAbsolutePath());
+            jtfOutputFile.setCaretPosition(0);
         }
     }
 

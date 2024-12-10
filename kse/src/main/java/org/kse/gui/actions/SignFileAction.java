@@ -22,41 +22,19 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.CMSTypedData;
-import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.DigestCalculatorProvider;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
-import org.bouncycastle.util.Store;
-import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.CmsSigner;
-import org.kse.crypto.signing.JarSigner;
+import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -83,9 +61,8 @@ public class SignFileAction extends KeyStoreExplorerAction {
         putValue(LONG_DESCRIPTION, res.getString("SignFileAction.statusbar"));
         putValue(NAME, res.getString("SignFileAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("SignFileAction.tooltip"));
-        // TODO JW - Need icon for sign file.
         putValue(SMALL_ICON,
-                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signjar.png"))));
+                 new ImageIcon(Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/signfile.png"))));
     }
 
     /**
@@ -133,6 +110,7 @@ public class SignFileAction extends KeyStoreExplorerAction {
 
             // TODO JW - When using RSA and MFG1, the MFG1 is not displayed when viewing the signature.
             boolean detachedSignature = dSignFile.isDetachedSignature();
+            boolean outputPem = dSignFile.isOutputPem();
             SignatureType signatureType = dSignFile.getSignatureType();
             File inputFile = dSignFile.getInputFile();
             File outputFile = dSignFile.getOutputFile();
@@ -142,52 +120,14 @@ public class SignFileAction extends KeyStoreExplorerAction {
                     tsaUrl, provider);
 
             try (OutputStream os = new FileOutputStream(outputFile)) {
-                // TODO JW - What about generating a PEM encoded file?
-                os.write(signedData.getEncoded());
+                if (!outputPem) {
+                    os.write(signedData.getEncoded());
+                } else {
+                    // shouldn't need character encoding since PEM is plain ASCII.
+                    // TODO JW - see out how other actions handle PEM output
+                    os.write(CmsUtil.getPem(signedData).getBytes());
+                }
             }
-
-            // start jar signing process
-//            DSignJarSigning dSignJarSigning = new DSignJarSigning(frame, inputJarFile, outputJarFile, privateKey, certs,
-//                                                                  signatureType, signatureName, signer, digestType,
-//                                                                  tsaUrl, provider);
-//            dSignJarSigning.setLocationRelativeTo(frame);
-//            dSignJarSigning.startDSignJarSigning();
-//            dSignJarSigning.setVisible(true);
-//
-//            // check if jar signing was successful
-//            if (!dSignJarSigning.isSuccessful()) {
-//                return;
-//            }
-//
-//            // check if exceptions were caught during jar signing
-//            if (!dSignJarSigning.getFileExceptions().isEmpty()) {
-//                Integer fileCount = inputJarFile.length;
-//                Integer errorCount = dSignJarSigning.getFileExceptions().size();
-//                String message = MessageFormat.format(res.getString("SignJarAction.SignJarError.message"),
-//                                                      errorCount,
-//                                                      fileCount);
-//
-//                String viewButtonText = res.getString("SignJarAction.ButtonView.message");
-//                String okButtonText = res.getString("SignJarAction.ButtonOK.message");
-//                Object[] buttonTexts = { viewButtonText, okButtonText };
-//
-//                int selected = JOptionPane.showOptionDialog(frame, message,
-//                                                            res.getString("SignJarAction.SignJar.Title"),
-//                                                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-//                                                            null, buttonTexts, okButtonText);
-//
-//                // if view button pressed show error collection
-//                if (selected == 0) {
-//                    DErrorCollection dError = new DErrorCollection(frame, dSignJarSigning.getFileExceptions());
-//                    dError.setVisible(true);
-//                }
-//            } else {
-//                Integer fileCount = inputJarFile.length;
-//                String message = MessageFormat.format(res.getString("SignJarAction.SignJarSuccessful.message"),
-//                                                      fileCount);
-//                JOptionPane.showMessageDialog(frame, message, res.getString("SignJarAction.SignJar.Title"),
-//                                              JOptionPane.INFORMATION_MESSAGE);
-//            }
 
         } catch (Exception ex) {
             DError.displayError(frame, ex);
