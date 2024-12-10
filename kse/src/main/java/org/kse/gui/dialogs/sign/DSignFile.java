@@ -72,11 +72,9 @@ public class DSignFile extends JEscDialog {
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
     private JLabel jlInputFile;
-    private JPanel jpInputFile;
     private JTextField jtfInputFile;
     private JButton jbInputFileBrowse;
     private JLabel jlOutputFile;
-    private JPanel jpOutputFile;
     private JTextField jtfOutputFile;
     private JButton jbOutputFileBrowse;
     private JLabel jlDetachedSignature;
@@ -138,11 +136,6 @@ public class DSignFile extends JEscDialog {
         PlatformUtil.setMnemonic(jbInputFileBrowse, res.getString("DSignFile.jbInputFileBrowse.mnemonic").charAt(0));
         jbInputFileBrowse.setToolTipText(res.getString("DSignFile.jbInputFileBrowse.tooltip"));
 
-        // TODO JW - Remove default panel margin/insets.
-        jpInputFile = new JPanel();
-        jpInputFile.add(jtfInputFile);
-        jpInputFile.add(jbInputFileBrowse);
-
         jlOutputFile = new JLabel(res.getString("DSignFile.jlOutputFile.text"));
         jtfOutputFile = new JTextField(30);
         jtfOutputFile.setCaretPosition(0);
@@ -151,11 +144,6 @@ public class DSignFile extends JEscDialog {
         jbOutputFileBrowse = new JButton(res.getString("DSignFile.jbOutputFileBrowse.text"));
         PlatformUtil.setMnemonic(jbOutputFileBrowse, res.getString("DSignFile.jbOutputFileBrowse.mnemonic").charAt(0));
         jbOutputFileBrowse.setToolTipText(res.getString("DSignFile.jbOutputFileBrowse.tooltip"));
-
-        // TODO JW - Remove default panel margin/insets.
-        jpOutputFile = new JPanel();
-        jpOutputFile.add(jtfOutputFile);
-        jpOutputFile.add(jbOutputFileBrowse);
 
         jlDetachedSignature = new JLabel(res.getString("DSignFile.jlDetachedSignature.text"));
         jcbDetachedSignature = new JCheckBox();
@@ -194,21 +182,23 @@ public class DSignFile extends JEscDialog {
 
         // layout
         Container pane = getContentPane();
-        pane.setLayout(new MigLayout("insets dialog, fill", "[para]unrel[right]unrel[]", "[]unrel[]"));
-        pane.add(jlInputFile, "skip");
-        pane.add(jpInputFile, "wrap");
-        pane.add(jlOutputFile, "skip");
-        pane.add(jpOutputFile, "wrap");
-        pane.add(jlDetachedSignature, "skip");
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]rel[]", "[]unrel[]"));
+        pane.add(jlInputFile, "");
+        pane.add(jtfInputFile, "");
+        pane.add(jbInputFileBrowse, "wrap");
+        pane.add(jlOutputFile, "");
+        pane.add(jtfOutputFile, "");
+        pane.add(jbOutputFileBrowse, "wrap");
+        pane.add(jlDetachedSignature, "");
         pane.add(jcbDetachedSignature, "wrap");
-        pane.add(jlOutputPem, "skip");
+        pane.add(jlOutputPem, "");
         pane.add(jcbOutputPem, "wrap");
-        pane.add(jlSignatureAlgorithm, "skip");
-        pane.add(jcbSignatureAlgorithm, "sgx, wrap");
-        pane.add(jlAddTimestamp, "skip");
+        pane.add(jlSignatureAlgorithm, "");
+        pane.add(jcbSignatureAlgorithm, "wrap");
+        pane.add(jlAddTimestamp, "");
         pane.add(jcbAddTimestamp, "wrap");
-        pane.add(jlTimestampServerUrl, "skip");
-        pane.add(jcbTimestampServerUrl, "sgx, wrap para");
+        pane.add(jlTimestampServerUrl, "");
+        pane.add(jcbTimestampServerUrl, "wrap para");
         pane.add(new JSeparator(), "spanx, growx, wrap para");
         pane.add(jpButtons, "right, spanx");
 
