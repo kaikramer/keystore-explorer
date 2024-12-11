@@ -153,10 +153,10 @@ public class DViewSignature extends JEscDialog {
     private JTextField jtfContentType;
     private JLabel jlContentDigest;
     private JTextField jtfContentDigest;
-    // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
     private JButton jbCertificates;
     private JButton jbTimeStamp;
     private JButton jbCounterSigners;
+    // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
     private JButton jbExtensions;
     private JButton jbPem;
     private JButton jbAsn1;
@@ -281,10 +281,11 @@ public class DViewSignature extends JEscDialog {
         pane.add(jtfSigningTime, "wrap");
         pane.add(jlSignatureAlgorithm, "");
         pane.add(jtfSignatureAlgorithm, "wrap");
-        pane.add(jlContentType, "");
-        pane.add(jtfContentType, "wrap");
-        pane.add(jlContentDigest, "");
-        pane.add(jtfContentDigest, "wrap");
+        // TODO JW - clean up the dialog
+//        pane.add(jlContentType, "");
+//        pane.add(jtfContentType, "wrap");
+//        pane.add(jlContentDigest, "");
+//        pane.add(jtfContentDigest, "wrap");
         pane.add(jbCertificates, "spanx, split");
         pane.add(jbTimeStamp, "");
         pane.add(jbCounterSigners, "");
@@ -482,7 +483,6 @@ public class DViewSignature extends JEscDialog {
                     jbTimeStamp.setEnabled(false);
                 }
 
-
                 if (signerInfo.getCounterSignatures().size() > 0) {
                     jbCounterSigners.setEnabled(true);
                 } else {
@@ -506,6 +506,7 @@ public class DViewSignature extends JEscDialog {
 
     private SignatureType lookupSignatureType(SignerInformation signerInfo) {
         SignatureType signatureType = null;
+
         if (PKCSObjectIdentifiers.rsaEncryption.getId().equals(signerInfo.getEncryptionAlgOID())) {
             // Lookup by JCE name for RSA
             DigestType digestType = DigestType.resolveOid(signerInfo.getDigestAlgOID());

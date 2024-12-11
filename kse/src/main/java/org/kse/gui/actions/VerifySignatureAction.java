@@ -251,12 +251,12 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             dViewSignature.setVisible(true);
 
             /*
+               Information from GnuTLS certtool
 Signers:
     Signer's issuer DN: O=ICU Medical,CN=ICU Medical Dev Issuing
     Signer's serial: 30bc7fadef7fe924fa77a0f376f31d92b68fa33e
     Signing time: Mon Feb 07 23:07:19 UTC 2022
     Signature Algorithm: RSA-SHA256
-    Signature Algorithm: RSA-PSS-SHA256           certtool shows SHA-256, but KSE shows SHA-384, which is what was used. (CmsSigner.java.p7m)
     Signed Attributes:
         messageDigest: 0420ed6b93a0a57ff71b075d7628f807db2d6f9a8727557a02b2f6f9ff520eb4caaf
         1.2.840.113549.1.9.52: 301c300b0609608648016503040201a10d06092a864886f70d01010b0500
@@ -265,11 +265,6 @@ Signers:
              */
 
             kseFrame.updateControls(true);
-
-            JOptionPane.showMessageDialog(frame, res.getString(
-                                                  "ImportTrustedCertificateAction.ImportTrustCertSuccessful.message"),
-                                          res.getString("ImportTrustedCertificateAction.ImportTrustCert.Title"),
-                                          JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
