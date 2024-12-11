@@ -75,6 +75,15 @@ public class SignerListCellRend extends DefaultListCellRenderer {
             X500Name subject = cert.getSubject();
 
             String shortName = X500NameUtils.extractCN(subject);
+            String emailAddress = X500NameUtils.extractEmailAddress(subject);
+
+            if (!StringUtils.isBlank(emailAddress)) {
+                if (StringUtils.isBlank(shortName)) {
+                    shortName = emailAddress;
+                } else {
+                    shortName += " <" + emailAddress + ">";
+                }
+            }
 
             if (StringUtils.isBlank(shortName)) {
                 shortName = subject.toString();
