@@ -12,4 +12,4 @@ Terminal=false
 Type=Application
 Icon=kse
 Categories=Utility;Security;System;Java;
-MimeType=application/x-pkcs12;application/x-java-keystore;application/x-java-jce-keystore;application/pkcs10;application/pkix-pkipath;application/pkix-cert;application/pkix-crl;application/x-x509-ca-cert;application/x-pkcs7-certificates;
+MimeType=application/pkcs7-mime;application/pkcs7-signature;application/pkcs8;application/pkcs8-encrypted;application/pkcs10;application/pkix-cert;application/pkix-crl;application/pkix-pkipath;application/x-java-jce-keystore;application/x-java-keystore;application/x-pem-file;application/x-pkcs7-certificates;application/x-pkcs7-certreqresp;application/x-pkcs7-crl;application/x-pkcs12;application/x-x509-ca-cert;application/x-x509-user-cert;
