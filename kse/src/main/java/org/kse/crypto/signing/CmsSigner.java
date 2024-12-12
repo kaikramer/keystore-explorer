@@ -25,6 +25,7 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ResourceBundle;
@@ -88,7 +89,9 @@ public class CmsSigner {
             CMSSignedData signedData = generator.generate(msg, !detachedSignature);
 
             if (tsaUrl != null) {
-                signedData = addTimestamp(tsaUrl, signedData, signatureType.digestType());
+                SignerInformationStore signerInfos = addTimestamp(tsaUrl, signedData.getSignerInfos(),
+                        signatureType.digestType());
+                signedData = CMSSignedData.replaceSigners(signedData, signerInfos);
             }
 
             return signedData;
@@ -121,9 +124,16 @@ public class CmsSigner {
                     new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().build())
                             .build(contentSigner, certificateChain[0]));
 
+            // Counter signs all existing signatures.
+            // TODO JW - Should there be a dialog for choosing the signature to counter sign?
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             for (SignerInformation signer : signedData.getSignerInfos()) {
                 SignerInformationStore counterSigners = counterSignerGen.generateCounterSigners(signer);
+
+                if (tsaUrl != null) {
+                    counterSigners = addTimestamp(tsaUrl, counterSigners, signatureType.digestType());
+                }
+
                 signer = SignerInformation.addCounterSigners(signer, counterSigners);
 
                 generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
@@ -133,13 +143,9 @@ public class CmsSigner {
 
             CMSSignedData counterSignedData = generator.generate(signedData.getSignedContent(), !detachedSignature);
 
-            // TODO JW - is it possible to add a timestamp for a counter signature? The current logic drops the counter signer.
-//            if (tsaUrl != null) {
-//                counterSignedData = addTimestamp(tsaUrl, counterSignedData);
-//            }
 
             return counterSignedData;
-        } catch (CertificateEncodingException | OperatorCreationException | CMSException e) {
+        } catch (CertificateEncodingException | OperatorCreationException | CMSException | IOException e) {
             throw new CryptoException(res.getString("CmsCounterSignatureFailed.exception.message"), e);
         }
     }
@@ -147,35 +153,33 @@ public class CmsSigner {
     /**
      * Adds a timestamp to a PKCS #7 signature.
      *
-     * @param tsaUrl     The URL of the time stamp authority.
-     * @param signedData The signature to time stamp.
-     * @param digestType The digest type to use for the time stamp.
-     * @return <b>CMSSignedData</b> with time stamp.
+     * @param tsaUrl      The URL of the time stamp authority.
+     * @param signerInfos The signer information to time stamp.
+     * @param digestType  The digest type to use for the time stamp.
+     * @return <b>SignerInformation</b> with time stamp token.
      */
-    public static CMSSignedData addTimestamp(String tsaUrl, CMSSignedData signedData, DigestType digestType)
-            throws IOException {
+    public static SignerInformationStore addTimestamp(String tsaUrl, SignerInformationStore signerInfos,
+            DigestType digestType) throws IOException {
 
-        Collection<SignerInformation> signerInfos = signedData.getSignerInfos().getSigners();
+        Collection<SignerInformation> newSignerInfos = new ArrayList<>();
 
         // get signature of first signer (should be the only one)
-        SignerInformation si = signerInfos.iterator().next();
-        byte[] signature = si.getSignature();
+        for (SignerInformation si : signerInfos.getSigners()) {
+            byte[] signature = si.getSignature();
 
-        // send request to TSA
-        byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, digestType);
+            // send request to TSA
+            byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, digestType);
 
-        // create new SignerInformation with TS attribute
-        Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,
-                new DERSet(ASN1Primitive.fromByteArray(token)));
-        ASN1EncodableVector timestampVector = new ASN1EncodableVector();
-        timestampVector.add(tokenAttr);
-        AttributeTable at = new AttributeTable(timestampVector);
-        si = SignerInformation.replaceUnsignedAttributes(si, at);
-        signerInfos.clear();
-        signerInfos.add(si);
-        SignerInformationStore newSignerStore = new SignerInformationStore(signerInfos);
+            // create new SignerInformation with TS attribute
+            Attribute tokenAttr = new Attribute(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken,
+                                                new DERSet(ASN1Primitive.fromByteArray(token)));
+            ASN1EncodableVector timestampVector = new ASN1EncodableVector();
+            timestampVector.add(tokenAttr);
+            AttributeTable at = new AttributeTable(timestampVector);
 
-        // create new signed data
-        return CMSSignedData.replaceSigners(signedData, newSignerStore);
+            newSignerInfos.add(SignerInformation.replaceUnsignedAttributes(si, at));
+        }
+
+        return new SignerInformationStore(newSignerInfos);
     }
 }

@@ -143,6 +143,8 @@ public class CounterSignAction extends KeyStoreExplorerAction {
     }
 
     private File chooseContentFile() {
+        // TODO JW - This dialog just pops up and the user doesn't know what file to choose.
+        // Need to provide more information.
         JFileChooser chooser = FileChooserFactory.getNoFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("CounterSignAction.ChooseContent.Title"));

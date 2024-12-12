@@ -282,6 +282,7 @@ public class DSignFile extends JEscDialog {
      * @return <b>File</b> output file
      */
     public File getOutputFile() {
+        // TODO JW - output file is not updated if the user manually changes the value (i.e., didn't use the file chooser)
         return outputFile;
     }
 
