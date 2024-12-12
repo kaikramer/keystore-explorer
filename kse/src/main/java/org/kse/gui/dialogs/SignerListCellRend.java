@@ -20,18 +20,15 @@
 package org.kse.gui.dialogs;
 
 import java.awt.Component;
-import java.util.Collection;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
-import org.kse.crypto.x509.X500NameUtils;
-import org.kse.utilities.StringUtils;
+import org.kse.crypto.signing.CmsUtil;
 
 /**
  * Custom cell renderer for the cells of the DViewSignature list.
@@ -61,38 +58,9 @@ public class SignerListCellRend extends DefaultListCellRenderer {
 
         if (value instanceof SignerInformation) {
             SignerInformation signer = (SignerInformation) value;
-            // TODO JW Need to move cert lookup to a utility class.
-            X509CertificateHolder cert = null;
-            Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates().getMatches(signer.getSID());
-            if (!matchedCerts.isEmpty()) {
-                cert = matchedCerts.iterator().next();
-            }
 
-            if (cert == null) {
-                // TODO JW - what type of error handling
-            }
-
-            X500Name subject = cert.getSubject();
-
-            String shortName = X500NameUtils.extractCN(subject);
-            String emailAddress = X500NameUtils.extractEmailAddress(subject);
-
-            if (!StringUtils.isBlank(emailAddress)) {
-                if (StringUtils.isBlank(shortName)) {
-                    shortName = emailAddress;
-                } else {
-                    shortName += " <" + emailAddress + ">";
-                }
-            }
-
-            if (StringUtils.isBlank(shortName)) {
-                shortName = subject.toString();
-            }
-
-            // subject DN can be empty in some cases
-            if (StringUtils.isBlank(shortName)) {
-                shortName = cert.getSerialNumber().toString();
-            }
+            X509CertificateHolder cert = CmsUtil.getSignerCert(signedData, signer);
+            String shortName = CmsUtil.getShortName(cert);
 
             cell.setText(shortName);
 
@@ -100,7 +68,7 @@ public class SignerListCellRend extends DefaultListCellRenderer {
 //            ImageIcon icon = new ImageIcon(getClass().getResource("images/certificate_node.png"));
 //            cell.setIcon(icon);
 
-            cell.setToolTipText(subject.toString());
+            cell.setToolTipText(cert.getSubject().toString());
         }
 
         return cell;

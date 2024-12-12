@@ -423,15 +423,9 @@ public class DViewSignature extends JEscDialog {
 
             try {
                 Date signingTime = CmsUtil.getSigningTime(signerInfo);
-                X509Certificate cert = null;
+                X509Certificate cert = X509CertUtil.convertCertificate(CmsUtil.getSignerCert(signedData, signerInfo));
 
-                @SuppressWarnings("unchecked") // SignerId does not specify a type when extending Selector<T>
-                Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates()
-                        .getMatches(signerInfo.getSID());
-                if (!matchedCerts.isEmpty()) {
-                    cert = X509CertUtil.convertCertificate(matchedCerts.iterator().next());
-                }
-                // TODO JW - Need to check for null certificate
+                // TODO JW - Need to check for null certificate (see CmsUtil.getSignerCert)
 
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
@@ -440,9 +434,11 @@ public class DViewSignature extends JEscDialog {
 
                 jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
 
-                // TODO JW - What to do if the signature doesn't have a signing time?
                 if (signingTime != null) {
                     jtfSigningTime.setText(StringUtils.formatDate(signingTime));
+                } else {
+                    // TODO JW - What to do if the signature doesn't have a signing time?
+                    jtfSigningTime.setText("");
                 }
 
 //                if (noLongerValid) {
@@ -549,10 +545,14 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void timeStampPressed() {
+        SignerInformation signer = getSelectedSignerInfo();
+
         try {
+            String shortName = CmsUtil.getShortName(CmsUtil.getSignerCert(signedData, signer));
+
             DViewSignature dViewSignature = new DViewSignature(this,
-                    res.getString("DViewSignature.TimeStampSigner.Title"), timeStampSigner,
-                    timeStampSigner.getSignerInfos().getSigners(), null);
+                    MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
+                    timeStampSigner, timeStampSigner.getSignerInfos().getSigners(), null);
             dViewSignature.setLocationRelativeTo(this);
             dViewSignature.setVisible(true);
         } catch (CryptoException e) {
@@ -564,8 +564,10 @@ public class DViewSignature extends JEscDialog {
         SignerInformation signer = getSelectedSignerInfo();
 
         try {
+            String shortName = CmsUtil.getShortName(CmsUtil.getSignerCert(signedData, signer));
+
             DViewSignature dViewSignature = new DViewSignature(this,
-                    res.getString("DViewSignature.CounterSigners.Title"), signedData,
+                    MessageFormat.format(res.getString("DViewSignature.CounterSigners.Title"), shortName), signedData,
                     signer.getCounterSignatures().getSigners(), null);
             dViewSignature.setLocationRelativeTo(this);
             dViewSignature.setVisible(true);

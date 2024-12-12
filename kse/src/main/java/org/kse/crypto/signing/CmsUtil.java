@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.function.Supplier;
@@ -34,6 +35,8 @@ import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
@@ -41,6 +44,8 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.x509.X500NameUtils;
+import org.kse.utilities.StringUtils;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
@@ -215,5 +220,45 @@ public class CmsUtil {
             }
         }
         return timeStampToken;
+    }
+
+    public static X509CertificateHolder getSignerCert(CMSSignedData signedData, SignerInformation signer) {
+        X509CertificateHolder cert = null;
+
+        Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates().getMatches(signer.getSID());
+        if (!matchedCerts.isEmpty()) {
+            cert = matchedCerts.iterator().next();
+        }
+
+        if (cert == null) {
+            // TODO JW - what type of error handling
+        }
+        return cert;
+    }
+
+    public static String getShortName(X509CertificateHolder cert) {
+        X500Name subject = cert.getSubject();
+
+        String shortName = X500NameUtils.extractCN(subject);
+        String emailAddress = X500NameUtils.extractEmailAddress(subject);
+
+        if (!StringUtils.isBlank(emailAddress)) {
+            if (StringUtils.isBlank(shortName)) {
+                shortName = emailAddress;
+            } else {
+                shortName += " <" + emailAddress + ">";
+            }
+        }
+
+        if (StringUtils.isBlank(shortName)) {
+            shortName = subject.toString();
+        }
+
+        // subject DN can be empty in some cases
+        if (StringUtils.isBlank(shortName)) {
+            shortName = cert.getSerialNumber().toString();
+        }
+
+        return shortName;
     }
 }
