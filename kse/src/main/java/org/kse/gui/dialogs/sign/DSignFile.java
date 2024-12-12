@@ -96,6 +96,7 @@ public class DSignFile extends JEscDialog {
     private KeyPairType signKeyPairType;
     private File inputFile;
     private File outputFile;
+    private boolean outputFileChosen;
     private boolean detachedSignature = true;
     private boolean outputPem;
     private SignatureType signatureType;
@@ -187,6 +188,7 @@ public class DSignFile extends JEscDialog {
         pane.add(jlInputFile, "");
         pane.add(jtfInputFile, "");
         pane.add(jbInputFileBrowse, "wrap");
+        // TODO JW - Hide the output file for counter signing (re-use the same cert file). Prompt for overwriting.
         pane.add(jlOutputFile, "");
         pane.add(jtfOutputFile, "");
         pane.add(jbOutputFileBrowse, "wrap");
@@ -262,7 +264,7 @@ public class DSignFile extends JEscDialog {
 
     protected void detachedSignatureStateChange() {
         detachedSignature = jcbDetachedSignature.isSelected();
-        // TODO JW - implement output file name update -- even if user chooses a file?
+        updateOutputFile();
     }
 
     /**
@@ -375,14 +377,11 @@ public class DSignFile extends JEscDialog {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
             inputFile = chosenFile;
-            outputFile = new File(inputFile.getAbsolutePath() + (detachedSignature ? ".p7s" : ".p7m"));
 
-            // TODO JW - Is there a better location for this code?
             jtfInputFile.setText(inputFile.getAbsolutePath());
             jtfInputFile.setCaretPosition(0);
 
-            jtfOutputFile.setText(outputFile.getAbsolutePath());
-            jtfOutputFile.setCaretPosition(0);
+            updateOutputFile();
         }
     }
 
@@ -400,13 +399,21 @@ public class DSignFile extends JEscDialog {
         if (rtnValue == JFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
-            // TODO JW - Need to add extension to chosen file?
             outputFile = chosenFile;
+            outputFileChosen = true;
 
-            // TODO JW - Is there a better location for this code?
-            jtfOutputFile.setText(outputFile.getAbsolutePath());
-            jtfOutputFile.setCaretPosition(0);
+            updateOutputFile();
         }
+    }
+
+    private void updateOutputFile()
+    {
+        if (!outputFileChosen) {
+            outputFile = new File(inputFile.getAbsolutePath() + (detachedSignature ? ".p7s" : ".p7m"));
+        }
+
+        jtfOutputFile.setText(outputFile.getAbsolutePath());
+        jtfOutputFile.setCaretPosition(0);
     }
 
     /**

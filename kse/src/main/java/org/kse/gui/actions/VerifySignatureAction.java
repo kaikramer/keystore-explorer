@@ -224,22 +224,21 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                 Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
                 if (!matchedCerts.isEmpty()) {
                     X509CertificateHolder cert = matchedCerts.iterator().next();
-                    // TODO JW- Counter signing breaks the signature...
                     // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
-//                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-//                        System.out.println("Verified by: " + cert.getSubject());
-//                        verified = true;
-//
-//                        TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
-//                        if (tspToken != null) {
-//                            matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
-//                            if (!matchedCerts.isEmpty()) {
-//                                cert = matchedCerts.iterator().next();
-//                                tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
-//                                System.out.println("Time stamped by: " + cert.getSubject());
-//                            }
-//                        }
-//                    }
+                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+                        System.out.println("Verified by: " + cert.getSubject());
+                        verified = true;
+
+                        TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
+                        if (tspToken != null) {
+                            matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
+                            if (!matchedCerts.isEmpty()) {
+                                cert = matchedCerts.iterator().next();
+                                tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
+                                System.out.println("Time stamped by: " + cert.getSubject());
+                            }
+                        }
+                    }
                 }
             }
             System.out.println("Verified: " + verified);
