@@ -286,10 +286,13 @@ public class DViewSignature extends JEscDialog {
 //        pane.add(jtfContentType, "wrap");
 //        pane.add(jlContentDigest, "");
 //        pane.add(jtfContentDigest, "wrap");
-        pane.add(jbCertificates, "spanx, split");
-        pane.add(jbTimeStamp, "");
-        pane.add(jbCounterSigners, "");
+        pane.add(jbTimeStamp, "spanx, split");
+        pane.add(jbCounterSigners, "wrap");
 //      pane.add(jbExtensions, "");
+        pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
+        pane.add(jbCertificates, "spanx, split");
+        // TODO JW - Hide PEM and ASN.1 buttons for Counter Signers.
+        // Bouncy Castle CMS does not expose the ASN1 encoding for SignerInfos or other aspects of the CMS data.
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
