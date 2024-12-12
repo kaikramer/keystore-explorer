@@ -180,19 +180,16 @@ public class CmsUtil {
      * @param signerInfo The signer information.
      * @return The time stamp token as TimeStampToken, if present, else null.
      */
-    public static TimeStampToken getTimeStampToken(SignerInformation signerInfo) throws CryptoException
-    {
+    public static TimeStampToken getTimeStampToken(SignerInformation signerInfo) throws CryptoException {
         TimeStampToken timeStampToken = null;
-        AttributeTable unsignedAttributes = signerInfo.getUnsignedAttributes();
-        if (unsignedAttributes != null) {
-            Attribute tsTokenAttribute = unsignedAttributes.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
-            if (tsTokenAttribute != null) {
-                try {
-                    timeStampToken = new TimeStampToken(ContentInfo.getInstance(tsTokenAttribute.getAttributeValues()[0]));
-                } catch (TSPException | IOException e) {
-                    // TODO JW Auto-generated catch block
-                    throw new CryptoException(e);
-                }
+
+        ContentInfo timeStamp = getTimeStampContentInfo(signerInfo);
+        if (timeStamp != null) {
+            try {
+                timeStampToken = new TimeStampToken(timeStamp);
+            } catch (TSPException | IOException e) {
+                // TODO JW Auto-generated catch block
+                throw new CryptoException(e);
             }
         }
         return timeStampToken;
@@ -204,22 +201,30 @@ public class CmsUtil {
      * @param signerInfo The signer information.
      * @return The time stamp token as CMSSignedData, if present, else null.
      */
-    public static CMSSignedData getTimeStampSignature(SignerInformation signerInfo) throws CryptoException
-    {
+    public static CMSSignedData getTimeStampSignature(SignerInformation signerInfo) throws CryptoException {
         CMSSignedData timeStampToken = null;
+
+        ContentInfo timeStamp = getTimeStampContentInfo(signerInfo);
+        if (timeStamp != null) {
+            try {
+                timeStampToken = new CMSSignedData(timeStamp);
+            } catch (CMSException e) {
+                // TODO JW Auto-generated catch block
+                throw new CryptoException(e);
+            }
+        }
+        return timeStampToken;
+    }
+
+    private static ContentInfo getTimeStampContentInfo(SignerInformation signerInfo) {
         AttributeTable unsignedAttributes = signerInfo.getUnsignedAttributes();
         if (unsignedAttributes != null) {
             Attribute tsTokenAttribute = unsignedAttributes.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
             if (tsTokenAttribute != null) {
-                try {
-                    timeStampToken = new CMSSignedData(ContentInfo.getInstance(tsTokenAttribute.getAttributeValues()[0]));
-                } catch (CMSException e) {
-                    // TODO JW Auto-generated catch block
-                    throw new CryptoException(e);
-                }
+                return ContentInfo.getInstance(tsTokenAttribute.getAttributeValues()[0]);
             }
         }
-        return timeStampToken;
+        return null;
     }
 
     public static X509CertificateHolder getSignerCert(CMSSignedData signedData, SignerInformation signer) {
