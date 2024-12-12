@@ -85,6 +85,8 @@ import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TSPValidationException;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
@@ -200,48 +202,9 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             // TODO JW - Verify the signature using the keystore
             // TODO JW build Store using certs from the truststore. If a cert cannot be found
             // then the signature should not be trusted (even if valid)
-            boolean verified = false;
             Store<X509CertificateHolder> certStore = signedData.getCertificates();
             SignerInformationStore signers = signedData.getSignerInfos();
-            for (SignerInformation signer : signers.getSigners()) {
-//                AttributeTable signedAttributes = signer.getSignedAttributes();
-//                AttributeTable unsignedAttributes = signer.getUnsignedAttributes();
-//
-//                if (signedAttributes != null) {
-//                    Hashtable ht = signedAttributes.toHashtable();
-//                    for (Object k : ht.keySet()) {
-//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
-//                    }
-//                }
-//                if (unsignedAttributes != null) {
-//                    Hashtable ht = unsignedAttributes.toHashtable();
-//                    for (Object k : ht.keySet()) {
-//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
-//                    }
-//                }
-//
-                // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
-                Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
-                if (!matchedCerts.isEmpty()) {
-                    X509CertificateHolder cert = matchedCerts.iterator().next();
-                    // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
-                    if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-                        System.out.println("Verified by: " + cert.getSubject());
-                        verified = true;
-
-                        TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
-                        if (tspToken != null) {
-                            matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
-                            if (!matchedCerts.isEmpty()) {
-                                cert = matchedCerts.iterator().next();
-                                tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
-                                System.out.println("Time stamped by: " + cert.getSubject());
-                            }
-                        }
-                    }
-                }
-            }
-            System.out.println("Verified: " + verified);
+            verify(certStore, signers);
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
@@ -267,6 +230,54 @@ Signers:
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
+    }
+
+    private void verify(Store<X509CertificateHolder> certStore, SignerInformationStore signers) throws CMSException,
+            OperatorCreationException, CertificateException, CryptoException, TSPException, TSPValidationException {
+        boolean verified = false;
+        for (SignerInformation signer : signers.getSigners()) {
+//                AttributeTable signedAttributes = signer.getSignedAttributes();
+//                AttributeTable unsignedAttributes = signer.getUnsignedAttributes();
+//
+//                if (signedAttributes != null) {
+//                    Hashtable ht = signedAttributes.toHashtable();
+//                    for (Object k : ht.keySet()) {
+//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
+//                    }
+//                }
+//                if (unsignedAttributes != null) {
+//                    Hashtable ht = unsignedAttributes.toHashtable();
+//                    for (Object k : ht.keySet()) {
+//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
+//                    }
+//                }
+//
+            // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
+            Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
+            if (!matchedCerts.isEmpty()) {
+                X509CertificateHolder cert = matchedCerts.iterator().next();
+                // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
+                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+                    System.out.println("Verified by: " + cert.getSubject());
+                    verified = true;
+
+                    TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
+                    if (tspToken != null) {
+                        matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
+                        if (!matchedCerts.isEmpty()) {
+                            cert = matchedCerts.iterator().next();
+                            tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
+                            System.out.println("Time stamped by: " + cert.getSubject());
+                        }
+                    }
+
+                    if (signer.getCounterSignatures().size() > 0) {
+                        verify(certStore, signer.getCounterSignatures());
+                    }
+                }
+            }
+        }
+        System.out.println("Verified: " + verified);
     }
 
     private boolean isCA(X509Certificate cert) {
