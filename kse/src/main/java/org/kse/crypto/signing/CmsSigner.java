@@ -59,6 +59,9 @@ import org.kse.crypto.digest.DigestType;
 public class CmsSigner {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
 
+    private CmsSigner() {
+    }
+
     /**
      * Signs a file using PKCS #7 CMS.
      *

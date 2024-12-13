@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.ResourceBundle;
 import java.util.function.Supplier;
 
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
@@ -54,6 +55,8 @@ import org.kse.utilities.pem.PemUtil;
  * Provides utility methods relating to Cryptographic Message Syntax (CMS).
  */
 public class CmsUtil {
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
+
     private static final String CMS_PEM_TYPE = "CMS";
     private static final String PKCS7_PEM_TYPE = "PKCS7";
 
@@ -128,11 +131,15 @@ public class CmsUtil {
      * @param cms The CMS signature
      * @return The PEM'd encoding
      */
-    public static String getPem(CMSSignedData cms) throws CryptoException, IOException {
-        // Use PKCS7 PEM header since it can be verified using GnuTLS certtool and OpenSSL.
-        // GnuTLS certtool will not verify signatures with the CMS PEM header.
-        PemInfo pemInfo = new PemInfo(PKCS7_PEM_TYPE, null, cms.getEncoded());
-        return PemUtil.encode(pemInfo);
+    public static String getPem(CMSSignedData cms) throws CryptoException {
+        try {
+            // Use PKCS7 PEM header since it can be verified using GnuTLS certtool and OpenSSL.
+            // GnuTLS certtool will not verify signatures with the CMS PEM header.
+            PemInfo pemInfo = new PemInfo(PKCS7_PEM_TYPE, null, cms.getEncoded());
+            return PemUtil.encode(pemInfo);
+        } catch (IOException e) {
+            throw new CryptoException(res.getString("CmsGetPemFailed.exception.message"), e);
+        }
     }
 
     /**

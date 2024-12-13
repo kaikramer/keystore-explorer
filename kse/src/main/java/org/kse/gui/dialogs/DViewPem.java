@@ -295,7 +295,7 @@ public class DViewPem extends JEscDialog {
         } else if (pubKey != null) {
             return OpenSslPubUtil.getPem(pubKey);
         } else if (cms != null) {
-            return CmsUtil.getPem(cms); 
+            return CmsUtil.getPem(cms);
         }
 
         return "";
