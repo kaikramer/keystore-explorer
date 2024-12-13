@@ -22,6 +22,7 @@ package org.kse.crypto.signing;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
@@ -59,46 +60,44 @@ public class CmsUtil {
     private CmsUtil() {
     }
 
+    /**
+     * Loads a signature. If it is a detached signature, attempts to find and load the content.
+     * Verification and counter signing require the content.
+     *
+     * @param signatureFile The signature file.
+     * @param chooser The file chooser to use for choosing the content file.
+     * @return
+     * @throws IOException
+     * @throws CMSException
+     */
     public static CMSSignedData loadSignature(File signatureFile, Supplier<File> chooser)
-            throws IOException, CryptoException, CMSException {
+            throws IOException, CMSException {
 
         // TODO JW - What if the file cannot be opened?
         byte[] signature = Files.readAllBytes(signatureFile.toPath());
 
         if (PemUtil.isPemFormat(signature)) {
             PemInfo signaturePem = PemUtil.decode(signature);
-            if (signaturePem == null) {
-                // TODO JW - What to throw if the signature is detected as PEM, but is not PEM?
-                throw new CryptoException("Not a PEM file, but has PEM header!");
+            if (signaturePem != null) {
+                signature = signaturePem.getContent();
             }
-            // TODO JW - Do we even want to check the type? Should we just let the BC CMS
-            // class bomb out?
-            if (!CMS_PEM_TYPE.equals(signaturePem.getType()) && !PKCS7_PEM_TYPE.equals(signaturePem.getType())) {
-                // TODO JW - What to throw if the signature is not the correct type?
-                throw new CryptoException("PEM is not of type CMS or PKCS7");
-            }
-            signature = signaturePem.getContent();
         }
-        CMSSignedData signedData = new CMSSignedData(signature);
 
-        if (signedData.isCertificateManagementMessage()) {
-            // TODO JW - Display a message indicating that the file doesn't have any
-            // signatures.
-            return null;
-        }
+        CMSSignedData signedData = new CMSSignedData(signature);
 
         if (signedData.isDetachedSignature()) {
             CMSProcessableFile content = loadDetachedContent(signatureFile, chooser);
-            if (content == null) {
-                return null;
+            if (content != null) {
+                signedData = new CMSSignedData(content, signature);
             }
-            signedData = new CMSSignedData(content, signature);
         }
+
         return signedData;
     }
 
     private static CMSProcessableFile loadDetachedContent(File signatureFile, Supplier<File> chooser)
             throws CMSException {
+
         // Look for the content file. if not present, prompt for it.
         File contentFile = null;
 
@@ -107,9 +106,8 @@ public class CmsUtil {
         if (extensionIndex > 0) {
             // Turn file_name.txt.p7s into file_name.txt
             String contentFileName = signatureFile.getAbsolutePath().substring(0, extensionIndex);
-            contentFile = new File(contentFileName);
-            if (!contentFile.exists()) {
-                contentFile = null;
+            if (Files.exists(Paths.get(contentFileName))) {
+                contentFile = new File(contentFileName);
             }
         }
 
@@ -130,16 +128,11 @@ public class CmsUtil {
      * @param cms The CMS signature
      * @return The PEM'd encoding
      */
-    public static String getPem(CMSSignedData cms) throws CryptoException {
+    public static String getPem(CMSSignedData cms) throws CryptoException, IOException {
         // Use PKCS7 PEM header since it can be verified using GnuTLS certtool and OpenSSL.
-        // GnuTLS certtool cannot verify signatures with the CMS PEM header.
-        try {
-            PemInfo pemInfo = new PemInfo(PKCS7_PEM_TYPE, null, cms.getEncoded());
-            return PemUtil.encode(pemInfo);
-        } catch (IOException e) {
-            // TODO JW Auto-generated catch block
-            throw new CryptoException(e);
-        }
+        // GnuTLS certtool will not verify signatures with the CMS PEM header.
+        PemInfo pemInfo = new PemInfo(PKCS7_PEM_TYPE, null, cms.getEncoded());
+        return PemUtil.encode(pemInfo);
     }
 
     /**
@@ -181,9 +174,10 @@ public class CmsUtil {
      * @return The time stamp token as TimeStampToken, if present, else null.
      */
     public static TimeStampToken getTimeStampToken(SignerInformation signerInfo) throws CryptoException {
-        TimeStampToken timeStampToken = null;
 
+        TimeStampToken timeStampToken = null;
         ContentInfo timeStamp = getTimeStampContentInfo(signerInfo);
+
         if (timeStamp != null) {
             try {
                 timeStampToken = new TimeStampToken(timeStamp);
@@ -192,6 +186,7 @@ public class CmsUtil {
                 throw new CryptoException(e);
             }
         }
+
         return timeStampToken;
     }
 
@@ -202,9 +197,10 @@ public class CmsUtil {
      * @return The time stamp token as CMSSignedData, if present, else null.
      */
     public static CMSSignedData getTimeStampSignature(SignerInformation signerInfo) throws CryptoException {
-        CMSSignedData timeStampToken = null;
 
+        CMSSignedData timeStampToken = null;
         ContentInfo timeStamp = getTimeStampContentInfo(signerInfo);
+
         if (timeStamp != null) {
             try {
                 timeStampToken = new CMSSignedData(timeStamp);
@@ -213,24 +209,29 @@ public class CmsUtil {
                 throw new CryptoException(e);
             }
         }
+
         return timeStampToken;
     }
 
     private static ContentInfo getTimeStampContentInfo(SignerInformation signerInfo) {
+
         AttributeTable unsignedAttributes = signerInfo.getUnsignedAttributes();
+
         if (unsignedAttributes != null) {
             Attribute tsTokenAttribute = unsignedAttributes.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
             if (tsTokenAttribute != null) {
                 return ContentInfo.getInstance(tsTokenAttribute.getAttributeValues()[0]);
             }
         }
+
         return null;
     }
 
     public static X509CertificateHolder getSignerCert(CMSSignedData signedData, SignerInformation signer) {
-        X509CertificateHolder cert = null;
 
+        X509CertificateHolder cert = null;
         Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates().getMatches(signer.getSID());
+
         if (!matchedCerts.isEmpty()) {
             cert = matchedCerts.iterator().next();
         }
@@ -238,6 +239,7 @@ public class CmsUtil {
         if (cert == null) {
             // TODO JW - what type of error handling
         }
+
         return cert;
     }
 

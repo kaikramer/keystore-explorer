@@ -437,7 +437,6 @@ public class DViewSignature extends JEscDialog {
                 if (signingTime != null) {
                     jtfSigningTime.setText(StringUtils.formatDate(signingTime));
                 } else {
-                    // TODO JW - What to do if the signature doesn't have a signing time?
                     jtfSigningTime.setText("");
                 }
 

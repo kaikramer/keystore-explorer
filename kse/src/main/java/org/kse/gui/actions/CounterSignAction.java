@@ -118,8 +118,16 @@ public class CounterSignAction extends KeyStoreExplorerAction {
             String tsaUrl = dSignFile.getTimestampingServerUrl();
 
             CMSSignedData signature = CmsUtil.loadSignature(inputFile, this::chooseContentFile);
-            if (signature == null) {
-                // TODO JW - identify the error conditions.
+            if (signature.isDetachedSignature()) {
+                // loadSignature tried to find and load the content but could not.
+                // TODO JW - Display a message stating that the content file has to be chosen
+                // for counter signing a detached signature.
+                return;
+            }
+
+            if (signature.isCertificateManagementMessage()) {
+                // TODO JW - Display a message indicating that the file doesn't have any
+                // signatures.
                 return;
             }
 

@@ -157,6 +157,11 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 
             // TODO JW - What about the logic in openSignature?
             CMSSignedData signedData = CmsUtil.loadSignature(signatureFile, this::chooseContentFile);
+            if (signedData.isCertificateManagementMessage()) {
+                // TODO JW - Display a message indicating that the file doesn't have any
+                // signatures.
+                return;
+            }
 
             // TODO JW - Add new option for using cacerts for signature verification.
             if (preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled()) {
@@ -199,32 +204,25 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                 return;
             }
 
-            // TODO JW - Verify the signature using the keystore
-            // TODO JW build Store using certs from the truststore. If a cert cannot be found
-            // then the signature should not be trusted (even if valid)
-            Store<X509CertificateHolder> certStore = signedData.getCertificates();
             SignerInformationStore signers = signedData.getSignerInfos();
-            verify(certStore, signers);
+
+            // TODO JW - It is not possible to verify a detached signature. loadSignature
+            // already tried to find and load the detached content. Provide some indication
+            // to the user that the signature cannot be verified, but still allow the signature
+            // info to be viewed.
+            if (!signedData.isDetachedSignature()) {
+                // TODO JW - Verify the signature using the keystore
+                // TODO JW build Store using certs from the truststore. If a cert cannot be found
+                // then the signature should not be trusted (even if valid)
+                Store<X509CertificateHolder> certStore = signedData.getCertificates();
+                verify(certStore, signers);
+            }
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
                     signedData, signedData.getSignerInfos().getSigners(), null);
             dViewSignature.setLocationRelativeTo(frame);
             dViewSignature.setVisible(true);
-
-            /*
-               Information from GnuTLS certtool
-Signers:
-    Signer's issuer DN: O=ICU Medical,CN=ICU Medical Dev Issuing
-    Signer's serial: 30bc7fadef7fe924fa77a0f376f31d92b68fa33e
-    Signing time: Mon Feb 07 23:07:19 UTC 2022
-    Signature Algorithm: RSA-SHA256
-    Signed Attributes:
-        messageDigest: 0420ed6b93a0a57ff71b075d7628f807db2d6f9a8727557a02b2f6f9ff520eb4caaf
-        1.2.840.113549.1.9.52: 301c300b0609608648016503040201a10d06092a864886f70d01010b0500
-        signingTime: 170d3232303230373233303731395a
-        contentType: 06092a864886f70d010701
-             */
 
             kseFrame.updateControls(true);
         } catch (Exception ex) {
@@ -236,22 +234,6 @@ Signers:
             OperatorCreationException, CertificateException, CryptoException, TSPException, TSPValidationException {
         boolean verified = false;
         for (SignerInformation signer : signers.getSigners()) {
-//                AttributeTable signedAttributes = signer.getSignedAttributes();
-//                AttributeTable unsignedAttributes = signer.getUnsignedAttributes();
-//
-//                if (signedAttributes != null) {
-//                    Hashtable ht = signedAttributes.toHashtable();
-//                    for (Object k : ht.keySet()) {
-//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
-//                    }
-//                }
-//                if (unsignedAttributes != null) {
-//                    Hashtable ht = unsignedAttributes.toHashtable();
-//                    for (Object k : ht.keySet()) {
-//                        System.out.println(k + " :: " + ((Attribute) ht.get(k)).getAttrValues());
-//                    }
-//                }
-//
             // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
             Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
             if (!matchedCerts.isEmpty()) {
