@@ -282,7 +282,6 @@ public class DSignFile extends JEscDialog {
      * @return <b>File</b> output file
      */
     public File getOutputFile() {
-        // TODO JW - output file is not updated if the user manually changes the value (i.e., didn't use the file chooser)
         return outputFile;
     }
 
@@ -347,6 +346,10 @@ public class DSignFile extends JEscDialog {
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
         detachedSignature = jcbDetachedSignature.isSelected();
         outputPem = jcbOutputPem.isSelected();
+
+        if (!outputFileChosen) {
+            outputFile = new File(jtfOutputFile.getText());
+        }
 
         // check add time stamp is selected and assign value
         if (jcbAddTimestamp.isSelected()) {

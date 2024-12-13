@@ -255,8 +255,6 @@ public class DViewSignature extends JEscDialog {
 //        jbExtensions.setToolTipText(res.getString("DViewSignature.jbExtensions.tooltip"));
 //        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewSignature.jbExtensions.mnemonic").charAt(0));
 
-        // TODO JW - Display PEM and ASN1 buttons for counter signatures? What about for time stamps?
-        // TODO JW - Need to make certain these buttons work as expected.
         jbPem = new JButton(res.getString("DViewSignature.jbPem.text"));
         jbPem.setToolTipText(res.getString("DViewSignature.jbPem.tooltip"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewSignature.jbPem.mnemonic").charAt(0));
@@ -291,8 +289,8 @@ public class DViewSignature extends JEscDialog {
 //      pane.add(jbExtensions, "");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCertificates, "spanx, split");
-        // TODO JW - Hide PEM and ASN.1 buttons for Counter Signers.
-        // Bouncy Castle CMS does not expose the ASN1 encoding for SignerInfos or other aspects of the CMS data.
+        // TODO JW - Hide PEM button for Counter Signers.
+        // Use SignerInformation.toASN1Structure for displaying signer info ASN.1.
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
@@ -595,7 +593,7 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void asn1DumpPressed() {
-        // TODO JW - Should this show only the ASN.1 for the selected signer?
+        // TODO JW - Should this show only the ASN.1 for the selected signer? See signerInfo.toASN1Structure().
         try {
             DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, signedData);
             dViewAsn1Dump.setLocationRelativeTo(this);
