@@ -158,8 +158,11 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             // TODO JW - What about the logic in openSignature?
             CMSSignedData signedData = CmsUtil.loadSignature(signatureFile, this::chooseContentFile);
             if (signedData.isCertificateManagementMessage()) {
-                // TODO JW - Display a message indicating that the file doesn't have any
-                // signatures.
+                JOptionPane.showMessageDialog(frame,
+                        MessageFormat.format(res.getString("VerifySignatureAction.NoSignatures.message"),
+                                signatureFile.getName()),
+                        res.getString("VerifySignatureAction.VerifySignature.Title"), JOptionPane.INFORMATION_MESSAGE);
+
                 return;
             }
 
@@ -206,11 +209,11 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 
             SignerInformationStore signers = signedData.getSignerInfos();
 
-            // TODO JW - It is not possible to verify a detached signature. loadSignature
-            // already tried to find and load the detached content. Provide some indication
-            // to the user that the signature cannot be verified, but still allow the signature
-            // info to be viewed.
-            if (!signedData.isDetachedSignature()) {
+            // TODO JW - On DViewSignature, provide signature status: verified, unverified, invalid, verified - no trust
+            // Don't verify the signature if there is no signed content, but the signature details
+            // can still be displayed. loadSignature already tried to find and load the detachted
+            // content.
+            if (signedData.getSignedContent() != null) {
                 // TODO JW - Verify the signature using the keystore
                 // TODO JW build Store using certs from the truststore. If a cert cannot be found
                 // then the signature should not be trusted (even if valid)

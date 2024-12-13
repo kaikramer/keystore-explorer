@@ -27,9 +27,11 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.bouncycastle.cms.CMSSignedData;
 import org.kse.crypto.keypair.KeyPairType;
@@ -118,16 +120,23 @@ public class CounterSignAction extends KeyStoreExplorerAction {
             String tsaUrl = dSignFile.getTimestampingServerUrl();
 
             CMSSignedData signature = CmsUtil.loadSignature(inputFile, this::chooseContentFile);
-            if (signature.isDetachedSignature()) {
-                // loadSignature tried to find and load the content but could not.
-                // TODO JW - Display a message stating that the content file has to be chosen
-                // for counter signing a detached signature.
+
+            if (signature.isCertificateManagementMessage()) {
+                JOptionPane.showMessageDialog(frame,
+                        MessageFormat.format(res.getString("CounterSignAction.NoSignatures.message"),
+                                inputFile.getName()),
+                        res.getString("CounterSignAction.CounterSign.Title"), JOptionPane.INFORMATION_MESSAGE);
+
                 return;
             }
 
-            if (signature.isCertificateManagementMessage()) {
-                // TODO JW - Display a message indicating that the file doesn't have any
-                // signatures.
+            if (signature.getSignedContent() == null) {
+                // loadSignature tried to find and load the content but could not.
+                // TODO JW - Is there a way to counter sign a signature without having the original content? Like providing the original hashes.
+                JOptionPane.showMessageDialog(frame,
+                        MessageFormat.format(res.getString("CounterSignAction.NoContent.message"), inputFile.getName()),
+                        res.getString("CounterSignAction.CounterSign.Title"), JOptionPane.ERROR_MESSAGE);
+
                 return;
             }
 
@@ -151,8 +160,6 @@ public class CounterSignAction extends KeyStoreExplorerAction {
     }
 
     private File chooseContentFile() {
-        // TODO JW - This dialog just pops up and the user doesn't know what file to choose.
-        // Need to provide more information.
         JFileChooser chooser = FileChooserFactory.getNoFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setDialogTitle(res.getString("CounterSignAction.ChooseContent.Title"));
