@@ -20,7 +20,7 @@
 # along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Oracle/OpenJDK JRE version 1.8+ has to be present on your path
+# A JDK/JRE version 11 or higher has to be present on your path
 # OR in a directory called "jre" in the same directory as this script
 
 # detect real location of this script, regardless aliases and symlinks
