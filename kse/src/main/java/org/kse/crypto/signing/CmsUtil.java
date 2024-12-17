@@ -68,7 +68,7 @@ public class CmsUtil {
      * Verification and counter signing require the content.
      *
      * @param signatureFile The signature file.
-     * @param chooser The file chooser to use for choosing the content file.
+     * @param chooser       The file chooser to use for choosing the content file.
      * @return
      * @throws IOException
      * @throws CMSException
@@ -114,7 +114,7 @@ public class CmsUtil {
             }
         }
 
-        // No file - ask for one (if choose is available)
+        // No file - ask for one (if chooser is available)
         if (contentFile == null && chooser != null) {
             contentFile = chooser.get();
             if (contentFile == null) {
@@ -123,6 +123,10 @@ public class CmsUtil {
         }
 
         return new CMSProcessableFile(contentFile);
+    }
+
+    public static boolean isCmsPemType(PemInfo pemInfo) {
+        return pemInfo != null && (PKCS7_PEM_TYPE.equals(pemInfo.getType()) || CMS_PEM_TYPE.equals(pemInfo.getType()));
     }
 
     /**

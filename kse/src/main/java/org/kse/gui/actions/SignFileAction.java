@@ -27,8 +27,11 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.bouncycastle.cms.CMSSignedData;
 import org.kse.crypto.keypair.KeyPairType;
@@ -37,6 +40,8 @@ import org.kse.crypto.signing.CmsSigner;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509CertUtil;
+import org.kse.gui.CurrentDirectory;
+import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.sign.DSignFile;
 import org.kse.gui.error.DError;
@@ -114,8 +119,36 @@ public class SignFileAction extends KeyStoreExplorerAction {
             File outputFile = dSignFile.getOutputFile();
             String tsaUrl = dSignFile.getTimestampingServerUrl();
 
-            CMSSignedData signedData = CmsSigner.sign(inputFile, privateKey, certs, detachedSignature, signatureType,
-                    tsaUrl, provider);
+            CMSSignedData signedData;
+            if (!dSignFile.isCounterSign()) {
+                signedData = CmsSigner.sign(inputFile, privateKey, certs, detachedSignature, signatureType, tsaUrl,
+                        provider);
+            } else {
+                CMSSignedData signature = CmsUtil.loadSignature(inputFile, this::chooseContentFile);
+
+                if (signature.isCertificateManagementMessage()) {
+                    JOptionPane.showMessageDialog(frame,
+                            MessageFormat.format(res.getString("SignFileAction.NoSignatures.message"),
+                                    inputFile.getName()),
+                            res.getString("SignFileAction.CounterSign.Title"), JOptionPane.INFORMATION_MESSAGE);
+
+                    return;
+                }
+
+                if (signature.getSignedContent() == null) {
+                    // loadSignature tried to find and load the content but could not.
+                    // TODO JW - Is there a way to counter sign a signature without having the original content? Like providing the original hashes.
+                    JOptionPane.showMessageDialog(frame,
+                            MessageFormat.format(res.getString("SignFileAction.NoContent.message"),
+                                    inputFile.getName()),
+                            res.getString("SignFileAction.CounterSign.Title"), JOptionPane.ERROR_MESSAGE);
+
+                    return;
+                }
+
+                signedData = CmsSigner.counterSign(signature, privateKey, certs, detachedSignature, signatureType,
+                        tsaUrl, provider);
+            }
 
             byte[] encoded;
             if (!dSignFile.isOutputPem()) {
@@ -131,5 +164,21 @@ public class SignFileAction extends KeyStoreExplorerAction {
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
+    }
+
+    private File chooseContentFile() {
+        JFileChooser chooser = FileChooserFactory.getNoFileChooser();
+        chooser.setCurrentDirectory(CurrentDirectory.get());
+        chooser.setDialogTitle(res.getString("SignFileAction.ChooseContent.Title"));
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setApproveButtonText(res.getString("SignFileAction.ChooseContent.button"));
+
+        int rtnValue = chooser.showOpenDialog(frame);
+        if (rtnValue == JFileChooser.APPROVE_OPTION) {
+            File importFile = chooser.getSelectedFile();
+            CurrentDirectory.updateForFile(importFile);
+            return importFile;
+        }
+        return null;
     }
 }
