@@ -76,11 +76,13 @@ import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
@@ -307,6 +309,7 @@ public class DViewSignature extends JEscDialog {
 
         jbOK.addActionListener(evt -> okPressed());
 
+        // TODO JW What to do if the signature doesn't have any certs at all?
         jbCertificates.addActionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DViewSignature.this);
@@ -471,7 +474,7 @@ public class DViewSignature extends JEscDialog {
                 }
                 jtfSignatureAlgorithm.setCaretPosition(0);
 
-                timeStampSigner = CmsUtil.getTimeStampSignature(signerInfo);
+                timeStampSigner = getTimeStampSignature(signerInfo);
 
                 if (timeStampSigner != null) {
                     jbTimeStamp.setEnabled(true);
@@ -500,7 +503,7 @@ public class DViewSignature extends JEscDialog {
         }
     }
 
-    private SignatureType lookupSignatureType(SignerInformation signerInfo) {
+    private static SignatureType lookupSignatureType(SignerInformation signerInfo) {
         SignatureType signatureType = null;
 
         if (PKCSObjectIdentifiers.rsaEncryption.getId().equals(signerInfo.getEncryptionAlgOID())) {
@@ -513,6 +516,32 @@ public class DViewSignature extends JEscDialog {
                     signerInfo.getEncryptionAlgParams());
         }
         return signatureType;
+    }
+
+    /**
+     * Extracts the time stamp token, if present, from the signature's unsigned
+     * attributes.
+     *
+     * @param signerInfo The signer information.
+     * @return The time stamp token as CMSSignedData, if present, else null.
+     */
+    private static CMSSignedData getTimeStampSignature(SignerInformation signerInfo) {
+
+        CMSSignedData timeStampToken = null;
+        ContentInfo timeStamp = CmsUtil.getTimeStamp(signerInfo);
+
+        if (timeStamp != null) {
+            try {
+                timeStampToken = new CMSSignedData(timeStamp);
+            } catch (CMSException e) {
+                // Users are not going to know what to do about an invalid time stamp token. The
+                // entire signature file has already been loaded so it is unlikely that this
+                // token is invalid. The signature verification logic will indicate if the time
+                // could not be verified.
+            }
+        }
+
+        return timeStampToken;
     }
 
     private static class SelectAll<T> implements Selector<T> {

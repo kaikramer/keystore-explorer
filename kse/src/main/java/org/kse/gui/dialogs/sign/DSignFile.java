@@ -401,11 +401,11 @@ public class DSignFile extends JEscDialog {
 
         // warn if overwriting a file when not counter signing
         if (outputFile.exists() && (!enableCounterSign || !jcbCounterSign.isSelected())) {
-            int option = JOptionPane.showConfirmDialog(this,
+            int selected = JOptionPane.showConfirmDialog(this,
                     MessageFormat.format(res.getString("DSignFile.OverWriteOutput.message"), outputFile.getName()),
                     getTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-            if (option == JOptionPane.NO_OPTION) {
+            if (selected != JOptionPane.YES_OPTION) {
                 return;
             }
         }

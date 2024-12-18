@@ -233,8 +233,9 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         }
     }
 
+    // TODO JW Display verification errors for the signature.
     private void verify(Store<X509CertificateHolder> certStore, SignerInformationStore signers) throws CMSException,
-            OperatorCreationException, CertificateException, CryptoException, TSPException, TSPValidationException {
+            IOException, OperatorCreationException, CertificateException, TSPException, TSPValidationException {
         boolean verified = false;
         for (SignerInformation signer : signers.getSigners()) {
             // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
@@ -246,8 +247,11 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                     System.out.println("Verified by: " + cert.getSubject());
                     verified = true;
 
-                    TimeStampToken tspToken = CmsUtil.getTimeStampToken(signer);
-                    if (tspToken != null) {
+                    ContentInfo timeStamp = CmsUtil.getTimeStamp(signer);
+
+                    if (timeStamp != null) {
+                        TimeStampToken tspToken = new TimeStampToken(timeStamp);
+
                         matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
                         if (!matchedCerts.isEmpty()) {
                             cert = matchedCerts.iterator().next();

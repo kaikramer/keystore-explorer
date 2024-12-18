@@ -43,8 +43,6 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TimeStampToken;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.utilities.StringUtils;
@@ -169,8 +167,8 @@ public class CmsUtil {
                             signingTime = ((ASN1GeneralizedTime) o).getDate();
                         }
                     } catch (ParseException e) {
-                        // TODO JW Auto-generated catch block
-                        throw new CryptoException(e);
+                        // Users are not going to know what to do about invalid ASN.1 date structures.
+                        // So ignore the exception.
                     }
                 }
             }
@@ -179,52 +177,13 @@ public class CmsUtil {
     }
 
     /**
-     * Extracts the time stamp token, if present, from the signature's unsigned attributes.
+     * Extracts the time stamp token, if present, from the signature's unsigned
+     * attributes.
      *
      * @param signerInfo The signer information.
-     * @return The time stamp token as TimeStampToken, if present, else null.
+     * @return The time stamp token as ContentInfo, if present, else null.
      */
-    public static TimeStampToken getTimeStampToken(SignerInformation signerInfo) throws CryptoException {
-
-        TimeStampToken timeStampToken = null;
-        ContentInfo timeStamp = getTimeStampContentInfo(signerInfo);
-
-        if (timeStamp != null) {
-            try {
-                timeStampToken = new TimeStampToken(timeStamp);
-            } catch (TSPException | IOException e) {
-                // TODO JW Auto-generated catch block
-                throw new CryptoException(e);
-            }
-        }
-
-        return timeStampToken;
-    }
-
-    /**
-     * Extracts the time stamp token, if present, from the signature's unsigned attributes.
-     *
-     * @param signerInfo The signer information.
-     * @return The time stamp token as CMSSignedData, if present, else null.
-     */
-    public static CMSSignedData getTimeStampSignature(SignerInformation signerInfo) throws CryptoException {
-
-        CMSSignedData timeStampToken = null;
-        ContentInfo timeStamp = getTimeStampContentInfo(signerInfo);
-
-        if (timeStamp != null) {
-            try {
-                timeStampToken = new CMSSignedData(timeStamp);
-            } catch (CMSException e) {
-                // TODO JW Auto-generated catch block
-                throw new CryptoException(e);
-            }
-        }
-
-        return timeStampToken;
-    }
-
-    private static ContentInfo getTimeStampContentInfo(SignerInformation signerInfo) {
+    public static ContentInfo getTimeStamp(SignerInformation signerInfo) {
 
         AttributeTable unsignedAttributes = signerInfo.getUnsignedAttributes();
 
