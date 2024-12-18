@@ -32,6 +32,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -100,16 +101,16 @@ public class DSignFile extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
-    // TODO store settings (e.g., signature algorithm, TS setting and URL) in preferences.
+    // TODO JW Store settings (e.g., signature algorithm, TS setting and URL) in preferences.
     private PrivateKey signPrivateKey;
     private KeyPairType signKeyPairType;
     private File inputFile;
     private File outputFile;
     private CMSSignedData inputSignature;
     private boolean outputFileChosen;
+    private boolean enableCounterSign;
     private boolean detachedSignature = true;
     private boolean outputPem;
-    private boolean enableCounterSign;
     private SignatureType signatureType;
     private String tsaUrl;
     private boolean successStatus = true;
@@ -208,7 +209,6 @@ public class DSignFile extends JEscDialog {
         pane.add(jlInputFile, "");
         pane.add(jtfInputFile, "");
         pane.add(jbInputFileBrowse, "wrap");
-        // TODO JW - Hide the output file for counter signing (re-use the same cert file). Prompt for overwriting.
         pane.add(jlOutputFile, "");
         pane.add(jtfOutputFile, "");
         pane.add(jbOutputFileBrowse, "wrap");
@@ -246,7 +246,7 @@ public class DSignFile extends JEscDialog {
             }
         });
 
-        jcbCounterSign.addActionListener(evt -> counterSignStateChange());
+        jcbCounterSign.addActionListener(evt -> updateOutputFile());
         jcbDetachedSignature.addItemListener(evt -> detachedSignatureStateChange());
         jcbAddTimestamp.addItemListener(evt -> enableDisableTsaElements());
 
@@ -281,17 +281,13 @@ public class DSignFile extends JEscDialog {
     /**
      * This function enables and disables elements in the dialog.
      */
-    protected void enableDisableControls() {
+    protected void updateControls() {
         jlCounterSign.setEnabled(enableCounterSign);
         jcbCounterSign.setEnabled(enableCounterSign);
         jcbCounterSign.setSelected(enableCounterSign);
 
         jcbDetachedSignature.setSelected(detachedSignature);
         jcbOutputPem.setSelected(outputPem);
-        updateOutputFile();
-    }
-
-    protected void counterSignStateChange() {
         updateOutputFile();
     }
 
@@ -305,6 +301,13 @@ public class DSignFile extends JEscDialog {
      */
     protected void enableDisableTsaElements() {
         jcbTimestampServerUrl.setEnabled(jcbAddTimestamp.isSelected());
+    }
+
+    private void resetToDefault() {
+        inputSignature = null;
+        enableCounterSign = false;
+        detachedSignature = true;
+        outputPem = false;
     }
 
     /**
@@ -349,7 +352,6 @@ public class DSignFile extends JEscDialog {
      * @return <b>booleans</b> output counterSign setting
      */
     public boolean isCounterSign() {
-        // TODO JW - Use a field for tracking this state?
         return jcbCounterSign.isSelected();
     }
 
@@ -393,14 +395,34 @@ public class DSignFile extends JEscDialog {
             return;
         }
 
-        // TODO JW - Review these assignments to see if they're really necessary. I think they are.
-        signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
-        detachedSignature = jcbDetachedSignature.isSelected();
-        outputPem = jcbOutputPem.isSelected();
-
         if (!outputFileChosen) {
             outputFile = new File(jtfOutputFile.getText());
         }
+
+        // warn if overwriting a file when not counter signing
+        if (outputFile.exists() && (!enableCounterSign || !jcbCounterSign.isSelected())) {
+            int option = JOptionPane.showConfirmDialog(this,
+                    MessageFormat.format(res.getString("DSignFile.OverWriteOutput.message"), outputFile.getName()),
+                    getTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (option == JOptionPane.NO_OPTION) {
+                return;
+            }
+        }
+
+        // TODO JW Removed if not used.
+//        if (inputFile.equals(outputFile)) {
+//            int option = JOptionPane.showConfirmDialog(this, res.getString("DSignFile.OverWriteInput.message"),
+//                    getTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+//
+//            if (option == JOptionPane.NO_OPTION) {
+//                return;
+//            }
+//        }
+
+        detachedSignature = jcbDetachedSignature.isSelected();
+        outputPem = jcbOutputPem.isSelected();
+        signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
 
         // check add time stamp is selected and assign value
         if (jcbAddTimestamp.isSelected()) {
@@ -433,45 +455,12 @@ public class DSignFile extends JEscDialog {
             CurrentDirectory.updateForFile(chosenFile);
             inputFile = chosenFile;
 
-            // reset to defaults
-            resetToDefault();
-            try {
-                if (inputFile.exists()) {
-                    byte[] signature = Files.readAllBytes(inputFile.toPath());
-
-                    if (PemUtil.isPemFormat(signature)) {
-                        PemInfo signaturePem = PemUtil.decode(signature);
-                        if (signaturePem != null) {
-                            signature = signaturePem.getContent();
-                        }
-                        outputPem = CmsUtil.isCmsPemType(signaturePem);
-                    }
-
-                    inputSignature = new CMSSignedData(signature);
-                    enableCounterSign = !inputSignature.isCertificateManagementMessage();
-                    detachedSignature = inputSignature.isDetachedSignature();
-                }
-            } catch (IOException | CMSException e) {
-                // Eat the exception.
-                // For IOException - don't know what failed, assume the file is not PKCS#7.
-                // For CMSException - know for certain that the file is not PKCS#7.
-            }
-
-            jtfInputFile.setText(inputFile.getAbsolutePath());
-            jtfInputFile.setCaretPosition(0);
-            enableDisableControls();
+            inputFileUpdated();
         }
     }
 
-    private void resetToDefault() {
-        inputSignature = null;
-        enableCounterSign = false;
-        detachedSignature = true;
-        outputPem = false;
-    }
-
     /**
-     * Get input file
+     * Get output file
      */
     private void outputFileBrowsePressed() {
         JFileChooser chooser = FileChooserFactory.getSignatureFileChooser();
@@ -491,6 +480,37 @@ public class DSignFile extends JEscDialog {
         }
     }
 
+    private void inputFileUpdated() {
+        if (inputFile.exists()) {
+            // reset to defaults
+            resetToDefault();
+
+            try {
+                byte[] signature = Files.readAllBytes(inputFile.toPath());
+
+                if (PemUtil.isPemFormat(signature)) {
+                    PemInfo signaturePem = PemUtil.decode(signature);
+                    if (signaturePem != null) {
+                        signature = signaturePem.getContent();
+                    }
+                    outputPem = CmsUtil.isCmsPemType(signaturePem);
+                }
+
+                inputSignature = new CMSSignedData(signature);
+                enableCounterSign = !inputSignature.isCertificateManagementMessage();
+                detachedSignature = inputSignature.isDetachedSignature();
+            } catch (IOException | CMSException e) {
+                // Eat the exception.
+                // For IOException - don't know what failed, assume the file is not PKCS#7.
+                // For CMSException - know for certain that the file is not PKCS#7.
+            }
+        }
+
+        jtfInputFile.setText(inputFile.getAbsolutePath());
+        jtfInputFile.setCaretPosition(0);
+        updateControls();
+    }
+
     private void updateOutputFile() {
         if (!outputFileChosen) {
             String addedExtension = "";
@@ -498,7 +518,6 @@ public class DSignFile extends JEscDialog {
             if (!enableCounterSign || !jcbCounterSign.isSelected()) {
                 addedExtension = detachedSignature ? ".p7s" : ".p7m";
             }
-            // TODO JW - Need to prompt if overwrite is ok.
             outputFile = new File(inputFile.getAbsolutePath() + addedExtension);
         }
 

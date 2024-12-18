@@ -137,6 +137,8 @@ public class CmsSigner {
                     counterSigners = addTimestamp(tsaUrl, counterSigners, signatureType.digestType());
                 }
 
+                // This does not replace existing counter signers. It creates a new counter signer vector
+                // if it does not already exist, and then it adds the counter signer.
                 signer = SignerInformation.addCounterSigners(signer, counterSigners);
 
                 generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
@@ -145,7 +147,6 @@ public class CmsSigner {
             generator.addCertificates(signedData.getCertificates());
 
             CMSSignedData counterSignedData = generator.generate(signedData.getSignedContent(), !detachedSignature);
-
 
             return counterSignedData;
         } catch (CertificateEncodingException | OperatorCreationException | CMSException | IOException e) {
