@@ -704,7 +704,7 @@ public final class X509CertUtil {
         return null; // No chain of trust
     }
 
-    private static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
+    public static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
         try {
             List<X509Certificate> certs = new ArrayList<>();
 

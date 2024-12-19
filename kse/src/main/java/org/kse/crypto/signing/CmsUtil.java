@@ -23,29 +23,19 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-import org.bouncycastle.asn1.ASN1GeneralizedTime;
-import org.bouncycastle.asn1.ASN1UTCTime;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.CMSAttributes;
-import org.bouncycastle.asn1.cms.ContentInfo;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableFile;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.util.Store;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.x509.X500NameUtils;
-import org.kse.utilities.StringUtils;
 import org.kse.utilities.pem.PemInfo;
 import org.kse.utilities.pem.PemUtil;
 
@@ -96,8 +86,7 @@ public class CmsUtil {
         return signedData;
     }
 
-    private static CMSProcessableFile loadDetachedContent(File signatureFile, Supplier<File> chooser)
-            throws CMSException {
+    private static CMSProcessableFile loadDetachedContent(File signatureFile, Supplier<File> chooser) {
 
         // Look for the content file. if not present, prompt for it.
         File contentFile = null;
@@ -144,98 +133,9 @@ public class CmsUtil {
         }
     }
 
-    /**
-     * Extracts the signature signing time, if present, from the signature's signed attributes.
-     *
-     * @param signerInfo The signer information.
-     * @return The signing time, if present, else null.
-     */
-    public static Date getSigningTime(SignerInformation signerInfo) throws CryptoException {
-        Date signingTime = null;
-        AttributeTable signedAttributes = signerInfo.getSignedAttributes();
-
-        if (signedAttributes != null) {
-            Attribute signingTimeAttribute = signedAttributes.get(CMSAttributes.signingTime);
-            if (signingTimeAttribute != null) {
-                Enumeration<?> element = signingTimeAttribute.getAttrValues().getObjects();
-                if (element.hasMoreElements()) {
-                    Object o = element.nextElement();
-                    try {
-                        if (o instanceof ASN1UTCTime) {
-                            signingTime = ((ASN1UTCTime) o).getAdjustedDate();
-                        } else if (o instanceof ASN1GeneralizedTime) {
-                            signingTime = ((ASN1GeneralizedTime) o).getDate();
-                        }
-                    } catch (ParseException e) {
-                        // Users are not going to know what to do about invalid ASN.1 date structures.
-                        // So ignore the exception.
-                    }
-                }
-            }
-        }
-        return signingTime;
-    }
-
-    /**
-     * Extracts the time stamp token, if present, from the signature's unsigned
-     * attributes.
-     *
-     * @param signerInfo The signer information.
-     * @return The time stamp token as ContentInfo, if present, else null.
-     */
-    public static ContentInfo getTimeStamp(SignerInformation signerInfo) {
-
-        AttributeTable unsignedAttributes = signerInfo.getUnsignedAttributes();
-
-        if (unsignedAttributes != null) {
-            Attribute tsTokenAttribute = unsignedAttributes.get(PKCSObjectIdentifiers.id_aa_signatureTimeStampToken);
-            if (tsTokenAttribute != null) {
-                return ContentInfo.getInstance(tsTokenAttribute.getAttributeValues()[0]);
-            }
-        }
-
-        return null;
-    }
-
-    public static X509CertificateHolder getSignerCert(CMSSignedData signedData, SignerInformation signer) {
-
-        X509CertificateHolder cert = null;
-        Collection<X509CertificateHolder> matchedCerts = signedData.getCertificates().getMatches(signer.getSID());
-
-        if (!matchedCerts.isEmpty()) {
-            cert = matchedCerts.iterator().next();
-        }
-
-        if (cert == null) {
-            // TODO JW - what type of error handling
-        }
-
-        return cert;
-    }
-
-    public static String getShortName(X509CertificateHolder cert) {
-        X500Name subject = cert.getSubject();
-
-        String shortName = X500NameUtils.extractCN(subject);
-        String emailAddress = X500NameUtils.extractEmailAddress(subject);
-
-        if (!StringUtils.isBlank(emailAddress)) {
-            if (StringUtils.isBlank(shortName)) {
-                shortName = emailAddress;
-            } else {
-                shortName += " <" + emailAddress + ">";
-            }
-        }
-
-        if (StringUtils.isBlank(shortName)) {
-            shortName = subject.toString();
-        }
-
-        // subject DN can be empty in some cases
-        if (StringUtils.isBlank(shortName)) {
-            shortName = cert.getSerialNumber().toString();
-        }
-
-        return shortName;
+    public static List<KseSignerInformation> convertSignerInformations(Collection<SignerInformation> signerInfos,
+            Store<X509CertificateHolder> trustedCerts, Store<X509CertificateHolder> signatureCerts) {
+        return signerInfos.stream().map(s -> new KseSignerInformation(s, trustedCerts, signatureCerts))
+                .collect(Collectors.toList());
     }
 }

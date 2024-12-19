@@ -26,20 +26,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.SignerInformation;
-import org.kse.crypto.signing.CmsUtil;
+import org.kse.crypto.signing.KseSignerInformation;
 
 /**
  * Custom cell renderer for the cells of the DViewSignature list.
  */
 public class SignerListCellRend extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
-    private CMSSignedData signedData;
-
-    public SignerListCellRend(CMSSignedData signedData) {
-        this.signedData = signedData;
-    }
 
     /**
      * Returns the rendered cell for the supplied value.
@@ -56,19 +49,25 @@ public class SignerListCellRend extends DefaultListCellRenderer {
             boolean cellHasFocus) {
         JLabel cell = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-        if (value instanceof SignerInformation) {
-            SignerInformation signer = (SignerInformation) value;
+        if (value instanceof KseSignerInformation) {
 
-            X509CertificateHolder cert = CmsUtil.getSignerCert(signedData, signer);
-            String shortName = CmsUtil.getShortName(cert);
+            KseSignerInformation signer = (KseSignerInformation) value;
+            X509CertificateHolder cert = signer.getCertificate();
 
-            cell.setText(shortName);
+            cell.setText(signer.getShortName());
 
-            // TODO JW - need icon for signer list cell renderer
+            // TODO JW Is an icon for signer list cell renderer desired?
 //            ImageIcon icon = new ImageIcon(getClass().getResource("images/certificate_node.png"));
 //            cell.setIcon(icon);
 
-            cell.setToolTipText(cert.getSubject().toString());
+            String tooltip;
+            if (cert != null) {
+                tooltip = cert.getSubject().toString();
+            } else {
+                tooltip = signer.getSID().getIssuer() + " / " + signer.getShortName();
+            }
+
+            cell.setToolTipText(tooltip);
         }
 
         return cell;

@@ -20,96 +20,42 @@
 
 package org.kse.gui.actions;
 
-import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Files;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Security;
-import java.security.SignatureException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertPathValidatorException;
-import java.security.cert.CertStore;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.PKIXCertPathChecker;
-import java.security.cert.PKIXParameters;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.cms.Attribute;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessable;
-import org.bouncycastle.cms.CMSProcessableByteArray;
-import org.bouncycastle.cms.CMSProcessableFile;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TSPValidationException;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.util.Selector;
 import org.bouncycastle.util.Store;
-import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.CmsUtil;
+import org.kse.crypto.signing.KseSignerInformation;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
-import org.kse.gui.dialogs.DGetAlias;
-import org.kse.gui.dialogs.DVerifyCertificate;
-import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewSignature;
-import org.kse.gui.dialogs.DVerifyCertificate.VerifyOptions;
 import org.kse.gui.error.DError;
-import org.kse.gui.error.DProblem;
-import org.kse.gui.error.Problem;
-import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
-import org.kse.utilities.pem.PemInfo;
-import org.kse.utilities.pem.PemUtil;
 
 public class VerifySignatureAction extends AuthorityCertificatesAction {
     private static final long serialVersionUID = 1L;
@@ -146,7 +92,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 //                }
 //            }
 
-            // TODO JW - Remove these?
             KeyStoreState currentState = history.getCurrentState();
             KeyStore keyStore = currentState.getKeyStore();
 
@@ -166,64 +111,43 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                 return;
             }
 
-            // TODO JW - Add new option for using cacerts for signature verification.
-            if (preferences.getCaCertsSettings().isImportTrustedCertTrustCheckEnabled()) {
-//                String matchAlias = X509CertUtil.matchCertificate(keyStore, trustCert);
-//                if (matchAlias != null) {
-//                    int selected = JOptionPane.showConfirmDialog(frame, MessageFormat.format(
-//                                                                         res.getString(
-//                                                                                 "ImportTrustedCertificateAction" +
-//                                                                                 ".TrustCertExistsConfirm.message"),
-//                                                                         matchAlias),
-//                                                                 res.getString(
-//                                                                         "ImportTrustedCertificateAction" +
-//                                                                         ".ImportTrustCert.Title"),
-//                                                                 JOptionPane.YES_NO_OPTION);
-//                    if (selected != JOptionPane.YES_OPTION) {
-//                        return;
-//                    }
-//                }
+            KeyStore caCertificates = getCaCertificates();
+            KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
 
-                KeyStore caCertificates = getCaCertificates();
-                KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
+            // Perform cert lookup against current KeyStore
+            Set<X509Certificate> compCerts = new HashSet<>();
+            compCerts.addAll(extractCertificates(keyStore));
 
-                // Establish against current KeyStore
-                ArrayList<KeyStore> compKeyStores = new ArrayList<>();
-                compKeyStores.add(keyStore);
-
-                if (caCertificates != null) {
-                    // Establish trust against CA Certificates KeyStore
-                    compKeyStores.add(caCertificates);
-                }
-
-                if (windowsTrustedRootCertificates != null) {
-                    // Establish trust against Windows Trusted Root Certificates KeyStore
-                    compKeyStores.add(windowsTrustedRootCertificates);
-                }
-
-                // TODO JW - Verify the signature using the CA certs
-                // TODO JW - Display dialog with option to see signature details.
-
-                return;
+            if (caCertificates != null) {
+                // Perform cert lookup against CA Certificates KeyStore
+                compCerts.addAll(extractCertificates(caCertificates));
             }
 
-            SignerInformationStore signers = signedData.getSignerInfos();
+            if (windowsTrustedRootCertificates != null) {
+                // Perform cert lookup against Windows Trusted Root Certificates KeyStore
+                compCerts.addAll(extractCertificates(windowsTrustedRootCertificates));
+            }
+
+            @SuppressWarnings("unchecked")
+            Store<X509CertificateHolder> trustedCerts = new JcaCertStore(compCerts);
+
+            SignerInformationStore signerInfos = signedData.getSignerInfos();
+            List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signerInfos.getSigners(),
+                    trustedCerts, signedData.getCertificates());
 
             // TODO JW - On DViewSignature, provide signature status: verified, unverified, invalid, verified - no trust
             // Don't verify the signature if there is no signed content, but the signature details
             // can still be displayed. loadSignature already tried to find and load the detachted
             // content.
             if (signedData.getSignedContent() != null) {
-                // TODO JW - Verify the signature using the keystore
-                // TODO JW build Store using certs from the truststore. If a cert cannot be found
-                // then the signature should not be trusted (even if valid)
-                Store<X509CertificateHolder> certStore = signedData.getCertificates();
-                verify(certStore, signers);
+                for (KseSignerInformation signer : signers) {
+                    signer.verify();
+                }
             }
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
-                    signedData, signedData.getSignerInfos().getSigners(), null);
+                    signedData, signers, null);
             dViewSignature.setLocationRelativeTo(frame);
             dViewSignature.setVisible(true);
 
@@ -233,113 +157,75 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         }
     }
 
+    private Collection<X509Certificate> extractCertificates(KeyStore keystore) {
+
+        List<X509Certificate> certs = new ArrayList<>();
+
+        try {
+            Enumeration<String> aliases = keystore.aliases();
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+
+                Certificate[] certChain = keystore.getCertificateChain(alias);
+                if (certChain != null) {
+                    for (Certificate cert : certChain) {
+                        certs.add(X509CertUtil.convertCertificate(cert));
+                    }
+                }
+
+                Certificate cert = keystore.getCertificate(alias);
+                if (cert != null) {
+                    certs.add(X509CertUtil.convertCertificate(cert));
+                }
+            }
+        }
+        catch (KeyStoreException e) {
+            // TODO JW Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (CryptoException e) {
+            // TODO JW Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return certs;
+    }
+
     // TODO JW Display verification errors for the signature.
-    private void verify(Store<X509CertificateHolder> certStore, SignerInformationStore signers) throws CMSException,
-            IOException, OperatorCreationException, CertificateException, TSPException, TSPValidationException {
-        boolean verified = false;
-        for (SignerInformation signer : signers.getSigners()) {
-            // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
-            Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
-            if (!matchedCerts.isEmpty()) {
-                X509CertificateHolder cert = matchedCerts.iterator().next();
-                // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
-                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-                    System.out.println("Verified by: " + cert.getSubject());
-                    verified = true;
-
-                    ContentInfo timeStamp = CmsUtil.getTimeStamp(signer);
-
-                    if (timeStamp != null) {
-                        TimeStampToken tspToken = new TimeStampToken(timeStamp);
-
-                        matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
-                        if (!matchedCerts.isEmpty()) {
-                            cert = matchedCerts.iterator().next();
-                            tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
-                            System.out.println("Time stamped by: " + cert.getSubject());
-                        }
-                    }
-
-                    if (signer.getCounterSignatures().size() > 0) {
-                        verify(certStore, signer.getCounterSignatures());
-                    }
-                }
-            }
-        }
-        System.out.println("Verified: " + verified);
-    }
-
-    private boolean isCA(X509Certificate cert) {
-        int basicConstraints = cert.getBasicConstraints();
-        if (basicConstraints != -1) {
-            boolean[] keyUsage = cert.getKeyUsage();
-            if (keyUsage != null && keyUsage[5]) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private KeyStore getKeyStore(KeyStoreHistory keyStoreHistory)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-
-        KeyStore trustStore = null;
-        trustStore = KeyStore.getInstance("JCEKS");
-        trustStore.load(null, null);
-        if (keyStoreHistory != null) {
-
-            KeyStore tempTrustStore = keyStoreHistory.getCurrentState().getKeyStore();
-            Enumeration<String> enumeration = tempTrustStore.aliases();
-            while (enumeration.hasMoreElements()) {
-                String alias = enumeration.nextElement();
-                if (tempTrustStore.entryInstanceOf(alias, KeyStore.PrivateKeyEntry.class) ||
-                    tempTrustStore.entryInstanceOf(alias, KeyStore.TrustedCertificateEntry.class)) {
-                    X509Certificate cert = (X509Certificate) tempTrustStore.getCertificate(alias);
-                    if (isCA(cert)) {
-                        trustStore.setCertificateEntry(alias, cert);
-                    }
-                }
-            }
-        }
-        if (trustStore.size() == 0) {
-//            if (keyCertChain != null) {
-//                for (int i = 0; i < keyCertChain.length; i++) {
-//                    X509Certificate cert = keyCertChain[i];
-//                    if (isCA(cert)) {
-//                        String entry = "entry" + i;
-//                        trustStore.setCertificateEntry(entry, cert);
+//    private void verify(Store<X509CertificateHolder> certStore, SignerInformationStore signers) throws CMSException,
+//            IOException, OperatorCreationException, CertificateException, TSPException, TSPValidationException {
+//        boolean verified = false;
+//        for (SignerInformation signer : signers.getSigners()) {
+//            // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
+//            Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
+//            if (!matchedCerts.isEmpty()) {
+//                X509CertificateHolder cert = matchedCerts.iterator().next();
+//                // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
+//                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+//                    System.out.println("Verified by: " + cert.getSubject());
+//                    verified = true;
+//
+//                    ContentInfo timeStamp = CmsUtil.getTimeStamp(signer);
+//
+//                    if (timeStamp != null) {
+//                        TimeStampToken tspToken = new TimeStampToken(timeStamp);
+//
+//                        matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
+//                        if (!matchedCerts.isEmpty()) {
+//                            cert = matchedCerts.iterator().next();
+//                            tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
+//                            System.out.println("Time stamped by: " + cert.getSubject());
+//                        }
+//                    }
+//
+//                    if (signer.getCounterSignatures().size() > 0) {
+//                        verify(certStore, signer.getCounterSignatures());
 //                    }
 //                }
 //            }
-        }
-        return trustStore;
-    }
-
-    private X509Certificate getCertificate(String alias) throws CryptoException {
-        try {
-            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-            KeyStore keyStore = history.getCurrentState().getKeyStore();
-
-            return X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
-        } catch (KeyStoreException ex) {
-            String message = MessageFormat.format(res.getString("VerifySignatureAction.NoAccessEntry.message"),
-                                                  alias);
-            throw new CryptoException(message, ex);
-        }
-    }
-
-    private X509Certificate[] getCertificateChain(String alias) throws CryptoException {
-        try {
-            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-            KeyStore keyStore = history.getCurrentState().getKeyStore();
-            X509Certificate[] certs = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
-            return certs;
-        } catch (KeyStoreException ex) {
-            String message = MessageFormat.format(res.getString("VerifySignatureAction.NoAccessEntry.message"),
-                                                  alias);
-            throw new CryptoException(message, ex);
-        }
-    }
+//        }
+//        System.out.println("Verified: " + verified);
+//    }
 
     /**
      * Open a signature file.

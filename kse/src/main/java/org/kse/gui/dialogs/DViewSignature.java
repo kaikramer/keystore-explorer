@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -99,6 +100,7 @@ import org.kse.crypto.KeyInfo;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.CmsUtil;
+import org.kse.crypto.signing.KseSignerInformation;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
@@ -139,7 +141,7 @@ public class DViewSignature extends JEscDialog {
     private KseFrame kseFrame;
 
     private JLabel jlSigners;
-    private JList<SignerInformation> jlbSigners;
+    private JList<KseSignerInformation> jlbSigners;
     private JScrollPane jspSigners;
     private JLabel jlVersion;
     private JTextField jtfVersion;
@@ -177,7 +179,7 @@ public class DViewSignature extends JEscDialog {
      * @param kseFrame     Reference to main class with currently opened keystores and their contents
      * @throws CryptoException A problem was encountered getting the certificates' details
      */
-    public DViewSignature(Window parent, String title, CMSSignedData signedData, Collection<SignerInformation> signers,
+    public DViewSignature(Window parent, String title, CMSSignedData signedData, Collection<KseSignerInformation> signers,
             KseFrame kseFrame) throws CryptoException {
         super(parent, title, Dialog.ModalityType.MODELESS);
         this.kseFrame = kseFrame;
@@ -185,7 +187,7 @@ public class DViewSignature extends JEscDialog {
         initComponents(signers);
     }
 
-    private void initComponents(Collection<SignerInformation> signers) throws CryptoException {
+    private void initComponents(Collection<KseSignerInformation> signers) throws CryptoException {
         jlSigners = new JLabel(res.getString("DViewSignature.jlSigners.text"));
 
         jlbSigners = new JList<>(createSignerList(signers));
@@ -193,7 +195,7 @@ public class DViewSignature extends JEscDialog {
 //        jlbSigners.setRowHeight(Math.max(18, jlbSigners.getRowHeight()));
         jlbSigners.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ToolTipManager.sharedInstance().registerComponent(jlbSigners);
-        jlbSigners.setCellRenderer(new SignerListCellRend(signedData));
+        jlbSigners.setCellRenderer(new SignerListCellRend());
 
         jspSigners = PlatformUtil.createScrollPane(jlbSigners, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -383,20 +385,20 @@ public class DViewSignature extends JEscDialog {
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
-    private ListModel<SignerInformation> createSignerList(Collection<SignerInformation> signers) {
-        DefaultListModel<SignerInformation> signerList = new DefaultListModel<>();
-        
+    private ListModel<KseSignerInformation> createSignerList(Collection<KseSignerInformation> signers) {
+        DefaultListModel<KseSignerInformation> signerList = new DefaultListModel<>();
+
         signerList.addAll(signers);
 
         return signerList;
     }
 
-    private SignerInformation getSelectedSignerInfo() {
+    private KseSignerInformation getSelectedSignerInfo() {
         return jlbSigners.getSelectedValue();
     }
 
     private void populateDetails() {
-        SignerInformation signerInfo = getSelectedSignerInfo();
+        KseSignerInformation signerInfo = getSelectedSignerInfo();
 
         if (signerInfo == null) {
             jdnSubject.setEnabled(false);
@@ -423,17 +425,18 @@ public class DViewSignature extends JEscDialog {
             jbAsn1.setEnabled(true);
 
             try {
-                Date signingTime = CmsUtil.getSigningTime(signerInfo);
-                X509Certificate cert = X509CertUtil.convertCertificate(CmsUtil.getSignerCert(signedData, signerInfo));
-
-                // TODO JW - Need to check for null certificate (see CmsUtil.getSignerCert)
+                Date signingTime = signerInfo.getSigningTime();
+                X509CertificateHolder cert = signerInfo.getCertificate();
 
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
 
-                jdnSubject.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getSubjectX500Principal()));
+                // TODO JW - Need to check for null certificate (see CmsUtil.getSignerCert)
+                if (cert != null) {
+                    jdnSubject.setDistinguishedName(cert.getSubject());
+                }
 
-                jdnIssuer.setDistinguishedName(X500NameUtils.x500PrincipalToX500Name(cert.getIssuerX500Principal()));
+                jdnIssuer.setDistinguishedName(signerInfo.getSID().getIssuer());
 
                 if (signingTime != null) {
                     jtfSigningTime.setText(StringUtils.formatDate(signingTime));
@@ -496,14 +499,15 @@ public class DViewSignature extends JEscDialog {
 //                } else {
 //                    jbExtensions.setEnabled(false);
 //                }
-            } catch (CryptoException e) {
+            // TODO JW Remove the try/catch (or fix exception list)
+            } catch (Exception e) {
                 DError.displayError(this, e);
                 dispose();
             }
         }
     }
 
-    private static SignatureType lookupSignatureType(SignerInformation signerInfo) {
+    private static SignatureType lookupSignatureType(KseSignerInformation signerInfo) {
         SignatureType signatureType = null;
 
         if (PKCSObjectIdentifiers.rsaEncryption.getId().equals(signerInfo.getEncryptionAlgOID())) {
@@ -525,10 +529,10 @@ public class DViewSignature extends JEscDialog {
      * @param signerInfo The signer information.
      * @return The time stamp token as CMSSignedData, if present, else null.
      */
-    private static CMSSignedData getTimeStampSignature(SignerInformation signerInfo) {
+    private static CMSSignedData getTimeStampSignature(KseSignerInformation signerInfo) {
 
         CMSSignedData timeStampToken = null;
-        ContentInfo timeStamp = CmsUtil.getTimeStamp(signerInfo);
+        ContentInfo timeStamp = signerInfo.getTimeStamp();
 
         if (timeStamp != null) {
             try {
@@ -543,23 +547,23 @@ public class DViewSignature extends JEscDialog {
 
         return timeStampToken;
     }
-
-    private static class SelectAll<T> implements Selector<T> {
-        @Override
-        public Object clone() {
-            return null;
-        }
-
-        @Override
-        public boolean match(T obj) {
-            return true;
-        }
-    }
+//
+//    private static class SelectAll<T> implements Selector<T> {
+//        @Override
+//        public Object clone() {
+//            return null;
+//        }
+//
+//        @Override
+//        public boolean match(T obj) {
+//            return true;
+//        }
+//    }
 
     private void certificatesPressed() {
         try {
             List<X509Certificate> certs = X509CertUtil.convertCertificateHolders(
-                    signedData.getCertificates().getMatches(new SelectAll<>()));
+                    signedData.getCertificates().getMatches(null));
             DViewCertificate dViewCertificates = new DViewCertificate(this,
                     res.getString("DViewSignature.Certificates.Title"), certs.toArray(X509Certificate[]::new), kseFrame,
                     DViewCertificate.NONE);
@@ -571,14 +575,18 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void timeStampPressed() {
-        SignerInformation signer = getSelectedSignerInfo();
+        KseSignerInformation signer = getSelectedSignerInfo();
 
         try {
-            String shortName = CmsUtil.getShortName(CmsUtil.getSignerCert(signedData, signer));
+            String shortName = signer.getShortName();
+
+            List<KseSignerInformation> timeStampSigners = CmsUtil.convertSignerInformations(
+                    timeStampSigner.getSignerInfos().getSigners(), signer.getTrustedCerts(),
+                    signer.getSignatureCerts());
 
             DViewSignature dViewSignature = new DViewSignature(this,
                     MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
-                    timeStampSigner, timeStampSigner.getSignerInfos().getSigners(), null);
+                    timeStampSigner, timeStampSigners, null);
             dViewSignature.setLocationRelativeTo(this);
             dViewSignature.setVisible(true);
         } catch (CryptoException e) {
@@ -587,14 +595,18 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void counterSignersPressed() {
-        SignerInformation signer = getSelectedSignerInfo();
+        KseSignerInformation signer = getSelectedSignerInfo();
 
         try {
-            String shortName = CmsUtil.getShortName(CmsUtil.getSignerCert(signedData, signer));
+            String shortName = signer.getShortName();
+
+            // TODO JW Have KseSignerInformation provide list of KseSignerInfos for counter signatures?
+            List<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
+                    signer.getCounterSignatures().getSigners(), signer.getTrustedCerts(), signer.getSignatureCerts());
 
             DViewSignature dViewSignature = new DViewSignature(this,
                     MessageFormat.format(res.getString("DViewSignature.CounterSigners.Title"), shortName), signedData,
-                    signer.getCounterSignatures().getSigners(), null);
+                    counterSigners, null);
             dViewSignature.setLocationRelativeTo(this);
             dViewSignature.setVisible(true);
         } catch (CryptoException e) {
