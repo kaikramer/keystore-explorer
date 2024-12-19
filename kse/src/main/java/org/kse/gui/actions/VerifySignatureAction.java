@@ -72,25 +72,13 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         putValue(SHORT_DESCRIPTION, res.getString("VerifySignatureAction.tooltip"));
         // TODO JW - Need image for verify signature.
         putValue(SMALL_ICON, new ImageIcon(
-                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifycert.png"))));
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifysignature.png"))));
     }
 
     @Override
     protected void doAction() {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-
-            // TODO JW - Use cacerts truststore if no keystore is currently opened
-            // handle case that no keystore is currently opened (-> create new keystore)
-//            if (history == null) {
-//                new NewAction(kseFrame).actionPerformed(null);
-//                history = kseFrame.getActiveKeyStoreHistory();
-//
-//                // cancel pressed => abort
-//                if (history == null) {
-//                    return;
-//                }
-//            }
 
             KeyStoreState currentState = history.getCurrentState();
             KeyStore keyStore = currentState.getKeyStore();

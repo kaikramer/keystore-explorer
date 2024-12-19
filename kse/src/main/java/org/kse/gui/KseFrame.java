@@ -1830,7 +1830,6 @@ public final class KseFrame implements StatusBar {
 
         jpmKeyStore.addSeparator();
 
-        // TODO JW - Need to figure out how to disable this until a key store is loaded
         jmiVerifySignature = new JMenuItem(verifySignatureAction);
         PlatformUtil.setMnemonic(jmiVerifySignature, res.getString("KseFrame.jmiVerifySignature.mnemonic").charAt(0));
         jmiVerifySignature.setToolTipText(null);
