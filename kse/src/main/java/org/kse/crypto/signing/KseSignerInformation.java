@@ -94,19 +94,30 @@ public class KseSignerInformation extends SignerInformation {
         return cert;
     }
 
-    private void lookupCert() {
-        Collection<X509CertificateHolder> matchedCerts = trustedCerts.getMatches(getSID());
+    /**
+     * @return the signature status
+     */
+    public String getStatus() {
+        // TDOO JW Determine the ignature status.
+        return "";
+    }
 
-        if (!matchedCerts.isEmpty()) {
-            cert = matchedCerts.iterator().next();
+    private void lookupCert() {
+
+        @SuppressWarnings("unchecked")
+        Collection<X509CertificateHolder> matchedCerts1 = trustedCerts.getMatches(getSID());
+
+        if (!matchedCerts1.isEmpty()) {
+            cert = matchedCerts1.iterator().next();
 
             // TODO JW Need to trace the signature cert to a self-signed or CA cert, check basic constraints.
             trustedCert = true;
         } else {
-            matchedCerts = signatureCerts.getMatches(getSID());
+            @SuppressWarnings("unchecked")
+            Collection<X509CertificateHolder> matchedCerts2 = signatureCerts.getMatches(getSID());
 
-            if (!matchedCerts.isEmpty()) {
-                cert = matchedCerts.iterator().next();
+            if (!matchedCerts2.isEmpty()) {
+                cert = matchedCerts2.iterator().next();
             }
         }
     }

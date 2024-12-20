@@ -43,6 +43,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.bouncycastle.asn1.cms.SignerInfo;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.csr.spkac.Spkac;
@@ -78,6 +79,7 @@ public class DViewAsn1Dump extends JEscFrame {
     private PKCS10CertificationRequest pkcs10Csr;
     private Spkac spkac;
     private CMSSignedData cms;
+    private SignerInfo signerInfo;
 
     /**
      * Creates a new DViewAsn1Dump dialog.
@@ -200,6 +202,21 @@ public class DViewAsn1Dump extends JEscFrame {
         initComponents();
     }
 
+    /**
+     * Creates a new DViewAsn1Dump dialog.
+     *
+     * @param parent     Parent frame
+     * @param signerInfo CMS signature to display dump for
+     * @throws Asn1Exception A problem was encountered getting the signer info ASN.1 dump
+     * @throws IOException   If an I/O problem occurred
+     */
+    public DViewAsn1Dump(JDialog parent, SignerInfo signerInfo) throws Asn1Exception, IOException {
+        super(res.getString("DViewAsn1Dump.SignerInfo.Title"));
+        this.signerInfo = signerInfo;
+        this.setIconImages(parent.getOwner().getIconImages());
+        initComponents();
+    }
+
     private void initComponents() throws Asn1Exception, IOException {
         jbCopy = new JButton(res.getString("DViewAsn1Dump.jbCopy.text"));
 
@@ -239,6 +256,8 @@ public class DViewAsn1Dump extends JEscFrame {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(publicKey));
         } else if (pkcs10Csr != null) {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(pkcs10Csr.getEncoded()));
+        } else if (signerInfo != null) {
+            jtaAsn1Dump = new JTextArea(asn1Dump.dump(signerInfo.getEncoded()));
         } else {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(spkac.getEncoded()));
         }

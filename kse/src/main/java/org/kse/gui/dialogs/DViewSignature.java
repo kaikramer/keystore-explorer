@@ -143,6 +143,8 @@ public class DViewSignature extends JEscDialog {
     private JLabel jlSigners;
     private JList<KseSignerInformation> jlbSigners;
     private JScrollPane jspSigners;
+    private JLabel jlStatus;
+    private JTextField jtfStatus;
     private JLabel jlVersion;
     private JTextField jtfVersion;
     private JLabel jlSubject;
@@ -157,11 +159,12 @@ public class DViewSignature extends JEscDialog {
     private JTextField jtfContentType;
     private JLabel jlContentDigest;
     private JTextField jtfContentDigest;
-    private JButton jbCertificates;
     private JButton jbTimeStamp;
     private JButton jbCounterSigners;
+    private JButton jbSignerAsn1;
     // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
     private JButton jbExtensions;
+    private JButton jbCertificates;
     private JButton jbPem;
     private JButton jbAsn1;
     private JButton jbOK;
@@ -201,6 +204,12 @@ public class DViewSignature extends JEscDialog {
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspSigners.setPreferredSize(new Dimension(100, 75));
 
+        jlStatus = new JLabel(res.getString("DViewSignature.jlStatus.text"));
+
+        jtfStatus = new JTextField(40);
+        jtfStatus.setEditable(false);
+        jtfStatus.setToolTipText(res.getString("DViewSignature.jtfStatus.tooltip"));
+
         jlVersion = new JLabel(res.getString("DViewSignature.jlVersion.text"));
 
         jtfVersion = new JTextField(40);
@@ -228,7 +237,7 @@ public class DViewSignature extends JEscDialog {
         jtfSignatureAlgorithm = new JTextField(40);
         jtfSignatureAlgorithm.setEditable(false);
         jtfSignatureAlgorithm.setToolTipText(res.getString("DViewSignature.jtfSignatureAlgorithm.tooltip"));
-        
+
         jlContentType = new JLabel(res.getString("DViewSignature.jlContentType.text"));
 
         jtfContentType = new JTextField(40);
@@ -236,14 +245,10 @@ public class DViewSignature extends JEscDialog {
         jtfContentType.setToolTipText(res.getString("DViewSignature.jtfContentType.tooltip"));
 
         jlContentDigest = new JLabel(res.getString("DViewSignature.jlContentDigest.text"));
-        
+
         jtfContentDigest = new JTextField(40);
         jtfContentDigest.setEditable(false);
         jtfContentDigest.setToolTipText(res.getString("DViewSignature.jtfContentDigest.tooltip"));
-
-        jbCertificates = new JButton(res.getString("DViewSignature.jbCertificates.text"));
-        jbCertificates.setToolTipText(res.getString("DViewSignature.jbCertificates.tooltip"));
-        PlatformUtil.setMnemonic(jbCertificates, res.getString("DViewSignature.jbCertificates.mnemonic").charAt(0));
 
         jbTimeStamp = new JButton(res.getString("DViewSignature.jbTimeStamp.text"));
         jbTimeStamp.setToolTipText(res.getString("DViewSignature.jbTimeStamp.tooltip"));
@@ -255,9 +260,19 @@ public class DViewSignature extends JEscDialog {
         // TODO JW - Need mnemonic for counter signers button
         PlatformUtil.setMnemonic(jbCounterSigners, res.getString("DViewSignature.jbCounterSigners.mnemonic").charAt(0));
 
+        jbSignerAsn1 = new JButton(res.getString("DViewSignature.jbSignerAsn1.text"));
+        jbSignerAsn1.setToolTipText(res.getString("DViewSignature.jbSignerAsn1.tooltip"));
+        // TODO JW - Need mnemonic for signer asn1 button
+//        PlatformUtil.setMnemonic(jbPem, res.getString("DViewSignature.jbSignerAsn1.mnemonic").charAt(0));
+
 //        jbExtensions = new JButton(res.getString("DViewSignature.jbExtensions.text"));
 //        jbExtensions.setToolTipText(res.getString("DViewSignature.jbExtensions.tooltip"));
 //        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewSignature.jbExtensions.mnemonic").charAt(0));
+
+        jbCertificates = new JButton(res.getString("DViewSignature.jbCertificates.text"));
+        jbCertificates.setToolTipText(res.getString("DViewSignature.jbCertificates.tooltip"));
+        PlatformUtil.setMnemonic(jbCertificates, res.getString("DViewSignature.jbCertificates.mnemonic").charAt(0));
+        jbCertificates.setEnabled(!signedData.getCertificates().getMatches(null).isEmpty());
 
         jbPem = new JButton(res.getString("DViewSignature.jbPem.text"));
         jbPem.setToolTipText(res.getString("DViewSignature.jbPem.tooltip"));
@@ -273,6 +288,9 @@ public class DViewSignature extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlSigners, "");
         pane.add(jspSigners, "sgx, wrap");
+        // TODO JW Disable certs button when no certs.
+        pane.add(jlStatus, "");
+        pane.add(jtfStatus, "sgx, wrap");
         pane.add(jlVersion, "");
         pane.add(jtfVersion, "sgx, wrap");
         pane.add(jlSubject, "");
@@ -289,7 +307,8 @@ public class DViewSignature extends JEscDialog {
 //        pane.add(jlContentDigest, "");
 //        pane.add(jtfContentDigest, "wrap");
         pane.add(jbTimeStamp, "spanx, split");
-        pane.add(jbCounterSigners, "wrap");
+        pane.add(jbCounterSigners, "");
+        pane.add(jbSignerAsn1, "wrap");
 //      pane.add(jbExtensions, "");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCertificates, "spanx, split");
@@ -334,6 +353,15 @@ public class DViewSignature extends JEscDialog {
             try {
                 CursorUtil.setCursorBusy(DViewSignature.this);
                 counterSignersPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewSignature.this);
+            }
+        });
+
+        jbSignerAsn1.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewSignature.this);
+                signerAsn1DumpPressed();
             } finally {
                 CursorUtil.setCursorFree(DViewSignature.this);
             }
@@ -403,12 +431,10 @@ public class DViewSignature extends JEscDialog {
         if (signerInfo == null) {
             jdnSubject.setEnabled(false);
             jdnIssuer.setEnabled(false);
-            jbCertificates.setEnabled(false);
             jbTimeStamp.setEnabled(false);
             jbCounterSigners.setEnabled(false);
+            jbSignerAsn1.setEnabled(false);
 //            jbExtensions.setEnabled(false);
-            jbPem.setEnabled(false);
-            jbAsn1.setEnabled(false);
 
             jtfVersion.setText("");
             jdnSubject.setDistinguishedName(null);
@@ -421,19 +447,23 @@ public class DViewSignature extends JEscDialog {
             jdnSubject.setEnabled(true);
             jdnIssuer.setEnabled(true);
 //            jbExtensions.setEnabled(true);
-            jbPem.setEnabled(true);
-            jbAsn1.setEnabled(true);
+            jbSignerAsn1.setEnabled(true);
 
             try {
                 Date signingTime = signerInfo.getSigningTime();
                 X509CertificateHolder cert = signerInfo.getCertificate();
 
+                jtfStatus.setText(res.getString(signerInfo.getStatus()));
+                jtfStatus.setCaretPosition(0);
+
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
 
-                // TODO JW - Need to check for null certificate (see CmsUtil.getSignerCert)
                 if (cert != null) {
+                    jdnSubject.setEnabled(true);
                     jdnSubject.setDistinguishedName(cert.getSubject());
+                } else {
+                    jdnSubject.setEnabled(false);
                 }
 
                 jdnIssuer.setDistinguishedName(signerInfo.getSID().getIssuer());
@@ -455,15 +485,15 @@ public class DViewSignature extends JEscDialog {
                 jtfSigningTime.setCaretPosition(0);
 
                 // TODO JW - These map strings need to be moved to a resource bundle.
-                Map<ASN1ObjectIdentifier, String> CONTENT_TYPES = new HashMap<>();
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.data, "Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedData, "Signed Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.envelopedData, "Enveloped Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedAndEnvelopedData, "Signed and Enveloped Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.digestedData, "Digested Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
-                jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
-                jtfContentType.setCaretPosition(0);
+//                Map<ASN1ObjectIdentifier, String> CONTENT_TYPES = new HashMap<>();
+//                CONTENT_TYPES.put(PKCSObjectIdentifiers.data, "Data");
+//                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedData, "Signed Data");
+//                CONTENT_TYPES.put(PKCSObjectIdentifiers.envelopedData, "Enveloped Data");
+//                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedAndEnvelopedData, "Signed and Enveloped Data");
+//                CONTENT_TYPES.put(PKCSObjectIdentifiers.digestedData, "Digested Data");
+//                CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
+//                jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
+//                jtfContentType.setCaretPosition(0);
 
                 // TODO JW - digest is only available after verify is called.
 //                jtfContentDigest.setText(HexUtil.getHexStringWithSep(signerInfo.getContentDigest(), ':'));
@@ -519,6 +549,7 @@ public class DViewSignature extends JEscDialog {
             signatureType = SignatureType.resolveOid(signerInfo.getEncryptionAlgOID(),
                     signerInfo.getEncryptionAlgParams());
         }
+
         return signatureType;
     }
 
@@ -547,18 +578,6 @@ public class DViewSignature extends JEscDialog {
 
         return timeStampToken;
     }
-//
-//    private static class SelectAll<T> implements Selector<T> {
-//        @Override
-//        public Object clone() {
-//            return null;
-//        }
-//
-//        @Override
-//        public boolean match(T obj) {
-//            return true;
-//        }
-//    }
 
     private void certificatesPressed() {
         try {
@@ -582,7 +601,7 @@ public class DViewSignature extends JEscDialog {
 
             List<KseSignerInformation> timeStampSigners = CmsUtil.convertSignerInformations(
                     timeStampSigner.getSignerInfos().getSigners(), signer.getTrustedCerts(),
-                    signer.getSignatureCerts());
+                    timeStampSigner.getCertificates());
 
             DViewSignature dViewSignature = new DViewSignature(this,
                     MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
@@ -614,6 +633,18 @@ public class DViewSignature extends JEscDialog {
         }
     }
 
+    private void signerAsn1DumpPressed() {
+        KseSignerInformation signer = getSelectedSignerInfo();
+
+        try {
+            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, signer.toASN1Structure());
+            dViewAsn1Dump.setLocationRelativeTo(this);
+            dViewAsn1Dump.setVisible(true);
+        } catch (Asn1Exception | IOException e) {
+            DError.displayError(this, e);
+        }
+    }
+
 //    private void extensionsPressed() {
 //        X509Certificate cert = getSelectedSignerInfo();
 //
@@ -634,7 +665,6 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void asn1DumpPressed() {
-        // TODO JW - Should this show only the ASN.1 for the selected signer? See signerInfo.toASN1Structure().
         try {
             DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, signedData);
             dViewAsn1Dump.setLocationRelativeTo(this);
