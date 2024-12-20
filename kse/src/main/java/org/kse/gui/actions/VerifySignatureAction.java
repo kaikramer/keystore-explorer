@@ -88,7 +88,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                 return;
             }
 
-            // TODO JW - What about the logic in openSignature?
             CMSSignedData signedData = CmsUtil.loadSignature(signatureFile, this::chooseContentFile);
             if (signedData.isCertificateManagementMessage()) {
                 JOptionPane.showMessageDialog(frame,
@@ -214,25 +213,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 //        }
 //        System.out.println("Verified: " + verified);
 //    }
-
-    /**
-     * Open a signature file.
-     *
-     * @param signatureFile The signature file
-     * @return The signature found in the file or null if open failed
-     */
-    protected byte[] openSignature(File signatureFile) {
-        try {
-            return Files.readAllBytes(signatureFile.toPath());
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(frame, MessageFormat.format(
-                                                  res.getString("KeyStoreExplorerAction.NoReadFile.message"),
-                                                  signatureFile),
-                                          res.getString("KeyStoreExplorerAction.OpenSignature.Title"),
-                                          JOptionPane.WARNING_MESSAGE);
-            return null;
-        }
-    }
 
     private File showFileSelectionDialog() {
         File signatureFile = chooseSignatureFile();

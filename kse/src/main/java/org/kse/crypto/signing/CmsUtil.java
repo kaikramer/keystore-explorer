@@ -58,32 +58,34 @@ public class CmsUtil {
      * @param signatureFile The signature file.
      * @param chooser       The file chooser to use for choosing the content file.
      * @return
-     * @throws IOException
-     * @throws CMSException
+     * @throws CryptoException
      */
     public static CMSSignedData loadSignature(File signatureFile, Supplier<File> chooser)
-            throws IOException, CMSException {
+            throws CryptoException {
 
-        // TODO JW - What if the file cannot be opened?
-        byte[] signature = Files.readAllBytes(signatureFile.toPath());
+        try {
+            byte[] signature = Files.readAllBytes(signatureFile.toPath());
 
-        if (PemUtil.isPemFormat(signature)) {
-            PemInfo signaturePem = PemUtil.decode(signature);
-            if (signaturePem != null) {
-                signature = signaturePem.getContent();
+            if (PemUtil.isPemFormat(signature)) {
+                PemInfo signaturePem = PemUtil.decode(signature);
+                if (signaturePem != null) {
+                    signature = signaturePem.getContent();
+                }
             }
-        }
 
-        CMSSignedData signedData = new CMSSignedData(signature);
+            CMSSignedData signedData = new CMSSignedData(signature);
 
-        if (signedData.isDetachedSignature()) {
-            CMSProcessableFile content = loadDetachedContent(signatureFile, chooser);
-            if (content != null) {
-                signedData = new CMSSignedData(content, signature);
+            if (signedData.isDetachedSignature()) {
+                CMSProcessableFile content = loadDetachedContent(signatureFile, chooser);
+                if (content != null) {
+                    signedData = new CMSSignedData(content, signature);
+                }
             }
-        }
 
-        return signedData;
+            return signedData;
+        } catch (IOException | CMSException e) {
+            throw new CryptoException(res.getString("NoReadCms.exception.message"), e);
+        }
     }
 
     private static CMSProcessableFile loadDetachedContent(File signatureFile, Supplier<File> chooser) {

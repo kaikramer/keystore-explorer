@@ -167,7 +167,6 @@ public class CmsSigner {
 
         Collection<SignerInformation> newSignerInfos = new ArrayList<>();
 
-        // get signature of first signer (should be the only one)
         for (SignerInformation si : signerInfos.getSigners()) {
             byte[] signature = si.getSignature();
 
