@@ -68,7 +68,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         putValue(LONG_DESCRIPTION, res.getString("VerifySignatureAction.statusbar"));
         putValue(NAME, res.getString("VerifySignatureAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("VerifySignatureAction.tooltip"));
-        // TODO JW - Need image for verify signature.
         putValue(SMALL_ICON, new ImageIcon(
                 Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/verifysignature.png"))));
     }
@@ -120,15 +119,17 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signerInfos.getSigners(),
                     trustedCerts, signedData.getCertificates());
 
-            // TODO JW - On DViewSignature, provide signature status: verified, unverified, invalid, verified - no trust
-            // Don't verify the signature if there is no signed content, but the signature details
-            // can still be displayed. loadSignature already tried to find and load the detachted
-            // content.
-            if (signedData.getSignedContent() != null) {
-                for (KseSignerInformation signer : signers) {
-                    signer.verify();
-                }
-            }
+            // TODO JW Signature verification happens while getting the signer info status. Not loading
+            // the content will display as invalid when really it cannot be verified.
+
+//            // Don't verify the signature if there is no signed content, but the signature details
+//            // can still be displayed. loadSignature already tried to find and load the detachted
+//            // content.
+//            if (signedData.getSignedContent() != null) {
+//                for (KseSignerInformation signer : signers) {
+//                    signer.verify();
+//                }
+//            }
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
@@ -175,42 +176,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 
         return certs;
     }
-
-    // TODO JW Display verification errors for the signature.
-//    private void verify(Store<X509CertificateHolder> certStore, SignerInformationStore signers) throws CMSException,
-//            IOException, OperatorCreationException, CertificateException, TSPException, TSPValidationException {
-//        boolean verified = false;
-//        for (SignerInformation signer : signers.getSigners()) {
-//            // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
-//            Collection<X509CertificateHolder> matchedCerts = certStore.getMatches(signer.getSID());
-//            if (!matchedCerts.isEmpty()) {
-//                X509CertificateHolder cert = matchedCerts.iterator().next();
-//                // TODO JW - this verifies using the attached certs. Need to link certs to keystore to validate the chain.
-//                if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-//                    System.out.println("Verified by: " + cert.getSubject());
-//                    verified = true;
-//
-//                    ContentInfo timeStamp = CmsUtil.getTimeStamp(signer);
-//
-//                    if (timeStamp != null) {
-//                        TimeStampToken tspToken = new TimeStampToken(timeStamp);
-//
-//                        matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
-//                        if (!matchedCerts.isEmpty()) {
-//                            cert = matchedCerts.iterator().next();
-//                            tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
-//                            System.out.println("Time stamped by: " + cert.getSubject());
-//                        }
-//                    }
-//
-//                    if (signer.getCounterSignatures().size() > 0) {
-//                        verify(certStore, signer.getCounterSignatures());
-//                    }
-//                }
-//            }
-//        }
-//        System.out.println("Verified: " + verified);
-//    }
 
     private File showFileSelectionDialog() {
         File signatureFile = chooseSignatureFile();

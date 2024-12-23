@@ -157,8 +157,6 @@ public class DViewSignature extends JEscDialog {
     private JTextField jtfSignatureAlgorithm;
     private JLabel jlContentType;
     private JTextField jtfContentType;
-    private JLabel jlContentDigest;
-    private JTextField jtfContentDigest;
     private JButton jbTimeStamp;
     private JButton jbCounterSigners;
     private JButton jbSignerAsn1;
@@ -244,12 +242,6 @@ public class DViewSignature extends JEscDialog {
         jtfContentType.setEditable(false);
         jtfContentType.setToolTipText(res.getString("DViewSignature.jtfContentType.tooltip"));
 
-        jlContentDigest = new JLabel(res.getString("DViewSignature.jlContentDigest.text"));
-
-        jtfContentDigest = new JTextField(40);
-        jtfContentDigest.setEditable(false);
-        jtfContentDigest.setToolTipText(res.getString("DViewSignature.jtfContentDigest.tooltip"));
-
         jbTimeStamp = new JButton(res.getString("DViewSignature.jbTimeStamp.text"));
         jbTimeStamp.setToolTipText(res.getString("DViewSignature.jbTimeStamp.tooltip"));
         // TODO JW - Need mnemonic for time stamp button
@@ -288,7 +280,6 @@ public class DViewSignature extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
         pane.add(jlSigners, "");
         pane.add(jspSigners, "sgx, wrap");
-        // TODO JW Disable certs button when no certs.
         pane.add(jlStatus, "");
         pane.add(jtfStatus, "sgx, wrap");
         pane.add(jlVersion, "");
@@ -304,8 +295,6 @@ public class DViewSignature extends JEscDialog {
         // TODO JW - clean up the dialog
 //        pane.add(jlContentType, "");
 //        pane.add(jtfContentType, "wrap");
-//        pane.add(jlContentDigest, "");
-//        pane.add(jtfContentDigest, "wrap");
         pane.add(jbTimeStamp, "spanx, split");
         pane.add(jbCounterSigners, "");
         pane.add(jbSignerAsn1, "wrap");
@@ -313,7 +302,7 @@ public class DViewSignature extends JEscDialog {
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCertificates, "spanx, split");
         // TODO JW - Hide PEM button for Counter Signers.
-        // Use SignerInformation.toASN1Structure for displaying signer info ASN.1.
+        // TODO JW Use OpenSSL to view PEM structure of SignerInfo
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
@@ -330,7 +319,6 @@ public class DViewSignature extends JEscDialog {
 
         jbOK.addActionListener(evt -> okPressed());
 
-        // TODO JW What to do if the signature doesn't have any certs at all?
         jbCertificates.addActionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DViewSignature.this);
@@ -436,13 +424,14 @@ public class DViewSignature extends JEscDialog {
             jbSignerAsn1.setEnabled(false);
 //            jbExtensions.setEnabled(false);
 
+            jtfStatus.setText("");
+            jtfStatus.setToolTipText("");
             jtfVersion.setText("");
             jdnSubject.setDistinguishedName(null);
             jdnIssuer.setDistinguishedName(null);
             jtfSigningTime.setText("");
             jtfSignatureAlgorithm.setText("");
             jtfContentType.setText("");
-            jtfContentDigest.setText("");
         } else {
             jdnSubject.setEnabled(true);
             jdnIssuer.setEnabled(true);
@@ -453,8 +442,9 @@ public class DViewSignature extends JEscDialog {
                 Date signingTime = signerInfo.getSigningTime();
                 X509CertificateHolder cert = signerInfo.getCertificate();
 
-                jtfStatus.setText(res.getString(signerInfo.getStatus()));
+                jtfStatus.setText(signerInfo.getStatus().getText());
                 jtfStatus.setCaretPosition(0);
+                jtfStatus.setToolTipText(signerInfo.getStatus().getToolTip());
 
                 jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
                 jtfVersion.setCaretPosition(0);
@@ -494,10 +484,6 @@ public class DViewSignature extends JEscDialog {
 //                CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
 //                jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
 //                jtfContentType.setCaretPosition(0);
-
-                // TODO JW - digest is only available after verify is called.
-//                jtfContentDigest.setText(HexUtil.getHexStringWithSep(signerInfo.getContentDigest(), ':'));
-//                jtfContentDigest.setCaretPosition(0);
 
                 SignatureType signatureType = lookupSignatureType(signerInfo);
                 if (signatureType != null ) {

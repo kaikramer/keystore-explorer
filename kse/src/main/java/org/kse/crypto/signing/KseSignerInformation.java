@@ -55,7 +55,7 @@ public class KseSignerInformation extends SignerInformation {
     private Store<X509CertificateHolder> trustedCerts;
     private Store<X509CertificateHolder> signatureCerts;
     private X509CertificateHolder cert;
-    // TODO JW trustedCert is not used.
+    private CmsSignatureStatus status;
     private boolean trustedCert;
 
     /**
@@ -97,9 +97,11 @@ public class KseSignerInformation extends SignerInformation {
     /**
      * @return the signature status
      */
-    public String getStatus() {
-        // TDOO JW Determine the ignature status.
-        return "";
+    public CmsSignatureStatus getStatus() {
+        if (status == null) {
+            verify();
+        }
+        return status;
     }
 
     private void lookupCert() {
@@ -215,35 +217,45 @@ public class KseSignerInformation extends SignerInformation {
         return null;
     }
 
-    // TODO JW Design verification flags/information for display. Add javadoc.
-    public boolean verify() throws CMSException, IOException, OperatorCreationException, CertificateException,
-            TSPException, TSPValidationException {
+    private void verify() {
 
-        boolean verified = false;
+        status = CmsSignatureStatus.NOT_VERIFIED;
 
         if (cert != null) {
-            // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
-            if (verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
-                System.out.println("Verified by: " + cert.getSubject());
-                verified = true;
 
-                // TODO JW Convert TS validation from exception into return value.
-                // TODO JW Display TS validation status on form.
-                verifyTimeStamp();
+            boolean verified = false;
 
-                if (getCounterSignatures().size() > 0) {
+            try {
+                // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
+                if (verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+                    verified = true;
 
-                    Collection<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
-                            getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
+                    // TODO JW Display TS validation status on form.
+                    verifyTimeStamp();
 
-                    verified &= verify(counterSigners);
+                    if (getCounterSignatures().size() > 0) {
+
+                        Collection<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
+                                getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
+
+                        verified &= verify(counterSigners);
+                    }
                 }
+            } catch (Exception e) {
+                verified = false;
             }
-        }
 
-        // TODO JW Remove the System.out.println() calls.
-        System.out.println("Verified: " + verified);
-        return verified;
+            if (verified) {
+                if (trustedCert) {
+                    status = CmsSignatureStatus.VALID_TRUSTED;
+                } else {
+                    status = CmsSignatureStatus.VALID_NOT_TRUSTED;
+                }
+            } else {
+                status = CmsSignatureStatus.INVALID;
+            }
+
+        }
     }
 
     private boolean verify(Collection<KseSignerInformation> signers) throws OperatorCreationException,
@@ -252,7 +264,10 @@ public class KseSignerInformation extends SignerInformation {
         boolean verified = true;
 
         for (KseSignerInformation signer : signers) {
-            verified &= signer.verify();
+            signer.verify();
+
+            verified &= (signer.getStatus() == CmsSignatureStatus.VALID_NOT_TRUSTED
+                    || signer.getStatus() == CmsSignatureStatus.VALID_TRUSTED);
         }
 
         return verified;
@@ -266,11 +281,11 @@ public class KseSignerInformation extends SignerInformation {
         if (timeStamp != null) {
             TimeStampToken tspToken = new TimeStampToken(timeStamp);
 
+            @SuppressWarnings("unchecked")
             Collection<X509CertificateHolder> matchedCerts = tspToken.getCertificates().getMatches(tspToken.getSID());
             if (!matchedCerts.isEmpty()) {
                 X509CertificateHolder cert = matchedCerts.iterator().next();
                 tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
-                System.out.println("Time stamped by: " + cert.getSubject());
             }
         }
     }
