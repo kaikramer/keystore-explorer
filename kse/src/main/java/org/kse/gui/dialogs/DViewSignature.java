@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -31,40 +30,22 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.ECPublicKey;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TreeSet;
 
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
@@ -73,32 +54,17 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.bouncycastle.asn1.ASN1GeneralizedTime;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1UTCTime;
-import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cert.X509AttributeCertificateHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.tsp.TSPException;
-import org.bouncycastle.tsp.TSPValidationException;
-import org.bouncycastle.tsp.TimeStampToken;
-import org.bouncycastle.util.Selector;
-import org.bouncycastle.util.StoreException;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.KeyInfo;
 import org.kse.crypto.digest.DigestType;
-import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.KseSignerInformation;
 import org.kse.crypto.signing.SignatureType;
@@ -107,22 +73,16 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509CertificateGenerator;
 import org.kse.crypto.x509.X509CertificateVersion;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.actions.ExportTrustedCertificateAction;
-import org.kse.gui.actions.ImportTrustedCertificateAction;
-import org.kse.gui.actions.VerifyCertificateAction;
-import org.kse.gui.crypto.JCertificateFingerprint;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
-import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.asn1.Asn1Exception;
-import org.kse.utilities.io.HexUtil;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -140,8 +100,9 @@ public class DViewSignature extends JEscDialog {
 
     private KseFrame kseFrame;
 
+    // TODO JW Add control to display if the signature is a counter signature
     private JLabel jlSigners;
-    private JList<KseSignerInformation> jlbSigners;
+    private JTree jtrSigners;
     private JScrollPane jspSigners;
     private JLabel jlStatus;
     private JTextField jtfStatus;
@@ -155,10 +116,7 @@ public class DViewSignature extends JEscDialog {
     private JTextField jtfSigningTime;
     private JLabel jlSignatureAlgorithm;
     private JTextField jtfSignatureAlgorithm;
-    private JLabel jlContentType;
-    private JTextField jtfContentType;
     private JButton jbTimeStamp;
-    private JButton jbCounterSigners;
     private JButton jbSignerAsn1;
     // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
     private JButton jbExtensions;
@@ -191,14 +149,17 @@ public class DViewSignature extends JEscDialog {
     private void initComponents(Collection<KseSignerInformation> signers) throws CryptoException {
         jlSigners = new JLabel(res.getString("DViewSignature.jlSigners.text"));
 
-        jlbSigners = new JList<>(createSignerList(signers));
-        // TODO JW - Signer list row height?
-//        jlbSigners.setRowHeight(Math.max(18, jlbSigners.getRowHeight()));
-        jlbSigners.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ToolTipManager.sharedInstance().registerComponent(jlbSigners);
-        jlbSigners.setCellRenderer(new SignerListCellRend());
+        jtrSigners = new JTree(createSignerNodes(signers));
+        jtrSigners.setRowHeight(Math.max(18, jtrSigners.getRowHeight()));
+        jtrSigners.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        ToolTipManager.sharedInstance().registerComponent(jtrSigners);
+        jtrSigners.setCellRenderer(new SignerTreeCellRend());
+        jtrSigners.setRootVisible(false);
 
-        jspSigners = PlatformUtil.createScrollPane(jlbSigners, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        TreeNode topNode = (TreeNode) jtrSigners.getModel().getRoot();
+        expandTree(jtrSigners, new TreePath(topNode));
+
+        jspSigners = PlatformUtil.createScrollPane(jtrSigners, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jspSigners.setPreferredSize(new Dimension(100, 75));
 
@@ -236,21 +197,10 @@ public class DViewSignature extends JEscDialog {
         jtfSignatureAlgorithm.setEditable(false);
         jtfSignatureAlgorithm.setToolTipText(res.getString("DViewSignature.jtfSignatureAlgorithm.tooltip"));
 
-        jlContentType = new JLabel(res.getString("DViewSignature.jlContentType.text"));
-
-        jtfContentType = new JTextField(40);
-        jtfContentType.setEditable(false);
-        jtfContentType.setToolTipText(res.getString("DViewSignature.jtfContentType.tooltip"));
-
         jbTimeStamp = new JButton(res.getString("DViewSignature.jbTimeStamp.text"));
         jbTimeStamp.setToolTipText(res.getString("DViewSignature.jbTimeStamp.tooltip"));
         // TODO JW - Need mnemonic for time stamp button
 //        PlatformUtil.setMnemonic(jbTimeStamp, res.getString("DViewSignature.jbTimeStamp.mnemonic").charAt(0));
-
-        jbCounterSigners = new JButton(res.getString("DViewSignature.jbCounterSigners.text"));
-        jbCounterSigners.setToolTipText(res.getString("DViewSignature.jbCounterSigners.tooltip"));
-        // TODO JW - Need mnemonic for counter signers button
-        PlatformUtil.setMnemonic(jbCounterSigners, res.getString("DViewSignature.jbCounterSigners.mnemonic").charAt(0));
 
         jbSignerAsn1 = new JButton(res.getString("DViewSignature.jbSignerAsn1.text"));
         jbSignerAsn1.setToolTipText(res.getString("DViewSignature.jbSignerAsn1.tooltip"));
@@ -292,22 +242,17 @@ public class DViewSignature extends JEscDialog {
         pane.add(jtfSigningTime, "wrap");
         pane.add(jlSignatureAlgorithm, "");
         pane.add(jtfSignatureAlgorithm, "wrap");
-        pane.add(jlContentType, "");
-        pane.add(jtfContentType, "wrap");
         pane.add(jbTimeStamp, "spanx, split");
-        pane.add(jbCounterSigners, "");
         pane.add(jbSignerAsn1, "wrap");
 //      pane.add(jbExtensions, "");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCertificates, "spanx, split");
-        // TODO JW - Hide PEM button for Counter Signers.
-        // TODO JW Use OpenSSL to view PEM structure of SignerInfo
         pane.add(jbPem, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbOK, "spanx, tag ok");
 
-        jlbSigners.addListSelectionListener(evt -> {
+        jtrSigners.addTreeSelectionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DViewSignature.this);
                 populateDetails();
@@ -331,15 +276,6 @@ public class DViewSignature extends JEscDialog {
             try {
                 CursorUtil.setCursorBusy(DViewSignature.this);
                 timeStampPressed();
-            } finally {
-                CursorUtil.setCursorFree(DViewSignature.this);
-            }
-        });
-
-        jbCounterSigners.addActionListener(evt -> {
-            try {
-                CursorUtil.setCursorBusy(DViewSignature.this);
-                counterSignersPressed();
             } finally {
                 CursorUtil.setCursorFree(DViewSignature.this);
             }
@@ -390,8 +326,10 @@ public class DViewSignature extends JEscDialog {
 
         setResizable(false);
 
-        // select first signer in signer list
-        jlbSigners.setSelectedIndex(0);
+        // TODO JW fix the selection -- this does not work.
+        // select (first) child in signers tree
+        TreeNode firstChild = ((DefaultMutableTreeNode) topNode).getFirstChild();
+        jtrSigners.setSelectionPath(new TreePath(firstChild));
 
         getRootPane().setDefaultButton(jbOK);
 
@@ -400,16 +338,43 @@ public class DViewSignature extends JEscDialog {
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
-    private ListModel<KseSignerInformation> createSignerList(Collection<KseSignerInformation> signers) {
-        DefaultListModel<KseSignerInformation> signerList = new DefaultListModel<>();
+    private DefaultMutableTreeNode createSignerNodes(Collection<KseSignerInformation> signers) {
+        DefaultMutableTreeNode signersNode = new DefaultMutableTreeNode();
 
-        signerList.addAll(signers);
+        for (SignerInformation signerInfo : signers) {
+            DefaultMutableTreeNode signerNode = new DefaultMutableTreeNode(signerInfo);
 
-        return signerList;
+            signersNode.add(signerNode);
+
+            for (SignerInformation counterSignerInfo : signerInfo.getCounterSignatures().getSigners()) {
+                signerNode.add(new DefaultMutableTreeNode(counterSignerInfo));
+            }
+        }
+
+        return signersNode;
+    }
+
+    private void expandTree(JTree tree, TreePath parent) {
+        TreeNode node = (TreeNode) parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration<?> enumNodes = node.children(); enumNodes.hasMoreElements(); ) {
+                TreeNode subNode = (TreeNode) enumNodes.nextElement();
+                TreePath path = parent.pathByAddingChild(subNode);
+                expandTree(tree, path);
+            }
+        }
+
+        tree.expandPath(parent);
     }
 
     private KseSignerInformation getSelectedSignerInfo() {
-        return jlbSigners.getSelectedValue();
+        TreePath[] selections = jtrSigners.getSelectionPaths();
+
+        if (selections == null) {
+            return null;
+        }
+
+        return (KseSignerInformation) ((DefaultMutableTreeNode) selections[0].getLastPathComponent()).getUserObject();
     }
 
     private void populateDetails() {
@@ -419,7 +384,6 @@ public class DViewSignature extends JEscDialog {
             jdnSubject.setEnabled(false);
             jdnIssuer.setEnabled(false);
             jbTimeStamp.setEnabled(false);
-            jbCounterSigners.setEnabled(false);
             jbSignerAsn1.setEnabled(false);
 //            jbExtensions.setEnabled(false);
 
@@ -430,7 +394,6 @@ public class DViewSignature extends JEscDialog {
             jdnIssuer.setDistinguishedName(null);
             jtfSigningTime.setText("");
             jtfSignatureAlgorithm.setText("");
-            jtfContentType.setText("");
         } else {
             jdnSubject.setEnabled(true);
             jdnIssuer.setEnabled(true);
@@ -463,7 +426,7 @@ public class DViewSignature extends JEscDialog {
                     jtfSigningTime.setText("");
                 }
 
-//                if (noLongerValid) {
+//                if (true) {
 //                    jtfSigningTime.setText(
 //                            MessageFormat.format(res.getString("DViewCertificate.jtfSigningTime.expired.text"),
 //                                                 jtfSigningTime.getText()));
@@ -472,17 +435,6 @@ public class DViewSignature extends JEscDialog {
 //                    jtfSigningTime.setForeground(jtfVersion.getForeground());
 //                }
                 jtfSigningTime.setCaretPosition(0);
-
-                // TODO JW - These map strings need to be moved to a resource bundle.
-                Map<ASN1ObjectIdentifier, String> CONTENT_TYPES = new HashMap<>();
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.data, "Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedData, "Signed Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.envelopedData, "Enveloped Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedAndEnvelopedData, "Signed and Enveloped Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.digestedData, "Digested Data");
-                CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
-                jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
-                jtfContentType.setCaretPosition(0);
 
                 SignatureType signatureType = lookupSignatureType(signerInfo);
                 if (signatureType != null ) {
@@ -498,12 +450,6 @@ public class DViewSignature extends JEscDialog {
                     jbTimeStamp.setEnabled(true);
                 } else {
                     jbTimeStamp.setEnabled(false);
-                }
-
-                if (signerInfo.getCounterSignatures().size() > 0) {
-                    jbCounterSigners.setEnabled(true);
-                } else {
-                    jbCounterSigners.setEnabled(false);
                 }
 
 //                Set<?> critExts = signerInfo.getCriticalExtensionOIDs();
@@ -591,26 +537,6 @@ public class DViewSignature extends JEscDialog {
             DViewSignature dViewSignature = new DViewSignature(this,
                     MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
                     timeStampSigner, timeStampSigners, null);
-            dViewSignature.setLocationRelativeTo(this);
-            dViewSignature.setVisible(true);
-        } catch (CryptoException e) {
-            DError.displayError(this, e);
-        }
-    }
-
-    private void counterSignersPressed() {
-        KseSignerInformation signer = getSelectedSignerInfo();
-
-        try {
-            String shortName = signer.getShortName();
-
-            // TODO JW Have KseSignerInformation provide list of KseSignerInfos for counter signatures?
-            List<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
-                    signer.getCounterSignatures().getSigners(), signer.getTrustedCerts(), signer.getSignatureCerts());
-
-            DViewSignature dViewSignature = new DViewSignature(this,
-                    MessageFormat.format(res.getString("DViewSignature.CounterSigners.Title"), shortName), signedData,
-                    counterSigners, null);
             dViewSignature.setLocationRelativeTo(this);
             dViewSignature.setVisible(true);
         } catch (CryptoException e) {

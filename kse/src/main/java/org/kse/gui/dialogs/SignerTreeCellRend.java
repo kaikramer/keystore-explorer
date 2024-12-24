@@ -21,9 +21,10 @@ package org.kse.gui.dialogs;
 
 import java.awt.Component;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.kse.crypto.signing.KseSignerInformation;
@@ -31,33 +32,46 @@ import org.kse.crypto.signing.KseSignerInformation;
 /**
  * Custom cell renderer for the cells of the DViewSignature list.
  */
-public class SignerListCellRend extends DefaultListCellRenderer {
+public class SignerTreeCellRend extends DefaultTreeCellRenderer {
     private static final long serialVersionUID = 1L;
 
     /**
      * Returns the rendered cell for the supplied value.
      *
-     * @param list         The JList
+     * @param jtrHSigners  The JTree
      * @param value        The value to assign to the cell
-     * @param index        The row index of the cell to render
      * @param isSelected   True if cell is selected
-     * @param cellHasFocus If true, render cell appropriately
+     * @param isExpanded   True if cell is expanded
+     * @param leaf         True if cell is a leaf
+     * @param row          The row of the cell to render
+     * @param hasFocus     If true, render cell appropriately
      * @return The rendered cell
      */
     @Override
-    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-            boolean cellHasFocus) {
-        JLabel cell = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    public Component getTreeCellRendererComponent(JTree jtrHSigners, Object value, boolean isSelected,
+                                                  boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
+        JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrHSigners, value, isSelected, isExpanded, leaf,
+                                                                  row, hasFocus);
 
-        if (value instanceof KseSignerInformation) {
+        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
 
-            KseSignerInformation signer = (KseSignerInformation) value;
+        Object userObject = treeNode.getUserObject();
+
+        if (userObject instanceof KseSignerInformation) {
+
+            KseSignerInformation signer = (KseSignerInformation) userObject;
             X509CertificateHolder cert = signer.getCertificate();
 
             cell.setText(signer.getShortName());
 
-            // TODO JW Is an icon for signer list cell renderer desired?
-//            ImageIcon icon = new ImageIcon(getClass().getResource("images/certificate_node.png"));
+            // TODO JW Is an icon for signer tree cell renderer desired?
+//            String iconResource;
+//            if (signer.isCounterSignature()) {
+//                iconResource = "images/counter_signature_node.png";
+//            } else {
+//                iconResource = "images/signature_node.png";
+//            }
+//            ImageIcon icon = new ImageIcon(getClass().getResource(iconResource));
 //            cell.setIcon(icon);
 
             String tooltip;

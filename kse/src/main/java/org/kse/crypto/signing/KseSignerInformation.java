@@ -22,9 +22,11 @@ package org.kse.crypto.signing;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 
 import org.bouncycastle.asn1.ASN1GeneralizedTime;
 import org.bouncycastle.asn1.ASN1UTCTime;
@@ -35,8 +37,8 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
-import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.tsp.TSPException;
@@ -235,10 +237,7 @@ public class KseSignerInformation extends SignerInformation {
 
                     if (getCounterSignatures().size() > 0) {
 
-                        Collection<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
-                                getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
-
-                        verified &= verify(counterSigners);
+                        verified &= verifyCounterSignatures();
                     }
                 }
             } catch (Exception e) {
@@ -258,12 +257,15 @@ public class KseSignerInformation extends SignerInformation {
         }
     }
 
-    private boolean verify(Collection<KseSignerInformation> signers) throws OperatorCreationException,
-            CertificateException, TSPValidationException, CMSException, IOException, TSPException {
+    private boolean verifyCounterSignatures() {
 
         boolean verified = true;
 
-        for (KseSignerInformation signer : signers) {
+        // TODO JW Don't use super. Just use the overridden method.
+        Collection<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
+                super.getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
+
+        for (KseSignerInformation signer : counterSigners) {
             signer.verify();
 
             verified &= (signer.getStatus() == CmsSignatureStatus.VALID_NOT_TRUSTED
@@ -288,5 +290,13 @@ public class KseSignerInformation extends SignerInformation {
                 tspToken.validate(new JcaSimpleSignerInfoVerifierBuilder().build(cert));
             }
         }
+    }
+
+    @Override
+    public SignerInformationStore getCounterSignatures() {
+        List<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
+                                super.getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
+        // Load into an ArrayList for mapping between generic types.
+        return new SignerInformationStore(new ArrayList<>(counterSigners));
     }
 }
