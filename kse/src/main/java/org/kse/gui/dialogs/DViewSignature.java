@@ -292,9 +292,8 @@ public class DViewSignature extends JEscDialog {
         pane.add(jtfSigningTime, "wrap");
         pane.add(jlSignatureAlgorithm, "");
         pane.add(jtfSignatureAlgorithm, "wrap");
-        // TODO JW - clean up the dialog
-//        pane.add(jlContentType, "");
-//        pane.add(jtfContentType, "wrap");
+        pane.add(jlContentType, "");
+        pane.add(jtfContentType, "wrap");
         pane.add(jbTimeStamp, "spanx, split");
         pane.add(jbCounterSigners, "");
         pane.add(jbSignerAsn1, "wrap");
@@ -475,15 +474,15 @@ public class DViewSignature extends JEscDialog {
                 jtfSigningTime.setCaretPosition(0);
 
                 // TODO JW - These map strings need to be moved to a resource bundle.
-//                Map<ASN1ObjectIdentifier, String> CONTENT_TYPES = new HashMap<>();
-//                CONTENT_TYPES.put(PKCSObjectIdentifiers.data, "Data");
-//                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedData, "Signed Data");
-//                CONTENT_TYPES.put(PKCSObjectIdentifiers.envelopedData, "Enveloped Data");
-//                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedAndEnvelopedData, "Signed and Enveloped Data");
-//                CONTENT_TYPES.put(PKCSObjectIdentifiers.digestedData, "Digested Data");
-//                CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
-//                jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
-//                jtfContentType.setCaretPosition(0);
+                Map<ASN1ObjectIdentifier, String> CONTENT_TYPES = new HashMap<>();
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.data, "Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedData, "Signed Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.envelopedData, "Enveloped Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.signedAndEnvelopedData, "Signed and Enveloped Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.digestedData, "Digested Data");
+                CONTENT_TYPES.put(PKCSObjectIdentifiers.encryptedData, "Encrypted Data");
+                jtfContentType.setText(CONTENT_TYPES.get(signerInfo.getContentType()));
+                jtfContentType.setCaretPosition(0);
 
                 SignatureType signatureType = lookupSignatureType(signerInfo);
                 if (signatureType != null ) {
