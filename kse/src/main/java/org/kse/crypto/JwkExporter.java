@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.Curve;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.crypto.keypair.KeyPairUtil;
 
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Map;
 import java.util.Optional;
@@ -45,6 +46,14 @@ public interface JwkExporter {
 
         public static boolean supportsCurve(String curveName) {
             return supportedCurvesMap.containsKey(curveName);
+        }
+        protected Optional<Curve> getCurve(ECPrivateKey privateKey) {
+            try {
+                String curveName = KeyPairUtil.getKeyInfo(privateKey).getDetailedAlgorithm();
+                return Optional.ofNullable(supportedCurvesMap.get(curveName));
+            } catch (CryptoException e) {
+                return Optional.empty();
+            }
         }
 
         protected Optional<Curve> getCurve(ECPublicKey publicKey) {

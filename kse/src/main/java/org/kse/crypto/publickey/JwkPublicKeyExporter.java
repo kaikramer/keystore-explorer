@@ -92,12 +92,11 @@ public class JwkPublicKeyExporter {
         }
 
         public byte[] exportWithAlias(String alias) throws JOSEException {
-            Optional<Curve> maybeCurve = getCurve(ecPublicKey);
-            if (maybeCurve.isEmpty()) {
+            Optional<Curve> curve = getCurve(ecPublicKey);
+            if (curve.isEmpty()) {
                 return new byte[0];
             }
-            Curve curve = maybeCurve.get();
-            ECKey.Builder builder = new ECKey.Builder(curve, ecPublicKey);
+            ECKey.Builder builder = new ECKey.Builder(curve.get(), ecPublicKey);
             if (alias != null) {
                 builder.keyID(alias);
             } else {

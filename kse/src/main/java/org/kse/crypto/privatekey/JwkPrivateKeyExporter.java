@@ -1,14 +1,18 @@
 package org.kse.crypto.privatekey;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import org.kse.crypto.JwkExporter;
 
-
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.spec.ECPoint;
+import java.util.Optional;
 
 
 public class JwkPrivateKeyExporter {
@@ -19,6 +23,8 @@ public class JwkPrivateKeyExporter {
         this.alias = alias;
         if (privateKey instanceof RSAPrivateCrtKey) {
             this.jwkExporter = new RSAPrivateKeyExporter(privateKey);
+        } else if (privateKey instanceof ECPrivateKey) {
+            this.jwkExporter = new ECPrivateKeyExporter(privateKey);
         } else {
            throw new IllegalArgumentException("Not supported key type: " + privateKey.getClass().getName());
         }
@@ -30,6 +36,41 @@ public class JwkPrivateKeyExporter {
 
     public static JwkPrivateKeyExporter from(PrivateKey privateKey, String alias) {
         return new JwkPrivateKeyExporter(privateKey, alias);
+    }
+
+    private static class ECPrivateKeyExporter extends JwkExporter.JwkECKeyExporter {
+        private final ECPrivateKey privateKey;
+
+        private ECPrivateKeyExporter(PrivateKey privateKey) {
+            this.privateKey = (ECPrivateKey)privateKey;
+        }
+
+        @Override
+        public byte[] exportWithAlias(String alias) throws JOSEException {
+            Optional<Curve> curve = getCurve(this.privateKey);
+            if (curve.isEmpty()){
+                return new byte[0];
+            }
+            final ECPoint generator = this.privateKey.getParams().getGenerator();
+            ECKey.Builder builder = new ECKey.Builder(
+                curve.get(),
+                Base64URL.encode(generator.getAffineX()),
+                Base64URL.encode(generator.getAffineY())
+            );
+            builder.d(Base64URL.encode(this.privateKey.getS()));
+            if (alias != null) {
+                builder.keyID(alias);
+            } else {
+                builder.keyIDFromThumbprint();
+            }
+            ECKey key = builder.build();
+            return key.toJSONString().getBytes(StandardCharsets.UTF_8);
+        }
+
+        @Override
+        public boolean canExport() {
+            return true;
+        }
     }
 
     private static class RSAPrivateKeyExporter implements JwkExporter {
