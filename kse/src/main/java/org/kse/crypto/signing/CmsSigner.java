@@ -170,6 +170,9 @@ public class CmsSigner {
         for (SignerInformation si : signerInfos.getSigners()) {
             byte[] signature = si.getSignature();
 
+            // TODO JW Ed448 uses digest type of SHAKE256-512, which is not readily supported by many,
+            // if not any, time stamp servers. Convert to something more widely recognized?
+
             // send request to TSA
             byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, digestType);
 
