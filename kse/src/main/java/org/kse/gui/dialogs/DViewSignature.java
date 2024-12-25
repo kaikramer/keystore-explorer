@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -100,7 +101,6 @@ public class DViewSignature extends JEscDialog {
 
     private KseFrame kseFrame;
 
-    // TODO JW Add control to display if the signature is a counter signature
     private JLabel jlSigners;
     private JTree jtrSigners;
     private JScrollPane jspSigners;
