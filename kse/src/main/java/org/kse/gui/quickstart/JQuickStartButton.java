@@ -20,8 +20,6 @@
 package org.kse.gui.quickstart;
 
 import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -32,6 +30,10 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.kse.gui.LnfUtil;
+
+import net.miginfocom.swing.MigLayout;
+
 /**
  * Quick Start button. Undecorated image button with attached descriptive text
  * that each react to mouse roll-overs.
@@ -40,6 +42,8 @@ public class JQuickStartButton extends JPanel {
     private static final long serialVersionUID = 1L;
     private JButton jbWelcome;
     private JLabel jlWelcome;
+    private final Color lightForeground;
+    private final Color darkForeground;
 
     /**
      * Initialise component and its subcomponents.
@@ -48,13 +52,19 @@ public class JQuickStartButton extends JPanel {
      * @param test          Button text
      * @param icon          Button icon
      * @param rollOverIcon  Button rollover icon
-     * @param foreground    Foreground color for text
-     * @param rollOverColor Rollover color for text
+     * @param lightForeground    Foreground color for text
+     * @param lightRollOverColor Rollover color for text
+     * @param darkForeground     Foreground color for text in dark LNF
+     * @param darkRollOverColor  Rollover color for text in dark LNF
      */
     public JQuickStartButton(Action action, String test, final ImageIcon icon, final ImageIcon rollOverIcon,
-                             final Color foreground, final Color rollOverColor) {
+                             final Color lightForeground, final Color lightRollOverColor,
+                             final Color darkForeground, final Color darkRollOverColor) {
+        this.lightForeground = lightForeground;
+        this.darkForeground = darkForeground;
+
         jlWelcome = new JLabel(test);
-        jlWelcome.setForeground(foreground);
+        jlWelcome.setForeground(LnfUtil.isDarkLnf() ? darkForeground : lightForeground);
 
         jbWelcome = new JButton();
         jbWelcome.setAction(action);
@@ -82,42 +92,35 @@ public class JQuickStartButton extends JPanel {
             // Mouse entered - use roll-over color on text and image on button
             @Override
             public void mouseEntered(MouseEvent evt) {
-                jlWelcome.setForeground(rollOverColor);
+                jlWelcome.setForeground(LnfUtil.isDarkLnf() ? darkRollOverColor : lightRollOverColor);
                 jbWelcome.setIcon(rollOverIcon);
             }
 
             // Mouse exited - remove roll-over color on text and image on button
             @Override
             public void mouseExited(MouseEvent evt) {
-                jlWelcome.setForeground(foreground);
+                jlWelcome.setForeground(LnfUtil.isDarkLnf() ? darkForeground : lightForeground);
                 jbWelcome.setIcon(icon);
             }
         });
 
-        // Button activate - remove roll-over color on text and image on
-        // button
+        // Button activate - remove roll-over color on text and image on button
         jbWelcome.addActionListener(evt -> {
-            jlWelcome.setForeground(foreground);
+            jlWelcome.setForeground(LnfUtil.isDarkLnf() ? darkForeground : lightForeground);
             jbWelcome.setIcon(icon);
         });
 
-        GridBagConstraints gbc_jlWelcome = new GridBagConstraints();
-        gbc_jlWelcome.gridheight = 1;
-        gbc_jlWelcome.gridwidth = 1;
-        gbc_jlWelcome.gridx = 0;
-        gbc_jlWelcome.gridy = 1;
-        gbc_jlWelcome.insets = new Insets(3, 0, 0, 0);
+        setLayout(new MigLayout("flowy, insets 0", "[center]", "[]rel[]"));
+        add(jbWelcome);
+        add(jlWelcome);
+    }
 
-        GridBagConstraints gbc_jbWelcome = new GridBagConstraints();
-        gbc_jbWelcome.gridheight = 1;
-        gbc_jbWelcome.gridwidth = 1;
-        gbc_jbWelcome.gridx = 0;
-        gbc_jbWelcome.gridy = 0;
-        gbc_jbWelcome.insets = new Insets(0, 0, 3, 0);
-
-        setLayout(new GridBagLayout());
-
-        add(jbWelcome, gbc_jbWelcome);
-        add(jlWelcome, gbc_jlWelcome);
+    @Override
+    public void repaint() {
+        super.repaint();
+        // for laf changes
+        if (jlWelcome != null) {
+            jlWelcome.setForeground(LnfUtil.isDarkLnf() ? darkForeground : lightForeground);
+        }
     }
 }

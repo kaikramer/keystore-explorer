@@ -35,6 +35,9 @@ import org.kse.crypto.csr.pkcs12.Pkcs12Util;
 import org.kse.gui.KseFrame;
 import org.kse.gui.preferences.DPreferences;
 
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
+
 /**
  * Action to show preferences.
  */
@@ -125,8 +128,21 @@ public class PreferencesAction extends ExitAction {
         preferences.setNativeFileChooserEnabled(dPreferences.isNativeFileChooserEnabled());
 
         if ((!dPreferences.getLookFeelInfo().getClassName().equals(UIManager.getLookAndFeel().getClass().getName())) ||
-            (dPreferences.getLookFeelDecoration() != JFrame.isDefaultLookAndFeelDecorated()) || languageHasChanged) {
-            // L&F or language changed - restart required for upgrade to take effect
+            dPreferences.getLookFeelDecoration() != JFrame.isDefaultLookAndFeelDecorated()) {
+            FlatAnimatedLafChange.showSnapshot();
+            try {
+                UIManager.setLookAndFeel(dPreferences.getLookFeelInfo().getClassName());
+                JFrame.setDefaultLookAndFeelDecorated(dPreferences.getLookFeelDecoration());
+                FlatLaf.updateUI();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelError.message"),
+                                              res.getString("PreferencesAction.LookFeelError.Title"), JOptionPane.ERROR_MESSAGE);
+            }
+            FlatAnimatedLafChange.hideSnapshotWithAnimation();
+        }
+
+        if (languageHasChanged) {
+            // language changed - restart required for upgrade to take effect
             JOptionPane.showMessageDialog(frame, res.getString("PreferencesAction.LookFeelChanged.message"),
                                           res.getString("PreferencesAction.LookFeelChanged.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);

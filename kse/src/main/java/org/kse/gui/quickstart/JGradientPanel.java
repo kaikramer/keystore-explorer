@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.gui.gradient;
+package org.kse.gui.quickstart;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -26,23 +26,31 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import org.kse.gui.LnfUtil;
+
 /**
  * JPanel with gradient.
  */
 public class JGradientPanel extends JPanel {
     private static final long serialVersionUID = 1L;
-    private Color color1;
-    private Color color2;
+    private Color lightColor1;
+    private Color lightColor2;
+    private Color darkColor1;
+    private Color darkColor2;
 
     /**
      * Construct a Gradient panel using the supplied colours.
      *
-     * @param color1 First colour
-     * @param color2 Second colour
+     * @param lightColor1 First light colour
+     * @param lightColor2 Second light colour
+     * @param darkColor1 First dark colour
+     * @param darkColor2 Second dark colour
      */
-    public JGradientPanel(Color color1, Color color2) {
-        this.color1 = color1;
-        this.color2 = color2;
+    public JGradientPanel(Color lightColor1, Color lightColor2, Color darkColor1, Color darkColor2) {
+        this.lightColor1 = lightColor1;
+        this.lightColor2 = lightColor2;
+        this.darkColor1 = darkColor1;
+        this.darkColor2 = darkColor2;
     }
 
     /**
@@ -53,6 +61,8 @@ public class JGradientPanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+        Color color1 = LnfUtil.isDarkLnf() ? darkColor1 : lightColor1;
+        Color color2 = LnfUtil.isDarkLnf() ? darkColor2 : lightColor2;
         GradientPaint gradient = new GradientPaint(0, 0, color1, getWidth(), getHeight(), color2);
         g2d.setPaint(gradient);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());

@@ -20,10 +20,9 @@
 package org.kse.gui.quickstart;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDragEvent;
@@ -45,24 +44,30 @@ import org.kse.gui.actions.NewAction;
 import org.kse.gui.actions.OpenAction;
 import org.kse.gui.actions.OpenCaCertificatesAction;
 import org.kse.gui.actions.OpenDefaultAction;
+import org.kse.gui.components.JEscFrame;
 import org.kse.gui.dnd.DroppedFileHandler;
-import org.kse.gui.gradient.JGradientPanel;
+import org.kse.utilities.DialogViewer;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * KSE Quick Start pane. Displays quick start buttons for common start functions
- * of the application. Also a drop target for opening KeyStore files.
+ * of the application. Also, a drop target for opening KeyStore files.
  */
 public class JQuickStartPane extends JGradientPanel implements DropTargetListener {
     private static final long serialVersionUID = 1L;
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/quickstart/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/quickstart/resources");
 
-    // set dark or light colors (depending on active LaF)
-    private static final boolean IS_DARK_LAF = LnfUtil.isDarkLnf();
-    private static final Color GRADIENT_COLOR_1 = IS_DARK_LAF ? new Color(85, 85, 85) : Color.WHITE;
-    private static final Color GRADIENT_COLOR_2 = IS_DARK_LAF ? new Color(60, 63, 65) : Color.LIGHT_GRAY;
-    private static final Color TEXT_COLOR = IS_DARK_LAF ? new Color(116, 131, 141) : new Color(0, 134, 201);
-    private static final Color TEXT_ROLLOVER_COLOR = IS_DARK_LAF ? new Color(141, 141, 124) : new Color(135, 31, 120);
+    // dark or light colors
+    private static final Color DARK_GRADIENT_COLOR_1 = new Color(85, 85, 85);
+    private static final Color DARK_GRADIENT_COLOR_2 = new Color(60, 63, 65);
+    private static final Color DARK_TEXT_COLOR = new Color(116, 131, 141);
+    private static final Color DARK_TEXT_ROLLOVER_COLOR = new Color(141, 141, 124);
+    private static final Color LIGHT_GRADIENT_COLOR_1 =  Color.WHITE;
+    private static final Color LIGHT_GRADIENT_COLOR_2 = Color.LIGHT_GRAY;
+    private static final Color LIGHT_TEXT_COLOR = new Color(0, 134, 201);
+    private static final Color LIGHT_TEXT_ROLLOVER_COLOR = new Color(135, 31, 120);
 
     private KseFrame kseFrame;
 
@@ -82,7 +87,7 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
      * @param kseFrame KSE frame
      */
     public JQuickStartPane(KseFrame kseFrame) {
-        super(GRADIENT_COLOR_1, GRADIENT_COLOR_2);
+        super(LIGHT_GRADIENT_COLOR_1, LIGHT_GRADIENT_COLOR_2, DARK_GRADIENT_COLOR_1, DARK_GRADIENT_COLOR_2);
 
         this.kseFrame = kseFrame;
 
@@ -94,7 +99,7 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 
     private void initComponents() {
         jqslHeading = new JQuickStartLabel(res.getString("JQuickStartPane.jqslHeading.text"));
-        jqslHeading.setForeground(TEXT_COLOR);
+        jqslHeading.setForeground(LnfUtil.isDarkLnf() ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR);
         jqslHeading.setFont(jqslHeading.getFont().deriveFont(20f));
 
         Toolkit toolKit = Toolkit.getDefaultToolkit();
@@ -104,7 +109,8 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
                 toolKit.createImage(getClass().getResource("images/new_rollover.png")));
         jqsbNewKeyStore = new JQuickStartButton(new NewAction(kseFrame),
                                                 res.getString("JQuickStartPane.jqsbNewKeyStore.text"), newImage,
-                                                newImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
+                                                newImageRollOver, LIGHT_TEXT_COLOR, LIGHT_TEXT_ROLLOVER_COLOR,
+                                                DARK_TEXT_COLOR, DARK_TEXT_ROLLOVER_COLOR);
         jqsbNewKeyStore.setOpaque(false);
 
         ImageIcon openImage = new ImageIcon(toolKit.createImage(getClass().getResource("images/open.png")));
@@ -112,7 +118,8 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
                 toolKit.createImage(getClass().getResource("images/open_rollover.png")));
         jqsbOpenKeyStore = new JQuickStartButton(new OpenAction(kseFrame),
                                                  res.getString("JQuickStartPane.jqsbOpenKeyStore.text"), openImage,
-                                                 openImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
+                                                 openImageRollOver, LIGHT_TEXT_COLOR, LIGHT_TEXT_ROLLOVER_COLOR,
+                                                 DARK_TEXT_COLOR, DARK_TEXT_ROLLOVER_COLOR);
         jqsbOpenKeyStore.setOpaque(false);
 
         ImageIcon openDefaultImage = new ImageIcon(
@@ -121,8 +128,9 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
                 toolKit.createImage(getClass().getResource("images/opendefault_rollover.png")));
         jqsbOpenDefaultKeyStore = new JQuickStartButton(new OpenDefaultAction(kseFrame),
                                                         res.getString("JQuickStartPane.jqsbOpenDefaultKeyStore.text"),
-                                                        openDefaultImage, openDefaultImageRollOver, TEXT_COLOR,
-                                                        TEXT_ROLLOVER_COLOR);
+                                                        openDefaultImage, openDefaultImageRollOver,
+                                                        LIGHT_TEXT_COLOR, LIGHT_TEXT_ROLLOVER_COLOR,
+                                                        DARK_TEXT_COLOR, DARK_TEXT_ROLLOVER_COLOR);
         jqsbOpenDefaultKeyStore.setOpaque(false);
 
         ImageIcon openCaCertificatesImage = new ImageIcon(
@@ -131,8 +139,9 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
                 toolKit.createImage(getClass().getResource("images/opencacerts_rollover.png")));
         jqsbOpenCaCertificatesKeyStore = new JQuickStartButton(new OpenCaCertificatesAction(kseFrame), res.getString(
                 "JQuickStartPane.jqsbOpenCaCertificatesKeyStore.text"), openCaCertificatesImage,
-                                                               openCaCertificatesImageRollOver, TEXT_COLOR,
-                                                               TEXT_ROLLOVER_COLOR);
+                                                               openCaCertificatesImageRollOver,
+                                                               LIGHT_TEXT_COLOR, LIGHT_TEXT_ROLLOVER_COLOR,
+                                                               DARK_TEXT_COLOR, DARK_TEXT_ROLLOVER_COLOR);
         jqsbOpenCaCertificatesKeyStore.setOpaque(false);
 
         ImageIcon examineCertificateImage = new ImageIcon(
@@ -142,78 +151,31 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
         jqsbExamineCertificate = new JQuickStartButton(new ExamineFileAction(kseFrame),
                                                        res.getString("JQuickStartPane.jqsbExamineCertificate.text"),
                                                        examineCertificateImage, examineCertificateImageRollOver,
-                                                       TEXT_COLOR, TEXT_ROLLOVER_COLOR);
+                                                       LIGHT_TEXT_COLOR, LIGHT_TEXT_ROLLOVER_COLOR,
+                                                       DARK_TEXT_COLOR, DARK_TEXT_ROLLOVER_COLOR);
         jqsbExamineCertificate.setOpaque(false);
 
         ImageIcon helpImage = new ImageIcon(toolKit.createImage(getClass().getResource("images/help.png")));
         ImageIcon helpImageRollOver = new ImageIcon(
                 toolKit.createImage(getClass().getResource("images/help_rollover.png")));
         jqsbHelp = new JQuickStartButton(new HelpAction(kseFrame), res.getString("JQuickStartPane.jqsbHelp.text"),
-                                         helpImage, helpImageRollOver, TEXT_COLOR, TEXT_ROLLOVER_COLOR);
+                                         helpImage, helpImageRollOver,
+                                         LIGHT_TEXT_COLOR, LIGHT_TEXT_ROLLOVER_COLOR,
+                                         DARK_TEXT_COLOR, DARK_TEXT_ROLLOVER_COLOR);
         jqsbHelp.setOpaque(false);
 
-        GridBagConstraints gbc_jqslHeading = new GridBagConstraints();
-        gbc_jqslHeading.gridheight = 1;
-        gbc_jqslHeading.gridwidth = 3;
-        gbc_jqslHeading.gridx = 0;
-        gbc_jqslHeading.gridy = 0;
-        gbc_jqslHeading.insets = new Insets(0, 0, 20, 0);
-
-        GridBagConstraints gbc_jqsbNewKeyStore = new GridBagConstraints();
-        gbc_jqsbNewKeyStore.gridheight = 1;
-        gbc_jqsbNewKeyStore.gridwidth = 1;
-        gbc_jqsbNewKeyStore.gridx = 0;
-        gbc_jqsbNewKeyStore.gridy = 1;
-        gbc_jqsbNewKeyStore.insets = new Insets(0, 0, 10, 10);
-
-        GridBagConstraints gbc_jqsbOpenKeyStore = new GridBagConstraints();
-        gbc_jqsbOpenKeyStore.gridheight = 1;
-        gbc_jqsbOpenKeyStore.gridwidth = 1;
-        gbc_jqsbOpenKeyStore.gridx = 1;
-        gbc_jqsbOpenKeyStore.gridy = 1;
-        gbc_jqsbOpenKeyStore.insets = new Insets(0, 10, 10, 10);
-
-        GridBagConstraints gbc_jqsbOpenDefaultKeyStore = new GridBagConstraints();
-        gbc_jqsbOpenDefaultKeyStore.gridheight = 1;
-        gbc_jqsbOpenDefaultKeyStore.gridwidth = 1;
-        gbc_jqsbOpenDefaultKeyStore.gridx = 2;
-        gbc_jqsbOpenDefaultKeyStore.gridy = 1;
-        gbc_jqsbOpenDefaultKeyStore.insets = new Insets(0, 10, 10, 10);
-
-        GridBagConstraints gbc_jqsbOpenCaCertificatesKeyStore = new GridBagConstraints();
-        gbc_jqsbOpenCaCertificatesKeyStore.gridheight = 1;
-        gbc_jqsbOpenCaCertificatesKeyStore.gridwidth = 1;
-        gbc_jqsbOpenCaCertificatesKeyStore.gridx = 0;
-        gbc_jqsbOpenCaCertificatesKeyStore.gridy = 2;
-        gbc_jqsbOpenCaCertificatesKeyStore.insets = new Insets(10, 0, 0, 10);
-
-        GridBagConstraints gbc_jqsbExamineCertificate = new GridBagConstraints();
-        gbc_jqsbExamineCertificate.gridheight = 1;
-        gbc_jqsbExamineCertificate.gridwidth = 1;
-        gbc_jqsbExamineCertificate.gridx = 1;
-        gbc_jqsbExamineCertificate.gridy = 2;
-        gbc_jqsbExamineCertificate.insets = new Insets(10, 10, 0, 10);
-
-        GridBagConstraints gbc_jqsbHelp = new GridBagConstraints();
-        gbc_jqsbHelp.gridheight = 1;
-        gbc_jqsbHelp.gridwidth = 1;
-        gbc_jqsbHelp.gridx = 2;
-        gbc_jqsbHelp.gridy = 2;
-        gbc_jqsbHelp.insets = new Insets(10, 10, 0, 0);
-
-        jpQuickStart = new JPanel(new GridBagLayout());
+        jpQuickStart = new JPanel();
         jpQuickStart.setOpaque(false);
+        jpQuickStart.setLayout(new MigLayout("fill", "[center]para[center]", "[]para[]"));
+        jpQuickStart.add(jqslHeading, "spanx, wrap");
+        jpQuickStart.add(jqsbNewKeyStore);
+        jpQuickStart.add(jqsbOpenKeyStore);
+        jpQuickStart.add(jqsbOpenDefaultKeyStore, "wrap");
+        jpQuickStart.add(jqsbOpenCaCertificatesKeyStore);
+        jpQuickStart.add(jqsbExamineCertificate);
+        jpQuickStart.add(jqsbHelp);
 
-        jpQuickStart.add(jqslHeading, gbc_jqslHeading);
-        jpQuickStart.add(jqsbNewKeyStore, gbc_jqsbNewKeyStore);
-        jpQuickStart.add(jqsbOpenKeyStore, gbc_jqsbOpenKeyStore);
-        jpQuickStart.add(jqsbOpenDefaultKeyStore, gbc_jqsbOpenDefaultKeyStore);
-        jpQuickStart.add(jqsbOpenCaCertificatesKeyStore, gbc_jqsbOpenCaCertificatesKeyStore);
-        jpQuickStart.add(jqsbExamineCertificate, gbc_jqsbExamineCertificate);
-        jpQuickStart.add(jqsbHelp, gbc_jqsbHelp);
-
-        // Put in panel to prevent resize of controls and center them
-        // horizontally
+        // Put in panel to prevent resize of controls and center them horizontally
         jpNonResizeCenterHorizontally = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         jpNonResizeCenterHorizontally.setOpaque(false);
         jpNonResizeCenterHorizontally.add(jpQuickStart);
@@ -243,5 +205,22 @@ public class JQuickStartPane extends JGradientPanel implements DropTargetListene
 
     @Override
     public void dropActionChanged(DropTargetDragEvent evt) {
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        jqslHeading.setForeground(LnfUtil.isDarkLnf() ? DARK_TEXT_COLOR : LIGHT_TEXT_COLOR);
+    }
+
+    // for quick testing
+    public static void main(String[] args) throws Exception {
+        DialogViewer.prepare();
+        KseFrame kseFrame = new KseFrame();
+        JEscFrame frame = new JEscFrame("Test");
+        JQuickStartPane jQuickStartPane = new JQuickStartPane(kseFrame);
+        frame.add(jQuickStartPane);
+        frame.setMinimumSize(new Dimension(800, 600));
+        DialogViewer.run(frame);
     }
 }

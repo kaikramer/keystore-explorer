@@ -34,6 +34,6 @@ public class MiGUtil {
         JLabel l = new JLabel(text, SwingConstants.LEADING);
 
         container.add(l, "gapbottom 1, span, split 2, aligny center");
-        container.add(new JSeparator(), "gapleft rel, growx");
+        container.add(new JSeparator(), "gapleft rel, growx, wrap unrel");
     }
 }
