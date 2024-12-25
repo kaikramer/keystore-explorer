@@ -42,6 +42,7 @@ public class KsePreferences {
     private DigestType certificateFingerprintAlgorithm = DigestType.SHA1;
     private PublicKeyFingerprintAlgorithm publicKeyFingerprintAlgorithm = PublicKeyFingerprintAlgorithm.SKI_METHOD1;
     private PasswordQualityConfig passwordQualityConfig = new PasswordQualityConfig(false, false, 60);
+    private PasswordGeneratorSettings passwordGeneratorSettings = new PasswordGeneratorSettings();
     private ProxySettings proxySettings = new ProxySettings();
     private Rectangle mainWindowSizeAndPosition = new Rectangle(0, 0, KseFrame.DEFAULT_WIDTH, KseFrame.DEFAULT_HEIGHT);
     private boolean showToolBar = true;
@@ -284,11 +285,19 @@ public class KsePreferences {
         this.nativeFileChooserEnabled = nativeFileChooserEnabled;
     }
 
-	public PublicKeyFingerprintAlgorithm getPublicKeyFingerprintAlgorithm() {
-		return publicKeyFingerprintAlgorithm;
-	}
+    public PublicKeyFingerprintAlgorithm getPublicKeyFingerprintAlgorithm() {
+        return publicKeyFingerprintAlgorithm;
+    }
 
-	public void setPublicKeyFingerprintAlgorithm(PublicKeyFingerprintAlgorithm publicKeyFingerprintAlgorithm) {
-		this.publicKeyFingerprintAlgorithm = publicKeyFingerprintAlgorithm;
-	}   
+    public void setPublicKeyFingerprintAlgorithm(PublicKeyFingerprintAlgorithm publicKeyFingerprintAlgorithm) {
+        this.publicKeyFingerprintAlgorithm = publicKeyFingerprintAlgorithm;
+    }
+
+    public PasswordGeneratorSettings getPasswordGeneratorSettings() {
+        return passwordGeneratorSettings;
+    }
+
+    public void setPasswordGeneratorSettings(PasswordGeneratorSettings passwordGeneratorSettings) {
+        this.passwordGeneratorSettings = passwordGeneratorSettings;
+    }
 }

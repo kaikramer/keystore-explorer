@@ -80,6 +80,7 @@ public class JPasswordQualityField extends JPanel {
 
     private void initComponents(int columns) {
         jpfPassword = new JPasswordField(columns);
+        jpfPassword.putClientProperty("JPasswordField.cutCopyAllowed", true);
 
         GridBagConstraints gbc_jpfPassword = new GridBagConstraints();
         gbc_jpfPassword.gridwidth = 1;

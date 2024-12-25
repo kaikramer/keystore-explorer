@@ -36,6 +36,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
+import org.kse.crypto.encryption.EncryptionException;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
@@ -263,7 +264,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     protected Password getNewKeyStorePassword(boolean askUserForPasswordManager) {
         DGetNewPassword dGetNewPassword =
                 new DGetNewPassword(frame, res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"),
-                                    preferences.getPasswordQualityConfig(), askUserForPasswordManager);
+                                    preferences, askUserForPasswordManager);
         dGetNewPassword.setLocationRelativeTo(frame);
         dGetNewPassword.setVisible(true);
 
@@ -275,21 +276,30 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     }
 
     protected void unlockPasswordManager() {
-        if (!PasswordManager.getInstance().isInitialized()) {
-            var dInitPasswordManager = new DInitPasswordManager(frame, preferences.getPasswordQualityConfig());
-            dInitPasswordManager.setLocationRelativeTo(frame);
-            dInitPasswordManager.setVisible(true);
-            if (dInitPasswordManager.getPassword() != null) {
-                PasswordManager.getInstance().unlock(dInitPasswordManager.getPassword().toCharArray());
+        try {
+            if (!PasswordManager.getInstance().isInitialized()) {
+                var dInitPasswordManager = new DInitPasswordManager(frame, preferences.getPasswordQualityConfig());
+                dInitPasswordManager.setLocationRelativeTo(frame);
+                dInitPasswordManager.setVisible(true);
+                if (dInitPasswordManager.getPassword() != null) {
+                    PasswordManager.getInstance().unlock(dInitPasswordManager.getPassword().toCharArray());
+                }
             }
-        }
-        if (!PasswordManager.getInstance().isUnlocked()) {
-            var dUnlockPasswordManager = new DUnlockPasswordManager(frame);
-            dUnlockPasswordManager.setLocationRelativeTo(frame);
-            dUnlockPasswordManager.setVisible(true);
-            if (!dUnlockPasswordManager.isCancelled()) {
-                PasswordManager.getInstance().unlock(dUnlockPasswordManager.getPassword().toCharArray());
+            if (!PasswordManager.getInstance().isUnlocked()) {
+                var dUnlockPasswordManager = new DUnlockPasswordManager(frame);
+                dUnlockPasswordManager.setLocationRelativeTo(frame);
+                dUnlockPasswordManager.setVisible(true);
+                if (!dUnlockPasswordManager.isCancelled()) {
+                    PasswordManager.getInstance().unlock(dUnlockPasswordManager.getPassword().toCharArray());
+                }
             }
+        } catch (EncryptionException e) {
+            JOptionPane.showMessageDialog(frame,
+                                          res.getString("KeyStoreExplorerAction.WrongPasswordManagerPassword.message"),
+                                          res.getString("KeyStoreExplorerAction.UnlockPasswordManager.title"),
+                                          JOptionPane.WARNING_MESSAGE);
+        } catch (Exception e) {
+            DError.displayError(frame, e);
         }
     }
 

@@ -17,19 +17,31 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.gui.passwordmanager;
+package org.kse.gui.preferences;
 
-public enum EncryptionAlgorithm {
-    AES_CBC("AES/CBC/PKCS5Padding"),
-    AES_GCM("AES/GCM/NoPadding");
+import javax.swing.JDialog;
+import javax.swing.JPanel;
 
-    private final String jceName;
+import org.kse.gui.dnchooser.DistinguishedNameChooser;
+import org.kse.gui.preferences.data.KsePreferences;
 
-    EncryptionAlgorithm(String jceName) {
-        this.jceName = jceName;
+class PanelDefaultName {
+    private final JDialog parent;
+    private final KsePreferences preferences;
+
+    private DistinguishedNameChooser distinguishedNameChooser;
+
+    PanelDefaultName(JDialog parent, KsePreferences preferences) {
+        this.parent = parent;
+        this.preferences = preferences;
     }
 
-    public String getJceName() {
-        return jceName;
+    JPanel initDefaultNameCard() {
+        distinguishedNameChooser = new DistinguishedNameChooser(null, true, preferences.getDefaultSubjectDN());
+        return distinguishedNameChooser;
+    }
+
+    DistinguishedNameChooser getDistinguishedNameChooser() {
+        return distinguishedNameChooser;
     }
 }

@@ -17,19 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.gui.passwordmanager;
+package org.kse.crypto.encryption;
 
-public enum EncryptionAlgorithm {
-    AES_CBC("AES/CBC/PKCS5Padding"),
-    AES_GCM("AES/GCM/NoPadding");
+/**
+ * Exception thrown when an encryption or decryption operation fails.
+ */
+public class EncryptionException extends RuntimeException {
 
-    private final String jceName;
-
-    EncryptionAlgorithm(String jceName) {
-        this.jceName = jceName;
+    /**
+     * Constructor
+     *
+     * @param cause The exception cause
+     */
+    public EncryptionException(Throwable cause) {
+        super(cause);
     }
 
-    public String getJceName() {
-        return jceName;
+    /**
+     * Constructor
+     *
+     * @param message The exception message
+     * @param cause The exception cause
+     */
+    public EncryptionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -30,12 +30,13 @@ import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.gui.password.DChangePassword;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -84,9 +85,16 @@ public class SetKeyPasswordAction extends KeyStoreExplorerAction implements Hist
 
             Password oldPassword = newState.getEntryPassword(alias);
 
+            // try to get password from password manager
+            if (oldPassword == null && history.getFile() != null) {
+                oldPassword = PasswordManager.getInstance()
+                                             .getKeyStoreEntryPassword(history.getFile(), alias)
+                                             .map(Password::new)
+                                             .orElse(null);
+            }
+
             DChangePassword dChangePassword = new DChangePassword(frame, DOCUMENT_MODAL, res.getString(
-                    "SetKeyPasswordAction.SetKeyPassword.Title"), oldPassword,
-                                                                  preferences.getPasswordQualityConfig());
+                    "SetKeyPasswordAction.SetKeyPassword.Title"), oldPassword, preferences);
             dChangePassword.setLocationRelativeTo(frame);
             dChangePassword.setVisible(true);
 

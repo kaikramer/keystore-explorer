@@ -30,9 +30,11 @@ import org.kse.gui.passwordmanager.EncryptionAlgorithm;
  * This is written to a JSON file as part of the KSE configuration files.
  */
 public class EncryptedKeyStorePasswords {
-    private int version = 1;
+    private int version = 2;
     private KeyDerivationSettings keyDerivationSettings = new KeyDerivationSettings();
     private EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithm.AES_CBC;
+    private byte[] encryptionKey;
+    private byte[] encryptionKeyInitVector;
     private List<EncryptedKeyStorePasswordData> passwords = new ArrayList<>();
 
     // auto-generated getters/setters
@@ -67,5 +69,21 @@ public class EncryptedKeyStorePasswords {
 
     public void setEncryptionAlgorithm(EncryptionAlgorithm encryptionAlgorithm) {
         this.encryptionAlgorithm = encryptionAlgorithm;
+    }
+
+    public byte[] getEncryptionKey() {
+        return encryptionKey;
+    }
+
+    public void setEncryptionKey(byte[] encryptionKey) {
+        this.encryptionKey = encryptionKey;
+    }
+
+    public byte[] getEncryptionKeyInitVector() {
+        return encryptionKeyInitVector;
+    }
+
+    public void setEncryptionKeyInitVector(byte[] encryptionKeyInitVector) {
+        this.encryptionKeyInitVector = encryptionKeyInitVector;
     }
 }

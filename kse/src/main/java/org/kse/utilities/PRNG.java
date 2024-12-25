@@ -19,9 +19,11 @@
  */
 package org.kse.utilities;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import org.kse.gui.preferences.data.PasswordGeneratorSettings;
 
 /**
  * Pseudo random number generator for purposes where no special requirements have to be met.
@@ -29,7 +31,12 @@ import java.util.Random;
  * Seeded once per application run.
  */
 public class PRNG {
-    private static Random random = new Random();
+    public static final String LOWER_CASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
+    public static final String UPPER_CASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String DIGITS = "0123456789";
+    public static final String SPECIAL_CHARACTERS = "+-,.;:!#()[]{}<>|/@%=^";
+
+    private static final SecureRandom random = new SecureRandom();
 
     /**
      * Generate random bytes
@@ -44,26 +51,33 @@ public class PRNG {
     }
 
     /**
-     * Creates a random password with
-     * @param length Length of password
+     * Creates a random password according to the given settings.
+     *
+     * @param generatorSettings Settings for the password generator
      * @return The generated password
      */
-    public static char[] generatePassword(int length) {
-        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
-        String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String digits = "0123456789";
-        String specialCharacters = "+-,.;:?!$";
-        String combinedChars = lowerCaseLetters + upperCaseLetters + digits + specialCharacters;
-
+    public static char[] generatePassword(PasswordGeneratorSettings generatorSettings) {
+        // make sure that at least one character from every configured category is in the generated password
         StringBuilder password = new StringBuilder();
+        String combinedChars = "";
+        if (generatorSettings.isIncludeLowerCaseLetters()) {
+            combinedChars += LOWER_CASE_LETTERS;
+            password.append(LOWER_CASE_LETTERS.charAt(random.nextInt(LOWER_CASE_LETTERS.length())));
+        }
+        if (generatorSettings.isIncludeUpperCaseLetters()) {
+            combinedChars += UPPER_CASE_LETTERS;
+            password.append(UPPER_CASE_LETTERS.charAt(random.nextInt(UPPER_CASE_LETTERS.length())));
+        }
+        if (generatorSettings.isIncludeDigits()) {
+            combinedChars += DIGITS;
+            password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
+        }
+        if (generatorSettings.isIncludeSpecialCharacters()) {
+            combinedChars += SPECIAL_CHARACTERS;
+            password.append(SPECIAL_CHARACTERS.charAt(random.nextInt(SPECIAL_CHARACTERS.length())));
+        }
 
-        // make sure that at least one character from every category is in the generated password
-        password.append(lowerCaseLetters.charAt(random.nextInt(lowerCaseLetters.length())));
-        password.append(upperCaseLetters.charAt(random.nextInt(upperCaseLetters.length())));
-        password.append(digits.charAt(random.nextInt(digits.length())));
-        password.append(specialCharacters.charAt(random.nextInt(specialCharacters.length())));
-
-        for (int i = 4; i < length; i++) {
+        for (int i = password.length(); i < generatorSettings.getLength(); i++) {
             password.append(combinedChars.charAt(random.nextInt(combinedChars.length())));
         }
 
@@ -77,8 +91,7 @@ public class PRNG {
         }
         StringBuilder output = new StringBuilder(input.length());
         while (!characters.isEmpty()) {
-            int randPicker = (int) (Math.random() * characters.size());
-            output.append(characters.remove(randPicker));
+            output.append(characters.remove(random.nextInt(characters.size())));
         }
         return output.toString().toCharArray();
     }

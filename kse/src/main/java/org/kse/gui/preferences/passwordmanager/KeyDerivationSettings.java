@@ -19,6 +19,8 @@
  */
 package org.kse.gui.preferences.passwordmanager;
 
+import java.util.Arrays;
+
 import org.kse.gui.passwordmanager.KeyDerivationAlgorithm;
 
 /**
@@ -31,6 +33,21 @@ public class KeyDerivationSettings {
     private int memLimitInMB;
     private int parallelism;
     private int derivedKeyLength;
+
+    public KeyDerivationSettings() {}
+
+    /**
+     * Copy constructor
+     * @param other settings to copy
+     */
+    public KeyDerivationSettings(KeyDerivationSettings other) {
+        this.keyDerivationAlgorithm = other.keyDerivationAlgorithm;
+        this.salt = other.salt != null ? Arrays.copyOf(other.salt, other.salt.length) : null;
+        this.iterations = other.iterations;
+        this.memLimitInMB = other.memLimitInMB;
+        this.parallelism = other.parallelism;
+        this.derivedKeyLength = other.derivedKeyLength;
+    }
 
     // auto-generated getters/setters
 

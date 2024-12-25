@@ -98,6 +98,7 @@ public class DInitPasswordManager extends JEscDialog {
 
         jlConfirm = new JLabel(res.getString("DInitPasswordManager.jlConfirm.text"));
         jpfConfirm = new JPasswordField(15);
+        jpfConfirm.putClientProperty("JPasswordField.cutCopyAllowed", true);
 
         jbOK = new JButton(res.getString("DInitPasswordManager.jbOK.text"));
 
@@ -152,7 +153,9 @@ public class DInitPasswordManager extends JEscDialog {
                 return new JPasswordQualityField(15);
             }
         } else {
-            return new JPasswordField(15);
+            JPasswordField jPasswordField = new JPasswordField(15);
+            jPasswordField.putClientProperty("JPasswordField.cutCopyAllowed", true);
+            return jPasswordField;
         }
 
     }

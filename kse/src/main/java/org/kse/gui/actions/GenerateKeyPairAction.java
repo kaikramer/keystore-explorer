@@ -186,7 +186,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
             if (keyStoreType.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "GenerateKeyPairAction.NewKeyPairEntryPassword.Title"), preferences.getPasswordQualityConfig());
+                        "GenerateKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();

@@ -19,9 +19,11 @@
  */
 package org.kse.gui.password;
 
+import static org.kse.gui.password.PasswordDialogHelper.createPasswordInputField;
+import static org.kse.gui.password.PasswordDialogHelper.preFillPasswordFields;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -41,6 +43,7 @@ import javax.swing.KeyStroke;
 
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -65,9 +68,9 @@ public class DChangePassword extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
-    private PasswordQualityConfig passwordQualityConfig;
     private Password newPassword;
     private Password oldPassword;
+    private final KsePreferences preferences;
 
     /**
      * Creates new DChangePassword dialog where the parent is a frame.
@@ -75,11 +78,11 @@ public class DChangePassword extends JEscDialog {
      * @param parent                Parent frame
      * @param modality              The dialog's title
      * @param oldPassword           The password to be changed
-     * @param passwordQualityConfig Password quality configuration
+     * @param preferences           Preferences
      */
-    public DChangePassword(JFrame parent, Dialog.ModalityType modality, Password oldPassword,
-                           PasswordQualityConfig passwordQualityConfig) {
-        this(parent, modality, res.getString("DChangePassword.Title"), oldPassword, passwordQualityConfig);
+    public DChangePassword(JFrame parent, ModalityType modality, Password oldPassword,
+                           KsePreferences preferences) {
+        this(parent, modality, res.getString("DChangePassword.Title"), oldPassword, preferences);
     }
 
     /**
@@ -89,13 +92,13 @@ public class DChangePassword extends JEscDialog {
      * @param modality              The dialog's title
      * @param title                 Is dialog modal?
      * @param oldPassword           The password to be changed
-     * @param passwordQualityConfig Password quality configuration
+     * @param preferences           Preferences
      */
-    public DChangePassword(JFrame parent, Dialog.ModalityType modality, String title, Password oldPassword,
-                           PasswordQualityConfig passwordQualityConfig) {
+    public DChangePassword(JFrame parent, ModalityType modality, String title, Password oldPassword,
+                           KsePreferences preferences) {
         super(parent, title, modality);
         this.oldPassword = oldPassword;
-        this.passwordQualityConfig = passwordQualityConfig;
+        this.preferences = preferences;
         initComponents();
     }
 
@@ -105,11 +108,11 @@ public class DChangePassword extends JEscDialog {
      * @param parent                Parent frame
      * @param modality              Dialog modality
      * @param oldPassword           The password to be changed
-     * @param passwordQualityConfig Password quality configuration
+     * @param preferences           Preferences
      */
-    public DChangePassword(JDialog parent, Dialog.ModalityType modality, Password oldPassword,
-                           PasswordQualityConfig passwordQualityConfig) {
-        this(parent, res.getString("DChangePassword.Title"), modality, oldPassword, passwordQualityConfig);
+    public DChangePassword(JDialog parent, ModalityType modality, Password oldPassword,
+                           KsePreferences preferences) {
+        this(parent, res.getString("DChangePassword.Title"), modality, oldPassword, preferences);
     }
 
     /**
@@ -119,13 +122,13 @@ public class DChangePassword extends JEscDialog {
      * @param title                 The dialog's title
      * @param modality              Dialog modality
      * @param oldPassword           The password to be changed
-     * @param passwordQualityConfig Password quality configuration
+     * @param preferences           Preferences
      */
-    public DChangePassword(JDialog parent, String title, Dialog.ModalityType modality, Password oldPassword,
-                           PasswordQualityConfig passwordQualityConfig) {
+    public DChangePassword(JDialog parent, String title, ModalityType modality, Password oldPassword,
+                           KsePreferences preferences) {
         super(parent, title, modality);
         this.oldPassword = oldPassword;
-        this.passwordQualityConfig = passwordQualityConfig;
+        this.preferences = preferences;
         initComponents();
     }
 
@@ -143,19 +146,16 @@ public class DChangePassword extends JEscDialog {
 
         jlFirst = new JLabel(res.getString("DChangePassword.jlFirst.text"));
 
-        if (passwordQualityConfig.getEnabled()) {
-            if (passwordQualityConfig.getEnforced()) {
-                jpfFirst = new JPasswordQualityField(15, passwordQualityConfig.getMinimumQuality());
-            } else {
-                jpfFirst = new JPasswordQualityField(15);
-            }
-        } else {
-            jpfFirst = new JPasswordField(15);
-        }
+        jpfFirst = createPasswordInputField(preferences.getPasswordQualityConfig());
 
         jlConfirm = new JLabel(res.getString("DChangePassword.jlConfirm.text"));
 
         jpfConfirm = new JPasswordField(15);
+        jpfConfirm.putClientProperty("JPasswordField.cutCopyAllowed", true);
+
+        if (preferences.getPasswordGeneratorSettings().isEnabled()) {
+            preFillPasswordFields(jpfFirst, jpfConfirm);
+        }
 
         jbOK = new JButton(res.getString("DChangePassword.jbOK.text"));
 
@@ -267,8 +267,10 @@ public class DChangePassword extends JEscDialog {
     }
 
     public static void main(String[] args) throws Exception {
-        DialogViewer.run(new DChangePassword(new javax.swing.JFrame(), ModalityType.APPLICATION_MODAL,
+        KsePreferences ksePreferences = new KsePreferences();
+        ksePreferences.setPasswordQualityConfig(new PasswordQualityConfig(false, false, 20));
+        DialogViewer.run(new DChangePassword(new JFrame(), ModalityType.APPLICATION_MODAL,
                                              new Password("123456".toCharArray()),
-                                             new PasswordQualityConfig(false, false, 20)));
+                                             ksePreferences));
     }
 }

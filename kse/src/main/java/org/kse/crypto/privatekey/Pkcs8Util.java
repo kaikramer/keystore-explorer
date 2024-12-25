@@ -32,8 +32,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Calendar;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -187,9 +185,7 @@ public class Pkcs8Util {
             KeyFactory keyFactory = KeyFactory.getInstance(privateKeyAlgorithm);
 
             return keyFactory.generatePrivate(privateKeySpec);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
-        } catch (InvalidKeySpecException ex) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
             throw new CryptoException(res.getString("NoLoadPkcs8PrivateKey.exception.message"), ex);
         }
     }
@@ -232,7 +228,7 @@ public class Pkcs8Util {
         }
 
         // try to read PKCS#8 info
-        PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo = null;
+        PKCS8EncryptedPrivateKeyInfo encryptedPrivateKeyInfo;
         try {
             encryptedPrivateKeyInfo = new PKCS8EncryptedPrivateKeyInfo(
                     org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo.getInstance(encPvk));
@@ -402,30 +398,6 @@ public class Pkcs8Util {
 
         return obj1 instanceof ASN1ObjectIdentifier;
 
-    }
-
-    private static int generateIterationCount() {
-        // Generate a random iteration count in range 1000-1999
-        Random rng = new Random();
-        rng.setSeed(Calendar.getInstance().getTimeInMillis());
-
-        int random = rng.nextInt();
-
-        int mod1000 = random % 1000;
-
-        return mod1000 + 1000;
-    }
-
-    private static byte[] generateSalt() {
-        // Generate random 8-bit salt
-        Random random = new Random();
-        random.setSeed(Calendar.getInstance().getTimeInMillis());
-
-        byte[] salt = new byte[8];
-
-        random.nextBytes(salt);
-
-        return salt;
     }
 
     private static String getPrivateKeyAlgorithm(byte[] unencPkcs8) throws IOException, CryptoException {

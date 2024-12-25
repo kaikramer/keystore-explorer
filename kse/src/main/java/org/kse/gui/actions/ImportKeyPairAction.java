@@ -30,7 +30,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -42,6 +41,7 @@ import org.kse.gui.dialogs.importexport.DImportKeyPairPvk;
 import org.kse.gui.dialogs.importexport.DImportKeyPairType;
 import org.kse.gui.error.DError;
 import org.kse.gui.password.DGetNewPassword;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -146,7 +146,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 
             if (type.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences.getPasswordQualityConfig());
+                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();
@@ -225,7 +225,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 
             if (type.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences.getPasswordQualityConfig());
+                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();
@@ -304,7 +304,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 
             if (type.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences.getPasswordQualityConfig());
+                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();
@@ -383,8 +383,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 
             if (type.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"),
-                                                                      preferences.getPasswordQualityConfig());
+                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();

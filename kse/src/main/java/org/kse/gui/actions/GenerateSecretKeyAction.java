@@ -29,7 +29,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
@@ -38,6 +37,7 @@ import org.kse.gui.dialogs.DGenerateSecretKey;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
 import org.kse.gui.password.DGetNewPassword;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -137,7 +137,7 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 
             if (type.hasEntryPasswords()) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"), preferences.getPasswordQualityConfig());
+                        "GenerateSecretKeyAction.NewSecretKeyEntryPassword.Title"), preferences);
                 dGetNewPassword.setLocationRelativeTo(frame);
                 dGetNewPassword.setVisible(true);
                 password = dGetNewPassword.getPassword();

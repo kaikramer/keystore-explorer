@@ -37,8 +37,6 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.text.MessageFormat;
-import java.util.Calendar;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 import javax.crypto.Cipher;
@@ -59,10 +57,11 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.ecc.EccUtil;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.PRNG;
 import org.kse.utilities.pem.PemAttribute;
 import org.kse.utilities.pem.PemAttributes;
 import org.kse.utilities.pem.PemInfo;
@@ -75,16 +74,16 @@ import org.kse.utilities.pem.PemUtil;
  * RSA PKCS#1 RSAPrivateKey
  * ------------------------
  *
- * RSAPrivateKey�::=�SEQUENCE�{
- * � version � � � � � INTEGER Version(0),
- * � modulus� � � � � �INTEGER,� --�n
- * � publicExponent� � INTEGER,� --�e
- * � privateExponent� �INTEGER,� --�d
- * � ...}
+ * RSAPrivateKey ::= SEQUENCE {
+ *   version          INTEGER Version(0),
+ *   modulus          INTEGER, -- n
+ *   publicExponent   INTEGER, -- e
+ *   privateExponent  INTEGER, -- d
+ *   ...
+ * }
  *
  * ------BEGIN RSA PRIVATE KEY------
  * ------END RSA PRIVATE KEY------
- *
  * </pre>
  *
  * <pre>
@@ -92,19 +91,20 @@ import org.kse.utilities.pem.PemUtil;
  * -------------
  * (RFC 5915 or SEC 1 section C.4)
  *
- * ECPrivateKey�::=�SEQUENCE�{
- * � version� � � � INTEGER�{�ecPrivkeyVer1(1)�},
- * � privateKey� � �OCTET�STRING,
- * � parameters�[0]�ECParameters�{{�NamedCurve�}}�OPTIONAL, // RFC5480
- * � publicKey� [1]�BIT�STRING�OPTIONAL}
+ * ECPrivateKey ::= SEQUENCE {
+ *   version        INTEGER { ecPrivkeyVer1(1) },
+ *   privateKey     OCTET STRING,
+ *   parameters [0] ECParameters {{ NamedCurve }} OPTIONAL, // RFC5480
+ *   publicKey [1]  BIT STRING OPTIONAL
+ * }
  *
- * -----BEGIN�EC�PRIVATE�KEY-----
- * -----END�EC�PRIVATE�KEY-----
+ * -----BEGIN EC PRIVATE KEY-----
+ * -----END EC PRIVATE KEY-----
  *
- * -----BEGIN�EC�PRIVATE�KEY-----
- * Proc-Type:�4,ENCRYPTED
- * DEK-Info:�DES-EDE3-CBC,258248872DB25390
- * -----END�EC�PRIVATE�KEY-----
+ * -----BEGIN EC PRIVATE KEY-----
+ * Proc-Type: 4,ENCRYPTED
+ * DEK-Info: DES-EDE3-CBC,258248872DB25390
+ * -----END EC PRIVATE KEY-----
  *
  * </pre>
  */
@@ -151,7 +151,7 @@ public class OpenSslPvkUtil {
     public static byte[] get(PrivateKey privateKey) throws CryptoException {
         try {
             // DER encoding for each key type is a sequence
-            ASN1Sequence asn1Sequence = null;
+            ASN1Sequence asn1Sequence;
 
             if (privateKey instanceof RSAPrivateCrtKey) {
                 RSAPrivateCrtKey rsaPrivateKey = (RSAPrivateCrtKey) privateKey;
@@ -209,7 +209,7 @@ public class OpenSslPvkUtil {
     public static String getPem(PrivateKey privateKey) throws CryptoException {
         byte[] openSsl = get(privateKey);
 
-        String pemType = null;
+        String pemType;
 
         if (privateKey instanceof RSAPrivateCrtKey) {
             pemType = OPENSSL_RSA_PVK_PEM_TYPE;
@@ -238,7 +238,7 @@ public class OpenSslPvkUtil {
             throws CryptoException {
         byte[] openSsl = get(privateKey);
 
-        String pemType = null;
+        String pemType;
 
         if (privateKey instanceof RSAPrivateCrtKey) {
             pemType = OPENSSL_RSA_PVK_PEM_TYPE;
@@ -252,7 +252,7 @@ public class OpenSslPvkUtil {
 
         String saltHex = bytesToHex(salt);
 
-        byte[] encOpenSsl = null;
+        byte[] encOpenSsl;
 
         try {
             byte[] encryptKey = deriveKeyFromPassword(password, salt, pbeType.keySize());
@@ -526,14 +526,7 @@ public class OpenSslPvkUtil {
     }
 
     private static byte[] generateSalt(int size) {
-        Random random = new Random();
-        random.setSeed(Calendar.getInstance().getTimeInMillis());
-
-        byte[] salt = new byte[size];
-
-        random.nextBytes(salt);
-
-        return salt;
+        return PRNG.generate(size);
     }
 
     private static byte[] deriveKeyFromPassword(Password password, byte[] salt, int keySize) throws CryptoException {

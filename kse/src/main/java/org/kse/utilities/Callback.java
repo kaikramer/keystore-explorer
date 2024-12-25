@@ -17,19 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.gui.passwordmanager;
+package org.kse.utilities;
 
-public enum EncryptionAlgorithm {
-    AES_CBC("AES/CBC/PKCS5Padding"),
-    AES_GCM("AES/GCM/NoPadding");
-
-    private final String jceName;
-
-    EncryptionAlgorithm(String jceName) {
-        this.jceName = jceName;
-    }
-
-    public String getJceName() {
-        return jceName;
-    }
+@FunctionalInterface
+public interface Callback {
+    void execute();
 }

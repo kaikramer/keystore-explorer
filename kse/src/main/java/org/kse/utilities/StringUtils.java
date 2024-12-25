@@ -110,4 +110,22 @@ public class StringUtils {
 
         return dateFormat.format(date);
     }
+
+    /**
+     * Shortens the input string to the specified maximum length.
+     * If the string is longer than the maximum length, it will be truncated and "..." will be appended.
+     *
+     * @param input the input string to shorten
+     * @param maxLength the maximum length of the output string
+     * @return the shortened string
+     */
+    public static String shortenString(String input, int maxLength) {
+        if (input == null || maxLength < 0) {
+            throw new IllegalArgumentException("Input string cannot be null and maxLength must be non-negative");
+        }
+        if (input.length() <= maxLength) {
+            return input;
+        }
+        return input.substring(0, maxLength - 3) + "...";
+    }
 }

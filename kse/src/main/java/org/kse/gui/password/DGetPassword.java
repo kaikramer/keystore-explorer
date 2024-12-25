@@ -101,6 +101,7 @@ public class DGetPassword extends JEscDialog {
     private void initComponents() {
         jlPassword = new JLabel(res.getString("DGetPassword.jlPassword.text"));
         jpfPassword = new JPasswordField(15);
+        jpfPassword.putClientProperty("JPasswordField.cutCopyAllowed", true);
 
         jcbStoreInPasswordManager = new JCheckBox(res.getString("DGetPassword.jcbStoreInPasswordManager.text"));
         jcbStoreInPasswordManager.setSelected(true);

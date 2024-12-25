@@ -96,6 +96,7 @@ public class PreferencesAction extends ExitAction {
         preferences.getCaCertsSettings().setImportTrustedCertTrustCheckEnabled(dPreferences.getEnableImportTrustedCertTrustCheck());
         preferences.getCaCertsSettings().setImportCaReplyTrustCheckEnabled(dPreferences.getEnableImportCaReplyTrustCheck());
         preferences.setPasswordQualityConfig(dPreferences.getPasswordQualityConfig());
+        preferences.setPasswordGeneratorSettings(dPreferences.getPasswordGeneratorSettings());
         preferences.setDefaultSubjectDN(dPreferences.getDefaultDN());
         preferences.getAutoUpdateCheckSettings().setEnabled(dPreferences.isAutoUpdateChecksEnabled());
         preferences.getAutoUpdateCheckSettings().setCheckInterval(dPreferences.getAutoUpdateChecksInterval());

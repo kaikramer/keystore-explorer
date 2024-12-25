@@ -22,7 +22,7 @@ package org.kse.gui.passwordmanager;
 import static java.util.stream.Collectors.toMap;
 import static org.kse.crypto.pbkd.PasswordBasedKeyDerivation.deriveKeyWithArgon2id;
 import static org.kse.crypto.pbkd.PasswordBasedKeyDerivation.deriveKeyWithPbkdf2;
-import static org.kse.gui.passwordmanager.EncryptionAlgorithm.AES_CBC;
+import static org.kse.gui.passwordmanager.EncryptionAlgorithm.AES_GCM;
 import static org.kse.gui.passwordmanager.KeyDerivationAlgorithm.PBKDF2;
 
 import java.io.File;
@@ -48,6 +48,11 @@ import org.kse.utilities.PRNG;
  * providing them for unlocking keystores and keystore entries.
  */
 public class PasswordManager {
+    public static final int KEY_LENGTH_BITS = 256;
+    public static final int KDF_ITERATIONS = 600_000;
+    public static final int SALT_LENGTH_BYTES = 16;
+    public static final int IV_LENGTH_GCM_BYTES = 12;
+    public static final int IV_LENGTH_CBC_BYTES = 16;
 
     private static PasswordManager INSTANCE;
     private char[] mainPassword;
@@ -66,7 +71,9 @@ public class PasswordManager {
     }
 
     /**
-     * Checks if a password for the given keystore file has been stored in the password manager
+     * Checks if a password for the given keystore file has been stored in the password manager.
+     * <p>
+     * It is not necessary for the password manager to be unlocked for this to work.
      *
      * @param keyStoreFile keystore file path
      * @return True, if password is available
@@ -76,6 +83,21 @@ public class PasswordManager {
                                  .getPasswords()
                                  .stream()
                                  .anyMatch(d -> d.getKeyStoreFile().equals(keyStoreFile));
+    }
+
+    /**
+     * Returns list of keystore files with passwords stored by the password manager.
+     * <p>
+     * It is not necessary for the password manager to be unlocked for this to work.
+     *
+     * @return List of keystore files with passwords stored by the password manager.
+     */
+    public List<File> getKnownKeyStorePasswordList() {
+        return PreferencesManager.getKeyStorePasswords()
+                                 .getPasswords()
+                                 .stream()
+                                 .map(EncryptedKeyStorePasswordData::getKeyStoreFile)
+                                 .collect(Collectors.toList());
     }
 
     /**
@@ -110,6 +132,14 @@ public class PasswordManager {
     }
 
     /**
+     * Get copy of current KDF settings from configuration.
+     * @return KDF settings
+     */
+    public KeyDerivationSettings getKeyDerivationSettings() {
+        return new KeyDerivationSettings(PreferencesManager.getKeyStorePasswords().getKeyDerivationSettings());
+    }
+
+    /**
      * Return stored keystore password
      *
      * @param keyStoreFile File name and path of the keystore
@@ -141,13 +171,34 @@ public class PasswordManager {
     }
 
     /**
+     * Returns a list of aliases for a certain keystore file.
+     * <p>
+     * It is not necessary for the password manager to be unlocked for this to work.
+     *
+     * @param keyStoreFile A keystore managed by this password manager.
+     * @return All aliases with a managed password of this keystore.
+     */
+    public List<String> getAliasList(File keyStoreFile) {
+        return PreferencesManager.getKeyStorePasswords()
+                                 .getPasswords()
+                                 .stream()
+                                 .filter(d -> d.getKeyStoreFile().equals(keyStoreFile))
+                                 .flatMap(d -> d.getKeyStoreEntryPasswords().stream())
+                                 .map(KeyStoreEntryPassword::getEntryAlias)
+                                 .collect(Collectors.toList());
+    }
+
+    /**
      * Add or replace the given keystore password data
      *
+     * @param keyStoreFile Keystore file
+     * @param keyStorePassword Password of keystore
+     * @param entryPasswords Map of entry aliases and their passwords
      */
     public void update(File keyStoreFile, char[] keyStorePassword, Map<String, char[]> entryPasswords) {
-        KeyStorePasswordData data = new KeyStorePasswordData();
-        data.setKeyStoreFile(keyStoreFile);
-        data.setKeyStorePassword(keyStorePassword.clone());
+        KeyStorePasswordData newData = new KeyStorePasswordData();
+        newData.setKeyStoreFile(keyStoreFile);
+        newData.setKeyStorePassword(keyStorePassword.clone());
 
         // fetch existing data first, because we have to merge it with the updates
         KeyStorePasswordData oldData = keyStorePasswords.stream()
@@ -158,23 +209,61 @@ public class PasswordManager {
 
         // the passed entry password list contains only unlocked entries, but there might be more in the keystore;
         // so we add the old entry data first and then overwrite/update them or add new ones
-        oldData.getKeyStoreEntryPasswords().forEach((a, p) -> data.getKeyStoreEntryPasswords().put(a, p.clone()));
-        entryPasswords.forEach((a, p) -> data.getKeyStoreEntryPasswords().put(a, p.clone()));
+        oldData.getKeyStoreEntryPasswords().forEach((a, p) -> newData.getKeyStoreEntryPasswords().put(a, p.clone()));
+        entryPasswords.forEach((a, p) -> newData.getKeyStoreEntryPasswords().put(a, p.clone()));
 
-        keyStorePasswords.removeIf(data::equals);
-        keyStorePasswords.add(data);
+        keyStorePasswords.removeIf(newData::equals);
+        keyStorePasswords.add(newData);
+    }
+
+    /**
+     * Remove the given keystore password data
+     * <p>
+     * It is not necessary for the password manager to be unlocked for this to work.
+     *
+     * @param keyStoreFile Keystore file
+     */
+    public void removeKeyStore(File keyStoreFile) {
+        keyStorePasswords.removeIf(d -> d.getKeyStoreFile().equals(keyStoreFile));
+        PreferencesManager.getKeyStorePasswords()
+                          .getPasswords()
+                          .removeIf(d -> d.getKeyStoreFile().equals(keyStoreFile));
+
+        if (!unlocked) {
+            // we have to persist the passwords here, because save() is not called when the password manager is locked
+            PreferencesManager.persistKeyStorePasswords();
+        }
+    }
+
+    /**
+     * Update the path of the keystore file
+     * <p>
+     * It is not necessary for the password manager to be unlocked for this to work.
+     *
+     * @param oldPath Old path of the keystore file
+     * @param newPath New path of the keystore file
+     */
+    public void updateKeyStoreFilePath(File oldPath, File newPath) {
+        keyStorePasswords.stream()
+                         .filter(d -> d.getKeyStoreFile().equals(oldPath))
+                         .forEach(d -> d.setKeyStoreFile(newPath));
+        PreferencesManager.getKeyStorePasswords()
+                          .getPasswords()
+                          .stream()
+                          .filter(d -> d.getKeyStoreFile().equals(oldPath))
+                          .forEach(d -> d.setKeyStoreFile(newPath));
     }
 
     /**
      * Add or replace the given ks entry password data.
      * <p>
-     * Calling this is only necessary when an existing entry is to be added to the password manager. Newly created
-     * entries are automatically added when the keystore is saved.
+     * Calling this is only necessary when an existing keystore entry is added to the password manager.
+     * Newly created entries are automatically added when the keystore is saved.
      * </p>
      *
-     * @param keyStoreFile keystore file
-     * @param alias alias of entry
-     * @param password password of entry
+     * @param keyStoreFile Keystore file
+     * @param alias Alias of entry
+     * @param password Password of entry
      */
     public void updateEntryPassword(File keyStoreFile, String alias, char[] password) {
         keyStorePasswords.stream()
@@ -186,11 +275,20 @@ public class PasswordManager {
     /**
      * Encrypt and save passwords to the configuration file
      */
+    @SuppressWarnings("ConstantValue")
     public void save() {
-        byte[] salt = PRNG.generate(16);
-        int iterations = 600_000;
-        int keyLengthInBits = 256;
-        SecretKey key = deriveKeyWithPbkdf2(mainPassword, salt, iterations, keyLengthInBits);
+        // use recommendations for PBKDF2 from NIST SP 800-132 for now and maybe make this configurable later
+        int iterations = KDF_ITERATIONS;
+        int keyLengthInBits = KEY_LENGTH_BITS;
+        byte[] salt = PRNG.generate(SALT_LENGTH_BYTES);
+        EncryptionAlgorithm encrAlgorithm = AES_GCM;
+
+        SecretKey kek = deriveKeyWithPbkdf2(mainPassword, salt, iterations, keyLengthInBits);
+
+        // generate new AES key for encryption of passwords
+        SecretKey key = AES.generateKey(KEY_LENGTH_BITS);
+        byte[] iv = PRNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
+        byte[] encryptedEncryptionKey = encryptKey(key, iv, kek, encrAlgorithm);
 
         var keyDerivationSettings = new KeyDerivationSettings();
         keyDerivationSettings.setKeyDerivationAlgorithm(PBKDF2);
@@ -200,13 +298,22 @@ public class PasswordManager {
 
         EncryptedKeyStorePasswords encryptedKeyStorePasswords = PreferencesManager.getKeyStorePasswords();
         encryptedKeyStorePasswords.setKeyDerivationSettings(keyDerivationSettings);
-        encryptedKeyStorePasswords.setEncryptionAlgorithm(AES_CBC);
+        encryptedKeyStorePasswords.setEncryptionAlgorithm(encrAlgorithm);
+        encryptedKeyStorePasswords.setVersion(2);
+        encryptedKeyStorePasswords.setEncryptionKey(encryptedEncryptionKey);
+        encryptedKeyStorePasswords.setEncryptionKeyInitVector(iv);
 
         List<EncryptedKeyStorePasswordData> passwords = new ArrayList<>();
-        keyStorePasswords.forEach(p -> passwords.add(createEncryptedKeyStorePasswordData(p, key)));
+        keyStorePasswords.forEach(p -> passwords.add(createEncryptedKeyStorePasswordData(p, key, encrAlgorithm)));
         encryptedKeyStorePasswords.setPasswords(passwords);
 
         PreferencesManager.persistKeyStorePasswords();
+    }
+
+    private byte[] encryptKey(SecretKey key, byte[] iv, SecretKey kek, EncryptionAlgorithm encrAlgorithm) {
+        return encrAlgorithm == AES_GCM ?
+               AES.encryptAesGcm(key.getEncoded(), iv, kek) :
+               AES.encryptAesCbc(key.getEncoded(), iv, kek);
     }
 
     private List<KeyStorePasswordData> decryptPasswords(EncryptedKeyStorePasswords encryptedKeyStorePasswords,
@@ -217,22 +324,40 @@ public class PasswordManager {
             return passwordData;
         }
 
-        SecretKey key = deriveKey(encryptedKeyStorePasswords, mainPassword);
+        EncryptionAlgorithm encrAlgorithm = encryptedKeyStorePasswords.getEncryptionAlgorithm();
+        SecretKey key = encryptedKeyStorePasswords.getVersion() == 1 ?
+                        deriveKey(encryptedKeyStorePasswords, mainPassword) :
+                        decryptEncryptionKey(deriveKey(encryptedKeyStorePasswords, mainPassword),
+                                             encryptedKeyStorePasswords, encrAlgorithm);
 
         for (EncryptedKeyStorePasswordData encryptedPwdData : encryptedKeyStorePasswords.getPasswords()) {
-            byte[] decryptedPassword = AES.decryptAesCbc(encryptedPwdData.getEncryptedKeyStorePassword(),
+            byte[] decryptedPassword = encrAlgorithm == AES_GCM ?
+                                       AES.decryptAesGcm(encryptedPwdData.getEncryptedKeyStorePassword(),
+                                                         encryptedPwdData.getEncryptedKeyStorePasswordInitVector(),
+                                                         key) :
+                                       AES.decryptAesCbc(encryptedPwdData.getEncryptedKeyStorePassword(),
                                                          encryptedPwdData.getEncryptedKeyStorePasswordInitVector(),
                                                          key);
 
             var keyStorePasswordData = new KeyStorePasswordData();
             keyStorePasswordData.setKeyStoreFile(encryptedPwdData.getKeyStoreFile());
             keyStorePasswordData.setKeyStorePassword(new String(decryptedPassword).toCharArray());
-            keyStorePasswordData.setKeyStoreEntryPasswords(decryptEntryPasswords(encryptedPwdData, key));
+            keyStorePasswordData.setKeyStoreEntryPasswords(decryptEntryPasswords(encryptedPwdData, key, encrAlgorithm));
 
             passwordData.add(keyStorePasswordData);
         }
 
         return passwordData;
+    }
+
+    private SecretKey decryptEncryptionKey(SecretKey kek, EncryptedKeyStorePasswords encryptedKeyStorePasswords,
+                                           EncryptionAlgorithm encrAlgorithm) {
+        byte[] iv = encryptedKeyStorePasswords.getEncryptionKeyInitVector();
+        byte[] encryptedKey = encryptedKeyStorePasswords.getEncryptionKey();
+        byte[] decryptedKey = encrAlgorithm == AES_GCM ?
+                              AES.decryptAesGcm(encryptedKey, iv, kek) :
+                              AES.decryptAesCbc(encryptedKey, iv, kek);
+        return AES.createKey(decryptedKey);
     }
 
     private static SecretKey deriveKey(EncryptedKeyStorePasswords encryptedKeyStorePasswords, char[] mainPassword) {
@@ -252,24 +377,36 @@ public class PasswordManager {
         }
     }
 
-    private static Map<String, char[]> decryptEntryPasswords(EncryptedKeyStorePasswordData encrPwdData, SecretKey key) {
+    private static Map<String, char[]> decryptEntryPasswords(EncryptedKeyStorePasswordData encrPwdData, SecretKey key,
+                                                             EncryptionAlgorithm encrAlgorithm) {
         return encrPwdData.getKeyStoreEntryPasswords()
                           .stream()
                           .collect(toMap(KeyStoreEntryPassword::getEntryAlias,
-                                         e -> new String(AES.decryptAesCbc(e.getEncryptedKeyEntryPassword(),
-                                                                           e.getEncryptedKeyEntryPasswordInitVector(),
-                                                                           key)).toCharArray()));
+                                         e -> decryptEntryPassword(key, encrAlgorithm, e)));
+    }
+
+    private static char[] decryptEntryPassword(SecretKey key, EncryptionAlgorithm encrAlgorithm,
+                                               KeyStoreEntryPassword e) {
+        return new String(encrAlgorithm == AES_GCM ?
+                          AES.decryptAesGcm(e.getEncryptedKeyEntryPassword(),
+                                            e.getEncryptedKeyEntryPasswordInitVector(), key) :
+                          AES.decryptAesCbc(e.getEncryptedKeyEntryPassword(),
+                                            e.getEncryptedKeyEntryPasswordInitVector(), key)).toCharArray();
     }
 
     private EncryptedKeyStorePasswordData createEncryptedKeyStorePasswordData(KeyStorePasswordData pwdData,
-                                                                              SecretKey key) {
-        byte[] iv = PRNG.generate(16);
+                                                                              SecretKey key,
+                                                                              EncryptionAlgorithm encrAlgorithm) {
 
-        byte[] encryptedKeyStorePwd = AES.encryptAesCbc(new String(pwdData.getKeyStorePassword()).getBytes(), iv, key);
+        byte[] iv = PRNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
+        byte[] encryptedKeyStorePwd = encrAlgorithm == AES_GCM ?
+                                      AES.encryptAesGcm(new String(pwdData.getKeyStorePassword()).getBytes(), iv, key) :
+                                      AES.encryptAesCbc(new String(pwdData.getKeyStorePassword()).getBytes(), iv, key);
+
         var encryptedEntryPwds = pwdData.getKeyStoreEntryPasswords()
                                         .entrySet()
                                         .stream()
-                                        .map(e -> createEncryptedEntryPwd(e.getKey(), e.getValue(), key))
+                                        .map(e -> createEncryptedEntryPwd(e.getKey(), e.getValue(), key, encrAlgorithm))
                                         .collect(Collectors.<KeyStoreEntryPassword>toList());
 
         var encryptedKeyStorePasswordData = new EncryptedKeyStorePasswordData();
@@ -280,11 +417,16 @@ public class PasswordManager {
         return encryptedKeyStorePasswordData;
     }
 
-    private KeyStoreEntryPassword createEncryptedEntryPwd(String alias, char[] password, SecretKey key) {
-        byte[] iv = PRNG.generate(16);
+    private KeyStoreEntryPassword createEncryptedEntryPwd(String alias, char[] password, SecretKey key,
+                                                          EncryptionAlgorithm encrAlgorithm) {
+        byte[] iv = PRNG.generate(encrAlgorithm == AES_GCM ? IV_LENGTH_GCM_BYTES : IV_LENGTH_CBC_BYTES);
+        byte[] encryptedEntryPwd = encrAlgorithm == AES_GCM ?
+                                   AES.encryptAesGcm(new String(password).getBytes(), iv, key) :
+                                   AES.encryptAesCbc(new String(password).getBytes(), iv, key);
+
         var entryPassword = new KeyStoreEntryPassword();
         entryPassword.setEntryAlias(alias);
-        entryPassword.setEncryptedKeyEntryPassword(AES.encryptAesCbc(new String(password).getBytes(), iv, key));
+        entryPassword.setEncryptedKeyEntryPassword(encryptedEntryPwd);
         entryPassword.setEncryptedKeyEntryPasswordInitVector(iv);
         return entryPassword;
     }

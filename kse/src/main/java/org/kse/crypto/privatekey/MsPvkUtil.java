@@ -37,8 +37,6 @@ import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.text.MessageFormat;
-import java.util.Calendar;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 import javax.crypto.Cipher;
@@ -46,6 +44,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.kse.crypto.CryptoException;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.utilities.PRNG;
 import org.kse.utilities.io.UnsignedUtil;
 
 // @formatter:off
@@ -137,7 +136,7 @@ public class MsPvkUtil {
     private static final long UNENCRYPTED_SALT_LENGTH = 0;
 
     // Salt length for encrypted PVK
-    private static final int ENCRYPTED_SALT_LENGTH = 0x10;
+    private static final int ENCRYPTED_SALT_LENGTH = 16;
 
     // PVK BLOB type field value
     private static final short PRIVATE_KEY_BLOB = 7;
@@ -365,9 +364,8 @@ public class MsPvkUtil {
      *
      * @param pvk BA containing Microsoft PVK private key
      * @return Encryption type or null if not a valid Microsoft PVK private key
-     * @throws IOException If an I/O problem occurred
      */
-    public static EncryptionType getEncryptionType(byte[] pvk) throws IOException {
+    public static EncryptionType getEncryptionType(byte[] pvk) {
 
         if (pvk == null || pvk.length < 24) {
             return null;
@@ -422,7 +420,7 @@ public class MsPvkUtil {
             writeReservedMagicKeyType(bb, keyType);
 
             // Get unencrypted private key blob
-            byte[] privateKeyBlob = null;
+            byte[] privateKeyBlob;
 
             if (privateKey instanceof RSAPrivateCrtKey) {
                 privateKeyBlob = rsaPrivateKeyToBlob((RSAPrivateCrtKey) privateKey);
@@ -509,7 +507,7 @@ public class MsPvkUtil {
             byte[] key = messageDigest.digest(saltAndPassword);
 
             // Get private key blob
-            byte[] privateKeyBlob = null;
+            byte[] privateKeyBlob;
 
             if (privateKey instanceof RSAPrivateCrtKey) {
                 privateKeyBlob = rsaPrivateKeyToBlob((RSAPrivateCrtKey) privateKey);
@@ -518,7 +516,7 @@ public class MsPvkUtil {
             }
 
             // Encrypt private key blob
-            byte[] encryptedPrivateKeyBlob = null;
+            byte[] encryptedPrivateKeyBlob;
 
             if (strong) {
                 // Strong version uses all 16 bytes of the key
@@ -556,9 +554,7 @@ public class MsPvkUtil {
             bb.put(encryptedPrivateKeyBlob);
 
             return getBufferBytes(bb);
-        } catch (IOException ex) {
-            throw new CryptoException(res.getString("NoGetMsPvk.exception.message"), ex);
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (IOException | NoSuchAlgorithmException ex) {
             throw new CryptoException(res.getString("NoGetMsPvk.exception.message"), ex);
         }
     }
@@ -580,7 +576,7 @@ public class MsPvkUtil {
         UnsignedUtil.putInt(bb, keyType);
     }
 
-    private static long readReservedMagicKeyType(ByteBuffer bb) throws IOException, CryptoException {
+    private static long readReservedMagicKeyType(ByteBuffer bb) throws CryptoException {
         /*
          * Read and validate the starting PVK fields: reserved, magic and key
          * type. While all three fields are validated only the key type is of
@@ -637,7 +633,7 @@ public class MsPvkUtil {
         }
     }
 
-    private static void readPrivateKeyBlobHeader(ByteBuffer bb, long keyType) throws IOException, CryptoException {
+    private static void readPrivateKeyBlobHeader(ByteBuffer bb, long keyType) throws CryptoException {
         // Read and validate BLOB header type field
         int blobType = UnsignedUtil.getByte(bb);
 
@@ -745,9 +741,7 @@ public class MsPvkUtil {
 
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return (RSAPrivateCrtKey) keyFactory.generatePrivate(rsaPrivateCrtKeySpec);
-        } catch (IOException ex) {
-            throw new CryptoException(res.getString("NoConvertBlobToRsaKey.exception.message"), ex);
-        } catch (GeneralSecurityException ex) {
+        } catch (IOException | GeneralSecurityException ex) {
             throw new CryptoException(res.getString("NoConvertBlobToRsaKey.exception.message"), ex);
         }
     }
@@ -784,9 +778,7 @@ public class MsPvkUtil {
 
             KeyFactory keyFactory = KeyFactory.getInstance("DSA");
             return (DSAPrivateKey) keyFactory.generatePrivate(dsaPrivateKeySpec);
-        } catch (IOException ex) {
-            throw new CryptoException(res.getString("NoConvertBlobToDsaKey.exception.message"), ex);
-        } catch (GeneralSecurityException ex) {
+        } catch (IOException | GeneralSecurityException ex) {
             throw new CryptoException(res.getString("NoConvertBlobToDsaKey.exception.message"), ex);
         }
     }
@@ -922,15 +914,7 @@ public class MsPvkUtil {
     }
 
     private static byte[] generate16ByteSalt() {
-        // Generate 16-byte salt for use with RC4
-
-        Random random = new Random();
-        random.setSeed(Calendar.getInstance().getTimeInMillis());
-
-        byte[] salt = new byte[16];
-        random.nextBytes(salt);
-
-        return salt;
+        return PRNG.generate(ENCRYPTED_SALT_LENGTH);
     }
 
     private static byte[] getBufferBytes(ByteBuffer bb) {

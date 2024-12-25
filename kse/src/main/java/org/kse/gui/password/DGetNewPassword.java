@@ -19,6 +19,9 @@
  */
 package org.kse.gui.password;
 
+import static org.kse.gui.password.PasswordDialogHelper.createPasswordInputField;
+import static org.kse.gui.password.PasswordDialogHelper.preFillPasswordFields;
+
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
@@ -42,8 +45,8 @@ import javax.swing.SwingUtilities;
 
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
-import org.kse.utilities.PRNG;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -65,33 +68,33 @@ public class DGetNewPassword extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
-    private PasswordQualityConfig passwordQualityConfig;
+    private KsePreferences preferences;
     private boolean askUserForPasswordManager = false;
     private Password password;
 
     /**
      * Creates new DGetNewPassword dialog where the parent is a frame.
      *
-     * @param parent                Parent frame
-     * @param title                 The dialog's title
-     * @param passwordQualityConfig Password quality configuration
+     * @param parent      Parent frame
+     * @param title       The dialog's title
+     * @param preferences Preferences
      */
-    public DGetNewPassword(JFrame parent, String title, PasswordQualityConfig passwordQualityConfig) {
-        this(parent, title, passwordQualityConfig, false);
+    public DGetNewPassword(JFrame parent, String title, KsePreferences preferences) {
+        this(parent, title, preferences, false);
     }
 
     /**
      * Creates new DGetNewPassword dialog where the parent is a frame.
      *
-     * @param parent                Parent frame
-     * @param title                 The dialog's title
-     * @param passwordQualityConfig Password quality configuration
+     * @param parent      Parent frame
+     * @param title       The dialog's title
+     * @param preferences Preferences
      * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
      */
-    public DGetNewPassword(JFrame parent, String title, PasswordQualityConfig passwordQualityConfig,
+    public DGetNewPassword(JFrame parent, String title, KsePreferences preferences,
                            boolean askUserForPasswordManager) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.passwordQualityConfig = passwordQualityConfig;
+        this.preferences = preferences;
         this.askUserForPasswordManager = askUserForPasswordManager;
         initComponents();
     }
@@ -99,26 +102,29 @@ public class DGetNewPassword extends JEscDialog {
     /**
      * Creates new DGetNewPassword dialog where the parent is a dialog.
      *
-     * @param parent                Parent dialog
-     * @param title                 The dialog's title
-     * @param modality              Dialog modality
-     * @param passwordQualityConfig Password quality configuration
+     * @param parent      Parent dialog
+     * @param title       The dialog's title
+     * @param modality    Dialog modality
+     * @param preferences Preferences
      */
     public DGetNewPassword(JDialog parent, String title, Dialog.ModalityType modality,
-                           PasswordQualityConfig passwordQualityConfig) {
+                           KsePreferences preferences) {
         super(parent, title, modality);
-        this.passwordQualityConfig = passwordQualityConfig;
+        this.preferences = preferences;
         initComponents();
     }
 
     private void initComponents() {
         jlFirst = new JLabel(res.getString("DGetNewPassword.jlFirst.text"));
-        jpfFirst = createPasswordInputField(passwordQualityConfig);
+        jpfFirst = createPasswordInputField(preferences.getPasswordQualityConfig());
 
         jlConfirm = new JLabel(res.getString("DGetNewPassword.jlConfirm.text"));
         jpfConfirm = new JPasswordField(15);
+        jpfConfirm.putClientProperty("JPasswordField.cutCopyAllowed", true);
 
-        preFillPasswordFields(jpfFirst, jpfConfirm);
+        if (preferences.getPasswordGeneratorSettings().isEnabled()) {
+            preFillPasswordFields(jpfFirst, jpfConfirm);
+        }
 
         jbOK = new JButton(res.getString("DGetNewPassword.jbOK.text"));
 
@@ -167,28 +173,6 @@ public class DGetNewPassword extends JEscDialog {
         pack();
 
         SwingUtilities.invokeLater(() -> jpfFirst.requestFocus());
-    }
-
-    private void preFillPasswordFields(JComponent jpfFirst, JPasswordField jpfConfirm) {
-        char[] generatedPassword = PRNG.generatePassword(20);
-        if (jpfFirst instanceof JPasswordQualityField) {
-            ((JPasswordQualityField) jpfFirst).setPassword(generatedPassword);
-        } else {
-            ((JPasswordField) jpfFirst).setText(new String(generatedPassword));
-        }
-        jpfConfirm.setText(new String(generatedPassword));
-    }
-
-    private JComponent createPasswordInputField(PasswordQualityConfig passwordQualityConfig) {
-        if (passwordQualityConfig.getEnabled()) {
-            if (passwordQualityConfig.getEnforced()) {
-                return new JPasswordQualityField(15, passwordQualityConfig.getMinimumQuality());
-            } else {
-                return new JPasswordQualityField(15);
-            }
-        } else {
-            return new JPasswordField(15);
-        }
     }
 
     /**
@@ -255,7 +239,8 @@ public class DGetNewPassword extends JEscDialog {
 
     // for quick testing
     public static void main(String[] args) throws Exception {
-        DialogViewer.run(new DGetNewPassword(new javax.swing.JFrame(), "New Password",
-                                             new PasswordQualityConfig(false, false, 20), true));
+        KsePreferences ksePreferences = new KsePreferences();
+        ksePreferences.setPasswordQualityConfig(new PasswordQualityConfig(false, false, 20));
+        DialogViewer.run(new DGetNewPassword(new javax.swing.JFrame(), "New Password", ksePreferences, true));
     }
 }
