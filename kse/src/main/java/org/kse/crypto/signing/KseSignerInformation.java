@@ -232,6 +232,7 @@ public class KseSignerInformation extends SignerInformation {
                 if (verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
                     verified = true;
 
+                    // TODO JW always use the cacerts store for validating the timestamp trust.
                     // TODO JW Display TS validation status on form.
                     verifyTimeStamp();
 
@@ -276,7 +277,7 @@ public class KseSignerInformation extends SignerInformation {
     }
 
     private void verifyTimeStamp()
-            throws TSPException, IOException, TSPValidationException, OperatorCreationException, CertificateException {
+            throws IOException, TSPException, TSPValidationException, OperatorCreationException, CertificateException {
 
         ContentInfo timeStamp = getTimeStamp();
 

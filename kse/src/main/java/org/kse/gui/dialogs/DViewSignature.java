@@ -136,17 +136,16 @@ public class DViewSignature extends JEscDialog {
      * @param signedData   Signature to display
      * @param signers      Signature(s) to display
      * @param kseFrame     Reference to main class with currently opened keystores and their contents
-     * @throws CryptoException A problem was encountered getting the certificates' details
      */
     public DViewSignature(Window parent, String title, CMSSignedData signedData, Collection<KseSignerInformation> signers,
-            KseFrame kseFrame) throws CryptoException {
+            KseFrame kseFrame) {
         super(parent, title, Dialog.ModalityType.MODELESS);
         this.kseFrame = kseFrame;
         this.signedData = signedData;
         initComponents(signers);
     }
 
-    private void initComponents(Collection<KseSignerInformation> signers) throws CryptoException {
+    private void initComponents(Collection<KseSignerInformation> signers) {
         jlSigners = new JLabel(res.getString("DViewSignature.jlSigners.text"));
 
         jtrSigners = new JTree(createSignerNodes(signers));
@@ -326,10 +325,9 @@ public class DViewSignature extends JEscDialog {
 
         setResizable(false);
 
-        // TODO JW fix the selection -- this does not work.
         // select (first) child in signers tree
         TreeNode firstChild = ((DefaultMutableTreeNode) topNode).getFirstChild();
-        jtrSigners.setSelectionPath(new TreePath(firstChild));
+        jtrSigners.setSelectionPath(new TreePath(new TreeNode[] {topNode, firstChild}));
 
         getRootPane().setDefaultButton(jbOK);
 
@@ -357,8 +355,8 @@ public class DViewSignature extends JEscDialog {
     private void expandTree(JTree tree, TreePath parent) {
         TreeNode node = (TreeNode) parent.getLastPathComponent();
         if (node.getChildCount() >= 0) {
-            for (Enumeration<?> enumNodes = node.children(); enumNodes.hasMoreElements(); ) {
-                TreeNode subNode = (TreeNode) enumNodes.nextElement();
+            for (Enumeration<? extends TreeNode> enumNodes = node.children(); enumNodes.hasMoreElements(); ) {
+                TreeNode subNode = enumNodes.nextElement();
                 TreePath path = parent.pathByAddingChild(subNode);
                 expandTree(tree, path);
             }
@@ -526,22 +524,17 @@ public class DViewSignature extends JEscDialog {
 
     private void timeStampPressed() {
         KseSignerInformation signer = getSelectedSignerInfo();
+        String shortName = signer.getShortName();
 
-        try {
-            String shortName = signer.getShortName();
+        List<KseSignerInformation> timeStampSigners = CmsUtil.convertSignerInformations(
+                timeStampSigner.getSignerInfos().getSigners(), signer.getTrustedCerts(),
+                timeStampSigner.getCertificates());
 
-            List<KseSignerInformation> timeStampSigners = CmsUtil.convertSignerInformations(
-                    timeStampSigner.getSignerInfos().getSigners(), signer.getTrustedCerts(),
-                    timeStampSigner.getCertificates());
-
-            DViewSignature dViewSignature = new DViewSignature(this,
-                    MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
-                    timeStampSigner, timeStampSigners, null);
-            dViewSignature.setLocationRelativeTo(this);
-            dViewSignature.setVisible(true);
-        } catch (CryptoException e) {
-            DError.displayError(this, e);
-        }
+        DViewSignature dViewSignature = new DViewSignature(this,
+                MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
+                timeStampSigner, timeStampSigners, null);
+        dViewSignature.setLocationRelativeTo(this);
+        dViewSignature.setVisible(true);
     }
 
     private void signerAsn1DumpPressed() {
