@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -118,8 +117,6 @@ public class DViewSignature extends JEscDialog {
     private JTextField jtfSignatureAlgorithm;
     private JButton jbTimeStamp;
     private JButton jbSignerAsn1;
-    // TODO JW - Convert extensions into dialog for displaying the signed/unsigned attributes
-    private JButton jbExtensions;
     private JButton jbCertificates;
     private JButton jbPem;
     private JButton jbAsn1;
@@ -198,17 +195,12 @@ public class DViewSignature extends JEscDialog {
 
         jbTimeStamp = new JButton(res.getString("DViewSignature.jbTimeStamp.text"));
         jbTimeStamp.setToolTipText(res.getString("DViewSignature.jbTimeStamp.tooltip"));
-        // TODO JW - Need mnemonic for time stamp button
-//        PlatformUtil.setMnemonic(jbTimeStamp, res.getString("DViewSignature.jbTimeStamp.mnemonic").charAt(0));
+        PlatformUtil.setMnemonic(jbTimeStamp, res.getString("DViewSignature.jbTimeStamp.mnemonic").charAt(0));
 
         jbSignerAsn1 = new JButton(res.getString("DViewSignature.jbSignerAsn1.text"));
         jbSignerAsn1.setToolTipText(res.getString("DViewSignature.jbSignerAsn1.tooltip"));
         // TODO JW - Need mnemonic for signer asn1 button
 //        PlatformUtil.setMnemonic(jbPem, res.getString("DViewSignature.jbSignerAsn1.mnemonic").charAt(0));
-
-//        jbExtensions = new JButton(res.getString("DViewSignature.jbExtensions.text"));
-//        jbExtensions.setToolTipText(res.getString("DViewSignature.jbExtensions.tooltip"));
-//        PlatformUtil.setMnemonic(jbExtensions, res.getString("DViewSignature.jbExtensions.mnemonic").charAt(0));
 
         jbCertificates = new JButton(res.getString("DViewSignature.jbCertificates.text"));
         jbCertificates.setToolTipText(res.getString("DViewSignature.jbCertificates.tooltip"));
@@ -243,7 +235,6 @@ public class DViewSignature extends JEscDialog {
         pane.add(jtfSignatureAlgorithm, "wrap");
         pane.add(jbTimeStamp, "spanx, split");
         pane.add(jbSignerAsn1, "wrap");
-//      pane.add(jbExtensions, "");
         pane.add(new JSeparator(), "spanx, growx, wrap 15:push");
         pane.add(jbCertificates, "spanx, split");
         pane.add(jbPem, "");
@@ -288,15 +279,6 @@ public class DViewSignature extends JEscDialog {
                 CursorUtil.setCursorFree(DViewSignature.this);
             }
         });
-
-//        jbExtensions.addActionListener(evt -> {
-//            try {
-//                CursorUtil.setCursorBusy(DViewSignature.this);
-//                extensionsPressed();
-//            } finally {
-//                CursorUtil.setCursorFree(DViewSignature.this);
-//            }
-//        });
 
         jbPem.addActionListener(evt -> {
             try {
@@ -383,7 +365,6 @@ public class DViewSignature extends JEscDialog {
             jdnIssuer.setEnabled(false);
             jbTimeStamp.setEnabled(false);
             jbSignerAsn1.setEnabled(false);
-//            jbExtensions.setEnabled(false);
 
             jtfStatus.setText("");
             jtfStatus.setToolTipText("");
@@ -395,7 +376,6 @@ public class DViewSignature extends JEscDialog {
         } else {
             jdnSubject.setEnabled(true);
             jdnIssuer.setEnabled(true);
-//            jbExtensions.setEnabled(true);
             jbSignerAsn1.setEnabled(true);
 
             try {
@@ -449,15 +429,6 @@ public class DViewSignature extends JEscDialog {
                 } else {
                     jbTimeStamp.setEnabled(false);
                 }
-
-//                Set<?> critExts = signerInfo.getCriticalExtensionOIDs();
-//                Set<?> nonCritExts = signerInfo.getNonCriticalExtensionOIDs();
-//
-//                if ((critExts != null && !critExts.isEmpty()) || (nonCritExts != null && !nonCritExts.isEmpty())) {
-//                    jbExtensions.setEnabled(true);
-//                } else {
-//                    jbExtensions.setEnabled(false);
-//                }
             // TODO JW Remove the try/catch (or fix exception list)
             } catch (Exception e) {
                 DError.displayError(this, e);
@@ -548,15 +519,6 @@ public class DViewSignature extends JEscDialog {
             DError.displayError(this, e);
         }
     }
-
-//    private void extensionsPressed() {
-//        X509Certificate cert = getSelectedSignerInfo();
-//
-//        DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCertificate.Extensions.Title"),
-//                cert, kseFrame);
-//        dViewExtensions.setLocationRelativeTo(this);
-//        dViewExtensions.setVisible(true);
-//    }
 
     private void pemEncodingPressed() {
         try {
