@@ -45,7 +45,6 @@ import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
-import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
@@ -82,11 +81,16 @@ public class CmsSigner {
         try {
             CMSTypedData msg = new CMSProcessableFile(inputFile);
 
+            JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(signatureType.jce());
+            JcaDigestCalculatorProviderBuilder digestCalculatorProviderBuilder = new JcaDigestCalculatorProviderBuilder();
+            if (provider != null) {
+                contentSignerBuilder.setProvider(provider);
+                digestCalculatorProviderBuilder.setProvider(provider);
+            }
+
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
-            ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
-            generator.addSignerInfoGenerator(
-                    new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().build())
-                            .build(contentSigner, certificateChain[0]));
+            generator.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(digestCalculatorProviderBuilder.build())
+                    .build(contentSignerBuilder.build(privateKey), certificateChain[0]));
             generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
 
             CMSSignedData signedData = generator.generate(msg, !detachedSignature);
@@ -121,11 +125,17 @@ public class CmsSigner {
             X509Certificate[] certificateChain, boolean detachedSignature, SignatureType signatureType, String tsaUrl,
             Provider provider) throws CryptoException {
         try {
+            JcaContentSignerBuilder contentSignerBuilder = new JcaContentSignerBuilder(signatureType.jce());
+            JcaDigestCalculatorProviderBuilder digestCalculatorProviderBuilder = new JcaDigestCalculatorProviderBuilder();
+            if (provider != null) {
+                contentSignerBuilder.setProvider(provider);
+                digestCalculatorProviderBuilder.setProvider(provider);
+            }
+
             CMSSignedDataGenerator counterSignerGen = new CMSSignedDataGenerator();
-            ContentSigner contentSigner = new JcaContentSignerBuilder(signatureType.jce()).build(privateKey);
             counterSignerGen.addSignerInfoGenerator(
-                    new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().build())
-                            .build(contentSigner, certificateChain[0]));
+                    new JcaSignerInfoGeneratorBuilder(digestCalculatorProviderBuilder.build())
+                            .build(contentSignerBuilder.build(privateKey), certificateChain[0]));
 
             // Counter signs all existing signatures.
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
