@@ -274,16 +274,16 @@ public class PrivateKeyUtils {
 
             exportEncodedPrivateKey(encoded, exportFile);
 
-            JOptionPane.showMessageDialog(frame, res.getString(
-                            "ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSslSuccessful" +
-                                    ".message"),
-                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSsl.Title"),
+            JOptionPane.showMessageDialog(
+                    frame,
+                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwkSuccessful.message"),
+                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwk.Title"),
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                     exportFile);
             JOptionPane.showMessageDialog(frame, message,
-                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSsl.Title"),
+                    res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwk.Title"),
                     JOptionPane.WARNING_MESSAGE);
         }
     }
