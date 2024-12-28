@@ -21,6 +21,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.io.File;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -37,6 +38,7 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
@@ -61,10 +63,8 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
     public VerifySignatureAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        // TODO JW - Add an accelerator?
-//        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('K',
-//                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
-        // TODO JW - Need a good description.
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('V',
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() + InputEvent.ALT_DOWN_MASK));
         putValue(LONG_DESCRIPTION, res.getString("VerifySignatureAction.statusbar"));
         putValue(NAME, res.getString("VerifySignatureAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("VerifySignatureAction.tooltip"));
@@ -102,6 +102,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             Set<X509Certificate> compCerts = new HashSet<>();
             compCerts.addAll(extractCertificates(keyStore));
 
+            // TODO JW make X509CertUtil.extractCertificates public and use it for cacerts and windowstrustedrootcerts
             if (caCertificates != null) {
                 // Perform cert lookup against CA Certificates KeyStore
                 compCerts.addAll(extractCertificates(caCertificates));
@@ -123,7 +124,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             // the content will display as invalid when really it cannot be verified.
 
 //            // Don't verify the signature if there is no signed content, but the signature details
-//            // can still be displayed. loadSignature already tried to find and load the detachted
+//            // can still be displayed. loadSignature already tried to find and load the detached
 //            // content.
 //            if (signedData.getSignedContent() != null) {
 //                for (KseSignerInformation signer : signers) {

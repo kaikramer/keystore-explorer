@@ -410,16 +410,6 @@ public class DSignFile extends JEscDialog {
             }
         }
 
-        // TODO JW Removed if not used.
-//        if (inputFile.equals(outputFile)) {
-//            int option = JOptionPane.showConfirmDialog(this, res.getString("DSignFile.OverWriteInput.message"),
-//                    getTitle(), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-//
-//            if (option == JOptionPane.NO_OPTION) {
-//                return;
-//            }
-//        }
-
         detachedSignature = jcbDetachedSignature.isSelected();
         outputPem = jcbOutputPem.isSelected();
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();

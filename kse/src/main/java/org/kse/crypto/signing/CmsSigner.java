@@ -128,7 +128,6 @@ public class CmsSigner {
                             .build(contentSigner, certificateChain[0]));
 
             // Counter signs all existing signatures.
-            // TODO JW - Should there be a dialog for choosing the signature to counter sign?
             CMSSignedDataGenerator generator = new CMSSignedDataGenerator();
             for (SignerInformation signer : signedData.getSignerInfos()) {
                 SignerInformationStore counterSigners = counterSignerGen.generateCounterSigners(signer);
@@ -137,8 +136,8 @@ public class CmsSigner {
                     counterSigners = addTimestamp(tsaUrl, counterSigners, signatureType.digestType());
                 }
 
-                // This does not replace existing counter signers. It creates a new counter signer vector
-                // if it does not already exist, and then it adds the counter signer.
+                // addCounterSigners does not replace existing counter signers. It creates a new
+                // counter signer vector if it does not already exist, and then it adds the counter signer.
                 signer = SignerInformation.addCounterSigners(signer, counterSigners);
 
                 generator.addCertificates(new JcaCertStore(Arrays.asList(certificateChain)));
@@ -170,8 +169,10 @@ public class CmsSigner {
         for (SignerInformation si : signerInfos.getSigners()) {
             byte[] signature = si.getSignature();
 
-            // TODO JW Ed448 uses digest type of SHAKE256-512, which is not readily supported by many,
-            // if not any, time stamp servers. Convert to something more widely recognized?
+            // Ed448 uses digest type of SHAKE256-512, which is not currently supported by the TSAs.
+            if (DigestType.SHAKE256 == digestType) {
+                digestType = DigestType.SHA512;
+            }
 
             // send request to TSA
             byte[] token = TimeStampingClient.getTimeStampToken(tsaUrl, signature, digestType);
