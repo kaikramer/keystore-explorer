@@ -96,7 +96,7 @@ public class DExportPrivateKeyType extends JEscDialog {
             case EC:
                 KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
                 String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
-                return JwkExporter.JwkECKeyExporter.supportsCurve(detailedAlgorithm);
+                return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
             default:
                 return false;
         }

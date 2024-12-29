@@ -33,7 +33,7 @@ public class JwkPrivateKeyExporter {
         } else if (privateKey instanceof ECPrivateKey) {
             this.jwkExporter = new ECPrivateKeyExporter(privateKey);
         } else if (privateKey instanceof BCEdDSAPrivateKey) {
-            this.jwkExporter = new EdPrivateKeyExporter(privateKey);
+            this.jwkExporter = new EdDSAPrivatKeyExporter(privateKey);
         } else {
             throw new IllegalArgumentException("Not supported key type: " + privateKey.getClass().getName());
         }
@@ -47,10 +47,10 @@ public class JwkPrivateKeyExporter {
         return jwkExporter.exportWithAlias(alias);
     }
 
-    private static class EdPrivateKeyExporter extends JwkExporter.JwkEdKeyExporter {
+    private static class EdDSAPrivatKeyExporter extends JwkExporter.EdDSAKeyExporter {
         private final BCEdDSAPrivateKey privateKey;
 
-        private EdPrivateKeyExporter(PrivateKey privateKey) {
+        private EdDSAPrivatKeyExporter(PrivateKey privateKey) {
             this.privateKey = (BCEdDSAPrivateKey) privateKey;
         }
 
@@ -88,7 +88,7 @@ public class JwkPrivateKeyExporter {
         }
     }
 
-    private static class ECPrivateKeyExporter extends JwkExporter.JwkECKeyExporter {
+    private static class ECPrivateKeyExporter extends JwkExporter.ECKeyExporter {
         private final ECPrivateKey privateKey;
 
         private ECPrivateKeyExporter(PrivateKey privateKey) {

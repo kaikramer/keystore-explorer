@@ -25,9 +25,9 @@ public class JwkPublicKeyExporter {
     private JwkPublicKeyExporter(PublicKey publicKey, String alias) {
         this.alias = alias;
         if (publicKey instanceof ECPublicKey) {
-            this.jwkExporter = new JwkECPublicKeyExporter(publicKey);
+            this.jwkExporter = new ECPublicKeyExporter(publicKey);
         } else if (publicKey instanceof BCEdDSAPublicKey) {
-            this.jwkExporter = new JwkEdDSAPublicKeyExporter(publicKey);
+            this.jwkExporter = new EdDSAPublicKeyExporter(publicKey);
         } else if (publicKey instanceof RSAPublicKey) {
             this.jwkExporter = new RSAPublicKeyExporter(publicKey);
         } else {
@@ -47,10 +47,10 @@ public class JwkPublicKeyExporter {
         return jwkExporter.exportWithAlias(alias);
     }
 
-    private static class JwkEdDSAPublicKeyExporter extends JwkExporter.JwkEdKeyExporter {
+    private static class EdDSAPublicKeyExporter extends JwkExporter.EdDSAKeyExporter {
         private final BCEdDSAPublicKey bcEdDSAPublicKey;
 
-        JwkEdDSAPublicKeyExporter(PublicKey publicKey) {
+        EdDSAPublicKeyExporter(PublicKey publicKey) {
             this.bcEdDSAPublicKey = (BCEdDSAPublicKey) publicKey;
         }
 
@@ -83,11 +83,11 @@ public class JwkPublicKeyExporter {
         }
     }
 
-    private static class JwkECPublicKeyExporter extends JwkExporter.JwkECKeyExporter {
+    private static class ECPublicKeyExporter extends JwkExporter.ECKeyExporter {
 
         private final ECPublicKey ecPublicKey;
 
-        JwkECPublicKeyExporter(PublicKey ecPublicKey) {
+        ECPublicKeyExporter(PublicKey ecPublicKey) {
             this.ecPublicKey = (ECPublicKey) ecPublicKey;
         }
 

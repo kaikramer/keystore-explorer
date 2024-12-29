@@ -33,7 +33,7 @@ public interface JwkExporter {
      */
     boolean canExport();
 
-    abstract class JwkECKeyExporter implements JwkExporter {
+    abstract class ECKeyExporter implements JwkExporter {
         protected static final Map<String, Curve> supportedCurvesMap =
                 Map.of(
                         "prime256v1", Curve.P_256,
@@ -68,7 +68,7 @@ public interface JwkExporter {
         }
     }
 
-    abstract class JwkEdKeyExporter implements JwkExporter {
+    abstract class EdDSAKeyExporter implements JwkExporter {
         protected final Map<String, Curve> supportedCurvesMap =
                 Map.of(
                         "Ed25519", Curve.Ed25519,
