@@ -81,11 +81,6 @@ public class JwkPrivateKeyExporter {
             OctetKeyPair key = builder.build();
             return key.toJSONString().getBytes(StandardCharsets.UTF_8);
         }
-
-        @Override
-        public boolean canExport() {
-            return true;
-        }
     }
 
     private static class ECPrivateKeyExporter extends JwkExporter.ECKeyExporter {
@@ -113,11 +108,6 @@ public class JwkPrivateKeyExporter {
             ECKey key = builder.build();
             return key.toJSONString().getBytes(StandardCharsets.UTF_8);
         }
-
-        @Override
-        public boolean canExport() {
-            return true;
-        }
     }
 
     private static class RSAPrivateKeyExporter implements JwkExporter {
@@ -140,11 +130,6 @@ public class JwkPrivateKeyExporter {
             builder.privateKey(privateKey);
             RSAKey rsaKey = builder.build();
             return rsaKey.toJSONString().getBytes(StandardCharsets.UTF_8);
-        }
-
-        @Override
-        public boolean canExport() {
-            return true;
         }
     }
 }

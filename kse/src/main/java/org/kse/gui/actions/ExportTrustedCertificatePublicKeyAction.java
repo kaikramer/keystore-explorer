@@ -75,8 +75,7 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
 
             PublicKey publicKey = getPublicKey(alias);
 
-            JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKey, alias);
-            boolean isKeyExportableAsJWK = jwkPublicKeyExporter.canExport();
+            boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
 
             DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);

@@ -16,7 +16,11 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
+
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.JwkExporter;
+import org.kse.crypto.KeyInfo;
+import org.kse.crypto.keypair.KeyPairUtil;
 
 public class JwkPublicKeyExporter {
     private final String alias;
@@ -39,8 +43,19 @@ public class JwkPublicKeyExporter {
         return new JwkPublicKeyExporter(publicKey, alias);
     }
 
-    public boolean canExport() {
-        return this.jwkExporter.canExport();
+    public static boolean isPublicKeyTypeExportable(PublicKey publicKey) throws CryptoException {
+        switch (KeyPairUtil.getKeyPairType(publicKey)) {
+        case ED448:
+        case ED25519:
+        case RSA:
+            return true;
+        case EC:
+            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(publicKey);
+            String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
+            return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
+        default:
+            return false;
+        }
     }
 
     public byte[] get() throws JOSEException {
@@ -76,11 +91,6 @@ public class JwkPublicKeyExporter {
             OctetKeyPair key = builder.build();
             return key.toPublicJWK().toJSONString().getBytes(StandardCharsets.UTF_8);
         }
-
-        @Override
-        public boolean canExport() {
-            return getCurve(bcEdDSAPublicKey).isPresent();
-        }
     }
 
     private static class ECPublicKeyExporter extends JwkExporter.ECKeyExporter {
@@ -105,11 +115,6 @@ public class JwkPublicKeyExporter {
             ECKey ecKey = builder.build();
             return ecKey.toJSONString().getBytes(StandardCharsets.UTF_8);
         }
-
-        @Override
-        public boolean canExport() {
-            return getCurve(ecPublicKey).isPresent();
-        }
     }
 
     private static class RSAPublicKeyExporter implements JwkExporter {
@@ -128,11 +133,6 @@ public class JwkPublicKeyExporter {
             }
             RSAKey rsaKey = builder.build();
             return rsaKey.toJSONString().getBytes(StandardCharsets.UTF_8);
-        }
-
-        @Override
-        public boolean canExport() {
-            return true;
         }
     }
 }

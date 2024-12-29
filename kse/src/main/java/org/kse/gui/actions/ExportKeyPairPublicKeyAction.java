@@ -34,9 +34,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.JwkExporter;
-import org.kse.crypto.KeyInfo;
-import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.crypto.x509.X509CertUtil;
@@ -78,7 +75,7 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
 
             PublicKey publicKey = getPublicKey(alias);
 
-            boolean isKeyExportableAsJWK = isJwkSupported(publicKey);
+            boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
             DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
             dExportPublicKey.setVisible(true);
@@ -142,21 +139,6 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
         try (FileOutputStream fos = new FileOutputStream(exportFile)) {
             fos.write(encoded);
             fos.flush();
-        }
-    }
-
-    private boolean isJwkSupported(PublicKey publicKey) throws CryptoException {
-        switch (KeyPairUtil.getKeyPairType(publicKey)) {
-        case ED448:
-        case ED25519:
-        case RSA:
-            return true;
-        case EC:
-            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(publicKey);
-            String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
-            return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
-        default:
-            return false;
         }
     }
 }

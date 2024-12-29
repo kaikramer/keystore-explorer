@@ -91,12 +91,6 @@ public class JwkPublicKeyExporterTest {
     }
 
     @Test
-    void shouldExportRSAPublicKey() {
-        JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(rsaPublicKey, "testAlias");
-        Assertions.assertTrue(exporter.canExport());
-    }
-
-    @Test
     public void shouldExportRSAPublicKeyWithAlias() throws JOSEException, JSONException {
         JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(rsaPublicKey, "testAlias");
         String exportedKey = new String(exporter.get());
@@ -164,32 +158,11 @@ public class JwkPublicKeyExporterTest {
         JSONAssert.assertEquals(expectedJson, exportedKey, JSONCompareMode.STRICT);
     }
 
-    @ParameterizedTest
-    @ValueSource(
-            strings = {"Ed25519", "Ed448"})
-    void supportsEdDSACurve(String curveName) {
-        BCEdDSAPublicKey publicKeyMock = mock(BCEdDSAPublicKey.class);
-        when(publicKeyMock.getAlgorithm()).thenReturn(curveName);
-        JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKeyMock, null);
-        assertTrue(jwkPublicKeyExporter.canExport());
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-            strings = {"prime256v1", "secp256r1", "P-256", "secp256k1", "secp384r1", "P-384", "secp521r1",
-                    "P-521"})
-    void supportsECCurve(String curveName) throws CryptoException {
-        KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, new BouncyCastleProvider());
-        JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(keyPair.getPublic(), null);
-        assertTrue(jwkPublicKeyExporter.canExport());
-    }
-
     @Test
     void handlesAttemptToExportUnsupportedEdDSAKeyWithGrace() throws JOSEException {
         BCEdDSAPublicKey publicKeyMock = mock(BCEdDSAPublicKey.class);
         when(publicKeyMock.getAlgorithm()).thenReturn("UnsupportedCurve");
         JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKeyMock, null);
-        assertFalse(jwkPublicKeyExporter.canExport());
         assertArrayEquals(jwkPublicKeyExporter.get(), new byte[]{});
     }
 
@@ -214,7 +187,6 @@ public class JwkPublicKeyExporterTest {
         ECPublicKey unsupportedECPublicKey = (ECPublicKey) keyFactory.generatePublic(unsupportedECPublicKeySpec);
 
         JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(unsupportedECPublicKey, null);
-        Assertions.assertFalse(jwkPublicKeyExporter.canExport());
         Assertions.assertArrayEquals(jwkPublicKeyExporter.get(), new byte[0]);
     }
 
@@ -238,7 +210,6 @@ public class JwkPublicKeyExporterTest {
         };
 
         JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(unsupportedKey, "testAlias");
-        Assertions.assertFalse(exporter.canExport());
         Assertions.assertEquals(exporter.get().length, 0);
     }
 }

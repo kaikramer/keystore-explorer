@@ -26,13 +26,6 @@ public interface JwkExporter {
      */
     byte[] exportWithAlias(String alias) throws JOSEException;
 
-    /**
-     * Checks if key can be exported
-     *
-     * @return true if given instance of {@link JwkExporter} can export instance of {@link java.security.PublicKey} or {@link java.security.PrivateKey}
-     */
-    boolean canExport();
-
     abstract class ECKeyExporter implements JwkExporter {
         protected static final Map<String, Curve> supportedCurvesMap =
                 Map.of(
@@ -88,11 +81,6 @@ public interface JwkExporter {
         @Override
         public byte[] exportWithAlias(String alias) {
             return new byte[0];
-        }
-
-        @Override
-        public boolean canExport() {
-            return false;
         }
     }
 }
