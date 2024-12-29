@@ -2,6 +2,8 @@ package org.kse.crypto;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.Curve;
+
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.crypto.keypair.KeyPairUtil;
 
@@ -66,7 +68,7 @@ public interface JwkExporter {
         }
     }
 
-    abstract class JwkEdDSAKeyExporter implements JwkExporter {
+    abstract class JwkEdKeyExporter implements JwkExporter {
         protected final Map<String, Curve> supportedCurvesMap =
                 Map.of(
                         "Ed25519", Curve.Ed25519,
@@ -75,6 +77,10 @@ public interface JwkExporter {
 
         protected Optional<Curve> getCurve(BCEdDSAPublicKey bcEdDSAPublicKey) {
             return Optional.ofNullable(supportedCurvesMap.get(bcEdDSAPublicKey.getAlgorithm()));
+        }
+
+        protected Optional<Curve> getCurve(BCEdDSAPrivateKey bcEdDSAPrivateKey) {
+            return Optional.ofNullable(supportedCurvesMap.get(bcEdDSAPrivateKey.getAlgorithm()));
         }
     }
 

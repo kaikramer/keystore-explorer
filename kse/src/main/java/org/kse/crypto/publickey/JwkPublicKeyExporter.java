@@ -47,7 +47,7 @@ public class JwkPublicKeyExporter {
         return jwkExporter.exportWithAlias(alias);
     }
 
-    private static class JwkEdDSAPublicKeyExporter extends JwkExporter.JwkEdDSAKeyExporter {
+    private static class JwkEdDSAPublicKeyExporter extends JwkExporter.JwkEdKeyExporter {
         private final BCEdDSAPublicKey bcEdDSAPublicKey;
 
         JwkEdDSAPublicKeyExporter(PublicKey publicKey) {

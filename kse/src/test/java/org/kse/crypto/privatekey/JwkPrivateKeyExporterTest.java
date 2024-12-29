@@ -1,6 +1,26 @@
 package org.kse.crypto.privatekey;
 
-import com.nimbusds.jose.JOSEException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPrivateCrtKeySpec;
+import java.util.Base64;
+
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECParameterSpec;
@@ -10,6 +30,7 @@ import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.math.ec.custom.sec.SecP256R1Curve;
 import org.bouncycastle.math.ec.custom.sec.SecP384R1Curve;
 import org.bouncycastle.math.ec.custom.sec.SecP521R1Curve;
+import org.bouncycastle.util.encoders.Hex;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -17,18 +38,98 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.util.Base64;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.nimbusds.jose.JOSEException;
 
 class JwkPrivateKeyExporterTest {
+    @Nested
+    class EdDSAExporter {
+        private byte[] encodePrivateKey(byte[] privateKeyScalar, String curve) throws IOException {
+            ASN1ObjectIdentifier oid;
+                switch (curve) {
+                case "Ed448":
+                    oid = new ASN1ObjectIdentifier("1.3.101.113");
+                    break;
+                case "Ed25519":
+                    oid = new ASN1ObjectIdentifier("1.3.101.112");
+                    break;
+                default:
+                    throw new IllegalArgumentException(curve);
+                }
+            ASN1EncodableVector vector = new ASN1EncodableVector();
+            vector.add(new ASN1Integer(0));
+
+            ASN1Sequence algIdSeq = new DERSequence(new ASN1Encodable[] { oid });
+            vector.add(algIdSeq);
+
+            vector.add(new DEROctetString(new DEROctetString(privateKeyScalar)));  // Wrap the first OCTET STRING
+            ASN1Sequence privateKeyInfo = new DERSequence(vector);
+
+            return privateKeyInfo.getEncoded(ASN1Encoding.DER);
+        }
+
+        PrivateKey createEdDSAPrivateKey(String name, byte[] d) {
+            try {
+                Security.addProvider(new BouncyCastleProvider());
+                byte[] pkcs8EncodedKey = encodePrivateKey(d, name);
+                KeyFactory keyFactory = KeyFactory.getInstance(name, "BC");
+                return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(pkcs8EncodedKey));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        @Nested
+        class ForEd25519{
+            byte[] d = Hex.decode("DCAAACEADDAC99D31020B81795E1F64CA36D81701034EE598C161F2655368F76");
+            PrivateKey privateKey = createEdDSAPrivateKey("Ed25519", d);
+            private final String expectedJwk =
+                    "{\n" +
+                    "  \"kty\": \"OKP\",\n" +
+                    "  \"kid\": \"alias\",\n" +
+                    "  \"crv\": \"Ed25519\",\n" +
+                    "  \"x\": \"FCCz5OTBgteYPnLnFQk5dqSl1fnck5tkMiT1WX_y43w\",\n" +
+                    "  \"d\": \"3Kqs6t2smdMQILgXleH2TKNtgXAQNO5ZjBYfJlU2j3Y\"\n" +
+                    "}";
+            @Test
+            void shouldExportWithProvidedAlias() throws JOSEException, JSONException {
+                JwkPrivateKeyExporter exporter = JwkPrivateKeyExporter.from(privateKey, "alias");
+                JSONAssert.assertEquals(expectedJwk, new String(exporter.get()), JSONCompareMode.STRICT);
+            }
+            @Test
+            void shouldExportAndGenerateAliasIfNotProvided() throws JOSEException, JSONException {
+                JwkPrivateKeyExporter exporter = JwkPrivateKeyExporter.from(privateKey, null);
+                JSONAssert.assertEquals(
+                        expectedJwk.replace("alias", "hMKYp7HryDQcWc9sdicmx4x0l7BXvkeZCbMm6fYH_UM"),
+                        new String(exporter.get()),
+                        JSONCompareMode.STRICT);
+            }
+        }
+        @Nested
+        class forEd448{
+            byte[] d = Hex.decode("0DAAE3F2A4AC597FD67BEE8F46F50AE24CD67D53F846BE5DEB6ACE0CB67FD9EA95604FBDEF9F566A4245C9A5BAB81FD8DC0AF3179CE94C4084");
+            PrivateKey privateKey = createEdDSAPrivateKey("Ed448", d);
+            private final String expectedJwk =
+                    "{\n" +
+                    "  \"kty\": \"OKP\",\n" +
+                    "  \"kid\": \"alias\",\n" +
+                    "  \"crv\": \"Ed448\",\n" +
+                    "  \"x\": \"J4amktQFNkPV_ei8-UiGvixoY8saK7__4LL6aLnLWLzLTpFIZdJA17T9hqFfzexgpwE4C7LeA8gA\",\n" +
+                    "  \"d\": \"Darj8qSsWX_We-6PRvUK4kzWfVP4Rr5d62rODLZ_2eqVYE-9759WakJFyaW6uB_Y3ArzF5zpTECE\"\n" +
+                    "}";
+            @Test
+            void shouldExportWithProvidedAlias() throws JOSEException, JSONException {
+                JwkPrivateKeyExporter exporter = JwkPrivateKeyExporter.from(privateKey, "alias");
+                JSONAssert.assertEquals(expectedJwk, new String(exporter.get()), JSONCompareMode.STRICT);
+            }
+            @Test
+            void shouldExportAndGenerateAliasIfNotProvided() throws JOSEException, JSONException {
+                JwkPrivateKeyExporter exporter = JwkPrivateKeyExporter.from(privateKey, null);
+                JSONAssert.assertEquals(
+                        expectedJwk.replace("alias", "nH74MmF8qGFGAXy5TjR7fRg2oNadcEM5q0c3X3AZSnU"),
+                        new String(exporter.get()),
+                        JSONCompareMode.STRICT);
+            }
+        }
+    }
     @Nested
     class ECExporter {
          PrivateKey createECPrivateKey(String name, BigInteger x, BigInteger y, BigInteger d, BigInteger n) {
@@ -44,6 +145,8 @@ class JwkPrivateKeyExporterTest {
                     case "secp521r1":
                         curve = new SecP521R1Curve();
                         break;
+                default:
+                    throw new IllegalArgumentException(name);
                 }
                 ECPoint ecPoint = curve.createPoint(x, y);
                 ECParameterSpec ecParameterSpec = new ECNamedCurveParameterSpec(
