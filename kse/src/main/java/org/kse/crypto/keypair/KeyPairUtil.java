@@ -280,6 +280,16 @@ public final class KeyPairUtil {
     }
 
     /**
+     * Determine the key pair type (algorithm).
+     *
+     * @param publicKey The private key
+     * @return KeyPairType type
+     */
+    public static KeyPairType getKeyPairType(PublicKey publicKey) {
+        return KeyPairType.resolveJce(publicKey.getAlgorithm());
+    }
+
+    /**
      * Check that the supplied private and public keys actually comprise a valid
      * key pair.
      *
