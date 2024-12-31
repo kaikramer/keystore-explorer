@@ -43,7 +43,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.JwkExporter;
+import org.kse.crypto.jwk.JwkExporter;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
@@ -208,6 +208,15 @@ public class DExportPrivateKeyType extends JEscDialog {
      */
     public boolean exportPvk() {
         return jrbPvk.isSelected();
+    }
+
+    /**
+     * Has the user chosen to export to JWK?
+     *
+     * @return True if they have, false otherwise
+     */
+    public boolean exportJwk() {
+        return jrbJwk.isSelected();
     }
 
     /**

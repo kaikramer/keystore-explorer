@@ -1,26 +1,41 @@
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 - 2024 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.kse.crypto.publickey;
 
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Optional;
-
-import com.nimbusds.jose.jwk.OctetKeyPair;
-import com.nimbusds.jose.util.Base64URL;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.kse.crypto.KeyInfo;
+import org.kse.crypto.jwk.JwkExporter;
+import org.kse.crypto.jwk.JwkExporterException;
+import org.kse.crypto.keypair.KeyPairUtil;
 
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
-
-import org.kse.crypto.CryptoException;
-import org.kse.crypto.JwkExporter;
-import org.kse.crypto.KeyInfo;
-import org.kse.crypto.keypair.KeyPairUtil;
+import com.nimbusds.jose.util.Base64URL;
 
 public class JwkPublicKeyExporter {
     private final String alias;
@@ -29,13 +44,13 @@ public class JwkPublicKeyExporter {
     private JwkPublicKeyExporter(PublicKey publicKey, String alias) {
         this.alias = alias;
         if (publicKey instanceof ECPublicKey) {
-            this.jwkExporter = new ECPublicKeyExporter(publicKey);
+            this.jwkExporter = new JwkPublicKeyExporter.ECPublicKeyExporter(publicKey);
         } else if (publicKey instanceof BCEdDSAPublicKey) {
-            this.jwkExporter = new EdDSAPublicKeyExporter(publicKey);
+            this.jwkExporter = new JwkPublicKeyExporter.EdDSAPublicKeyExporter(publicKey);
         } else if (publicKey instanceof RSAPublicKey) {
-            this.jwkExporter = new RSAPublicKeyExporter(publicKey);
+            this.jwkExporter = new JwkPublicKeyExporter.RSAPublicKeyExporter(publicKey);
         } else {
-            this.jwkExporter = new JwkExporter.NotSupportedKeyTypeExporter();
+            throw JwkExporterException.notSupported(publicKey.getAlgorithm(), null);
         }
     }
 
@@ -43,22 +58,26 @@ public class JwkPublicKeyExporter {
         return new JwkPublicKeyExporter(publicKey, alias);
     }
 
-    public static boolean isPublicKeyTypeExportable(PublicKey publicKey) throws CryptoException {
-        switch (KeyPairUtil.getKeyPairType(publicKey)) {
-        case ED448:
-        case ED25519:
-        case RSA:
-            return true;
-        case EC:
-            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(publicKey);
-            String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
-            return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
-        default:
-            return false;
+    public static boolean isPublicKeyTypeExportable(PublicKey publicKey)  {
+        try {
+            switch (KeyPairUtil.getKeyPairType(publicKey)) {
+            case ED448:
+            case ED25519:
+            case RSA:
+                return true;
+            case EC:
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(publicKey);
+                String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
+                return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
+            default:
+                return false;
+            }
+        } catch (Exception e) {
+            throw JwkExporterException.notSupported(publicKey.getAlgorithm(), null);
         }
     }
 
-    public byte[] get() throws JOSEException {
+    public byte[] get() {
         return jwkExporter.exportWithAlias(alias);
     }
 
@@ -69,51 +88,49 @@ public class JwkPublicKeyExporter {
             this.bcEdDSAPublicKey = (BCEdDSAPublicKey) publicKey;
         }
 
-
         @Override
-        public byte[] exportWithAlias(String alias) throws JOSEException {
-            Optional<Curve> maybeCurve = getCurve(bcEdDSAPublicKey);
-            if (maybeCurve.isEmpty()) {
-                return new byte[0];
+        public byte[] exportWithAlias(String alias) {
+            Curve curve = getCurve(bcEdDSAPublicKey);
+            try {
+                SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(
+                        bcEdDSAPublicKey.getEncoded());
+                byte[] rawKey = subjectPublicKeyInfo.getPublicKeyData().getBytes();
+                OctetKeyPair.Builder builder = new OctetKeyPair.Builder(curve, Base64URL.encode(rawKey));
+                if (alias != null) {
+                    builder.keyID(alias);
+                } else {
+                    builder.keyIDFromThumbprint();
+                }
+                OctetKeyPair key = builder.build();
+                return key.toPublicJWK().toJSONString().getBytes(StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                throw JwkExporterException.keyExportFailed(alias, e);
             }
-            Curve curve = maybeCurve.get();
-            SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(bcEdDSAPublicKey.getEncoded());
-            byte[] rawKey = subjectPublicKeyInfo.getPublicKeyData().getBytes();
-            OctetKeyPair.Builder builder = new OctetKeyPair.Builder(
-                    curve,
-                    Base64URL.encode(rawKey)
-            );
-            if (alias != null) {
-                builder.keyID(alias);
-            } else {
-                builder.keyIDFromThumbprint();
-            }
-            OctetKeyPair key = builder.build();
-            return key.toPublicJWK().toJSONString().getBytes(StandardCharsets.UTF_8);
         }
     }
 
     private static class ECPublicKeyExporter extends JwkExporter.ECKeyExporter {
-
         private final ECPublicKey ecPublicKey;
 
         ECPublicKeyExporter(PublicKey ecPublicKey) {
             this.ecPublicKey = (ECPublicKey) ecPublicKey;
         }
 
-        public byte[] exportWithAlias(String alias) throws JOSEException {
-            Optional<Curve> curve = getCurve(ecPublicKey);
-            if (curve.isEmpty()) {
-                return new byte[0];
+        @Override
+        public byte[] exportWithAlias(String alias) {
+            Curve curve = getCurve(ecPublicKey);
+            try {
+                ECKey.Builder builder = new ECKey.Builder(curve, ecPublicKey);
+                if (alias != null) {
+                    builder.keyID(alias);
+                } else {
+                    builder.keyIDFromThumbprint();
+                }
+                ECKey ecKey = builder.build();
+                return ecKey.toJSONString().getBytes(StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                throw JwkExporterException.keyExportFailed(alias, e);
             }
-            ECKey.Builder builder = new ECKey.Builder(curve.get(), ecPublicKey);
-            if (alias != null) {
-                builder.keyID(alias);
-            } else {
-                builder.keyIDFromThumbprint();
-            }
-            ECKey ecKey = builder.build();
-            return ecKey.toJSONString().getBytes(StandardCharsets.UTF_8);
         }
     }
 
@@ -124,15 +141,19 @@ public class JwkPublicKeyExporter {
             this.rsaPublicKey = (RSAPublicKey) publicKey;
         }
 
-        public byte[] exportWithAlias(String alias) throws JOSEException {
-            RSAKey.Builder builder = new RSAKey.Builder(rsaPublicKey);
-            if (alias != null) {
-                builder.keyID(alias);
-            } else {
-                builder.keyIDFromThumbprint();
+        public byte[] exportWithAlias(String alias) {
+            try {
+                RSAKey.Builder builder = new RSAKey.Builder(rsaPublicKey);
+                if (alias != null) {
+                    builder.keyID(alias);
+                } else {
+                    builder.keyIDFromThumbprint();
+                }
+                RSAKey rsaKey = builder.build();
+                return rsaKey.toJSONString().getBytes(StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                throw JwkExporterException.keyExportFailed(alias, e);
             }
-            RSAKey rsaKey = builder.build();
-            return rsaKey.toJSONString().getBytes(StandardCharsets.UTF_8);
         }
     }
 }

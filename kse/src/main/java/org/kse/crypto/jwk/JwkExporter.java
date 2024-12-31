@@ -1,16 +1,34 @@
-package org.kse.crypto;
-
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.Curve;
-
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
-import org.kse.crypto.keypair.KeyPairUtil;
+/*
+ * Copyright 2004 - 2013 Wayne Grant
+ *           2013 - 2024 Kai Kramer
+ *
+ * This file is part of KeyStore Explorer.
+ *
+ * KeyStore Explorer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * KeyStore Explorer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.kse.crypto.jwk;
 
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Map;
-import java.util.Optional;
+
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.keypair.KeyPairUtil;
+
+import com.nimbusds.jose.jwk.Curve;
 
 /**
  * Implementers knows how to export an asymmetric key
@@ -22,9 +40,8 @@ public interface JwkExporter {
      *
      * @param alias a key alias
      * @return byte array with encoded key
-     * @throws JOSEException thrown if export failed
      */
-    byte[] exportWithAlias(String alias) throws JOSEException;
+    byte[] exportWithAlias(String alias);
 
     abstract class ECKeyExporter implements JwkExporter {
         protected static final Map<String, Curve> supportedCurvesMap =
@@ -42,21 +59,21 @@ public interface JwkExporter {
         public static boolean supportsCurve(String curveName) {
             return supportedCurvesMap.containsKey(curveName);
         }
-        protected Optional<Curve> getCurve(ECPrivateKey privateKey) {
+        protected Curve getCurve(ECPrivateKey privateKey) {
             try {
                 String curveName = KeyPairUtil.getKeyInfo(privateKey).getDetailedAlgorithm();
-                return Optional.ofNullable(supportedCurvesMap.get(curveName));
+                return supportedCurvesMap.get(curveName);
             } catch (CryptoException e) {
-                return Optional.empty();
+                throw JwkExporterException.notSupported(privateKey.getAlgorithm(), e);
             }
         }
 
-        protected Optional<Curve> getCurve(ECPublicKey publicKey) {
+        protected Curve getCurve(ECPublicKey publicKey) {
             try {
                 String curveName = KeyPairUtil.getKeyInfo(publicKey).getDetailedAlgorithm();
-                return Optional.ofNullable(supportedCurvesMap.get(curveName));
+                return supportedCurvesMap.get(curveName);
             } catch (CryptoException e) {
-                return Optional.empty();
+                throw JwkExporterException.notSupported(publicKey.getAlgorithm(), e);
             }
         }
     }
@@ -68,19 +85,12 @@ public interface JwkExporter {
                         "Ed448", Curve.Ed448
                 );
 
-        protected Optional<Curve> getCurve(BCEdDSAPublicKey bcEdDSAPublicKey) {
-            return Optional.ofNullable(supportedCurvesMap.get(bcEdDSAPublicKey.getAlgorithm()));
+        protected Curve getCurve(BCEdDSAPublicKey bcEdDSAPublicKey) {
+            return supportedCurvesMap.get(bcEdDSAPublicKey.getAlgorithm());
         }
 
-        protected Optional<Curve> getCurve(BCEdDSAPrivateKey bcEdDSAPrivateKey) {
-            return Optional.ofNullable(supportedCurvesMap.get(bcEdDSAPrivateKey.getAlgorithm()));
-        }
-    }
-
-    class NotSupportedKeyTypeExporter implements JwkExporter {
-        @Override
-        public byte[] exportWithAlias(String alias) {
-            return new byte[0];
+        protected Curve getCurve(BCEdDSAPrivateKey bcEdDSAPrivateKey) {
+            return supportedCurvesMap.get(bcEdDSAPrivateKey.getAlgorithm());
         }
     }
 }

@@ -76,6 +76,7 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
             PublicKey publicKey = getPublicKey(alias);
 
             boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
+
             DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
             dExportPublicKey.setVisible(true);
