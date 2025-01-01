@@ -60,8 +60,11 @@ ext {
 	appJarName = "${appSimpleName}.jar" as GStringImpl
 	appExe = "${appSimpleName}.exe" as GStringImpl
 	appBundle = "${appName}.app" as GStringImpl
-	dmgFile = "${appSimpleName}-${appSimpleVersion}.dmg" as GStringImpl
-
+	if (System.getProperty("os.arch") == "aarch64") {
+		dmgFile = "${appSimpleName}-arm64-${appSimpleVersion}.dmg" as GStringImpl
+	} else {
+		dmgFile = "${appSimpleName}-x64-${appSimpleVersion}.dmg" as GStringImpl
+	}
 	// Resource Hacker for setting the version info and icon of kse.exe
 	rh = "c:\\Program Files (x86)\\Resource Hacker\\ResourceHacker.exe"
 
