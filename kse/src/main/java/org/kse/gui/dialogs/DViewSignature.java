@@ -199,8 +199,7 @@ public class DViewSignature extends JEscDialog {
 
         jbSignerAsn1 = new JButton(res.getString("DViewSignature.jbSignerAsn1.text"));
         jbSignerAsn1.setToolTipText(res.getString("DViewSignature.jbSignerAsn1.tooltip"));
-        // TODO JW - Need mnemonic for signer asn1 button
-//        PlatformUtil.setMnemonic(jbPem, res.getString("DViewSignature.jbSignerAsn1.mnemonic").charAt(0));
+        PlatformUtil.setMnemonic(jbSignerAsn1, res.getString("DViewSignature.jbSignerAsn1.mnemonic").charAt(0));
 
         jbCertificates = new JButton(res.getString("DViewSignature.jbCertificates.text"));
         jbCertificates.setToolTipText(res.getString("DViewSignature.jbCertificates.tooltip"));

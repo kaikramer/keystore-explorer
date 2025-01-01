@@ -83,28 +83,6 @@ public class X500NameUtils {
         return value;
     }
 
-    private static String extractComponent(X500Name name, ASN1ObjectIdentifier objectIdentifier) {
-        for (RDN rdn : name.getRDNs()) {
-            AttributeTypeAndValue atav = rdn.getFirst();
-
-            if (atav.getType().equals(objectIdentifier)) {
-                return atav.getValue().toString();
-            }
-        }
-
-        return "";
-    }
-
-    /**
-     * Return Email Address of an X.500 name
-     *
-     * @param name X.500 name object
-     * @return Email Address from Name or an empty string if no Email Address found
-     */
-    public static String extractEmailAddress(X500Name name) {
-        return extractComponent(name, BCStyle.E);
-    }
-
     /**
      * Return CN of an X.500 name
      *
@@ -112,7 +90,15 @@ public class X500NameUtils {
      * @return CN from Name or an empty string if no CN found
      */
     public static String extractCN(X500Name name) {
-        return extractComponent(name, BCStyle.CN);
+        for (RDN rdn : name.getRDNs()) {
+            AttributeTypeAndValue atav = rdn.getFirst();
+
+            if (atav.getType().equals(BCStyle.CN)) {
+                return atav.getValue().toString();
+            }
+        }
+
+        return "";
     }
 
     /**

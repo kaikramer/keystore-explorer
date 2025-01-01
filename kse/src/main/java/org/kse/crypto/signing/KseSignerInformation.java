@@ -21,6 +21,7 @@ package org.kse.crypto.signing;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +37,9 @@ import org.bouncycastle.asn1.cms.CMSAttributes;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
@@ -45,7 +49,10 @@ import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.tsp.TSPValidationException;
 import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.Store;
+import org.kse.KSE;
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X500NameUtils;
+import org.kse.crypto.x509.X509CertUtil;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.HexUtil;
 
@@ -73,6 +80,7 @@ public class KseSignerInformation extends SignerInformation {
         this.trustedCerts = trustedCerts;
         this.signatureCerts = signatureCerts;
         lookupCert();
+        establishTrust();
     }
 
     /**
@@ -109,20 +117,39 @@ public class KseSignerInformation extends SignerInformation {
     private void lookupCert() {
 
         @SuppressWarnings("unchecked")
-        Collection<X509CertificateHolder> matchedCerts1 = trustedCerts.getMatches(getSID());
+        Collection<X509CertificateHolder> matchedCerts1 = signatureCerts.getMatches(getSID());
 
         if (!matchedCerts1.isEmpty()) {
             cert = matchedCerts1.iterator().next();
-
-            // TODO JW Need to trace the signature cert to a self-signed or CA cert, check basic constraints.
-            trustedCert = true;
         } else {
             @SuppressWarnings("unchecked")
-            Collection<X509CertificateHolder> matchedCerts2 = signatureCerts.getMatches(getSID());
+            Collection<X509CertificateHolder> matchedCerts2 = trustedCerts.getMatches(getSID());
 
             if (!matchedCerts2.isEmpty()) {
                 cert = matchedCerts2.iterator().next();
             }
+        }
+    }
+
+    private void establishTrust() {
+
+        try {
+            List<X509Certificate> certs = new ArrayList<>();
+
+            // TODO JW Don't want to use signature certs for establishing trust, but need to use
+            // them for building a chain that can potentially lead to trust.
+            for (X509CertificateHolder certHolder : signatureCerts.getMatches(null)) {
+                certs.add(X509CertUtil.convertCertificate(certHolder));
+            }
+            for (X509CertificateHolder certHolder : trustedCerts.getMatches(null)) {
+                certs.add(X509CertUtil.convertCertificate(certHolder));
+            }
+
+            X509Certificate[] trustChain = null; //X509CertUtil.establishTrust(X509CertUtil.convertCertificate(cert), certs);
+            trustedCert = trustChain != null;
+        } catch (CryptoException e) {
+            // TODO JW Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -146,9 +173,9 @@ public class KseSignerInformation extends SignerInformation {
         X500Name subject = cert.getSubject();
 
         String shortName = X500NameUtils.extractCN(subject);
-        String emailAddress = X500NameUtils.extractEmailAddress(subject);
+        String emailAddress = extractEmailAddress(cert);
 
-        if (!StringUtils.isBlank(emailAddress)) {
+        if (!StringUtils.isBlank(emailAddress) && !shortName.equals(emailAddress)) {
             if (StringUtils.isBlank(shortName)) {
                 shortName = emailAddress;
             } else {
@@ -166,6 +193,20 @@ public class KseSignerInformation extends SignerInformation {
         }
 
         return shortName;
+    }
+
+    private static String extractEmailAddress(X509CertificateHolder cert) {
+        GeneralNames names = GeneralNames.fromExtensions(cert.getExtensions(), Extension.subjectAlternativeName);
+
+        if (names != null) {
+            for (GeneralName name : names.getNames()) {
+                if (name.getTagNo() == GeneralName.rfc822Name) {
+                    return name.getName().toString();
+                }
+            }
+        }
+
+        return "";
     }
 
     /**
@@ -228,8 +269,7 @@ public class KseSignerInformation extends SignerInformation {
             boolean verified = false;
 
             try {
-                // TODO JW - Should a provider be specified for the JcaSimpleSingerInfoVerifierBuilder?
-                if (verify(new JcaSimpleSignerInfoVerifierBuilder().build(cert))) {
+                if (verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(KSE.BC).build(cert))) {
                     verified = true;
 
                     // TODO JW always use the cacerts store for validating the timestamp trust.
@@ -263,9 +303,8 @@ public class KseSignerInformation extends SignerInformation {
 
         boolean verified = true;
 
-        // TODO JW Don't use super. Just use the overridden method.
-        Collection<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
-                super.getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
+        Collection<KseSignerInformation> counterSigners = CmsUtil
+                .convertSignerInformations(super.getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
 
         for (KseSignerInformation signer : counterSigners) {
             signer.verify();
