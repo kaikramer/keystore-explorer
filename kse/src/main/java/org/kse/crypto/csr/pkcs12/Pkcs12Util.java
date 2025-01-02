@@ -35,10 +35,20 @@ public class Pkcs12Util {
     public static void setEncryptionStrength(Pkcs12EncryptionSetting pkcs12EncryptionSetting) {
         switch (pkcs12EncryptionSetting) {
         case strong:
-            System.clearProperty("keystore.pkcs12.legacy");
+            System.setProperty("keystore.pkcs12.certProtectionAlgorithm", "PBEWithHmacSHA256AndAES_256");
+            System.setProperty("keystore.pkcs12.certPbeIterationCount", "10000");
+            System.setProperty("keystore.pkcs12.keyProtectionAlgorithm", "PBEWithHmacSHA256AndAES_256");
+            System.setProperty("keystore.pkcs12.keyPbeIterationCount", "10000");
+            System.setProperty("keystore.pkcs12.macAlgorithm", "HmacPBESHA256");
+            System.setProperty("keystore.pkcs12.macIterationCount", "10000");
             break;
         case legacy:
-            System.setProperty("keystore.pkcs12.legacy", "true");
+            System.setProperty("keystore.pkcs12.certProtectionAlgorithm", "PBEWithSHA1AndRC2_40");
+            System.setProperty("keystore.pkcs12.keyProtectionAlgorithm", "PBEWithSHA1AndDESede");
+            System.setProperty("keystore.pkcs12.macAlgorithm", "HmacPBESHA1");
+            System.setProperty("keystore.pkcs12.certPbeIterationCount", "50000");
+            System.setProperty("keystore.pkcs12.keyPbeIterationCount", "50000");
+            System.setProperty("keystore.pkcs12.macIterationCount", "100000");
             break;
         }
     }
