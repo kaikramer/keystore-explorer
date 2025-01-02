@@ -28,6 +28,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
@@ -95,9 +96,11 @@ public class KSE {
                 Locale.setDefault(new Locale(language));
             }
 
-            initialiseSecurity();
+            Security.addProvider(BC);
 
             Pkcs12Util.setEncryptionStrength(preferences.getPkcs12EncryptionSetting());
+
+            setProperties(preferences.getProperties());
 
             // list of files to open after start
             List<File> parameterFiles = new ArrayList<>();
@@ -114,6 +117,12 @@ public class KSE {
             dError.setLocationRelativeTo(null);
             dError.setVisible(true);
             System.exit(1);
+        }
+    }
+
+    private static void setProperties(Map<String, String> properties) {
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
         }
     }
 
@@ -153,11 +162,6 @@ public class KSE {
         if (currentDir != null) {
             CurrentDirectory.update(new File(currentDir));
         }
-    }
-
-    private static void initialiseSecurity() {
-        // Add BouncyCastle provider
-        Security.addProvider(BC);
     }
 
     /**
