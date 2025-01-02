@@ -59,8 +59,8 @@ import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
@@ -371,14 +371,27 @@ public class DViewCsr extends JEscDialog {
 
     private void verifyPressed() {
         try {
-            if (Pkcs10Util.verifyCsr(pkcs10Csr)) {
-                JOptionPane.showMessageDialog(this, res.getString("DViewCsr.VerifyOK.message"),
-                                              res.getString("DViewCsr.Verify.title"), JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, res.getString("DViewCsr.NoVerify.message"),
-                                              res.getString("DViewCsr.Verify.title"), JOptionPane.WARNING_MESSAGE);
+            if (pkcs10Csr != null) {
+                if (Pkcs10Util.verifyCsr(pkcs10Csr)) {
+                    JOptionPane.showMessageDialog(this, res.getString("DViewCsr.VerifyOK.message"),
+                                                  res.getString("DViewCsr.Verify.title"),
+                                                  JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, res.getString("DViewCsr.NoVerify.message"),
+                                                  res.getString("DViewCsr.Verify.title"), JOptionPane.WARNING_MESSAGE);
+                }
             }
-        } catch (CryptoException e) {
+            if (spkacCsr != null) {
+                if (spkacCsr.verify()) {
+                    JOptionPane.showMessageDialog(this, res.getString("DViewCsr.VerifyOK.message"),
+                                                  res.getString("DViewCsr.Verify.title"),
+                                                  JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, res.getString("DViewCsr.NoVerify.message"),
+                                                  res.getString("DViewCsr.Verify.title"), JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        } catch (Exception e) {
             DError.displayError(this, e);
         }
     }
