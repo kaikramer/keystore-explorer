@@ -104,7 +104,7 @@ public class SignFileAction extends KeyStoreExplorerAction {
             KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
             // get the file, signatures, and time stamp
-            DSignFile dSignFile = new DSignFile(frame, privateKey, keyPairType, false);
+            DSignFile dSignFile = new DSignFile(frame, privateKey, keyPairType);
             dSignFile.setLocationRelativeTo(frame);
             dSignFile.setVisible(true);
 
@@ -137,7 +137,6 @@ public class SignFileAction extends KeyStoreExplorerAction {
 
                 if (signature.getSignedContent() == null) {
                     // loadSignature tried to find and load the content but could not.
-                    // TODO JW - Is there a way to counter sign a signature without having the original content? Like providing the original hashes.
                     JOptionPane.showMessageDialog(frame,
                             MessageFormat.format(res.getString("SignFileAction.NoContent.message"),
                                     inputFile.getName()),

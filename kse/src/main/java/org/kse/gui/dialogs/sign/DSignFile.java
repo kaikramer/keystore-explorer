@@ -101,7 +101,6 @@ public class DSignFile extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
-    // TODO JW Store settings (e.g., signature algorithm, TS setting and URL) in preferences.
     private PrivateKey signPrivateKey;
     private KeyPairType signKeyPairType;
     private File inputFile;
@@ -121,26 +120,19 @@ public class DSignFile extends JEscDialog {
      * @param parent          The parent frame
      * @param signPrivateKey  Signing key pair's private key
      * @param signKeyPairType Signing key pair's type
-     * @param isCounterSign   True if the dialog should be counter signing a signature. False for signing a file.
      */
-    public DSignFile(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType, boolean isCounterSign) {
+    public DSignFile(JFrame parent, PrivateKey signPrivateKey, KeyPairType signKeyPairType) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.signPrivateKey = signPrivateKey;
         this.signKeyPairType = signKeyPairType;
-        String title = "DSignFile.Sign.Title";
-        if (isCounterSign) {
-            title = "DSignFile.CounterSign.Title";
-        }
-        setTitle(res.getString(title));
-        initComponents(isCounterSign);
+        setTitle(res.getString("DSignFile.Sign.Title"));
+        initComponents();
     }
 
     /**
      * Initializes the dialogue panel and associated elements
-     *
-     * @param isCounterSign True for counter signing. False for signing.
      */
-    private void initComponents(boolean isCounterSign) {
+    private void initComponents() {
         resetToDefault();
 
         jlInputFile = new JLabel(res.getString("DSignFile.jlInputFile.text"));
@@ -231,7 +223,7 @@ public class DSignFile extends JEscDialog {
         jbInputFileBrowse.addActionListener(evt -> {
             try {
                 CursorUtil.setCursorBusy(DSignFile.this);
-                inputFileBrowsePressed(isCounterSign);
+                inputFileBrowsePressed();
             } finally {
                 CursorUtil.setCursorFree(DSignFile.this);
             }
@@ -425,16 +417,11 @@ public class DSignFile extends JEscDialog {
     /**
      * Get input file
      */
-    private void inputFileBrowsePressed(boolean isCounterSign) {
+    private void inputFileBrowsePressed() {
         JFileChooser chooser;
 
-        if (!isCounterSign) {
-            chooser = FileChooserFactory.getAllFileChooser();
-            chooser.setDialogTitle(res.getString("DSignFile.ChooseInputFile.Sign.Title"));
-        } else {
-            chooser = FileChooserFactory.getSignatureFileChooser();
-            chooser.setDialogTitle(res.getString("DSignFile.ChooseInputFile.CounterSign.Title"));
-        }
+        chooser = FileChooserFactory.getAllFileChooser();
+        chooser.setDialogTitle(res.getString("DSignFile.ChooseInputFile.Sign.Title"));
         chooser.setCurrentDirectory(CurrentDirectory.get());
         chooser.setMultiSelectionEnabled(false);
         chooser.setApproveButtonText(res.getString("DSignFile.InputFileChooser.button"));
@@ -547,7 +534,7 @@ public class DSignFile extends JEscDialog {
         kpg.initialize(1024, new SecureRandom());
         KeyPair kp = kpg.generateKeyPair();
 
-        DSignFile dialog = new DSignFile(new JFrame(), kp.getPrivate(), KeyPairType.RSA, false);
+        DSignFile dialog = new DSignFile(new JFrame(), kp.getPrivate(), KeyPairType.RSA);
         DialogViewer.run(dialog);
     }
 }
