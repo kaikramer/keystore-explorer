@@ -24,8 +24,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import javax.swing.ImageIcon;
 import org.kse.gui.passwordmanager.Password;
-import org.kse.crypto.keypair.KeyPairType;
-import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.crypto.privatekey.PrivateKeyUtils;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyType;
@@ -73,9 +71,8 @@ public class ExportKeyPairPrivateKeyAction extends KeyStoreExplorerAction {
 
             KeyStore keyStore = currentState.getKeyStore();
             PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
-            KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
 
-            DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType(frame, keyPairType);
+            DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType(frame, privateKey);
             dExportPrivateKeyType.setLocationRelativeTo(frame);
             dExportPrivateKeyType.setVisible(true);
 
@@ -87,8 +84,10 @@ public class ExportKeyPairPrivateKeyAction extends KeyStoreExplorerAction {
                 PrivateKeyUtils.exportAsPkcs8(privateKey, alias, frame, preferences, res);
             } else if (dExportPrivateKeyType.exportPvk()) {
                 PrivateKeyUtils.exportAsPvk(privateKey, alias, frame, preferences, res);
-            } else {
+            } else if (dExportPrivateKeyType.exportOpenSsl()) {
                 PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, frame, preferences, res);
+            } else if (dExportPrivateKeyType.exportJwk()) {
+                PrivateKeyUtils.exportAsJwk(privateKey, alias, frame, preferences, res);
             }
         } catch (Exception ex) {
             DError.displayError(frame, ex);

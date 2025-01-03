@@ -75,8 +75,8 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
 
             PublicKey publicKey = getPublicKey(alias);
 
-            JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKey, alias);
-            boolean isKeyExportableAsJWK = jwkPublicKeyExporter.canExport();
+            boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
+
             DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
             dExportPublicKey.setVisible(true);
@@ -97,7 +97,7 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
                     encoded = OpenSslPubUtil.get(publicKey);
                     break;
                 case JWK:
-                    encoded = jwkPublicKeyExporter.get();
+                    encoded = JwkPublicKeyExporter.from(publicKey, alias).get();
                     break;
             }
 

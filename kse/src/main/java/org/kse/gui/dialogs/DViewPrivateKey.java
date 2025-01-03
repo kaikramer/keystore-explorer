@@ -51,7 +51,6 @@ import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
@@ -166,7 +165,6 @@ public class DViewPrivateKey extends JEscDialog {
                                                    ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jspEncoded.setBorder(jtfFormat.getBorder());
 
-
         jbExport = new JButton(res.getString("DViewPrivateKey.jbExport.text"));
         PlatformUtil.setMnemonic(jbExport, res.getString("DViewPrivateKey.jbExport.mnemonic").charAt(0));
         jbExport.setToolTipText(res.getString("DViewPrivateKey.jbExport.tooltip"));
@@ -256,15 +254,14 @@ public class DViewPrivateKey extends JEscDialog {
     }
 
     private void exportPressed() {
-        KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
-        DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType((JFrame) this.getParent(), keyPairType);
-        dExportPrivateKeyType.setLocationRelativeTo(null);
-        dExportPrivateKeyType.setVisible(true);
-
-        if (!dExportPrivateKeyType.exportTypeSelected()) {
-            return;
-        }
         try {
+            DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType((JFrame) this.getParent(), privateKey);
+            dExportPrivateKeyType.setLocationRelativeTo(null);
+            dExportPrivateKeyType.setVisible(true);
+
+            if (!dExportPrivateKeyType.exportTypeSelected()) {
+                return;
+            }
             if (dExportPrivateKeyType.exportPkcs8()) {
                 PrivateKeyUtils.exportAsPkcs8(privateKey, alias, (JFrame) this.getParent(), preferences,
                                               resActions);

@@ -75,8 +75,7 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
 
             PublicKey publicKey = getPublicKey(alias);
 
-            JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKey, alias);
-            boolean isKeyExportableAsJWK = jwkPublicKeyExporter.canExport();
+            boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
 
             DExportPublicKey dExportPublicKey = new DExportPublicKey(frame, alias, isKeyExportableAsJWK);
             dExportPublicKey.setLocationRelativeTo(frame);
@@ -87,14 +86,19 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
             }
 
             exportFile = dExportPublicKey.getExportFile();
-            boolean pemEncode = dExportPublicKey.pemEncode();
 
             byte[] encoded = null;
 
-            if (pemEncode) {
+            switch (dExportPublicKey.getSelectedPubKeyFormat()){
+            case OPENSSL_PEM:
                 encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
-            } else {
+                break;
+            case OPENSSL:
                 encoded = OpenSslPubUtil.get(publicKey);
+                break;
+            case JWK:
+                encoded = JwkPublicKeyExporter.from(publicKey, alias).get();
+                break;
             }
 
             exportEncodedPublicKey(encoded, exportFile);

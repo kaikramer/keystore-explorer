@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.security.PrivateKey;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -41,7 +42,11 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.kse.crypto.CryptoException;
+import org.kse.crypto.jwk.JwkExporter;
+import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
@@ -60,6 +65,7 @@ public class DExportPrivateKeyType extends JEscDialog {
     private JRadioButton jrbPkcs8;
     private JRadioButton jrbPvk;
     private JRadioButton jrbOpenSsl;
+    private JRadioButton jrbJwk;
     private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
@@ -67,20 +73,36 @@ public class DExportPrivateKeyType extends JEscDialog {
     private boolean exportTypeSelected = false;
 
     private KeyPairType keyPairType;
-
+    private PrivateKey privateKey;
     /**
      * Creates a new DExportPrivateKeyType dialog.
      *
      * @param parent The parent frame
      */
-    public DExportPrivateKeyType(JFrame parent, KeyPairType keyPairType) {
+    public DExportPrivateKeyType(JFrame parent, PrivateKey privateKey) throws CryptoException {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
-        this.keyPairType = keyPairType;
+        this.privateKey = privateKey;
+        this.keyPairType = KeyPairUtil.getKeyPairType(privateKey);
         setTitle(res.getString("DExportPrivateKeyType.Title"));
         initComponents();
     }
 
-    private void initComponents() {
+    private boolean isJwkSupported() throws CryptoException {
+        switch (keyPairType) {
+            case ED448:
+            case ED25519:
+            case RSA:
+                return true;
+            case EC:
+                KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+                String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
+                return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
+            default:
+                return false;
+        }
+    }
+
+    private void initComponents() throws CryptoException {
         jlExportType = new JLabel(res.getString("DExportPrivateKeyType.jlExportType.text"));
 
         jrbPkcs8 = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPkcs8.text"), true);
@@ -103,13 +125,19 @@ public class DExportPrivateKeyType extends JEscDialog {
             jrbOpenSsl.setEnabled(false);
         }
 
+        jrbJwk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbJwk.text"));
+        PlatformUtil.setMnemonic(jrbJwk, res.getString("DExportPrivateKeyType.jrbJwk.mnemonic").charAt(0));
+        jrbJwk.setToolTipText(res.getString("DExportPrivateKeyType.jrbJwk.tooltip"));
+        jrbJwk.setEnabled(isJwkSupported());
+
         ButtonGroup keyStoreTypes = new ButtonGroup();
 
         keyStoreTypes.add(jrbPkcs8);
         keyStoreTypes.add(jrbPvk);
         keyStoreTypes.add(jrbOpenSsl);
+        keyStoreTypes.add(jrbJwk);
 
-        jpExportType = new JPanel(new GridLayout(4, 1));
+        jpExportType = new JPanel(new GridLayout(5, 1));
         jpExportType.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5),
                                                   new CompoundBorder(new EtchedBorder(), new EmptyBorder(5, 5, 5, 5))));
 
@@ -117,6 +145,7 @@ public class DExportPrivateKeyType extends JEscDialog {
         jpExportType.add(jrbPkcs8);
         jpExportType.add(jrbPvk);
         jpExportType.add(jrbOpenSsl);
+        jpExportType.add(jrbJwk);
 
         jbOK = new JButton(res.getString("DExportPrivateKeyType.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -179,6 +208,15 @@ public class DExportPrivateKeyType extends JEscDialog {
      */
     public boolean exportPvk() {
         return jrbPvk.isSelected();
+    }
+
+    /**
+     * Has the user chosen to export to JWK?
+     *
+     * @return True if they have, false otherwise
+     */
+    public boolean exportJwk() {
+        return jrbJwk.isSelected();
     }
 
     /**
