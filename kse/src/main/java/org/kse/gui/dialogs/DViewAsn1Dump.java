@@ -43,6 +43,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.x509.X509Ext;
@@ -55,7 +57,7 @@ import org.kse.utilities.asn1.Asn1Exception;
 
 /**
  * Displays an ASN.1 dump of the supplied object: an X.509 certificate, private
- * key, public key, CRL or Extension.
+ * key, public key, CRL, Extension, or CMS.
  */
 public class DViewAsn1Dump extends JEscFrame {
     private static final long serialVersionUID = 1L;
@@ -76,6 +78,8 @@ public class DViewAsn1Dump extends JEscFrame {
     private PublicKey publicKey;
     private PKCS10CertificationRequest pkcs10Csr;
     private Spkac spkac;
+    private CMSSignedData cms;
+    private SignerInfo signerInfo;
 
     /**
      * Creates a new DViewAsn1Dump dialog.
@@ -183,6 +187,36 @@ public class DViewAsn1Dump extends JEscFrame {
         initComponents();
     }
 
+    /**
+     * Creates a new DViewAsn1Dump dialog.
+     *
+     * @param parent Parent frame
+     * @param cms    CMS signature to display dump for
+     * @throws Asn1Exception A problem was encountered getting the CMS signature ASN.1 dump
+     * @throws IOException   If an I/O problem occurred
+     */
+    public DViewAsn1Dump(JDialog parent, CMSSignedData cms) throws Asn1Exception, IOException {
+        super(res.getString("DViewAsn1Dump.Cms.Title"));
+        this.cms = cms;
+        this.setIconImages(parent.getOwner().getIconImages());
+        initComponents();
+    }
+
+    /**
+     * Creates a new DViewAsn1Dump dialog.
+     *
+     * @param parent     Parent frame
+     * @param signerInfo CMS signature to display dump for
+     * @throws Asn1Exception A problem was encountered getting the signer info ASN.1 dump
+     * @throws IOException   If an I/O problem occurred
+     */
+    public DViewAsn1Dump(JDialog parent, SignerInfo signerInfo) throws Asn1Exception, IOException {
+        super(res.getString("DViewAsn1Dump.SignerInfo.Title"));
+        this.signerInfo = signerInfo;
+        this.setIconImages(parent.getOwner().getIconImages());
+        initComponents();
+    }
+
     private void initComponents() throws Asn1Exception, IOException {
         jbCopy = new JButton(res.getString("DViewAsn1Dump.jbCopy.text"));
 
@@ -210,6 +244,8 @@ public class DViewAsn1Dump extends JEscFrame {
 
         if (certificate != null) {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(certificate));
+        } else if (cms != null) {
+            jtaAsn1Dump = new JTextArea(asn1Dump.dump(cms.getEncoded()));
         } else if (crl != null) {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(crl));
         } else if (extension != null) {
@@ -220,6 +256,8 @@ public class DViewAsn1Dump extends JEscFrame {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(publicKey));
         } else if (pkcs10Csr != null) {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(pkcs10Csr.getEncoded()));
+        } else if (signerInfo != null) {
+            jtaAsn1Dump = new JTextArea(asn1Dump.dump(signerInfo.getEncoded()));
         } else {
             jtaAsn1Dump = new JTextArea(asn1Dump.dump(spkac.getEncoded()));
         }
