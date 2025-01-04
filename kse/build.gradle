@@ -359,8 +359,7 @@ tasks.register('appbundler') {
 		) {
 			classpath(dir: dependenciesDir)
 			classpath(file: jar.archiveFile.get().asFile.getAbsolutePath())
-			arch(name: "arm64")
-			arch(name: "x86_64")
+			arch(name: (System.getProperty("os.arch") == "aarch64") ? "arm64" : "x86_64")
 
 			jlink(runtime: System.properties.'java.home') {
 				jmod(name: "java.base")
