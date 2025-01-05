@@ -133,7 +133,18 @@ dependencies {
 		implementation('org.openjfx:javafx-base:17.0.9:linux')
 		implementation('org.openjfx:javafx-graphics:17.0.9:linux')
 	}
-	if (gradle.startParameter.taskNames.any { ['dmg', 'zip'].contains(it) }) {
+	if (gradle.startParameter.taskNames.any { ['appbundler', 'dmg'].contains(it) }) {
+		if (System.getProperty("os.arch") == "aarch64") {
+			implementation('org.openjfx:javafx-base:17.0.9:mac-aarch64')
+			implementation('org.openjfx:javafx-graphics:17.0.9:mac-aarch64')
+			implementation('org.openjfx:javafx-swing:17.0.9:mac-aarch64')
+		} else {
+			implementation('org.openjfx:javafx-base:17.0.9:mac')
+			implementation('org.openjfx:javafx-graphics:17.0.9:mac')
+			implementation('org.openjfx:javafx-swing:17.0.9:mac')
+		}
+	}
+	if (gradle.startParameter.taskNames.any { ['zip'].contains(it) }) {
 		implementation('org.openjfx:javafx-base:17.0.9:mac')
 		implementation('org.openjfx:javafx-graphics:17.0.9:mac')
 		implementation('org.openjfx:javafx-swing:17.0.9:mac')
