@@ -19,13 +19,13 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
@@ -34,6 +34,7 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -58,6 +59,7 @@ import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
@@ -65,6 +67,7 @@ import org.bouncycastle.util.encoders.Hex;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.signing.CmsSigner;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.KseSignerInformation;
 import org.kse.crypto.signing.SignatureType;
@@ -78,8 +81,6 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.error.DError;
-import org.kse.gui.preferences.PreferencesManager;
-import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -95,8 +96,6 @@ public class DViewSignature extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-
-    private KsePreferences preferences = PreferencesManager.getPreferences();
 
     private KseFrame kseFrame;
 
@@ -223,7 +222,7 @@ public class DViewSignature extends JEscDialog {
         pane.add(jlStatus, "");
         pane.add(jtfStatus, "sgx, wrap");
         pane.add(jlVersion, "");
-        pane.add(jtfVersion, "sgx, wrap");
+        pane.add(jtfVersion, "wrap");
         pane.add(jlSubject, "");
         pane.add(jdnSubject, "wrap");
         pane.add(jlIssuer, "");
@@ -377,61 +376,46 @@ public class DViewSignature extends JEscDialog {
             jdnIssuer.setEnabled(true);
             jbSignerAsn1.setEnabled(true);
 
-            try {
-                Date signingTime = signerInfo.getSigningTime();
-                X509CertificateHolder cert = signerInfo.getCertificate();
+            Date signingTime = signerInfo.getSigningTime();
+            X509CertificateHolder cert = signerInfo.getCertificate();
 
-                jtfStatus.setText(signerInfo.getStatus().getText());
-                jtfStatus.setCaretPosition(0);
-                jtfStatus.setToolTipText(signerInfo.getStatus().getToolTip());
+            jtfStatus.setText(signerInfo.getStatus().getText());
+            jtfStatus.setCaretPosition(0);
+            jtfStatus.setToolTipText(signerInfo.getStatus().getToolTip());
 
-                jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
-                jtfVersion.setCaretPosition(0);
+            jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
+            jtfVersion.setCaretPosition(0);
 
-                if (cert != null) {
-                    jdnSubject.setEnabled(true);
-                    jdnSubject.setDistinguishedName(cert.getSubject());
-                } else {
-                    jdnSubject.setEnabled(false);
-                }
+            if (cert != null) {
+                jdnSubject.setEnabled(true);
+                jdnSubject.setDistinguishedName(cert.getSubject());
+            } else {
+                jdnSubject.setEnabled(false);
+            }
 
-                jdnIssuer.setDistinguishedName(signerInfo.getSID().getIssuer());
+            jdnIssuer.setDistinguishedName(signerInfo.getSID().getIssuer());
 
-                if (signingTime != null) {
-                    jtfSigningTime.setText(StringUtils.formatDate(signingTime));
-                } else {
-                    jtfSigningTime.setText("");
-                }
+            if (signingTime != null) {
+                jtfSigningTime.setText(StringUtils.formatDate(signingTime));
+            } else {
+                jtfSigningTime.setText("");
+            }
+            jtfSigningTime.setCaretPosition(0);
 
-//                if (true) {
-//                    jtfSigningTime.setText(
-//                            MessageFormat.format(res.getString("DViewCertificate.jtfSigningTime.expired.text"),
-//                                                 jtfSigningTime.getText()));
-//                    jtfSigningTime.setForeground(Color.red);
-//                } else {
-//                    jtfSigningTime.setForeground(jtfVersion.getForeground());
-//                }
-                jtfSigningTime.setCaretPosition(0);
+            SignatureType signatureType = lookupSignatureType(signerInfo);
+            if (signatureType != null) {
+                jtfSignatureAlgorithm.setText(signatureType.friendly());
+            } else {
+                jtfSignatureAlgorithm.setText("");
+            }
+            jtfSignatureAlgorithm.setCaretPosition(0);
 
-                SignatureType signatureType = lookupSignatureType(signerInfo);
-                if (signatureType != null ) {
-                    jtfSignatureAlgorithm.setText(signatureType.friendly());
-                } else {
-                    jtfSignatureAlgorithm.setText("");
-                }
-                jtfSignatureAlgorithm.setCaretPosition(0);
+            timeStampSigner = getTimeStampSignature(signerInfo);
 
-                timeStampSigner = getTimeStampSignature(signerInfo);
-
-                if (timeStampSigner != null) {
-                    jbTimeStamp.setEnabled(true);
-                } else {
-                    jbTimeStamp.setEnabled(false);
-                }
-            // TODO JW Remove the try/catch (or fix exception list)
-            } catch (Exception e) {
-                DError.displayError(this, e);
-                dispose();
+            if (timeStampSigner != null) {
+                jbTimeStamp.setEnabled(true);
+            } else {
+                jbTimeStamp.setEnabled(false);
             }
         }
     }
@@ -540,7 +524,6 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void okPressed() {
-        // TODO JW - set any preferences here (e.g., chosen fingerprint algorithm)
         closeDialog();
     }
 
@@ -570,10 +553,14 @@ public class DViewSignature extends JEscDialog {
                         Hex.decode("0011223344556677889900112233445566778899")));
 
         X509Certificate[] certs = new X509Certificate[] { eeCert, caCert };
+        CMSSignedData signedData = CmsSigner.sign(new File("build.gradle"), eeKeyPair.getPrivate(), certs, false,
+                SignatureType.SHA256_RSA, null, null);
+        @SuppressWarnings("unchecked")
+        List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signedData.getSignerInfos().getSigners(),
+                new JcaCertStore(Arrays.asList(certs)), signedData.getCertificates());
 
-        // TODO JW - fix main method
-//        DViewSignature dialog = new DViewSignature(new javax.swing.JFrame(), "Title", certs, new KseFrame(),
-//                                                       IMPORT_EXPORT);
-//        DialogViewer.run(dialog);
+        DViewSignature dialog = new DViewSignature(new javax.swing.JFrame(), "Title", signedData, signers,
+                new KseFrame());
+        DialogViewer.run(dialog);
     }
 }
