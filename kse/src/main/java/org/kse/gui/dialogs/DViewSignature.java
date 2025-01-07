@@ -63,6 +63,7 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
+import org.bouncycastle.util.Store;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
@@ -122,22 +123,26 @@ public class DViewSignature extends JEscDialog {
     private JButton jbOK;
 
     private CMSSignedData signedData;
+    private Store<X509CertificateHolder> tsaTrustedCerts;
     private CMSSignedData timeStampSigner;
 
     /**
      * Creates a new DViewCertificate dialog.
      *
-     * @param parent       Parent frame
-     * @param title        The dialog title
-     * @param signedData   Signature to display
-     * @param signers      Signature(s) to display
-     * @param kseFrame     Reference to main class with currently opened keystores and their contents
+     * @param parent          Parent frame
+     * @param title           The dialog title
+     * @param signedData      Signature to display
+     * @param signers         Signature(s) to display
+     * @param tsaTrustedCerts All trusted certs suitable for verifying TSA signatures
+     * @param kseFrame        Reference to main class with currently opened keystores and their contents
      */
-    public DViewSignature(Window parent, String title, CMSSignedData signedData, Collection<KseSignerInformation> signers,
+    public DViewSignature(Window parent, String title, CMSSignedData signedData,
+            Collection<KseSignerInformation> signers, Store<X509CertificateHolder> tsaTrustedCerts,
             KseFrame kseFrame) {
         super(parent, title, Dialog.ModalityType.MODELESS);
         this.kseFrame = kseFrame;
         this.signedData = signedData;
+        this.tsaTrustedCerts = tsaTrustedCerts;
         initComponents(signers);
     }
 
@@ -480,13 +485,15 @@ public class DViewSignature extends JEscDialog {
         KseSignerInformation signer = getSelectedSignerInfo();
         String shortName = signer.getShortName();
 
+        // Use the trusted certs not managed per the user preferences setting for
+        // the time stamp trusted certs.
         List<KseSignerInformation> timeStampSigners = CmsUtil.convertSignerInformations(
-                timeStampSigner.getSignerInfos().getSigners(), signer.getTrustedCerts(),
+                timeStampSigner.getSignerInfos().getSigners(), tsaTrustedCerts,
                 timeStampSigner.getCertificates());
 
         DViewSignature dViewSignature = new DViewSignature(this,
                 MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
-                timeStampSigner, timeStampSigners, null);
+                timeStampSigner, timeStampSigners, tsaTrustedCerts, kseFrame);
         dViewSignature.setLocationRelativeTo(this);
         dViewSignature.setVisible(true);
     }
@@ -559,7 +566,7 @@ public class DViewSignature extends JEscDialog {
         List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signedData.getSignerInfos().getSigners(),
                 new JcaCertStore(Arrays.asList(certs)), signedData.getCertificates());
 
-        DViewSignature dialog = new DViewSignature(new javax.swing.JFrame(), "Title", signedData, signers,
+        DViewSignature dialog = new DViewSignature(new javax.swing.JFrame(), "Title", signedData, signers, null,
                 new KseFrame());
         DialogViewer.run(dialog);
     }

@@ -278,7 +278,6 @@ public class KseSignerInformation extends SignerInformation {
                 if (verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(KSE.BC).build(cert))) {
                     verified = true;
 
-                    // TODO JW always use the cacerts store for validating the timestamp trust.
                     verifyTimeStamp();
 
                     if (getCounterSignatures().size() > 0) {

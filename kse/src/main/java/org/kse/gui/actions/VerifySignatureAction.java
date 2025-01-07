@@ -25,7 +25,9 @@ import java.awt.event.InputEvent;
 import java.io.File;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.Security;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -45,7 +47,9 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.util.Store;
+import org.kse.AuthorityCertificates;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.SecurityProvider;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.KseSignerInformation;
 import org.kse.crypto.x509.X509CertUtil;
@@ -134,7 +138,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
-                    signedData, signers, null);
+                    signedData, signers, getTrustedCertsNoPrefs(), null);
             dViewSignature.setLocationRelativeTo(frame);
             dViewSignature.setVisible(true);
 
@@ -144,7 +148,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         }
     }
 
-    private Collection<X509Certificate> extractCertificates(KeyStore keystore) {
+    private Collection<X509Certificate> extractCertificates(KeyStore keystore) throws CryptoException {
 
         List<X509Certificate> certs = new ArrayList<>();
 
@@ -168,14 +172,72 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         }
         catch (KeyStoreException e) {
             // TODO JW Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (CryptoException e) {
-            // TODO JW Auto-generated catch block
-            e.printStackTrace();
+            throw new CryptoException(res.getString("NoExtractCertificates.exception.message"), e);
         }
 
         return certs;
+    }
+
+    private Store<X509CertificateHolder> getTrustedCertsNoPrefs()
+            throws CryptoException, CertificateEncodingException {
+        KeyStore caCertificates = getCaCertificatesNoPrefCheck();
+        KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificatesNoPrefCheck();
+
+        // Perform cert lookup against current KeyStore
+        Set<X509Certificate> compCerts = new HashSet<>();
+
+        if (caCertificates != null) {
+            // Perform cert lookup against CA Certificates KeyStore
+            compCerts.addAll(extractCertificates(caCertificates));
+        }
+
+        if (windowsTrustedRootCertificates != null) {
+            // Perform cert lookup against Windows Trusted Root Certificates KeyStore
+            compCerts.addAll(extractCertificates(windowsTrustedRootCertificates));
+        }
+
+        @SuppressWarnings("unchecked")
+        Store<X509CertificateHolder> trustedCerts = new JcaCertStore(compCerts);
+        return trustedCerts;
+    }
+
+    /**
+     * Get CA Certificates KeyStore.
+     *
+     * @return KeyStore or null if unavailable
+     */
+    private KeyStore getCaCertificatesNoPrefCheck() {
+        AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
+
+        KeyStore caCertificates = authorityCertificates.getCaCertificates();
+
+        if (caCertificates == null) {
+            caCertificates = loadCaCertificatesKeyStore();
+
+            if (caCertificates != null) {
+                authorityCertificates.setCaCertificates(caCertificates);
+            }
+        }
+
+        return caCertificates;
+    }
+
+    /**
+     * Get Windows Trusted Root Certificates KeyStore.
+     *
+     * @return KeyStore or null if unavailable
+     * @throws CryptoException If a problem occurred getting the KeyStore
+     */
+    private KeyStore getWindowsTrustedRootCertificatesNoPrefCheck() throws CryptoException {
+        AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
+
+        KeyStore windowsTrustedRootCertificates = null;
+
+        if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
+            windowsTrustedRootCertificates = authorityCertificates.getWindowsTrustedRootCertificates();
+        }
+
+        return windowsTrustedRootCertificates;
     }
 
     private File showFileSelectionDialog() {
