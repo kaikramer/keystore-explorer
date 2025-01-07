@@ -662,7 +662,7 @@ public final class X509CertUtil {
         return establishTrust(cert, ksCerts);
     }
 
-    private static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> compCerts)
+    public static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> compCerts)
             throws CryptoException {
         /*
          * Check whether or not a trust path exists between the supplied X.509

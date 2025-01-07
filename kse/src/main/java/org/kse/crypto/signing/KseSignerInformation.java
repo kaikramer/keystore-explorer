@@ -80,7 +80,6 @@ public class KseSignerInformation extends SignerInformation {
         this.trustedCerts = trustedCerts;
         this.signatureCerts = signatureCerts;
         lookupCert();
-        establishTrust();
     }
 
     /**
@@ -131,25 +130,30 @@ public class KseSignerInformation extends SignerInformation {
         }
     }
 
-    private void establishTrust() {
+    private void establishTrust() throws CryptoException {
 
-        try {
-            List<X509Certificate> certs = new ArrayList<>();
+        List<X509Certificate> allCerts = new ArrayList<>();
 
-            // TODO JW Don't want to use signature certs for establishing trust, but need to use
-            // them for building a chain that can potentially lead to trust.
-            for (X509CertificateHolder certHolder : signatureCerts.getMatches(null)) {
-                certs.add(X509CertUtil.convertCertificate(certHolder));
-            }
-            for (X509CertificateHolder certHolder : trustedCerts.getMatches(null)) {
-                certs.add(X509CertUtil.convertCertificate(certHolder));
-            }
+        List<X509Certificate> certs = new ArrayList<>();
+        for (X509CertificateHolder certHolder : trustedCerts.getMatches(null)) {
+            X509Certificate c = X509CertUtil.convertCertificate(certHolder);
+            certs.add(c);
+            allCerts.add(c);
+        }
+        for (X509CertificateHolder certHolder : signatureCerts.getMatches(null)) {
+            allCerts.add(X509CertUtil.convertCertificate(certHolder));
+        }
 
-            X509Certificate[] trustChain = null; //X509CertUtil.establishTrust(X509CertUtil.convertCertificate(cert), certs);
+        // Builds a chain from the signer cert to a root cert. The root cert is not
+        // necessarily trusted. Uses all known certs.
+        X509Certificate[] signatureChain = X509CertUtil.establishTrust(X509CertUtil.convertCertificate(cert),
+                allCerts);
+        if (signatureChain != null) {
+            int rootIndex = Math.max(signatureChain.length - 1, 0);
+
+            // Establishes trust from the root of the signature chain to all trusted certs.
+            X509Certificate[] trustChain = X509CertUtil.establishTrust(signatureChain[rootIndex], certs);
             trustedCert = trustChain != null;
-        } catch (CryptoException e) {
-            // TODO JW Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
@@ -269,11 +273,12 @@ public class KseSignerInformation extends SignerInformation {
             boolean verified = false;
 
             try {
+                establishTrust();
+
                 if (verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(KSE.BC).build(cert))) {
                     verified = true;
 
                     // TODO JW always use the cacerts store for validating the timestamp trust.
-                    // TODO JW Display TS validation status on form.
                     verifyTimeStamp();
 
                     if (getCounterSignatures().size() > 0) {
