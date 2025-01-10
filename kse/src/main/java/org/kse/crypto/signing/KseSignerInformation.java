@@ -286,7 +286,6 @@ public class KseSignerInformation extends SignerInformation {
                     }
                 }
             } catch (Exception e) {
-                // TODO JW Display verification failure reason.
                 verified = false;
             }
 

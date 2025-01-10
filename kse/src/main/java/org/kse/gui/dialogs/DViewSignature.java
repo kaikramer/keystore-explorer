@@ -68,6 +68,7 @@ import org.bouncycastle.util.encoders.Hex;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.signing.CmsSignatureStatus;
 import org.kse.crypto.signing.CmsSigner;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.KseSignerInformation;
@@ -384,9 +385,18 @@ public class DViewSignature extends JEscDialog {
             Date signingTime = signerInfo.getSigningTime();
             X509CertificateHolder cert = signerInfo.getCertificate();
 
-            jtfStatus.setText(signerInfo.getStatus().getText());
+            // Don't verify the signature if there is no signed content. CmsUtil.loadSignature already
+            // tried to find and load the detached content for verification purposes.
+            CmsSignatureStatus status;
+            if (signedData.getSignedContent() != null) {
+                status = signerInfo.getStatus();
+            } else {
+                status = CmsSignatureStatus.NOT_VERIFIED;
+            }
+
+            jtfStatus.setText(status.getText());
             jtfStatus.setCaretPosition(0);
-            jtfStatus.setToolTipText(signerInfo.getStatus().getToolTip());
+            jtfStatus.setToolTipText(status.getToolTip());
 
             jtfVersion.setText(Integer.toString(signerInfo.getVersion()));
             jtfVersion.setCaretPosition(0);

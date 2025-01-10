@@ -124,18 +124,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signerInfos.getSigners(),
                     trustedCerts, signedData.getCertificates());
 
-            // TODO JW Signature verification happens while getting the signer info status. Not loading
-            // the content will display as invalid when really it cannot be verified.
-
-//            // Don't verify the signature if there is no signed content, but the signature details
-//            // can still be displayed. loadSignature already tried to find and load the detached
-//            // content.
-//            if (signedData.getSignedContent() != null) {
-//                for (KseSignerInformation signer : signers) {
-//                    signer.verify();
-//                }
-//            }
-
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
                     signedData, signers, getTrustedCertsNoPrefs(), null);
