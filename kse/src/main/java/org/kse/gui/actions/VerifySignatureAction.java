@@ -106,7 +106,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             Set<X509Certificate> compCerts = new HashSet<>();
             compCerts.addAll(extractCertificates(keyStore));
 
-            // TODO JW make X509CertUtil.extractCertificates public and use it for cacerts and windowstrustedrootcerts
             if (caCertificates != null) {
                 // Perform cert lookup against CA Certificates KeyStore
                 compCerts.addAll(extractCertificates(caCertificates));
@@ -159,8 +158,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
             }
         }
         catch (KeyStoreException e) {
-            // TODO JW Auto-generated catch block
-            throw new CryptoException(res.getString("NoExtractCertificates.exception.message"), e);
+            throw new CryptoException(res.getString("VerifySignatureAction.NoExtractCertificates.message"), e);
         }
 
         return certs;
