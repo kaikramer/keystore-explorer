@@ -159,12 +159,11 @@ public final class X509CertUtil {
 
     private static List<X509Certificate> loadAsPEM(byte[] bytes, CertificateFactory cf) {
 
-        PEMParser pemParser = new PEMParser(new StringReader(new String(bytes)));
         JcaX509CertificateConverter jcaX509CertConverter = new JcaX509CertificateConverter();
 
         List<X509Certificate> certs = new ArrayList<>();
 
-        try {
+        try (PEMParser pemParser = new PEMParser(new StringReader(new String(bytes)))) {
             Object pemObject = pemParser.readObject();
             while (pemObject != null) {
                 // check for all possible certificate classes
@@ -273,6 +272,47 @@ public final class X509CertUtil {
             ByteArrayInputStream bais = new ByteArrayInputStream(certIn.getEncoded());
             return (X509Certificate) cf.generateCertificate(bais);
         } catch (CertificateException e) {
+            throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), e);
+        }
+    }
+
+    /**
+     * Convert the supplied array of X509CertificateHolder objects into X509Certificate
+     * objects.
+     *
+     * @param certs The X509CertificateHolder objects
+     * @return The converted X509Certificate objects
+     * @throws CryptoException A problem occurred during the conversion
+     */
+    public static List<X509Certificate> convertCertificateHolders(Collection<? extends X509CertificateHolder> certs)
+            throws CryptoException {
+
+        ArrayList<X509Certificate> convertedCerts = new ArrayList<>();
+
+        if (certs == null) {
+            return convertedCerts;
+        }
+
+        for (X509CertificateHolder cert : certs) {
+            convertedCerts.add(convertCertificate(cert));
+        }
+
+        return convertedCerts;
+    }
+
+    /**
+     * Convert the supplied X509CertificateHolder object into an X509Certificate object.
+     *
+     * @param certIn The X509CertificateHolder object
+     * @return The converted X509Certificate object
+     * @throws CryptoException A problem occurred during the conversion
+     */
+    public static X509Certificate convertCertificate(X509CertificateHolder certIn) throws CryptoException {
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
+            ByteArrayInputStream bais = new ByteArrayInputStream(certIn.getEncoded());
+            return (X509Certificate) cf.generateCertificate(bais);
+        } catch (CertificateException | IOException e) {
             throw new CryptoException(res.getString("NoConvertCertificate.exception.message"), e);
         }
     }
@@ -622,7 +662,7 @@ public final class X509CertUtil {
         return establishTrust(cert, ksCerts);
     }
 
-    private static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> compCerts)
+    public static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> compCerts)
             throws CryptoException {
         /*
          * Check whether or not a trust path exists between the supplied X.509

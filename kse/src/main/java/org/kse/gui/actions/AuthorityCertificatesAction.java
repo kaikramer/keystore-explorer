@@ -95,7 +95,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
         return windowsTrustedRootCertificates;
     }
 
-    private KeyStore loadCaCertificatesKeyStore() {
+    protected KeyStore loadCaCertificatesKeyStore() {
         File caCertificatesFile = new File(preferences.getCaCertsSettings().getCaCertificatesFile());
 
         KeyStore caCertificatesKeyStore = null;
