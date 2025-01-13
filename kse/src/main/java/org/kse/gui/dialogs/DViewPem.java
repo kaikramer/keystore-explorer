@@ -53,6 +53,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
@@ -61,6 +62,7 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.publickey.OpenSslPubUtil;
+import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
@@ -93,6 +95,7 @@ public class DViewPem extends JEscDialog {
     private PKCS10CertificationRequest pkcs10Csr;
     private PrivateKey privKey;
     private PublicKey pubKey;
+    private CMSSignedData cms;
 
     /**
      * Creates a new DViewPem dialog.
@@ -200,6 +203,20 @@ public class DViewPem extends JEscDialog {
         initComponents();
     }
 
+    /**
+     * Creates new DViewPem dialog where the parent is a dialog.
+     *
+     * @param parent Parent dialog
+     * @param title  The dialog title
+     * @param cms    CMS data to display encoding for
+     * @throws CryptoException
+     */
+    public DViewPem(JDialog parent, String title, CMSSignedData cms) throws CryptoException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.cms = cms;
+        initComponents();
+    }
+
     private void initComponents() throws CryptoException {
         jbOK = new JButton(res.getString("DViewPem.jbOK.text"));
 
@@ -277,6 +294,8 @@ public class DViewPem extends JEscDialog {
             return Pkcs8Util.getPem(privKey);
         } else if (pubKey != null) {
             return OpenSslPubUtil.getPem(pubKey);
+        } else if (cms != null) {
+            return CmsUtil.getPem(cms);
         }
 
         return "";
