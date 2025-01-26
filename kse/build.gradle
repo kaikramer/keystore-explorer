@@ -111,7 +111,7 @@ configurations {
 }
 
 dependencies {
-	implementation('org.bouncycastle:bcpkix-jdk18on:1.78.1')
+	implementation('org.bouncycastle:bcpkix-jdk18on:1.80')
 	implementation('commons-io:commons-io:2.15.1')
 	implementation('com.miglayout:miglayout-swing:11.3')
 	implementation('com.formdev:flatlaf:3.4.1')
