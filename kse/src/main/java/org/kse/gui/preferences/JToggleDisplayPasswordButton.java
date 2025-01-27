@@ -19,6 +19,8 @@
  */
 package org.kse.gui.preferences;
 
+import java.util.ResourceBundle;
+
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 
@@ -26,6 +28,8 @@ import javax.swing.JPasswordField;
  * Button to toggle the visibility of an associated password field.
  */
 public class JToggleDisplayPasswordButton extends JButton {
+	private static final long serialVersionUID = 3222235201966932207L;
+	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
     private final JPasswordField passwordField;
     private boolean visible = false;
 
@@ -34,7 +38,7 @@ public class JToggleDisplayPasswordButton extends JButton {
      * @param passwordField the password field to toggle the visibility of
      */
     public JToggleDisplayPasswordButton(JPasswordField passwordField) {
-        super("Show");
+        super(res.getString("DPreferences.storedPasswords.jtdPasswordButton.show.text"));
         this.passwordField = passwordField;
         initializeButtonBehavior();
     }
@@ -43,11 +47,11 @@ public class JToggleDisplayPasswordButton extends JButton {
         this.addActionListener(e -> {
             if (visible) {
                 passwordField.setEchoChar('•');
-                setText("Show");
+                setText(res.getString("DPreferences.storedPasswords.jtdPasswordButton.show.text"));
             } else {
                 // show plain text
                 passwordField.setEchoChar((char) 0);
-                setText("Hide");
+                setText(res.getString("DPreferences.storedPasswords.jtdPasswordButton.hide.text"));
             }
             visible = !visible;
         });

@@ -21,6 +21,7 @@ package org.kse.gui.preferences;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
@@ -29,6 +30,8 @@ import javax.swing.JPasswordField;
  * Special JButton to copy the content of an associated password field.
  */
 public class JCopyPasswordButton extends JButton {
+	private static final long serialVersionUID = 8233303153730253088L;
+	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
     private final JPasswordField passwordField;
 
     /**
@@ -36,7 +39,7 @@ public class JCopyPasswordButton extends JButton {
      * @param passwordField the associated password field for the copy operation
      */
     public JCopyPasswordButton(JPasswordField passwordField) {
-        super("Copy");
+        super(res.getString("DPreferences.storedPasswords.jCopyPasswordButton.text"));
         this.passwordField = passwordField;
         initializeButtonBehavior();
     }
