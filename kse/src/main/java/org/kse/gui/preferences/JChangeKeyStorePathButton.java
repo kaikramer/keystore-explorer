@@ -21,6 +21,7 @@ package org.kse.gui.preferences;
 
 import java.io.File;
 import java.security.KeyStore;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -37,6 +38,8 @@ import org.kse.gui.passwordmanager.PasswordManager;
  * Button to update the keystore file path of an associated text field.
  */
 public class JChangeKeyStorePathButton extends JButton {
+	private static final long serialVersionUID = 1324616391135888291L;
+	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
     private final JTextField keystorePathField;
     private final PasswordManager passwordManager;
 
@@ -47,7 +50,7 @@ public class JChangeKeyStorePathButton extends JButton {
      * @param passwordManager   The password manager to update the keystore file path with
      */
     public JChangeKeyStorePathButton(JTextField keystorePathField, PasswordManager passwordManager) {
-        super("Change...");
+        super(res.getString("DPreferences.storedPasswords.changeKeyStore.button.text"));
         this.keystorePathField = keystorePathField;
         this.passwordManager = passwordManager;
         this.addActionListener(e -> {
@@ -65,9 +68,9 @@ public class JChangeKeyStorePathButton extends JButton {
 
         JFileChooser chooser = FileChooserFactory.getKeyStoreFileChooser();
         chooser.setCurrentDirectory(oldPath.getParentFile());
-        chooser.setDialogTitle("Select KeyStore File");
+        chooser.setDialogTitle(res.getString("DPreferences.storedPasswords.changeKeyStore.chooser.title"));
         chooser.setMultiSelectionEnabled(false);
-        chooser.setApproveButtonText("Select");
+        chooser.setApproveButtonText(res.getString("DPreferences.storedPasswords.changeKeyStore.chooser.button"));
 
         int rtnValue = chooser.showOpenDialog(this.getParent());
         if (rtnValue == JFileChooser.APPROVE_OPTION) {
@@ -77,32 +80,32 @@ public class JChangeKeyStorePathButton extends JButton {
                 return;
             }
 
-            if (passwordManager.isKeyStorePasswordKnown(newPath)) {
-                JOptionPane.showMessageDialog(this.getParent(),
-                                              "The selected KeyStore file is already stored in the password manager.",
-                                              "KeyStore file already in password manager",
-                                              JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+			if (passwordManager.isKeyStorePasswordKnown(newPath)) {
+				JOptionPane.showMessageDialog(this.getParent(),
+						res.getString("DPreferences.storedPasswords.changeKeyStore.ksPwdKnown.msg"),
+						res.getString("DPreferences.storedPasswords.changeKeyStore.ksPwdKnown.tit"),
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 
             passwordManager.getKeyStorePassword(oldPath).ifPresent(password -> {
                 try {
                     KeyStore keyStore = KeyStoreUtil.load(newPath, new Password(password));
 
-                    if (keyStore == null) {
-                        JOptionPane.showMessageDialog(this.getParent(),
-                                                      "File does not seem to be a keystore.",
-                                                      "Error opening KeyStore",
-                                                      JOptionPane.ERROR_MESSAGE);
-                    }
+					if (keyStore == null) {
+						JOptionPane.showMessageDialog(this.getParent(),
+								res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.err.msg"),
+								res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.err.tit"),
+								JOptionPane.ERROR_MESSAGE);
+					}
 
                     keystorePathField.setText(newPath.getAbsolutePath());
                     passwordManager.updateKeyStoreFilePath(oldPath, newPath);
                 } catch (Exception e1) {
-                    JOptionPane.showMessageDialog(this.getParent(),
-                                                  "Cannot open keystore with the password stored for the old path.",
-                                                  "Error opening KeyStore",
-                                                  JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this.getParent(),
+							res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.ex.msg"),
+							res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.ex.tit"),
+							JOptionPane.ERROR_MESSAGE);
                 }
             });
         }

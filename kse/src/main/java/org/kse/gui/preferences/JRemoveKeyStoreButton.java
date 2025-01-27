@@ -22,6 +22,7 @@ package org.kse.gui.preferences;
 import static javax.swing.JOptionPane.showConfirmDialog;
 
 import java.io.File;
+import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -34,6 +35,8 @@ import org.kse.utilities.Callback;
  * Button to remove the keystore file path of an associated text field from the password manager.
  */
 public class JRemoveKeyStoreButton extends JButton {
+	private static final long serialVersionUID = -4827685790679405898L;
+	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
     private final JTextField keystorePathField;
     private final PasswordManager passwordManager;
     private final Callback updateFormFields;
@@ -47,7 +50,7 @@ public class JRemoveKeyStoreButton extends JButton {
      */
     public JRemoveKeyStoreButton(JTextField keystorePathField, PasswordManager passwordManager,
                                  Callback updateFormFields) {
-        super("Remove...");
+        super(res.getString("DPreferences.storedPasswords.removeKeyStore.button.text"));
         this.keystorePathField = keystorePathField;
         this.passwordManager = passwordManager;
         this.updateFormFields = updateFormFields;
@@ -55,15 +58,14 @@ public class JRemoveKeyStoreButton extends JButton {
     }
 
     private void removeKeyStoreFromPasswordManager() {
-        int selected = showConfirmDialog(this.getParent(),
-                                         "Do you really want to remove the passwords for this keystore from the " +
-                                         "password manager?",
-                                         "Remove KeyStore",
-                                         JOptionPane.YES_NO_OPTION);
+		int selected = showConfirmDialog(this.getParent(),
+				res.getString("DPreferences.storedPasswords.removeKeyStore.confirm.msg"),
+				res.getString("DPreferences.storedPasswords.removeKeyStore.confirm.title"),
+				JOptionPane.YES_NO_OPTION);
 
-        if (selected != JOptionPane.YES_OPTION) {
-            return;
-        }
+		if (selected != JOptionPane.YES_OPTION) {
+			return;
+		}
 
         passwordManager.removeKeyStore(new File(keystorePathField.getText()));
 

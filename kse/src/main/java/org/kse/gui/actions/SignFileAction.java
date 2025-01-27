@@ -159,7 +159,9 @@ public class SignFileAction extends KeyStoreExplorerAction {
             try (OutputStream os = new FileOutputStream(outputFile)) {
                 os.write(encoded);
             }
-
+            JOptionPane.showMessageDialog(frame, res.getString("SignFileAction.SignFileSuccessful.message"),
+                    res.getString("SignFileAction.SignFile.Title"),
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
