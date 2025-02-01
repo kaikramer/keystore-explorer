@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2025 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -94,7 +94,7 @@ public class DViewJwt extends JEscDialog {
     private JLabel jlPublicKey;
     private JTextArea jtaPublicKey;
     private JScrollPane jspPublicKey;
-    
+
     private JButton jbCopy;
     private JButton jbOK;
     private JButton jbVerify;
@@ -199,7 +199,7 @@ public class DViewJwt extends JEscDialog {
         pane.add(jspEncoded, "width 400lp:400lp:400lp, height 200lp:200lp:200lp");
         pane.add(jlPublicKey, "");
         pane.add(jspPublicKey, "width 400lp:400lp:400lp, height 200lp:200lp:200lp, wrap");
-        
+
         jpButtons = PlatformUtil.createDialogButtonPanel(jbCopy, jbVerify, "insets 0");
 
         pane.add(jpButtons, "right, spanx");
@@ -271,7 +271,7 @@ public class DViewJwt extends JEscDialog {
         }
         return dataAsBytes;
     }
-    
+
     private void verifyPressed() {
         String data = jtaPublicKey.getText();
         if (data.isEmpty()) {

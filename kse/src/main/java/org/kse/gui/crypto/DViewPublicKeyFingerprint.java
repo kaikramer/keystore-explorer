@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2025 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -92,7 +92,7 @@ public class DViewPublicKeyFingerprint extends JEscDialog {
     private JScrollPane jspBase64Fingerprint;
     private JLabel jlBase64Fingerprint;
     private JTextArea jtaBase64Fingerprint;
-    
+
     private PublicKey publicKey;
     private PublicKeyFingerprintAlgorithm fingerprintAlg;
     private String fingerprint;
@@ -160,7 +160,7 @@ public class DViewPublicKeyFingerprint extends JEscDialog {
 		jtaBase64Fingerprint = newJtaFingerprint("DViewPublicKeyFingerprint.jtaBase64Fingerprint.tooltip");
 		jspBase64Fingerprint = PlatformUtil.createScrollPane(jtaBase64Fingerprint,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
+
 		Container pane = getContentPane();
 		pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
 		pane.add(jlFingerprint, "");
@@ -215,7 +215,7 @@ public class DViewPublicKeyFingerprint extends JEscDialog {
 		});
 		return jtaFingerprint;
 	}
-	
+
 	private void populateFingerprint() {
 		if (publicKey != null) {
 			try {

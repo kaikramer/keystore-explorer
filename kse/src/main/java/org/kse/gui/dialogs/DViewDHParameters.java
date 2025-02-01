@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2025 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -113,7 +113,7 @@ public class DViewDHParameters extends JEscDialog {
 
 		jspAreaPem = PlatformUtil.createScrollPane(jtAreaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		
+
         jbExport = new JButton(res.getString("DViewDHParameters.jbExport.export.text"));
         jbExport.setToolTipText(res.getString("DViewDHParameters.jbExport.export.tooltip"));
         PlatformUtil.setMnemonic(jbExport, res.getString("DViewDHParameters.jbExport.mnemonic").charAt(0));

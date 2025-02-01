@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2025 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -322,7 +322,7 @@ public class DSignFile extends JEscDialog {
 
     /**
      * Get the chosen detached signature setting
-     * 
+     *
      * @return <b>boolean</b> detached signature setting
      */
     public boolean isDetachedSignature() {

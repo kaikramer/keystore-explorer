@@ -1,6 +1,6 @@
 /*
  * Copyright 2004 - 2013 Wayne Grant
- *           2013 - 2024 Kai Kramer
+ *           2013 - 2025 Kai Kramer
  *
  * This file is part of KeyStore Explorer.
  *
@@ -174,7 +174,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
 		pane.add(new JSeparator(), "spanx, growx, wrap");
 		pane.add(jpButtons, "spanx, tag ok");
-        
+
         setTitle(MessageFormat.format(res.getString("DViewCertificateFingerprint.Title"), fingerprintAlg.friendly()));
         setResizable(true);
 
@@ -193,7 +193,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 
         populateFingerprint();
     }
-    
+
 	private JTextArea newJtaFingerprint(String toolTipText) {
 		JTextArea jtaFingerprint = new JTextArea();
 		jtaFingerprint.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
@@ -215,7 +215,7 @@ public class DViewCertificateFingerprint extends JEscDialog {
 		});
 		return jtaFingerprint;
 	}
-    
+
 	private void populateFingerprint() {
 		if (encodedCertificate != null) {
 			try {
