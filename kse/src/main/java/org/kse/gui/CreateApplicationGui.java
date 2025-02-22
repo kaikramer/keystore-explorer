@@ -32,9 +32,7 @@ import javax.swing.SwingUtilities;
 
 import org.kse.AuthorityCertificates;
 import org.kse.KSE;
-import org.kse.crypto.jcepolicy.JcePolicyUtil;
 import org.kse.gui.actions.CheckUpdateAction;
-import org.kse.gui.crypto.DUpgradeCryptoStrength;
 import org.kse.gui.dnd.DroppedFileHandler;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.data.KsePreferences;
@@ -76,14 +74,6 @@ public class CreateApplicationGui implements Runnable {
             }
 
             initLookAndFeel(ksePreferences);
-
-            // try to remove crypto restrictions
-            JcePolicyUtil.removeRestrictions();
-
-            // if crypto strength still limited, start upgrade assistant
-            if (JcePolicyUtil.isLocalPolicyCrytoStrengthLimited()) {
-                upgradeCryptoStrength();
-            }
 
             final KseFrame kseFrame = new KseFrame();
 
@@ -190,33 +180,6 @@ public class CreateApplicationGui implements Runnable {
         }
 
         return true;
-    }
-
-    private void upgradeCryptoStrength() {
-        JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.UpgradeRequired.message"),
-                                      KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-
-        DUpgradeCryptoStrength dUpgradeCryptoStrength = new DUpgradeCryptoStrength(new JFrame());
-        dUpgradeCryptoStrength.setLocationRelativeTo(null);
-        dUpgradeCryptoStrength.setVisible(true);
-
-        if (dUpgradeCryptoStrength.hasCryptoStrengthBeenUpgraded()) {
-            // Crypto strength upgraded - restart required to take effect
-            JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.Upgraded.message"),
-                                          KSE.getApplicationName(), JOptionPane.INFORMATION_MESSAGE);
-
-            KseRestart.restart();
-            System.exit(0);
-        } else if (dUpgradeCryptoStrength.hasCryptoStrengthUpgradeFailed()) {
-            // Manual install instructions have already been displayed
-            System.exit(1);
-        } else {
-            // Crypto strength not upgraded - exit as upgrade required
-            JOptionPane.showMessageDialog(new JFrame(), res.getString("CryptoStrengthUpgrade.NotUpgraded.message"),
-                                          KSE.getApplicationName(), JOptionPane.WARNING_MESSAGE);
-
-            System.exit(1);
-        }
     }
 
     private void integrateWithMacOs(KseFrame kseFrame)
