@@ -39,13 +39,21 @@ type
                            pname: cstring, lname: cstring, javaargs: uint8, cpwildcard: uint8, javaw: uint8,
                            ergo: cint): cint {.gcsafe, stdcall.}
 
+    SplashInitProc = proc(): cint {.gcsafe, stdcall.}
+    SplashLoadFileProc = proc(filename: cstring): cint {.gcsafe, stdcall.}
+    SplashSetFileJarName = proc(filename: cstring, jarname: cstring): cint {.gcsafe, stdcall.}
+    SplashCloseProc = proc() {.gcsafe, stdcall.}
+
 const
+    SPLASH_FILE = "splash.png"
     MB_ICONERROR = 0x00000010.DWORD
     MB_ICONWARNING = 0x00000030.DWORD
     MB_ICONINFO = 0x00000040.DWORD
     MB_ICONQUESTION = 0x00000020.DWORD
     JNI_TRUE = 1.uint8
     JNI_FALSE = 0.uint8
+    LOAD_LIBRARY_SEARCH_USER_DIRS = 0x00000400.DWORD
+    LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000.DWORD
 
 proc showMessageBox*(hWnd: HWND, lpText: LPCSTR, lpCaption: LPCSTR, uType: UINT): int32
     {.discardable, stdcall, dynlib: "user32", importc: "MessageBoxA".}
@@ -53,6 +61,14 @@ proc showMessageBox*(hWnd: HWND, lpText: LPCSTR, lpCaption: LPCSTR, uType: UINT)
 proc setCurrentProcessExplicitAppUserModelID*(appId: PCWSTR): int32
     {.discardable, stdcall, dynlib: "shell32", importc: "SetCurrentProcessExplicitAppUserModelID".}
 
+proc setDllDirectory*(lpPathName: LPWSTR): bool
+    {.discardable, stdcall, dynlib: "kernel32", importc: "SetDllDirectoryW".}
+
+proc addDllDirectory*(newDirectory: LPWSTR): PCWSTR
+    {.discardable, stdcall, dynlib: "kernel32", importc: "AddDllDirectory".}
+
+proc loadLibraryEx*(lpLibFileName: LPWSTR, hFile: Handle, dwFlags: DWORD): HANDLE
+    {.discardable, stdcall, dynlib: "kernel32", importc: "LoadLibraryExW".}
 
 proc getJavaHome(): string =
     let libHandle: LibHandle = loadLib("JavaInfo.dll")
@@ -77,6 +93,7 @@ proc getJavaHome(): string =
 
 
 proc is64BitDll(filePath: string): bool =
+    # loading JavaInfo.dll again should be avoided, but this happens only when no Java installation is found
     let libHandle: LibHandle = loadLib("JavaInfo.dll")
     if libHandle.isNil:
         showMessageBox(0, "Error loading JavaInfo.dll!\nIt has to be in the same folder as kse.exe!", "Error", MB_ICONERROR)
@@ -97,18 +114,72 @@ proc is64BitDll(filePath: string): bool =
     unloadLib(libHandle)
 
 
-proc getJliDllPath(): string =
+proc showSplashScreen(jdkDllBaseDir: string, imagePath: string) =
+    # Load splashscreen.dll before invoking JLI launch, see comments in https://bugs.openjdk.org/browse/JDK-8250611
+    let splashDllPath = jdkDllBaseDir & DirSep & "splashscreen.dll"
+    let splashDllHandle: LibHandle = cast[LibHandle](loadLibraryEx(splashDllPath.newWideCString(),
+                                                                    cast[HANDLE](nil),
+                                                                    LOAD_LIBRARY_SEARCH_DEFAULT_DIRS or LOAD_LIBRARY_SEARCH_USER_DIRS))
+
+    let splashInit = cast[SplashInitProc](symAddr(splashDllHandle, "SplashInit"))
+    let splashLoadFile = cast[SplashLoadFileProc](symAddr(splashDllHandle, "SplashLoadFile"))
+    let splashSetFileJarName  = cast[SplashSetFileJarName](symAddr(splashDllHandle, "SplashSetFileJarName"))
+    let splashClose = cast[SplashCloseProc](symAddr(splashDllHandle, "SplashClose"))
+
+    if splashInit == nil or splashLoadFile == nil or splashClose == nil:
+        showMessageBox(0, "Failed to load required splash screen functions!", "Error", MB_ICONERROR)
+        unloadLib(splashDllHandle)
+        return
+
+    if splashInit() == 0:
+        showMessageBox(0, "Failed to initialize splash screen!", "Error", MB_ICONERROR)
+        unloadLib(splashDllHandle)
+        return
+
+    if splashLoadFile(imagePath.cstring) == 0:
+        showMessageBox(0, ("Failed to load splash image: " & imagePath).cstring, "Error", MB_ICONERROR)
+        unloadLib(splashDllHandle)
+        return
+
+
+proc addDllDirectories(jreBinDir: string) =
+    if setDllDirectory(jreBinDir.newWideCString()) == false:
+        showMessageBox(0, "Could not set directory for DLL search path!", "Error Loading DLL", MB_ICONERROR)
+        quit(1)
+
+    let serverDir = jreBinDir & DirSep & "server"
+    if dirExists(serverDir):
+        if addDllDirectory(serverDir.newWideCString()) == nil:
+            showMessageBox(0, "Could not add directory to DLL search path!", "Error Loading DLL", MB_ICONERROR)
+            quit(1)
+        return
+
+    # IBM ...
+    let defaultDir = jreBinDir & DirSep & "default"
+    if dirExists(defaultDir):
+        if addDllDirectory(defaultDir.newWideCString()) == nil:
+            showMessageBox(0, "Could not add directory to DLL search path!", "Error Loading DLL", MB_ICONERROR)
+            quit(1)
+        return
+
+
+proc loadJliLibrary(): LibHandle =
     let localJrePath = getAppDir() & DirSep & "jre"
+    let jliDllPath =
+        if dirExists(localJrePath):
+             localJrePath & DirSep & "bin" & DirSep & "jli.dll"
+         else:
+             getJavaHome() & DirSep & "bin" & DirSep & "jli.dll"
+    let jdkDllBaseDir: string = parentDir(jliDllPath)
 
-    if dirExists(localJrePath):
-        result = localJrePath & DirSep & "bin" & DirSep & DirSep & "jli.dll"
-    else:
-        result = getJavaHome() & DirSep & "bin" & DirSep & DirSep & "jli.dll"
+    # Add the directories containing JVM DLLs to the search path for this application
+    addDllDirectories(jdkDllBaseDir)
 
+    showSplashScreen(jdkDllBaseDir, getAppDir() & DirSep & SPLASH_FILE)
 
-proc callJliLaunch() =
-    let jliDllPath = getJliDllPath()
-    let jliDllHandle: LibHandle = loadLib(jliDllPath)
+    let jliDllHandle: LibHandle = cast[LibHandle](loadLibraryEx(jliDllPath.newWideCString(),
+                                                                cast[HANDLE](nil),
+                                                                LOAD_LIBRARY_SEARCH_DEFAULT_DIRS))
     if jliDllHandle.isNil:
         if not is64BitDll(jliDllPath):
             let errMsg = cstring(jliDllPath & " is a 32 bit Java runtime.\nPlease install a 64 bit JRE!")
@@ -117,6 +188,12 @@ proc callJliLaunch() =
         else:
             showMessageBox(0, "Could not load jli.dll!", "Error Loading DLL", MB_ICONERROR)
             quit(1)
+
+    result = jliDllHandle
+
+
+proc callJliLaunch() =
+    let jliDllHandle = loadJliLibrary()
 
     let jliLaunch: JliLaunchProc = cast[JliLaunchProc](symAddr(jliDllHandle, "JLI_Launch"))
     if jliLaunch.isNil:
