@@ -112,16 +112,16 @@ configurations {
 
 dependencies {
 	implementation('org.bouncycastle:bcpkix-jdk18on:1.80')
-	implementation('commons-io:commons-io:2.15.1')
-	implementation('com.miglayout:miglayout-swing:11.3')
-	implementation('com.formdev:flatlaf:3.4.1')
-	implementation('com.formdev:flatlaf-extras:3.4.1')
-	implementation('com.nimbusds:nimbus-jose-jwt:9.37.2')
-	implementation('org.violetlib:vaqua:11')
+	implementation('commons-io:commons-io:2.17.0')
+	implementation('com.miglayout:miglayout-swing:11.4.2')
+	implementation('com.formdev:flatlaf:3.5.2')
+	implementation('com.formdev:flatlaf-extras:3.5.2')
+	implementation('com.nimbusds:nimbus-jose-jwt:9.41.1')
+	implementation('org.violetlib:vaqua:12')
 	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
 	implementation('org.openjdk.nashorn:nashorn-core:15.4')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.17.0')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.17.0')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.17.2')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.17.2')
 
 	if (gradle.startParameter.taskNames.any { ['innosetup', 'zip'].contains(it) }) {
 		implementation('org.openjfx:javafx-base:17.0.9:win')
@@ -152,11 +152,11 @@ dependencies {
 
 	appbundler('com.evolvedbinary.appbundler:appbundler:1.3.1')
 
-	testImplementation('org.assertj:assertj-core:3.25.1')
+	testImplementation('org.assertj:assertj-core:3.26.3')
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.10.1')
 	testImplementation('org.junit.jupiter:junit-jupiter-params:5.10.1')
 	testImplementation('org.skyscreamer:jsonassert:1.5.3')
-	testImplementation('org.mockito:mockito-core:5.14.1')
+	testImplementation('org.mockito:mockito-core:5.14.2')
 	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.10.1')
 	testRuntimeOnly('org.junit.platform:junit-platform-launcher')
 }
