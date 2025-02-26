@@ -69,7 +69,7 @@ public class KsePreferences {
     private Pkcs12EncryptionSetting pkcs12EncryptionSetting = Pkcs12EncryptionSetting.strong;
     private int serialNumberLengthInBytes = 20;
     private Map<String, String> properties = new HashMap<>() {{
-        put("sun.java2d.noddraw", "true");
+        put("sun.java2d.d3d.onscreen", "false");
     }};
 
     // auto-generated getters/setters
