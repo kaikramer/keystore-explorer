@@ -22,6 +22,9 @@ package org.kse;
 import java.awt.Toolkit;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.security.Provider;
 import java.security.Security;
 import java.text.MessageFormat;
@@ -84,6 +87,7 @@ public class KSE {
                 fixAppClassName();
             }
 
+            // Set the install directory property (this is used for restarts and in some cases to find the config file)
             setInstallDirProperty();
 
             KsePreferences preferences = PreferencesManager.getPreferences();
@@ -154,8 +158,17 @@ public class KSE {
     }
 
     private static void setInstallDirProperty() {
-        // Use this for restarts; install directory is always user.dir, but we change user.dir in CurrentDirectory class
-        System.setProperty(KseRestart.KSE_INSTALL_DIR, System.getProperty("user.dir"));
+        try {
+            // kse.jar and kse.exe have to be in the same directory, so we can use the jar file's location
+            URL url = KSE.class.getProtectionDomain().getCodeSource().getLocation();
+            String jarDir = Paths.get(url.toURI()).getParent().toAbsolutePath().toString();
+
+            // see KseRestart.java for how this property is used
+            System.setProperty(KseRestart.KSE_INSTALL_DIR, jarDir);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            System.setProperty(KseRestart.KSE_INSTALL_DIR, System.getProperty("user.dir"));
+        }
     }
 
     private static void setCurrentDirectory(String currentDir) {
