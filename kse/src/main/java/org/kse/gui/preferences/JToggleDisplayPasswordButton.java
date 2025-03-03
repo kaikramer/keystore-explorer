@@ -46,7 +46,7 @@ public class JToggleDisplayPasswordButton extends JButton {
     private void initializeButtonBehavior() {
         this.addActionListener(e -> {
             if (visible) {
-                passwordField.setEchoChar('•');
+                passwordField.setEchoChar('\u2022'); // Unicode Bullet
                 setText(res.getString("DPreferences.storedPasswords.jtdPasswordButton.show.text"));
             } else {
                 // show plain text
