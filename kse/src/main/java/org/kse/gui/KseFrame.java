@@ -2350,9 +2350,16 @@ public final class KseFrame implements StatusBar {
 
         JTable jtKeyStore = getActiveKeyStoreTable();
 
-        // TODO JW - pop up the menu on the correct row.
+        // Pops up the menu at the selected row, unless the row is not visible,
+        // then it uses the origin of the JTable.
         int row = jtKeyStore.getSelectedRow();
-        showKeyStoreContextMenu(jtKeyStore, row, jtKeyStore.getX(), jtKeyStore.getY());
+        Rectangle visibleRect = jtKeyStore.getVisibleRect();
+        Rectangle cellRect = jtKeyStore.getCellRect(row, 0, true);
+        int y = visibleRect.y;
+        if (cellRect.y > y && cellRect.y < y + visibleRect.height) {
+            y = cellRect.y;
+        }
+        showKeyStoreContextMenu(jtKeyStore, row, jtKeyStore.getX(), y);
 
         // Selection changed - update edit controls
         updateCutCopyPasteControls();
