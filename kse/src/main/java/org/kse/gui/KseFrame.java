@@ -36,6 +36,7 @@ import java.awt.Toolkit;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -549,6 +550,7 @@ public final class KseFrame implements StatusBar {
     private static final String COPY_KEY = "COPY_KEY";
     private static final String PASTE_KEY = "PASTE_KEY";
     private static final String RENAME_KEY = "RENAME_KEY";
+    private static final String CONTEXT_MENU_KEY = "CONTEXT_MENU_KEY";
 
     public KseFrame() {
         initComponents();
@@ -1535,6 +1537,17 @@ public final class KseFrame implements StatusBar {
             updateControls(false);
         });
 
+        jkstpKeyStores.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.SHIFT_DOWN_MASK, true), CONTEXT_MENU_KEY);
+        jkstpKeyStores.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, 0, true), CONTEXT_MENU_KEY);
+        jkstpKeyStores.getActionMap().put(CONTEXT_MENU_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maybeShowKeyStoreTabPopup();
+            }
+        });
+
         jkstpKeyStores.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -1609,6 +1622,17 @@ public final class KseFrame implements StatusBar {
 
         jtKeyStore.getInputMap().put((KeyStroke) renameKeyPairAction.getValue(Action.ACCELERATOR_KEY), RENAME_KEY);
         jtKeyStore.getActionMap().put(RENAME_KEY, renameKeyPairAction);
+
+        jtKeyStore.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.SHIFT_DOWN_MASK, true), CONTEXT_MENU_KEY);
+        jtKeyStore.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, 0, true), CONTEXT_MENU_KEY);
+        jtKeyStore.getActionMap().put(CONTEXT_MENU_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                maybeShowSelectedEntryPopupMenu();
+            }
+        });
 
         // open keystore entry details when user presses enter key
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
@@ -2310,48 +2334,9 @@ public final class KseFrame implements StatusBar {
         Point point = new Point(evt.getX(), evt.getY());
         int row = jtKeyStore.rowAtPoint(point);
 
-        KeyStoreType type = KeyStoreType.resolveJce(
-                getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType());
-
         if (evt.isPopupTrigger()) {
 
-            if (row != -1) {
-
-                if (jtKeyStore.getSelectedRows().length > 1) {
-                    jpmMultiEntrySel.show(evt.getComponent(), evt.getX(), evt.getY());
-                } else {
-                    jtKeyStore.setRowSelectionInterval(row, row);
-
-                    if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
-
-                        // For KeyStore types that support password protected entries...
-                        if (type.hasEntryPasswords()) {
-                            // Only allow unlocking from menu if entry is currently locked
-                            boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
-                            unlockKeyPairAction.setEnabled(locked);
-                        }
-
-                        jpmKeyPair.show(evt.getComponent(), evt.getX(), evt.getY());
-
-                    } else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
-
-                        jpmTrustedCertificate.show(evt.getComponent(), evt.getX(), evt.getY());
-
-                    } else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_ENTRY)) {
-
-                        // For KeyStore types that support password protected entries...
-                        if (type.hasEntryPasswords()) {
-                            // Only allow unlocking from menu if entry is currently locked
-                            boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
-                            unlockKeyAction.setEnabled(locked);
-                        }
-
-                        jpmKey.show(evt.getComponent(), evt.getX(), evt.getY());
-                    }
-                }
-            } else {
-                jpmKeyStore.show(evt.getComponent(), evt.getX(), evt.getY());
-            }
+            showKeyStoreContextMenu(jtKeyStore, row, evt.getX(), evt.getY());
         } else if (evt.getClickCount() > 1 && row == -1) {
             // double click on free space opens generate key pair dialog
             generateKeyPairAction.generateKeyPair();
@@ -2359,6 +2344,68 @@ public final class KseFrame implements StatusBar {
 
         // Selection changed - update edit controls
         updateCutCopyPasteControls();
+    }
+
+    private void maybeShowSelectedEntryPopupMenu() {
+
+        JTable jtKeyStore = getActiveKeyStoreTable();
+
+        // Pops up the menu at the selected row, unless the row is not visible,
+        // then it uses the origin of the JTable.
+        int row = jtKeyStore.getSelectedRow();
+        Rectangle visibleRect = jtKeyStore.getVisibleRect();
+        Rectangle cellRect = jtKeyStore.getCellRect(row, 0, true);
+        int y = visibleRect.y;
+        if (cellRect.y > y && cellRect.y < y + visibleRect.height) {
+            y = cellRect.y;
+        }
+        showKeyStoreContextMenu(jtKeyStore, row, jtKeyStore.getX(), y);
+
+        // Selection changed - update edit controls
+        updateCutCopyPasteControls();
+    }
+
+    private void showKeyStoreContextMenu(JTable jtKeyStore, int row, int x, int y) {
+        if (row != -1) {
+
+            KeyStoreType type = KeyStoreType
+                    .resolveJce(getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType());
+
+            if (jtKeyStore.getSelectedRows().length > 1) {
+                jpmMultiEntrySel.show(jtKeyStore, x, y);
+            } else {
+                jtKeyStore.setRowSelectionInterval(row, row);
+
+                if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
+
+                    // For KeyStore types that support password protected entries...
+                    if (type.hasEntryPasswords()) {
+                        // Only allow unlocking from menu if entry is currently locked
+                        boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
+                        unlockKeyPairAction.setEnabled(locked);
+                    }
+
+                    jpmKeyPair.show(jtKeyStore, x, y);
+
+                } else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
+
+                    jpmTrustedCertificate.show(jtKeyStore, x, y);
+
+                } else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_ENTRY)) {
+
+                    // For KeyStore types that support password protected entries...
+                    if (type.hasEntryPasswords()) {
+                        // Only allow unlocking from menu if entry is currently locked
+                        boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
+                        unlockKeyAction.setEnabled(locked);
+                    }
+
+                    jpmKey.show(jtKeyStore, x, y);
+                }
+            }
+        } else {
+            jpmKeyStore.show(jtKeyStore, x, y);
+        }
     }
 
     private void maybeShowKeyStoreTabPopup(MouseEvent evt) {
@@ -2379,6 +2426,17 @@ public final class KseFrame implements StatusBar {
                 jpmKeyStoreTab.show(evt.getComponent(), evt.getX(), evt.getY());
                 break;
             }
+        }
+    }
+
+    private void maybeShowKeyStoreTabPopup() {
+        int selectedTab = jkstpKeyStores.getSelectedIndex();
+
+        if (selectedTab > -1) {
+            TabbedPaneUI tpu = jkstpKeyStores.getUI();
+            Rectangle rect = tpu.getTabBounds(jkstpKeyStores, selectedTab);
+
+            jpmKeyStoreTab.show(jkstpKeyStores.getSelectedComponent(), rect.x, rect.y);
         }
     }
 
