@@ -20,6 +20,8 @@
 
 package org.kse.utilities.oid;
 
+import java.math.BigInteger;
+
 /**
  * Representation as a string of an oid object
  */
@@ -55,12 +57,12 @@ public class ObjectOid implements Comparable<ObjectOid> {
         String[] a2 = id2.split("\\.");
 
         for (int i = 0; i < a1.length; i++) {
-            Integer i1 = Integer.valueOf(a1[i].trim());
+            BigInteger i1 = new BigInteger(a1[i].trim());
             if (i >= a2.length) {
                 return 1;
             }
-            Integer i2 = Integer.valueOf(a2[i].trim());
-            if (i1.intValue() != i2.intValue()) {
+            BigInteger i2 = new BigInteger(a2[i].trim());
+            if (!i1.equals(i2)) {
                 return i1.compareTo(i2);
             }
         }

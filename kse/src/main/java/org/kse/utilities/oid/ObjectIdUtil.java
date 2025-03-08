@@ -22,9 +22,6 @@ package org.kse.utilities.oid;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
@@ -32,103 +29,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
  * Provides utility methods related to Object Identifiers.
  */
 public class ObjectIdUtil {
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/utilities/oid/resources");
 
     private ObjectIdUtil() {
-    }
-
-    /**
-     * Validate an object identifier. To be valid it must be well-formed and must
-     * contain valid arcs ranges. The first arc must be 0-2, and the second arc must
-     * be 0-39 where the first arc is 0-1 or 0-47 where the first arc is 2.
-     *
-     * @param oid Object identifier
-     * @throws InvalidObjectIdException If object identifier is not valid.
-     */
-    public static void validate(ASN1ObjectIdentifier oid) throws InvalidObjectIdException {
-        int[] arcs = extractArcs(oid);
-
-        validate(arcs);
-    }
-
-    /**
-     * Extract the arcs from an object identifier.
-     *
-     * @param oid Object identifier
-     * @return Arcs
-     * @throws InvalidObjectIdException If object identifier is not a '.' separated
-     *                                  list of non-negative integers
-     */
-    public static int[] extractArcs(ASN1ObjectIdentifier oid) throws InvalidObjectIdException {
-        String oidStr = oid.getId();
-
-        StringTokenizer strTokCnt = new StringTokenizer(oidStr, ".", false);
-        int arcCount = strTokCnt.countTokens();
-
-        StringTokenizer strTok = new StringTokenizer(oidStr, ".", true);
-
-        boolean expectDelimiter = false;
-
-        int[] arcs = new int[arcCount];
-        int i = 0;
-        while (strTok.hasMoreTokens()) {
-            String token = strTok.nextToken();
-
-            if (expectDelimiter && (!token.equals(".") || !strTok.hasMoreTokens())) {
-                throw new InvalidObjectIdException(
-                        res.getString("InvalidOidNotNonNegativeIntSequence.exception.message"));
-            } else if (!expectDelimiter) {
-                try {
-                    arcs[i] = Integer.parseInt(token);
-
-                    if (arcs[i] < 0) {
-                        throw new InvalidObjectIdException(
-                                res.getString("InvalidOidNotNonNegativeIntSequence.exception.message"));
-                    }
-
-                    i++;
-                } catch (NumberFormatException ex) {
-                    throw new InvalidObjectIdException(
-                            res.getString("InvalidOidNotNonNegativeIntSequence.exception.message"));
-                }
-            }
-
-            expectDelimiter = !expectDelimiter;
-        }
-
-        return arcs;
-    }
-
-    private static void validate(int[] arcs) throws InvalidObjectIdException {
-        if (arcs.length < 3) {
-            throw new InvalidObjectIdException(res.getString("InvalidOidMinThreeArcsRequired.exception.message"));
-        }
-
-        int firstArc = -1;
-
-        for (int j = 0; j < arcs.length; j++) {
-            if (j == 0) {
-                firstArc = arcs[0];
-
-                if ((firstArc < 0) || (firstArc > 2)) {
-                    throw new InvalidObjectIdException(res.getString("InvalidOidFirstArc.exception.message"));
-                }
-            } else if (j == 1) {
-                if (firstArc == 0) {
-                    if (arcs[j] > 39) {
-                        throw new InvalidObjectIdException(res.getString("InvalidOidFirstArcZero.exception.message"));
-                    }
-                } else if (firstArc == 1) {
-                    if (arcs[j] > 39) {
-                        throw new InvalidObjectIdException(res.getString("InvalidOidFirstArcOne.exception.message"));
-                    }
-                } else {
-                    if (arcs[j] > 47) {
-                        throw new InvalidObjectIdException(res.getString("InvalidOidFirstArcTwo.exception.message"));
-                    }
-                }
-            }
-        }
     }
 
     private static Map<String, String> oidToNameMapping = new HashMap<>();

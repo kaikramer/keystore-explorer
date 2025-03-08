@@ -125,23 +125,22 @@ public class JObjectIdEditor extends JPanel {
         if (objectId == null) {
             populateSecondArc();
         } else {
-            ObjectIdUtil.validate(objectId);
-            int[] arcs = ObjectIdUtil.extractArcs(objectId);
+            String[] arcs = objectId.getId().split("\\.");
 
-            jcbFirstArc.setSelectedItem(arcs[0]);
-            jcbSecondArc.setSelectedItem(arcs[1]);
+            jcbFirstArc.setSelectedItem(Integer.valueOf(arcs[0]));
+            jcbSecondArc.setSelectedItem(Integer.valueOf(arcs[1]));
 
-            String remainingArcs = "";
+            StringBuilder remainingArcs = new StringBuilder();
 
             for (int i = 2; i < arcs.length; i++) {
-                remainingArcs += arcs[i];
+                remainingArcs.append(arcs[i]);
 
                 if ((i + 1) < arcs.length) {
-                    remainingArcs += ".";
+                    remainingArcs.append(".");
                 }
             }
             loadRemainingArcs(arcs[0] + "." + arcs[1] + ".");
-            jtfRemainingArcs.setSelectedItem(new ObjectOid("", remainingArcs, ""));
+            jtfRemainingArcs.setSelectedItem(new ObjectOid("", remainingArcs.toString(), ""));
         }
     }
 
@@ -180,7 +179,7 @@ public class JObjectIdEditor extends JPanel {
     public ASN1ObjectIdentifier getObjectId() throws InvalidObjectIdException {
         String firstArc = "" + jcbFirstArc.getSelectedItem();
         String secondArc = "" + jcbSecondArc.getSelectedItem();
-        String remainingArcs = "";
+        String remainingArcs;
         Object obj = jtfRemainingArcs.getSelectedItem();
         if (obj instanceof String) {
             remainingArcs = ((String) obj).trim();
@@ -189,11 +188,12 @@ public class JObjectIdEditor extends JPanel {
             remainingArcs = oid.getIdentifier().trim();
         }
 
-        ASN1ObjectIdentifier newObjectId = new ASN1ObjectIdentifier(firstArc + "." + secondArc + "." + remainingArcs);
-        ObjectIdUtil.validate(newObjectId);
-        objectId = newObjectId;
-
-        return objectId;
+        try {
+            objectId = new ASN1ObjectIdentifier(firstArc + "." + secondArc + "." + remainingArcs);
+            return objectId;
+        } catch (IllegalArgumentException e) {
+            throw new InvalidObjectIdException(res.getString("JObjectIdEditor.InvalidOid.exception.message"));
+        }
     }
 
     /**
