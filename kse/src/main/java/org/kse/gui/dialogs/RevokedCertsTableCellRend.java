@@ -17,11 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.kse.gui.dialogs;
 
 import java.awt.Component;
 import java.math.BigInteger;
+import java.security.cert.CRLReason;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -37,6 +40,8 @@ import org.kse.utilities.io.HexUtil;
 public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 
     private static final long serialVersionUID = 1L;
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     /**
      * Returns the rendered cell.
@@ -55,10 +60,17 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
         JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,
                                                                    col);
 
-        if (col == 0) {
-            cell.setText(HexUtil.getHexString((BigInteger) value, "0x", 4, 0));
-        } else {
-            cell.setText(StringUtils.formatDate((Date) value));
+        switch (col)
+        {
+            case RevokedCertsTableModel.COL_SERIAL_NUMBER:
+                cell.setText(HexUtil.getHexString((BigInteger) value, "0x", 4, 0));
+                break;
+            case RevokedCertsTableModel.COL_REVOCATION_DATE:
+                cell.setText(StringUtils.formatDate((Date) value));
+                break;
+            case RevokedCertsTableModel.COL_REASON:
+                cell.setText(res.getString("RevokedCertsTableCellRend." + ((CRLReason) value).name() + ".text"));
+                break;
         }
 
         cell.setBorder(new EmptyBorder(0, 5, 0, 5));

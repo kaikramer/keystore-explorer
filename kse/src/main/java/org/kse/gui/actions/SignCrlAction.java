@@ -191,7 +191,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
 
             for (Map.Entry<BigInteger, RevokedEntry> pair : mapRevokedCertificate.entrySet()) {
                 RevokedEntry entry = pair.getValue();
-                crlGen.addCRLEntry(entry.getUserCertificateSerial(), entry.getRevocationDate(), entry.getReason());
+                crlGen.addCRLEntry(entry.getUserCertificateSerial(), entry.getRevocationDate(), entry.getReason().ordinal());
             }
         }
         JcaX509ExtensionUtils extUtils = new JcaX509ExtensionUtils();

@@ -17,9 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.kse.gui.dialogs;
 
 import java.math.BigInteger;
+import java.security.cert.CRLReason;
 import java.security.cert.X509CRLEntry;
 import java.util.Date;
 import java.util.Iterator;
@@ -29,12 +31,19 @@ import java.util.TreeMap;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.kse.gui.dialogs.sign.RevokedEntry;
+
 /**
  * The table model used to display an array of X.509 CRL entries sorted by
  * serial number.
  */
 public class RevokedCertsTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
+
+    static final int COL_SERIAL_NUMBER = 0;
+    static final int COL_REVOCATION_DATE = 1;
+    static final int COL_REASON = 2;
+    private static final int COLUMN_COUNT = 3;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
@@ -45,9 +54,10 @@ public class RevokedCertsTableModel extends AbstractTableModel {
      * Construct a new RevokedCertsTableModel.
      */
     public RevokedCertsTableModel() {
-        columnNames = new String[2];
-        columnNames[0] = res.getString("RevokedCertsTableModel.SerialNumberColumn");
-        columnNames[1] = res.getString("RevokedCertsTableModel.RevocationDateColumn");
+        columnNames = new String[COLUMN_COUNT];
+        columnNames[COL_SERIAL_NUMBER] = res.getString("RevokedCertsTableModel.SerialNumberColumn");
+        columnNames[COL_REVOCATION_DATE] = res.getString("RevokedCertsTableModel.RevocationDateColumn");
+        columnNames[COL_REASON] = res.getString("RevokedCertsTableModel.ReasonColumn");
 
         data = new Object[0][0];
     }
@@ -64,16 +74,36 @@ public class RevokedCertsTableModel extends AbstractTableModel {
             sortedRevokedCerts.put(revokedCert.getSerialNumber(), revokedCert);
         }
 
-        data = new Object[sortedRevokedCerts.size()][2];
+        data = new Object[sortedRevokedCerts.size()][COLUMN_COUNT];
 
         int i = 0;
         for (Iterator<?> itr = sortedRevokedCerts.entrySet().iterator(); itr.hasNext(); i++) {
             X509CRLEntry x509CrlEntry = (X509CRLEntry) ((Map.Entry<?, ?>) itr.next()).getValue();
 
-            data[i][0] = x509CrlEntry.getSerialNumber();
-            data[i][1] = x509CrlEntry.getRevocationDate();
+            data[i][COL_SERIAL_NUMBER] = x509CrlEntry.getSerialNumber();
+            data[i][COL_REVOCATION_DATE] = x509CrlEntry.getRevocationDate();
+            data[i][COL_REASON] = x509CrlEntry.getRevocationReason();
         }
 
+        fireTableDataChanged();
+    }
+
+    /**
+     * Load the RevokedCertsTableModel with a map of RevokedEntry.
+     *
+     * @param mapRevokedEntry The X.509 CRL entries
+     */
+    public void load(Map<BigInteger, RevokedEntry> mapRevokedEntry) {
+        data = new Object[mapRevokedEntry.size()][COLUMN_COUNT];
+
+        int i = 0;
+        for (Map.Entry<BigInteger, RevokedEntry> pair : mapRevokedEntry.entrySet()) {
+            RevokedEntry entry = pair.getValue();
+            data[i][COL_SERIAL_NUMBER] = entry.getUserCertificateSerial();
+            data[i][COL_REVOCATION_DATE] = entry.getRevocationDate();
+            data[i][COL_REASON] = entry.getReason();
+            i++;
+        }
         fireTableDataChanged();
     }
 
@@ -128,11 +158,16 @@ public class RevokedCertsTableModel extends AbstractTableModel {
      */
     @Override
     public Class<?> getColumnClass(int col) {
-        if (col == 0) {
-            return BigInteger.class;
-        } else {
-            return Date.class;
+        switch (col)
+        {
+            case COL_SERIAL_NUMBER:
+                return BigInteger.class;
+            case COL_REVOCATION_DATE:
+                return Date.class;
+            case COL_REASON:
+                return CRLReason.class;
         }
+        throw new IndexOutOfBoundsException(String.valueOf(col));
     }
 
     /**
