@@ -158,8 +158,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
      */
     @Override
     public Class<?> getColumnClass(int col) {
-        switch (col)
-        {
+        switch (col) {
             case COL_SERIAL_NUMBER:
                 return BigInteger.class;
             case COL_REVOCATION_DATE:

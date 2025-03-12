@@ -60,8 +60,7 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
         JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,
                                                                    col);
 
-        switch (col)
-        {
+        switch (col) {
             case RevokedCertsTableModel.COL_SERIAL_NUMBER:
                 cell.setText(HexUtil.getHexString((BigInteger) value, "0x", 4, 0));
                 break;
