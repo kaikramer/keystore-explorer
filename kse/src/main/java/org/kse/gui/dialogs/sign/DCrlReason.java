@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
+import java.security.cert.CRLReason;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -39,7 +40,6 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.bouncycastle.asn1.x509.CRLReason;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
@@ -77,7 +77,7 @@ public class DCrlReason extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
-    private int reason;
+    private CRLReason reason;
     private boolean ok = false;
     private Date revocationDate;
     private X509Certificate cert;
@@ -208,32 +208,32 @@ public class DCrlReason extends JEscDialog {
 
     private void okPressed() {
         if (jrbUnspecified.isSelected()) {
-            reason = CRLReason.unspecified;
+            reason = CRLReason.UNSPECIFIED;
         } else if (jrbKeyCompromise.isSelected()) {
-            reason = CRLReason.keyCompromise;
+            reason = CRLReason.KEY_COMPROMISE;
         } else if (jrbCACompromise.isSelected()) {
-            reason = CRLReason.cACompromise;
+            reason = CRLReason.CA_COMPROMISE;
         } else if (jrbAffiliationChanged.isSelected()) {
-            reason = CRLReason.affiliationChanged;
+            reason = CRLReason.AFFILIATION_CHANGED;
         } else if (jrbSuperseded.isSelected()) {
-            reason = CRLReason.superseded;
+            reason = CRLReason.SUPERSEDED;
         } else if (jrbCessationOfOperation.isSelected()) {
-            reason = CRLReason.cessationOfOperation;
+            reason = CRLReason.CESSATION_OF_OPERATION;
         } else if (jrbCertificateHold.isSelected()) {
-            reason = CRLReason.certificateHold;
+            reason = CRLReason.CERTIFICATE_HOLD;
         } else if (jrbRemoveFromCR.isSelected()) {
-            reason = CRLReason.removeFromCRL;
+            reason = CRLReason.REMOVE_FROM_CRL;
         } else if (jrbPrivilegeWithdrawn.isSelected()) {
-            reason = CRLReason.privilegeWithdrawn;
+            reason = CRLReason.PRIVILEGE_WITHDRAWN;
         } else if (jrbAACompromise.isSelected()) {
-            reason = CRLReason.aACompromise;
+            reason = CRLReason.AA_COMPROMISE;
         }
         revocationDate = jdtRevocationDate.getDateTime();
         ok = true;
         closeDialog();
     }
 
-    public int getReason() {
+    public CRLReason getReason() {
         return reason;
     }
 
