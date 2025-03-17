@@ -22,9 +22,7 @@ package org.kse.gui.dialogs;
 
 import java.awt.Component;
 import java.math.BigInteger;
-import java.security.cert.CRLReason;
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -40,8 +38,6 @@ import org.kse.utilities.io.HexUtil;
 public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
 
     private static final long serialVersionUID = 1L;
-
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     /**
      * Returns the rendered cell.
@@ -68,7 +64,7 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
                 cell.setText(StringUtils.formatDate((Date) value));
                 break;
             case RevokedCertsTableModel.COL_REASON:
-                cell.setText(res.getString("RevokedCertsTableCellRend." + ((CRLReason) value).name() + ".text"));
+                cell.setText((String) value);
                 break;
         }
 

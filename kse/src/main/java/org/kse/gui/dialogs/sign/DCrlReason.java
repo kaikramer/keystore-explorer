@@ -56,6 +56,7 @@ public class DCrlReason extends JEscDialog {
 
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
+    private static ResourceBundle resCryptoX509 = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
     private JLabel jlSubject;
@@ -108,35 +109,35 @@ public class DCrlReason extends JEscDialog {
 
         jlReason = new JLabel(res.getString("DCrlReason.jlReason.text"));
 
-        jrbUnspecified = new JRadioButton(res.getString("DCrlReason.jrbUnspecified.text"));
-        jrbUnspecified.setToolTipText(res.getString("DCrlReason.jrbUnspecified.tooltip"));
+        jrbUnspecified = new JRadioButton(getCrlReasonText(CRLReason.UNSPECIFIED));
+        jrbUnspecified.setToolTipText(getCrlReasonTooltip(CRLReason.UNSPECIFIED));
 
-        jrbKeyCompromise = new JRadioButton(res.getString("DCrlReason.jrbKeyCompromise.text"));
-        jrbKeyCompromise.setToolTipText(res.getString("DCrlReason.jrbKeyCompromise.tooltip"));
+        jrbKeyCompromise = new JRadioButton(getCrlReasonText(CRLReason.KEY_COMPROMISE));
+        jrbKeyCompromise.setToolTipText(getCrlReasonTooltip(CRLReason.KEY_COMPROMISE));
 
-        jrbCACompromise = new JRadioButton(res.getString("DCrlReason.jrbCACompromise.text"));
-        jrbCACompromise.setToolTipText(res.getString("DCrlReason.jrbCACompromise.tooltip"));
+        jrbCACompromise = new JRadioButton(getCrlReasonText(CRLReason.CA_COMPROMISE));
+        jrbCACompromise.setToolTipText(getCrlReasonTooltip(CRLReason.CA_COMPROMISE));
 
-        jrbAffiliationChanged = new JRadioButton(res.getString("DCrlReason.jrbAffiliationChanged.text"));
-        jrbAffiliationChanged.setToolTipText(res.getString("DCrlReason.jrbAffiliationChanged.tooltip"));
+        jrbAffiliationChanged = new JRadioButton(getCrlReasonText(CRLReason.AFFILIATION_CHANGED));
+        jrbAffiliationChanged.setToolTipText(getCrlReasonTooltip(CRLReason.AFFILIATION_CHANGED));
 
-        jrbSuperseded = new JRadioButton(res.getString("DCrlReason.jrbSuperseded.text"));
-        jrbSuperseded.setToolTipText(res.getString("DCrlReason.jrbSuperseded.tooltip"));
+        jrbSuperseded = new JRadioButton(getCrlReasonText(CRLReason.SUPERSEDED));
+        jrbSuperseded.setToolTipText(getCrlReasonTooltip(CRLReason.SUPERSEDED));
 
-        jrbCessationOfOperation = new JRadioButton(res.getString("DCrlReason.jrbCessationOfOperation.text"));
-        jrbCessationOfOperation.setToolTipText(res.getString("DCrlReason.jrbCessationOfOperation.tooltip"));
+        jrbCessationOfOperation = new JRadioButton(getCrlReasonText(CRLReason.CESSATION_OF_OPERATION));
+        jrbCessationOfOperation.setToolTipText(getCrlReasonTooltip(CRLReason.CESSATION_OF_OPERATION));
 
-        jrbCertificateHold = new JRadioButton(res.getString("DCrlReason.jrbCertificateHold.text"));
-        jrbCertificateHold.setToolTipText(res.getString("DCrlReason.jrbCertificateHold.tooltip"));
+        jrbCertificateHold = new JRadioButton(getCrlReasonText(CRLReason.CERTIFICATE_HOLD));
+        jrbCertificateHold.setToolTipText(getCrlReasonTooltip(CRLReason.CERTIFICATE_HOLD));
 
-        jrbRemoveFromCR = new JRadioButton(res.getString("DCrlReason.jrbRemoveFromCR.text"));
-        jrbRemoveFromCR.setToolTipText(res.getString("DCrlReason.jrbRemoveFromCR.tooltip"));
+        jrbRemoveFromCR = new JRadioButton(getCrlReasonText(CRLReason.REMOVE_FROM_CRL));
+        jrbRemoveFromCR.setToolTipText(getCrlReasonTooltip(CRLReason.REMOVE_FROM_CRL));
 
-        jrbPrivilegeWithdrawn = new JRadioButton(res.getString("DCrlReason.jrbPrivilegeWithdrawn.text"));
-        jrbPrivilegeWithdrawn.setToolTipText(res.getString("DCrlReason.jrbPrivilegeWithdrawn.tooltip"));
+        jrbPrivilegeWithdrawn = new JRadioButton(getCrlReasonText(CRLReason.PRIVILEGE_WITHDRAWN));
+        jrbPrivilegeWithdrawn.setToolTipText(getCrlReasonTooltip(CRLReason.PRIVILEGE_WITHDRAWN));
 
-        jrbAACompromise = new JRadioButton(res.getString("DCrlReason.jrbAACompromise.text"));
-        jrbAACompromise.setToolTipText(res.getString("DCrlReason.jrbAACompromise.tooltip"));
+        jrbAACompromise = new JRadioButton(getCrlReasonText(CRLReason.AA_COMPROMISE));
+        jrbAACompromise.setToolTipText(getCrlReasonTooltip(CRLReason.AA_COMPROMISE));
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(jrbUnspecified);
@@ -189,6 +190,14 @@ public class DCrlReason extends JEscDialog {
         getRootPane().setDefaultButton(jbOK);
 
         pack();
+    }
+
+    private String getCrlReasonText(CRLReason reason) {
+        return resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
+    }
+
+    private String getCrlReasonTooltip(CRLReason reason) {
+        return resCryptoX509.getString("CrlReason." + reason.ordinal() + ".tooltip");
     }
 
     private void populate() {

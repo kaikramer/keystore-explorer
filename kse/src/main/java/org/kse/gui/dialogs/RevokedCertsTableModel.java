@@ -46,6 +46,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
     private static final int COLUMN_COUNT = 3;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static ResourceBundle resCryptoX509 = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 
     private String[] columnNames;
     private Object[][] data;
@@ -82,7 +83,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
 
             data[i][COL_SERIAL_NUMBER] = x509CrlEntry.getSerialNumber();
             data[i][COL_REVOCATION_DATE] = x509CrlEntry.getRevocationDate();
-            data[i][COL_REASON] = x509CrlEntry.getRevocationReason();
+            data[i][COL_REASON] = getReasonString(x509CrlEntry.getRevocationReason());
         }
 
         fireTableDataChanged();
@@ -101,10 +102,23 @@ public class RevokedCertsTableModel extends AbstractTableModel {
             RevokedEntry entry = pair.getValue();
             data[i][COL_SERIAL_NUMBER] = entry.getUserCertificateSerial();
             data[i][COL_REVOCATION_DATE] = entry.getRevocationDate();
-            data[i][COL_REASON] = entry.getReason();
+            data[i][COL_REASON] = getReasonString(entry.getReason());
             i++;
         }
         fireTableDataChanged();
+    }
+
+    private String getReasonString(CRLReason reason) {
+        String reasonString = "";
+        if (reason != null) {
+            // TODO JW - Need to lookup the CRL reason texts
+            // SupersededCrlReason
+            // DCrlReason.jrbSuperseded.text
+            // DCrlReason.jrbSuperseded.tooltip
+            // RevokedCertsTableCellRend.SUPERSEDED.text
+            reasonString = resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
+        }
+        return reasonString;
     }
 
     /**
@@ -164,7 +178,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
             case COL_REVOCATION_DATE:
                 return Date.class;
             case COL_REASON:
-                return CRLReason.class;
+                return String.class;
         }
         throw new IndexOutOfBoundsException(String.valueOf(col));
     }
