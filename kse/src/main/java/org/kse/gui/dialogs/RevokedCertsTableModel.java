@@ -111,11 +111,6 @@ public class RevokedCertsTableModel extends AbstractTableModel {
     private String getReasonString(CRLReason reason) {
         String reasonString = "";
         if (reason != null) {
-            // TODO JW - Need to lookup the CRL reason texts
-            // SupersededCrlReason
-            // DCrlReason.jrbSuperseded.text
-            // DCrlReason.jrbSuperseded.tooltip
-            // RevokedCertsTableCellRend.SUPERSEDED.text
             reasonString = resCryptoX509.getString("CrlReason." + reason.ordinal() + ".text");
         }
         return reasonString;
