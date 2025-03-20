@@ -236,6 +236,7 @@ class PanelUserInterface {
                 new LanguageItem("French", "fr"),
                 new LanguageItem("Russian", "ru"),
                 new LanguageItem("Spanish", "es"),
+                new LanguageItem("Chinese", "zh"),
                 };
 
         for (LanguageItem languageItem : languageItems) {
