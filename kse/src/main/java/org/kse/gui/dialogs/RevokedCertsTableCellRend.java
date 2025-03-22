@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.kse.gui.dialogs;
 
 import java.awt.Component;
@@ -55,10 +56,16 @@ public class RevokedCertsTableCellRend extends DefaultTableCellRenderer {
         JLabel cell = (JLabel) super.getTableCellRendererComponent(jtRevokedCerts, value, isSelected, hasFocus, row,
                                                                    col);
 
-        if (col == 0) {
-            cell.setText(HexUtil.getHexString((BigInteger) value, "0x", 4, 0));
-        } else {
-            cell.setText(StringUtils.formatDate((Date) value));
+        switch (col) {
+            case RevokedCertsTableModel.COL_SERIAL_NUMBER:
+                cell.setText(HexUtil.getHexString((BigInteger) value, "0x", 4, 0));
+                break;
+            case RevokedCertsTableModel.COL_REVOCATION_DATE:
+                cell.setText(StringUtils.formatDate((Date) value));
+                break;
+            case RevokedCertsTableModel.COL_REASON:
+                cell.setText((String) value);
+                break;
         }
 
         cell.setBorder(new EmptyBorder(0, 5, 0, 5));

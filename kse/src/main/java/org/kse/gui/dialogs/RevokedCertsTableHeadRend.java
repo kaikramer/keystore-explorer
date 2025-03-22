@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.kse.gui.dialogs;
 
 import java.awt.Component;
@@ -37,6 +38,11 @@ public class RevokedCertsTableHeadRend extends DefaultTableCellRenderer {
 
     private TableCellRenderer delegate;
 
+    /**
+     * Construct a new RevokedCertsTableHeadRend.
+     *
+     * @param delegate
+     */
     public RevokedCertsTableHeadRend(TableCellRenderer delegate) {
         this.delegate = delegate;
     }
@@ -61,10 +67,16 @@ public class RevokedCertsTableHeadRend extends DefaultTableCellRenderer {
         if (c instanceof JLabel) {
             JLabel header = (JLabel) c;
 
-            if (col == 0) {
-                header.setToolTipText(res.getString("RevokedCertsTableHeadRend.SerialNumberColumn.tooltip"));
-            } else {
-                header.setToolTipText(res.getString("RevokedCertsTableHeadRend.RevocationDateColumn.tooltip"));
+            switch (col) {
+                case RevokedCertsTableModel.COL_SERIAL_NUMBER:
+                    header.setToolTipText(res.getString("RevokedCertsTableHeadRend.SerialNumberColumn.tooltip"));
+                    break;
+                case RevokedCertsTableModel.COL_REVOCATION_DATE:
+                    header.setToolTipText(res.getString("RevokedCertsTableHeadRend.RevocationDateColumn.tooltip"));
+                    break;
+                case RevokedCertsTableModel.COL_REASON:
+                    header.setToolTipText(res.getString("RevokedCertsTableHeadRend.ReasonColumn.tooltip"));
+                    break;
             }
         }
 
