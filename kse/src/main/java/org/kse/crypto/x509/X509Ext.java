@@ -854,29 +854,7 @@ public class X509Ext {
 
         long crlReasonLong = crlReason.getValue().longValue();
 
-        if (crlReasonLong == CRLReason.unspecified) {
-            sb.append(res.getString("UnspecifiedCrlReason"));
-        } else if (crlReasonLong == CRLReason.keyCompromise) {
-            sb.append(res.getString("KeyCompromiseCrlReason"));
-        } else if (crlReasonLong == CRLReason.cACompromise) {
-            sb.append(res.getString("CaCompromiseCrlReason"));
-        } else if (crlReasonLong == CRLReason.affiliationChanged) {
-            sb.append(res.getString("AffiliationChangedCrlReason"));
-        } else if (crlReasonLong == CRLReason.superseded) {
-            sb.append(res.getString("SupersededCrlReason"));
-        } else if (crlReasonLong == CRLReason.cessationOfOperation) {
-            sb.append(res.getString("CessationOfOperationCrlReason"));
-        } else if (crlReasonLong == CRLReason.certificateHold) {
-            sb.append(res.getString("CertificateHoldCrlReason"));
-        } else if (crlReasonLong == CRLReason.removeFromCRL) {
-            sb.append(res.getString("RemoveFromCrlCrlReason"));
-        } else if (crlReasonLong == CRLReason.privilegeWithdrawn) {
-            sb.append(res.getString("PrivilegeWithdrawnCrlReason"));
-        } else
-        // CRLReason.aACompromise
-        {
-            sb.append(res.getString("AaCompromiseCrlReason"));
-        }
+        sb.append(res.getString("CrlReason." + crlReasonLong + ".text"));
 
         sb.append(NEWLINE);
 

@@ -32,6 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.security.cert.CRLException;
+import java.security.cert.CRLReason;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
@@ -64,7 +65,6 @@ import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.x509.CRLReason;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
@@ -74,6 +74,9 @@ import org.kse.gui.FileChooserFactory;
 import org.kse.gui.JKseTable;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.dialogs.RevokedCertsTableCellRend;
+import org.kse.gui.dialogs.RevokedCertsTableHeadRend;
+import org.kse.gui.dialogs.RevokedCertsTableModel;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 
@@ -201,11 +204,11 @@ public class JRevokedCerts extends JPanel {
                 if (entry.getRevocationReason() == null) {
                     mapRevokedEntry.put(entry.getSerialNumber(),
                                         new RevokedEntry(entry.getSerialNumber(), entry.getRevocationDate(),
-                                                         CRLReason.unspecified));
+                                                         CRLReason.UNSPECIFIED));
                 } else {
                     mapRevokedEntry.put(entry.getSerialNumber(),
                                         new RevokedEntry(entry.getSerialNumber(), entry.getRevocationDate(),
-                                                         entry.getRevocationReason().ordinal()));
+                                                         entry.getRevocationReason()));
                 }
             }
             RevokedCertsTableModel revokedCertsTableModel = (RevokedCertsTableModel) jtRevokedCerts.getModel();
@@ -238,7 +241,7 @@ public class JRevokedCerts extends JPanel {
                 dCRLReason.setLocationRelativeTo(parent);
                 dCRLReason.setVisible(true);
                 if (dCRLReason.isOk()) {
-                    int reason = dCRLReason.getReason();
+                    CRLReason reason = dCRLReason.getReason();
                     Date revocationDate = dCRLReason.getRevocationDate();
                     mapRevokedEntry.put(cerRev.getSerialNumber(),
                                         new RevokedEntry(cerRev.getSerialNumber(), revocationDate, reason));

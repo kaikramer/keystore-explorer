@@ -21,6 +21,7 @@
 package org.kse.gui.dialogs.sign;
 
 import java.math.BigInteger;
+import java.security.cert.CRLReason;
 import java.util.Date;
 
 /**
@@ -30,7 +31,7 @@ public class RevokedEntry {
 
     private BigInteger userCertificateSerial;
     private Date revocationDate;
-    private int reason;
+    private CRLReason reason;
 
     /**
      * Construct a new RevokedEntry.
@@ -39,7 +40,7 @@ public class RevokedEntry {
      * @param revocationDate        Revocation date
      * @param reason                Reason why a certificate is revoked
      */
-    public RevokedEntry(BigInteger userCertificateSerial, Date revocationDate, int reason) {
+    public RevokedEntry(BigInteger userCertificateSerial, Date revocationDate, CRLReason reason) {
         super();
         this.userCertificateSerial = userCertificateSerial;
         this.revocationDate = revocationDate;
@@ -69,7 +70,7 @@ public class RevokedEntry {
      *
      * @return reason.
      */
-    public int getReason() {
+    public CRLReason getReason() {
         return reason;
     }
 
