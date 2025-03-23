@@ -34,6 +34,8 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DNewKeyStoreType;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordAndDecision;
+import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to open the default KeyStore. If it does not exist provide the user
@@ -92,8 +94,9 @@ public class OpenDefaultAction extends OpenAction {
                 return;
             }
 
-            Password password = getNewKeyStorePassword(true);
+            PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(false);
 
+            Password password = passwordAndDecision.getPassword();
             if (password == null) {
                 return;
             }
@@ -101,7 +104,10 @@ public class OpenDefaultAction extends OpenAction {
             KeyStore defaultKeyStore = KeyStoreUtil.create(keyStoreType);
             KeyStoreUtil.save(defaultKeyStore, defaultKeyStoreFile, password);
 
-            kseFrame.addKeyStore(defaultKeyStore, defaultKeyStoreFile, password);
+            KeyStoreHistory history = new KeyStoreHistory(defaultKeyStore, defaultKeyStoreFile, password);
+            history.getCurrentState().setStoredInPasswordManager(passwordAndDecision.isSavePassword());
+
+            kseFrame.addKeyStoreHistory(history);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }

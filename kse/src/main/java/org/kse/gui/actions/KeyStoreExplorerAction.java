@@ -49,6 +49,7 @@ import org.kse.gui.password.DGetPassword;
 import org.kse.gui.passwordmanager.DInitPasswordManager;
 import org.kse.gui.passwordmanager.DUnlockPasswordManager;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordAndDecision;
 import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -159,6 +160,20 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
                                           .orElse(null);
             }
 
+            // for PKCS#12 keystores, the entry password is usually the same as the keystore password
+            if (password == null && history.getCurrentState().getType() == KeyStoreType.PKCS12) {
+                Password keystorePassword = state.getPassword();
+                if (keystorePassword != null) {
+                    password = new Password(keystorePassword.toCharArray());
+                    try {
+                        // test if password is correct
+                        keyStore.getKey(alias, password.toCharArray());
+                    } catch (GeneralSecurityException ex) {
+                        password = null;
+                    }
+                }
+            }
+
             // no password found, ask user to enter it
             if (password == null) {
                 DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
@@ -258,21 +273,21 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     /**
      * Get a new KeyStore password.
      *
-     * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
+     * @param isPasswordManagerWanted Current decision of user to store KeyStore password in the pwd mgr
      * @return The new KeyStore password, or null if none entered by the user
      */
-    protected Password getNewKeyStorePassword(boolean askUserForPasswordManager) {
+    protected PasswordAndDecision getNewKeyStorePassword(boolean isPasswordManagerWanted) {
         DGetNewPassword dGetNewPassword =
                 new DGetNewPassword(frame, res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"),
-                                    preferences, askUserForPasswordManager);
+                                    preferences, isPasswordManagerWanted);
         dGetNewPassword.setLocationRelativeTo(frame);
         dGetNewPassword.setVisible(true);
 
-        if (askUserForPasswordManager && dGetNewPassword.isPasswordManagerWanted()) {
+        if (dGetNewPassword.isPasswordManagerWanted()) {
             unlockPasswordManager();
         }
 
-        return dGetNewPassword.getPassword();
+        return new PasswordAndDecision(dGetNewPassword.getPassword(), dGetNewPassword.isPasswordManagerWanted());
     }
 
     protected void unlockPasswordManager() {

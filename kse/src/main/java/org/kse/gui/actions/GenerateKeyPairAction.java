@@ -184,7 +184,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             Password password = new Password((char[]) null);
             KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
 
-            if (keyStoreType.hasEntryPasswords()) {
+            if (keyStoreType.hasEntryPasswords() && keyStoreType != KeyStoreType.PKCS12) {
                 DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
                         "GenerateKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
                 dGetNewPassword.setLocationRelativeTo(frame);
@@ -193,6 +193,18 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
 
                 if (password == null) {
                     return "";
+                }
+            }
+            if (keyStoreType == KeyStoreType.PKCS12) {
+                if (currentState.getPassword() == null) {
+                    var passwordAndDecision = getNewKeyStorePassword(newState.isStoredInPasswordManager());
+                    password = passwordAndDecision.getPassword();
+                    if (password == null) {
+                        return "";
+                    }
+                    newState.setStoredInPasswordManager(passwordAndDecision.isSavePassword());
+                } else {
+                    password = new Password(currentState.getPassword());
                 }
             }
 
@@ -212,6 +224,10 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             }
 
             keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(), newCertChain);
+
+            if (keyStoreType == KeyStoreType.PKCS12 && currentState.getPassword() == null) {
+                newState.setPassword(password);
+            }
             newState.setEntryPassword(alias, password);
 
             currentState.append(newState);

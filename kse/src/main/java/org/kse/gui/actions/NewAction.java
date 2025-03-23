@@ -31,6 +31,7 @@ import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DNewKeyStoreType;
 import org.kse.gui.error.DError;
+import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to create a new KeyStore.
@@ -77,7 +78,9 @@ public class NewAction extends KeyStoreExplorerAction {
             untitledCount++;
             String untitled = MessageFormat.format(res.getString("NewAction.Untitled"), untitledCount);
 
-            kseFrame.addKeyStore(newKeyStore, untitled, null, null);
+            KeyStoreHistory newKeyStoreHistory = new KeyStoreHistory(newKeyStore, untitled, null, null);
+
+            kseFrame.addKeyStoreHistory(newKeyStoreHistory);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }

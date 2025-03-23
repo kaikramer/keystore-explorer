@@ -34,6 +34,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DOpenPkcs11KeyStore;
 import org.kse.gui.dialogs.PasswordCallbackHandler;
 import org.kse.gui.error.DError;
+import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to open the PKCS11 KeyStore. If it does not exist provide the
@@ -84,7 +85,9 @@ public class OpenPkcs11Action extends OpenAction {
 
             keyStore.load(null, null);
 
-            kseFrame.addKeyStore(keyStore, selectedProvider.getName(), null, selectedProvider);
+            var history = new KeyStoreHistory(keyStore, selectedProvider.getName(), null, selectedProvider);
+
+            kseFrame.addKeyStoreHistory(history);
 
         } catch (Exception ex) {
             DError.displayError(frame, ex);

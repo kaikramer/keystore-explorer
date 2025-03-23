@@ -93,6 +93,10 @@ public class SetKeyPairPasswordAction extends KeyStoreExplorerAction implements 
                                              .getKeyStoreEntryPassword(history.getFile(), alias)
                                              .map(Password::new)
                                              .orElse(null);
+
+                if (oldPassword != null) {
+                    newState.setStoredInPasswordManager(true);
+                }
             }
 
             DChangePassword dChangePassword = new DChangePassword(frame, DOCUMENT_MODAL, res.getString(

@@ -46,8 +46,10 @@ public class KeyStoreState {
     private KeyStore keyStore;
     private Password password;
     private HashMap<String, Password> entryPasswords = new HashMap<>();
+    private boolean isStoredInPasswordManager = false;
     private KeyStoreState previous;
     private KeyStoreState next;
+
     /**
      * Create an empty state.
      */
@@ -310,10 +312,32 @@ public class KeyStoreState {
         }
 
         copy.entryPasswords = keyPairPasswordsCopy;
-
         copy.action = action;
+        copy.isStoredInPasswordManager = isStoredInPasswordManager;
 
         return copy;
+    }
+
+    /**
+     * Flag that indicates that the passwords of this keystore (state) are managed by the password manager.
+     * <p>
+     * This is relevant when the keystore is saved to a file. Then all passwords are transferred to the password
+     * manager and stored in the password file.
+     * </p>
+     *
+     * @return True, if keystore/entry passwords are managed by password manager
+     */
+    public boolean isStoredInPasswordManager() {
+        return isStoredInPasswordManager;
+    }
+
+    /**
+     * Flag that indicates that the passwords of this keystore (state) are managed by the password manager.
+     *
+     * @param storedInPasswordManager True, if keystore/entry passwords are managed by password manager
+     */
+    public void setStoredInPasswordManager(boolean storedInPasswordManager) {
+        isStoredInPasswordManager = storedInPasswordManager;
     }
 
     protected void propagateNewPasswords(KeyStoreState targetState) throws CryptoException {
@@ -372,5 +396,4 @@ public class KeyStoreState {
             return currentKey.equals(targetKey);
         }
     }
-
 }

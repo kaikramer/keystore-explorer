@@ -30,6 +30,7 @@ import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.keystore.MsCapiStoreType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to open the PKCS11 KeyStore. If it does not exist provide the
@@ -72,7 +73,9 @@ public class OpenMsCapiAction extends OpenAction {
             // Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
             // applications must not specify the SunMSCAPI provider."
 
-            kseFrame.addKeyStore(openedKeyStore, res.getString("OpenMsCapiAction.TabTitle"), null, null);
+            var history = new KeyStoreHistory(openedKeyStore, res.getString("OpenMsCapiAction.TabTitle"), null, null);
+
+            kseFrame.addKeyStoreHistory(history);
 
         } catch (Exception ex) {
             DError.displayError(frame, ex);

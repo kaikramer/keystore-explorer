@@ -42,6 +42,7 @@ import org.kse.gui.error.Problem;
 import org.kse.gui.password.DGetPassword;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.passwordmanager.PasswordManager;
+import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to open a KeyStore.
@@ -189,7 +190,9 @@ public class OpenAction extends KeyStoreExplorerAction {
                 return;
             }
 
-            kseFrame.addKeyStore(openedKeyStore, keyStoreFile, password);
+            KeyStoreHistory history = new KeyStoreHistory(openedKeyStore, keyStoreFile, password);
+
+            kseFrame.addKeyStoreHistory(history);
             this.newKeyStoreWasAdded = true;
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("OpenAction.NoReadFile.message"),

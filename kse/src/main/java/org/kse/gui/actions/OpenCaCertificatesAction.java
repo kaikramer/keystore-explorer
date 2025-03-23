@@ -35,6 +35,8 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DNewKeyStoreType;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.passwordmanager.PasswordAndDecision;
+import org.kse.utilities.history.KeyStoreHistory;
 
 /**
  * Action to open the CA Certificates KeyStore. If it does not exist provide the
@@ -92,16 +94,21 @@ public class OpenCaCertificatesAction extends OpenAction {
                 return;
             }
 
-            Password password = getNewKeyStorePassword(false);
+            KeyStore caCertificatesKeyStore = KeyStoreUtil.create(keyStoreType);
 
+            PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(false);
+
+            Password password = passwordAndDecision.getPassword();
             if (password == null) {
                 return;
             }
 
-            KeyStore caCertificatesKeyStore = KeyStoreUtil.create(keyStoreType);
             KeyStoreUtil.save(caCertificatesKeyStore, caCertificatesFile, password);
 
-            kseFrame.addKeyStore(caCertificatesKeyStore, caCertificatesFile, password);
+            KeyStoreHistory history = new KeyStoreHistory(caCertificatesKeyStore, caCertificatesFile, password);
+            history.getCurrentState().setStoredInPasswordManager(passwordAndDecision.isSavePassword());
+
+            kseFrame.addKeyStoreHistory(history);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }

@@ -48,7 +48,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -2466,31 +2465,9 @@ public final class KseFrame implements StatusBar {
     /**
      * Add a KeyStore to the set of loaded KeyStores.
      *
-     * @param keyStore         KeyStore
-     * @param keyStoreName     KeyStore name
-     * @param password         KeyStore password
-     * @param explicitProvider Explicitly specify a provider that is used for this keystore
+     * @param history KeyStore history
      */
-    public void addKeyStore(KeyStore keyStore, String keyStoreName, Password password, Provider explicitProvider) {
-        KeyStoreHistory history = new KeyStoreHistory(keyStore, keyStoreName, password, explicitProvider);
-
-        addKeyStoreHistory(history);
-    }
-
-    /**
-     * Add a KeyStore to the set of loaded KeyStores.
-     *
-     * @param keyStore     KeyStore
-     * @param keyStoreFile KeyStore file
-     * @param password     KeyStore password
-     */
-    public void addKeyStore(KeyStore keyStore, File keyStoreFile, Password password) {
-        KeyStoreHistory history = new KeyStoreHistory(keyStore, keyStoreFile, password);
-
-        addKeyStoreHistory(history);
-    }
-
-    private void addKeyStoreHistory(KeyStoreHistory history) {
+    public void addKeyStoreHistory(KeyStoreHistory history) {
         histories.add(history);
 
         JTable jtKeyStore = createEmptyKeyStoreTable();
