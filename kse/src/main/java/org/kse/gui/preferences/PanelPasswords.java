@@ -183,7 +183,7 @@ class PanelPasswords {
             jbChangeKeyStorePath.setEnabled(unlocked);
             jpPasswords.add(jbChangeKeyStorePath, "sizegroupx");
 
-            var jbRemoveKeyStore = new JRemoveKeyStoreButton(jtfKeyStorePath, passwordManager,
+            var jbRemoveKeyStore = new JRemoveKeyStoreButton(this.parent, jtfKeyStorePath, passwordManager,
                                                              this::updatePasswordsCard);
             jpPasswords.add(jbRemoveKeyStore, "sizegroupx, wrap");
 

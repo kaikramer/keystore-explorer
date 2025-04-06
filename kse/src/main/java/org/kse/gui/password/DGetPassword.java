@@ -30,7 +30,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -84,27 +83,13 @@ public class DGetPassword extends JEscDialog {
         initComponents();
     }
 
-    /**
-     * Creates new DGetPassword dialog where the parent is a dialog.
-     *
-     * @param parent   Parent dialog
-     * @param title    The dialog's title
-     * @param modality Dialog modality
-     * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
-     */
-    public DGetPassword(JDialog parent, String title, ModalityType modality, boolean askUserForPasswordManager) {
-        super(parent, title, modality);
-        this.askUserForPasswordManager = askUserForPasswordManager;
-        initComponents();
-    }
-
     private void initComponents() {
         jlPassword = new JLabel(res.getString("DGetPassword.jlPassword.text"));
         jpfPassword = new JPasswordField(15);
         jpfPassword.putClientProperty("JPasswordField.cutCopyAllowed", true);
 
         jcbStoreInPasswordManager = new JCheckBox(res.getString("DGetPassword.jcbStoreInPasswordManager.text"));
-        jcbStoreInPasswordManager.setSelected(true);
+        jcbStoreInPasswordManager.setSelected(false);
         jcbStoreInPasswordManager.setVisible(askUserForPasswordManager);
 
         jbOK = new JButton(res.getString("DGetPassword.jbOK.text"));

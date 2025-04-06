@@ -320,7 +320,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
     protected static void saveInPasswordManager(KeyStoreState currentState, File saveFile, Password password)
             throws KeyStoreException {
-        if (PasswordManager.getInstance().isUnlocked()) {
+        if (PasswordManager.getInstance().isUnlocked() && currentState.isStoredInPasswordManager()) {
             var entryPasswords = new HashMap<String, char[]>();
             for (String alias : Collections.list(currentState.getKeyStore().aliases())) {
                 if (currentState.getEntryPassword(alias) != null) {
