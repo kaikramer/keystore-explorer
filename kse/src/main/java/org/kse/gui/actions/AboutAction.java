@@ -71,6 +71,7 @@ public class AboutAction extends KeyStoreExplorerAction {
                                  ".org)",
                                  "MigLayout Copyright 2004, Mikael Grev, MiG InfoCom AB (www.miglayout.com)",
                                  "Fugue Icons Copyright 2013 Yusuke Kamiyamane (p.yusukekamiyamane.com)",
+                                 "JNA Copyright 2007 Timothy Wall (github.com/java-native-access/jna)",
                                  "FlatLaf Copyright 2019 - 2021 FormDev Software GmbH (www.formdev.com/flatlaf/)",
                                  LnfUtil.isVAquaAvailable() ?
                                  "VAqua Copyright 2015 - 2019 Alan Snyder (violetlib.org)" : "",

@@ -27,105 +27,22 @@ public class OperatingSystem {
     private static final String OS_VERSION = System.getProperty("os.version");
 
     // @formatter:off
-
-	/*
-	 * OS detection is relatively simple for most platforms. Simply check that
-	 * the 'os.name' system property contains a recognized string. Windows is
-	 * the exception as the os name may be wrong, e.g. Windows 2000 is sometimes
-	 * reported as 'Windows NT' We therefore check for the string 'Windows' only
-	 * and use the 'os.version' system property to discriminate:
-	 *
-	 * - NT4 : 4.0 - 95 : 4.0 - 98 : 4.1 - ME : 4.9 - 2000 : 5.0 - XP : 5.1 -
-	 * Vista : 6.0 - 7: 6.1 - 8: 6.2 - 8.1: 6.3 - 10: 10.0
-	 *
-	 * This works find except for NT4 and 95 which have the same version. For
-	 * these we also check for the full os name as well.
-	 */
-
-	// @formatter:on
+    /*
+     * OS detection is relatively simple for most platforms. Simply check that
+     * the 'os.name' system property contains a recognized string. Windows is
+     * the exception as the os name may be wrong, e.g. Windows 2000 is sometimes
+     * reported as 'Windows NT' We therefore check for the string 'Windows' only
+     * and use the 'os.version' system property to discriminate:
+     *
+     * - NT4 : 4.0 - 95 : 4.0 - 98 : 4.1 - ME : 4.9 - 2000 : 5.0 - XP : 5.1 -
+     * Vista : 6.0 - 7: 6.1 - 8: 6.2 - 8.1: 6.3 - 10: 10.0
+     *
+     * This works find except for NT4 and 95 which have the same version. For
+     * these we also check for the full os name as well.
+     */
+    // @formatter:on
 
     private OperatingSystem() {
-    }
-
-    /**
-     * Is operating system Windows NT 4?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindowsNt4() {
-        return OS_NAME.contains("Windows NT") && OS_VERSION.equals("4.0");
-    }
-
-    /**
-     * Is operating system Windows 95?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindows95() {
-        return OS_NAME.contains("Windows 95") && OS_VERSION.equals("4.0");
-    }
-
-    /**
-     * Is operating system Windows 98?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindows98() {
-        return OS_NAME.contains("Windows") && OS_VERSION.equals("4.1");
-    }
-
-    /**
-     * Is operating system Windows ME?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindowsMe() {
-        return OS_NAME.contains("Windows") && OS_VERSION.equals("4.9");
-    }
-
-    /**
-     * Is operating system Windows 2000?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindows2000() {
-        return OS_NAME.contains("Windows") && OS_VERSION.equals("5.0");
-    }
-
-    /**
-     * Is operating system Windows XP?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindowsXp() {
-        return OS_NAME.contains("Windows") && OS_VERSION.equals("5.1");
-    }
-
-    /**
-     * Is operating system Windows Vista?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindowsVista() {
-        return OS_NAME.contains("Windows") && OS_VERSION.equals("6.0");
-    }
-
-    /**
-     * Is operating system Windows 7?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindows7() {
-        return OS_NAME.contains("Windows") && OS_VERSION.equals("6.1");
-    }
-
-    /**
-     * Is operating system Windows 8 or 8.1?
-     *
-     * @return True if it is
-     */
-    public static boolean isWindows8() {
-        return OS_NAME.contains("Windows") && (OS_VERSION.equals("6.2") || OS_VERSION.equals("6.3"));
     }
 
     /**
@@ -201,30 +118,12 @@ public class OperatingSystem {
     }
 
     /**
-     * Is operating system Irix?
-     *
-     * @return True if it is
-     */
-    public static boolean isIrix() {
-        return OS_NAME.contains("Irix");
-    }
-
-    /**
-     * Is operating system Digital UNIX?
-     *
-     * @return True if it is
-     */
-    public static boolean isDigitalUnix() {
-        return OS_NAME.contains("Digital Unix");
-    }
-
-    /**
      * Is operating system one of the various Unix flavors?
      *
      * @return True if it is
      */
     public static boolean isUnix() {
-        return isSolaris() || isAix() || isFreeBsd() || isHpUx() || isIrix() || isDigitalUnix();
+        return isSolaris() || isAix() || isFreeBsd() || isHpUx();
     }
 
     /**
