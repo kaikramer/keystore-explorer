@@ -19,9 +19,7 @@
  */
 package org.kse;
 
-import java.awt.Toolkit;
 import java.io.File;
-import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -50,7 +48,6 @@ import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.LanguageItem;
 import org.kse.utilities.net.ProxySettingsUpdater;
 import org.kse.utilities.os.OperatingSystem;
-import org.kse.version.JavaVersion;
 import org.kse.version.Version;
 
 import com.sun.jna.Library;
@@ -96,8 +93,6 @@ public class KSE {
                 String appId = props.getString("KSE.AppUserModelId");
                 Shell32 shell32 = Native.load("shell32", Shell32.class);
                 shell32.SetCurrentProcessExplicitAppUserModelID(new WString(appId)).longValue();
-            } else if (OperatingSystem.isLinux()) {
-                fixAppClassName();
             }
 
             // Set the install directory property (this is used for restarts and in some cases to find the config file)
@@ -140,21 +135,6 @@ public class KSE {
     private static void setProperties(Map<String, String> properties) {
         for (Map.Entry<String, String> entry : properties.entrySet()) {
             System.setProperty(entry.getKey(), entry.getValue());
-        }
-    }
-
-    private static void fixAppClassName() {
-        // Fix application name in Gnome top bar, see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6528430
-        // TODO Bug is not fixed yet, but the workaround causes an "Illegal reflective access" warning since Java 9...
-        if (JavaVersion.getJreVersion().isBelow(JavaVersion.JRE_VERSION_12)) {
-            Toolkit xToolkit = Toolkit.getDefaultToolkit();
-            try {
-                Field awtAppClassNameField = xToolkit.getClass().getDeclaredField("awtAppClassName");
-                awtAppClassNameField.setAccessible(true);
-                awtAppClassNameField.set(xToolkit, getApplicationName());
-            } catch (Exception x) {
-                // ignore
-            }
         }
     }
 
