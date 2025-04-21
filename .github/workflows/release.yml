@@ -19,7 +19,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install nim mingw-w64
       - name: Build
-        run: nim -d:mingw --cpu:amd64 -d:release --app:gui --opt:size --out:kse-launcher.exe c kse_launcher.nim
+        run: nim -d:mingw --cpu:i386 -d:release --app:gui --opt:size --out:kse-launcher.exe c kse_launcher.nim
         working-directory: kse/res
       - name: Shrink executable
         run: strip kse/res/kse-launcher.exe
@@ -45,10 +45,10 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: kse-launcher
-          path: kse/res
+#      - uses: actions/download-artifact@v4.1.7
+#        with:
+#          name: kse-launcher
+#          path: kse/res
       - name: Build with Gradle
         run: .\gradlew.bat test zip innosetup
         working-directory: kse
@@ -107,10 +107,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: kse-launcher
-          path: kse/res
+#      - uses: actions/download-artifact@v4.1.7
+#        with:
+#          name: kse-launcher
+#          path: kse/res
       - name: Build with Gradle
         run: .\gradlew.bat test innosetup
         working-directory: kse
