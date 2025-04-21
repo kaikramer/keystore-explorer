@@ -55,13 +55,13 @@ jobs:
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
-          name: windows-artifacts
+          name: windows-artifact-exe
           path: |
             kse/build/launcher/kse.exe
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
-          # use second step with same artifact name in order to avoid sub-folders
+          # use second step to upload other artifacts in order to avoid sub-folders
           name: windows-artifacts
           path: |
             kse/build/distributions/kse-*.zip
@@ -204,21 +204,7 @@ jobs:
     needs: [windows, linux, windows-with-jre, macos, macos-arm]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: windows-artifacts
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: linux-artifacts
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: windows-with-jre-artifact
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: macos-artifact
-      - uses: actions/download-artifact@v4.1.7
-        with:
-          name: macos-arm-artifact
+      - uses: actions/download-artifact@v4
       - name: Create a release
         uses: softprops/action-gh-release@v1
         #if: startsWith(github.ref, 'refs/tags/')
