@@ -113,7 +113,7 @@ Source: "%ICONS_DIR%\www.ico"; DestDir: "{app}"
 Name: "{group}\{#AppName}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\kse.ico"; AppUserModelID: "%KSE_APP_USER_MODEL_ID%"; Comment: "{cm:IconsAppComment}"; WorkingDir: "{app}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\kse.ico"; Comment: "{cm:IconsAppComment}"; WorkingDir: "{app}"; Tasks: desktopicon
 Name: "{group}\{cm:IconsWebsiteName}"; Filename: "{#AppURL}"; IconFilename: "{app}\www.ico"; Comment: "{cm:IconsWebsiteComment}"
-Name: "{group}\{cm:IconsLicensesName}"; Filename: "{app}\licenses"; IconFilename: "{app}\licenses.ico"; Comment: "{cm:IconsLicensesComment}"; Flags: foldershortcut
+Name: "{group}\{cm:IconsLicensesName}"; Filename: "{app}\licenses"; IconFilename: "{app}\licenses.ico"; Comment: "{cm:IconsLicensesComment}"
 
 [Tasks]
 Name: registerapp; Description: "{cm:TasksRegisterAppDescription}"
