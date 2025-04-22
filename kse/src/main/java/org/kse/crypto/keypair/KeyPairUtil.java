@@ -190,20 +190,23 @@ public final class KeyPairUtil {
      * @throws CryptoException If there is a problem getting the information
      */
     public static KeyInfo getKeyInfo(PublicKey publicKey) throws CryptoException {
+        if (publicKey == null) {
+            return new KeyInfo(ASYMMETRIC, "");
+        }
         try {
             String algorithm = publicKey.getAlgorithm();
 
-            if (algorithm.equals(RSA.jce())) {
+            if (RSA.jce().equals(algorithm)) {
                 KeyFactory keyFact = KeyFactory.getInstance(algorithm, KSE.BC);
                 RSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, RSAPublicKeySpec.class);
                 BigInteger modulus = keySpec.getModulus();
                 return new KeyInfo(ASYMMETRIC, algorithm, modulus.toString(2).length());
-            } else if (algorithm.equals(DSA.jce())) {
+            } else if (DSA.jce().equals(algorithm)) {
                 KeyFactory keyFact = KeyFactory.getInstance(algorithm);
                 DSAPublicKeySpec keySpec = keyFact.getKeySpec(publicKey, DSAPublicKeySpec.class);
                 BigInteger prime = keySpec.getP();
                 return new KeyInfo(ASYMMETRIC, algorithm, prime.toString(2).length());
-            } else if (algorithm.equals(EC.jce()) || algorithm.equals(ECDSA.jce())) {
+            } else if (EC.jce().equals(algorithm) || ECDSA.jce().equals(algorithm)) {
                 ECPublicKey pubk = (ECPublicKey) publicKey;
                 int size = pubk.getParams().getOrder().bitLength();
                 return new KeyInfo(ASYMMETRIC, algorithm, size, EccUtil.getNamedCurve(publicKey));
@@ -230,6 +233,9 @@ public final class KeyPairUtil {
      * @throws CryptoException If there is a problem getting the information
      */
     public static KeyInfo getKeyInfo(PrivateKey privateKey) throws CryptoException {
+        if (privateKey == null) {
+            return new KeyInfo(ASYMMETRIC, "");
+        }
         try {
             String algorithm = privateKey.getAlgorithm();
 
