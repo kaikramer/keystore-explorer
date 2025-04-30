@@ -29,7 +29,6 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -51,7 +50,7 @@ import net.miginfocom.swing.MigLayout;
  */
 public class DInitPasswordManager extends JEscDialog {
     private static final long serialVersionUID = 1L;
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/passwordmanager/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/passwordmanager/resources");
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -73,18 +72,6 @@ public class DInitPasswordManager extends JEscDialog {
      * @param passwordQualityConfig Password quality configuration
      */
     public DInitPasswordManager(JFrame parent, PasswordQualityConfig passwordQualityConfig) {
-        super(parent, res.getString("DInitPasswordManager.Title"), ModalityType.DOCUMENT_MODAL);
-        this.passwordQualityConfig = passwordQualityConfig;
-        initComponents();
-    }
-
-    /**
-     * Creates new DInitPasswordManager dialog where the parent is a dialog.
-     *
-     * @param parent                Parent dialog
-     * @param passwordQualityConfig Password quality configuration
-     */
-    public DInitPasswordManager(JDialog parent, PasswordQualityConfig passwordQualityConfig) {
         super(parent, res.getString("DInitPasswordManager.Title"), ModalityType.DOCUMENT_MODAL);
         this.passwordQualityConfig = passwordQualityConfig;
         initComponents();

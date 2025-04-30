@@ -56,6 +56,7 @@ public class PasswordManager {
 
     private static PasswordManager INSTANCE;
     private char[] mainPassword;
+    private boolean initialized = false;
     private boolean unlocked = false;
     private List<KeyStorePasswordData> keyStorePasswords = new ArrayList<>();
 
@@ -107,7 +108,16 @@ public class PasswordManager {
      * @return True if password manager has been initialized
      */
     public boolean isInitialized() {
-        return PreferencesManager.getKeyStorePasswords().getKeyDerivationSettings().getSalt() != null;
+        return initialized || PreferencesManager.getKeyStorePasswords().getKeyDerivationSettings().getSalt() != null;
+    }
+
+    /**
+     * Initialize password manager (this will create a password file)
+     */
+    public void initialize(char[] passwordManagerMainPassword) {
+        mainPassword = passwordManagerMainPassword.clone();
+        initialized = true;
+        unlocked = true;
     }
 
     /**

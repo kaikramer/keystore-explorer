@@ -263,7 +263,7 @@ class PanelPasswords {
         dInitPasswordManager.setVisible(true);
 
         if (dInitPasswordManager.getPassword() != null) {
-            passwordManager.unlock(dInitPasswordManager.getPassword().toCharArray());
+            passwordManager.initialize(dInitPasswordManager.getPassword().toCharArray());
             passwordManager.save();
             updatePasswordsCard();
         }

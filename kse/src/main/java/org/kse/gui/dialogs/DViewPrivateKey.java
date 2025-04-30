@@ -73,8 +73,8 @@ import net.miginfocom.swing.MigLayout;
 public class DViewPrivateKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
-    private static ResourceBundle resActions = ResourceBundle.getBundle("org/kse/gui/actions/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static final ResourceBundle resActions = ResourceBundle.getBundle("org/kse/gui/actions/resources");
 
     private JLabel jlAlgorithm;
     private JTextField jtfAlgorithm;

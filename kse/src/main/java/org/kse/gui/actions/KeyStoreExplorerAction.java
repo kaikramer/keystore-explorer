@@ -297,7 +297,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
                 dInitPasswordManager.setLocationRelativeTo(frame);
                 dInitPasswordManager.setVisible(true);
                 if (dInitPasswordManager.getPassword() != null) {
-                    PasswordManager.getInstance().unlock(dInitPasswordManager.getPassword().toCharArray());
+                    PasswordManager.getInstance().initialize(dInitPasswordManager.getPassword().toCharArray());
                 }
             }
             if (!PasswordManager.getInstance().isUnlocked()) {
