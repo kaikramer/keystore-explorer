@@ -186,6 +186,12 @@ public class DInitPasswordManager extends JEscDialog {
             firstPassword = new Password(((JPasswordField) jpfFirst).getPassword());
         }
 
+        if (firstPassword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, res.getString("MinimumPasswordQualityNotMet.message"), getTitle(),
+                                          JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+
         Password confirmPassword = new Password(jpfConfirm.getPassword());
 
         if (firstPassword.equals(confirmPassword)) {

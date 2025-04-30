@@ -54,9 +54,9 @@ import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.privatekey.PrivateKeyUtils;
 import org.kse.gui.dialogs.importexport.DExportPrivateKeyType;
 import org.kse.gui.error.DError;
@@ -263,14 +263,13 @@ public class DViewPrivateKey extends JEscDialog {
                 return;
             }
             if (dExportPrivateKeyType.exportPkcs8()) {
-                PrivateKeyUtils.exportAsPkcs8(privateKey, alias, (JFrame) this.getParent(), preferences,
-                                              resActions);
+                PrivateKeyUtils.exportAsPkcs8(privateKey, alias, (JFrame) this.getParent(), preferences, resActions);
             } else if (dExportPrivateKeyType.exportPvk()) {
-                PrivateKeyUtils.exportAsPvk(privateKey, alias, (JFrame) this.getParent(), preferences,
-                                            resActions);
-            } else {
-                PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, (JFrame) this.getParent(), preferences,
-                                                resActions);
+                PrivateKeyUtils.exportAsPvk(privateKey, alias, (JFrame) this.getParent(), preferences, resActions);
+            } else if (dExportPrivateKeyType.exportOpenSsl()) {
+                PrivateKeyUtils.exportAsOpenSsl(privateKey, alias, (JFrame) this.getParent(), preferences, resActions);
+            } else if (dExportPrivateKeyType.exportJwk()) {
+                PrivateKeyUtils.exportAsJwk(privateKey, alias, (JFrame) this.getParent(), preferences, resActions);
             }
         } catch (Exception ex) {
             DError.displayError((JFrame) this.getParent(), ex);
