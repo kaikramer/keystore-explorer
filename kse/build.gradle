@@ -36,7 +36,7 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
-	id "com.netflix.nebula.ospackage" version "11.10.0"
+	id "com.netflix.nebula.ospackage" version "11.11.2"
 }
 
 defaultTasks 'zip'
@@ -61,9 +61,9 @@ ext {
 	appExe = "${appSimpleName}.exe" as GStringImpl
 	appBundle = "${appName}.app" as GStringImpl
 	if (System.getProperty("os.arch") == "aarch64") {
-		dmgFile = "${appSimpleName}-arm64-${appSimpleVersion}.dmg" as GStringImpl
+		dmgFile = "${appSimpleName}-${appSimpleVersion}-arm64.dmg" as GStringImpl
 	} else {
-		dmgFile = "${appSimpleName}-x64-${appSimpleVersion}.dmg" as GStringImpl
+		dmgFile = "${appSimpleName}-${appSimpleVersion}-x64.dmg" as GStringImpl
 	}
 	// Resource Hacker for setting the version info and icon of kse.exe
 	rh = "c:\\Program Files (x86)\\Resource Hacker\\ResourceHacker.exe"
@@ -535,13 +535,13 @@ ospackage {
 buildRpm {
 	release '1' // for spacewalk/satellite because they require a release field
 	arch NOARCH
-	requires('jre', '1.8.0', GREATER | EQUAL)
+	requires('jre', '11', GREATER | EQUAL)
 	postInstall('update-desktop-database; touch /usr/share/icons/hicolor/')
 }
 
 buildDeb {
 	arch = "all"
-	requires("default-jre").or("java8-runtime")
+	requires("default-jre").or("java11-runtime")
 }
 
 idea {
