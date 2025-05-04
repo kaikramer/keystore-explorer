@@ -114,14 +114,14 @@ dependencies {
 	implementation('net.java.dev.jna:jna:5.17.0')
 	implementation('commons-io:commons-io:2.17.0')
 	implementation('com.miglayout:miglayout-swing:11.4.2')
-	implementation('com.formdev:flatlaf:3.5.2')
-	implementation('com.formdev:flatlaf-extras:3.5.2')
-	implementation('com.nimbusds:nimbus-jose-jwt:9.41.1')
-	implementation('org.violetlib:vaqua:12')
-	implementation('io.github.java-diff-utils:java-diff-utils:4.12')
-	implementation('org.openjdk.nashorn:nashorn-core:15.4')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.17.2')
-	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.17.2')
+	implementation('com.formdev:flatlaf:3.5.4')
+	implementation('com.formdev:flatlaf-extras:3.5.4')
+	implementation('com.nimbusds:nimbus-jose-jwt:10.2')
+	implementation('org.violetlib:vaqua:13')
+	implementation('io.github.java-diff-utils:java-diff-utils:4.15')
+	implementation('org.openjdk.nashorn:nashorn-core:15.6')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.18.3')
+	implementation('com.fasterxml.jackson.jr:jackson-jr-annotation-support:2.18.3')
 
 	if (gradle.startParameter.taskNames.any { ['innosetup', 'zip'].contains(it) }) {
 		implementation('org.openjfx:javafx-base:17.0.9:win')
@@ -475,25 +475,25 @@ tasks.register('notarization', Exec) {
 
 // common part for RPM and DEB
 ospackage {
-	packageName "${appSimpleName}"
-	version "${appVersion}"
+	packageName = "${appSimpleName}"
+	version = "${appVersion}"
 	//release '1'
 
-	url "${website}"
-	summary "Multipurpose keystore and certificate tool"
-	packageGroup 'utils'
-	packageDescription 'KeyStore Explorer is a user friendly GUI application for creating,\n' +
+	url = "${website}"
+	summary = "Multipurpose keystore and certificate tool"
+	packageGroup = 'utils'
+	packageDescription = 'KeyStore Explorer is a user friendly GUI application for creating,\n' +
 			'managing and examining keystores, keys, certificates, certificate requests,\n' +
 			'certificate revocation lists and more.'
-	license 'GPLv3+'
-	packager ''
-	vendor "${vendor}"
+	license = 'GPLv3+'
+	packager = ''
+	vendor = "${vendor}"
 
-	os LINUX
-	type BINARY
+	os = LINUX
+	type = BINARY
 
-	user 'root'
-	permissionGroup 'root'
+	user = 'root'
+	permissionGroup = 'root'
 
 	into "/opt/${packageName}"
 	from(jar.outputs.files)
@@ -504,7 +504,9 @@ ospackage {
 		include '**/*.txt'
 		into 'licenses'
 		fileType LICENSE
-		fileMode 0644
+		filePermissions {
+			unix(0644)
+		}
 	}
 	from(iconsDir) {
 		include '**/kse_*.png'
@@ -512,7 +514,9 @@ ospackage {
 	}
 	from(resDir) {
 		include 'kse.sh'
-		fileMode 0755
+		filePermissions {
+			unix(0755)
+		}
 	}
 	from(resDir) {
 		include 'kse.desktop'
@@ -528,13 +532,13 @@ ospackage {
 	link('/usr/share/applications/kse.desktop', '/opt/kse/kse.desktop', 0644)
 	for (size in [16, 32, 48, 128, 256, 512]) {
 		link("/usr/share/icons/hicolor/${size}x${size}/apps/kse.png", "/opt/kse/icons/kse_${size}.png", 0644)
-		fileMode 0644
+		fileMode = 0644
 	}
 }
 
 buildRpm {
-	release '1' // for spacewalk/satellite because they require a release field
-	arch NOARCH
+	release = '1' // for spacewalk/satellite because they require a release field
+	arch = NOARCH
 	requires('jre', '11', GREATER | EQUAL)
 	postInstall('update-desktop-database; touch /usr/share/icons/hicolor/')
 }
