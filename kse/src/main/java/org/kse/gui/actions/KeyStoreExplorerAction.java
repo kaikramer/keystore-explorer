@@ -279,7 +279,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     protected PasswordAndDecision getNewKeyStorePassword(boolean isPasswordManagerWanted) {
         DGetNewPassword dGetNewPassword =
                 new DGetNewPassword(frame, res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"),
-                                    preferences, isPasswordManagerWanted);
+                                    preferences, true, isPasswordManagerWanted);
         dGetNewPassword.setLocationRelativeTo(frame);
         dGetNewPassword.setVisible(true);
 

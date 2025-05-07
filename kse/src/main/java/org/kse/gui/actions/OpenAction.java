@@ -192,6 +192,8 @@ public class OpenAction extends KeyStoreExplorerAction {
 
             KeyStoreHistory history = new KeyStoreHistory(openedKeyStore, keyStoreFile, password);
 
+            history.getCurrentState().setStoredInPasswordManager(passwordManager.isKeyStorePasswordKnown(keyStoreFile));
+
             kseFrame.addKeyStoreHistory(history);
             this.newKeyStoreWasAdded = true;
         } catch (FileNotFoundException ex) {

@@ -69,6 +69,7 @@ public class DGetNewPassword extends JEscDialog {
     private JButton jbCancel;
 
     private KsePreferences preferences;
+    private boolean askUserForPasswordManager = false;
     private boolean usePasswordManagerEnabled = false;
     private Password password;
 
@@ -80,7 +81,7 @@ public class DGetNewPassword extends JEscDialog {
      * @param preferences Preferences
      */
     public DGetNewPassword(JFrame parent, String title, KsePreferences preferences) {
-        this(parent, title, preferences, false);
+        this(parent, title, preferences, false, false);
     }
 
     /**
@@ -89,12 +90,14 @@ public class DGetNewPassword extends JEscDialog {
      * @param parent      Parent frame
      * @param title       The dialog's title
      * @param preferences Preferences
+     * @param askUserForPasswordManager Whether to show the checkbox asking the user if they want to use the pwd-mgr
      * @param usePasswordManagerEnabled Whether the checkbox for using the password manager is initially enabled
      */
     public DGetNewPassword(JFrame parent, String title, KsePreferences preferences,
-                           boolean usePasswordManagerEnabled) {
+                           boolean askUserForPasswordManager, boolean usePasswordManagerEnabled) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.preferences = preferences;
+        this.askUserForPasswordManager = askUserForPasswordManager;
         this.usePasswordManagerEnabled = usePasswordManagerEnabled;
         initComponents();
     }
@@ -133,6 +136,7 @@ public class DGetNewPassword extends JEscDialog {
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
 
         jcbStoreInPasswordManager = new JCheckBox(res.getString("DGetNewPassword.jcbStoreInPasswordManager.text"));
+        jcbStoreInPasswordManager.setVisible(askUserForPasswordManager);
         jcbStoreInPasswordManager.setSelected(usePasswordManagerEnabled);
 
         Container pane = getContentPane();
@@ -240,6 +244,6 @@ public class DGetNewPassword extends JEscDialog {
     public static void main(String[] args) throws Exception {
         KsePreferences ksePreferences = new KsePreferences();
         ksePreferences.setPasswordQualityConfig(new PasswordQualityConfig(false, false, 20));
-        DialogViewer.run(new DGetNewPassword(new javax.swing.JFrame(), "New Password", ksePreferences, true));
+        DialogViewer.run(new DGetNewPassword(new javax.swing.JFrame(), "New Password", ksePreferences, true, true));
     }
 }

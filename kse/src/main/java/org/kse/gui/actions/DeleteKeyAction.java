@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -91,6 +92,10 @@ public class DeleteKeyAction extends KeyStoreExplorerAction implements HistoryAc
             keyStore.deleteEntry(alias);
 
             currentState.append(newState);
+
+            if (history.getFile() != null) {
+                PasswordManager.getInstance().removeEntryPassword(history.getFile(), alias);
+            }
 
             kseFrame.updateControls(true);
         } catch (Exception ex) {
