@@ -273,13 +273,16 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     /**
      * Get a new KeyStore password.
      *
+     * @param askUserForPasswordManager True if user should be asked if they want to store the KeyStore password in the
+     *                                  password manager
      * @param isPasswordManagerWanted Current decision of user to store KeyStore password in the pwd mgr
      * @return The new KeyStore password, or null if none entered by the user
      */
-    protected PasswordAndDecision getNewKeyStorePassword(boolean isPasswordManagerWanted) {
+    protected PasswordAndDecision getNewKeyStorePassword(boolean askUserForPasswordManager,
+                                                         boolean isPasswordManagerWanted) {
         DGetNewPassword dGetNewPassword =
                 new DGetNewPassword(frame, res.getString("KeyStoreExplorerAction.SetKeyStorePassword.Title"),
-                                    preferences, true, isPasswordManagerWanted);
+                                    preferences, askUserForPasswordManager, isPasswordManagerWanted);
         dGetNewPassword.setLocationRelativeTo(frame);
         dGetNewPassword.setVisible(true);
 

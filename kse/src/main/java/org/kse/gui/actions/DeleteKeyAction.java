@@ -93,10 +93,6 @@ public class DeleteKeyAction extends KeyStoreExplorerAction implements HistoryAc
 
             currentState.append(newState);
 
-            if (history.getFile() != null) {
-                PasswordManager.getInstance().removeEntryPassword(history.getFile(), alias);
-            }
-
             kseFrame.updateControls(true);
         } catch (Exception ex) {
             DError.displayError(frame, ex);

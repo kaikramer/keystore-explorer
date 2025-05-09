@@ -283,28 +283,6 @@ public class PasswordManager {
     }
 
     /**
-     * Remove the given keystore entry password data, when the entry is deleted from the keystore.
-     *
-     * @param keyStoreFile Keystore file
-     * @param alias Alias of entry
-     */
-    public void removeEntryPassword(File keyStoreFile, String alias) {
-        keyStorePasswords.stream()
-                .filter(d -> d.getKeyStoreFile().equals(keyStoreFile))
-                .findAny()
-                .ifPresent(data -> data.getKeyStoreEntryPasswords().remove(alias));
-
-        // it is better to remove the entry password from the preferences here as well, because  otherwise it will be
-        // considered as "exists but is still unencrypted"; in case of an undo, the password will be re-added on save()
-        PreferencesManager.getKeyStorePasswords()
-                .getPasswords()
-                .stream()
-                .filter(d -> d.getKeyStoreFile().equals(keyStoreFile))
-                .findAny()
-                .ifPresent(data -> data.getKeyStoreEntryPasswords().remove(alias));
-    }
-
-    /**
      * Encrypt and save passwords to the configuration file
      */
     @SuppressWarnings("ConstantValue")

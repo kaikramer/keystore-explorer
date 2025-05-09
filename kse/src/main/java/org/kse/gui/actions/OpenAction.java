@@ -134,12 +134,16 @@ public class OpenAction extends KeyStoreExplorerAction {
             KeyStore openedKeyStore;
             boolean firstTry = true;
             while (true) {
+                boolean passwordManagerWanted = false;
+
+                // user might have cancelled password manager dialog, then no decision from user is required here
+                boolean askForPasswordManager = !passwordManager.isKeyStorePasswordKnown(keyStoreFile);
 
                 // show password dialog if no default password was passed or if last try to unlock ks has failed
-                boolean passwordManagerWanted = false;
                 if (password == null) {
                     DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
-                            res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()), true);
+                            res.getString("OpenAction.UnlockKeyStore.Title"), keyStoreFile.getName()),
+                            askForPasswordManager);
                     dGetPassword.setLocationRelativeTo(frame);
                     dGetPassword.setVisible(true);
 

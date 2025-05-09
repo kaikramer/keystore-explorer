@@ -197,7 +197,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             }
             if (keyStoreType == KeyStoreType.PKCS12) {
                 if (currentState.getPassword() == null) {
-                    var passwordAndDecision = getNewKeyStorePassword(newState.isStoredInPasswordManager());
+                    var passwordAndDecision = getNewKeyStorePassword(true, newState.isStoredInPasswordManager());
                     password = passwordAndDecision.getPassword();
                     if (password == null) {
                         return "";

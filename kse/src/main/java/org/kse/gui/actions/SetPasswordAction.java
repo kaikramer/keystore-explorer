@@ -30,6 +30,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.passwordmanager.PasswordAndDecision;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -91,7 +92,14 @@ public class SetPasswordAction extends KeyStoreExplorerAction implements History
         KeyStoreState currentState = history.getCurrentState();
         KeyStoreState newState = currentState.createBasisForNextState(this);
 
-        PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(newState.isStoredInPasswordManager());
+        // don't ask user whether they want to use the password manager if they already answered with "yes" or
+        // if the keystore password is already stored in the password manager
+        boolean askUserForPasswordManager = !(newState.isStoredInPasswordManager() ||
+                PasswordManager.getInstance().isKeyStorePasswordKnown(history.getFile()));
+        boolean isPasswordManagerWanted = newState.isStoredInPasswordManager();
+
+        PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(askUserForPasswordManager,
+                                                                         isPasswordManagerWanted);
         Password password = passwordAndDecision.getPassword();
 
         if (password == null) {

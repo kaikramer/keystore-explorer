@@ -96,7 +96,7 @@ public class OpenCaCertificatesAction extends OpenAction {
 
             KeyStore caCertificatesKeyStore = KeyStoreUtil.create(keyStoreType);
 
-            PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(false);
+            PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(true, false);
 
             Password password = passwordAndDecision.getPassword();
             if (password == null) {

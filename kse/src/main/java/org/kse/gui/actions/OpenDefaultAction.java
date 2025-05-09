@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.io.File;
 import java.security.KeyStore;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -35,6 +36,7 @@ import org.kse.gui.dialogs.DNewKeyStoreType;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.passwordmanager.PasswordAndDecision;
+import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.KeyStoreHistory;
 
 /**
@@ -94,7 +96,7 @@ public class OpenDefaultAction extends OpenAction {
                 return;
             }
 
-            PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(false);
+            PasswordAndDecision passwordAndDecision = getNewKeyStorePassword(true, false);
 
             Password password = passwordAndDecision.getPassword();
             if (password == null) {
@@ -106,6 +108,9 @@ public class OpenDefaultAction extends OpenAction {
 
             KeyStoreHistory history = new KeyStoreHistory(defaultKeyStore, defaultKeyStoreFile, password);
             history.getCurrentState().setStoredInPasswordManager(passwordAndDecision.isSavePassword());
+            if (passwordAndDecision.isSavePassword()) {
+                PasswordManager.getInstance().update(defaultKeyStoreFile, password.toCharArray(), new HashMap<>());
+            }
 
             kseFrame.addKeyStoreHistory(history);
         } catch (Exception ex) {
