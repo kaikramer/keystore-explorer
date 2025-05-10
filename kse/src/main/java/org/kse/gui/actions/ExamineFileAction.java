@@ -30,6 +30,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Optional;
 
 import javax.swing.ImageIcon;
@@ -170,11 +171,22 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
     private void showPkcs12Info(File file) throws IOException, CryptoException {
         Password password;
         PasswordManager passwordManager = PasswordManager.getInstance();
+        boolean passwordManagerWanted = false;
+
         if (passwordManager.isKeyStorePasswordKnown(file)) {
             unlockPasswordManager();
             password = passwordManager.getKeyStorePassword(file).map(Password::new).orElse(null);
         } else {
-            password = getPassword(file);
+            DGetPassword dGetPassword = new DGetPassword(frame, MessageFormat.format(
+                    res.getString("OpenAction.UnlockKeyStore.Title"), file.getName()), true);
+            dGetPassword.setLocationRelativeTo(frame);
+            dGetPassword.setVisible(true);
+
+            password = dGetPassword.getPassword();
+            passwordManagerWanted = dGetPassword.isPasswordManagerWanted();
+            if (passwordManagerWanted) {
+                unlockPasswordManager();
+            }
         }
 
         if (password == null || password.isNulled()) {
@@ -186,6 +198,10 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         DPkcs12Info dPkcs12Info = new DPkcs12Info(frame, p12Data, password, file);
         dPkcs12Info.setLocationRelativeTo(frame);
         dPkcs12Info.setVisible(true);
+
+        if (passwordManagerWanted) {
+            passwordManager.update(file, password.toCharArray(), new HashMap<>());
+        }
 
         if (!dPkcs12Info.isCancelled()) {
             new OpenAction(kseFrame).openKeyStore(file, new String(password.toCharArray()));
