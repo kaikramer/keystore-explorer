@@ -111,13 +111,23 @@ configurations {
 
 dependencies {
 	implementation('org.bouncycastle:bcpkix-jdk18on:1.80')
-	implementation('net.java.dev.jna:jna:5.17.0')
 	implementation('commons-io:commons-io:2.17.0')
 	implementation('com.miglayout:miglayout-swing:11.4.2')
-	implementation('com.formdev:flatlaf:3.5.4')
-	implementation('com.formdev:flatlaf-extras:3.5.4')
+	implementation('com.formdev:flatlaf:3.5.4:no-natives')
+	implementation('com.formdev:flatlaf:3.5.4:linux-x86_64@so')
+	implementation('com.formdev:flatlaf:3.5.4:macos-arm64@dylib')
+	implementation('com.formdev:flatlaf:3.5.4:macos-x86_64@dylib')
+	implementation('com.formdev:flatlaf:3.5.4:windows-x86_64@dll')
+	implementation('com.formdev:flatlaf:3.5.4:windows-x86@dll')
+	implementation('com.formdev:flatlaf:3.5.4:windows-arm64@dll')
+	implementation('com.formdev:flatlaf-extras:3.5.4') {
+		exclude group: 'com.formdev', module: 'flatlaf'
+	}
 	implementation('com.nimbusds:nimbus-jose-jwt:10.2')
-	implementation('org.violetlib:vaqua:13')
+
+	// disabled because of Apple notarization failing due to unsigned native libraries in this jar
+	// implementation('org.violetlib:vaqua:13')
+
 	implementation('io.github.java-diff-utils:java-diff-utils:4.15')
 	implementation('org.openjdk.nashorn:nashorn-core:15.6')
 	implementation('com.fasterxml.jackson.jr:jackson-jr-objects:2.18.3')
@@ -143,6 +153,12 @@ dependencies {
 			implementation('org.openjfx:javafx-graphics:17.0.9:mac')
 			implementation('org.openjfx:javafx-swing:17.0.9:mac')
 		}
+
+		// don't include jar in app bundle because of Apple notarization failing due to unsigned native libraries
+		compileOnly('net.java.dev.jna:jna:5.17.0')
+	} else {
+		// currently JNA is only used for Windows, so this is fine as a temporary workaround
+		implementation('net.java.dev.jna:jna:5.17.0')
 	}
 	if (gradle.startParameter.taskNames.any { ['zip'].contains(it) }) {
 		implementation('org.openjfx:javafx-base:17.0.9:mac')
@@ -257,7 +273,9 @@ tasks.register('zip', Zip) {
 		}
 		from(resDir) {
 			include 'kse.sh'
-			fileMode 0755
+			filePermissions {
+				unix(0755)
+			}
 			include 'readme.txt'
 		}
 	}
