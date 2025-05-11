@@ -448,6 +448,22 @@ tasks.register('signapp') {
 			commandLine 'codesign',
 					'-vvv',
 					'--force',
+					'-s', 'Kai Kramer',
+					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-arm64.dylib"
+		}
+		exec {
+			workingDir appBundleDir
+			commandLine 'codesign',
+					'-vvv',
+					'--force',
+					'-s', 'Kai Kramer',
+					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-x86_64.dylib"
+		}
+		exec {
+			workingDir appBundleDir
+			commandLine 'codesign',
+					'-vvv',
+					'--force',
 					'--options=runtime',
 					'--entitlements', "${dmgDir}/entitlements.xml",
 					'-s', 'Kai Kramer',
