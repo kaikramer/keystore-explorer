@@ -53,6 +53,8 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle resCryptoDigest = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
+
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -104,11 +106,12 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private void initComponents(byte[] keyIdentifier) throws CryptoException {
         jlGenerationMethod = new JLabel(res.getString("DKeyIdentifierChooser.jlGenerationMethod.text"));
 
-        jrb160BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb160BitHash.text"));
-        jrb160BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb160BitHash.tooltip"));
+        jrb160BitHash = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod1.text"));
+        jrb160BitHash.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod1.tooltip"));
 
-        jrb64BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb64BitHash.text"));
-        jrb64BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb64BitHash.tooltip"));
+        jrb64BitHash = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod2.text"));
+        jrb64BitHash.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod2.tooltip"));
+        // TODO JW Add additional algorithms
 
         ButtonGroup bgKeyIdentifier = new ButtonGroup();
         bgKeyIdentifier.add(jrb160BitHash);
