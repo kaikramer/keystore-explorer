@@ -170,9 +170,6 @@ public enum SignatureType {
         signatureTypes.add(SHA384_ECDSA);
         signatureTypes.add(SHA512_ECDSA);
 
-        signatureTypes.add(ED25519);
-        signatureTypes.add(ED448);
-
         return signatureTypes;
     }
 
