@@ -21,6 +21,7 @@ package org.kse.gui.crypto.generalname;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -28,6 +29,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
+import org.kse.crypto.x509.GeneralNameUtil;
 
 /**
  * The table model used to display general names.
@@ -156,5 +158,13 @@ public class GeneralNamesTableModel extends AbstractTableModel {
      */
     public List<GeneralName> getData() {
         return data;
+    }
+
+    static class GeneralNameComparator implements Comparator<GeneralName> {
+        @Override
+        public int compare(GeneralName name1, GeneralName name2) {
+            return GeneralNameUtil.safeToString(name1, false)
+                                  .compareToIgnoreCase(GeneralNameUtil.safeToString(name2, false));
+        }
     }
 }
