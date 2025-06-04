@@ -375,9 +375,7 @@ public class JGeneralNames extends JPanel {
                 return;
             }
 
-            getGeneralNamesTableModel().removeRow(selectedRow);
-            getGeneralNamesTableModel().addRow(newGeneralName);
-
+            getGeneralNamesTableModel().setValueAt(newGeneralName, selectedRow, 0);
             selectGeneralNameInTable(newGeneralName);
             updateButtonControls();
         }

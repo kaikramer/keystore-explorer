@@ -151,6 +151,12 @@ public class GeneralNamesTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    @Override
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        data.set(rowIndex, (GeneralName) value);
+        fireTableDataChanged();
+    }
+
     /**
      * Returns the table data
      *
