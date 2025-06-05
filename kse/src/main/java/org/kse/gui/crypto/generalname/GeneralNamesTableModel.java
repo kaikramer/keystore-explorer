@@ -21,7 +21,6 @@ package org.kse.gui.crypto.generalname;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -62,7 +61,6 @@ public class GeneralNamesTableModel extends AbstractTableModel {
         GeneralName[] generalNamesArray = generalNames.getNames();
 
         data = new ArrayList<>(Arrays.asList(generalNamesArray));
-        data.sort(new GeneralNameComparator());
 
         fireTableDataChanged();
     }
@@ -140,7 +138,6 @@ public class GeneralNamesTableModel extends AbstractTableModel {
      */
     public void addRow(GeneralName generalName) {
         data.add(generalName);
-        data.sort(new GeneralNameComparator());
         fireTableDataChanged();
     }
 
@@ -151,6 +148,20 @@ public class GeneralNamesTableModel extends AbstractTableModel {
      */
     public void removeRow(int row) {
         data.remove(row);
+        fireTableDataChanged();
+    }
+
+    /**
+     * Sets the value in the cell at <code>columnIndex</code> and
+     * <code>rowIndex</code> to <code>value</code>.
+     *
+     * @param value       the new value
+     * @param rowIndex    the row whose value is to be changed
+     * @param columnIndex the column whose value is to be changed
+     */
+    @Override
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        data.set(rowIndex, (GeneralName) value);
         fireTableDataChanged();
     }
 
