@@ -57,6 +57,8 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.X509TrustedCertificateBlock;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.utilities.SerialNumbers;
@@ -869,5 +871,18 @@ public final class X509CertUtil {
     public static String generateCertSerialNumber() {
         int snLength = PreferencesManager.getPreferences().getSerialNumberLengthInBytes();
         return HexUtil.getHexString(SerialNumbers.generate(snLength), "0x", 0, 0);
+    }
+
+    /**
+     * Returns certificate fingerprint in hexadecimal format
+     *
+     * @param x509Cert       The certificate
+     * @param fingerprintAlg Digest type of fingerprint
+     * @return Fingerprint as hex string
+     * @throws CryptoException If there was a problem encoding the certificate
+     */
+    public static String getFingerprint(X509Certificate x509Cert, DigestType fingerprintAlg) throws CryptoException {
+        byte[] messageDigest = DigestUtil.getMessageDigest(getCertEncodedX509(x509Cert), fingerprintAlg);
+        return HexUtil.getHexString(messageDigest, "", 0, 0);
     }
 }

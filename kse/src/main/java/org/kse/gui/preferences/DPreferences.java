@@ -49,6 +49,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.kse.crypto.SecurityProvider;
+import org.kse.crypto.digest.DigestType;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.PlatformUtil;
@@ -409,6 +410,8 @@ public class DPreferences extends JEscDialog {
         newKstColumns.setEnableSubjectO(panelDisplayColumns.getJcbEnableSubjectO().isSelected());
         newKstColumns.setEnableSerialNumberHex(panelDisplayColumns.getJcbEnableSerialNumberHex().isSelected());
         newKstColumns.setEnableSerialNumberDec(panelDisplayColumns.getJcbEnableSerialNumberDec().isSelected());
+        newKstColumns.setEnableFingerprint(panelDisplayColumns.getJcbEnableFingerprint().isSelected());
+        newKstColumns.setFingerprintAlg((DigestType) panelDisplayColumns.getJcbFingerprintAlg().getSelectedItem());
         return newKstColumns;
     }
 

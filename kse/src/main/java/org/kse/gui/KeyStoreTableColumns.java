@@ -19,7 +19,10 @@
  */
 package org.kse.gui;
 
+import java.util.Objects;
 import java.util.stream.Stream;
+
+import org.kse.crypto.digest.DigestType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -45,6 +48,8 @@ public class KeyStoreTableColumns {
     private boolean enableSubjectO = false;
     private boolean enableSerialNumberHex = false;
     private boolean enableSerialNumberDec = false;
+    private boolean enableFingerprint = false;
+    private DigestType fingerprintAlg;
 
     /**
      * Get number of activated columns. The actual table has 3 columns more, as the first 3 are fixed.
@@ -56,7 +61,7 @@ public class KeyStoreTableColumns {
         return Stream.of(enableEntryName, enableAlgorithm, enableKeySize, enableCertificateValidityStart,
                          enableCertificateExpiry, enableLastModified, enableSKI, enableAKI, enableIssuerDN,
                          enableSubjectDN, enableCurve, enableIssuerCN, enableSubjectCN, enableIssuerO, enableSubjectO,
-                         enableSerialNumberHex, enableSerialNumberDec
+                         enableSerialNumberHex, enableSerialNumberDec, enableFingerprint
         ).mapToInt(b -> b ? 1 : 0).sum();
     }
 
@@ -65,7 +70,7 @@ public class KeyStoreTableColumns {
         return 2 + Stream.of(enableEntryName, enableAlgorithm, enableKeySize, enableCurve,
                              enableCertificateValidityStart, enableCertificateExpiry, enableLastModified, enableAKI,
                              enableSKI, enableIssuerDN, enableSubjectDN, enableIssuerCN, enableSubjectCN, enableIssuerO,
-                             enableSubjectO, enableSerialNumberHex, enableSerialNumberDec)
+                             enableSubjectO, enableSerialNumberHex, enableSerialNumberDec, enableFingerprint)
                          .mapToInt(b -> b ? 1 : 0)
                          .limit(originalIndex)
                          .sum();
@@ -139,6 +144,10 @@ public class KeyStoreTableColumns {
         return calculateActualColumnIndex(17);
     }
 
+    public int colIndexFingerprint() {
+        return calculateActualColumnIndex(18);
+    }
+
 
     public boolean getEnableEntryName() {
         return enableEntryName;
@@ -206,6 +215,14 @@ public class KeyStoreTableColumns {
 
     public boolean getEnableSerialNumberDec() {
         return enableSerialNumberDec;
+    }
+
+    public boolean getEnableFingerprint() {
+        return enableFingerprint;
+    }
+
+    public DigestType getFingerprintAlg() {
+        return fingerprintAlg;
     }
 
     public void setEnableEntryName(boolean enableEntryName) {
@@ -276,6 +293,14 @@ public class KeyStoreTableColumns {
         this.enableSerialNumberDec = enableSerialNumberDec;
     }
 
+    public void setEnableFingerprint(boolean enableFingerprint) {
+        this.enableFingerprint = enableFingerprint;
+    }
+
+    public void setFingerprintAlg(DigestType fingerprintAlg) {
+        this.fingerprintAlg = fingerprintAlg;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -335,7 +360,13 @@ public class KeyStoreTableColumns {
         if (enableSerialNumberHex != that.enableSerialNumberHex) {
             return false;
         }
-        return enableSerialNumberDec == that.enableSerialNumberDec;
+        if (enableSerialNumberDec != that.enableSerialNumberDec) {
+            return false;
+        }
+        if (enableFingerprint != that.enableFingerprint) {
+            return false;
+        }
+        return Objects.equals(fingerprintAlg, that.fingerprintAlg);
     }
 
     @Override
@@ -357,6 +388,8 @@ public class KeyStoreTableColumns {
         result = 31 * result + (enableSubjectO ? 1 : 0);
         result = 31 * result + (enableSerialNumberHex ? 1 : 0);
         result = 31 * result + (enableSerialNumberDec ? 1 : 0);
+        result = 31 * result + (enableFingerprint ? 1 : 0);
+        result = 31 * result + (fingerprintAlg == null ? 0 : fingerprintAlg.hashCode());
         return result;
     }
 }
