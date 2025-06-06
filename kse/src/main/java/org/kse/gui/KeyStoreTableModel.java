@@ -29,6 +29,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
@@ -50,6 +51,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
@@ -115,6 +117,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
     private int iSubjectOColumn = -1;
     private int iSerialNumberHexColumn = -1;
     private int iSerialNumberDecColumn = -1;
+    private int iFingerprintColumn = -1;
 
     /**
      * Construct a new KeyStoreTableModel with a variable layout.
@@ -350,6 +353,17 @@ public class KeyStoreTableModel extends AbstractTableModel {
                     data[i][iSKIColumn] = null;
                 }
             }
+            if (iFingerprintColumn > 0) {
+                if (!entryType.equals(KEY_ENTRY)) {
+                    data[i][iFingerprintColumn] = getCertificateFingerprint(alias, keyStore,
+                                                                            keyStoreTableColumns.getFingerprintAlg());
+                    if (iColWidth[iFingerprintColumn] < data[i][iFingerprintColumn].toString().length()) {
+                        iColWidth[iFingerprintColumn] = data[i][iFingerprintColumn].toString().length();
+                    }
+                } else {
+                    data[i][iFingerprintColumn] = null;
+                }
+            }
         }
 
         fireTableDataChanged();
@@ -469,6 +483,12 @@ public class KeyStoreTableModel extends AbstractTableModel {
     private String getCertificateSerialNumberDec(String alias, KeyStore ks) throws CryptoException, KeyStoreException {
         X509Certificate x509Cert = getCertificate(alias, ks);
         return X509CertUtil.getSerialNumberAsDec(x509Cert);
+    }
+
+    private String getCertificateFingerprint(String alias, KeyStore ks, DigestType fingerprintAlg)
+            throws CryptoException, KeyStoreException {
+        X509Certificate x509Cert = getCertificate(alias, ks);
+        return X509CertUtil.getFingerprint(x509Cert, fingerprintAlg);
     }
 
     private String getCertificateSubjectCN(String alias, KeyStore keyStore) throws CryptoException, KeyStoreException {
@@ -653,6 +673,12 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 columnNames[col] = res.getString("KeyStoreTableModel.SerialNumberDec");
                 columnTypes[col] = String.class;
                 iSerialNumberDecColumn = col;
+                iColWidth[col] = columnNames[col].length();
+            } else if (col == keyStoreTableColumns.colIndexFingerprint()) {
+                columnNames[col] = MessageFormat.format(res.getString("KeyStoreTableModel.Fingerprint"),
+                                                        keyStoreTableColumns.getFingerprintAlg());
+                columnTypes[col] = String.class;
+                iFingerprintColumn = col;
                 iColWidth[col] = columnNames[col].length();
             }
         }

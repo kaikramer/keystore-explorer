@@ -22,11 +22,13 @@ package org.kse.gui.preferences;
 import java.util.ResourceBundle;
 
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import org.kse.crypto.digest.DigestType;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.preferences.data.KsePreferences;
 
@@ -55,6 +57,8 @@ class PanelDisplayColumns {
     private JCheckBox jcbEnableSubjectO;
     private JCheckBox jcbEnableSerialNumberHex;
     private JCheckBox jcbEnableSerialNumberDec;
+    private JCheckBox jcbEnableFingerprint;
+    private JComboBox<DigestType> jcbFingerprintAlg;
     private JSpinner jspExpirationWarnDays;
 
     PanelDisplayColumns(DPreferences parent, KsePreferences preferences) {
@@ -139,6 +143,20 @@ class PanelDisplayColumns {
                                                  bEnableSerialNumberDec);
         jcbEnableSerialNumberDec.setSelected(bEnableSerialNumberDec);
 
+        boolean bEnableFingerprint = kstColumns.getEnableFingerprint();
+        jcbEnableFingerprint = new JCheckBox(res.getString("DPreferences.jcbEnableFingerprint.text"),
+                                                 bEnableFingerprint);
+        jcbEnableFingerprint.setSelected(bEnableFingerprint);
+
+        jcbFingerprintAlg = new JComboBox<>();
+        jcbFingerprintAlg.setToolTipText(res.getString("DPreferences.jcbFingerprintAlg.tooltip"));
+        jcbFingerprintAlg.setMaximumRowCount(10);
+        jcbFingerprintAlg.setEnabled(bEnableFingerprint);
+        jcbEnableFingerprint.addItemListener(evt -> jcbFingerprintAlg.setEnabled(jcbEnableFingerprint.isSelected()));
+        populateFingerprintAlgs(kstColumns.getFingerprintAlg() == null ?
+                                preferences.getCertificateFingerprintAlgorithm() :
+                                kstColumns.getFingerprintAlg());
+
         JLabel jlExpirationWarnDays = new JLabel(res.getString("DPreferences.jlExpiryWarning.text"));
         var spinnerNumberModel = new SpinnerNumberModel(preferences.getExpiryWarnDays(), 0, 90, 1);
         jspExpirationWarnDays = new JSpinner(spinnerNumberModel);
@@ -165,7 +183,9 @@ class PanelDisplayColumns {
         jpDisplayColumns.add(jcbEnableIssuerO, "left, wrap");
         jpDisplayColumns.add(jcbEnableSubjectO, "left");
         jpDisplayColumns.add(jcbEnableSerialNumberHex, "left, wrap");
-        jpDisplayColumns.add(jcbEnableSerialNumberDec, "left, wrap para");
+        jpDisplayColumns.add(jcbEnableSerialNumberDec, "left");
+        jpDisplayColumns.add(jcbEnableFingerprint, "left, spanx, split");
+        jpDisplayColumns.add(jcbFingerprintAlg, "wrap para");
         jpDisplayColumns.add(jlExpirationWarnDays, "left, spanx, split");
         jpDisplayColumns.add(jspExpirationWarnDays, "wrap");
 
@@ -240,7 +260,25 @@ class PanelDisplayColumns {
         return jcbEnableSerialNumberDec;
     }
 
+    JCheckBox getJcbEnableFingerprint() {
+        return jcbEnableFingerprint;
+    }
+
+    JComboBox<DigestType> getJcbFingerprintAlg() {
+        return jcbFingerprintAlg;
+    }
+
     JSpinner getJspExpirationWarnDays() {
         return jspExpirationWarnDays;
+    }
+
+    private void populateFingerprintAlgs(DigestType algorithm) {
+        DigestType[] digestAlgs = DigestType.values();
+        for (int i = 0; i < digestAlgs.length; i++) {
+            jcbFingerprintAlg.addItem(digestAlgs[i]);
+            if (digestAlgs[i] == algorithm) {
+                jcbFingerprintAlg.setSelectedIndex(i);
+            }
+        }
     }
 }

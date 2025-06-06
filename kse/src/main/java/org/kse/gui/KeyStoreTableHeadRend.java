@@ -137,6 +137,8 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectOColumn.tooltip"));
                 } else if (col == keyStoreTableColumns.colIndexCurve()) {
                     header.setToolTipText(res.getString("KeyStoreTableHeadRend.CurveColumn.tooltip"));
+                } else if (col == keyStoreTableColumns.colIndexFingerprint()) {
+                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.FingerprintColumn.tooltip"));
                 }
             }
         }
