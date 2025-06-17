@@ -43,7 +43,6 @@ import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 
-
 public class JwkPrivateKeyExporter {
     private final String alias;
     private final JwkExporter jwkExporter;
