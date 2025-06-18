@@ -153,8 +153,6 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         case ED25519:
             signatureAlgorithm = JWSAlgorithm.Ed25519;
             break;
-        case ED448:
-            signatureAlgorithm = JWSAlgorithm.Ed448;
         default:
             break;
         }
