@@ -74,18 +74,19 @@ public class JwkPrivateKeyExporter {
     }
 
     private JwkExporter checkforJdkEdDSA(PrivateKey privateKey) {
-        try
-        {
+        try {
+            // Use reflection so that KSE can still compile with JDK 11.
             Class<?> c = Class.forName("java.security.interfaces.EdECPrivateKey");
             if (c.isAssignableFrom(privateKey.getClass())) {
+                // Quickest way to convert to a BC EdDSA key. Doesn't require importing any
+                // Ed25519 or Ed448 specific classes, and it doesn't require using reflection
+                // to access the JDK 15+ EC crypto provider.
                 KeyFactory kf = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
                 PrivateKey bcPrivateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(privateKey.getEncoded()));
                 return new EdDSAPrivateKeyExporter(bcPrivateKey);
             }
-        }
-        catch (Exception e)
-        {
-            // ignore if JDK 15 or higher is not being used
+        } catch (Exception e) {
+            // ignore -- JDK 14 or lower is being used
         }
         return null;
     }
