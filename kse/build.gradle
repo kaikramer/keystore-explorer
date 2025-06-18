@@ -124,6 +124,7 @@ dependencies {
 		exclude group: 'com.formdev', module: 'flatlaf'
 	}
 	implementation('com.nimbusds:nimbus-jose-jwt:10.2')
+	implementation('com.google.crypto.tink:tink:1.17.0') // nimbus-jose-jwt option dep for ed25519
 
 	// disabled because of Apple notarization failing due to unsigned native libraries in this jar
 	// implementation('org.violetlib:vaqua:13')

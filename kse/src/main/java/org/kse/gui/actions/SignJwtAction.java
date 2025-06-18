@@ -30,7 +30,8 @@ import java.util.Base64;
 
 import javax.swing.ImageIcon;
 
-import org.kse.gui.passwordmanager.Password;
+import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
@@ -39,6 +40,7 @@ import org.kse.gui.dialogs.DViewJwt;
 import org.kse.gui.dialogs.sign.CustomClaim;
 import org.kse.gui.dialogs.sign.DSignJwt;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -46,8 +48,11 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.crypto.Ed25519Signer;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.OctetKeyPair;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
@@ -145,6 +150,11 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             signatureAlgorithm = JWSAlgorithm.ES512;
             curve = Curve.P_521;
             break;
+        case ED25519:
+            signatureAlgorithm = JWSAlgorithm.Ed25519;
+            break;
+        case ED448:
+            signatureAlgorithm = JWSAlgorithm.Ed448;
         default:
             break;
         }
@@ -166,6 +176,14 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         case SHA384_ECDSA:
         case SHA512_ECDSA:
             signer = new ECDSASigner(privateKey, curve);
+            break;
+        case ED25519:
+            Ed25519PrivateKeyParameters params = (Ed25519PrivateKeyParameters) PrivateKeyFactory
+                    .createKey(privateKey.getEncoded());
+            OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
+                    Base64URL.encode(params.generatePublicKey().getEncoded())).d(Base64URL.encode(params.getEncoded()))
+                            .build();
+            signer = new Ed25519Signer(okp);
             break;
         default:
             break;
