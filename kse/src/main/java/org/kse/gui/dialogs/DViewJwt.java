@@ -49,8 +49,6 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
-import org.bouncycastle.crypto.params.Ed25519PublicKeyParameters;
-import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.ecc.EdDSACurves;
@@ -312,10 +310,8 @@ public class DViewJwt extends JEscDialog {
                             res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                Ed25519PublicKeyParameters params = (Ed25519PublicKeyParameters) PublicKeyFactory
-                        .createKey(publicKey.getEncoded());
-                OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519, Base64URL.encode(params.getEncoded()))
-                        .build();
+                OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
+                        Base64URL.encode(((BCEdDSAPublicKey) publicKey).getPointEncoding())).build();
                 verifier = new Ed25519Verifier(okp);
             } else {
                 JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
