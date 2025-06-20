@@ -24,7 +24,6 @@ import static org.kse.version.JavaVersion.JRE_VERSION_15;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
@@ -61,7 +60,7 @@ public enum CurveSet {
         sets.add(ANSI_X9_62.visibleName);
         sets.add(NIST.visibleName);
         sets.add(SEC.visibleName);
-        if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(TELETRUST.visibleName);
         }
         sets.add(ED.visibleName);
@@ -78,10 +77,10 @@ public enum CurveSet {
         sets.add(ANSI_X9_62);
         sets.add(NIST);
         sets.add(SEC);
-        if (EccUtil.isBouncyCastleKeyStore(keyStoreType)) {
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(TELETRUST);
         }
-        if (EccUtil.isBouncyCastleKeyStore(keyStoreType) || JavaVersion.getJreVersion().isAtLeast(JRE_VERSION_15)) {
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || JavaVersion.getJreVersion().isAtLeast(JRE_VERSION_15)) {
             sets.add(ED);
         }
         return sets;

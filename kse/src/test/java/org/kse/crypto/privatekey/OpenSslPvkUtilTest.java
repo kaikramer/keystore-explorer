@@ -31,6 +31,7 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -46,11 +47,15 @@ import org.kse.crypto.filetype.CryptoFileUtil;
 /**
  * Unit tests for OpenSslPvkUtil. Encodes a RSA, EC and DSA private keys using
  * OpenSSL format and reads them back using a variety of options.
+ * <p>
+ * Note that OpenSSL ML-DSA has no support for “traditional” (or “legacy”)
+ * private-key format
+ * </p>
  */
 public class OpenSslPvkUtilTest extends KeyTestsBase {
 
     @ParameterizedTest
-    @MethodSource("privateKeys")
+    @MethodSource("openSSLCompatiblePrivateKeys")
     public void unencryptedOpenSslPvk(PrivateKey privateKey) throws Exception {
         byte[] key = OpenSslPvkUtil.get(privateKey);
         assertEquals(privateKey, OpenSslPvkUtil.load(key));
@@ -58,7 +63,7 @@ public class OpenSslPvkUtilTest extends KeyTestsBase {
     }
 
     @ParameterizedTest
-    @MethodSource("privateKeys")
+    @MethodSource("openSSLCompatiblePrivateKeys")
     public void unencryptedOpenSslPvkPem(PrivateKey privateKey) throws Exception {
         String pemKey = OpenSslPvkUtil.getPem(privateKey);
         assertEquals(privateKey, OpenSslPvkUtil.load(pemKey.getBytes()));
@@ -68,7 +73,7 @@ public class OpenSslPvkUtilTest extends KeyTestsBase {
     @TestFactory
     Iterable<DynamicTest> testAllPbeTypes() throws Exception {
         List<DynamicTest> tests = new ArrayList<>();
-        for (PrivateKey privateKey : privateKeys()) {
+        for (PrivateKey privateKey : openSSLCompatiblePrivateKeys()) {
             for (OpenSslPbeType pbeType : OpenSslPbeType.values()) {
                 tests.add(dynamicTest("test " + pbeType.name() + "/" + privateKey.getClass().getSimpleName(), () -> {
                     byte[] encKey = OpenSslPvkUtil.getEncrypted(privateKey, pbeType, PASSWORD).getBytes();
@@ -81,7 +86,7 @@ public class OpenSslPvkUtilTest extends KeyTestsBase {
     }
 
     @ParameterizedTest
-    @MethodSource("privateKeys")
+    @MethodSource("openSSLCompatiblePrivateKeys")
     public void checkCompatibilityWithBC(PrivateKey privateKey) throws Exception {
         String key = OpenSslPvkUtil.getPem(privateKey);
         try (PEMParser pemParser = new PEMParser(new StringReader(key))) {
@@ -102,4 +107,11 @@ public class OpenSslPvkUtilTest extends KeyTestsBase {
         assertEquals(ENC_OPENSSL_PVK, CryptoFileUtil.detectFileType(encKey.getBytes()));
         assertThrows(PrivateKeyEncryptedException.class, () -> OpenSslPvkUtil.load(encKey.getBytes()));
     }
+
+    public static List<PrivateKey> openSSLCompatiblePrivateKeys() {
+        return privateKeys().stream()
+                .filter(OpenSslPvkUtil::isOpenSSLFormatSupported)
+                .collect(Collectors.toList());
+    }
+
 }

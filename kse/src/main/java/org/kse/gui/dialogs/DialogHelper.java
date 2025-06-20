@@ -81,6 +81,15 @@ public class DialogHelper {
         case ED448:
             sigAlgs = Collections.singletonList(SignatureType.ED448);
             break;
+        case MLDSA44:
+            sigAlgs = Collections.singletonList(SignatureType.MLDSA44);
+            break;
+        case MLDSA65:
+            sigAlgs = List.of(SignatureType.MLDSA65);
+            break;
+        case MLDSA87:
+            sigAlgs = Collections.singletonList(SignatureType.MLDSA87);
+            break;
         case RSA:
         default:
             try {

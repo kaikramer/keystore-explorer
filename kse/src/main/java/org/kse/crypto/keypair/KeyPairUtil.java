@@ -27,6 +27,7 @@ import static org.kse.crypto.keypair.KeyPairType.EC;
 import static org.kse.crypto.keypair.KeyPairType.ECDSA;
 import static org.kse.crypto.keypair.KeyPairType.EDDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
+import static org.kse.crypto.keypair.KeyPairType.isMlDSA;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -138,6 +139,26 @@ public final class KeyPairUtil {
         }
     }
 
+
+    public static KeyPair generateMLDSAKeyPair(KeyPairType keyPairType, Provider provider)
+            throws CryptoException {
+        try {
+            if (!isMlDSA(keyPairType)) {
+                throw new CryptoException(res.getString("NoGenerateKeypair.exception.NotMlDSA.message"));
+            }
+            KeyPairGenerator keyPairGen;
+            if (provider == null) {
+                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
+            } else {
+                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
+            }
+            return keyPairGen.generateKeyPair();
+        } catch (GeneralSecurityException ex) {
+            throw new CryptoException(
+                    MessageFormat.format(res.getString("NoGenerateKeypair.exception.message"), keyPairType.jce()), ex);
+        }
+    }
+
     /**
      * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
      *
@@ -217,6 +238,9 @@ public final class KeyPairUtil {
             } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
                 EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
                 return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
+            } else if (isMlDSA(getKeyPairType(publicKey))) {
+                KeyPairType keyPairType = getKeyPairType(publicKey);
+                return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
             }
 
             return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
@@ -267,6 +291,9 @@ public final class KeyPairUtil {
             } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
                 EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
                 return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
+            } else if (isMlDSA(getKeyPairType(privateKey))) {
+                KeyPairType keyPairType = getKeyPairType(privateKey);
+                return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
             }
 
             return new KeyInfo(ASYMMETRIC, algorithm); // size unknown
@@ -333,6 +360,10 @@ public final class KeyPairUtil {
                 EdDSACurves detectedEdDSACurve = EccUtil.detectEdDSACurve(privateKey);
                 byte[] signature = sign(toSign, privateKey, detectedEdDSACurve.jce());
                 return verify(toSign, signature, publicKey, detectedEdDSACurve.jce());
+            } else if (isMlDSA(getKeyPairType(privateKey))) {
+                KeyPairType keyPairType = getKeyPairType(privateKey);
+                byte[] signature = sign(toSign, privateKey, keyPairType.jce());
+                return verify(toSign, signature, publicKey, keyPairType.jce());
             } else {
                 throw new CryptoException(
                         MessageFormat.format(res.getString("NoCheckCompriseValidKeypairAlg.exception.message"),

@@ -43,10 +43,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.jwk.JwkExporter;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.jwk.JwkExporter;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.privatekey.MsPvkUtil;
+import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
 
@@ -112,18 +114,12 @@ public class DExportPrivateKeyType extends JEscDialog {
         jrbPvk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbPvk.text"));
         PlatformUtil.setMnemonic(jrbPvk, res.getString("DExportPrivateKeyType.jrbPvk.mnemonic").charAt(0));
         jrbPvk.setToolTipText(res.getString("DExportPrivateKeyType.jrbPvk.tooltip"));
-        if (keyPairType == KeyPairType.EC || keyPairType == KeyPairType.ECDSA || keyPairType == KeyPairType.EDDSA ||
-            keyPairType == KeyPairType.ED25519 || keyPairType == KeyPairType.ED448) {
-            jrbPvk.setEnabled(false);
-        }
+        jrbPvk.setEnabled(MsPvkUtil.isPVKFormatSupported(privateKey));
 
         jrbOpenSsl = new JRadioButton(res.getString("DExportPrivateKeyType.jrbOpenSsl.text"));
         PlatformUtil.setMnemonic(jrbOpenSsl, res.getString("DExportPrivateKeyType.jrbOpenSsl.mnemonic").charAt(0));
         jrbOpenSsl.setToolTipText(res.getString("DExportPrivateKeyType.jrbOpenSsl.tooltip"));
-        if (keyPairType == KeyPairType.EDDSA || keyPairType == KeyPairType.ED25519 ||
-            keyPairType == KeyPairType.ED448) {
-            jrbOpenSsl.setEnabled(false);
-        }
+        jrbOpenSsl.setEnabled(OpenSslPvkUtil.isOpenSSLFormatSupported(privateKey));
 
         jrbJwk = new JRadioButton(res.getString("DExportPrivateKeyType.jrbJwk.text"));
         PlatformUtil.setMnemonic(jrbJwk, res.getString("DExportPrivateKeyType.jrbJwk.mnemonic").charAt(0));
