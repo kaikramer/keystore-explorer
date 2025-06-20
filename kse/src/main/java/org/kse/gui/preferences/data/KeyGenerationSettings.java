@@ -33,6 +33,7 @@ public class KeyGenerationSettings {
     private int keyPairSizeDSA = 1024;
     private String ecCurveSet = "";
     private String ecCurveName = "";
+    private KeyPairType mlDSAKeyPairType = KeyPairType.MLDSA44;
 
     private SecretKeyType secretKeyType = SecretKeyType.AES;
     private int secretKeySize = 128;
@@ -92,5 +93,15 @@ public class KeyGenerationSettings {
 
     public void setSecretKeySize(int secretKeySize) {
         this.secretKeySize = secretKeySize;
+    }
+
+    public KeyPairType getMLDSAKeyPairType() {
+        return mlDSAKeyPairType;
+    }
+
+    public void setMLDSAKeyPairType(KeyPairType keyPairType) {
+        if (KeyPairType.isMlDSA(keyPairType)) {
+            mlDSAKeyPairType = keyPairType;
+        }
     }
 }

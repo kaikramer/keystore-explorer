@@ -166,18 +166,7 @@ public class EccUtil {
      * @return True, if there are EC curves available
      */
     public static boolean isECAvailable(KeyStoreType keyStoreType) {
-        return (sunECProviderAvailable) || isBouncyCastleKeyStore(keyStoreType);
-    }
-
-    /**
-     * Is the given KeyStoreType backed by the BC provider?
-     *
-     * @param keyStoreType KeyStoreType to check
-     * @return True, if KeyStoreType is backed by the BC provider
-     */
-    public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
-        return (keyStoreType == KeyStoreType.BKS || keyStoreType == KeyStoreType.UBER ||
-                keyStoreType == KeyStoreType.BCFKS);
+        return (sunECProviderAvailable) || KeyStoreType.isBouncyCastleKeyStore(keyStoreType);
     }
 
     /**
@@ -190,7 +179,7 @@ public class EccUtil {
     public static boolean isCurveAvailable(String curveName, KeyStoreType keyStoreType) {
 
         // BC provides all curves
-        if (isBouncyCastleKeyStore(keyStoreType) || EdDSACurves.ED25519.jce().equalsIgnoreCase(curveName) ||
+        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || EdDSACurves.ED25519.jce().equalsIgnoreCase(curveName) ||
             EdDSACurves.ED448.jce().equalsIgnoreCase(curveName)) {
             return true;
         }

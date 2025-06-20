@@ -20,7 +20,9 @@
 package org.kse.crypto.keypair;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyFactory;
@@ -28,15 +30,20 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
@@ -125,6 +132,38 @@ public class KeyPairUtilTest extends CryptoTestsBase {
                                         .generatePublic(new X509EncodedKeySpec(keyPair.getPublic().getEncoded()));
 
         assertTrue(KeyPairUtil.validKeyPair(privateKey, publicKey));
+    }
+
+    @ParameterizedTest
+    @MethodSource("mldsaVariants")
+    void shouldGenerateAndValidateMLDSA(KeyPairType keyPairType) throws Exception {
+        KeyPair keyPair = KeyPairUtil.generateMLDSAKeyPair(keyPairType, KSE.BC);
+        assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"SUN", "SunJCE"})
+    void shouldThrowOnWrongProviderForMLDSA(String providerName) {
+        Provider provider = Security.getProvider(providerName);
+        assumeTrue(provider != null, "Provider " + providerName + " not available");
+
+        assertThrows(
+                CryptoException.class,
+                () -> KeyPairUtil.generateMLDSAKeyPair(KeyPairType.MLDSA44, provider)
+        );
+    }
+
+    @Test
+    void shouldThrowOnWrongKeyTypeForMLDSA() {
+        assertThrows(
+                CryptoException.class,
+                () -> KeyPairUtil.generateMLDSAKeyPair(KeyPairType.RSA, KSE.BC)
+        );
+    }
+
+    private static Stream<KeyPairType> mldsaVariants() {
+        return Arrays.stream(KeyPairType.values())
+                .filter(KeyPairType::isMlDSA);
     }
 
 }

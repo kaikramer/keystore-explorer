@@ -62,6 +62,17 @@ public enum KeyStoreType {
     }
 
     /**
+     * Is the given KeyStoreType backed by the BC provider?
+     *
+     * @param keyStoreType KeyStoreType to check
+     * @return True, if KeyStoreType is backed by the BC provider
+     */
+    public static boolean isBouncyCastleKeyStore(KeyStoreType keyStoreType) {
+        return (keyStoreType == BKS || keyStoreType == UBER ||
+                keyStoreType == BCFKS);
+    }
+
+    /**
      * Get KeyStore type JCE name.
      *
      * @return JCE name
@@ -122,6 +133,10 @@ public enum KeyStoreType {
      */
     public boolean supportsECC() {
         return EccUtil.isECAvailable(this);
+    }
+
+    public boolean supportMLDSA() {
+        return isBouncyCastleKeyStore(this);
     }
 
     /**
