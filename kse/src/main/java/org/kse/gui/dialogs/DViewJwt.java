@@ -49,7 +49,9 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.publickey.OpenSslPubUtil;
@@ -62,17 +64,21 @@ import org.kse.utilities.DialogViewer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
+import com.nimbusds.jose.crypto.Ed25519Verifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.OctetKeyPair;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.SignedJWT;
-
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -295,6 +301,18 @@ public class DViewJwt extends JEscDialog {
                 verifier = new ECDSAVerifier((ECPublicKey) publicKey);
             } else if (publicKey instanceof RSAPublicKey) {
                 verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
+            // Works for Java 15+ since OpenSslPubUtil uses the BC provider for loading the key
+            } else if (publicKey instanceof BCEdDSAPublicKey) {
+                // Prevent exceptions in case an Ed448 key is used. There's no JWSVerifier for Ed448 keys.
+                if (EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm()))
+                {
+                    JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
+                            res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
+                        Base64URL.encode(((BCEdDSAPublicKey) publicKey).getPointEncoding())).build();
+                verifier = new Ed25519Verifier(okp);
             } else {
                 JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
                         res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
