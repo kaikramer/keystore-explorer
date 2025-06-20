@@ -49,7 +49,7 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.filetype.CryptoFileType;
@@ -302,7 +302,7 @@ public class DViewJwt extends JEscDialog {
             } else if (publicKey instanceof RSAPublicKey) {
                 verifier = new RSASSAVerifier((RSAPublicKey) publicKey);
             // Works for Java 15+ since OpenSslPubUtil uses the BC provider for loading the key
-            } else if (publicKey instanceof BCEdDSAPublicKey) {
+            } else if (publicKey instanceof EdDSAPublicKey) {
                 // Prevent exceptions in case an Ed448 key is used. There's no JWSVerifier for Ed448 keys.
                 if (EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm()))
                 {
@@ -311,7 +311,7 @@ public class DViewJwt extends JEscDialog {
                     return;
                 }
                 OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
-                        Base64URL.encode(((BCEdDSAPublicKey) publicKey).getPointEncoding())).build();
+                        Base64URL.encode(((EdDSAPublicKey) publicKey).getPointEncoding())).build();
                 verifier = new Ed25519Verifier(okp);
             } else {
                 JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
