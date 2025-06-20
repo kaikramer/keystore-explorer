@@ -20,17 +20,20 @@
 package org.kse.crypto.privatekey;
 
 import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.spec.ECPoint;
+import java.security.spec.PKCS8EncodedKeySpec;
 
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.kse.KSE;
 import org.kse.crypto.jwk.JwkExporter;
 import org.kse.crypto.jwk.JwkExporterException;
 
@@ -53,7 +56,12 @@ public class JwkPrivateKeyExporter {
         } else if (privateKey instanceof BCEdDSAPrivateKey) {
             this.jwkExporter = new EdDSAPrivateKeyExporter(privateKey);
         } else {
-            throw new IllegalArgumentException("Not supported key type: " + privateKey.getClass().getName());
+            // JDK 15 has native support for EdDSA keys
+            this.jwkExporter = checkforJdkEdDSA(privateKey);
+
+            if (jwkExporter == null) {
+                throw new IllegalArgumentException("Not supported key type: " + privateKey.getClass().getName());
+            }
         }
     }
 
@@ -63,6 +71,24 @@ public class JwkPrivateKeyExporter {
 
     public byte[] get() {
         return jwkExporter.exportWithAlias(alias);
+    }
+
+    private JwkExporter checkforJdkEdDSA(PrivateKey privateKey) {
+        try {
+            // Use reflection so that KSE can still compile with JDK 11.
+            Class<?> c = Class.forName("java.security.interfaces.EdECPrivateKey");
+            if (c.isAssignableFrom(privateKey.getClass())) {
+                // Quickest way to convert to a BC EdDSA key. Doesn't require importing any
+                // Ed25519 or Ed448 specific classes, and it doesn't require using reflection
+                // to access the JDK 15+ EC crypto provider.
+                KeyFactory kf = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
+                PrivateKey bcPrivateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(privateKey.getEncoded()));
+                return new EdDSAPrivateKeyExporter(bcPrivateKey);
+            }
+        } catch (Exception e) {
+            // ignore -- JDK 14 or lower is being used
+        }
+        return null;
     }
 
     private static class EdDSAPrivateKeyExporter extends JwkExporter.EdDSAKeyExporter {
@@ -81,9 +107,9 @@ public class JwkPrivateKeyExporter {
                         edDSAPublicKey.getEncoded());
                 byte[] rawKey = subjectPublicKeyInfo.getPublicKeyData().getBytes();
                 OctetKeyPair.Builder builder = new OctetKeyPair.Builder(curve, Base64URL.encode(rawKey));
-                ASN1Primitive privateKeyOctetString = DEROctetString.fromByteArray(
+                ASN1Primitive privateKeyOctetString = ASN1Primitive.fromByteArray(
                         PrivateKeyInfo.getInstance(privateKey.getEncoded()).getPrivateKey().getOctets());
-                byte[] d = DEROctetString.getInstance(privateKeyOctetString.getEncoded()).getOctets();
+                byte[] d = ASN1OctetString.getInstance(privateKeyOctetString.getEncoded()).getOctets();
                 builder.d(Base64URL.encode(d));
                 if (alias != null) {
                     builder.keyID(alias);
