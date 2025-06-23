@@ -270,8 +270,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
         BigInteger authorityCertSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
 
         if (authorityCertSerialNumber != null) {
-            // TODO JW This serial number is incorrect. Need to remove ".longValue()".
-            jtfAuthorityCertSerialNumber.setText("" + authorityCertSerialNumber.longValue());
+            jtfAuthorityCertSerialNumber.setText("" + authorityCertSerialNumber);
             jtfAuthorityCertSerialNumber.setCaretPosition(0);
         }
     }
