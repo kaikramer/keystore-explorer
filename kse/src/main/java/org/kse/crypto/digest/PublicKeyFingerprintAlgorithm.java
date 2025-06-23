@@ -33,7 +33,7 @@ public enum PublicKeyFingerprintAlgorithm {
 	SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"),
 	SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki.text");
 
-	// @formatter:on
+    // @formatter:on
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
 
