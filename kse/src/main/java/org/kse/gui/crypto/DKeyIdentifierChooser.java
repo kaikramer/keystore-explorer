@@ -177,13 +177,12 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private void populate(byte[] keyIdentifier) throws CryptoException {
         KeyIdentifierGenerator keyIdentifierGenerator = new KeyIdentifierGenerator(publicKey);
 
-        // This is similar to PublicKeyFingerprintUtil.calculateFingerprint
+        // This strategy is similar to PublicKeyFingerprintUtil.calculateFingerprint
         keyIdentifier160Bit = keyIdentifierGenerator.generate160BitHashId();
         keyIdentifier64Bit = keyIdentifierGenerator.generate64BitHashId();
         keyIdentifierSha1OverSpki = DigestUtil.getMessageDigest(publicKey.getEncoded(), DigestType.SHA1);
         keyIdentifierSha256OverSpki = DigestUtil.getMessageDigest(publicKey.getEncoded(), DigestType.SHA256);
 
-        // TODO JW Need to use correct authority identifier when signing a cert with cert that uses a non-standard subject id.
         if (keyIdentifier == null) {
             jrb160BitHash.setSelected(true);
         } else if (keyIdentifier.length == keyIdentifier160Bit.length) {

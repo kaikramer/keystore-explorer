@@ -80,6 +80,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
 
     private byte[] value;
     private PublicKey authorityPublicKey;
+    private byte[] authorityKeyIdentifier;
 
     /**
      * Creates a new DAuthorityKeyIdentifier dialog.
@@ -88,13 +89,15 @@ public class DAuthorityKeyIdentifier extends DExtension {
      * @param authorityPublicKey        Authority public key
      * @param authorityCertName         Authority certificate name
      * @param authorityCertSerialNumber Authority certificate serial number
+     * @param authorityKeyIdentifier    Authority key identifier
      */
     public DAuthorityKeyIdentifier(JDialog parent, PublicKey authorityPublicKey, X500Name authorityCertName,
-                                   BigInteger authorityCertSerialNumber) {
+                                   BigInteger authorityCertSerialNumber, byte[] authorityKeyIdentifier) {
         super(parent);
 
         setTitle(res.getString("DAuthorityKeyIdentifier.Title"));
         this.authorityPublicKey = authorityPublicKey;
+        this.authorityKeyIdentifier = authorityKeyIdentifier;
         initComponents();
         prepopulateWithAuthorityCertDetails(authorityCertName, authorityCertSerialNumber);
     }
@@ -105,12 +108,14 @@ public class DAuthorityKeyIdentifier extends DExtension {
      * @param parent             The parent dialog
      * @param value              Authority Key Identifier DER-encoded
      * @param authorityPublicKey Authority public key
-     * @throws IOException If value could not be decoded
+     * @param authorityKeyIdentifier    Authority key identifier
      */
-    public DAuthorityKeyIdentifier(JDialog parent, byte[] value, PublicKey authorityPublicKey) throws IOException {
+    public DAuthorityKeyIdentifier(JDialog parent, byte[] value, PublicKey authorityPublicKey,
+            byte[] authorityKeyIdentifier) {
         super(parent);
         setTitle(res.getString("DAuthorityKeyIdentifier.Title"));
         this.authorityPublicKey = authorityPublicKey;
+        this.authorityKeyIdentifier = authorityKeyIdentifier;
         initComponents();
         prepopulateWithValue(value);
     }
@@ -227,6 +232,10 @@ public class DAuthorityKeyIdentifier extends DExtension {
     }
 
     private void prepopulateWithAuthorityCertDetails(X500Name authorityCertName, BigInteger authorityCertSerialNumber) {
+        if (authorityKeyIdentifier != null) {
+            jkiKeyIdentifier.setKeyIdentifier(authorityKeyIdentifier);
+        }
+
         if (authorityCertName != null) {
             try {
                 GeneralName generalName = new GeneralName(GeneralName.directoryName, authorityCertName);
@@ -245,7 +254,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
         }
     }
 
-    private void prepopulateWithValue(byte[] value) throws IOException {
+    private void prepopulateWithValue(byte[] value) {
         AuthorityKeyIdentifier authorityKeyIdentifier = AuthorityKeyIdentifier.getInstance(value);
 
         if (authorityKeyIdentifier.getKeyIdentifier() != null) {
@@ -261,6 +270,7 @@ public class DAuthorityKeyIdentifier extends DExtension {
         BigInteger authorityCertSerialNumber = authorityKeyIdentifier.getAuthorityCertSerialNumber();
 
         if (authorityCertSerialNumber != null) {
+            // TODO JW This serial number is incorrect. Need to remove ".longValue()".
             jtfAuthorityCertSerialNumber.setText("" + authorityCertSerialNumber.longValue());
             jtfAuthorityCertSerialNumber.setCaretPosition(0);
         }
