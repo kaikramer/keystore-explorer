@@ -235,30 +235,30 @@ tasks.register('prepareExe') {
 			  END
 			END
 		"""
-		exec {
-			workingDir projectDir
-			commandLine "${rh}",
+		providers.exec { spec ->
+			spec.workingDir = projectDir
+			spec.commandLine = ["${rh}",
 					'-open', "${launcherOutDir}\\kse.rc",
 					'-save', "${launcherOutDir}\\kse.res",
-					'-action', 'compile'
+					'-action', 'compile']
 		}
-		exec {
-			workingDir projectDir
-			commandLine "${rh}",
+		providers.exec { spec ->
+			spec.workingDir = projectDir
+			spec.commandLine = ["${rh}",
 					'-open', "${launcherOutDir}\\${appExe}",
 					'-save', "${launcherOutDir}\\${appExe}",
 					'-action', 'addoverwrite',
 					'-mask', ' VersionInfo,,',
-					'-res', "${launcherOutDir}\\kse.res"
+					'-res', "${launcherOutDir}\\kse.res"]
 		}
-		exec {
-			workingDir projectDir
-			commandLine "${rh}",
+		providers.exec { spec ->
+			spec.workingDir = projectDir
+			spec.commandLine = ["${rh}",
 					'-open', "${launcherOutDir}\\${appExe}",
 					'-save', "${launcherOutDir}\\${appExe}",
 					'-action', 'addoverwrite',
 					'-mask', 'ICONGROUP,MAINICON,0',
-					'-res', "$kseIco"
+					'-res', "$kseIco"]
 		}
 	}
 }
@@ -363,7 +363,7 @@ tasks.register('innosetup') {
 			])
 			into("innosetup")
 		}
-		exec {
+		providers.exec {
 			workingDir "$projectDir/innosetup"
 			commandLine "ISCC.exe", "setup.iss"
 		}
@@ -444,41 +444,41 @@ tasks.register('signapp') {
 	dependsOn appbundler
 	def javaBaseDirName = new File(System.properties.'java.home').getParentFile().getParentFile().getName()
 	doLast {
-		exec {
-			workingDir appBundleDir
-			commandLine 'codesign',
+		providers.exec { spec ->
+			spec.workingDir = appBundleDir
+			spec.commandLine = ['codesign',
 					'-vvv',
 					'--force',
 					'-s', 'Kai Kramer',
-					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-arm64.dylib"
+					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-arm64.dylib"]
 		}
-		exec {
-			workingDir appBundleDir
-			commandLine 'codesign',
+		providers.exec { spec ->
+			spec.workingDir = appBundleDir
+			spec.commandLine = ['codesign',
 					'-vvv',
 					'--force',
 					'-s', 'Kai Kramer',
-					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-x86_64.dylib"
+					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-x86_64.dylib"]
 		}
-		exec {
-			workingDir appBundleDir
-			commandLine 'codesign',
+		providers.exec { spec ->
+			spec.workingDir = appBundleDir
+			spec.commandLine = ['codesign',
 					'-vvv',
 					'--force',
 					'--options=runtime',
 					'--entitlements', "${dmgDir}/entitlements.xml",
 					'-s', 'Kai Kramer',
-					"${appBundle}/Contents/PlugIns/${javaBaseDirName}"
+					"${appBundle}/Contents/PlugIns/${javaBaseDirName}"]
 		}
-		exec {
-			workingDir appBundleDir
-			commandLine 'codesign',
+		providers.exec { spec ->
+			spec.workingDir = appBundleDir
+			spec.commandLine = ['codesign',
 					'-vvv',
 					'--force',
 					'--options=runtime',
 					'--entitlements', "${dmgDir}/entitlements.xml",
 					'-s', 'Kai Kramer',
-					"${appBundle}"
+					"${appBundle}"]
 		}
 	}
 }
