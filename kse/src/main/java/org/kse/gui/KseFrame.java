@@ -117,6 +117,7 @@ import org.kse.gui.actions.ExamineClipboardAction;
 import org.kse.gui.actions.ExamineFileAction;
 import org.kse.gui.actions.ExamineSslAction;
 import org.kse.gui.actions.ExitAction;
+import org.kse.gui.actions.ExportCsvAction;
 import org.kse.gui.actions.ExportKeyPairAction;
 import org.kse.gui.actions.ExportKeyPairCertificateChainAction;
 import org.kse.gui.actions.ExportKeyPairPrivateKeyAction;
@@ -271,6 +272,7 @@ public final class KseFrame implements StatusBar {
     private JRadioButtonMenuItem jrbmiChangeTypeUber;
     private JMenuItem jmiSetPassword;
     private JMenuItem jmiProperties;
+    private JMenuItem jmiExportCsv;
     private JMenuItem jmiPreferences;
 
     private JMenu jmExamine;
@@ -313,6 +315,7 @@ public final class KseFrame implements StatusBar {
     private JButton jbVerifySignature;
     private JButton jbSetPassword;
     private JButton jbProperties;
+    private JButton jbExportCsv;
     private JButton jbExamineFile;
     private JButton jbExamineClipboard;
     private JButton jbExamineSsl;
@@ -330,6 +333,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiKeyStoreTabCloseOthers;
     private JMenuItem jmiKeyStoreTabCloseAll;
     private JMenuItem jmiKeyStoreTabProperties;
+    private JMenuItem jmiKeyStoreTabExportCsv;
 
     private JPopupMenu jpmKeyStore;
     private JMenuItem jmiKeyStoreGenerateKeyPair;
@@ -345,6 +349,7 @@ public final class KseFrame implements StatusBar {
     private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeUber;
     private JMenuItem jmiKeyStoreSetPassword;
     private JMenuItem jmiKeyStoreProperties;
+    private JMenuItem jmiKeyStoreExportCsv;
 
     private JPopupMenu jpmKeyPair;
     private JMenu jmKeyPairDetails;
@@ -464,6 +469,7 @@ public final class KseFrame implements StatusBar {
     private final ChangeTypeAction changeTypeBcfksAction = new ChangeTypeAction(this, KeyStoreType.BCFKS);
     private final ChangeTypeAction changeTypeUberAction = new ChangeTypeAction(this, KeyStoreType.UBER);
     private final PropertiesAction propertiesAction = new PropertiesAction(this);
+    private final ExportCsvAction exportCsvAction = new ExportCsvAction(this);
     private final PreferencesAction preferencesAction = new PreferencesAction(this);
     private final ExamineFileAction examineFileAction = new ExamineFileAction(this);
     private final ExamineClipboardAction examineClipboardAction = new ExamineClipboardAction(this);
@@ -990,6 +996,12 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiProperties, (String) propertiesAction.getValue(Action.LONG_DESCRIPTION), this);
         jmTools.add(jmiProperties);
 
+        jmiExportCsv = new JMenuItem(exportCsvAction);
+        PlatformUtil.setMnemonic(jmiExportCsv, res.getString("KseFrame.jmiExportCsv.mnemonic").charAt(0));
+        jmiExportCsv.setToolTipText(null);
+        new StatusBarChangeHandler(jmiExportCsv, (String) exportCsvAction.getValue(Action.LONG_DESCRIPTION), this);
+        jmTools.add(jmiExportCsv);
+
         if (!OperatingSystem.isMacOs()) {
             jmTools.addSeparator();
 
@@ -1398,6 +1410,23 @@ public final class KseFrame implements StatusBar {
             }
         });
 
+        jbExportCsv = new JButton();
+        jbExportCsv.setAction(exportCsvAction);
+        jbExportCsv.setText(null);
+        PlatformUtil.setMnemonic(jbExportCsv, 0);
+        jbExportCsv.setFocusable(false);
+        jbExportCsv.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent evt) {
+                setStatusBarText((String) exportCsvAction.getValue(Action.LONG_DESCRIPTION));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent evt) {
+                setDefaultStatusBarText();
+            }
+        });
+
         jbExamineFile = new JButton();
         jbExamineFile.setAction(examineFileAction);
         jbExamineFile.setText(null);
@@ -1502,6 +1531,7 @@ public final class KseFrame implements StatusBar {
         jtbToolBar.add(jbVerifySignature);
         jtbToolBar.add(jbSetPassword);
         jtbToolBar.add(jbProperties);
+        jtbToolBar.add(jbExportCsv);
 
         jtbToolBar.addSeparator();
 
@@ -1816,6 +1846,12 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiKeyStoreTabProperties,
                                    (String) propertiesAction.getValue(Action.LONG_DESCRIPTION), this);
         jpmKeyStoreTab.add(jmiKeyStoreTabProperties);
+
+        jmiKeyStoreTabExportCsv = new JMenuItem(exportCsvAction);
+        jmiKeyStoreTabExportCsv.setToolTipText(null);
+        new StatusBarChangeHandler(jmiKeyStoreTabExportCsv,
+                (String) exportCsvAction.getValue(Action.LONG_DESCRIPTION), this);
+        jpmKeyStoreTab.add(jmiKeyStoreTabExportCsv);
     }
 
     private void initKeyStorePopupMenu() {
@@ -1938,6 +1974,13 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiKeyStoreProperties, (String) propertiesAction.getValue(Action.LONG_DESCRIPTION),
                                    this);
         jpmKeyStore.add(jmiKeyStoreProperties);
+
+        jmiKeyStoreExportCsv = new JMenuItem(exportCsvAction);
+        PlatformUtil.setMnemonic(jmiKeyStoreExportCsv, res.getString("KseFrame.jmiExportCsv.mnemonic").charAt(0));
+        jmiKeyStoreExportCsv.setToolTipText(null);
+        new StatusBarChangeHandler(jmiKeyStoreExportCsv, (String) exportCsvAction.getValue(Action.LONG_DESCRIPTION),
+                this);
+        jpmKeyStore.add(jmiKeyStoreExportCsv);
     }
 
     private void initKeyStoreEntryPopupMenus() {
@@ -2376,7 +2419,7 @@ public final class KseFrame implements StatusBar {
             } else {
                 jtKeyStore.setRowSelectionInterval(row, row);
 
-                if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_PAIR_ENTRY)) {
+                if (KeyStoreTableModel.EntryType.KEY_PAIR.equals(jtKeyStore.getValueAt(row, 0))) {
 
                     // For KeyStore types that support password protected entries...
                     if (type.hasEntryPasswords()) {
@@ -2391,11 +2434,11 @@ public final class KseFrame implements StatusBar {
 
                     jpmKeyPair.show(jtKeyStore, x, y);
 
-                } else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
+                } else if (KeyStoreTableModel.EntryType.TRUST_CERT.equals(jtKeyStore.getValueAt(row, 0))) {
 
                     jpmTrustedCertificate.show(jtKeyStore, x, y);
 
-                } else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.KEY_ENTRY)) {
+                } else if (KeyStoreTableModel.EntryType.KEY.equals(jtKeyStore.getValueAt(row, 0))) {
 
                     // For KeyStore types that support password protected entries...
                     if (type.hasEntryPasswords()) {
@@ -2614,7 +2657,7 @@ public final class KseFrame implements StatusBar {
         }
     }
 
-    private JTable getActiveKeyStoreTable() {
+    public JTable getActiveKeyStoreTable() {
         if (keyStoreTables.isEmpty()) {
             return null;
         }
@@ -2872,6 +2915,7 @@ public final class KseFrame implements StatusBar {
         importKeyPairAction.setEnabled(true);
         verifySignatureAction.setEnabled(true);
         propertiesAction.setEnabled(true);
+        exportCsvAction.setEnabled(true);
         if (type.isFileBased()) {
             setPasswordAction.setEnabled(true);
         }
@@ -3001,6 +3045,7 @@ public final class KseFrame implements StatusBar {
         setPasswordAction.setEnabled(false);
         jmChangeType.setEnabled(false);
         propertiesAction.setEnabled(false);
+        exportCsvAction.setEnabled(false);
 
         // No current KeyStore type
         jrbmiChangeTypeJks.setSelected(false);
