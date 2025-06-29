@@ -62,8 +62,8 @@ import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionType;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 
@@ -92,6 +92,7 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
     private PublicKey authorityPublicKey;
     private PublicKey subjectPublicKey;
     private X500Name subjectCertName;
+    private byte[] issuerSkiExt;
 
     private boolean cancelled = true;
 
@@ -102,13 +103,15 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
      * @param authorityPublicKey Key of issuer certificate
      * @param subjectPublicKey   Key of new certificate
      * @param subjectCertName    Subject DN
+     * @param issuerSkiExt       Subject key identifier extension of issuer certificate
      */
     public DSelectStandardExtensionTemplate(JDialog parent, PublicKey authorityPublicKey, PublicKey subjectPublicKey,
-                                            X500Name subjectCertName) {
+                                            X500Name subjectCertName, byte[] issuerSkiExt) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.authorityPublicKey = authorityPublicKey;
         this.subjectPublicKey = subjectPublicKey;
         this.subjectCertName = subjectCertName;
+        this.issuerSkiExt = issuerSkiExt;
         setTitle(res.getString("DSelectStandardExtensionTemplate.Title"));
         initComponents();
     }
@@ -261,8 +264,13 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
     }
 
     private void addAuthorityKeyIdentifier(X509ExtensionSet extensionSet) throws CryptoException, IOException {
-        KeyIdentifierGenerator akiGenerator = new KeyIdentifierGenerator(authorityPublicKey);
-        AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(akiGenerator.generate160BitHashId());
+        byte[] keyIdentifier = new KeyIdentifierGenerator(authorityPublicKey).generate160BitHashId();
+        if (issuerSkiExt != null) {
+            // The *issuer* subject key identifier is the *issued* cert's authority key identifier
+            keyIdentifier = SubjectKeyIdentifier.getInstance(X509Ext.unwrapExtension(issuerSkiExt))
+                    .getKeyIdentifier();
+        }
+        AuthorityKeyIdentifier aki = new AuthorityKeyIdentifier(keyIdentifier);
         byte[] akiEncoded = X509Ext.wrapInOctetString(aki.getEncoded());
         extensionSet.addExtension(X509ExtensionType.AUTHORITY_KEY_IDENTIFIER.oid(), false, akiEncoded);
     }
@@ -311,7 +319,8 @@ public class DSelectStandardExtensionTemplate extends JEscDialog {
                                                                                        issuerKP.getPublic(),
                                                                                        subjectKP.getPublic(),
                                                                                        new X500Name(
-                                                                                               "cn=www.example.com"));
+                                                                                               "cn=www.example.com"),
+                                                                                       null);
         DialogViewer.run(dialog);
     }
 }
