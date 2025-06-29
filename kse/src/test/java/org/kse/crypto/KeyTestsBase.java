@@ -31,6 +31,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.List;
 
+import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.junit.jupiter.api.BeforeAll;
 import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
@@ -48,9 +49,23 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
     protected static DSAPublicKey dsaPublicKey;
     protected static ECPrivateKey ecPrivateKey;
     protected static ECPublicKey ecPublicKey;
+    protected static PublicKey mldsaPublicKey;
+    /**
+     * MLDSA private keys come with different types of encoding
+     * and each should be handled by KSE
+     * <p>
+     * {@link org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey#getPrivateKey}
+     * </p>
+     */
+    protected static PrivateKey mldsaPrivateKeySeedOnly;
+    protected static PrivateKey mldsaPrivateKeyExpandedOnly;
+    protected static PrivateKey mldsaPrivateKeySeedAndExpanded;
+
 
     public static List<PrivateKey> privateKeys() {
-        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey);
+        return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey,
+                mldsaPrivateKeySeedAndExpanded, mldsaPrivateKeySeedOnly,
+                mldsaPrivateKeyExpandedOnly);
     }
 
     public static List<PublicKey> publicKeys() {
@@ -77,6 +92,16 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
             ecPrivateKey = (ECPrivateKey) ecKeyPair.getPrivate();
             ecPublicKey = (ECPublicKey) ecKeyPair.getPublic();
         }
+
+        if (mldsaPublicKey == null) {
+            KeyPair mldsaKeyPair = KeyPairUtil.generateMLDSAKeyPair(KeyPairType.MLDSA44, KSE.BC);
+            mldsaPublicKey = mldsaKeyPair.getPublic();
+            MLDSAPrivateKey privateKey = (MLDSAPrivateKey) mldsaKeyPair.getPrivate();
+            mldsaPrivateKeySeedAndExpanded = privateKey;
+            mldsaPrivateKeySeedOnly = privateKey.getPrivateKey(true);
+            mldsaPrivateKeyExpandedOnly = privateKey.getPrivateKey(false);
+        }
+
     }
 
 }

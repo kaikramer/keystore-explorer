@@ -47,7 +47,8 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -299,8 +300,9 @@ public class DViewPrivateKey extends JEscDialog {
         jtaEncoded.setText(new BigInteger(1, privateKey.getEncoded()).toString(16).toUpperCase());
         jtaEncoded.setCaretPosition(0);
 
-        jbFields.setEnabled((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey) ||
-                            (privateKey instanceof ECPrivateKey) || (privateKey instanceof BCEdDSAPrivateKey));
+        jbFields.setEnabled((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)
+                || (privateKey instanceof ECPrivateKey) || (privateKey instanceof EdDSAPrivateKey)
+                || (privateKey instanceof MLDSAPrivateKey));
     }
 
     private void pemEncodingPressed() {

@@ -23,10 +23,7 @@ import static org.kse.crypto.SecurityProvider.APPLE;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 import static org.kse.crypto.SecurityProvider.MS_CAPI;
 import static org.kse.crypto.keypair.KeyPairType.EC;
-import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
-import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.KEYCHAIN;
-import static org.kse.crypto.keystore.KeyStoreType.UBER;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +47,7 @@ import java.util.ResourceBundle;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keypair.KeyPairType;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.gui.preferences.PreferencesManager;
@@ -373,7 +371,7 @@ public final class KeyStoreUtil {
 
     private static KeyStore getKeyStoreInstance(KeyStoreType keyStoreType) throws CryptoException {
         try {
-            if (keyStoreType == BKS || keyStoreType == UBER || keyStoreType == BCFKS) {
+            if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
                 if (Security.getProvider(BOUNCY_CASTLE.jce()) == null) {
                     throw new CryptoException(
                             MessageFormat.format(res.getString("NoProvider.exception.message"), BOUNCY_CASTLE.jce()));
@@ -407,6 +405,29 @@ public final class KeyStoreUtil {
         String algorithm = certificate.getPublicKey().getAlgorithm();
         return algorithm.equals(EC.jce());
     }
+
+    /**
+     * Is the key pair entry identified by alias an MLDSA key pair?
+     *
+     * @param alias    Alias of key pair entry
+     * @param keyStore KeyStore that contains the key pair
+     * @return True, if alias is an MLDSA key pair
+     * @throws KeyStoreException If there was a problem accessing the KeyStore.
+     */
+    public static boolean isMLDSAKeyPair(String alias, KeyStore keyStore) throws KeyStoreException {
+
+        if (!isKeyPairEntry(alias, keyStore)) {
+            return false;
+        }
+
+        Certificate certificate = keyStore.getCertificate(alias);
+        String algorithm = certificate.getPublicKey().getAlgorithm();
+        return KeyPairType.isMlDSA(
+                KeyPairType.resolveJce(algorithm)
+        );
+    }
+
+
 
     /**
      * Is the keystore entry type supported (e.g. exclude Card Verifiable Certificates)
