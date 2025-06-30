@@ -139,7 +139,18 @@ public final class KeyPairUtil {
         }
     }
 
-
+    /**
+     * Generates an ML-DSA key pair
+     * <ul>
+     *     <li>
+     *     see {@link org.kse.crypto.keypair.KeyPairType#isMlDSA(KeyPairType)}
+     *     </li>
+     * <ul>
+     * @param keyPairType must be an mldsa key pair
+     * @param provider the provider must support ML-DSA, if null defaults to BC
+     * @return
+     * @throws CryptoException
+     */
     public static KeyPair generateMLDSAKeyPair(KeyPairType keyPairType, Provider provider)
             throws CryptoException {
         try {

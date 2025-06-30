@@ -85,7 +85,7 @@ public class DialogHelper {
             sigAlgs = Collections.singletonList(SignatureType.MLDSA44);
             break;
         case MLDSA65:
-            sigAlgs = List.of(SignatureType.MLDSA65);
+            sigAlgs = Collections.singletonList(SignatureType.MLDSA65);
             break;
         case MLDSA87:
             sigAlgs = Collections.singletonList(SignatureType.MLDSA87);

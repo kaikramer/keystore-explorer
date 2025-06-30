@@ -363,11 +363,8 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
                 res.getString("DViewAsymmetricKeyFields.jltFields.PublicKey.text"),
                 getHexString(raw)));
 
-        try {
-            MLDSAPublicKey publicKey = (MLDSAPublicKey) key;
-            populateDetailedFields(publicKey, fields);
-        } catch (Exception e) {
-        }
+        MLDSAPublicKey publicKey = (MLDSAPublicKey) key;
+        populateDetailedFields(publicKey, fields);
         return fields.toArray(Field[]::new);
     }
 
@@ -389,11 +386,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
                 getHexString(privateKey.getPrivateData())));
 
         // Add detailed fields
-        try {
-            populateDetailedFields(privateKey, fields);
-        } catch (Exception e) {
-            // ignored
-        }
+        populateDetailedFields(privateKey, fields);
 
         return fields.toArray(Field[]::new);
     }
@@ -417,10 +410,6 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
     }
 
     private void populateDetailedFields(MLDSAPublicKey publicKey, List<Field> fields) {
-        if (!(key instanceof MLDSAPublicKey)) {
-            return;
-        }
-
         KeyPairType keyPairType = KeyPairUtil.getKeyPairType(publicKey);
         MLDSAParameters params = getMLDSAParameters(keyPairType);
         if (params == null) {
@@ -442,10 +431,6 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
     }
 
     private void populateDetailedFields(MLDSAPrivateKey privateKey, List<Field> fields) {
-        if (!(key instanceof MLDSAPrivateKey)) {
-            return;
-        }
-
         KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
         MLDSAParameters params = getMLDSAParameters(keyPairType);
         if (params == null) {

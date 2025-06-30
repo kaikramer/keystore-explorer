@@ -14,6 +14,25 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+/**
+ * UI elements used by {@link  org.kse.gui.dialogs.DGenerateKeyPair}
+ * to generate MLDSA key pairs
+ * <p>
+ * Holds a radio button and combo box for picking an ML-DSA {@link KeyPairType},
+ * enabling/disabling the combo automatically.
+ * </p>
+ *
+ * <pre>
+ * {@code
+ * MLDSAKeySelector mlDsa = new MLDSAKeySelector(group);
+ * mlDsa.add(contentPane);
+ *
+ * if (mlDsa.isSelected()) { // later, when OK pressed
+ *     KeyPairType type = mlDsa.getKeyPairType();
+ * }
+ * }
+ * </pre>
+ */
 public class MLDSAKeySelector implements Serializable {
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(
             "org/kse/gui/dialogs/resources");
