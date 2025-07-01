@@ -20,6 +20,7 @@
 package org.kse.crypto.keypair;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Enumeration of Key Pair Types supported by the KeyPairUtil class.
@@ -31,12 +32,17 @@ public enum KeyPairType {
     ECDSA("ECDSA", "1.2.840.10045.2.1", 160, 571, 32),
     EDDSA("EdDSA", "", 256, 456, 200), // for Java >= 15 (there is no specific OID for EdDSA)
     ED25519("Ed25519", "1.3.101.112", 256, 256, 0), // BC has separate key pair types for the two EdDSA types
-    ED448("Ed448", "1.3.101.113", 456, 456, 0);
+    ED448("Ed448", "1.3.101.113", 456, 456, 0),
+
+    MLDSA44("ML-DSA-44", "2.16.840.1.101.3.4.3.17", 10_496, 10_496, 0),
+    MLDSA65("ML-DSA-65", "2.16.840.1.101.3.4.3.18", 15_616, 15_616, 0),
+    MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", 20_736, 20_736, 0);
 
     /**
      * Set of all EC key pair types (EC, ECDSA, EDDSA, ED25519, ED448)
      */
-    public static final EnumSet<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, EDDSA, ED25519, ED448);
+    public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, EDDSA, ED25519, ED448);
+    private static final Set<KeyPairType> MLDSA_TYPES_SET = EnumSet.of(MLDSA44, MLDSA65, MLDSA87);
 
     private final String jce;
     private final String oid;
@@ -111,6 +117,10 @@ public enum KeyPairType {
         }
 
         return null;
+    }
+
+    public static boolean isMlDSA(KeyPairType keyPairType) {
+        return MLDSA_TYPES_SET.contains(keyPairType);
     }
 
     /**

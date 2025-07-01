@@ -95,6 +95,20 @@ public class DGeneratingKeyPair extends JEscDialog {
      *
      * @param parent      The parent frame
      * @param keyPairType The key pair generation type
+     */
+    public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, Provider provider) {
+        super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.keyPairType = keyPairType;
+        this.provider = provider;
+        initComponents();
+    }
+
+
+    /**
+     * Creates a new DGeneratingKeyPair dialog.
+     *
+     * @param parent      The parent frame
+     * @param keyPairType The key pair generation type
      * @param curveName   The name of the curve to create
      */
     public DGeneratingKeyPair(JFrame parent, KeyPairType keyPairType, String curveName, Provider provider) {
@@ -197,6 +211,11 @@ public class DGeneratingKeyPair extends JEscDialog {
                 case RSA:
                 case DSA:
                     keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, provider);
+                    break;
+                case MLDSA44:
+                case MLDSA65:
+                case MLDSA87:
+                    keyPair = KeyPairUtil.generateMLDSAKeyPair(keyPairType, provider);
                     break;
                 case EC:
                 case ECDSA:

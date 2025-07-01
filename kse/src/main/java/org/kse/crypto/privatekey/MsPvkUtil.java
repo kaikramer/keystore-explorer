@@ -38,11 +38,14 @@ import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.PRNG;
 import org.kse.utilities.io.UnsignedUtil;
@@ -164,6 +167,9 @@ public class MsPvkUtil {
 
     // Length of a private key blob header in bytes
     private static final int BLOB_HEADER_LENGTH = 8;
+
+    private static final Set<KeyPairType> PVK_SUPPORTED_KEYPAIR = Set.of(
+            KeyPairType.RSA, KeyPairType.DSA);
 
     /*
      * Length of PVK read buffer used when creating PVK encoding This should be
@@ -477,6 +483,14 @@ public class MsPvkUtil {
     public static byte[] getEncrypted(DSAPrivateKey privateKey, Password password, boolean strong)
             throws CryptoException {
         return getEncryptedInternal(privateKey, PVK_KEY_SIGNATURE, password, strong);
+    }
+
+    /**
+     * Legacy format only supported for RSA and DSA keys
+     */
+    public static boolean isPVKFormatSupported(PrivateKey privateKey) {
+        KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+        return PVK_SUPPORTED_KEYPAIR.contains(keyPairType);
     }
 
     private static byte[] getEncryptedInternal(PrivateKey privateKey, int keyType, Password password, boolean strong)

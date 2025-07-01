@@ -46,6 +46,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
@@ -271,8 +272,9 @@ public class DViewPublicKey extends JEscDialog {
         jcfFingerprint.setPublicKey(publicKey);
         jcfFingerprint.setFingerprintAlg(preferences.getPublicKeyFingerprintAlgorithm());
 
-        jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey) ||
-                            (publicKey instanceof ECPublicKey) || (publicKey instanceof BCEdDSAPublicKey));
+        jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey)
+                || (publicKey instanceof ECPublicKey) || (publicKey instanceof BCEdDSAPublicKey)
+                || publicKey instanceof MLDSAPublicKey);
     }
 
     private void pemEncodingPressed() {

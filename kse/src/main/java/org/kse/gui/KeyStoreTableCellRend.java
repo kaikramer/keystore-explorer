@@ -157,7 +157,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
                     cell.setHorizontalAlignment(LEFT);
                 } else {
                     if (value instanceof Integer) {
-                        if (((Integer) value < 10000) && ((Integer) value >= 0)) {
+                        if (((Integer) value < 100_000) && ((Integer) value >= 0)) {
                             cell.setText(String.valueOf(value));
                         } else {
                             cell.setText("X" + String.format("%x", value));

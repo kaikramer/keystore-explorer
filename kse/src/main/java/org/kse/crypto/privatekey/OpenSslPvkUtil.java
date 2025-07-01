@@ -38,6 +38,7 @@ import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -60,6 +61,8 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.ecc.EccUtil;
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.PRNG;
 import org.kse.utilities.pem.PemAttribute;
@@ -137,6 +140,9 @@ public class OpenSslPvkUtil {
 
     // DEK-Info PEM headere attribute value template (pbe algorithm,salt)
     private static final String DEK_INFO_ATTR_VALUE_TEMPLATE = "{0},{1}";
+
+    private static final Set<KeyPairType> OPEN_SSL_SUPPORTED_KEYPAIR = Set.of(
+            KeyPairType.RSA, KeyPairType.DSA, KeyPairType.EC, KeyPairType.ECDSA);
 
     private OpenSslPvkUtil() {
     }
@@ -613,4 +619,13 @@ public class OpenSslPvkUtil {
                     ex);
         }
     }
+
+    /**
+     * Legacy format only supported for RSA, DSA, and EC curves (except Edwards)
+     */
+    public static boolean isOpenSSLFormatSupported(PrivateKey privateKey) {
+        KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+        return OPEN_SSL_SUPPORTED_KEYPAIR.contains(keyPairType);
+    }
+
 }
