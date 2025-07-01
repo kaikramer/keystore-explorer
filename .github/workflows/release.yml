@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install build tools
         run: |
           sudo apt-get update
@@ -39,7 +39,7 @@ jobs:
       - name: Install required software packages
         run: choco install reshack
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -74,7 +74,7 @@ jobs:
       - name: Disable automatic EOL conversions
         run: git config --global core.autocrlf false
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -101,7 +101,7 @@ jobs:
       - name: Install required software packages
         run: choco install reshack
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -124,36 +124,17 @@ jobs:
     name: Create artifacts on macOS
     runs-on: macos-13
     steps:
-      - name: Preparations
+      - name: Disable automatic EOL conversions
+        run: git config --global core.autocrlf false
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
         env:
           MACOS_CERT: ${{ secrets.MACOS_CERT }}
           MACOS_CERT_PWD: ${{ secrets.MACOS_CERT_PWD }}
         run: |
-          echo $MACOS_CERT | base64 --decode > macos_cert.p12
-          security create-keychain -p buildchain build.chain
-          security default-keychain -s build.chain
-          security unlock-keychain -p buildchain build.chain
-          security set-keychain-settings build.chain
-          security import macos_cert.p12 -k build.chain -P $MACOS_CERT_PWD -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k buildchain build.chain
-          rm -f macos_cert.p12
-          # actions/setup-java@v2 removes the directories MacOS and _CodeSignature and the file Info.plist from the JDK, so we cannot use it for the application
-          wget https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_x64_mac_hotspot_21.0.5_11.tar.gz
-          tar zxf OpenJDK21U-jdk_x64_mac_hotspot_21.0.5_11.tar.gz -C $RUNNER_TEMP
-          echo "JAVA_HOME=$RUNNER_TEMP/jdk-21.0.5+11/Contents/Home" >> $GITHUB_ENV
-          echo "$RUNNER_TEMP/jdk-21.0.5+11/Contents/Home/bin" >> $GITHUB_PATH
-          # install tools for DMG creation:
-          npm install --global create-dmg
-          brew install graphicsmagick imagemagick
-      - name: Disable automatic EOL conversions
-        run: git config --global core.autocrlf false
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew dmg
-        working-directory: kse
+          chmod +x .github/scripts/macos-build.sh
+          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_x64_mac_hotspot_21.0.5_11.tar.gz"
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
@@ -164,36 +145,17 @@ jobs:
     name: Create artifacts on macOS for ARM architecture
     runs-on: macos-14
     steps:
-      - name: Preparations
+      - name: Disable automatic EOL conversions
+        run: git config --global core.autocrlf false
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
         env:
           MACOS_CERT: ${{ secrets.MACOS_CERT }}
           MACOS_CERT_PWD: ${{ secrets.MACOS_CERT_PWD }}
         run: |
-          echo $MACOS_CERT | base64 --decode > macos_cert.p12
-          security create-keychain -p buildchain build.chain
-          security default-keychain -s build.chain
-          security unlock-keychain -p buildchain build.chain
-          security set-keychain-settings build.chain
-          security import macos_cert.p12 -k build.chain -P $MACOS_CERT_PWD -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k buildchain build.chain
-          rm -f macos_cert.p12
-          # actions/setup-java@v2 removes the directories MacOS and _CodeSignature and the file Info.plist from the JDK, so we cannot use it for the application
-          wget https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.5_11.tar.gz
-          tar zxf OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.5_11.tar.gz -C $RUNNER_TEMP
-          echo "JAVA_HOME=$RUNNER_TEMP/jdk-21.0.5+11/Contents/Home" >> $GITHUB_ENV
-          echo "$RUNNER_TEMP/jdk-21.0.5+11/Contents/Home/bin" >> $GITHUB_PATH
-          # install tools for DMG creation:
-          npm install --global create-dmg
-          brew install graphicsmagick imagemagick
-      - name: Disable automatic EOL conversions
-        run: git config --global core.autocrlf false
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew dmg
-        working-directory: kse
+          chmod +x .github/scripts/macos-build.sh
+          .github/scripts/macos-build.sh "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.5%2B11/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.5_11.tar.gz"
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
@@ -207,6 +169,10 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github
       - name: Create a release
         uses: softprops/action-gh-release@v1
         #if: startsWith(github.ref, 'refs/tags/')
@@ -223,12 +189,9 @@ jobs:
             kse*.dmg
           token: ${{ secrets.github_token }}
       - name: VirusTotal Scan
-        uses: crazy-max/ghaction-virustotal@v3
-        with:
-          vt_api_key: ${{ secrets.VT_API_KEY }}
-          update_release_body: true
-          files: |
-            kse.exe
-            kse-*.zip
-            kse-*-setup.exe
-            kse-*-setup-no-jre.exe
+        run: |
+          chmod +x .github/scripts/virustotal-scan.sh
+          .github/scripts/virustotal-scan.sh kse.exe kse-*.zip kse-*-setup.exe kse-*-setup-no-jre.exe
+        env:
+          VT_API_KEY: ${{ secrets.VT_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

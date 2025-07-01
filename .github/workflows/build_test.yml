@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: 'Set up JDK'
       uses: actions/setup-java@v2
       with:
@@ -18,8 +18,6 @@ jobs:
     - name: 'Grant execute permission for gradlew'
       run: chmod +x gradlew
       working-directory: kse
-    - name: 'Setup Gradle'
-      uses: gradle/gradle-build-action@v2
     - name: 'Build with Gradle'
       run: ./gradlew build
       working-directory: kse
@@ -37,4 +35,3 @@ jobs:
         path: |
           build/libs/kse.jar
           kse/build/distributions/kse-*.zip
-

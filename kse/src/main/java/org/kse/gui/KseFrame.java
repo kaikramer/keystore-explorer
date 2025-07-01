@@ -91,6 +91,7 @@ import javax.swing.table.TableRowSorter;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.actions.AboutAction;
@@ -2384,6 +2385,10 @@ public final class KseFrame implements StatusBar {
                         unlockKeyPairAction.setEnabled(locked);
                     }
 
+                    // Don't have a library for signing a JWT with Ed448.
+                    boolean canSignJwt = !EdDSACurves.ED448.jce().equals(jtKeyStore.getValueAt(row, 4));
+                    signJwtAction.setEnabled(canSignJwt);
+
                     jpmKeyPair.show(jtKeyStore, x, y);
 
                 } else if (jtKeyStore.getValueAt(row, 0).equals(KeyStoreTableModel.TRUST_CERT_ENTRY)) {
@@ -2398,6 +2403,10 @@ public final class KseFrame implements StatusBar {
                         boolean locked = (Boolean) jtKeyStore.getValueAt(row, 1);
                         unlockKeyAction.setEnabled(locked);
                     }
+
+                    // Don't have a library for signing a JWT with Ed448.
+                    boolean canSignJwt = !EdDSACurves.ED448.jce().equals(jtKeyStore.getValueAt(row, 4));
+                    signJwtAction.setEnabled(canSignJwt);
 
                     jpmKey.show(jtKeyStore, x, y);
                 }

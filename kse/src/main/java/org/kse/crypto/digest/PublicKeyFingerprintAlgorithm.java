@@ -28,12 +28,12 @@ public enum PublicKeyFingerprintAlgorithm {
 
     // @formatter:off
 
-	SKI_METHOD1("PublicKeyFingerprintAlgorithm.SkiMethod1"),
-	SKI_METHOD2("PublicKeyFingerprintAlgorithm.SkiMethod2"),
-	SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki"),
-	SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki");
+	SKI_METHOD1("PublicKeyFingerprintAlgorithm.SkiMethod1.text"),
+	SKI_METHOD2("PublicKeyFingerprintAlgorithm.SkiMethod2.text"),
+	SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"),
+	SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki.text");
 
-	// @formatter:on
+    // @formatter:on
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
 

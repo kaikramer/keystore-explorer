@@ -25,6 +25,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.security.PublicKey;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -42,6 +43,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.digest.DigestType;
+import org.kse.crypto.digest.DigestUtil;
 import org.kse.crypto.publickey.KeyIdentifierGenerator;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
@@ -53,6 +56,8 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
+    private static ResourceBundle resCryptoDigest = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
+
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -60,6 +65,8 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private JLabel jlGenerationMethod;
     private JRadioButton jrb160BitHash;
     private JRadioButton jrb64BitHash;
+    private JRadioButton jrbSha1OverSpki;
+    private JRadioButton jrbSha256OverSpki;
     private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
@@ -67,6 +74,8 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private PublicKey publicKey;
     private byte[] keyIdentifier160Bit;
     private byte[] keyIdentifier64Bit;
+    private byte[] keyIdentifierSha1OverSpki;
+    private byte[] keyIdentifierSha256OverSpki;
     private byte[] keyIdentifier;
 
     /**
@@ -104,17 +113,25 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private void initComponents(byte[] keyIdentifier) throws CryptoException {
         jlGenerationMethod = new JLabel(res.getString("DKeyIdentifierChooser.jlGenerationMethod.text"));
 
-        jrb160BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb160BitHash.text"));
-        jrb160BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb160BitHash.tooltip"));
+        jrb160BitHash = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod1.text"));
+        jrb160BitHash.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod1.tooltip"));
 
-        jrb64BitHash = new JRadioButton(res.getString("DKeyIdentifierChooser.jrb64BitHash.text"));
-        jrb64BitHash.setToolTipText(res.getString("DKeyIdentifierChooser.jrb64BitHash.tooltip"));
+        jrb64BitHash = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod2.text"));
+        jrb64BitHash.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.SkiMethod2.tooltip"));
+
+        jrbSha1OverSpki = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"));
+        jrbSha1OverSpki.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.Sha1overSpki.tooltip"));
+
+        jrbSha256OverSpki = new JRadioButton(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.Sha256overSpki.text"));
+        jrbSha256OverSpki.setToolTipText(resCryptoDigest.getString("PublicKeyFingerprintAlgorithm.Sha256overSpki.tooltip"));
 
         ButtonGroup bgKeyIdentifier = new ButtonGroup();
         bgKeyIdentifier.add(jrb160BitHash);
         bgKeyIdentifier.add(jrb64BitHash);
+        bgKeyIdentifier.add(jrbSha1OverSpki);
+        bgKeyIdentifier.add(jrbSha256OverSpki);
 
-        jpKeyIdentifier = new JPanel(new GridLayout(3, 1));
+        jpKeyIdentifier = new JPanel(new GridLayout(5, 1));
         jpKeyIdentifier.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new CompoundBorder(new EtchedBorder(),
                                                                                                      new EmptyBorder(5,
                                                                                                                      5,
@@ -123,6 +140,8 @@ public class DKeyIdentifierChooser extends JEscDialog {
         jpKeyIdentifier.add(jlGenerationMethod);
         jpKeyIdentifier.add(jrb160BitHash);
         jpKeyIdentifier.add(jrb64BitHash);
+        jpKeyIdentifier.add(jrbSha1OverSpki);
+        jpKeyIdentifier.add(jrbSha256OverSpki);
 
         jbOK = new JButton(res.getString("DKeyIdentifierChooser.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
@@ -158,13 +177,24 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private void populate(byte[] keyIdentifier) throws CryptoException {
         KeyIdentifierGenerator keyIdentifierGenerator = new KeyIdentifierGenerator(publicKey);
 
+        // This strategy is similar to PublicKeyFingerprintUtil.calculateFingerprint
         keyIdentifier160Bit = keyIdentifierGenerator.generate160BitHashId();
         keyIdentifier64Bit = keyIdentifierGenerator.generate64BitHashId();
+        keyIdentifierSha1OverSpki = DigestUtil.getMessageDigest(publicKey.getEncoded(), DigestType.SHA1);
+        keyIdentifierSha256OverSpki = DigestUtil.getMessageDigest(publicKey.getEncoded(), DigestType.SHA256);
 
-        if (keyIdentifier == null || (keyIdentifier.length == keyIdentifier160Bit.length)) {
+        if (keyIdentifier == null) {
             jrb160BitHash.setSelected(true);
-        } else {
+        } else if (keyIdentifier.length == keyIdentifier160Bit.length) {
+            if (Arrays.equals(keyIdentifier, keyIdentifier160Bit)) {
+                jrb160BitHash.setSelected(true);
+            } else {
+                jrbSha1OverSpki.setSelected(true);
+            }
+        } else if (keyIdentifier.length == keyIdentifier64Bit.length) {
             jrb64BitHash.setSelected(true);
+        } else {
+            jrbSha256OverSpki.setSelected(true);
         }
     }
 
@@ -180,8 +210,12 @@ public class DKeyIdentifierChooser extends JEscDialog {
     private void okPressed() {
         if (jrb160BitHash.isSelected()) {
             keyIdentifier = keyIdentifier160Bit;
-        } else {
+        } else if (jrb64BitHash.isSelected()) {
             keyIdentifier = keyIdentifier64Bit;
+        } else if (jrbSha1OverSpki.isSelected()) {
+            keyIdentifier = keyIdentifierSha1OverSpki;
+        } else {
+            keyIdentifier = keyIdentifierSha256OverSpki;
         }
 
         closeDialog();

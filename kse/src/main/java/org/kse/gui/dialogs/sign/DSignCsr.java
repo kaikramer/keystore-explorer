@@ -665,8 +665,10 @@ public class DSignCsr extends JEscDialog {
         DAddExtensions dAddExtensions = new DAddExtensions(this, extensions, issuerCertificate.getPublicKey(),
                                                            X500NameUtils.x500PrincipalToX500Name(
                                                                    issuerCertificate.getSubjectX500Principal()),
-                                                           issuerCertificate.getSerialNumber(), csrPublicKey,
-                                                           jdnSubjectDN.getDistinguishedName());
+                                                           issuerCertificate.getSerialNumber(),
+                                                           issuerCertificate.getExtensionValue(
+                                                                   X509ExtensionType.SUBJECT_KEY_IDENTIFIER.oid()),
+                                                           csrPublicKey, jdnSubjectDN.getDistinguishedName());
         dAddExtensions.setLocationRelativeTo(this);
         dAddExtensions.setVisible(true);
 
