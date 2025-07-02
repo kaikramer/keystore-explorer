@@ -31,8 +31,8 @@ import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.jwk.JwkExporter;
 import org.kse.crypto.jwk.JwkExporterException;
@@ -53,7 +53,7 @@ public class JwkPrivateKeyExporter {
             this.jwkExporter = new RSAPrivateKeyExporter(privateKey);
         } else if (privateKey instanceof ECPrivateKey) {
             this.jwkExporter = new ECPrivateKeyExporter(privateKey);
-        } else if (privateKey instanceof BCEdDSAPrivateKey) {
+        } else if (privateKey instanceof EdDSAPrivateKey) {
             this.jwkExporter = new EdDSAPrivateKeyExporter(privateKey);
         } else {
             // JDK 15 has native support for EdDSA keys
@@ -92,10 +92,10 @@ public class JwkPrivateKeyExporter {
     }
 
     private static class EdDSAPrivateKeyExporter extends JwkExporter.EdDSAKeyExporter {
-        private final BCEdDSAPrivateKey privateKey;
+        private final EdDSAPrivateKey privateKey;
 
         private EdDSAPrivateKeyExporter(PrivateKey privateKey) {
-            this.privateKey = (BCEdDSAPrivateKey) privateKey;
+            this.privateKey = (EdDSAPrivateKey) privateKey;
         }
 
         @Override

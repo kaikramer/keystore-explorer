@@ -63,8 +63,6 @@ import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jcajce.provider.asymmetric.mldsa.BCMLDSAPrivateKey;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
@@ -74,9 +72,9 @@ import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.HexUtil;
 
@@ -141,11 +139,11 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
     private static String getEdAlg(Key key) {
         // Ed25519 or Ed448?
         String edAlg;
-        if (key instanceof BCEdDSAPublicKey) {
-            BCEdDSAPublicKey bcEdDSAPublicKey = (BCEdDSAPublicKey) key;
+        if (key instanceof EdDSAPublicKey) {
+            EdDSAPublicKey bcEdDSAPublicKey = (EdDSAPublicKey) key;
             edAlg = bcEdDSAPublicKey.getAlgorithm(); // Ed25519 or Ed448
         } else {
-            BCEdDSAPrivateKey bcEdDSAPrivateKey = (BCEdDSAPrivateKey) key;
+            EdDSAPrivateKey bcEdDSAPrivateKey = (EdDSAPrivateKey) key;
             edAlg = bcEdDSAPrivateKey.getAlgorithm();
         }
         return edAlg;

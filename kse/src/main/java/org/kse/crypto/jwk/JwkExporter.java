@@ -23,8 +23,8 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Map;
 
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairUtil;
 
@@ -85,11 +85,11 @@ public interface JwkExporter {
                         "Ed448", Curve.Ed448
                 );
 
-        protected Curve getCurve(BCEdDSAPublicKey bcEdDSAPublicKey) {
+        protected Curve getCurve(EdDSAPublicKey bcEdDSAPublicKey) {
             return supportedCurvesMap.get(bcEdDSAPublicKey.getAlgorithm());
         }
 
-        protected Curve getCurve(BCEdDSAPrivateKey bcEdDSAPrivateKey) {
+        protected Curve getCurve(EdDSAPrivateKey bcEdDSAPrivateKey) {
             return supportedCurvesMap.get(bcEdDSAPrivateKey.getAlgorithm());
         }
     }

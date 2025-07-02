@@ -46,17 +46,17 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JPublicKeyFingerprint;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.PreferencesManager;
@@ -273,7 +273,7 @@ public class DViewPublicKey extends JEscDialog {
         jcfFingerprint.setFingerprintAlg(preferences.getPublicKeyFingerprintAlgorithm());
 
         jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey)
-                || (publicKey instanceof ECPublicKey) || (publicKey instanceof BCEdDSAPublicKey)
+                || (publicKey instanceof ECPublicKey) || (publicKey instanceof EdDSAPublicKey)
                 || publicKey instanceof MLDSAPublicKey);
     }
 

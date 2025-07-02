@@ -20,7 +20,8 @@
 package org.kse.crypto.publickey;
 
 import com.nimbusds.jose.JOSEException;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.util.encoders.Hex;
@@ -171,7 +172,7 @@ public class JwkPublicKeyExporterTest {
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(spkiEncoded);
             KeyFactory keyFactory = KeyFactory.getInstance("Ed25519", "BC");
 
-            BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyFactory.generatePublic(keySpec);
+            EdDSAPublicKey publicKey = (EdDSAPublicKey) keyFactory.generatePublic(keySpec);
             JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(publicKey, null);
             String exportedKey = new String(exporter.get());
 
@@ -191,7 +192,7 @@ public class JwkPublicKeyExporterTest {
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(spkiEncoded);
             KeyFactory keyFactory = KeyFactory.getInstance("Ed448", "BC");
 
-            BCEdDSAPublicKey publicKey = (BCEdDSAPublicKey) keyFactory.generatePublic(keySpec);
+            EdDSAPublicKey publicKey = (EdDSAPublicKey) keyFactory.generatePublic(keySpec);
             JwkPublicKeyExporter exporter = JwkPublicKeyExporter.from(publicKey, "testAlias");
             String exportedKey = new String(exporter.get());
 
@@ -209,7 +210,7 @@ public class JwkPublicKeyExporterTest {
     @Test
     void handlesAttemptToExportUnsupportedEdDSAKeyWithGrace()  {
         assertThrows(JwkExporterException.class, () -> {
-            BCEdDSAPublicKey publicKeyMock = mock(BCEdDSAPublicKey.class);
+            EdDSAPublicKey publicKeyMock = mock(EdDSAPublicKey.class);
             when(publicKeyMock.getAlgorithm()).thenReturn("UnsupportedCurve");
             JwkPublicKeyExporter jwkPublicKeyExporter = JwkPublicKeyExporter.from(publicKeyMock, null);
             jwkPublicKeyExporter.get();

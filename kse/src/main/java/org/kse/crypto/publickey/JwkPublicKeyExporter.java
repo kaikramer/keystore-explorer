@@ -25,7 +25,7 @@ import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.jwk.JwkExporter;
 import org.kse.crypto.jwk.JwkExporterException;
@@ -45,7 +45,7 @@ public class JwkPublicKeyExporter {
         this.alias = alias;
         if (publicKey instanceof ECPublicKey) {
             this.jwkExporter = new JwkPublicKeyExporter.ECPublicKeyExporter(publicKey);
-        } else if (publicKey instanceof BCEdDSAPublicKey) {
+        } else if (publicKey instanceof EdDSAPublicKey) {
             this.jwkExporter = new JwkPublicKeyExporter.EdDSAPublicKeyExporter(publicKey);
         } else if (publicKey instanceof RSAPublicKey) {
             this.jwkExporter = new JwkPublicKeyExporter.RSAPublicKeyExporter(publicKey);
@@ -82,10 +82,10 @@ public class JwkPublicKeyExporter {
     }
 
     private static class EdDSAPublicKeyExporter extends JwkExporter.EdDSAKeyExporter {
-        private final BCEdDSAPublicKey bcEdDSAPublicKey;
+        private final EdDSAPublicKey bcEdDSAPublicKey;
 
         EdDSAPublicKeyExporter(PublicKey publicKey) {
-            this.bcEdDSAPublicKey = (BCEdDSAPublicKey) publicKey;
+            this.bcEdDSAPublicKey = (EdDSAPublicKey) publicKey;
         }
 
         @Override
