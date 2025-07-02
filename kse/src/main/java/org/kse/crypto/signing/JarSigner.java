@@ -19,8 +19,6 @@
  */
 package org.kse.crypto.signing;
 
-import static org.kse.crypto.signing.SignatureType.SHA1_DSA;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -119,17 +117,17 @@ public class JarSigner {
     // Signature Version
     private static final String SIGNATURE_VERSION = "1.0";
 
-    // Manifest location in JAR file
-    private static final String MANIFEST_LOCATION = "META-INF/MANIFEST.MF";
-
     // DSA signature block extension
-    private static final String DSA_SIG_BLOCK_EXT = "DSA";
+    public static final String DSA_SIG_BLOCK_EXT = "DSA";
 
     // RSA signature block extension
-    private static final String RSA_SIG_BLOCK_EXT = "RSA";
+    public static final String RSA_SIG_BLOCK_EXT = "RSA";
+
+    // EC signature block extension
+    public static final String EC_SIG_BLOCK_EXT = "EC";
 
     // Signature file extension
-    private static final String SIGNATURE_EXT = "SF";
+    public static final String SIGNATURE_EXT = "SF";
 
     // Meta inf file location
     private static final String METAINF_FILE_LOC = "META-INF/{0}.{1}";
@@ -212,8 +210,8 @@ public class JarSigner {
             // Write out digests to manifest and signature file
 
             // Sign each JAR entry...
-            for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements(); ) {
-                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+            for (Enumeration<JarEntry> jarEntries = jar.entries(); jarEntries.hasMoreElements(); ) {
+                JarEntry jarEntry = jarEntries.nextElement();
 
                 if (!jarEntry.isDirectory()) // Ignore directories
                 {
@@ -294,20 +292,13 @@ public class JarSigner {
 
         // Entries to be ignored are all in the "META-INF" folder
         if (entryName.startsWith("META-INF/")) {
-            if (entryName.equalsIgnoreCase(MANIFEST_LOCATION)) {
-                return true; // Manifest file - ignore
-            }
-
-            if (entryName.toUpperCase().endsWith(SIGNATURE_EXT)) {
-                return true; // Signature file - ignore
-            }
-
-            if (entryName.toUpperCase().endsWith(RSA_SIG_BLOCK_EXT)) {
-                return true; // RSA signature block file - ignore
-            }
-
-            if (entryName.toUpperCase().endsWith(DSA_SIG_BLOCK_EXT)) {
-                return true; // DSA signature block file - ignore
+            // Ignore signature file and EC/RSA/DSA signature blocks
+            if (entryName.equals(JarFile.MANIFEST_NAME)
+                    || entryName.endsWith(SIGNATURE_EXT) //
+                    || entryName.endsWith(EC_SIG_BLOCK_EXT) //
+                    || entryName.endsWith(RSA_SIG_BLOCK_EXT) //
+                    || entryName.endsWith(DSA_SIG_BLOCK_EXT)) {
+                return true; // Manifest or signature block file - ignore
             }
         }
 
@@ -323,15 +314,18 @@ public class JarSigner {
      * @throws IOException If an I/O problem occurs while examining the JAR file
      */
     public static boolean hasSignature(File jarFile, String signatureName) throws IOException {
+        signatureName = signatureName.toUpperCase();
+
         try (JarFile jar = new JarFile(jarFile)) {
 
             // Look for signature file
-            for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements(); ) {
-                JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
-                if (!jarEntry.isDirectory() && (jarEntry.getName().equalsIgnoreCase(
-                        MessageFormat.format(METAINF_FILE_LOC, signatureName, DSA_SIG_BLOCK_EXT))) ||
-                    (jarEntry.getName().equalsIgnoreCase(
-                            MessageFormat.format(METAINF_FILE_LOC, signatureName, RSA_SIG_BLOCK_EXT)))) {
+            for (Enumeration<JarEntry> jarEntries = jar.entries(); jarEntries.hasMoreElements(); ) {
+                JarEntry jarEntry = jarEntries.nextElement();
+                String entryName = jarEntry.getName(); // Signature entries must be upper case.
+                if (!jarEntry.isDirectory() && (entryName
+                        .equals(MessageFormat.format(METAINF_FILE_LOC, signatureName, EC_SIG_BLOCK_EXT))
+                        || entryName.equals(MessageFormat.format(METAINF_FILE_LOC, signatureName, RSA_SIG_BLOCK_EXT))
+                        || entryName.equals(MessageFormat.format(METAINF_FILE_LOC, signatureName, DSA_SIG_BLOCK_EXT)))) {
                     return true;
                 }
             }
@@ -453,7 +447,7 @@ public class JarSigner {
      */
     private static String getManifest(JarFile jar) throws IOException {
 
-        JarEntry manifestEntry = jar.getJarEntry(MANIFEST_LOCATION);
+        JarEntry manifestEntry = jar.getJarEntry(JarFile.MANIFEST_NAME);
 
         try (InputStream jis = jar.getInputStream(manifestEntry);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -545,23 +539,25 @@ public class JarSigner {
      * manifest and existing signature files for the supplied signature name
      */
     private static void writeJarEntries(JarFile jar, JarOutputStream jos, String signatureName) throws IOException {
+        signatureName = signatureName.toUpperCase();
 
-        for (Enumeration<?> jarEntries = jar.entries(); jarEntries.hasMoreElements(); ) {
-            JarEntry jarEntry = (JarEntry) jarEntries.nextElement();
+        for (Enumeration<JarEntry> jarEntries = jar.entries(); jarEntries.hasMoreElements(); ) {
+            JarEntry jarEntry = jarEntries.nextElement();
             if (!jarEntry.isDirectory()) {
                 String entryName = jarEntry.getName();
 
                 // Signature files not to write across
-                String sigFileLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, SIGNATURE_EXT)
-                                                      .toUpperCase();
+                String sigFileLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, SIGNATURE_EXT);
                 String dsaSigBlockLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, DSA_SIG_BLOCK_EXT);
                 String rsaSigBlockLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, RSA_SIG_BLOCK_EXT);
+                String ecSigBlockLocation = MessageFormat.format(METAINF_FILE_LOC, signatureName, EC_SIG_BLOCK_EXT);
 
                 // Do not write across existing manifest or matching signature files
-                if ((!entryName.equalsIgnoreCase(MANIFEST_LOCATION)) &&
-                    (!entryName.equalsIgnoreCase(sigFileLocation)) &&
-                    (!entryName.equalsIgnoreCase(dsaSigBlockLocation)) &&
-                    (!entryName.equalsIgnoreCase(rsaSigBlockLocation))) {
+                if ((!entryName.equals(JarFile.MANIFEST_NAME)) &&
+                    (!entryName.equals(sigFileLocation)) &&
+                    (!entryName.equals(dsaSigBlockLocation)) &&
+                    (!entryName.equals(ecSigBlockLocation)) &&
+                    (!entryName.equals(rsaSigBlockLocation))) {
                     // New JAR entry based on original
                     transferJarEntry(jar, jos, jarEntry);
                 }
@@ -596,7 +592,7 @@ public class JarSigner {
     private static void writeManifest(byte[] manifest, JarOutputStream jos) throws IOException {
 
         // Manifest file entry
-        JarEntry mfJarEntry = new JarEntry(MANIFEST_LOCATION);
+        JarEntry mfJarEntry = new JarEntry(JarFile.MANIFEST_NAME);
         jos.putNextEntry(mfJarEntry);
 
         try (ByteArrayInputStream bais = new ByteArrayInputStream(manifest)) {
@@ -645,10 +641,13 @@ public class JarSigner {
         // Block's extension depends on signature type
         String extension = null;
 
-        if (signatureType == SHA1_DSA) {
+        if (SignatureType.dsaSignatureTypes().contains(signatureType)) {
             extension = DSA_SIG_BLOCK_EXT;
-        } else {
+        } else if (SignatureType.rsaSignatureTypes().contains(signatureType)) {
             extension = RSA_SIG_BLOCK_EXT;
+        } else {
+            // This includes EDDSA, ED25519, & ED448
+            extension = EC_SIG_BLOCK_EXT;
         }
 
         // Signature block entry

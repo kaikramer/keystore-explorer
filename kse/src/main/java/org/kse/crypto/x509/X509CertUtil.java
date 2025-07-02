@@ -664,6 +664,17 @@ public final class X509CertUtil {
         return establishTrust(cert, ksCerts);
     }
 
+    /**
+     * Check whether or not a trust path exists between the supplied X.509
+     * certificate and the supplied list of certificates, ie that a chain of
+     * trust exists between the supplied certificate and a self-signed trusted
+     * certificate in the list.
+     *
+     * @param cert      The certificate
+     * @param compCerts The list of trusted certificates.
+     * @return The trust chain, or null if trust could not be established
+     * @throws CryptoException If there is a problem establishing trust
+     */
     public static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> compCerts)
             throws CryptoException {
         /*
@@ -706,7 +717,14 @@ public final class X509CertUtil {
         return null; // No chain of trust
     }
 
-    private static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
+    /**
+     * Extracts a list of X509Certificates from a KeyStore.
+     *
+     * @param keyStore The key store containing trusted certificates.
+     * @return List<X509Certificate>
+     * @throws CryptoException If there is a problem extracting the certificates.
+     */
+    public static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
         try {
             List<X509Certificate> certs = new ArrayList<>();
 
