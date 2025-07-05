@@ -47,7 +47,7 @@ import org.kse.utilities.history.KeyStoreHistory;
  */
 public class ExportCsvAction extends KeyStoreExplorerAction {
     private static final long serialVersionUID = 1L;
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Construct action.
