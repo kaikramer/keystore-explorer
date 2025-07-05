@@ -76,6 +76,7 @@ public class FileChooserFactory {
     public static final String CMS_EXT_1 = "p7s";
     public static final String CMS_EXT_2 = "p7m";
     public static final String SIG_EXT = "sig";
+    public static final String CSV_EXT = "csv";
 
     private static final String KEYSTORE_FILE_DESC =
             format(res.getString("FileChooserFactory.KeyStoreFiles"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
@@ -140,6 +141,8 @@ public class FileChooserFactory {
 
     private static final String SIG_FILE_DESC =
             format(res.getString("FileChooserFactory.SignatureFiles"), SIG_EXT);
+
+    private static final String CSV_FILE_DESC = format(res.getString("FileChooserFactory.CsvFiles"), CSV_EXT);
 
     private FileChooserFactory() {
     }
@@ -443,6 +446,17 @@ public class FileChooserFactory {
         JFileChooser chooser = getFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter(CMS_FILE_DESC, CMS_EXT_1, CMS_EXT_2));
         chooser.addChoosableFileFilter(new FileNameExtensionFilter(SIG_FILE_DESC, SIG_EXT));
+        return chooser;
+    }
+
+    /**
+     * Get a JFileChooser filtered for CSV files.
+     *
+     * @return JFileChooser object
+     */
+    public static JFileChooser getCsvFileChooser() {
+        JFileChooser chooser = getFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter(CSV_FILE_DESC, CSV_EXT));
         return chooser;
     }
 

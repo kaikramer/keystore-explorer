@@ -75,20 +75,50 @@ public class KeyStoreTableModel extends AbstractTableModel {
     private Object[][] data = new Object[0][0];
     private KeyStoreHistory history;
 
-    /**
-     * Type column value for a key pair entry
-     */
-    public static final String KEY_PAIR_ENTRY = res.getString("KeyStoreTableModel.KeyPairEntry");
+    enum EntryType {
+        /**
+         * Type column value for a key pair entry
+         */
+        KEY_PAIR(res.getString("KeyStoreTableModel.KeyPairEntry")),
 
-    /**
-     * Type column value for a trusted certificate entry
-     */
-    public static final String TRUST_CERT_ENTRY = res.getString("KeyStoreTableModel.TrustCertEntry");
+        /**
+         * Type column value for a trusted certificate entry
+         */
+        TRUST_CERT(res.getString("KeyStoreTableModel.TrustCertEntry")),
 
-    /**
-     * Type column value for a key entry
-     */
-    public static final String KEY_ENTRY = res.getString("KeyStoreTableModel.KeyEntry");
+        /**
+         * Type column value for a key entry
+         */
+        KEY(res.getString("KeyStoreTableModel.KeyEntry"));
+
+        private String text;
+
+        EntryType(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
+
+    enum Expiration {
+        EXPIRED(res.getString("KeyStoreTableModel.Expired")),
+        ALMOST_EXPIRED(res.getString("KeyStoreTableModel.AlmostExpired")),
+        NOT_EXPIRED(res.getString("KeyStoreTableModel.NotExpired"));
+
+        private String text;
+
+        Expiration(String text) {
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
 
     private static final int ICON_SIZE = 28;
 
@@ -162,21 +192,21 @@ public class KeyStoreTableModel extends AbstractTableModel {
         for (Iterator<Entry<String, String>> itr = sortedAliases.entrySet().iterator(); itr.hasNext(); i++) {
             String alias = itr.next().getKey();
 
-            String entryType = null;
+            EntryType entryType = null;
 
             // Type column
             if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-                entryType = TRUST_CERT_ENTRY;
+                entryType = EntryType.TRUST_CERT;
             } else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-                entryType = KEY_PAIR_ENTRY;
+                entryType = EntryType.KEY_PAIR;
             } else {
-                entryType = KEY_ENTRY;
+                entryType = EntryType.KEY;
             }
 
             data[i][0] = entryType;
 
             // Lock column - only applies to KeyStores types that actually support passwords for entries
-            if ((entryType.equals(KEY_PAIR_ENTRY) || entryType.equals(KEY_ENTRY)) && type.hasEntryPasswords()) {
+            if ((entryType == EntryType.KEY_PAIR || entryType == EntryType.KEY) && type.hasEntryPasswords()) {
                 if (currentState.getEntryPassword(alias) != null) {
                     data[i][1] = Boolean.FALSE; // Unlocked
                 } else {
@@ -186,24 +216,28 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 data[i][1] = null; // Lock status does not apply
             }
 
+            Expiration expiration;
+
             // Expiry status column
             Date expiry = getCertificateExpiry(alias, keyStore);
             ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());
             ZonedDateTime nowPlusExpiryWarnDays = now.plusDays(expiryWarnDays);
             if (expiry == null) {
-                data[i][2] = null; // No certExpiration - must be a key entry
+                expiration = null; // No certExpiration - must be a key entry
             } else {
                 ZonedDateTime expiryDateTime = expiry.toInstant().atZone(ZoneId.systemDefault());
                 if (now.isAfter(expiryDateTime)) {
-                    data[i][2] = 2; // Expired
+                    expiration = Expiration.EXPIRED;
                 } else {
                     if (nowPlusExpiryWarnDays.isAfter(expiryDateTime)) {
-                        data[i][2] = 1; // Almost expired
+                        expiration = Expiration.ALMOST_EXPIRED;
                     } else {
-                        data[i][2] = 0; // Not expired
+                        expiration = Expiration.NOT_EXPIRED;
                     }
                 }
             }
+
+            data[i][2] = expiration;
 
             if (iNameColumn > 0) {
                 // Alias column
@@ -252,7 +286,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iSubjectDNColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iSubjectDNColumn] = getCertificateSubjectDN(alias, keyStore);
                     if (iColWidth[iSubjectDNColumn] < data[i][iSubjectDNColumn].toString().length()) {
                         iColWidth[iSubjectDNColumn] = data[i][iSubjectDNColumn].toString().length();
@@ -262,7 +296,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iIssuerDNColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iIssuerDNColumn] = getCertificateIssuerDN(alias, keyStore);
                     if (iColWidth[iIssuerDNColumn] < data[i][iIssuerDNColumn].toString().length()) {
                         iColWidth[iIssuerDNColumn] = data[i][iIssuerDNColumn].toString().length();
@@ -272,7 +306,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iSerialNumberHexColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iSerialNumberHexColumn] = getCertificateSerialNumberHex(alias, keyStore);
                     if (iColWidth[iSerialNumberHexColumn] < data[i][iSerialNumberHexColumn].toString().length()) {
                         iColWidth[iSerialNumberHexColumn] = data[i][iSerialNumberHexColumn].toString().length();
@@ -282,7 +316,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iSerialNumberDecColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iSerialNumberDecColumn] = getCertificateSerialNumberDec(alias, keyStore);
                     if (iColWidth[iSerialNumberDecColumn] < data[i][iSerialNumberDecColumn].toString().length()) {
                         iColWidth[iSerialNumberDecColumn] = data[i][iSerialNumberDecColumn].toString().length();
@@ -292,7 +326,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iSubjectCNColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iSubjectCNColumn] = getCertificateSubjectCN(alias, keyStore);
                     if (iColWidth[iSubjectCNColumn] < data[i][iSubjectCNColumn].toString().length()) {
                         iColWidth[iSubjectCNColumn] = data[i][iSubjectCNColumn].toString().length();
@@ -302,7 +336,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iIssuerCNColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iIssuerCNColumn] = getCertificateIssuerCN(alias, keyStore);
                     if (iColWidth[iIssuerCNColumn] < data[i][iIssuerCNColumn].toString().length()) {
                         iColWidth[iIssuerCNColumn] = data[i][iIssuerCNColumn].toString().length();
@@ -312,7 +346,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iSubjectOColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iSubjectOColumn] = getCertificateSubjectO(alias, keyStore);
                     if (iColWidth[iSubjectOColumn] < data[i][iSubjectOColumn].toString().length()) {
                         iColWidth[iSubjectOColumn] = data[i][iSubjectOColumn].toString().length();
@@ -322,7 +356,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iIssuerOColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iIssuerOColumn] = getCertificateIssuerO(alias, keyStore);
                     if (iColWidth[iIssuerOColumn] < data[i][iIssuerOColumn].toString().length()) {
                         iColWidth[iIssuerOColumn] = data[i][iIssuerOColumn].toString().length();
@@ -333,7 +367,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iAKIColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iAKIColumn] = getCertificateAKI(alias, keyStore);
                     if (iColWidth[iAKIColumn] < data[i][iAKIColumn].toString().length()) {
                         iColWidth[iAKIColumn] = data[i][iAKIColumn].toString().length();
@@ -344,7 +378,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iSKIColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iSKIColumn] = getCertificateSKI(alias, keyStore);
                     if (iColWidth[iSKIColumn] < data[i][iSKIColumn].toString().length()) {
                         iColWidth[iSKIColumn] = data[i][iSKIColumn].toString().length();
@@ -354,7 +388,7 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 }
             }
             if (iFingerprintColumn > 0) {
-                if (!entryType.equals(KEY_ENTRY)) {
+                if (entryType != EntryType.KEY) {
                     data[i][iFingerprintColumn] = getCertificateFingerprint(alias, keyStore,
                                                                             keyStoreTableColumns.getFingerprintAlg());
                     if (iColWidth[iFingerprintColumn] < data[i][iFingerprintColumn].toString().length()) {
