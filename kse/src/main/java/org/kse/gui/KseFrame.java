@@ -2428,9 +2428,11 @@ public final class KseFrame implements StatusBar {
                         unlockKeyPairAction.setEnabled(locked);
                     }
 
-                    // Don't have a library for signing a JWT with Ed448.
-                    boolean canSignJwt = !EdDSACurves.ED448.jce().equals(jtKeyStore.getValueAt(row, 4));
-                    signJwtAction.setEnabled(canSignJwt);
+                    signMidletAction.setEnabled(signMidletAction.isKeySupported(getSelectedEntryAlias()));
+                    jmiKeyPairSignMidlet.setToolTipText(signMidletAction.getToolTip());
+
+                    signJwtAction.setEnabled(signJwtAction.isKeySupported(getSelectedEntryAlias()));
+                    jmiKeyPairSignJwt.setToolTipText(signJwtAction.getToolTip());
 
                     jpmKeyPair.show(jtKeyStore, x, y);
 
@@ -2447,9 +2449,11 @@ public final class KseFrame implements StatusBar {
                         unlockKeyAction.setEnabled(locked);
                     }
 
-                    // Don't have a library for signing a JWT with Ed448.
-                    boolean canSignJwt = !EdDSACurves.ED448.jce().equals(jtKeyStore.getValueAt(row, 4));
-                    signJwtAction.setEnabled(canSignJwt);
+                    signMidletAction.setEnabled(signMidletAction.isKeySupported(getSelectedEntryAlias()));
+                    jmiKeyPairSignMidlet.setToolTipText(signMidletAction.getToolTip());
+
+                    signJwtAction.setEnabled(signJwtAction.isKeySupported(getSelectedEntryAlias()));
+                    jmiKeyPairSignJwt.setToolTipText(signJwtAction.getToolTip());
 
                     jpmKey.show(jtKeyStore, x, y);
                 }
