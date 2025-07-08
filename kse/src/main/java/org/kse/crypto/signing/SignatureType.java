@@ -32,6 +32,7 @@ import static org.kse.crypto.digest.DigestType.SHA3_384;
 import static org.kse.crypto.digest.DigestType.SHA3_512;
 import static org.kse.crypto.digest.DigestType.SHA512;
 import static org.kse.crypto.digest.DigestType.SHAKE256;
+import static org.kse.crypto.digest.DigestType.SM3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,50 +49,54 @@ public enum SignatureType {
 
     // @formatter:off
 
-	// DSA
-	SHA1_DSA("SHA1withDSA", "1.2.840.10040.4.3", SHA1, "SignatureType.Sha1WithDsa"),
-	SHA224_DSA("SHA224withDSA", "2.16.840.1.101.3.4.3.1", SHA224, "SignatureType.Sha224WithDsa"),
-	SHA256_DSA("SHA256withDSA", "2.16.840.1.101.3.4.3.2", SHA256, "SignatureType.Sha256WithDsa"),
-	SHA384_DSA("SHA384withDSA", "2.16.840.1.101.3.4.3.3", SHA384, "SignatureType.Sha384WithDsa"),
-	SHA512_DSA("SHA512withDSA", "2.16.840.1.101.3.4.3.4", SHA512, "SignatureType.Sha512WithDsa"),
+    // DSA
+    SHA1_DSA("SHA1withDSA", "1.2.840.10040.4.3", SHA1, "SignatureType.Sha1WithDsa"),
+    SHA224_DSA("SHA224withDSA", "2.16.840.1.101.3.4.3.1", SHA224, "SignatureType.Sha224WithDsa"),
+    SHA256_DSA("SHA256withDSA", "2.16.840.1.101.3.4.3.2", SHA256, "SignatureType.Sha256WithDsa"),
+    SHA384_DSA("SHA384withDSA", "2.16.840.1.101.3.4.3.3", SHA384, "SignatureType.Sha384WithDsa"),
+    SHA512_DSA("SHA512withDSA", "2.16.840.1.101.3.4.3.4", SHA512, "SignatureType.Sha512WithDsa"),
 
-	// RSA
-	MD5_RSA("MD5withRSA", "1.2.840.113549.1.1.4", MD5, "SignatureType.Md5WithRsa"),
-	RIPEMD160_RSA("RIPEMD160withRSA", "1.3.36.3.3.1.2", RIPEMD160, "SignatureType.Ripemd160WithRsa"),
-	SHA1_RSA("SHA1withRSA", "1.2.840.113549.1.1.5", SHA1, "SignatureType.Sha1WithRsa"),
-	SHA224_RSA("SHA224withRSA", "1.2.840.113549.1.1.14", SHA224, "SignatureType.Sha224WithRsa"),
-	SHA256_RSA("SHA256withRSA", "1.2.840.113549.1.1.11", SHA256, "SignatureType.Sha256WithRsa"),
-	SHA384_RSA("SHA384withRSA", "1.2.840.113549.1.1.12", SHA384, "SignatureType.Sha384WithRsa"),
-	SHA512_RSA("SHA512withRSA", "1.2.840.113549.1.1.13", SHA512, "SignatureType.Sha512WithRsa"),
+    // RSA
+    MD5_RSA("MD5withRSA", "1.2.840.113549.1.1.4", MD5, "SignatureType.Md5WithRsa"),
+    RIPEMD160_RSA("RIPEMD160withRSA", "1.3.36.3.3.1.2", RIPEMD160, "SignatureType.Ripemd160WithRsa"),
+    SHA1_RSA("SHA1withRSA", "1.2.840.113549.1.1.5", SHA1, "SignatureType.Sha1WithRsa"),
+    SHA224_RSA("SHA224withRSA", "1.2.840.113549.1.1.14", SHA224, "SignatureType.Sha224WithRsa"),
+    SHA256_RSA("SHA256withRSA", "1.2.840.113549.1.1.11", SHA256, "SignatureType.Sha256WithRsa"),
+    SHA384_RSA("SHA384withRSA", "1.2.840.113549.1.1.12", SHA384, "SignatureType.Sha384WithRsa"),
+    SHA512_RSA("SHA512withRSA", "1.2.840.113549.1.1.13", SHA512, "SignatureType.Sha512WithRsa"),
 
-	// RSASSA-PSS (there is only one OID for the PSS signature scheme, the parameters define the exact algorithm)
-	SHA1WITHRSAANDMGF1("SHA1WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA1, "SignatureType.Sha1WithRsaAndMGF1"),
-	SHA224WITHRSAANDMGF1("SHA224WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA224, "SignatureType.Sha224WithRsaAndMGF1"),
-	SHA256WITHRSAANDMGF1("SHA256WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA256, "SignatureType.Sha256WithRsaAndMGF1"),
-	SHA384WITHRSAANDMGF1("SHA384WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA384, "SignatureType.Sha384WithRsaAndMGF1"),
-	SHA512WITHRSAANDMGF1("SHA512WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA512, "SignatureType.Sha512WithRsaAndMGF1"),
+    // RSASSA-PSS (there is only one OID for the PSS signature scheme, the parameters define the exact algorithm)
+    SHA1WITHRSAANDMGF1("SHA1WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA1, "SignatureType.Sha1WithRsaAndMGF1"),
+    SHA224WITHRSAANDMGF1("SHA224WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA224, "SignatureType.Sha224WithRsaAndMGF1"),
+    SHA256WITHRSAANDMGF1("SHA256WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA256, "SignatureType.Sha256WithRsaAndMGF1"),
+    SHA384WITHRSAANDMGF1("SHA384WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA384, "SignatureType.Sha384WithRsaAndMGF1"),
+    SHA512WITHRSAANDMGF1("SHA512WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA512, "SignatureType.Sha512WithRsaAndMGF1"),
 
-	// RSA with SHA3 and MGF1
-	SHA3_224WITHRSAANDMGF1("SHA3-224WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_224, "SignatureType.Sha3_224WithRsaAndMGF1"),
-	SHA3_256WITHRSAANDMGF1("SHA3-256WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_256, "SignatureType.Sha3_256WithRsaAndMGF1"),
-	SHA3_384WITHRSAANDMGF1("SHA3-384WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_384, "SignatureType.Sha3_384WithRsaAndMGF1"),
-	SHA3_512WITHRSAANDMGF1("SHA3-512WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_512, "SignatureType.Sha3_512WithRsaAndMGF1"),
+    // RSA with SHA3 and MGF1
+    SHA3_224WITHRSAANDMGF1("SHA3-224WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_224, "SignatureType.Sha3_224WithRsaAndMGF1"),
+    SHA3_256WITHRSAANDMGF1("SHA3-256WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_256, "SignatureType.Sha3_256WithRsaAndMGF1"),
+    SHA3_384WITHRSAANDMGF1("SHA3-384WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_384, "SignatureType.Sha3_384WithRsaAndMGF1"),
+    SHA3_512WITHRSAANDMGF1("SHA3-512WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA3_512, "SignatureType.Sha3_512WithRsaAndMGF1"),
 
-	// ECDSA
-	SHA1_ECDSA("SHA1withECDSA", "1.2.840.10045.4.1", SHA1, "SignatureType.Sha1WithEcDsa"),
-	SHA224_ECDSA("SHA224withECDSA", "1.2.840.10045.4.3.1", SHA224, "SignatureType.Sha224WithEcDsa"),
-	SHA256_ECDSA("SHA256withECDSA", "1.2.840.10045.4.3.2", SHA256, "SignatureType.Sha256WithEcDsa"),
-	SHA384_ECDSA("SHA384withECDSA", "1.2.840.10045.4.3.3", SHA384, "SignatureType.Sha384WithEcDsa"),
-	SHA512_ECDSA("SHA512withECDSA", "1.2.840.10045.4.3.4", SHA512, "SignatureType.Sha512WithEcDsa"),
+    // ECDSA
+    SHA1_ECDSA("SHA1withECDSA", "1.2.840.10045.4.1", SHA1, "SignatureType.Sha1WithEcDsa"),
+    SHA224_ECDSA("SHA224withECDSA", "1.2.840.10045.4.3.1", SHA224, "SignatureType.Sha224WithEcDsa"),
+    SHA256_ECDSA("SHA256withECDSA", "1.2.840.10045.4.3.2", SHA256, "SignatureType.Sha256WithEcDsa"),
+    SHA384_ECDSA("SHA384withECDSA", "1.2.840.10045.4.3.3", SHA384, "SignatureType.Sha384WithEcDsa"),
+    SHA512_ECDSA("SHA512withECDSA", "1.2.840.10045.4.3.4", SHA512, "SignatureType.Sha512WithEcDsa"),
 
-	// EdDSA
-	ED25519("Ed25519", EdDSACurves.ED25519.oid().getId(), SHA512, "SignatureType.Ed25519"),
-	ED448("Ed448", EdDSACurves.ED448.oid().getId(), SHAKE256, "SignatureType.Ed448"),
+    // EdDSA
+    ED25519("Ed25519", EdDSACurves.ED25519.oid().getId(), SHA512, "SignatureType.Ed25519"),
+    ED448("Ed448", EdDSACurves.ED448.oid().getId(), SHAKE256, "SignatureType.Ed448"),
 
     // ML-DSA (“pure”)
     MLDSA44("ML-DSA-44", "2.16.840.1.101.3.4.3.17", SHAKE256, "SignatureType.MlDsa44"),
     MLDSA65("ML-DSA-65", "2.16.840.1.101.3.4.3.18", SHAKE256, "SignatureType.MlDsa65"),
-    MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", SHAKE256, "SignatureType.MlDsa87");
+    MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", SHAKE256, "SignatureType.MlDsa87"),
+
+    // SM2
+    SHA256_SM2("SHA256withSM2", "1.2.156.10197.1.503", SHA256, "SignatureType.Sha256withSm2"),
+    SM3_SM2("SM3withSM2", "1.2.156.10197.1.501", SM3, "SignatureType.Sm3withSm2");
 	// @formatter:on
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
@@ -226,6 +231,20 @@ public enum SignatureType {
         if (keySize < 624) {
             signatureTypes.remove(SHA384_RSA);
         }
+
+        return signatureTypes;
+    }
+
+    /**
+     * Get the signature types compatible with SM2.
+     *
+     * @return SM2 signature types
+     */
+    public static List<SignatureType> sm2SignatureTypes() {
+        List<SignatureType> signatureTypes = new ArrayList<>();
+
+        signatureTypes.add(SM3_SM2);
+        signatureTypes.add(SHA256_SM2);
 
         return signatureTypes;
     }

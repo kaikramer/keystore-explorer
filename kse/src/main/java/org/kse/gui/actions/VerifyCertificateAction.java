@@ -403,7 +403,9 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             }
         }
 
-        CertPathValidator validator = CertPathValidator.getInstance("PKIX");
+        // Use the BC provider for the PKIX implementation. Allows for verifying certs with
+        // algorithms only supported by Bouncy Castle. For example, Brainpool and SM2 curves.
+        CertPathValidator validator = CertPathValidator.getInstance("PKIX", KSE.BC);
         CertificateFactory factory = CertificateFactory.getInstance("X509");
         CertPath certPath = factory.generateCertPath(listCertificates);
         PKIXParameters params = new PKIXParameters(trustStore);

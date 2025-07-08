@@ -19,19 +19,17 @@
  */
 package org.kse.crypto.ecc;
 
-import static org.kse.version.JavaVersion.JRE_VERSION_15;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
 import org.kse.crypto.keystore.KeyStoreType;
-import org.kse.version.JavaVersion;
 
 /**
  * Enumeration for all currently available ECC named curve sets.
@@ -42,6 +40,7 @@ public enum CurveSet {
     NIST("NIST"),
     SEC("SEC"),
     TELETRUST("Brainpool"),
+    SM2("SM2"),
     ED("Edwards");
 
     private String visibleName;
@@ -60,10 +59,11 @@ public enum CurveSet {
         sets.add(ANSI_X9_62.visibleName);
         sets.add(NIST.visibleName);
         sets.add(SEC.visibleName);
+        sets.add(ED.visibleName);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(TELETRUST.visibleName);
+            sets.add(SM2.visibleName);
         }
-        sets.add(ED.visibleName);
         return sets.toArray(new String[0]);
     }
 
@@ -77,11 +77,10 @@ public enum CurveSet {
         sets.add(ANSI_X9_62);
         sets.add(NIST);
         sets.add(SEC);
+        sets.add(ED);
         if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType)) {
             sets.add(TELETRUST);
-        }
-        if (KeyStoreType.isBouncyCastleKeyStore(keyStoreType) || JavaVersion.getJreVersion().isAtLeast(JRE_VERSION_15)) {
-            sets.add(ED);
+            sets.add(SM2);
         }
         return sets;
     }
@@ -125,6 +124,9 @@ public enum CurveSet {
         case ED:
             en = EdDSACurves.getNames();
             break;
+        case SM2:
+            en = GMNamedCurves.getNames();
+            break;
         }
 
         if (en == null) {
@@ -155,6 +157,8 @@ public enum CurveSet {
             return TELETRUST;
         } else if (curveSetName.equals(ED.visibleName)) {
             return ED;
+        } else if (curveSetName.equals(SM2.visibleName)) {
+            return SM2;
         }
 
         return null;
