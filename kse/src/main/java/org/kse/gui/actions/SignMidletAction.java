@@ -22,20 +22,23 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateKey;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.MidletSigner;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.sign.DSignMidlet;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -44,6 +47,8 @@ import org.kse.utilities.history.KeyStoreState;
  */
 public class SignMidletAction extends KeyStoreExplorerAction {
     private static final long serialVersionUID = 1L;
+
+    private String tooltip;
 
     /**
      * Construct action.
@@ -83,14 +88,6 @@ public class SignMidletAction extends KeyStoreExplorerAction {
             X509Certificate[] certs = X509CertUtil.orderX509CertChain(
                     X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias)));
 
-            if (!privateKey.getAlgorithm().equals(KeyPairType.RSA.jce())) {
-                JOptionPane.showMessageDialog(frame,
-                                              res.getString("SignMidletAction.ReqRsaKeyPairMidletSigning.message"),
-                                              res.getString("SignMidletAction.SignMidlet.Title"),
-                                              JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
             DSignMidlet dSignMidlet = new DSignMidlet(frame);
             dSignMidlet.setLocationRelativeTo(frame);
             dSignMidlet.setVisible(true);
@@ -115,5 +112,37 @@ public class SignMidletAction extends KeyStoreExplorerAction {
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
+    }
+
+    /**
+     * Determines if the public key algorithm is supported.
+     *
+     * @param selectedAlias The selected alias.
+     * @return True if the selected alias is supported. False, if not.
+     */
+    public boolean isKeySupported(String selectedAlias) {
+        PublicKey publicKey;
+        try {
+            Certificate cert = kseFrame.getActiveKeyStore().getCertificate(selectedAlias);
+            publicKey = cert.getPublicKey();
+        } catch (KeyStoreException e) {
+            // Not possible to sign if there is a keystore exception.
+            return false;
+        }
+
+        tooltip = null;
+        boolean isSupported = KeyPairType.RSA.jce().equals(publicKey.getAlgorithm());
+        if (!isSupported) {
+            tooltip = res.getString("SignMidletAction.ReqRsaKeyPairMidletSigning.message");
+        }
+        return isSupported;
+    }
+
+    /**
+     *
+     * @return The tool tip to use for the menu item.
+     */
+    public String getToolTip() {
+        return tooltip;
     }
 }

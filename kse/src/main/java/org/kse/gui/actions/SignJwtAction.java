@@ -22,19 +22,21 @@ package org.kse.gui.actions;
 
 import java.awt.Toolkit;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.interfaces.ECPublicKey;
 import java.util.Base64;
 
 import javax.swing.ImageIcon;
 
 import org.bouncycastle.crypto.params.Ed25519PrivateKeyParameters;
 import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
-import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewJwt;
 import org.kse.gui.dialogs.sign.CustomClaim;
@@ -63,6 +65,8 @@ import com.nimbusds.jwt.SignedJWT;
 public class SignJwtAction extends KeyStoreExplorerAction {
 
     private static final long serialVersionUID = 1L;
+
+    private String tooltip;
 
     /**
      * Construct action.
@@ -116,75 +120,19 @@ public class SignJwtAction extends KeyStoreExplorerAction {
 
     private SignedJWT signJwt(DSignJwt dSignJwt, PrivateKey privateKey, Provider provider) throws Exception {
 
-        Curve curve = null;
-        JWSAlgorithm signatureAlgorithm = null;
-        SignatureType signatureType = dSignJwt.getSignatureType();
-        switch (signatureType) {
-        case SHA256_RSA:
-            signatureAlgorithm = JWSAlgorithm.RS256;
-            break;
-        case SHA384_RSA:
-            signatureAlgorithm = JWSAlgorithm.RS384;
-            break;
-        case SHA512_RSA:
-            signatureAlgorithm = JWSAlgorithm.RS512;
-            break;
-        case SHA256WITHRSAANDMGF1:
-            signatureAlgorithm = JWSAlgorithm.PS256;
-            break;
-        case SHA384WITHRSAANDMGF1:
-            signatureAlgorithm = JWSAlgorithm.PS384;
-            break;
-        case SHA512WITHRSAANDMGF1:
-            signatureAlgorithm = JWSAlgorithm.PS512;
-            break;
-        case SHA256_ECDSA:
-            signatureAlgorithm = JWSAlgorithm.ES256;
-            curve = Curve.P_256;
-            break;
-        case SHA384_ECDSA:
-            signatureAlgorithm = JWSAlgorithm.ES384;
-            curve = Curve.P_384;
-            break;
-        case SHA512_ECDSA:
-            signatureAlgorithm = JWSAlgorithm.ES512;
-            curve = Curve.P_521;
-            break;
-        case ED25519:
-            signatureAlgorithm = JWSAlgorithm.Ed25519;
-            break;
-        default:
-            break;
-        }
-        if (signatureAlgorithm == null) {
-            throw new NoSuchAlgorithmException(
-                    signatureType + ": " + res.getString("SignJwtAction.signNotAvailable.message"));
-        }
         JWSSigner signer = null;
-        switch (signatureType) {
-        case SHA256_RSA:
-        case SHA384_RSA:
-        case SHA512_RSA:
-        case SHA256WITHRSAANDMGF1:
-        case SHA384WITHRSAANDMGF1:
-        case SHA512WITHRSAANDMGF1:
+        JWSAlgorithm signatureAlgorithm = dSignJwt.getAlgorithm();
+        if (JWSAlgorithm.Family.RSA.contains(signatureAlgorithm)) {
             signer = new RSASSASigner(privateKey);
-            break;
-        case SHA256_ECDSA:
-        case SHA384_ECDSA:
-        case SHA512_ECDSA:
-            signer = new ECDSASigner(privateKey, curve);
-            break;
-        case ED25519:
+        } else if (JWSAlgorithm.Family.EC.contains(signatureAlgorithm)) {
+            signer = new ECDSASigner(privateKey, dSignJwt.getCurve());
+        } else if (JWSAlgorithm.Ed25519 == signatureAlgorithm) {
             Ed25519PrivateKeyParameters params = (Ed25519PrivateKeyParameters) PrivateKeyFactory
                     .createKey(privateKey.getEncoded());
             OctetKeyPair okp = new OctetKeyPair.Builder(Curve.Ed25519,
                     Base64URL.encode(params.generatePublicKey().getEncoded())).d(Base64URL.encode(params.getEncoded()))
                             .build();
             signer = new Ed25519Signer(okp);
-            break;
-        default:
-            break;
         }
         if (provider != null) {
             signer.getJCAContext().setProvider(provider);
@@ -205,5 +153,45 @@ public class SignJwtAction extends KeyStoreExplorerAction {
         signedJWT.sign(signer);
 
         return signedJWT;
+    }
+
+    /**
+     * Determines if the public key algorithm is supported.
+     *
+     * @param selectedAlias The selected alias.
+     * @return True if the selected alias is supported. False, if not.
+     */
+    public boolean isKeySupported(String selectedAlias) {
+        PublicKey publicKey;
+        try {
+            Certificate cert = kseFrame.getActiveKeyStore().getCertificate(selectedAlias);
+            publicKey = cert.getPublicKey();
+        } catch (KeyStoreException e) {
+            // Not possible to sign if there is a keystore exception.
+            return false;
+        }
+
+        tooltip = null;
+        boolean isSupported = true;
+        if (publicKey instanceof ECPublicKey) {
+            // Only the standard EC curves are supported (P-256, P-384, P-521)
+            isSupported = Curve.forECParameterSpec(((ECPublicKey) publicKey).getParams()) != null;
+        }
+        // Don't have a library for signing a JWT with Ed448 or with ML-DSA.
+        boolean isEd448 = EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm());
+        boolean isMlDSA = KeyPairType.isMlDSA(KeyPairType.resolveJce(publicKey.getAlgorithm()));
+        isSupported = isSupported && !isEd448 && !isMlDSA;
+        if (!isSupported) {
+            tooltip = res.getString("SignJwtAction.NotSupported.message");
+        }
+        return isSupported;
+    }
+
+    /**
+     *
+     * @return The tool tip to use for the menu item.
+     */
+    public String getToolTip() {
+        return tooltip;
     }
 }

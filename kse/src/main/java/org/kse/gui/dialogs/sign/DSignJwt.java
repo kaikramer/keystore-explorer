@@ -24,6 +24,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.event.KeyEvent;
 import java.security.PrivateKey;
+import java.security.interfaces.ECPrivateKey;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -40,15 +41,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.signing.SignatureType;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.DialogHelper;
 import org.kse.utilities.DialogViewer;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.Curve;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -95,10 +97,8 @@ public class DSignJwt extends JEscDialog {
      * @param parent          The parent frame
      * @param signKeyPairType Key pair type
      * @param signPrivateKey  Private key certificate
-     * @throws CryptoException A problem was encountered with the supplied private
-     *                         key
      */
-    public DSignJwt(JFrame parent, KeyPairType signKeyPairType, PrivateKey signPrivateKey) throws CryptoException {
+    public DSignJwt(JFrame parent, KeyPairType signKeyPairType, PrivateKey signPrivateKey) {
         super(parent, Dialog.ModalityType.DOCUMENT_MODAL);
         this.parent = parent;
         this.signKeyPairType = signKeyPairType;
@@ -107,7 +107,7 @@ public class DSignJwt extends JEscDialog {
         initComponents();
     }
 
-    private void initComponents() throws CryptoException {
+    private void initComponents() {
         Date now = new Date();
 
         jlId = new JLabel(res.getString("DSignJwt.jlId.text"));
@@ -150,7 +150,18 @@ public class DSignJwt extends JEscDialog {
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
         if (signPrivateKey != null) {
+            // JWS uses specific algorithms. The defaults provide unsupported algorithms.
             DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
+            if (KeyPairType.RSA == signKeyPairType) {
+                // These algorithms are not supported by JWS
+                jcbSignatureAlgorithm.removeItem(SignatureType.RIPEMD160_RSA);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA1_RSA);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA1WITHRSAANDMGF1);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224WITHRSAANDMGF1);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256WITHRSAANDMGF1);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384WITHRSAANDMGF1);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512WITHRSAANDMGF1);
+            }
         }
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJwt.jcbSignatureAlgorithm.tooltip"));
 
@@ -188,8 +199,12 @@ public class DSignJwt extends JEscDialog {
         pane.add(jlAudience, "");
         pane.add(jtfAudience, "wrap");
 
-        pane.add(jlSignatureAlgorithm, "");
-        pane.add(jcbSignatureAlgorithm, "wrap");
+        // Don't show the signature algorithm for ECDSA and EDDSA.
+        // The JWS algorithm is derived from the curve.
+        if (KeyPairType.EC != signKeyPairType && KeyPairType.EDDSA != signKeyPairType && KeyPairType.ED25519 != signKeyPairType) {
+            pane.add(jlSignatureAlgorithm, "");
+            pane.add(jcbSignatureAlgorithm, "wrap");
+        }
         pane.add(jpClaims, "spanx, growx, wrap unrel");
 
         pane.add(jpButtons, "right, spanx");
@@ -282,9 +297,64 @@ public class DSignJwt extends JEscDialog {
     public boolean isOk() {
         return isOk;
     }
+    
+    public JWSAlgorithm getAlgorithm() {
+        JWSAlgorithm signatureAlgorithm = null;
 
-    public SignatureType getSignatureType() {
-        return signatureType;
+        if (KeyPairType.RSA == signKeyPairType) {
+            // For RSA determine JWS algorithm using the signature type
+            switch (signatureType) {
+                case SHA256_RSA:
+                    signatureAlgorithm = JWSAlgorithm.RS256;
+                    break;
+                case SHA384_RSA:
+                    signatureAlgorithm = JWSAlgorithm.RS384;
+                    break;
+                case SHA512_RSA:
+                    signatureAlgorithm = JWSAlgorithm.RS512;
+                    break;
+                case SHA256WITHRSAANDMGF1:
+                    signatureAlgorithm = JWSAlgorithm.PS256;
+                    break;
+                case SHA384WITHRSAANDMGF1:
+                    signatureAlgorithm = JWSAlgorithm.PS384;
+                    break;
+                case SHA512WITHRSAANDMGF1:
+                    signatureAlgorithm = JWSAlgorithm.PS512;
+                    break;
+                default:
+                    break;
+            }
+        } else if (KeyPairType.EC == signKeyPairType) {
+            // For EC determine the algorithm based on the curve not the signature type
+            Curve curve = getCurve();
+            if (Curve.P_256 == curve) {
+                signatureAlgorithm = JWSAlgorithm.ES256;
+            } else if (Curve.P_384 == curve) {
+                signatureAlgorithm = JWSAlgorithm.ES384;
+            } else if (Curve.P_521 == curve) {
+                signatureAlgorithm = JWSAlgorithm.ES512;
+            } else if (Curve.SECP256K1 == curve) {
+                signatureAlgorithm = JWSAlgorithm.ES256K;
+            }
+        } else if (KeyPairType.EDDSA == signKeyPairType) {
+            // Only Ed25519 is supported. Must figure out the curve if Nimbus JOSE ever adds an Ed448 signer.
+            // Likely use the signatureType since only one signature type is supported for each Edwards curve.
+            signatureAlgorithm = JWSAlgorithm.Ed25519;
+        } else if (KeyPairType.ED25519 == signKeyPairType) {
+            signatureAlgorithm = JWSAlgorithm.Ed25519;
+        }
+
+        return signatureAlgorithm;
+    }
+
+    public Curve getCurve() {
+        if (KeyPairType.EC == signKeyPairType) {
+            if (signPrivateKey instanceof ECPrivateKey) {
+                return Curve.forECParameterSpec(((ECPrivateKey) signPrivateKey).getParams());
+            }
+        }
+        return null;
     }
 
     public static Date addOneDayCalendar(Date date) {
