@@ -46,10 +46,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -129,6 +131,10 @@ public class DViewCertificate extends JEscDialog {
     private JTextField jtfValidFrom;
     private JLabel jlValidUntil;
     private JTextField jtfValidUntil;
+    private JLabel jlValidityPercentage;
+    private JProgressBar jpbValidityPercentage;
+    private JLabel jlValidityDays;
+    private JTextField jtfValidityDays;
     private JLabel jlPublicKey;
     private JTextField jtfPublicKey;
     private JButton jbViewPublicKeyDetails;
@@ -224,6 +230,16 @@ public class DViewCertificate extends JEscDialog {
         jtfValidUntil.setEditable(false);
         jtfValidUntil.setToolTipText(res.getString("DViewCertificate.jtfValidUntil.tooltip"));
 
+        jlValidityPercentage = new JLabel(res.getString("DViewCertificate.jlValidityPercentage.text"));
+        jpbValidityPercentage = new JProgressBar(0, 100);
+        jpbValidityPercentage.setToolTipText(res.getString("DViewCertificate.jpbValidityPercentage.tooltip"));
+        jpbValidityPercentage.setStringPainted(true);
+
+        jlValidityDays = new JLabel(res.getString("DViewCertificate.jlValidityDays.text"));
+        jtfValidityDays = new JTextField(40);
+        jtfValidityDays.setToolTipText(res.getString("DViewCertificate.jtfValidityDays.tooltip"));
+        jtfValidityDays.setEditable(false);
+
         jlPublicKey = new JLabel(res.getString("DViewCertificate.jlPublicKey.text"));
 
         jtfPublicKey = new JTextField(40);
@@ -292,6 +308,10 @@ public class DViewCertificate extends JEscDialog {
         pane.add(jtfValidFrom, "wrap");
         pane.add(jlValidUntil, "");
         pane.add(jtfValidUntil, "wrap");
+        pane.add(jlValidityPercentage, "");
+        pane.add(jpbValidityPercentage, "sgx, wrap");
+        pane.add(jlValidityDays);
+        pane.add(jtfValidityDays, "wrap");
         pane.add(jlPublicKey, "");
         pane.add(jtfPublicKey, "spanx, split");
         pane.add(jbViewPublicKeyDetails, "wrap");
@@ -509,7 +529,12 @@ public class DViewCertificate extends JEscDialog {
 
         return (X509Certificate) ((DefaultMutableTreeNode) selections[0].getLastPathComponent()).getUserObject();
     }
-
+    
+    private static long getDateDiffInDays(Date startDate, Date endDate) {
+        long diffInMillis = endDate.getTime() - startDate.getTime();
+        return TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+    }
+    
     private void populateDetails() {
         X509Certificate cert = getSelectedCertificate();
 
@@ -532,6 +557,8 @@ public class DViewCertificate extends JEscDialog {
             jtfPublicKey.setText("");
             jtfSignatureAlgorithm.setText("");
             jcfFingerprint.setEncodedCertificate(null);
+            jtfValidityDays.setText("");
+            jpbValidityPercentage.setValue(0);
         } else {
             jdnSubject.setEnabled(true);
             jdnIssuer.setEnabled(true);
@@ -600,6 +627,15 @@ public class DViewCertificate extends JEscDialog {
                 if (cert.getPublicKey() instanceof ECPublicKey) {
                     jtfPublicKey.setText(jtfPublicKey.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
                 }
+                long totalDays = getDateDiffInDays(startDate, endDate);
+                long elapsedDays = getDateDiffInDays(startDate, currentDate);
+                double percentUsed = (elapsedDays >= 0) ? ((double) elapsedDays / totalDays) * 100 : 0;
+                jpbValidityPercentage.setValue((int) (100 - percentUsed));
+                long remainingDays = getDateDiffInDays(currentDate, endDate);
+                jtfValidityDays.setText(MessageFormat.format(res.getString("DViewCertificate.jtfValidityDays.text"),
+                        totalDays, elapsedDays,
+                        remainingDays));
+
                 jtfPublicKey.setCaretPosition(0);
 
                 jtfSignatureAlgorithm.setText(X509CertUtil.getCertificateSignatureAlgorithm(cert));
