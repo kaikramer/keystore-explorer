@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.text.MessageFormat;
@@ -773,7 +774,7 @@ public class DAddExtensions extends JEscDialog {
                                                       res.getString("DAddExtensions.InvalidCetFile.message"), loadFile),
                                               res.getString("DAddExtensions.LoadCet.Title"),
                                               JOptionPane.WARNING_MESSAGE);
-            } catch (FileNotFoundException ex) {
+            } catch (FileNotFoundException | NoSuchFileException ex) {
                 JOptionPane.showMessageDialog(this,
                                               MessageFormat.format(res.getString("DAddExtensions.NoReadFile.message"),
                                                                    loadFile),
@@ -817,7 +818,7 @@ public class DAddExtensions extends JEscDialog {
 
             try {
                 extensionsToSave.save(new FileOutputStream(saveFile));
-            } catch (FileNotFoundException ex) {
+            } catch (FileNotFoundException | NoSuchFileException ex) {
                 JOptionPane.showMessageDialog(parentComponent,
                                               MessageFormat.format(res.getString("DAddExtensions.NoWriteFile.message"),
                                                                    saveFile),

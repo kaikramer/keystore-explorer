@@ -24,9 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.PublicKey;
 
-import org.apache.commons.io.FileUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -59,7 +59,7 @@ class PublicKeyFingerprintUtilTest {
     void calculateFingerprint(String certFile, PublicKeyFingerprintAlgorithm fpAlgorithm, String expectedValueHex)
             throws IOException, CryptoException {
 
-        byte[] data = FileUtils.readFileToByteArray(new File(TEST_FILES_PATH, certFile));
+        byte[] data = Files.readAllBytes(new File(TEST_FILES_PATH, certFile).toPath());
         PublicKey publicKey = X509CertUtil.loadCertificates(data)[0].getPublicKey();
 
         byte[] calculatedFingerprint = PublicKeyFingerprintUtil.calculateFingerprint(publicKey, fpAlgorithm);

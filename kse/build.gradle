@@ -111,7 +111,6 @@ configurations {
 
 dependencies {
 	implementation('org.bouncycastle:bcpkix-jdk18on:1.81')
-	implementation('commons-io:commons-io:2.17.0')
 	implementation('com.miglayout:miglayout-swing:11.4.2')
 	implementation('com.formdev:flatlaf:3.5.4:no-natives')
 	implementation('com.formdev:flatlaf:3.5.4:linux-x86_64@so')
@@ -126,8 +125,7 @@ dependencies {
 	implementation('com.nimbusds:nimbus-jose-jwt:10.3')
 	implementation('com.google.crypto.tink:tink:1.17.0') // nimbus-jose-jwt optional dep for ed25519
 
-	// disabled because of Apple notarization failing due to unsigned native libraries in this jar
-	 implementation('org.violetlib:vaqua:13')
+	implementation('org.violetlib:vaqua:13')
 
 	implementation('io.github.java-diff-utils:java-diff-utils:4.15')
 	implementation('org.openjdk.nashorn:nashorn-core:15.6')

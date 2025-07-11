@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -51,7 +52,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -67,10 +67,10 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 import org.kse.utilities.DialogViewer;
 
@@ -315,7 +315,6 @@ public class DViewPem extends JEscDialog {
 
     private void exportPressed() {
         File chosenFile = null;
-        FileWriter fw = null;
 
         String title = res.getString("DViewPem.ExportPem.Title");
         try {
@@ -346,17 +345,16 @@ public class DViewPem extends JEscDialog {
                 }
             }
 
-            fw = new FileWriter(chosenFile);
-            fw.write(certPem);
-        } catch (FileNotFoundException ex) {
+            try (FileWriter fw = new FileWriter(chosenFile)) {
+                fw.write(certPem);
+            }
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(this, MessageFormat.format(res.getString("DViewPem.NoWriteFile.message"),
                                                                      chosenFile), title, JOptionPane.WARNING_MESSAGE);
             return;
         } catch (Exception ex) {
             DError.displayError(this, ex);
             return;
-        } finally {
-            IOUtils.closeQuietly(fw);
         }
 
         JOptionPane.showMessageDialog(this, res.getString("DViewPem.ExportPemCertificateSuccessful.message"), title,

@@ -183,7 +183,7 @@ public class DCertificatePolicies extends DExtension {
         }
 
         CertificatePolicies certificatePolicies = new CertificatePolicies(
-                policyInformation.toArray(new PolicyInformation[0]));
+                policyInformation.toArray(PolicyInformation[]::new));
 
         try {
             value = certificatePolicies.getEncoded(ASN1Encoding.DER);

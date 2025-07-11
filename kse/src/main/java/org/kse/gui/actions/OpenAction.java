@@ -22,6 +22,7 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -200,7 +201,7 @@ public class OpenAction extends KeyStoreExplorerAction {
 
             kseFrame.addKeyStoreHistory(history);
             this.newKeyStoreWasAdded = true;
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("OpenAction.NoReadFile.message"),
                                                                       keyStoreFile),
                                           res.getString("OpenAction.OpenKeyStore.Title"), JOptionPane.WARNING_MESSAGE);

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
 import java.security.Signature;
 import java.security.cert.CertificateEncodingException;
@@ -40,7 +41,6 @@ import java.util.TreeMap;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.kse.crypto.CryptoException;
-import org.kse.utilities.io.CopyUtil;
 
 /**
  * Class provides functionality to sign MIDlets.
@@ -83,7 +83,7 @@ public class MidletSigner {
 
         sign(jadFile, tmpFile, jarFile, privateKey, certificateChain, certificateNumber);
 
-        CopyUtil.copyClose(Files.newInputStream(tmpFile.toPath()), Files.newOutputStream(jadFile.toPath()));
+        Files.copy(tmpFile.toPath(), jadFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         tmpFile.delete();
     }

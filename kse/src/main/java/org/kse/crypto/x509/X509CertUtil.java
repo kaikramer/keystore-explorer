@@ -21,7 +21,6 @@ package org.kse.crypto.x509;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -48,7 +47,6 @@ import java.util.ResourceBundle;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -111,11 +109,11 @@ public final class X509CertUtil {
                 loadedCerts = convertCertificates(certs);
             }
 
-            return loadedCerts.toArray(new X509Certificate[0]);
+            return loadedCerts.toArray(X509Certificate[]::new);
         } catch (CertificateException ex) {
             // Failed to load certificates, may be pki path encoded - try loading as that
             try {
-                return loadCertificatesPkiPath(new ByteArrayInputStream(certsBytes));
+                return loadCertificatesPkiPath(certsBytes);
             } catch (CryptoException ex2) {
                 throw new CryptoException(res.getString("NoLoadCertificate.exception.message"), ex);
             }
@@ -134,10 +132,10 @@ public final class X509CertUtil {
         }
     }
 
-    private static X509Certificate[] loadCertificatesPkiPath(InputStream is) throws CryptoException {
+    private static X509Certificate[] loadCertificatesPkiPath(byte[] certsBytes) throws CryptoException {
         try {
             CertificateFactory cf = CertificateFactory.getInstance(X509_CERT_TYPE, KSE.BC);
-            CertPath certPath = cf.generateCertPath(is, PKI_PATH_ENCODING);
+            CertPath certPath = cf.generateCertPath(new ByteArrayInputStream(certsBytes), PKI_PATH_ENCODING);
 
             List<? extends Certificate> certs = certPath.getCertificates();
 
@@ -151,11 +149,9 @@ public final class X509CertUtil {
                 }
             }
 
-            return loadedCerts.toArray(new X509Certificate[0]);
+            return loadedCerts.toArray(X509Certificate[]::new);
         } catch (CertificateException e) {
             throw new CryptoException(res.getString("NoLoadPkiPath.exception.message"), e);
-        } finally {
-            IOUtils.closeQuietly(is);
         }
     }
 
@@ -368,7 +364,7 @@ public final class X509CertUtil {
         }
 
         // Return longest path
-        return longestPath.toArray(new X509Certificate[0]);
+        return longestPath.toArray(X509Certificate[]::new);
     }
     /*
      * Tries to sort the certificates according to their hierarchy,
@@ -435,7 +431,7 @@ public final class X509CertUtil {
                 }
             }
         }
-        return listCertificates.toArray(new X509Certificate[0]);
+        return listCertificates.toArray(X509Certificate[]::new);
     }
 
     private static boolean certificatesEquals(X509Certificate cert1, X509Certificate cert2) {

@@ -44,12 +44,11 @@ import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Base64;
 
-import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -92,7 +91,7 @@ public class CryptoFileUtil {
      * @throws IOException If an I/O problem occurred
      */
     public static CryptoFileType detectFileType(File file) throws IOException {
-        return detectFileType(FileUtils.readFileToByteArray(file));
+        return detectFileType(Files.readAllBytes(file.toPath()));
     }
 
     /**
@@ -215,8 +214,6 @@ public class CryptoFileUtil {
         try {
             Pkcs10Util.loadCsr(csrData);
             return PKCS10;
-        } catch (FileNotFoundException ex) {
-            throw ex;
         } catch (Exception ex) {
             // Ignore - not a PKCS #10 file
         } catch (OutOfMemoryError ex) {
@@ -242,7 +239,7 @@ public class CryptoFileUtil {
      * @throws IOException If an I/O problem occurred
      */
     public static KeyStoreType detectKeyStoreType(File file) throws IOException {
-        return detectKeyStoreType(FileUtils.readFileToByteArray(file));
+        return detectKeyStoreType(Files.readAllBytes(file.toPath()));
     }
 
     /**

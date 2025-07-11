@@ -154,7 +154,7 @@ public class ImportTrustedCertificateAction extends AuthorityCertificatesAction 
                 }
 
                 // Can we establish trust for the certificate?
-                if (X509CertUtil.establishTrust(trustCert, compKeyStores.toArray(new KeyStore[0])) ==
+                if (X509CertUtil.establishTrust(trustCert, compKeyStores.toArray(KeyStore[]::new)) ==
                     null) {
 
                     // if trustCert comes from an Examination Dialog (i.e. certFile == null)

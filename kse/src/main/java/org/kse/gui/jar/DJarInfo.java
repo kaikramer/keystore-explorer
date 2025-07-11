@@ -189,7 +189,7 @@ public class DJarInfo extends JEscDialog {
             }
         }
 
-        return jars.toArray(new JarFile[0]);
+        return jars.toArray(JarFile[]::new);
     }
 
     private boolean isJarFile(File file) {

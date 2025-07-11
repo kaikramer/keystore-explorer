@@ -46,7 +46,6 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.X509CRLHolder;
@@ -58,7 +57,6 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.x509.X509CertUtil;
@@ -67,6 +65,7 @@ import org.kse.gui.dialogs.importexport.DExportCrl;
 import org.kse.gui.dialogs.sign.DSignCrl;
 import org.kse.gui.dialogs.sign.RevokedEntry;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 import org.kse.utilities.pem.PemInfo;
@@ -170,7 +169,7 @@ public class SignCrlAction extends KeyStoreExplorerAction {
             return null;
         }
         try (FileInputStream is = new FileInputStream(filePrevious)) {
-            X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+            X509CRL crl = X509CertUtil.loadCRL(is.readAllBytes());
             crl.verify(caCert.getPublicKey());
             return crl;
         } catch (InvalidKeyException | CRLException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | IOException | CryptoException e) {

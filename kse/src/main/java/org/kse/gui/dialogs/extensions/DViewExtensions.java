@@ -57,17 +57,16 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.dialogs.DViewAsn1Dump;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewCrl;
@@ -388,7 +387,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             urlConn = (HttpURLConnection) url.openConnection();
         }
         try (InputStream is = urlConn.getInputStream()) {
-            X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+            X509CRL crl = X509CertUtil.loadCRL(is.readAllBytes());
             if (crl != null) {
                 DViewCrl dViewCrl = new DViewCrl(this,
                                                  MessageFormat.format(res.getString("DViewExtensions.ViewCrl.Title"),
@@ -409,7 +408,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
             urlConn = (HttpURLConnection) url.openConnection();
         }
         try (InputStream is = urlConn.getInputStream()) {
-            X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
+            X509Certificate[] certs = X509CertUtil.loadCertificates(is.readAllBytes());
             if (certs != null && certs.length > 0) {
                 int importExport = kseFrame == null ? DViewCertificate.NONE : DViewCertificate.IMPORT_EXPORT;
                 DViewCertificate dViewCertificate = new DViewCertificate(this,

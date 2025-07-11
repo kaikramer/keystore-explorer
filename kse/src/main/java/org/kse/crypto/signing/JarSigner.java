@@ -19,14 +19,13 @@
  */
 package org.kse.crypto.signing;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.SecureRandom;
@@ -46,8 +45,6 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -77,7 +74,6 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.DigestUtil;
-import org.kse.utilities.io.CopyUtil;
 
 /**
  * Class provides functionality to sign JAR files.
@@ -138,7 +134,7 @@ public class JarSigner {
     /**
      * Sign a JAR file overwriting it with the signed JAR.
      *
-     * @param jsrFile          JAR file to sign
+     * @param jarFile          JAR file to sign
      * @param privateKey       Private key to sign with
      * @param certificateChain Certificate chain for private key
      * @param signatureType    Signature type
@@ -149,16 +145,16 @@ public class JarSigner {
      * @throws IOException     If an I/O problem occurs while signing the JAR file
      * @throws CryptoException If a crypto problem occurs while signing the JAR file
      */
-    public static void sign(File jsrFile, PrivateKey privateKey, X509Certificate[] certificateChain,
+    public static void sign(File jarFile, PrivateKey privateKey, X509Certificate[] certificateChain,
                             SignatureType signatureType, String signatureName, String signer, DigestType digestType,
                             String tsaUrl, Provider provider) throws IOException, CryptoException {
         File tmpFile = File.createTempFile("kse", "tmp");
         tmpFile.deleteOnExit();
 
-        sign(jsrFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType, tsaUrl,
+        sign(jarFile, tmpFile, privateKey, certificateChain, signatureType, signatureName, signer, digestType, tsaUrl,
              provider);
 
-        FileUtils.copyFile(tmpFile, jsrFile);
+        Files.copy(tmpFile.toPath(), jarFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         tmpFile.delete();
     }
@@ -448,11 +444,8 @@ public class JarSigner {
 
         JarEntry manifestEntry = jar.getJarEntry(JarFile.MANIFEST_NAME);
 
-        try (InputStream jis = jar.getInputStream(manifestEntry);
-             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-
-            CopyUtil.copyClose(jis, baos);
-            return baos.toString();
+        try (InputStream jis = jar.getInputStream(manifestEntry)) {
+            return new String(jis.readAllBytes());
         }
     }
 
@@ -580,7 +573,7 @@ public class JarSigner {
         jos.putNextEntry(newJarEntry);
 
         try (InputStream is = jar.getInputStream(jarEntry)) {
-            IOUtils.copy(is, jos);
+            is.transferTo(jos);
             jos.closeEntry();
         }
     }
@@ -594,17 +587,8 @@ public class JarSigner {
         JarEntry mfJarEntry = new JarEntry(JarFile.MANIFEST_NAME);
         jos.putNextEntry(mfJarEntry);
 
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(manifest)) {
-            // Write content
-            byte[] buffer = new byte[2048];
-            int read = -1;
-
-            while ((read = bais.read(buffer)) != -1) {
-                jos.write(buffer, 0, read);
-            }
-
-            jos.closeEntry();
-        }
+        jos.write(manifest);
+        jos.closeEntry();
     }
 
     /*
@@ -617,18 +601,8 @@ public class JarSigner {
                 MessageFormat.format(METAINF_FILE_LOC, signatureName, SIGNATURE_EXT).toUpperCase());
         jos.putNextEntry(sfJarEntry);
 
-        // Write content
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(sf)) {
-
-            byte[] buffer = new byte[2048];
-            int read = -1;
-
-            while ((read = bais.read(buffer)) != -1) {
-                jos.write(buffer, 0, read);
-            }
-
-            jos.closeEntry();
-        }
+        jos.write(sf);
+        jos.closeEntry();
     }
 
     /*
@@ -654,16 +628,7 @@ public class JarSigner {
                 MessageFormat.format(METAINF_FILE_LOC, signatureName, extension).toUpperCase());
         jos.putNextEntry(bkJarEntry);
 
-        // Write content
-        ByteArrayInputStream bais = new ByteArrayInputStream(sigBlock);
-
-        byte[] buffer = new byte[2048];
-        int read = -1;
-
-        while ((read = bais.read(buffer)) != -1) {
-            jos.write(buffer, 0, read);
-        }
-
+        jos.write(sigBlock);
         jos.closeEntry();
     }
 

@@ -234,7 +234,7 @@ public class JGeneralNames extends JPanel {
      * @return General names
      */
     public GeneralNames getGeneralNames() {
-        return new GeneralNames(getGeneralNamesTableModel().getData().toArray(new GeneralName[0]));
+        return new GeneralNames(getGeneralNamesTableModel().getData().toArray(GeneralName[]::new));
     }
 
     /**

@@ -172,6 +172,6 @@ public class JMenuRecentFiles extends JMenu {
             recentFiles.add(jmiRecentFile.getFile());
         }
 
-        return recentFiles.toArray(new File[0]);
+        return recentFiles.toArray(File[]::new);
     }
 }
