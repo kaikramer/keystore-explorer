@@ -35,6 +35,7 @@ import java.util.List;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTNamedCurves;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
@@ -144,6 +145,9 @@ public class EccUtil {
             }
             if (curveName == null) {
                 curveName = TeleTrusTNamedCurves.getName(curveId);
+            }
+            if (curveName == null) {
+                curveName = GMNamedCurves.getName(curveId);
             }
 
             if (curveName != null) {

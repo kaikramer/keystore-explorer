@@ -34,6 +34,7 @@ import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.ecc.CurveSet;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
@@ -65,7 +66,13 @@ public class DialogHelper {
             sigAlgs = SignatureType.dsaSignatureTypes();
             break;
         case EC:
-            sigAlgs = SignatureType.ecdsaSignatureTypes();
+            // SM2 is an EC curve, but it is used with a different set of signature algorithms
+            String curve = EccUtil.getNamedCurve(privateKey);
+            if (CurveSet.SM2.getAllCurveNames().contains(curve)) {
+                sigAlgs = SignatureType.sm2SignatureTypes();
+            } else {
+                sigAlgs = SignatureType.ecdsaSignatureTypes();
+            }
             break;
         case EDDSA:
             EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);

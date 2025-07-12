@@ -263,6 +263,10 @@ public class DGenerateKeyPair extends JEscDialog {
 
     private void loadECNamedCurves(String curveSet, String keyPairCurveName) {
         CurveSet set = CurveSet.resolveName(curveSet);
+        // Use the default curve set if the keystore type does not support the last used curve set.
+        if (!CurveSet.getAvailableSets(keyStoreType).contains(set)) {
+            set = null;
+        }
         if (set == null) {
             set = CurveSet.resolveName((String) jcbECCurveSet.getModel().getSelectedItem());
         } else {
