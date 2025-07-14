@@ -17,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
@@ -27,15 +28,17 @@ import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
-import org.kse.crypto.keystore.MsCapiStoreType;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.preferences.data.PasswordGeneratorSettings;
 import org.kse.utilities.history.KeyStoreHistory;
+import org.kse.utilities.rng.PasswordGenerator;
 
 /**
- * Action to open the MS CAPI KeyStore.
+ * Action to open the Apple Keychain KeyStore.
  */
-public class OpenMsCapiAction extends OpenAction {
+public class OpenAppleKeychainAction extends OpenAction {
 
     private static final long serialVersionUID = -9068103518220241052L;
 
@@ -44,17 +47,17 @@ public class OpenMsCapiAction extends OpenAction {
      *
      * @param kseFrame KeyStore Explorer frame
      */
-    public OpenMsCapiAction(KseFrame kseFrame) {
+    public OpenAppleKeychainAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('M',
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('A',
                                                          Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx() +
                                                          InputEvent.SHIFT_DOWN_MASK));
-        putValue(LONG_DESCRIPTION, res.getString("OpenMsCapiAction.statusbar"));
-        putValue(NAME, res.getString("OpenMsCapiAction.text"));
-        putValue(SHORT_DESCRIPTION, res.getString("OpenMsCapiAction.tooltip"));
+        putValue(LONG_DESCRIPTION, res.getString("OpenAppleKeychainAction.statusbar"));
+        putValue(NAME, res.getString("OpenAppleKeychainAction.text"));
+        putValue(SHORT_DESCRIPTION, res.getString("OpenAppleKeychainAction.tooltip"));
         putValue(SMALL_ICON, new ImageIcon(
-                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/openmscapi.png"))));
+                Toolkit.getDefaultToolkit().createImage(getClass().getResource("images/openapplekeychain.png"))));
     }
 
     /**
@@ -65,14 +68,17 @@ public class OpenMsCapiAction extends OpenAction {
 
         try {
 
-            KeyStore openedKeyStore = KeyStoreUtil.loadMsCapiStore(MsCapiStoreType.PERSONAL);
+            KeyStore openedKeyStore = KeyStoreUtil.loadAppleKeychain();
 
-            // https://bugs.openjdk.java.net/browse/JDK-6407454
-            // "The SunMSCAPI provider doesn't support access to the RSA keys that it generates.
-            // Users of the keytool utility must omit the SunMSCAPI provider from the -provider option and
-            // applications must not specify the SunMSCAPI provider."
-
-            var history = new KeyStoreHistory(openedKeyStore, res.getString("OpenMsCapiAction.TabTitle"), null, null);
+            var history = new KeyStoreHistory(openedKeyStore, res.getString("OpenAppleKeychainAction.TabTitle"), null, null);
+            // The Apple security provider requires a password to import/export keychain entries,
+            // but the password is irrelevant and not actually used. Keychain Access can export
+            // entries created by KSE without using this password.
+            //
+            // Sets the key store password so that the user doesn't have to be prompted for passwords
+            // that won't be used and could be confusing for the user to understand.
+            history.getCurrentState()
+                    .setPassword(new Password(PasswordGenerator.generatePassword(new PasswordGeneratorSettings())));
 
             kseFrame.addKeyStoreHistory(history);
 

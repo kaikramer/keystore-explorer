@@ -145,6 +145,7 @@ import org.kse.gui.actions.KeyPairPrivateKeyDetailsAction;
 import org.kse.gui.actions.KeyPairPublicKeyDetailsAction;
 import org.kse.gui.actions.NewAction;
 import org.kse.gui.actions.OpenAction;
+import org.kse.gui.actions.OpenAppleKeychainAction;
 import org.kse.gui.actions.OpenCaCertificatesAction;
 import org.kse.gui.actions.OpenDefaultAction;
 import org.kse.gui.actions.OpenMsCapiAction;
@@ -239,6 +240,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiOpenCaCertificatesKeyStore;
     private JMenuItem jmiOpenPkcs11KeyStore;
     private JMenuItem jmiOpenMsCapiKeyStore;
+    private JMenuItem jmiAppleKeychainKeyStore;
     private JMenuItem jmiClose;
     private JMenuItem jmiCloseAll;
     private JMenuItem jmiSave;
@@ -472,6 +474,7 @@ public final class KseFrame implements StatusBar {
     private final OpenCaCertificatesAction openCaCertificatesKeyStoreAction = new OpenCaCertificatesAction(this);
     private final OpenPkcs11Action openPkcs11KeyStoreAction = new OpenPkcs11Action(this);
     private final OpenMsCapiAction openMsCapiAction = new OpenMsCapiAction(this);
+    private final OpenAppleKeychainAction openAppleKeychainAction = new OpenAppleKeychainAction(this);
     private final SaveAction saveAction = new SaveAction(this);
     private final SaveAsAction saveAsAction = new SaveAsAction(this);
     private final SaveAllAction saveAllAction = new SaveAllAction(this);
@@ -737,13 +740,24 @@ public final class KseFrame implements StatusBar {
 
         jmiOpenMsCapiKeyStore = new JMenuItem(openMsCapiAction);
         PlatformUtil.setMnemonic(jmiOpenMsCapiKeyStore,
-                                 res.getString("KseFrame.jmiOpenPkcs11KeyStore.mnemonic").charAt(0));
+                                 res.getString("KseFrame.jmiOpenMsCapiKeyStore.mnemonic").charAt(0));
         jmiOpenMsCapiKeyStore.setToolTipText(null);
         new StatusBarChangeHandler(jmiOpenMsCapiKeyStore, (String) openMsCapiAction.getValue(Action.LONG_DESCRIPTION),
                                    this);
         // show menu item for MSCAPI Windows-MY only on Windows
         if (OperatingSystem.isWindows()) {
             jmOpenSpecial.add(jmiOpenMsCapiKeyStore);
+        }
+
+        jmiAppleKeychainKeyStore = new JMenuItem(openAppleKeychainAction);
+        PlatformUtil.setMnemonic(jmiAppleKeychainKeyStore,
+                res.getString("KseFrame.jmiOpenAppleKeychainKeystore.mnemonic").charAt(0));
+        jmiAppleKeychainKeyStore.setToolTipText(null);
+        new StatusBarChangeHandler(jmiAppleKeychainKeyStore, (String) openAppleKeychainAction.getValue(Action.LONG_DESCRIPTION),
+                this);
+        // show menu item for Apple Keychain only on macOS
+        if (OperatingSystem.isMacOs()) {
+            jmOpenSpecial.add(jmiAppleKeychainKeyStore);
         }
 
         jmFile.addSeparator();

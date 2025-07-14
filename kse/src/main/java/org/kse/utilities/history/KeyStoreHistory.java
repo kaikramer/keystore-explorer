@@ -43,7 +43,7 @@ public class KeyStoreHistory {
      * @param keyStore         KeyStore
      * @param name             KeyStore name
      * @param password         KeyStore password
-     * @param explicitProvider
+     * @param explicitProvider The security provider to use for this key store.
      */
     public KeyStoreHistory(KeyStore keyStore, String name, Password password, Provider explicitProvider) {
         this.name = name;
@@ -55,7 +55,13 @@ public class KeyStoreHistory {
             initialState = new KeyStoreState(this, keyStore, password);
         } else {
             // we cannot handle state (which implies creating copies of the keystore in memory) for smartcards or alike
-            initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
+            if (type == KeyStoreType.KEYCHAIN) {
+                // The Apple KeyStore provider does not update the Keychain until the
+                // key store is saved.
+                initialState = new SaveableNonFileKeyStoreState(this, keyStore, password);
+            } else {
+                initialState = new AlwaysIdenticalKeyStoreState(this, keyStore, password);
+            }
         }
 
         currentState = initialState;
@@ -157,6 +163,9 @@ public class KeyStoreHistory {
         savedState = state;
     }
 
+    /**
+     * @return The security provider for this key store.
+     */
     public Provider getExplicitProvider() {
         return explicitProvider;
     }
