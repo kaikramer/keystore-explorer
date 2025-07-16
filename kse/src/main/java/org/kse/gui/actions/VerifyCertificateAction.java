@@ -48,6 +48,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.PKIXCertPathChecker;
 import java.security.cert.PKIXParameters;
+import java.security.cert.PKIXRevocationChecker;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -55,6 +56,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -169,7 +171,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
                    InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
                    CryptoException {
-        if (verify("false", "false", false, keyStoreHistory, null, alias)) {
+        if (verify(false, false, keyStoreHistory, null, alias)) {
             JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.ChainSuccessful.message"),
                                           MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
                                                                alias), JOptionPane.INFORMATION_MESSAGE);
@@ -180,7 +182,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
                    InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
                    CryptoException {
-        if (verify("false", "true", true, keyStoreHistory, null, alias)) {
+        if (verify(false, true, keyStoreHistory, null, alias)) {
             JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.OcspSuccessful.message"),
                                           MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
                                                                alias), JOptionPane.INFORMATION_MESSAGE);
@@ -192,7 +194,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
                    KeyStoreException, NoSuchAlgorithmException, CertificateException,
                    InvalidAlgorithmParameterException, IllegalStateException, CryptoException {
 
-        if (verify("false", "false", false, keyStoreHistory, null, alias)) {
+        if (verify(false, false, keyStoreHistory, null, alias)) {
             // search issuer
             X509Certificate issuer = null;
 
@@ -352,7 +354,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             dProblem.setVisible(true);
             return;
         }
-        if (verify("true", "false", true, keyStoreHistory, crl, alias)) {
+        if (verify(true, false, keyStoreHistory, crl, alias)) {
             JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
                                           MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
                                                                alias), JOptionPane.INFORMATION_MESSAGE);
@@ -363,15 +365,14 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             throws CertificateException, KeyStoreException, NoSuchAlgorithmException, IOException,
                    InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
                    CryptoException {
-        if (verify("true", "false", true, keyStoreHistory, null, alias)) {
+        if (verify(true, false, keyStoreHistory, null, alias)) {
             JOptionPane.showMessageDialog(frame, res.getString("VerifyCertificateAction.CrlSuccessful.message"),
                                           MessageFormat.format(res.getString("VerifyCertificateAction.Verify.Title"),
                                                                alias), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    private boolean verify(String crl, String ocsp, boolean revocationEnabled, KeyStoreHistory keyStoreHistory,
-                           X509CRL xCrl, String alias)
+    private boolean verify(boolean crl, boolean ocsp, KeyStoreHistory keyStoreHistory, X509CRL xCrl, String alias)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
                    InvalidAlgorithmParameterException, CertPathValidatorException, IllegalStateException,
                    CryptoException {
@@ -384,9 +385,13 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         if (trustStore.size() == 0) {
             throw new CertPathValidatorException(res.getString("VerifyCertificateAction.trustStoreEmpty.message"));
         }
-        System.setProperty("com.sun.net.ssl.checkRevocation", crl);
-        System.setProperty("com.sun.security.enableCRLDP", crl);
-        Security.setProperty("ocsp.enable", ocsp);
+
+        boolean revocationEnabled = crl || ocsp;
+        // The CRL DP is not used unless requested by these properties
+        System.setProperty("com.sun.security.enableCRLDP", Boolean.toString(crl));
+        System.setProperty("org.bouncycastle.x509.enableCRLDP", Boolean.toString(crl));
+        // Used by both BC and SUN providers
+        Security.setProperty("ocsp.enable", Boolean.toString(ocsp));
 
         List<X509Certificate> listCertificates = new ArrayList<>();
         if (revocationEnabled) {
@@ -414,13 +419,25 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
                     Collections.singletonList(xCrl))));
         }
 
+        // This block is not needed when using the SUN provider
+        if (revocationEnabled) {
+            PKIXRevocationChecker revocationChecker = (PKIXRevocationChecker) validator.getRevocationChecker();
+            // Don't fall back so that the UI options are not deceiving. The checker will
+            // fallback to the CRL if OCSP fails and vice-versa unless NO_FALLBACK is enabled.
+            Set<PKIXRevocationChecker.Option> options = EnumSet.of(PKIXRevocationChecker.Option.NO_FALLBACK);
+            if (crl) {
+                options.add(PKIXRevocationChecker.Option.PREFER_CRLS);
+            }
+            revocationChecker.setOptions(options);
+            params.addCertPathChecker(revocationChecker);
+        }
+
         // remove some critical extensions that are private to companies and would
         // otherwise cause a validation failure
         PKIXCertPathChecker certPathChecker = new ExtensionRemovingCertPathChecker();
         params.addCertPathChecker(certPathChecker);
 
-        Date now = new Date(System.currentTimeMillis());
-        params.setDate(now);
+        params.setDate(new Date());
         params.setRevocationEnabled(revocationEnabled);
         validator.validate(certPath, params);
         return true;
