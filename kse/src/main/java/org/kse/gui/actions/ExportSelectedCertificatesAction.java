@@ -9,9 +9,9 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -43,10 +43,10 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
 
     @Override
     protected void doAction() {
-        List<X509Certificate> listCertificate = getCertificates();
+        Set<X509Certificate> setCertificates = getCertificates();
         File exportFile = null;
         try {
-            if (!listCertificate.isEmpty()) {
+            if (!setCertificates.isEmpty()) {
                 KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
                 String fileName = FileNameUtil.removeExtension(history.getName());
                 DExportCertificates dExportCertificates = new DExportCertificates(frame, fileName, false, true);
@@ -56,7 +56,7 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
                 if (!dExportCertificates.exportSelected()) {
                     return;
                 }
-                X509Certificate[] certs = listCertificate.toArray(new X509Certificate[0]);
+                X509Certificate[] certs = setCertificates.toArray(new X509Certificate[0]);
                 certs = X509CertUtil.orderX509CertsChain(certs);
                 exportFile = dExportCertificates.getExportFile();
 
@@ -99,31 +99,31 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
         }
     }
 
-    private List<X509Certificate> getCertificates() {
+    private Set<X509Certificate> getCertificates() {
         KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
         KeyStoreState currentState = history.getCurrentState();
 
         String[] aliases = kseFrame.getSelectedEntryAliases();
         try {
-            List<X509Certificate> listCertificates = new ArrayList<>();
+            Set<X509Certificate> setCertificates = new HashSet<>();
             KeyStore keyStore = currentState.getKeyStore();
             for (String alias : aliases) {
                 if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
                     Certificate certificate = keyStore.getCertificate(alias);
-                    listCertificates.add((X509Certificate) certificate);
+                    setCertificates.add((X509Certificate) certificate);
                 } else if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
                     Certificate[] chain = keyStore.getCertificateChain(alias);
                     if (chain != null) {
                         for (Certificate certificate : chain) {
-                            listCertificates.add((X509Certificate) certificate);
+                            setCertificates.add((X509Certificate) certificate);
                         }
                     }
                 }
             }
-            return listCertificates;
+            return setCertificates;
         } catch (Exception ex) {
             DError.displayError(frame, ex);
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
     }
 

@@ -158,6 +158,7 @@ import org.kse.gui.actions.SaveAction;
 import org.kse.gui.actions.SaveAllAction;
 import org.kse.gui.actions.SaveAsAction;
 import org.kse.gui.actions.SecurityProvidersAction;
+import org.kse.gui.actions.SelectedCertificatesChainDetailsAction;
 import org.kse.gui.actions.SetKeyPairPasswordAction;
 import org.kse.gui.actions.SetKeyPasswordAction;
 import org.kse.gui.actions.SetPasswordAction;
@@ -408,6 +409,7 @@ public final class KseFrame implements StatusBar {
 
 
     private JPopupMenu jpmMultiEntrySel;
+    private JMenuItem jmiMultiEntryDetails;
     private JMenuItem jmiMultiEntrySelCut;
     private JMenuItem jmiMultEntrySelCopy;
     private JMenuItem jmiMultiEntrySelDelete;
@@ -547,6 +549,7 @@ public final class KseFrame implements StatusBar {
     private final DeleteKeyAction deleteKeyAction = new DeleteKeyAction(this);
     private final RenameKeyAction renameKeyAction = new RenameKeyAction(this);
     private final ExportSelectedCertificatesAction exportSelectedCertificatesAction = new ExportSelectedCertificatesAction(this);
+    private final SelectedCertificatesChainDetailsAction selectedCertificatesChainDetailsAction = new SelectedCertificatesChainDetailsAction(this);
 
     //
     // Action map keys - map input to action
@@ -2297,6 +2300,10 @@ public final class KseFrame implements StatusBar {
         // Popup menu for when multiple entries are selected
         //
 
+        jmiMultiEntryDetails = new JMenuItem(selectedCertificatesChainDetailsAction);
+        jmiMultiEntryDetails.setToolTipText(null);
+        new StatusBarChangeHandler(jmiMultiEntryDetails, (String) selectedCertificatesChainDetailsAction.getValue(Action.LONG_DESCRIPTION), this);
+
         jmiMultiEntrySelCut = new JMenuItem(cutAction);
         jmiMultiEntrySelCut.setToolTipText(null);
         new StatusBarChangeHandler(jmiMultiEntrySelCut, (String) cutAction.getValue(Action.LONG_DESCRIPTION), this);
@@ -2321,6 +2328,7 @@ public final class KseFrame implements StatusBar {
                 (String) exportSelectedCertificatesAction.getValue(Action.LONG_DESCRIPTION), this);
 
         jpmMultiEntrySel = new JPopupMenu();
+        jpmMultiEntrySel.add(jmiMultiEntryDetails);
         jpmMultiEntrySel.add(jmiMultiEntrySelCut);
         jpmMultiEntrySel.add(jmiMultEntrySelCopy);
         jpmMultiEntrySel.add(jmiMultiEntrySelDelete);
