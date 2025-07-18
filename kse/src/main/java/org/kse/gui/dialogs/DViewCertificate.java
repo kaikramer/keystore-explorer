@@ -186,7 +186,10 @@ public class DViewCertificate extends JEscDialog {
 
         jspHierarchy = PlatformUtil.createScrollPane(jtrHierarchy, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                      ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        jspHierarchy.setPreferredSize(new Dimension(100, 75));
+        int height = jtrHierarchy.getRowHeight() * jtrHierarchy.getRowCount();
+        height = Math.max(height, 75);
+        height = Math.min(height, jtrHierarchy.getRowHeight() * 10);
+        jspHierarchy.setPreferredSize(new Dimension(100, height));
 
         jlVersion = new JLabel(res.getString("DViewCertificate.jlVersion.text"));
 
