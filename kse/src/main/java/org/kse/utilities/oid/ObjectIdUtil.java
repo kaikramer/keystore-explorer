@@ -1794,6 +1794,9 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.16.840.1.101.3.4.2.9", "SHA3-384");
         oidToNameMapping.put("2.16.840.1.101.3.4.3.1", "DsaWithSha224");
         oidToNameMapping.put("2.16.840.1.101.3.4.3.2", "DsaWithSha256");
+        oidToNameMapping.put("2.16.840.1.101.3.4.3.17", "MlDsa44");
+        oidToNameMapping.put("2.16.840.1.101.3.4.3.18", "MlDsa65");
+        oidToNameMapping.put("2.16.840.1.101.3.4.3.19", "MlDsa87");
         oidToNameMapping.put("2.16.840.1.113719.1.2.8", "NovellAlgorithm");
         oidToNameMapping.put("2.16.840.1.113719.1.2.8.130", "Md4Packet");
         oidToNameMapping.put("2.16.840.1.113719.1.2.8.131", "RsaEncryptionBsafe1");
