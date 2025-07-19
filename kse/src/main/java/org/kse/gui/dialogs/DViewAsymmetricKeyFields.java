@@ -129,9 +129,9 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         } else if (key instanceof EdDSAPrivateKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), getEdAlg(key));
         } else if (key instanceof MLDSAPublicKey) {
-            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "MLDSA");
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-DSA");
         } else if (key instanceof MLDSAPrivateKey) {
-            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "MLDSA");
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "ML-DSA");
         }
         throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
     }
