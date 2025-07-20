@@ -1995,6 +1995,13 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.23.42.9.7", "BankGate");
         oidToNameMapping.put("2.23.42.9.8", "GTE");
         oidToNameMapping.put("2.23.42.9.9", "CompuSource");
+        oidToNameMapping.put("2.23.140", "CaBrowserForum");
+        oidToNameMapping.put("2.23.140.1", "CertificatePolicies");
+        oidToNameMapping.put("2.23.140.1.1", "EvGuidelines");
+        oidToNameMapping.put("2.23.140.1.2", "BaselineRequirements");
+        oidToNameMapping.put("2.23.140.1.2.1", "DomainValidated");
+        oidToNameMapping.put("2.23.140.1.2.2", "OrganizationValidated");
+        oidToNameMapping.put("2.23.140.1.2.3", "IndividualValidated");
         oidToNameMapping.put("2.5.29.1", "AuthorityKeyIdentifier");
         oidToNameMapping.put("2.5.29.10", "BasicConstraints");
         oidToNameMapping.put("2.5.29.11", "NameConstraints");
