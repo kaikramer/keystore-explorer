@@ -2457,12 +2457,6 @@ public final class KseFrame implements StatusBar {
                         unlockKeyAction.setEnabled(locked);
                     }
 
-                    signMidletAction.setEnabled(signMidletAction.isKeySupported(getSelectedEntryAlias()));
-                    jmiKeyPairSignMidlet.setToolTipText(signMidletAction.getToolTip());
-
-                    signJwtAction.setEnabled(signJwtAction.isKeySupported(getSelectedEntryAlias()));
-                    jmiKeyPairSignJwt.setToolTipText(signJwtAction.getToolTip());
-
                     jpmKey.show(jtKeyStore, x, y);
                 }
             }
