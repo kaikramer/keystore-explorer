@@ -53,6 +53,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -398,12 +399,11 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             listCertificates.add(certificateEval);
         } else {
             if (keyCertChain != null) {
-                for (int i = keyCertChain.length - 1; i >= 0; i--) {
-                    X509Certificate cert = keyCertChain[i];
-                    listCertificates.add(0, cert);
-                    if (cert.equals(certificateEval)) {
-                        break;
-                    }
+                CertPath path = CertificateFactory.getInstance("X509", KSE.BC)
+                        .generateCertPath(Arrays.asList(keyCertChain));
+                List<? extends Certificate> genericCertList = path.getCertificates();
+                for (Certificate cert : genericCertList) {
+                    listCertificates.add((X509Certificate) cert);
                 }
             }
         }
@@ -506,8 +506,13 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             KeyStore keyStore = history.getCurrentState().getKeyStore();
-            X509Certificate[] certs = X509CertUtil.convertCertificates(keyStore.getCertificateChain(alias));
-            return certs;
+            Certificate[] certsIn = keyStore.getCertificateChain(alias);
+            if (certsIn != null) {
+                return X509CertUtil.convertCertificates(certsIn);
+            } else {
+                X509Certificate cert = X509CertUtil.convertCertificate(keyStore.getCertificate(alias));
+                return new X509Certificate[] { cert };
+            }
         } catch (KeyStoreException ex) {
             String message = MessageFormat.format(res.getString("VerifyCertificateAction.NoAccessEntry.message"),
                                                   alias);
