@@ -4,6 +4,8 @@
 [![Downloads](https://img.shields.io/github/downloads/kaikramer/keystore-explorer/total)](https://tooomm.github.io/github-release-stats/?username=kaikramer&repository=keystore-explorer)
 [![License](https://img.shields.io/github/license/kaikramer/keystore-explorer)](https://github.com/kaikramer/keystore-explorer/blob/master/LICENSE)
 [![Packaging status](https://repology.org/badge/tiny-repos/keystore-explorer.svg)](https://repology.org/project/keystore-explorer/versions)
+[![Translation status](https://hosted.weblate.org/widgets/keystore-explorer/-/svg-badge.svg)](https://hosted.weblate.org/projects/keystore-explorer/)
+
 
 KeyStore Explorer is a free GUI replacement for the Java command-line utilities keytool and jarsigner.
 
@@ -75,6 +77,13 @@ Or run `org/kse/KSE.java` directly from an IDE.
 ## Contributing
 
 We encourage you to contribute to KSE! Please check out the [Contributing to KSE guide](https://github.com/kaikramer/keystore-explorer/blob/master/CONTRIBUTING.md) for guidelines about how to proceed.
+
+## Translating
+
+KSE uses Java resource bundles for translations. Translators can either clone this repository and add their translations
+to the `kse/src/main/resources/org/kse` subdirectories (the "Resource Bundle Editor" plugin for JetBrains IDEs might be
+helpful for this), or use the
+[Weblate translation platform](https://hosted.weblate.org/projects/keystore-explorer/) to contribute translations.
 
 ## License
 

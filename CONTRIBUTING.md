@@ -57,14 +57,3 @@ Good documentation is crucial for any kind of software. You can help improving t
   improvements for the website can be contributed in the same way as code contributions. Or you could open
   an [issue](https://github.com/kaikramer/keystore-explorer/issues) if you think the website could be improved, but
   don't want to do it yourself.
-
-### Translations
-
-You are welcome to translate the KSE application or documentation into your own language. Just create
-an [issue](https://github.com/kaikramer/keystore-explorer/issues) where you announce that you want to work on
-translating KSE in a certain language.
-
-Also, if you find any problems with existing translations, either create a
-new [issue](https://github.com/kaikramer/keystore-explorer/issues) or fix them and create a pull request.
-
-It is highly recommended to use [ResourceBundle Editor](https://essiembre.github.io/eclipse-rbe/) when working on the translation files. 
