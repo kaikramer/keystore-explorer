@@ -33,5 +33,5 @@ jobs:
       with:
         name: 'artifacts'
         path: |
-          build/libs/kse.jar
+          kse/build/libs/kse.jar
           kse/build/distributions/kse-*.zip

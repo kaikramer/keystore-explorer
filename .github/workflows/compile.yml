@@ -1,0 +1,31 @@
+name: Compile KSE (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 'Set up JDK'
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+
+    - name: 'Grant execute permission for gradlew'
+      run: chmod +x gradlew
+      working-directory: kse
+
+    - name: 'Java Compile with Gradle'
+      run: ./gradlew jar
+      working-directory: kse
+
+    - name: 'Publish Compile'
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'libs-kse'
+        path: kse/build/libs/kse.jar
