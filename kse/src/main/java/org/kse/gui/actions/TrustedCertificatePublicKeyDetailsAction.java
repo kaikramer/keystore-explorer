@@ -20,11 +20,13 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.security.PublicKey;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewPublicKey;
@@ -47,6 +49,7 @@ public class TrustedCertificatePublicKeyDetailsAction extends KeyStoreExplorerAc
     public TrustedCertificatePublicKeyDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0));
         putValue(LONG_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.statusbar"));
         putValue(NAME, res.getString("TrustedCertificatePublicKeyDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.tooltip"));
@@ -59,6 +62,13 @@ public class TrustedCertificatePublicKeyDetailsAction extends KeyStoreExplorerAc
      */
     @Override
     protected void doAction() {
+        showPublicKeySelectedEntry();
+    }
+
+    /**
+     * Show the public key details of the selected KeyStore entry.
+     */
+    public void showPublicKeySelectedEntry() {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             KeyStoreState currentState = history.getCurrentState();
