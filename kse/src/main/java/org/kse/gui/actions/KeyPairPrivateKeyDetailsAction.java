@@ -20,12 +20,14 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.text.MessageFormat;
 import java.util.Optional;
 
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.KseFrame;
@@ -48,6 +50,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
     public KeyPairPrivateKeyDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0));
         putValue(LONG_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.statusbar"));
         putValue(NAME, res.getString("KeyPairPrivateKeyDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.tooltip"));
@@ -60,6 +63,13 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
      */
     @Override
     protected void doAction() {
+        showPrivateKeySelectedEntry();
+    }
+
+    /**
+     * Show the private details of the selected KeyStore entry.
+     */
+    public void showPrivateKeySelectedEntry() {
         try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             KeyStoreState currentState = history.getCurrentState();

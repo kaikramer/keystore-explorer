@@ -1728,6 +1728,14 @@ public final class KseFrame implements StatusBar {
                 if (evt.getKeyCode() == KeyEvent.VK_F2) {
                     renameSelectedEntry();
                 }
+
+                if (evt.getKeyChar() == '+') {
+                    showPublicKeySelectedEntry();
+                }
+
+                if (evt.getKeyChar() == '-') {
+                    showPrivateKeySelectedEntry();
+                }
             }
 
             @Override
@@ -2514,6 +2522,50 @@ public final class KseFrame implements StatusBar {
                 renameTrustedCertificateAction.renameSelectedEntry();
             } else {
                 renameKeyAction.renameSelectedEntry();
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
+
+    private void showPublicKeySelectedEntry() {
+
+        KeyStoreHistory history = getActiveKeyStoreHistory();
+        KeyStore keyStore = history.getCurrentState().getKeyStore();
+        String alias = getSelectedEntryAlias();
+
+        if (alias == null) {
+            return;
+        }
+
+        try {
+            if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+                keyPairPublicKeyDetailsAction.showPublicKeySelectedEntry();
+            } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+                trustedCertificatePublicKeyDetailsAction.showPublicKeySelectedEntry();
+            } else {
+                return;
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
+
+    private void showPrivateKeySelectedEntry() {
+
+        KeyStoreHistory history = getActiveKeyStoreHistory();
+        KeyStore keyStore = history.getCurrentState().getKeyStore();
+        String alias = getSelectedEntryAlias();
+
+        if (alias == null) {
+            return;
+        }
+
+        try {
+            if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+                keyPairPrivateKeyDetailsAction.showPrivateKeySelectedEntry();
+            } else {
+                return;
             }
         } catch (Exception ex) {
             DError.displayError(frame, ex);
