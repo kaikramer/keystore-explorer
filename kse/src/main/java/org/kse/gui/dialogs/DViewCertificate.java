@@ -131,8 +131,8 @@ public class DViewCertificate extends JEscDialog {
     private JTextField jtfValidFrom;
     private JLabel jlValidUntil;
     private JTextField jtfValidUntil;
-    private JLabel jlValidityPercentage;
-    private JProgressBar jpbValidityPercentage;
+    private JLabel jlValidityProgress;
+    private JProgressBar jpbValidityProgress;
     private JLabel jlValidityDays;
     private JTextField jtfValidityDays;
     private JLabel jlPublicKey;
@@ -233,10 +233,10 @@ public class DViewCertificate extends JEscDialog {
         jtfValidUntil.setEditable(false);
         jtfValidUntil.setToolTipText(res.getString("DViewCertificate.jtfValidUntil.tooltip"));
 
-        jlValidityPercentage = new JLabel(res.getString("DViewCertificate.jlValidityPercentage.text"));
-        jpbValidityPercentage = new JProgressBar(0, 100);
-        jpbValidityPercentage.setToolTipText(res.getString("DViewCertificate.jpbValidityPercentage.tooltip"));
-        jpbValidityPercentage.setStringPainted(true);
+        jlValidityProgress = new JLabel(res.getString("DViewCertificate.jlValidityProgress.text"));
+        jpbValidityProgress = new JProgressBar(0, 100);
+        jpbValidityProgress.setToolTipText(res.getString("DViewCertificate.jpbValidityProgress.tooltip"));
+        jpbValidityProgress.setStringPainted(true);
 
         jlValidityDays = new JLabel(res.getString("DViewCertificate.jlValidityDays.text"));
         jtfValidityDays = new JTextField(40);
@@ -311,8 +311,8 @@ public class DViewCertificate extends JEscDialog {
         pane.add(jtfValidFrom, "wrap");
         pane.add(jlValidUntil, "");
         pane.add(jtfValidUntil, "wrap");
-        pane.add(jlValidityPercentage, "");
-        pane.add(jpbValidityPercentage, "sgx, wrap");
+        pane.add(jlValidityProgress, "");
+        pane.add(jpbValidityProgress, "sgx, wrap");
         pane.add(jlValidityDays);
         pane.add(jtfValidityDays, "wrap");
         pane.add(jlPublicKey, "");
@@ -538,6 +538,11 @@ public class DViewCertificate extends JEscDialog {
         return TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
     }
     
+    private static long getDateDiffInSeconds(Date startDate, Date endDate) {
+        long diffInMillis = endDate.getTime() - startDate.getTime();
+        return TimeUnit.SECONDS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+    }
+    
     private void populateDetails() {
         X509Certificate cert = getSelectedCertificate();
 
@@ -561,7 +566,7 @@ public class DViewCertificate extends JEscDialog {
             jtfSignatureAlgorithm.setText("");
             jcfFingerprint.setEncodedCertificate(null);
             jtfValidityDays.setText("");
-            jpbValidityPercentage.setValue(0);
+            jpbValidityProgress.setValue(0);
         } else {
             jdnSubject.setEnabled(true);
             jdnIssuer.setEnabled(true);
@@ -630,14 +635,21 @@ public class DViewCertificate extends JEscDialog {
                 if (cert.getPublicKey() instanceof ECPublicKey) {
                     jtfPublicKey.setText(jtfPublicKey.getText() + " (" + keyInfo.getDetailedAlgorithm() + ")");
                 }
+                long totalSeconds = getDateDiffInSeconds(startDate, endDate);
+                long elapsedSeconds = getDateDiffInSeconds(startDate, currentDate);
+                double percentUsed = 0;
+                if (totalSeconds > 0) {
+                    percentUsed = elapsedSeconds > 0 ? ((double) elapsedSeconds / totalSeconds) * 100 : 0;
+                    percentUsed = percentUsed > 0 && percentUsed < 1 ? 1 : percentUsed;
+                } else {
+                    percentUsed = elapsedSeconds > 0 ? 100 : 0;
+                }
+                jpbValidityProgress.setValue((int) (percentUsed));
                 long totalDays = getDateDiffInDays(startDate, endDate);
-                long elapsedDays = getDateDiffInDays(startDate, currentDate);
-                double percentUsed = (elapsedDays >= 0) ? ((double) elapsedDays / totalDays) * 100 : 0;
-                jpbValidityPercentage.setValue((int) (100 - percentUsed));
-                long remainingDays = getDateDiffInDays(currentDate, endDate);
+                long elapsedDays = Math.max(0, Math.min(getDateDiffInDays(startDate, currentDate), totalDays));
+                long remainingDays = Math.max(0, Math.min(totalDays - elapsedDays, totalDays));
                 jtfValidityDays.setText(MessageFormat.format(res.getString("DViewCertificate.jtfValidityDays.text"),
-                        totalDays, elapsedDays,
-                        remainingDays));
+                        totalDays, elapsedDays, remainingDays));
 
                 jtfPublicKey.setCaretPosition(0);
 
