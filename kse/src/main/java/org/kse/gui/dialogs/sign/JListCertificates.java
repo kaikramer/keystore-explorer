@@ -40,6 +40,7 @@ import org.kse.gui.JKseTable;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KeyStoreTableModel;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.TableColumnAdjuster;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -57,7 +58,7 @@ public class JListCertificates extends JPanel {
 
     private KeyStoreTableColumns keyStoreTableColumns;
     private KeyStore keyStore;
-    private int autoResizeMode = JTable.AUTO_RESIZE_LAST_COLUMN;
+
     /**
      * Creates a new JListCertificates
      */
@@ -78,10 +79,11 @@ public class JListCertificates extends JPanel {
         jtListCerts.setShowGrid(false);
         jtListCerts.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         jtListCerts.getTableHeader().setReorderingAllowed(false);
-        jtListCerts.setAutoResizeMode(autoResizeMode);
         jtListCerts.setRowHeight(Math.max(18, jtListCerts.getRowHeight())); // min. height of 18 because of 16x16 icons
         jtListCerts.setColumnsToIconSize(0, 1, 2);
-        jtListCerts.colAdjust(keyStoreTableColumns, autoResizeMode);
+        jtListCerts.addCustomRenderers(keyStoreTableColumns);
+
+        new TableColumnAdjuster(jtListCerts, keyStoreTableColumns).adjustColumns();
 
         jspListCertsTable = PlatformUtil.createScrollPane(jtListCerts, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                           ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);

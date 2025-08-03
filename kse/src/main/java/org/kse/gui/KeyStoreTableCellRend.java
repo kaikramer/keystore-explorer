@@ -143,7 +143,7 @@ public class KeyStoreTableCellRend extends DefaultTableCellRenderer {
 
     private JLabel writeCell(JLabel cell, Object value) {
         try {
-            if (value == null) {
+            if (value == null || value.toString().equals("-") || value.toString().isEmpty()) {
                 cell.setText("-");
                 cell.setToolTipText(res.getString("KeyStoreTableCellRend.Unavailable.tooltip"));
                 cell.setHorizontalAlignment(CENTER);

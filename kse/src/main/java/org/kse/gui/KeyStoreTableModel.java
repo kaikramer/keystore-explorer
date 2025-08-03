@@ -124,7 +124,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
     private KeyStoreTableColumns keyStoreTableColumns;
     private int nofColumns = 5;
-    private int[] iColWidth;
 
     /**
      * Column for a property
@@ -242,9 +241,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iNameColumn > 0) {
                 // Alias column
                 data[i][iNameColumn] = alias;
-                if (alias.length() > iColWidth[iNameColumn]) {
-                    iColWidth[iNameColumn] = alias.length();
-                }
             }
 
             KeyInfo keyInfo = getKeyInfo(alias, keyStore, currentState);
@@ -253,21 +249,15 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 // Algorithm column
                 if (iAlgorithmColumn > 0) {
                     data[i][iAlgorithmColumn] = getAlgorithmName(keyInfo);
-                    if (iColWidth[iAlgorithmColumn] < data[i][iAlgorithmColumn].toString().length()) {
-                        iColWidth[iAlgorithmColumn] = data[i][iAlgorithmColumn].toString().length();
-                    }
                 }
 
                 // Key Size column
                 if (iKeySizeColumn > 0) {
                     data[i][iKeySizeColumn] = keyInfo.getSize();
                 }
-                // Key Size column
+                // EC curve column
                 if (keyStoreTableColumns.getEnableCurve()) {
                     data[i][iCurveColumn] = keyInfo.getDetailedAlgorithm();
-                    if (iColWidth[iCurveColumn] < data[i][iCurveColumn].toString().length()) {
-                        iColWidth[iCurveColumn] = data[i][iCurveColumn].toString().length();
-                    }
                 }
             }
             if (iCertValidityStartColumn > 0) {
@@ -288,9 +278,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iSubjectDNColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iSubjectDNColumn] = getCertificateSubjectDN(alias, keyStore);
-                    if (iColWidth[iSubjectDNColumn] < data[i][iSubjectDNColumn].toString().length()) {
-                        iColWidth[iSubjectDNColumn] = data[i][iSubjectDNColumn].toString().length();
-                    }
                 } else {
                     data[i][iSubjectDNColumn] = null;
                 }
@@ -298,9 +285,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iIssuerDNColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iIssuerDNColumn] = getCertificateIssuerDN(alias, keyStore);
-                    if (iColWidth[iIssuerDNColumn] < data[i][iIssuerDNColumn].toString().length()) {
-                        iColWidth[iIssuerDNColumn] = data[i][iIssuerDNColumn].toString().length();
-                    }
                 } else {
                     data[i][iIssuerDNColumn] = null;
                 }
@@ -308,9 +292,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iSerialNumberHexColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iSerialNumberHexColumn] = getCertificateSerialNumberHex(alias, keyStore);
-                    if (iColWidth[iSerialNumberHexColumn] < data[i][iSerialNumberHexColumn].toString().length()) {
-                        iColWidth[iSerialNumberHexColumn] = data[i][iSerialNumberHexColumn].toString().length();
-                    }
                 } else {
                     data[i][iSerialNumberHexColumn] = null;
                 }
@@ -318,9 +299,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iSerialNumberDecColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iSerialNumberDecColumn] = getCertificateSerialNumberDec(alias, keyStore);
-                    if (iColWidth[iSerialNumberDecColumn] < data[i][iSerialNumberDecColumn].toString().length()) {
-                        iColWidth[iSerialNumberDecColumn] = data[i][iSerialNumberDecColumn].toString().length();
-                    }
                 } else {
                     data[i][iSerialNumberDecColumn] = null;
                 }
@@ -328,9 +306,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iSubjectCNColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iSubjectCNColumn] = getCertificateSubjectCN(alias, keyStore);
-                    if (iColWidth[iSubjectCNColumn] < data[i][iSubjectCNColumn].toString().length()) {
-                        iColWidth[iSubjectCNColumn] = data[i][iSubjectCNColumn].toString().length();
-                    }
                 } else {
                     data[i][iSubjectCNColumn] = null;
                 }
@@ -338,9 +313,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iIssuerCNColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iIssuerCNColumn] = getCertificateIssuerCN(alias, keyStore);
-                    if (iColWidth[iIssuerCNColumn] < data[i][iIssuerCNColumn].toString().length()) {
-                        iColWidth[iIssuerCNColumn] = data[i][iIssuerCNColumn].toString().length();
-                    }
                 } else {
                     data[i][iIssuerCNColumn] = null;
                 }
@@ -348,9 +320,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iSubjectOColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iSubjectOColumn] = getCertificateSubjectO(alias, keyStore);
-                    if (iColWidth[iSubjectOColumn] < data[i][iSubjectOColumn].toString().length()) {
-                        iColWidth[iSubjectOColumn] = data[i][iSubjectOColumn].toString().length();
-                    }
                 } else {
                     data[i][iSubjectOColumn] = null;
                 }
@@ -358,10 +327,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iIssuerOColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iIssuerOColumn] = getCertificateIssuerO(alias, keyStore);
-                    if (iColWidth[iIssuerOColumn] < data[i][iIssuerOColumn].toString().length()) {
-                        iColWidth[iIssuerOColumn] = data[i][iIssuerOColumn].toString().length();
-                    }
-
                 } else {
                     data[i][iIssuerOColumn] = null;
                 }
@@ -369,10 +334,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iAKIColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iAKIColumn] = getCertificateAKI(alias, keyStore);
-                    if (iColWidth[iAKIColumn] < data[i][iAKIColumn].toString().length()) {
-                        iColWidth[iAKIColumn] = data[i][iAKIColumn].toString().length();
-                    }
-
                 } else {
                     data[i][iAKIColumn] = null;
                 }
@@ -380,9 +341,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
             if (iSKIColumn > 0) {
                 if (entryType != EntryType.KEY) {
                     data[i][iSKIColumn] = getCertificateSKI(alias, keyStore);
-                    if (iColWidth[iSKIColumn] < data[i][iSKIColumn].toString().length()) {
-                        iColWidth[iSKIColumn] = data[i][iSKIColumn].toString().length();
-                    }
                 } else {
                     data[i][iSKIColumn] = null;
                 }
@@ -391,9 +349,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
                 if (entryType != EntryType.KEY) {
                     data[i][iFingerprintColumn] = getCertificateFingerprint(alias, keyStore,
                                                                             keyStoreTableColumns.getFingerprintAlg());
-                    if (iColWidth[iFingerprintColumn] < data[i][iFingerprintColumn].toString().length()) {
-                        iColWidth[iFingerprintColumn] = data[i][iFingerprintColumn].toString().length();
-                    }
                 } else {
                     data[i][iFingerprintColumn] = null;
                 }
@@ -589,7 +544,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
 
     private void adjustColumns() {
         nofColumns = 3 + keyStoreTableColumns.getNofColumns();
-        iColWidth = new int[nofColumns];
 
         // remove all columns before possibly enabling them
         iNameColumn = -1;
@@ -614,106 +568,85 @@ public class KeyStoreTableModel extends AbstractTableModel {
         columnTypes = new Class[nofColumns];
         columnNames[0] = res.getString("KeyStoreTableModel.TypeColumn");
         columnTypes[0] = String.class;
-        iColWidth[0] = ICON_SIZE;
         columnNames[1] = res.getString("KeyStoreTableModel.LockStatusColumn");
         columnTypes[1] = Boolean.class;
-        iColWidth[1] = ICON_SIZE;
         columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
         columnTypes[2] = Integer.class;
-        iColWidth[2] = ICON_SIZE;
 
         for (int col = 3; col < nofColumns; col++) {
             if (col == keyStoreTableColumns.colIndexEntryName()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.NameColumn");
                 columnTypes[col] = String.class;
                 iNameColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexAlgorithm()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
                 columnTypes[col] = String.class;
                 iAlgorithmColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexKeySize()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.KeySizeColumn");
                 columnTypes[col] = Integer.class;
                 iKeySizeColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexCurve()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
                 columnTypes[col] = String.class;
                 iCurveColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexCertificateValidityStart()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CertValidityStartColumn");
                 columnTypes[col] = Date.class;
                 iCertValidityStartColumn = col;
-                iColWidth[col] = " 20.00.2000 00:00:00 MESZ ".length();
             } else if (col == keyStoreTableColumns.colIndexCertificateExpiry()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
                 columnTypes[col] = Date.class;
                 iCertExpiryColumn = col;
-                iColWidth[col] = " 20.00.2000 00:00:00 MESZ ".length();
             } else if (col == keyStoreTableColumns.colIndexLastModified()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
                 columnTypes[col] = Date.class;
                 iLastModifiedColumn = col;
-                iColWidth[col] = " 20.00.2000 00:00:00 MESZ ".length();
             } else if (col == keyStoreTableColumns.colIndexAKI()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.AKIColumn");
                 columnTypes[col] = String.class;
                 iAKIColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexSKI()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SKIColumn");
                 columnTypes[col] = String.class;
                 iSKIColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexIssuerDN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
                 columnTypes[col] = String.class;
                 iIssuerDNColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexSubjectDN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
                 columnTypes[col] = String.class;
                 iSubjectDNColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexIssuerCN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
                 columnTypes[col] = String.class;
                 iIssuerCNColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexSubjectCN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
                 columnTypes[col] = String.class;
                 iSubjectCNColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexIssuerO()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.IssuerOColumn");
                 columnTypes[col] = String.class;
                 iIssuerOColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexSubjectO()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SubjectOColumn");
                 columnTypes[col] = String.class;
                 iSubjectOColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexSerialNumberHex()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SerialNumberHex");
                 columnTypes[col] = String.class;
                 iSerialNumberHexColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexSerialNumberDec()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SerialNumberDec");
                 columnTypes[col] = String.class;
                 iSerialNumberDecColumn = col;
-                iColWidth[col] = columnNames[col].length();
             } else if (col == keyStoreTableColumns.colIndexFingerprint()) {
                 columnNames[col] = MessageFormat.format(res.getString("KeyStoreTableModel.Fingerprint"),
                                                         keyStoreTableColumns.getFingerprintAlg());
                 columnTypes[col] = String.class;
                 iFingerprintColumn = col;
-                iColWidth[col] = columnNames[col].length();
             }
         }
     }
@@ -782,21 +715,6 @@ public class KeyStoreTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int row, int col) {
         return false;
-    }
-
-    /**
-     * Maximum width of a column
-     *
-     * @param col The column
-     * @return Maximum length of the contents (or title) in characters
-     * @
-     */
-    public int getColumnWidth(int col) {
-        if ((col < nofColumns) && (col >= 0)) {
-            return iColWidth[col];
-        } else {
-            return 0;
-        }
     }
 
     public KeyStoreHistory getHistory() {

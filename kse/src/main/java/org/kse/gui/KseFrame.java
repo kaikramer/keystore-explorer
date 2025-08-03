@@ -19,6 +19,8 @@
  */
 package org.kse.gui;
 
+import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
+import static javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN;
 import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
@@ -203,7 +205,7 @@ import org.kse.utilities.os.OperatingSystem;
  */
 public final class KseFrame implements StatusBar {
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
     static final String KSE_UPDATE_CHECK_DISABLED = "kse.update.disabled";
 
@@ -213,12 +215,11 @@ public final class KseFrame implements StatusBar {
     // Default KeyStores tabbed pane - dictates height of this frame
     public static final int DEFAULT_HEIGHT = 450;
 
-    private ArrayList<KeyStoreHistory> histories = new ArrayList<>();
-    private ArrayList<JTable> keyStoreTables = new ArrayList<>();
-    private JFrame frame = new JFrame();
-    private KsePreferences preferences = PreferencesManager.getPreferences();
-    private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
-    private int autoResizeMode = JTable.AUTO_RESIZE_ALL_COLUMNS;
+    private final ArrayList<KeyStoreHistory> histories = new ArrayList<>();
+    private final ArrayList<JTable> keyStoreTables = new ArrayList<>();
+    private final JFrame frame = new JFrame();
+    private final KsePreferences preferences = PreferencesManager.getPreferences();
+    private KeyStoreTableColumns keyStoreTableColumns = PreferencesManager.getPreferences().getKeyStoreTableColumns();
 
     //
     // Menu bar controls
@@ -417,6 +418,29 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiMultiEntryUnlock;
 
     //
+    // Table header popup menu controls
+    //
+
+    private JPopupMenu jpmTableHeader;
+    private JCheckBoxMenuItem jcbmiHeaderEntryName;
+    private JCheckBoxMenuItem jcbmiHeaderAlgorithm;
+    private JCheckBoxMenuItem jcbmiHeaderKeySize;
+    private JCheckBoxMenuItem jcbmiHeaderCurve;
+    private JCheckBoxMenuItem jcbmiHeaderCertificateValidityStart;
+    private JCheckBoxMenuItem jcbmiHeaderCertificateExpiry;
+    private JCheckBoxMenuItem jcbmiHeaderLastModified;
+    private JCheckBoxMenuItem jcbmiHeaderAKI;
+    private JCheckBoxMenuItem jcbmiHeaderSKI;
+    private JCheckBoxMenuItem jcbmiHeaderIssuerDN;
+    private JCheckBoxMenuItem jcbmiHeaderSubjectDN;
+    private JCheckBoxMenuItem jcbmiHeaderIssuerCN;
+    private JCheckBoxMenuItem jcbmiHeaderSubjectCN;
+    private JCheckBoxMenuItem jcbmiHeaderIssuerO;
+    private JCheckBoxMenuItem jcbmiHeaderSubjectO;
+    private JCheckBoxMenuItem jcbmiHeaderSerialNumberHex;
+    private JCheckBoxMenuItem jcbmiHeaderSerialNumberDec;
+
+    //
     // Main display controls
     //
 
@@ -599,6 +623,7 @@ public final class KseFrame implements StatusBar {
         initKeyStoreTabPopupMenu();
         initKeyStorePopupMenu();
         initKeyStoreEntryPopupMenus();
+        initTableHeaderPopupMenu();
 
         // Handle application close
         frame.addWindowListener(new WindowAdapter() {
@@ -1629,8 +1654,7 @@ public final class KseFrame implements StatusBar {
         return jspKeyStoreTable;
     }
 
-    private JTable createEmptyKeyStoreTable() {
-        keyStoreTableColumns = preferences.getKeyStoreTableColumns();
+    private JKseTable createEmptyKeyStoreTable() {
         KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns, preferences.getExpiryWarnDays());
         final JKseTable jtKeyStore = new JKseTable(ksModel);
 
@@ -1640,7 +1664,6 @@ public final class KseFrame implements StatusBar {
         jtKeyStore.setShowGrid(false);
         jtKeyStore.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jtKeyStore.getTableHeader().setReorderingAllowed(false);
-        jtKeyStore.setAutoResizeMode(autoResizeMode);
         jtKeyStore.setRowHeight(Math.max(18, jtKeyStore.getRowHeight())); // min. height of 18 because of 16x16 icons
 
         // Register cut, copy and paste actions with the relevant keystrokes
@@ -1661,6 +1684,23 @@ public final class KseFrame implements StatusBar {
             @Override
             public void actionPerformed(ActionEvent e) {
                 maybeShowSelectedEntryPopupMenu();
+            }
+        });
+
+        // Add mouse listener to table header for context menu
+        jtKeyStore.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    jpmTableHeader.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    jpmTableHeader.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
             }
         });
 
@@ -1692,12 +1732,28 @@ public final class KseFrame implements StatusBar {
         DragSource ds = DragSource.getDefaultDragSource();
         ds.createDefaultDragGestureRecognizer(jtKeyStore, DnDConstants.ACTION_MOVE,
                                               new KeyStoreEntryDragGestureListener(this));
-        jtKeyStore.setAutoResizeMode(autoResizeMode);
 
         // Add custom renderers for headers and cells
-        jtKeyStore.colAdjust(keyStoreTableColumns, autoResizeMode);
+        jtKeyStore.addCustomRenderers(keyStoreTableColumns);
 
         jtKeyStore.setColumnsToIconSize(0, 1, 2);
+
+        // Add mouse listener to table header for context menu
+        jtKeyStore.getTableHeader().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    jpmTableHeader.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    jpmTableHeader.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+        });
 
         jtKeyStore.addMouseListener(new MouseAdapter() {
             @Override
@@ -2381,7 +2437,7 @@ public final class KseFrame implements StatusBar {
             DError.displayError(frame, ex);
         }
     }
-    
+
     private void maybeShowSelectedEntryDetails(MouseEvent evt) {
         // Check if a double click occurred on the KeyStore table. If it has
         // shown the relevant details of the entry clicked upon
@@ -2577,10 +2633,8 @@ public final class KseFrame implements StatusBar {
     public void addKeyStoreHistory(KeyStoreHistory history) {
         histories.add(history);
 
-        JTable jtKeyStore = createEmptyKeyStoreTable();
+        JKseTable jtKeyStore = createEmptyKeyStoreTable();
         jtKeyStore.getSelectionModel().addListSelectionListener(event -> setDefaultStatusBarText());
-        TableColumnAdjuster tca = new TableColumnAdjuster(jtKeyStore);
-        tca.adjustColumns();
         keyStoreTables.add(jtKeyStore);
 
         JScrollPane jspKeyStore = wrapKeyStoreTableInScrollPane(jtKeyStore);
@@ -2591,6 +2645,8 @@ public final class KseFrame implements StatusBar {
         jkstpKeyStores.setSelectedIndex(jkstpKeyStores.getTabCount() - 1);
 
         updateControls(true);
+
+        new TableColumnAdjuster(jtKeyStore, keyStoreTableColumns).adjustColumns();
 
         // If KeyStore is backed up by a file add it to the recent files menu
         if (history.getFile() != null) {
@@ -2614,7 +2670,7 @@ public final class KseFrame implements StatusBar {
     }
 
     /**
-     * Re-draw all keystore tables
+     * Re-draw all keystore tables after preferences have changed.
      *
      * @param preferences settings
      */
@@ -2622,6 +2678,8 @@ public final class KseFrame implements StatusBar {
         if (keyStoreTables != null) {
 
             keyStoreTableColumns = preferences.getKeyStoreTableColumns();
+            updateTableHeaderPopupMenu();
+
             int expiryWarnDays = preferences.getExpiryWarnDays();
 
             for (JTable keyStoreTable : keyStoreTables) {
@@ -2636,7 +2694,9 @@ public final class KseFrame implements StatusBar {
                     if (keyStoreTable instanceof JKseTable) {
                         JKseTable keyStoreTab = (JKseTable) keyStoreTable;
                         keyStoreTab.setColumnsToIconSize(0, 1, 2);
-                        keyStoreTab.colAdjust(keyStoreTableColumns, autoResizeMode);
+                        keyStoreTab.addCustomRenderers(keyStoreTableColumns);
+
+                        new TableColumnAdjuster(keyStoreTab, keyStoreTableColumns).adjustColumns();
                     }
                 } catch (GeneralSecurityException | CryptoException e) {
                     DError.displayError(frame, e);
@@ -3337,5 +3397,178 @@ public final class KseFrame implements StatusBar {
             frame.getContentPane().add(jlStatusBar, BorderLayout.SOUTH);
             preferences.setShowStatusBar(true);
         }
+    }
+
+    private void initTableHeaderPopupMenu() {
+        jpmTableHeader = new JPopupMenu();
+
+        // Create checkbox menu items for each column
+        jcbmiHeaderEntryName = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.NameColumn"));
+        jcbmiHeaderEntryName.setSelected(keyStoreTableColumns.getEnableEntryName());
+        jcbmiHeaderEntryName.addActionListener(e -> toggleColumnVisibility("EntryName"));
+        jpmTableHeader.add(jcbmiHeaderEntryName);
+
+        jcbmiHeaderAlgorithm = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.AlgorithmColumn"));
+        jcbmiHeaderAlgorithm.setSelected(keyStoreTableColumns.getEnableAlgorithm());
+        jcbmiHeaderAlgorithm.addActionListener(e -> toggleColumnVisibility("Algorithm"));
+        jpmTableHeader.add(jcbmiHeaderAlgorithm);
+
+        jcbmiHeaderKeySize = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.KeySizeColumn"));
+        jcbmiHeaderKeySize.setSelected(keyStoreTableColumns.getEnableKeySize());
+        jcbmiHeaderKeySize.addActionListener(e -> toggleColumnVisibility("KeySize"));
+        jpmTableHeader.add(jcbmiHeaderKeySize);
+
+        jcbmiHeaderCurve = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.CurveColumn"));
+        jcbmiHeaderCurve.setSelected(keyStoreTableColumns.getEnableCurve());
+        jcbmiHeaderCurve.addActionListener(e -> toggleColumnVisibility("Curve"));
+        jpmTableHeader.add(jcbmiHeaderCurve);
+
+        jcbmiHeaderCertificateValidityStart = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.CertValidityStartColumn"));
+        jcbmiHeaderCertificateValidityStart.setSelected(keyStoreTableColumns.getEnableCertificateValidityStart());
+        jcbmiHeaderCertificateValidityStart.addActionListener(e -> toggleColumnVisibility("CertificateValidityStart"));
+        jpmTableHeader.add(jcbmiHeaderCertificateValidityStart);
+
+        jcbmiHeaderCertificateExpiry = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.CertExpiryColumn"));
+        jcbmiHeaderCertificateExpiry.setSelected(keyStoreTableColumns.getEnableCertificateExpiry());
+        jcbmiHeaderCertificateExpiry.addActionListener(e -> toggleColumnVisibility("CertificateExpiry"));
+        jpmTableHeader.add(jcbmiHeaderCertificateExpiry);
+
+        jcbmiHeaderLastModified = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.LastModifiedColumn"));
+        jcbmiHeaderLastModified.setSelected(keyStoreTableColumns.getEnableLastModified());
+        jcbmiHeaderLastModified.addActionListener(e -> toggleColumnVisibility("LastModified"));
+        jpmTableHeader.add(jcbmiHeaderLastModified);
+
+        jpmTableHeader.addSeparator();
+
+        jcbmiHeaderAKI = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.AKIColumn"));
+        jcbmiHeaderAKI.setSelected(keyStoreTableColumns.getEnableAKI());
+        jcbmiHeaderAKI.addActionListener(e -> toggleColumnVisibility("AKI"));
+        jpmTableHeader.add(jcbmiHeaderAKI);
+
+        jcbmiHeaderSKI = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.SKIColumn"));
+        jcbmiHeaderSKI.setSelected(keyStoreTableColumns.getEnableSKI());
+        jcbmiHeaderSKI.addActionListener(e -> toggleColumnVisibility("SKI"));
+        jpmTableHeader.add(jcbmiHeaderSKI);
+
+        jcbmiHeaderIssuerDN = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.IssuerDNColumn"));
+        jcbmiHeaderIssuerDN.setSelected(keyStoreTableColumns.getEnableIssuerDN());
+        jcbmiHeaderIssuerDN.addActionListener(e -> toggleColumnVisibility("IssuerDN"));
+        jpmTableHeader.add(jcbmiHeaderIssuerDN);
+
+        jcbmiHeaderSubjectDN = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.SubjectDNColumn"));
+        jcbmiHeaderSubjectDN.setSelected(keyStoreTableColumns.getEnableSubjectDN());
+        jcbmiHeaderSubjectDN.addActionListener(e -> toggleColumnVisibility("SubjectDN"));
+        jpmTableHeader.add(jcbmiHeaderSubjectDN);
+
+        jcbmiHeaderIssuerCN = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.IssuerCNColumn"));
+        jcbmiHeaderIssuerCN.setSelected(keyStoreTableColumns.getEnableIssuerCN());
+        jcbmiHeaderIssuerCN.addActionListener(e -> toggleColumnVisibility("IssuerCN"));
+        jpmTableHeader.add(jcbmiHeaderIssuerCN);
+
+        jcbmiHeaderSubjectCN = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.SubjectCNColumn"));
+        jcbmiHeaderSubjectCN.setSelected(keyStoreTableColumns.getEnableSubjectCN());
+        jcbmiHeaderSubjectCN.addActionListener(e -> toggleColumnVisibility("SubjectCN"));
+        jpmTableHeader.add(jcbmiHeaderSubjectCN);
+
+        jcbmiHeaderIssuerO = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.IssuerOColumn"));
+        jcbmiHeaderIssuerO.setSelected(keyStoreTableColumns.getEnableIssuerO());
+        jcbmiHeaderIssuerO.addActionListener(e -> toggleColumnVisibility("IssuerO"));
+        jpmTableHeader.add(jcbmiHeaderIssuerO);
+
+        jcbmiHeaderSubjectO = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.SubjectOColumn"));
+        jcbmiHeaderSubjectO.setSelected(keyStoreTableColumns.getEnableSubjectO());
+        jcbmiHeaderSubjectO.addActionListener(e -> toggleColumnVisibility("SubjectO"));
+        jpmTableHeader.add(jcbmiHeaderSubjectO);
+
+        jpmTableHeader.addSeparator();
+
+        jcbmiHeaderSerialNumberHex = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.SerialNumberHex"));
+        jcbmiHeaderSerialNumberHex.setSelected(keyStoreTableColumns.getEnableSerialNumberHex());
+        jcbmiHeaderSerialNumberHex.addActionListener(e -> toggleColumnVisibility("SerialNumberHex"));
+        jpmTableHeader.add(jcbmiHeaderSerialNumberHex);
+
+        jcbmiHeaderSerialNumberDec = new JCheckBoxMenuItem(res.getString("KeyStoreTableModel.SerialNumberDec"));
+        jcbmiHeaderSerialNumberDec.setSelected(keyStoreTableColumns.getEnableSerialNumberDec());
+        jcbmiHeaderSerialNumberDec.addActionListener(e -> toggleColumnVisibility("SerialNumberDec"));
+        jpmTableHeader.add(jcbmiHeaderSerialNumberDec);
+    }
+
+    private void updateTableHeaderPopupMenu() {
+        jcbmiHeaderEntryName.setSelected(keyStoreTableColumns.getEnableEntryName());
+        jcbmiHeaderAlgorithm.setSelected(keyStoreTableColumns.getEnableAlgorithm());
+        jcbmiHeaderKeySize.setSelected(keyStoreTableColumns.getEnableKeySize());
+        jcbmiHeaderCurve.setSelected(keyStoreTableColumns.getEnableCurve());
+        jcbmiHeaderCertificateValidityStart.setSelected(keyStoreTableColumns.getEnableCertificateValidityStart());
+        jcbmiHeaderCertificateExpiry.setSelected(keyStoreTableColumns.getEnableCertificateExpiry());
+        jcbmiHeaderLastModified.setSelected(keyStoreTableColumns.getEnableLastModified());
+        jcbmiHeaderAKI.setSelected(keyStoreTableColumns.getEnableAKI());
+        jcbmiHeaderSKI.setSelected(keyStoreTableColumns.getEnableSKI());
+        jcbmiHeaderIssuerDN.setSelected(keyStoreTableColumns.getEnableIssuerDN());
+        jcbmiHeaderSubjectDN.setSelected(keyStoreTableColumns.getEnableSubjectDN());
+        jcbmiHeaderIssuerCN.setSelected(keyStoreTableColumns.getEnableIssuerCN());
+        jcbmiHeaderSubjectCN.setSelected(keyStoreTableColumns.getEnableSubjectCN());
+        jcbmiHeaderIssuerO.setSelected(keyStoreTableColumns.getEnableIssuerO());
+        jcbmiHeaderSubjectO.setSelected(keyStoreTableColumns.getEnableSubjectO());
+        jcbmiHeaderSerialNumberHex.setSelected(keyStoreTableColumns.getEnableSerialNumberHex());
+        jcbmiHeaderSerialNumberDec.setSelected(keyStoreTableColumns.getEnableSerialNumberDec());
+    }
+
+    private void toggleColumnVisibility(String columnType) {
+        switch (columnType) {
+        case "EntryName":
+            keyStoreTableColumns.setEnableEntryName(jcbmiHeaderEntryName.isSelected());
+            break;
+        case "Algorithm":
+            keyStoreTableColumns.setEnableAlgorithm(jcbmiHeaderAlgorithm.isSelected());
+            break;
+        case "KeySize":
+            keyStoreTableColumns.setEnableKeySize(jcbmiHeaderKeySize.isSelected());
+            break;
+        case "Curve":
+            keyStoreTableColumns.setEnableCurve(jcbmiHeaderCurve.isSelected());
+            break;
+        case "CertificateValidityStart":
+            keyStoreTableColumns.setEnableCertificateValidityStart(jcbmiHeaderCertificateValidityStart.isSelected());
+            break;
+        case "CertificateExpiry":
+            keyStoreTableColumns.setEnableCertificateExpiry(jcbmiHeaderCertificateExpiry.isSelected());
+            break;
+        case "LastModified":
+            keyStoreTableColumns.setEnableLastModified(jcbmiHeaderLastModified.isSelected());
+            break;
+        case "AKI":
+            keyStoreTableColumns.setEnableAKI(jcbmiHeaderAKI.isSelected());
+            break;
+        case "SKI":
+            keyStoreTableColumns.setEnableSKI(jcbmiHeaderSKI.isSelected());
+            break;
+        case "IssuerDN":
+            keyStoreTableColumns.setEnableIssuerDN(jcbmiHeaderIssuerDN.isSelected());
+            break;
+        case "SubjectDN":
+            keyStoreTableColumns.setEnableSubjectDN(jcbmiHeaderSubjectDN.isSelected());
+            break;
+        case "IssuerCN":
+            keyStoreTableColumns.setEnableIssuerCN(jcbmiHeaderIssuerCN.isSelected());
+            break;
+        case "SubjectCN":
+            keyStoreTableColumns.setEnableSubjectCN(jcbmiHeaderSubjectCN.isSelected());
+            break;
+        case "IssuerO":
+            keyStoreTableColumns.setEnableIssuerO(jcbmiHeaderIssuerO.isSelected());
+            break;
+        case "SubjectO":
+            keyStoreTableColumns.setEnableSubjectO(jcbmiHeaderSubjectO.isSelected());
+            break;
+        case "SerialNumberHex":
+            keyStoreTableColumns.setEnableSerialNumberHex(jcbmiHeaderSerialNumberHex.isSelected());
+            break;
+        case "SerialNumberDec":
+            keyStoreTableColumns.setEnableSerialNumberDec(jcbmiHeaderSerialNumberDec.isSelected());
+            break;
+        }
+
+        preferences.setKeyStoreTableColumns(keyStoreTableColumns);
+        redrawKeyStores(preferences);
     }
 }
