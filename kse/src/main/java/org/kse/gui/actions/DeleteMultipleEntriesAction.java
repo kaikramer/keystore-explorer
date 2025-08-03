@@ -20,16 +20,19 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.os.OperatingSystem;
 
 /**
  * Action to delete multiple selected entries.
@@ -45,6 +48,7 @@ public class DeleteMultipleEntriesAction extends KeyStoreExplorerAction implemen
     public DeleteMultipleEntriesAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke((OperatingSystem.isMacOs()) ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, 0));
         putValue(LONG_DESCRIPTION, res.getString("DeleteMultipleEntriesAction.statusbar"));
         putValue(NAME, res.getString("DeleteMultipleEntriesAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("DeleteMultipleEntriesAction.tooltip"));

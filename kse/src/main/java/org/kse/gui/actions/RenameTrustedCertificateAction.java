@@ -20,12 +20,14 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
@@ -48,6 +50,7 @@ public class RenameTrustedCertificateAction extends KeyStoreExplorerAction imple
     public RenameTrustedCertificateAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
         putValue(LONG_DESCRIPTION, res.getString("RenameTrustedCertificateAction.statusbar"));
         putValue(NAME, res.getString("RenameTrustedCertificateAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("RenameTrustedCertificateAction.tooltip"));

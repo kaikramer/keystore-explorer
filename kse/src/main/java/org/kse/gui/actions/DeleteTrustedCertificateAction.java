@@ -20,17 +20,20 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.os.OperatingSystem;
 
 /**
  * Action to delete the selected trusted certificate.
@@ -46,6 +49,7 @@ public class DeleteTrustedCertificateAction extends KeyStoreExplorerAction imple
     public DeleteTrustedCertificateAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke((OperatingSystem.isMacOs()) ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, 0));
         putValue(LONG_DESCRIPTION, res.getString("DeleteTrustedCertificateAction.statusbar"));
         putValue(NAME, res.getString("DeleteTrustedCertificateAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("DeleteTrustedCertificateAction.tooltip"));

@@ -20,7 +20,6 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.security.PublicKey;
 import java.text.MessageFormat;
@@ -49,7 +48,7 @@ public class TrustedCertificatePublicKeyDetailsAction extends KeyStoreExplorerAc
     public TrustedCertificatePublicKeyDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("typed +"));
         putValue(LONG_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.statusbar"));
         putValue(NAME, res.getString("TrustedCertificatePublicKeyDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("TrustedCertificatePublicKeyDetailsAction.tooltip"));
