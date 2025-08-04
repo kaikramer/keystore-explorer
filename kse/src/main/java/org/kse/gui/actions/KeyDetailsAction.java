@@ -20,6 +20,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -30,6 +31,7 @@ import java.util.Optional;
 
 import javax.crypto.SecretKey;
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import org.kse.crypto.CryptoException;
 import org.kse.gui.passwordmanager.Password;
@@ -55,6 +57,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
     public KeyDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
         putValue(LONG_DESCRIPTION, res.getString("KeyDetailsAction.statusbar"));
         putValue(NAME, res.getString("KeyDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("KeyDetailsAction.tooltip"));

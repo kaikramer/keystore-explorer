@@ -20,6 +20,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -27,6 +28,7 @@ import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.x509.X509CertUtil;
@@ -51,6 +53,7 @@ public class RenameKeyPairAction extends KeyStoreExplorerAction implements Histo
     public RenameKeyPairAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
         putValue(LONG_DESCRIPTION, res.getString("RenameKeyPairAction.statusbar"));
         putValue(NAME, res.getString("RenameKeyPairAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("RenameKeyPairAction.tooltip"));

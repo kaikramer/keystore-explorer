@@ -20,12 +20,14 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.Key;
 import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.KseFrame;
@@ -49,6 +51,7 @@ public class RenameKeyAction extends KeyStoreExplorerAction implements HistoryAc
     public RenameKeyAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
         putValue(LONG_DESCRIPTION, res.getString("RenameKeyAction.statusbar"));
         putValue(NAME, res.getString("RenameKeyAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("RenameKeyAction.tooltip"));

@@ -20,11 +20,13 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
@@ -32,6 +34,7 @@ import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
+import org.kse.utilities.os.OperatingSystem;
 
 /**
  * Action to delete the selected key.
@@ -47,6 +50,7 @@ public class DeleteKeyAction extends KeyStoreExplorerAction implements HistoryAc
     public DeleteKeyAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke((OperatingSystem.isMacOs()) ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, 0));
         putValue(LONG_DESCRIPTION, res.getString("DeleteKeyAction.statusbar"));
         putValue(NAME, res.getString("DeleteKeyAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("DeleteKeyAction.tooltip"));

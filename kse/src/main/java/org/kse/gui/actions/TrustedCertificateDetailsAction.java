@@ -20,11 +20,13 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
@@ -46,6 +48,7 @@ public class TrustedCertificateDetailsAction extends KeyStoreExplorerAction {
     public TrustedCertificateDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
 
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
         putValue(LONG_DESCRIPTION, res.getString("TrustedCertificateDetailsAction.statusbar"));
         putValue(NAME, res.getString("TrustedCertificateDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("TrustedCertificateDetailsAction.tooltip"));

@@ -50,7 +50,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
     public KeyPairPrivateKeyDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0));
         putValue(LONG_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.statusbar"));
         putValue(NAME, res.getString("KeyPairPrivateKeyDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.tooltip"));
