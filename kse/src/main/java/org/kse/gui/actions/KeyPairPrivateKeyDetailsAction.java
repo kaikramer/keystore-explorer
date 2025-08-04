@@ -20,6 +20,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.text.MessageFormat;
@@ -49,7 +50,7 @@ public class KeyPairPrivateKeyDetailsAction extends KeyStoreExplorerAction {
     public KeyPairPrivateKeyDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
 
-        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("typed -"));
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0));
         putValue(LONG_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.statusbar"));
         putValue(NAME, res.getString("KeyPairPrivateKeyDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("KeyPairPrivateKeyDetailsAction.tooltip"));
