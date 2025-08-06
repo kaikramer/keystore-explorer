@@ -558,7 +558,6 @@ public final class KseFrame implements StatusBar {
     private static final String CUT_KEY = "CUT_KEY";
     private static final String COPY_KEY = "COPY_KEY";
     private static final String PASTE_KEY = "PASTE_KEY";
-    private static final String RENAME_KEY = "RENAME_KEY";
     private static final String CONTEXT_MENU_KEY = "CONTEXT_MENU_KEY";
 
     public KseFrame() {
@@ -1652,9 +1651,6 @@ public final class KseFrame implements StatusBar {
 
         jtKeyStore.getInputMap().put((KeyStroke) pasteAction.getValue(Action.ACCELERATOR_KEY), PASTE_KEY);
         jtKeyStore.getActionMap().put(PASTE_KEY, pasteAction);
-
-        jtKeyStore.getInputMap().put((KeyStroke) renameKeyPairAction.getValue(Action.ACCELERATOR_KEY), RENAME_KEY);
-        jtKeyStore.getActionMap().put(RENAME_KEY, renameKeyPairAction);
 
         jtKeyStore.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.SHIFT_DOWN_MASK, true), CONTEXT_MENU_KEY);
         jtKeyStore.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, 0, true), CONTEXT_MENU_KEY);
