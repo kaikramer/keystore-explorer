@@ -43,7 +43,7 @@ public class SelectedCertificatesChainDetailsAction extends KeyStoreExplorerActi
     }
 
     @Override
-   protected void doAction() {
+    protected void doAction() {
         showCertificatesSelectedEntries();
     }
 
