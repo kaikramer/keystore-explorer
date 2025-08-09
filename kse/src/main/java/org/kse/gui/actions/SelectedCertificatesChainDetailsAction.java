@@ -1,6 +1,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -10,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
+import javax.swing.KeyStroke;
 
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.KseFrame;
@@ -32,6 +34,7 @@ public class SelectedCertificatesChainDetailsAction extends KeyStoreExplorerActi
      */
     public SelectedCertificatesChainDetailsAction(KseFrame kseFrame) {
         super(kseFrame);
+        putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0));
         putValue(LONG_DESCRIPTION, res.getString("SelectedCertificatesChainDetailsAction.statusbar"));
         putValue(NAME, res.getString("SelectedCertificatesChainDetailsAction.text"));
         putValue(SHORT_DESCRIPTION, res.getString("SelectedCertificatesChainDetailsAction.tooltip"));
@@ -41,6 +44,13 @@ public class SelectedCertificatesChainDetailsAction extends KeyStoreExplorerActi
 
     @Override
     protected void doAction() {
+        showCertificatesSelectedEntries();
+    }
+
+    /**
+     * Show the certificates details of the multiple selected KeyStore entries.
+     */
+    public void showCertificatesSelectedEntries() {
         Set<X509Certificate> setCertificates = getCertificates();
         X509Certificate[] certs = setCertificates.toArray(new X509Certificate[0]);
         DViewCertificate dViewCertificate;

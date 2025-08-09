@@ -61,6 +61,7 @@ public class DListCertificatesKS extends JEscDialog {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
     private static final String CANCEL_KEY = "CANCEL_KEY";
+    private static final String ENTER_KEY = "ENTER_KEY";
 
     private KseFrame kseFrame;
 
@@ -127,8 +128,8 @@ public class DListCertificatesKS extends JEscDialog {
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         jListCertificates.getJtListCerts()
                          .getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                         .put(enter, "Enter");
-        jListCertificates.getJtListCerts().getActionMap().put("Enter", new AbstractAction() {
+                         .put(enter, ENTER_KEY);
+        jListCertificates.getJtListCerts().getActionMap().put(ENTER_KEY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 okPressed();

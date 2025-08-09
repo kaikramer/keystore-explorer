@@ -559,6 +559,7 @@ public final class KseFrame implements StatusBar {
     private static final String COPY_KEY = "COPY_KEY";
     private static final String PASTE_KEY = "PASTE_KEY";
     private static final String CONTEXT_MENU_KEY = "CONTEXT_MENU_KEY";
+    private static final String ENTER_KEY = "ENTER_KEY";
 
     public KseFrame() {
         initComponents();
@@ -1665,17 +1666,21 @@ public final class KseFrame implements StatusBar {
 
         // open keystore entry details when user presses enter key
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-        jtKeyStore.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, "Enter");
-        jtKeyStore.getActionMap().put("Enter", new AbstractAction() {
+        jtKeyStore.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, ENTER_KEY);
+        jtKeyStore.getActionMap().put(ENTER_KEY, new AbstractAction() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public void actionPerformed(ActionEvent ae) {
                 try {
-                    int selectedRow = jtKeyStore.getSelectedRow();
-                    if (selectedRow != -1) {
-                        CursorUtil.setCursorBusy(frame);
+                    int selectedRowCount = jtKeyStore.getSelectedRowCount();
+                    CursorUtil.setCursorBusy(frame);
+                    if (selectedRowCount == 1) {
+                        int selectedRow = jtKeyStore.getSelectedRow();
                         showSelectedEntryDetails(jtKeyStore, selectedRow);
+                    }
+                    else if (selectedRowCount > 1) {
+                        selectedCertificatesChainDetailsAction.showCertificatesSelectedEntries();
                     }
                 } finally {
                     CursorUtil.setCursorFree(frame);
