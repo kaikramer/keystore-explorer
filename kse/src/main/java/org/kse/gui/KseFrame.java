@@ -1761,9 +1761,6 @@ public final class KseFrame implements StatusBar {
     }
 
     private void handleDeleteSelectedEntry() {
-        KeyStoreHistory history = getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
-        String alias = getSelectedEntryAlias();
         String nextAlias = getNextEntrysAlias();
         int nrEntriesBeforeDeletion = getNumberOfEntries();
 
@@ -1771,13 +1768,11 @@ public final class KseFrame implements StatusBar {
             String[] aliases = getSelectedEntryAliases();
             if (aliases.length == 1) {
                 // if only one entry is selected, use the specific action as it displays a nice warning dialog
-                if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-                    deleteKeyPairAction.deleteSelectedEntry();
-                } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-                    deleteTrustedCertificateAction.deleteSelectedEntry();
-                } else {
-                    deleteKeyAction.deleteSelectedEntry();
-                }
+                handleSelectedEntry(
+                    deleteKeyPairAction::deleteSelectedEntry,
+                    deleteTrustedCertificateAction::deleteSelectedEntry,
+                    deleteKeyAction::deleteSelectedEntry
+                );
             } else {
                 deleteMultipleEntriesAction.deleteSelectedEntries();
             }
@@ -2346,6 +2341,39 @@ public final class KseFrame implements StatusBar {
 
     }
 
+    // Helper interface for actions on a selected entry
+    @FunctionalInterface
+    private interface KeyStoreEntryAction {
+        void perform() throws Exception;
+    }
+
+    // Helper to select the right action depending on entry type, with exception handling
+    private void handleSelectedEntry(
+            KeyStoreEntryAction keyPairAction,
+            KeyStoreEntryAction trustedCertAction,
+            KeyStoreEntryAction keyAction
+    ) {
+        KeyStoreHistory history = getActiveKeyStoreHistory();
+        KeyStore keyStore = history.getCurrentState().getKeyStore();
+        String alias = getSelectedEntryAlias();
+
+        if (alias == null) {
+            return;
+        }
+
+        try {
+            if (keyPairAction != null && KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
+                keyPairAction.perform();
+            } else if (trustedCertAction != null && KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
+                trustedCertAction.perform();
+            } else if (keyAction != null && KeyStoreUtil.isKeyEntry(alias, keyStore)) {
+                keyAction.perform();
+            }
+        } catch (Exception ex) {
+            DError.displayError(frame, ex);
+        }
+    }
+    
     private void maybeShowSelectedEntryDetails(MouseEvent evt) {
         // Check if a double click occurred on the KeyStore table. If it has
         // shown the relevant details of the entry clicked upon
@@ -2369,22 +2397,11 @@ public final class KseFrame implements StatusBar {
     private void showSelectedEntryDetails(JTable jtKeyStore, int row) {
         jtKeyStore.setRowSelectionInterval(row, row);
         updateCutCopyPasteControls(); // Selection changed - update edit controls
-
-        KeyStoreHistory history = getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
-        String alias = getSelectedEntryAlias();
-
-        try {
-            if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-                keyPairCertificateChainDetailsAction.showCertificateSelectedEntry();
-            } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-                trustedCertificateDetailsAction.showCertificateSelectedEntry();
-            } else if (KeyStoreUtil.isKeyEntry(alias, keyStore)) {
-                keyDetailsAction.showKeySelectedEntry();
-            }
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
+        handleSelectedEntry(
+            keyPairCertificateChainDetailsAction::showCertificateSelectedEntry,
+            trustedCertificateDetailsAction::showCertificateSelectedEntry,
+            keyDetailsAction::showKeySelectedEntry
+        );
     }
 
     private void maybeShowSelectedEntryPopupMenu(MouseEvent evt) {
@@ -2507,70 +2524,27 @@ public final class KseFrame implements StatusBar {
     }
 
     private void renameSelectedEntry() {
-
-        KeyStoreHistory history = getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
-        String alias = getSelectedEntryAlias();
-
-        if (alias == null) {
-            return;
-        }
-
-        try {
-            if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-                renameKeyPairAction.renameSelectedEntry();
-            } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-                renameTrustedCertificateAction.renameSelectedEntry();
-            } else {
-                renameKeyAction.renameSelectedEntry();
-            }
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
+        handleSelectedEntry(
+            renameKeyPairAction::renameSelectedEntry,
+            renameTrustedCertificateAction::renameSelectedEntry,
+            renameKeyAction::renameSelectedEntry
+        );
     }
 
     private void showPublicKeySelectedEntry() {
-
-        KeyStoreHistory history = getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
-        String alias = getSelectedEntryAlias();
-
-        if (alias == null) {
-            return;
-        }
-
-        try {
-            if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-                keyPairPublicKeyDetailsAction.showPublicKeySelectedEntry();
-            } else if (KeyStoreUtil.isTrustedCertificateEntry(alias, keyStore)) {
-                trustedCertificatePublicKeyDetailsAction.showPublicKeySelectedEntry();
-            } else {
-                return;
-            }
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
+        handleSelectedEntry(
+            keyPairPublicKeyDetailsAction::showPublicKeySelectedEntry,
+            trustedCertificatePublicKeyDetailsAction::showPublicKeySelectedEntry,
+            null // Not applicable for simple key entries
+        );
     }
 
     private void showPrivateKeySelectedEntry() {
-
-        KeyStoreHistory history = getActiveKeyStoreHistory();
-        KeyStore keyStore = history.getCurrentState().getKeyStore();
-        String alias = getSelectedEntryAlias();
-
-        if (alias == null) {
-            return;
-        }
-
-        try {
-            if (KeyStoreUtil.isKeyPairEntry(alias, keyStore)) {
-                keyPairPrivateKeyDetailsAction.showPrivateKeySelectedEntry();
-            } else {
-                return;
-            }
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
+        handleSelectedEntry(
+            keyPairPrivateKeyDetailsAction::showPrivateKeySelectedEntry,
+            null, // Not applicable for trusted certs
+            null  // Not applicable for simple key entries
+        );
     }
 
     /**
