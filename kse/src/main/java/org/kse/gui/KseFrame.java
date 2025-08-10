@@ -1769,9 +1769,9 @@ public final class KseFrame implements StatusBar {
             if (aliases.length == 1) {
                 // if only one entry is selected, use the specific action as it displays a nice warning dialog
                 handleSelectedEntry(
-                    () -> deleteKeyPairAction.deleteSelectedEntry(),
-                    () -> deleteTrustedCertificateAction.deleteSelectedEntry(),
-                    () -> deleteKeyAction.deleteSelectedEntry()
+                    deleteKeyPairAction::deleteSelectedEntry,
+                    deleteTrustedCertificateAction::deleteSelectedEntry,
+                    deleteKeyAction::deleteSelectedEntry
                 );
             } else {
                 deleteMultipleEntriesAction.deleteSelectedEntries();
@@ -2398,9 +2398,9 @@ public final class KseFrame implements StatusBar {
         jtKeyStore.setRowSelectionInterval(row, row);
         updateCutCopyPasteControls(); // Selection changed - update edit controls
         handleSelectedEntry(
-            () -> keyPairCertificateChainDetailsAction.showCertificateSelectedEntry(),
-            () -> trustedCertificateDetailsAction.showCertificateSelectedEntry(),
-            () -> keyDetailsAction.showKeySelectedEntry()
+            keyPairCertificateChainDetailsAction::showCertificateSelectedEntry,
+            trustedCertificateDetailsAction::showCertificateSelectedEntry,
+            keyDetailsAction::showKeySelectedEntry
         );
     }
 
@@ -2525,23 +2525,23 @@ public final class KseFrame implements StatusBar {
 
     private void renameSelectedEntry() {
         handleSelectedEntry(
-            () -> renameKeyPairAction.renameSelectedEntry(),
-            () -> renameTrustedCertificateAction.renameSelectedEntry(),
-            () -> renameKeyAction.renameSelectedEntry()
+            renameKeyPairAction::renameSelectedEntry,
+            renameTrustedCertificateAction::renameSelectedEntry,
+            renameKeyAction::renameSelectedEntry
         );
     }
 
     private void showPublicKeySelectedEntry() {
         handleSelectedEntry(
-            () -> keyPairPublicKeyDetailsAction.showPublicKeySelectedEntry(),
-            () -> trustedCertificatePublicKeyDetailsAction.showPublicKeySelectedEntry(),
+            keyPairPublicKeyDetailsAction::showPublicKeySelectedEntry,
+            trustedCertificatePublicKeyDetailsAction::showPublicKeySelectedEntry,
             null // Not applicable for simple key entries
         );
     }
 
     private void showPrivateKeySelectedEntry() {
         handleSelectedEntry(
-            () -> keyPairPrivateKeyDetailsAction.showPrivateKeySelectedEntry(),
+            keyPairPrivateKeyDetailsAction::showPrivateKeySelectedEntry,
             null, // Not applicable for trusted certs
             null  // Not applicable for simple key entries
         );
