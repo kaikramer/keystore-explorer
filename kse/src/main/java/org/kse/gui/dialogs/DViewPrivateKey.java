@@ -28,20 +28,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.X509Certificate;
-import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.DSAPublicKeySpec;
-import java.security.spec.RSAPublicKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -60,10 +53,6 @@ import javax.swing.SwingUtilities;
 
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.jce.spec.ECPublicKeySpec;
-import org.bouncycastle.math.ec.ECPoint;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -287,73 +276,9 @@ public class DViewPrivateKey extends JEscDialog {
     private void generatePressed() {
         try {
             KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
-            KeyPairType keyPairType = null;
-            KeyPair keyPair = null;
+            KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+            KeyPair keyPair = KeyPairUtil.generateKeyPair(privateKey, keyInfo);
 
-            if (privateKey instanceof RSAPrivateKey) {
-                RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
-                RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
-                        rsaPrivate.getPublicExponent());
-                KeyFactory kf = KeyFactory.getInstance("RSA", KSE.BC);
-                PublicKey publicKey = kf.generatePublic(publicSpec);
-                keyPair = new KeyPair(publicKey, privateKey);
-                keyPairType = KeyPairType.RSA;
-            }
-            if (privateKey instanceof ECPrivateKey) {
-                ECPrivateKey ecPrivate = (ECPrivateKey) privateKey;
-                BigInteger d = ecPrivate.getS();
-                ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(keyInfo.getDetailedAlgorithm());
-                ECPoint Q = ecSpec.getG().multiply(d).normalize();
-                ECPublicKeySpec pubKeySpec = new ECPublicKeySpec(Q, ecSpec);
-                KeyFactory keyFactory = KeyFactory.getInstance("EC", KSE.BC);
-                PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
-                keyPair = new KeyPair(publicKey, privateKey);
-                keyPairType = KeyPairType.EC;
-            }
-            if (privateKey instanceof DSAPrivateKey) {
-                DSAPrivateKey dsaPrivate = (DSAPrivateKey) privateKey;
-                DSAParams params = dsaPrivate.getParams();
-                BigInteger y = params.getG().modPow(dsaPrivate.getX(), params.getP());
-                DSAPublicKeySpec publicSpec = new DSAPublicKeySpec(y, params.getP(), params.getQ(), params.getG());
-                KeyFactory kf = KeyFactory.getInstance("DSA", KSE.BC);
-                PublicKey publicKey = kf.generatePublic(publicSpec);
-                keyPair = new KeyPair(publicKey, privateKey);
-                keyPairType = KeyPairType.DSA;
-            }
-            if (privateKey instanceof EdDSAPrivateKey) {
-                EdDSAPrivateKey edPrivate = (EdDSAPrivateKey) privateKey;
-                byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
-                KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
-                PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
-                keyPair = new KeyPair(publicKey, privateKey);
-                switch (edPrivate.getAlgorithm()) {
-                case "Ed25519":
-                    keyPairType = KeyPairType.ED25519;
-                    break;
-                case "Ed448":
-                    keyPairType = KeyPairType.ED448;
-                    break;
-                default:
-                    keyPairType = KeyPairType.EDDSA;
-                }
-            }
-            if (privateKey instanceof MLDSAPrivateKey) {
-                MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
-                PublicKey publicKey = mldsaPrivate.getPublicKey();
-                keyPair = new KeyPair(publicKey, privateKey);
-                switch (mldsaPrivate.getAlgorithm()) {
-                case "ML-DSA-44":
-                    keyPairType = KeyPairType.MLDSA44;
-                    break;
-                case "ML-DSA-65":
-                    keyPairType = KeyPairType.MLDSA65;
-                    break;
-                case "ML-DSA-87":
-                    keyPairType = KeyPairType.MLDSA87;
-                    break;
-                default:
-                }
-            }
             if (keyPair != null && keyPairType != null) {
                 DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(null, null,
                         res.getString("DViewPrivateKey.dGenerateKeyPairCert.text"), keyPair,
