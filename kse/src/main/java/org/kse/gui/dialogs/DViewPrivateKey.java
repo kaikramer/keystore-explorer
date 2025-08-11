@@ -50,6 +50,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -288,7 +289,7 @@ public class DViewPrivateKey extends JEscDialog {
             KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
             KeyPairType keyPairType = null;
             KeyPair keyPair = null;
-            
+
             if (privateKey instanceof RSAPrivateKey) {
                 RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
                 RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
@@ -369,9 +370,15 @@ public class DViewPrivateKey extends JEscDialog {
                     fileNewCert = tempFile.getAbsolutePath();
                     closeDialog();
                 }
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        MessageFormat.format(res.getString("DViewPrivateKey.MissingSupport.text"),
+                                "" + keyInfo.getAlgorithm()),
+                        this.getTitle(),
+                        JOptionPane.WARNING_MESSAGE);
             }
         } catch (Exception ex) {
-            DError.displayError((JFrame) this.getParent(), ex);
+            DError.displayError((JDialog) this.getParent(), ex);
         }
     }
 
