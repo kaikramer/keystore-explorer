@@ -24,14 +24,24 @@ import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.DSAPublicKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -49,9 +59,14 @@ import javax.swing.SwingUtilities;
 
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.spec.ECParameterSpec;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.math.ec.ECPoint;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
@@ -77,6 +92,8 @@ public class DViewPrivateKey extends JEscDialog {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
     private static final ResourceBundle resActions = ResourceBundle.getBundle("org/kse/gui/actions/resources");
 
+    public static final int MAX_LINE_LENGTH = 32;
+
     private JLabel jlAlgorithm;
     private JTextField jtfAlgorithm;
     private JLabel jlKeySize;
@@ -87,6 +104,7 @@ public class DViewPrivateKey extends JEscDialog {
     private JTextArea jtaEncoded;
     private JScrollPane jspEncoded;
     private JButton jbExport;
+    private JButton jbGenCert;
     private JButton jbPem;
     private JButton jbFields;
     private JButton jbAsn1;
@@ -99,6 +117,8 @@ public class DViewPrivateKey extends JEscDialog {
 
     private Optional<PrivateKeyFormat> format;
 
+    private String fileNewCert;
+    
     /**
      * Creates a new DViewPrivateKey dialog.
      *
@@ -114,7 +134,7 @@ public class DViewPrivateKey extends JEscDialog {
         this.privateKey = privateKey;
         this.preferences = preferences;
         this.format = format;
-        initComponents();
+        initComponents(false);
     }
 
     /**
@@ -129,11 +149,11 @@ public class DViewPrivateKey extends JEscDialog {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.privateKey = privateKey;
         this.format = Optional.empty();
-        initComponents();
+        initComponents(true);        
         jbExport.setVisible(false);
     }
 
-    private void initComponents() throws CryptoException {
+    private void initComponents(boolean generateVisible) throws CryptoException {
 
         jlAlgorithm = new JLabel(res.getString("DViewPrivateKey.jlAlgorithm.text"));
 
@@ -170,6 +190,10 @@ public class DViewPrivateKey extends JEscDialog {
         PlatformUtil.setMnemonic(jbExport, res.getString("DViewPrivateKey.jbExport.mnemonic").charAt(0));
         jbExport.setToolTipText(res.getString("DViewPrivateKey.jbExport.tooltip"));
 
+        jbGenCert = new JButton(res.getString("DViewPrivateKey.jbGenCert.text"));
+        PlatformUtil.setMnemonic(jbGenCert, res.getString("DViewPrivateKey.jbGenCert.mnemonic").charAt(0));
+        jbGenCert.setToolTipText(res.getString("DViewPrivateKey.jbGenCert.tooltip"));
+        
         jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
         jbPem.setToolTipText(res.getString("DViewPrivateKey.jbPem.tooltip"));
@@ -196,7 +220,11 @@ public class DViewPrivateKey extends JEscDialog {
         pane.add(jlEncoded, "");
         pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
 
-        pane.add(jbExport, "spanx, split");
+        if (generateVisible) {
+            pane.add(jbGenCert, "spanx, split");
+        } else {
+            pane.add(jbExport, "spanx, split");
+        }
         pane.add(jbPem, "");
         pane.add(jbFields, "");
         pane.add(jbAsn1, "wrap");
@@ -206,6 +234,7 @@ public class DViewPrivateKey extends JEscDialog {
         // actions
 
         jbExport.addActionListener(evt -> exportPressed());
+        jbGenCert.addActionListener(evt -> generatePressed());
 
         jbOK.addActionListener(evt -> okPressed());
 
@@ -252,6 +281,83 @@ public class DViewPrivateKey extends JEscDialog {
         pack();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
+    }
+
+    private void generatePressed() {
+        try {
+            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+            KeyPairType keyPairType = null;
+            KeyPair keyPair = null;
+            
+            if (privateKey instanceof RSAPrivateKey) {
+                RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
+                RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
+                        rsaPrivate.getPublicExponent());
+                KeyFactory kf = KeyFactory.getInstance("RSA", KSE.BC);
+                PublicKey publicKey = kf.generatePublic(publicSpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+                keyPairType = KeyPairType.RSA;
+            }
+            if (privateKey instanceof ECPrivateKey) {
+                ECPrivateKey ecPrivate = (ECPrivateKey) privateKey;
+                BigInteger d = ecPrivate.getS();
+                ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec(keyInfo.getDetailedAlgorithm());
+                ECPoint Q = ecSpec.getG().multiply(d).normalize();
+                ECPublicKeySpec pubKeySpec = new ECPublicKeySpec(Q, ecSpec);
+                KeyFactory keyFactory = KeyFactory.getInstance("EC", KSE.BC);
+                PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+                keyPairType = KeyPairType.EC;
+            }
+            if (privateKey instanceof DSAPrivateKey) {
+                DSAPrivateKey dsaPrivate = (DSAPrivateKey) privateKey;
+                DSAParams params = dsaPrivate.getParams();
+                BigInteger y = params.getG().modPow(dsaPrivate.getX(), params.getP());
+                DSAPublicKeySpec publicSpec = new DSAPublicKeySpec(y, params.getP(), params.getQ(), params.getG());
+                KeyFactory kf = KeyFactory.getInstance("DSA", KSE.BC);
+                PublicKey publicKey = kf.generatePublic(publicSpec);
+                keyPair = new KeyPair(publicKey, privateKey);
+                keyPairType = KeyPairType.DSA;
+            }
+            if (privateKey instanceof EdDSAPrivateKey) {
+                EdDSAPrivateKey edPrivate = (EdDSAPrivateKey) privateKey;
+                byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
+                KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
+                PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
+                keyPair = new KeyPair(publicKey, privateKey);
+                switch (edPrivate.getAlgorithm()) {
+                case "Ed25519":
+                    keyPairType = KeyPairType.ED25519;
+                    break;
+                case "Ed448":
+                    keyPairType = KeyPairType.ED448;
+                    break;
+                default:
+                    keyPairType = KeyPairType.EDDSA;
+                }
+            }
+            if (privateKey instanceof MLDSAPrivateKey) {
+            }
+            if (keyPair != null && keyPairType != null) {
+                DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(null, null,
+                        res.getString("DViewPrivateKey.dGenerateKeyPairCert.text"), keyPair,
+                        keyPairType, null, null, KSE.BC);
+                dGenerateKeyPairCert.setLocationRelativeTo((JDialog) this.getParent());
+                dGenerateKeyPairCert.setVisible(true);
+                X509Certificate certificate = dGenerateKeyPairCert.getCertificate();
+                if (certificate != null) {
+                    File tempFile = File.createTempFile("gen-", ".cer");
+                    tempFile.deleteOnExit();
+                    try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                        fos.write(certificate.getEncoded());
+                    }
+                    fileNewCert = tempFile.getAbsolutePath();
+                    closeDialog();
+                }
+            }
+        } catch (Exception ex) {
+            DError.displayError((JFrame) this.getParent(), ex);
+        }
     }
 
     private void exportPressed() {
@@ -338,6 +444,10 @@ public class DViewPrivateKey extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
+    }
+
+    public String getFileNewCert() {
+        return fileNewCert;
     }
 
     // for quick testing
