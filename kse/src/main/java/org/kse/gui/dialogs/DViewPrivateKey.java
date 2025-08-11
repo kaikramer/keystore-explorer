@@ -373,9 +373,8 @@ public class DViewPrivateKey extends JEscDialog {
             } else {
                 JOptionPane.showMessageDialog(this,
                         MessageFormat.format(res.getString("DViewPrivateKey.MissingSupport.text"),
-                                "" + keyInfo.getAlgorithm()),
-                        this.getTitle(),
-                        JOptionPane.WARNING_MESSAGE);
+                                keyInfo.getAlgorithm()),
+                        this.getTitle(), JOptionPane.WARNING_MESSAGE);
             }
         } catch (Exception ex) {
             DError.displayError((JDialog) this.getParent(), ex);
