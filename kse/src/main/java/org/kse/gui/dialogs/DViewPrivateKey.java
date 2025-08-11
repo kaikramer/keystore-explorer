@@ -149,7 +149,7 @@ public class DViewPrivateKey extends JEscDialog {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.privateKey = privateKey;
         this.format = Optional.empty();
-        initComponents(true);        
+        initComponents(true);
         jbExport.setVisible(false);
     }
 
@@ -337,6 +337,21 @@ public class DViewPrivateKey extends JEscDialog {
                 }
             }
             if (privateKey instanceof MLDSAPrivateKey) {
+                MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
+                PublicKey publicKey = mldsaPrivate.getPublicKey();
+                keyPair = new KeyPair(publicKey, privateKey);
+                switch (mldsaPrivate.getAlgorithm()) {
+                case "ML-DSA-44":
+                    keyPairType = KeyPairType.MLDSA44;
+                    break;
+                case "ML-DSA-65":
+                    keyPairType = KeyPairType.MLDSA65;
+                    break;
+                case "ML-DSA-87":
+                    keyPairType = KeyPairType.MLDSA87;
+                    break;
+                default:
+                }
             }
             if (keyPair != null && keyPairType != null) {
                 DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(null, null,
