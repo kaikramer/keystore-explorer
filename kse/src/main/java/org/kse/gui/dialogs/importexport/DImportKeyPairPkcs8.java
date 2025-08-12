@@ -365,6 +365,9 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
                         res.getString("DImportKeyPairPkcs8.ViewPrivateKeyDetails.Title"), path), privateKey);
                 dViewPrivateKey.setLocationRelativeTo(this);
                 dViewPrivateKey.setVisible(true);
+                if (dViewPrivateKey.getFileNewCert() != null) {
+                    jtfCertificatePath.setText(dViewPrivateKey.getFileNewCert());
+                }
             }
         } catch (CryptoException ex) {
             DError.displayError(this, ex);

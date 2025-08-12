@@ -365,6 +365,9 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
                         res.getString("DImportKeyPairOpenSsl.ViewPrivateKeyDetails.Title"), path), privateKey);
                 dViewPrivateKey.setLocationRelativeTo(this);
                 dViewPrivateKey.setVisible(true);
+                if (dViewPrivateKey.getFileNewCert() != null) {
+                    jtfCertificatePath.setText(dViewPrivateKey.getFileNewCert());
+                }
             }
         } catch (CryptoException ex) {
             DError.displayError(this, ex);

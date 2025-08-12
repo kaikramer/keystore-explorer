@@ -34,23 +34,34 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.security.interfaces.DSAParams;
+import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.DSAPrivateKeySpec;
 import java.security.spec.DSAPublicKeySpec;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.spec.ECPublicKeySpec;
+import org.bouncycastle.math.ec.ECPoint;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -400,4 +411,52 @@ public final class KeyPairUtil {
         signature.update(signed);
         return signature.verify(signatureToVerify);
     }
+    
+    public static KeyPair generateKeyPair(PrivateKey privateKey, KeyInfo keyInfo)
+            throws CryptoException, NoSuchAlgorithmException, InvalidKeySpecException {
+        KeyPair keyPair = null;
+
+        if (privateKey instanceof RSAPrivateKey) {
+            RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
+            RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
+                    rsaPrivate.getPublicExponent());
+            KeyFactory kf = KeyFactory.getInstance("RSA", KSE.BC);
+            PublicKey publicKey = kf.generatePublic(publicSpec);
+            keyPair = new KeyPair(publicKey, privateKey);
+        }
+        if (privateKey instanceof ECPrivateKey) {
+            ECPrivateKey ecPrivate = (ECPrivateKey) privateKey;
+            BigInteger d = ecPrivate.getS();
+            org.bouncycastle.jce.spec.ECParameterSpec ecSpec = ECNamedCurveTable
+                    .getParameterSpec(keyInfo.getDetailedAlgorithm());
+            ECPoint Q = ecSpec.getG().multiply(d).normalize();
+            ECPublicKeySpec pubKeySpec = new ECPublicKeySpec(Q, ecSpec);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC", KSE.BC);
+            PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
+            keyPair = new KeyPair(publicKey, privateKey);
+        }
+        if (privateKey instanceof DSAPrivateKey) {
+            DSAPrivateKey dsaPrivate = (DSAPrivateKey) privateKey;
+            DSAParams params = dsaPrivate.getParams();
+            BigInteger y = params.getG().modPow(dsaPrivate.getX(), params.getP());
+            DSAPublicKeySpec publicSpec = new DSAPublicKeySpec(y, params.getP(), params.getQ(), params.getG());
+            KeyFactory kf = KeyFactory.getInstance("DSA", KSE.BC);
+            PublicKey publicKey = kf.generatePublic(publicSpec);
+            keyPair = new KeyPair(publicKey, privateKey);
+        }
+        if (privateKey instanceof EdDSAPrivateKey) {
+            EdDSAPrivateKey edPrivate = (EdDSAPrivateKey) privateKey;
+            byte[] pubKeyBytes = edPrivate.getPublicKey().getEncoded();
+            KeyFactory kf = KeyFactory.getInstance(edPrivate.getAlgorithm(), KSE.BC);
+            PublicKey publicKey = kf.generatePublic(new X509EncodedKeySpec(pubKeyBytes));
+            keyPair = new KeyPair(publicKey, privateKey);
+        }
+        if (privateKey instanceof MLDSAPrivateKey) {
+            MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
+            PublicKey publicKey = mldsaPrivate.getPublicKey();
+            keyPair = new KeyPair(publicKey, privateKey);
+        }        
+        return keyPair;
+    }
+    
 }
