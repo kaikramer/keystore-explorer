@@ -24,14 +24,11 @@ import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -43,7 +40,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -56,7 +52,6 @@ import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
-import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
@@ -94,7 +89,6 @@ public class DViewPrivateKey extends JEscDialog {
     private JTextArea jtaEncoded;
     private JScrollPane jspEncoded;
     private JButton jbExport;
-    private JButton jbGenCert;
     private JButton jbPem;
     private JButton jbFields;
     private JButton jbAsn1;
@@ -107,8 +101,6 @@ public class DViewPrivateKey extends JEscDialog {
 
     private Optional<PrivateKeyFormat> format;
 
-    private String fileNewCert;
-    
     /**
      * Creates a new DViewPrivateKey dialog.
      *
@@ -124,7 +116,7 @@ public class DViewPrivateKey extends JEscDialog {
         this.privateKey = privateKey;
         this.preferences = preferences;
         this.format = format;
-        initComponents(false);
+        initComponents();
     }
 
     /**
@@ -139,11 +131,11 @@ public class DViewPrivateKey extends JEscDialog {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.privateKey = privateKey;
         this.format = Optional.empty();
-        initComponents(true);
+        initComponents();
         jbExport.setVisible(false);
     }
 
-    private void initComponents(boolean generateVisible) throws CryptoException {
+    private void initComponents() throws CryptoException {
 
         jlAlgorithm = new JLabel(res.getString("DViewPrivateKey.jlAlgorithm.text"));
 
@@ -180,10 +172,6 @@ public class DViewPrivateKey extends JEscDialog {
         PlatformUtil.setMnemonic(jbExport, res.getString("DViewPrivateKey.jbExport.mnemonic").charAt(0));
         jbExport.setToolTipText(res.getString("DViewPrivateKey.jbExport.tooltip"));
 
-        jbGenCert = new JButton(res.getString("DViewPrivateKey.jbGenCert.text"));
-        PlatformUtil.setMnemonic(jbGenCert, res.getString("DViewPrivateKey.jbGenCert.mnemonic").charAt(0));
-        jbGenCert.setToolTipText(res.getString("DViewPrivateKey.jbGenCert.tooltip"));
-        
         jbPem = new JButton(res.getString("DViewPrivateKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPrivateKey.jbPem.mnemonic").charAt(0));
         jbPem.setToolTipText(res.getString("DViewPrivateKey.jbPem.tooltip"));
@@ -210,11 +198,7 @@ public class DViewPrivateKey extends JEscDialog {
         pane.add(jlEncoded, "");
         pane.add(jspEncoded, "width 300lp:300lp:300lp, height 100lp:100lp:100lp, wrap");
 
-        if (generateVisible) {
-            pane.add(jbGenCert, "spanx, split");
-        } else {
-            pane.add(jbExport, "spanx, split");
-        }
+        pane.add(jbExport, "spanx, split");
         pane.add(jbPem, "");
         pane.add(jbFields, "");
         pane.add(jbAsn1, "wrap");
@@ -224,7 +208,6 @@ public class DViewPrivateKey extends JEscDialog {
         // actions
 
         jbExport.addActionListener(evt -> exportPressed());
-        jbGenCert.addActionListener(evt -> generatePressed());
 
         jbOK.addActionListener(evt -> okPressed());
 
@@ -271,39 +254,6 @@ public class DViewPrivateKey extends JEscDialog {
         pack();
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
-    }
-
-    private void generatePressed() {
-        try {
-            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
-            KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
-            KeyPair keyPair = KeyPairUtil.generateKeyPair(privateKey, keyInfo);
-
-            if (keyPair != null && keyPairType != null) {
-                DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert(null, null,
-                        res.getString("DViewPrivateKey.dGenerateKeyPairCert.text"), keyPair,
-                        keyPairType, null, null, KSE.BC);
-                dGenerateKeyPairCert.setLocationRelativeTo((JDialog) this.getParent());
-                dGenerateKeyPairCert.setVisible(true);
-                X509Certificate certificate = dGenerateKeyPairCert.getCertificate();
-                if (certificate != null) {
-                    File tempFile = File.createTempFile("gen-", ".cer");
-                    tempFile.deleteOnExit();
-                    try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-                        fos.write(certificate.getEncoded());
-                    }
-                    fileNewCert = tempFile.getAbsolutePath();
-                    closeDialog();
-                }
-            } else {
-                JOptionPane.showMessageDialog(this,
-                        MessageFormat.format(res.getString("DViewPrivateKey.MissingSupport.text"),
-                                keyInfo.getAlgorithm()),
-                        this.getTitle(), JOptionPane.WARNING_MESSAGE);
-            }
-        } catch (Exception ex) {
-            DError.displayError((JDialog) this.getParent(), ex);
-        }
     }
 
     private void exportPressed() {
@@ -390,10 +340,6 @@ public class DViewPrivateKey extends JEscDialog {
     private void closeDialog() {
         setVisible(false);
         dispose();
-    }
-
-    public String getFileNewCert() {
-        return fileNewCert;
     }
 
     // for quick testing

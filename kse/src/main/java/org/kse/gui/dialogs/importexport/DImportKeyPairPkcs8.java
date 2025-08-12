@@ -30,6 +30,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -54,8 +56,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.apache.commons.io.FileUtils;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
+import org.kse.crypto.KeyInfo;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
 import org.kse.crypto.privatekey.PrivateKeyEncryptedException;
@@ -67,6 +72,7 @@ import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.dialogs.DGenerateKeyPairCert;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewPrivateKey;
 import org.kse.gui.error.DError;
@@ -81,7 +87,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
-
+    
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
     private JPanel jpKeyPair;
@@ -365,9 +371,6 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
                         res.getString("DImportKeyPairPkcs8.ViewPrivateKeyDetails.Title"), path), privateKey);
                 dViewPrivateKey.setLocationRelativeTo(this);
                 dViewPrivateKey.setVisible(true);
-                if (dViewPrivateKey.getFileNewCert() != null) {
-                    jtfCertificatePath.setText(dViewPrivateKey.getFileNewCert());
-                }
             }
         } catch (CryptoException ex) {
             DError.displayError(this, ex);
@@ -459,7 +462,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
 
     private void certificateDetailsPressed() {
         try {
-            X509Certificate[] certs = loadCertificates();
+            X509Certificate[] certs = loadCertificates(null);
 
             if ((certs != null) && (certs.length != 0)) {
                 String path = new File(jtfCertificatePath.getText()).getName();
@@ -474,14 +477,56 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
             DError.displayError(this, ex);
         }
     }
+    
+    private boolean generateCertificate(PrivateKey privateKey) {
+        try {
+            KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
+            KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
+            KeyPair keyPair = KeyPairUtil.generateKeyPair(privateKey, keyInfo);
 
-    private X509Certificate[] loadCertificates() {
+            DGenerateKeyPairCert dGenerateKeyPairCert = new DGenerateKeyPairCert((JFrame) this.getParent(), null,
+                    res.getString("DImportKeyPairPkcs8.GenerateKeyPairCert.Title"), keyPair,
+                    keyPairType, null, null, KSE.BC);
+            dGenerateKeyPairCert.setLocationRelativeTo((JFrame) this.getParent());
+            dGenerateKeyPairCert.setVisible(true);
+            X509Certificate certificate = dGenerateKeyPairCert.getCertificate();
+            if (certificate != null) {
+                File tempFile = File.createTempFile("gen-", ".cer");
+                tempFile.deleteOnExit();
+                try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                    fos.write(certificate.getEncoded());
+                }
+                jtfCertificatePath.setText(tempFile.getAbsolutePath());
+                return true;
+            }
+        } catch (Exception ex) {
+            DError.displayError((JFrame) this.getParent(), ex);
+        }
+        return false;
+    }
+    
+    private X509Certificate[] loadCertificates(PrivateKey privateKey) {
         String certificatePath = jtfCertificatePath.getText().trim();
 
         if (certificatePath.isEmpty()) {
-            JOptionPane.showMessageDialog(this, res.getString("DImportKeyPairPkcs8.CertificateRequired.message"),
-                                          getTitle(), JOptionPane.WARNING_MESSAGE);
-            return null;
+            if (privateKey == null) {
+                JOptionPane.showMessageDialog(this, res.getString("DImportKeyPairPkcs8.CertificateRequired.message"),
+                        getTitle(), JOptionPane.WARNING_MESSAGE);
+                return null;
+            } else {
+                int selected = JOptionPane.showConfirmDialog(this,
+                        res.getString("DImportKeyPairPkcs8.ConfirmGenerateCert.message"),
+                        res.getString("DImportKeyPairPkcs8.ConfirmGenerateCert.Title"), JOptionPane.YES_NO_OPTION);
+
+                if (selected != JOptionPane.YES_OPTION) {
+                    return null;
+                }
+                if (generateCertificate(privateKey)) {
+                    certificatePath = jtfCertificatePath.getText().trim();
+                } else {
+                    return null;
+                }
+            }
         }
 
         File certificateFile = new File(certificatePath);
@@ -553,7 +598,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
                 return;
             }
 
-            X509Certificate[] certs = loadCertificates();
+            X509Certificate[] certs = loadCertificates(privateKey);
 
             if ((certs == null) || (certs.length == 0)) {
                 return;
