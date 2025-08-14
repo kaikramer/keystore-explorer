@@ -23,7 +23,7 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -216,7 +216,8 @@ public class DViewSecretKey extends JEscDialog {
 
         jtfFormat.setText(secretKey.getFormat());
 
-        jtaEncoded.setText(new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase());
+        jtaEncoded.setText(new String(Hex.encode(secretKey.getEncoded(), 0, secretKey.getEncoded().length),
+                StandardCharsets.US_ASCII).toUpperCase());
         jtaEncoded.setCaretPosition(0);
     }
 
