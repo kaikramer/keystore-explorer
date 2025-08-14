@@ -412,6 +412,15 @@ public final class KeyPairUtil {
         return signature.verify(signatureToVerify);
     }
     
+    /**
+     * The function generates a key pair (public-private) from a given private key
+     * @param privateKey Private key
+     * @param keyInfo Holds information about a key
+     * @return Key Pair or null if the private key is not of a supported type
+     * @throws CryptoException
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
     public static KeyPair generateKeyPair(PrivateKey privateKey, KeyInfo keyInfo)
             throws CryptoException, NoSuchAlgorithmException, InvalidKeySpecException {
         KeyPair keyPair = null;
@@ -420,7 +429,7 @@ public final class KeyPairUtil {
             RSAPrivateCrtKey rsaPrivate = (RSAPrivateCrtKey) privateKey;
             RSAPublicKeySpec publicSpec = new RSAPublicKeySpec(rsaPrivate.getModulus(),
                     rsaPrivate.getPublicExponent());
-            KeyFactory kf = KeyFactory.getInstance("RSA", KSE.BC);
+            KeyFactory kf = KeyFactory.getInstance(RSA.jce(), KSE.BC);
             PublicKey publicKey = kf.generatePublic(publicSpec);
             keyPair = new KeyPair(publicKey, privateKey);
         }
@@ -431,7 +440,7 @@ public final class KeyPairUtil {
                     .getParameterSpec(keyInfo.getDetailedAlgorithm());
             ECPoint Q = ecSpec.getG().multiply(d).normalize();
             ECPublicKeySpec pubKeySpec = new ECPublicKeySpec(Q, ecSpec);
-            KeyFactory keyFactory = KeyFactory.getInstance("EC", KSE.BC);
+            KeyFactory keyFactory = KeyFactory.getInstance(EC.jce(), KSE.BC);
             PublicKey publicKey = keyFactory.generatePublic(pubKeySpec);
             keyPair = new KeyPair(publicKey, privateKey);
         }
@@ -440,7 +449,7 @@ public final class KeyPairUtil {
             DSAParams params = dsaPrivate.getParams();
             BigInteger y = params.getG().modPow(dsaPrivate.getX(), params.getP());
             DSAPublicKeySpec publicSpec = new DSAPublicKeySpec(y, params.getP(), params.getQ(), params.getG());
-            KeyFactory kf = KeyFactory.getInstance("DSA", KSE.BC);
+            KeyFactory kf = KeyFactory.getInstance(DSA.jce(), KSE.BC);
             PublicKey publicKey = kf.generatePublic(publicSpec);
             keyPair = new KeyPair(publicKey, privateKey);
         }
@@ -455,8 +464,7 @@ public final class KeyPairUtil {
             MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
             PublicKey publicKey = mldsaPrivate.getPublicKey();
             keyPair = new KeyPair(publicKey, privateKey);
-        }        
+        }
         return keyPair;
     }
-    
 }
