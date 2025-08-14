@@ -101,7 +101,7 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
                 dViewSecretKey.setVisible(true);
 
                 if (dViewSecretKey.keyHasChanged()) {
-                    updateSecretKey(currentState, alias, password, dViewSecretKey);
+                    updateSecretKey(currentState, alias, password, dViewSecretKey.getSecretKey());
                 }
             } else if (key instanceof PrivateKey) {
                 PrivateKey privateKey = (PrivateKey) key;
@@ -125,16 +125,13 @@ public class KeyDetailsAction extends KeyStoreExplorerAction {
     }
 
     private void updateSecretKey(KeyStoreState currentState, String alias, Password password,
-                                 DViewSecretKey dViewSecretKey) throws CryptoException, KeyStoreException {
-        KeyStore keyStore;
+                                 SecretKey newSecretKey) throws CryptoException, KeyStoreException {
         KeyStoreState newState = currentState.createBasisForNextState(new GenerateSecretKeyAction(kseFrame));
-        keyStore = newState.getKeyStore();
-        SecretKey newSecretKey = dViewSecretKey.getSecretKey();
+        KeyStore keyStore = newState.getKeyStore();
         keyStore.deleteEntry(alias);
         newState.removeEntryPassword(alias);
         keyStore.setKeyEntry(alias, newSecretKey, password.toCharArray(), null);
         newState.setEntryPassword(alias, password);
         currentState.append(newState);
-        kseFrame.updateControls(true);
     }
 }
