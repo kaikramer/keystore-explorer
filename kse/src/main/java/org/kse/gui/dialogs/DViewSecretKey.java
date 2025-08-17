@@ -23,7 +23,6 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -51,6 +50,7 @@ import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
+import org.kse.utilities.io.HexUtil;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -216,7 +216,7 @@ public class DViewSecretKey extends JEscDialog {
 
         jtfFormat.setText(secretKey.getFormat());
 
-        jtaEncoded.setText(new BigInteger(1, secretKey.getEncoded()).toString(16).toUpperCase());
+        jtaEncoded.setText(HexUtil.getHexString(secretKey.getEncoded(), "", 0, 0));
         jtaEncoded.setCaretPosition(0);
     }
 
