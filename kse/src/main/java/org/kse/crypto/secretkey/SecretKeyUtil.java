@@ -34,6 +34,9 @@ import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.utilities.rng.RNG;
 
+/**
+ * Provides utility methods relating to secret keys.
+ */
 public final class SecretKeyUtil {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/secretkey/resources");
 
@@ -69,8 +72,12 @@ public final class SecretKeyUtil {
     public static KeyInfo getKeyInfo(SecretKey secretKey) {
         String algorithm = secretKey.getAlgorithm();
 
-        if (algorithm.equals("RC4")) {
+        if ("RC4".equals(algorithm)) {
             algorithm = "ARC4"; // RC4 is trademarked so we never want to display it
+        } else if ("ZUC128".equals(algorithm)) {
+            algorithm = "ZUC-128"; // BC uses ZUC-128 for the key generator and ZUC128 for the algorithm
+        } else if ("ZUC256".equals(algorithm)) {
+            algorithm = "ZUC-256"; // BC uses ZUC-256 for the key generator and ZUC256 for the algorithm
         }
 
         if (secretKey.getFormat().equals("RAW")) {

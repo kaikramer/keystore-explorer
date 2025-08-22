@@ -23,21 +23,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.crypto.SecretKey;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.KeyInfo;
 
+/**
+ * Unit tests for SecretKeyUtil.
+ */
 public class SecretKeyUtilTest extends CryptoTestsBase {
-    @Test
-    public void testAllSecretKeyTypes() throws CryptoException {
-        for (SecretKeyType secretKeyType : SecretKeyType.values()) {
-            testSecretKeyType(secretKeyType);
-        }
-    }
 
-    @Test
-    private void testSecretKeyType(SecretKeyType secretKeyType) throws CryptoException {
+    @ParameterizedTest
+    @EnumSource(value = SecretKeyType.class)
+    void testSecretKeyType(SecretKeyType secretKeyType) throws CryptoException {
         for (int keySize = secretKeyType.minSize(); keySize <= secretKeyType.maxSize(); keySize += secretKeyType
                 .stepSize()) {
             SecretKey secretKey = SecretKeyUtil.generateSecretKey(secretKeyType, keySize);

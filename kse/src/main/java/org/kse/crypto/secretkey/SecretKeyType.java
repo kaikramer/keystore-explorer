@@ -26,14 +26,17 @@ import java.util.Set;
 public enum SecretKeyType {
     AES("AES", "AES", 128, 256, 64),
     ARC4("ARC4", "ARC4", 40, 2048, 8),
+    ARIA("ARIA", "ARIA", 128, 256, 64),
     BLOWFISH("BLOWFISH", "Blowfish", 32, 448, 64),
     CAMELLIA("CAMELLIA", "Camellia", 128, 256, 64),
-    CHACHA("CHACHA", "ChaCha", 128, 256, 128),
     CAST5("CAST5", "CAST-128", 40, 128, 8),
     CAST6("CAST6", "CAST-256", 128, 256, 32),
+    CHACHA("CHACHA", "ChaCha", 128, 256, 128),
     DES("DES", "DES", 64, 64, 1),
     DESEDE("DESede", "DESEDE", 128, 192, 64),
+    DSTU7624("DSTU7624", "DSTU 7624", 128, 512, 128), // key sizes are 128, 256, 512
     GOST_28147("GOST28147", "GOST 28147-89", 256, 256, 1),
+    GOST_3412("GOST3412-2015", "GOST R 34.12-2015", 256, 256, 1),
     GRAIN_V1("Grainv1", "Grain v1", 80, 80, 1),
     GRAIN_128("Grain128", "Grain-128", 128, 128, 1),
     HC_128("HC128", "HC-128", 128, 128, 1),
@@ -49,6 +52,7 @@ public enum SecretKeyType {
     HMAC_SHA384("HMACSHA384", "HMac-SHA384", 384, 384, 1),
     HMAC_SHA512("HMACSHA512", "HMac-SHA512", 512, 512, 1),
     HMAC_TIGER("HMACTIGER", "HMac-Tiger", 192, 192, 1),
+    IDEA("IDEA", "IDEA", 128, 128, 1),
     NOEKEON("NOEKEON", "NOEKEON", 128, 128, 1),
     RC2("RC2", "RC2", 8, 128, 8),
     RC5("RC5", "RC5", 8, 2040, 8),
@@ -56,15 +60,19 @@ public enum SecretKeyType {
     RIJNDAEL("RIJNDAEL", "Rijndael", 128, 256, 32),
     SALSA_20("SALSA20", "Salsa20", 128, 256, 128),
     SERPENT("Serpent", "Serpent", 128, 256, 64),
+    TNEPRES("Tnepres", "Tnepres", 128, 256, 64),
     SEED("SEED", "SEED", 128, 128, 1),
     SKIPJACK("SKIPJACK", "Skipjack", 80, 80, 1),
+    SM4("SM4", "SM4", 128, 128, 1),
     TEA("TEA", "TEA", 128, 128, 1),
     TWOFISH("Twofish", "Twofish", 128, 256, 64),
     THREEFISH_256("Threefish-256", "Threefish-256", 256, 256, 1),
     THREEFISH_512("Threefish-512", "Threefish-512", 512, 512, 1),
     THREEFISH_1024("Threefish-1024", "Threefish-1024", 1024, 1024, 1),
     XSALSA_20("XSALSA20", "XSalsa20", 128, 256, 128),
-    XTEA("XTEA", "XTEA", 128, 128, 1);
+    XTEA("XTEA", "XTEA", 128, 128, 1),
+    ZUC_128("ZUC-128", "ZUC-128", 128, 128, 1),
+    ZUC_256("ZUC-256", "ZUC-256", 256, 256, 1);
 
     // Supported sets of secret key algorithms. Located here so that they can be
     // referenced by the KeyStoreType enum.
