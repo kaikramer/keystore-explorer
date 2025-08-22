@@ -20,6 +20,9 @@
 
 package org.kse.crypto.secretkey;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 public enum SecretKeyType {
     AES("AES", "AES", 128, 256, 64),
     ARC4("ARC4", "ARC4", 40, 2048, 8),
@@ -62,6 +65,16 @@ public enum SecretKeyType {
     THREEFISH_1024("Threefish-1024", "Threefish-1024", 1024, 1024, 1),
     XSALSA_20("XSALSA20", "XSalsa20", 128, 256, 128),
     XTEA("XTEA", "XTEA", 128, 128, 1);
+
+    // Supported sets of secret key algorithms. Located here so that they can be
+    // referenced by the KeyStoreType enum.
+    public static final Set<SecretKeyType> SECRET_KEY_ALL = EnumSet.allOf(SecretKeyType.class);
+
+    public static final Set<SecretKeyType> SECRET_KEY_PKCS12 = EnumSet.of(AES, BLOWFISH, CAMELLIA, CAST5, DES,
+            HMAC_SHA1, HMAC_SHA224, HMAC_SHA256, HMAC_SHA384, HMAC_SHA512, ARC4, SEED);
+
+    public static final Set<SecretKeyType> SECRET_KEY_BCFKS = EnumSet.of(AES, DESEDE, HMAC_SHA1, HMAC_SHA224,
+            HMAC_SHA256, HMAC_SHA384, HMAC_SHA512, SEED);
 
     private String jce;
     private String friendly;

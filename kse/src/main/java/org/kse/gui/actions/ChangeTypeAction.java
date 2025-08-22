@@ -35,6 +35,7 @@ import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
+import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
@@ -51,6 +52,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
     private boolean warnNoChangeKey;
     private boolean warnNoECC;
     private boolean warnNoMLDSA;
+    private boolean warnUnsupportedKey;
 
     /**
      * Construct action.
@@ -144,10 +146,9 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
     private void resetWarnings() {
         // Only warn the user once about key entries not being carried over by the change
         warnNoChangeKey = false;
-
-        // Only warn the user once about key entries not being carried over by the change
         warnNoECC = false;
         warnNoMLDSA = false;
+        warnUnsupportedKey = false;
     }
 
     private boolean copyKeyPairEntry(KeyStoreType newKeyStoreType, KeyStoreState currentState, KeyStore currentKeyStore,
@@ -202,6 +203,10 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
 
             Key secretKey = currentKeyStore.getKey(alias, password.toCharArray());
 
+            if (!newKeyStoreType.supportsKeyType(SecretKeyType.resolveJce(secretKey.getAlgorithm()))) {
+                return showWarnUnsupportedKey();
+            }
+
             currentState.setEntryPassword(alias, password);
 
             newKeyStore.setKeyEntry(alias, secretKey, password.toCharArray(), null);
@@ -250,6 +255,20 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
                                                          res.getString("ChangeTypeAction.WarnNoChangeKey.message"),
                                                          res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"),
                                                          JOptionPane.YES_NO_OPTION);
+            if (selected != JOptionPane.YES_OPTION) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean showWarnUnsupportedKey() {
+        if (!warnUnsupportedKey) {
+            warnUnsupportedKey = true;
+            int selected = JOptionPane.showConfirmDialog(frame,
+                    res.getString("ChangeTypeAction.WarnUnsupportedKey.message"),
+                    res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"),
+                    JOptionPane.YES_NO_OPTION);
             if (selected != JOptionPane.YES_OPTION) {
                 return false;
             }

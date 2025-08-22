@@ -28,6 +28,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -43,6 +44,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
@@ -69,6 +71,7 @@ public class DGenerateSecretKey extends JEscDialog {
     private JButton jbOK;
     private JButton jbCancel;
 
+    private KeyStoreType keystoreType;
     private SecretKeyType secretKeyType;
     private int secretKeySize;
     private boolean success = false;
@@ -77,12 +80,14 @@ public class DGenerateSecretKey extends JEscDialog {
      * Creates a new DGenerateSecretKey dialog.
      *
      * @param parent        The parent frame
+     * @param keystoreType  The keystore type for storing the key
      * @param secretKeyType Initial secret key type
      * @param secretKeySize Initial secret key size
      */
-    public DGenerateSecretKey(JFrame parent, SecretKeyType secretKeyType, int secretKeySize) {
+    public DGenerateSecretKey(JFrame parent, KeyStoreType keystoreType, SecretKeyType secretKeyType, int secretKeySize) {
         super(parent, res.getString("DGenerateSecretKey.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
+        this.keystoreType = keystoreType;
         this.secretKeyType = secretKeyType;
         this.secretKeySize = secretKeySize;
 
@@ -158,9 +163,8 @@ public class DGenerateSecretKey extends JEscDialog {
     }
 
     private void populateKeyAlgs() {
-        for (SecretKeyType secretKeyType : SecretKeyType.values()) {
-            jcbKeyAlg.addItem(secretKeyType);
-        }
+        Stream.of(SecretKeyType.values()).filter(skt -> keystoreType.supportsKeyType(skt))
+                .forEach(skt -> jcbKeyAlg.addItem(skt));
 
         jcbKeyAlg.setSelectedItem(secretKeyType);
     }

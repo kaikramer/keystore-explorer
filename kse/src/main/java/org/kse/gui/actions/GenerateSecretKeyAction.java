@@ -87,7 +87,10 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
             int secretKeySize = preferences.getKeyGenerationDefaults().getSecretKeySize();
             SecretKeyType secretKeyType = preferences.getKeyGenerationDefaults().getSecretKeyType();
 
-            DGenerateSecretKey dGenerateSecretKey = new DGenerateSecretKey(frame, secretKeyType, secretKeySize);
+            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
+            KeyStoreState currentState = history.getCurrentState();
+
+            DGenerateSecretKey dGenerateSecretKey = new DGenerateSecretKey(frame, currentState.getType(), secretKeyType, secretKeySize);
             dGenerateSecretKey.setLocationRelativeTo(frame);
             dGenerateSecretKey.setVisible(true);
 
@@ -103,9 +106,6 @@ public class GenerateSecretKeyAction extends KeyStoreExplorerAction implements H
 
             SecretKey secretKey = SecretKeyUtil.generateSecretKey(secretKeyType, secretKeySize);
 
-            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-
-            KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
             KeyStore keyStore = newState.getKeyStore();
