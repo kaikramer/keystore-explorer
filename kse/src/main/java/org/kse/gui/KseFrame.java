@@ -415,6 +415,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiMultiEntrySelDelete;
     private JMenuItem jmiMultiEntryCompare;
     private JMenuItem jmiMultiEntryExport;
+    private JMenuItem jmiMultiEntryUnlock;
 
     //
     // Main display controls
@@ -2331,13 +2332,21 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiMultiEntryExport,
                 (String) exportSelectedCertificatesAction.getValue(Action.LONG_DESCRIPTION), this);
 
+        jmiMultiEntryUnlock = new  JMenuItem(unlockKeyAction);
+        jmiMultiEntryUnlock.setToolTipText(null);
+        new StatusBarChangeHandler(jmiMultiEntryUnlock,
+                (String) unlockKeyAction.getValue(Action.LONG_DESCRIPTION), this);
+
         jpmMultiEntrySel = new JPopupMenu();
-        jpmMultiEntrySel.add(jmiMultiEntryDetails);
         jpmMultiEntrySel.add(jmiMultiEntrySelCut);
         jpmMultiEntrySel.add(jmiMultEntrySelCopy);
         jpmMultiEntrySel.add(jmiMultiEntrySelDelete);
-        jpmMultiEntrySel.add(jmiMultiEntryCompare);
+        jpmMultiEntrySel.addSeparator();
+        jpmMultiEntrySel.add(jmiMultiEntryDetails);
         jpmMultiEntrySel.add(jmiMultiEntryExport);
+        jpmMultiEntrySel.add(jmiMultiEntryCompare);
+        jpmMultiEntrySel.addSeparator();
+        jpmMultiEntrySel.add(jmiMultiEntryUnlock);
 
     }
 
@@ -2449,6 +2458,20 @@ public final class KseFrame implements StatusBar {
                     .resolveJce(getActiveKeyStoreHistory().getCurrentState().getKeyStore().getType());
 
             if (jtKeyStore.getSelectedRows().length > 1) {
+
+                boolean hasKeyEntry = false;
+                boolean hasCertEntry = false;
+                for (int r : jtKeyStore.getSelectedRows()) {
+                    hasKeyEntry |= KeyStoreTableModel.EntryType.KEY_PAIR.equals(jtKeyStore.getValueAt(r, 0))
+                            || KeyStoreTableModel.EntryType.KEY.equals(jtKeyStore.getValueAt(r, 0));
+                    hasCertEntry |= KeyStoreTableModel.EntryType.KEY_PAIR.equals(jtKeyStore.getValueAt(r, 0))
+                            || KeyStoreTableModel.EntryType.TRUST_CERT.equals(jtKeyStore.getValueAt(r, 0));
+                }
+
+                selectedCertificatesChainDetailsAction.setEnabled(hasCertEntry);
+                exportSelectedCertificatesAction.setEnabled(hasCertEntry);
+                unlockKeyAction.setEnabled(hasKeyEntry);
+
                 jpmMultiEntrySel.show(jtKeyStore, x, y);
             } else {
                 jtKeyStore.setRowSelectionInterval(row, row);

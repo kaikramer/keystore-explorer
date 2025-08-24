@@ -20,6 +20,7 @@
 package org.kse.gui.actions;
 
 import java.awt.Toolkit;
+import java.security.KeyStore;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -28,6 +29,7 @@ import javax.swing.JOptionPane;
 import org.kse.KSE;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.KseFrame;
+import org.kse.gui.error.DError;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -60,17 +62,35 @@ public class UnlockKeyAction extends KeyStoreExplorerAction {
         KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
         KeyStoreState currentState = history.getCurrentState();
 
-        String alias = kseFrame.getSelectedEntryAlias();
+        if (kseFrame.getSelectedEntryAliases().length > 1) {
+            try {
+                KeyStore keyStore = currentState.getKeyStore();
 
-        Password password = currentState.getEntryPassword(alias);
+                for (String alias : kseFrame.getSelectedEntryAliases()) {
+                    // Use isKeyEntry rather than the KSE isKeyPair/isKey utils since
+                    // unlocking does not care if it's a secret key or key pair entry.
+                    if (keyStore.isKeyEntry(alias)) {
+                        // Use getEntryPassword for unlocking a multiple selection. It checks to
+                        // see if the key is unlocked before calling unlock.
+                        getEntryPassword(alias, currentState);
+                    }
+                }
+            } catch (Exception ex) {
+                DError.displayError(frame, ex);
+            }
+        } else {
+            String alias = kseFrame.getSelectedEntryAlias();
 
-        if (password != null) {
-            JOptionPane.showMessageDialog(frame, MessageFormat.format(
-                                                  res.getString("UnlockKeyAction.KeyAlreadyUnlocked.message"), alias), KSE.getApplicationName(),
-                                          JOptionPane.WARNING_MESSAGE);
-            return;
+            Password password = currentState.getEntryPassword(alias);
+
+            if (password != null) {
+                JOptionPane.showMessageDialog(frame, MessageFormat.format(
+                                                      res.getString("UnlockKeyAction.KeyAlreadyUnlocked.message"), alias), KSE.getApplicationName(),
+                                              JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            unlockEntry(alias, currentState);
         }
-
-        unlockEntry(alias, currentState);
     }
 }
