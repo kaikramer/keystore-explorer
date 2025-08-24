@@ -91,7 +91,6 @@ import javax.swing.table.TableRowSorter;
 
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.gui.actions.AboutAction;
@@ -3039,6 +3038,8 @@ public final class KseFrame implements StatusBar {
 
         updateKeyStoreTabsText();
         updateApplicationTitle();
+
+        getActiveKeyStoreTable().requestFocusInWindow();
 
         frame.repaint();
     }
