@@ -70,6 +70,8 @@ public enum SecretKeyType {
     // referenced by the KeyStoreType enum.
     public static final Set<SecretKeyType> SECRET_KEY_ALL = EnumSet.allOf(SecretKeyType.class);
 
+    public static final Set<SecretKeyType> SECRET_KEY_NONE = EnumSet.noneOf(SecretKeyType.class);
+
     public static final Set<SecretKeyType> SECRET_KEY_PKCS12 = EnumSet.of(AES, BLOWFISH, CAMELLIA, CAST5, DES,
             HMAC_SHA1, HMAC_SHA224, HMAC_SHA256, HMAC_SHA384, HMAC_SHA512, ARC4, SEED);
 

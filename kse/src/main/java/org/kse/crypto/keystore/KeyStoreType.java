@@ -38,17 +38,17 @@ import org.kse.crypto.secretkey.SecretKeyType;
  */
 public enum KeyStoreType {
 
-    JKS("JKS", "KeyStoreType.Jks", true, JKS_KS, null),
+    JKS("JKS", "KeyStoreType.Jks", true, JKS_KS, SecretKeyType.SECRET_KEY_NONE),
     JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS, SecretKeyType.SECRET_KEY_ALL),
     PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12),
     BKS("BKS", "KeyStoreType.Bks", true, BKS_KS, SecretKeyType.SECRET_KEY_ALL),
     UBER("UBER", "KeyStoreType.Uber", true, UBER_KS, SecretKeyType.SECRET_KEY_ALL),
-    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null, null),
-    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null, null),
-    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null, null),
-    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null, null),
+    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null, SecretKeyType.SECRET_KEY_NONE),
+    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null, SecretKeyType.SECRET_KEY_NONE),
+    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null, SecretKeyType.SECRET_KEY_NONE),
+    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null, SecretKeyType.SECRET_KEY_NONE),
     BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS),
-    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null, null);
+    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null, SecretKeyType.SECRET_KEY_NONE);
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
     private String jce;
@@ -128,7 +128,7 @@ public enum KeyStoreType {
      * @return True, if secret key entries are supported by this KeyStore type
      */
     public boolean supportsKeyEntries() {
-        return supportedKeyTypes != null;
+        return !supportedKeyTypes.isEmpty();
     }
 
     /**
@@ -138,7 +138,7 @@ public enum KeyStoreType {
      * @return True, if secret key type is supported by this KeyStore type
      */
     public boolean supportsKeyType(SecretKeyType secretKeyType) {
-        return supportedKeyTypes != null && supportedKeyTypes.contains(secretKeyType);
+        return supportedKeyTypes.contains(secretKeyType);
     }
 
     /**
