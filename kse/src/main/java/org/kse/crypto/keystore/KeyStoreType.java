@@ -27,38 +27,43 @@ import static org.kse.crypto.filetype.CryptoFileType.PKCS12_KS;
 import static org.kse.crypto.filetype.CryptoFileType.UBER_KS;
 
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.filetype.CryptoFileType;
+import org.kse.crypto.secretkey.SecretKeyType;
 
 /**
  * Enumeration of KeyStore Types supported by the KeyStoreUtil class.
  */
 public enum KeyStoreType {
 
-    JKS("JKS", "KeyStoreType.Jks", true, JKS_KS),
-    JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS),
-    PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS),
-    BKS("BKS", "KeyStoreType.Bks", true, BKS_KS),
-    UBER("UBER", "KeyStoreType.Uber", true, UBER_KS),
-    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
-    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
-    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
-    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
-    BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS),
-    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null);
+    JKS("JKS", "KeyStoreType.Jks", true, JKS_KS, SecretKeyType.SECRET_KEY_NONE),
+    JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS, SecretKeyType.SECRET_KEY_ALL),
+    PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12),
+    BKS("BKS", "KeyStoreType.Bks", true, BKS_KS, SecretKeyType.SECRET_KEY_ALL),
+    UBER("UBER", "KeyStoreType.Uber", true, UBER_KS, SecretKeyType.SECRET_KEY_ALL),
+    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null, SecretKeyType.SECRET_KEY_NONE),
+    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null, SecretKeyType.SECRET_KEY_NONE),
+    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null, SecretKeyType.SECRET_KEY_NONE),
+    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null, SecretKeyType.SECRET_KEY_NONE),
+    BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS),
+    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null, SecretKeyType.SECRET_KEY_NONE);
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
     private String jce;
     private String friendlyKey;
     private boolean fileBased;
     private CryptoFileType cryptoFileType;
+    private Set<SecretKeyType> supportedKeyTypes;
 
-    KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType) {
+    KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType,
+            Set<SecretKeyType> supportedKeyTypes) {
         this.jce = jce;
         this.friendlyKey = friendlyKey;
         this.fileBased = fileBased;
         this.cryptoFileType = cryptoFileType;
+        this.supportedKeyTypes = supportedKeyTypes;
     }
 
     /**
@@ -108,7 +113,7 @@ public enum KeyStoreType {
         return this != PKCS11 && this != MS_CAPI_PERSONAL;
     }
 
-    /*
+    /**
      * Are private keys exportable for this keystore type?
      *
      * @return True if private keys are exportable, false otherwise
@@ -123,18 +128,33 @@ public enum KeyStoreType {
      * @return True, if secret key entries are supported by this KeyStore type
      */
     public boolean supportsKeyEntries() {
-        return this == JCEKS || this == BKS || this == UBER || this == BCFKS || this == PKCS12;
+        return !supportedKeyTypes.isEmpty();
+    }
+
+    /**
+     * Does this KeyStore type support the secret key type?
+     *
+     * @param secretKeyType The secret key type to check for support.
+     * @return True, if secret key type is supported by this KeyStore type
+     */
+    public boolean supportsKeyType(SecretKeyType secretKeyType) {
+        return supportedKeyTypes.contains(secretKeyType);
     }
 
     /**
      * Does this KeyStore type support ECC key pair entries?
      *
-     * @return True, if ECC supported
+     * @return True, if ECC is supported
      */
     public boolean supportsECC() {
         return EccUtil.isECAvailable(this);
     }
 
+    /**
+     * Does this KeyStore type support ML-DSA key pair entries?
+     *
+     * @return True, if ML-DSA is supported
+     */
     public boolean supportMLDSA() {
         return isBouncyCastleKeyStore(this);
     }
@@ -142,6 +162,7 @@ public enum KeyStoreType {
     /**
      * Does this KeyStore type support a certain named curve?
      *
+     * @param curveName The curve name to check for support.
      * @return True, if curve is supported
      */
     public boolean supportsNamedCurve(String curveName) {
