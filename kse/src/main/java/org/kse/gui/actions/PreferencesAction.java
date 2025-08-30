@@ -116,12 +116,20 @@ public class PreferencesAction extends ExitAction {
         boolean languageHasChanged = !language.equals(preferences.getLanguage());
         preferences.setLanguage(language);
 
+        boolean redraw = false;
         if (dPreferences.columnsChanged()) {
             preferences.setKeyStoreTableColumns(dPreferences.getColumns());
-            kseFrame.redrawKeyStores(preferences);
+            redraw = true;
         }
 
-        preferences.setExpiryWarnDays(dPreferences.getExpiryWarnDays());
+        if (preferences.getExpiryWarnDays() != dPreferences.getExpiryWarnDays()) {
+            preferences.setExpiryWarnDays(dPreferences.getExpiryWarnDays());
+            redraw = true;
+        }
+
+        if (redraw) {
+            kseFrame.redrawKeyStores(preferences);
+        }
 
         preferences.setProxySettings(updateSettings(preferences.getProxySettings()));
 
