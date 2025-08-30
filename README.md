@@ -32,8 +32,9 @@ Official website: https://keystore-explorer.org/
 ## Building
 
 To do a clean build, issue the following command from the `kse` directory:
-
-    $ ./gradlew clean build
+```sh
+./gradlew clean build
+```
 
 This runs the unit tests and builds the following artifacts:
 - `build/libs/kse.jar`
@@ -47,31 +48,37 @@ The `build.gradle` file contains further instructions for building the platform 
 Especially what the requirements are for executing the build commands.
 
 For the release ZIP package execute the following command (command works only under Windows because it generates kse.exe):
-
-    $ ./gradlew zip 
+```sh
+./gradlew zip 
+```
 
 For the Windows installer:
-
-    $ ./gradlew innosetup
+```sh
+./gradlew innosetup
+```
 
 For the macOS application:
-
-    $ ./gradlew appbundler
+```sh
+./gradlew appbundler
+```
 
 For the RPM package:
-
-    $ ./gradlew buildRpm
+```sh
+./gradlew buildRpm
+```
 
 For the DEB package:
-
-    $ ./gradlew buildDeb
+```sh
+./gradlew buildDeb
+```
 
 ## Running
 
 To run the application, issue the following command from the `kse` directory:
 
-    $ ./gradlew run
-
+```sh
+./gradlew run
+```
 Or run `org/kse/KSE.java` directly from an IDE.
 
 ## Contributing
@@ -80,10 +87,15 @@ We encourage you to contribute to KSE! Please check out the [Contributing to KSE
 
 ## Translating
 
-KSE uses Java resource bundles for translations. Translators can either clone this repository and add their translations
-to the `kse/src/main/resources/org/kse` subdirectories (the "Resource Bundle Editor" plugin for JetBrains IDEs might be
-helpful for this), or use the
-[Weblate translation platform](https://hosted.weblate.org/projects/keystore-explorer/) to contribute translations.
+<a href="https://hosted.weblate.org/projects/keystore-explorer/">
+<img src="https://hosted.weblate.org/widget/keystore-explorer/multi-auto.svg" alt="Translation status" />
+</a>
+
+Please help to translate on the [Weblate translation platform](https://hosted.weblate.org/projects/keystore-explorer/).
+
+Alternatively you can contribute translations directly on GitHub. KSE uses Java resource bundles for translations.
+Translators can clone this repository and add their translations to the `kse/src/main/resources/org/kse` subdirectories.
+Use the "Resource Bundle Editor" plugin for JetBrains IDEs to simplify the process.
 
 ## License
 
