@@ -16,12 +16,13 @@ wget "$JDK_URL"
 JDK_FILENAME=$(basename "$JDK_URL")
 JDK_DIR=$(tar -tzf "$JDK_FILENAME" | head -1 | cut -f1 -d"/")
 tar zxf "$JDK_FILENAME" -C "$RUNNER_TEMP"
-echo "JAVA_HOME=$RUNNER_TEMP/$JDK_DIR/Contents/Home" >> "$GITHUB_ENV"
-echo "$RUNNER_TEMP/$JDK_DIR/Contents/Home/bin" >> "$GITHUB_PATH"
+JAVA_HOME="$RUNNER_TEMP/$JDK_DIR/Contents/Home"
+echo "JAVA_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+echo "$JAVA_HOME/bin" >> "$GITHUB_PATH"
 
 npm install --global create-dmg
 brew install graphicsmagick imagemagick
 
 cd kse
 chmod +x gradlew
-./gradlew dmg
+./gradlew -Dorg.gradle.java.home="$JAVA_HOME" dmg
