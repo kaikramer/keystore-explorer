@@ -327,6 +327,7 @@ tasks.register('jlink', Exec) {
 					'java.net.http,' +
 					'java.prefs,' +
 					'java.scripting,' +
+					'jdk.accessibility,' +
 					'jdk.localedata,' +
 					'jdk.net,' +
 					'jdk.charsets,' +
@@ -400,6 +401,7 @@ tasks.register('appbundler') {
 				jmod(name: "java.net.http")
 				jmod(name: "java.prefs")
 				jmod(name: "java.scripting")
+				jmod(name: "jdk.accessibility")
 				jmod(name: "jdk.localedata")
 				jmod(name: "jdk.net")
 				jmod(name: "jdk.charsets")
