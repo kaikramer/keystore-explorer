@@ -126,9 +126,9 @@ jobs:
         run: |
           echo "Current working directory: $(pwd)"
           echo "Contents of current directory:"
-          ls -la
+          ls
           echo "Contents of kse directory:"
-          ls -la kse/ || echo "kse directory not found"
+          ls .\kse\build\distributions
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
