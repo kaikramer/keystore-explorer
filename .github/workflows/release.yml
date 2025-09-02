@@ -28,6 +28,8 @@ jobs:
         with:
           name: kse-launcher
           path: kse/res/kse-launcher.exe
+          if-no-files-found: error
+          compression-level: 0
 
   windows:
     name: Create artifacts on Windows
@@ -58,6 +60,8 @@ jobs:
           name: windows-artifact-exe
           path: |
             kse/build/launcher/kse.exe
+          if-no-files-found: error
+          compression-level: 0
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
@@ -66,6 +70,8 @@ jobs:
           path: |
             kse/build/distributions/kse-*.zip
             kse/build/distributions/kse-*-setup-no-jre.exe
+          if-no-files-found: error
+          compression-level: 0
 
   linux:
     name: Create artifacts on Linux
@@ -90,6 +96,8 @@ jobs:
           path: |
             kse/build/distributions/kse*.deb
             kse/build/distributions/kse*.rpm
+          if-no-files-found: error
+          compression-level: 0
 
   windows-with-jre:
     name: Create a Windows installer with included JRE
@@ -112,13 +120,22 @@ jobs:
 #          name: kse-launcher
 #          path: kse/res
       - name: Build with Gradle
-        run: .\gradlew.bat test innosetup
+        run: .\gradlew.bat test innosetup --info
         working-directory: kse
+      - name: Debug - Check current directory
+        run: |
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -la
+          echo "Contents of kse directory:"
+          ls -la kse/ || echo "kse directory not found"
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
           name: windows-with-jre-artifact
           path: kse/build/distributions/kse-*-setup.exe
+          if-no-files-found: error
+          compression-level: 0
 
   macos:
     name: Create artifacts on macOS
@@ -140,6 +157,8 @@ jobs:
         with:
           name: macos-artifact
           path: kse/build/distributions/kse*.dmg
+          if-no-files-found: error
+          compression-level: 0
 
   macos-arm:
     name: Create artifacts on macOS for ARM architecture
@@ -161,12 +180,14 @@ jobs:
         with:
           name: macos-arm-artifact
           path: kse/build/distributions/kse*.dmg
+          if-no-files-found: error
+          compression-level: 0
 
   release:
     needs: [windows, linux, windows-with-jre, macos, macos-arm]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           merge-multiple: true
       - name: Checkout
