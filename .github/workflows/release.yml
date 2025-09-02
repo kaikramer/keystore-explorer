@@ -180,23 +180,15 @@ jobs:
     needs: [windows, linux, windows-with-jre, macos, macos-arm]
     runs-on: ubuntu-24.04
     steps:
-      - name: Debug - Check current directory
-        run: |
-          echo "Current working directory: $(pwd)"
-          echo "Contents of current directory:"
-          ls -Rla
-      - uses: actions/download-artifact@v5
-        with:
-          merge-multiple: true
-      - name: Debug - Check current directory
-        run: |
-          echo "Current working directory: $(pwd)"
-          echo "Contents of current directory:"
-          ls -Rla
+      # Checkout has to be done BEFORE downloading artifacts, because it deletes all files in the working directory
       - name: Checkout
         uses: actions/checkout@v4
         with:
           sparse-checkout: .github
+      - uses: actions/download-artifact@v5
+        with:
+          merge-multiple: true
+          path: artifacts
       - name: Debug - Check current directory
         run: |
           echo "Current working directory: $(pwd)"
@@ -210,17 +202,17 @@ jobs:
           body: "Release Notes are available here: [Release Notes](https://keystore-explorer.org/releases.html)"
           fail_on_unmatched_files: true
           files: |
-            kse-*.zip
-            kse-*-setup.exe
-            kse-*-setup-no-jre.exe
-            kse*.deb
-            kse*.rpm
-            kse*.dmg
+            artifacts/kse-*.zip
+            artifacts/kse-*-setup.exe
+            artifacts/kse-*-setup-no-jre.exe
+            artifacts/kse*.deb
+            artifacts/kse*.rpm
+            artifacts/kse*.dmg
           token: ${{ secrets.github_token }}
       - name: VirusTotal Scan
         run: |
           chmod +x .github/scripts/virustotal-scan.sh
-          .github/scripts/virustotal-scan.sh kse.exe kse-*.zip kse-*-setup.exe kse-*-setup-no-jre.exe
+          .github/scripts/virustotal-scan.sh artifacts/kse.exe artifacts/kse-*.zip artifacts/kse-*-setup.exe artifacts/kse-*-setup-no-jre.exe
         env:
           VT_API_KEY: ${{ secrets.VT_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
