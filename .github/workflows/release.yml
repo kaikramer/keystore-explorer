@@ -122,13 +122,6 @@ jobs:
       - name: Build with Gradle
         run: .\gradlew.bat test innosetup --info
         working-directory: kse
-      - name: Debug - Check current directory
-        run: |
-          echo "Current working directory: $(pwd)"
-          echo "Contents of current directory:"
-          ls
-          echo "Contents of kse directory:"
-          ls .\kse\build\distributions
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
         with:
@@ -190,6 +183,11 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           merge-multiple: true
+      - name: Debug - Check current directory
+        run: |
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -Rla
       - name: Checkout
         uses: actions/checkout@v4
         with:
