@@ -120,7 +120,7 @@ jobs:
 #          name: kse-launcher
 #          path: kse/res
       - name: Build with Gradle
-        run: .\gradlew.bat test innosetup --info
+        run: .\gradlew.bat test innosetup
         working-directory: kse
       - name: Store artifacts for release
         uses: actions/upload-artifact@v4
@@ -193,12 +193,12 @@ jobs:
         with:
           sparse-checkout: .github
       - name: Create a release
-        uses: softprops/action-gh-release@v1
-        #if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           name: "KSE Release ${{ github.ref_name }}"
           body: "Release Notes are available here: [Release Notes](https://keystore-explorer.org/releases.html)"
+          fail_on_unmatched_files: true
           files: |
             kse-*.zip
             kse-*-setup.exe
@@ -210,6 +210,8 @@ jobs:
       - name: VirusTotal Scan
         run: |
           chmod +x .github/scripts/virustotal-scan.sh
+          pwd
+          ls -Rla
           .github/scripts/virustotal-scan.sh kse.exe kse-*.zip kse-*-setup.exe kse-*-setup-no-jre.exe
         env:
           VT_API_KEY: ${{ secrets.VT_API_KEY }}

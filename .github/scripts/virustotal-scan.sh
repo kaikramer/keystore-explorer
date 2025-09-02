@@ -20,6 +20,8 @@ fi
 VT_API_URL="https://www.virustotal.com/api/v3"
 ANALYSIS_LINKS=""
 
+echo "Working dir: ${PWD}"
+
 for file_path in "$@"; do
   if [[ ! -f "${file_path}" ]]; then
     echo "::warning::File not found: ${file_path}"
