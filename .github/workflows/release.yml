@@ -180,6 +180,11 @@ jobs:
     needs: [windows, linux, windows-with-jre, macos, macos-arm]
     runs-on: ubuntu-24.04
     steps:
+      - name: Debug - Check current directory
+        run: |
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -Rla
       - uses: actions/download-artifact@v5
         with:
           merge-multiple: true
@@ -192,6 +197,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: .github
+      - name: Debug - Check current directory
+        run: |
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -Rla
       - name: Create a release
         uses: softprops/action-gh-release@v2
         with:
@@ -210,8 +220,6 @@ jobs:
       - name: VirusTotal Scan
         run: |
           chmod +x .github/scripts/virustotal-scan.sh
-          pwd
-          ls -Rla
           .github/scripts/virustotal-scan.sh kse.exe kse-*.zip kse-*-setup.exe kse-*-setup-no-jre.exe
         env:
           VT_API_KEY: ${{ secrets.VT_API_KEY }}
