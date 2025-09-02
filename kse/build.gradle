@@ -127,7 +127,7 @@ dependencies {
 	implementation('com.google.crypto.tink:tink:1.17.0') // nimbus-jose-jwt optional dep for ed25519
 
 	// disabled because of Apple notarization failing due to unsigned native libraries in this jar
-	// implementation('org.violetlib:vaqua:13')
+	 implementation('org.violetlib:vaqua:13')
 
 	implementation('io.github.java-diff-utils:java-diff-utils:4.15')
 	implementation('org.openjdk.nashorn:nashorn-core:15.6')
@@ -327,6 +327,7 @@ tasks.register('jlink', Exec) {
 					'java.net.http,' +
 					'java.prefs,' +
 					'java.scripting,' +
+					'jdk.accessibility,' +
 					'jdk.localedata,' +
 					'jdk.net,' +
 					'jdk.charsets,' +
@@ -400,6 +401,7 @@ tasks.register('appbundler') {
 				jmod(name: "java.net.http")
 				jmod(name: "java.prefs")
 				jmod(name: "java.scripting")
+				jmod(name: "jdk.accessibility")
 				jmod(name: "jdk.localedata")
 				jmod(name: "jdk.net")
 				jmod(name: "jdk.charsets")
@@ -442,25 +444,82 @@ tasks.register('appbundler') {
 
 tasks.register('signapp') {
 	dependsOn appbundler
-	def javaBaseDirName = new File(System.properties.'java.home').getParentFile().getParentFile().getName()
 	doLast {
-		providers.exec { spec ->
-			spec.workingDir = appBundleDir
-			spec.commandLine = ['codesign',
-					'-vvv',
-					'--force',
-					'-s', 'Kai Kramer',
-					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-arm64.dylib"]
+		def javaDir = new File("${appBundleDir}/${appBundle}/Contents/Java")
+		fileTree(dir: javaDir, include: 'flatlaf-*-macos-*.dylib').each { flatlafDylib ->
+			println "Signing FlatLaf native library: ${flatlafDylib.absolutePath}"
+			def result = providers.exec { spec ->
+				spec.workingDir = appBundleDir
+				spec.commandLine = ['codesign',
+						'-vvv',
+						'--force',
+						'-s', 'Kai Kramer',
+						flatlafDylib.absolutePath]
+			}
+			println "Codesign output: ${result.standardOutput.asText.get()}"
+			if (result.standardError.asText.get()) {
+				println "Codesign errors: ${result.standardError.asText.get()}"
+			}
 		}
-		providers.exec { spec ->
-			spec.workingDir = appBundleDir
-			spec.commandLine = ['codesign',
-					'-vvv',
-					'--force',
-					'-s', 'Kai Kramer',
-					"${appBundle}/Contents/Java/flatlaf-3.5.4-macos-x86_64.dylib"]
+
+		// Helper function to extract, sign, and repackage jars containing native libraries
+		def processJarWithNativeLibs = { jarPattern, jarName ->
+			def jarFiles = fileTree(dir: "${appBundleDir}/${appBundle}/Contents/Java", include: "**/${jarPattern}")
+			if (jarFiles.isEmpty()) {
+				println "No ${jarName} jar found, skipping..."
+				return
+			}
+
+			def jar = jarFiles.singleFile
+			def extractDir = "${appBundleDir}/${jarName}-temp"
+			mkdir extractDir
+
+			copy {
+				from zipTree(jar)
+				into extractDir
+			}
+
+			// Find all .dylib files in the extracted content, but not in .dSYM dirs
+			def dylibFiles = fileTree(dir: extractDir, include: '**/*.dylib', exclude: '**/*.dSYM/**')
+			if (dylibFiles.isEmpty()) {
+				println "No native libraries found in ${jarName} jar"
+			} else {
+				dylibFiles.each { dylibFile ->
+					println "Signing ${jarName} native library: ${dylibFile.absolutePath}"
+					def result = providers.exec { spec ->
+						spec.workingDir = appBundleDir
+						spec.commandLine = ['codesign',
+								'-vvv',
+								'--force',
+								'-s', 'Kai Kramer',
+								"${dylibFile.absolutePath}"]
+					}
+					println "Codesign output: ${result.standardOutput.asText.get()}"
+					if (result.standardError.asText.get()) {
+						println "Codesign errors: ${result.standardError.asText.get()}"
+					}
+				}
+			}
+
+			// Repackage the jar with all extracted and signed files
+			ant.jar(destfile: jar.absolutePath, update: true) {
+				fileset(dir: extractDir) {
+					include(name: '**/*')
+				}
+			}
+			delete extractDir
 		}
-		providers.exec { spec ->
+
+		// Process jars that contain native libraries
+		processJarWithNativeLibs('vaqua-*.jar', 'vaqua')
+		processJarWithNativeLibs('vappearances-*.jar', 'vappearances')
+		processJarWithNativeLibs('jnr-*.jar', 'jnr')
+
+		// Sign Java runtime and app bundle
+		def javaBaseDirName = new File(System.properties.'java.home').getParentFile().getParentFile().getName()
+		println "java.home: ${System.properties.'java.home'}"
+		println "Signing Java runtime: ${appBundle}/Contents/PlugIns/${javaBaseDirName}"
+		def result1 = providers.exec { spec ->
 			spec.workingDir = appBundleDir
 			spec.commandLine = ['codesign',
 					'-vvv',
@@ -470,7 +529,13 @@ tasks.register('signapp') {
 					'-s', 'Kai Kramer',
 					"${appBundle}/Contents/PlugIns/${javaBaseDirName}"]
 		}
-		providers.exec { spec ->
+		println "Codesign output: ${result1.standardOutput.asText.get()}"
+		if (result1.standardError.asText.get()) {
+			println "Codesign errors: ${result1.standardError.asText.get()}"
+		}
+
+		println "Signing app bundle: ${appBundle}"
+		def result2 = providers.exec { spec ->
 			spec.workingDir = appBundleDir
 			spec.commandLine = ['codesign',
 					'-vvv',
@@ -479,6 +544,10 @@ tasks.register('signapp') {
 					'--entitlements', "${dmgDir}/entitlements.xml",
 					'-s', 'Kai Kramer',
 					"${appBundle}"]
+		}
+		println "Codesign output: ${result2.standardOutput.asText.get()}"
+		if (result2.standardError.asText.get()) {
+			println "Codesign errors: ${result2.standardError.asText.get()}"
 		}
 	}
 }
