@@ -20,6 +20,8 @@ fi
 VT_API_URL="https://www.virustotal.com/api/v3"
 ANALYSIS_LINKS=""
 
+echo "Working dir: ${PWD}"
+
 for file_path in "$@"; do
   if [[ ! -f "${file_path}" ]]; then
     echo "::warning::File not found: ${file_path}"
@@ -71,8 +73,8 @@ release_body=$(echo "${release_data}" | jq -r '.body')
 release_id=$(echo "${release_data}" | jq -r '.id')
 
 if [[ -z "${release_id}" || "${release_id}" == "null" ]]; then
-    echo "::error::Could not find release with tag ${GITHUB_REF_NAME}"
-    exit 1
+    echo "::warning::Could not find release with tag ${GITHUB_REF_NAME} - aborting update."
+    exit 0
 fi
 
 # Append new links to the existing body

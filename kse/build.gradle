@@ -364,9 +364,13 @@ tasks.register('innosetup') {
 			])
 			into("innosetup")
 		}
-		providers.exec {
+		def result = providers.exec {
 			workingDir "$projectDir/innosetup"
 			commandLine "ISCC.exe", "setup.iss"
+		}
+		println "Innosetup output: ${result.standardOutput.asText.get()}"
+		if (result.standardError.asText.get()) {
+			println "Innosetup errors: ${result.standardError.asText.get()}"
 		}
 	}
 }
