@@ -299,7 +299,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.2.156.10197.1.504", "SM2withSHA512");
         oidToNameMapping.put("1.2.156.10197.1.505", "SM2withSHA224");
         oidToNameMapping.put("1.2.156.10197.1.506", "SM2withSHA384");
-        oidToNameMapping.put("1.2.156.10197.1.507", "SM2withRMD160");
+        oidToNameMapping.put("1.2.156.10197.1.507", "SM2withRIPEMD160");
         oidToNameMapping.put("1.2.156.11235.1.1.1", "wapi192v1");
         oidToNameMapping.put("1.2.36.1.3.1.1.1", "Qgpki");
         oidToNameMapping.put("1.2.36.1.3.1.1.1.1", "QgpkiPolicies");
