@@ -290,6 +290,17 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.0.10118.3.0.49", "Ripemd160");
         oidToNameMapping.put("1.0.10118.3.0.50", "Ripemd128");
         oidToNameMapping.put("1.0.10118.3.0.55", "Whirlpool");
+        oidToNameMapping.put("1.2.156.10197.1.301", "sm2p256v1");
+        oidToNameMapping.put("1.2.156.10197.1.301.101", "wapip192v1");
+        oidToNameMapping.put("1.2.156.10197.1.401", "SM3");
+        oidToNameMapping.put("1.2.156.10197.1.501", "SM2withSM3");
+        oidToNameMapping.put("1.2.156.10197.1.502", "SM2withSHA1");
+        oidToNameMapping.put("1.2.156.10197.1.503", "SM2withSHA256");
+        oidToNameMapping.put("1.2.156.10197.1.504", "SM2withSHA512");
+        oidToNameMapping.put("1.2.156.10197.1.505", "SM2withSHA224");
+        oidToNameMapping.put("1.2.156.10197.1.506", "SM2withSHA384");
+        oidToNameMapping.put("1.2.156.10197.1.507", "SM2withRIPEMD160");
+        oidToNameMapping.put("1.2.156.11235.1.1.1", "wapi192v1");
         oidToNameMapping.put("1.2.36.1.3.1.1.1", "Qgpki");
         oidToNameMapping.put("1.2.36.1.3.1.1.1.1", "QgpkiPolicies");
         oidToNameMapping.put("1.2.36.1.3.1.1.1.1.1", "QgpkiMedIntermedCA");
