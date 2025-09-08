@@ -24,9 +24,11 @@ import static org.kse.crypto.x509.CertificatePolicyQualifierType.PKIX_USER_NOTIC
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -45,6 +47,7 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1PrintableString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.ASN1UTCTime;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DERGeneralString;
@@ -305,6 +308,8 @@ public class X509Ext {
             return getMsCertificateTemplateStringValue(octets);
         case MS_APPLICATION_POLICIES:
             return HexUtil.getHexClearDump(octets);
+        case MS_NTDS_CA_SECURITY_EXT:
+            return getMsNtdsCaSecurityExtStringValue(octets);
         case SMIME_CAPABILITIES:
             return getSMIMECapabilitiesStringValue(octets);
         case VS_CZAG:
@@ -2680,6 +2685,87 @@ public class X509Ext {
             sb.append(NEWLINE);
         }
 
+        return sb.toString();
+    }
+
+    private static String getMsNtdsCaSecurityExtStringValue(byte[] octets) throws IOException {
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            ASN1Sequence rootSeq = ASN1Sequence.getInstance(octets);
+            for (Enumeration<?> e = rootSeq.getObjects(); e.hasMoreElements(); ) {
+                Object element = e.nextElement();
+                ASN1Sequence subSeq = null;
+
+                // If the [first] element is a tagged object, parse with implicit = false
+                if (element instanceof ASN1TaggedObject) {
+                    subSeq = ASN1Sequence.getInstance((ASN1TaggedObject) element, false);
+                }
+                // If the element is a SEQUENCE, use it directly
+                else if (element instanceof ASN1Sequence) {
+                    subSeq = (ASN1Sequence) element;
+                }
+
+                if (subSeq != null) {
+                    sb.append(processMsNtdsCaSecurityExtSubSeq(subSeq));
+                } else {
+                    sb.append(MessageFormat.format(res.getString("MSNtdsCaSecurityExt.Unexpected.Element.Warning"), element.getClass().getName())).append(NEWLINE);
+                }
+            }
+        } catch (Exception ex) {
+            sb.append(MessageFormat.format(res.getString("Extension.Parse.Error"), ex.getMessage())).append(NEWLINE);
+            sb.append(HexUtil.getHexClearDump(octets)).append(NEWLINE);
+        }
+        return sb.toString();
+    }
+
+    private static String processMsNtdsCaSecurityExtSubSeq(ASN1Sequence subSeq) throws IOException {
+
+        // @formatter:off
+        /*
+            OtherName  ::= SEQUENCE
+            {
+                type-id     OBJECT IDENTIFIER,
+                value       OCTET STRING
+            }
+         */
+        // @formatter:on
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            ASN1ObjectIdentifier typeOid = ASN1ObjectIdentifier.getInstance(subSeq.getObjectAt(0));
+            ASN1TaggedObject innerTagged = ASN1TaggedObject.getInstance(subSeq.getObjectAt(1));
+            ASN1OctetString valueOctets;
+            try {
+                valueOctets = ASN1OctetString.getInstance(innerTagged, true); // explicit tagging
+            } catch (IllegalArgumentException ex) {
+                valueOctets = ASN1OctetString.getInstance(innerTagged, false); // fallback for implicit tagging
+            }
+            byte[] valueBytes = valueOctets.getOctets();
+
+            MSNtdsCaSecurityExtType typeOidType = MSNtdsCaSecurityExtType.resolveOid(typeOid.getId());
+            String typeOidTypeStr = null;
+
+            if (typeOidType != null) {
+                typeOidTypeStr = typeOidType.friendly();
+            } else {
+                // Unrecognised Type OID
+                typeOidTypeStr = ObjectIdUtil.toString(typeOid);
+            }
+
+            sb.append(MessageFormat.format(res.getString("MSNtdsCaSecurityExt.Type.ID"), typeOidTypeStr));
+            sb.append(NEWLINE);
+
+            String valueStr = new String(valueBytes, StandardCharsets.UTF_8);
+            if (!(valueStr.startsWith("S-")))
+                valueStr = HexUtil.getHexClearDump(valueBytes);
+
+            sb.append(MessageFormat.format(res.getString("MSNtdsCaSecurityExt.Value"), valueStr));
+            sb.append(NEWLINE);
+            sb.append(NEWLINE);
+        } catch (Exception subex) {
+            sb.append(MessageFormat.format(res.getString("MSNtdsCaSecurityExt.Parse.SubSeq.Error"), subex.getMessage())).append(NEWLINE);
+        }
         return sb.toString();
     }
 
