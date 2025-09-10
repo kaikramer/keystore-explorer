@@ -35,12 +35,24 @@ public enum PublicKeyFingerprintAlgorithm {
 
     // @formatter:on
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
+    private volatile ResourceBundle cachedResourceBundle;
 
-    private String resBundleKey;
+    private final String resBundleKey;
 
     PublicKeyFingerprintAlgorithm(String resBundleKey) {
         this.resBundleKey = resBundleKey;
+    }
+
+    private ResourceBundle getResourceBundle() {
+        if (cachedResourceBundle == null) {
+            synchronized (this) {
+                // Double-check locking pattern (cachedResourceBundle is volatile to ensure visibility)
+                if (cachedResourceBundle == null) {
+                    cachedResourceBundle = ResourceBundle.getBundle("org/kse/crypto/digest/resources");
+                }
+            }
+        }
+        return cachedResourceBundle;
     }
 
     /**
@@ -49,7 +61,7 @@ public enum PublicKeyFingerprintAlgorithm {
      * @return Friendly name
      */
     public String friendly() {
-        return res.getString(resBundleKey);
+        return getResourceBundle().getString(resBundleKey);
     }
 
     /**
