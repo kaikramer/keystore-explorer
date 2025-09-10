@@ -52,6 +52,7 @@ import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.gui.CursorUtil;
@@ -69,7 +70,7 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * Displays the details of a private key with the option to display its fields
- * if it is of a supported type (RSA or DSA).
+ * if it is of a supported type.
  */
 public class DViewPrivateKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
@@ -109,8 +110,8 @@ public class DViewPrivateKey extends JEscDialog {
      * @param privateKey Private key to display
      * @throws CryptoException A problem was encountered getting the private key's details
      */
-    public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, KsePreferences preferences, Optional<PrivateKeyFormat> format)
-            throws CryptoException {
+    public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, KsePreferences preferences,
+                           Optional<PrivateKeyFormat> format) throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         this.alias = alias;
         this.privateKey = privateKey;
@@ -303,7 +304,7 @@ public class DViewPrivateKey extends JEscDialog {
         jtaEncoded.setCaretPosition(0);
 
         jbFields.setEnabled((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)
-                || (privateKey instanceof ECPrivateKey) || (privateKey instanceof EdDSAPrivateKey)
+                || (privateKey instanceof ECPrivateKey) || (EccUtil.isEdPrivateKey(privateKey))
                 || (privateKey instanceof MLDSAPrivateKey));
     }
 
@@ -345,7 +346,7 @@ public class DViewPrivateKey extends JEscDialog {
     // for quick testing
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", KSE.BC);
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("Ed25519", KSE.BC);
         KeyPair keyPair = keyGen.genKeyPair();
 
         PrivateKey privKey = keyPair.getPrivate();

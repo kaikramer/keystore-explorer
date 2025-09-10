@@ -29,6 +29,7 @@ import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
@@ -69,6 +70,7 @@ import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPublicKeyParameters;
 import org.bouncycastle.util.BigIntegers;
 import org.kse.KSE;
+import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.CursorUtil;
@@ -126,7 +128,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "EC");
         } else if (key instanceof EdDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), getEdAlg(key));
-        } else if (key instanceof EdDSAPrivateKey) {
+        } else if (EccUtil.isEdPrivateKey(key)) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), getEdAlg(key));
         } else if (key instanceof MLDSAPublicKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-DSA");
@@ -143,8 +145,11 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             EdDSAPublicKey bcEdDSAPublicKey = (EdDSAPublicKey) key;
             edAlg = bcEdDSAPublicKey.getAlgorithm(); // Ed25519 or Ed448
         } else {
-            EdDSAPrivateKey bcEdDSAPrivateKey = (EdDSAPrivateKey) key;
-            edAlg = bcEdDSAPrivateKey.getAlgorithm();
+            EdDSAPrivateKey edPrivateKey = EccUtil.getEdPrivateKey((PrivateKey) key);
+            if (edPrivateKey == null) {
+                throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
+            }
+            edAlg = edPrivateKey.getAlgorithm();
         }
         return edAlg;
     }
@@ -226,7 +231,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             fields = getEcPrivateFields();
         } else if (key instanceof EdDSAPublicKey) {
             fields = getEdPubFields();
-        } else if (key instanceof EdDSAPrivateKey) {
+        } else if (EccUtil.isEdPrivateKey(key)) {
             fields = getEdPrivateFields();
         } else if (key instanceof MLDSAPublicKey) {
             fields = getMLDSAPublicFields();

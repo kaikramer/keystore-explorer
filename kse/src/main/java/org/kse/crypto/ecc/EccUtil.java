@@ -22,6 +22,7 @@ package org.kse.crypto.ecc;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -30,6 +31,7 @@ import java.security.interfaces.ECKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.List;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -43,7 +45,9 @@ import org.bouncycastle.asn1.teletrust.TeleTrusTNamedCurves;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.X962NamedCurves;
+import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.kse.KSE;
 import org.kse.crypto.keystore.KeyStoreType;
 
 /**
@@ -294,5 +298,47 @@ public class EccUtil {
         ASN1ObjectIdentifier algOid = algorithm.getAlgorithm();
 
         return EdDSACurves.resolve(algOid);
+    }
+
+    /**
+     * Converts an Ed25519 or Ed448 PrivateKey object to a BC EdDSAPrivateKey.
+     * <br>
+     * If the given privateKey is a JDK EdDSA key (Java 15+), convert it to a BouncyCastle EdDSA key.
+     * If the given privateKey is already a BouncyCastle EdDSA key, return it as-is.
+     * Otherwise (no known implementation class) return null.
+     *
+     * @param privateKey A private key
+     * @return A BouncyCastle EdDSA private key, or null
+     */
+    public static EdDSAPrivateKey getEdPrivateKey(PrivateKey privateKey) {
+        if (privateKey instanceof EdDSAPrivateKey) {
+            return (EdDSAPrivateKey) privateKey;
+        }
+
+        try {
+            // Use reflection so that KSE can still compile with JDK 11.
+            Class<?> c = Class.forName("java.security.interfaces.EdECPrivateKey");
+            if (c.isAssignableFrom(privateKey.getClass())) {
+                // Quickest way to convert to a BC EdDSA key. Doesn't require importing any
+                // Ed25519 or Ed448 specific classes, and it doesn't require using reflection
+                // to access the JDK 15+ EC crypto provider.
+                KeyFactory kf = KeyFactory.getInstance(privateKey.getAlgorithm(), KSE.BC);
+                PrivateKey bcPrivateKey = kf.generatePrivate(new PKCS8EncodedKeySpec(privateKey.getEncoded()));
+                return (EdDSAPrivateKey) bcPrivateKey;
+            }
+        } catch (Exception e) {
+            // ignore -- not a JDK EdDSA key
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the given privateKey is an EdDSA private key (Ed25519 or Ed448).
+     *
+     *  @param key A key
+     * @return True, if the given key is an EdDSA private key
+     */
+    public static boolean isEdPrivateKey(Key key) {
+        return key instanceof PrivateKey && getEdPrivateKey((PrivateKey) key) != null;
     }
 }
