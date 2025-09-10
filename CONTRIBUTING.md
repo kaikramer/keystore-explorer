@@ -45,7 +45,7 @@ of the code base, it is important to:
 If you intend to implement a non-trivial enhancement or a new feature, please make sure there is
 an [issue](https://github.com/kaikramer/keystore-explorer/issues) that corresponds to your contribution &ndash; either
 created by you or by somebody else. Announce in the issue that you intend to work on it to make sure that the work is
-not done twice. This is also a good way to get some guidance on how to beste tackle a problem or discuss implementation
+not done twice. This is also a good way to get some guidance on how to best tackle a problem or discuss implementation
 ideas.
 
 ### Contributing to the Documentation or Website
