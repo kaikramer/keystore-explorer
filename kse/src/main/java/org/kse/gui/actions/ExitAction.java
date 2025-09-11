@@ -94,7 +94,7 @@ public class ExitAction extends CloseAllAction {
         PreferencesManager.persistPreferences();
 
         if (PasswordManager.getInstance().isInitialized() && PasswordManager.getInstance().isUnlocked()) {
-            PasswordManager.getInstance().save();
+            KeyStoreExplorerAction.savePasswordManagerWithProgress(kseFrame.getUnderlyingFrame());
         }
 
         if (restart) {

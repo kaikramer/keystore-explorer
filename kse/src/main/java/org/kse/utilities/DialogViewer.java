@@ -57,9 +57,8 @@ public class DialogViewer {
 
         prepare();
 
-        SwingUtilities.updateComponentTreeUI(dialog);
-
         SwingUtilities.invokeLater(() -> {
+            SwingUtilities.updateComponentTreeUI(dialog);
 
             dialog.addWindowListener(new WindowAdapter() {
                 @Override

@@ -128,7 +128,7 @@ public class SaveAsAction extends KeyStoreExplorerAction {
                 return false;
             }
 
-            saveInPasswordManager(currentState, saveFile, password);
+            saveInPasswordManager(currentState, saveFile, password, frame);
 
             KeyStoreUtil.save(currentState.getKeyStore(), saveFile, password);
 

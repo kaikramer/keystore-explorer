@@ -41,6 +41,8 @@ import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.KseFrame;
+import org.kse.gui.dialogs.DSavingPasswords;
+import org.kse.gui.dialogs.DUnlockingPasswords;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
@@ -197,15 +199,15 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
             return password;
         } catch (GeneralSecurityException ex) {
-            String problemStr = MessageFormat.format(res.getString("KeyStoreExplorerAction.NoUnlockEntry.Problem"),
-                                                     alias);
+            String problemStr =
+                    MessageFormat.format(res.getString("KeyStoreExplorerAction.NoUnlockEntry.Problem"), alias);
 
             String[] causes = new String[] { res.getString("KeyStoreExplorerAction.PasswordIncorrectEntry.Cause") };
 
             Problem problem = new Problem(problemStr, causes, ex);
 
-            DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"),
-                                             problem);
+            DProblem dProblem =
+                    new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemUnlockingEntry.Title"), problem);
             dProblem.setLocationRelativeTo(frame);
             dProblem.setVisible(true);
 
@@ -261,8 +263,8 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
 
             Problem problem = new Problem(problemStr, causes, ex);
 
-            DProblem dProblem = new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"),
-                                             problem);
+            DProblem dProblem =
+                    new DProblem(frame, res.getString("KeyStoreExplorerAction.ProblemOpeningCert.Title"), problem);
             dProblem.setLocationRelativeTo(frame);
             dProblem.setVisible(true);
 
@@ -308,7 +310,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
                 dUnlockPasswordManager.setLocationRelativeTo(frame);
                 dUnlockPasswordManager.setVisible(true);
                 if (!dUnlockPasswordManager.isCancelled()) {
-                    PasswordManager.getInstance().unlock(dUnlockPasswordManager.getPassword().toCharArray());
+                    unlockPasswordManagerWithProgress(dUnlockPasswordManager.getPassword().toCharArray());
                 }
             }
         } catch (EncryptionException e) {
@@ -321,8 +323,22 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
         }
     }
 
-    protected static void saveInPasswordManager(KeyStoreState currentState, File saveFile, Password password)
-            throws KeyStoreException {
+    private void unlockPasswordManagerWithProgress(char[] password) throws Exception {
+        DUnlockingPasswords dUnlockingPasswords = new DUnlockingPasswords(frame);
+        dUnlockingPasswords.setLocationRelativeTo(frame);
+        dUnlockingPasswords.startPasswordUnlocking(() -> PasswordManager.getInstance().unlock(password));
+        dUnlockingPasswords.setVisible(true);
+
+        if (!dUnlockingPasswords.isUnlockCompleted()) {
+            Exception unlockException = dUnlockingPasswords.getUnlockException();
+            if (unlockException != null) {
+                throw unlockException;
+            }
+        }
+    }
+
+    protected static void saveInPasswordManager(KeyStoreState currentState, File saveFile, Password password,
+                                                JFrame parent) throws KeyStoreException {
         if (PasswordManager.getInstance().isUnlocked() && currentState.isStoredInPasswordManager()) {
             var entryPasswords = new HashMap<String, char[]>();
             for (String alias : Collections.list(currentState.getKeyStore().aliases())) {
@@ -334,7 +350,26 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
                 }
             }
             PasswordManager.getInstance().update(saveFile, password.toCharArray(), entryPasswords);
-            PasswordManager.getInstance().save();
+            savePasswordManagerWithProgress(parent);
+        }
+    }
+
+    /**
+     * Save the Password Manager with a progress dialog to prevent UI blocking.
+     *
+     * @param parent The parent frame for the dialog
+     */
+    protected static void savePasswordManagerWithProgress(JFrame parent) {
+        DSavingPasswords dSavingPasswords = new DSavingPasswords(parent);
+        dSavingPasswords.setLocationRelativeTo(parent);
+        dSavingPasswords.startPasswordSaving(() -> PasswordManager.getInstance().save());
+        dSavingPasswords.setVisible(true);
+
+        if (!dSavingPasswords.isSaveCompleted()) {
+            Exception saveException = dSavingPasswords.getSaveException();
+            if (saveException != null) {
+                DError.displayError(parent, saveException);
+            }
         }
     }
 

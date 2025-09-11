@@ -43,9 +43,11 @@ import javax.swing.SpinnerNumberModel;
 import org.kse.crypto.encryption.EncryptionException;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.MiGUtil;
+import org.kse.gui.dialogs.DUnlockingPasswords;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.DInitPasswordManager;
 import org.kse.gui.passwordmanager.DUnlockPasswordManager;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;
@@ -242,7 +244,8 @@ class PanelPasswords {
             dUnlockPasswordManager.setVisible(true);
 
             if (!dUnlockPasswordManager.isCancelled()) {
-                passwordManager.unlock(dUnlockPasswordManager.getPassword().toCharArray());
+                unlockPasswordManagerWithProgress(jFrame, passwordManager,
+                                                  dUnlockPasswordManager.getPassword().toCharArray());
                 updatePasswordsCard();
             }
         } catch (EncryptionException e) {
@@ -252,6 +255,21 @@ class PanelPasswords {
                                           JOptionPane.WARNING_MESSAGE);
         } catch (Exception e) {
             DError.displayError(parent, e);
+        }
+    }
+
+    private void unlockPasswordManagerWithProgress(JFrame jFrame, PasswordManager passwordManager, char[] password)
+            throws Exception {
+        DUnlockingPasswords dUnlockingPasswords = new DUnlockingPasswords(jFrame);
+        dUnlockingPasswords.setLocationRelativeTo(jFrame);
+        dUnlockingPasswords.startPasswordUnlocking(() -> passwordManager.unlock(password));
+        dUnlockingPasswords.setVisible(true);
+
+        if (!dUnlockingPasswords.isUnlockCompleted()) {
+            Exception unlockException = dUnlockingPasswords.getUnlockException();
+            if (unlockException != null) {
+                throw unlockException;
+            }
         }
     }
 
