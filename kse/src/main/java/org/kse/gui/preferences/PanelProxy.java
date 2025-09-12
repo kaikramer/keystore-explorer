@@ -32,6 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.utilities.net.IpAddress;
 import org.kse.utilities.net.ManualProxySelector;
@@ -149,6 +150,7 @@ class PanelProxy {
         // layout
         JPanel jpInternetProxy = new JPanel();
         jpInternetProxy.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
+        MiGUtil.addSeparator(jpInternetProxy, res.getString("DPreferences.proxyConfiguration.separator"));
         jpInternetProxy.add(jrbNoProxy, "left, span, wrap");
         jpInternetProxy.add(jrbSystemProxySettings, "left, span, wrap");
         jpInternetProxy.add(jrbManualProxyConfig, "left, span, wrap");
@@ -166,7 +168,7 @@ class PanelProxy {
         jpInternetProxy.add(jtfSocksPort, "wrap");
         jpInternetProxy.add(jrbAutomaticProxyConfig, "left, span, wrap");
         jpInternetProxy.add(jlPacUrl, "gap unrel, skip, right");
-        jpInternetProxy.add(jtfPacUrl, "span, wrap push");
+        jpInternetProxy.add(jtfPacUrl, "span, growx, wrap push");
 
         jrbAutomaticProxyConfig.addItemListener(evt -> updateProxyControls());
 

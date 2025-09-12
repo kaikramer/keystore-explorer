@@ -34,6 +34,7 @@ import org.kse.crypto.SecurityProvider;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.preferences.data.CaCertsSettings;
 import org.kse.gui.preferences.data.KsePreferences;
@@ -108,18 +109,20 @@ class PanelAuthorityCertificates {
         JPanel jpAuthorityCertificates = new JPanel();
         jpAuthorityCertificates.setLayout(new MigLayout("insets dialog", "20lp[][]", "20lp[][]"));
 
-        jpAuthorityCertificates.add(jlCaCertificatesFile, "split");
+        MiGUtil.addSeparator(jpAuthorityCertificates, res.getString("DPreferences.caCertificates.separator"));
+        jpAuthorityCertificates.add(jlCaCertificatesFile, "gapx indent, split");
         jpAuthorityCertificates.add(jtfCaCertificatesFile, "");
         jpAuthorityCertificates.add(jbBrowseCaCertificatesFile, "wrap rel");
         if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
-            jpAuthorityCertificates.add(jcbUseCaCertificates, "wrap rel");
-            jpAuthorityCertificates.add(jcbUseWinTrustedRootCertificates, "wrap para");
+            jpAuthorityCertificates.add(jcbUseCaCertificates, "gapx indent, wrap rel");
+            jpAuthorityCertificates.add(jcbUseWinTrustedRootCertificates, "gapx indent, wrap para");
         } else {
-            jpAuthorityCertificates.add(jcbUseCaCertificates, "wrap para");
+            jpAuthorityCertificates.add(jcbUseCaCertificates, "gapx indent, wrap para");
         }
-        jpAuthorityCertificates.add(jlTrustChecks, "wrap unrel");
-        jpAuthorityCertificates.add(jcbEnableImportTrustedCertTrustCheck, "wrap rel");
-        jpAuthorityCertificates.add(jcbEnableImportCaReplyTrustCheck, "wrap unrel");
+        MiGUtil.addSeparator(jpAuthorityCertificates, res.getString("DPreferences.trustChecks.separator"));
+        jpAuthorityCertificates.add(jlTrustChecks, "gapx indent, wrap unrel");
+        jpAuthorityCertificates.add(jcbEnableImportTrustedCertTrustCheck, "gapx indent, wrap rel");
+        jpAuthorityCertificates.add(jcbEnableImportCaReplyTrustCheck, "gapx indent, wrap unrel");
 
         jbBrowseCaCertificatesFile.addActionListener(evt -> {
             try {

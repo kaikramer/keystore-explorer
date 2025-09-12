@@ -19,13 +19,20 @@
  */
 package org.kse.gui.preferences;
 
+import java.util.ResourceBundle;
+
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.kse.gui.MiGUtil;
 import org.kse.gui.dnchooser.DistinguishedNameChooser;
 import org.kse.gui.preferences.data.KsePreferences;
 
+import net.miginfocom.swing.MigLayout;
+
 class PanelDefaultName {
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
+
     private final JDialog parent;
     private final KsePreferences preferences;
 
@@ -38,7 +45,14 @@ class PanelDefaultName {
 
     JPanel initDefaultNameCard() {
         distinguishedNameChooser = new DistinguishedNameChooser(null, true, preferences.getDefaultSubjectDN());
-        return distinguishedNameChooser;
+
+        JPanel jpDefaultName = new JPanel();
+        jpDefaultName.setLayout(new MigLayout("insets dialog", "20lp[]", "20lp[]"));
+
+        MiGUtil.addSeparator(jpDefaultName, res.getString("DPreferences.defaultDNSettings.separator"));
+        jpDefaultName.add(distinguishedNameChooser, "spanx, wrap");
+
+        return jpDefaultName;
     }
 
     DistinguishedNameChooser getDistinguishedNameChooser() {

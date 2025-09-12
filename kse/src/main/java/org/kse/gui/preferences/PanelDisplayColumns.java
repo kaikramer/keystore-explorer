@@ -30,6 +30,7 @@ import javax.swing.SpinnerNumberModel;
 
 import org.kse.crypto.digest.DigestType;
 import org.kse.gui.KeyStoreTableColumns;
+import org.kse.gui.MiGUtil;
 import org.kse.gui.preferences.data.KsePreferences;
 
 import net.miginfocom.swing.MigLayout;
@@ -167,6 +168,7 @@ class PanelDisplayColumns {
         // layout
         JPanel jpDisplayColumns = new JPanel();
         jpDisplayColumns.setLayout(new MigLayout("insets dialog", "20lp[]20lp[]", "20lp[]rel[]"));
+        MiGUtil.addSeparator(jpDisplayColumns, res.getString("DPreferences.tableColumns.separator"));
         jpDisplayColumns.add(jcbEnableEntryName, "left");
         jpDisplayColumns.add(jcbEnableAlgorithm, "left, wrap");
         jpDisplayColumns.add(jcbEnableKeySize, "left");
@@ -186,6 +188,7 @@ class PanelDisplayColumns {
         jpDisplayColumns.add(jcbEnableSerialNumberDec, "left");
         jpDisplayColumns.add(jcbEnableFingerprint, "left, spanx, split");
         jpDisplayColumns.add(jcbFingerprintAlg, "wrap para");
+        MiGUtil.addSeparator(jpDisplayColumns, res.getString("DPreferences.certificateExpiry.separator"));
         jpDisplayColumns.add(jlExpirationWarnDays, "left, spanx, split");
         jpDisplayColumns.add(jspExpirationWarnDays, "wrap");
 
