@@ -302,6 +302,7 @@ public enum X509ExtensionType {
 	MS_CRL_NEXT_PUBLISH("1.3.6.1.4.1.311.21.4", "MSCRLNextPublish"),
 	MS_CERTIFICATE_TEMPLATE("1.3.6.1.4.1.311.21.7", "MSCertificateTemplate"),
 	MS_APPLICATION_POLICIES("1.3.6.1.4.1.311.21.10", "MSApplicationPolicies"),
+	MS_NTDS_CA_SECURITY_EXT("1.3.6.1.4.1.311.25.2", "MSNtdsCaSecurityExt"),
 
 
 	// ////////////////////////////////
