@@ -1424,6 +1424,8 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.4.1.311.21.7", "CertificateTemplate");
         oidToNameMapping.put("1.3.6.1.4.1.311.21.9", "RdnDummySigner");
         oidToNameMapping.put("1.3.6.1.4.1.311.25.1", "NtdsReplication");
+        oidToNameMapping.put("1.3.6.1.4.1.311.25.2", "NtdsCaSecurityExt");
+        oidToNameMapping.put("1.3.6.1.4.1.311.25.2.1", "NtdsObjectSId");
         oidToNameMapping.put("1.3.6.1.4.1.311.3.2.1", "TimestampRequest");
         oidToNameMapping.put("1.3.6.1.4.1.311.31.1", "ProductUpdate");
         oidToNameMapping.put("1.3.6.1.4.1.311.47.1.1", "SystemHealth");
