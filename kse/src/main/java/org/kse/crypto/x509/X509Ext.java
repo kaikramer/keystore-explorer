@@ -2690,6 +2690,26 @@ public class X509Ext {
 
     private static String getMsNtdsCaSecurityExtStringValue(byte[] octets) throws IOException {
 
+        // @formatter:off
+        /*
+            Not much information available about that extension...
+
+            SEQUENCE
+            {
+                TAGGED [0] IMPLICIT :
+                    SEQUENCE
+                    {
+                        OBJECT IDENTIFIER=NtdsObjectSId (1.3.6.1.4.1.311.25.2.1)
+                        TAGGED [0]:
+                            OCTET STRING (L:46)=
+                                53 2D 31 2D 35 2D 32 31  2D 31 31 31 31 31 31 31   S-1-5-21-1111111
+                                31 31 31 2D 32 32 32 32  32 32 32 32 32 32 2D 33   111-2222222222-3
+                                33 33 33 33 33 33 33 33  2D 34 34 34 34 34         33333333-44444
+                    }
+            }
+         */
+        // @formatter:on
+
         StringBuilder sb = new StringBuilder();
         ASN1Sequence rootSeq = ASN1Sequence.getInstance(octets);
         for (Enumeration<?> e = rootSeq.getObjects(); e.hasMoreElements(); ) {
@@ -2715,16 +2735,6 @@ public class X509Ext {
     }
 
     private static String processMsNtdsCaSecurityExtSubSeq(ASN1Sequence subSeq) throws IOException {
-
-        // @formatter:off
-        /*
-            OtherName  ::= SEQUENCE
-            {
-                type-id     OBJECT IDENTIFIER,
-                value       OCTET STRING
-            }
-         */
-        // @formatter:on
 
         StringBuilder sb = new StringBuilder();
         ASN1ObjectIdentifier typeOid = ASN1ObjectIdentifier.getInstance(subSeq.getObjectAt(0));
