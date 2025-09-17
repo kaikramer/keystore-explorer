@@ -1274,6 +1274,12 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.36.8.7.1.7", "PtCorelCRT");
         oidToNameMapping.put("1.3.36.8.7.1.8", "PtCorelDRW");
         oidToNameMapping.put("1.3.36.8.7.1.9", "PtCorelEXC");
+        oidToNameMapping.put("1.3.6.1.4.1.11129", "Google");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.4", "CertificateTransparency");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.4.2", "SignedCertificateTimestampList");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.4.3", "PrecertificatePoison");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.4.4", "PrecertificateCA");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.4.5", "OcspSignedCertificateTimestampList");
         oidToNameMapping.put("1.3.6.1.4.1.11591", "Gnu");
         oidToNameMapping.put("1.3.6.1.4.1.11591.1", "GnuRadius");
         oidToNameMapping.put("1.3.6.1.4.1.11591.12", "GnuDigestAlgorithm");
