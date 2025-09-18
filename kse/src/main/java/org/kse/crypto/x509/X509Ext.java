@@ -308,7 +308,7 @@ public class X509Ext {
         case MS_CERTIFICATE_TEMPLATE:
             return getMsCertificateTemplateStringValue(octets);
         case MS_APPLICATION_POLICIES:
-            return HexUtil.getHexClearDump(octets);
+            return getMsApplicationPoliciesStringValue(octets);
         case MS_NTDS_CA_SECURITY_EXT:
             return getMsNtdsCaSecurityExtStringValue(octets);
         case SMIME_CAPABILITIES:
@@ -2721,6 +2721,44 @@ public class X509Ext {
             sb.append(NEWLINE);
         }
 
+        return sb.toString();
+    }
+
+    private static String getMsApplicationPoliciesStringValue(byte[] octets) throws IOException {
+
+        // @formatter:off
+
+        /*
+         * MsApplicationPolicies ::= ASN1Sequence SIZE (1..MAX) OF PolicyInformation
+         *
+         * PolicyInformation ::= ASN1Sequence
+         * {
+         *      policyIdentifier KeyPurposeId
+         * }
+         *
+         * KeyPurposeId ::= OBJECT IDENTIFIER
+         */
+
+        // @formatter:on
+
+        StringBuilder sb = new StringBuilder();
+        
+        ASN1Sequence outerSeq = ASN1Sequence.getInstance(octets);
+
+        for (ASN1Encodable innerEnc : outerSeq) {
+            ASN1Sequence innerSeq = ASN1Sequence.getInstance(innerEnc);
+            ASN1ObjectIdentifier keyPurposeId = ASN1ObjectIdentifier.getInstance(innerSeq.getObjectAt(0));
+            String oid = keyPurposeId.getId();
+            ExtendedKeyUsageType type = ExtendedKeyUsageType.resolveOid(oid);
+
+            if (type != null) {
+                sb.append(type.friendly());
+            } else {
+                // Unrecognised key purpose ID
+                sb.append(ObjectIdUtil.toString(keyPurposeId));
+            }
+            sb.append(NEWLINE);
+        }
         return sb.toString();
     }
 
