@@ -917,7 +917,7 @@ public class X509Ext {
             sb.append(holdInstructionCodeType.friendly());
         } else {
             // Unrecognised Hold Instruction Code
-            sb.append(holdInstructionCode.getId());
+            sb.append(ObjectIdUtil.toString(holdInstructionCode));
         }
         sb.append(NEWLINE);
 
@@ -1480,7 +1480,7 @@ public class X509Ext {
                 sb.append(type.friendly());
             } else {
                 // Unrecognised key purpose ID
-                sb.append(oid);
+                sb.append(ObjectIdUtil.toString(keyPurposeId));
             }
 
             sb.append(NEWLINE);
