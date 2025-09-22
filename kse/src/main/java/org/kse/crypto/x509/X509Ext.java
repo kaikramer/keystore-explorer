@@ -1472,9 +1472,8 @@ public class X509Ext {
         ExtendedKeyUsage extendedKeyUsage = ExtendedKeyUsage.getInstance(value);
 
         for (KeyPurposeId keyPurposeId : extendedKeyUsage.getUsages()) {
-            String oid = keyPurposeId.getId();
 
-            ExtendedKeyUsageType type = ExtendedKeyUsageType.resolveOid(oid);
+            ExtendedKeyUsageType type = ExtendedKeyUsageType.resolveOid(keyPurposeId.getId());
 
             if (type != null) {
                 sb.append(type.friendly());
@@ -2747,15 +2746,14 @@ public class X509Ext {
 
         for (ASN1Encodable innerEnc : outerSeq) {
             ASN1Sequence innerSeq = ASN1Sequence.getInstance(innerEnc);
-            ASN1ObjectIdentifier keyPurposeId = ASN1ObjectIdentifier.getInstance(innerSeq.getObjectAt(0));
-            String oid = keyPurposeId.getId();
-            ExtendedKeyUsageType type = ExtendedKeyUsageType.resolveOid(oid);
+            ASN1ObjectIdentifier oid = ASN1ObjectIdentifier.getInstance(innerSeq.getObjectAt(0));
+            ExtendedKeyUsageType type = ExtendedKeyUsageType.resolveOid(oid.getId());
 
             if (type != null) {
                 sb.append(type.friendly());
             } else {
                 // Unrecognised key purpose ID
-                sb.append(ObjectIdUtil.toString(keyPurposeId));
+                sb.append(ObjectIdUtil.toString(oid));
             }
             sb.append(NEWLINE);
         }
@@ -2811,7 +2809,7 @@ public class X509Ext {
     private static String processMsNtdsCaSecurityExtSubSeq(ASN1Sequence subSeq) throws IOException {
 
         StringBuilder sb = new StringBuilder();
-        ASN1ObjectIdentifier typeOid = ASN1ObjectIdentifier.getInstance(subSeq.getObjectAt(0));
+        ASN1ObjectIdentifier typeId = ASN1ObjectIdentifier.getInstance(subSeq.getObjectAt(0));
         ASN1TaggedObject innerTagged = ASN1TaggedObject.getInstance(subSeq.getObjectAt(1));
         ASN1OctetString valueOctets;
         try {
@@ -2821,17 +2819,17 @@ public class X509Ext {
         }
         byte[] valueBytes = valueOctets.getOctets();
 
-        MSNtdsCaSecurityExtType typeOidType = MSNtdsCaSecurityExtType.resolveOid(typeOid.getId());
-        String typeOidTypeStr = null;
+        MSNtdsCaSecurityExtType typeIdType = MSNtdsCaSecurityExtType.resolveOid(typeId.getId());
+        String typeIdStr = null;
 
-        if (typeOidType != null) {
-            typeOidTypeStr = typeOidType.friendly();
+        if (typeIdType != null) {
+            typeIdStr = typeIdType.friendly();
         } else {
             // Unrecognised Type OID
-            typeOidTypeStr = ObjectIdUtil.toString(typeOid);
+            typeIdStr = ObjectIdUtil.toString(typeId);
         }
 
-        sb.append(MessageFormat.format(res.getString("MSNtdsCaSecurityExt.Type.ID"), typeOidTypeStr));
+        sb.append(MessageFormat.format(res.getString("MSNtdsCaSecurityExt.Type.ID"), typeIdStr));
         sb.append(NEWLINE);
 
         String valueStr = new String(valueBytes, StandardCharsets.UTF_8);
