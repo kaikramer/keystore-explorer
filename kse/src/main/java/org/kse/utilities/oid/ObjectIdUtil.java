@@ -1493,6 +1493,9 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.4.1.7879.13.24.1", "T-TeleSec EV policy");
         oidToNameMapping.put("1.3.6.1.4.1.8024.0.2.100.1.2", "QuoVadis EV policy");
         oidToNameMapping.put("1.3.6.1.4.1.8231.1", "RolUnicoNacional");
+        oidToNameMapping.put("1.3.6.1.4.1.8301", "TechnicalUniversityOfDarmstadt");
+        oidToNameMapping.put("1.3.6.1.4.1.8301.3", "CDC");
+        oidToNameMapping.put("1.3.6.1.4.1.8301.3.5", "ValidityModel");
         oidToNameMapping.put("1.3.6.1.4.1.8301.3.5.1", "ValidityModelChain");
         oidToNameMapping.put("1.3.6.1.4.1.8301.3.5.2", "ValidityModelShell");
         oidToNameMapping.put("1.3.6.1.5.5.7", "Pkix");

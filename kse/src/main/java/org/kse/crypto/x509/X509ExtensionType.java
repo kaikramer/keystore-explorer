@@ -39,7 +39,7 @@ public enum X509ExtensionType {
 	/** Authority Information Access */
 	AUTHORITY_INFORMATION_ACCESS("1.3.6.1.5.5.7.1.1", "AuthorityInformationAccessCertExt"),
 
-	/** Authority Information Access */
+	/** Subject Information Access */
 	SUBJECT_INFORMATION_ACCESS("1.3.6.1.5.5.7.1.11", "SubjectInformationAccessCertExt"),
 
 	/** Subject Directory Attributes */
