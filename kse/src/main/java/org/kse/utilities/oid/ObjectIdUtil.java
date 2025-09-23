@@ -1523,6 +1523,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.5.5.7.10.6", "WlanSSID");
         oidToNameMapping.put("1.3.6.1.5.5.7.11", "PersonalData");
         oidToNameMapping.put("1.3.6.1.5.5.7.11.1", "PkixQCSyntax-v1");
+        oidToNameMapping.put("1.3.6.1.5.5.7.11.2", "PkixQCSyntax-v2");
         oidToNameMapping.put("1.3.6.1.5.5.7.14.2", "ResourceCertificatePolicy");
         oidToNameMapping.put("1.3.6.1.5.5.7.2", "PolicyQualifierIds");
         oidToNameMapping.put("1.3.6.1.5.5.7.2.1", "Cps");
