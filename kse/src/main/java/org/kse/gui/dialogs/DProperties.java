@@ -102,7 +102,7 @@ public class DProperties extends JEscDialog {
     private JScrollPane jspProperties;
     private KeyStoreHistory history;
     private KeyStoreState currentState;
-    private IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+    private IndentSequence INDENT = IndentSequence.FOUR_SPACES;
 
     /**
      * Creates a new DProperties dialog.

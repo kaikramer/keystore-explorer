@@ -122,7 +122,7 @@ public class X509Ext {
     private byte[] value;
     private boolean critical;
 
-    public static final IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+    public static final IndentSequence INDENT = IndentSequence.FOUR_SPACES;
     public static final String NEWLINE = "\n";
 
     /**

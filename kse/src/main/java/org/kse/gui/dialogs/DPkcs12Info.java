@@ -128,7 +128,7 @@ public class DPkcs12Info extends JEscDialog {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private static final String NEWLINE = "\n";
-    private static final IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+    private static final IndentSequence INDENT = IndentSequence.FOUR_SPACES;
 
     private JButton jbOpen;
     private JTree jtrP12Content;

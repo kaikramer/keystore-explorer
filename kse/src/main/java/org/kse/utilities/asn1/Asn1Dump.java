@@ -80,7 +80,7 @@ public class Asn1Dump {
      * Construct Asn1Dump that uses 4 spaces as its indent sequence.
      */
     public Asn1Dump() {
-        indentSequence = new IndentSequence(IndentChar.SPACE, 4);
+        indentSequence = IndentSequence.FOUR_SPACES;
     }
 
     /**

@@ -79,7 +79,7 @@ public class DCompareCertificates extends JEscFrame {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
     private static final String NEWLINE = "\n";
-    private IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+    private IndentSequence INDENT = IndentSequence.FOUR_SPACES;
 
     private JEditorPane editorLeft;
     private JEditorPane editorRight;
