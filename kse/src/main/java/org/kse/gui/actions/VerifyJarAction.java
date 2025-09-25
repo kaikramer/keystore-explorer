@@ -102,8 +102,8 @@ public class VerifyJarAction extends AuthorityCertificatesVerifyAction {
             // Read the JAR using JarFile since JarInputStream skips MANIFEST.MF.
             try (JarFile jarFile = new JarFile(file, true)) {
 
-                for (Enumeration<?> jarEntries = jarFile.entries(); jarEntries.hasMoreElements(); ) {
-                    JarEntry entry = (JarEntry) jarEntries.nextElement();
+                for (Enumeration<JarEntry> jarEntries = jarFile.entries(); jarEntries.hasMoreElements(); ) {
+                    JarEntry entry = jarEntries.nextElement();
 
                     String name = entry.getName();
                     String uname = entry.getName().toUpperCase(Locale.ENGLISH);
