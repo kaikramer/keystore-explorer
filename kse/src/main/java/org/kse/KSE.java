@@ -63,6 +63,13 @@ public class KSE {
 
     public static Provider BC = new BouncyCastleProvider();
 
+    /**
+     * Captures the system locale for identifying locale specific formatting
+     * independent of the chosen language. KSE changes the default locale based
+     * on the user preferences, and this constant preserves the system locale.
+     */
+    public static final Locale SYSTEM_LOCALE = Locale.getDefault();
+
     static {
         // set default style for Bouncy Castle's X500Name class
         X500Name.setDefaultStyle(KseX500NameStyle.INSTANCE);
