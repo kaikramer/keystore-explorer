@@ -64,16 +64,6 @@ public class SignerTreeCellRend extends DefaultTreeCellRenderer {
 
             cell.setText(signer.getShortName());
 
-            // TODO JW Is an icon for signer tree cell renderer desired?
-//            String iconResource;
-//            if (signer.isCounterSignature()) {
-//                iconResource = "images/counter_signature_node.png";
-//            } else {
-//                iconResource = "images/signature_node.png";
-//            }
-//            ImageIcon icon = new ImageIcon(getClass().getResource(iconResource));
-//            cell.setIcon(icon);
-
             String tooltip;
             if (cert != null) {
                 tooltip = cert.getSubject().toString();

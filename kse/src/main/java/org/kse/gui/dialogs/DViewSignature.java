@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -123,34 +124,44 @@ public class DViewSignature extends JEscDialog {
     private JButton jbAsn1;
     private JButton jbOK;
 
-    private CMSSignedData signedData;
     private Store<X509CertificateHolder> tsaTrustedCerts;
     private CMSSignedData timeStampSigner;
 
     /**
-     * Creates a new DViewCertificate dialog.
+     * Creates a new DViewSignature dialog for displaying one digital signature.
      *
      * @param parent          Parent frame
      * @param title           The dialog title
-     * @param signedData      Signature to display
      * @param signers         Signature(s) to display
      * @param tsaTrustedCerts All trusted certs suitable for verifying TSA signatures
      * @param kseFrame        Reference to main class with currently opened keystores and their contents
      */
-    public DViewSignature(Window parent, String title, CMSSignedData signedData,
-            Collection<KseSignerInformation> signers, Store<X509CertificateHolder> tsaTrustedCerts,
-            KseFrame kseFrame) {
-        super(parent, title, Dialog.ModalityType.MODELESS);
-        this.kseFrame = kseFrame;
-        this.signedData = signedData;
-        this.tsaTrustedCerts = tsaTrustedCerts;
-        initComponents(signers);
+    public DViewSignature(Window parent, String title, Collection<KseSignerInformation> signers,
+            Store<X509CertificateHolder> tsaTrustedCerts, KseFrame kseFrame) {
+        this(parent, title, Map.of("", signers), tsaTrustedCerts, kseFrame);
     }
 
-    private void initComponents(Collection<KseSignerInformation> signers) {
+    /**
+     * Creates a new DViewSignature dialog for display multiple digital signatures.
+     *
+     * @param parent          Parent frame
+     * @param title           The dialog title
+     * @param signatures      Signature(s) to display
+     * @param tsaTrustedCerts All trusted certs suitable for verifying TSA signatures
+     * @param kseFrame        Reference to main class with currently opened keystores and their contents
+     */
+    public DViewSignature(Window parent, String title, Map<String, Collection<KseSignerInformation>> signatures,
+            Store<X509CertificateHolder> tsaTrustedCerts, KseFrame kseFrame) {
+        super(parent, title, Dialog.ModalityType.MODELESS);
+        this.kseFrame = kseFrame;
+        this.tsaTrustedCerts = tsaTrustedCerts;
+        initComponents(signatures);
+    }
+
+    private void initComponents(Map<String, Collection<KseSignerInformation>> signatures) {
         jlSigners = new JLabel(res.getString("DViewSignature.jlSigners.text"));
 
-        jtrSigners = new JTree(createSignerNodes(signers));
+        jtrSigners = new JTree(createSignerNodes(signatures));
         jtrSigners.setRowHeight(Math.max(18, jtrSigners.getRowHeight()));
         jtrSigners.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         ToolTipManager.sharedInstance().registerComponent(jtrSigners);
@@ -209,7 +220,6 @@ public class DViewSignature extends JEscDialog {
         jbCertificates = new JButton(res.getString("DViewSignature.jbCertificates.text"));
         jbCertificates.setToolTipText(res.getString("DViewSignature.jbCertificates.tooltip"));
         PlatformUtil.setMnemonic(jbCertificates, res.getString("DViewSignature.jbCertificates.mnemonic").charAt(0));
-        jbCertificates.setEnabled(!signedData.getCertificates().getMatches(null).isEmpty());
 
         jbPem = new JButton(res.getString("DViewSignature.jbPem.text"));
         jbPem.setToolTipText(res.getString("DViewSignature.jbPem.tooltip"));
@@ -322,20 +332,26 @@ public class DViewSignature extends JEscDialog {
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
-    private DefaultMutableTreeNode createSignerNodes(Collection<KseSignerInformation> signers) {
-        DefaultMutableTreeNode signersNode = new DefaultMutableTreeNode();
+    private DefaultMutableTreeNode createSignerNodes(Map<String, Collection<KseSignerInformation>> signatures) {
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
+        for (String signature : signatures.keySet()) {
+            createSignerNodes(rootNode, signatures.get(signature));
+        }
+
+        return rootNode;
+    }
+
+    private void createSignerNodes(DefaultMutableTreeNode parentNode, Collection<KseSignerInformation> signers) {
         for (SignerInformation signerInfo : signers) {
             DefaultMutableTreeNode signerNode = new DefaultMutableTreeNode(signerInfo);
 
-            signersNode.add(signerNode);
+            parentNode.add(signerNode);
 
             for (SignerInformation counterSignerInfo : signerInfo.getCounterSignatures().getSigners()) {
                 signerNode.add(new DefaultMutableTreeNode(counterSignerInfo));
             }
         }
-
-        return signersNode;
     }
 
     private void expandTree(JTree tree, TreePath parent) {
@@ -369,6 +385,9 @@ public class DViewSignature extends JEscDialog {
             jdnIssuer.setEnabled(false);
             jbTimeStamp.setEnabled(false);
             jbSignerAsn1.setEnabled(false);
+            jbCertificates.setEnabled(false);
+            jbPem.setEnabled(false);
+            jbAsn1.setEnabled(false);
 
             jtfStatus.setText("");
             jtfStatus.setToolTipText("");
@@ -381,9 +400,12 @@ public class DViewSignature extends JEscDialog {
             jdnSubject.setEnabled(true);
             jdnIssuer.setEnabled(true);
             jbSignerAsn1.setEnabled(true);
+            jbPem.setEnabled(true);
+            jbAsn1.setEnabled(true);
 
             Date signingTime = signerInfo.getSigningTime();
             X509CertificateHolder cert = signerInfo.getCertificate();
+            CMSSignedData signedData = signerInfo.getSignedData();
 
             // Don't verify the signature if there is no signed content. CmsUtil.loadSignature already
             // tried to find and load the detached content for verification purposes.
@@ -427,11 +449,8 @@ public class DViewSignature extends JEscDialog {
 
             timeStampSigner = getTimeStampSignature(signerInfo);
 
-            if (timeStampSigner != null) {
-                jbTimeStamp.setEnabled(true);
-            } else {
-                jbTimeStamp.setEnabled(false);
-            }
+            jbTimeStamp.setEnabled(timeStampSigner != null);
+            jbCertificates.setEnabled(!signedData.getCertificates().getMatches(null).isEmpty());
         }
     }
 
@@ -478,12 +497,14 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void certificatesPressed() {
+        KseSignerInformation signer = getSelectedSignerInfo();
+
         try {
             List<X509Certificate> certs = X509CertUtil.convertCertificateHolders(
-                    signedData.getCertificates().getMatches(null));
+                    signer.getSignedData().getCertificates().getMatches(null));
             DViewCertificate dViewCertificates = new DViewCertificate(this,
-                    res.getString("DViewSignature.Certificates.Title"), certs.toArray(X509Certificate[]::new), kseFrame,
-                    DViewCertificate.NONE);
+                    res.getString("DViewSignature.Certificates.Title"), certs.toArray(X509Certificate[]::new),
+                    kseFrame, DViewCertificate.NONE);
             dViewCertificates.setLocationRelativeTo(this);
             dViewCertificates.setVisible(true);
         } catch (CryptoException e) {
@@ -499,11 +520,11 @@ public class DViewSignature extends JEscDialog {
         // the time stamp trusted certs.
         List<KseSignerInformation> timeStampSigners = CmsUtil.convertSignerInformations(
                 timeStampSigner.getSignerInfos().getSigners(), tsaTrustedCerts,
-                timeStampSigner.getCertificates());
+                timeStampSigner);
 
         DViewSignature dViewSignature = new DViewSignature(this,
                 MessageFormat.format(res.getString("DViewSignature.TimeStampSigner.Title"), shortName),
-                timeStampSigner, timeStampSigners, tsaTrustedCerts, kseFrame);
+                timeStampSigners, tsaTrustedCerts, kseFrame);
         dViewSignature.setLocationRelativeTo(this);
         dViewSignature.setVisible(true);
     }
@@ -521,8 +542,11 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void pemEncodingPressed() {
+        KseSignerInformation signer = getSelectedSignerInfo();
+
         try {
-            DViewPem dViewCertPem = new DViewPem(this, res.getString("DViewSignature.Pem.Title"), signedData);
+            DViewPem dViewCertPem = new DViewPem(this, res.getString("DViewSignature.Pem.Title"),
+                    signer.getSignedData());
             dViewCertPem.setLocationRelativeTo(this);
             dViewCertPem.setVisible(true);
         } catch (CryptoException e) {
@@ -531,8 +555,10 @@ public class DViewSignature extends JEscDialog {
     }
 
     private void asn1DumpPressed() {
+        KseSignerInformation signer = getSelectedSignerInfo();
+
         try {
-            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, signedData);
+            DViewAsn1Dump dViewAsn1Dump = new DViewAsn1Dump(this, signer.getSignedData());
             dViewAsn1Dump.setLocationRelativeTo(this);
             dViewAsn1Dump.setVisible(true);
         } catch (Asn1Exception | IOException e) {
@@ -549,6 +575,11 @@ public class DViewSignature extends JEscDialog {
         dispose();
     }
 
+    /**
+     * Main method for quick testing.
+     * @param args Command line arguments.
+     * @throws Exception If an error is encountered.
+     */
     public static void main(String[] args) throws Exception {
         DialogViewer.prepare();
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
@@ -574,10 +605,9 @@ public class DViewSignature extends JEscDialog {
                 SignatureType.SHA256_RSA, null, null);
         @SuppressWarnings("unchecked")
         List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signedData.getSignerInfos().getSigners(),
-                new JcaCertStore(Arrays.asList(certs)), signedData.getCertificates());
+                new JcaCertStore(Arrays.asList(certs)), signedData);
 
-        DViewSignature dialog = new DViewSignature(new javax.swing.JFrame(), "Title", signedData, signers, null,
-                new KseFrame());
+        DViewSignature dialog = new DViewSignature(new javax.swing.JFrame(), "Title", signers, null, new KseFrame());
         DialogViewer.run(dialog);
     }
 }
