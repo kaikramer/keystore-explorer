@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -37,6 +38,7 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.table.TableColumnModel;
 
+import org.kse.KSE;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DExportCsv;
 import org.kse.gui.error.DError;
@@ -90,6 +92,7 @@ public class ExportCsvAction extends KeyStoreExplorerAction {
     }
 
     private void exportFile(JTable table, File exportFile) throws IOException {
+        char listSeparator = getListSeparator();
         try (PrintStream csvOut = new PrintStream(exportFile, StandardCharsets.UTF_8)) {
             int columnCount = table.getColumnCount();
 
@@ -99,7 +102,7 @@ public class ExportCsvAction extends KeyStoreExplorerAction {
                 csvOut.print(columnModel.getColumn(col).getHeaderValue());
                 csvOut.print("\"");
                 if (col < columnCount - 1) {
-                    csvOut.print(",");
+                    csvOut.print(listSeparator);
                 }
             }
             csvOut.println();
@@ -119,11 +122,22 @@ public class ExportCsvAction extends KeyStoreExplorerAction {
                     csvOut.print(String.valueOf(value).replaceAll("\"","\"\""));
                     csvOut.print("\"");
                     if (col < columnCount - 1) {
-                        csvOut.print(",");
+                        csvOut.print(listSeparator);
                     }
                 }
                 csvOut.println();
             }
         }
+    }
+
+    private char getListSeparator() {
+        // Infer the list separator by inspecting the decimal separator of the system locale.
+        // Default is the comma, but if the decimal separator is a comma, like in Europe,
+        // switch the list separator to a semicolon.
+        char listSeparator = ',';
+        if (',' == DecimalFormatSymbols.getInstance(KSE.SYSTEM_LOCALE).getDecimalSeparator()) {
+            listSeparator = ';';
+        }
+        return listSeparator;
     }
 }
