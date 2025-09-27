@@ -670,22 +670,16 @@ public final class X509CertUtil {
      * trust exists between the supplied certificate and a self-signed trusted
      * certificate in the list.
      *
-     * @param cert      The certificate
-     * @param compCerts The list of trusted certificates.
+     * @param cert         The certificate
+     * @param trustedCerts The list of trusted certificates.
      * @return The trust chain, or null if trust could not be established
      * @throws CryptoException If there is a problem establishing trust
      */
-    public static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> compCerts)
+    public static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> trustedCerts)
             throws CryptoException {
-        /*
-         * Check whether or not a trust path exists between the supplied X.509
-         * certificate and the supplied comparison certificates , ie that a
-         * chain of trust exists between the certificate and a self-signed
-         * trusted certificate in the comparison set
-         */
 
-        for (int i = 0; i < compCerts.size(); i++) {
-            X509Certificate compCert = compCerts.get(i);
+        for (int i = 0; i < trustedCerts.size(); i++) {
+            X509Certificate compCert = trustedCerts.get(i);
 
             // Verify of certificate issuer is sam as comparison certificate's subject
             if (cert.getIssuerX500Principal().equals(compCert.getSubjectX500Principal())) {
@@ -700,7 +694,7 @@ public final class X509CertUtil {
                      * Otherwise try and establish a chain of trust from the
                      * comparison certificate against the other comparison certificates
                      */
-                    X509Certificate[] tmpChain = establishTrust(compCert, compCerts);
+                    X509Certificate[] tmpChain = establishTrust(compCert, trustedCerts);
                     if (tmpChain != null) {
                         X509Certificate[] trustChain = new X509Certificate[tmpChain.length + 1];
 

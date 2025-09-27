@@ -213,10 +213,9 @@ public class JarSigner {
             for (Enumeration<JarEntry> jarEntries = jar.entries(); jarEntries.hasMoreElements(); ) {
                 JarEntry jarEntry = jarEntries.nextElement();
 
-                if (!jarEntry.isDirectory()) // Ignore directories
-                {
-                    if (!ignoreJarEntry(jarEntry)) // Ignore some entries (existing signature files)
-                    {
+                if (!jarEntry.isDirectory()) { // Ignore directories
+
+                    if (!ignoreJarEntry(jarEntry)) { // Ignore some entries (existing signature files)
                         // Get the digest of the entry as manifest attributes
                         String manifestEntry = getDigestManifestAttrs(jar, jarEntry, digestType);
 

@@ -235,7 +235,7 @@ public class DViewSignedJar extends JEscDialog {
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", ""));
 
         pane.add(jlVerifyStatus, "");
-        pane.add(jtfVerifyStatus, "sgx, wrap");
+        pane.add(jtfVerifyStatus, "growx, wrap");
         pane.add(jspJarEntryTable, "split, spanx, growx, wrap");
         pane.add(jbSignatures, "split, spanx");
         pane.add(jbJarEntryCertificates, "split, spanx, right, wrap");

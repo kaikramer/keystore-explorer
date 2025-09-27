@@ -76,14 +76,12 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
         Set<X509Certificate> trustedCerts = new HashSet<>();
         trustedCerts.addAll(extractCertificates(keyStore));
 
-        if (caCertificates != null)
-        {
+        if (caCertificates != null) {
             // Perform cert lookup against CA Certificates KeyStore
             trustedCerts.addAll(extractCertificates(caCertificates));
         }
 
-        if (windowsTrustedRootCertificates != null)
-        {
+        if (windowsTrustedRootCertificates != null) {
             // Perform cert lookup against Windows Trusted Root Certificates KeyStore
             trustedCerts.addAll(extractCertificates(windowsTrustedRootCertificates));
         }
