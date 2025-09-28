@@ -1959,8 +1959,8 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.16.840.1.114413.1.7.23.3", "GoDaddy EV policy");
         oidToNameMapping.put("2.16.840.1.114414.1.7.23.3", "Starfield EV policy");
         oidToNameMapping.put("2.23.134.1.2.1.8.210", "PostSignumCommercialServerPolicy");
-        oidToNameMapping.put("2.23.134.1.2.2.3", "PostSignumPublicCA ");
-        oidToNameMapping.put("2.23.134.1.4.2.1", "PostSignumRootQCA  ");
+        oidToNameMapping.put("2.23.134.1.2.2.3", "PostSignumPublicCA");
+        oidToNameMapping.put("2.23.134.1.4.2.1", "PostSignumRootQCA");
         oidToNameMapping.put("2.23.136.1.1.1", "MRTDSignatureData");
         oidToNameMapping.put("2.23.42.0", "ContentType");
         oidToNameMapping.put("2.23.42.0.0", "PanData");
