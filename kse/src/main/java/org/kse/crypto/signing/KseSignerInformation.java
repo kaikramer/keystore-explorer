@@ -41,6 +41,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
@@ -61,6 +62,7 @@ import org.kse.utilities.io.HexUtil;
  */
 public class KseSignerInformation extends SignerInformation {
 
+    private CMSSignedData signedData;
     private Store<X509CertificateHolder> trustedCerts;
     private Store<X509CertificateHolder> signatureCerts;
     private X509CertificateHolder cert;
@@ -72,14 +74,22 @@ public class KseSignerInformation extends SignerInformation {
      *
      * @param signerInfo The SignerInformation to extend.
      * @param trustedCerts The trusted certs for lookup and verification.
-     * @param signatureCerts The signature certs for lookup and verification.
+     * @param signedData The signedData for the signer.
      */
     public KseSignerInformation(SignerInformation signerInfo, Store<X509CertificateHolder> trustedCerts,
-            Store<X509CertificateHolder> signatureCerts) {
+            CMSSignedData signedData) {
         super(signerInfo);
+        this.signedData = signedData;
         this.trustedCerts = trustedCerts;
-        this.signatureCerts = signatureCerts;
+        this.signatureCerts = signedData.getCertificates();
         lookupCert();
+    }
+
+    /**
+     * @return the signedData
+     */
+    public CMSSignedData getSignedData() {
+        return signedData;
     }
 
     /**
@@ -307,7 +317,7 @@ public class KseSignerInformation extends SignerInformation {
         boolean verified = true;
 
         Collection<KseSignerInformation> counterSigners = CmsUtil
-                .convertSignerInformations(super.getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
+                .convertSignerInformations(super.getCounterSignatures().getSigners(), trustedCerts, signedData);
 
         for (KseSignerInformation signer : counterSigners) {
             signer.verify();
@@ -339,7 +349,7 @@ public class KseSignerInformation extends SignerInformation {
     @Override
     public SignerInformationStore getCounterSignatures() {
         List<KseSignerInformation> counterSigners = CmsUtil.convertSignerInformations(
-                                super.getCounterSignatures().getSigners(), trustedCerts, signatureCerts);
+                                super.getCounterSignatures().getSigners(), trustedCerts, signedData);
         // Load into an ArrayList for mapping between generic types.
         return new SignerInformationStore(new ArrayList<>(counterSigners));
     }

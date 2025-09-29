@@ -91,8 +91,7 @@ public class ExportCsvAction extends KeyStoreExplorerAction {
         }
     }
 
-    private void exportFile(JTable table, File exportFile) throws IOException
-    {
+    private void exportFile(JTable table, File exportFile) throws IOException {
         char listSeparator = getListSeparator();
         try (PrintStream csvOut = new PrintStream(exportFile, StandardCharsets.UTF_8)) {
             int columnCount = table.getColumnCount();

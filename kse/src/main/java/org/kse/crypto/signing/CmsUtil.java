@@ -57,8 +57,8 @@ public class CmsUtil {
      *
      * @param signatureFile The signature file.
      * @param chooser       The file chooser to use for choosing the content file.
-     * @return
-     * @throws CryptoException
+     * @return The CMSSignedData including any detached content, if available.
+     * @throws CryptoException If an exception occurs reading the signature or content.
      */
     public static CMSSignedData loadSignature(File signatureFile, Supplier<File> chooser)
             throws CryptoException {
@@ -114,6 +114,11 @@ public class CmsUtil {
         return new CMSProcessableFile(contentFile);
     }
 
+    /**
+     *
+     * @param pemInfo A PemInfo containing unknown PEM content.
+     * @return True if the PEM content is PKCS7 or CMS.
+     */
     public static boolean isCmsPemType(PemInfo pemInfo) {
         return pemInfo != null && (PKCS7_PEM_TYPE.equals(pemInfo.getType()) || CMS_PEM_TYPE.equals(pemInfo.getType()));
     }
@@ -123,6 +128,7 @@ public class CmsUtil {
      *
      * @param cms The CMS signature
      * @return The PEM'd encoding
+     * @throws CryptoException If an error occurs when decoding the PEM content.
      */
     public static String getPem(CMSSignedData cms) throws CryptoException {
         try {
@@ -135,9 +141,17 @@ public class CmsUtil {
         }
     }
 
+    /**
+     * Converts a collection of SignerInformation objects into a collection of KseSignerInformation objects.
+     *
+     * @param signerInfos The collection of SignerInformation objects to convert.
+     * @param trustedCerts The set of trusted certificates to add to the SignerInformation objects.
+     * @param signedData The signed data to add to the SignerInformation objects.
+     * @return A collection of KseSignerInformation objects.
+     */
     public static List<KseSignerInformation> convertSignerInformations(Collection<SignerInformation> signerInfos,
-            Store<X509CertificateHolder> trustedCerts, Store<X509CertificateHolder> signatureCerts) {
-        return signerInfos.stream().map(s -> new KseSignerInformation(s, trustedCerts, signatureCerts))
+            Store<X509CertificateHolder> trustedCerts, CMSSignedData signedData) {
+        return signerInfos.stream().map(s -> new KseSignerInformation(s, trustedCerts, signedData))
                 .collect(Collectors.toList());
     }
 }
