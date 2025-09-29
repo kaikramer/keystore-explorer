@@ -893,7 +893,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.2.840.113583.1.1.9", "PdfX509Extension");
         oidToNameMapping.put("1.2.840.113583.1.1.9.1", "PdfTimeStamp");
         oidToNameMapping.put("1.2.840.113583.1.1.9.2", "PdfArchiveRevInfo");
-        oidToNameMapping.put("1.2.840.113583.1.2 ", "acrobatCPS");
+        oidToNameMapping.put("1.2.840.113583.1.2", "AcrobatCPS");
         oidToNameMapping.put("1.2.840.113583.1.2.1", "PdfAuthenticDocumentsCPS");
         oidToNameMapping.put("1.2.840.113583.1.2.2", "PdfTestCPS");
         oidToNameMapping.put("1.2.840.113583.1.2.3", "PdfUbiquityCPS");
