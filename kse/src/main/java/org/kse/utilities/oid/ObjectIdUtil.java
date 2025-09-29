@@ -2127,6 +2127,13 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.0", "ObjectClass");
         oidToNameMapping.put("2.5.4.1", "AliasedEntryName");
         oidToNameMapping.put("2.5.4.10", "OrganizationName");
+        oidToNameMapping.put("2.5.4.100", "DnsName");
+        oidToNameMapping.put("2.5.4.101", "EepkCertificateRevocationList");
+        oidToNameMapping.put("2.5.4.102", "EeAttrCertificateRevocationList");
+        oidToNameMapping.put("2.5.4.103", "SupportedPublicKeyAlgorithms");
+        oidToNameMapping.put("2.5.4.104", "IntEmail");
+        oidToNameMapping.put("2.5.4.105", "Jid");
+        oidToNameMapping.put("2.5.4.106", "ObjectIdentifier");
         oidToNameMapping.put("2.5.4.10.1", "CollectiveOrganizationName");
         oidToNameMapping.put("2.5.4.11", "OrganizationalUnitName");
         oidToNameMapping.put("2.5.4.11.1", "CollectiveOrganizationalUnitName");
@@ -2226,6 +2233,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.87", "Url");
         oidToNameMapping.put("2.5.4.88", "UtmCoordinates");
         oidToNameMapping.put("2.5.4.89", "UrnC");
+        oidToNameMapping.put("2.5.4.9", "StreetAddress");
         oidToNameMapping.put("2.5.4.90", "Uii");
         oidToNameMapping.put("2.5.4.91", "Epc");
         oidToNameMapping.put("2.5.4.92", "TagAfi");
@@ -2234,7 +2242,8 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.95", "LdapUrl");
         oidToNameMapping.put("2.5.4.96", "TagLocation");
         oidToNameMapping.put("2.5.4.97", "OrganizationIdentifier");
-        oidToNameMapping.put("2.5.4.9", "StreetAddress");
+        oidToNameMapping.put("2.5.4.98", "CountryCode3c");
+        oidToNameMapping.put("2.5.4.99", "CountryCode3n");
         oidToNameMapping.put("2.5.4.9.1", "CollectiveStreetAddress");
         oidToNameMapping.put("2.5.6.0", "Top");
         oidToNameMapping.put("2.5.6.1", "Alias");
