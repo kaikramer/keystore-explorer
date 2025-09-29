@@ -2232,7 +2232,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.93", "EpcFormat");
         oidToNameMapping.put("2.5.4.94", "EpcInUrn");
         oidToNameMapping.put("2.5.4.95", "LdapUrl");
-        oidToNameMapping.put("2.5.4.96", "LdapUrl");
+        oidToNameMapping.put("2.5.4.96", "TagLocation");
         oidToNameMapping.put("2.5.4.97", "OrganizationIdentifier");
         oidToNameMapping.put("2.5.4.9", "StreetAddress");
         oidToNameMapping.put("2.5.4.9.1", "CollectiveStreetAddress");
