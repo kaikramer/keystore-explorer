@@ -312,16 +312,16 @@ public class CryptoFileUtil {
         }
 
         // @formatter:off
-		/*
-		 * Test for PKCS #12. ASN.1 should look like this:
-		 *
-		 * PFX ::= ASN1Sequence {
-		 * 		version ASN1Integer {v3(3)}(v3,...),
-		 * 		authSafe ContentInfo,
-		 * 		macData MacData OPTIONAL
-		 * }
-		 */
-		// @formatter:on
+        /*
+         * Test for PKCS #12. ASN.1 should look like this:
+         *
+         * PFX ::= ASN1Sequence {
+         *      version ASN1Integer {v3(3)}(v3,...),
+         *      authSafe ContentInfo,
+         *      macData MacData OPTIONAL
+         * }
+         */
+        // @formatter:on
 
         ASN1Primitive pfx = null;
         try {

@@ -56,43 +56,43 @@ public class GeneralNameUtil {
 
     // @formatter:off
 
-	/*
-	 * GeneralName ::= CHOICE
-	 * {
-	 *      otherName [0] AnotherName,
-	 *      rfc822Name [1] DERIA5String,
-	 *      dNSName [2] DERIA5String,
-	 *      x400Address [3] ORAddress,
-	 *      directoryName [4] Name,
-	 *      ediPartyName [5] EDIPartyName,
-	 *      uniformResourceIdentifier [6] DERIA5String,
-	 *      iPAddress [7] OCTET STRING,
-	 *      registeredID [8] OBJECT IDENTIFIER
-	 * }
-	 *
-	 * AnotherName ::= ASN1Sequence
-	 * {
-	 *      type-id OBJECT IDENTIFIER,
-	 *      value [0] EXPLICIT ANY DEFINED BY type-id
-	 * }
-	 *
-	 * EDIPartyName ::= ASN1Sequence
-	 * {
-	 *      nameAssigner [0] DirectoryString OPTIONAL,
-	 *      partyName [1] DirectoryString
-	 * }
-	 *
-	 * DirectoryString ::= CHOICE
-	 * {
-	 *      teletexString TeletexString (SIZE (1..MAX),
-	 *      printableString PrintableString (SIZE (1..MAX)),
-	 *      universalString UniversalString (SIZE (1..MAX)),
-	 *      utf8String UTF8String (SIZE (1.. MAX)),
-	 *      bmpString BMPString (SIZE(1..MAX))
-	 * }
-	 */
+    /*
+     * GeneralName ::= CHOICE
+     * {
+     *      otherName [0] AnotherName,
+     *      rfc822Name [1] DERIA5String,
+     *      dNSName [2] DERIA5String,
+     *      x400Address [3] ORAddress,
+     *      directoryName [4] Name,
+     *      ediPartyName [5] EDIPartyName,
+     *      uniformResourceIdentifier [6] DERIA5String,
+     *      iPAddress [7] OCTET STRING,
+     *      registeredID [8] OBJECT IDENTIFIER
+     * }
+     *
+     * AnotherName ::= ASN1Sequence
+     * {
+     *      type-id OBJECT IDENTIFIER,
+     *      value [0] EXPLICIT ANY DEFINED BY type-id
+     * }
+     *
+     * EDIPartyName ::= ASN1Sequence
+     * {
+     *      nameAssigner [0] DirectoryString OPTIONAL,
+     *      partyName [1] DirectoryString
+     * }
+     *
+     * DirectoryString ::= CHOICE
+     * {
+     *      teletexString TeletexString (SIZE (1..MAX),
+     *      printableString PrintableString (SIZE (1..MAX)),
+     *      universalString UniversalString (SIZE (1..MAX)),
+     *      utf8String UTF8String (SIZE (1.. MAX)),
+     *      bmpString BMPString (SIZE(1..MAX))
+     * }
+     */
 
-	// @formatter:on
+    // @formatter:on
 
     /**
      * Extract GeneralName from X500Principal object

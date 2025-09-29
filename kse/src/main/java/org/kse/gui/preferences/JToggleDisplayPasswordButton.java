@@ -28,8 +28,8 @@ import javax.swing.JPasswordField;
  * Button to toggle the visibility of an associated password field.
  */
 public class JToggleDisplayPasswordButton extends JButton {
-	private static final long serialVersionUID = 3222235201966932207L;
-	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
+    private static final long serialVersionUID = 3222235201966932207L;
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
     private final JPasswordField passwordField;
     private boolean visible = false;
 

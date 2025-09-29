@@ -304,8 +304,7 @@ public class DViewJwt extends JEscDialog {
             // Works for Java 15+ since OpenSslPubUtil uses the BC provider for loading the key
             } else if (publicKey instanceof EdDSAPublicKey) {
                 // Prevent exceptions in case an Ed448 key is used. There's no JWSVerifier for Ed448 keys.
-                if (EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm()))
-                {
+                if (EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm())) {
                     JOptionPane.showMessageDialog(this, res.getString("DViewJwt.InvalidPublicKey.message"),
                             res.getString("DViewJwt.Verify.Title"), JOptionPane.ERROR_MESSAGE);
                     return;

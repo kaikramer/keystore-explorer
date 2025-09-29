@@ -30,13 +30,13 @@ public enum OcspDigestAlgorithm {
 
     // @formatter:off
 
-	SHA1(CertificateID.HASH_SHA1, "SHA-1"),
+    SHA1(CertificateID.HASH_SHA1, "SHA-1"),
 
-	SHA256(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256), "SHA-256"),
-	SHA384(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384), "SHA-384"),
-	SHA512(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512), "SHA-512");
+    SHA256(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256), "SHA-256"),
+    SHA384(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384), "SHA-384"),
+    SHA512(new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512), "SHA-512");
 
-	// @formatter:on
+    // @formatter:on
 
     private AlgorithmIdentifier algorithmIdentifier;
     private String friendly;

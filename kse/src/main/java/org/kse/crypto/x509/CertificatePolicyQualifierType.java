@@ -29,10 +29,10 @@ public enum CertificatePolicyQualifierType {
 
     // @formatter:off
 
-	PKIX_CPS_POINTER_QUALIFIER("1.3.6.1.5.5.7.2.1", "PkixCpsPointerQualifier"),
-	PKIX_USER_NOTICE_QUALIFIER("1.3.6.1.5.5.7.2.2", "PkixUserNoticeQualifier");
+    PKIX_CPS_POINTER_QUALIFIER("1.3.6.1.5.5.7.2.1", "PkixCpsPointerQualifier"),
+    PKIX_USER_NOTICE_QUALIFIER("1.3.6.1.5.5.7.2.2", "PkixUserNoticeQualifier");
 
-	// @formatter:on
+    // @formatter:on
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
     private String oid;

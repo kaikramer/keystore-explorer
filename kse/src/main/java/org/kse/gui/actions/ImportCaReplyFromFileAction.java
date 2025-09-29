@@ -136,8 +136,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
                     X509Certificate rootCert = certs[certs.length - 1];
                     String matchAlias = null;
 
-                    if (caCertificates != null) // Match against CA Certificates KeyStore
-                    {
+                    if (caCertificates != null) { // Match against CA Certificates KeyStore
                         matchAlias = X509CertUtil.matchCertificate(caCertificates, rootCert);
                     }
 
@@ -146,8 +145,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
                         matchAlias = X509CertUtil.matchCertificate(windowsTrustedRootCertificates, rootCert);
                     }
 
-                    if (matchAlias == null) // Match against current KeyStore
-                    {
+                    if (matchAlias == null) { // Match against current KeyStore
                         matchAlias = X509CertUtil.matchCertificate(keyStore, rootCert);
                     }
 

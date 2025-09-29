@@ -45,39 +45,39 @@ public class PolicyInformationUtil {
 
     // @formatter:off
 
-	/*
-	 * PolicyInformation ::= ASN1Sequence { policyIdentifier CertPolicyId,
-	 * policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo
-	 * OPTIONAL }
-	 *
-	 * CertPolicyId ::= OBJECT IDENTIFIER
-	 *
-	 * PolicyQualifierInfo ::= ASN1Sequence { policyQualifierId
-	 * PolicyQualifierId, qualifier ANY DEFINED BY policyQualifierId }
-	 *
-	 * -- policyQualifierIds for Internet policy qualifiers
-	 *
-	 * id-qt OBJECT IDENTIFIER ::= { id-pkix 2 } id-qt-cps OBJECT IDENTIFIER ::=
-	 * { id-qt 1 } id-qt-unotice OBJECT IDENTIFIER ::= { id-qt 2 }
-	 *
-	 * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
-	 *
-	 * Qualifier ::= CHOICE { cPSuri CPSuri, userNotice UserNotice }
-	 *
-	 * CPSuri ::= DERIA5String
-	 *
-	 * UserNotice ::= ASN1Sequence { noticeRef NoticeReference OPTIONAL,
-	 * explicitText DisplayText OPTIONAL}
-	 *
-	 * NoticeReference ::= ASN1Sequence { organization DisplayText,
-	 * noticeNumbers ASN1Sequence OF ASN1Integer }
-	 *
-	 * DisplayText ::= CHOICE { ia5String DERIA5String (SIZE (1..200)),
-	 * visibleString VisibleString (SIZE (1..200)), bmpString BMPString (SIZE
-	 * (1..200)), utf8String UTF8String (SIZE (1..200)) }
-	 */
+    /*
+     * PolicyInformation ::= ASN1Sequence { policyIdentifier CertPolicyId,
+     * policyQualifiers ASN1Sequence SIZE (1..MAX) OF PolicyQualifierInfo
+     * OPTIONAL }
+     *
+     * CertPolicyId ::= OBJECT IDENTIFIER
+     *
+     * PolicyQualifierInfo ::= ASN1Sequence { policyQualifierId
+     * PolicyQualifierId, qualifier ANY DEFINED BY policyQualifierId }
+     *
+     * -- policyQualifierIds for Internet policy qualifiers
+     *
+     * id-qt OBJECT IDENTIFIER ::= { id-pkix 2 } id-qt-cps OBJECT IDENTIFIER ::=
+     * { id-qt 1 } id-qt-unotice OBJECT IDENTIFIER ::= { id-qt 2 }
+     *
+     * PolicyQualifierId ::= OBJECT IDENTIFIER ( id-qt-cps | id-qt-unotice )
+     *
+     * Qualifier ::= CHOICE { cPSuri CPSuri, userNotice UserNotice }
+     *
+     * CPSuri ::= DERIA5String
+     *
+     * UserNotice ::= ASN1Sequence { noticeRef NoticeReference OPTIONAL,
+     * explicitText DisplayText OPTIONAL}
+     *
+     * NoticeReference ::= ASN1Sequence { organization DisplayText,
+     * noticeNumbers ASN1Sequence OF ASN1Integer }
+     *
+     * DisplayText ::= CHOICE { ia5String DERIA5String (SIZE (1..200)),
+     * visibleString VisibleString (SIZE (1..200)), bmpString BMPString (SIZE
+     * (1..200)), utf8String UTF8String (SIZE (1..200)) }
+     */
 
-	// @formatter:on
+    // @formatter:on
 
     private PolicyInformationUtil() {
     }
