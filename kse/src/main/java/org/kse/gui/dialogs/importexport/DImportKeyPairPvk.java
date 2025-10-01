@@ -495,7 +495,7 @@ public class DImportKeyPairPvk extends JEscDialog {
         }
         return false;
     }
-    
+
     private X509Certificate[] loadCertificates(PrivateKey privateKey) {
         String certificatePath = jtfCertificatePath.getText().trim();
 

@@ -2741,7 +2741,7 @@ public class X509Ext {
         // @formatter:on
 
         StringBuilder sb = new StringBuilder();
-        
+
         ASN1Sequence outerSeq = ASN1Sequence.getInstance(octets);
 
         for (ASN1Encodable innerEnc : outerSeq) {

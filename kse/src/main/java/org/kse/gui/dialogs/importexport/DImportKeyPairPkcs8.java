@@ -87,7 +87,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
-    
+
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
     private JPanel jpKeyPair;
@@ -477,7 +477,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
             DError.displayError(this, ex);
         }
     }
-    
+
     private boolean generateCertificate(PrivateKey privateKey) {
         try {
             KeyInfo keyInfo = KeyPairUtil.getKeyInfo(privateKey);
@@ -504,7 +504,7 @@ public class DImportKeyPairPkcs8 extends JEscDialog {
         }
         return false;
     }
-    
+
     private X509Certificate[] loadCertificates(PrivateKey privateKey) {
         String certificatePath = jtfCertificatePath.getText().trim();
 

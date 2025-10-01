@@ -127,7 +127,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     }
 
     /**
-     * Creates new DViewExtensions dialog. 
+     * Creates new DViewExtensions dialog.
      * @param parent Parent dialog
      * @param title The dialog title
      * @param extensions Extensions to display

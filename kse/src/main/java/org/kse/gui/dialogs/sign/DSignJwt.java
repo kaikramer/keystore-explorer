@@ -297,7 +297,7 @@ public class DSignJwt extends JEscDialog {
     public boolean isOk() {
         return isOk;
     }
-    
+
     public JWSAlgorithm getAlgorithm() {
         JWSAlgorithm signatureAlgorithm = null;
 

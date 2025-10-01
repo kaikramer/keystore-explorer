@@ -371,7 +371,7 @@ public final class X509CertUtil {
         return longestPath.toArray(new X509Certificate[0]);
     }
     /*
-     * Tries to sort the certificates according to their hierarchy, 
+     * Tries to sort the certificates according to their hierarchy,
      * and adds at the end those that have no dependencies.
      */
     public static X509Certificate[] orderX509CertsChain(X509Certificate[] certs) {

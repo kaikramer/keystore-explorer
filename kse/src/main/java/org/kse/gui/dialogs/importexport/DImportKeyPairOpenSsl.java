@@ -529,7 +529,7 @@ public class DImportKeyPairOpenSsl extends JEscDialog {
                 }
             }
         }
-        
+
         File certificateFile = new File(certificatePath);
 
         try {
