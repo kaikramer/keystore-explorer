@@ -2125,6 +2125,7 @@ public class X509Ext {
                 sb.append(INDENT);
                 sb.append(ObjectIdUtil.toString(statementId));
                 if (statementInfo != null) {
+                    sb.append(INDENT.toString(2));
                     sb.append(statementInfo);
                 }
                 sb.append(NEWLINE);
