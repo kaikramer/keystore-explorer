@@ -2083,7 +2083,7 @@ public class X509Ext {
                 sb.append(INDENT.toString(indentLevel));
                 sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
                 sb.append(NEWLINE);
-                sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
+                sb.append(getMonetaryValueStringValue(statementInfo));
                 break;
             case QC_RETENTION_PERIOD:
                 ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
@@ -2187,7 +2187,7 @@ public class X509Ext {
         return sb.toString();
     }
 
-    private static String getMonetaryValueStringValue(ASN1Encodable asn1Encodable, int baseIndentLevel) {
+    private static String getMonetaryValueStringValue(ASN1Encodable asn1Encodable) {
 
         // @formatter:off
 
@@ -2216,19 +2216,19 @@ public class X509Ext {
 
         if (currency != null) {
             String currencyString = currency.isAlphabetic() ? currency.getAlphabetic() : "" + currency.getNumeric();
-            sb.append(INDENT.toString(baseIndentLevel));
+            sb.append(INDENT.toString(2));
             sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Currency"), currencyString));
             sb.append(NEWLINE);
         }
 
         if (amount != null) {
-            sb.append(INDENT.toString(baseIndentLevel));
+            sb.append(INDENT.toString(2));
             sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Amount"), amount.toString()));
             sb.append(NEWLINE);
         }
 
         if (exponent != null) {
-            sb.append(INDENT.toString(baseIndentLevel));
+            sb.append(INDENT.toString(2));
             sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Exponent"), exponent.toString()));
             sb.append(NEWLINE);
         }
