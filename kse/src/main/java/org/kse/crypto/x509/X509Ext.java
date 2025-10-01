@@ -2071,7 +2071,7 @@ public class X509Ext {
             case QC_SYNTAX_V1:
             case QC_SYNTAX_V2:
                 SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
-                sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
+                sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo));
                 break;
             case QC_COMPLIANCE:
                 // no statementInfo
@@ -2137,8 +2137,7 @@ public class X509Ext {
 
     }
 
-    private static String getSemanticInformationValueString(QcStatementType qcStatementType,
-                                                            SemanticsInformation semanticsInfo, int baseIndentLevel)
+    private static String getSemanticInformationValueString(QcStatementType qcStatementType, SemanticsInformation semanticsInfo)
             throws IOException {
 
         // @formatter:off
@@ -2159,7 +2158,7 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append(INDENT.toString(baseIndentLevel));
+        sb.append(INDENT));
         if (qcStatementType == QcStatementType.QC_SYNTAX_V1) {
             sb.append(res.getString(QcStatementType.QC_SYNTAX_V1.getResKey()));
         } else {
@@ -2168,18 +2167,18 @@ public class X509Ext {
         sb.append(NEWLINE);
 
         if (semanticsIdentifier != null) {
-            sb.append(INDENT.toString(baseIndentLevel + 1));
+            sb.append(INDENT.toString(2));
             sb.append(MessageFormat.format(res.getString("QCSyntax.SemanticsIdentifier"), semanticsIdentifier.getId()));
             sb.append(NEWLINE);
         }
 
         if (nameRegistrationAuthorities != null) {
-            sb.append(INDENT.toString(baseIndentLevel + 1));
+            sb.append(INDENT.toString(2));
             sb.append(res.getString("QCSyntax.NameRegistrationAuthorities"));
             sb.append(NEWLINE);
 
             for (GeneralName nameRegistrationAuthority : nameRegistrationAuthorities) {
-                sb.append(INDENT.toString(baseIndentLevel + 2));
+                sb.append(INDENT.toString(3));
                 sb.append(GeneralNameUtil.toString(nameRegistrationAuthority));
                 sb.append(NEWLINE);
             }
