@@ -113,7 +113,6 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.DialogViewer;
-import org.kse.utilities.io.IndentChar;
 import org.kse.utilities.io.IndentSequence;
 import org.kse.utilities.oid.ObjectIdUtil;
 

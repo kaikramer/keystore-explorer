@@ -63,7 +63,6 @@ import org.bouncycastle.asn1.DERUniversalString;
 import org.bouncycastle.asn1.DERVisibleString;
 import org.kse.crypto.x509.X509Ext;
 import org.kse.utilities.io.HexUtil;
-import org.kse.utilities.io.IndentChar;
 import org.kse.utilities.io.IndentSequence;
 import org.kse.utilities.oid.ObjectIdUtil;
 

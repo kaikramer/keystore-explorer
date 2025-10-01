@@ -81,7 +81,6 @@ import org.kse.gui.PlatformUtil;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
-import org.kse.utilities.io.IndentChar;
 import org.kse.utilities.io.IndentSequence;
 
 /**

@@ -106,7 +106,6 @@ import org.bouncycastle.asn1.x509.qualified.SemanticsInformation;
 import org.bouncycastle.asn1.x509.qualified.TypeOfBiometricData;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.HexUtil;
-import org.kse.utilities.io.IndentChar;
 import org.kse.utilities.io.IndentSequence;
 import org.kse.utilities.oid.ObjectIdUtil;
 

@@ -63,7 +63,6 @@ import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.asn1.Asn1Dump;
 import org.kse.utilities.asn1.Asn1Exception;
-import org.kse.utilities.io.IndentChar;
 import org.kse.utilities.io.IndentSequence;
 
 import com.github.difflib.text.DiffRow;
