@@ -540,8 +540,7 @@ public class X509Ext {
             sb.append(INDENT);
             sb.append(res.getString("AccessLocation"));
             sb.append(NEWLINE);
-            sb.append(INDENT);
-            sb.append(INDENT);
+            sb.append(INDENT.toString(2));
             sb.append(accessLocationStr);
             sb.append(NEWLINE);
         }
@@ -1090,16 +1089,13 @@ public class X509Ext {
                 sb.append(MessageFormat.format(res.getString("PermittedSubtree"), permitted));
                 sb.append(NEWLINE);
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(res.getString("Base"));
                 sb.append(NEWLINE);
 
                 GeneralName base = permittedSubtree.getBase();
 
-                sb.append(INDENT);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(3));
                 sb.append(GeneralNameUtil.toString(base));
                 sb.append(NEWLINE);
 
@@ -1110,8 +1106,7 @@ public class X509Ext {
                     minimumInt = minimum.intValue();
                 }
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
                 sb.append(NEWLINE);
 
@@ -1120,8 +1115,7 @@ public class X509Ext {
                 if (maximum != null) {
                     int maximumInt = maximum.intValue();
 
-                    sb.append(INDENT);
-                    sb.append(INDENT);
+                    sb.append(INDENT.toString(2));
                     sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
                     sb.append(NEWLINE);
                 }
@@ -1150,24 +1144,20 @@ public class X509Ext {
                 sb.append(MessageFormat.format(res.getString("ExcludedSubtree"), excluded));
                 sb.append(NEWLINE);
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(res.getString("Base"));
                 sb.append(NEWLINE);
 
                 GeneralName base = excludedSubtree.getBase();
 
-                sb.append(INDENT);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(3));
                 sb.append(GeneralNameUtil.toString(base));
                 sb.append(NEWLINE);
 
                 BigInteger minimum = excludedSubtree.getMinimum();
                 int minimumInt = minimum.intValue();
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
                 sb.append(NEWLINE);
 
@@ -1176,8 +1166,7 @@ public class X509Ext {
                 if (maximum != null) {
                     int maximumInt = maximum.intValue();
 
-                    sb.append(INDENT);
-                    sb.append(INDENT);
+                    sb.append(INDENT.toString(2));
                     sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
                     sb.append(NEWLINE);
                 }
@@ -1816,8 +1805,7 @@ public class X509Ext {
 
             for (GeneralName generalName : generalNames.getNames()) {
                 sb.append(baseIndent);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(GeneralNameUtil.toString(generalName));
                 sb.append(NEWLINE);
             }
@@ -1838,8 +1826,7 @@ public class X509Ext {
                 String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
                 sb.append(baseIndent);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
                 sb.append(NEWLINE);
             }
@@ -2486,8 +2473,7 @@ public class X509Ext {
             sb.append(INDENT);
             sb.append(res.getString("Procuration.CertRef.Issuer"));
             for (GeneralName generalName : certRef.getIssuer().getNames()) {
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(GeneralNameUtil.toString(generalName));
                 sb.append(NEWLINE);
             }
