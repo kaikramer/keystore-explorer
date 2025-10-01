@@ -696,8 +696,8 @@ public class MsPvkUtil {
         if ((privateKeyBlob[0] == 82) && // R
             (privateKeyBlob[1] == 83) && // S
             (privateKeyBlob[2] == 65) && // A
-            (privateKeyBlob[3] == 50)) // 2
-        {
+            (privateKeyBlob[3] == 50)) { // 2
+
             return blobToRsaPrivateKey(privateKeyBlob);
         } else {
             return blobToDsaPrivateKey(privateKeyBlob);
@@ -879,16 +879,16 @@ public class MsPvkUtil {
             if ((decryptedKeyBlob[0] == 82) && // R
                 (decryptedKeyBlob[1] == 83) && // S
                 (decryptedKeyBlob[2] == 65) && // A
-                (decryptedKeyBlob[3] == 50)) // 2
-            {
+                (decryptedKeyBlob[3] == 50)) { // 2
+
                 return decryptedKeyBlob;
-            }
+
             // First four bytes will be "DSS2" if successful for a DSA private key
-            else if ((decryptedKeyBlob[0] == 68) && // D
+            } else if ((decryptedKeyBlob[0] == 68) && // D
                      (decryptedKeyBlob[1] == 83) && // S
                      (decryptedKeyBlob[2] == 83) && // S
-                     (decryptedKeyBlob[3] == 50)) // 2
-            {
+                     (decryptedKeyBlob[3] == 50)) { // 2
+
                 return decryptedKeyBlob;
             } else {
                 return null;
