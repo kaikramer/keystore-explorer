@@ -66,27 +66,34 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
     protected Set<X509Certificate> getTrustedCertificates() throws CryptoException {
         KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
-        KeyStoreState currentState = history.getCurrentState();
-        KeyStore keyStore = currentState.getKeyStore();
+        // When a key store is loaded, use the key store for the trusted certs, and
+        // include the CA certs if the user has enabled the CA certs in the preferences.
+        if (history != null) {
+            KeyStoreState currentState = history.getCurrentState();
+            KeyStore keyStore = currentState.getKeyStore();
 
-        KeyStore caCertificates = getCaCertificates();
-        KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
+            KeyStore caCertificates = getCaCertificates();
+            KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
 
-        // Perform cert lookup against current KeyStore
-        Set<X509Certificate> trustedCerts = new HashSet<>();
-        trustedCerts.addAll(extractCertificates(keyStore));
+            // Perform cert lookup against current KeyStore
+            Set<X509Certificate> trustedCerts = new HashSet<>();
+            trustedCerts.addAll(extractCertificates(keyStore));
 
-        if (caCertificates != null) {
-            // Perform cert lookup against CA Certificates KeyStore
-            trustedCerts.addAll(extractCertificates(caCertificates));
+            if (caCertificates != null) {
+                // Perform cert lookup against CA Certificates KeyStore
+                trustedCerts.addAll(extractCertificates(caCertificates));
+            }
+
+            if (windowsTrustedRootCertificates != null) {
+                // Perform cert lookup against Windows Trusted Root Certificates KeyStore
+                trustedCerts.addAll(extractCertificates(windowsTrustedRootCertificates));
+            }
+
+            return trustedCerts;
         }
 
-        if (windowsTrustedRootCertificates != null) {
-            // Perform cert lookup against Windows Trusted Root Certificates KeyStore
-            trustedCerts.addAll(extractCertificates(windowsTrustedRootCertificates));
-        }
-
-        return trustedCerts;
+        // When a key store is NOT loaded, use the CA certs regardless of the users preferences.
+        return getTrustedCertsNoPrefsAsSet();
     }
 
     protected Collection<X509Certificate> extractCertificates(KeyStore keystore) throws CryptoException {
@@ -108,25 +115,33 @@ public abstract class AuthorityCertificatesVerifyAction extends AuthorityCertifi
      */
     protected Store<X509CertificateHolder> getTrustedCertsNoPrefs()
             throws CryptoException, CertificateEncodingException {
+
+        @SuppressWarnings("unchecked")
+        Store<X509CertificateHolder> trustedCerts = new JcaCertStore(getTrustedCertsNoPrefsAsSet());
+        return trustedCerts;
+    }
+
+    /*
+     * A private method for getting the CA trusted certs (no user preferences) as a Set.
+     */
+    private Set<X509Certificate> getTrustedCertsNoPrefsAsSet() throws CryptoException {
         KeyStore caCertificates = getCaCertificatesNoPrefCheck();
         KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificatesNoPrefCheck();
 
         // Perform cert lookup against current KeyStore
-        Set<X509Certificate> compCerts = new HashSet<>();
+        Set<X509Certificate> allCerts = new HashSet<>();
 
         if (caCertificates != null) {
             // Perform cert lookup against CA Certificates KeyStore
-            compCerts.addAll(X509CertUtil.extractCertificates(caCertificates));
+            allCerts.addAll(X509CertUtil.extractCertificates(caCertificates));
         }
 
         if (windowsTrustedRootCertificates != null) {
             // Perform cert lookup against Windows Trusted Root Certificates KeyStore
-            compCerts.addAll(X509CertUtil.extractCertificates(windowsTrustedRootCertificates));
+            allCerts.addAll(X509CertUtil.extractCertificates(windowsTrustedRootCertificates));
         }
 
-        @SuppressWarnings("unchecked")
-        Store<X509CertificateHolder> trustedCerts = new JcaCertStore(compCerts);
-        return trustedCerts;
+        return allCerts;
     }
 
     /**

@@ -3062,8 +3062,6 @@ public final class KseFrame implements StatusBar {
         generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
         importTrustedCertificateAction.setEnabled(true);
         importKeyPairAction.setEnabled(true);
-        verifySignatureAction.setEnabled(true);
-        verifyJarAction.setEnabled(true);
         propertiesAction.setEnabled(true);
         exportCsvAction.setEnabled(true);
         if (type.isFileBased()) {
@@ -3193,8 +3191,6 @@ public final class KseFrame implements StatusBar {
         generateSecretKeyAction.setEnabled(false);
         importTrustedCertificateAction.setEnabled(false);
         importKeyPairAction.setEnabled(false);
-        verifySignatureAction.setEnabled(false);
-        verifyJarAction.setEnabled(false);
         setPasswordAction.setEnabled(false);
         jmChangeType.setEnabled(false);
         propertiesAction.setEnabled(false);
