@@ -1648,6 +1648,8 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.5.5.7.2.1", "Cps");
         oidToNameMapping.put("1.3.6.1.5.5.7.2.2", "Unotice");
         oidToNameMapping.put("1.3.6.1.5.5.7.2.3", "TextNotice");
+        oidToNameMapping.put("1.3.6.1.5.5.7.2.4", "Acps");
+        oidToNameMapping.put("1.3.6.1.5.5.7.2.5", "Acunotice");
         oidToNameMapping.put("1.3.6.1.5.5.7.20", "Logo");
         oidToNameMapping.put("1.3.6.1.5.5.7.20.1", "LogoLoyalty");
         oidToNameMapping.put("1.3.6.1.5.5.7.20.2", "LogoBackground");
