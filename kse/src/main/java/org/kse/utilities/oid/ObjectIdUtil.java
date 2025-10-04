@@ -1201,6 +1201,8 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.101.111", "X448");
         oidToNameMapping.put("1.3.101.112", "Ed25519");
         oidToNameMapping.put("1.3.101.113", "Ed448");
+        oidToNameMapping.put("1.3.101.114", "Ed25519ph");
+        oidToNameMapping.put("1.3.101.115", "Ed448ph");
         oidToNameMapping.put("1.3.12.2.1011.7.1", "DecEncryptionAlgorithm");
         oidToNameMapping.put("1.3.12.2.1011.7.1.2", "DecDEA");
         oidToNameMapping.put("1.3.12.2.1011.7.2", "DecHashAlgorithm");
