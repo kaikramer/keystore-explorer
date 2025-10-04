@@ -22,7 +22,15 @@ package org.kse.crypto.x509;
 import java.util.ResourceBundle;
 
 /**
- * Enumeration of Access Methods (1.3.6.1.5.5.7.1.1).
+ * Enumeration of Access Methods for:
+ * <ul>
+ *     <li>
+ *         AuthorityInformationAccess (1.3.6.1.5.5.7.1.1)
+ *     </li>
+ *     <li>
+ *         or SubjectInformationAccess (1.3.6.1.5.5.7.1.11).
+ *     </li>
+ * <ul>
  */
 public enum AccessMethodType {
     OCSP("1.3.6.1.5.5.7.48.1", "OcspAccessMethod"),
