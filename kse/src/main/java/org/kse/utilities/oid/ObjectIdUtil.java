@@ -371,6 +371,12 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.0.10118.3.0.49", "Ripemd160");
         oidToNameMapping.put("1.0.10118.3.0.50", "Ripemd128");
         oidToNameMapping.put("1.0.10118.3.0.55", "Whirlpool");
+        oidToNameMapping.put("1.2.112.0.2.0.34.101.45.11", "BignWithHSpec");
+        oidToNameMapping.put("1.2.112.0.2.0.34.101.45.12", "BignWithHBelt");
+        oidToNameMapping.put("1.2.112.0.2.0.34.101.45.2.1", "BignPubkey");
+        oidToNameMapping.put("1.2.112.0.2.0.34.101.45.3.1", "BignParamB1");
+        oidToNameMapping.put("1.2.112.0.2.0.34.101.45.3.2", "BignParamB2");
+        oidToNameMapping.put("1.2.112.0.2.0.34.101.45.3.3", "BignParamB3");
         oidToNameMapping.put("1.2.156.10197.1.301", "sm2p256v1");
         oidToNameMapping.put("1.2.156.10197.1.301.101", "wapip192v1");
         oidToNameMapping.put("1.2.156.10197.1.401", "SM3");
