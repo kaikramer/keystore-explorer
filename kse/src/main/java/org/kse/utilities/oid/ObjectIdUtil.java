@@ -2470,6 +2470,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.54.1775.6", "Tunneling");
         oidToNameMapping.put("2.54.1775.7", "SetQualifier");
         oidToNameMapping.put("2.54.1775.99", "SetData");
+        oidToNameMapping.put("2.999", "Example");
     }
 
     /**
