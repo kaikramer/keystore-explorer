@@ -1427,8 +1427,8 @@ public class X509Ext {
 
         /*
          * PolicyConstraints ::= ASN1Sequence {
-         * 		requireExplicitPolicy [0] SkipCerts OPTIONAL,
-         * 		inhibitPolicyMapping [1] SkipCerts OPTIONAL
+         *      requireExplicitPolicy [0] SkipCerts OPTIONAL,
+         *      inhibitPolicyMapping [1] SkipCerts OPTIONAL
          * }
          *
          * SkipCerts ::= ASN1Integer (0..MAX)
@@ -1731,9 +1731,9 @@ public class X509Ext {
 
         /*
          * DistributionPoint ::= ASN1Sequence {
-         * 		distributionPoint [0] DistributionPointName OPTIONAL,
-         * 		reasons [1] ReasonFlags OPTIONAL,
-         * 		cRLIssuer [2] GeneralNames OPTIONAL
+         *      distributionPoint [0] DistributionPointName OPTIONAL,
+         *      reasons [1] ReasonFlags OPTIONAL,
+         *      cRLIssuer [2] GeneralNames OPTIONAL
          * }
          *
          * GeneralNames ::= ASN1Sequence SIZE (1..MAX) OF GeneralName
@@ -1788,8 +1788,8 @@ public class X509Ext {
 
         /*
          * DistributionPointName ::= CHOICE {
-         * 		fullname [0] GeneralNames,
-         * 		nameRelativeToCRLIssuer [1] RelativeDistinguishedName
+         *      fullname [0] GeneralNames,
+         *      nameRelativeToCRLIssuer [1] RelativeDistinguishedName
          * }
          *
          * RelativeDistinguishedName ::= SET SIZE (1 .. MAX) OF
@@ -2253,7 +2253,7 @@ public class X509Ext {
 
     private static String getOcspNoCheckStringValue() {
 
-        /*	OCSPNoCheck ::= NULL */
+        /*  OCSPNoCheck ::= NULL */
 
         // we return the extension name as the value, because only its existence matters and 'NULL' might be confusing
         return res.getString("OCSPNoCheck");
@@ -2420,7 +2420,7 @@ public class X509Ext {
 
     private static String getLiabilityLimitationFlagStringValue(byte[] octets) {
 
-        /*	LiabilityLimitationFlagSyntax ::= BOOLEAN */
+        /*  LiabilityLimitationFlagSyntax ::= BOOLEAN */
 
         ASN1Boolean asn1Boolean = ASN1Boolean.getInstance(octets);
         return asn1Boolean.toString();
@@ -2428,7 +2428,7 @@ public class X509Ext {
 
     private static String getDateOfCertGenStringValue(byte[] octets) {
 
-        /*	DateOfCertGenSyntax ::= GeneralizedTime */
+        /*  DateOfCertGenSyntax ::= GeneralizedTime */
 
         ASN1GeneralizedTime dateOfCertGenSyntax = ASN1GeneralizedTime.getInstance(octets);
         return getGeneralizedTimeString(dateOfCertGenSyntax);
@@ -2592,21 +2592,21 @@ public class X509Ext {
 
     private static String getICCSNStringValue(byte[] octets) {
 
-        /*	ICCSNSyntax ::= OCTET STRING (SIZE(8..20)) */
+        /*  ICCSNSyntax ::= OCTET STRING (SIZE(8..20)) */
 
         return HexUtil.getHexString(octets);
     }
 
     private static String getRestrictionStringValue(byte[] octets) throws IOException {
 
-        /*	RestrictionSyntax ::= DirectoryString (SIZE(1..1024)) */
+        /*  RestrictionSyntax ::= DirectoryString (SIZE(1..1024)) */
 
         return DirectoryString.getInstance(ASN1Primitive.fromByteArray(octets)).toString();
     }
 
     private static String getAdditionalInformationStringValue(byte[] octets) throws IOException {
 
-        /*	AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048)) */
+        /*  AdditionalInformationSyntax ::= DirectoryString (SIZE(1..2048)) */
 
         return DirectoryString.getInstance(ASN1Primitive.fromByteArray(octets)).toString();
     }
@@ -2636,10 +2636,10 @@ public class X509Ext {
         /*
             Not much information available about that extension...
 
-            06 09		; OBJECT_ID (9 Bytes)
+            06 09       ; OBJECT_ID (9 Bytes)
             |  2b 06 01 04 01 82 37 14  02
             |     ; 1.3.6.1.4.1.311.20.2 Certificate Template Name (Certificate Type)
-            04 0a		; OCTET_STRING (a Bytes)#
+            04 0a       ; OCTET_STRING (a Bytes)#
                1e 08 00 55 00 73 00 65  00 72                    ; ...U.s.e.r
          */
         // @formatter:on
@@ -2741,7 +2741,7 @@ public class X509Ext {
         // @formatter:on
 
         StringBuilder sb = new StringBuilder();
-        
+
         ASN1Sequence outerSeq = ASN1Sequence.getInstance(octets);
 
         for (ASN1Encodable innerEnc : outerSeq) {

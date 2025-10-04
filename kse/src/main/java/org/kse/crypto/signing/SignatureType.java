@@ -97,7 +97,7 @@ public enum SignatureType {
     // SM2
     SHA256_SM2("SHA256withSM2", "1.2.156.10197.1.503", SHA256, "SignatureType.Sha256withSm2"),
     SM3_SM2("SM3withSM2", "1.2.156.10197.1.501", SM3, "SignatureType.Sm3withSm2");
-	// @formatter:on
+    // @formatter:on
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
     private static final String RSASSA_PSS_OID = id_RSASSA_PSS.getId();

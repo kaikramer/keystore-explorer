@@ -38,8 +38,8 @@ import org.kse.gui.passwordmanager.PasswordManager;
  * Button to update the keystore file path of an associated text field.
  */
 public class JChangeKeyStorePathButton extends JButton {
-	private static final long serialVersionUID = 1324616391135888291L;
-	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
+    private static final long serialVersionUID = 1324616391135888291L;
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
     private final JTextField keystorePathField;
     private final PasswordManager passwordManager;
 
@@ -80,32 +80,32 @@ public class JChangeKeyStorePathButton extends JButton {
                 return;
             }
 
-			if (passwordManager.isKeyStorePasswordKnown(newPath)) {
-				JOptionPane.showMessageDialog(this.getParent(),
-						res.getString("DPreferences.storedPasswords.changeKeyStore.ksPwdKnown.msg"),
-						res.getString("DPreferences.storedPasswords.changeKeyStore.ksPwdKnown.tit"),
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+            if (passwordManager.isKeyStorePasswordKnown(newPath)) {
+                JOptionPane.showMessageDialog(this.getParent(),
+                        res.getString("DPreferences.storedPasswords.changeKeyStore.ksPwdKnown.msg"),
+                        res.getString("DPreferences.storedPasswords.changeKeyStore.ksPwdKnown.tit"),
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             passwordManager.getKeyStorePassword(oldPath).ifPresent(password -> {
                 try {
                     KeyStore keyStore = KeyStoreUtil.load(newPath, new Password(password));
 
-					if (keyStore == null) {
-						JOptionPane.showMessageDialog(this.getParent(),
-								res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.err.msg"),
-								res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.err.tit"),
-								JOptionPane.ERROR_MESSAGE);
-					}
+                    if (keyStore == null) {
+                        JOptionPane.showMessageDialog(this.getParent(),
+                                res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.err.msg"),
+                                res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.err.tit"),
+                                JOptionPane.ERROR_MESSAGE);
+                    }
 
                     keystorePathField.setText(newPath.getAbsolutePath());
                     passwordManager.updateKeyStoreFilePath(oldPath, newPath);
                 } catch (Exception e1) {
-					JOptionPane.showMessageDialog(this.getParent(),
-							res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.ex.msg"),
-							res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.ex.tit"),
-							JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this.getParent(),
+                            res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.ex.msg"),
+                            res.getString("DPreferences.storedPasswords.changeKeyStore.ksLoad.ex.tit"),
+                            JOptionPane.ERROR_MESSAGE);
                 }
             });
         }

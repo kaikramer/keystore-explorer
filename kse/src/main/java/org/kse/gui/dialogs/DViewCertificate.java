@@ -532,17 +532,17 @@ public class DViewCertificate extends JEscDialog {
 
         return (X509Certificate) ((DefaultMutableTreeNode) selections[0].getLastPathComponent()).getUserObject();
     }
-    
+
     private static long getDateDiffInDays(Date startDate, Date endDate) {
         long diffInMillis = endDate.getTime() - startDate.getTime();
         return TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
     }
-    
+
     private static long getDateDiffInSeconds(Date startDate, Date endDate) {
         long diffInMillis = endDate.getTime() - startDate.getTime();
         return TimeUnit.SECONDS.convert(diffInMillis, TimeUnit.MILLISECONDS);
     }
-    
+
     private void populateDetails() {
         X509Certificate cert = getSelectedCertificate();
 

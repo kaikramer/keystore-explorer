@@ -80,8 +80,7 @@ public class ManualProxySelector extends ProxySelector {
             proxies.add(httpsProxy);
         } else if ((uri.getScheme().equals("ftp")) && (ftpProxy != null)) {
             proxies.add(ftpProxy);
-        } else if (socksProxy != null) // Use SOCKS if available and no proxy yet identified
-        {
+        } else if (socksProxy != null) { // Use SOCKS if available and no proxy yet identified
             proxies.add(socksProxy);
         }
 

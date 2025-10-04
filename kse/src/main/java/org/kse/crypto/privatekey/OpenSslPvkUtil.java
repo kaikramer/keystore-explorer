@@ -498,11 +498,11 @@ public class OpenSslPvkUtil {
 
                 // handle EC structure first (RFC 5915)
                 //   ECPrivateKey ::= SEQUENCE {
-                //	     version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
-                //	     privateKey     OCTET STRING,
-                //	     parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
-                //	     publicKey  [1] BIT STRING OPTIONAL
-                //	   }
+                //       version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
+                //       privateKey     OCTET STRING,
+                //       parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
+                //       publicKey  [1] BIT STRING OPTIONAL
+                //     }
                 if ((seq.size() >= 2) && (seq.size() <= 4) && seq.getObjectAt(0) instanceof ASN1Integer) {
                     BigInteger version = ((ASN1Integer) seq.getObjectAt(0)).getValue();
                     if (version.equals(VERSION_EC)) {

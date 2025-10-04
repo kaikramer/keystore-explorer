@@ -30,8 +30,8 @@ import javax.swing.JPasswordField;
  * Special JButton to copy the content of an associated password field.
  */
 public class JCopyPasswordButton extends JButton {
-	private static final long serialVersionUID = 8233303153730253088L;
-	private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
+    private static final long serialVersionUID = 8233303153730253088L;
+    private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/preferences/resources");
     private final JPasswordField passwordField;
 
     /**

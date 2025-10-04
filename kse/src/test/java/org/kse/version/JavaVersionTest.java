@@ -74,11 +74,11 @@ public class JavaVersionTest {
 
     @ParameterizedTest
     @CsvSource({
-            "1.8.0_20-b62, 	1, 8, 0",
-            "9, 			9, 0, 0",
-            "9-ea, 			9, 0, 0",
-            "10.0.0, 	   10, 0, 0",
-            "10.0.1, 	   10, 0, 1",
+            "1.8.0_20-b62,  1, 8, 0",
+            "9,             9, 0, 0",
+            "9-ea,          9, 0, 0",
+            "10.0.0,       10, 0, 0",
+            "10.0.1,       10, 0, 1",
     })
     public void getMajorMinorSecurity(String ver, int major, int minor, int security) {
         assertEquals(major, new JavaVersion(ver).getMajor());

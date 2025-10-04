@@ -119,7 +119,7 @@ public class DAbout extends JEscDialog {
         jpAbout.add(jlKSE, "top");
         jpAbout.add(jlIcon, "top, right, spany 2, wrap unrel");
         jpAbout.add(jlVersion, "top, wrap para");
-        //		jpAbout.add(jlLicense, "span, wrap unrel");
+        //      jpAbout.add(jlLicense, "span, wrap unrel");
         jpAbout.add(jtkDetails, "width 100%, span, wrap para:push");
 
         jpAbout.add(jbCredits, "");

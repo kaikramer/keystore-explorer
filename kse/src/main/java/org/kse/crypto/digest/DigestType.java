@@ -47,7 +47,7 @@ public enum DigestType {
 
     SM3("SM3", "1.2.156.10197.1.401", "SM3");
 
-	// @formatter:on
+    // @formatter:on
 
     private String jce;
     private String oid;

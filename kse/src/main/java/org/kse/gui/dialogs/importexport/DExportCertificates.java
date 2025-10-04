@@ -293,15 +293,15 @@ public class DExportCertificates extends JEscDialog {
             }
         });
 
-		if (certificateSelected) {
-			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateSelected.Title"),
-					certificateAlias));
-		} else if (chain) {
-			setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateChain.Title"),
-					certificateAlias));
-		} else {
-			setTitle(MessageFormat.format(res.getString("DExportCertificates.Certificate.Title"), certificateAlias));
-		}
+        if (certificateSelected) {
+            setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateSelected.Title"),
+                    certificateAlias));
+        } else if (chain) {
+            setTitle(MessageFormat.format(res.getString("DExportCertificates.CertificateChain.Title"),
+                    certificateAlias));
+        } else {
+            setTitle(MessageFormat.format(res.getString("DExportCertificates.Certificate.Title"), certificateAlias));
+        }
 
         setResizable(false);
 
