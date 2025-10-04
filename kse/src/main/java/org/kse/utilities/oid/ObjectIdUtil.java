@@ -1133,6 +1133,9 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.2.840.113628.114.1.7", "AdobePKCS7");
         oidToNameMapping.put("1.2.840.113635.100", "AppleDataSecurity");
         oidToNameMapping.put("1.2.840.113635.100.1", "AppleTrustPolicy");
+        oidToNameMapping.put("1.2.840.113635.100.15.1", "AppleCustomCertificateExtension1");
+        oidToNameMapping.put("1.2.840.113635.100.15.2", "AppleCustomCertificateExtension2");
+        oidToNameMapping.put("1.2.840.113635.100.15.3", "AppleCustomCertificateExtension3");
         oidToNameMapping.put("1.2.840.113635.100.1.1", "AppleISignTP");
         oidToNameMapping.put("1.2.840.113635.100.1.10", "AppleSWUpdateSigningPolicy");
         oidToNameMapping.put("1.2.840.113635.100.1.11", "AppleIPSecPolicy");
