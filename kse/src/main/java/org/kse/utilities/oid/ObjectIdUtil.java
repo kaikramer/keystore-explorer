@@ -1540,10 +1540,11 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.4.1.311.61.1.1", "KernelModeCodeSigning");
         oidToNameMapping.put("1.3.6.1.4.1.311.88.2.1", "OriginalFilename");
         oidToNameMapping.put("1.3.6.1.4.1.3401.8.1.1", "PgpExtension");
-        oidToNameMapping.put("1.3.6.1.4.1.34697.2.1", "AffirmTrust EV policy");
-        oidToNameMapping.put("1.3.6.1.4.1.34697.2.2", "AffirmTrust EV policy");
-        oidToNameMapping.put("1.3.6.1.4.1.34697.2.3", "AffirmTrust EV policy");
-        oidToNameMapping.put("1.3.6.1.4.1.34697.2.4", "AffirmTrust EV policy");
+        oidToNameMapping.put("1.3.6.1.4.1.34697.2", "AffirmTrust Premium EV policy");
+        oidToNameMapping.put("1.3.6.1.4.1.34697.2.1", "AffirmTrust EV policy - Commercial certificate");
+        oidToNameMapping.put("1.3.6.1.4.1.34697.2.2", "AffirmTrust EV policy - Networking certificate");
+        oidToNameMapping.put("1.3.6.1.4.1.34697.2.3", "AffirmTrust EV policy - Premium certificate");
+        oidToNameMapping.put("1.3.6.1.4.1.34697.2.4", "AffirmTrust EV policy - Premium Elliptic Curve Cryptography (ECC) certificate");
         oidToNameMapping.put("1.3.6.1.4.1.3576.7", "EciaAscX12Edi");
         oidToNameMapping.put("1.3.6.1.4.1.3576.7.1", "PlainEDImessage");
         oidToNameMapping.put("1.3.6.1.4.1.3576.7.2", "SignedEDImessage");
