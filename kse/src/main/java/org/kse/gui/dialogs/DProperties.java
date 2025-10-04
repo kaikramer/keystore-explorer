@@ -81,7 +81,6 @@ import org.kse.gui.PlatformUtil;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
-import org.kse.utilities.io.IndentChar;
 import org.kse.utilities.io.IndentSequence;
 
 /**
@@ -102,7 +101,7 @@ public class DProperties extends JEscDialog {
     private JScrollPane jspProperties;
     private KeyStoreHistory history;
     private KeyStoreState currentState;
-    private IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+    private IndentSequence INDENT = IndentSequence.FOUR_SPACES;
 
     /**
      * Creates a new DProperties dialog.

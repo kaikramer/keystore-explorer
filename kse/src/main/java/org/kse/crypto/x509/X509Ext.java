@@ -106,7 +106,6 @@ import org.bouncycastle.asn1.x509.qualified.SemanticsInformation;
 import org.bouncycastle.asn1.x509.qualified.TypeOfBiometricData;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.io.HexUtil;
-import org.kse.utilities.io.IndentChar;
 import org.kse.utilities.io.IndentSequence;
 import org.kse.utilities.oid.ObjectIdUtil;
 
@@ -122,7 +121,7 @@ public class X509Ext {
     private byte[] value;
     private boolean critical;
 
-    public static final IndentSequence INDENT = new IndentSequence(IndentChar.SPACE, 4);
+    public static final IndentSequence INDENT = IndentSequence.FOUR_SPACES;
     public static final String NEWLINE = "\n";
 
     /**
@@ -541,8 +540,7 @@ public class X509Ext {
             sb.append(INDENT);
             sb.append(res.getString("AccessLocation"));
             sb.append(NEWLINE);
-            sb.append(INDENT);
-            sb.append(INDENT);
+            sb.append(INDENT.toString(2));
             sb.append(accessLocationStr);
             sb.append(NEWLINE);
         }
@@ -1091,16 +1089,13 @@ public class X509Ext {
                 sb.append(MessageFormat.format(res.getString("PermittedSubtree"), permitted));
                 sb.append(NEWLINE);
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(res.getString("Base"));
                 sb.append(NEWLINE);
 
                 GeneralName base = permittedSubtree.getBase();
 
-                sb.append(INDENT);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(3));
                 sb.append(GeneralNameUtil.toString(base));
                 sb.append(NEWLINE);
 
@@ -1111,8 +1106,7 @@ public class X509Ext {
                     minimumInt = minimum.intValue();
                 }
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
                 sb.append(NEWLINE);
 
@@ -1121,8 +1115,7 @@ public class X509Ext {
                 if (maximum != null) {
                     int maximumInt = maximum.intValue();
 
-                    sb.append(INDENT);
-                    sb.append(INDENT);
+                    sb.append(INDENT.toString(2));
                     sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
                     sb.append(NEWLINE);
                 }
@@ -1151,24 +1144,20 @@ public class X509Ext {
                 sb.append(MessageFormat.format(res.getString("ExcludedSubtree"), excluded));
                 sb.append(NEWLINE);
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(res.getString("Base"));
                 sb.append(NEWLINE);
 
                 GeneralName base = excludedSubtree.getBase();
 
-                sb.append(INDENT);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(3));
                 sb.append(GeneralNameUtil.toString(base));
                 sb.append(NEWLINE);
 
                 BigInteger minimum = excludedSubtree.getMinimum();
                 int minimumInt = minimum.intValue();
 
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(MessageFormat.format(res.getString("Minimum"), minimumInt));
                 sb.append(NEWLINE);
 
@@ -1177,8 +1166,7 @@ public class X509Ext {
                 if (maximum != null) {
                     int maximumInt = maximum.intValue();
 
-                    sb.append(INDENT);
-                    sb.append(INDENT);
+                    sb.append(INDENT.toString(2));
                     sb.append(MessageFormat.format(res.getString("Maximum"), maximumInt));
                     sb.append(NEWLINE);
                 }
@@ -1817,8 +1805,7 @@ public class X509Ext {
 
             for (GeneralName generalName : generalNames.getNames()) {
                 sb.append(baseIndent);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(GeneralNameUtil.toString(generalName));
                 sb.append(NEWLINE);
             }
@@ -1839,8 +1826,7 @@ public class X509Ext {
                 String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
                 sb.append(baseIndent);
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
                 sb.append(NEWLINE);
             }
@@ -2075,84 +2061,71 @@ public class X509Ext {
             ASN1ObjectIdentifier statementId = qcStatement.getStatementId();
             ASN1Encodable statementInfo = qcStatement.getStatementInfo();
 
-            int indentLevel = 1;
-
             sb.append(MessageFormat.format(res.getString("QCStatement.QCStatement"), ++qcStatementNr));
             sb.append(NEWLINE);
 
+            sb.append(INDENT);
             QcStatementType qcStatementType = QcStatementType.resolveOid(statementId.getId());
             switch (qcStatementType) {
             case QC_SYNTAX_V1:
             case QC_SYNTAX_V2:
                 SemanticsInformation semanticsInfo = SemanticsInformation.getInstance(statementInfo);
-                sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo, indentLevel));
+                sb.append(getSemanticInformationValueString(qcStatementType, semanticsInfo));
                 break;
             case QC_COMPLIANCE:
                 // no statementInfo
-                sb.append(INDENT.toString(indentLevel));
                 sb.append(res.getString(QcStatementType.QC_COMPLIANCE.getResKey()));
-                sb.append(NEWLINE);
                 break;
             case QC_EU_LIMIT_VALUE:
-                sb.append(INDENT.toString(indentLevel));
                 sb.append(res.getString(QcStatementType.QC_EU_LIMIT_VALUE.getResKey()));
-                sb.append(NEWLINE);
-                sb.append(getMonetaryValueStringValue(statementInfo, indentLevel + 1));
+                sb.append(getMonetaryValueStringValue(statementInfo));
                 break;
             case QC_RETENTION_PERIOD:
                 ASN1Integer asn1Integer = ASN1Integer.getInstance(statementInfo);
-                sb.append(INDENT.toString(indentLevel));
                 sb.append(MessageFormat.format(res.getString(QcStatementType.QC_RETENTION_PERIOD.getResKey()),
                                                asn1Integer.getValue().toString()));
-                sb.append(NEWLINE);
                 break;
             case QC_SSCD:
                 // no statementInfo
-                sb.append(INDENT.toString(indentLevel));
                 sb.append(res.getString(QcStatementType.QC_SSCD.getResKey()));
-                sb.append(NEWLINE);
                 break;
             case QC_PDS:
                 ASN1Sequence pdsLocations = ASN1Sequence.getInstance(statementInfo);
-                sb.append(INDENT.toString(indentLevel));
                 sb.append(res.getString(QcStatementType.QC_PDS.getResKey()));
                 for (ASN1Encodable pdsLoc : pdsLocations) {
                     sb.append(NEWLINE);
-                    sb.append(INDENT.toString(indentLevel + 1));
+                    sb.append(INDENT.toString(2));
                     DLSequence pds = (DLSequence) pdsLoc;
                     sb.append(MessageFormat.format(res.getString("QCPDS.locations"), pds.getObjectAt(1),
                                                    pds.getObjectAt(0)));
                 }
-                sb.append(NEWLINE);
                 break;
             case QC_TYPE:
-                sb.append(INDENT.toString(indentLevel));
                 sb.append(res.getString(QcStatementType.QC_TYPE.getResKey()));
                 ASN1Sequence qcTypes = ASN1Sequence.getInstance(statementInfo);
                 for (ASN1Encodable type : qcTypes) {
                     sb.append(NEWLINE);
-                    sb.append(INDENT.toString(indentLevel + 1));
+                    sb.append(INDENT.toString(2));
                     sb.append(ObjectIdUtil.toString((ASN1ObjectIdentifier) type));
                 }
-                sb.append(NEWLINE);
                 break;
             default:
                 // unknown statement type
-                sb.append(INDENT.toString(indentLevel));
                 sb.append(ObjectIdUtil.toString(statementId));
                 if (statementInfo != null) {
+                    sb.append(NEWLINE);
+                    sb.append(INDENT.toString(2));
                     sb.append(statementInfo);
                 }
-                sb.append(NEWLINE);
             }
+            sb.append(NEWLINE);
         }
 
         return sb.toString();
 
     }
 
-    private static String getSemanticInformationValueString(QcStatementType qcStatementType,
-                                                            SemanticsInformation semanticsInfo, int baseIndentLevel)
+    private static String getSemanticInformationValueString(QcStatementType qcStatementType, SemanticsInformation semanticsInfo)
             throws IOException {
 
         // @formatter:off
@@ -2173,36 +2146,34 @@ public class X509Ext {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append(INDENT.toString(baseIndentLevel));
         if (qcStatementType == QcStatementType.QC_SYNTAX_V1) {
             sb.append(res.getString(QcStatementType.QC_SYNTAX_V1.getResKey()));
         } else {
             sb.append(res.getString(QcStatementType.QC_SYNTAX_V2.getResKey()));
         }
-        sb.append(NEWLINE);
 
         if (semanticsIdentifier != null) {
-            sb.append(INDENT.toString(baseIndentLevel + 1));
-            sb.append(MessageFormat.format(res.getString("QCSyntax.SemanticsIdentifier"), semanticsIdentifier.getId()));
             sb.append(NEWLINE);
+            sb.append(INDENT.toString(2));
+            sb.append(MessageFormat.format(res.getString("QCSyntax.SemanticsIdentifier"), semanticsIdentifier.getId()));
         }
 
         if (nameRegistrationAuthorities != null) {
-            sb.append(INDENT.toString(baseIndentLevel + 1));
-            sb.append(res.getString("QCSyntax.NameRegistrationAuthorities"));
             sb.append(NEWLINE);
+            sb.append(INDENT.toString(2));
+            sb.append(res.getString("QCSyntax.NameRegistrationAuthorities"));
 
             for (GeneralName nameRegistrationAuthority : nameRegistrationAuthorities) {
-                sb.append(INDENT.toString(baseIndentLevel + 2));
-                sb.append(GeneralNameUtil.toString(nameRegistrationAuthority));
                 sb.append(NEWLINE);
+                sb.append(INDENT.toString(3));
+                sb.append(GeneralNameUtil.toString(nameRegistrationAuthority));
             }
         }
 
         return sb.toString();
     }
 
-    private static String getMonetaryValueStringValue(ASN1Encodable asn1Encodable, int baseIndentLevel) {
+    private static String getMonetaryValueStringValue(ASN1Encodable asn1Encodable) {
 
         // @formatter:off
 
@@ -2231,21 +2202,21 @@ public class X509Ext {
 
         if (currency != null) {
             String currencyString = currency.isAlphabetic() ? currency.getAlphabetic() : "" + currency.getNumeric();
-            sb.append(INDENT.toString(baseIndentLevel));
-            sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Currency"), currencyString));
             sb.append(NEWLINE);
+            sb.append(INDENT.toString(2));
+            sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Currency"), currencyString));
         }
 
         if (amount != null) {
-            sb.append(INDENT.toString(baseIndentLevel));
-            sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Amount"), amount.toString()));
             sb.append(NEWLINE);
+            sb.append(INDENT.toString(2));
+            sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Amount"), amount.toString()));
         }
 
         if (exponent != null) {
-            sb.append(INDENT.toString(baseIndentLevel));
-            sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Exponent"), exponent.toString()));
             sb.append(NEWLINE);
+            sb.append(INDENT.toString(2));
+            sb.append(MessageFormat.format(res.getString("QCEuLimitValue.Exponent"), exponent.toString()));
         }
 
         return sb.toString();
@@ -2487,8 +2458,7 @@ public class X509Ext {
             sb.append(INDENT);
             sb.append(res.getString("Procuration.CertRef.Issuer"));
             for (GeneralName generalName : certRef.getIssuer().getNames()) {
-                sb.append(INDENT);
-                sb.append(INDENT);
+                sb.append(INDENT.toString(2));
                 sb.append(GeneralNameUtil.toString(generalName));
                 sb.append(NEWLINE);
             }
