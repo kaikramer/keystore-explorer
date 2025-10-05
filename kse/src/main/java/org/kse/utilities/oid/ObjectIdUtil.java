@@ -2673,6 +2673,11 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.23.42.9.7", "BankGate");
         oidToNameMapping.put("2.23.42.9.8", "GTE");
         oidToNameMapping.put("2.23.42.9.9", "CompuSource");
+        oidToNameMapping.put("2.23.43.1.4", "WTLS-ECC");
+        oidToNameMapping.put("2.23.43.1.4.1", "WTLS-ECC-curve1");
+        oidToNameMapping.put("2.23.43.1.4.6", "WTLS-ECC-curve6");
+        oidToNameMapping.put("2.23.43.1.4.8", "WTLS-ECC-curve8");
+        oidToNameMapping.put("2.23.43.1.4.9", "WTLS-ECC-curve9");
         oidToNameMapping.put("2.5.29.1", "AuthorityKeyIdentifier");
         oidToNameMapping.put("2.5.29.10", "BasicConstraints");
         oidToNameMapping.put("2.5.29.11", "NameConstraints");
