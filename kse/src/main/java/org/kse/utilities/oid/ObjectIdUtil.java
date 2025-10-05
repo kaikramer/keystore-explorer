@@ -2148,7 +2148,12 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.5.5.8.2.1", "IKEEnd");
         oidToNameMapping.put("1.3.6.1.5.5.8.2.2", "IKEIntermediate");
         oidToNameMapping.put("2.16.528.1.1001.1.1.1.12.6.1.1.1", "DigiNotar EV policy");
+        oidToNameMapping.put("2.16.578.1.26.1.3.1", "PrivateKeySmartCard");
+        oidToNameMapping.put("2.16.578.1.26.1.3.2", "PrivateKeySoftToken");
         oidToNameMapping.put("2.16.578.1.26.1.3.3", "BuyPass EV policy");
+        oidToNameMapping.put("2.16.578.1.26.1.3.4", "SslBusinessPlus");
+        oidToNameMapping.put("2.16.578.1.26.1.3.5", "PrivateKeyHardToken");
+        oidToNameMapping.put("2.16.578.1.26.1.3.6", "PrivateKeyHSM");
         oidToNameMapping.put("2.16.724.1.2.2.4.1", "PersonalDataInfo");
         oidToNameMapping.put("2.16.756.1.89.1.2.1.1", "SwissSign EV policy");
         oidToNameMapping.put("2.16.840.1.101.2.1.1.1", "SdnsSignatureAlgorithm");
