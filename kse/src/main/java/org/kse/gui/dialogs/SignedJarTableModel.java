@@ -24,23 +24,29 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.kse.crypto.signing.KseJarEntry;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display an array of signed JAR entries.
  */
-public class SignedJarTableModel extends AbstractTableModel {
+public class SignedJarTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "SignedJarTableModel.FlagsColumn.tooltip", //
+            "SignedJarTableModel.SizeColumn.tooltip", //
+            "SignedJarTableModel.DateColumn.tooltip", //
+            "SignedJarTableModel.NameColumn.tooltip" //
+    };
 
     static final int COL_FLAGS = 0;
     static final int COL_SIZE = 1;
     static final int COL_DATE = 2;
     static final int COL_NAME = 3;
     private static final int COLUMN_COUNT = 4;
-
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private int[] columnSizes = {50, 50, 200, 400};
     private String[] columnNames;
@@ -50,6 +56,7 @@ public class SignedJarTableModel extends AbstractTableModel {
      * Construct a new SignedJarTableModel.
      */
     public SignedJarTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[COLUMN_COUNT];
         columnNames[COL_FLAGS] = res.getString("SignedJarTableModel.FlagsColumn.text");
         columnNames[COL_SIZE] = res.getString("SignedJarTableModel.SizeColumn.text");

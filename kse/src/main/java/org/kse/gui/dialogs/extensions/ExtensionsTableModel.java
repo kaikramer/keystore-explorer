@@ -21,25 +21,28 @@ package org.kse.gui.dialogs.extensions;
 
 import java.security.cert.X509Extension;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.crypto.x509.X509Ext;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display X.509 extensions.
  */
-public class ExtensionsTableModel extends AbstractTableModel {
+public class ExtensionsTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "ExtensionsTableHeadRend.CriticalColumn.tooltip", //
+            "ExtensionsTableHeadRend.NameColumn.tooltip", //
+            "ExtensionsTableHeadRend.OidColumn.tooltip" //
+    };
 
     private String[] columnNames;
     private Object[][] data;
@@ -48,6 +51,7 @@ public class ExtensionsTableModel extends AbstractTableModel {
      * Construct a new ExtensionsTableModel.
      */
     public ExtensionsTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[3];
         columnNames[0] = res.getString("ExtensionsTableModel.CriticalColumn");
         columnNames[1] = res.getString("ExtensionsTableModel.NameColumn");

@@ -20,24 +20,28 @@
 package org.kse.gui.crypto.generalsubtree;
 
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.x509.GeneralSubtree;
 import org.kse.crypto.x509.GeneralNameUtil;
 import org.kse.crypto.x509.GeneralSubtrees;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display general subtrees.
  */
-public class GeneralSubtreesTableModel extends AbstractTableModel {
+public class GeneralSubtreesTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalsubtree/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "GeneralSubtreesTableHeadRend.BaseColumn.tooltip", //
+            "GeneralSubtreesTableHeadRend.MinimumColumn.tooltip", //
+            "GeneralSubtreesTableHeadRend.MaximumColumn.tooltip" //
+    };
 
     private String[] columnNames;
     private Object[][] data;
@@ -46,6 +50,7 @@ public class GeneralSubtreesTableModel extends AbstractTableModel {
      * Construct a new GeneralSubtreesTableModel.
      */
     public GeneralSubtreesTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[3];
         columnNames[0] = res.getString("GeneralSubtreesTableModel.BaseColumn");
         columnNames[1] = res.getString("GeneralSubtreesTableModel.MinimumColumn");

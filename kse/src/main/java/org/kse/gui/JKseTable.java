@@ -20,59 +20,33 @@
 package org.kse.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
-public class JKseTable extends JTable {
+import org.kse.gui.table.ToolTipTable;
+import org.kse.gui.table.ToolTipTableModel;
+
+public class JKseTable extends ToolTipTable {
 
     private static final long serialVersionUID = 6624687599136560793L;
     private static final int ICON_SIZE = 28;
 
-    public JKseTable() {
-        super();
+    /**
+     * @param tableModel
+     */
+    public JKseTable(ToolTipTableModel tableModel) {
+        super(tableModel);
         fixRowHeight();
     }
 
-    public JKseTable(int numRows, int numColumns) {
-        super(numRows, numColumns);
-        fixRowHeight();
-    }
-
-    public JKseTable(Object[][] rowData, Object[] columnNames) {
-        super(rowData, columnNames);
-        fixRowHeight();
-    }
-
-    public JKseTable(TableModel dm, TableColumnModel cm, ListSelectionModel sm) {
-        super(dm, cm, sm);
-        fixRowHeight();
-    }
-
-    public JKseTable(TableModel dm, TableColumnModel cm) {
-        super(dm, cm);
-        fixRowHeight();
-    }
-
-    public JKseTable(TableModel dm) {
-        super(dm);
-        fixRowHeight();
-    }
-
-    public JKseTable(Vector<? extends Vector<?>> rowData, Vector<?> columnNames) {
+    private JKseTable(Object[][] rowData, Object[] columnNames) {
         super(rowData, columnNames);
         fixRowHeight();
     }

@@ -159,8 +159,6 @@ public class JPolicyMappings extends JPanel {
 
         for (int i = 0; i < jtPolicyMappings.getColumnCount(); i++) {
             TableColumn column = jtPolicyMappings.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(
-                    new PolicyMappingsTableHeadRend(jtPolicyMappings.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new PolicyMappingsTableCellRend());
         }
 

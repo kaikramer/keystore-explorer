@@ -24,16 +24,19 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display Custom Extended Key Usage oids.
  */
-public class CustomExtKeyUsageTableModel extends AbstractTableModel {
+public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/customextkeyusage/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = {
+            "CustomExtKeyUsageTableHeadRend.ObjectId.tooltip"
+    };
 
     private String[] columnNames;
     private Object[][] data;
@@ -42,6 +45,7 @@ public class CustomExtKeyUsageTableModel extends AbstractTableModel {
      * Construct a new CustomExtKeyUsageTableModel.
      */
     public CustomExtKeyUsageTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[1];
         columnNames[0] = res.getString("CustomExtKeyUsageTableTableModel.ObjectId");
         data = new Object[0][0];

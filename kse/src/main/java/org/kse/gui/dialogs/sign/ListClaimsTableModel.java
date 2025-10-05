@@ -24,20 +24,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display a list of custom claims
  */
-public class ListClaimsTableModel extends AbstractTableModel {
+public class ListClaimsTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "ClaimsTableHeadRend.NameColumn.tooltip", //
+            "ClaimsTableHeadRend.ValueColumn.tooltip" //
+    };
 
     private String[] columnNames;
     List<CustomClaim> listClaims;
 
     public ListClaimsTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[2];
         columnNames[0] = res.getString("ListClaimsTableModel.NameColumn");
         columnNames[1] = res.getString("ListClaimsTableModel.ValueColumn");

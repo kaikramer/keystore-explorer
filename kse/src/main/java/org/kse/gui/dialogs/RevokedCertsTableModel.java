@@ -29,15 +29,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.kse.gui.dialogs.sign.RevokedEntry;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display an array of X.509 CRL entries sorted by
  * serial number.
  */
-public class RevokedCertsTableModel extends AbstractTableModel {
+public class RevokedCertsTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     static final int COL_SERIAL_NUMBER = 0;
@@ -48,6 +47,12 @@ public class RevokedCertsTableModel extends AbstractTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
     private static ResourceBundle resCryptoX509 = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "RevokedCertsTableHeadRend.SerialNumberColumn.tooltip", //
+            "RevokedCertsTableHeadRend.RevocationDateColumn.tooltip", //
+            "RevokedCertsTableHeadRend.ReasonColumn.tooltip" //
+    };
+
     private String[] columnNames;
     private Object[][] data;
 
@@ -55,6 +60,7 @@ public class RevokedCertsTableModel extends AbstractTableModel {
      * Construct a new RevokedCertsTableModel.
      */
     public RevokedCertsTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[COLUMN_COUNT];
         columnNames[COL_SERIAL_NUMBER] = res.getString("RevokedCertsTableModel.SerialNumberColumn");
         columnNames[COL_REVOCATION_DATE] = res.getString("RevokedCertsTableModel.RevocationDateColumn");

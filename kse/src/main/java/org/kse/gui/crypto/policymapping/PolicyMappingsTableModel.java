@@ -23,21 +23,25 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.PolicyMappings;
 import org.kse.crypto.x509.PolicyMapping;
+import org.kse.gui.table.ToolTipTableModel;
 import org.kse.utilities.oid.ObjectIdComparator;
 
 /**
  * The table model used to display policy mappings.
  */
-public class PolicyMappingsTableModel extends AbstractTableModel {
+public class PolicyMappingsTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policymapping/resources");
     private static ObjectIdComparator objectIdComparator = new ObjectIdComparator();
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "PolicyMappingsTableHeadRend.IssuerDomainPolicyColumn.tooltip", //
+            "PolicyMappingsTableHeadRend.SubjectDomainPolicyColumn.tooltip" //
+    };
 
     private String[] columnNames;
     private Object[][] data;
@@ -46,6 +50,7 @@ public class PolicyMappingsTableModel extends AbstractTableModel {
      * Construct a new PolicyMappingsTableModel.
      */
     public PolicyMappingsTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[2];
         columnNames[0] = res.getString("PolicyMappingsTableModel.IssuerDomainPolicyColumn");
         columnNames[1] = res.getString("PolicyMappingsTableModel.SubjectDomainPolicyColumn");

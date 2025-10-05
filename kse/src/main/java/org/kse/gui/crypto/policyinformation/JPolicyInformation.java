@@ -159,8 +159,6 @@ public class JPolicyInformation extends JPanel {
 
         for (int i = 0; i < jtPolicyInformation.getColumnCount(); i++) {
             TableColumn column = jtPolicyInformation.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(
-                    new PolicyInformationTableHeadRend(jtPolicyInformation.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new PolicyInformationTableCellRend());
         }
 

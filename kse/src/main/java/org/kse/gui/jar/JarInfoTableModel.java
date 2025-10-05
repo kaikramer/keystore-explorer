@@ -26,15 +26,18 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.swing.table.AbstractTableModel;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display information about JAR files.
  */
-public class JarInfoTableModel extends AbstractTableModel {
+public class JarInfoTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/jar/resources");
+
+    // No tool tips for this table header.
+    private static final String[] COLUMN_TOOL_TIPS = new String[8];
 
     private String[] columnNames;
     private Object[][] data;
@@ -43,6 +46,7 @@ public class JarInfoTableModel extends AbstractTableModel {
      * Construct a new JarInfoTableModel.
      */
     public JarInfoTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[8];
         columnNames[0] = res.getString("JarInfoTableModel.JarFileColumn");
         columnNames[1] = res.getString("JarInfoTableModel.SizeColumn");

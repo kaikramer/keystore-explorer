@@ -75,7 +75,6 @@ import org.kse.gui.JKseTable;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dialogs.RevokedCertsTableCellRend;
-import org.kse.gui.dialogs.RevokedCertsTableHeadRend;
 import org.kse.gui.dialogs.RevokedCertsTableModel;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
@@ -159,8 +158,6 @@ public class JRevokedCerts extends JPanel {
                 column.setPreferredWidth(100);
             }
 
-            column.setHeaderRenderer(
-                    new RevokedCertsTableHeadRend(jtRevokedCerts.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new RevokedCertsTableCellRend());
         }
 

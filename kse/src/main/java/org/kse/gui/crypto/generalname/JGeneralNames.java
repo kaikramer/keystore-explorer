@@ -155,8 +155,6 @@ public class JGeneralNames extends JPanel {
 
         for (int i = 0; i < jtGeneralNames.getColumnCount(); i++) {
             TableColumn column = jtGeneralNames.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(
-                    new GeneralNamesTableHeadRend(jtGeneralNames.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new GeneralNamesTableCellRend());
         }
 

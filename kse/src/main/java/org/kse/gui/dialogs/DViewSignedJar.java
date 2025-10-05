@@ -47,9 +47,7 @@ import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -65,6 +63,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.StringUtils;
 
 import net.miginfocom.swing.MigLayout;
@@ -120,39 +119,6 @@ public class DViewSignedJar extends JEscDialog {
         }
     }
 
-
-    private static final String[] COLUMN_TOOL_TIPS = { //
-            "SignedJarTableModel.FlagsColumn.tooltip", //
-            "SignedJarTableModel.SizeColumn.tooltip", //
-            "SignedJarTableModel.DateColumn.tooltip", //
-            "SignedJarTableModel.NameColumn.tooltip" //
-    };
-
-    private static class ToolTipTable extends JTable {
-        // https://docs.oracle.com/javase/tutorial/uiswing/components/table.html#headertooltip
-        private static final long serialVersionUID = 1L;
-
-        private String[] columnToolTips;
-
-        public ToolTipTable(TableModel tableModel, String[] columnToolTips) {
-            super(tableModel);
-            this.columnToolTips = columnToolTips;
-        }
-
-        @Override
-        protected JTableHeader createDefaultTableHeader() {
-            return new JTableHeader(columnModel) {
-                @Override
-                public String getToolTipText(MouseEvent event) {
-                    Point p = event.getPoint();
-                    int index = columnModel.getColumnIndexAtX(p.x);
-                    int realIndex = columnModel.getColumn(index).getModelIndex();
-                    return res.getString(columnToolTips[realIndex]);
-                }
-            };
-        }
-    }
-
     private void initComponents() {
 
         jlVerifyStatus = new JLabel(res.getString("DViewSignedJar.jlVerifyStatus.text"));
@@ -162,7 +128,7 @@ public class DViewSignedJar extends JEscDialog {
 
         SignedJarTableModel tableModel = new SignedJarTableModel();
 
-        jtJarEntries = new ToolTipTable(tableModel, COLUMN_TOOL_TIPS);
+        jtJarEntries = new ToolTipTable(tableModel);
 
         RowSorter<SignedJarTableModel> sorter = new TableRowSorter<>(tableModel);
         jtJarEntries.setRowSorter(sorter);

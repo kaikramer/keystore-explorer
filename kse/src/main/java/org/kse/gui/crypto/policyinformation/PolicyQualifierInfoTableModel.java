@@ -25,18 +25,21 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.x509.PolicyQualifierInfo;
 import org.kse.crypto.x509.PolicyInformationUtil;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display policy qualifier info.
  */
-public class PolicyQualifierInfoTableModel extends AbstractTableModel {
+public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "PolicyQualifierInfoTableHeadRend.PolicyQualifierInfoColumn.tooltip" //
+    };
 
     private String[] columnNames;
     private Object[][] data;
@@ -45,6 +48,7 @@ public class PolicyQualifierInfoTableModel extends AbstractTableModel {
      * Construct a new PolicyQualifierInfoTableModel.
      */
     public PolicyQualifierInfoTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[1];
         columnNames[0] = res.getString("PolicyQualifierInfoTableModel.PolicyQualifierInfoColumn");
 

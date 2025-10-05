@@ -158,8 +158,6 @@ public class JAccessDescriptions extends JPanel {
 
         for (int i = 0; i < jtAccessDescriptions.getColumnCount(); i++) {
             TableColumn column = jtAccessDescriptions.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(
-                    new AccessDescriptionsTableHeadRend(jtAccessDescriptions.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new AccessDescriptionsTableCellRend());
         }
 
