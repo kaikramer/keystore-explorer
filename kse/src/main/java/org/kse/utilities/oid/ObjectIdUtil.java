@@ -1874,6 +1874,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.4.1.4146.1.90", "GlobalsignTPMRootPolicy");
         oidToNameMapping.put("1.3.6.1.4.1.4146.1.95", "GlobalsignOCSPPolicy");
         oidToNameMapping.put("1.3.6.1.4.1.4788.2.202.1", "D-TRUST EV policy");
+        oidToNameMapping.put("1.3.6.1.4.1.51483.2.1", "HashOfRootKey");
         oidToNameMapping.put("1.3.6.1.4.1.5309.1", "EdelWebPolicy");
         oidToNameMapping.put("1.3.6.1.4.1.5309.1.2", "EdelWebCustomerPolicy");
         oidToNameMapping.put("1.3.6.1.4.1.5309.1.2.1", "EdelWebClepsydrePolicy");
