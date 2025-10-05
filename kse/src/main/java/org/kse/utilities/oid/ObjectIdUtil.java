@@ -2487,6 +2487,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.16.840.1.113730.3.1", "LdapDefinitions");
         oidToNameMapping.put("2.16.840.1.113730.3.1.1", "CarLicense");
         oidToNameMapping.put("2.16.840.1.113730.3.1.2", "DepartmentNumber");
+        oidToNameMapping.put("2.16.840.1.113730.3.1.216", "UserPKCS12");
         oidToNameMapping.put("2.16.840.1.113730.3.1.3", "EmployeeNumber");
         oidToNameMapping.put("2.16.840.1.113730.3.1.4", "EmployeeType");
         oidToNameMapping.put("2.16.840.1.113730.3.2.2", "InetOrgPerson");
