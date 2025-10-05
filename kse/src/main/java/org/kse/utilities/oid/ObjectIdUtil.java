@@ -1679,6 +1679,14 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.4.1.23629.1.4.2.1.3", "SafenetStartDate");
         oidToNameMapping.put("1.3.6.1.4.1.23629.1.4.2.1.4", "SafenetAdminCert");
         oidToNameMapping.put("1.3.6.1.4.1.23629.1.4.2.2.1", "SafenetKeyDigest");
+        oidToNameMapping.put("1.3.6.1.4.1.2363", "EuroControlMaastrichtUpperAreaControlCentre");
+        oidToNameMapping.put("1.3.6.1.4.1.2363.3.2", "EuroControlUntrustedEA");
+        oidToNameMapping.put("1.3.6.1.4.1.2363.4.3", "EuroControlEARootCA");
+        oidToNameMapping.put("1.3.6.1.4.1.2363.4.3.1", "EuroControlEABridgeCA");
+        oidToNameMapping.put("1.3.6.1.4.1.2363.4.3.1.1", "EuroControlEAIssuingCA");
+        oidToNameMapping.put("1.3.6.1.4.1.2363.4.3.1.1.1", "EuroControlEAClientCertificate");
+        oidToNameMapping.put("1.3.6.1.4.1.2363.4.3.1.1.2", "EuroControlEAServerCertificate");
+        oidToNameMapping.put("1.3.6.1.4.1.2363.4.3.1.1.3", "EuroControlEASWIMSigningCertificate");
         oidToNameMapping.put("1.3.6.1.4.1.2428.10.1.1", "UNINETT policyIdentifier");
         oidToNameMapping.put("1.3.6.1.4.1.2712.10", "ICE-TEL policyIdentifier");
         oidToNameMapping.put("1.3.6.1.4.1.2786.1.1.1", "ICE-TEL Italian policyIdentifier");
