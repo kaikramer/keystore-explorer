@@ -2021,6 +2021,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.5.5.7.3.1", "ServerAuth");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.10", "Dvcs");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.11", "SbgpCertAAServerAuth");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.12", "ScvpResponder");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.13", "EapOverPPP");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.14", "EapOverLAN");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.15", "ScvpServer");
