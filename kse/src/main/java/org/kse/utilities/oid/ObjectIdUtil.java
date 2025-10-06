@@ -1902,6 +1902,14 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.4.1.8301.3.5", "ValidityModel");
         oidToNameMapping.put("1.3.6.1.4.1.8301.3.5.1", "ValidityModelChain");
         oidToNameMapping.put("1.3.6.1.4.1.8301.3.5.2", "ValidityModelShell");
+        oidToNameMapping.put("1.3.6.1.5.2", "Kerberos V5");
+        oidToNameMapping.put("1.3.6.1.5.2.3", "Public Key cryptography for INITial authentication (PKINIT)");
+        oidToNameMapping.put("1.3.6.1.5.2.3.1", "AuthData");
+        oidToNameMapping.put("1.3.6.1.5.2.3.2", "DHKeyData");
+        oidToNameMapping.put("1.3.6.1.5.2.3.3", "RkeyData");
+        oidToNameMapping.put("1.3.6.1.5.2.3.4", "KeyPurposeClientAuth");
+        oidToNameMapping.put("1.3.6.1.5.2.3.5", "KeyPurposeKdc");
+        oidToNameMapping.put("1.3.6.1.5.2.3.6", "Kdf");
         oidToNameMapping.put("1.3.6.1.5.5.7", "Pkix");
         oidToNameMapping.put("1.3.6.1.5.5.7.0.12", "AttributeCert");
         oidToNameMapping.put("1.3.6.1.5.5.7.1", "PrivateExtension");
