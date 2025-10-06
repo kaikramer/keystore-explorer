@@ -2126,6 +2126,9 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.5.5.7.6.31", "RsaPssShake256");
         oidToNameMapping.put("1.3.6.1.5.5.7.6.32", "EcdsaShake128");
         oidToNameMapping.put("1.3.6.1.5.5.7.6.33", "EcdsaShake256");
+        oidToNameMapping.put("1.3.6.1.5.5.7.6.34", "XmssHashsig");
+        oidToNameMapping.put("1.3.6.1.5.5.7.6.35", "XmssmtHashsig");
+        oidToNameMapping.put("1.3.6.1.5.5.7.6.36", "Unsigned");
         oidToNameMapping.put("1.3.6.1.5.5.7.6.4", "DhPop");
         oidToNameMapping.put("1.3.6.1.5.5.7.6.5", "DhPopSha224");
         oidToNameMapping.put("1.3.6.1.5.5.7.6.6", "DhPopSha256");
