@@ -2570,7 +2570,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.23.133.2.14", "TcgFoundationSecurityTarget");
         oidToNameMapping.put("2.23.133.2.15", "TcgTpmIdLabel");
         oidToNameMapping.put("2.23.133.2.16", "TcgTpmSpecification");
-        oidToNameMapping.put("2.23.133.2.16", "TcgPlatformSpecification");
+        oidToNameMapping.put("2.23.133.2.17", "TcgPlatformSpecification");
         oidToNameMapping.put("2.23.133.2.18", "TcgTpmSecurityAssertions");
         oidToNameMapping.put("2.23.133.2.19", "TcgTbbSecurityAssertions");
         oidToNameMapping.put("2.23.133.2.2", "TcgTpmModel");
