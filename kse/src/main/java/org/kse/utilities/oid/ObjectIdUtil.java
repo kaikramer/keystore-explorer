@@ -1009,7 +1009,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.2.840.113549.1.9.16.7.1", "TestAmoco");
         oidToNameMapping.put("1.2.840.113549.1.9.16.7.2", "TestCaterpillar");
         oidToNameMapping.put("1.2.840.113549.1.9.16.7.3", "TestWhirlpool");
-        oidToNameMapping.put("1.2.840.113549.1.9.16.7.4", "TestWhirlpoolCategories"); 
+        oidToNameMapping.put("1.2.840.113549.1.9.16.7.4", "TestWhirlpoolCategories");
         oidToNameMapping.put("1.2.840.113549.1.9.16.8.1", "GlUseKEK");
         oidToNameMapping.put("1.2.840.113549.1.9.16.8.10", "GlFailInfo");
         oidToNameMapping.put("1.2.840.113549.1.9.16.8.11", "GlaQueryRequest");
@@ -1133,9 +1133,6 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.2.840.113628.114.1.7", "AdobePKCS7");
         oidToNameMapping.put("1.2.840.113635.100", "AppleDataSecurity");
         oidToNameMapping.put("1.2.840.113635.100.1", "AppleTrustPolicy");
-        oidToNameMapping.put("1.2.840.113635.100.15.1", "AppleCustomCertificateExtension1");
-        oidToNameMapping.put("1.2.840.113635.100.15.2", "AppleCustomCertificateExtension2");
-        oidToNameMapping.put("1.2.840.113635.100.15.3", "AppleCustomCertificateExtension3");
         oidToNameMapping.put("1.2.840.113635.100.1.1", "AppleISignTP");
         oidToNameMapping.put("1.2.840.113635.100.1.10", "AppleSWUpdateSigningPolicy");
         oidToNameMapping.put("1.2.840.113635.100.1.11", "AppleIPSecPolicy");
@@ -1153,6 +1150,9 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.2.840.113635.100.1.7", "AppleOCSPPolicy");
         oidToNameMapping.put("1.2.840.113635.100.1.8", "AppleSMIMEPolicy");
         oidToNameMapping.put("1.2.840.113635.100.1.9", "AppleEAPPolicy");
+        oidToNameMapping.put("1.2.840.113635.100.15.1", "AppleCustomCertificateExtension1");
+        oidToNameMapping.put("1.2.840.113635.100.15.2", "AppleCustomCertificateExtension2");
+        oidToNameMapping.put("1.2.840.113635.100.15.3", "AppleCustomCertificateExtension3");
         oidToNameMapping.put("1.2.840.113635.100.2", "AppleSecurityAlgorithm");
         oidToNameMapping.put("1.2.840.113635.100.2.1", "AppleFEE");
         oidToNameMapping.put("1.2.840.113635.100.2.2", "AppleASC");
@@ -2764,6 +2764,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.0", "ObjectClass");
         oidToNameMapping.put("2.5.4.1", "AliasedEntryName");
         oidToNameMapping.put("2.5.4.10", "OrganizationName");
+        oidToNameMapping.put("2.5.4.10.1", "CollectiveOrganizationName");
         oidToNameMapping.put("2.5.4.100", "DnsName");
         oidToNameMapping.put("2.5.4.101", "EepkCertificateRevocationList");
         oidToNameMapping.put("2.5.4.102", "EeAttrCertificateRevocationList");
@@ -2771,7 +2772,6 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.104", "IntEmail");
         oidToNameMapping.put("2.5.4.105", "Jid");
         oidToNameMapping.put("2.5.4.106", "ObjectIdentifier");
-        oidToNameMapping.put("2.5.4.10.1", "CollectiveOrganizationName");
         oidToNameMapping.put("2.5.4.11", "OrganizationalUnitName");
         oidToNameMapping.put("2.5.4.11.1", "CollectiveOrganizationalUnitName");
         oidToNameMapping.put("2.5.4.12", "Title");
@@ -2871,6 +2871,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.88", "UtmCoordinates");
         oidToNameMapping.put("2.5.4.89", "UrnC");
         oidToNameMapping.put("2.5.4.9", "StreetAddress");
+        oidToNameMapping.put("2.5.4.9.1", "CollectiveStreetAddress");
         oidToNameMapping.put("2.5.4.90", "Uii");
         oidToNameMapping.put("2.5.4.91", "Epc");
         oidToNameMapping.put("2.5.4.92", "TagAfi");
@@ -2881,7 +2882,6 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.97", "OrganizationIdentifier");
         oidToNameMapping.put("2.5.4.98", "CountryCode3c");
         oidToNameMapping.put("2.5.4.99", "CountryCode3n");
-        oidToNameMapping.put("2.5.4.9.1", "CollectiveStreetAddress");
         oidToNameMapping.put("2.5.6.0", "Top");
         oidToNameMapping.put("2.5.6.1", "Alias");
         oidToNameMapping.put("2.5.6.10", "ResidentialPerson");
