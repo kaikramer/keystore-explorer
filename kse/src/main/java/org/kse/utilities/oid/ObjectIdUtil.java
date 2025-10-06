@@ -2767,6 +2767,12 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.29.68", "AttributeMappings");
         oidToNameMapping.put("2.5.29.69", "HolderNameConstraints");
         oidToNameMapping.put("2.5.29.7", "SubjectAltName");
+        oidToNameMapping.put("2.5.29.70", "AuthorizationValidation");
+        oidToNameMapping.put("2.5.29.71", "ProtRestrict");
+        oidToNameMapping.put("2.5.29.72", "SubjectAltPublicKeyInfo");
+        oidToNameMapping.put("2.5.29.73", "AltSignatureAlgorithm");
+        oidToNameMapping.put("2.5.29.74", "AltSignatureValue");
+        oidToNameMapping.put("2.5.29.75", "AssociatedInformation");
         oidToNameMapping.put("2.5.29.8", "IssuerAltName");
         oidToNameMapping.put("2.5.29.9", "SubjectDirectoryAttributes");
         oidToNameMapping.put("2.5.4.0", "ObjectClass");
