@@ -2047,7 +2047,15 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.5.5.7.3.34", "RpcTLSServer");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.35", "BundleSecurity");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.36", "DocumentSigning");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.37", "JWT");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.38", "HttpContentEncrypt");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.39", "OauthAccessTokenSigning");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.4", "EmailProtection");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.40", "ImUri");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.41", "ConfigSigning");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.42", "TrustAnchorConfigSigning");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.43", "UpdatePackageSigning");
+        oidToNameMapping.put("1.3.6.1.5.5.7.3.44", "SafetyCommunication");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.5", "IpsecEndSystem");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.6", "IpsecTunnel");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.7", "IpsecUser");
