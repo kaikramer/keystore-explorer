@@ -25,17 +25,13 @@ import java.awt.event.InputEvent;
 import java.io.File;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.Security;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -47,9 +43,7 @@ import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.SignerInformationStore;
 import org.bouncycastle.util.Store;
-import org.kse.AuthorityCertificates;
 import org.kse.crypto.CryptoException;
-import org.kse.crypto.SecurityProvider;
 import org.kse.crypto.signing.CmsUtil;
 import org.kse.crypto.signing.KseSignerInformation;
 import org.kse.crypto.x509.X509CertUtil;
@@ -58,12 +52,17 @@ import org.kse.gui.FileChooserFactory;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DViewSignature;
 import org.kse.gui.error.DError;
-import org.kse.utilities.history.KeyStoreHistory;
-import org.kse.utilities.history.KeyStoreState;
 
-public class VerifySignatureAction extends AuthorityCertificatesAction {
+/**
+ * Action to verify a PKCS #7 / CMS digital signature.
+ */
+public class VerifySignatureAction extends AuthorityCertificatesVerifyAction {
     private static final long serialVersionUID = 1L;
 
+    /**
+     *
+     * @param kseFrame KeyStore Explorer frame
+     */
     public VerifySignatureAction(KseFrame kseFrame) {
         super(kseFrame);
 
@@ -79,12 +78,7 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
     @Override
     protected void doAction() {
         try {
-            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-
-            KeyStoreState currentState = history.getCurrentState();
-            KeyStore keyStore = currentState.getKeyStore();
-
-            File signatureFile = showFileSelectionDialog();
+            File signatureFile = chooseSignatureFile();
             if (signatureFile == null) {
                 return;
             }
@@ -99,43 +93,30 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
                 return;
             }
 
-            KeyStore caCertificates = getCaCertificates();
-            KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificates();
-
-            // Perform cert lookup against current KeyStore
-            Set<X509Certificate> compCerts = new HashSet<>();
-            compCerts.addAll(extractCertificates(keyStore));
-
-            if (caCertificates != null) {
-                // Perform cert lookup against CA Certificates KeyStore
-                compCerts.addAll(extractCertificates(caCertificates));
-            }
-
-            if (windowsTrustedRootCertificates != null) {
-                // Perform cert lookup against Windows Trusted Root Certificates KeyStore
-                compCerts.addAll(extractCertificates(windowsTrustedRootCertificates));
-            }
-
             @SuppressWarnings("unchecked")
-            Store<X509CertificateHolder> trustedCerts = new JcaCertStore(compCerts);
+            Store<X509CertificateHolder> trustedCerts = new JcaCertStore(getTrustedCertificates());
 
             SignerInformationStore signerInfos = signedData.getSignerInfos();
             List<KseSignerInformation> signers = CmsUtil.convertSignerInformations(signerInfos.getSigners(),
-                    trustedCerts, signedData.getCertificates());
+                    trustedCerts, signedData);
 
             DViewSignature dViewSignature = new DViewSignature(frame, MessageFormat
                     .format(res.getString("VerifySignatureAction.SignatureDetailsFile.Title"), signatureFile.getName()),
-                    signedData, signers, getTrustedCertsNoPrefs(), null);
+                    signers, getTrustedCertsNoPrefs(), kseFrame);
             dViewSignature.setLocationRelativeTo(frame);
             dViewSignature.setVisible(true);
-
-            kseFrame.updateControls(true);
         } catch (Exception ex) {
             DError.displayError(frame, ex);
         }
     }
 
-    private Collection<X509Certificate> extractCertificates(KeyStore keystore) throws CryptoException {
+    /*
+     * This method checks for the presence of a certificate chain or certificate
+     * rather than checking the key store entry type to allow signers to verify
+     * that their PKCS#7/CMS signature is trusted by using their signing key store.
+     */
+    @Override
+    protected Collection<X509Certificate> extractCertificates(KeyStore keystore) throws CryptoException {
 
         List<X509Certificate> certs = new ArrayList<>();
 
@@ -162,77 +143,6 @@ public class VerifySignatureAction extends AuthorityCertificatesAction {
         }
 
         return certs;
-    }
-
-    private Store<X509CertificateHolder> getTrustedCertsNoPrefs()
-            throws CryptoException, CertificateEncodingException {
-        KeyStore caCertificates = getCaCertificatesNoPrefCheck();
-        KeyStore windowsTrustedRootCertificates = getWindowsTrustedRootCertificatesNoPrefCheck();
-
-        // Perform cert lookup against current KeyStore
-        Set<X509Certificate> compCerts = new HashSet<>();
-
-        if (caCertificates != null) {
-            // Perform cert lookup against CA Certificates KeyStore
-            compCerts.addAll(extractCertificates(caCertificates));
-        }
-
-        if (windowsTrustedRootCertificates != null) {
-            // Perform cert lookup against Windows Trusted Root Certificates KeyStore
-            compCerts.addAll(extractCertificates(windowsTrustedRootCertificates));
-        }
-
-        @SuppressWarnings("unchecked")
-        Store<X509CertificateHolder> trustedCerts = new JcaCertStore(compCerts);
-        return trustedCerts;
-    }
-
-    /**
-     * Get CA Certificates KeyStore.
-     *
-     * @return KeyStore or null if unavailable
-     */
-    private KeyStore getCaCertificatesNoPrefCheck() {
-        AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
-
-        KeyStore caCertificates = authorityCertificates.getCaCertificates();
-
-        if (caCertificates == null) {
-            caCertificates = loadCaCertificatesKeyStore();
-
-            if (caCertificates != null) {
-                authorityCertificates.setCaCertificates(caCertificates);
-            }
-        }
-
-        return caCertificates;
-    }
-
-    /**
-     * Get Windows Trusted Root Certificates KeyStore.
-     *
-     * @return KeyStore or null if unavailable
-     * @throws CryptoException If a problem occurred getting the KeyStore
-     */
-    private KeyStore getWindowsTrustedRootCertificatesNoPrefCheck() throws CryptoException {
-        AuthorityCertificates authorityCertificates = AuthorityCertificates.getInstance();
-
-        KeyStore windowsTrustedRootCertificates = null;
-
-        if (Security.getProvider(SecurityProvider.MS_CAPI.jce()) != null) {
-            windowsTrustedRootCertificates = authorityCertificates.getWindowsTrustedRootCertificates();
-        }
-
-        return windowsTrustedRootCertificates;
-    }
-
-    private File showFileSelectionDialog() {
-        File signatureFile = chooseSignatureFile();
-        if (signatureFile == null) {
-            return null;
-        }
-
-        return signatureFile;
     }
 
     private File chooseSignatureFile() {

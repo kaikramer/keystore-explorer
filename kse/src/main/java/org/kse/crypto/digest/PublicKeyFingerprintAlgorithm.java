@@ -28,10 +28,10 @@ public enum PublicKeyFingerprintAlgorithm {
 
     // @formatter:off
 
-	SKI_METHOD1("PublicKeyFingerprintAlgorithm.SkiMethod1.text"),
-	SKI_METHOD2("PublicKeyFingerprintAlgorithm.SkiMethod2.text"),
-	SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"),
-	SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki.text");
+    SKI_METHOD1("PublicKeyFingerprintAlgorithm.SkiMethod1.text"),
+    SKI_METHOD2("PublicKeyFingerprintAlgorithm.SkiMethod2.text"),
+    SHA1_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha1overSpki.text"),
+    SHA256_OVER_SPKI("PublicKeyFingerprintAlgorithm.Sha256overSpki.text");
 
     // @formatter:on
 

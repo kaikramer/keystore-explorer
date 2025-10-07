@@ -384,8 +384,8 @@ public class Pkcs8Util {
         // @formatter:off
         /*
          * AlgorithmIdentifier ::= ASN1Sequence {
-         * 		algorithm OBJECT IDENTIFIER,
-         * 		parameters ANY DEFINED BY algorithm OPTIONAL
+         *      algorithm OBJECT IDENTIFIER,
+         *      parameters ANY DEFINED BY algorithm OPTIONAL
          * }
          */
         // @formatter:on
@@ -406,16 +406,16 @@ public class Pkcs8Util {
          * Get private key algorithm from unencrypted PKCS #8 bytes:
          *
          * PrivateKeyInfo ::= ASN1Sequence {
-         * 		version Version,
-         * 		privateKeyAlgorithm PrivateKeyAlgorithmIdentifier, privateKey
-         * 		PrivateKey, attributes [0] IMPLICIT Attributes OPTIONAL
+         *      version Version,
+         *      privateKeyAlgorithm PrivateKeyAlgorithmIdentifier, privateKey
+         *      PrivateKey, attributes [0] IMPLICIT Attributes OPTIONAL
          * }
          *
          * PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
          *
          * AlgorithmIdentifier ::= ASN1Sequence {
-         * 		algorithm OBJECT IDENTIFIER,
-         * 		parameters ANY DEFINED BY algorithm OPTIONAL
+         *      algorithm OBJECT IDENTIFIER,
+         *      parameters ANY DEFINED BY algorithm OPTIONAL
          * }
          */
         // @formatter:on

@@ -34,64 +34,64 @@ import javax.swing.tree.TreeNode;
  *
  */
 public class Pkcs12InfoTreeCellRend extends DefaultTreeCellRenderer {
-	private static final long serialVersionUID = 1L;
-	private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+    private static final long serialVersionUID = 1L;
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
-	/**
-	 * Returns the rendered cell for the supplied value.
-	 *
-	 * @param jtrProperties The JTree
-	 * @param value The value to assign to the cell
-	 * @param isSelected True if cell is selected
-	 * @param isExpanded True if cell is expanded
-	 * @param leaf True if cell is a leaf
-	 * @param row The row of the cell to render
-	 * @param hasFocus If true, render cell appropriately
-	 * @return The rendered cell
-	 */
-	@Override
-	public Component getTreeCellRendererComponent(JTree jtrProperties, Object value, boolean isSelected,
-			boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
+    /**
+     * Returns the rendered cell for the supplied value.
+     *
+     * @param jtrProperties The JTree
+     * @param value The value to assign to the cell
+     * @param isSelected True if cell is selected
+     * @param isExpanded True if cell is expanded
+     * @param leaf True if cell is a leaf
+     * @param row The row of the cell to render
+     * @param hasFocus If true, render cell appropriately
+     * @return The rendered cell
+     */
+    @Override
+    public Component getTreeCellRendererComponent(JTree jtrProperties, Object value, boolean isSelected,
+            boolean isExpanded, boolean leaf, int row, boolean hasFocus) {
 
-		JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrProperties, value, isSelected, isExpanded, leaf,
-				row, hasFocus);
-		cell.setText(value.toString());
+        JLabel cell = (JLabel) super.getTreeCellRendererComponent(jtrProperties, value, isSelected, isExpanded, leaf,
+                row, hasFocus);
+        cell.setText(value.toString());
 
-		// Get the correct icon for the node and set any tool tip text
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-		ImageIcon icon = null;
+        // Get the correct icon for the node and set any tool tip text
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+        ImageIcon icon = null;
 
-		if (node.getLevel() == 1) {
-			TreeNode parent = node.getParent();
-			int index = parent.getIndex(node);
+        if (node.getLevel() == 1) {
+            TreeNode parent = node.getParent();
+            int index = parent.getIndex(node);
 
-			if (index == 0) {
-				icon = new ImageIcon(getClass().getResource("images/file_node.png"));
-			} else if (index == 1) {
-				icon = new ImageIcon(getClass().getResource("images/type_node.png"));
-			} else if (value.toString().contains("MAC")) {
-				icon = new ImageIcon(getClass().getResource("images/mac.png"));
-			} else if (value.toString().contains("PKCS#7 Data")) {
-				icon = new ImageIcon(getClass().getResource("images/data.png"));
-			} else if (value.toString().contains("PKCS#7 Encrypted Data")) {
-				icon = new ImageIcon(getClass().getResource("images/encr_data.png"));
-			} else {
-				icon = new ImageIcon(getClass().getResource("images/entry_node.png"));
-			}
-		} else {
+            if (index == 0) {
+                icon = new ImageIcon(getClass().getResource("images/file_node.png"));
+            } else if (index == 1) {
+                icon = new ImageIcon(getClass().getResource("images/type_node.png"));
+            } else if (value.toString().contains("MAC")) {
+                icon = new ImageIcon(getClass().getResource("images/mac.png"));
+            } else if (value.toString().contains("PKCS#7 Data")) {
+                icon = new ImageIcon(getClass().getResource("images/data.png"));
+            } else if (value.toString().contains("PKCS#7 Encrypted Data")) {
+                icon = new ImageIcon(getClass().getResource("images/encr_data.png"));
+            } else {
+                icon = new ImageIcon(getClass().getResource("images/entry_node.png"));
+            }
+        } else {
 
-			if (value.toString().contains("Certificate Bag")) {
-				icon = new ImageIcon(getClass().getResource("images/certificates_node.png"));
-			} else if (value.toString().contains("Key Bag")) {
-				icon = new ImageIcon(getClass().getResource("images/privatekey_node.png"));
-			} else if (value.toString().contains("Bag Attributes")) {
-				icon = new ImageIcon(getClass().getResource("images/bag_attributes.png"));
-			} else {
-				icon = new ImageIcon(getClass().getResource("images/default_node.png"));
-			}
-		}
+            if (value.toString().contains("Certificate Bag")) {
+                icon = new ImageIcon(getClass().getResource("images/certificates_node.png"));
+            } else if (value.toString().contains("Key Bag")) {
+                icon = new ImageIcon(getClass().getResource("images/privatekey_node.png"));
+            } else if (value.toString().contains("Bag Attributes")) {
+                icon = new ImageIcon(getClass().getResource("images/bag_attributes.png"));
+            } else {
+                icon = new ImageIcon(getClass().getResource("images/default_node.png"));
+            }
+        }
 
-		cell.setIcon(icon);
-		return cell;
-	}
+        cell.setIcon(icon);
+        return cell;
+    }
 }

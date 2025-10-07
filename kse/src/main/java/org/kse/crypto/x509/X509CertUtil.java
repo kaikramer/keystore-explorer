@@ -371,7 +371,7 @@ public final class X509CertUtil {
         return longestPath.toArray(new X509Certificate[0]);
     }
     /*
-     * Tries to sort the certificates according to their hierarchy, 
+     * Tries to sort the certificates according to their hierarchy,
      * and adds at the end those that have no dependencies.
      */
     public static X509Certificate[] orderX509CertsChain(X509Certificate[] certs) {
@@ -664,17 +664,22 @@ public final class X509CertUtil {
         return establishTrust(cert, ksCerts);
     }
 
-    public static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> compCerts)
+    /**
+     * Check whether or not a trust path exists between the supplied X.509
+     * certificate and the supplied list of certificates, ie that a chain of
+     * trust exists between the supplied certificate and a self-signed trusted
+     * certificate in the list.
+     *
+     * @param cert         The certificate
+     * @param trustedCerts The list of trusted certificates.
+     * @return The trust chain, or null if trust could not be established
+     * @throws CryptoException If there is a problem establishing trust
+     */
+    public static X509Certificate[] establishTrust(X509Certificate cert, List<X509Certificate> trustedCerts)
             throws CryptoException {
-        /*
-         * Check whether or not a trust path exists between the supplied X.509
-         * certificate and the supplied comparison certificates , ie that a
-         * chain of trust exists between the certificate and a self-signed
-         * trusted certificate in the comparison set
-         */
 
-        for (int i = 0; i < compCerts.size(); i++) {
-            X509Certificate compCert = compCerts.get(i);
+        for (int i = 0; i < trustedCerts.size(); i++) {
+            X509Certificate compCert = trustedCerts.get(i);
 
             // Verify of certificate issuer is sam as comparison certificate's subject
             if (cert.getIssuerX500Principal().equals(compCert.getSubjectX500Principal())) {
@@ -689,7 +694,7 @@ public final class X509CertUtil {
                      * Otherwise try and establish a chain of trust from the
                      * comparison certificate against the other comparison certificates
                      */
-                    X509Certificate[] tmpChain = establishTrust(compCert, compCerts);
+                    X509Certificate[] tmpChain = establishTrust(compCert, trustedCerts);
                     if (tmpChain != null) {
                         X509Certificate[] trustChain = new X509Certificate[tmpChain.length + 1];
 
@@ -706,7 +711,14 @@ public final class X509CertUtil {
         return null; // No chain of trust
     }
 
-    private static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
+    /**
+     * Extracts a list of X509Certificates from a KeyStore.
+     *
+     * @param keyStore The key store containing trusted certificates.
+     * @return List<X509Certificate>
+     * @throws CryptoException If there is a problem extracting the certificates.
+     */
+    public static List<X509Certificate> extractCertificates(KeyStore keyStore) throws CryptoException {
         try {
             List<X509Certificate> certs = new ArrayList<>();
 

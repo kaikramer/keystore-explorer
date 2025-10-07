@@ -109,10 +109,10 @@ public class DViewDHParameters extends JEscDialog {
         jtAreaPem.setEditable(false);
         jtAreaPem.setFont(new Font(Font.MONOSPACED, Font.PLAIN, LnfUtil.getDefaultFontSize()));
         // keep uneditable color same as editable
-		jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
+        jtAreaPem.putClientProperty("JTextArea.infoBackground", Boolean.TRUE);
 
-		jspAreaPem = PlatformUtil.createScrollPane(jtAreaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jspAreaPem = PlatformUtil.createScrollPane(jtAreaPem, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jbExport = new JButton(res.getString("DViewDHParameters.jbExport.export.text"));
         jbExport.setToolTipText(res.getString("DViewDHParameters.jbExport.export.tooltip"));

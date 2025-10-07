@@ -60,20 +60,18 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
 
         ImageIcon icon = null;
 
-        if (node.getLevel() == 0) // First level - root
-        {
-            // Root node
+        if (node.getLevel() == 0) {
+            // First level - Root node
             icon = new ImageIcon(getClass().getResource("images/root_node.png"));
             cell.setToolTipText(res.getString("ProviderTreeCellRend.Root.tooltip"));
-        } else if (node.getLevel() == 1) // Second level - providers
-        {
-            // Provider node - name and version
+
+        } else if (node.getLevel() == 1) {
+            // Second level - Provider node; name and version
             icon = new ImageIcon(getClass().getResource("images/provider_node.png"));
             cell.setToolTipText(res.getString("ProviderTreeCellRend.Provider.tooltip"));
-        } else if (node.getLevel() == 2) // Third level - provider description,
-        // version, java class
-        // and services
-        {
+
+        } else if (node.getLevel() == 2) {
+            // Third level - provider description, version, java class and services
             TreeNode parent = node.getParent();
             int index = parent.getIndex(node);
 
@@ -90,20 +88,19 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
                 icon = new ImageIcon(getClass().getResource("images/services_node.png"));
                 cell.setToolTipText(res.getString("ProviderTreeCellRend.Services.tooltip"));
             }
-        } else if (node.getLevel() == 3) // Fourth level - list if services
-        {
-            // Provider service node
+
+        } else if (node.getLevel() == 3) {
+            // Fourth level - Provider service node; list if services
             icon = new ImageIcon(getClass().getResource("images/service_node.png"));
             cell.setToolTipText(res.getString("ProviderTreeCellRend.Service.tooltip"));
-        } else if (node.getLevel() == 4) // Fifth level - list of service
-        // algorithms
-        {
-            // Service algorithm node
+
+        } else if (node.getLevel() == 4) {
+            // Fifth level - Service algorithm node; list of service algorithms
             icon = new ImageIcon(getClass().getResource("images/algorithm_node.png"));
             cell.setToolTipText(res.getString("ProviderTreeCellRend.Algorithm.tooltip"));
-        } else if (node.getLevel() == 5) // Sixth level - algorithm java class,
-        // attributes and aliases
-        {
+
+        } else if (node.getLevel() == 5) {
+            // Sixth level - algorithm java class, attributes and aliases
             TreeNode parent = node.getParent();
             int index = parent.getIndex(node);
 
@@ -120,9 +117,9 @@ public class ProviderTreeCellRend extends DefaultTreeCellRenderer {
                 icon = new ImageIcon(getClass().getResource("images/aliases_node.png"));
                 cell.setToolTipText(res.getString("ProviderTreeCellRend.Aliases.tooltip"));
             }
-        } else
-        // Seventh level - list of attributes or aliases
-        {
+
+        } else {
+            // Seventh level - list of attributes or aliases
             TreeNode parent = node.getParent();
 
             if (parent.toString().equals(res.getString("DProviderInfo.AttributesNode.text"))) {

@@ -110,13 +110,7 @@ public class DSignJarSigning extends JEscDialog {
      */
     private void initComponents() {
 
-        // TODO Create Jar sign icon
-
         jlSignJar = new JLabel(res.getString("DSignJarSigning.jlSignJar.text"));
-		/*
-		ImageIcon icon = new ImageIcon(getClass().getResource("images/genkp.png"));
-		jlSignJar.setIcon(icon);
-		 */
 
         jpbSignJar = new JProgressBar(0, inputJarFiles.length);
         jpbSignJar.setIndeterminate(false);

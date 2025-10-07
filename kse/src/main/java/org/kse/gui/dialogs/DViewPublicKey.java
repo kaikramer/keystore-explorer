@@ -304,7 +304,7 @@ public class DViewPublicKey extends JEscDialog {
     }
 
     private void okPressed() {
-    	preferences.setPublicKeyFingerprintAlgorithm(jcfFingerprint.getSelectedFingerprintAlg());
+        preferences.setPublicKeyFingerprintAlgorithm(jcfFingerprint.getSelectedFingerprintAlg());
         closeDialog();
     }
 

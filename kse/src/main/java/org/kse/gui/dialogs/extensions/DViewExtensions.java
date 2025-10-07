@@ -127,7 +127,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     }
 
     /**
-     * Creates new DViewExtensions dialog. 
+     * Creates new DViewExtensions dialog.
      * @param parent Parent dialog
      * @param title The dialog title
      * @param extensions Extensions to display
@@ -369,23 +369,23 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     }
 
     private boolean isRedirect(int status) {
-		// normally, 3xx is redirect
-    	if (status != HttpURLConnection.HTTP_OK) {
-			if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-					|| status == HttpURLConnection.HTTP_SEE_OTHER)
-				return true;
-		}
-    	return false;
+        // normally, 3xx is redirect
+        if (status != HttpURLConnection.HTTP_OK) {
+            if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
+                    || status == HttpURLConnection.HTTP_SEE_OTHER)
+                return true;
+        }
+        return false;
     }
 
     private void downloadCrl(URL url) throws IOException, CryptoException {
-    	HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-		int status = urlConn.getResponseCode();
-		if (isRedirect(status)) {
-			String newUrl = urlConn.getHeaderField("Location");
-			url = new URL(newUrl);
-			urlConn = (HttpURLConnection) url.openConnection();
-		}
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        int status = urlConn.getResponseCode();
+        if (isRedirect(status)) {
+            String newUrl = urlConn.getHeaderField("Location");
+            url = new URL(newUrl);
+            urlConn = (HttpURLConnection) url.openConnection();
+        }
         try (InputStream is = urlConn.getInputStream()) {
             X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
             if (crl != null) {
@@ -400,13 +400,13 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     }
 
     private void downloadCert(URL url) throws IOException, CryptoException {
-    	HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-		int status = urlConn.getResponseCode();
-		if (isRedirect(status)) {
-			String newUrl = urlConn.getHeaderField("Location");
-			url = new URL(newUrl);
-			urlConn = (HttpURLConnection) url.openConnection();
-		}
+        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
+        int status = urlConn.getResponseCode();
+        if (isRedirect(status)) {
+            String newUrl = urlConn.getHeaderField("Location");
+            url = new URL(newUrl);
+            urlConn = (HttpURLConnection) url.openConnection();
+        }
         try (InputStream is = urlConn.getInputStream()) {
             X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
             if (certs != null && certs.length > 0) {

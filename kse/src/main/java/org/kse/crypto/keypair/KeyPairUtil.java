@@ -411,7 +411,7 @@ public final class KeyPairUtil {
         signature.update(signed);
         return signature.verify(signatureToVerify);
     }
-    
+
     /**
      * The function generates a key pair (public-private) from a given private key
      * @param privateKey Private key

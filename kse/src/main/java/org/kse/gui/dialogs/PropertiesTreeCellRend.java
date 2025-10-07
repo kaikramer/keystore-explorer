@@ -60,10 +60,9 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
 
         ImageIcon icon = null;
 
-        if (node.getLevel() == 1) // Second level - keystore main properties and
-        // "keys", "key pairs"
-        // and "trusted certificates"
-        {
+        if (node.getLevel() == 1) {
+            // Second level - keystore main properties and
+            // "keys", "key pairs" and "trusted certificates"
             TreeNode parent = node.getParent();
             int index = parent.getIndex(node);
 
@@ -80,15 +79,14 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
             } else if (index == 5) {
                 icon = new ImageIcon(getClass().getResource("images/trustcerts_node.png"));
             }
-        } else if (node.getLevel() == 2) // Third level - entries
-        {
+
+        } else if (node.getLevel() == 2) {
+            // Third level - entries
             icon = new ImageIcon(getClass().getResource("images/entry_node.png"));
-        } else if (node.getLevel() == 3) // Fourth level - includes private
-        // keys, certificates of key
-        // pairs, public keys of trusted
-        // certificates and keys within
-        // key entries of all types
-        {
+
+        } else if (node.getLevel() == 3) {
+            // Fourth level - includes private keys, certificates of key pairs, public keys of
+            // trusted certificates and keys within key entries of all types
             if (value.toString().equals(res.getString("DProperties.properties.PrivateKey"))) {
                 icon = new ImageIcon(getClass().getResource("images/privatekey_node.png"));
             } else if (value.toString().equals(res.getString("DProperties.properties.Certificates"))) {
@@ -97,25 +95,22 @@ public class PropertiesTreeCellRend extends DefaultTreeCellRenderer {
                 icon = new ImageIcon(getClass().getResource("images/publickey_node.png"));
             } else if (value.toString().equals(res.getString("DProperties.properties.SecretKey"))) {
                 icon = new ImageIcon(getClass().getResource("images/secretkey_node.png"));
-            }
-            // Otherwise use default icon
-            else {
+            } else {
+                // Otherwise use default icon
                 icon = new ImageIcon(getClass().getResource("images/default_node.png"));
             }
-        } else if (node.getLevel() == 5) // Sixth level - includes public keys
-        // of key pair
-        // certificates
-        {
+
+        } else if (node.getLevel() == 5) {
+            // Sixth level - includes public keys of key pair certificates
             if (value.toString().equals(res.getString("DProperties.properties.PublicKey"))) {
                 icon = new ImageIcon(getClass().getResource("images/publickey_node.png"));
-            }
-            // Otherwise use default icon
-            else {
+            } else {
+                // Otherwise use default icon
                 icon = new ImageIcon(getClass().getResource("images/default_node.png"));
             }
-        }
-        // Otherwise use default icon
-        else {
+
+        } else {
+            // Otherwise use default icon
             icon = new ImageIcon(getClass().getResource("images/default_node.png"));
         }
 

@@ -22,7 +22,6 @@ package org.kse.crypto.privatekey;
 import static org.kse.crypto.privatekey.EncryptionType.ENCRYPTED;
 import static org.kse.crypto.privatekey.EncryptionType.UNENCRYPTED;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -187,9 +186,8 @@ public class MsPvkUtil {
      * @return The private key
      * @throws PrivateKeyEncryptedException If private key is encrypted
      * @throws CryptoException              Problem encountered while loading the private key
-     * @throws IOException                  An I/O error occurred
      */
-    public static PrivateKey load(byte[] pvk) throws IOException, CryptoException {
+    public static PrivateKey load(byte[] pvk) throws CryptoException {
 
         // Wrap in a byte buffer set up to read little endian
         ByteBuffer bb = ByteBuffer.wrap(pvk);
@@ -210,8 +208,7 @@ public class MsPvkUtil {
         // Read and validate salt length field
         long saltLength = UnsignedUtil.getInt(bb);
 
-        if (saltLength != UNENCRYPTED_SALT_LENGTH) // Specific length (0) for unencrypted PVK
-        {
+        if (saltLength != UNENCRYPTED_SALT_LENGTH) { // Specific length (0) for unencrypted PVK
             throw new CryptoException(
                     MessageFormat.format(res.getString("InvalidMsPvkSaltLengthField.exception.message"),
                                          Long.toHexString(saltLength), Long.toHexString(UNENCRYPTED_SALT_LENGTH)));
@@ -246,9 +243,8 @@ public class MsPvkUtil {
      * @return The private key
      * @throws PrivateKeyUnencryptedException If private key is unencrypted
      * @throws CryptoException                Problem encountered while loading the private key
-     * @throws IOException                    An I/O error occurred
      */
-    public static PrivateKey loadEncrypted(byte[] pvk, Password password) throws IOException, CryptoException {
+    public static PrivateKey loadEncrypted(byte[] pvk, Password password) throws CryptoException {
         try {
             // Wrap in a byte buffer set up to read little endian
             ByteBuffer bb = ByteBuffer.wrap(pvk);
@@ -417,43 +413,39 @@ public class MsPvkUtil {
     private static byte[] getInternal(PrivateKey privateKey, int keyType) throws CryptoException {
         // PVK encode a private key unencrypted
 
-        try {
-            // Write PVK to a byte buffer set up to write little endian
-            ByteBuffer bb = ByteBuffer.wrap(new byte[PVK_BUFFER_LENGTH]);
-            bb.order(ByteOrder.LITTLE_ENDIAN);
+        // Write PVK to a byte buffer set up to write little endian
+        ByteBuffer bb = ByteBuffer.wrap(new byte[PVK_BUFFER_LENGTH]);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
 
-            // Write magic number, reserved and key type fields
-            writeReservedMagicKeyType(bb, keyType);
+        // Write magic number, reserved and key type fields
+        writeReservedMagicKeyType(bb, keyType);
 
-            // Get unencrypted private key blob
-            byte[] privateKeyBlob;
+        // Get unencrypted private key blob
+        byte[] privateKeyBlob;
 
-            if (privateKey instanceof RSAPrivateCrtKey) {
-                privateKeyBlob = rsaPrivateKeyToBlob((RSAPrivateCrtKey) privateKey);
-            } else {
-                privateKeyBlob = dsaPrivateKeyToBlob((DSAPrivateKey) privateKey);
-            }
-
-            // Write type field - unencrypted
-            UnsignedUtil.putInt(bb, PVK_UNENCRYPTED);
-
-            // Write salt length - unencrypted so no salt, length = 0
-            UnsignedUtil.putInt(bb, UNENCRYPTED_SALT_LENGTH);
-
-            // Write key length field - length of the blob plus length of blob header
-            long keyLength = privateKeyBlob.length + BLOB_HEADER_LENGTH;
-            UnsignedUtil.putInt(bb, keyLength);
-
-            // Write private key blob header
-            writePrivateKeyBlobHeader(bb, keyType, privateKey);
-
-            // Write private key blob
-            bb.put(privateKeyBlob);
-
-            return getBufferBytes(bb);
-        } catch (IOException ex) {
-            throw new CryptoException(res.getString("NoGetMsPvk.exception.message"), ex);
+        if (privateKey instanceof RSAPrivateCrtKey) {
+            privateKeyBlob = rsaPrivateKeyToBlob((RSAPrivateCrtKey) privateKey);
+        } else {
+            privateKeyBlob = dsaPrivateKeyToBlob((DSAPrivateKey) privateKey);
         }
+
+        // Write type field - unencrypted
+        UnsignedUtil.putInt(bb, PVK_UNENCRYPTED);
+
+        // Write salt length - unencrypted so no salt, length = 0
+        UnsignedUtil.putInt(bb, UNENCRYPTED_SALT_LENGTH);
+
+        // Write key length field - length of the blob plus length of blob header
+        long keyLength = privateKeyBlob.length + BLOB_HEADER_LENGTH;
+        UnsignedUtil.putInt(bb, keyLength);
+
+        // Write private key blob header
+        writePrivateKeyBlobHeader(bb, keyType, privateKey);
+
+        // Write private key blob
+        bb.put(privateKeyBlob);
+
+        return getBufferBytes(bb);
     }
 
     /**
@@ -487,6 +479,9 @@ public class MsPvkUtil {
 
     /**
      * Legacy format only supported for RSA and DSA keys
+     *
+     * @param privateKey The private key to check.
+     * @return True if the private key type is supported by the PVK format.
      */
     public static boolean isPVKFormatSupported(PrivateKey privateKey) {
         KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
@@ -568,12 +563,12 @@ public class MsPvkUtil {
             bb.put(encryptedPrivateKeyBlob);
 
             return getBufferBytes(bb);
-        } catch (IOException | NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException ex) {
             throw new CryptoException(res.getString("NoGetMsPvk.exception.message"), ex);
         }
     }
 
-    private static void writeReservedMagicKeyType(ByteBuffer bb, long keyType) throws IOException, CryptoException {
+    private static void writeReservedMagicKeyType(ByteBuffer bb, long keyType) throws CryptoException {
         // Write the PVK fields: reserved, magic and key type
 
         UnsignedUtil.putInt(bb, PVK_MAGIC_NUMBER);
@@ -624,8 +619,7 @@ public class MsPvkUtil {
         return keyType;
     }
 
-    private static void writePrivateKeyBlobHeader(ByteBuffer bb, long keyType, PrivateKey privateKey)
-            throws IOException {
+    private static void writePrivateKeyBlobHeader(ByteBuffer bb, long keyType, PrivateKey privateKey) {
         // Write Key blob type - private key
         UnsignedUtil.putByte(bb, PRIVATE_KEY_BLOB);
 
@@ -702,8 +696,8 @@ public class MsPvkUtil {
         if ((privateKeyBlob[0] == 82) && // R
             (privateKeyBlob[1] == 83) && // S
             (privateKeyBlob[2] == 65) && // A
-            (privateKeyBlob[3] == 50)) // 2
-        {
+            (privateKeyBlob[3] == 50)) { // 2
+
             return blobToRsaPrivateKey(privateKeyBlob);
         } else {
             return blobToDsaPrivateKey(privateKeyBlob);
@@ -755,7 +749,7 @@ public class MsPvkUtil {
 
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return (RSAPrivateCrtKey) keyFactory.generatePrivate(rsaPrivateCrtKeySpec);
-        } catch (IOException | GeneralSecurityException ex) {
+        } catch (GeneralSecurityException ex) {
             throw new CryptoException(res.getString("NoConvertBlobToRsaKey.exception.message"), ex);
         }
     }
@@ -792,91 +786,82 @@ public class MsPvkUtil {
 
             KeyFactory keyFactory = KeyFactory.getInstance("DSA");
             return (DSAPrivateKey) keyFactory.generatePrivate(dsaPrivateKeySpec);
-        } catch (IOException | GeneralSecurityException ex) {
+        } catch (GeneralSecurityException ex) {
             throw new CryptoException(res.getString("NoConvertBlobToDsaKey.exception.message"), ex);
         }
     }
 
-    private static byte[] rsaPrivateKeyToBlob(RSAPrivateCrtKey rsaPrivCrtKey) throws CryptoException {
-        try {
-            ByteBuffer bb = ByteBuffer.wrap(new byte[4096]); // 2316 sufficient for a 4096 bit RSA key
-            bb.order(ByteOrder.LITTLE_ENDIAN);
+    private static byte[] rsaPrivateKeyToBlob(RSAPrivateCrtKey rsaPrivCrtKey) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[4096]); // 2316 sufficient for a 4096 bit RSA key
+        bb.order(ByteOrder.LITTLE_ENDIAN);
 
-            // Write out the blob fields
+        // Write out the blob fields
 
-            UnsignedUtil.putInt(bb, RSA_PRIV_MAGIC); // rsapubkey.magic
+        UnsignedUtil.putInt(bb, RSA_PRIV_MAGIC); // rsapubkey.magic
 
-            BigInteger modulus = rsaPrivCrtKey.getModulus();
-            int bitLength = modulus.bitLength();
-            UnsignedUtil.putInt(bb, bitLength); // rsapubkey.bitlen
+        BigInteger modulus = rsaPrivCrtKey.getModulus();
+        int bitLength = modulus.bitLength();
+        UnsignedUtil.putInt(bb, bitLength); // rsapubkey.bitlen
 
-            BigInteger publicExponent = rsaPrivCrtKey.getPublicExponent();
-            UnsignedUtil.putInt(bb, (int) publicExponent.longValue()); // rsapubkey.pubexp
+        BigInteger publicExponent = rsaPrivCrtKey.getPublicExponent();
+        UnsignedUtil.putInt(bb, (int) publicExponent.longValue()); // rsapubkey.pubexp
 
-            /*
-             * Byte lengths divisions may have remainders to take account for if
-             * not factors of 16 and/or 8
-             */
-            int add8 = 0;
-            if ((bitLength % 8) != 0) {
-                add8++;
-            }
-
-            int add16 = 0;
-            if ((bitLength % 16) != 0) {
-                add16++;
-            }
-
-            writeBigInteger(bb, modulus, (bitLength / 8) + add8); // modulus
-            writeBigInteger(bb, rsaPrivCrtKey.getPrimeP(), (bitLength / 16) + add16); // prime1
-            writeBigInteger(bb, rsaPrivCrtKey.getPrimeQ(), (bitLength / 16) + add16); // prime2
-            writeBigInteger(bb, rsaPrivCrtKey.getPrimeExponentP(), (bitLength / 16) + add16); // exponent1
-            writeBigInteger(bb, rsaPrivCrtKey.getPrimeExponentQ(), (bitLength / 16) + add16); // exponent2
-            writeBigInteger(bb, rsaPrivCrtKey.getCrtCoefficient(), (bitLength / 16) + add16); // coefficient
-            writeBigInteger(bb, rsaPrivCrtKey.getPrivateExponent(), (bitLength / 8) + add8); // privateExponent
-
-            return getBufferBytes(bb);
-        } catch (IOException ex) {
-            throw new CryptoException(res.getString("NoConvertKeyToBlob.exception.message"), ex);
+        /*
+         * Byte lengths divisions may have remainders to take account for if
+         * not factors of 16 and/or 8
+         */
+        int add8 = 0;
+        if ((bitLength % 8) != 0) {
+            add8++;
         }
+
+        int add16 = 0;
+        if ((bitLength % 16) != 0) {
+            add16++;
+        }
+
+        writeBigInteger(bb, modulus, (bitLength / 8) + add8); // modulus
+        writeBigInteger(bb, rsaPrivCrtKey.getPrimeP(), (bitLength / 16) + add16); // prime1
+        writeBigInteger(bb, rsaPrivCrtKey.getPrimeQ(), (bitLength / 16) + add16); // prime2
+        writeBigInteger(bb, rsaPrivCrtKey.getPrimeExponentP(), (bitLength / 16) + add16); // exponent1
+        writeBigInteger(bb, rsaPrivCrtKey.getPrimeExponentQ(), (bitLength / 16) + add16); // exponent2
+        writeBigInteger(bb, rsaPrivCrtKey.getCrtCoefficient(), (bitLength / 16) + add16); // coefficient
+        writeBigInteger(bb, rsaPrivCrtKey.getPrivateExponent(), (bitLength / 8) + add8); // privateExponent
+
+        return getBufferBytes(bb);
     }
 
-    private static byte[] dsaPrivateKeyToBlob(DSAPrivateKey dsaPrivKey) throws CryptoException {
-        try {
-            DSAParams dsaParams = dsaPrivKey.getParams();
+    private static byte[] dsaPrivateKeyToBlob(DSAPrivateKey dsaPrivKey) {
+        DSAParams dsaParams = dsaPrivKey.getParams();
 
-            ByteBuffer bb = ByteBuffer.wrap(new byte[512]); // 328 sufficient for a 1024 bit DSA key
-            bb.order(ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer bb = ByteBuffer.wrap(new byte[512]); // 328 sufficient for a 1024 bit DSA key
+        bb.order(ByteOrder.LITTLE_ENDIAN);
 
-            // Write out the blob fields
+        // Write out the blob fields
 
-            UnsignedUtil.putInt(bb, DSS_PRIV_MAGIC); // dsspubkey.magic
+        UnsignedUtil.putInt(bb, DSS_PRIV_MAGIC); // dsspubkey.magic
 
-            BigInteger prime = dsaParams.getP();
-            int bitLength = prime.toString(2).length();
-            UnsignedUtil.putInt(bb, bitLength); // dsspubkey.bitlen
+        BigInteger prime = dsaParams.getP();
+        int bitLength = prime.toString(2).length();
+        UnsignedUtil.putInt(bb, bitLength); // dsspubkey.bitlen
 
-            /*
-             * Unlike RSA there are no bit length remainders (ie DSA bit length
-             * always divisible by 8 as they are multiples of 64)
-             */
+        /*
+         * Unlike RSA there are no bit length remainders (ie DSA bit length
+         * always divisible by 8 as they are multiples of 64)
+         */
 
-            writeBigInteger(bb, dsaParams.getP(), (bitLength / 8)); // modulus
-            writeBigInteger(bb, dsaParams.getQ(), 20); // prime
-            writeBigInteger(bb, dsaParams.getG(), (bitLength / 8)); // generator
-            writeBigInteger(bb, dsaPrivKey.getX(), 20); // secret exponent
+        writeBigInteger(bb, dsaParams.getP(), (bitLength / 8)); // modulus
+        writeBigInteger(bb, dsaParams.getQ(), 20); // prime
+        writeBigInteger(bb, dsaParams.getG(), (bitLength / 8)); // generator
+        writeBigInteger(bb, dsaPrivKey.getX(), 20); // secret exponent
 
-            UnsignedUtil.putInt(bb, 0xffffffff); // dssseed.counter - none, fill 0xff
+        UnsignedUtil.putInt(bb, 0xffffffff); // dssseed.counter - none, fill 0xff
 
-            for (int i = 0; i < 20; i++) // dssseed.seed - none, fill 0xff
-            {
-                bb.put((byte) 0xff);
-            }
-
-            return getBufferBytes(bb);
-        } catch (IOException ex) {
-            throw new CryptoException(res.getString("NoConvertKeyToBlob.exception.message"), ex);
+        for (int i = 0; i < 20; i++) { // dssseed.seed - none, fill 0xff
+            bb.put((byte) 0xff);
         }
+
+        return getBufferBytes(bb);
     }
 
     private static byte[] decryptPrivateKeyBlob(byte[] encryptedPvk, byte[] rc4Key) throws CryptoException {
@@ -894,16 +879,16 @@ public class MsPvkUtil {
             if ((decryptedKeyBlob[0] == 82) && // R
                 (decryptedKeyBlob[1] == 83) && // S
                 (decryptedKeyBlob[2] == 65) && // A
-                (decryptedKeyBlob[3] == 50)) // 2
-            {
+                (decryptedKeyBlob[3] == 50)) { // 2
+
                 return decryptedKeyBlob;
-            }
+
             // First four bytes will be "DSS2" if successful for a DSA private key
-            else if ((decryptedKeyBlob[0] == 68) && // D
+            } else if ((decryptedKeyBlob[0] == 68) && // D
                      (decryptedKeyBlob[1] == 83) && // S
                      (decryptedKeyBlob[2] == 83) && // S
-                     (decryptedKeyBlob[3] == 50)) // 2
-            {
+                     (decryptedKeyBlob[3] == 50)) { // 2
+
                 return decryptedKeyBlob;
             } else {
                 return null;
@@ -943,7 +928,7 @@ public class MsPvkUtil {
         return written;
     }
 
-    private static BigInteger readBigInteger(ByteBuffer bb, int length) throws IOException {
+    private static BigInteger readBigInteger(ByteBuffer bb, int length) {
         // Read a big integer from a little endian source
 
         // Read the required number of bytes
@@ -961,7 +946,7 @@ public class MsPvkUtil {
         return new BigInteger(1, bigIntBytes);
     }
 
-    private static void writeBigInteger(ByteBuffer bb, BigInteger bigInteger, int length) throws IOException {
+    private static void writeBigInteger(ByteBuffer bb, BigInteger bigInteger, int length) {
         // Get big-endian two's compliment representation of big integer
         byte[] bigInt = bigInteger.toByteArray();
 

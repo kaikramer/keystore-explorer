@@ -62,8 +62,8 @@ public class DCustomExtension extends DExtension {
     private JLabel jlCustomOID;
     private JObjectIdEditor joidCustomOID;
 
-    //	private JLabel jlValueType;
-    //	private JComboBox<String> jcbValueType;
+    //  private JLabel jlValueType;
+    //  private JComboBox<String> jcbValueType;
 
     private JLabel jlEncodedHexValue;
     private JTextArea jtaEncodedHexValue;
@@ -107,11 +107,11 @@ public class DCustomExtension extends DExtension {
         joidCustomOID = new JObjectIdEditor();
         joidCustomOID.setToolTipText(res.getString("DCustomExtension.joidCustomOID.tooltip"));
 
-        //		jlValueType = new JLabel(res.getString("DCustomExtension.jlValueType.text"));
+        //      jlValueType = new JLabel(res.getString("DCustomExtension.jlValueType.text"));
         //
-        //		jcbValueType = new JComboBox<>();
-        //		jcbValueType.setModel(new DefaultComboBoxModel<>(getValueTypeOptions()));
-        //		jcbValueType.setToolTipText(res.getString("DCustomExtension.jcbValueType.tooltip"));
+        //      jcbValueType = new JComboBox<>();
+        //      jcbValueType.setModel(new DefaultComboBoxModel<>(getValueTypeOptions()));
+        //      jcbValueType.setToolTipText(res.getString("DCustomExtension.jcbValueType.tooltip"));
 
         jlEncodedHexValue = new JLabel(res.getString("DCustomExtension.jlEncodedHexValue.text"));
 
@@ -162,13 +162,13 @@ public class DCustomExtension extends DExtension {
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
-    //	private String[] getValueTypeOptions() {
-    //		return new String[] {
-    //				res.getString("DCustomExtension.jcbValueType.options.empty"),
-    //				res.getString("DCustomExtension.jcbValueType.options.string"),
-    //				res.getString("DCustomExtension.jcbValueType.options.hex")
-    //		};
-    //	}
+    //  private String[] getValueTypeOptions() {
+    //      return new String[] {
+    //              res.getString("DCustomExtension.jcbValueType.options.empty"),
+    //              res.getString("DCustomExtension.jcbValueType.options.string"),
+    //              res.getString("DCustomExtension.jcbValueType.options.hex")
+    //      };
+    //  }
 
     private void prepopulate(ASN1ObjectIdentifier oid, byte[] value) {
         try {
