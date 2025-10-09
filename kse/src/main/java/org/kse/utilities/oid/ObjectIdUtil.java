@@ -681,9 +681,15 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.2.840.10046.3.4", "DhHybrid2");
         oidToNameMapping.put("1.2.840.10046.3.5", "Mqv2");
         oidToNameMapping.put("1.2.840.10046.3.6", "Mqv1");
-        oidToNameMapping.put("1.2.840.10065.2.2", "?");
+        oidToNameMapping.put("1.2.840.10065.2", "HealthcareCertificatePolicy");
+        oidToNameMapping.put("1.2.840.10065.2.1", "E3120-CertPolicy");
+        oidToNameMapping.put("1.2.840.10065.2.1.1", "CertPolicy-Entity");
+        oidToNameMapping.put("1.2.840.10065.2.1.2", "CertPolicy-BasicIndividual");
+        oidToNameMapping.put("1.2.840.10065.2.1.3", "CertPolicy-ClinicalIndividual");
+        oidToNameMapping.put("1.2.840.10065.2.2", "Healthcare-?");
         oidToNameMapping.put("1.2.840.10065.2.3", "HealthcareLicense");
-        oidToNameMapping.put("1.2.840.10065.2.3.1.1", "License?");
+        oidToNameMapping.put("1.2.840.10065.2.3.1", "HealthcareProfessionalLicenseNumber");
+        oidToNameMapping.put("1.2.840.10065.2.3.1.1", "HealthcareLicenseType");
         oidToNameMapping.put("1.2.840.113533.7", "Nsn");
         oidToNameMapping.put("1.2.840.113533.7.65", "Nsn-ce");
         oidToNameMapping.put("1.2.840.113533.7.65.0", "EntrustVersInfo");
