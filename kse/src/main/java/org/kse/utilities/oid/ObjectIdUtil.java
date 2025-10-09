@@ -2022,9 +2022,9 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.5.5.7.20.2", "LogoBackground");
         oidToNameMapping.put("1.3.6.1.5.5.7.20.3", "LogoCertImage");
         oidToNameMapping.put("1.3.6.1.5.5.7.21", "ProxyCertificatePolicyLanguages");
-        oidToNameMapping.put("1.3.6.1.5.5.7.21.1", "PplAnyLanguage");
-        oidToNameMapping.put("1.3.6.1.5.5.7.21.2", "PplInheritAll");
-        oidToNameMapping.put("1.3.6.1.5.5.7.21.3", "PplIndependent");
+        oidToNameMapping.put("1.3.6.1.5.5.7.21.0", "PplAnyLanguage");
+        oidToNameMapping.put("1.3.6.1.5.5.7.21.1", "PplInheritAll");
+        oidToNameMapping.put("1.3.6.1.5.5.7.21.2", "PplIndependent");
         oidToNameMapping.put("1.3.6.1.5.5.7.3", "KeyPurpose");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.1", "ServerAuth");
         oidToNameMapping.put("1.3.6.1.5.5.7.3.10", "Dvcs");
