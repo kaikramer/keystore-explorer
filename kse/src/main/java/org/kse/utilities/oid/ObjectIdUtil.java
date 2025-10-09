@@ -1252,7 +1252,6 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.132.0.9", "Secp160k1");
         oidToNameMapping.put("1.3.132.1.11", "Diffie-Hellman (DH) single pass, standard, with Key Derivation Functions (KDFs)");
         oidToNameMapping.put("1.3.132.1.11.0", "EcdhX963KDF-SHA224");
-        oidToNameMapping.put("1.3.132.1.11.0", "EcdhX963KDF-SHA224");
         oidToNameMapping.put("1.3.132.1.11.1", "EcdhX963KDF-SHA256");
         oidToNameMapping.put("1.3.132.1.11.2", "EcdhX963KDF-SHA384");
         oidToNameMapping.put("1.3.132.1.11.3", "EcdhX963KDF-SHA512");
