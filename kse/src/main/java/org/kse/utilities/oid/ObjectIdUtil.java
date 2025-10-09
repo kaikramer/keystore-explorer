@@ -2819,7 +2819,7 @@ public class ObjectIdUtil {
         oidToNameMapping.put("2.5.4.25.1", "CollectiveInternationalISDNNumber");
         oidToNameMapping.put("2.5.4.26", "RegisteredAddress");
         oidToNameMapping.put("2.5.4.27", "DestinationIndicator");
-        oidToNameMapping.put("2.5.4.28", "PreferredDeliveryMehtod");
+        oidToNameMapping.put("2.5.4.28", "PreferredDeliveryMethod");
         oidToNameMapping.put("2.5.4.29", "PresentationAddress");
         oidToNameMapping.put("2.5.4.3", "CommonName");
         oidToNameMapping.put("2.5.4.30", "SupportedApplicationContext");
