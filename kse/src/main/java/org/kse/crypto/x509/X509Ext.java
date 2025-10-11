@@ -375,6 +375,11 @@ public class X509Ext {
         return ia5String.getString();
     }
 
+    private static String getIA5String(ASN1Encodable value) throws IOException {
+        ASN1IA5String ia5String = ASN1IA5String.getInstance(value);
+        return ia5String.getString();
+    }
+
     private String getSCTs(byte[] octets) throws IOException {
         ASN1InputStream asn1InputStream = new ASN1InputStream(new ByteArrayInputStream(octets));
         ASN1OctetString octetString = (ASN1OctetString) asn1InputStream.readObject();
