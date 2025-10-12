@@ -319,7 +319,7 @@ public class X509Ext {
         case VS_SERIAL_NUMBER_ROLLOVER:
         case VS_ON_SITE_JURISDICTION_HASH:
             // most VeriSign extensions contain just an IA5STRING
-            return ASN1IA5String.getInstance(octets).getString();
+            return getIA5String(octets);
         case VS_TOKEN_TYPE:
         case VS_UNKNOWN:
             return getBitString(octets);
@@ -368,6 +368,16 @@ public class X509Ext {
         }
 
         return X509ExtensionType.UNKNOWN.friendly();
+    }
+
+    private static String getIA5String(byte[] value) throws IOException {
+        ASN1IA5String ia5String = ASN1IA5String.getInstance(value);
+        return ia5String.getString();
+    }
+
+    private static String getIA5String(ASN1Encodable value) throws IOException {
+        ASN1IA5String ia5String = ASN1IA5String.getInstance(value);
+        return ia5String.getString();
     }
 
     private String getSCTs(byte[] octets) throws IOException {
@@ -1601,14 +1611,7 @@ public class X509Ext {
 
         // @formatter:on
 
-        StringBuilder sb = new StringBuilder();
-
-        ASN1IA5String netscapeBaseUrl = ASN1IA5String.getInstance(value);
-
-        sb.append(netscapeBaseUrl.getString());
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return getIA5String(value) + NEWLINE;
     }
 
     private static String getNetscapeRevocationUrlStringValue(byte[] value) throws IOException {
@@ -1618,14 +1621,7 @@ public class X509Ext {
 
         // @formatter:on
 
-        StringBuilder sb = new StringBuilder();
-
-        ASN1IA5String netscapeRevocationUrl = ASN1IA5String.getInstance(value);
-
-        sb.append(netscapeRevocationUrl.getString());
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return getIA5String(value) + NEWLINE;
     }
 
     private static String getNetscapeCaRevocationUrlStringValue(byte[] value) throws IOException {
@@ -1635,14 +1631,7 @@ public class X509Ext {
 
         // @formatter:on
 
-        StringBuilder sb = new StringBuilder();
-
-        ASN1IA5String netscapeCaRevocationUrl = ASN1IA5String.getInstance(value);
-
-        sb.append(netscapeCaRevocationUrl.getString());
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return getIA5String(value) + NEWLINE;
     }
 
     private static String getNetscapeCertificateRenewalStringValue(byte[] value) throws IOException {
@@ -1652,14 +1641,7 @@ public class X509Ext {
 
         // @formatter:on
 
-        StringBuilder sb = new StringBuilder();
-
-        ASN1IA5String netscapeCertRenewalUrl = ASN1IA5String.getInstance(value);
-
-        sb.append(netscapeCertRenewalUrl.getString());
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return getIA5String(value) + NEWLINE;
     }
 
     private static String getNetscapeCaPolicyUrlStringValue(byte[] value) throws IOException {
@@ -1669,14 +1651,7 @@ public class X509Ext {
 
         // @formatter:on
 
-        StringBuilder sb = new StringBuilder();
-
-        ASN1IA5String netscapeCaPolicyUrl = ASN1IA5String.getInstance(value);
-
-        sb.append(netscapeCaPolicyUrl.getString());
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return getIA5String(value) + NEWLINE;
     }
 
     private static String getNetscapeSslServerNameStringValue(byte[] value) throws IOException {
@@ -1686,14 +1661,7 @@ public class X509Ext {
 
         // @formatter:on
 
-        StringBuilder sb = new StringBuilder();
-
-        ASN1IA5String netscapeSslServerName = ASN1IA5String.getInstance(value);
-
-        sb.append(netscapeSslServerName.getString());
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return getIA5String(value) + NEWLINE;
     }
 
     private static String getNetscapeCommentStringValue(byte[] value) throws IOException {
@@ -1703,14 +1671,7 @@ public class X509Ext {
 
         // @formatter:on
 
-        StringBuilder sb = new StringBuilder();
-
-        ASN1IA5String netscapeComment = ASN1IA5String.getInstance(value);
-
-        sb.append(netscapeComment.getString());
-        sb.append(NEWLINE);
-
-        return sb.toString();
+        return getIA5String(value) + NEWLINE;
     }
 
     private static String getDistributionPointString(DistributionPoint distributionPoint, String baseIndent)
@@ -1939,7 +1900,7 @@ public class X509Ext {
         case EMAIL_ADDRESS:
         case UNSTRUCTURED_NAME:
         case DOMAIN_COMPONENT:
-            return ASN1IA5String.getInstance(attributeValue).getString();
+            return getIA5String(attributeValue);
         default:
             // Attribute type not recognized - return hex string for value
             return HexUtil.getHexString(attributeValue.toASN1Primitive().getEncoded());
