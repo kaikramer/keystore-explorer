@@ -27,15 +27,18 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
-import javax.swing.table.AbstractTableModel;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to System Properties.
  */
-public class SystemPropertiesTableModel extends AbstractTableModel {
+public class SystemPropertiesTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/about/resources");
+
+    // No tool tips for this table header.
+    private static final String[] COLUMN_TOOL_TIPS = new String[2];
 
     private String[] columnNames;
     private Object[][] data;
@@ -44,6 +47,7 @@ public class SystemPropertiesTableModel extends AbstractTableModel {
      * Construct a new SystemPropertiesTableModel.
      */
     public SystemPropertiesTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[2];
         columnNames[0] = res.getString("SystemPropertiesTableModel.NameColumn");
         columnNames[1] = res.getString("SystemPropertiesTableModel.ValueColumn");

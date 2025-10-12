@@ -25,18 +25,21 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.kse.crypto.x509.PolicyInformationUtil;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display policy information.
  */
-public class PolicyInformationTableModel extends AbstractTableModel {
+public class PolicyInformationTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "PolicyInformationTableHeadRend.PolicyInformationColumn.tooltip" //
+    };
 
     private String[] columnNames;
     private Object[][] data;
@@ -45,6 +48,7 @@ public class PolicyInformationTableModel extends AbstractTableModel {
      * Construct a new PolicyInformationTableModel.
      */
     public PolicyInformationTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[1];
         columnNames[0] = res.getString("PolicyInformationTableModel.PolicyInformationColumn");
 

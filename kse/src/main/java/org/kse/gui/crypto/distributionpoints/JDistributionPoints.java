@@ -148,8 +148,6 @@ public class JDistributionPoints extends JPanel {
 
         for (int i = 0; i < jtDistributionPoints.getColumnCount(); i++) {
             TableColumn column = jtDistributionPoints.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(
-                    new DistributionPointsTableHeadRend(jtDistributionPoints.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new DistributionPointsTableCellRend());
         }
 

@@ -62,6 +62,7 @@ import org.kse.gui.PlatformUtil;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.StringUtils;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -184,7 +185,7 @@ public class DViewCrl extends JEscDialog {
 
         RevokedCertsTableModel rcModel = new RevokedCertsTableModel();
 
-        jtRevokedCerts = new JTable(rcModel);
+        jtRevokedCerts = new ToolTipTable(rcModel);
 
         RowSorter<RevokedCertsTableModel> sorter = new TableRowSorter<>(rcModel);
         jtRevokedCerts.setRowSorter(sorter);
@@ -202,8 +203,6 @@ public class DViewCrl extends JEscDialog {
                 column.setPreferredWidth(150);
             }
 
-            column.setHeaderRenderer(
-                    new RevokedCertsTableHeadRend(jtRevokedCerts.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new RevokedCertsTableCellRend());
         }
 

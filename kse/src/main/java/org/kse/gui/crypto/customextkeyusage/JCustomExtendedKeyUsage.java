@@ -162,8 +162,6 @@ public class JCustomExtendedKeyUsage extends JPanel {
 
         for (int i = 0; i < jtCustomExtKeyUsages.getColumnCount(); i++) {
             TableColumn column = jtCustomExtKeyUsages.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(
-                    new CustomExtKeyUsageTableHeadRend(jtCustomExtKeyUsages.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new CustomExtKeyUsageTableCellRend());
         }
 

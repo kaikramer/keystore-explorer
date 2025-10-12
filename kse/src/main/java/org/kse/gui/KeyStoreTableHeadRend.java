@@ -20,7 +20,6 @@
 package org.kse.gui;
 
 import java.awt.Component;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -34,8 +33,6 @@ import javax.swing.table.TableCellRenderer;
  */
 public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
-
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
     private TableCellRenderer delegate;
 
@@ -78,8 +75,6 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
                 header.setIcon(icon);
                 header.setHorizontalAlignment(CENTER);
                 header.setVerticalAlignment(CENTER);
-
-                header.setToolTipText(res.getString("KeyStoreTableHeadRend.TypeColumn.tooltip"));
             }
             // As does the lock status
             else if (col == 1) {
@@ -88,8 +83,6 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
                 header.setIcon(icon);
                 header.setHorizontalAlignment(CENTER);
                 header.setVerticalAlignment(CENTER);
-
-                header.setToolTipText(res.getString("KeyStoreTableHeadRend.LockStatusColumn.tooltip"));
             }
             // And the expiry status
             else if (col == 2) {
@@ -98,48 +91,12 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
                 header.setIcon(icon);
                 header.setHorizontalAlignment(CENTER);
                 header.setVerticalAlignment(CENTER);
-
-                header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertExpiryStatusColumn.tooltip"));
             }
             // The other headers contain text
             else {
                 header.setText((String) value);
                 header.setHorizontalAlignment(LEFT);
                 header.setIcon(null);
-
-                if (col == keyStoreTableColumns.colIndexEntryName()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.NameColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexAlgorithm()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.AlgorithmColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexKeySize()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.KeySizeColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexCertificateValidityStart()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertValidityStartColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexCertificateExpiry()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.CertExpiryColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexLastModified()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.LastModifiedColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexAKI()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.AKIColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexSKI()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.SKIColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexIssuerDN()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerDNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexSubjectDN()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectDNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexIssuerCN()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerCNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexSubjectCN()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectCNColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexIssuerO()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.IssuerOColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexSubjectO()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.SubjectOColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexCurve()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.CurveColumn.tooltip"));
-                } else if (col == keyStoreTableColumns.colIndexFingerprint()) {
-                    header.setToolTipText(res.getString("KeyStoreTableHeadRend.FingerprintColumn.tooltip"));
-                }
             }
         }
 

@@ -22,25 +22,27 @@ package org.kse.gui.crypto.distributionpoints;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display general names.
  */
-public class DistributionPointsTableModel extends AbstractTableModel {
+public class DistributionPointsTableModel extends ToolTipTableModel {
 
     private static final long serialVersionUID = 4224864830348756671L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/distributionpoints/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "DistributionPointsTableHeadRend.DistributionPointColumn.tooltip" //
+    };
 
     private String columnName;
     private List<DistributionPoint> data;
@@ -49,6 +51,7 @@ public class DistributionPointsTableModel extends AbstractTableModel {
      * Construct a new DistributionPointsTableModel.
      */
     public DistributionPointsTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnName = res.getString("DistributionPointsTableModel.DistributionPointColumn");
 
         data = new ArrayList<>();

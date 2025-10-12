@@ -24,19 +24,23 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.x509.AccessDescription;
 import org.kse.crypto.x509.GeneralNameUtil;
+import org.kse.gui.table.ToolTipTableModel;
 import org.kse.utilities.oid.ObjectIdComparator;
 
 /**
  * The table model used to display access descriptions.
  */
-public class AccessDescriptionsTableModel extends AbstractTableModel {
+public class AccessDescriptionsTableModel extends ToolTipTableModel {
     private static final long serialVersionUID = 1L;
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/accessdescription/resources");
     private static ObjectIdComparator objectIdComparator = new ObjectIdComparator();
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "AccessDescriptionsTableHeadRend.AccessMethodColumn.tooltip", //
+            "AccessDescriptionsTableHeadRend.AccessLocationColumn.tooltip" //
+    };
 
     private String[] columnNames;
     private Object[][] data;
@@ -45,6 +49,7 @@ public class AccessDescriptionsTableModel extends AbstractTableModel {
      * Construct a new AccessDescriptionsTableModel.
      */
     public AccessDescriptionsTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnNames = new String[2];
         columnNames[0] = res.getString("AccessDescriptionsTableModel.AccessMethodColumn");
         columnNames[1] = res.getString("AccessDescriptionsTableModel.AccessLocationColumn");

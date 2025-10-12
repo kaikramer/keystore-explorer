@@ -25,20 +25,23 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.table.AbstractTableModel;
-
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.kse.crypto.x509.GeneralNameUtil;
+import org.kse.gui.table.ToolTipTableModel;
 
 /**
  * The table model used to display general names.
  */
-public class GeneralNamesTableModel extends AbstractTableModel {
+public class GeneralNamesTableModel extends ToolTipTableModel {
 
     private static final long serialVersionUID = 4224864830348756671L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
+
+    private static final String[] COLUMN_TOOL_TIPS = { //
+            "GeneralNamesTableHeadRend.GeneralNameColumn.tooltip" //
+    };
 
     private String columnName;
     private List<GeneralName> data;
@@ -47,6 +50,7 @@ public class GeneralNamesTableModel extends AbstractTableModel {
      * Construct a new GeneralNamesTableModel.
      */
     public GeneralNamesTableModel() {
+        super(res, COLUMN_TOOL_TIPS);
         columnName = res.getString("GeneralNamesTableModel.GeneralNameColumn");
 
         data = new ArrayList<>();

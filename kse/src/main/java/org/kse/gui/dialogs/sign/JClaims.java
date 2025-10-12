@@ -164,7 +164,6 @@ public class JClaims extends JPanel {
                 column.setPreferredWidth(100);
             }
 
-            column.setHeaderRenderer(new ClaimsTableHeadRend(jtClaims.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new ClaimsTableCellRend());
         }
 

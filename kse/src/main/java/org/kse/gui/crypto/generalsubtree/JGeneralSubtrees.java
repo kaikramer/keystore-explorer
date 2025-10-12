@@ -159,8 +159,6 @@ public class JGeneralSubtrees extends JPanel {
 
         for (int i = 0; i < jtGeneralSubtrees.getColumnCount(); i++) {
             TableColumn column = jtGeneralSubtrees.getColumnModel().getColumn(i);
-            column.setHeaderRenderer(
-                    new GeneralSubtreesTableHeadRend(jtGeneralSubtrees.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new GeneralSubtreesTableCellRend());
         }
 

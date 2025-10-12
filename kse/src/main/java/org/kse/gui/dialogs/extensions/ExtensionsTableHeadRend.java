@@ -69,18 +69,10 @@ public class ExtensionsTableHeadRend extends DefaultTableCellRenderer {
                 header.setIcon(icon);
                 header.setHorizontalAlignment(CENTER);
                 header.setVerticalAlignment(CENTER);
-
-                header.setToolTipText(res.getString("ExtensionsTableHeadRend.CriticalColumn.tooltip"));
             } else {
                 // The other headers contain text
                 header.setText(value.toString());
                 header.setHorizontalAlignment(LEFT);
-
-                if (col == 1) {
-                    header.setToolTipText(res.getString("ExtensionsTableHeadRend.NameColumn.tooltip"));
-                } else {
-                    header.setToolTipText(res.getString("ExtensionsTableHeadRend.OidColumn.tooltip"));
-                }
             }
         }
 
