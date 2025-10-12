@@ -22,7 +22,7 @@ package org.kse.crypto.x509;
 import java.util.ResourceBundle;
 
 /**
- * Enumeration of Validity Models (1.3.6.1.5.5.7.1.1).
+ * Enumeration of Validity Models (1.3.6.1.4.1.8301.3.5).
  */
 public enum ValidityModelType {
     CHAIN_MODEL("1.3.6.1.4.1.8301.3.5.1", "ChainModel"),
