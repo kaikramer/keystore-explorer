@@ -19,8 +19,6 @@
  */
 package org.kse.gui;
 
-import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
-import static javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN;
 import static org.kse.crypto.keystore.KeyStoreType.BCFKS;
 import static org.kse.crypto.keystore.KeyStoreType.BKS;
 import static org.kse.crypto.keystore.KeyStoreType.JCEKS;
@@ -196,6 +194,8 @@ import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.quickstart.JQuickStartPane;
 import org.kse.gui.statusbar.StatusBar;
 import org.kse.gui.statusbar.StatusBarChangeHandler;
+import org.kse.gui.table.TableUtil;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.buffer.Buffer;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -1681,9 +1681,9 @@ public final class KseFrame implements StatusBar {
         return jspKeyStoreTable;
     }
 
-    private JKseTable createEmptyKeyStoreTable() {
+    private JTable createEmptyKeyStoreTable() {
         KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns, preferences.getExpiryWarnDays());
-        final JKseTable jtKeyStore = new JKseTable(ksModel);
+        final JTable jtKeyStore = new ToolTipTable(ksModel);
 
         RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
         jtKeyStore.setRowSorter(sorter);
@@ -1761,9 +1761,9 @@ public final class KseFrame implements StatusBar {
                                               new KeyStoreEntryDragGestureListener(this));
 
         // Add custom renderers for headers and cells
-        jtKeyStore.addCustomRenderers(keyStoreTableColumns);
+        TableUtil.addCustomRenderers(jtKeyStore, keyStoreTableColumns);
 
-        jtKeyStore.setColumnsToIconSize(0, 1, 2);
+        TableUtil.setColumnsToIconSize(jtKeyStore, 0, 1, 2);
 
         // Add mouse listener to table header for context menu
         jtKeyStore.getTableHeader().addMouseListener(new MouseAdapter() {
@@ -2667,7 +2667,7 @@ public final class KseFrame implements StatusBar {
     public void addKeyStoreHistory(KeyStoreHistory history) {
         histories.add(history);
 
-        JKseTable jtKeyStore = createEmptyKeyStoreTable();
+        JTable jtKeyStore = createEmptyKeyStoreTable();
         jtKeyStore.getSelectionModel().addListSelectionListener(event -> setDefaultStatusBarText());
         keyStoreTables.add(jtKeyStore);
 
@@ -2723,15 +2723,11 @@ public final class KseFrame implements StatusBar {
                     ksModel.load(history);
                     keyStoreTable.setModel(ksModel);
 
-                    RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
-                    keyStoreTable.setRowSorter(sorter);
-                    if (keyStoreTable instanceof JKseTable) {
-                        JKseTable keyStoreTab = (JKseTable) keyStoreTable;
-                        keyStoreTab.setColumnsToIconSize(0, 1, 2);
-                        keyStoreTab.addCustomRenderers(keyStoreTableColumns);
+                    keyStoreTable.setRowSorter(new TableRowSorter<>(ksModel));
+                    TableUtil.setColumnsToIconSize(keyStoreTable, 0, 1, 2);
+                    TableUtil.addCustomRenderers(keyStoreTable, keyStoreTableColumns);
 
-                        new TableColumnAdjuster(keyStoreTab, keyStoreTableColumns).adjustColumns();
-                    }
+                    new TableColumnAdjuster(keyStoreTable, keyStoreTableColumns).adjustColumns();
                 } catch (GeneralSecurityException | CryptoException e) {
                     DError.displayError(frame, e);
                 }

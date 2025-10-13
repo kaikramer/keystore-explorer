@@ -40,6 +40,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
@@ -48,10 +49,13 @@ import javax.swing.table.TableRowSorter;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.os.OperatingSystem;
 
+/**
+ * Component to show the list distribution points.
+ */
 public class JDistributionPoints extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -62,11 +66,16 @@ public class JDistributionPoints extends JPanel {
     private JButton jbEdit;
     private JButton jbRemove;
     private JScrollPane jspDistributionPoints;
-    private JKseTable jtDistributionPoints;
+    private JTable jtDistributionPoints;
 
     private String title;
     private boolean enabled = true;
 
+    /**
+     * Creates a new JDistributionPoints
+     *
+     * @param title The title of the window.
+     */
     public JDistributionPoints(String title) {
         this.title = title;
         initComponents();
@@ -133,7 +142,7 @@ public class JDistributionPoints extends JPanel {
         jpDistributionPointsButtons.add(Box.createVerticalGlue());
 
         DistributionPointsTableModel distributionPointsTableModel = new DistributionPointsTableModel();
-        jtDistributionPoints = new JKseTable(distributionPointsTableModel);
+        jtDistributionPoints = new ToolTipTable(distributionPointsTableModel);
 
         TableRowSorter<DistributionPointsTableModel> sorter = new TableRowSorter<>(distributionPointsTableModel);
         sorter.setComparator(0, new DistributionPointsTableModel.DistributionPointComparator());
@@ -143,7 +152,7 @@ public class JDistributionPoints extends JPanel {
         jtDistributionPoints.setRowMargin(0);
         jtDistributionPoints.getColumnModel().setColumnMargin(0);
         jtDistributionPoints.getTableHeader().setReorderingAllowed(false);
-        jtDistributionPoints.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtDistributionPoints.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtDistributionPoints.setRowHeight(Math.max(18, jtDistributionPoints.getRowHeight()));
 
         for (int i = 0; i < jtDistributionPoints.getColumnCount(); i++) {
@@ -219,10 +228,18 @@ public class JDistributionPoints extends JPanel {
         updateButtonControls();
     }
 
+    /**
+     * @return A CRLDistPoint populated from the table.
+     */
     public CRLDistPoint getCRLDistPoint() {
         return new CRLDistPoint(getDistributionPointsTableModel().getData().toArray(new DistributionPoint[0]));
     }
 
+    /**
+     * Populates the table with the distribution points in cRLDistPoint.
+     *
+     * @param cRLDistPoint The distribution points to load.
+     */
     public void setCRLDistPoint(CRLDistPoint cRLDistPoint) {
         getDistributionPointsTableModel().load(cRLDistPoint);
     }

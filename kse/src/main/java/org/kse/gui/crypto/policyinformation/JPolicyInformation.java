@@ -42,6 +42,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
@@ -49,9 +50,9 @@ import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.PolicyInformation;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.os.OperatingSystem;
 
 /**
@@ -67,7 +68,7 @@ public class JPolicyInformation extends JPanel {
     private JButton jbEdit;
     private JButton jbRemove;
     private JScrollPane jspPolicyInformation;
-    private JKseTable jtPolicyInformation;
+    private JTable jtPolicyInformation;
 
     private String title;
     private List<PolicyInformation> policyInformation;
@@ -144,7 +145,7 @@ public class JPolicyInformation extends JPanel {
         jpPolicyInformationButtons.add(Box.createVerticalGlue());
 
         PolicyInformationTableModel policyInformationTableModel = new PolicyInformationTableModel();
-        jtPolicyInformation = new JKseTable(policyInformationTableModel);
+        jtPolicyInformation = new ToolTipTable(policyInformationTableModel);
 
         TableRowSorter<PolicyInformationTableModel> sorter = new TableRowSorter<>(policyInformationTableModel);
         sorter.setComparator(0, new PolicyInformationTableModel.PolicyInformationComparator());
@@ -154,7 +155,7 @@ public class JPolicyInformation extends JPanel {
         jtPolicyInformation.setRowMargin(0);
         jtPolicyInformation.getColumnModel().setColumnMargin(0);
         jtPolicyInformation.getTableHeader().setReorderingAllowed(false);
-        jtPolicyInformation.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtPolicyInformation.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtPolicyInformation.setRowHeight(Math.max(18, jtPolicyInformation.getRowHeight()));
 
         for (int i = 0; i < jtPolicyInformation.getColumnCount(); i++) {

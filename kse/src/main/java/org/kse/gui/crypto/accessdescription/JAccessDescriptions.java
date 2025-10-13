@@ -41,6 +41,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
@@ -48,8 +49,8 @@ import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.x509.AccessDescription;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.os.OperatingSystem;
 
 /**
@@ -65,7 +66,7 @@ public class JAccessDescriptions extends JPanel {
     private JButton jbEdit;
     private JButton jbRemove;
     private JScrollPane jspAccessDescriptions;
-    private JKseTable jtAccessDescriptions;
+    private JTable jtAccessDescriptions;
 
     private String title;
     private List<AccessDescription> accessDescriptions;
@@ -142,7 +143,7 @@ public class JAccessDescriptions extends JPanel {
         jpAccessDescriptionButtons.add(Box.createVerticalGlue());
 
         AccessDescriptionsTableModel accessDescriptionsTableModel = new AccessDescriptionsTableModel();
-        jtAccessDescriptions = new JKseTable(accessDescriptionsTableModel);
+        jtAccessDescriptions = new ToolTipTable(accessDescriptionsTableModel);
 
         TableRowSorter<AccessDescriptionsTableModel> sorter = new TableRowSorter<>(accessDescriptionsTableModel);
         sorter.setComparator(0, new AccessDescriptionsTableModel.AccessDescriptionMethodComparator());
@@ -153,7 +154,7 @@ public class JAccessDescriptions extends JPanel {
         jtAccessDescriptions.setRowMargin(0);
         jtAccessDescriptions.getColumnModel().setColumnMargin(0);
         jtAccessDescriptions.getTableHeader().setReorderingAllowed(false);
-        jtAccessDescriptions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtAccessDescriptions.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtAccessDescriptions.setRowHeight(Math.max(18, jtAccessDescriptions.getRowHeight()));
 
         for (int i = 0; i < jtAccessDescriptions.getColumnCount(); i++) {

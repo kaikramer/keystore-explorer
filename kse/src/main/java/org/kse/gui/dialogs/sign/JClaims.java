@@ -27,6 +27,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -38,6 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
@@ -48,8 +50,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.table.ToolTipTable;
 
 /**
  * Component to show the list of custom claims
@@ -62,7 +64,7 @@ public class JClaims extends JPanel {
     private JFrame parent;
     private JLabel jlClaims;
     private JScrollPane jspClaimsTable;
-    private JKseTable jtClaims;
+    private JTable jtClaims;
 
     private JPanel jpClaimsButtons;
     private JButton jbAdd;
@@ -134,7 +136,7 @@ public class JClaims extends JPanel {
         jlClaims = new JLabel(res.getString("JClaims.jlClaims.text"));
         ListClaimsTableModel rcModel = new ListClaimsTableModel();
 
-        jtClaims = new JKseTable(rcModel);
+        jtClaims = new ToolTipTable(rcModel);
         ListSelectionModel selectionModel = jtClaims.getSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionModel.addListSelectionListener(evt -> {
@@ -155,7 +157,7 @@ public class JClaims extends JPanel {
         jtClaims.setRowMargin(0);
         jtClaims.getColumnModel().setColumnMargin(0);
         jtClaims.getTableHeader().setReorderingAllowed(false);
-        jtClaims.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtClaims.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         for (int i = 0; i < jtClaims.getColumnCount(); i++) {
             TableColumn column = jtClaims.getColumnModel().getColumn(i);
@@ -256,9 +258,12 @@ public class JClaims extends JPanel {
         }
     }
 
+    /**
+     * @return An unmodifiable list of custom claims.
+     */
     public List<CustomClaim> getCustomClaims() {
         ListClaimsTableModel model = getCustomClaimTableModel();
-        return model.getData();
+        return Collections.unmodifiableList(model.getData());
     }
 
     private void updateButtonControls() {

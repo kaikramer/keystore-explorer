@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -38,7 +39,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.JKseTable;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.gui.PlatformUtil;
 
 /**
@@ -53,7 +54,7 @@ public class DEnvironmentVariables extends JEscDialog {
     private JPanel jpOK;
     private JPanel jpEnvironmentVariablesTable;
     private JScrollPane jspEnvironmentVariablesTable;
-    private JKseTable jtEnvironmentVariables;
+    private JTable jtEnvironmentVariables;
 
     /**
      * Creates new DEnvironmentVariables dialog where the parent is a dialog.
@@ -80,12 +81,12 @@ public class DEnvironmentVariables extends JEscDialog {
         EnvironmentVariablesTableModel evModel = new EnvironmentVariablesTableModel();
         evModel.load();
 
-        jtEnvironmentVariables = new JKseTable(evModel);
+        jtEnvironmentVariables = new ToolTipTable(evModel);
 
         jtEnvironmentVariables.setRowMargin(0);
         jtEnvironmentVariables.getColumnModel().setColumnMargin(0);
         jtEnvironmentVariables.getTableHeader().setReorderingAllowed(false);
-        jtEnvironmentVariables.setAutoResizeMode(JKseTable.AUTO_RESIZE_OFF);
+        jtEnvironmentVariables.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         RowSorter<EnvironmentVariablesTableModel> sorter = new TableRowSorter<>(evModel);
         jtEnvironmentVariables.setRowSorter(sorter);
