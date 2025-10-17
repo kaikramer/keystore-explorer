@@ -95,6 +95,10 @@ public class FileChooserFactory {
 
     private static final String CET_FILE_DESC = format(res.getString("FileChooserFactory.CetFiles"), CET_EXT);
 
+    private static final String KEY_FILE_DESC = format(res.getString("FileChooserFactory.KeyFiles"),
+            PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2, P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT, PEM_EXT, PVK_EXT,
+            OPENSSL_PVK_EXT);
+
     private static final String PKCS12_FILE_DESC =
             format(res.getString("FileChooserFactory.Pkcs12Files"), PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2);
 
@@ -262,6 +266,18 @@ public class FileChooserFactory {
         chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKCS7_FILE_DESC, PKCS7_EXT_1, PKCS7_EXT_2));
         chooser.addChoosableFileFilter(new FileNameExtensionFilter(PKI_PATH_FILE_DESC, PKI_PATH_EXT));
         chooser.addChoosableFileFilter(new FileNameExtensionFilter(SPC_FILE_DESC, SPC_EXT));
+        return chooser;
+    }
+
+    /**
+     * Get a JFileChooser filtered for key pair and private key files.
+     *
+     * @return JFileChooser object
+     */
+    public static JFileChooser getKeyFileChooser() {
+        JFileChooser chooser = getFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter(KEY_FILE_DESC, PKCS12_KEYSTORE_EXT_1, PKCS12_KEYSTORE_EXT_2,
+                P8_EXT, P8E_EXT, PKCS8_EXT, PK8_EXT, PEM_EXT, PVK_EXT, OPENSSL_PVK_EXT));
         return chooser;
     }
 
