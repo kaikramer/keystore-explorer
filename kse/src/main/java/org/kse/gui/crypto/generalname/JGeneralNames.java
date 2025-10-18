@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -39,6 +40,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
@@ -47,8 +49,8 @@ import javax.swing.table.TableRowSorter;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.os.OperatingSystem;
 
 /**
@@ -64,7 +66,7 @@ public class JGeneralNames extends JPanel {
     private JButton jbEdit;
     private JButton jbRemove;
     private JScrollPane jspGeneralNames;
-    private JKseTable jtGeneralNames;
+    private JTable jtGeneralNames;
 
     private String title;
     private boolean enabled = true;
@@ -140,7 +142,7 @@ public class JGeneralNames extends JPanel {
         jpGeneralNameButtons.add(Box.createVerticalGlue());
 
         GeneralNamesTableModel generalNamesTableModel = new GeneralNamesTableModel();
-        jtGeneralNames = new JKseTable(generalNamesTableModel);
+        jtGeneralNames = new ToolTipTable(generalNamesTableModel);
 
         TableRowSorter<GeneralNamesTableModel> sorter = new TableRowSorter<>(generalNamesTableModel);
         sorter.setComparator(0, new GeneralNamesTableModel.GeneralNameComparator());
@@ -150,7 +152,7 @@ public class JGeneralNames extends JPanel {
         jtGeneralNames.setRowMargin(0);
         jtGeneralNames.getColumnModel().setColumnMargin(0);
         jtGeneralNames.getTableHeader().setReorderingAllowed(false);
-        jtGeneralNames.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtGeneralNames.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtGeneralNames.setRowHeight(Math.max(18, jtGeneralNames.getRowHeight()));
 
         for (int i = 0; i < jtGeneralNames.getColumnCount(); i++) {
@@ -357,13 +359,7 @@ public class JGeneralNames extends JPanel {
 
             Container container = getTopLevelAncestor();
 
-            DGeneralNameChooser dGeneralNameChooser = null;
-
-            if (container instanceof JDialog) {
-                dGeneralNameChooser = new DGeneralNameChooser((JDialog) container, title, generalName);
-            } else if (container instanceof JFrame) {
-                dGeneralNameChooser = new DGeneralNameChooser((JFrame) container, title, generalName);
-            }
+            DGeneralNameChooser dGeneralNameChooser = new DGeneralNameChooser((Window) container, title, generalName);
             dGeneralNameChooser.setLocationRelativeTo(container);
             dGeneralNameChooser.setVisible(true);
 

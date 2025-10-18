@@ -20,8 +20,8 @@
 package org.kse.gui.crypto.generalname;
 
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
@@ -30,8 +30,6 @@ import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -96,24 +94,12 @@ public class DGeneralNameChooser extends JEscDialog {
     /**
      * Constructs a new DGeneralNameChooser dialog.
      *
-     * @param parent      The parent frame
+     * @param parent      The parent window
      * @param title       The dialog title
      * @param generalName General name
      */
-    public DGeneralNameChooser(JFrame parent, String title, GeneralName generalName) {
+    public DGeneralNameChooser(Window parent, String title, GeneralName generalName) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
-        initComponents(generalName);
-    }
-
-    /**
-     * Constructs a new DGeneralNameChooser dialog.
-     *
-     * @param parent      The parent dialog
-     * @param title       The dialog title
-     * @param generalName General name
-     */
-    public DGeneralNameChooser(JDialog parent, String title, GeneralName generalName) {
-        super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
         initComponents(generalName);
     }
 

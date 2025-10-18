@@ -45,6 +45,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -64,7 +65,6 @@ import org.kse.crypto.x509.X509Ext;
 import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.JKseTable;
 import org.kse.gui.KseFrame;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
@@ -72,6 +72,7 @@ import org.kse.gui.dialogs.DViewAsn1Dump;
 import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.dialogs.DViewCrl;
 import org.kse.gui.error.DError;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.asn1.Asn1Exception;
 import org.kse.utilities.oid.ObjectIdComparator;
 
@@ -86,7 +87,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
     private JPanel jpExtensions;
     private JPanel jpExtensionsTable;
     private JScrollPane jspExtensionsTable;
-    private JKseTable jtExtensions;
+    private JTable jtExtensions;
     private JPanel jpExtensionValue;
     private JLabel jlExtensionValue;
     private JPanel jpExtensionValueTextArea;
@@ -142,7 +143,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
 
     private void initComponents() {
         ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
-        jtExtensions = new JKseTable(extensionsTableModel);
+        jtExtensions = new ToolTipTable(extensionsTableModel);
 
         TableRowSorter<ExtensionsTableModel> sorter = new TableRowSorter<>(extensionsTableModel);
         sorter.setComparator(2, new ObjectIdComparator());
@@ -152,7 +153,7 @@ public class DViewExtensions extends JEscDialog implements HyperlinkListener {
         jtExtensions.setRowMargin(0);
         jtExtensions.getColumnModel().setColumnMargin(0);
         jtExtensions.getTableHeader().setReorderingAllowed(false);
-        jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtExtensions.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtExtensions.setRowHeight(Math.max(18, jtExtensions.getRowHeight()));
 
         for (int i = 0; i < jtExtensions.getColumnCount(); i++) {

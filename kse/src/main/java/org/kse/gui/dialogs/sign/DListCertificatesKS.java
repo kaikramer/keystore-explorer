@@ -192,6 +192,9 @@ public class DListCertificatesKS extends JEscDialog {
         closeDialog();
     }
 
+    /**
+     * @return The selected certificate.
+     */
     public X509Certificate getCertificate() {
         return cert;
     }

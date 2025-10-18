@@ -38,6 +38,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,6 +56,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.CompoundBorder;
@@ -71,13 +73,13 @@ import org.kse.crypto.filetype.CryptoFileUtil;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JKseTable;
 import org.kse.gui.KseFrame;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.dialogs.RevokedCertsTableCellRend;
 import org.kse.gui.dialogs.RevokedCertsTableModel;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
+import org.kse.gui.table.ToolTipTable;
 
 /**
  * Component to show the list of certificates revoked
@@ -89,7 +91,7 @@ public class JRevokedCerts extends JPanel {
 
     private JLabel jlRevokedCerts;
     private JScrollPane jspRevokedCertsTable;
-    private JKseTable jtRevokedCerts;
+    private JTable jtRevokedCerts;
 
     private JPanel jpRevokedButtons;
     private JButton jbRevCertFile;
@@ -141,7 +143,7 @@ public class JRevokedCerts extends JPanel {
         jlRevokedCerts = new JLabel(res.getString("JRevokedCerts.jlRevokedCerts.text"));
         RevokedCertsTableModel rcModel = new RevokedCertsTableModel();
 
-        jtRevokedCerts = new JKseTable(rcModel);
+        jtRevokedCerts = new ToolTipTable(rcModel);
         RowSorter<RevokedCertsTableModel> sorter = new TableRowSorter<>(rcModel);
         jtRevokedCerts.setRowSorter(sorter);
 
@@ -149,7 +151,7 @@ public class JRevokedCerts extends JPanel {
         jtRevokedCerts.setRowMargin(0);
         jtRevokedCerts.getColumnModel().setColumnMargin(0);
         jtRevokedCerts.getTableHeader().setReorderingAllowed(false);
-        jtRevokedCerts.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtRevokedCerts.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
         for (int i = 0; i < jtRevokedCerts.getColumnCount(); i++) {
             TableColumn column = jtRevokedCerts.getColumnModel().getColumn(i);
@@ -397,8 +399,13 @@ public class JRevokedCerts extends JPanel {
         return null;
     }
 
+    /**
+     * Exposes a read-only view of the revoked certificates map.
+     *
+     * @return An unmodifiable map of revoked certificate.
+     */
     public Map<BigInteger, RevokedEntry> getMapRevokedEntry() {
-        return mapRevokedEntry;
+        return Collections.unmodifiableMap(mapRevokedEntry);
     }
 
 }

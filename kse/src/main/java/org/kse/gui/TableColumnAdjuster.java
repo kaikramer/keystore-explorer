@@ -23,17 +23,13 @@ import static javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS;
 import static javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JTable;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -50,7 +46,7 @@ import javax.swing.table.TableModel;
 public class TableColumnAdjuster implements PropertyChangeListener, TableModelListener {
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/resources");
 
-    private final JKseTable table;
+    private final JTable table;
     private final KeyStoreTableColumns keyStoreTableColumns;
 
     private static final double FF = 0.7; // fudge factor for font size to column size
@@ -73,7 +69,7 @@ public class TableColumnAdjuster implements PropertyChangeListener, TableModelLi
     /*
      * Specify the table and use default spacing
      */
-    public TableColumnAdjuster(JKseTable table, KeyStoreTableColumns keyStoreTableColumns) {
+    public TableColumnAdjuster(JTable table, KeyStoreTableColumns keyStoreTableColumns) {
         this.table = table;
         this.keyStoreTableColumns = keyStoreTableColumns;
         setDynamicAdjustment(isDynamicAdjustment);

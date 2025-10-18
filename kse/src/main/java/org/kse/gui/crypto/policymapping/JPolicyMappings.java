@@ -39,6 +39,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
@@ -49,8 +50,8 @@ import org.bouncycastle.asn1.x509.PolicyMappings;
 import org.kse.crypto.x509.PolicyMapping;
 import org.kse.crypto.x509.PolicyMappingsUtil;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.os.OperatingSystem;
 
 /**
@@ -66,7 +67,7 @@ public class JPolicyMappings extends JPanel {
     private JButton jbEdit;
     private JButton jbRemove;
     private JScrollPane jspPolicyMappings;
-    private JKseTable jtPolicyMappings;
+    private JTable jtPolicyMappings;
 
     private String title;
     private PolicyMappings policyMappings;
@@ -143,7 +144,7 @@ public class JPolicyMappings extends JPanel {
         jpPolicyMappingButtons.add(Box.createVerticalGlue());
 
         PolicyMappingsTableModel policyMappingsTableModel = new PolicyMappingsTableModel();
-        jtPolicyMappings = new JKseTable(policyMappingsTableModel);
+        jtPolicyMappings = new ToolTipTable(policyMappingsTableModel);
 
         TableRowSorter<PolicyMappingsTableModel> sorter = new TableRowSorter<>(policyMappingsTableModel);
         sorter.setComparator(0, new PolicyMappingsTableModel.IssuerDomainPolicyComparator());
@@ -154,7 +155,7 @@ public class JPolicyMappings extends JPanel {
         jtPolicyMappings.setRowMargin(0);
         jtPolicyMappings.getColumnModel().setColumnMargin(0);
         jtPolicyMappings.getTableHeader().setReorderingAllowed(false);
-        jtPolicyMappings.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtPolicyMappings.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtPolicyMappings.setRowHeight(Math.max(18, jtPolicyMappings.getRowHeight()));
 
         for (int i = 0; i < jtPolicyMappings.getColumnCount(); i++) {

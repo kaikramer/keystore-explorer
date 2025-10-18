@@ -54,6 +54,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -88,10 +89,10 @@ import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.oid.ObjectIdComparator;
 import org.kse.utilities.os.OperatingSystem;
@@ -113,7 +114,7 @@ public class DAddExtensions extends JEscDialog {
     private JButton jbToggleCriticality;
     private JButton jbRemove;
     private JScrollPane jspExtensionsTable;
-    private JKseTable jtExtensions;
+    private JTable jtExtensions;
     private JButton jbSelectStandardTemplate;
     private JButton jbLoadTemplate;
     private JButton jbSaveTemplate;
@@ -254,7 +255,7 @@ public class DAddExtensions extends JEscDialog {
         });
 
         ExtensionsTableModel extensionsTableModel = new ExtensionsTableModel();
-        jtExtensions = new JKseTable(extensionsTableModel);
+        jtExtensions = new ToolTipTable(extensionsTableModel);
 
         TableRowSorter<ExtensionsTableModel> sorter = new TableRowSorter<>(extensionsTableModel);
         sorter.setComparator(2, new ObjectIdComparator());
@@ -264,7 +265,7 @@ public class DAddExtensions extends JEscDialog {
         jtExtensions.setRowMargin(0);
         jtExtensions.getColumnModel().setColumnMargin(0);
         jtExtensions.getTableHeader().setReorderingAllowed(false);
-        jtExtensions.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtExtensions.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtExtensions.setRowHeight(Math.max(18, jtExtensions.getRowHeight()));
 
         for (int i = 0; i < jtExtensions.getColumnCount(); i++) {

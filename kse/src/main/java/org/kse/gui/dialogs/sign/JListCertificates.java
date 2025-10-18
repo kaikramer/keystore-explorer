@@ -29,19 +29,21 @@ import java.security.cert.X509Certificate;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableRowSorter;
 
 import org.kse.crypto.CryptoException;
-import org.kse.gui.JKseTable;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KeyStoreTableModel;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.TableColumnAdjuster;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.gui.preferences.data.KsePreferences;
+import org.kse.gui.table.TableUtil;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.history.KeyStoreHistory;
 
 /**
@@ -51,7 +53,7 @@ public class JListCertificates extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private JScrollPane jspListCertsTable;
-    private JKseTable jtListCerts;
+    private JTable jtListCerts;
 
     private KsePreferences preferences = PreferencesManager.getPreferences();
 
@@ -71,7 +73,7 @@ public class JListCertificates extends JPanel {
         keyStoreTableColumns = preferences.getKeyStoreTableColumns();
         KeyStoreTableModel ksModel = new KeyStoreTableModel(keyStoreTableColumns, preferences.getExpiryWarnDays());
 
-        jtListCerts = new JKseTable(ksModel);
+        jtListCerts = new ToolTipTable(ksModel);
         RowSorter<KeyStoreTableModel> sorter = new TableRowSorter<>(ksModel);
         jtListCerts.setRowSorter(sorter);
 
@@ -79,8 +81,8 @@ public class JListCertificates extends JPanel {
         jtListCerts.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         jtListCerts.getTableHeader().setReorderingAllowed(false);
         jtListCerts.setRowHeight(Math.max(18, jtListCerts.getRowHeight())); // min. height of 18 because of 16x16 icons
-        jtListCerts.setColumnsToIconSize(0, 1, 2);
-        jtListCerts.addCustomRenderers(keyStoreTableColumns);
+        TableUtil.setColumnsToIconSize(jtListCerts, 0, 1, 2);
+        TableUtil.addCustomRenderers(jtListCerts, keyStoreTableColumns);
 
         new TableColumnAdjuster(jtListCerts, keyStoreTableColumns).adjustColumns();
 
@@ -93,6 +95,10 @@ public class JListCertificates extends JPanel {
         this.add(jspListCertsTable, BorderLayout.CENTER);
     }
 
+    /**
+     * Updates the table with the certificates from the currently selected key store.
+     * @param keyStoreHistory The KeyStoreHistory to load.
+     */
     public void load(KeyStoreHistory keyStoreHistory) {
 
         if (keyStoreHistory != null) {
@@ -106,7 +112,7 @@ public class JListCertificates extends JPanel {
         }
     }
 
-    public String getSelectedEntryAlias() {
+    private String getSelectedEntryAlias() {
         int row = jtListCerts.getSelectedRow();
 
         if (row == -1) {
@@ -116,6 +122,10 @@ public class JListCertificates extends JPanel {
         return (String) jtListCerts.getValueAt(row, 3);
     }
 
+    /**
+     *
+     * @return The currently selected certificate, else null if no certificate is selected.
+     */
     public X509Certificate getSelectedCert() {
         int pos = jtListCerts.getSelectedRow();
         if (pos >= 0) {
@@ -129,7 +139,11 @@ public class JListCertificates extends JPanel {
         return null;
     }
 
-    public JKseTable getJtListCerts() {
+    /**
+     *
+     * @return The JTable backing the list of certificates.
+     */
+    public JTable getJtListCerts() {
         return jtListCerts;
     }
 }

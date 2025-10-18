@@ -41,6 +41,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.TableColumn;
@@ -48,10 +49,10 @@ import javax.swing.table.TableRowSorter;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
 import org.kse.gui.oid.DObjectIdChooser;
+import org.kse.gui.table.ToolTipTable;
 import org.kse.utilities.oid.InvalidObjectIdException;
 import org.kse.utilities.oid.ObjectIdComparator;
 import org.kse.utilities.os.OperatingSystem;
@@ -69,7 +70,7 @@ public class JCustomExtendedKeyUsage extends JPanel {
     private JButton jbEdit;
     private JButton jbRemove;
     private JScrollPane jspCustomExtKeyUsage;
-    private JKseTable jtCustomExtKeyUsages;
+    private JTable jtCustomExtKeyUsages;
 
     private String title;
     private Set<ASN1ObjectIdentifier> objectIds;
@@ -147,7 +148,7 @@ public class JCustomExtendedKeyUsage extends JPanel {
         jpCustomExtKeyUsageButtons.add(Box.createVerticalGlue());
 
         CustomExtKeyUsageTableModel customExtKeyUsageTableModel = new CustomExtKeyUsageTableModel();
-        jtCustomExtKeyUsages = new JKseTable(customExtKeyUsageTableModel);
+        jtCustomExtKeyUsages = new ToolTipTable(customExtKeyUsageTableModel);
 
         TableRowSorter<CustomExtKeyUsageTableModel> sorter = new TableRowSorter<>(customExtKeyUsageTableModel);
         sorter.setComparator(0, new ObjectIdComparator());
@@ -157,7 +158,7 @@ public class JCustomExtendedKeyUsage extends JPanel {
         jtCustomExtKeyUsages.setRowMargin(0);
         jtCustomExtKeyUsages.getColumnModel().setColumnMargin(0);
         jtCustomExtKeyUsages.getTableHeader().setReorderingAllowed(false);
-        jtCustomExtKeyUsages.setAutoResizeMode(JKseTable.AUTO_RESIZE_ALL_COLUMNS);
+        jtCustomExtKeyUsages.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         jtCustomExtKeyUsages.setRowHeight(Math.max(18, jtCustomExtKeyUsages.getRowHeight()));
 
         for (int i = 0; i < jtCustomExtKeyUsages.getColumnCount(); i++) {
