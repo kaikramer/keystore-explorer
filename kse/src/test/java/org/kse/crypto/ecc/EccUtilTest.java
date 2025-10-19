@@ -83,22 +83,26 @@ public class EccUtilTest extends CryptoTestsBase {
 
         byte[] encoded = EccUtil.convertToECPrivateKeyStructure(ecPrivateKey).toASN1Primitive().getEncoded();
 
-        // verify ASN.1 structure "ECPrivateKey" from RFC 5915:
-        //
-        // ECPrivateKey ::= SEQUENCE {
-        //    version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
-        //    privateKey     OCTET STRING,
-        //    parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
-        //    publicKey  [1] BIT STRING OPTIONAL
-        // }
-        //
-        // ECParameters ::= CHOICE {
-        //     namedCurve         OBJECT IDENTIFIER
-        //     -- implicitCurve   NULL
-        //     -- specifiedCurve  SpecifiedECDomain
-        //   }
-        // RFC 5480:
-        // -- implicitCurve and specifiedCurve MUST NOT be used in PKIX.
+        // @formatter:off
+        /*
+            verify ASN.1 structure "ECPrivateKey" from RFC 5915:
+        
+            ECPrivateKey ::= SEQUENCE {
+                version        INTEGER { ecPrivkeyVer1(1) } (ecPrivkeyVer1),
+                privateKey     OCTET STRING,
+                parameters [0] ECParameters {{ NamedCurve }} OPTIONAL,
+                publicKey  [1] BIT STRING OPTIONAL
+            }
+        
+            ECParameters ::= CHOICE {
+                namedCurve         OBJECT IDENTIFIER
+                -- implicitCurve   NULL
+                -- specifiedCurve  SpecifiedECDomain
+            }
+            RFC 5480:
+            -- implicitCurve and specifiedCurve MUST NOT be used in PKIX.
+        */
+        // @formatter:on
 
         ASN1Sequence sequence = ASN1Sequence.getInstance(encoded);
 
