@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
@@ -182,6 +183,12 @@ public class DStorePassphrase extends JEscDialog {
     }
 
     private void okPressed() {
+        if (passphrase == null) {
+            JOptionPane.showMessageDialog(getParent(),
+                    res.getString("DStorePassphrase.NoPassphrase.message"),
+                    res.getString("DStorePassphrase.Title"), JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         success = true;
         closeDialog();
     }
