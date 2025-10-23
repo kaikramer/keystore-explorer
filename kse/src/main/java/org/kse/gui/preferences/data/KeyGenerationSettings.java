@@ -21,6 +21,7 @@
 package org.kse.gui.preferences.data;
 
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.secretkey.PasswordType;
 import org.kse.crypto.secretkey.SecretKeyType;
 
 /**
@@ -37,6 +38,8 @@ public class KeyGenerationSettings {
 
     private SecretKeyType secretKeyType = SecretKeyType.AES;
     private int secretKeySize = 128;
+
+    private PasswordType passwordType = PasswordType.PBEWithHmacSHA256AndAES_128;
 
 
     public KeyPairType getKeyPairType() {
@@ -93,6 +96,14 @@ public class KeyGenerationSettings {
 
     public void setSecretKeySize(int secretKeySize) {
         this.secretKeySize = secretKeySize;
+    }
+
+    public PasswordType getPasswordType() {
+        return passwordType;
+    }
+
+    public void setPasswordType(PasswordType passwordType) {
+        this.passwordType = passwordType;
     }
 
     public KeyPairType getMLDSAKeyPairType() {

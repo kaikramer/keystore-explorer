@@ -28,7 +28,6 @@ import java.util.ResourceBundle;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
@@ -82,22 +81,6 @@ public class DViewPassword extends JEscDialog {
      */
     public DViewPassword(JFrame parent, String title, SecretKey password, boolean editable) {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
-        this.password = password;
-        this.editable = editable;
-        initComponents();
-    }
-
-    /**
-     * Creates new DViewPassword dialog where the parent is a dialog.
-     *
-     * @param parent      Parent dialog
-     * @param title       The dialog title
-     * @param modality    Dialog modality
-     * @param password    Secret key to display
-     * @param editable    Secret key can be edited/replaced
-     */
-    public DViewPassword(JDialog parent, String title, ModalityType modality, SecretKey password, boolean editable) {
-        super(parent, title, modality);
         this.password = password;
         this.editable = editable;
         initComponents();

@@ -75,11 +75,17 @@ public enum PasswordType {
 
     public static final Set<PasswordType> PASSWORD_NONE = EnumSet.noneOf(PasswordType.class);
 
-//    public static final Set<PasswordType> PASSWORD_PKCS12 = EnumSet.of(AES, BLOWFISH, CAMELLIA, CAST5, DES,
-//            HMAC_SHA1, HMAC_SHA224, HMAC_SHA256, HMAC_SHA384, HMAC_SHA512, ARC4, SEED);
-//
-//    public static final Set<PasswordType> PASSWORD_BCFKS = EnumSet.of(AES, DESEDE, HMAC_SHA1, HMAC_SHA224,
-//            HMAC_SHA256, HMAC_SHA384, HMAC_SHA512, SEED);
+    public static final Set<PasswordType> PASSWORD_PKCS12 = EnumSet.of(PBEWithMD5AndDES,
+            PBEWITHSHAAND3_KEYTRIPLEDES_CBC, PBEWithSHA1AndDESede, PBEWithSHA1AndRC2_128, PBEWithSHA1AndRC2_40,
+            PBEWithSHA1AndRC4_128, PBEWITHSHAAND128BITRC4, PBEWithSHA1AndRC4_40);
+
+    public static final Set<PasswordType> PASSWORD_BCFKS = EnumSet.of(PBEWithHmacSHA1AndAES_128,
+            PBEWithHmacSHA1AndAES_256, PBEWithHmacSHA224AndAES_128, PBEWithHmacSHA224AndAES_256,
+            PBEWithHmacSHA256AndAES_128, PBEWithHmacSHA256AndAES_256, PBEWithHmacSHA384AndAES_128,
+            PBEWithHmacSHA384AndAES_256, PBEWithHmacSHA512AndAES_128, PBEWithHmacSHA512AndAES_256,
+            PBEWITHMD5AND128BITAES_CBC_OPENSSL, PBEWITHMD5AND192BITAES_CBC_OPENSSL, PBEWITHMD5AND256BITAES_CBC_OPENSSL,
+            PBEWITHSHAAND128BITAES_CBC_BC, PBEWITHSHAAND192BITAES_CBC_BC, PBEWITHSHAAND256BITAES_CBC_BC,
+            PBEWITHSHA256AND128BITAES_CBC_BC, PBEWITHSHA256AND192BITAES_CBC_BC, PBEWITHSHA256AND256BITAES_CBC_BC);
 
     private String jce;
     private String friendly;
@@ -136,4 +142,37 @@ public enum PasswordType {
     public static boolean isPassword(String jce) {
         return jce.startsWith("PBE");
     }
+
+    /**
+     * Returns friendly name.
+     *
+     * @return Friendly name
+     */
+    @Override
+    public String toString() {
+        return friendly();
+    }
+
+    // Method for quickly identifying the PBE algorithms supported by KeyStoreType.
+    // It prints out the enum name making it easy to update the EnumSets.
+//    public static void main(String[] args) throws Exception {
+//        try {
+//            byte[] pass = "testpassword".getBytes();
+//            char[] keypass = "password".toCharArray();
+//            KeyStore ks = KeyStore.getInstance("BCFKS");
+//            System.out.println("Type: " + ks.getType());
+//            ks.load(null);
+//            for (PasswordType pt : PasswordType.values()) {
+//                try {
+//                    ks.setKeyEntry(pt.friendly(), new SecretKeySpec(pass, pt.jce()), keypass, null);
+//                    ks.getKey(pt.friendly(), keypass);
+//                    System.out.println(pt.name());
+//                } catch (Exception e) {
+//
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
