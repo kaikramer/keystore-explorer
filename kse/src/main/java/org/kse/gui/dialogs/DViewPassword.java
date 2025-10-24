@@ -99,7 +99,6 @@ public class DViewPassword extends JEscDialog {
 
         jpfPassword = new JPasswordField();
         jpfPassword.setEditable(false);
-        jpfPassword.setToolTipText(res.getString("DViewPassword.jtfPassword.tooltip"));
 
         jbUpdate = new JButton(res.getString("DViewPassword.jbUpdate.text"));
         jbCancel = new JButton(res.getString("DViewPassword.jbCancel.text"));
