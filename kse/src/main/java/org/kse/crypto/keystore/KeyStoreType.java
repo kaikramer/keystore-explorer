@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.kse.crypto.ecc.EccUtil;
 import org.kse.crypto.filetype.CryptoFileType;
+import org.kse.crypto.secretkey.PasswordType;
 import org.kse.crypto.secretkey.SecretKeyType;
 
 /**
@@ -38,17 +39,17 @@ import org.kse.crypto.secretkey.SecretKeyType;
  */
 public enum KeyStoreType {
 
-    JKS("JKS", "KeyStoreType.Jks", true, JKS_KS, SecretKeyType.SECRET_KEY_NONE),
-    JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS, SecretKeyType.SECRET_KEY_ALL),
-    PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12),
-    BKS("BKS", "KeyStoreType.Bks", true, BKS_KS, SecretKeyType.SECRET_KEY_ALL),
-    UBER("UBER", "KeyStoreType.Uber", true, UBER_KS, SecretKeyType.SECRET_KEY_ALL),
-    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null, SecretKeyType.SECRET_KEY_NONE),
-    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null, SecretKeyType.SECRET_KEY_NONE),
-    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null, SecretKeyType.SECRET_KEY_NONE),
-    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null, SecretKeyType.SECRET_KEY_NONE),
-    BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS),
-    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null, SecretKeyType.SECRET_KEY_NONE);
+    JKS("JKS", "KeyStoreType.Jks", true, JKS_KS),
+    JCEKS("JCEKS", "KeyStoreType.Jceks", true, JCEKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    PKCS12("PKCS12", "KeyStoreType.Pkcs12", true, PKCS12_KS, SecretKeyType.SECRET_KEY_PKCS12, PasswordType.PASSWORD_PKCS12),
+    BKS("BKS", "KeyStoreType.Bks", true, BKS_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    UBER("UBER", "KeyStoreType.Uber", true, UBER_KS, SecretKeyType.SECRET_KEY_ALL, PasswordType.PASSWORD_ALL),
+    KEYCHAIN("KeychainStore", "KeyStoreType.AppleKeyChain", false, null),
+    MS_CAPI_PERSONAL("Windows-MY", "KeyStoreType.MscapiPersonalCerts", false, null),
+    MS_CAPI_ROOT("Windows-ROOT", "Windows Root Certificates", false, null),
+    PKCS11("PKCS11", "KeyStoreType.Pkcs11", false, null),
+    BCFKS("BCFKS", "KeyStoreType.Bcfks", true, BCFKS_KS, SecretKeyType.SECRET_KEY_BCFKS, PasswordType.PASSWORD_BCFKS),
+    UNKNOWN("UNKNOWN", "KeyStoreType.Unknown", false, null);
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/keystore/resources");
     private String jce;
@@ -56,14 +57,25 @@ public enum KeyStoreType {
     private boolean fileBased;
     private CryptoFileType cryptoFileType;
     private Set<SecretKeyType> supportedKeyTypes;
+    private Set<PasswordType> supportedPasswordTypes;
+
+    KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType) {
+        this.jce = jce;
+        this.friendlyKey = friendlyKey;
+        this.fileBased = fileBased;
+        this.cryptoFileType = cryptoFileType;
+        this.supportedKeyTypes = SecretKeyType.SECRET_KEY_NONE;
+        this.supportedPasswordTypes = PasswordType.PASSWORD_NONE;
+    }
 
     KeyStoreType(String jce, String friendlyKey, boolean fileBased, CryptoFileType cryptoFileType,
-            Set<SecretKeyType> supportedKeyTypes) {
+            Set<SecretKeyType> supportedKeyTypes, Set<PasswordType> supportedPasswordTypes) {
         this.jce = jce;
         this.friendlyKey = friendlyKey;
         this.fileBased = fileBased;
         this.cryptoFileType = cryptoFileType;
         this.supportedKeyTypes = supportedKeyTypes;
+        this.supportedPasswordTypes = supportedPasswordTypes;
     }
 
     /**
@@ -139,6 +151,16 @@ public enum KeyStoreType {
      */
     public boolean supportsKeyType(SecretKeyType secretKeyType) {
         return supportedKeyTypes.contains(secretKeyType);
+    }
+
+    /**
+     * Does this KeyStore type support the password type?
+     *
+     * @param passwordType The password type to check for support.
+     * @return True, if password type is supported by this KeyStore type
+     */
+    public boolean supportsPasswordType(PasswordType passwordType) {
+        return supportedPasswordTypes.contains(passwordType);
     }
 
     /**

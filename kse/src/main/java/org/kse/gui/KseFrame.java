@@ -170,6 +170,7 @@ import org.kse.gui.actions.SignJarAction;
 import org.kse.gui.actions.SignJwtAction;
 import org.kse.gui.actions.SignMidletAction;
 import org.kse.gui.actions.SignNewKeyPairAction;
+import org.kse.gui.actions.StorePassphraseAction;
 import org.kse.gui.actions.SystemInformationAction;
 import org.kse.gui.actions.TabStyleScrollAction;
 import org.kse.gui.actions.TabStyleWrapAction;
@@ -264,6 +265,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiGenerateSecretKey;
     private JMenuItem jmiImportTrustedCertificate;
     private JMenuItem jmiImportKeyPair;
+    private JMenuItem jmiStorePassphrase;
     private JMenuItem jmiVerifySignature;
     private JMenuItem jmiVerifyJar;
     private JMenu jmChangeType;
@@ -343,6 +345,7 @@ public final class KseFrame implements StatusBar {
     private JMenuItem jmiKeyStoreGenerateSecretKey;
     private JMenuItem jmiKeyStoreImportTrustedCertificate;
     private JMenuItem jmiKeyStoreImportKeyPair;
+    private JMenuItem jmiKeyStoreStorePassphrase;
     private JMenu jmKeyStoreChangeType;
     private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeJks;
     private JRadioButtonMenuItem jrbmiKeyStoreChangeTypeJceks;
@@ -489,6 +492,7 @@ public final class KseFrame implements StatusBar {
     private final ImportTrustedCertificateAction importTrustedCertificateAction = new ImportTrustedCertificateAction(
             this);
     private final ImportKeyPairAction importKeyPairAction = new ImportKeyPairAction(this);
+    private final StorePassphraseAction storePassphraseAction = new StorePassphraseAction(this);
     private final SetPasswordAction setPasswordAction = new SetPasswordAction(this);
     private final ChangeTypeAction changeTypeJksAction = new ChangeTypeAction(this, KeyStoreType.JKS);
     private final ChangeTypeAction changeTypeJceksAction = new ChangeTypeAction(this, KeyStoreType.JCEKS);
@@ -943,6 +947,14 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiImportKeyPair, (String) importKeyPairAction.getValue(Action.LONG_DESCRIPTION),
                                    this);
         jmTools.add(jmiImportKeyPair);
+
+        jmiStorePassphrase = new JMenuItem(storePassphraseAction);
+        PlatformUtil.setMnemonic(jmiStorePassphrase,
+                                 res.getString("KseFrame.jmiStorePassphrase.mnemonic").charAt(0));
+        jmiStorePassphrase.setToolTipText(null);
+        new StatusBarChangeHandler(jmiStorePassphrase,
+                                   (String) storePassphraseAction.getValue(Action.LONG_DESCRIPTION), this);
+        jmTools.add(jmiStorePassphrase);
 
         jmTools.addSeparator();
 
@@ -1977,6 +1989,14 @@ public final class KseFrame implements StatusBar {
         new StatusBarChangeHandler(jmiKeyStoreImportKeyPair,
                                    (String) importKeyPairAction.getValue(Action.LONG_DESCRIPTION), this);
         jpmKeyStore.add(jmiKeyStoreImportKeyPair);
+
+        jmiKeyStoreStorePassphrase = new JMenuItem(storePassphraseAction);
+        PlatformUtil.setMnemonic(jmiKeyStoreStorePassphrase,
+                                 res.getString("KseFrame.jmiStorePassphrase.mnemonic").charAt(0));
+        jmiKeyStoreStorePassphrase.setToolTipText(null);
+        new StatusBarChangeHandler(jmiKeyStoreStorePassphrase,
+                                   (String) storePassphraseAction.getValue(Action.LONG_DESCRIPTION), this);
+        jpmKeyStore.add(jmiKeyStoreStorePassphrase);
 
         jpmKeyStore.addSeparator();
 
@@ -3058,6 +3078,8 @@ public final class KseFrame implements StatusBar {
         generateSecretKeyAction.setEnabled(type.supportsKeyEntries());
         importTrustedCertificateAction.setEnabled(true);
         importKeyPairAction.setEnabled(true);
+        storePassphraseAction.setEnabled(true);
+        storePassphraseAction.setEnabled(type.supportsKeyEntries());
         propertiesAction.setEnabled(true);
         exportCsvAction.setEnabled(true);
         if (type.isFileBased()) {
@@ -3187,6 +3209,7 @@ public final class KseFrame implements StatusBar {
         generateSecretKeyAction.setEnabled(false);
         importTrustedCertificateAction.setEnabled(false);
         importKeyPairAction.setEnabled(false);
+        storePassphraseAction.setEnabled(false);
         setPasswordAction.setEnabled(false);
         jmChangeType.setEnabled(false);
         propertiesAction.setEnabled(false);
