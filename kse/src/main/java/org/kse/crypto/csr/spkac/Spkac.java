@@ -73,28 +73,40 @@ import org.kse.utilities.io.HexUtil;
  */
 public class Spkac {
     // @formatter:off
-
     /*
-     * SPKAC ASN.1 structure:
-     *
-     * SignedPublicKeyAndChallenge ::= ASN1Sequence {
-     *      publicKeyAndChallenge PublicKeyAndChallenge,
-     *      signatureAlgorithm AlgorithmIdentifier,
-     *      signature BIT STRING }
-     *
-     * PublicKeyAndChallenge ::= ASN1Sequence { spki SubjectPublicKeyInfo, challenge IA5STRING }
-     *
-     * SubjectPublicKeyInfo ::= ASN1Sequence { algorithm AlgorithmIdentifier, publicKey BIT STRING }
-     *
-     * AlgorithmIdentifier ::= ASN1Sequence { algorithm OBJECT IDENTIFIER, parameters ANY DEFINED BY algorithm OPTIONAL }
-     *
-     * AlgorithmIdentifier parameters for DSA:
-     * Dss-Parms ::= ASN1Sequence { p ASN1Integer, q ASN1Integer, g ASN1Integer }
-     *
-     * AlgorithmIdentifier parameters for RSA:
-     * Rsa-Params ::= ASN1Null
+        SPKAC ASN.1 structure:
+        
+        SignedPublicKeyAndChallenge ::= ASN1Sequence {
+            publicKeyAndChallenge PublicKeyAndChallenge,
+            signatureAlgorithm AlgorithmIdentifier,
+            signature BIT STRING
+        }
+        
+        PublicKeyAndChallenge ::= ASN1Sequence {
+            spki SubjectPublicKeyInfo,
+            challenge IA5STRING
+        }
+        
+        SubjectPublicKeyInfo ::= ASN1Sequence {
+            algorithm AlgorithmIdentifier,
+            publicKey BIT STRING
+        }
+        
+        AlgorithmIdentifier ::= ASN1Sequence {
+            algorithm OBJECT IDENTIFIER,
+            parameters ANY DEFINED BY algorithm OPTIONAL
+        }
+        
+        AlgorithmIdentifier parameters for DSA:
+        Dss-Parms ::= ASN1Sequence {
+            p ASN1Integer,
+            q ASN1Integer,
+            g ASN1Integer
+        }
+        
+        AlgorithmIdentifier parameters for RSA:
+        Rsa-Params ::= ASN1Null
      */
-
     // @formatter:on
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/csr/spkac/resources");

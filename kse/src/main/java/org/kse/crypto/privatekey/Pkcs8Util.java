@@ -287,26 +287,23 @@ public class Pkcs8Util {
                 // May be unencrypted
                 if ((sequence.size() == 3) || (sequence.size() == 4)) {
                     // @formatter:off
-
                     /*
-                     * Unencrypted PKCS #8 Private Key:
-                     *
-                     * PrivateKeyInfo ::= OneAsymmetricKey
-
-                     * OneAsymmetricKey ::= ASN1Sequence {
-                     *      version Version,
-                     *      privateKeyAlgorithm PrivateKeyAlgorithmIdentifier,
-                     *      privateKey PrivateKey,
-                     *      attributes [0] IMPLICIT Attributes OPTIONAL
-                     *      publicKey  [1] BIT STRING OPTIONAL
-                     * }
-                     *
-                     * Version ::= ASN1Integer
-                     * PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
-                     * PrivateKey ::= OCTET STRING
-                     * Attributes ::= SET OF Attribute
+                        Unencrypted PKCS #8 Private Key:
+                        
+                        PrivateKeyInfo ::= OneAsymmetricKey
+                        OneAsymmetricKey ::= ASN1Sequence {
+                            version Version,
+                            privateKeyAlgorithm PrivateKeyAlgorithmIdentifier,
+                            privateKey PrivateKey,
+                            attributes [0] IMPLICIT Attributes OPTIONAL
+                            publicKey  [1] BIT STRING OPTIONAL
+                        }
+                        
+                        Version ::= ASN1Integer
+                        PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
+                        PrivateKey ::= OCTET STRING
+                        Attributes ::= SET OF Attribute
                      */
-
                     // @formatter:on
 
                     Object obj1 = sequence.getObjectAt(0);
@@ -338,19 +335,17 @@ public class Pkcs8Util {
                     return UNENCRYPTED;
                 } else if (sequence.size() == 2) {
                     // @formatter:off
-
                     /*
-                     * Encrypted PKCS #8 Private Key:
-                     *
-                     * EncryptedPrivateKeyInfo ::= ASN1Sequence {
-                     *      encryptionAlgorithm EncryptionAlgorithmIdentifier,
-                     *      encryptedData EncryptedData
-                     * }
-                     *
-                     * EncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
-                     * EncryptedData ::= OCTET STRING
+                        Encrypted PKCS #8 Private Key:
+                        
+                        EncryptedPrivateKeyInfo ::= ASN1Sequence {
+                            encryptionAlgorithm EncryptionAlgorithmIdentifier,
+                            encryptedData EncryptedData
+                        }
+                        
+                        EncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
+                        EncryptedData ::= OCTET STRING
                      */
-
                     // @formatter:on
 
                     // May be encrypted
@@ -383,10 +378,10 @@ public class Pkcs8Util {
     private static boolean sequenceIsAlgorithmIdentifier(ASN1Sequence sequence) {
         // @formatter:off
         /*
-         * AlgorithmIdentifier ::= ASN1Sequence {
-         *      algorithm OBJECT IDENTIFIER,
-         *      parameters ANY DEFINED BY algorithm OPTIONAL
-         * }
+            AlgorithmIdentifier ::= ASN1Sequence {
+                algorithm OBJECT IDENTIFIER,
+                parameters ANY DEFINED BY algorithm OPTIONAL
+            }
          */
         // @formatter:on
 
@@ -403,20 +398,21 @@ public class Pkcs8Util {
     private static String getPrivateKeyAlgorithm(byte[] unencPkcs8) throws IOException, CryptoException {
         // @formatter:off
         /*
-         * Get private key algorithm from unencrypted PKCS #8 bytes:
-         *
-         * PrivateKeyInfo ::= ASN1Sequence {
-         *      version Version,
-         *      privateKeyAlgorithm PrivateKeyAlgorithmIdentifier, privateKey
-         *      PrivateKey, attributes [0] IMPLICIT Attributes OPTIONAL
-         * }
-         *
-         * PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
-         *
-         * AlgorithmIdentifier ::= ASN1Sequence {
-         *      algorithm OBJECT IDENTIFIER,
-         *      parameters ANY DEFINED BY algorithm OPTIONAL
-         * }
+            Get private key algorithm from unencrypted PKCS #8 bytes:
+            
+            PrivateKeyInfo ::= ASN1Sequence {
+                version Version,
+                privateKeyAlgorithm PrivateKeyAlgorithmIdentifier,
+                privateKey PrivateKey,
+                attributes [0] IMPLICIT Attributes OPTIONAL
+            }
+            
+            PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
+            
+            AlgorithmIdentifier ::= ASN1Sequence {
+                algorithm OBJECT IDENTIFIER,
+                parameters ANY DEFINED BY algorithm OPTIONAL
+            }
          */
         // @formatter:on
 
