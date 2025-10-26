@@ -273,6 +273,53 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
     }
 
     /**
+     * Gets a key store entry password.
+     *
+     * For PKCS #12 key stores, the entry password is always going to be the same as the key store
+     * password. If a key store password is not set, this method will prompt for the key store
+     * password and set it.
+     *
+     * For other key stores that has entry passwords, the user is always prompted to supply an entry
+     * password.
+     *
+     * @param keyStoreType The key store type.
+     * @param title        The new entry password dialog title.
+     * @param currentState The current key store state.
+     * @param newState     The new key store state.
+     * @return
+     */
+    protected Password getNewEntryPassword(KeyStoreType keyStoreType, String title, KeyStoreState currentState,
+            KeyStoreState newState) {
+        Password password = new Password((char[]) null);
+
+        if (keyStoreType.hasEntryPasswords() && keyStoreType != KeyStoreType.PKCS12) {
+            DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, title, preferences);
+            dGetNewPassword.setLocationRelativeTo(frame);
+            dGetNewPassword.setVisible(true);
+            password = dGetNewPassword.getPassword();
+
+            if (password == null) {
+                return null;
+            }
+        }
+        if (keyStoreType == KeyStoreType.PKCS12) {
+            if (currentState.getPassword() == null) {
+                var passwordAndDecision = getNewKeyStorePassword(true, newState.isStoredInPasswordManager());
+                password = passwordAndDecision.getPassword();
+                if (password == null) {
+                    return null;
+                }
+                newState.setPassword(password);
+                newState.setStoredInPasswordManager(passwordAndDecision.isSavePassword());
+            } else {
+                password = new Password(currentState.getPassword());
+            }
+        }
+
+        return password;
+    }
+
+    /**
      * Get a new KeyStore password.
      *
      * @param askUserForPasswordManager True if user should be asked if they want to store the KeyStore password in the

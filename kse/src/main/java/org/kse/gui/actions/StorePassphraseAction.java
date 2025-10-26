@@ -37,7 +37,6 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.dialogs.DStorePassphrase;
 import org.kse.gui.error.DError;
-import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -132,19 +131,12 @@ public class StorePassphraseAction extends KeyStoreExplorerAction implements His
                 }
             }
 
-            Password password = new Password((char[]) null);
-            KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
-            if (type.hasEntryPasswords()) {
-                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "StorePassphraseAction.NewPassphraseEntryPassword.Title"), preferences);
-                dGetNewPassword.setLocationRelativeTo(frame);
-                dGetNewPassword.setVisible(true);
-                password = dGetNewPassword.getPassword();
-
-                if (password == null) {
-                    return;
-                }
+            Password password = getNewEntryPassword(keyStoreType,
+                    res.getString("StorePassphraseAction.NewPassphraseEntryPassword.Title"), currentState, newState);
+            if (password == null) {
+                return;
             }
 
             if (keyStore.containsAlias(alias)) {

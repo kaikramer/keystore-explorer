@@ -40,7 +40,6 @@ import org.kse.gui.dialogs.DGenerateKeyPairCert;
 import org.kse.gui.dialogs.DGeneratingKeyPair;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
-import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
@@ -166,6 +165,16 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
                 return "";
             }
 
+            // create new chain with certificates from issuer chain
+            X509Certificate[] newCertChain;
+            if (issuerCertChain != null) {
+                newCertChain = new X509Certificate[issuerCertChain.length + 1];
+                System.arraycopy(issuerCertChain, 0, newCertChain, 1, issuerCertChain.length);
+                newCertChain[0] = certificate;
+            } else {
+                newCertChain = new X509Certificate[] { certificate };
+            }
+
             KeyStoreState currentState = history.getCurrentState();
             KeyStoreState newState = currentState.createBasisForNextState(this);
 
@@ -193,31 +202,10 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
                 }
             }
 
-            Password password = new Password((char[]) null);
-            KeyStoreType keyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
-
-            if (keyStoreType.hasEntryPasswords() && keyStoreType != KeyStoreType.PKCS12) {
-                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "GenerateKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
-                dGetNewPassword.setLocationRelativeTo(frame);
-                dGetNewPassword.setVisible(true);
-                password = dGetNewPassword.getPassword();
-
-                if (password == null) {
-                    return "";
-                }
-            }
-            if (keyStoreType == KeyStoreType.PKCS12) {
-                if (currentState.getPassword() == null) {
-                    var passwordAndDecision = getNewKeyStorePassword(true, newState.isStoredInPasswordManager());
-                    password = passwordAndDecision.getPassword();
-                    if (password == null) {
-                        return "";
-                    }
-                    newState.setStoredInPasswordManager(passwordAndDecision.isSavePassword());
-                } else {
-                    password = new Password(currentState.getPassword());
-                }
+            Password password = getNewEntryPassword(activeKeyStoreType,
+                    res.getString("GenerateKeyPairAction.NewKeyPairEntryPassword.Title"), currentState, newState);
+            if (password == null) {
+                return "";
             }
 
             if (keyStore.containsAlias(alias)) {
@@ -225,21 +213,7 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
                 newState.removeEntryPassword(alias);
             }
 
-            // create new chain with certificates from issuer chain
-            X509Certificate[] newCertChain = null;
-            if (issuerCertChain != null) {
-                newCertChain = new X509Certificate[issuerCertChain.length + 1];
-                System.arraycopy(issuerCertChain, 0, newCertChain, 1, issuerCertChain.length);
-                newCertChain[0] = certificate;
-            } else {
-                newCertChain = new X509Certificate[] { certificate };
-            }
-
             keyStore.setKeyEntry(alias, keyPair.getPrivate(), password.toCharArray(), newCertChain);
-
-            if (keyStoreType == KeyStoreType.PKCS12 && currentState.getPassword() == null) {
-                newState.setPassword(password);
-            }
             newState.setEntryPassword(alias, password);
 
             currentState.append(newState);
