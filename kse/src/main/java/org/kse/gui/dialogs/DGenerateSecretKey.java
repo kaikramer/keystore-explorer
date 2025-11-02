@@ -21,17 +21,22 @@ package org.kse.gui.dialogs;
 
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 
 import org.kse.crypto.keystore.KeyStoreType;
@@ -48,6 +53,8 @@ public class DGenerateSecretKey extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
+
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
     private JLabel jlKeyAlg;
     private JComboBox<SecretKeyType> jcbKeyAlg;
@@ -102,6 +109,8 @@ public class DGenerateSecretKey extends JEscDialog {
 
         jbCancel = new JButton(res.getString("DGenerateSecretKey.jbCancel.text"));
         jbCancel.addActionListener(evt -> cancelPressed());
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                CANCEL_KEY);
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
@@ -112,6 +121,15 @@ public class DGenerateSecretKey extends JEscDialog {
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jbCancel, "spanx, split 2, tag cancel");
         pane.add(jbOK, "tag ok");
+
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
         addWindowListener(new WindowAdapter() {
             @Override

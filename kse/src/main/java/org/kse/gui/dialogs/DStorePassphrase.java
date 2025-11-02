@@ -22,18 +22,23 @@ package org.kse.gui.dialogs;
 
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.kse.crypto.keystore.KeyStoreType;
@@ -56,6 +61,8 @@ public class DStorePassphrase extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private KsePreferences preferences = PreferencesManager.getPreferences();
+
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
     private JLabel jlAlgorithm;
     private JComboBox<PasswordType> jcbAlgorithm;
@@ -102,6 +109,9 @@ public class DStorePassphrase extends JEscDialog {
 
         jbSetPass = new JButton(res.getString("DStorePassphrase.jbSetPass.text"));
         jbCancel = new JButton(res.getString("DStorePassphrase.jbCancel.text"));
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                CANCEL_KEY);
+
         jbOK = new JButton(res.getString("DStorePassphrase.jbOK.text"));
 
         // layout
@@ -123,6 +133,15 @@ public class DStorePassphrase extends JEscDialog {
         jbCancel.addActionListener(evt -> cancelPressed());
 
         setResizable(false);
+
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
         addWindowListener(new WindowAdapter() {
             @Override
