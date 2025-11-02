@@ -19,10 +19,8 @@
  */
 package org.kse.gui.dialogs;
 
-import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -36,18 +34,16 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.gui.components.JEscDialog;
-import org.kse.gui.PlatformUtil;
+
+import net.miginfocom.swing.MigLayout;
 
 /**
  * Dialog used to choose the parameters required for secret key generation. The
@@ -60,14 +56,10 @@ public class DGenerateSecretKey extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpOptions;
-    private JPanel jpKeyAlg;
     private JLabel jlKeyAlg;
     private JComboBox<SecretKeyType> jcbKeyAlg;
-    private JPanel jpKeySize;
     private JLabel jlKeySize;
     private JSpinner jsKeySize;
-    private JPanel jpButtons;
     private JButton jbOK;
     private JButton jbCancel;
 
@@ -100,10 +92,6 @@ public class DGenerateSecretKey extends JEscDialog {
         jsKeySize = new JSpinner();
         jsKeySize.setToolTipText(res.getString("DGenerateSecretKey.jsKeySize.tooltip"));
 
-        jpKeySize = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        jpKeySize.add(jlKeySize);
-        jpKeySize.add(jsKeySize);
-
         jlKeyAlg = new JLabel(res.getString("DGenerateSecretKey.jlKeyAlg.text"));
 
         jcbKeyAlg = new JComboBox<>();
@@ -114,25 +102,26 @@ public class DGenerateSecretKey extends JEscDialog {
 
         jcbKeyAlg.addItemListener(evt -> loadKeySizes(getSecretKeySize()));
 
-        jpKeyAlg = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        jpKeyAlg.add(jlKeyAlg);
-        jpKeyAlg.add(jcbKeyAlg);
-
         jsKeySize.addChangeListener(evt -> correctSecretKeySize());
-
-        jpOptions = new JPanel(new GridLayout(2, 1, 5, 5));
-        jpOptions.add(jpKeyAlg);
-        jpOptions.add(jpKeySize);
-
-        jpOptions.setBorder(new CompoundBorder(new EmptyBorder(5, 5, 5, 5), new EtchedBorder()));
 
         jbOK = new JButton(res.getString("DGenerateSecretKey.jbOK.text"));
         jbOK.addActionListener(evt -> okPressed());
 
         jbCancel = new JButton(res.getString("DGenerateSecretKey.jbCancel.text"));
         jbCancel.addActionListener(evt -> cancelPressed());
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                CANCEL_KEY);
+
+        Container pane = getContentPane();
+        pane.setLayout(new MigLayout("insets dialog, fill", "[right]unrel[]", "[]unrel[]"));
+        pane.add(jlKeyAlg, "");
+        pane.add(jcbKeyAlg, "growx, pushx, wrap");
+        pane.add(jlKeySize, "");
+        pane.add(jsKeySize, "wrap");
+        pane.add(new JSeparator(), "spanx, growx, wrap");
+        pane.add(jbCancel, "spanx, split 2, tag cancel");
+        pane.add(jbOK, "tag ok");
+
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
             private static final long serialVersionUID = 1L;
 
@@ -141,12 +130,6 @@ public class DGenerateSecretKey extends JEscDialog {
                 cancelPressed();
             }
         });
-
-        jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel);
-
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(jpOptions, BorderLayout.CENTER);
-        getContentPane().add(jpButtons, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
             @Override
