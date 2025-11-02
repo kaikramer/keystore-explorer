@@ -21,6 +21,8 @@
 package org.kse.gui.dialogs.importexport;
 
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -39,7 +41,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -48,6 +52,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -89,6 +94,8 @@ public class DImportKeyPair extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
+
+    private static final String CANCEL_KEY = "CANCEL_KEY";
 
     private JLabel jlPrivateKey;
     private JTextField jtfPrivateKeyPath;
@@ -231,6 +238,9 @@ public class DImportKeyPair extends JEscDialog {
         });
 
         jbCancel = new JButton(res.getString("DImportKeyPair.jbCancel.text"));
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                CANCEL_KEY);
+
         jbCancel.addActionListener(evt -> cancelPressed());
 
         setEnabledPassword(false);
@@ -252,6 +262,15 @@ public class DImportKeyPair extends JEscDialog {
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jbImport, "right, spanx, split, tag ok");
         pane.add(jbCancel, "tag cancel");
+
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -288,7 +307,7 @@ public class DImportKeyPair extends JEscDialog {
 
         File currentFile = new File(jtfPrivateKeyPath.getText());
 
-        if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
+        if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
             chooser.setCurrentDirectory(currentFile.getParentFile());
         } else {
             chooser.setCurrentDirectory(CurrentDirectory.get());
@@ -341,7 +360,7 @@ public class DImportKeyPair extends JEscDialog {
 
         File currentFile = new File(jtfCertificatePath.getText());
 
-        if ((currentFile.getParentFile() != null) && (currentFile.getParentFile().exists())) {
+        if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
             chooser.setCurrentDirectory(currentFile.getParentFile());
         } else {
             chooser.setCurrentDirectory(CurrentDirectory.get());
@@ -548,7 +567,7 @@ public class DImportKeyPair extends JEscDialog {
         try {
             X509Certificate[] certs = loadCertificates(null);
 
-            if ((certs != null) && (certs.length != 0)) {
+            if (certs != null && certs.length != 0) {
                 String path = new File(jtfCertificatePath.getText()).getName();
 
                 DViewCertificate dViewCertificate = new DViewCertificate(this, MessageFormat.format(
@@ -675,7 +694,7 @@ public class DImportKeyPair extends JEscDialog {
             if (certificateChain == null) {
                 X509Certificate[] certs = loadCertificates(privateKey);
 
-                if ((certs == null) || (certs.length == 0)) {
+                if (certs == null || certs.length == 0) {
                     return;
                 }
 

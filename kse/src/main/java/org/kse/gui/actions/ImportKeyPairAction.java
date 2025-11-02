@@ -115,19 +115,12 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
                 }
             }
 
-            Password password = new Password((char[]) null);
-            KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
-            if (type.hasEntryPasswords()) {
-                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
-                dGetNewPassword.setLocationRelativeTo(frame);
-                dGetNewPassword.setVisible(true);
-                password = dGetNewPassword.getPassword();
-
-                if (password == null) {
-                    return;
-                }
+            Password password = getNewEntryPassword(keyStoreType,
+                    res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"), currentState, newState);
+            if (password == null) {
+                return;
             }
 
             if (keyStore.containsAlias(alias)) {
