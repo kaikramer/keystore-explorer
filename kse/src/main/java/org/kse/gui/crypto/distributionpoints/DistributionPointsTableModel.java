@@ -41,7 +41,7 @@ public class DistributionPointsTableModel extends ToolTipTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/distributionpoints/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "DistributionPointsTableHeadRend.DistributionPointColumn.tooltip" //
+            "DistributionPointsTableModel.DistributionPointColumn.tooltip" //
     };
 
     private String columnName;

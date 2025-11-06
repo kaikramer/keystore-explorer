@@ -38,8 +38,8 @@ public class AccessDescriptionsTableModel extends ToolTipTableModel {
     private static ObjectIdComparator objectIdComparator = new ObjectIdComparator();
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "AccessDescriptionsTableHeadRend.AccessMethodColumn.tooltip", //
-            "AccessDescriptionsTableHeadRend.AccessLocationColumn.tooltip" //
+            "AccessDescriptionsTableModel.AccessMethodColumn.tooltip", //
+            "AccessDescriptionsTableModel.AccessLocationColumn.tooltip" //
     };
 
     private String[] columnNames;

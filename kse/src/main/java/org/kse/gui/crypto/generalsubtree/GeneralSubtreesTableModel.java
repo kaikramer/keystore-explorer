@@ -38,9 +38,9 @@ public class GeneralSubtreesTableModel extends ToolTipTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalsubtree/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "GeneralSubtreesTableHeadRend.BaseColumn.tooltip", //
-            "GeneralSubtreesTableHeadRend.MinimumColumn.tooltip", //
-            "GeneralSubtreesTableHeadRend.MaximumColumn.tooltip" //
+            "GeneralSubtreesTableModel.BaseColumn.tooltip", //
+            "GeneralSubtreesTableModel.MinimumColumn.tooltip", //
+            "GeneralSubtreesTableModel.MaximumColumn.tooltip" //
     };
 
     private String[] columnNames;

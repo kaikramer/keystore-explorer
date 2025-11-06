@@ -39,8 +39,8 @@ public class PolicyMappingsTableModel extends ToolTipTableModel {
     private static ObjectIdComparator objectIdComparator = new ObjectIdComparator();
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "PolicyMappingsTableHeadRend.IssuerDomainPolicyColumn.tooltip", //
-            "PolicyMappingsTableHeadRend.SubjectDomainPolicyColumn.tooltip" //
+            "PolicyMappingsTableModel.IssuerDomainPolicyColumn.tooltip", //
+            "PolicyMappingsTableModel.SubjectDomainPolicyColumn.tooltip" //
     };
 
     private String[] columnNames;

@@ -35,7 +35,7 @@ public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/customextkeyusage/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = {
-            "CustomExtKeyUsageTableHeadRend.ObjectId.tooltip"
+            "CustomExtKeyUsageTableModel.ObjectId.tooltip"
     };
 
     private String[] columnNames;

@@ -575,89 +575,89 @@ public class KeyStoreTableModel extends ToolTipTableModel {
         columnTypes = new Class[nofColumns];
         columnNames[0] = res.getString("KeyStoreTableModel.TypeColumn");
         columnTypes[0] = String.class;
-        COLUMN_TOOL_TIPS[0] = "KeyStoreTableHeadRend.TypeColumn.tooltip";
+        COLUMN_TOOL_TIPS[0] = "KeyStoreTableModel.TypeColumn.tooltip";
         columnNames[1] = res.getString("KeyStoreTableModel.LockStatusColumn");
         columnTypes[1] = Boolean.class;
-        COLUMN_TOOL_TIPS[1] = "KeyStoreTableHeadRend.LockStatusColumn.tooltip";
+        COLUMN_TOOL_TIPS[1] = "KeyStoreTableModel.LockStatusColumn.tooltip";
         columnNames[2] = res.getString("KeyStoreTableModel.CertExpiryStatusColumn");
         columnTypes[2] = Integer.class;
-        COLUMN_TOOL_TIPS[2] = "KeyStoreTableHeadRend.CertExpiryStatusColumn.tooltip";
+        COLUMN_TOOL_TIPS[2] = "KeyStoreTableModel.CertExpiryStatusColumn.tooltip";
 
         for (int col = 3; col < nofColumns; col++) {
             if (col == keyStoreTableColumns.colIndexEntryName()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.NameColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.NameColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.NameColumn.tooltip";
                 iNameColumn = col;
             } else if (col == keyStoreTableColumns.colIndexAlgorithm()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.AlgorithmColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.AlgorithmColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.AlgorithmColumn.tooltip";
                 iAlgorithmColumn = col;
             } else if (col == keyStoreTableColumns.colIndexKeySize()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.KeySizeColumn");
                 columnTypes[col] = Integer.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.KeySizeColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.KeySizeColumn.tooltip";
                 iKeySizeColumn = col;
             } else if (col == keyStoreTableColumns.colIndexCurve()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CurveColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.CurveColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.CurveColumn.tooltip";
                 iCurveColumn = col;
             } else if (col == keyStoreTableColumns.colIndexCertificateValidityStart()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CertValidityStartColumn");
                 columnTypes[col] = Date.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.CertValidityStartColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.CertValidityStartColumn.tooltip";
                 iCertValidityStartColumn = col;
             } else if (col == keyStoreTableColumns.colIndexCertificateExpiry()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.CertExpiryColumn");
                 columnTypes[col] = Date.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.CertExpiryColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.CertExpiryColumn.tooltip";
                 iCertExpiryColumn = col;
             } else if (col == keyStoreTableColumns.colIndexLastModified()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.LastModifiedColumn");
                 columnTypes[col] = Date.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.LastModifiedColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.LastModifiedColumn.tooltip";
                 iLastModifiedColumn = col;
             } else if (col == keyStoreTableColumns.colIndexAKI()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.AKIColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.AKIColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.AKIColumn.tooltip";
                 iAKIColumn = col;
             } else if (col == keyStoreTableColumns.colIndexSKI()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SKIColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.SKIColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.SKIColumn.tooltip";
                 iSKIColumn = col;
             } else if (col == keyStoreTableColumns.colIndexIssuerDN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.IssuerDNColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.IssuerDNColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.IssuerDNColumn.tooltip";
                 iIssuerDNColumn = col;
             } else if (col == keyStoreTableColumns.colIndexSubjectDN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SubjectDNColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.SubjectDNColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.SubjectDNColumn.tooltip";
                 iSubjectDNColumn = col;
             } else if (col == keyStoreTableColumns.colIndexIssuerCN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.IssuerCNColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.IssuerCNColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.IssuerCNColumn.tooltip";
                 iIssuerCNColumn = col;
             } else if (col == keyStoreTableColumns.colIndexSubjectCN()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SubjectCNColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.SubjectCNColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.SubjectCNColumn.tooltip";
                 iSubjectCNColumn = col;
             } else if (col == keyStoreTableColumns.colIndexIssuerO()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.IssuerOColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.IssuerOColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.IssuerOColumn.tooltip";
                 iIssuerOColumn = col;
             } else if (col == keyStoreTableColumns.colIndexSubjectO()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SubjectOColumn");
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.SubjectOColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.SubjectOColumn.tooltip";
                 iSubjectOColumn = col;
             } else if (col == keyStoreTableColumns.colIndexSerialNumberHex()) {
                 columnNames[col] = res.getString("KeyStoreTableModel.SerialNumberHex");
@@ -673,7 +673,7 @@ public class KeyStoreTableModel extends ToolTipTableModel {
                 columnNames[col] = MessageFormat.format(res.getString("KeyStoreTableModel.Fingerprint"),
                                                         keyStoreTableColumns.getFingerprintAlg());
                 columnTypes[col] = String.class;
-                COLUMN_TOOL_TIPS[col] = "KeyStoreTableHeadRend.FingerprintColumn.tooltip";
+                COLUMN_TOOL_TIPS[col] = "KeyStoreTableModel.FingerprintColumn.tooltip";
                 iFingerprintColumn = col;
             }
         }

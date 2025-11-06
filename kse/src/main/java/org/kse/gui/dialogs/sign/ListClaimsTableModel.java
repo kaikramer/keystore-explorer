@@ -35,8 +35,8 @@ public class ListClaimsTableModel extends ToolTipTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/sign/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "ClaimsTableHeadRend.NameColumn.tooltip", //
-            "ClaimsTableHeadRend.ValueColumn.tooltip" //
+            "ListClaimsTableModel.NameColumn.tooltip", //
+            "ListClaimsTableModel.ValueColumn.tooltip" //
     };
 
     private String[] columnNames;
