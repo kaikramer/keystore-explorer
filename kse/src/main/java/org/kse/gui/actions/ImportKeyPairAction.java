@@ -22,7 +22,6 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.security.KeyStore;
 import java.security.PrivateKey;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 
@@ -34,11 +33,7 @@ import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
-import org.kse.gui.dialogs.importexport.DImportKeyPairOpenSsl;
-import org.kse.gui.dialogs.importexport.DImportKeyPairPkcs12;
-import org.kse.gui.dialogs.importexport.DImportKeyPairPkcs8;
-import org.kse.gui.dialogs.importexport.DImportKeyPairPvk;
-import org.kse.gui.dialogs.importexport.DImportKeyPairType;
+import org.kse.gui.dialogs.importexport.DImportKeyPair;
 import org.kse.gui.error.DError;
 import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.passwordmanager.Password;
@@ -79,184 +74,18 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
      */
     @Override
     protected void doAction() {
-        DImportKeyPairType dImportKeyPairType = new DImportKeyPairType(frame);
-        dImportKeyPairType.setLocationRelativeTo(frame);
-        dImportKeyPairType.setVisible(true);
+        DImportKeyPair dImportKeyPair = new DImportKeyPair(frame);
+        dImportKeyPair.setLocationRelativeTo(frame);
+        dImportKeyPair.setVisible(true);
 
-        if (!dImportKeyPairType.importTypeSelected()) {
-            return;
-        }
-
-        if (dImportKeyPairType.importPkcs12()) {
-            importKeyPairPkcs12();
-        } else if (dImportKeyPairType.importPkcs8()) {
-            importKeyPairPkcs8();
-        } else if (dImportKeyPairType.importPvk()) {
-            importKeyPairPvk();
-        } else {
-            importKeyPairOpenSsl();
-        }
-    }
-
-    private void importKeyPairPkcs12() {
         try {
-            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-
-            KeyStoreState currentState = history.getCurrentState();
-            KeyStoreState newState = currentState.createBasisForNextState(this);
-
-            KeyStore keyStore = newState.getKeyStore();
-
-            DImportKeyPairPkcs12 dImportKeyPairPkcs12 = new DImportKeyPairPkcs12(frame);
-            dImportKeyPairPkcs12.setLocationRelativeTo(frame);
-            dImportKeyPairPkcs12.setVisible(true);
-
-            PrivateKey privKey = dImportKeyPairPkcs12.getPrivateKey();
-            X509Certificate[] certs = dImportKeyPairPkcs12.getCertificateChain();
-
-            if ((privKey == null) || (certs == null)) {
-                return;
-            }
-
-            X509Certificate[] x509Certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
-
-            DGetAlias dGetAlias = new DGetAlias(frame, res.getString("ImportKeyPairAction.NewKeyPairEntryAlias.Title"),
-                                                X509CertUtil.getCertificateAlias(x509Certs[0]));
-            dGetAlias.setLocationRelativeTo(frame);
-            dGetAlias.setVisible(true);
-            String alias = dGetAlias.getAlias();
-
-            if (alias == null) {
-                return;
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                String message = MessageFormat.format(res.getString("ImportKeyPairAction.OverWriteEntry.message"),
-                                                      alias);
-
-                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
-                if (selected != JOptionPane.YES_OPTION) {
-                    return;
-                }
-            }
-
-            Password password = new Password((char[]) null);
-            KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
-
-            if (type.hasEntryPasswords()) {
-                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
-                dGetNewPassword.setLocationRelativeTo(frame);
-                dGetNewPassword.setVisible(true);
-                password = dGetNewPassword.getPassword();
-
-                if (password == null) {
-                    return;
-                }
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                keyStore.deleteEntry(alias);
-                newState.removeEntryPassword(alias);
-            }
-
-            keyStore.setKeyEntry(alias, privKey, password.toCharArray(), x509Certs);
-            newState.setEntryPassword(alias, password);
-
-            currentState.append(newState);
-
-            kseFrame.updateControls(true);
-
-            JOptionPane.showMessageDialog(frame, res.getString("ImportKeyPairAction.KeyPairImportSuccessful.message"),
-                                          res.getString("ImportKeyPairAction.ImportKeyPair.Title"),
-                                          JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
-    }
-
-    private void importKeyPairPkcs8() {
-        try {
-            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-
-            KeyStoreState currentState = history.getCurrentState();
-            KeyStoreState newState = currentState.createBasisForNextState(this);
-
-            KeyStore keyStore = newState.getKeyStore();
-
-            DImportKeyPairPkcs8 dImportKeyPairPkcs8 = new DImportKeyPairPkcs8(frame);
-            dImportKeyPairPkcs8.setLocationRelativeTo(frame);
-            dImportKeyPairPkcs8.setVisible(true);
-
-            PrivateKey privateKey = dImportKeyPairPkcs8.getPrivateKey();
-            Certificate[] certs = dImportKeyPairPkcs8.getCertificateChain();
+            PrivateKey privateKey = dImportKeyPair.getPrivateKey();
+            X509Certificate[] certs = dImportKeyPair.getCertificateChain();
 
             if ((privateKey == null) || (certs == null)) {
                 return;
             }
 
-            X509Certificate[] x509Certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
-
-            DGetAlias dGetAlias = new DGetAlias(frame, res.getString("ImportKeyPairAction.NewKeyPairEntryAlias.Title"),
-                                                X509CertUtil.getCertificateAlias(x509Certs[0]));
-
-            dGetAlias.setLocationRelativeTo(frame);
-            dGetAlias.setVisible(true);
-            String alias = dGetAlias.getAlias();
-
-            if (alias == null) {
-                return;
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                String message = MessageFormat.format(res.getString("ImportKeyPairAction.OverWriteEntry.message"),
-                                                      alias);
-
-                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
-                if (selected != JOptionPane.YES_OPTION) {
-                    return;
-                }
-            }
-
-            Password password = new Password((char[]) null);
-            KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
-
-            if (type.hasEntryPasswords()) {
-                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
-                dGetNewPassword.setLocationRelativeTo(frame);
-                dGetNewPassword.setVisible(true);
-                password = dGetNewPassword.getPassword();
-
-                if (password == null) {
-                    return;
-                }
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                keyStore.deleteEntry(alias);
-                newState.removeEntryPassword(alias);
-            }
-
-            keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), x509Certs);
-            newState.setEntryPassword(alias, password);
-
-            currentState.append(newState);
-
-            kseFrame.updateControls(true);
-
-            JOptionPane.showMessageDialog(frame, res.getString("ImportKeyPairAction.KeyPairImportSuccessful.message"),
-                                          res.getString("ImportKeyPairAction.ImportKeyPair.Title"),
-                                          JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
-    }
-
-    private void importKeyPairPvk() {
-        try {
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
 
             KeyStoreState currentState = history.getCurrentState();
@@ -264,21 +93,8 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
 
             KeyStore keyStore = newState.getKeyStore();
 
-            DImportKeyPairPvk dImportKeyPairPvk = new DImportKeyPairPvk(frame);
-            dImportKeyPairPvk.setLocationRelativeTo(frame);
-            dImportKeyPairPvk.setVisible(true);
-
-            PrivateKey privateKey = dImportKeyPairPvk.getPrivateKey();
-            Certificate[] certs = dImportKeyPairPvk.getCertificateChain();
-
-            if ((privateKey == null) || (certs == null)) {
-                return;
-            }
-
-            X509Certificate[] x509Certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
-
             DGetAlias dGetAlias = new DGetAlias(frame, res.getString("ImportKeyPairAction.NewKeyPairEntryAlias.Title"),
-                                                X509CertUtil.getCertificateAlias(x509Certs[0]));
+                                                X509CertUtil.getCertificateAlias(certs[0]));
 
             dGetAlias.setLocationRelativeTo(frame);
             dGetAlias.setVisible(true);
@@ -299,19 +115,12 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
                 }
             }
 
-            Password password = new Password((char[]) null);
-            KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
+            KeyStoreType keyStoreType = KeyStoreType.resolveJce(keyStore.getType());
 
-            if (type.hasEntryPasswords()) {
-                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
-                dGetNewPassword.setLocationRelativeTo(frame);
-                dGetNewPassword.setVisible(true);
-                password = dGetNewPassword.getPassword();
-
-                if (password == null) {
-                    return;
-                }
+            Password password = getNewEntryPassword(keyStoreType,
+                    res.getString("ImportKeyPairAction.NewKeyPairEntryPassword.Title"), currentState, newState);
+            if (password == null) {
+                return;
             }
 
             if (keyStore.containsAlias(alias)) {
@@ -319,86 +128,7 @@ public class ImportKeyPairAction extends KeyStoreExplorerAction implements Histo
                 newState.removeEntryPassword(alias);
             }
 
-            keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), x509Certs);
-            newState.setEntryPassword(alias, password);
-
-            currentState.append(newState);
-
-            kseFrame.updateControls(true);
-
-            JOptionPane.showMessageDialog(frame, res.getString("ImportKeyPairAction.KeyPairImportSuccessful.message"),
-                                          res.getString("ImportKeyPairAction.ImportKeyPair.Title"),
-                                          JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            DError.displayError(frame, ex);
-        }
-    }
-
-    private void importKeyPairOpenSsl() {
-        try {
-            KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
-
-            KeyStoreState currentState = history.getCurrentState();
-            KeyStoreState newState = currentState.createBasisForNextState(this);
-
-            KeyStore keyStore = newState.getKeyStore();
-
-            DImportKeyPairOpenSsl dImportKeyPairOpenSsl = new DImportKeyPairOpenSsl(frame);
-            dImportKeyPairOpenSsl.setLocationRelativeTo(frame);
-            dImportKeyPairOpenSsl.setVisible(true);
-
-            PrivateKey privateKey = dImportKeyPairOpenSsl.getPrivateKey();
-            Certificate[] certs = dImportKeyPairOpenSsl.getCertificateChain();
-
-            if ((privateKey == null) || (certs == null)) {
-                return;
-            }
-
-            X509Certificate[] x509Certs = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
-
-            DGetAlias dGetAlias = new DGetAlias(frame, res.getString("ImportKeyPairAction.NewKeyPairEntryAlias.Title"),
-                                                X509CertUtil.getCertificateAlias(x509Certs[0]));
-
-            dGetAlias.setLocationRelativeTo(frame);
-            dGetAlias.setVisible(true);
-            String alias = dGetAlias.getAlias();
-
-            if (alias == null) {
-                return;
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                String message = MessageFormat.format(res.getString("ImportKeyPairAction.OverWriteEntry.message"),
-                                                      alias);
-
-                int selected = JOptionPane.showConfirmDialog(frame, message, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryAlias.Title"), JOptionPane.YES_NO_OPTION);
-                if (selected != JOptionPane.YES_OPTION) {
-                    return;
-                }
-            }
-
-            Password password = new Password((char[]) null);
-            KeyStoreType type = KeyStoreType.resolveJce(keyStore.getType());
-
-            if (type.hasEntryPasswords()) {
-                DGetNewPassword dGetNewPassword = new DGetNewPassword(frame, res.getString(
-                        "ImportKeyPairAction.NewKeyPairEntryPassword.Title"), preferences);
-                dGetNewPassword.setLocationRelativeTo(frame);
-                dGetNewPassword.setVisible(true);
-                password = dGetNewPassword.getPassword();
-
-                if (password == null) {
-                    return;
-                }
-            }
-
-            if (keyStore.containsAlias(alias)) {
-                keyStore.deleteEntry(alias);
-                newState.removeEntryPassword(alias);
-            }
-
-            keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), x509Certs);
+            keyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certs);
             newState.setEntryPassword(alias, password);
 
             currentState.append(newState);

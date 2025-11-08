@@ -66,6 +66,7 @@ public class DialogHelper {
             sigAlgs = SignatureType.dsaSignatureTypes();
             break;
         case EC:
+        case ECDSA:
             // SM2 is an EC curve, but it is used with a different set of signature algorithms
             String curve = EccUtil.getNamedCurve(privateKey);
             if (CurveSet.SM2.getAllCurveNames().contains(curve)) {
