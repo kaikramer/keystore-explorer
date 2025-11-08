@@ -38,7 +38,7 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/policyinformation/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "PolicyInformationTableHeadRend.PolicyInformationColumn.tooltip" //
+            "PolicyInformationTableModel.PolicyInformationColumn.tooltip" //
     };
 
     private String[] columnNames;

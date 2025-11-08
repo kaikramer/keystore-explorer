@@ -48,9 +48,9 @@ public class RevokedCertsTableModel extends ToolTipTableModel {
     private static ResourceBundle resCryptoX509 = ResourceBundle.getBundle("org/kse/crypto/x509/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "RevokedCertsTableHeadRend.SerialNumberColumn.tooltip", //
-            "RevokedCertsTableHeadRend.RevocationDateColumn.tooltip", //
-            "RevokedCertsTableHeadRend.ReasonColumn.tooltip" //
+            "RevokedCertsTableModel.SerialNumberColumn.tooltip", //
+            "RevokedCertsTableModel.RevocationDateColumn.tooltip", //
+            "RevokedCertsTableModel.ReasonColumn.tooltip" //
     };
 
     private String[] columnNames;

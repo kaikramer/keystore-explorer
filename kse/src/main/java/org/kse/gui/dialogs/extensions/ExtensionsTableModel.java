@@ -39,9 +39,9 @@ public class ExtensionsTableModel extends ToolTipTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "ExtensionsTableHeadRend.CriticalColumn.tooltip", //
-            "ExtensionsTableHeadRend.NameColumn.tooltip", //
-            "ExtensionsTableHeadRend.OidColumn.tooltip" //
+            "ExtensionsTableModel.CriticalColumn.tooltip", //
+            "ExtensionsTableModel.NameColumn.tooltip", //
+            "ExtensionsTableModel.OidColumn.tooltip" //
     };
 
     private String[] columnNames;

@@ -40,7 +40,7 @@ public class GeneralNamesTableModel extends ToolTipTableModel {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/generalname/resources");
 
     private static final String[] COLUMN_TOOL_TIPS = { //
-            "GeneralNamesTableHeadRend.GeneralNameColumn.tooltip" //
+            "GeneralNamesTableModel.GeneralNameColumn.tooltip" //
     };
 
     private String columnName;
