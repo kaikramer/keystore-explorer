@@ -62,7 +62,7 @@ public class PolicyInformationTableModel extends ToolTipTableModel {
      */
     public void load(List<PolicyInformation> policyInformation) {
         PolicyInformation[] policyInformationArray = policyInformation.toArray(
-                new PolicyInformation[0]);
+                PolicyInformation[]::new);
         Arrays.sort(policyInformationArray, new PolicyInformationComparator());
 
         data = new Object[policyInformation.size()][1];

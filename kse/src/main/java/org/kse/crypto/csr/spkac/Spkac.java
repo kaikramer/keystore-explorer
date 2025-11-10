@@ -51,7 +51,6 @@ import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -343,14 +342,11 @@ public class Spkac {
      * Output SPKAC.
      *
      * @param os Output stream
-     * @throws IOException    If an I/O problem occurs
      * @throws SpkacException If output fails
      */
-    public void output(OutputStream os) throws IOException, SpkacException {
-        OutputStreamWriter osw = null;
+    public void output(OutputStream os) throws SpkacException {
 
-        try {
-            osw = new OutputStreamWriter(os);
+        try (OutputStreamWriter osw = new OutputStreamWriter(os)) {
 
             outputProperty(osw, SPKAC_PROPERTY,
                            Base64.toBase64String(createSignedPublicKeyAndChallenge().getEncoded(ASN1Encoding.DER)));
@@ -362,8 +358,6 @@ public class Spkac {
             outputProperty(osw, C_PROPERTY, subject.getC());
         } catch (IOException ex) {
             throw new SpkacException(res.getString("NoOutputSpkac.exception.message"), ex);
-        } finally {
-            IOUtils.closeQuietly(osw);
         }
     }
 

@@ -26,8 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -43,13 +41,12 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.io.IOUtils;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
-import org.kse.utilities.net.URLs;
 import org.kse.version.Version;
+import org.kse.version.VersionCheck;
 
 /**
  * Check for an updated version of KeyStore Explorer. This check works over the
@@ -170,11 +167,7 @@ public class DCheckUpdate extends JEscDialog {
         @Override
         public void run() {
             try {
-                // Get the version number of the latest KeyStore Explorer from its website
-                URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
-
-                String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
-                latestVersion = new Version(versionString);
+                latestVersion = VersionCheck.getLatestVersion();
 
                 SwingUtilities.invokeLater(() -> closeDialog());
             } catch (final Exception ex) {

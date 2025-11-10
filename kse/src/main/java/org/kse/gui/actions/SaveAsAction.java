@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -141,7 +142,7 @@ public class SaveAsAction extends KeyStoreExplorerAction {
             kseFrame.addRecentFile(saveFile);
 
             return true;
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("SaveAsAction.NoWriteFile.message"),
                                                                       saveFile),
                                           res.getString("SaveAsAction.SaveKeyStoreAs.Title"),

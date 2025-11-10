@@ -57,7 +57,7 @@ public class CustomExtKeyUsageTableModel extends ToolTipTableModel {
      * @param objectIds The EKU oids
      */
     public void load(Set<ASN1ObjectIdentifier> objectIds) {
-        ASN1ObjectIdentifier[] objectIdsArray = objectIds.toArray(new ASN1ObjectIdentifier[0]);
+        ASN1ObjectIdentifier[] objectIdsArray = objectIds.toArray(ASN1ObjectIdentifier[]::new);
         Arrays.sort(objectIdsArray, Comparator.comparing(ASN1ObjectIdentifier::getId,
                                                          Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER)));
 

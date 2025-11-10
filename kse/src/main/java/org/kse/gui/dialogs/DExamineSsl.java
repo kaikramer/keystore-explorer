@@ -232,12 +232,12 @@ public class DExamineSsl extends JEscDialog {
 
     private String[] getSslHosts() {
         List<String> sslHosts = preferences.getExamineSslHosts();
-        return sslHosts.toArray(new String[sslHosts.size()]);
+        return sslHosts.toArray(String[]::new);
     }
 
     private String[] getSslPorts() {
         List<String> sslPorts = preferences.getExamineSslPorts();
-        return sslPorts.toArray(new String[sslPorts.size()]);
+        return sslPorts.toArray(String[]::new);
     }
 
     private void updateClientAuthComponents() {

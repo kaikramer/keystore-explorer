@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
@@ -130,7 +131,7 @@ public class ExportTrustedCertificateAction extends KeyStoreExplorerAction {
                                                   "ExportTrustedCertificateAction.ExportCertificateSuccessful.message"),
                                           res.getString("ExportTrustedCertificateAction.ExportCertificate.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportTrustedCertificateAction.NoWriteFile.message"),
                                                   exportFile);
 

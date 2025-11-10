@@ -232,7 +232,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
 
     private String[] getLibraryList() {
         List<String> p11Libs = preferences.getPkcs11Libraries();
-        return p11Libs.toArray(new String[p11Libs.size()]);
+        return p11Libs.toArray(String[]::new);
     }
 
     private void browsePressed() {

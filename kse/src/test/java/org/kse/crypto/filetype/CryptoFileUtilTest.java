@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Security;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.kse.KSE;
@@ -122,7 +122,7 @@ class CryptoFileUtilTest {
     })
     // @formatter:on
     void detectFileType(String fileName, CryptoFileType expectedResult) throws IOException {
-        byte[] data = FileUtils.readFileToByteArray(new File(TEST_FILES_PATH, fileName));
+        byte[] data = Files.readAllBytes(new File(TEST_FILES_PATH, fileName).toPath());
 
         assertEquals(expectedResult, CryptoFileUtil.detectFileType(data));
     }

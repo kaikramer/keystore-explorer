@@ -387,7 +387,7 @@ public class DExtendedKeyUsage extends DExtension {
             }
         }
         ExtendedKeyUsage extendedKeyUsage = new ExtendedKeyUsage(
-                keyPurposeIds.toArray(new KeyPurposeId[0]));
+                keyPurposeIds.toArray(KeyPurposeId[]::new));
 
         try {
             value = extendedKeyUsage.getEncoded(ASN1Encoding.DER);

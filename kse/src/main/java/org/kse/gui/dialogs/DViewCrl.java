@@ -358,7 +358,7 @@ public class DViewCrl extends JEscDialog {
         if (revokedCertsSet == null) {
             revokedCertsSet = new HashSet<>();
         }
-        X509CRLEntry[] revokedCerts = revokedCertsSet.toArray(new X509CRLEntry[0]);
+        X509CRLEntry[] revokedCerts = revokedCertsSet.toArray(X509CRLEntry[]::new);
         RevokedCertsTableModel revokedCertsTableModel = (RevokedCertsTableModel) jtRevokedCerts.getModel();
         revokedCertsTableModel.load(revokedCerts);
 

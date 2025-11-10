@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -65,8 +66,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.filetype.CryptoFileType;
 import org.kse.crypto.filetype.CryptoFileUtil;
@@ -198,7 +197,7 @@ public class JRevokedCerts extends JPanel {
             if (revokedCertsSet == null) {
                 revokedCertsSet = new HashSet<>();
             }
-            X509CRLEntry[] revokedCerts = revokedCertsSet.toArray(new X509CRLEntry[0]);
+            X509CRLEntry[] revokedCerts = revokedCertsSet.toArray(X509CRLEntry[]::new);
             for (X509CRLEntry entry : revokedCerts) {
                 if (entry.getRevocationReason() == null) {
                     mapRevokedEntry.put(entry.getSerialNumber(),
@@ -286,8 +285,7 @@ public class JRevokedCerts extends JPanel {
             CryptoFileType fileType = CryptoFileUtil.detectFileType(file);
             if (fileType == CryptoFileType.CRL) {
                 try (FileInputStream is = new FileInputStream(file)) {
-                    X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
-                    return crl;
+                    return X509CertUtil.loadCRL(is.readAllBytes());
                 }
             } else {
                 JOptionPane.showMessageDialog(parent, MessageFormat.format(
@@ -327,7 +325,7 @@ public class JRevokedCerts extends JPanel {
 
     protected X509Certificate[] openCertificate(File certificateFile) {
         try {
-            return openCertificate(FileUtils.readFileToByteArray(certificateFile), certificateFile.getName());
+            return openCertificate(Files.readAllBytes(certificateFile.toPath()), certificateFile.getName());
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(parent,
                                           MessageFormat.format(res.getString("ExamineFileAction.NoReadFile.message"),

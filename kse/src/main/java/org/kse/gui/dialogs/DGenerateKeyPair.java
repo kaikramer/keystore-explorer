@@ -276,7 +276,7 @@ public class DGenerateKeyPair extends JEscDialog {
         List<String> curveNames = set.getAvailableCurveNames(keyStoreType);
         Collections.sort(curveNames);
 
-        jcbECCurve.setModel(new DefaultComboBoxModel<>(curveNames.toArray(new String[0])));
+        jcbECCurve.setModel(new DefaultComboBoxModel<>(curveNames.toArray(String[]::new)));
         if (curveNames.contains(keyPairCurveName)) {
             jcbECCurve.getModel().setSelectedItem(keyPairCurveName);
         }

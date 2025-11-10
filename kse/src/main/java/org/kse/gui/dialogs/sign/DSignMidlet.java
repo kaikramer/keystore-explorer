@@ -49,14 +49,13 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.signing.MidletSigner;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
 import org.kse.utilities.io.FileNameUtil;
@@ -365,9 +364,7 @@ public class DSignMidlet extends JEscDialog {
             return;
         }
 
-        JarFile jarFileTest = null;
-        try {
-            jarFileTest = new JarFile(jarFile);
+        try (JarFile jarFileTest = new JarFile(jarFile)) {
         } catch (IOException ex) {
             String problemStr = MessageFormat.format(res.getString("DSignMidlet.NoOpenJar.Problem"), jarFile.getName());
 
@@ -381,8 +378,6 @@ public class DSignMidlet extends JEscDialog {
             dProblem.setVisible(true);
 
             return;
-        } finally {
-            IOUtils.closeQuietly(jarFileTest);
         }
 
         if (!signDirectly) {

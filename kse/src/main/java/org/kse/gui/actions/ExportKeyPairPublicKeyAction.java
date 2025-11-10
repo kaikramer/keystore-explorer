@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
@@ -107,7 +108,7 @@ public class ExportKeyPairPublicKeyAction extends KeyStoreExplorerAction {
                                                   "ExportKeyPairPublicKeyAction.ExportPublicKeySuccessful.message"),
                                           res.getString("ExportKeyPairPublicKeyAction.ExportPublicKey.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPublicKeyAction.NoWriteFile.message"),
                                                   exportFile);
 

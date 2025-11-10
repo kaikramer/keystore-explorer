@@ -73,7 +73,7 @@ public class SelectedCertificatesChainDetailsAction extends KeyStoreExplorerActi
      */
     public void showCertificatesSelectedEntries() {
         Set<X509Certificate> setCertificates = getCertificates();
-        X509Certificate[] certs = setCertificates.toArray(new X509Certificate[0]);
+        X509Certificate[] certs = setCertificates.toArray(X509Certificate[]::new);
         DViewCertificate dViewCertificate;
         try {
             dViewCertificate = new DViewCertificate(frame, MessageFormat.format(

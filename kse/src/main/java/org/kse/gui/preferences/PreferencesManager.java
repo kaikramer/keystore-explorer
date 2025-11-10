@@ -23,6 +23,7 @@ package org.kse.gui.preferences;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 
 import org.kse.gui.components.JEscFrame;
 import org.kse.gui.KseRestart;
@@ -91,7 +92,7 @@ public class PreferencesManager {
     private static KsePreferences loadPreferences() {
         try {
             return json.beanFrom(KsePreferences.class, determineConfigFilePath());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // ignore, happens always on first run
             return new KsePreferences();
         } catch (Exception e) {
@@ -103,7 +104,7 @@ public class PreferencesManager {
     private static EncryptedKeyStorePasswords loadKeyStorePasswords() {
         try {
             return json.beanFrom(EncryptedKeyStorePasswords.class, determinePasswordsFilePath());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             return new EncryptedKeyStorePasswords();
         } catch (Exception e) {
             DError.displayError(new JEscFrame(), e);

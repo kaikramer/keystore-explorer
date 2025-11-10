@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -66,8 +67,6 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -261,12 +260,10 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
             con.setDoOutput(true);
             con.setUseCaches(false);
             try (OutputStream out = con.getOutputStream()) {
-                IOUtils.write(ocspReqData, out);
+                out.write(ocspReqData);
                 out.flush();
             }
-            byte[] responseBytes = IOUtils.toByteArray(con.getInputStream());
-            OCSPResp ocspResp = new OCSPResp(responseBytes);
-            return ocspResp;
+            return new OCSPResp(con.getInputStream().readAllBytes());
         } finally {
             if (con != null) {
                 con.disconnect();
@@ -338,7 +335,7 @@ public class VerifyCertificateAction extends KeyStoreExplorerAction {
         File file = new File(crlFile);
         X509CRL crl = null;
         try {
-            byte[] data = FileUtils.readFileToByteArray(file);
+            byte[] data = Files.readAllBytes(file.toPath());
             crl = X509CertUtil.loadCRL(data);
         } catch (Exception ex) {
             String problemStr = MessageFormat.format(res.getString("ExamineFileAction.NoOpenCrl.Problem"),

@@ -17,35 +17,34 @@
  * You should have received a copy of the GNU General Public License
  * along with KeyStore Explorer.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kse.utilities.io;
+
+package org.kse.version;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.io.IOUtils;
+import org.kse.utilities.net.URLs;
 
 /**
- * Class of utility methods to copy data between I/O streams.
+ * A utility class for retrieving the latest KSE version from the web site.
  */
-public class CopyUtil {
-    private CopyUtil() {
-    }
+public class VersionCheck {
+
+    // Utility pattern
+    private VersionCheck() {}
 
     /**
-     * Copy data from one stream to another and close I/O.
-     *
-     * @param in  Input stream
-     * @param out Output stream
-     * @throws IOException If an I/O problem occurred
+     * Gets the latest version of KSE from the web site.
+     * @return The latest version of KSE.
+     * @throws IOException If fetching the version file from the web site failed
      */
-    public static void copyClose(InputStream in, OutputStream out) throws IOException {
-        try {
-            IOUtils.copy(in, out);
-        } finally {
-            IOUtils.closeQuietly(in);
-            IOUtils.closeQuietly(out);
+    public static Version getLatestVersion() throws IOException {
+        // Get the version number of the latest KeyStore Explorer from its web site
+        URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
+        try (InputStream is = latestVersionUrl.openStream()) {
+            return new Version(new String(is.readAllBytes(), StandardCharsets.US_ASCII));
         }
     }
-
 }

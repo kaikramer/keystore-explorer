@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
@@ -109,7 +110,7 @@ public class ExportTrustedCertificatePublicKeyAction extends KeyStoreExplorerAct
                                                   "ExportTrustedCertificatePublicKeyAction.ExportPublicKey" +
                                                   ".Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(
                     res.getString("ExportTrustedCertificatePublicKeyAction.NoWriteFile.message"), exportFile);
 

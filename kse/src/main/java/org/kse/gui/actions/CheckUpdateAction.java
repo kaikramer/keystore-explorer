@@ -23,8 +23,6 @@ import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.time.Period;
@@ -33,13 +31,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.KSE;
 import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DCheckUpdate;
 import org.kse.gui.error.DError;
 import org.kse.utilities.net.URLs;
 import org.kse.version.Version;
+import org.kse.version.VersionCheck;
 import org.kse.version.VersionException;
 
 /**
@@ -103,10 +101,7 @@ public class CheckUpdateAction extends KeyStoreExplorerAction {
         // save in settings when last check (this one) has happened
         preferences.getAutoUpdateCheckSettings().setLastCheck(now);
 
-        // Get the version number of the latest KeyStore Explorer from its website
-        URL latestVersionUrl = new URL(URLs.LATEST_VERSION_ADDRESS);
-        String versionString = IOUtils.toString(latestVersionUrl, StandardCharsets.US_ASCII);
-        final Version latestVersion = new Version(versionString);
+        final Version latestVersion = VersionCheck.getLatestVersion();
 
         SwingUtilities.invokeLater(() -> {
             compareVersions(latestVersion, true);

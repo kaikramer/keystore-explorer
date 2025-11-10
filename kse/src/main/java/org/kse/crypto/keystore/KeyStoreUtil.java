@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -103,13 +104,17 @@ public final class KeyStoreUtil {
      * @throws FileNotFoundException If the KeyStore file does not exist, is a directory rather
      *                               than a regular file, or for some other reason cannot be
      *                               opened for reading
+     * @throws NoSuchFileException   If the KeyStore file does not exist, is a directory rather
+     *                               than a regular file, or for some other reason cannot be
+     *                               opened for reading
      */
-    public static KeyStore load(File keyStoreFile, Password password) throws CryptoException, FileNotFoundException {
+    public static KeyStore load(File keyStoreFile, Password password)
+            throws CryptoException, FileNotFoundException, NoSuchFileException {
         KeyStoreType keyStoreType = null;
 
         try {
             keyStoreType = CryptoFileUtil.detectKeyStoreType(keyStoreFile);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             throw ex;
         } catch (IOException ex) {
             throw new CryptoException(res.getString("NoLoadKeyStore.exception.message"), ex);
@@ -135,9 +140,12 @@ public final class KeyStoreUtil {
      * @throws FileNotFoundException If the KeyStore file does not exist, is a directory rather
      *                               than a regular file, or for some other reason cannot be
      *                               opened for reading
+     * @throws NoSuchFileException   If the KeyStore file does not exist, is a directory rather
+     *                               than a regular file, or for some other reason cannot be
+     *                               opened for reading
      */
     public static KeyStore load(File keyStoreFile, Password password, KeyStoreType keyStoreType)
-            throws CryptoException, FileNotFoundException {
+            throws CryptoException, FileNotFoundException, NoSuchFileException {
         if (!keyStoreType.isFileBased()) {
             throw new CryptoException(
                     MessageFormat.format(res.getString("NoLoadKeyStoreNotFile.exception.message"), keyStoreType.jce()));
@@ -157,7 +165,7 @@ public final class KeyStoreUtil {
             throw new KeyStoreLoadException(
                     MessageFormat.format(res.getString("NoLoadKeyStoreType.exception.message"), keyStoreType), ex,
                     keyStoreType);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             throw ex;
         } catch (IOException ex) {
             throw new KeyStoreLoadException(

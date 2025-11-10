@@ -22,6 +22,8 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -32,8 +34,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
@@ -43,6 +43,7 @@ import org.kse.gui.dialogs.DViewCertificate;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -194,7 +195,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
                     }
 
                     X509Certificate[] trustChain = X509CertUtil.establishTrust(certs[0], compKeyStores.toArray(
-                            new KeyStore[0]));
+                            KeyStore[]::new));
 
                     if (trustChain != null) {
                         newCertChain = trustChain;
@@ -249,7 +250,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
 
     private X509Certificate[] openCaReply(File caReply) {
         try {
-            byte[] caReplyData = FileUtils.readFileToByteArray(caReply);
+            byte[] caReplyData = Files.readAllBytes(caReply.toPath());
             X509Certificate[] certs = X509CertUtil.loadCertificates(caReplyData);
 
             if (certs.length == 0) {
@@ -260,7 +261,7 @@ public class ImportCaReplyFromFileAction extends AuthorityCertificatesAction imp
             }
 
             return certs;
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                   res.getString("ImportCaReplyFromFileAction.NoReadFile.message"), caReply),
                                           res.getString("ImportCaReplyFromFileAction.OpenCaReply.Title"),

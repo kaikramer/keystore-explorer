@@ -22,6 +22,7 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -110,7 +111,7 @@ public class SaveAction extends SaveAsAction {
             kseFrame.updateControls(false);
 
             return true;
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(res.getString("SaveAction.NoWriteFile.message"),
                                                                       saveFile),
                                           res.getString("SaveAction.SaveKeyStore.Title"), JOptionPane.WARNING_MESSAGE);

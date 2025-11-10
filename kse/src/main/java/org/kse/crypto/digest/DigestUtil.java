@@ -26,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.crypto.CryptoException;
 import org.kse.utilities.io.HexUtil;
 
@@ -61,8 +60,6 @@ public final class DigestUtil {
             return messageDigester.digest();
         } catch (IOException ex) {
             throw new CryptoException(res.getString("NoCreateDigest.exception.message"), ex);
-        } finally {
-            IOUtils.closeQuietly(istream);
         }
     }
 

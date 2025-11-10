@@ -232,7 +232,7 @@ public class JDistributionPoints extends JPanel {
      * @return A CRLDistPoint populated from the table.
      */
     public CRLDistPoint getCRLDistPoint() {
-        return new CRLDistPoint(getDistributionPointsTableModel().getData().toArray(new DistributionPoint[0]));
+        return new CRLDistPoint(getDistributionPointsTableModel().getData().toArray(DistributionPoint[]::new));
     }
 
     /**

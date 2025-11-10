@@ -2806,7 +2806,7 @@ public final class KseFrame implements StatusBar {
      * @return KeyStore histories
      */
     public KeyStoreHistory[] getKeyStoreHistories() {
-        return histories.toArray(new KeyStoreHistory[0]);
+        return histories.toArray(KeyStoreHistory[]::new);
     }
 
     /**

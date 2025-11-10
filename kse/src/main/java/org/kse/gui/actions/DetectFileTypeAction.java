@@ -22,6 +22,7 @@ package org.kse.gui.actions;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.text.MessageFormat;
 
 import javax.swing.ImageIcon;
@@ -104,7 +105,7 @@ public class DetectFileTypeAction extends KeyStoreExplorerAction {
                                           res.getString("DetectFileTypeAction.CryptographicFileType.Title"),
                                           JOptionPane.PLAIN_MESSAGE, new ImageIcon(
                             getClass().getResource(res.getString("DetectFileTypeAction.DetectFileType.icon"))));
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame,
                                           MessageFormat.format(res.getString("DetectFileTypeAction.NoReadFile.message"),
                                                                detectTypeFile),

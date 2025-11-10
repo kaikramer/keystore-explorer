@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509CRL;
@@ -38,7 +40,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.io.FileUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -157,7 +158,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
                                               JOptionPane.WARNING_MESSAGE);
                 break;
             }
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame,
                                           MessageFormat.format(res.getString("ExamineFileAction.NotFile.message"),
                                                                file),
@@ -193,7 +194,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
             return;
         }
 
-        byte[] p12Data = FileUtils.readFileToByteArray(file);
+        byte[] p12Data = Files.readAllBytes(file.toPath());
 
         DPkcs12Info dPkcs12Info = new DPkcs12Info(frame, p12Data, password, file);
         dPkcs12Info.setLocationRelativeTo(frame);
@@ -225,7 +226,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
         X509CRL crl = null;
         try {
-            byte[] data = FileUtils.readFileToByteArray(file);
+            byte[] data = Files.readAllBytes(file.toPath());
             crl = X509CertUtil.loadCRL(data);
         } catch (Exception ex) {
             String problemStr = MessageFormat.format(res.getString("ExamineFileAction.NoOpenCrl.Problem"),
@@ -259,7 +260,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         Spkac spkacCsr = null;
 
         try {
-            byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
+            byte[] data = decodeIfBase64(Files.readAllBytes(file.toPath()));
             if (fileType == CryptoFileType.PKCS10_CSR) {
                 pkcs10Csr = Pkcs10Util.loadCsr(data);
             } else if (fileType == CryptoFileType.SPKAC_CSR) {
@@ -297,7 +298,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
 
     private void openPrivateKey(File file, CryptoFileType fileType) throws IOException, CryptoException {
 
-        byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
+        byte[] data = decodeIfBase64(Files.readAllBytes(file.toPath()));
         PrivateKey privKey = null;
         PrivateKeyFormat format = null;
         Password password;
@@ -351,7 +352,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
     }
 
     private void openPublicKey(File file) throws IOException, CryptoException {
-        byte[] data = decodeIfBase64(FileUtils.readFileToByteArray(file));
+        byte[] data = decodeIfBase64(Files.readAllBytes(file.toPath()));
         PublicKey publicKey = OpenSslPubUtil.load(data);
 
         DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(

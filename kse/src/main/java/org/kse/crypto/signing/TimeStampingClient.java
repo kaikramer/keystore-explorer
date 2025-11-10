@@ -19,7 +19,6 @@
  */
 package org.kse.crypto.signing;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +36,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.tsp.TSPException;
@@ -145,17 +143,19 @@ public class TimeStampingClient {
             con.setRequestProperty("Content-Type", "application/timestamp-query");
             con.setRequestProperty("Content-Transfer-Encoding", "binary");
 
-            OutputStream out = con.getOutputStream();
-            out.write(requestBytes);
-            out.close();
-
-            InputStream is = con.getInputStream();
-            byte[] respBytes = IOUtils.toByteArray(is);
-            String encoding = con.getContentEncoding();
-            if (encoding != null && encoding.equalsIgnoreCase("base64")) {
-                respBytes = Base64.decode(new String(respBytes));
+            try (OutputStream out = con.getOutputStream()) {
+                out.write(requestBytes);
+                out.close();
             }
-            return respBytes;
+
+            try (InputStream is = con.getInputStream()) {
+                byte[] respBytes = is.readAllBytes();
+                String encoding = con.getContentEncoding();
+                if (encoding != null && encoding.equalsIgnoreCase("base64")) {
+                    respBytes = Base64.decode(new String(respBytes));
+                }
+                return respBytes;
+            }
 
         } finally {
             // restore default trust manager
