@@ -80,7 +80,7 @@ public class DSignJarSigning extends JEscDialog {
     private String tsaUrl;
     private Provider provider;
 
-    private Thread generator;
+    private Thread signerThread;
     private boolean successStatus = true;
 
     /**
@@ -117,7 +117,8 @@ public class DSignJarSigning extends JEscDialog {
 
         jbCancel = new JButton(res.getString("DSignJarSigning.jbCancel.text"));
         jbCancel.addActionListener(evt -> cancelPressed());
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        // Need to use WHEN_FOCUSED since the cancel button will always have focus.
+        jbCancel.getInputMap(JComponent.WHEN_FOCUSED)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -137,10 +138,7 @@ public class DSignJarSigning extends JEscDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                if ((generator != null) && (generator.isAlive())) {
-                    generator.interrupt();
-                }
-                closeDialog();
+                cancelPressed();
             }
         });
 
@@ -154,9 +152,9 @@ public class DSignJarSigning extends JEscDialog {
      * Start signing in a separate thread.
      */
     public void startDSignJarSigning() {
-        generator = new Thread(new signJars());
-        generator.setPriority(Thread.MIN_PRIORITY);
-        generator.start();
+        signerThread = new Thread(new signJars());
+        signerThread.setPriority(Thread.MIN_PRIORITY);
+        signerThread.start();
     }
 
     /**
@@ -172,8 +170,8 @@ public class DSignJarSigning extends JEscDialog {
      * Calls the close dialogue, Sets the success value to false
      */
     private void cancelPressed() {
-        if ((generator != null) && (generator.isAlive())) {
-            generator.interrupt();
+        if ((signerThread != null) && (signerThread.isAlive())) {
+            signerThread.interrupt();
         }
         successStatus = false;
         closeDialog();

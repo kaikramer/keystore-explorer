@@ -194,7 +194,7 @@ public class DKeyUsage extends DExtension {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                cancelPressed();
             }
         });
 

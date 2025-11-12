@@ -76,7 +76,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
     private transient KsePreferences preferences = PreferencesManager.getPreferences();
-    public static final int MAX_LIST_SIZE = 10;
+    private static final int MAX_LIST_SIZE = 10;
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
@@ -202,7 +202,7 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                cancelPressed();
             }
         });
 

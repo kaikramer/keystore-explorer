@@ -103,7 +103,8 @@ public class DCheckUpdate extends JEscDialog {
 
         jbCancel = new JButton(res.getString("DCheckUpdate.jbCancel.text"));
         jbCancel.addActionListener(evt -> cancelPressed());
-        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+        // Need to use WHEN_FOCUSED since the cancel button will always have focus.
+        jbCancel.getInputMap(JComponent.WHEN_FOCUSED)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), CANCEL_KEY);
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
             private static final long serialVersionUID = 1L;
@@ -123,10 +124,7 @@ public class DCheckUpdate extends JEscDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                if ((checker != null) && (checker.isAlive())) {
-                    checker.interrupt();
-                }
-                closeDialog();
+                cancelPressed();
             }
         });
 

@@ -275,7 +275,7 @@ public class DImportKeyPair extends JEscDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                cancelPressed();
             }
         });
 
@@ -331,8 +331,7 @@ public class DImportKeyPair extends JEscDialog {
         }
     }
 
-    private void detectFileType(File chosenFile)
-    {
+    private void detectFileType(File chosenFile) {
         try {
             fileType = CryptoFileUtil.detectFileType(chosenFile);
 

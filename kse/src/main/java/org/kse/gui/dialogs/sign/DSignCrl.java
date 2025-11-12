@@ -23,7 +23,10 @@ package org.kse.gui.dialogs.sign;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PrivateKey;
@@ -34,6 +37,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -211,6 +215,22 @@ public class DSignCrl extends JEscDialog {
                 jdtEffectiveDate.setDateTime(startDate);
             }
             jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
+        });
+
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                cancelPressed();
+            }
         });
 
         setResizable(false);

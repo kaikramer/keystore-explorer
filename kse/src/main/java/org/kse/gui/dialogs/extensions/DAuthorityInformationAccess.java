@@ -155,7 +155,7 @@ public class DAuthorityInformationAccess extends DExtension {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                cancelPressed();
             }
         });
 

@@ -21,18 +21,23 @@ package org.kse.gui.dialogs.extensions;
 
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
@@ -52,18 +57,17 @@ import org.kse.utilities.oid.InvalidObjectIdException;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * Displays the details of a secret key.
+ * Dialog used to add or edit a custom extension.
  */
 public class DCustomExtension extends DExtension {
     private static final long serialVersionUID = 1L;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
 
+    private static final String CANCEL_KEY = "CANCEL_KEY";
+
     private JLabel jlCustomOID;
     private JObjectIdEditor joidCustomOID;
-
-    //  private JLabel jlValueType;
-    //  private JComboBox<String> jcbValueType;
 
     private JLabel jlEncodedHexValue;
     private JTextArea jtaEncodedHexValue;
@@ -90,9 +94,8 @@ public class DCustomExtension extends DExtension {
      *
      * @param parent The parent dialog
      * @param value  Value of the custom extension DER-encoded
-     * @throws IOException If value could not be decoded
      */
-    public DCustomExtension(JDialog parent, String oid, byte[] value) throws IOException {
+    public DCustomExtension(JDialog parent, String oid, byte[] value) {
         super(parent);
         setTitle(res.getString("DCustomExtension.Title"));
         initComponents();
@@ -107,12 +110,6 @@ public class DCustomExtension extends DExtension {
         joidCustomOID = new JObjectIdEditor();
         joidCustomOID.setToolTipText(res.getString("DCustomExtension.joidCustomOID.tooltip"));
 
-        //      jlValueType = new JLabel(res.getString("DCustomExtension.jlValueType.text"));
-        //
-        //      jcbValueType = new JComboBox<>();
-        //      jcbValueType.setModel(new DefaultComboBoxModel<>(getValueTypeOptions()));
-        //      jcbValueType.setToolTipText(res.getString("DCustomExtension.jcbValueType.tooltip"));
-
         jlEncodedHexValue = new JLabel(res.getString("DCustomExtension.jlEncodedHexValue.text"));
 
         jtaEncodedHexValue = new JTextArea();
@@ -124,10 +121,11 @@ public class DCustomExtension extends DExtension {
         jspEncodedHexValue = PlatformUtil.createScrollPane(jtaEncodedHexValue,
                                                            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                                                            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        //jspEncodedHexValue.setBorder(jtfOID.getBorder());
 
-        jbCancel = new JButton(res.getString("DCustomExtension.jbCancel.text"));
         jbOK = new JButton(res.getString("DCustomExtension.jbOK.text"));
+        jbCancel = new JButton(res.getString("DCustomExtension.jbCancel.text"));
+        jbCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                CANCEL_KEY);
 
         // layout
         Container pane = getContentPane();
@@ -148,10 +146,19 @@ public class DCustomExtension extends DExtension {
 
         jtaEncodedHexValue.setCaretPosition(0);
 
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                cancelPressed();
             }
         });
 
@@ -161,14 +168,6 @@ public class DCustomExtension extends DExtension {
 
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
-
-    //  private String[] getValueTypeOptions() {
-    //      return new String[] {
-    //              res.getString("DCustomExtension.jcbValueType.options.empty"),
-    //              res.getString("DCustomExtension.jcbValueType.options.string"),
-    //              res.getString("DCustomExtension.jcbValueType.options.hex")
-    //      };
-    //  }
 
     private void prepopulate(ASN1ObjectIdentifier oid, byte[] value) {
         try {

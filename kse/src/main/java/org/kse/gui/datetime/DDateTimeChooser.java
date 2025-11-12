@@ -34,17 +34,21 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -310,6 +314,22 @@ public class DDateTimeChooser extends JEscDialog {
             @Override
             public void keyPressed(KeyEvent evt) {
                 calendarKeyboardNavigation(evt);
+            }
+        });
+
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                cancelPressed();
             }
         });
 
