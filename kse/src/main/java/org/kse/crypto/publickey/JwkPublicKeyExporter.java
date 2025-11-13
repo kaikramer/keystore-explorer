@@ -141,6 +141,7 @@ public class JwkPublicKeyExporter {
             this.rsaPublicKey = (RSAPublicKey) publicKey;
         }
 
+        @Override
         public byte[] exportWithAlias(String alias) {
             try {
                 RSAKey.Builder builder = new RSAKey.Builder(rsaPublicKey);

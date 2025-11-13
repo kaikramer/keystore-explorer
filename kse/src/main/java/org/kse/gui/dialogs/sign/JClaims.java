@@ -238,8 +238,8 @@ public class JClaims extends JPanel {
             dialog.setLocationRelativeTo(parent);
             dialog.setVisible(true);
             if (dialog.isOk()) {
-                customClaim.setName(dialog.getName());
-                customClaim.setValue(dialog.getValue());
+                customClaim.setName(dialog.getClaimName());
+                customClaim.setValue(dialog.getClaimValue());
                 model.updateRow(selectedRow, customClaim);
             }
         }
@@ -250,7 +250,7 @@ public class JClaims extends JPanel {
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
         if (dialog.isOk()) {
-            CustomClaim customClaim = new CustomClaim(dialog.getName(), dialog.getValue());
+            CustomClaim customClaim = new CustomClaim(dialog.getClaimName(), dialog.getClaimValue());
             ListClaimsTableModel rcModel = getCustomClaimTableModel();
             rcModel.addRow(customClaim);
             selectFirstCustomClaimInTable();

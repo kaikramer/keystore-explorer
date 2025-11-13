@@ -35,7 +35,6 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.dialogs.importexport.DImportKeyPair;
 import org.kse.gui.error.DError;
-import org.kse.gui.password.DGetNewPassword;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;

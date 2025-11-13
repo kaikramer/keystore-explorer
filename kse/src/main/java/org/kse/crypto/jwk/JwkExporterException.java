@@ -25,16 +25,20 @@ import java.text.MessageFormat;
  *
  */
 public class JwkExporterException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     private JwkExporterException(String message, Throwable cause) {
         super(message, cause);
     }
+
     private JwkExporterException(String message) {
         super(message);
     }
+
     public static JwkExporterException keyExportFailed(String keyAlias, Throwable throwable){
         return new JwkExporterException(MessageFormat.format("Key \"{0}\" export failed", keyAlias), throwable);
     }
+
     public static JwkExporterException notSupported(String notSupportedItem, Throwable throwable) {
         String message = MessageFormat.format("Not supported: \"{0}\"", notSupportedItem);
         if (throwable == null) {

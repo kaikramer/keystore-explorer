@@ -20,7 +20,6 @@
 package org.kse.gui.dialogs.extensions;
 
 import java.awt.Component;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -34,10 +33,13 @@ import javax.swing.table.TableCellRenderer;
 public class ExtensionsTableHeadRend extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
 
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/extensions/resources");
-
     private TableCellRenderer delegate;
 
+    /**
+     * Constructs a new KeyStoreTableHeadRend instance.
+     *
+     * @param delegate The delegate for rendering the table column header.
+     */
     public ExtensionsTableHeadRend(TableCellRenderer delegate) {
         this.delegate = delegate;
     }

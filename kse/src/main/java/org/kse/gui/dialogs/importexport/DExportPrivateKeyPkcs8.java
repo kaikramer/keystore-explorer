@@ -42,21 +42,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.password.JPasswordQualityField;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
@@ -76,7 +75,6 @@ public class DExportPrivateKeyPkcs8 extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpOptions;
     private JLabel jlEncrypt;
     private JCheckBox jcbEncrypt;
     private JLabel jlPbeAlg;

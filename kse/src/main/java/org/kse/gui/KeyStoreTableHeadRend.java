@@ -36,15 +36,13 @@ public class KeyStoreTableHeadRend extends DefaultTableCellRenderer {
 
     private TableCellRenderer delegate;
 
-    private KeyStoreTableColumns keyStoreTableColumns = new KeyStoreTableColumns();
-
+    /**
+     * Constructs a new KeyStoreTableHeadRend instance.
+     *
+     * @param delegate The delegate for rendering the table column header.
+     */
     public KeyStoreTableHeadRend(TableCellRenderer delegate) {
         this.delegate = delegate;
-    }
-
-    public KeyStoreTableHeadRend(TableCellRenderer delegate, KeyStoreTableColumns keyStoreTableColumnsParm) {
-        this.delegate = delegate;
-        keyStoreTableColumns = keyStoreTableColumnsParm;
     }
 
     /**

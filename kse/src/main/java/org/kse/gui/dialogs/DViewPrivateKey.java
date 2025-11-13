@@ -47,7 +47,6 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
-import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;

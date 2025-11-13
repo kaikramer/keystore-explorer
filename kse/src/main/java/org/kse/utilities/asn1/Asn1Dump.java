@@ -491,14 +491,13 @@ public class Asn1Dump {
     }
 
     private String dumpHexClear(byte[] der) throws IOException {
-        try {
-            indentLevel++;
+        indentLevel++;
 
-            // Get hex/clear dump of value
-            String hexClearDump = HexUtil.getHexClearDump(der);
+        // Get hex/clear dump of value
+        String hexClearDump = HexUtil.getHexClearDump(der);
 
-            // Put indent at the start of each line of the dump
-            LineNumberReader lnr = new LineNumberReader(new StringReader(hexClearDump));
+        // Put indent at the start of each line of the dump
+        try (LineNumberReader lnr = new LineNumberReader(new StringReader(hexClearDump))) {
 
             StringBuilder sb = new StringBuilder();
 
@@ -516,7 +515,6 @@ public class Asn1Dump {
                 sb.append(line);
             }
 
-            lnr.close();
             return sb.toString();
         } finally {
             indentLevel--;

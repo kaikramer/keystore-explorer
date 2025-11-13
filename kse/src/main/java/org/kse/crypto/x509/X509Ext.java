@@ -381,36 +381,36 @@ public class X509Ext {
     }
 
     private String getSCTs(byte[] octets) throws IOException {
-        ASN1InputStream asn1InputStream = new ASN1InputStream(new ByteArrayInputStream(octets));
-        ASN1OctetString octetString = (ASN1OctetString) asn1InputStream.readObject();
-        asn1InputStream.close();
-        byte[] sctListBytes = octetString.getOctets();
-        List<SignedCertificateTimestamp> sctList = SignedCertificateTimestamp.deserializeSct(sctListBytes);
-        int sctIndex = 1;
-        StringBuilder sb = new StringBuilder();
-        for (SignedCertificateTimestamp sct : sctList) {
-            sb.append(MessageFormat.format(res.getString("SignedCertificateTimestamp"), sctIndex++));
-            sb.append(NEWLINE);
-            sb.append(INDENT);
-            sb.append(MessageFormat.format(res.getString("SCTVersion"), sct.getVersion()));
-            sb.append(NEWLINE);
-            sb.append(INDENT);
-            sb.append(MessageFormat.format(res.getString("SCTLogId"), HexUtil.getHexString(sct.getLogId())));
-            sb.append(NEWLINE);
-            sb.append(INDENT);
-            sb.append(MessageFormat.format(res.getString("SCTTimestamp"), StringUtils.formatDate(sct.getTimestamp())));
-            sb.append(NEWLINE);
-            sb.append(INDENT);
-            String valueExtensions = sct.getExtensions().length == 0 ? res.getString("NoValue")
-                    : HexUtil.getHexString(sct.getExtensions());
-            sb.append(MessageFormat.format(res.getString("SCTExtensions"), valueExtensions));
-            sb.append(NEWLINE);
-            sb.append(INDENT);
-            sb.append(MessageFormat.format(res.getString("SCTSignature"), sct.getSignature().getHashAlgorithm(),
-                    sct.getSignature().getSignatureAlgorithm()));
-            sb.append(NEWLINE);
+        try (ASN1InputStream asn1InputStream = new ASN1InputStream(new ByteArrayInputStream(octets))) {
+            ASN1OctetString octetString = (ASN1OctetString) asn1InputStream.readObject();
+            byte[] sctListBytes = octetString.getOctets();
+            List<SignedCertificateTimestamp> sctList = SignedCertificateTimestamp.deserializeSct(sctListBytes);
+            int sctIndex = 1;
+            StringBuilder sb = new StringBuilder();
+            for (SignedCertificateTimestamp sct : sctList) {
+                sb.append(MessageFormat.format(res.getString("SignedCertificateTimestamp"), sctIndex++));
+                sb.append(NEWLINE);
+                sb.append(INDENT);
+                sb.append(MessageFormat.format(res.getString("SCTVersion"), sct.getVersion()));
+                sb.append(NEWLINE);
+                sb.append(INDENT);
+                sb.append(MessageFormat.format(res.getString("SCTLogId"), HexUtil.getHexString(sct.getLogId())));
+                sb.append(NEWLINE);
+                sb.append(INDENT);
+                sb.append(MessageFormat.format(res.getString("SCTTimestamp"), StringUtils.formatDate(sct.getTimestamp())));
+                sb.append(NEWLINE);
+                sb.append(INDENT);
+                String valueExtensions = sct.getExtensions().length == 0 ? res.getString("NoValue")
+                        : HexUtil.getHexString(sct.getExtensions());
+                sb.append(MessageFormat.format(res.getString("SCTExtensions"), valueExtensions));
+                sb.append(NEWLINE);
+                sb.append(INDENT);
+                sb.append(MessageFormat.format(res.getString("SCTSignature"), sct.getSignature().getHashAlgorithm(),
+                        sct.getSignature().getSignatureAlgorithm()));
+                sb.append(NEWLINE);
+            }
+            return sb.toString();
         }
-        return sb.toString();
     }
 
     private static String getEntrustVersionInformationStringValue(byte[] value) throws IOException {

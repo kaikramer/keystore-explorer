@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.security.Provider;
@@ -286,7 +285,6 @@ public class DOpenPkcs11KeyStore extends JEscDialog {
                 String pkcs11ConfigSettings =
                         "name = Slot" + jspSlotListIndex.getValue() + "\n" + "library = " + selectedLib + "\n" +
                         "slotListIndex = " + jspSlotListIndex.getValue();
-                ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11ConfigSettings.getBytes());
 
                 // instantiate the provider
                 Provider p11Provider = Security.getProvider("SunPKCS11");

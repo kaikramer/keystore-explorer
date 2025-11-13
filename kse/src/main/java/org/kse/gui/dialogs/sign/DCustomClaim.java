@@ -131,11 +131,11 @@ public class DCustomClaim extends JEscDialog {
         return isOk;
     }
 
-    public String getName() {
+    public String getClaimName() {
         return name;
     }
 
-    public String getValue() {
+    public String getClaimValue() {
         return value;
     }
 

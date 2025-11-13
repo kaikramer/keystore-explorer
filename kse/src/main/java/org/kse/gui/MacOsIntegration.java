@@ -66,6 +66,7 @@ public class MacOsIntegration implements InvocationHandler {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         switch (method.getName()) {
         case "openFiles":
