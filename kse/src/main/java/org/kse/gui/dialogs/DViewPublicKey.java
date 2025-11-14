@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -274,7 +275,7 @@ public class DViewPublicKey extends JEscDialog {
 
         jbFields.setEnabled((publicKey instanceof RSAPublicKey) || (publicKey instanceof DSAPublicKey)
                 || (publicKey instanceof ECPublicKey) || (publicKey instanceof EdDSAPublicKey)
-                || publicKey instanceof MLDSAPublicKey);
+                || publicKey instanceof MLDSAPublicKey || publicKey instanceof SLHDSAPublicKey);
     }
 
     private void pemEncodingPressed() {
@@ -288,9 +289,13 @@ public class DViewPublicKey extends JEscDialog {
     }
 
     private void fieldsPressed() {
-        DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, publicKey);
-        dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-        dViewAsymmetricKeyFields.setVisible(true);
+        try {
+            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, publicKey);
+            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
+            dViewAsymmetricKeyFields.setVisible(true);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+        }
     }
 
     private void asn1DumpPressed() {

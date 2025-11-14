@@ -50,6 +50,7 @@ import org.kse.crypto.ecc.EdDSACurves;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.gui.components.JEscDialog;
+import org.kse.gui.preferences.data.KeyGenerationSettings;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.utilities.DialogViewer;
@@ -84,12 +85,15 @@ public class DGenerateKeyPair extends JEscDialog {
     private JComboBox<String> jcbECCurve;
 
     private MLDSAKeySelector mldsaKeySelector;
+    private SlhDsaKeySelector slhDsaKeySelector;
 
     private final KeyPairType keyPairType;
     private final int keyPairSizeRSA;
     private final int keyPairSizeDSA;
     private final String keyPairCurveSet;
     private final String keyPairCurveName;
+    private final KeyPairType mldsaParameterSet;
+    private final KeyPairType slhDsaParameterSet;
     private final KeyStoreType keyStoreType;
 
     private boolean success = false;
@@ -99,22 +103,19 @@ public class DGenerateKeyPair extends JEscDialog {
      *
      * @param parent           The parent frame
      * @param keyStoreType     Type of the key store for the new ke pair
-     * @param keyPairType      Initial key pair type
-     * @param keyPairSizeRSA   Initial key pair size
-     * @param keyPairSizeDSA   Initial key pair size
-     * @param keyPairCurveSet  Initially selected EC curve set
-     * @param keyPairCurveName Initially selected named EC curve
+     * @param defaults         Initial key pair type and parameters
      */
-    public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyPairType keyPairType, int keyPairSizeRSA,
-                            int keyPairSizeDSA, String keyPairCurveSet, String keyPairCurveName) {
+    public DGenerateKeyPair(JFrame parent, KeyStoreType keyStoreType, KeyGenerationSettings defaults) {
 
         super(parent, res.getString("DGenerateKeyPair.Title"), Dialog.ModalityType.DOCUMENT_MODAL);
 
-        this.keyPairType = keyPairType;
-        this.keyPairSizeRSA = keyPairSizeRSA;
-        this.keyPairSizeDSA = keyPairSizeDSA;
-        this.keyPairCurveSet = keyPairCurveSet;
-        this.keyPairCurveName = keyPairCurveName;
+        this.keyPairType = defaults.getKeyPairType();
+        this.keyPairSizeRSA = defaults.getKeyPairSizeRSA();
+        this.keyPairSizeDSA = defaults.getKeyPairSizeDSA();
+        this.keyPairCurveSet = defaults.getEcCurveSet();
+        this.keyPairCurveName = defaults.getEcCurveName();
+        this.mldsaParameterSet = defaults.getMLDSAParameterSet();
+        this.slhDsaParameterSet = defaults.getSlhDsaParameterSet();
         this.keyStoreType = keyStoreType;
 
         initComponents();
@@ -180,11 +181,14 @@ public class DGenerateKeyPair extends JEscDialog {
         jbOK = new JButton(res.getString("DGenerateKeyPair.jbOK.text"));
 
         mldsaKeySelector = new MLDSAKeySelector(buttonGroup);
+        slhDsaKeySelector = new SlhDsaKeySelector(buttonGroup);
+
         focusKeyPair();
 
         loadKeySizes(keyPairSizeRSA, keyPairSizeDSA);
         loadECNamedCurves(keyPairCurveSet, keyPairCurveName);
-        mldsaKeySelector.setPreferredKeyType(keyPairType);
+        mldsaKeySelector.setPreferredParameterSet(mldsaParameterSet);
+        slhDsaKeySelector.setPreferredParameterSet(slhDsaParameterSet);
         enableDisableElements();
 
         JPanel jpButtons = PlatformUtil.createDialogButtonPanel(jbOK, jbCancel, "insets 0");
@@ -204,9 +208,13 @@ public class DGenerateKeyPair extends JEscDialog {
         pane.add(jcbECCurveSet, "growx, wrap");
         pane.add(jlECCurve, "skip");
         pane.add(jcbECCurve, "growx, wrap para");
-        if (keyStoreType.supportMLDSA()) {
+        if (keyStoreType.supportsMLDSA()) {
             mldsaKeySelector.add(pane);
             mldsaKeySelector.addItemListener(evt -> enableDisableElements());
+        }
+        if (keyStoreType.supportsSlhDsa()) {
+            slhDsaKeySelector.add(pane);
+            slhDsaKeySelector.addItemListener(evt -> enableDisableElements());
         }
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jpButtons, "right, spanx");
@@ -249,8 +257,11 @@ public class DGenerateKeyPair extends JEscDialog {
         } else if (keyPairType == KeyPairType.DSA) {
             jrbDSA.setSelected(true);
         } else if (KeyPairType.isMlDSA(keyPairType)
-                && keyStoreType.supportMLDSA()) {
+                && keyStoreType.supportsMLDSA()) {
             mldsaKeySelector.setSelected(true);
+        } else if (KeyPairType.isSlhDsa(keyPairType)
+                && keyStoreType.supportsSlhDsa()) {
+            slhDsaKeySelector.setSelected(true);
         } else {
             if (jrbEC.isEnabled()) {
                 jrbEC.setSelected(true);
@@ -297,8 +308,9 @@ public class DGenerateKeyPair extends JEscDialog {
         jlECCurveSet.setEnabled(isEcType);
         jcbECCurveSet.setEnabled(isEcType);
 
-        // ML-DSA selector manages its own internal state
+        // Selectors manage their own internal state
         mldsaKeySelector.enableDisableElements();
+        slhDsaKeySelector.enableDisableElements();
     }
 
     private void loadKeySizes(int keyPairSizeRSA, int keyPairSizeDSA) {
@@ -415,6 +427,10 @@ public class DGenerateKeyPair extends JEscDialog {
             return mldsaKeySelector.getKeyPairType();
         }
 
+        if (slhDsaKeySelector.isSelected()) {
+            return slhDsaKeySelector.getKeyPairType();
+        }
+
         // handle Ed25519 and Ed448
         if (jrbEC.isSelected() && CurveSet.ED.getVisibleName().equals(jcbECCurveSet.getModel().getSelectedItem())) {
             if (EdDSACurves.ED25519.jce().equals(jcbECCurve.getModel().getSelectedItem())) {
@@ -425,13 +441,6 @@ public class DGenerateKeyPair extends JEscDialog {
         }
 
         return KeyPairType.EC;
-    }
-
-    public DGenerateKeyPair setMLDSAKeyPairType(KeyPairType mlDSAKeyPairType) {
-        if (mldsaKeySelector != null) {
-            mldsaKeySelector.setPreferredKeyType(mlDSAKeyPairType);
-        }
-        return this;
     }
 
     /**
@@ -459,15 +468,13 @@ public class DGenerateKeyPair extends JEscDialog {
 
     // for quick UI testing
     public static void main(String[] args) throws Exception {
-        DGenerateKeyPair dialog = new DGenerateKeyPair(
-                new JFrame(),
-                KeyStoreType.BKS,
-                KeyPairType.RSA,
-                2048,
-                1024,
-                "",
-                ""
-        ).setMLDSAKeyPairType(KeyPairType.MLDSA87);
+        KeyGenerationSettings defaults = new KeyGenerationSettings();
+        defaults.setKeyPairType(KeyPairType.RSA);
+        defaults.setKeyPairSizeRSA(2048);
+        defaults.setKeyPairSizeDSA(1024);
+        defaults.setEcCurveSet("");
+        defaults.setEcCurveName("");
+        DGenerateKeyPair dialog = new DGenerateKeyPair(new JFrame(), KeyStoreType.BKS, defaults);
         DialogViewer.run(dialog);
     }
 }

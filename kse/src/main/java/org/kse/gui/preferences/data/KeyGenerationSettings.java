@@ -34,7 +34,8 @@ public class KeyGenerationSettings {
     private int keyPairSizeDSA = 1024;
     private String ecCurveSet = "";
     private String ecCurveName = "";
-    private KeyPairType mlDSAKeyPairType = KeyPairType.MLDSA44;
+    private KeyPairType mlDSAParameterSet = KeyPairType.MLDSA44;
+    private KeyPairType slhDsaParameterSet = KeyPairType.SLHDSA_SHA2_128F;
 
     private SecretKeyType secretKeyType = SecretKeyType.AES;
     private int secretKeySize = 128;
@@ -106,13 +107,23 @@ public class KeyGenerationSettings {
         this.passwordType = passwordType;
     }
 
-    public KeyPairType getMLDSAKeyPairType() {
-        return mlDSAKeyPairType;
+    public KeyPairType getMLDSAParameterSet() {
+        return mlDSAParameterSet;
     }
 
-    public void setMLDSAKeyPairType(KeyPairType keyPairType) {
+    public void setMLDSAParameterSet(KeyPairType keyPairType) {
         if (KeyPairType.isMlDSA(keyPairType)) {
-            mlDSAKeyPairType = keyPairType;
+            mlDSAParameterSet = keyPairType;
+        }
+    }
+
+    public KeyPairType getSlhDsaParameterSet() {
+        return slhDsaParameterSet;
+    }
+
+    public void setSlhDsaParameterSet(KeyPairType keyPairType) {
+        if (KeyPairType.isSlhDsa(keyPairType)) {
+            slhDsaParameterSet = keyPairType;
         }
     }
 }

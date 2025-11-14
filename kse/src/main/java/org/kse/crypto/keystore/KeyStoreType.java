@@ -177,7 +177,16 @@ public enum KeyStoreType {
      *
      * @return True, if ML-DSA is supported
      */
-    public boolean supportMLDSA() {
+    public boolean supportsMLDSA() {
+        return isBouncyCastleKeyStore(this);
+    }
+
+    /**
+     * Does this KeyStore type support SLH-DSA key pair entries?
+     *
+     * @return True, if SLH-DSA is supported
+     */
+    public boolean supportsSlhDsa() {
         return isBouncyCastleKeyStore(this);
     }
 

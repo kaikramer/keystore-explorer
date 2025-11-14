@@ -60,20 +60,22 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
     protected static PrivateKey mldsaPrivateKeySeedOnly;
     protected static PrivateKey mldsaPrivateKeyExpandedOnly;
     protected static PrivateKey mldsaPrivateKeySeedAndExpanded;
+    protected static PublicKey slhDsaPublicKey;
+    protected static PrivateKey slhDsaPrivateKey;
 
 
-    public static List<PrivateKey> privateKeys() {
+    protected static List<PrivateKey> privateKeys() {
         return Arrays.asList(rsaPrivateKey, dsaPrivateKey, ecPrivateKey,
                 mldsaPrivateKeySeedAndExpanded, mldsaPrivateKeySeedOnly,
                 mldsaPrivateKeyExpandedOnly);
     }
 
-    public static List<PublicKey> publicKeys() {
+    protected static List<PublicKey> publicKeys() {
         return Arrays.asList(rsaPublicKey, dsaPublicKey, ecPublicKey);
     }
 
     @BeforeAll
-    public static void initKeys() throws CryptoException {
+    static void initKeys() throws CryptoException {
 
         if (rsaPrivateKey == null) {
             KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
@@ -94,7 +96,7 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
         }
 
         if (mldsaPublicKey == null) {
-            KeyPair mldsaKeyPair = KeyPairUtil.generateMLDSAKeyPair(KeyPairType.MLDSA44, KSE.BC);
+            KeyPair mldsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.MLDSA44, KSE.BC);
             mldsaPublicKey = mldsaKeyPair.getPublic();
             MLDSAPrivateKey privateKey = (MLDSAPrivateKey) mldsaKeyPair.getPrivate();
             mldsaPrivateKeySeedAndExpanded = privateKey;
@@ -102,6 +104,11 @@ public abstract class KeyTestsBase extends CryptoTestsBase {
             mldsaPrivateKeyExpandedOnly = privateKey.getPrivateKey(false);
         }
 
+        if (slhDsaPublicKey == null) {
+            KeyPair slhDsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.SLHDSA_SHA2_128F, KSE.BC);
+            slhDsaPublicKey = slhDsaKeyPair.getPublic();
+            slhDsaPrivateKey = slhDsaKeyPair.getPrivate();
+        }
     }
 
 }

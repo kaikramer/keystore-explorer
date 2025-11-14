@@ -52,6 +52,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
     private boolean warnNoChangeKey;
     private boolean warnNoECC;
     private boolean warnNoMLDSA;
+    private boolean warnNoSlhDsa;
     private boolean warnUnsupportedKey;
 
     /**
@@ -148,6 +149,7 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
         warnNoChangeKey = false;
         warnNoECC = false;
         warnNoMLDSA = false;
+        warnNoSlhDsa = false;
         warnUnsupportedKey = false;
     }
 
@@ -181,8 +183,13 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
         }
 
         if (KeyStoreUtil.isMLDSAKeyPair(alias, currentKeyStore)
-                && !newKeyStoreType.supportMLDSA()) {
+                && !newKeyStoreType.supportsMLDSA()) {
             return showWarnNoMLDSA();
+        }
+
+        if (KeyStoreUtil.isSlhDsaKeyPair(alias, currentKeyStore)
+                && !newKeyStoreType.supportsSlhDsa()) {
+            return showWarnNoSlhDsa();
         }
 
         newKeyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
@@ -239,6 +246,20 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
             warnNoMLDSA = true;
             int selected = JOptionPane.showConfirmDialog(frame,
                     res.getString("ChangeTypeAction.WarnNoMLDSA.message"),
+                    res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.YES_NO_OPTION);
+            if (selected != JOptionPane.YES_OPTION) {
+                // user wants to abort
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean showWarnNoSlhDsa() {
+        if (!warnNoSlhDsa) {
+            warnNoSlhDsa = true;
+            int selected = JOptionPane.showConfirmDialog(frame,
+                    res.getString("ChangeTypeAction.WarnNoSlhDsa.message"),
                     res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.YES_NO_OPTION);
             if (selected != JOptionPane.YES_OPTION) {
                 // user wants to abort

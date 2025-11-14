@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyPair;
@@ -64,15 +65,17 @@ import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.EdDSAPublicKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPublicKey;
-import org.bouncycastle.jcajce.provider.asymmetric.mldsa.BCMLDSAPrivateKey;
-import org.bouncycastle.pqc.crypto.mldsa.MLDSAParameters;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPublicKey;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPrivateKeyParameters;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 import org.bouncycastle.util.BigIntegers;
 import org.kse.KSE;
 import org.kse.crypto.ecc.EccUtil;
-import org.kse.crypto.keypair.KeyPairType;
-import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
@@ -88,7 +91,7 @@ import net.miginfocom.swing.MigLayout;
 public class DViewAsymmetricKeyFields extends JEscDialog {
     private static final long serialVersionUID = 1L;
 
-    public static final int MAX_LINE_LENGTH = 32;
+    private static final int MAX_LINE_LENGTH = 32;
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
 
@@ -106,8 +109,9 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
      *
      * @param parent       Parent dialog
      * @param key          RSA/DSA/EC public or private key to display fields of
+     * @throws IOException If an error occurs parsing ASN.1 content.
      */
-    public DViewAsymmetricKeyFields(JDialog parent, Key key) {
+    public DViewAsymmetricKeyFields(JDialog parent, Key key) throws IOException {
         super(parent, getTitle(key), Dialog.ModalityType.DOCUMENT_MODAL);
         this.key = key;
         initFields();
@@ -134,6 +138,10 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "ML-DSA");
         } else if (key instanceof MLDSAPrivateKey) {
             return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "ML-DSA");
+        } else if (key instanceof SLHDSAPublicKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PublicKey.title"), "SLH-DSA");
+        } else if (key instanceof SLHDSAPrivateKey) {
+            return MessageFormat.format(res.getString("DViewAsymmetricKeyFields.PrivateKey.title"), "SLH-DSA");
         }
         throw new IllegalArgumentException("Unsupported key format for asymmetric fields viewer");
     }
@@ -154,7 +162,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         return edAlg;
     }
 
-    private void initFields() {
+    private void initFields() throws IOException {
         jlFields = new JLabel(res.getString("DViewAsymmetricKeyFields.jlFields.text"));
 
         jltFields = new JList<>();
@@ -212,7 +220,7 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         SwingUtilities.invokeLater(() -> jbOK.requestFocus());
     }
 
-    private void populateFields() {
+    private void populateFields() throws IOException {
         Field[] fields = null;
 
         if (key instanceof RSAPublicKey) {
@@ -237,6 +245,10 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
             fields = getMLDSAPublicFields();
         } else if (key instanceof MLDSAPrivateKey) {
             fields = getMLDSAPrivateFields();
+        } else if (key instanceof SLHDSAPublicKey) {
+            fields = getSlhDsaPublicFields();
+        } else if (key instanceof SLHDSAPrivateKey) {
+            fields = getSlhDsaPrivateFields();
         }
 
         if (fields != null) {
@@ -355,109 +367,6 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         return fields;
     }
 
-
-    private Field[] getMLDSAPublicFields() {
-        List<Field> fields = new ArrayList<>();
-        byte[] spki = key.getEncoded();
-        byte[] raw = SubjectPublicKeyInfo.getInstance(spki)
-                .getPublicKeyData()
-                .getBytes();
-        fields.add(new Field(
-                res.getString("DViewAsymmetricKeyFields.jltFields.PublicKey.text"),
-                getHexString(raw)));
-
-        MLDSAPublicKey publicKey = (MLDSAPublicKey) key;
-        populateDetailedFields(publicKey, fields);
-        return fields.toArray(Field[]::new);
-    }
-
-    private Field[] getMLDSAPrivateFields() {
-        List<Field> fields = new ArrayList<>();
-        MLDSAPrivateKey privateKey = (MLDSAPrivateKey) key;
-
-        // Add seed field if present
-        byte[] seed = privateKey.getSeed();
-        if (seed != null) {
-            fields.add(new Field(
-                    res.getString("DViewAsymmetricKeyFields.jltFields.PrivateSeed.text"),
-                    getHexString(seed)));
-        }
-
-        // Add expanded private data
-        fields.add(new Field(
-                res.getString("DViewAsymmetricKeyFields.jltFields.PrivateExpanded.text"),
-                getHexString(privateKey.getPrivateData())));
-
-        // Add detailed fields
-        populateDetailedFields(privateKey, fields);
-
-        return fields.toArray(Field[]::new);
-    }
-
-    private static MLDSAParameters getMLDSAParameters(KeyPairType keyPairType) {
-        MLDSAParameters mldsaParameters;
-        switch (keyPairType) {
-            case MLDSA44:
-                mldsaParameters = MLDSAParameters.ml_dsa_44;
-                break;
-            case MLDSA65:
-                mldsaParameters = MLDSAParameters.ml_dsa_65;
-                break;
-            case MLDSA87:
-                mldsaParameters = MLDSAParameters.ml_dsa_87;
-                break;
-            default:
-                return null;
-        }
-        return mldsaParameters;
-    }
-
-    private void populateDetailedFields(MLDSAPublicKey publicKey, List<Field> fields) {
-        KeyPairType keyPairType = KeyPairUtil.getKeyPairType(publicKey);
-        MLDSAParameters params = getMLDSAParameters(keyPairType);
-        if (params == null) {
-            return;
-        }
-
-        MLDSAPublicKeyParameters pkParams =
-                new MLDSAPublicKeyParameters(params, publicKey.getPublicData());
-
-        Map<String, byte[]> fieldValues = new LinkedHashMap<>();
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaRho.rho.text", pkParams.getRho());
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMldsaT1.text", pkParams.getT1());
-
-        fieldValues.forEach((resourceKey, data) -> {
-            if (data != null) {
-                fields.add(new Field(res.getString(resourceKey), getHexString(data)));
-            }
-        });
-    }
-
-    private void populateDetailedFields(MLDSAPrivateKey privateKey, List<Field> fields) {
-        KeyPairType keyPairType = KeyPairUtil.getKeyPairType(privateKey);
-        MLDSAParameters params = getMLDSAParameters(keyPairType);
-        if (params == null) {
-            return;
-        }
-
-        MLDSAPrivateKeyParameters privParams =
-                new MLDSAPrivateKeyParameters(params, privateKey.getPrivateData());
-
-        Map<String, byte[]> fieldValues = new LinkedHashMap<>();
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaRho.rho.text", privParams.getRho());
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMldsaT1.text", privParams.getT1());
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaT0.text", privParams.getT0());
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMldsaTr.text", privParams.getTr());
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaS1.text", privParams.getS1());
-        fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaS2.text", privParams.getS2());
-
-        fieldValues.forEach((resourceKey, data) -> {
-            if (data != null) {
-                fields.add(new Field(res.getString(resourceKey), getHexString(data)));
-            }
-        });
-    }
-
     private Field[] getEdPubFields() {
         Field[] fields;
         SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(key.getEncoded());
@@ -481,6 +390,97 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
         fields = new Field[] {
                 new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivEdPrivateKey.text"), rawKeyHex) };
         return fields;
+    }
+
+    private Field[] getMLDSAPublicFields() throws IOException {
+        SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(key.getEncoded());
+
+        try {
+            MLDSAPublicKeyParameters pkParams = (MLDSAPublicKeyParameters) PublicKeyFactory.createKey(keyInfo);
+
+            List<Field> fields = new ArrayList<>();
+            fields.add(new Field(
+                    res.getString("DViewAsymmetricKeyFields.jltFields.PublicKey.text"),
+                    getHexString(keyInfo.getPublicKeyData().getBytes())));
+
+            Map<String, byte[]> fieldValues = new LinkedHashMap<>();
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaRho.rho.text", pkParams.getRho());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMldsaT1.text", pkParams.getT1());
+
+            fieldValues.forEach((resourceKey, data) -> {
+                if (data != null) {
+                    fields.add(new Field(res.getString(resourceKey), getHexString(data)));
+                }
+            });
+
+            return fields.toArray(Field[]::new);
+        } finally {
+        }
+    }
+
+    private Field[] getMLDSAPrivateFields() throws IOException {
+        PrivateKeyInfo keyInfo = PrivateKeyInfo.getInstance(key.getEncoded());
+
+        try {
+            MLDSAPrivateKeyParameters privParams = (MLDSAPrivateKeyParameters) PrivateKeyFactory.createKey(keyInfo);
+
+            Map<String, byte[]> fieldValues = new LinkedHashMap<>();
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivateSeed.text", privParams.getSeed());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivateExpanded.text", privParams.getEncoded());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaRho.rho.text", privParams.getRho());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMldsaT1.text", privParams.getT1());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaT0.text", privParams.getT0());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PubMldsaTr.text", privParams.getTr());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaS1.text", privParams.getS1());
+            fieldValues.put("DViewAsymmetricKeyFields.jltFields.PrivMldsaS2.text", privParams.getS2());
+
+            List<Field> fields = new ArrayList<>();
+            fieldValues.forEach((resourceKey, data) -> {
+                if (data != null) {
+                    fields.add(new Field(res.getString(resourceKey), getHexString(data)));
+                }
+            });
+
+            return fields.toArray(Field[]::new);
+        } finally {
+        }
+    }
+
+    private Field[] getSlhDsaPublicFields() throws IOException  {
+        SubjectPublicKeyInfo keyInfo = SubjectPublicKeyInfo.getInstance(key.getEncoded());
+
+        try {
+            SLHDSAPublicKeyParameters params = (SLHDSAPublicKeyParameters) PublicKeyFactory.createKey(keyInfo);
+            String root = getHexString(params.getRoot());
+            String seed = getHexString(params.getSeed());
+
+            Field[] fields = new Field[] {
+                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubSlhDsaSeed.text"), seed),
+                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubSlhDsaRoot.text"), root)};
+            return fields;
+        } finally {
+        }
+    }
+
+    private Field[] getSlhDsaPrivateFields() throws IOException {
+        PrivateKeyInfo keyInfo = PrivateKeyInfo.getInstance(key.getEncoded());
+
+        try {
+            SLHDSAPrivateKeyParameters params = (SLHDSAPrivateKeyParameters) PrivateKeyFactory.createKey(keyInfo);
+
+            String prf = getHexString(params.getPrf());
+            String seed = getHexString(params.getSeed());
+            String publicSeed = getHexString(params.getPublicSeed());
+            String root = getHexString(params.getRoot());
+
+            Field[] fields = new Field[] {
+                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivSlhDsaPrf.text"), prf),
+                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PrivSlhDsaSeed.text"), seed),
+                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubSlhDsaSeed.text"), publicSeed),
+                    new Field(res.getString("DViewAsymmetricKeyFields.jltFields.PubSlhDsaRoot.text"), root)};
+            return fields;
+        } finally {
+        }
     }
 
     private static String getHexString(BigInteger bigInt) {
@@ -548,15 +548,19 @@ public class DViewAsymmetricKeyFields extends JEscDialog {
 //        keyGen.initialize(ecSpec);
 //        KeyPair keyPair = keyGen.generateKeyPair();
 
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ML-DSA-44", KSE.BC);
-        KeyPair keyPair = keyGen.generateKeyPair();
-        MLDSAPrivateKey privateKey = (MLDSAPrivateKey) keyPair.getPrivate();
-        privateKey = privateKey.getPrivateKey(false);
-        privateKey = new BCMLDSAPrivateKey(
-                new MLDSAPrivateKeyParameters(MLDSAParameters.ml_dsa_44, privateKey.getEncoded())
-        );
-        keyPair = new KeyPair(keyPair.getPublic(), privateKey);
+//        // With Seed
+//        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ML-DSA-44", KSE.BC);
+//        KeyPair keyPair = keyGen.generateKeyPair();
+//        // Without Seed
+//        MLDSAPrivateKey privateKey = (MLDSAPrivateKey) keyPair.getPrivate();
+//        privateKey = privateKey.getPrivateKey(false);
+//        privateKey = new BCMLDSAPrivateKey(
+//                new MLDSAPrivateKeyParameters(MLDSAParameters.ml_dsa_44, privateKey.getEncoded())
+//        );
+//        keyPair = new KeyPair(keyPair.getPublic(), privateKey);
 
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("SLH-DSA-SHA2-128F", KSE.BC);
+        KeyPair keyPair = keyGen.generateKeyPair();
 
         DViewAsymmetricKeyFields dialog = new DViewAsymmetricKeyFields(new JDialog(), keyPair.getPrivate());
         DialogViewer.run(dialog);

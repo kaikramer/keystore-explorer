@@ -28,6 +28,7 @@ import static org.kse.crypto.keypair.KeyPairType.ECDSA;
 import static org.kse.crypto.keypair.KeyPairType.EDDSA;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
 import static org.kse.crypto.keypair.KeyPairType.isMlDSA;
+import static org.kse.crypto.keypair.KeyPairType.isSlhDsa;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -59,6 +60,7 @@ import java.util.ResourceBundle;
 
 import org.bouncycastle.jcajce.interfaces.EdDSAPrivateKey;
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.math.ec.ECPoint;
@@ -151,29 +153,24 @@ public final class KeyPairUtil {
     }
 
     /**
-     * Generates an ML-DSA key pair
-     * <ul>
-     *     <li>
-     *     see {@link org.kse.crypto.keypair.KeyPairType#isMlDSA(KeyPairType)}
-     *     </li>
-     * <ul>
-     * @param keyPairType must be an mldsa key pair
-     * @param provider the provider must support ML-DSA, if null defaults to BC
-     * @return
-     * @throws CryptoException
+     * Generates a key pair for types that encode the parameter set into the key pair type.
+     *
+     * @param keyPairType The key pair type including the parameter set.
+     * @param provider Crypto provider used for key generation. If null, BC is used.
+     * @return A key pair
+     * @throws CryptoException If there was a problem generating the key pair
      */
-    public static KeyPair generateMLDSAKeyPair(KeyPairType keyPairType, Provider provider)
+    public static KeyPair generateKeyPair(KeyPairType keyPairType, Provider provider)
             throws CryptoException {
         try {
-            if (!isMlDSA(keyPairType)) {
-                throw new CryptoException(res.getString("NoGenerateKeypair.exception.NotMlDSA.message"));
-            }
             KeyPairGenerator keyPairGen;
-            if (provider == null) {
-                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
-            } else {
+
+            if (provider != null) {
                 keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), provider);
+            } else {
+                keyPairGen = KeyPairGenerator.getInstance(keyPairType.jce(), KSE.BC);
             }
+
             return keyPairGen.generateKeyPair();
         } catch (GeneralSecurityException ex) {
             throw new CryptoException(
@@ -204,10 +201,10 @@ public final class KeyPairUtil {
     }
 
     /**
-     * Checks if the passed provider is an instance of "sun.security.mscapi.SunMSCAPI".
+     * Checks if the passed provider is an instance of "com.sun.crypto.provider.SunJCE".
      *
      * @param provider A JCE provider.
-     * @return True, if instance of SunMSCAPI
+     * @return True, if instance of SunJCE
      */
     public static boolean isSunJCE(Provider provider) {
 
@@ -260,7 +257,7 @@ public final class KeyPairUtil {
             } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
                 EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(publicKey);
                 return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
-            } else if (isMlDSA(getKeyPairType(publicKey))) {
+            } else if (isMlDSA(getKeyPairType(publicKey)) || isSlhDsa(getKeyPairType(publicKey))) {
                 KeyPairType keyPairType = getKeyPairType(publicKey);
                 return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
             }
@@ -313,7 +310,7 @@ public final class KeyPairUtil {
             } else if (EDDSA.jce().equalsIgnoreCase(algorithm)) { // JRE 15 or higher
                 EdDSACurves edDSACurve = EccUtil.detectEdDSACurve(privateKey);
                 return new KeyInfo(ASYMMETRIC, edDSACurve.jce(), edDSACurve.bitLength());
-            } else if (isMlDSA(getKeyPairType(privateKey))) {
+            } else if (isMlDSA(getKeyPairType(privateKey)) || isSlhDsa(getKeyPairType(privateKey))) {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
                 return new KeyInfo(ASYMMETRIC, algorithm, keyPairType.maxSize());
             }
@@ -382,7 +379,7 @@ public final class KeyPairUtil {
                 EdDSACurves detectedEdDSACurve = EccUtil.detectEdDSACurve(privateKey);
                 byte[] signature = sign(toSign, privateKey, detectedEdDSACurve.jce());
                 return verify(toSign, signature, publicKey, detectedEdDSACurve.jce());
-            } else if (isMlDSA(getKeyPairType(privateKey))) {
+            } else if (isMlDSA(getKeyPairType(privateKey)) || isSlhDsa(getKeyPairType(privateKey))) {
                 KeyPairType keyPairType = getKeyPairType(privateKey);
                 byte[] signature = sign(toSign, privateKey, keyPairType.jce());
                 return verify(toSign, signature, publicKey, keyPairType.jce());
@@ -463,6 +460,11 @@ public final class KeyPairUtil {
         if (privateKey instanceof MLDSAPrivateKey) {
             MLDSAPrivateKey mldsaPrivate = (MLDSAPrivateKey) privateKey;
             PublicKey publicKey = mldsaPrivate.getPublicKey();
+            keyPair = new KeyPair(publicKey, privateKey);
+        }
+        if (privateKey instanceof SLHDSAPrivateKey) {
+            SLHDSAPrivateKey slhDsaPrivate = (SLHDSAPrivateKey) privateKey;
+            PublicKey publicKey = slhDsaPrivate.getPublicKey();
             keyPair = new KeyPair(publicKey, privateKey);
         }
         return keyPair;

@@ -36,13 +36,37 @@ public enum KeyPairType {
 
     MLDSA44("ML-DSA-44", "2.16.840.1.101.3.4.3.17", 10_496, 10_496, 0),
     MLDSA65("ML-DSA-65", "2.16.840.1.101.3.4.3.18", 15_616, 15_616, 0),
-    MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", 20_736, 20_736, 0);
+    MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", 20_736, 20_736, 0),
+
+    SLHDSA_SHA2_128F("SLH-DSA-SHA2-128F", "2.16.840.1.101.3.4.3.21", 512, 512, 0),
+    SLHDSA_SHA2_128S("SLH-DSA-SHA2-128S", "2.16.840.1.101.3.4.3.20", 512, 512, 0),
+    SLHDSA_SHA2_192F("SLH-DSA-SHA2-192F", "2.16.840.1.101.3.4.3.23", 768, 768, 0),
+    SLHDSA_SHA2_192S("SLH-DSA-SHA2-192S", "2.16.840.1.101.3.4.3.22", 768, 768, 0),
+    SLHDSA_SHA2_256F("SLH-DSA-SHA2-256F", "2.16.840.1.101.3.4.3.25", 1024, 1024, 0),
+    SLHDSA_SHA2_256S("SLH-DSA-SHA2-256S", "2.16.840.1.101.3.4.3.24", 1024, 1024, 0),
+    SLHDSA_SHAKE_128F("SLH-DSA-SHAKE-128F", "2.16.840.1.101.3.4.3.27", 512, 512, 0),
+    SLHDSA_SHAKE_128S("SLH-DSA-SHAKE-128S", "2.16.840.1.101.3.4.3.26", 512, 512, 0),
+    SLHDSA_SHAKE_192F("SLH-DSA-SHAKE-192F", "2.16.840.1.101.3.4.3.29", 768, 768, 0),
+    SLHDSA_SHAKE_192S("SLH-DSA-SHAKE-192S", "2.16.840.1.101.3.4.3.28", 768, 768, 0),
+    SLHDSA_SHAKE_256F("SLH-DSA-SHAKE-256F", "2.16.840.1.101.3.4.3.31", 1024, 1024, 0),
+    SLHDSA_SHAKE_256S("SLH-DSA-SHAKE-256S", "2.16.840.1.101.3.4.3.30", 1024, 1024, 0);
 
     /**
      * Set of all EC key pair types (EC, ECDSA, EDDSA, ED25519, ED448)
      */
     public static final Set<KeyPairType> EC_TYPES_SET = EnumSet.of(EC, ECDSA, EDDSA, ED25519, ED448);
-    private static final Set<KeyPairType> MLDSA_TYPES_SET = EnumSet.of(MLDSA44, MLDSA65, MLDSA87);
+
+    /**
+     * Set of all ML-DSA key pair types
+     */
+    public static final Set<KeyPairType> MLDSA_TYPES_SET = EnumSet.of(MLDSA44, MLDSA65, MLDSA87);
+
+    /**
+     * Set of all SLH-DSA key pair types
+     */
+    public static final Set<KeyPairType> SLHDSA_TYPES_SET = EnumSet.of(SLHDSA_SHA2_128F, SLHDSA_SHA2_128S,
+            SLHDSA_SHA2_192F, SLHDSA_SHA2_192S, SLHDSA_SHA2_256F, SLHDSA_SHA2_256S, SLHDSA_SHAKE_128F,
+            SLHDSA_SHAKE_128S, SLHDSA_SHAKE_192F, SLHDSA_SHAKE_192S, SLHDSA_SHAKE_256F, SLHDSA_SHAKE_256S);
 
     private final String jce;
     private final String oid;
@@ -119,8 +143,22 @@ public enum KeyPairType {
         return null;
     }
 
+    /**
+     *
+     * @param keyPairType The KeyPairType to check.
+     * @return True if keyPairType is a ML-DSA key type.
+     */
     public static boolean isMlDSA(KeyPairType keyPairType) {
         return MLDSA_TYPES_SET.contains(keyPairType);
+    }
+
+    /**
+     *
+     * @param keyPairType The KeyPairType to check.
+     * @return True if keyPairType is a SLH-DSA key type.
+     */
+    public static boolean isSlhDsa(KeyPairType keyPairType) {
+        return SLHDSA_TYPES_SET.contains(keyPairType);
     }
 
     /**
