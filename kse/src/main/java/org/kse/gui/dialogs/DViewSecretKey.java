@@ -47,13 +47,12 @@ import javax.swing.SwingUtilities;
 
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
-import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.secretkey.SecretKeyType;
 import org.kse.crypto.secretkey.SecretKeyUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.HexUtil;
 
@@ -109,10 +108,8 @@ public class DViewSecretKey extends JEscDialog {
      * @param modality  Dialog modality
      * @param secretKey Secret key to display
      * @param editable  Secret key can be edited/replaced
-     * @throws CryptoException A problem was encountered getting the secret key's details
      */
-    public DViewSecretKey(JDialog parent, String title, ModalityType modality, SecretKey secretKey, boolean editable)
-            throws CryptoException {
+    public DViewSecretKey(JDialog parent, String title, ModalityType modality, SecretKey secretKey, boolean editable) {
         super(parent, title, modality);
         this.secretKey = secretKey;
         this.editable = editable;
@@ -200,7 +197,7 @@ public class DViewSecretKey extends JEscDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                cancelPressed();
             }
         });
 
@@ -265,10 +262,18 @@ public class DViewSecretKey extends JEscDialog {
         closeDialog();
     }
 
+    /**
+     *
+     * @return True if the secret key has changed.
+     */
     public boolean keyHasChanged() {
         return keyHasChanged;
     }
 
+    /**
+     *
+     * @return The secret key.
+     */
     public SecretKey getSecretKey() {
         return secretKey;
     }

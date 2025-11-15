@@ -22,7 +22,10 @@ package org.kse.gui.dialogs.sign;
 
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.security.PrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Calendar;
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -213,6 +217,22 @@ public class DSignJwt extends JEscDialog {
         jbGenId.addActionListener(evt -> genIdPressed());
         jbOK.addActionListener(evt -> okPressed());
         jbCancel.addActionListener(evt -> cancelPressed());
+
+        jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                cancelPressed();
+            }
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                cancelPressed();
+            }
+        });
 
         setResizable(false);
 

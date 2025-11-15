@@ -249,7 +249,7 @@ public class DVerifyCertificate extends JEscDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                closeDialog();
+                cancelPressed();
             }
         });
         setTitle(MessageFormat.format(res.getString("DVerifyCertificate.Title"), certificateAlias));
