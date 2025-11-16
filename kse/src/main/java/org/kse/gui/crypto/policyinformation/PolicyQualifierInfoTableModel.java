@@ -62,7 +62,7 @@ public class PolicyQualifierInfoTableModel extends ToolTipTableModel {
      */
     public void load(List<PolicyQualifierInfo> policyQualifierInfo) {
         PolicyQualifierInfo[] policyQualifierInfoArray = policyQualifierInfo.toArray(
-                new PolicyQualifierInfo[0]);
+                PolicyQualifierInfo[]::new);
         Arrays.sort(policyQualifierInfoArray, new PolicyQualifierInfoComparator());
 
         data = new Object[policyQualifierInfoArray.length][1];

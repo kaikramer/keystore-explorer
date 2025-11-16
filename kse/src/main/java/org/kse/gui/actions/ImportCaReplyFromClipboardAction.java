@@ -187,7 +187,7 @@ public class ImportCaReplyFromClipboardAction extends AuthorityCertificatesActio
                     }
 
                     X509Certificate[] trustChain = X509CertUtil.establishTrust(certs[0], compKeyStores.toArray(
-                            new KeyStore[0]));
+                            KeyStore[]::new));
 
                     if (trustChain != null) {
                         newCertChain = trustChain;

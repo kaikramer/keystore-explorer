@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.nio.file.NoSuchFileException;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -47,7 +48,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -55,10 +55,10 @@ import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.error.DError;
 
 /**
@@ -231,7 +231,6 @@ public class DViewCertCsrPem extends JEscDialog {
 
     private void exportPressed() {
         File chosenFile = null;
-        FileWriter fw = null;
 
         String title;
         if (cert != null) {
@@ -268,10 +267,11 @@ public class DViewCertCsrPem extends JEscDialog {
                 }
             }
 
-            fw = new FileWriter(chosenFile);
-            fw.write(certPem);
-            fw.flush();
-        } catch (FileNotFoundException ex) {
+            try (FileWriter fw = new FileWriter(chosenFile)) {
+                fw.write(certPem);
+                fw.flush();
+            }
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(this,
                                           MessageFormat.format(res.getString("DViewCertCsrPem.NoWriteFile.message"),
                                                                chosenFile), title, JOptionPane.WARNING_MESSAGE);
@@ -279,8 +279,6 @@ public class DViewCertCsrPem extends JEscDialog {
         } catch (Exception ex) {
             DError.displayError(this, ex);
             return;
-        } finally {
-            IOUtils.closeQuietly(fw);
         }
 
         JOptionPane.showMessageDialog(this, res.getString("DViewCertCsrPem.ExportPemCertificateSuccessful.message"),

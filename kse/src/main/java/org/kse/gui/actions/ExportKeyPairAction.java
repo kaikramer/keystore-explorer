@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
@@ -34,9 +36,7 @@ import java.text.MessageFormat;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
 import org.kse.crypto.CryptoException;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.privatekey.Pkcs8PbeType;
@@ -46,6 +46,7 @@ import org.kse.gui.KseFrame;
 import org.kse.gui.dialogs.importexport.DExportKeyPair;
 import org.kse.gui.dialogs.importexport.DExportKeyPair.ExportFormat;
 import org.kse.gui.error.DError;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 
@@ -115,7 +116,7 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
             JOptionPane.showMessageDialog(frame, res.getString("ExportKeyPairAction.ExportKeyPairSuccessful.message"),
                                           res.getString("ExportKeyPairAction.ExportKeyPair.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairAction.NoWriteFile.message"), exportFile);
             JOptionPane.showMessageDialog(frame, message, res.getString("ExportKeyPairAction.ExportKeyPair.Title"),
                                           JOptionPane.WARNING_MESSAGE);
@@ -148,6 +149,6 @@ public class ExportKeyPairAction extends KeyStoreExplorerAction {
         X509Certificate[] orderedCerts = X509CertUtil.orderX509CertChain(X509CertUtil.convertCertificates(certs));
         String pemEncodedCerts = X509CertUtil.getCertsEncodedX509Pem(orderedCerts);
 
-        FileUtils.write(exportFile, pemEncodedPrivKey + pemEncodedCerts, StandardCharsets.US_ASCII);
+        Files.writeString(exportFile.toPath(), pemEncodedPrivKey + pemEncodedCerts, StandardCharsets.US_ASCII);
     }
 }

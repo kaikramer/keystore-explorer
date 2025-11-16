@@ -64,7 +64,7 @@ public enum CurveSet {
             sets.add(TELETRUST.visibleName);
             sets.add(SM2.visibleName);
         }
-        return sets.toArray(new String[0]);
+        return sets.toArray(String[]::new);
     }
 
     /**

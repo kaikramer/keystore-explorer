@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.security.PrivateKey;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
@@ -93,7 +94,7 @@ public class PrivateKeyUtils {
                                                   ".message"),
                                           res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPkcs8.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                                                   exportFile);
             JOptionPane.showMessageDialog(frame, message,
@@ -177,7 +178,7 @@ public class PrivateKeyUtils {
                                                   ".message"),
                                           res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyPvk.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                                                   exportFile);
             JOptionPane.showMessageDialog(frame, message,
@@ -254,7 +255,7 @@ public class PrivateKeyUtils {
                                                   ".message"),
                                           res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyOpenSsl.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                                                   exportFile);
             JOptionPane.showMessageDialog(frame, message,
@@ -300,7 +301,7 @@ public class PrivateKeyUtils {
                     res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwkSuccessful.message"),
                     res.getString("ExportKeyPairPrivateKeyAction.ExportPrivateKeyJwk.Title"),
                     JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportKeyPairPrivateKeyAction.NoWriteFile.message"),
                     exportFile);
             JOptionPane.showMessageDialog(frame, message,

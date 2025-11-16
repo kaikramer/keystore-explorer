@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
@@ -130,7 +131,7 @@ public class ExportKeyPairCertificateChainAction extends KeyStoreExplorerAction 
                                                   ".ExportCertificateChainSuccessful.message"), res.getString(
                                                   "ExportKeyPairCertificateChainAction.ExportCertificateChain.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(
                     res.getString("ExportKeyPairCertificateChainAction.NoWriteFile.message"), exportFile);
 

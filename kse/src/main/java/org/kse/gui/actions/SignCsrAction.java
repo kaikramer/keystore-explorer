@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -37,10 +39,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
 import org.kse.crypto.filetype.CryptoFileType;
@@ -61,6 +61,7 @@ import org.kse.gui.dialogs.sign.DSignCsr;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
 import org.kse.gui.error.Problem;
+import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
 import org.kse.utilities.io.FileNameUtil;
@@ -145,7 +146,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
         try {
             CryptoFileType fileType = CryptoFileUtil.detectFileType(csrFile);
             if (fileType == CryptoFileType.PKCS10_CSR) {
-                PKCS10CertificationRequest pkcs10Csr = Pkcs10Util.loadCsr(FileUtils.readFileToByteArray(csrFile));
+                PKCS10CertificationRequest pkcs10Csr = Pkcs10Util.loadCsr(Files.readAllBytes(csrFile.toPath()));
 
                 if (!Pkcs10Util.verifyCsr(pkcs10Csr)) {
                     JOptionPane.showMessageDialog(frame, res.getString("SignCsrAction.NoVerifyPkcs10Csr.message"),
@@ -156,7 +157,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
 
                 return new DSignCsr(frame, pkcs10Csr, privateKey, keyPairType, signingCert);
             } else if (fileType == CryptoFileType.SPKAC_CSR) {
-                Spkac spkacCsr = new Spkac(FileUtils.readFileToByteArray(csrFile));
+                Spkac spkacCsr = new Spkac(Files.readAllBytes(csrFile.toPath()));
 
                 if (!spkacCsr.verify()) {
                     JOptionPane.showMessageDialog(frame, res.getString("SignCsrAction.NoVerifySpkacCsr.message"),
@@ -175,7 +176,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
                 return null;
             }
 
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame,
                                           MessageFormat.format(res.getString("SignCsrAction.NotFile.message"), csrFile),
                                           res.getString("SignCsrAction.SignCsr.Title"), JOptionPane.WARNING_MESSAGE);
@@ -293,7 +294,7 @@ public class SignCsrAction extends KeyStoreExplorerAction {
             JOptionPane.showMessageDialog(frame, res.getString("SignCsrAction.SignCsrSuccessful.message"),
                                           res.getString("SignCsrAction.SignCsr.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame,
                                           MessageFormat.format(res.getString("SignJarAction.NoWriteFile.message"),
                                                                caReplyFile),

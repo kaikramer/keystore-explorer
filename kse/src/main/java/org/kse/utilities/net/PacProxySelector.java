@@ -22,8 +22,7 @@ package org.kse.utilities.net;
 import static java.util.Collections.singletonList;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -48,7 +47,6 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.utilities.TriFunction;
 import org.kse.utilities.VarFunction;
 import org.openjdk.nashorn.api.scripting.ClassFilter;
@@ -148,10 +146,8 @@ public class PacProxySelector extends ProxySelector {
             URL latestVersionUrl = pacURI.toURL();
             connection = latestVersionUrl.openConnection();
 
-            try (InputStreamReader isr = new InputStreamReader(connection.getInputStream());
-                 StringWriter sw = new StringWriter()) {
-                IOUtils.copy(isr, sw);
-                return sw.toString();
+            try (InputStream is = connection.getInputStream()) {
+                return new String(is.readAllBytes());
             }
         } catch (IOException ex) {
             throw new PacProxyException(

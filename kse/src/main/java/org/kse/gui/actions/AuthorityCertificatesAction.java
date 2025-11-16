@@ -21,6 +21,7 @@ package org.kse.gui.actions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.text.MessageFormat;
 
@@ -152,7 +153,7 @@ public abstract class AuthorityCertificatesAction extends KeyStoreExplorerAction
             }
 
             return caCertificatesKeyStore;
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                   res.getString("AuthorityCertificatesAction.NoReadFile.message"), caCertificatesFile),
                                           res.getString("AuthorityCertificatesAction.OpenCaCertificatesKeyStore.Title"),

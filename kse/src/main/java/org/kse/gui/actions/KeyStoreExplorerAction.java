@@ -22,6 +22,7 @@ package org.kse.gui.actions;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -35,7 +36,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
 import org.kse.crypto.encryption.EncryptionException;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.crypto.x509.X509CertUtil;
@@ -223,7 +223,7 @@ public abstract class KeyStoreExplorerAction extends AbstractAction {
      */
     protected X509Certificate[] openCertificate(File certificateFile) {
         try {
-            return openCertificate(FileUtils.readFileToByteArray(certificateFile), certificateFile.getName());
+            return openCertificate(Files.readAllBytes(certificateFile.toPath()), certificateFile.getName());
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(frame, MessageFormat.format(
                                                   res.getString("KeyStoreExplorerAction.NoReadFile.message"),

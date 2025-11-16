@@ -24,6 +24,7 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -168,7 +169,7 @@ public class GenerateCsrAction extends KeyStoreExplorerAction {
             JOptionPane.showMessageDialog(frame, res.getString("GenerateCsrAction.CsrGenerationSuccessful.message"),
                                           res.getString("GenerateCsrAction.GenerateCsr.Title"),
                                           JOptionPane.INFORMATION_MESSAGE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             JOptionPane.showMessageDialog(frame,
                                           MessageFormat.format(res.getString("GenerateCsrAction.NoWriteFile.message"),
                                                                csrFile),

@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -77,7 +78,7 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
                 if (!dExportCertificates.exportSelected()) {
                     return;
                 }
-                X509Certificate[] certs = setCertificates.toArray(new X509Certificate[0]);
+                X509Certificate[] certs = setCertificates.toArray(X509Certificate[]::new);
                 certs = X509CertUtil.orderX509CertsChain(certs);
                 exportFile = dExportCertificates.getExportFile();
 
@@ -108,7 +109,7 @@ public class ExportSelectedCertificatesAction extends KeyStoreExplorerAction {
                         res.getString("ExportSelectedCertificatesAction.ExportCertificate.Title"),
                         JOptionPane.WARNING_MESSAGE);
             }
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException | NoSuchFileException ex) {
             String message = MessageFormat.format(res.getString("ExportSelectedCertificatesAction.NoWriteFile.message"),
                     exportFile);
 

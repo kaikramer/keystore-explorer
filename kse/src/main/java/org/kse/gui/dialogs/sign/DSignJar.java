@@ -55,7 +55,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import org.apache.commons.io.IOUtils;
 import org.kse.KSE;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.keypair.KeyPairType;
@@ -64,9 +63,9 @@ import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.MiGUtil;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.dialogs.DialogHelper;
 import org.kse.gui.error.DError;
 import org.kse.gui.error.DProblem;
@@ -608,10 +607,8 @@ public class DSignJar extends JEscDialog {
      * @return <b>Boolean</b> true if the file is a valid jar and false if not
      */
     private boolean validJAR(File file) {
-        JarFile jarFile = null;
 
-        try {
-            jarFile = new JarFile(file);
+        try (JarFile jarFile = new JarFile(file)) {
         } catch (IOException ex) {
             String problemStr = MessageFormat.format(res.getString("DSignJar.NoOpenJar.Problem"), file.getName());
 
@@ -625,8 +622,6 @@ public class DSignJar extends JEscDialog {
             dProblem.setVisible(true);
 
             return false;
-        } finally {
-            IOUtils.closeQuietly(jarFile);
         }
 
         return true;

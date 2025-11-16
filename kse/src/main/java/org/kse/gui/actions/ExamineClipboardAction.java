@@ -44,7 +44,6 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
@@ -229,7 +228,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             urlConn = (HttpURLConnection) url.openConnection();
         }
         try (InputStream is = urlConn.getInputStream()) {
-            X509CRL crl = X509CertUtil.loadCRL(IOUtils.toByteArray(is));
+            X509CRL crl = X509CertUtil.loadCRL(is.readAllBytes());
             if (crl != null) {
                 DViewCrl dViewCrl = new DViewCrl(frame,
                                                  MessageFormat.format(resExt.getString("DViewExtensions.ViewCrl.Title"),
@@ -249,7 +248,7 @@ public class ExamineClipboardAction extends KeyStoreExplorerAction {
             urlConn = (HttpURLConnection) url.openConnection();
         }
         try (InputStream is = urlConn.getInputStream()) {
-            X509Certificate[] certs = X509CertUtil.loadCertificates(IOUtils.toByteArray(is));
+            X509Certificate[] certs = X509CertUtil.loadCertificates(is.readAllBytes());
             if (certs != null && certs.length > 0) {
                 DViewCertificate dViewCertificate = new DViewCertificate(frame,
                         MessageFormat.format(resExt.getString("DViewExtensions.ViewCert.Title"), url.toString()), certs,

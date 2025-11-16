@@ -241,7 +241,7 @@ public class DTipOfTheDay extends JEscDialog {
             // no more tips
         }
 
-        tipsText = tipList.toArray(new String[0]);
+        tipsText = tipList.toArray(String[]::new);
 
         if (tipsText.length == 0) {
             throw new IllegalArgumentException(res.getString("NoTipsOfTheDaySupplied.exception.message"));

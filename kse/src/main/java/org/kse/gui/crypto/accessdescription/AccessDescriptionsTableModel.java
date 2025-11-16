@@ -64,7 +64,7 @@ public class AccessDescriptionsTableModel extends ToolTipTableModel {
      */
     public void load(List<AccessDescription> accessDescriptions) {
         AccessDescription[] accessDescriptionsArray = accessDescriptions.toArray(
-                new AccessDescription[0]);
+                AccessDescription[]::new);
         Arrays.sort(accessDescriptionsArray, new AccessDescriptionMethodComparator());
 
         data = new Object[accessDescriptionsArray.length][2];
