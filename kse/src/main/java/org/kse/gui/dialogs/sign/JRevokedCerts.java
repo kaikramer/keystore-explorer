@@ -24,10 +24,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -284,19 +285,23 @@ public class JRevokedCerts extends JPanel {
         try {
             CryptoFileType fileType = CryptoFileUtil.detectFileType(file);
             if (fileType == CryptoFileType.CRL) {
-                try (FileInputStream is = new FileInputStream(file)) {
-                    return X509CertUtil.loadCRL(is.readAllBytes());
-                }
+                return X509CertUtil.loadCRL(Files.readAllBytes(file.toPath()));
             } else {
                 JOptionPane.showMessageDialog(parent, MessageFormat.format(
-                                                      res.getString("ExamineFileAction.NotCrlFile.message"), file),
-                                              res.getString("ExamineFileAction.ExamineFile.Title"),
+                                                      res.getString("JRevokedCerts.NotCrlFile.message"), file),
+                                              res.getString("JRevokedCerts.OpenFile.Title"),
                                               JOptionPane.WARNING_MESSAGE);
             }
+        } catch (FileNotFoundException | NoSuchFileException e) {
+            JOptionPane.showMessageDialog(parent,
+                    MessageFormat.format(res.getString("JRevokedCerts.NoReadFile.message"),
+                                         file),
+                    res.getString("JRevokedCerts.OpenFile.Title"),
+                    JOptionPane.WARNING_MESSAGE);
         } catch (CryptoException | IOException e) {
             JOptionPane.showMessageDialog(parent, MessageFormat.format(
-                                                  res.getString("ExamineFileAction.UnknownFileType.message"), file),
-                                          res.getString("ExamineFileAction.ExamineFile.Title"),
+                                                  res.getString("JRevokedCerts.UnknownFileType.message"), file),
+                                          res.getString("JRevokedCerts.OpenFile.Title"),
                                           JOptionPane.WARNING_MESSAGE);
         }
         return null;
@@ -310,14 +315,20 @@ public class JRevokedCerts extends JPanel {
                 return certificates[0];
             } else {
                 JOptionPane.showMessageDialog(parent, MessageFormat.format(
-                                                      res.getString("ExamineFileAction.NotCerFile.message"), file),
-                                              res.getString("ExamineFileAction.ExamineFile.Title"),
+                                                      res.getString("JRevokedCerts.NotCerFile.message"), file),
+                                              res.getString("JRevokedCerts.OpenFile.Title"),
                                               JOptionPane.WARNING_MESSAGE);
             }
+        } catch (FileNotFoundException | NoSuchFileException e) {
+            JOptionPane.showMessageDialog(parent,
+                    MessageFormat.format(res.getString("JRevokedCerts.NoReadFile.message"),
+                                         file),
+                    res.getString("JRevokedCerts.OpenFile.Title"),
+                    JOptionPane.WARNING_MESSAGE);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(parent, MessageFormat.format(
-                                                  res.getString("ExamineFileAction.UnknownFileType.message"), file),
-                                          res.getString("ExamineFileAction.ExamineFile.Title"),
+                                                  res.getString("JRevokedCerts.UnknownFileType.message"), file),
+                                          res.getString("JRevokedCerts.OpenFile.Title"),
                                           JOptionPane.WARNING_MESSAGE);
         }
         return null;
@@ -328,9 +339,9 @@ public class JRevokedCerts extends JPanel {
             return openCertificate(Files.readAllBytes(certificateFile.toPath()), certificateFile.getName());
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(parent,
-                                          MessageFormat.format(res.getString("ExamineFileAction.NoReadFile.message"),
+                                          MessageFormat.format(res.getString("JRevokedCerts.NoReadFile.message"),
                                                                certificateFile),
-                                          res.getString("ExamineFileAction.ExamineFile.Title"),
+                                          res.getString("JRevokedCerts.OpenFile.Title"),
                                           JOptionPane.WARNING_MESSAGE);
             return new X509Certificate[0];
         }
@@ -343,21 +354,21 @@ public class JRevokedCerts extends JPanel {
 
             if (certs.length == 0) {
                 JOptionPane.showMessageDialog(parent, MessageFormat.format(
-                                                      res.getString("ExamineFileAction.NoCertsFound.message"), name),
-                                              res.getString("ExamineFileAction.ExamineFile.Title"),
+                                                      res.getString("JRevokedCerts.NoCertsFound.message"), name),
+                                              res.getString("JRevokedCerts.OpenFile.Title"),
                                               JOptionPane.WARNING_MESSAGE);
             }
 
             return certs;
         } catch (Exception ex) {
-            String problemStr = MessageFormat.format(res.getString("ExamineFileAction.NoOpenCert.Problem"), name);
+            String problemStr = MessageFormat.format(res.getString("JRevokedCerts.NoOpenCert.Problem"), name);
 
             String[] causes = new String[] { res.getString("KeyStoreExplorerAction.NotCert.Cause"),
-                                             res.getString("ExamineFileAction.ExamineFile.Title") };
+                                             res.getString("JRevokedCerts.OpenFile.Title") };
 
             Problem problem = new Problem(problemStr, causes, ex);
 
-            DProblem dProblem = new DProblem(parent, res.getString("ExamineFileAction.ExamineFile.Title"), problem);
+            DProblem dProblem = new DProblem(parent, res.getString("JRevokedCerts.OpenFile.Title"), problem);
             dProblem.setLocationRelativeTo(this);
             dProblem.setVisible(true);
 
@@ -369,9 +380,9 @@ public class JRevokedCerts extends JPanel {
 
         JFileChooser chooser = FileChooserFactory.getCertFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
-        chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
+        chooser.setDialogTitle(res.getString("JRevokedCerts.OpenFile.Title"));
         chooser.setMultiSelectionEnabled(false);
-        chooser.setApproveButtonText(res.getString("ExamineFileAction.ExamineFile.button"));
+        chooser.setApproveButtonText(res.getString("JRevokedCerts.OpenFile.button"));
         int rtnValue = chooser.showOpenDialog(this);
         if (rtnValue == JFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
@@ -385,9 +396,9 @@ public class JRevokedCerts extends JPanel {
 
         JFileChooser chooser = FileChooserFactory.getCrlFileChooser();
         chooser.setCurrentDirectory(CurrentDirectory.get());
-        chooser.setDialogTitle(res.getString("ExamineFileAction.ExamineFile.Title"));
+        chooser.setDialogTitle(res.getString("JRevokedCerts.OpenFile.Title"));
         chooser.setMultiSelectionEnabled(false);
-        chooser.setApproveButtonText(res.getString("ExamineFileAction.ExamineFile.button"));
+        chooser.setApproveButtonText(res.getString("JRevokedCerts.OpenFile.button"));
         int rtnValue = chooser.showOpenDialog(this);
         if (rtnValue == JFileChooser.APPROVE_OPTION) {
             File openFile = chooser.getSelectedFile();
