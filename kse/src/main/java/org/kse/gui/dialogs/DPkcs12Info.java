@@ -262,13 +262,14 @@ public class DPkcs12Info extends JEscDialog {
 
                     DefaultMutableTreeNode dataNode = addNode(parentNode,"DPkcs12Info.content.Pkcs7Data");
 
-                    ASN1InputStream dIn = new ASN1InputStream(((ASN1OctetString) safeContent.getContent()).getOctets());
-                    ASN1Sequence seq = (ASN1Sequence) dIn.readObject();
+                    try (ASN1InputStream dIn = new ASN1InputStream(((ASN1OctetString) safeContent.getContent()).getOctets())) {
+                        ASN1Sequence seq = (ASN1Sequence) dIn.readObject();
 
-                    for (ASN1Encodable asn1Encodable : seq) {
-                        SafeBag b = SafeBag.getInstance(asn1Encodable);
+                        for (ASN1Encodable asn1Encodable : seq) {
+                            SafeBag b = SafeBag.getInstance(asn1Encodable);
 
-                        processBagNode(password, dataNode, b);
+                            processBagNode(password, dataNode, b);
+                        }
                     }
                 } else if (safeContent.getContentType().equals(encryptedData)) {
 
@@ -452,7 +453,7 @@ public class DPkcs12Info extends JEscDialog {
         DefaultMutableTreeNode attributesNode = addNode(parentNode, "DPkcs12Info.content.BagAttributes");
 
         if (b.getBagAttributes() != null) {
-            Enumeration e = b.getBagAttributes().getObjects();
+            Enumeration<?> e = b.getBagAttributes().getObjects();
 
             while (e.hasMoreElements()) {
                 ASN1Sequence sq = (ASN1Sequence) e.nextElement();

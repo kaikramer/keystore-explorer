@@ -168,6 +168,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
                 // set extension filters
                 Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
+                @SuppressWarnings("unchecked")
                 List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
 
                 // checks if the AcceptAll FileFilter is used.
@@ -230,6 +231,7 @@ public class JavaFXFileChooser extends JFileChooser {
 
                 // set extension filters
                 Method getExtensionFiltersMethod = fileChooserClass.getMethod("getExtensionFilters");
+                @SuppressWarnings("unchecked")
                 List<Object> observableList = (List<Object>) getExtensionFiltersMethod.invoke(fileChooser);
 
                 // checks if the AcceptAll FileFilter is used.
@@ -260,14 +262,15 @@ public class JavaFXFileChooser extends JFileChooser {
 
                 // set show dialog
                 Method showDialogMethod = fileChooserClass.getMethod(method, windowClass);
-                Object file = showDialogMethod.invoke(fileChooser, (Object) null);
+                @SuppressWarnings("unchecked")
+                List<Object> file = (List<Object>) showDialogMethod.invoke(fileChooser, (Object) null);
 
                 // create a File array
-                File[] files = new File[((List<Object>) file).size()];
+                File[] files = new File[file.size()];
 
                 // convert an ArrayList to a File array; List<File> to File[]
-                for (int i = 0; i < ((List<Object>) file).size(); i++) {
-                    files[i] = (File) ((List<Object>) file).get(i);
+                for (int i = 0; i < file.size(); i++) {
+                    files[i] = (File) file.get(i);
                 }
 
                 return files;
@@ -491,7 +494,7 @@ public class JavaFXFileChooser extends JFileChooser {
         chooser.showDialog(null, "Button Text");
 
         // chooser.showSaveDialog(null);
-        File file = chooser.getSelectedFile();
+        // File file = chooser.getSelectedFile();
 
         // System.out.println(file.getAbsolutePath());
         // System.out.println(chooser.getSelectedFiles().length);

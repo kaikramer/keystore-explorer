@@ -30,7 +30,6 @@ import javax.swing.KeyStroke;
 
 import org.kse.gui.KseFrame;
 import org.kse.gui.error.DError;
-import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;

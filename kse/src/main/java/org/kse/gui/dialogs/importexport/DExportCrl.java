@@ -39,7 +39,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -48,9 +47,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.kse.gui.CurrentDirectory;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.FileChooserFactory;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.JavaFXFileChooser;
 import org.kse.gui.PlatformUtil;
+import org.kse.gui.components.JEscDialog;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.io.FileNameUtil;
 
@@ -66,13 +65,11 @@ public class DExportCrl extends JEscDialog {
 
     private static final String CANCEL_KEY = "CANCEL_KEY";
 
-    private JPanel jpOptions;
     private JLabel jlExportPem;
     private JCheckBox jcbExportPem;
     private JLabel jlExportFile;
     private JTextField jtfExportFile;
     private JButton jbBrowse;
-    private JPanel jpButtons;
     private JButton jbExport;
     private JButton jbCancel;
 

@@ -73,7 +73,7 @@ public class TableUtil {
             TableColumn column = table.getColumnModel().getColumn(i);
 
             column.setHeaderRenderer(
-                    new KeyStoreTableHeadRend(table.getTableHeader().getDefaultRenderer(), keyStoreTableColumns));
+                    new KeyStoreTableHeadRend(table.getTableHeader().getDefaultRenderer()));
             column.setCellRenderer(new KeyStoreTableCellRend());
         }
     }

@@ -67,7 +67,7 @@ public class RdnPanelList extends JPanel {
             for (AttributeTypeAndValue atav : rdn.getTypesAndValues()) {
                 String type = OidDisplayNameMapping.getDisplayNameForOid(atav.getType().getId());
                 String value = atav.getValue().toString();
-                RdnPanel rdnPanel = new RdnPanel(new JComboBox<Object>(comboBoxEntries), type, value, this, editable);
+                RdnPanel rdnPanel = new RdnPanel(new JComboBox<>(comboBoxEntries), type, value, this, editable);
                 addItem(rdnPanel);
             }
         }
@@ -77,16 +77,18 @@ public class RdnPanelList extends JPanel {
     public static class RdnFocusTraversalPolicy extends FocusTraversalPolicy {
         List<Component> order;
 
-        public RdnFocusTraversalPolicy(List<Component> order) {
+        private RdnFocusTraversalPolicy(List<Component> order) {
             this.order = new ArrayList<>(order.size());
             this.order.addAll(order);
         }
 
+        @Override
         public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
             int idx = (order.indexOf(aComponent) + 1) % order.size();
             return order.get(idx);
         }
 
+        @Override
         public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
             int idx = order.indexOf(aComponent) - 1;
             if (idx < 0) {
@@ -95,14 +97,17 @@ public class RdnPanelList extends JPanel {
             return order.get(idx);
         }
 
+        @Override
         public Component getDefaultComponent(Container focusCycleRoot) {
             return order.get(0);
         }
 
+        @Override
         public Component getLastComponent(Container focusCycleRoot) {
             return !order.isEmpty() ? order.get(order.size() - 1) : null;
         }
 
+        @Override
         public Component getFirstComponent(Container focusCycleRoot) {
             return order.get(0);
         }
@@ -110,7 +115,7 @@ public class RdnPanelList extends JPanel {
 
     public void cloneEntry(RdnPanel entry) {
         Object selected = entry.getComboBox().getSelectedItem();
-        RdnPanel clone = new RdnPanel(new JComboBox<Object>(comboBoxEntries), selected.toString(), "", this, editable);
+        RdnPanel clone = new RdnPanel(new JComboBox<>(comboBoxEntries), selected.toString(), "", this, editable);
 
         addItemAfter(clone, entry);
     }

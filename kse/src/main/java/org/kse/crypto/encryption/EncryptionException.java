@@ -23,6 +23,7 @@ package org.kse.crypto.encryption;
  * Exception thrown when an encryption or decryption operation fails.
  */
 public class EncryptionException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor

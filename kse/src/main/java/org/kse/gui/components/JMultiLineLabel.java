@@ -27,6 +27,7 @@ import javax.swing.border.EmptyBorder;
  * Basically a JTextArea that looks like a JLabel and can be used for long labels that span multiple lines.
  */
 public class JMultiLineLabel extends JTextArea {
+    private static final long serialVersionUID = 1L;
 
     /**
      * c-tor

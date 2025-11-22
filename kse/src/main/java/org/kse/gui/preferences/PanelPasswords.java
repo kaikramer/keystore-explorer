@@ -47,7 +47,6 @@ import org.kse.gui.dialogs.DUnlockingPasswords;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.DInitPasswordManager;
 import org.kse.gui.passwordmanager.DUnlockPasswordManager;
-import org.kse.gui.passwordmanager.Password;
 import org.kse.gui.passwordmanager.PasswordManager;
 import org.kse.gui.preferences.data.KsePreferences;
 import org.kse.gui.preferences.data.PasswordGeneratorSettings;

@@ -41,9 +41,13 @@ import static org.kse.gui.FileChooserFactory.JWK_EXT;
 import static org.kse.gui.FileChooserFactory.OPENSSL_PVK_EXT;
 
 public class DExportPrivateKeyJwk extends JEscDialog {
-    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
+    private static final long serialVersionUID = 1L;
+
     public static final String JWK_FILE_EXT = '.' + OPENSSL_PVK_EXT + '.' + JWK_EXT;
     private static final String CANCEL_KEY = "CANCEL_KEY";
+
+    private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/importexport/resources");
+
     private final String entryAlias;
     private File exportFile;
     private boolean exportSelected;
