@@ -322,6 +322,7 @@ public class DImportKeyPair extends JEscDialog {
         if (rtnValue == JFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
             CurrentDirectory.updateForFile(chosenFile);
+
             disableDocumentListener = true;
             jtfPrivateKeyPath.setText(chosenFile.toString());
             jtfPrivateKeyPath.setCaretPosition(0);
@@ -349,6 +350,11 @@ public class DImportKeyPair extends JEscDialog {
 
             setEnabledPassword(encrypted);
             setEnabledCertificate(fileType != CryptoFileType.PKCS12_KS);
+        } catch (FileNotFoundException | NoSuchFileException e) {
+            JOptionPane.showMessageDialog(this,
+                    MessageFormat.format(res.getString("DImportKeyPair.NoReadFile.message"),
+                                         chosenFile), getTitle(),
+                    JOptionPane.WARNING_MESSAGE);
         } catch (IOException e) {
             DError.displayError(this, e);
         }
