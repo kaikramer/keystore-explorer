@@ -502,8 +502,8 @@ public class DSignJar extends JEscDialog {
                 // set prefix and suffix to the file name
                 String fileBaseName = FileNameUtil.removeExtension(outputJarFiles.get(i).getName());
                 String outFileName =
-                        outputJarFiles.get(i).getParent() + "\\" + outputJarPrefix + fileBaseName + outputJarSuffix +
-                        FILE_SUFFIX;
+                        outputJarFiles.get(i).getParent() + File.separator + outputJarPrefix + fileBaseName
+                                + outputJarSuffix + FILE_SUFFIX;
                 // replace file object in arraylist
                 this.outputJarFiles.set(i, new File(outFileName));
 
