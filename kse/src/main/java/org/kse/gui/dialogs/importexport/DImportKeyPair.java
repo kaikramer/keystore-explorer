@@ -39,6 +39,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -68,6 +69,7 @@ import org.kse.crypto.keystore.KeyStoreUtil;
 import org.kse.crypto.privatekey.MsPvkUtil;
 import org.kse.crypto.privatekey.OpenSslPvkUtil;
 import org.kse.crypto.privatekey.Pkcs8Util;
+import org.kse.crypto.privatekey.PrivateKeyFormat;
 import org.kse.crypto.privatekey.PrivateKeyPbeNotSupportedException;
 import org.kse.crypto.x509.X509CertUtil;
 import org.kse.gui.CurrentDirectory;
@@ -398,8 +400,9 @@ public class DImportKeyPair extends JEscDialog {
                             res.getString("DImportKeyPair.ViewKeyPairDetails.Title"), path), privateKey,
                             certificateChain);
                 } else {
-                    dViewDetails = new DViewPrivateKey(this, MessageFormat.format(
-                            res.getString("DImportKeyPair.ViewPrivateKeyDetails.Title"), path), privateKey);
+                    dViewDetails = new DViewPrivateKey(this,
+                            MessageFormat.format(res.getString("DImportKeyPair.ViewPrivateKeyDetails.Title"), path),
+                            privateKey, Optional.ofNullable(getPrivateKeyFormat()));
                 }
                 dViewDetails.setLocationRelativeTo(this);
                 dViewDetails.setVisible(true);
@@ -407,6 +410,29 @@ public class DImportKeyPair extends JEscDialog {
         } catch (CryptoException ex) {
             DError.displayError(this, ex);
         }
+    }
+
+    private PrivateKeyFormat getPrivateKeyFormat() {
+        PrivateKeyFormat format;
+        switch (fileType) {
+            case ENC_PKCS8_PVK:
+            case UNENC_PKCS8_PVK:
+               format = PrivateKeyFormat.PKCS8;
+               break;
+            case ENC_OPENSSL_PVK:
+            case UNENC_OPENSSL_PVK:
+                format = PrivateKeyFormat.PKCS1;
+                break;
+            case ENC_MS_PVK:
+            case UNENC_MS_PVK:
+                format = PrivateKeyFormat.MSPVK;
+                break;
+            default:
+                // Ignore the file types since detectFileType filters out unsupported file types.
+                format = null;
+                break;
+        }
+        return format;
     }
 
     private PrivateKey loadPrivateKey() {

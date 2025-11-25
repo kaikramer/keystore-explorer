@@ -106,7 +106,10 @@ public class DViewPrivateKey extends JEscDialog {
      *
      * @param parent     Parent frame
      * @param title      The dialog title
+     * @param alias      The entry alias. Used for prepopulating the export file name.
      * @param privateKey Private key to display
+     * @param preferences The preferences for exporting.
+     * @param format     The private key file format. If not provided, the internal JVM private key format.
      * @throws CryptoException A problem was encountered getting the private key's details
      */
     public DViewPrivateKey(JFrame parent, String title, String alias, PrivateKey privateKey, KsePreferences preferences,
@@ -125,12 +128,14 @@ public class DViewPrivateKey extends JEscDialog {
      * @param parent     Parent dialog
      * @param title      The dialog title
      * @param privateKey Private key to display
+     * @param format     The private key file format. If not provided, the internal JVM private key format.
      * @throws CryptoException A problem was encountered getting the private key's details
      */
-    public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey) throws CryptoException {
+    public DViewPrivateKey(JDialog parent, String title, PrivateKey privateKey, Optional<PrivateKeyFormat> format)
+            throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.privateKey = privateKey;
-        this.format = Optional.empty();
+        this.format = format;
         initComponents();
         jbExport.setVisible(false);
     }
