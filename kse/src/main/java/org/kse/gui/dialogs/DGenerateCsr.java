@@ -117,6 +117,7 @@ public class DGenerateCsr extends JEscDialog {
      * Creates a new DGenerateCsr dialog.
      *
      * @param parent      The parent frame
+     * @param alias       The entry alias for pre-populating the CSR file name
      * @param subjectDN   Subject DN of certificate
      * @param privateKey  Private key
      * @param keyPairType Key pair algorithm
@@ -145,6 +146,7 @@ public class DGenerateCsr extends JEscDialog {
         jrbSpkac = new JRadioButton(res.getString("DGenerateCsr.jrbSpkac.text"), true);
         PlatformUtil.setMnemonic(jrbSpkac, res.getString("DGenerateCsr.jrbSpkac.mnemonic").charAt(0));
         jrbSpkac.setToolTipText(res.getString("DGenerateCsr.jrbSpkac.tooltip"));
+        jrbSpkac.setEnabled(keyPairType == KeyPairType.RSA || keyPairType == KeyPairType.DSA);
 
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(jrbPkcs10);
