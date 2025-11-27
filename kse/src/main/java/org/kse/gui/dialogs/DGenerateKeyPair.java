@@ -208,16 +208,13 @@ public class DGenerateKeyPair extends JEscDialog {
         pane.add(jcbECCurveSet, "growx, wrap");
         pane.add(jlECCurve, "skip");
         pane.add(jcbECCurve, "growx, wrap para");
-        if (keyStoreType.supportsMLDSA()) {
-            mldsaKeySelector.add(pane);
-            mldsaKeySelector.addItemListener(evt -> enableDisableElements());
-        }
-        if (keyStoreType.supportsSlhDsa()) {
-            slhDsaKeySelector.add(pane);
-            slhDsaKeySelector.addItemListener(evt -> enableDisableElements());
-        }
+        mldsaKeySelector.add(pane);
+        slhDsaKeySelector.add(pane);
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jpButtons, "right, spanx");
+
+        mldsaKeySelector.addItemListener(evt -> enableDisableElements());
+        slhDsaKeySelector.addItemListener(evt -> enableDisableElements());
 
         jcbECCurveSet.addItemListener(
                 evt -> loadECNamedCurves((String) jcbECCurveSet.getModel().getSelectedItem(), keyPairCurveName));
@@ -256,11 +253,9 @@ public class DGenerateKeyPair extends JEscDialog {
             jrbRSA.setSelected(true);
         } else if (keyPairType == KeyPairType.DSA) {
             jrbDSA.setSelected(true);
-        } else if (KeyPairType.isMlDSA(keyPairType)
-                && keyStoreType.supportsMLDSA()) {
+        } else if (KeyPairType.isMlDSA(keyPairType)) {
             mldsaKeySelector.setSelected(true);
-        } else if (KeyPairType.isSlhDsa(keyPairType)
-                && keyStoreType.supportsSlhDsa()) {
+        } else if (KeyPairType.isSlhDsa(keyPairType)) {
             slhDsaKeySelector.setSelected(true);
         } else {
             if (jrbEC.isEnabled()) {
