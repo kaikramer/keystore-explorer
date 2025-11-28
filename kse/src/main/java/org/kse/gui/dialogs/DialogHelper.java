@@ -98,6 +98,20 @@ public class DialogHelper {
         case MLDSA87:
             sigAlgs = Collections.singletonList(SignatureType.MLDSA87);
             break;
+        case SLHDSA_SHA2_128S:
+        case SLHDSA_SHA2_128F:
+        case SLHDSA_SHA2_192S:
+        case SLHDSA_SHA2_192F:
+        case SLHDSA_SHA2_256S:
+        case SLHDSA_SHA2_256F:
+        case SLHDSA_SHAKE_128S:
+        case SLHDSA_SHAKE_128F:
+        case SLHDSA_SHAKE_192S:
+        case SLHDSA_SHAKE_192F:
+        case SLHDSA_SHAKE_256S:
+        case SLHDSA_SHAKE_256F:
+            sigAlgs = Collections.singletonList(SignatureType.SLHDSA);
+            break;
         case RSA:
         default:
             try {

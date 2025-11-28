@@ -108,14 +108,14 @@ public class EccUtil {
     /**
      * Determines the name of the domain parameters that were used for generating the key.
      *
-     * @param publicKey An EC key
-     * @return The name of the domain parameters that were used for the EC key,
+     * @param publicKey An EC public key
+     * @return The name of the domain parameters that were used for the EC public key,
      *         or an empty string if curve is unknown.
      */
     public static String getNamedCurve(PublicKey publicKey) {
 
         if (!(publicKey instanceof ECPublicKey)) {
-            throw new InvalidParameterException("Not a EC private key.");
+            throw new InvalidParameterException("Not a EC public key.");
         }
 
         SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());

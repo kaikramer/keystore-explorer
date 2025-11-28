@@ -51,7 +51,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
     private KeyStoreType newType;
     private boolean warnNoChangeKey;
     private boolean warnNoECC;
-    private boolean warnNoMLDSA;
     private boolean warnUnsupportedKey;
 
     /**
@@ -147,7 +146,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
         // Only warn the user once about key entries not being carried over by the change
         warnNoChangeKey = false;
         warnNoECC = false;
-        warnNoMLDSA = false;
         warnUnsupportedKey = false;
     }
 
@@ -178,11 +176,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
                 // show warning and abort change or just skip depending on user choice
                 return showWarnNoECC();
             }
-        }
-
-        if (KeyStoreUtil.isMLDSAKeyPair(alias, currentKeyStore)
-                && !newKeyStoreType.supportMLDSA()) {
-            return showWarnNoMLDSA();
         }
 
         newKeyStore.setKeyEntry(alias, privateKey, password.toCharArray(), certificateChain);
@@ -231,20 +224,6 @@ public class ChangeTypeAction extends KeyStoreExplorerAction implements HistoryA
             }
         }
         // do not add this entry to new key store
-        return true;
-    }
-
-    private boolean showWarnNoMLDSA() {
-        if (!warnNoMLDSA) {
-            warnNoMLDSA = true;
-            int selected = JOptionPane.showConfirmDialog(frame,
-                    res.getString("ChangeTypeAction.WarnNoMLDSA.message"),
-                    res.getString("ChangeTypeAction.ChangeKeyStoreType.Title"), JOptionPane.YES_NO_OPTION);
-            if (selected != JOptionPane.YES_OPTION) {
-                // user wants to abort
-                return false;
-            }
-        }
         return true;
     }
 

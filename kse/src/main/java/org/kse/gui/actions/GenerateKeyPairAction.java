@@ -41,6 +41,7 @@ import org.kse.gui.dialogs.DGeneratingKeyPair;
 import org.kse.gui.dialogs.DGetAlias;
 import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
+import org.kse.gui.preferences.data.KeyGenerationSettings;
 import org.kse.utilities.history.HistoryAction;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
@@ -103,23 +104,19 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
         String alias = "";
         try {
             // Restore preferences regarding key type and length (or EC curve)
-            KeyPairType keyPairType = preferences.getKeyGenerationDefaults().getKeyPairType();
-            int keyPairSizeRSA = preferences.getKeyGenerationDefaults().getKeyPairSizeRSA();
-            int keyPairSizeDSA = preferences.getKeyGenerationDefaults().getKeyPairSizeDSA();
-            String keyPairCurveSet = preferences.getKeyGenerationDefaults().getEcCurveSet();
-            String keyPairCurveName = preferences.getKeyGenerationDefaults().getEcCurveName();
-            KeyPairType mlDSAKeyPairType = preferences.getKeyGenerationDefaults()
-                    .getMLDSAKeyPairType();
+            KeyGenerationSettings defaults = preferences.getKeyGenerationDefaults();
+            KeyPairType keyPairType = defaults.getKeyPairType();
+            int keyPairSizeRSA = defaults.getKeyPairSizeRSA();
+            int keyPairSizeDSA = defaults.getKeyPairSizeDSA();
+            String keyPairCurveSet = defaults.getEcCurveSet();
+            String keyPairCurveName = defaults.getEcCurveName();
 
             KeyStore activeKeyStore = kseFrame.getActiveKeyStore();
             KeyStoreType activeKeyStoreType = KeyStoreType.resolveJce(activeKeyStore.getType());
             KeyStoreHistory history = kseFrame.getActiveKeyStoreHistory();
             Provider provider = history.getExplicitProvider();
 
-            DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(
-                    frame, activeKeyStoreType, keyPairType,
-                    keyPairSizeRSA, keyPairSizeDSA, keyPairCurveSet, keyPairCurveName)
-                    .setMLDSAKeyPairType(mlDSAKeyPairType);
+            DGenerateKeyPair dGenerateKeyPair = new DGenerateKeyPair(frame, activeKeyStoreType, defaults);
 
             dGenerateKeyPair.setLocationRelativeTo(frame);
             dGenerateKeyPair.setVisible(true);
@@ -134,12 +131,13 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
             keyPairSizeDSA = dGenerateKeyPair.getKeyPairSizeDSA();
             keyPairCurveSet = dGenerateKeyPair.getCurveSet();
             keyPairCurveName = dGenerateKeyPair.getCurveName();
-            preferences.getKeyGenerationDefaults().setKeyPairType(keyPairType);
-            preferences.getKeyGenerationDefaults().setKeyPairSizeRSA(keyPairSizeRSA);
-            preferences.getKeyGenerationDefaults().setKeyPairSizeDSA(keyPairSizeDSA);
-            preferences.getKeyGenerationDefaults().setEcCurveSet(keyPairCurveSet);
-            preferences.getKeyGenerationDefaults().setEcCurveName(keyPairCurveName);
-            preferences.getKeyGenerationDefaults().setMLDSAKeyPairType(keyPairType);
+            defaults.setKeyPairType(keyPairType);
+            defaults.setKeyPairSizeRSA(keyPairSizeRSA);
+            defaults.setKeyPairSizeDSA(keyPairSizeDSA);
+            defaults.setEcCurveSet(keyPairCurveSet);
+            defaults.setEcCurveName(keyPairCurveName);
+            defaults.setMLDSAParameterSet(keyPairType);
+            defaults.setSlhDsaParameterSet(keyPairType);
 
             KeyPair keyPair = generateKeyPair(
                     keyPairType,
@@ -245,6 +243,18 @@ public class GenerateKeyPairAction extends KeyStoreExplorerAction implements His
         case MLDSA44:
         case MLDSA65:
         case MLDSA87:
+        case SLHDSA_SHA2_128F:
+        case SLHDSA_SHA2_128S:
+        case SLHDSA_SHA2_192F:
+        case SLHDSA_SHA2_192S:
+        case SLHDSA_SHA2_256F:
+        case SLHDSA_SHA2_256S:
+        case SLHDSA_SHAKE_128F:
+        case SLHDSA_SHAKE_128S:
+        case SLHDSA_SHAKE_192F:
+        case SLHDSA_SHAKE_192S:
+        case SLHDSA_SHAKE_256F:
+        case SLHDSA_SHAKE_256S:
             dGeneratingKeyPair = new DGeneratingKeyPair(frame, keyPairType, provider);
             break;
         case EC:

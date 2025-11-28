@@ -430,12 +430,27 @@ public final class KeyStoreUtil {
 
         Certificate certificate = keyStore.getCertificate(alias);
         String algorithm = certificate.getPublicKey().getAlgorithm();
-        return KeyPairType.isMlDSA(
-                KeyPairType.resolveJce(algorithm)
-        );
+        return KeyPairType.isMlDSA(KeyPairType.resolveJce(algorithm));
     }
 
+    /**
+     * Is the key pair entry identified by alias an SLH-DSA key pair?
+     *
+     * @param alias    Alias of key pair entry
+     * @param keyStore KeyStore that contains the key pair
+     * @return True, if alias is an SLH-DSA key pair
+     * @throws KeyStoreException If there was a problem accessing the KeyStore.
+     */
+    public static boolean isSlhDsaKeyPair(String alias, KeyStore keyStore) throws KeyStoreException {
 
+        if (!isKeyPairEntry(alias, keyStore)) {
+            return false;
+        }
+
+        Certificate certificate = keyStore.getCertificate(alias);
+        String algorithm = certificate.getPublicKey().getAlgorithm();
+        return KeyPairType.isSlhDsa(KeyPairType.resolveJce(algorithm));
+    }
 
     /**
      * Is the keystore entry type supported (e.g. exclude Card Verifiable Certificates)

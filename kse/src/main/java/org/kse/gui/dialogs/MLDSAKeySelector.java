@@ -21,19 +21,19 @@
 
 package org.kse.gui.dialogs;
 
-import org.kse.crypto.keypair.KeyPairType;
-import org.kse.gui.PlatformUtil;
+import java.awt.Container;
+import java.awt.event.ItemListener;
+import java.io.Serializable;
+import java.util.ResourceBundle;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
-import java.awt.Container;
-import java.awt.event.ItemListener;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.ResourceBundle;
+
+import org.kse.crypto.keypair.KeyPairType;
+import org.kse.gui.PlatformUtil;
 
 /**
  * UI elements used by {@link  org.kse.gui.dialogs.DGenerateKeyPair}
@@ -79,8 +79,7 @@ public class MLDSAKeySelector implements Serializable {
         jComboBoxKeyType.setToolTipText(RESOURCE_BUNDLE.getString("MLDSAKeySelector.jComboBoxKeyType.tooltip"));
 
 
-        String[] names = Arrays.stream(KeyPairType.values())
-                .filter(KeyPairType::isMlDSA)
+        String[] names = KeyPairType.MLDSA_TYPES_SET.stream()
                 .map(KeyPairType::jce)
                 .toArray(String[]::new);
 
@@ -106,7 +105,7 @@ public class MLDSAKeySelector implements Serializable {
         jComboBoxKeyType.setEnabled(jRadioButton.isSelected());
     }
 
-    public void setPreferredKeyType(KeyPairType keyType) {
+    public void setPreferredParameterSet(KeyPairType keyType) {
         if (KeyPairType.isMlDSA(keyType)) {
             jComboBoxKeyType.setSelectedItem(keyType.jce());
         }

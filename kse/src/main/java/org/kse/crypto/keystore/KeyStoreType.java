@@ -173,15 +173,6 @@ public enum KeyStoreType {
     }
 
     /**
-     * Does this KeyStore type support ML-DSA key pair entries?
-     *
-     * @return True, if ML-DSA is supported
-     */
-    public boolean supportMLDSA() {
-        return isBouncyCastleKeyStore(this);
-    }
-
-    /**
      * Does this KeyStore type support a certain named curve?
      *
      * @param curveName The curve name to check for support.

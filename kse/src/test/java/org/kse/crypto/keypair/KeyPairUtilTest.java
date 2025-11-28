@@ -20,6 +20,7 @@
 package org.kse.crypto.keypair;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -37,8 +38,7 @@ import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,6 +49,7 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.CryptoTestsBase;
 import org.kse.crypto.KeyInfo;
+import org.kse.crypto.KeyType;
 
 /**
  * Unit tests for KeyPairUtil. Runs a test to create a key pair for supported
@@ -68,7 +69,7 @@ public class KeyPairUtilTest extends CryptoTestsBase {
             //"RSA, 4096", takes too long
     })
     // @formatter:on
-    public void generateRsaDsaKeys(KeyPairType keyPairType, Integer keySize) throws Exception {
+    void generateRsaDsaKeys(KeyPairType keyPairType, Integer keySize) throws Exception {
         KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, keySize, KSE.BC);
 
         PrivateKey privateKey = keyPair.getPrivate();
@@ -82,6 +83,21 @@ public class KeyPairUtilTest extends CryptoTestsBase {
         assertEquals(keySize, publicKeyInfo.getSize());
 
         assertTrue(KeyPairUtil.validKeyPair(privateKey, publicKey));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(privateKey);
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), privKeyInfo.getAlgorithm());
+        assertEquals(keySize, privKeyInfo.getSize());
+        assertEquals("-", privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(publicKey);
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), pubKeyInfo.getAlgorithm());
+        assertEquals(keySize, pubKeyInfo.getSize());
+        assertEquals("-", pubKeyInfo.getDetailedAlgorithm());
+
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(privateKey));
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(publicKey));
     }
 
     @ParameterizedTest
@@ -107,16 +123,57 @@ public class KeyPairUtilTest extends CryptoTestsBase {
             "brainpoolP224t1",
             "brainpoolP256r1", "brainpoolP256t1", "brainpoolP320r1", "brainpoolP320t1", "brainpoolP384r1",
             "brainpoolP384t1",
-            "brainpoolP512r1", "brainpoolP512t1"
+            "brainpoolP512r1", "brainpoolP512t1",
+            // SM2 curves
+            "sm2p256v1", "wapi192v1", "wapip192v1"
     })
     // @formatter:on
-    public void generateEcKeys(String curveName) throws Exception {
+    void generateEcKeys(String curveName) throws Exception {
         KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
         assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPrivate());
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(KeyPairType.EC.jce(), privKeyInfo.getAlgorithm());
+//        assertEquals(keySize, privKeyInfo.getSize());
+        assertEquals(curveName, privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPublic());
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(KeyPairType.EC.jce(), pubKeyInfo.getAlgorithm());
+//        assertEquals(keySize, pubKeyInfo.getSize());
+//        assertEquals(curveName, pubKeyInfo.getDetailedAlgorithm());
+
+        assertEquals(KeyPairType.EC, KeyPairUtil.getKeyPairType(keyPair.getPrivate()));
+        assertEquals(KeyPairType.EC, KeyPairUtil.getKeyPairType(keyPair.getPublic()));
+    }
+
+    @ParameterizedTest
+    // @formatter:off
+    @ValueSource(strings = {
+            // Edwards curves
+            "ED25519", "ED448"
+    })
+    // @formatter:on
+    void generateEdKeys(KeyPairType keyPairType) throws Exception {
+        KeyPair keyPair = KeyPairUtil.generateECKeyPair(keyPairType.jce(), KSE.BC);
+        assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPrivate());
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), privKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), privKeyInfo.getSize());
+        assertEquals("-", privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPublic());
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), pubKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), pubKeyInfo.getSize());
+        assertEquals("-", pubKeyInfo.getDetailedAlgorithm());
     }
 
     @Test
-    public void testValidKeyPairWithDifferentAlgorithmNames()
+    void testValidKeyPairWithDifferentAlgorithmNames()
             throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, CryptoException,
                    InvalidKeySpecException {
 
@@ -137,11 +194,27 @@ public class KeyPairUtilTest extends CryptoTestsBase {
     @ParameterizedTest
     @MethodSource("mldsaVariants")
     void shouldGenerateAndValidateMLDSA(KeyPairType keyPairType) throws Exception {
-        KeyPair keyPair = KeyPairUtil.generateMLDSAKeyPair(keyPairType, KSE.BC);
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, KSE.BC);
         assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPrivate());
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), privKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), privKeyInfo.getSize());
+        assertEquals("-", privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPublic());
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), pubKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), pubKeyInfo.getSize());
+        assertEquals("-", pubKeyInfo.getDetailedAlgorithm());
+
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(keyPair.getPrivate()));
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(keyPair.getPublic()));
     }
 
     @ParameterizedTest
+    // Fails for SUN when using Java 25
     @ValueSource(strings = {"SUN", "SunJCE"})
     void shouldThrowOnWrongProviderForMLDSA(String providerName) {
         Provider provider = Security.getProvider(providerName);
@@ -149,21 +222,60 @@ public class KeyPairUtilTest extends CryptoTestsBase {
 
         assertThrows(
                 CryptoException.class,
-                () -> KeyPairUtil.generateMLDSAKeyPair(KeyPairType.MLDSA44, provider)
+                () -> KeyPairUtil.generateKeyPair(KeyPairType.MLDSA44, provider)
         );
+    }
+
+    private static Set<KeyPairType> mldsaVariants() {
+        return KeyPairType.MLDSA_TYPES_SET;
+    }
+
+    @ParameterizedTest
+    @MethodSource("slhDsaVariants")
+    void shouldGenerateAndValidateSlhDsa(KeyPairType keyPairType) throws Exception {
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(keyPairType, KSE.BC);
+        assertTrue(KeyPairUtil.validKeyPair(keyPair.getPrivate(), keyPair.getPublic()));
+
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPrivate());
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), privKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), privKeyInfo.getSize());
+        assertEquals("-", privKeyInfo.getDetailedAlgorithm());
+
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo(keyPair.getPublic());
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals(keyPairType.jce(), pubKeyInfo.getAlgorithm());
+        assertEquals(keyPairType.maxSize(), pubKeyInfo.getSize());
+        assertEquals("-", pubKeyInfo.getDetailedAlgorithm());
+
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(keyPair.getPrivate()));
+        assertEquals(keyPairType, KeyPairUtil.getKeyPairType(keyPair.getPublic()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"SUN", "SunJCE"})
+    void shouldThrowOnWrongProviderForSlhDsa(String providerName) {
+        Provider provider = Security.getProvider(providerName);
+        assumeTrue(provider != null, "Provider " + providerName + " not available");
+
+        assertThrows(CryptoException.class, () -> KeyPairUtil.generateKeyPair(KeyPairType.SLHDSA_SHA2_128F, provider));
+    }
+
+    private static Set<KeyPairType> slhDsaVariants() {
+        return KeyPairType.SLHDSA_TYPES_SET;
     }
 
     @Test
-    void shouldThrowOnWrongKeyTypeForMLDSA() {
-        assertThrows(
-                CryptoException.class,
-                () -> KeyPairUtil.generateMLDSAKeyPair(KeyPairType.RSA, KSE.BC)
-        );
-    }
+    void getKeyInfoNullKey() throws Exception {
+        KeyInfo pubKeyInfo = KeyPairUtil.getKeyInfo((PublicKey) null);
+        assertEquals(KeyType.ASYMMETRIC, pubKeyInfo.getKeyType());
+        assertEquals("", pubKeyInfo.getAlgorithm());
+        assertNull(pubKeyInfo.getSize());
 
-    private static Stream<KeyPairType> mldsaVariants() {
-        return Arrays.stream(KeyPairType.values())
-                .filter(KeyPairType::isMlDSA);
+        KeyInfo privKeyInfo = KeyPairUtil.getKeyInfo((PrivateKey) null);
+        assertEquals(KeyType.ASYMMETRIC, privKeyInfo.getKeyType());
+        assertEquals("", privKeyInfo.getAlgorithm());
+        assertNull(privKeyInfo.getSize());
     }
 
 }

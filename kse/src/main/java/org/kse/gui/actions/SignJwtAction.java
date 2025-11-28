@@ -177,10 +177,11 @@ public class SignJwtAction extends KeyStoreExplorerAction {
             // Only the standard EC curves are supported (P-256, P-384, P-521)
             isSupported = Curve.forECParameterSpec(((ECPublicKey) publicKey).getParams()) != null;
         }
-        // Don't have a library for signing a JWT with Ed448 or with ML-DSA.
+        // Nimbus-JOSE does not support signing a JWT with Ed448, ML-DSA, SLH-DSA.
         boolean isEd448 = EdDSACurves.ED448.jce().equals(publicKey.getAlgorithm());
         boolean isMlDSA = KeyPairType.isMlDSA(KeyPairType.resolveJce(publicKey.getAlgorithm()));
-        isSupported = isSupported && !isEd448 && !isMlDSA;
+        boolean isSlhDsa = KeyPairType.isSlhDsa(KeyPairType.resolveJce(publicKey.getAlgorithm()));
+        isSupported = isSupported && !isEd448 && !isMlDSA && !isSlhDsa;
         if (!isSupported) {
             tooltip = res.getString("SignJwtAction.NotSupported.message");
         }

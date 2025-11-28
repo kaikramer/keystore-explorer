@@ -21,8 +21,14 @@
 package org.kse.crypto.ecc;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
+import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 
@@ -32,14 +38,19 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.kse.KSE;
 import org.kse.crypto.CryptoTestsBase;
+import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.keystore.KeyStoreType;
 import org.kse.utilities.oid.ObjectIdUtil;
 
+/**
+ * Unit tests for EccUtil.
+ */
 public class EccUtilTest extends CryptoTestsBase {
 
     @ParameterizedTest
@@ -51,7 +62,7 @@ public class EccUtilTest extends CryptoTestsBase {
             "UBER",
             "PKCS11"
     })
-    public void testIsEcAvailable(KeyStoreType keyStoreType) {
+    void testIsEcAvailable(KeyStoreType keyStoreType) {
         assertThat(EccUtil.isECAvailable(keyStoreType)).isTrue();
     }
 
@@ -72,11 +83,14 @@ public class EccUtilTest extends CryptoTestsBase {
             // Brainpool curves
             "brainpoolP160r1", "brainpoolP160t1", "brainpoolP192r1", "brainpoolP192t1", "brainpoolP224r1",
             "brainpoolP224t1", "brainpoolP256r1", "brainpoolP256t1", "brainpoolP320r1", "brainpoolP320t1",
-            "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1"
+            "brainpoolP384r1", "brainpoolP384t1", "brainpoolP512r1", "brainpoolP512t1",
+            // SM2 curves
+            "sm2p256v1", "wapi192v1", "wapip192v1"
             // NIST curves are a subset of SEC curves (not explicitly tested here)
+            // Edwards curves are not EC curves (not tested here)
     })
     // @formatter:on
-    public void convertToECPrivateKeyStructure(String curveName) throws Exception {
+    void convertToECPrivateKeyStructure(String curveName) throws Exception {
 
         KeyPair keyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
         ECPrivateKey ecPrivateKey = (ECPrivateKey) keyPair.getPrivate();
@@ -122,5 +136,42 @@ public class EccUtilTest extends CryptoTestsBase {
         ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) asn1TaggedObject.getBaseObject();
         String resolvedCurveName = ObjectIdUtil.toString(oid);
         assertThat(resolvedCurveName).containsIgnoringCase(curveName);
+    }
+
+    @Test
+    void getNamedCurve() throws Exception {
+        KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("secp384r1", KSE.BC);
+
+        assertEquals("secp384r1", EccUtil.getNamedCurve(ecKeyPair.getPrivate()));
+//        assertEquals("secp384r1", EccUtil.getNamedCurve(ecKeyPair.getPublic()));
+
+        KeyPair rsaKeyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 2048, KSE.BC);
+        assertThrows(InvalidParameterException.class, () -> EccUtil.getNamedCurve(rsaKeyPair.getPublic()));
+        assertThrows(InvalidParameterException.class, () -> EccUtil.getNamedCurve(rsaKeyPair.getPrivate()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Ed25519", "Ed448"})
+    void detectEDDSACurve(String curveName) throws Exception {
+        KeyPair edKeyPair = KeyPairUtil.generateECKeyPair(curveName, KSE.BC);
+
+        assertNotNull(EccUtil.detectEdDSACurve(edKeyPair.getPrivate()));
+        assertNotNull(EccUtil.detectEdDSACurve(edKeyPair.getPublic()));
+    }
+
+    @Test
+    void detectEDDSACurveNotEd() throws Exception {
+        KeyPair ecKeyPair = KeyPairUtil.generateECKeyPair("secp384r1", KSE.BC);
+
+        assertThrows(InvalidParameterException.class, () -> EccUtil.detectEdDSACurve(ecKeyPair.getPrivate()));
+        assertThrows(InvalidParameterException.class, () -> EccUtil.detectEdDSACurve(ecKeyPair.getPublic()));
+    }
+
+    @Test
+    void isEdPrivateKey() throws Exception {
+        KeyPair edKeyPair = KeyPairUtil.generateECKeyPair("Ed448", KSE.BC);
+        assertTrue(EccUtil.isEdPrivateKey(edKeyPair.getPrivate()));
+        assertFalse(EccUtil.isEdPrivateKey(edKeyPair.getPublic()));
+        assertFalse(EccUtil.isEdPrivateKey(KeyPairUtil.generateECKeyPair("secp384r1", KSE.BC).getPrivate()));
     }
 }

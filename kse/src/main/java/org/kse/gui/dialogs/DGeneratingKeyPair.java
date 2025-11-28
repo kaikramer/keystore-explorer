@@ -213,7 +213,19 @@ public class DGeneratingKeyPair extends JEscDialog {
                 case MLDSA44:
                 case MLDSA65:
                 case MLDSA87:
-                    keyPair = KeyPairUtil.generateMLDSAKeyPair(keyPairType, provider);
+                case SLHDSA_SHA2_128F:
+                case SLHDSA_SHA2_128S:
+                case SLHDSA_SHA2_192F:
+                case SLHDSA_SHA2_192S:
+                case SLHDSA_SHA2_256F:
+                case SLHDSA_SHA2_256S:
+                case SLHDSA_SHAKE_128F:
+                case SLHDSA_SHAKE_128S:
+                case SLHDSA_SHAKE_192F:
+                case SLHDSA_SHAKE_192S:
+                case SLHDSA_SHAKE_256F:
+                case SLHDSA_SHAKE_256S:
+                    keyPair = KeyPairUtil.generateKeyPair(keyPairType, provider);
                     break;
                 case EC:
                 case ECDSA:

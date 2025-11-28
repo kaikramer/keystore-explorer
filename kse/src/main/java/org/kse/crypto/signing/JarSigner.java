@@ -618,9 +618,14 @@ public class JarSigner {
             extension = DSA_SIG_BLOCK_EXT;
         } else if (SignatureType.rsaSignatureTypes().contains(signatureType)) {
             extension = RSA_SIG_BLOCK_EXT;
-        } else {
-            // This includes EDDSA, ED25519, & ED448
+        } else if (SignatureType.ecdsaSignatureTypes().contains(signatureType) //
+                || SignatureType.ED25519 == signatureType //
+                || SignatureType.ED448 == signatureType) {
             extension = EC_SIG_BLOCK_EXT;
+        } else {
+            // Per the Java 24 jarsigner specification, any signature type that is not
+            // listed in the Supported Algorithms table uses .DSA for the extension.
+            extension = DSA_SIG_BLOCK_EXT;
         }
 
         // Signature block entry

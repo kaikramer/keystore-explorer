@@ -34,6 +34,7 @@ import static org.kse.crypto.signing.SignatureType.SHA256WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA256_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA256_ECDSA;
 import static org.kse.crypto.signing.SignatureType.SHA256_RSA;
+import static org.kse.crypto.signing.SignatureType.SHA256_SM2;
 import static org.kse.crypto.signing.SignatureType.SHA384WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA384_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA384_ECDSA;
@@ -42,9 +43,11 @@ import static org.kse.crypto.signing.SignatureType.SHA512WITHRSAANDMGF1;
 import static org.kse.crypto.signing.SignatureType.SHA512_DSA;
 import static org.kse.crypto.signing.SignatureType.SHA512_ECDSA;
 import static org.kse.crypto.signing.SignatureType.SHA512_RSA;
+import static org.kse.crypto.signing.SignatureType.SM3_SM2;
 import static org.kse.crypto.signing.SignatureType.dsaSignatureTypes;
 import static org.kse.crypto.signing.SignatureType.ecdsaSignatureTypes;
 import static org.kse.crypto.signing.SignatureType.rsaSignatureTypes;
+import static org.kse.crypto.signing.SignatureType.sm2SignatureTypes;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -97,6 +100,13 @@ class SignatureTypeTest {
                                 SHA256_ECDSA,
                                 SHA384_ECDSA,
                                 SHA512_ECDSA
+                        )
+                ),
+                Arguments.of(
+                        sm2SignatureTypes(),
+                        List.of(
+                                SM3_SM2,
+                                SHA256_SM2
                         )
                 )
         );

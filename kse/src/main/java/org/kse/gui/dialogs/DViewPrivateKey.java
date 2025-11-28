@@ -48,6 +48,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import org.bouncycastle.jcajce.interfaces.MLDSAPrivateKey;
+import org.bouncycastle.jcajce.interfaces.SLHDSAPrivateKey;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
@@ -76,8 +77,6 @@ public class DViewPrivateKey extends JEscDialog {
 
     private static final ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/dialogs/resources");
     private static final ResourceBundle resActions = ResourceBundle.getBundle("org/kse/gui/actions/resources");
-
-    public static final int MAX_LINE_LENGTH = 32;
 
     private JLabel jlAlgorithm;
     private JTextField jtfAlgorithm;
@@ -304,7 +303,7 @@ public class DViewPrivateKey extends JEscDialog {
 
         jbFields.setEnabled((privateKey instanceof RSAPrivateKey) || (privateKey instanceof DSAPrivateKey)
                 || (privateKey instanceof ECPrivateKey) || (EccUtil.isEdPrivateKey(privateKey))
-                || (privateKey instanceof MLDSAPrivateKey));
+                || (privateKey instanceof MLDSAPrivateKey) || (privateKey instanceof SLHDSAPrivateKey));
     }
 
     private void pemEncodingPressed() {
@@ -318,9 +317,13 @@ public class DViewPrivateKey extends JEscDialog {
     }
 
     private void fieldsPressed() {
-        DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, privateKey);
-        dViewAsymmetricKeyFields.setLocationRelativeTo(this);
-        dViewAsymmetricKeyFields.setVisible(true);
+        try {
+            DViewAsymmetricKeyFields dViewAsymmetricKeyFields = new DViewAsymmetricKeyFields(this, privateKey);
+            dViewAsymmetricKeyFields.setLocationRelativeTo(this);
+            dViewAsymmetricKeyFields.setVisible(true);
+        } catch (IOException e) {
+            DError.displayError(this, e);
+        }
     }
 
     private void asn1DumpPressed() {

@@ -31,6 +31,7 @@ import static org.kse.crypto.digest.DigestType.SHA3_256;
 import static org.kse.crypto.digest.DigestType.SHA3_384;
 import static org.kse.crypto.digest.DigestType.SHA3_512;
 import static org.kse.crypto.digest.DigestType.SHA512;
+import static org.kse.crypto.digest.DigestType.SHAKE128;
 import static org.kse.crypto.digest.DigestType.SHAKE256;
 import static org.kse.crypto.digest.DigestType.SM3;
 
@@ -94,6 +95,22 @@ public enum SignatureType {
     MLDSA65("ML-DSA-65", "2.16.840.1.101.3.4.3.18", SHAKE256, "SignatureType.MlDsa65"),
     MLDSA87("ML-DSA-87", "2.16.840.1.101.3.4.3.19", SHAKE256, "SignatureType.MlDsa87"),
 
+    // SLH-DSA ("pure")
+    SLHDSA("SLH-DSA", "", SHA512, "SignatureType.SlhDsa"), // Used for signature type selection
+    // Used for SignatureType lookup by OID (e.g., DViewSignature)
+    SLHDSA_SHA2_128S("SLHDSA_SHA2_128S", "2.16.840.1.101.3.4.3.20", SHA256, "SignatureType.SlhDsaSha2128s"),
+    SLHDSA_SHA2_128F("SLHDSA_SHA2_128F", "2.16.840.1.101.3.4.3.21", SHA256, "SignatureType.SlhDsaSha2128f"),
+    SLHDSA_SHA2_192S("SLHDSA_SHA2_192S", "2.16.840.1.101.3.4.3.22", SHA512, "SignatureType.SlhDsaSha2192s"),
+    SLHDSA_SHA2_192F("SLHDSA_SHA2_192F", "2.16.840.1.101.3.4.3.23", SHA512, "SignatureType.SlhDsaSha2192f"),
+    SLHDSA_SHA2_256S("SLHDSA_SHA2_256S", "2.16.840.1.101.3.4.3.24", SHA512, "SignatureType.SlhDsaSha2256s"),
+    SLHDSA_SHA2_256F("SLHDSA_SHA2_256F", "2.16.840.1.101.3.4.3.25", SHA512, "SignatureType.SlhDsaSha2256f"),
+    SLHDSA_SHAKE_128S("SLHDSA_SHAKE_128S", "2.16.840.1.101.3.4.3.26", SHAKE128, "SignatureType.SlhDsaShake128s"),
+    SLHDSA_SHAKE_128F("SLHDSA_SHAKE_128F", "2.16.840.1.101.3.4.3.27", SHAKE128, "SignatureType.SlhDsaShake128f"),
+    SLHDSA_SHAKE_192S("SLHDSA_SHAKE_192S", "2.16.840.1.101.3.4.3.28", SHAKE256, "SignatureType.SlhDsaShake192s"),
+    SLHDSA_SHAKE_192F("SLHDSA_SHAKE_192F", "2.16.840.1.101.3.4.3.29", SHAKE256, "SignatureType.SlhDsaShake192f"),
+    SLHDSA_SHAKE_256S("SLHDSA_SHAKE_256S", "2.16.840.1.101.3.4.3.30", SHAKE256, "SignatureType.SlhDsaShake256s"),
+    SLHDSA_SHAKE_256F("SLHDSA_SHAKE_256F", "2.16.840.1.101.3.4.3.31", SHAKE256, "SignatureType.SlhDsaShake256f"),
+
     // SM2
     SHA256_SM2("SHA256withSM2", "1.2.156.10197.1.503", SHA256, "SignatureType.Sha256withSm2"),
     SM3_SM2("SM3withSM2", "1.2.156.10197.1.501", SM3, "SignatureType.Sm3withSm2");
@@ -101,6 +118,7 @@ public enum SignatureType {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
     private static final String RSASSA_PSS_OID = id_RSASSA_PSS.getId();
+
     private String jce;
     private String oid;
     private DigestType digestType;
