@@ -74,6 +74,7 @@ public class Asn1Dump {
     private IndentSequence indentSequence;
     private int indentLevel = -1;
     private static final String NEWLINE = "\n";
+    private static final String EQUALS = " = ";
 
     /**
      * Construct Asn1Dump that uses 4 spaces as its indent sequence.
@@ -269,7 +270,7 @@ public class Asn1Dump {
             sb.append(NEWLINE);
             sb.append(encapsulated);
         } catch (Exception e) {
-            sb.append("=");
+            sb.append(EQUALS);
             if (bytes.length < 8) {
                 sb.append(HexUtil.getHexString(bytes));
             } else {
@@ -294,7 +295,7 @@ public class Asn1Dump {
             sb.append(NEWLINE);
             sb.append(dump);
         } catch (Exception e) {
-            sb.append("=");
+            sb.append(EQUALS);
 
             // print short bit strings as string of bits and long ones as hex dump
             if (bytes.length < 8) {
@@ -312,7 +313,7 @@ public class Asn1Dump {
     private String dumpObjectIdentifier(ASN1ObjectIdentifier asn1ObjectIdentifier) {
 
         String sb = indentSequence.toString(indentLevel) +
-                "OBJECT IDENTIFIER=" +
+                "OBJECT IDENTIFIER" + EQUALS +
                 ObjectIdUtil.toString(asn1ObjectIdentifier) +
                 NEWLINE;
 
@@ -333,7 +334,7 @@ public class Asn1Dump {
         BigInteger value = asn1Integer.getValue();
 
         sb.append(indentSequence.toString(indentLevel));
-        sb.append("INTEGER=");
+        sb.append("INTEGER").append(EQUALS);
         // is big int value small enough to be displayed as a number?
         if (value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) == -1) {
             sb.append(value.toString(10));
@@ -353,7 +354,7 @@ public class Asn1Dump {
     private String dumpEnumerated(ASN1Enumerated asn1Enumerated) {
 
         String sb = indentSequence.toString(indentLevel) +
-                "ENUMERATED=" +
+                "ENUMERATED" + EQUALS +
                 asn1Enumerated.getValue() +
                 NEWLINE;
 
@@ -363,7 +364,7 @@ public class Asn1Dump {
     private String dumpBoolean(ASN1Boolean asn1Boolean) {
 
         String sb = indentSequence.toString(indentLevel) +
-                "BOOLEAN=" +
+                "BOOLEAN" + EQUALS +
                 asn1Boolean.isTrue() +
                 NEWLINE;
 
@@ -412,7 +413,7 @@ public class Asn1Dump {
         StringBuilder sb = new StringBuilder();
 
         sb.append(indentSequence.toString(indentLevel));
-        sb.append("UTC TIME=");
+        sb.append("UTC TIME").append(EQUALS);
 
         // UTCTime, note does not support ms precision hence the different date format
         Date date;
@@ -436,7 +437,7 @@ public class Asn1Dump {
         StringBuilder sb = new StringBuilder();
 
         sb.append(indentSequence.toString(indentLevel));
-        sb.append("GENERALIZED TIME=");
+        sb.append("GENERALIZED TIME").append(EQUALS);
 
         Date date;
         try {
@@ -461,27 +462,28 @@ public class Asn1Dump {
         sb.append(indentSequence.toString(indentLevel));
 
         if (asn1String instanceof DERBMPString) {
-            sb.append("BMP STRING=");
+            sb.append("BMP STRING");
         } else if (asn1String instanceof DERGeneralString) {
-            sb.append("GENERAL STRING=");
+            sb.append("GENERAL STRING");
         } else if (asn1String instanceof DERIA5String) {
-            sb.append("IA5 STRING=");
+            sb.append("IA5 STRING");
         } else if (asn1String instanceof DERNumericString) {
-            sb.append("NUMERIC STRING=");
+            sb.append("NUMERIC STRING");
         } else if (asn1String instanceof DERPrintableString) {
-            sb.append("PRINTABLE STRING=");
+            sb.append("PRINTABLE STRING");
         } else if (asn1String instanceof DERT61String) {
-            sb.append("TELETEX STRING=");
+            sb.append("TELETEX STRING");
         } else if (asn1String instanceof DERUniversalString) {
-            sb.append("UNIVERSAL STRING=");
+            sb.append("UNIVERSAL STRING");
         } else if (asn1String instanceof DERUTF8String) {
-            sb.append("UTF8 STRING=");
+            sb.append("UTF8 STRING");
         } else if (asn1String instanceof DERVisibleString) {
-            sb.append("VISIBLE STRING=");
+            sb.append("VISIBLE STRING");
         } else {
-            sb.append("UNKNOWN STRING=");
+            sb.append("UNKNOWN STRING");
         }
 
+        sb.append(EQUALS);
         sb.append("'");
         sb.append(asn1String.getString());
         sb.append("'");
