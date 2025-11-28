@@ -249,7 +249,7 @@ public class Asn1Dump {
         sb.append(']');
 
         if (!o.isExplicit()) {
-            sb.append(" IMPLICIT ");
+            sb.append(" IMPLICIT");
         }
         sb.append(":");
         sb.append(NEWLINE);
