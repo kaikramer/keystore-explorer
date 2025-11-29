@@ -26,6 +26,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.swing.JButton;
@@ -156,7 +157,7 @@ public class DViewKeyPair extends JEscDialog {
     private void privateKeyDetailsPressed() {
         try {
             DViewPrivateKey dViewPrivateKey = new DViewPrivateKey(this, res.getString(
-                    "DViewKeyPair.ViewPrivateKeyDetails.Title"), privateKey);
+                    "DViewKeyPair.ViewPrivateKeyDetails.Title"), privateKey, Optional.empty());
             dViewPrivateKey.setLocationRelativeTo(this);
             dViewPrivateKey.setVisible(true);
         } catch (CryptoException ex) {
