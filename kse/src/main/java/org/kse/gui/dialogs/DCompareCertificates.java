@@ -31,6 +31,7 @@ import java.security.cert.X509Certificate;
 import java.security.cert.X509Extension;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -97,7 +98,7 @@ public class DCompareCertificates extends JEscFrame {
      */
     public DCompareCertificates(JFrame frame, X509Certificate cert1, X509Certificate cert2) {
         super(MessageFormat.format(res.getString("DCompareCertificates.Title"), X509CertUtil.getShortName(cert1),
-                                   X509CertUtil.getShortName(cert2)));
+                X509CertUtil.getShortName(cert2)));
         this.setIconImages(frame.getIconImages());
         initComponents(cert1, cert2);
     }
@@ -131,14 +132,22 @@ public class DCompareCertificates extends JEscFrame {
         jpButtons.add(jlMatch, "sgx");
         jpButtons.add(jbOK, "right, tag ok");
 
-        DiffRowGenerator generator =
-                DiffRowGenerator.create().showInlineDiffs(true).inlineDiffByWord(true).ignoreWhiteSpaces(true).build();
-
-        List<DiffRow> rows = null;
+        List<DiffRow> rows = Collections.emptyList();
         try {
             String text1 = getCertificateDump(cert1);
             String text2 = getCertificateDump(cert2);
-            rows = generator.generateDiffRows(getLines(text1), getLines(text2));
+            var lines1 = getLines(text1);
+            var lines2 = getLines(text2);
+
+            boolean largeDiff = lines1.size() > 1000 || lines2.size() > 1000;
+
+            DiffRowGenerator generator = DiffRowGenerator.create()
+                    .showInlineDiffs(!largeDiff)
+                    .inlineDiffByWord(!largeDiff)
+                    .ignoreWhiteSpaces(true)
+                    .build();
+
+            rows = generator.generateDiffRows(lines1, lines2);
         } catch (Asn1Exception | IOException | CertificateEncodingException | CryptoException ex) {
             DError.displayError(this, ex);
         }
@@ -160,7 +169,7 @@ public class DCompareCertificates extends JEscFrame {
         if (!rows.isEmpty()) {
             int percent = equals * 100 / rows.size();
             jlMatch.setText(MessageFormat.format(res.getString("DCompareCertificates.jlMatch.text"),
-                                                 percent));
+                    percent));
         }
 
         sbuilderLeft.append("</tt>");
@@ -175,7 +184,7 @@ public class DCompareCertificates extends JEscFrame {
         jpCompareCert.add(editorRight, "");
 
         jspCompareCert = PlatformUtil.createScrollPane(jpCompareCert, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                                                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         Container pane = getContentPane();
         pane.setLayout(new MigLayout("insets 0, fill", "[]", "[]"));
@@ -185,7 +194,8 @@ public class DCompareCertificates extends JEscFrame {
         setResizable(true);
         pack();
 
-        // as the compare window can become quite large, we adjust its size depending on the screen size
+        // as the compare window can become quite large, we adjust its size depending on
+        // the screen size
         Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         if (getWidth() > maximumWindowBounds.width) {
             setSize(maximumWindowBounds.width, getHeight());
@@ -237,34 +247,34 @@ public class DCompareCertificates extends JEscFrame {
 
     private String getSubject(X509Certificate certificate) {
         String subject = MessageFormat.format(res.getString("DProperties.properties.Subject"),
-                                              X500NameUtils.x500PrincipalToX500Name(
-                                                      certificate.getSubjectX500Principal()));
+                X500NameUtils.x500PrincipalToX500Name(
+                        certificate.getSubjectX500Principal()));
         return subject;
     }
 
     private String getIssuer(X509Certificate certificate) {
         String issuer = MessageFormat.format(res.getString("DProperties.properties.Issuer"),
-                                             X500NameUtils.x500PrincipalToX500Name(
-                                                     certificate.getIssuerX500Principal()));
+                X500NameUtils.x500PrincipalToX500Name(
+                        certificate.getIssuerX500Principal()));
         return issuer;
     }
 
     private String getSerialNumber(X509Certificate certificate) {
         String serialNumber = MessageFormat.format(res.getString("DProperties.properties.SerialNumber"),
-                                                   X509CertUtil.getSerialNumberAsHex(certificate));
+                X509CertUtil.getSerialNumberAsHex(certificate));
         return serialNumber;
     }
 
     private String getSha1(X509Certificate certificate) throws CertificateEncodingException, CryptoException {
         byte[] cert = certificate.getEncoded();
         String sha1 = MessageFormat.format(res.getString("DProperties.properties.Sha1Fingerprint"),
-                                           DigestUtil.getFriendlyMessageDigest(cert, DigestType.SHA1));
+                DigestUtil.getFriendlyMessageDigest(cert, DigestType.SHA1));
         return sha1;
     }
 
     private String getSignatureAlgo(X509Certificate certificate) {
         String signatureAlgorithm = MessageFormat.format(res.getString("DProperties.properties.SignatureAlgorithm"),
-                                                         X509CertUtil.getCertificateSignatureAlgorithm(certificate));
+                X509CertUtil.getCertificateSignatureAlgorithm(certificate));
         return signatureAlgorithm;
 
     }
@@ -272,14 +282,14 @@ public class DCompareCertificates extends JEscFrame {
     private String getValidFrom(X509Certificate certificate) {
         Date validFromDate = certificate.getNotBefore();
         String validFrom = MessageFormat.format(res.getString("DProperties.properties.ValidFrom"),
-                                                StringUtils.formatDate(validFromDate));
+                StringUtils.formatDate(validFromDate));
         return validFrom;
     }
 
     private String getValidUntil(X509Certificate certificate) {
         Date validUntilDate = certificate.getNotAfter();
         String validUntil = MessageFormat.format(res.getString("DProperties.properties.ValidUntil"),
-                                                 StringUtils.formatDate(validUntilDate));
+                StringUtils.formatDate(validUntilDate));
         return validUntil;
     }
 
@@ -294,8 +304,7 @@ public class DCompareCertificates extends JEscFrame {
 
     // for quick testing
     public static void main(String[] args) throws Exception {
-        String cert1Pem =
-                "-----BEGIN CERTIFICATE-----\n" +
+        String cert1Pem = "-----BEGIN CERTIFICATE-----\n" +
                 "MIIDXzCCAkegAwIBAgILBAAAAAABIVhTCKIwDQYJKoZIhvcNAQELBQAwTDEgMB4G\n" +
                 "A1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjMxEzARBgNVBAoTCkdsb2JhbFNp\n" +
                 "Z24xEzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMDkwMzE4MTAwMDAwWhcNMjkwMzE4\n" +
@@ -316,8 +325,7 @@ public class DCompareCertificates extends JEscFrame {
                 "Mx86OyXShkDOOyyGeMlhLxS67ttVb9+E7gUJTb0o2HLO02JQZR7rkpeDMdmztcpH\n" +
                 "WD9f\n" +
                 "-----END CERTIFICATE-----\n";
-        String cert2Pem =
-                "-----BEGIN CERTIFICATE-----\n" +
+        String cert2Pem = "-----BEGIN CERTIFICATE-----\n" +
                 "MIIFgzCCA2ugAwIBAgIORea7A4Mzw4VlSOb/RVEwDQYJKoZIhvcNAQEMBQAwTDEg\n" +
                 "MB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2Jh\n" +
                 "bFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMTQxMjEwMDAwMDAwWhcNMzQx\n" +
