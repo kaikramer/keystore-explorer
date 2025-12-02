@@ -29,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -53,8 +54,10 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.components.JEscDialog;
@@ -174,9 +177,7 @@ public class DSignCrl extends JEscDialog {
 
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
-        if (signPrivateKey != null) {
-            DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
-        }
+        DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCrl.jcbSignatureAlgorithm.tooltip"));
 
         jlCrlNumber = new JLabel(res.getString("DSignCrl.jlCrlNumber.text"));
@@ -326,6 +327,8 @@ public class DSignCrl extends JEscDialog {
             ValiditySettings validitySettings = preferences.getValiditySignCrl();
             validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
             validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
+
+            DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
         }
 
         closeDialog();
@@ -367,6 +370,7 @@ public class DSignCrl extends JEscDialog {
     }
 
     public static void main(String[] args) throws HeadlessException, UnsupportedLookAndFeelException, CryptoException {
-        DialogViewer.run(new DSignCrl(new JFrame(), null, KeyPairType.RSA, null, null, null));
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
+        DialogViewer.run(new DSignCrl(new JFrame(), null, KeyPairType.RSA, keyPair.getPrivate(), null, null));
     }
 }

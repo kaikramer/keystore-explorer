@@ -30,6 +30,7 @@ import javax.swing.JTabbedPane;
 
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.PublicKeyFingerprintAlgorithm;
+import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
@@ -75,6 +76,10 @@ public class KsePreferences {
     private ValiditySettings validityGenerateCert = new ValiditySettings();
     private ValiditySettings validitySignCsr = new ValiditySettings();
     private ValiditySettings validitySignCrl = new ValiditySettings(7, PeriodType.DAYS);
+    // jackson-jr loads the Map key using String. There are no compile time errors when using
+    // KeyPairType, but it does not work at runtime due to type erasure since the hashCodes
+    // don't match. Use String since it matches jackson-jr and is convenient.
+    private Map<String, SignatureType> signatureTypes = new HashMap<>();
 
     // auto-generated getters/setters
 
@@ -352,5 +357,13 @@ public class KsePreferences {
         if (validitySignCrl != null) {
             this.validitySignCrl = validitySignCrl;
         }
+    }
+
+    public Map<String, SignatureType> getSignatureTypes() {
+        return signatureTypes;
+    }
+
+    public void setSignatureTypes(Map<String, SignatureType> signatureTypes) {
+        this.signatureTypes = signatureTypes;
     }
 }

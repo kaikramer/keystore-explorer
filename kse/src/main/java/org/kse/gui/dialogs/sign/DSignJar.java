@@ -464,6 +464,8 @@ public class DSignJar extends JEscDialog {
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
         digestType = (DigestType) jcbDigestAlgorithm.getSelectedItem();
 
+        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+
         // check add time stamp is selected and assign value
         if (jcbAddTimestamp.isSelected()) {
             tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();

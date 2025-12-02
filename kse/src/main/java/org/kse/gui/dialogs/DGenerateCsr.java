@@ -391,6 +391,8 @@ public class DGenerateCsr extends JEscDialog {
 
         signatureAlgorithm = jcbSignatureAlgorithm.getItemAt(jcbSignatureAlgorithm.getSelectedIndex());
 
+        DialogHelper.rememberSigAlg(keyPairType, privateKey, signatureAlgorithm);
+
         if (jdnName.getDistinguishedName().toString().isEmpty()) {
             JOptionPane.showMessageDialog(this, res.getString("DGenerateCsr.InvalidDN.message"), getTitle(),
                                           JOptionPane.WARNING_MESSAGE);

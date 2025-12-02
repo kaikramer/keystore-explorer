@@ -411,6 +411,8 @@ public class DSignFile extends JEscDialog {
             tsaUrl = jcbTimestampServerUrl.getSelectedItem().toString();
         }
 
+        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+
         closeDialog();
     }
 

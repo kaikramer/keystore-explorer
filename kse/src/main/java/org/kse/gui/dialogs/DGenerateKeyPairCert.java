@@ -414,7 +414,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         }
 
         try {
-            SignatureType signatureType = ((SignatureType) jcbSignatureAlgorithm.getSelectedItem());
+            SignatureType signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
 
             X509CertificateGenerator generator;
 
@@ -458,9 +458,20 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
     private void okPressed() {
         if (generateCertificate()) {
+            // Remember user selections
             ValiditySettings validitySettings = preferences.getValidityGenerateCert();
             validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
             validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
+
+            SignatureType signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
+            if (issuerPrivateKey != null) {
+                String issuerKeyAlgorithm = issuerPrivateKey.getAlgorithm();
+                KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerKeyAlgorithm);
+                DialogHelper.rememberSigAlg(issuerKeyPairType, issuerPrivateKey, signatureType);
+            } else {
+                // self-signed
+                DialogHelper.rememberSigAlg(keyPairType, keyPair.getPrivate(), signatureType);
+            }
 
             closeDialog();
         }

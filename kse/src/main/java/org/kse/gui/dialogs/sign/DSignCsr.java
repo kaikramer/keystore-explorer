@@ -743,6 +743,8 @@ public class DSignCsr extends JEscDialog {
         validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
         validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
 
+        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+
         closeDialog();
     }
 
