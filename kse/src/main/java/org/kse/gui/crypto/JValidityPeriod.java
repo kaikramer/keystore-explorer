@@ -31,6 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import org.kse.gui.preferences.data.ValiditySettings.PeriodType;
+
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -43,65 +45,38 @@ public class JValidityPeriod extends JPanel {
 
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/gui/crypto/resources");
 
+    private int periodValue;
+    private PeriodType periodType;
+
     private JSpinner jsValue;
     private JComboBox<?> jcbType;
     private JButton jbApply;
 
     /**
-     * Years period type
-     */
-    public static final int YEARS = 0;
-
-    /**
-     * Months period type
-     */
-    public static final int MONTHS = 1;
-
-    /**
-     * Weeks period type
-     */
-    public static final int WEEKS = 2;
-
-    /**
-     * Days period type
-     */
-    public static final int DAYS = 3;
-
-    /**
      * Construct a JValidityPeriod with the period type defaulting to that
      * supplied.
      *
-     * @param periodType Period type
+     * @param periodValue The default validity period value.
+     * @param periodType  The default validity period type.
      */
-    public JValidityPeriod(int periodType) {
-        initComponents(periodType);
+    public JValidityPeriod(int periodValue, PeriodType periodType) {
+        this.periodValue = periodValue;
+        this.periodType = periodType;
+
+        initComponents();
     }
 
-    private void initComponents(int periodType) {
+    private void initComponents() {
         jsValue = new JSpinner();
+        jsValue.setValue(Integer.valueOf(periodValue));
+
         jcbType = new JComboBox<>(new String[] { res.getString("JValidityPeriod.jcbType.years.text"),
                                                  res.getString("JValidityPeriod.jcbType.months.text"),
                                                  res.getString("JValidityPeriod.jcbType.weeks.text"),
                                                  res.getString("JValidityPeriod.jcbType.days.text"), });
 
-        switch (periodType) {
-        case YEARS:
-            jcbType.setSelectedIndex(YEARS);
-            typeChanged(YEARS);
-            break;
-        case MONTHS:
-            jcbType.setSelectedIndex(MONTHS);
-            typeChanged(MONTHS);
-            break;
-        case WEEKS:
-            jcbType.setSelectedIndex(WEEKS);
-            typeChanged(WEEKS);
-            break;
-        default:
-            jcbType.setSelectedIndex(DAYS);
-            typeChanged(DAYS);
-            break;
-        }
+        jcbType.setSelectedIndex(periodType.ordinal());
+        typeChanged(periodType);
 
         jcbType.addItemListener(evt -> typeChanged(((JComboBox<?>) evt.getSource()).getSelectedIndex()));
 
@@ -125,8 +100,12 @@ public class JValidityPeriod extends JPanel {
         jcbType.setToolTipText(toolTipText);
     }
 
+    private void typeChanged(int periodTypeIndex) {
+        typeChanged(PeriodType.values()[periodTypeIndex]);
+    }
+
     @SuppressWarnings("unchecked")
-    private void typeChanged(int periodType) {
+    private void typeChanged(PeriodType periodType) {
         Number value = ((SpinnerNumberModel) jsValue.getModel()).getNumber();
 
         SpinnerNumberModel model;
@@ -155,22 +134,9 @@ public class JValidityPeriod extends JPanel {
     }
 
     /**
-     * Get chosen validity period in msecs.
-     *
-     * @return Validity period
-     */
-    public long getValidityPeriodMs() {
-        /*
-         * Use a non-shifting timezone to calculate validity date otherwise, if
-         * we cross a DST-shift, we'll be an hour out
-         */
-        Calendar now = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        return getValidityPeriodMs(now.getTime());
-    }
-
-    /**
      * Get chosen validity period in msecs, relative to validity start date.
      *
+     * @param validityStart The starting date to for calculating the end date.
      * @return Validity period
      */
     public long getValidityPeriodMs(Date validityStart) {
@@ -183,6 +149,7 @@ public class JValidityPeriod extends JPanel {
      * Compute validity end date, based on chosen period and relative to validity
      * start date.
      *
+     * @param validityStart The starting date to for calculating the end date.
      * @return Validity End Date
      */
     public Date getValidityEnd(Date validityStart) {
@@ -193,8 +160,8 @@ public class JValidityPeriod extends JPanel {
         Calendar validityDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         validityDate.setTime(validityStart);
 
-        int periodType = jcbType.getSelectedIndex();
-        int periodValue = ((Number) jsValue.getValue()).intValue();
+        periodType = PeriodType.values()[jcbType.getSelectedIndex()];
+        periodValue = ((Number) jsValue.getValue()).intValue();
 
         switch (periodType) {
         case YEARS:
@@ -223,7 +190,26 @@ public class JValidityPeriod extends JPanel {
         jbApply.addActionListener(listener);
     }
 
+    /**
+     * Updates the JSpinner with the period value.
+     *
+     * @param value The period value.
+     */
     public void setValue(int value) {
         jsValue.setValue(value);
+    }
+
+    /**
+     * @return the value
+     */
+    public int getPeriodValue() {
+        return periodValue;
+    }
+
+    /**
+     * @return the period
+     */
+    public PeriodType getPeriodType() {
+        return periodType;
     }
 }

@@ -41,7 +41,6 @@ import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -94,6 +93,10 @@ import org.kse.gui.dialogs.DialogHelper;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
 import org.kse.gui.dialogs.extensions.DViewExtensions;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
+import org.kse.gui.preferences.data.ValiditySettings;
+import org.kse.gui.preferences.data.ValiditySettings.PeriodType;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.SerialNumbers;
 import org.kse.utilities.asn1.Asn1Exception;
@@ -145,6 +148,8 @@ public class DSignCsr extends JEscDialog {
     private JButton jbAddExtensions;
     private JButton jbOK;
     private JButton jbCancel;
+
+    KsePreferences preferences = PreferencesManager.getPreferences();
 
     private PrivateKey signPrivateKey;
     private KeyPairType signKeyPairType;
@@ -277,6 +282,13 @@ public class DSignCsr extends JEscDialog {
 
         Date now = new Date();
 
+        jlValidityPeriod = new JLabel(res.getString("DSignCsr.jlValidityPeriod.text"));
+
+        int periodValue = preferences.getValiditySignCsr().getPeriodValue();
+        PeriodType periodType = preferences.getValiditySignCsr().getPeriodType();
+        jvpValidityPeriod = new JValidityPeriod(periodValue, periodType);
+        jvpValidityPeriod.setToolTipText(res.getString("DSignCsr.jvpValidityPeriod.tooltip"));
+
         jlValidityStart = new JLabel(res.getString("DSignCsr.jlValidityStart.text"));
 
         jdtValidityStart = new JDateTime(res.getString("DSignCsr.jdtValidityStart.text"), false);
@@ -286,13 +298,8 @@ public class DSignCsr extends JEscDialog {
         jlValidityEnd = new JLabel(res.getString("DSignCsr.jlValidityEnd.text"));
 
         jdtValidityEnd = new JDateTime(res.getString("DSignCsr.jdtValidityEnd.text"), false);
-        jdtValidityEnd.setDateTime(new Date(now.getTime() + TimeUnit.DAYS.toMillis(365)));
+        jdtValidityEnd.setDateTime(jvpValidityPeriod.getValidityEnd(now));
         jdtValidityEnd.setToolTipText(res.getString("DSignCsr.jdtValidityEnd.tooltip"));
-
-        jlValidityPeriod = new JLabel(res.getString("DSignCsr.jlValidityPeriod.text"));
-
-        jvpValidityPeriod = new JValidityPeriod(JValidityPeriod.YEARS);
-        jvpValidityPeriod.setToolTipText(res.getString("DSignCsr.jvpValidityPeriod.tooltip"));
 
         jlSerialNumber = new JLabel(res.getString("DSignCsr.jlSerialNumber.text"));
 
@@ -731,6 +738,10 @@ public class DSignCsr extends JEscDialog {
         validityEnd = jdtValidityEnd.getDateTime();
 
         subjectDN = jdnSubjectDN.getDistinguishedName();
+
+        ValiditySettings validitySettings = preferences.getValiditySignCsr();
+        validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
+        validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
 
         closeDialog();
     }
