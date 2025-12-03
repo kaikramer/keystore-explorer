@@ -42,6 +42,7 @@ import java.util.ResourceBundle;
 import org.bouncycastle.asn1.pkcs.RSASSAPSSparams;
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.ecc.EdDSACurves;
+import org.kse.version.JavaVersion;
 
 /**
  * Enumeration of Signature Types supported by the X509CertUtil class.
@@ -56,6 +57,10 @@ public enum SignatureType {
     SHA256_DSA("SHA256withDSA", "2.16.840.1.101.3.4.3.2", SHA256, "SignatureType.Sha256WithDsa"),
     SHA384_DSA("SHA384withDSA", "2.16.840.1.101.3.4.3.3", SHA384, "SignatureType.Sha384WithDsa"),
     SHA512_DSA("SHA512withDSA", "2.16.840.1.101.3.4.3.4", SHA512, "SignatureType.Sha512WithDsa"),
+    SHA3_224_DSA("SHA3-224withDSA", "2.16.840.1.101.3.4.3.5", SHA3_224, "SignatureType.Sha3_224WithDsa"),
+    SHA3_256_DSA("SHA3-256withDSA", "2.16.840.1.101.3.4.3.6", SHA3_256, "SignatureType.Sha3_256WithDsa"),
+    SHA3_384_DSA("SHA3-384withDSA", "2.16.840.1.101.3.4.3.7", SHA3_384, "SignatureType.Sha3_384WithDsa"),
+    SHA3_512_DSA("SHA3-512withDSA", "2.16.840.1.101.3.4.3.8", SHA3_512, "SignatureType.Sha3_512WithDsa"),
 
     // RSA
     MD5_RSA("MD5withRSA", "1.2.840.113549.1.1.4", MD5, "SignatureType.Md5WithRsa"),
@@ -65,6 +70,10 @@ public enum SignatureType {
     SHA256_RSA("SHA256withRSA", "1.2.840.113549.1.1.11", SHA256, "SignatureType.Sha256WithRsa"),
     SHA384_RSA("SHA384withRSA", "1.2.840.113549.1.1.12", SHA384, "SignatureType.Sha384WithRsa"),
     SHA512_RSA("SHA512withRSA", "1.2.840.113549.1.1.13", SHA512, "SignatureType.Sha512WithRsa"),
+    SHA3_224_RSA("SHA3-224withRSA", "2.16.840.1.101.3.4.3.13", SHA3_224, "SignatureType.Sha3_224WithRsa"),
+    SHA3_256_RSA("SHA3-256withRSA", "2.16.840.1.101.3.4.3.14", SHA3_256, "SignatureType.Sha3_256WithRsa"),
+    SHA3_384_RSA("SHA3-384withRSA", "2.16.840.1.101.3.4.3.15", SHA3_384, "SignatureType.Sha3_384WithRsa"),
+    SHA3_512_RSA("SHA3-512withRSA", "2.16.840.1.101.3.4.3.16", SHA3_512, "SignatureType.Sha3_512WithRsa"),
 
     // RSASSA-PSS (there is only one OID for the PSS signature scheme, the parameters define the exact algorithm)
     SHA1WITHRSAANDMGF1("SHA1WITHRSAANDMGF1", id_RSASSA_PSS.getId(), SHA1, "SignatureType.Sha1WithRsaAndMGF1"),
@@ -85,6 +94,10 @@ public enum SignatureType {
     SHA256_ECDSA("SHA256withECDSA", "1.2.840.10045.4.3.2", SHA256, "SignatureType.Sha256WithEcDsa"),
     SHA384_ECDSA("SHA384withECDSA", "1.2.840.10045.4.3.3", SHA384, "SignatureType.Sha384WithEcDsa"),
     SHA512_ECDSA("SHA512withECDSA", "1.2.840.10045.4.3.4", SHA512, "SignatureType.Sha512WithEcDsa"),
+    SHA3_224_ECDSA("SHA3-224withECDSA", "2.16.840.1.101.3.4.3.9", SHA3_224, "SignatureType.Sha3_224WithEcDsa"),
+    SHA3_256_ECDSA("SHA3-256withECDSA", "2.16.840.1.101.3.4.3.10", SHA3_256, "SignatureType.Sha3_256WithEcDsa"),
+    SHA3_384_ECDSA("SHA3-384withECDSA", "2.16.840.1.101.3.4.3.11", SHA3_384, "SignatureType.Sha3_384WithEcDsa"),
+    SHA3_512_ECDSA("SHA3-512withECDSA", "2.16.840.1.101.3.4.3.12", SHA3_512, "SignatureType.Sha3_512WithEcDsa"),
 
     // EdDSA
     ED25519("Ed25519", EdDSACurves.ED25519.oid().getId(), SHA512, "SignatureType.Ed25519"),
@@ -180,6 +193,10 @@ public enum SignatureType {
         signatureTypes.add(SHA256_DSA);
         signatureTypes.add(SHA384_DSA);
         signatureTypes.add(SHA512_DSA);
+        signatureTypes.add(SHA3_224_DSA);
+        signatureTypes.add(SHA3_256_DSA);
+        signatureTypes.add(SHA3_384_DSA);
+        signatureTypes.add(SHA3_512_DSA);
 
         return signatureTypes;
     }
@@ -193,10 +210,14 @@ public enum SignatureType {
         List<SignatureType> signatureTypes = new ArrayList<>();
 
         signatureTypes.add(SHA1_ECDSA);
-        //signatureTypes.add(SHA224_ECDSA); // not supported by Sun provider
+        signatureTypes.add(SHA224_ECDSA);
         signatureTypes.add(SHA256_ECDSA);
         signatureTypes.add(SHA384_ECDSA);
         signatureTypes.add(SHA512_ECDSA);
+        signatureTypes.add(SHA3_224_ECDSA);
+        signatureTypes.add(SHA3_256_ECDSA);
+        signatureTypes.add(SHA3_384_ECDSA);
+        signatureTypes.add(SHA3_512_ECDSA);
 
         return signatureTypes;
     }
@@ -215,6 +236,12 @@ public enum SignatureType {
         signatureTypes.add(SHA256_RSA);
         signatureTypes.add(SHA384_RSA);
         signatureTypes.add(SHA512_RSA);
+
+        signatureTypes.add(SHA3_224_RSA);
+        signatureTypes.add(SHA3_256_RSA);
+        signatureTypes.add(SHA3_384_RSA);
+        signatureTypes.add(SHA3_512_RSA);
+
         signatureTypes.add(SHA1WITHRSAANDMGF1);
         signatureTypes.add(SHA224WITHRSAANDMGF1);
         signatureTypes.add(SHA256WITHRSAANDMGF1);
@@ -223,10 +250,12 @@ public enum SignatureType {
 
         // SHA3 signatures cause problems when reading certificates with standard providers (e.g. in P12 keystore)
         // because at least up to Java 15 there is no support for SHA3 signatures (see http://openjdk.java.net/jeps/287)
-        //signatureTypes.add(SHA3_224WITHRSAANDMGF1);
-        //signatureTypes.add(SHA3_256WITHRSAANDMGF1);
-        //signatureTypes.add(SHA3_384WITHRSAANDMGF1);
-        //signatureTypes.add(SHA3_512WITHRSAANDMGF1);
+        if (JavaVersion.getJreVersion().isAtLeast(JavaVersion.JRE_VERSION_17)) {
+            signatureTypes.add(SHA3_224WITHRSAANDMGF1);
+            signatureTypes.add(SHA3_256WITHRSAANDMGF1);
+            signatureTypes.add(SHA3_384WITHRSAANDMGF1);
+            signatureTypes.add(SHA3_512WITHRSAANDMGF1);
+        }
 
         return signatureTypes;
     }
@@ -240,14 +269,28 @@ public enum SignatureType {
     public static List<SignatureType> rsaSignatureTypes(int keySize) {
         List<SignatureType> signatureTypes = rsaSignatureTypes();
 
-        // SHA-512 requires RSA key length 512 + 233 bits padding, round up to nearest power of 8
-        if (keySize < 752) {
-            signatureTypes.remove(SHA512_RSA);
+        // RSASSA-PSS SHA-512 requires key length 512 + 512 bits salt + 9 bits, round up to nearest multiple of 8
+        if (keySize < 1040) {
+            signatureTypes.remove(SHA512WITHRSAANDMGF1);
+            signatureTypes.remove(SHA3_512WITHRSAANDMGF1);
         }
 
-        // SHA-384 requires RSA key length 384 + 233 bits padding, round up to nearest power of 8
+        // RSASSA-PSS SHA-384 requires key length 384 + 384 bits salt + 9 bits, round up to nearest multiple of 8
+        if (keySize < 784) {
+            signatureTypes.remove(SHA384WITHRSAANDMGF1);
+            signatureTypes.remove(SHA3_384WITHRSAANDMGF1);
+        }
+
+        // SHA-512 requires RSA key length 512 + 233 bits padding, round up to nearest multiple of 8
+        if (keySize < 752) {
+            signatureTypes.remove(SHA512_RSA);
+            signatureTypes.remove(SHA3_512_RSA);
+        }
+
+        // SHA-384 requires RSA key length 384 + 233 bits padding, round up to nearest multiple of 8
         if (keySize < 624) {
             signatureTypes.remove(SHA384_RSA);
+            signatureTypes.remove(SHA3_384_RSA);
         }
 
         return signatureTypes;

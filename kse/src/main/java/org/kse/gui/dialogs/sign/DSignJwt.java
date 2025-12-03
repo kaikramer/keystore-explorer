@@ -160,7 +160,13 @@ public class DSignJwt extends JEscDialog {
                 // These algorithms are not supported by JWS
                 jcbSignatureAlgorithm.removeItem(SignatureType.RIPEMD160_RSA);
                 jcbSignatureAlgorithm.removeItem(SignatureType.SHA1_RSA);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA224_RSA);
                 jcbSignatureAlgorithm.removeItem(SignatureType.SHA1WITHRSAANDMGF1);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA224WITHRSAANDMGF1);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224_RSA);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256_RSA);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384_RSA);
+                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512_RSA);
                 jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224WITHRSAANDMGF1);
                 jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256WITHRSAANDMGF1);
                 jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384WITHRSAANDMGF1);

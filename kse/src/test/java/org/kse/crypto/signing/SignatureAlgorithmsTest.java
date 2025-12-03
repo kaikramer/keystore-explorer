@@ -21,13 +21,23 @@ package org.kse.crypto.signing;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kse.crypto.keypair.KeyPairType.DSA;
+import static org.kse.crypto.keypair.KeyPairType.EC;
+import static org.kse.crypto.keypair.KeyPairType.ED25519;
+import static org.kse.crypto.keypair.KeyPairType.ED448;
+import static org.kse.crypto.keypair.KeyPairType.MLDSA44;
+import static org.kse.crypto.keypair.KeyPairType.MLDSA65;
+import static org.kse.crypto.keypair.KeyPairType.MLDSA87;
 import static org.kse.crypto.keypair.KeyPairType.RSA;
+import static org.kse.crypto.keypair.KeyPairType.SLHDSA_SHA2_256F;
+import static org.kse.crypto.keypair.KeyPairType.SLHDSA_SHAKE_256F;
 
 import java.io.ByteArrayOutputStream;
 import java.security.InvalidParameterException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.security.auth.x500.X500Principal;
 
@@ -51,15 +61,21 @@ import org.kse.crypto.x509.X509CertificateVersion;
  * Unit tests for all signature algorithms for certificate and CSR generation.
  */
 public class SignatureAlgorithmsTest extends CryptoTestsBase {
-    private static KeyPair rsaKeyPair;
-    private static KeyPair dsaKeyPair;
-    private static KeyPair ecKeyPair;
+    private static Map<KeyPairType, KeyPair> keyPairs;
 
     @BeforeAll
     static void setUp() throws Exception {
-        rsaKeyPair = KeyPairUtil.generateKeyPair(RSA, 2048, KSE.BC);
-        dsaKeyPair = KeyPairUtil.generateKeyPair(DSA, 1024, KSE.BC);
-        ecKeyPair = KeyPairUtil.generateECKeyPair("prime192v1", KSE.BC);
+        keyPairs = new HashMap<>();
+        keyPairs.put(RSA, KeyPairUtil.generateKeyPair(RSA, 2048, KSE.BC));
+        keyPairs.put(DSA, KeyPairUtil.generateKeyPair(DSA, 1024, KSE.BC));
+        keyPairs.put(EC, KeyPairUtil.generateECKeyPair("prime192v1", KSE.BC));
+        keyPairs.put(ED25519, KeyPairUtil.generateECKeyPair("Ed25519", KSE.BC));
+        keyPairs.put(ED448, KeyPairUtil.generateECKeyPair("Ed448", KSE.BC));
+        keyPairs.put(MLDSA44, KeyPairUtil.generateKeyPair(MLDSA44, KSE.BC));
+        keyPairs.put(MLDSA65, KeyPairUtil.generateKeyPair(MLDSA65, KSE.BC));
+        keyPairs.put(MLDSA87, KeyPairUtil.generateKeyPair(MLDSA87, KSE.BC));
+        keyPairs.put(SLHDSA_SHA2_256F, KeyPairUtil.generateKeyPair(SLHDSA_SHA2_256F, KSE.BC));
+        keyPairs.put(SLHDSA_SHAKE_256F, KeyPairUtil.generateKeyPair(SLHDSA_SHAKE_256F, KSE.BC));
     }
 
     @ParameterizedTest
@@ -71,30 +87,76 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
             "RSA, SHA256_RSA, SPKAC",
             "RSA, SHA384_RSA, SPKAC",
             "RSA, SHA512_RSA, SPKAC",
+            "RSA, SHA3_224_RSA, SPKAC",
+            "RSA, SHA3_256_RSA, SPKAC",
+            "RSA, SHA3_384_RSA, SPKAC",
+            "RSA, SHA3_512_RSA, SPKAC",
+            // SPKAC does not support RSASSA-PSS signatures.
+//            "RSA, SHA1WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA224WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA256WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA384WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA512WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA3_224WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA3_256WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA3_384WITHRSAANDMGF1, SPKAC",
+//            "RSA, SHA3_512WITHRSAANDMGF1, SPKAC",
             "RSA, RIPEMD160_RSA, SPKAC",
             "DSA, SHA1_DSA, SPKAC",
             "DSA, SHA224_DSA, SPKAC",
             "DSA, SHA256_DSA, SPKAC",
             "DSA, SHA384_DSA, SPKAC",
             "DSA, SHA512_DSA, SPKAC",
+            "DSA, SHA3_224_DSA, SPKAC",
+            "DSA, SHA3_256_DSA, SPKAC",
+            "DSA, SHA3_384_DSA, SPKAC",
+            "DSA, SHA3_512_DSA, SPKAC",
             "RSA, MD5_RSA, PKCS10",
             "RSA, SHA1_RSA, PKCS10",
             "RSA, SHA224_RSA, PKCS10",
             "RSA, SHA256_RSA, PKCS10",
             "RSA, SHA384_RSA, PKCS10",
             "RSA, SHA512_RSA, PKCS10",
+            "RSA, SHA3_224_RSA, PKCS10",
+            "RSA, SHA3_256_RSA, PKCS10",
+            "RSA, SHA3_384_RSA, PKCS10",
+            "RSA, SHA3_512_RSA, PKCS10",
+            "RSA, SHA1WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA224WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA256WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA384WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA512WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA3_224WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA3_256WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA3_384WITHRSAANDMGF1, PKCS10",
+            "RSA, SHA3_512WITHRSAANDMGF1, PKCS10",
             "RSA, RIPEMD160_RSA, PKCS10",
             "DSA, SHA1_DSA, PKCS10",
             "DSA, SHA224_DSA, PKCS10",
             "DSA, SHA256_DSA, PKCS10",
             "DSA, SHA384_DSA, PKCS10",
             "DSA, SHA512_DSA, PKCS10",
+            "DSA, SHA3_224_DSA, PKCS10",
+            "DSA, SHA3_256_DSA, PKCS10",
+            "DSA, SHA3_384_DSA, PKCS10",
+            "DSA, SHA3_512_DSA, PKCS10",
             "EC, SHA1_ECDSA, PKCS10",
             "EC, SHA224_ECDSA, PKCS10",
             "EC, SHA256_ECDSA, PKCS10",
             "EC, SHA384_ECDSA, PKCS10",
             "EC, SHA512_ECDSA, PKCS10",
+            "EC, SHA3_224_ECDSA, PKCS10",
+            "EC, SHA3_256_ECDSA, PKCS10",
+            "EC, SHA3_384_ECDSA, PKCS10",
+            "EC, SHA3_512_ECDSA, PKCS10",
             // combination EC/SPKAC not supported right now and probably never will be
+            "ED25519, ED25519, PKCS10",
+            "ED448, ED448, PKCS10",
+            "MLDSA44, MLDSA44, PKCS10",
+            "MLDSA65, MLDSA65, PKCS10",
+            "MLDSA87, MLDSA87, PKCS10",
+            "SLHDSA_SHA2_256F, SLHDSA, PKCS10",
+            "SLHDSA_SHAKE_256F, SLHDSA, PKCS10",
     })
     // @formatter:on
     public void testSignCertificateAndCSR(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType)
@@ -105,19 +167,8 @@ public class SignatureAlgorithmsTest extends CryptoTestsBase {
 
     private void doTest(KeyPairType keyPairType, SignatureType signatureType, CsrType csrType,
                         X509CertificateVersion version) throws Exception {
-        KeyPair keyPair;
-
-        switch (keyPairType) {
-        case RSA:
-            keyPair = rsaKeyPair;
-            break;
-        case DSA:
-            keyPair = dsaKeyPair;
-            break;
-        case EC:
-            keyPair = ecKeyPair;
-            break;
-        default:
+        KeyPair keyPair = keyPairs.get(keyPairType);
+        if (keyPair == null) {
             throw new InvalidParameterException();
         }
 
