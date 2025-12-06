@@ -338,7 +338,23 @@ public class DViewPem extends JEscDialog {
         try {
             String certPem = jtaPem.getText();
 
-            JFileChooser chooser = FileChooserFactory.getX509FileChooser();
+            JFileChooser chooser;
+            if (cert != null) {
+                chooser = FileChooserFactory.getX509FileChooser();
+            } else if (crl != null) {
+                chooser = FileChooserFactory.getCrlFileChooser();
+            } else if (pkcs10Csr != null) {
+                chooser = FileChooserFactory.getPkcs10FileChooser();
+            } else if (privKey != null) {
+                chooser = FileChooserFactory.getPkcs8FileChooser();
+            } else if (pubKey != null) {
+                chooser = FileChooserFactory.getPublicKeyFileChooser();
+            } else if (cms != null) {
+                chooser = FileChooserFactory.getSignatureFileChooser();
+            } else {
+                chooser = FileChooserFactory.getX509FileChooser();
+            }
+
             chooser.setCurrentDirectory(CurrentDirectory.get());
             chooser.setDialogTitle(title);
             chooser.setMultiSelectionEnabled(false);
