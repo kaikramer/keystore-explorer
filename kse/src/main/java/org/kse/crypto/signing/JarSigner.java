@@ -81,6 +81,8 @@ import org.kse.crypto.digest.DigestUtil;
 public class JarSigner {
     private static ResourceBundle res = ResourceBundle.getBundle("org/kse/crypto/signing/resources");
 
+    private static final int MAX_LINE_LENGTH = 72;
+
     private static final String CRLF = "\r\n";
 
     // Message format template for manifest and signature file attributes
@@ -248,12 +250,12 @@ public class JarSigner {
             // Write out Manifest Digest, Created By and Signature Version to start of signature file
             sbSf.insert(0, CRLF);
             sbSf.insert(0, CRLF);
-            sbSf.insert(0,
-                        createAttributeText(MessageFormat.format(DIGEST_MANIFEST_ATTR, digestType.jce()), digestMfStr));
-            sbSf.insert(0, CRLF);
             sbSf.insert(0, createAttributeText(
                     MessageFormat.format(DIGEST_MANIFEST_MAIN_ATTRIBUTES_ATTR, digestType.jce()),
                     digestMfMainAttrsStr));
+            sbSf.insert(0, CRLF);
+            sbSf.insert(0,
+                    createAttributeText(MessageFormat.format(DIGEST_MANIFEST_ATTR, digestType.jce()), digestMfStr));
             sbSf.insert(0, CRLF);
             sbSf.insert(0, createAttributeText(CREATED_BY_ATTR, signer));
             sbSf.insert(0, CRLF);
@@ -261,9 +263,6 @@ public class JarSigner {
 
             // Signature file complete
             byte[] sf = sbSf.toString().getBytes();
-
-            // Write JAR files from JAR to be signed to signed JAR
-            writeJarEntries(jar, jos, signatureName);
 
             // Write manifest to signed JAR
             writeManifest(manifest, jos);
@@ -274,6 +273,9 @@ public class JarSigner {
             // Create signature block and write it out to signed JAR
             byte[] sigBlock = createSignatureBlock(sf, privateKey, certificateChain, signatureType, tsaUrl, provider);
             writeSignatureBlock(sigBlock, signatureType, signatureName, jos);
+
+            // Write JAR files from JAR to be signed to signed JAR
+            writeJarEntries(jar, jos, signatureName);
         }
     }
 
@@ -495,9 +497,9 @@ public class JarSigner {
             // First entry name attribute to match
             String entryNameAttr = createAttributeText(NAME_ATTR, entryName);
 
-            // Only match on first 70 characters (max line length)
-            if (entryNameAttr.length() > 70) {
-                entryNameAttr = entryNameAttr.substring(0, 70);
+            // Only match on first 72 characters (max line length)
+            if (entryNameAttr.length() > MAX_LINE_LENGTH) {
+                entryNameAttr = entryNameAttr.substring(0, MAX_LINE_LENGTH);
             }
 
             // Keep reading and ignoring lines until entry is found - the end of the entry's attributes
@@ -651,13 +653,18 @@ public class JarSigner {
         // Remaining text to split
         String remainingText = attributeText;
 
+        // Subsequent lines are indented by one space, which is not accounted for
+        // when checking the remaining text length. This offset accounts for the
+        // indentation after the first line is wrapped.
+        int paddingOffset = 0;
         while (true) {
-            if (remainingText.length() > 70) {
+            if (remainingText.length() > MAX_LINE_LENGTH - paddingOffset) {
                 // Split a line
-                sb.append(remainingText, 0, 70);
+                sb.append(remainingText, 0, MAX_LINE_LENGTH - paddingOffset);
                 sb.append(CRLF);
                 sb.append(" ");
-                remainingText = remainingText.substring(70);
+                remainingText = remainingText.substring(MAX_LINE_LENGTH - paddingOffset);
+                paddingOffset = 1;
             } else {
                 // Done splitting
                 sb.append(remainingText);
@@ -778,4 +785,5 @@ public class JarSigner {
 
         return sb.toString();
     }
+
 }
