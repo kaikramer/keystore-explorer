@@ -53,6 +53,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.kse.crypto.CryptoException;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.crypto.x509.X509CertUtil;
@@ -89,6 +90,7 @@ public class DViewCrl extends JEscDialog {
     private JLabel jlSignatureAlgorithm;
     private JTextField jtfSignatureAlgorithm;
     private JButton jbCrlExtensions;
+    private JButton jbCrlPem;
     private JButton jbCrlAsn1;
     private JLabel jlRevokedCerts;
     private JScrollPane jspRevokedCertsTable;
@@ -162,6 +164,19 @@ public class DViewCrl extends JEscDialog {
             try {
                 CursorUtil.setCursorBusy(DViewCrl.this);
                 crlExtensionsPressed();
+            } finally {
+                CursorUtil.setCursorFree(DViewCrl.this);
+            }
+        });
+
+        jbCrlPem = new JButton(res.getString("DViewCrl.jbCrlPem.text"));
+
+        PlatformUtil.setMnemonic(jbCrlPem, res.getString("DViewCrl.jbCrlPem.mnemonic").charAt(0));
+        jbCrlPem.setToolTipText(res.getString("DViewCrl.jbCrlPem.tooltip"));
+        jbCrlPem.addActionListener(evt -> {
+            try {
+                CursorUtil.setCursorBusy(DViewCrl.this);
+                crlPemPressed();
             } finally {
                 CursorUtil.setCursorFree(DViewCrl.this);
             }
@@ -263,6 +278,7 @@ public class DViewCrl extends JEscDialog {
         pane.add(jlSignatureAlgorithm, "");
         pane.add(jtfSignatureAlgorithm, "wrap");
         pane.add(jbCrlExtensions, "split, spanx, right");
+        pane.add(jbCrlPem, "");
         pane.add(jbCrlAsn1, "wrap unrel");
         pane.add(new JSeparator(), "spanx, growx, wrap");
         pane.add(jlRevokedCerts, "split, wrap");
@@ -398,6 +414,16 @@ public class DViewCrl extends JEscDialog {
         DViewExtensions dViewExtensions = new DViewExtensions(this, res.getString("DViewCrl.Extensions.Title"), crl);
         dViewExtensions.setLocationRelativeTo(this);
         dViewExtensions.setVisible(true);
+    }
+
+    private void crlPemPressed() {
+        try {
+            DViewPem dViewPem = new DViewPem(this, res.getString("DViewCrl.Pem.Title"), crl);
+            dViewPem.setLocationRelativeTo(this);
+            dViewPem.setVisible(true);
+        } catch (CryptoException e) {
+            DError.displayError(this, e);
+        }
     }
 
     private void asn1DumpPressed() {
