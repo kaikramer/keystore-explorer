@@ -40,6 +40,13 @@ public class DigestUtilTest extends CryptoTestsBase {
             "SHA256",
             "SHA384",
             "SHA512",
+            "SHA3_224",
+            "SHA3_256",
+            "SHA3_384",
+            "SHA3_512",
+            "SHAKE128",
+            "SHAKE256",
+            "SM3",
             "RIPEMD160",
     })
     // @formatter:on
