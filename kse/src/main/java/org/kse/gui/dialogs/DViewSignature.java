@@ -545,10 +545,10 @@ public class DViewSignature extends JEscDialog {
         KseSignerInformation signer = getSelectedSignerInfo();
 
         try {
-            DViewPem dViewCertPem = new DViewPem(this, res.getString("DViewSignature.Pem.Title"),
+            DViewPem dViewPem = new DViewPem(this, res.getString("DViewSignature.Pem.Title"),
                     signer.getSignedData());
-            dViewCertPem.setLocationRelativeTo(this);
-            dViewCertPem.setVisible(true);
+            dViewPem.setLocationRelativeTo(this);
+            dViewPem.setVisible(true);
         } catch (CryptoException e) {
             DError.displayError(this, e);
         }

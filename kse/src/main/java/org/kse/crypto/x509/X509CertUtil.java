@@ -74,6 +74,7 @@ public final class X509CertUtil {
     private static final String PKCS7_ENCODING = "PKCS7";
     private static final String PKI_PATH_ENCODING = "PkiPath";
     private static final String CERT_PEM_TYPE = "CERTIFICATE";
+    private static final String CRL_PEM_TYPE = "X509 CRL";
     private static final String PKCS7_PEM_TYPE = "PKCS7";
 
     public static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
@@ -366,9 +367,13 @@ public final class X509CertUtil {
         // Return longest path
         return longestPath.toArray(X509Certificate[]::new);
     }
-    /*
+
+    /**
      * Tries to sort the certificates according to their hierarchy,
      * and adds at the end those that have no dependencies.
+     *
+     * @param certs The array of certificates to sort.
+     * @return A sorted array of certificates.
      */
     public static X509Certificate[] orderX509CertsChain(X509Certificate[] certs) {
         if (certs == null) {
@@ -612,6 +617,33 @@ public final class X509CertUtil {
         } catch (CertificateException e) {
             throw new CryptoException(res.getString("NoPkcs7Encode.exception.message"), e);
         }
+    }
+
+    /**
+     * X.509 encode a CRL.
+     *
+     * @param crl The CRL
+     * @return The encoding
+     * @throws CryptoException If there was a problem encoding the CRL
+     */
+    public static byte[] getCrlEncodedX509(X509CRL crl) throws CryptoException {
+        try {
+            return crl.getEncoded();
+        } catch (CRLException ex) {
+            throw new CryptoException(res.getString("NoDerEncodeCrl.exception.message"), ex);
+        }
+    }
+
+    /**
+     * X.509 encode a CRL and PEM the encoding.
+     *
+     * @param crl The CRL
+     * @return The PEM'd encoding
+     * @throws CryptoException If there was a problem encoding the CRL
+     */
+    public static String getCrlEncodedX509Pem(X509CRL crl) throws CryptoException {
+        PemInfo pemInfo = new PemInfo(CRL_PEM_TYPE, null, getCrlEncodedX509(crl));
+        return PemUtil.encode(pemInfo);
     }
 
     /**

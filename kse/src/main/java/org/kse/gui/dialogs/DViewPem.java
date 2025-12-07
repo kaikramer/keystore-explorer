@@ -36,6 +36,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -92,6 +93,7 @@ public class DViewPem extends JEscDialog {
     private JTextArea jtaPem;
 
     private X509Certificate cert;
+    private X509CRL crl;
     private PKCS10CertificationRequest pkcs10Csr;
     private PrivateKey privKey;
     private PublicKey pubKey;
@@ -124,6 +126,20 @@ public class DViewPem extends JEscDialog {
     public DViewPem(JDialog parent, String title, X509Certificate cert) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.cert = cert;
+        initComponents();
+    }
+
+    /**
+     * Creates new DViewPem dialog where the parent is a dialog.
+     *
+     * @param parent Parent dialog
+     * @param title  The dialog title
+     * @param crl    CRL to display encoding for
+     * @throws CryptoException A problem was encountered getting the CRL's PEM'd DER encoding
+     */
+    public DViewPem(JDialog parent, String title, X509CRL crl) throws CryptoException {
+        super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.crl = crl;
         initComponents();
     }
 
@@ -288,6 +304,8 @@ public class DViewPem extends JEscDialog {
 
         if (cert != null) {
             return X509CertUtil.getCertEncodedX509Pem(cert);
+        } else if (crl != null) {
+            return X509CertUtil.getCrlEncodedX509Pem(crl);
         } else if (pkcs10Csr != null) {
             return Pkcs10Util.getCsrEncodedDerPem(pkcs10Csr);
         } else if (privKey != null) {
@@ -320,7 +338,23 @@ public class DViewPem extends JEscDialog {
         try {
             String certPem = jtaPem.getText();
 
-            JFileChooser chooser = FileChooserFactory.getX509FileChooser();
+            JFileChooser chooser;
+            if (cert != null) {
+                chooser = FileChooserFactory.getX509FileChooser();
+            } else if (crl != null) {
+                chooser = FileChooserFactory.getCrlFileChooser();
+            } else if (pkcs10Csr != null) {
+                chooser = FileChooserFactory.getPkcs10FileChooser();
+            } else if (privKey != null) {
+                chooser = FileChooserFactory.getPkcs8FileChooser();
+            } else if (pubKey != null) {
+                chooser = FileChooserFactory.getPublicKeyFileChooser();
+            } else if (cms != null) {
+                chooser = FileChooserFactory.getSignatureFileChooser();
+            } else {
+                chooser = FileChooserFactory.getX509FileChooser();
+            }
+
             chooser.setCurrentDirectory(CurrentDirectory.get());
             chooser.setDialogTitle(title);
             chooser.setMultiSelectionEnabled(false);

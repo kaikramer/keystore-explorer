@@ -23,13 +23,11 @@ package org.kse.gui.actions;
 import static org.kse.crypto.SecurityProvider.BOUNCY_CASTLE;
 
 import java.awt.Toolkit;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -68,8 +66,6 @@ import org.kse.gui.error.DError;
 import org.kse.gui.passwordmanager.Password;
 import org.kse.utilities.history.KeyStoreHistory;
 import org.kse.utilities.history.KeyStoreState;
-import org.kse.utilities.pem.PemInfo;
-import org.kse.utilities.pem.PemUtil;
 
 /**
  * Action to create a list of revoked certificates CRL.
@@ -206,26 +202,19 @@ public class SignCrlAction extends KeyStoreExplorerAction {
     }
 
     private void exportFile(X509CRL x509CRL, File fileExported, boolean pemEncode)
-            throws FileNotFoundException, IOException, CRLException {
+            throws FileNotFoundException, IOException, CryptoException {
 
         if (fileExported == null) {
             return;
         }
         byte[] data = null;
         if (pemEncode) {
-            PemInfo pemInfo = new PemInfo("X509 CRL", null, x509CRL.getEncoded());
-            data = PemUtil.encode(pemInfo).getBytes();
+            data = X509CertUtil.getCrlEncodedX509Pem(x509CRL).getBytes();
         } else {
-            data = x509CRL.getEncoded();
+            data = X509CertUtil.getCrlEncodedX509(x509CRL);
         }
-        try (InputStream in = new ByteArrayInputStream(data)) {
-            int length;
-            byte[] buffer = new byte[1024];
-            try (FileOutputStream fileOutputStream = new FileOutputStream(fileExported)) {
-                while ((length = in.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer, 0, length);
-                }
-            }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(fileExported)) {
+            fileOutputStream.write(data);
         }
     }
 }
