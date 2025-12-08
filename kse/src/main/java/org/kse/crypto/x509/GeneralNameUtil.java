@@ -112,7 +112,7 @@ public class GeneralNameUtil {
      * @param addLinkForURI If true, convert URI to a clickable link
      * @return String representation of general name
      */
-    public static String safeToString(GeneralName generalName, boolean addLinkForURI) {
+    public static String safeToString(GeneralName generalName, boolean addLinkForURIorDNS) {
 
         if (generalName == null) {
             return "";
@@ -127,7 +127,12 @@ public class GeneralNameUtil {
         case GeneralName.dNSName:
             DERIA5String dnsName = (DERIA5String) generalName.getName();
 
-            return MessageFormat.format(res.getString("GeneralNameUtil.DnsGeneralName"), dnsName.getString());
+            String dnsNameString = dnsName.getString();
+            String dns = addLinkForURIorDNS ?
+                         "<a href=\"" + dnsNameString + "\">" + dnsNameString + "</a>" :
+                         dnsNameString;
+
+            return MessageFormat.format(res.getString("GeneralNameUtil.DnsGeneralName"), dns);
         case GeneralName.iPAddress:
             String ipAddressString = parseIpAddress(generalName);
             return MessageFormat.format(res.getString("GeneralNameUtil.IpAddressGeneralName"), ipAddressString);
@@ -143,9 +148,10 @@ public class GeneralNameUtil {
         case GeneralName.uniformResourceIdentifier:
             DERIA5String uri = (DERIA5String) generalName.getName();
 
-            String link = addLinkForURI ?
-                          "<a href=\"" + uri.getString() + "\">" + uri.getString() + "</a>" :
-                          uri.getString();
+            String uriString = uri.getString();
+            String link = addLinkForURIorDNS ?
+                          "<a href=\"" + uriString + "\">" + uriString + "</a>" :
+                          uriString;
 
             return MessageFormat.format(res.getString("GeneralNameUtil.UriGeneralName"), link);
         case GeneralName.otherName:
