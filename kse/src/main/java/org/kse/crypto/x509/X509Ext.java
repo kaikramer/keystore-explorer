@@ -593,7 +593,7 @@ public class X509Ext {
 
                 String attributeValueStr = getAttributeValueString(attributeType, attributeValue);
 
-                sb.append(MessageFormat.format("{0}: {1}", attributeTypeStr, attributeValueStr));
+                sb.append(MessageFormat.format(res.getString("genericTypeValueFormat"), attributeTypeStr, attributeValueStr));
                 sb.append(NEWLINE);
             }
         }
@@ -1734,7 +1734,7 @@ public class X509Ext {
 
                 sb.append(baseIndent);
                 sb.append(INDENT.toString(2));
-                sb.append(MessageFormat.format("{0}={1}", attributeTypeStr, attributeValueStr));
+                sb.append(MessageFormat.format(res.getString("genericTypeValueFormat"), attributeTypeStr, attributeValueStr));
                 sb.append(NEWLINE);
             }
         }
@@ -2778,7 +2778,7 @@ public class X509Ext {
 
                 String attributeValueStr = getAttributeValueString(attributeId, attributeValue);
 
-                sb.append(MessageFormat.format("{0}={1}", attributeId.getId(), attributeValueStr));
+                sb.append(MessageFormat.format(res.getString("genericTypeValueFormat"), attributeId.getId(), attributeValueStr));
                 sb.append(NEWLINE);
             }
         }
