@@ -37,6 +37,9 @@ import com.nimbusds.jose.jwk.OctetKeyPair;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 
+/**
+ * Public key exporter for exporting keys in JWK format.
+ */
 public class JwkPublicKeyExporter {
     private final String alias;
     private final JwkExporter jwkExporter;
@@ -54,18 +57,33 @@ public class JwkPublicKeyExporter {
         }
     }
 
+    /**
+     * Constructs a new JwkPublicKeyExporter.
+     *
+     * @param publicKey The public key to export.
+     * @param alias     The alias of the public key to export.
+     * @return          A JwkPublicKeyExporter for exporting the public key.
+     */
     public static JwkPublicKeyExporter from(PublicKey publicKey, String alias) {
         return new JwkPublicKeyExporter(publicKey, alias);
     }
 
+    /**
+     * Determines if the public key is exportable to JWK.
+     *
+     * @param publicKey The public key to export.
+     * @return True if the public key can be exported to JWK.
+     */
     public static boolean isPublicKeyTypeExportable(PublicKey publicKey)  {
         try {
             switch (KeyPairUtil.getKeyPairType(publicKey)) {
             case ED448:
             case ED25519:
+            case EDDSA:
             case RSA:
                 return true;
             case EC:
+            case ECDSA:
                 KeyInfo keyInfo = KeyPairUtil.getKeyInfo(publicKey);
                 String detailedAlgorithm = keyInfo.getDetailedAlgorithm();
                 return JwkExporter.ECKeyExporter.supportsCurve(detailedAlgorithm);
@@ -77,6 +95,9 @@ public class JwkPublicKeyExporter {
         }
     }
 
+    /**
+     * @return The public key exported as JWK JSON converted to byte[].
+     */
     public byte[] get() {
         return jwkExporter.exportWithAlias(alias);
     }

@@ -356,7 +356,7 @@ public class ExamineFileAction extends KeyStoreExplorerAction {
         PublicKey publicKey = OpenSslPubUtil.load(data);
 
         DViewPublicKey dViewPublicKey = new DViewPublicKey(frame, MessageFormat.format(
-                res.getString("ExamineFileAction.PublicKeyDetailsFile.Title"), file.getName()), publicKey);
+                res.getString("ExamineFileAction.PublicKeyDetailsFile.Title"), file.getName()), FileNameUtil.removeExtension(file.getName()), publicKey);
         dViewPublicKey.setLocationRelativeTo(frame);
         dViewPublicKey.setVisible(true);
     }

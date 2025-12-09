@@ -22,10 +22,15 @@ package org.kse.gui.dialogs;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PublicKey;
@@ -39,6 +44,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -53,12 +59,14 @@ import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.keypair.KeyPairUtil;
+import org.kse.crypto.publickey.JwkPublicKeyExporter;
 import org.kse.crypto.publickey.OpenSslPubUtil;
 import org.kse.gui.CursorUtil;
 import org.kse.gui.LnfUtil;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JPublicKeyFingerprint;
+import org.kse.gui.dialogs.importexport.DExportPublicKey;
 import org.kse.gui.error.DError;
 import org.kse.gui.preferences.PreferencesManager;
 import org.kse.gui.preferences.data.KsePreferences;
@@ -88,11 +96,13 @@ public class DViewPublicKey extends JEscDialog {
     private JScrollPane jspEncoded;
     private JLabel jlFingerprint;
     private JPublicKeyFingerprint jcfFingerprint;
+    private JButton jbExport;
     private JButton jbPem;
     private JButton jbFields;
     private JButton jbAsn1;
     private JButton jbOK;
 
+    private String alias;
     private PublicKey publicKey;
 
     /**
@@ -100,11 +110,13 @@ public class DViewPublicKey extends JEscDialog {
      *
      * @param parent    Parent frame
      * @param title     The dialog title
+     * @param alias     The public key alias
      * @param publicKey Public key to display
      * @throws CryptoException A problem was encountered getting the public key's details
      */
-    public DViewPublicKey(JFrame parent, String title, PublicKey publicKey) throws CryptoException {
+    public DViewPublicKey(JFrame parent, String title, String alias, PublicKey publicKey) throws CryptoException {
         super(parent, title, Dialog.ModalityType.DOCUMENT_MODAL);
+        this.alias = alias;
         this.publicKey = convertKey(publicKey);
         initComponents();
     }
@@ -121,6 +133,7 @@ public class DViewPublicKey extends JEscDialog {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
         this.publicKey = convertKey(publicKey);
         initComponents();
+        jbExport.setVisible(false);
     }
 
     private PublicKey convertKey(PublicKey publicKey) throws CryptoException {
@@ -166,6 +179,10 @@ public class DViewPublicKey extends JEscDialog {
 
         jcfFingerprint = new JPublicKeyFingerprint(25);
 
+        jbExport = new JButton(res.getString("DViewPublicKey.jbExport.text"));
+        PlatformUtil.setMnemonic(jbExport, res.getString("DViewPublicKey.jbExport.mnemonic").charAt(0));
+        jbExport.setToolTipText(res.getString("DViewPublicKey.jbExport.tooltip"));
+
         jbPem = new JButton(res.getString("DViewPublicKey.jbPem.text"));
         PlatformUtil.setMnemonic(jbPem, res.getString("DViewPublicKey.jbPem.mnemonic").charAt(0));
         jbPem.setToolTipText(res.getString("DViewPublicKey.jbPem.tooltip"));
@@ -193,7 +210,8 @@ public class DViewPublicKey extends JEscDialog {
         pane.add(jspEncoded, "growx, height 150lp:150lp:150lp, wrap");
         pane.add(jlFingerprint, "");
         pane.add(jcfFingerprint, "wrap");
-        pane.add(jbPem, "spanx, split");
+        pane.add(jbExport, "spanx, split");
+        pane.add(jbPem, "");
         pane.add(jbFields, "");
         pane.add(jbAsn1, "wrap");
         pane.add(new JSeparator(), "spanx, growx, wrap");
@@ -202,6 +220,8 @@ public class DViewPublicKey extends JEscDialog {
         // actions
 
         jbOK.addActionListener(evt -> okPressed());
+
+        jbExport.addActionListener(evt -> exportPressed());
 
         jbPem.addActionListener(evt -> {
             try {
@@ -278,6 +298,55 @@ public class DViewPublicKey extends JEscDialog {
                 || publicKey instanceof MLDSAPublicKey || publicKey instanceof SLHDSAPublicKey);
     }
 
+    private void exportPressed() {
+        File exportFile = null;
+
+        try {
+            boolean isKeyExportableAsJWK = JwkPublicKeyExporter.isPublicKeyTypeExportable(publicKey);
+
+            DExportPublicKey dExportPublicKey = new DExportPublicKey((Window) getParent(), alias, isKeyExportableAsJWK);
+            dExportPublicKey.setLocationRelativeTo(this);
+            dExportPublicKey.setVisible(true);
+
+            if (!dExportPublicKey.exportSelected()) {
+                return;
+            }
+
+            exportFile = dExportPublicKey.getExportFile();
+
+            byte[] encoded = null;
+
+            switch (dExportPublicKey.getSelectedPubKeyFormat()) {
+            case OPENSSL_PEM:
+                encoded = OpenSslPubUtil.getPem(publicKey).getBytes();
+                break;
+            case OPENSSL:
+                encoded = OpenSslPubUtil.get(publicKey);
+                break;
+            case JWK:
+                encoded = JwkPublicKeyExporter.from(publicKey, alias).get();
+                break;
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(exportFile)) {
+                fos.write(encoded);
+            }
+
+            JOptionPane.showMessageDialog(getParent(),
+                    res.getString("DViewPublicKey.ExportSuccessful.message"),
+                    res.getString("DViewPublicKey.ExportPublicKey.Title"), JOptionPane.INFORMATION_MESSAGE);
+        } catch (FileNotFoundException | NoSuchFileException e) {
+            String message = MessageFormat.format(
+                    res.getString("DViewPublicKey.NoWriteFile.message"), exportFile);
+
+            JOptionPane.showMessageDialog(getParent(), message,
+                                          res.getString("DViewPublicKey.ExportPublicKey.Title"),
+                                          JOptionPane.WARNING_MESSAGE);
+        } catch (IOException e) {
+            DError.displayError(getParent(), e);
+        }
+    }
+
     private void pemEncodingPressed() {
         try {
             DViewPem dViewCsrPem = new DViewPem(this, res.getString("DViewPublicKey.Pem.Title"), publicKey);
@@ -324,7 +393,7 @@ public class DViewPublicKey extends JEscDialog {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA", KSE.BC);
         KeyPair keyPair = keyGen.genKeyPair();
 
-        DViewPublicKey dialog = new DViewPublicKey(new javax.swing.JFrame(), "Title", keyPair.getPublic());
+        DViewPublicKey dialog = new DViewPublicKey(new javax.swing.JFrame(), "Title", "public", keyPair.getPublic());
         DialogViewer.run(dialog);
     }
 }

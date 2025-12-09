@@ -263,7 +263,7 @@ public class DViewPrivateKey extends JEscDialog {
     private void exportPressed() {
         try {
             DExportPrivateKeyType dExportPrivateKeyType = new DExportPrivateKeyType((JFrame) this.getParent(), privateKey);
-            dExportPrivateKeyType.setLocationRelativeTo(null);
+            dExportPrivateKeyType.setLocationRelativeTo(this);
             dExportPrivateKeyType.setVisible(true);
 
             if (!dExportPrivateKeyType.exportTypeSelected()) {
@@ -279,7 +279,7 @@ public class DViewPrivateKey extends JEscDialog {
                 PrivateKeyUtils.exportAsJwk(privateKey, alias, (JFrame) this.getParent(), preferences, resActions);
             }
         } catch (Exception ex) {
-            DError.displayError((JFrame) this.getParent(), ex);
+            DError.displayError(this.getParent(), ex);
         }
 
     }
