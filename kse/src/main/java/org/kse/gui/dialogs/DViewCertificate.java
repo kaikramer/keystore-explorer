@@ -688,6 +688,7 @@ public class DViewCertificate extends JEscDialog {
 
             DViewPublicKey dViewPublicKey = new DViewPublicKey(this,
                                                                res.getString("DViewCertificate.PubKeyDetails.Title"),
+                                                               X509CertUtil.getCertificateAlias(cert),
                                                                cert.getPublicKey());
             dViewPublicKey.setLocationRelativeTo(this);
             dViewPublicKey.setVisible(true);

@@ -126,14 +126,15 @@ public class DViewPublicKey extends JEscDialog {
      *
      * @param parent    Parent dialog
      * @param title     The dialog title
+     * @param alias     The public key alias
      * @param publicKey Public key to display
      * @throws CryptoException A problem was encountered getting the public key's details
      */
-    public DViewPublicKey(JDialog parent, String title, PublicKey publicKey) throws CryptoException {
+    public DViewPublicKey(JDialog parent, String title, String alias, PublicKey publicKey) throws CryptoException {
         super(parent, title, ModalityType.DOCUMENT_MODAL);
+        this.alias = alias;
         this.publicKey = convertKey(publicKey);
         initComponents();
-        jbExport.setVisible(false);
     }
 
     private PublicKey convertKey(PublicKey publicKey) throws CryptoException {

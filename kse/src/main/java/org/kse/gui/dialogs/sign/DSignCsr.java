@@ -32,7 +32,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -63,14 +62,12 @@ import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequestBuilder;
 import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.KeyInfo;
 import org.kse.crypto.csr.pkcs10.Pkcs10Util;
 import org.kse.crypto.csr.spkac.Spkac;
-import org.kse.crypto.csr.spkac.SpkacSubject;
 import org.kse.crypto.keypair.KeyPairType;
 import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
@@ -151,6 +148,7 @@ public class DSignCsr extends JEscDialog {
     private X509Certificate issuerCertificate;
     private PKCS10CertificationRequest pkcs10Csr;
     private Spkac spkacCsr;
+    private X500Name csrSubjectDN;
     private PublicKey csrPublicKey;
     private X509CertificateVersion version;
     private SignatureType signatureType;
@@ -461,14 +459,10 @@ public class DSignCsr extends JEscDialog {
         jtfCsrFormat.setText(res.getString("DSignCsr.jtfCsrFormat.Pkcs10.text"));
         jtfCsrFormat.setCaretPosition(0);
 
-        jdnCsrSubject.setDistinguishedName(pkcs10Csr.getSubject());
+        csrSubjectDN = pkcs10Csr.getSubject();
+        jdnCsrSubject.setDistinguishedName(csrSubjectDN);
 
-        try {
-            csrPublicKey = new JcaPKCS10CertificationRequest(pkcs10Csr).getPublicKey();
-        } catch (GeneralSecurityException ex) {
-            throw new CryptoException(res.getString("DSignCsr.NoGetCsrPublicKey.message"), ex);
-        }
-
+        csrPublicKey = Pkcs10Util.getPkcs10PublicKey(pkcs10Csr);
         populatePublicKey();
 
         String sigAlgId = pkcs10Csr.getSignatureAlgorithm().getAlgorithm().getId();
@@ -509,8 +503,8 @@ public class DSignCsr extends JEscDialog {
         jtfCsrFormat.setText(res.getString("DSignCsr.jtfCsrFormat.Spkac.text"));
         jtfCsrFormat.setCaretPosition(0);
 
-        SpkacSubject subject = spkacCsr.getSubject();
-        jdnCsrSubject.setDistinguishedName(subject.getName());
+        csrSubjectDN = spkacCsr.getSubject().getName();
+        jdnCsrSubject.setDistinguishedName(csrSubjectDN);
 
         csrPublicKey = spkacCsr.getPublicKey();
         populatePublicKey();
@@ -681,6 +675,7 @@ public class DSignCsr extends JEscDialog {
     private void pubKeyDetailsPressed() {
         try {
             DViewPublicKey dViewPublicKey = new DViewPublicKey(this, res.getString("DSignCsr.PubKeyDetails.Title"),
+                                                               X500NameUtils.extractCN(csrSubjectDN),
                                                                csrPublicKey);
             dViewPublicKey.setLocationRelativeTo(this);
             dViewPublicKey.setVisible(true);
