@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Calendar;
@@ -45,7 +46,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import org.kse.KSE;
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.components.JEscDialog;
@@ -153,25 +156,23 @@ public class DSignJwt extends JEscDialog {
 
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
-        if (signPrivateKey != null) {
-            // JWS uses specific algorithms. The defaults provide unsupported algorithms.
-            DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
-            if (KeyPairType.RSA == signKeyPairType) {
-                // These algorithms are not supported by JWS
-                jcbSignatureAlgorithm.removeItem(SignatureType.RIPEMD160_RSA);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA1_RSA);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA224_RSA);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA1WITHRSAANDMGF1);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA224WITHRSAANDMGF1);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224_RSA);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256_RSA);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384_RSA);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512_RSA);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224WITHRSAANDMGF1);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256WITHRSAANDMGF1);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384WITHRSAANDMGF1);
-                jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512WITHRSAANDMGF1);
-            }
+        // JWS uses specific algorithms. The defaults provide unsupported algorithms.
+        DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
+        if (KeyPairType.RSA == signKeyPairType) {
+            // These algorithms are not supported by JWS
+            jcbSignatureAlgorithm.removeItem(SignatureType.RIPEMD160_RSA);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA1_RSA);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA224_RSA);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA1WITHRSAANDMGF1);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA224WITHRSAANDMGF1);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224_RSA);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256_RSA);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384_RSA);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512_RSA);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_224WITHRSAANDMGF1);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_256WITHRSAANDMGF1);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_384WITHRSAANDMGF1);
+            jcbSignatureAlgorithm.removeItem(SignatureType.SHA3_512WITHRSAANDMGF1);
         }
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignJwt.jcbSignatureAlgorithm.tooltip"));
 
@@ -211,7 +212,8 @@ public class DSignJwt extends JEscDialog {
 
         // Don't show the signature algorithm for ECDSA and EDDSA.
         // The JWS algorithm is derived from the curve.
-        if (KeyPairType.EC != signKeyPairType && KeyPairType.EDDSA != signKeyPairType && KeyPairType.ED25519 != signKeyPairType) {
+        if (KeyPairType.EC != signKeyPairType && KeyPairType.ECDSA != signKeyPairType
+                && KeyPairType.EDDSA != signKeyPairType && KeyPairType.ED25519 != signKeyPairType) {
             pane.add(jlSignatureAlgorithm, "");
             pane.add(jcbSignatureAlgorithm, "wrap");
         }
@@ -259,6 +261,7 @@ public class DSignJwt extends JEscDialog {
     private void okPressed() {
         isOk = true;
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
+        DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
         closeDialog();
     }
 
@@ -391,6 +394,7 @@ public class DSignJwt extends JEscDialog {
     }
 
     public static void main(String[] args) throws Exception {
-        DialogViewer.run(new DSignJwt(new javax.swing.JFrame(), KeyPairType.RSA, null));
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
+        DialogViewer.run(new DSignJwt(new javax.swing.JFrame(), KeyPairType.RSA, keyPair.getPrivate()));
     }
 }

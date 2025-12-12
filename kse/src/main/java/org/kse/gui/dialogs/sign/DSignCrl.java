@@ -29,6 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
@@ -53,8 +54,10 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.kse.KSE;
 import org.kse.crypto.CryptoException;
 import org.kse.crypto.keypair.KeyPairType;
+import org.kse.crypto.keypair.KeyPairUtil;
 import org.kse.crypto.signing.SignatureType;
 import org.kse.crypto.x509.X500NameUtils;
 import org.kse.gui.components.JEscDialog;
@@ -64,6 +67,10 @@ import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.DialogHelper;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
+import org.kse.gui.preferences.data.ValiditySettings;
+import org.kse.gui.preferences.data.ValiditySettings.PeriodType;
 import org.kse.utilities.DialogViewer;
 
 import net.miginfocom.swing.MigLayout;
@@ -96,6 +103,9 @@ public class DSignCrl extends JEscDialog {
 
     private JButton jbOK;
     private JButton jbCancel;
+
+    private KsePreferences preferences = PreferencesManager.getPreferences();
+    private boolean isApplyPressed;
 
     private KeyPairType signKeyPairType;
     private PrivateKey signPrivateKey;
@@ -153,21 +163,21 @@ public class DSignCrl extends JEscDialog {
 
         jlValidityPeriod = new JLabel(res.getString("DSignCrl.jlValidityPeriod.text"));
 
-        jvpValidityPeriod = new JValidityPeriod(JValidityPeriod.DAYS);
+        int periodValue = preferences.getValiditySignCrl().getPeriodValue();
+        PeriodType periodType = preferences.getValiditySignCrl().getPeriodType();
+        jvpValidityPeriod = new JValidityPeriod(periodValue, periodType);
         jvpValidityPeriod.setToolTipText(res.getString("DSignCrl.jvpValidityPeriod.tooltip"));
 
         jlNextUpdate = new JLabel(res.getString("DSignCrl.jlNextUpdate.text"));
         jdtNextUpdate = new JDateTime(res.getString("DSignCrl.jdtNextUpdate.text"), false);
-        jdtNextUpdate.setDateTime(now);
+        jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(now));
         jdtNextUpdate.setToolTipText(res.getString("DSignCrl.jdtNextUpdate.tooltip"));
 
         jlSignatureAlgorithm = new JLabel(res.getString("DSignCrl.jlSignatureAlgorithm.text"));
 
         jcbSignatureAlgorithm = new JComboBox<>();
         jcbSignatureAlgorithm.setMaximumRowCount(10);
-        if (signPrivateKey != null) {
-            DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
-        }
+        DialogHelper.populateSigAlgs(signKeyPairType, signPrivateKey, jcbSignatureAlgorithm);
         jcbSignatureAlgorithm.setToolTipText(res.getString("DSignCrl.jcbSignatureAlgorithm.tooltip"));
 
         jlCrlNumber = new JLabel(res.getString("DSignCrl.jlCrlNumber.text"));
@@ -215,6 +225,7 @@ public class DSignCrl extends JEscDialog {
                 jdtEffectiveDate.setDateTime(startDate);
             }
             jdtNextUpdate.setDateTime(jvpValidityPeriod.getValidityEnd(startDate));
+            isApplyPressed = true;
         });
 
         jbCancel.getActionMap().put(CANCEL_KEY, new AbstractAction() {
@@ -308,30 +319,58 @@ public class DSignCrl extends JEscDialog {
         effectiveDate = jdtEffectiveDate.getDateTime();
         nextUpdate = jdtNextUpdate.getDateTime();
         signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
+
+        // The validity period does not use the configuration settings when loading
+        // an existing CRL so don't update the configuration settings unless the user
+        // has explicitly changed it.
+        if (isApplyPressed) {
+            ValiditySettings validitySettings = preferences.getValiditySignCrl();
+            validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
+            validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
+
+            DialogHelper.rememberSigAlg(signKeyPairType, signPrivateKey, signatureType);
+        }
+
         closeDialog();
     }
 
+    /**
+     * @return The effective date for the CRL.
+     */
     public Date getEffectiveDate() {
         return effectiveDate;
     }
 
+    /**
+     * @return The next update date for the CRL.
+     */
     public Date getNextUpdate() {
         return nextUpdate;
     }
 
+    /**
+     * @return The signature type for signing the CRL.
+     */
     public SignatureType getSignatureType() {
         return signatureType;
     }
 
+    /**
+     * @return The CRL number.
+     */
     public BigInteger getCrlNumber() {
         return crlNumber;
     }
 
+    /**
+     * @return The map of revoked certificates in the CRL.
+     */
     public Map<BigInteger, RevokedEntry> getMapRevokedEntry() {
         return jpRevokedCertsTable.getMapRevokedEntry();
     }
 
     public static void main(String[] args) throws HeadlessException, UnsupportedLookAndFeelException, CryptoException {
-        DialogViewer.run(new DSignCrl(new JFrame(), null, KeyPairType.RSA, null, null, null));
+        KeyPair keyPair = KeyPairUtil.generateKeyPair(KeyPairType.RSA, 1024, KSE.BC);
+        DialogViewer.run(new DSignCrl(new JFrame(), null, KeyPairType.RSA, keyPair.getPrivate(), null, null));
     }
 }

@@ -38,7 +38,6 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
@@ -65,14 +64,18 @@ import org.kse.crypto.x509.X509ExtensionSet;
 import org.kse.crypto.x509.X509ExtensionSetUpdater;
 import org.kse.crypto.x509.X509ExtensionType;
 import org.kse.gui.CursorUtil;
-import org.kse.gui.components.JEscDialog;
 import org.kse.gui.KseFrame;
+import org.kse.gui.components.JEscDialog;
 import org.kse.gui.crypto.JDistinguishedName;
 import org.kse.gui.crypto.JValidityPeriod;
 import org.kse.gui.datetime.JDateTime;
 import org.kse.gui.dialogs.extensions.DAddExtensions;
 import org.kse.gui.dialogs.sign.DListCertificatesKS;
 import org.kse.gui.error.DError;
+import org.kse.gui.preferences.PreferencesManager;
+import org.kse.gui.preferences.data.KsePreferences;
+import org.kse.gui.preferences.data.ValiditySettings;
+import org.kse.gui.preferences.data.ValiditySettings.PeriodType;
 import org.kse.utilities.DialogViewer;
 import org.kse.utilities.SerialNumbers;
 
@@ -108,6 +111,8 @@ public class DGenerateKeyPairCert extends JEscDialog {
     private JButton jbAddExtensions;
     private JButton jbOK;
     private JButton jbCancel;
+
+    KsePreferences preferences = PreferencesManager.getPreferences();
 
     private KeyPair keyPair;
     private KeyPairType keyPairType;
@@ -185,13 +190,15 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
         jlValidityPeriod = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityPeriod.text"));
 
-        jvpValidityPeriod = new JValidityPeriod(JValidityPeriod.YEARS);
+        int periodValue = preferences.getValidityGenerateCert().getPeriodValue();
+        PeriodType periodType = preferences.getValidityGenerateCert().getPeriodType();
+        jvpValidityPeriod = new JValidityPeriod(periodValue, periodType);
         jvpValidityPeriod.setToolTipText(res.getString("DGenerateKeyPairCert.jvpValidityPeriod.tooltip"));
 
         jlValidityEnd = new JLabel(res.getString("DGenerateKeyPairCert.jlValidityEnd.text"));
 
         jdtValidityEnd = new JDateTime(res.getString("DGenerateKeyPairCert.jdtValidityEnd.text"), false);
-        jdtValidityEnd.setDateTime(new Date(now.getTime() + TimeUnit.DAYS.toMillis(365)));
+        jdtValidityEnd.setDateTime(jvpValidityPeriod.getValidityEnd(now));
         jdtValidityEnd.setToolTipText(res.getString("DGenerateKeyPairCert.jdtValidityEnd.tooltip"));
 
         jlSerialNumber = new JLabel(res.getString("DGenerateKeyPairCert.jlSerialNumber.text"));
@@ -250,7 +257,6 @@ public class DGenerateKeyPairCert extends JEscDialog {
             }
             Date validityEnd = jvpValidityPeriod.getValidityEnd(startDate);
             jdtValidityEnd.setDateTime(validityEnd);
-
         });
 
         jbTransferNameExt.addActionListener(evt -> {
@@ -408,7 +414,7 @@ public class DGenerateKeyPairCert extends JEscDialog {
         }
 
         try {
-            SignatureType signatureType = ((SignatureType) jcbSignatureAlgorithm.getSelectedItem());
+            SignatureType signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
 
             X509CertificateGenerator generator;
 
@@ -452,6 +458,21 @@ public class DGenerateKeyPairCert extends JEscDialog {
 
     private void okPressed() {
         if (generateCertificate()) {
+            // Remember user selections
+            ValiditySettings validitySettings = preferences.getValidityGenerateCert();
+            validitySettings.setPeriodValue(jvpValidityPeriod.getPeriodValue());
+            validitySettings.setPeriodType(jvpValidityPeriod.getPeriodType());
+
+            SignatureType signatureType = (SignatureType) jcbSignatureAlgorithm.getSelectedItem();
+            if (issuerPrivateKey != null) {
+                String issuerKeyAlgorithm = issuerPrivateKey.getAlgorithm();
+                KeyPairType issuerKeyPairType = KeyPairType.resolveJce(issuerKeyAlgorithm);
+                DialogHelper.rememberSigAlg(issuerKeyPairType, issuerPrivateKey, signatureType);
+            } else {
+                // self-signed
+                DialogHelper.rememberSigAlg(keyPairType, keyPair.getPrivate(), signatureType);
+            }
+
             closeDialog();
         }
     }

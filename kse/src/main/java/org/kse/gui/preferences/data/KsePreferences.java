@@ -30,9 +30,11 @@ import javax.swing.JTabbedPane;
 
 import org.kse.crypto.digest.DigestType;
 import org.kse.crypto.digest.PublicKeyFingerprintAlgorithm;
+import org.kse.crypto.signing.SignatureType;
 import org.kse.gui.KeyStoreTableColumns;
 import org.kse.gui.KseFrame;
 import org.kse.gui.password.PasswordQualityConfig;
+import org.kse.gui.preferences.data.ValiditySettings.PeriodType;
 
 /**
  * Bean for storing application preferences
@@ -71,6 +73,13 @@ public class KsePreferences {
     private Map<String, String> properties = new HashMap<>() {{
         put("sun.java2d.d3d.onscreen", "false");
     }};
+    private ValiditySettings validityGenerateCert = new ValiditySettings();
+    private ValiditySettings validitySignCsr = new ValiditySettings();
+    private ValiditySettings validitySignCrl = new ValiditySettings(7, PeriodType.DAYS);
+    // jackson-jr loads the Map key using String. There are no compile time errors when using
+    // KeyPairType, but it does not work at runtime due to type erasure since the hashCodes
+    // don't match. Use String since it matches jackson-jr and is convenient.
+    private Map<String, SignatureType> signatureTypes = new HashMap<>();
 
     // auto-generated getters/setters
 
@@ -312,5 +321,49 @@ public class KsePreferences {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public ValiditySettings getValidityGenerateCert() {
+        return validityGenerateCert;
+    }
+
+    public void setValidityGenerateCert(ValiditySettings validityGenerateCert) {
+        // Users upgrading from a previous version of KSE won't have these
+        // settings. Ignore the incoming null and use the defaults.
+        if (validityGenerateCert != null) {
+            this.validityGenerateCert = validityGenerateCert;
+        }
+    }
+
+    public ValiditySettings getValiditySignCsr() {
+        return validitySignCsr;
+    }
+
+    public void setValiditySignCsr(ValiditySettings validitySignCsr) {
+        // Users upgrading from a previous version of KSE won't have these
+        // settings. Ignore the incoming null and use the defaults.
+        if (validitySignCsr != null) {
+            this.validitySignCsr = validitySignCsr;
+        }
+    }
+
+    public ValiditySettings getValiditySignCrl() {
+        return validitySignCrl;
+    }
+
+    public void setValiditySignCrl(ValiditySettings validitySignCrl) {
+        // Users upgrading from a previous version of KSE won't have these
+        // settings. Ignore the incoming null and use the defaults.
+        if (validitySignCrl != null) {
+            this.validitySignCrl = validitySignCrl;
+        }
+    }
+
+    public Map<String, SignatureType> getSignatureTypes() {
+        return signatureTypes;
+    }
+
+    public void setSignatureTypes(Map<String, SignatureType> signatureTypes) {
+        this.signatureTypes = signatureTypes;
     }
 }
