@@ -1622,6 +1622,11 @@ public class ObjectIdUtil {
         oidToNameMapping.put("1.3.6.1.4.1.11129.2.4.3", "PrecertificatePoison");
         oidToNameMapping.put("1.3.6.1.4.1.11129.2.4.4", "PrecertificateCA");
         oidToNameMapping.put("1.3.6.1.4.1.11129.2.4.5", "OcspSignedCertificateTimestampList");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.5.3", "CertificatePolicy");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.5.3.1", "SignedHTTPExchanges");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.5.3.2", "ClientAuthentication");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.5.3.3", "DocumentSigning");
+        oidToNameMapping.put("1.3.6.1.4.1.11129.2.5.3.4", "S/MIME");
         oidToNameMapping.put("1.3.6.1.4.1.11591", "Gnu");
         oidToNameMapping.put("1.3.6.1.4.1.11591.1", "GnuRadius");
         oidToNameMapping.put("1.3.6.1.4.1.11591.12", "GnuDigestAlgorithm");
